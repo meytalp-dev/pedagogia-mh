@@ -5,404 +5,519 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
 <meta name="description" content="מרחב הידע, הכלים והפרקטיקות של הפדגוגיה המקצועית — משרד העבודה, מינהל הכשרה מקצועית">
-<meta property="og:type" content="website">
-<meta property="og:title" content="אתר פדגוגיה משרד העבודה">
-<meta property="og:description" content="מרחב הידע, הכלים והפרקטיקות של הפדגוגיה המקצועית — מינהל הכשרה מקצועית">
-<meta property="og:url" content="https://pedagogiamh.co.il/">
-<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
-<meta property="og:locale" content="he_IL">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="אתר פדגוגיה משרד העבודה">
-<meta name="twitter:description" content="מרחב הידע, הכלים והפרקטיקות של הפדגוגיה המקצועית — מינהל הכשרה מקצועית">
-<meta name="twitter:image" content="https://pedagogiamh.co.il/logo.png">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#2A3A8C;          /* כחול הלוגו הכהה */
-    --navy-deep:#1D2B6B;
-    --royal:#2F6BE0;         /* הכחול הבוהק של תת-הכותרת */
-    --sky:#7DB4E8;           /* התכלת של הלוגו */
-    --sky-soft:#EAF2FB;
-    --ink:#1A2440;
-    --ink-soft:#4A5878;
-    --bg:#F5F7FC;
-    --card:#FFFFFF;
-    --line:#DCE4F2;
-    --gold:#C9962E;
-    --radius:18px;
-    --shadow:0 2px 6px rgba(29,43,107,.06), 0 14px 34px rgba(29,43,107,.08);
-    --shadow-lift:0 4px 10px rgba(29,43,107,.09), 0 22px 48px rgba(29,43,107,.14);
+    --ink:        oklch(27% 0.06 268);
+    --ink-soft:   oklch(46% 0.035 262);
+    --navy:       oklch(38% 0.115 268);
+    --navy-deep:  oklch(30% 0.10 268);
+    --royal:      oklch(54% 0.165 262);
+    --sky:        oklch(76% 0.085 250);
+    --sky-tint:   oklch(95.5% 0.017 250);
+    --bg:         oklch(97.6% 0.006 255);
+    --surface:    oklch(99.2% 0.003 255);
+    --line:       oklch(89% 0.014 255);
+    --line-soft:  oklch(93% 0.010 255);
+    --amber-ink:  oklch(52% 0.10 80);
+    --amber-bg:   oklch(96% 0.03 90);
+    --ease:cubic-bezier(.16,1,.3,1); /* ease-out-quint */
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
-    line-height:1.6; overflow-x:hidden;
+    line-height:1.65; overflow-x:clip;
   }
-  h1,h2,h3{font-family:'Frank Ruhl Libre',serif; line-height:1.2}
+  h1,h2,h3{font-family:'Frank Ruhl Libre',serif; line-height:1.12; letter-spacing:-.01em}
   a{color:inherit}
   img{max-width:100%}
+  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
 
-  /* ===== רקע גיאומטרי עדין בהשראת כוכב הלוגו ===== */
-  .bg-motif{
-    position:fixed; inset:0; z-index:-1; pointer-events:none;
-    background:
-      radial-gradient(900px 500px at 85% -5%, rgba(125,180,232,.18), transparent 60%),
-      radial-gradient(700px 450px at 8% 20%, rgba(47,107,224,.07), transparent 60%),
-      var(--bg);
-  }
-  .bg-motif::after{
-    content:""; position:absolute; inset:0; opacity:.35;
-    background-image:url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 18l6 10h-12zM60 102l-6-10h12zM24 39l11.5.5-5.8 10zM96 81l-11.5-.5 5.8-10zM24 81l5.8-10 5.7 10zM96 39l-5.8 10-5.7-10z' fill='%232A3A8C' fill-opacity='.05'/%3E%3C/svg%3E");
-  }
+  /* ---------- reveal on scroll ---------- */
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
+  .rv.in{opacity:1; transform:none}
 
-  .wrap{max-width:1120px; margin:0 auto; padding:0 24px}
-
-  /* ===== סרגל עליון ===== */
-  header.top{
-    position:sticky; top:0; z-index:50;
-    background:rgba(255,255,255,.88); backdrop-filter:blur(12px);
-    border-bottom:1px solid var(--line);
-  }
-  .top-in{display:flex; align-items:center; gap:18px; padding:10px 0}
-  .top-in img{height:52px; width:auto}
-  .top-title{font-weight:800; font-size:17px; color:var(--navy)}
-  .top-title small{display:block; font-weight:500; font-size:12.5px; color:var(--ink-soft)}
-  nav.jump{margin-inline-start:auto; display:flex; gap:4px}
+  /* ---------- top bar ---------- */
+  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
+  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
+  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
+  .top-in img{height:50px; width:auto}
+  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
+  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+  nav.jump{margin-inline-start:auto; display:flex; gap:26px}
   nav.jump a{
-    text-decoration:none; font-weight:600; font-size:14.5px; color:var(--ink-soft);
-    padding:8px 14px; border-radius:999px; transition:.2s;
+    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
+    position:relative; padding:6px 2px; transition:color .25s;
   }
-  nav.jump a:hover{background:var(--sky-soft); color:var(--navy)}
-  @media(max-width:820px){nav.jump{display:none}}
+  nav.jump a::after{
+    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
+  }
+  nav.jump a:hover{color:var(--navy)}
+  nav.jump a:hover::after{transform:scaleX(1)}
+  @media(max-width:840px){nav.jump{display:none}}
 
-  /* ===== פתיח ===== */
-  .hero{padding:72px 0 56px; position:relative}
-  .hero .kicker{
-    display:inline-flex; align-items:center; gap:10px;
-    color:var(--royal); font-weight:700; font-size:15px; letter-spacing:.02em;
-    animation:rise .7s .05s both;
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:clamp(56px,9vh,104px) 0 clamp(40px,6vh,72px)}
+  .hero-grid{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,4fr); gap:24px; align-items:center}
+  @media(max-width:840px){.hero-grid{grid-template-columns:1fr}.hero-star{display:none}}
+  .kicker{
+    display:inline-flex; align-items:center; gap:12px;
+    color:var(--royal); font-weight:700; font-size:15px;
   }
-  .hero .kicker::before{content:""; width:34px; height:2.5px; background:var(--royal); border-radius:2px}
+  .kicker::before{
+    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
+    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
   .hero h1{
-    font-size:clamp(38px,6.4vw,64px); font-weight:900; color:var(--navy-deep);
-    margin:14px 0 16px; animation:rise .7s .15s both;
+    font-size:clamp(46px,7.6vw,88px); font-weight:900; color:var(--navy-deep);
+    margin:18px 0 20px; max-width:11ch;
   }
-  .hero h1 em{font-style:normal; color:var(--royal)}
-  .hero p.lead{
-    font-size:19px; color:var(--ink-soft); max-width:640px; animation:rise .7s .25s both;
-  }
-  .hero .cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; animation:rise .7s .35s both}
+  .hero h1 .accent{color:var(--royal)}
+  .hero p.lead{font-size:clamp(17px,1.6vw,20px); color:var(--ink-soft); max-width:52ch}
+  .hero .cta-row{display:flex; flex-wrap:wrap; gap:14px; margin-top:34px}
   .btn{
-    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
-    font-weight:700; font-size:16px; padding:13px 26px; border-radius:999px; transition:.22s;
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none; cursor:pointer;
+    font-family:inherit; font-weight:700; font-size:16.5px; padding:14px 30px; border-radius:999px;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s, color .25s, border-color .25s;
   }
-  .btn.solid{background:var(--navy); color:#fff; box-shadow:var(--shadow)}
-  .btn.solid:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:var(--shadow-lift)}
-  .btn.ghost{border:1.5px solid var(--line); background:#fff; color:var(--navy)}
+  .btn:active{transform:scale(.97)}
+  .btn .arr{transition:transform .3s var(--ease)}
+  .btn:hover .arr{transform:translateX(-5px)}
+  .btn.solid{background:var(--navy); color:oklch(98% 0.005 255); border:1.5px solid var(--navy); box-shadow:0 10px 26px oklch(38% 0.115 268 / .28)}
+  .btn.solid:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 16px 36px oklch(38% 0.115 268 / .36)}
+  .btn.ghost{border:1.5px solid var(--line); background:var(--surface); color:var(--navy)}
   .btn.ghost:hover{border-color:var(--royal); color:var(--royal); transform:translateY(-2px)}
-  @keyframes rise{from{opacity:0; transform:translateY(18px)}to{opacity:1; transform:none}}
+  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
+  .hero-stagger > *:nth-child(1){animation-delay:.05s}
+  .hero-stagger > *:nth-child(2){animation-delay:.16s}
+  .hero-stagger > *:nth-child(3){animation-delay:.28s}
+  .hero-stagger > *:nth-child(4){animation-delay:.4s}
+  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
 
-  /* ===== כותרות מדור ===== */
-  .sec{padding:54px 0}
-  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:28px}
-  .sec-head .num{
-    font-family:'Frank Ruhl Libre',serif; font-weight:900; font-size:15px; color:#fff;
-    background:var(--royal); width:34px; height:34px; border-radius:10px;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; transform:translateY(4px);
+  /* --- the star: the hero moment --- */
+  .hero-star{position:relative; justify-self:end; margin-inline-end:clamp(-70px,-4vw,-20px)}
+  .hero-star::before{
+    content:""; position:absolute; inset:-18%;
+    background:radial-gradient(closest-side, oklch(76% 0.085 250 / .28), transparent 70%);
   }
-  .sec-head h2{font-size:clamp(26px,3.6vw,36px); font-weight:900; color:var(--navy-deep)}
-  .sec-head p{color:var(--ink-soft); font-size:15.5px; margin-inline-start:auto; max-width:340px; text-align:start}
-  @media(max-width:720px){.sec-head{flex-wrap:wrap}.sec-head p{margin-inline-start:0}}
+  .star-svg{width:clamp(260px,30vw,400px); height:auto; display:block; position:relative}
+  .star-rot{transform-origin:200px 200px; animation:orbit 100s linear infinite}
+  @keyframes orbit{to{transform:rotate(360deg)}}
+  .chev{animation:breathe 7.2s ease-in-out infinite}
+  .chev:nth-child(2){animation-delay:1.2s}
+  .chev:nth-child(3){animation-delay:2.4s}
+  .chev:nth-child(4){animation-delay:3.6s}
+  .chev:nth-child(5){animation-delay:4.8s}
+  .chev:nth-child(6){animation-delay:6s}
+  @keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
 
-  /* ===== טאבים — המרחבים ===== */
-  .tabs{
-    display:inline-flex; background:#fff; border:1.5px solid var(--line); border-radius:999px;
-    padding:5px; gap:4px; box-shadow:var(--shadow); margin-bottom:26px; flex-wrap:wrap;
+  /* ---------- ticker ---------- */
+  .ticker{border-block:1px solid var(--line); background:var(--surface); overflow:hidden}
+  .ticker-track{
+    display:flex; gap:0; width:max-content;
+    animation:slide 46s linear infinite;
+  }
+  .ticker:hover .ticker-track{animation-play-state:paused}
+  @keyframes slide{to{transform:translateX(50%)}}
+  .ticker-seq{display:flex; align-items:center; padding-block:11px}
+  .ticker-seq span{
+    font-family:'Karantina',serif; font-weight:700; font-size:21px; letter-spacing:.04em;
+    color:var(--ink-soft); white-space:nowrap; padding-inline:26px; position:relative;
+  }
+  .ticker-seq span::after{
+    content:"✦"; position:absolute; inset-inline-start:-7px; top:50%; translate:0 -52%;
+    font-size:11px; color:var(--sky);
+  }
+
+  /* ---------- section heads ---------- */
+  .sec{padding:clamp(56px,9vh,96px) 0; position:relative}
+  .sec-head{display:flex; align-items:flex-end; gap:22px; margin-bottom:clamp(30px,4vw,44px); position:relative}
+  .sec-head .ghost{
+    font-family:'Karantina',serif; font-weight:700; font-size:clamp(84px,11vw,150px); line-height:.72;
+    color:transparent; -webkit-text-stroke:1.5px oklch(80% 0.05 255); user-select:none;
+  }
+  .sec-head h2{font-size:clamp(30px,4.2vw,44px); font-weight:900; color:var(--navy-deep)}
+  .sec-head .sub{margin-inline-start:auto; max-width:300px; font-size:15px; color:var(--ink-soft); text-align:start; padding-bottom:6px}
+  @media(max-width:720px){.sec-head{flex-wrap:wrap}.sec-head .sub{margin-inline-start:0}}
+
+  /* ---------- ogen band ---------- */
+  .ogen-band{background:var(--navy-deep); color:oklch(96% 0.01 255); position:relative; overflow:clip}
+  .ogen-band::before{
+    content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background:
+      radial-gradient(640px 420px at 12% 110%, oklch(54% 0.165 262 / .35), transparent 65%),
+      radial-gradient(520px 380px at 92% -10%, oklch(76% 0.085 250 / .22), transparent 60%);
+  }
+  .ogen-grid{display:grid; grid-template-columns:minmax(0,6fr) minmax(0,5fr); gap:clamp(30px,5vw,68px); align-items:center; position:relative; padding-block:clamp(52px,8vh,88px)}
+  @media(max-width:840px){.ogen-grid{grid-template-columns:1fr}}
+  .ogen-band .kicker{color:var(--sky)}
+  .ogen-band .kicker::before{background:var(--sky); animation:none; transform:none}
+  .ogen-band h2{font-size:clamp(34px,4.8vw,54px); font-weight:900; margin:14px 0 16px; color:oklch(98% 0.005 255); line-height:1.18}
+  .ogen-band p.big{font-size:clamp(16.5px,1.5vw,19px); color:oklch(84% 0.03 255); max-width:46ch}
+  .ogen-band .btn.light{background:oklch(97% 0.008 255); color:var(--navy-deep); border:none; margin-top:30px}
+  .ogen-band .btn.light:hover{background:var(--sky-tint); transform:translateY(-2px); box-shadow:0 16px 36px oklch(20% 0.08 268 / .45)}
+  .widget-note{display:flex; align-items:center; gap:10px; margin-top:26px; font-size:15px; color:oklch(80% 0.04 255)}
+  .pulse{width:10px; height:10px; border-radius:50%; background:oklch(78% 0.17 160); position:relative; flex-shrink:0}
+  .pulse::after{content:""; position:absolute; inset:-5px; border-radius:50%; border:2px solid oklch(78% 0.17 160); animation:ping 1.8s infinite}
+  @keyframes ping{0%{transform:scale(.55); opacity:1}100%{transform:scale(1.5); opacity:0}}
+
+  /* chat preview — looping micro-scene */
+  .chat-demo{
+    background:oklch(99% 0.004 255); color:var(--ink); border-radius:22px;
+    box-shadow:0 30px 70px oklch(15% 0.06 268 / .5);
+    padding:22px; display:flex; flex-direction:column; gap:12px; min-height:300px;
+    transform:rotate(-1.6deg);
+  }
+  .chat-demo .bar{display:flex; align-items:center; gap:10px; padding-bottom:14px; border-bottom:1px solid var(--line-soft)}
+  .chat-demo .bar .dot-av{width:38px; height:38px; border-radius:50%; background:var(--navy); color:oklch(97% 0.01 255); display:flex; align-items:center; justify-content:center; font-size:18px}
+  .chat-demo .bar strong{font-size:15.5px}
+  .chat-demo .bar small{display:block; font-weight:400; font-size:12px; color:var(--ink-soft)}
+  .bubble{max-width:82%; padding:11px 16px; border-radius:16px; font-size:14.5px; line-height:1.55; opacity:0}
+  .bubble.q{align-self:flex-start; background:var(--sky-tint); border-end-start-radius:5px; animation:pop .5s var(--ease) forwards; animation-delay:.9s}
+  .bubble.typing{align-self:flex-end; background:var(--navy); border-end-end-radius:5px; display:flex; gap:5px; padding-block:15px; animation:typeshow 12s infinite}
+  .bubble.typing i{width:6px; height:6px; border-radius:50%; background:oklch(85% 0.03 255); animation:tp 1.2s infinite}
+  .bubble.typing i:nth-child(2){animation-delay:.18s}
+  .bubble.typing i:nth-child(3){animation-delay:.36s}
+  @keyframes tp{0%,60%,100%{transform:translateY(0); opacity:.5}30%{transform:translateY(-4px); opacity:1}}
+  .bubble.a{align-self:flex-end; background:var(--navy); color:oklch(96% 0.01 255); border-end-end-radius:5px; animation:answershow 12s infinite}
+  .bubble.a b{color:var(--sky)}
+  .src-chip{align-self:flex-end; font-size:12.5px; font-weight:600; color:var(--royal); background:var(--sky-tint); padding:5px 13px; border-radius:999px; opacity:0; animation:chipshow 12s infinite}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.96)}to{opacity:1; transform:none}}
+  @keyframes typeshow{0%,14%{opacity:0; transform:translateY(10px)}18%,34%{opacity:1; transform:none}38%,100%{opacity:0; transform:none}}
+  @keyframes answershow{0%,36%{opacity:0; transform:translateY(12px) scale(.96)}42%,92%{opacity:1; transform:none}97%,100%{opacity:0}}
+  @keyframes chipshow{0%,44%{opacity:0; transform:translateY(8px)}50%,92%{opacity:1; transform:none}97%,100%{opacity:0}}
+  @media(max-width:840px){.chat-demo{transform:none}}
+
+  /* ---------- spaces: tabs + index lists ---------- */
+  .tabs{position:relative; display:inline-flex; background:var(--surface); border:1.5px solid var(--line); border-radius:999px; padding:5px; margin-bottom:clamp(26px,3.5vw,38px); flex-wrap:wrap}
+  .tab-ind{
+    position:absolute; top:5px; bottom:5px; border-radius:999px; background:var(--navy);
+    box-shadow:0 6px 18px oklch(38% 0.115 268 / .35);
+    transition:transform .45s var(--ease), width .45s var(--ease); z-index:0;
   }
   .tab{
-    border:none; background:transparent; cursor:pointer; font-family:inherit;
-    font-weight:700; font-size:16px; color:var(--ink-soft);
-    padding:11px 26px; border-radius:999px; transition:.22s;
+    position:relative; z-index:1; border:none; background:transparent; cursor:pointer; font-family:inherit;
+    font-weight:700; font-size:16.5px; color:var(--ink-soft);
+    padding:12px 28px; border-radius:999px; transition:color .3s;
   }
   .tab:hover{color:var(--navy)}
-  .tab[aria-selected="true"]{background:var(--navy); color:#fff; box-shadow:0 4px 14px rgba(42,58,140,.35)}
-  .panel{display:none; animation:fadeUp .45s both}
+  .tab[aria-selected="true"]{color:oklch(98% 0.005 255)}
+  .panel{display:none}
   .panel.on{display:block}
-  @keyframes fadeUp{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .panel.on .row{opacity:0; transform:translateY(16px); animation:rise .6s var(--ease) forwards}
+  .panel.on .row:nth-child(1){animation-delay:.03s}
+  .panel.on .row:nth-child(2){animation-delay:.1s}
+  .panel.on .row:nth-child(3){animation-delay:.17s}
+  .panel.on .row:nth-child(4){animation-delay:.24s}
+  .panel.on .row:nth-child(5){animation-delay:.31s}
 
-  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px}
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:24px 22px; text-decoration:none; position:relative; overflow:hidden;
-    box-shadow:var(--shadow); transition:.25s; display:flex; flex-direction:column; gap:9px;
+  .index-list{border-top:1px solid var(--line)}
+  .row{
+    display:grid; grid-template-columns:74px minmax(0,1fr) auto; align-items:center; gap:clamp(14px,3vw,30px);
+    padding:clamp(20px,3vw,28px) 6px; border-bottom:1px solid var(--line);
+    text-decoration:none; position:relative; overflow:clip;
   }
-  .card::before{
-    content:""; position:absolute; inset-inline-start:0; top:0; bottom:0; width:4px;
-    background:linear-gradient(180deg,var(--royal),var(--sky)); opacity:0; transition:.25s;
+  .row::before{
+    content:""; position:absolute; inset:0; background:var(--sky-tint);
+    transform:scaleY(0); transform-origin:bottom; transition:transform .45s var(--ease); z-index:-1;
   }
-  a.card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lift); border-color:#C7D6EE}
-  a.card:hover::before{opacity:1}
-  .card .ic{
-    width:46px; height:46px; border-radius:13px; background:var(--sky-soft);
-    display:flex; align-items:center; justify-content:center; font-size:22px;
+  a.row:hover::before{transform:scaleY(1)}
+  .row .idx{position:relative; height:44px}
+  .row .idx .n, .row .idx .a{
+    position:absolute; inset:0; display:flex; align-items:center;
+    font-family:'Karantina',serif; font-weight:700; font-size:44px; line-height:1; color:oklch(78% 0.05 255);
+    transition:transform .4s var(--ease), opacity .4s var(--ease);
   }
-  .card h3{font-size:19px; font-weight:700; color:var(--navy-deep)}
-  .card p{font-size:14.5px; color:var(--ink-soft); flex:1}
-  .card .go{font-weight:700; font-size:14px; color:var(--royal)}
-  .card .go::after{content:"←"; margin-inline-start:6px; transition:.2s; display:inline-block}
-  a.card:hover .go::after{transform:translateX(-4px)}
+  .row .idx .a{color:var(--royal); transform:translateX(18px); opacity:0; font-size:36px}
+  a.row:hover .idx .n{transform:translateX(-18px); opacity:0}
+  a.row:hover .idx .a{transform:none; opacity:1}
+  .row h3{font-size:clamp(20px,2.3vw,26px); font-weight:700; color:var(--navy-deep); transition:color .3s}
+  a.row:hover h3{color:var(--royal)}
+  .row p{font-size:15px; color:var(--ink-soft); max-width:64ch; margin-top:2px}
+  .row .dest{font-size:13.5px; font-weight:700; color:var(--ink-soft); white-space:nowrap; display:flex; align-items:center; gap:8px}
+  .row .dest svg{transition:transform .35s var(--ease)}
+  a.row:hover .dest svg{transform:translate(-3px,-3px)}
+  .row.soon{opacity:.62}
+  .row.soon .idx .n{color:oklch(85% 0.02 255)}
   .tag-soon{
-    position:absolute; top:16px; inset-inline-end:16px;
-    background:#FFF6E3; color:#9A741F; border:1px solid #EDDCB0;
-    font-size:12px; font-weight:700; padding:3px 11px; border-radius:999px;
+    font-size:12.5px; font-weight:700; color:var(--amber-ink); background:var(--amber-bg);
+    border:1px solid oklch(88% 0.05 90); padding:3px 12px; border-radius:999px; white-space:nowrap;
   }
-  .card.soon{opacity:.85}
 
-  /* ===== העוגן ===== */
-  .ogen{
-    background:linear-gradient(135deg,var(--navy-deep) 0%, var(--navy) 55%, #33509F 100%);
-    border-radius:26px; color:#fff; padding:46px 44px; position:relative; overflow:hidden;
-    box-shadow:0 24px 60px rgba(29,43,107,.35);
-  }
-  .ogen::before{
-    content:"⚓"; position:absolute; inset-inline-end:-30px; bottom:-58px; font-size:260px;
-    opacity:.08; transform:rotate(-12deg);
-  }
-  .ogen::after{
-    content:""; position:absolute; inset:0;
-    background-image:url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 18l6 10h-12zM60 102l-6-10h12zM24 39l11.5.5-5.8 10zM96 81l-11.5-.5 5.8-10zM24 81l5.8-10 5.7 10zM96 39l-5.8 10-5.7-10z' fill='%23ffffff' fill-opacity='.05'/%3E%3C/svg%3E");
-    pointer-events:none;
-  }
-  .ogen-grid{display:grid; grid-template-columns:1.2fr .9fr; gap:36px; position:relative; z-index:1}
-  @media(max-width:820px){.ogen-grid{grid-template-columns:1fr}}
-  .ogen .kicker{color:var(--sky); font-weight:700; font-size:14.5px; letter-spacing:.04em}
-  .ogen h2{font-size:clamp(26px,3.4vw,34px); font-weight:900; margin:8px 0 12px}
-  .ogen p{color:#D7E2F5; font-size:16px; max-width:520px}
-  .ogen .btn.light{background:#fff; color:var(--navy); margin-top:22px}
-  .ogen .btn.light:hover{background:var(--sky-soft)}
-  .ogen-side{
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
-    border-radius:18px; padding:24px; backdrop-filter:blur(4px); align-self:center;
-  }
-  .ogen-side h3{font-size:18px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:9px}
-  .ogen-side p{font-size:14.5px; color:#C9D7F0}
-  .pulse{
-    width:11px; height:11px; border-radius:50%; background:#5CE0A5; position:relative; flex-shrink:0;
-  }
-  .pulse::after{
-    content:""; position:absolute; inset:-5px; border-radius:50%;
-    border:2px solid #5CE0A5; animation:ping 1.6s infinite;
-  }
-  @keyframes ping{0%{transform:scale(.6); opacity:1}100%{transform:scale(1.4); opacity:0}}
+  /* featured row (first in each panel) */
+  .row.featured{background:var(--surface); border:1px solid var(--line); border-radius:20px; margin-bottom:14px; padding-inline:clamp(16px,2.5vw,28px)}
+  .row.featured::before{border-radius:20px}
+  .row.featured h3{font-size:clamp(23px,2.7vw,30px)}
+  .row.featured .idx .n{color:var(--royal)}
 
-  /* ===== קישורים חשובים ===== */
-  .links{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:16px}
-  .link-tile{
-    display:flex; align-items:center; gap:14px; text-decoration:none;
-    background:#fff; border:1px solid var(--line); border-radius:15px; padding:17px 18px;
-    box-shadow:var(--shadow); transition:.22s; font-weight:700; color:var(--navy-deep);
+  /* ---------- links: editorial two-column ---------- */
+  .links-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(28px,5vw,72px)}
+  @media(max-width:760px){.links-grid{grid-template-columns:1fr}}
+  .lrow{
+    display:flex; align-items:baseline; gap:18px; padding:19px 4px; border-bottom:1px solid var(--line);
+    text-decoration:none; position:relative;
   }
-  .link-tile:hover{transform:translateY(-3px); box-shadow:var(--shadow-lift); border-color:var(--sky)}
-  .link-tile .ic{
-    width:42px; height:42px; border-radius:11px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:20px;
-    background:var(--sky-soft);
+  .lrow .ln{font-family:'Karantina',serif; font-weight:700; font-size:26px; color:oklch(76% 0.05 255); min-width:34px; transition:color .3s}
+  .lrow:hover .ln{color:var(--royal)}
+  .lrow .lt{font-weight:700; font-size:17.5px; color:var(--navy-deep); position:relative}
+  .lrow .lt::after{
+    content:""; position:absolute; inset-inline:0; bottom:-3px; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .4s var(--ease);
   }
-  .link-tile small{display:block; font-weight:500; font-size:12.5px; color:var(--ink-soft)}
+  .lrow:hover .lt::after{transform:scaleX(1)}
+  .lrow .ls{font-size:13.5px; color:var(--ink-soft); margin-inline-start:auto; text-align:start; white-space:nowrap}
+  .lrow svg{flex-shrink:0; align-self:center; color:var(--ink-soft); transition:transform .35s var(--ease), color .3s}
+  .lrow:hover svg{transform:translate(-3px,-3px); color:var(--royal)}
+  @media(max-width:560px){.lrow .ls{display:none}}
 
-  /* ===== פוטר ===== */
-  footer{
-    border-top:1px solid var(--line); background:#fff; margin-top:40px;
-  }
-  .foot-in{
-    display:flex; align-items:center; gap:16px; padding:26px 0; flex-wrap:wrap;
-  }
-  .foot-in img{height:44px}
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:20px}
+  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
+  .foot-in img{height:42px}
   .foot-in p{font-size:13.5px; color:var(--ink-soft)}
-  .foot-in .spacer{margin-inline-start:auto; font-size:13px; color:var(--ink-soft)}
+  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
 
-  /* נגישות: מיקוד מקלדת */
-  a:focus-visible,button:focus-visible{outline:3px solid var(--royal); outline-offset:2px; border-radius:8px}
+  /* ---------- ogen floating widget: enlarge ---------- */
+  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
+  .ogenw-launcher svg{transform:scale(1.28)}
+  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
+  .ogenw-panel{bottom:118px !important}
+
+  /* ---------- accessibility ---------- */
+  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
+    .rv{opacity:1; transform:none}
+    .ticker-track{animation:none}
+  }
 </style>
 </head>
 <body>
-<div class="bg-motif" aria-hidden="true"></div>
 
-<header class="top">
+<header class="top" id="topbar">
   <div class="wrap top-in">
     <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
-    <div class="top-title">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
+    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
     <nav class="jump" aria-label="ניווט מהיר">
-      <a href="#spaces">המרחבים</a>
       <a href="#ogen">העוגן</a>
+      <a href="#spaces">המרחבים</a>
       <a href="#links">קישורים חשובים</a>
     </nav>
   </div>
 </header>
 
 <section class="hero">
-  <div class="wrap">
-    <span class="kicker">משרד העבודה · מינהל הכשרה מקצועית</span>
-    <h1>הבית של <em>הפדגוגיה המקצועית</em></h1>
-    <p class="lead">מרחב אחד לידע, לכלים ולפרקטיקות של החינוך המקצועי־טכנולוגי — למפקחות, למנהלים, למורים ולמדריכים. הכול בכתובת אחת, פתוח ומעודכן.</p>
-    <div class="cta-row">
-      <a class="btn solid" href="#spaces">אל המרחבים</a>
-      <a class="btn ghost" href="#ogen">⚓ שאלו את העוגן</a>
+  <div class="wrap hero-grid">
+    <div class="hero-stagger">
+      <span class="kicker">משרד העבודה · מינהל הכשרה מקצועית</span>
+      <h1>הבית של הפדגוגיה <span class="accent">המקצועית</span></h1>
+      <p class="lead">מרחב אחד לידע, לכלים ולפרקטיקות של החינוך המקצועי־טכנולוגי — למפקחות, למנהלים, למורים ולמדריכים. פתוח, מעודכן, בכתובת אחת.</p>
+      <div class="cta-row">
+        <button class="btn solid" id="open-ogen-btn" type="button">⚓ שאלו את העוגן <span class="arr">←</span></button>
+        <a class="btn ghost" href="#spaces">אל המרחבים</a>
+      </div>
+    </div>
+
+    <div class="hero-star" aria-hidden="true">
+      <svg class="star-svg" viewBox="0 0 400 400" fill="none">
+        <g class="star-rot">
+          <g class="chev" transform="rotate(0 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(76% 0.085 250)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(38% 0.115 268)"/>
+          </g>
+          <g class="chev" transform="rotate(60 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(38% 0.115 268)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(54% 0.165 262)"/>
+          </g>
+          <g class="chev" transform="rotate(120 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(54% 0.165 262)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(76% 0.085 250)"/>
+          </g>
+          <g class="chev" transform="rotate(180 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(76% 0.085 250)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(38% 0.115 268)"/>
+          </g>
+          <g class="chev" transform="rotate(240 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(38% 0.115 268)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(54% 0.165 262)"/>
+          </g>
+          <g class="chev" transform="rotate(300 200 200)">
+            <circle cx="200" cy="66" r="13" fill="oklch(54% 0.165 262)"/>
+            <path d="M168 148 L200 106 L232 148 L232 174 L200 132 L168 174 Z" fill="oklch(76% 0.085 250)"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="ticker-seq">
+      <span>מרחב פדגוגי</span><span>מרחב מנהלים</span><span>מרחב פיקוח</span><span>העוגן</span><span>PEDAGOGIAMH.CO.IL</span>
+      <span>מרחב פדגוגי</span><span>מרחב מנהלים</span><span>מרחב פיקוח</span><span>העוגן</span><span>PEDAGOGIAMH.CO.IL</span>
+    </div>
+    <div class="ticker-seq">
+      <span>מרחב פדגוגי</span><span>מרחב מנהלים</span><span>מרחב פיקוח</span><span>העוגן</span><span>PEDAGOGIAMH.CO.IL</span>
+      <span>מרחב פדגוגי</span><span>מרחב מנהלים</span><span>מרחב פיקוח</span><span>העוגן</span><span>PEDAGOGIAMH.CO.IL</span>
+    </div>
+  </div>
+</div>
+
+<section class="ogen-band" id="ogen">
+  <div class="wrap ogen-grid">
+    <div class="rv">
+      <span class="kicker">העוזר החכם של המינהל</span>
+      <h2>שואלים את העוגן —<br>מקבלים תשובה עם מקור</h2>
+      <p class="big">נוהל, זכאות, תקצוב, היערכות — העוגן עונה בשפה פשוטה ומצרף את המסמך המקורי. בלי לחפש בעשרה מקומות, בלי לנחש.</p>
+      <a class="btn light" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">פתיחת אפליקציית העוגן <span class="arr">←</span></a>
+      <div class="widget-note"><span class="pulse"></span> הוויג׳ט פעיל כאן באתר — הכפתור הצף בפינת המסך, מכל עמוד.</div>
+    </div>
+    <div class="chat-demo rv" style="--d:.15s" aria-hidden="true">
+      <div class="bar">
+        <div class="dot-av">⚓</div>
+        <div><strong>העוגן</strong><small>עוזר הידע של מינהל הכשרה מקצועית</small></div>
+      </div>
+      <div class="bubble q">כמה שעות תגבור עברית מגיעות לתלמיד עולה?</div>
+      <div class="bubble typing"><i></i><i></i><i></i></div>
+      <div class="bubble a">לפי <b>סעיף 101</b> — שעות תגבור להוראת עברית כשפה שנייה והשלמת פערים לתלמידים עולים ותושבים חוזרים. מצרף את הנוהל המלא ⬇</div>
+      <div class="src-chip">📄 מקור: נוהל קליטת עולים · עודכן 2026</div>
     </div>
   </div>
 </section>
 
 <section class="sec" id="spaces">
   <div class="wrap">
-    <div class="sec-head">
-      <span class="num">1</span>
+    <div class="sec-head rv">
+      <span class="ghost num-face">01</span>
       <h2>המרחבים</h2>
-      <p>שלושה שערים — לכל תפקיד השער שלו. בחרו מרחב:</p>
+      <p class="sub">שלושה שערים — לכל תפקיד השער שלו.</p>
     </div>
 
-    <div class="tabs" role="tablist" aria-label="מרחבי המרכז">
-      <button class="tab" role="tab" id="tab-ped" aria-controls="panel-ped" aria-selected="true">🧭 מרחב פדגוגי</button>
-      <button class="tab" role="tab" id="tab-man" aria-controls="panel-man" aria-selected="false">🏫 מרחב מנהלים</button>
-      <button class="tab" role="tab" id="tab-sup" aria-controls="panel-sup" aria-selected="false">🔭 מרחב פיקוח</button>
+    <div class="rv">
+      <div class="tabs" role="tablist" aria-label="מרחבי המרכז">
+        <span class="tab-ind" aria-hidden="true"></span>
+        <button class="tab" role="tab" id="tab-ped" aria-controls="panel-ped" aria-selected="true">מרחב פדגוגי</button>
+        <button class="tab" role="tab" id="tab-man" aria-controls="panel-man" aria-selected="false">מרחב מנהלים</button>
+        <button class="tab" role="tab" id="tab-sup" aria-controls="panel-sup" aria-selected="false">מרחב פיקוח</button>
+      </div>
     </div>
 
     <div class="panel on" id="panel-ped" role="tabpanel" aria-labelledby="tab-ped">
-      <div class="cards">
-        <a class="card" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
-          <div class="ic">🧭</div>
-          <h3>מצפן ההדרכות הפדגוגיות</h3>
-          <p>מצפן הפיקוח לניהול פדגוגי — מפת ההדרכות למורים: מה מדריכים, למי ובאיזה רצף.</p>
-          <span class="go">כניסה למצפן</span>
+      <div class="index-list">
+        <a class="row featured" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">01</span><span class="a">←</span></span>
+          <span><h3>מצפן ההדרכות הפדגוגיות</h3><p>מצפן הפיקוח לניהול פדגוגי — מפת ההדרכות למורים: מה מדריכים, למי ובאיזה רצף.</p></span>
+          <span class="dest">lerani.co.il <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <div class="card soon">
+        <div class="row soon">
+          <span class="idx"><span class="n">02</span></span>
+          <span><h3>מקצועות הליבה</h3><p>עמוד לכל מקצוע: מפת ט׳–י״ב, מודולות, כשירויות בוגר, מערכי שיעור והדרך לתעודה.</p></span>
           <span class="tag-soon">בבנייה</span>
-          <div class="ic">📚</div>
-          <h3>מקצועות הליבה</h3>
-          <p>עמוד לכל מקצוע: מפת ט׳–י״ב, מודולות, כשירויות בוגר, מערכי שיעור והדרך לתעודה.</p>
         </div>
-        <div class="card soon">
+        <div class="row soon">
+          <span class="idx"><span class="n">03</span></span>
+          <span><h3>ללמד את הלומד שלנו</h3><p>מאסטרי ומעגל תיקון, הוראה מדורגת, חוסן ומוטיבציה — הפדגוגיה שמאחורי התוכניות.</p></span>
           <span class="tag-soon">בבנייה</span>
-          <div class="ic">🪜</div>
-          <h3>ללמד את הלומד שלנו</h3>
-          <p>מאסטרי ומעגל תיקון, הוראה מדורגת, חוסן ומוטיבציה — הפדגוגיה שמאחורי התוכניות.</p>
         </div>
-        <div class="card soon">
+        <div class="row soon">
+          <span class="idx"><span class="n">04</span></span>
+          <span><h3>מצפן המיומנויות</h3><p>מיומנויות־העל חוצות־המקצועות ומפת ה־NQF — איך כל מקצוע תורם לתמונה השלמה.</p></span>
           <span class="tag-soon">בבנייה</span>
-          <div class="ic">✨</div>
-          <h3>מצפן המיומנויות</h3>
-          <p>מיומנויות־העל חוצות־המקצועות ומפת ה־NQF — איך כל מקצוע תורם לתמונה השלמה.</p>
         </div>
       </div>
     </div>
 
     <div class="panel" id="panel-man" role="tabpanel" aria-labelledby="tab-man">
-      <div class="cards">
-        <a class="card" href="https://drive.google.com/drive/folders/1-qrq5zqAzQIHNioklhwxuSasFpuNVc17" target="_blank" rel="noopener">
-          <div class="ic">📁</div>
-          <h3>דרייב מנהלים</h3>
-          <p>כל חומרי הניהול במקום אחד: אוגדני שעות, ועדה מלווה, פיתוח צוות, תקציב ועוד.</p>
-          <span class="go">פתיחת הדרייב</span>
+      <div class="index-list">
+        <a class="row featured" href="https://drive.google.com/drive/folders/1-qrq5zqAzQIHNioklhwxuSasFpuNVc17" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">01</span><span class="a">←</span></span>
+          <span><h3>דרייב מנהלים</h3><p>כל חומרי הניהול במקום אחד: אוגדני שעות, ועדה מלווה, פיתוח צוות, תקציב ועוד.</p></span>
+          <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <a class="card" href="https://meytalp-dev.github.io/hopa-nihul/tashpaz.html" target="_blank" rel="noopener">
-          <div class="ic">🗓️</div>
-          <h3>היערכות לשנת תשפ״ז</h3>
-          <p>אתר ההיערכות לשנת הלימודים: העקרונות, הדגשים והצעדים — תחנה אחר תחנה.</p>
-          <span class="go">אל אתר ההיערכות</span>
+        <a class="row" href="https://meytalp-dev.github.io/hopa-nihul/tashpaz.html" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">02</span><span class="a">←</span></span>
+          <span><h3>היערכות לשנת תשפ״ז</h3><p>אתר ההיערכות לשנת הלימודים: העקרונות, הדגשים והצעדים — תחנה אחר תחנה.</p></span>
+          <span class="dest">אתר ההיערכות <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <a class="card" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">
-          <div class="ic">⚓</div>
-          <h3>העוגן — עוזר הניהול</h3>
-          <p>תשובה מהירה לכל שאלת ניהול: נהלים, זכאויות, תקצוב — עם מקור לכל תשובה.</p>
-          <span class="go">אל האפליקציה</span>
+        <a class="row" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">03</span><span class="a">←</span></span>
+          <span><h3>העוגן — עוזר הניהול</h3><p>תשובה מהירה לכל שאלת ניהול: נהלים, זכאויות, תקצוב — עם מקור לכל תשובה.</p></span>
+          <span class="dest">אפליקציה <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <div class="card soon">
+        <div class="row soon">
+          <span class="idx"><span class="n">04</span></span>
+          <span><h3>תוכניות עבודה בית־ספריות</h3><p>מחולל תוכנית העבודה השנתית — מהיעדים של המינהל ועד התוכנית של כל בעל תפקיד.</p></span>
           <span class="tag-soon">בבנייה</span>
-          <div class="ic">🗂️</div>
-          <h3>תוכניות עבודה בית־ספריות</h3>
-          <p>מחולל תוכנית העבודה השנתית — מהיעדים של המינהל ועד התוכנית של כל בעל תפקיד.</p>
         </div>
       </div>
     </div>
 
     <div class="panel" id="panel-sup" role="tabpanel" aria-labelledby="tab-sup">
-      <div class="cards">
-        <a class="card" href="https://drive.google.com/drive/folders/1kjAS46iIFWbluTQDQtcvlsEfYC98kzuv" target="_blank" rel="noopener">
-          <div class="ic">💠</div>
-          <h3>דרייב ייעוצי</h3>
-          <p>ערכת הייעוץ, כישורי חיים, שאלונים ומדידה, למידת עמיתים ותוכניות רווחה.</p>
-          <span class="go">פתיחת הדרייב</span>
+      <div class="index-list">
+        <a class="row featured" href="https://drive.google.com/drive/folders/1kjAS46iIFWbluTQDQtcvlsEfYC98kzuv" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">01</span><span class="a">←</span></span>
+          <span><h3>דרייב ייעוצי</h3><p>ערכת הייעוץ, כישורי חיים, שאלונים ומדידה, למידת עמיתים ותוכניות רווחה.</p></span>
+          <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <a class="card" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">
-          <div class="ic">📜</div>
-          <h3>חוזרי מנכ״ל</h3>
-          <p>אתר חוזרי המנכ״ל — הוראות קבע והוראות שעה, במקור ובנוסח המעודכן.</p>
-          <span class="go">אל החוזרים</span>
+        <a class="row" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">02</span><span class="a">←</span></span>
+          <span><h3>חוזרי מנכ״ל</h3><p>אתר חוזרי המנכ״ל — הוראות קבע והוראות שעה, במקור ובנוסח המעודכן.</p></span>
+          <span class="dest">education.gov.il <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <a class="card" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
-          <div class="ic">🧭</div>
-          <h3>מצפן ההדרכות</h3>
-          <p>מפת ההדרכות של הפיקוח: תחומים, מדריכות ורצפי ליווי לצוותי ההוראה.</p>
-          <span class="go">כניסה למצפן</span>
+        <a class="row" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
+          <span class="idx"><span class="n">03</span><span class="a">←</span></span>
+          <span><h3>מצפן ההדרכות</h3><p>מפת ההדרכות של הפיקוח: תחומים, מדריכות ורצפי ליווי לצוותי ההוראה.</p></span>
+          <span class="dest">lerani.co.il <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
         </a>
-        <div class="card soon">
+        <div class="row soon">
+          <span class="idx"><span class="n">04</span></span>
+          <span><h3>משולחן הפיקוח</h3><p>עדכונים, דגשים והנחיות מהפיקוח — ישירות אל עמודי המקצוע.</p></span>
           <span class="tag-soon">בבנייה</span>
-          <div class="ic">🔭</div>
-          <h3>משולחן הפיקוח</h3>
-          <p>עדכונים, דגשים והנחיות מהפיקוח — ישירות אל עמודי המקצוע.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec" id="ogen">
+<section class="sec" id="links" style="padding-top:0">
   <div class="wrap">
-    <div class="ogen">
-      <div class="ogen-grid">
-        <div>
-          <span class="kicker">עוזר חכם · זמין תמיד</span>
-          <h2>⚓ העוגן — שואלים, מקבלים תשובה עם מקור</h2>
-          <p>העוגן הוא העוזר של המינהל: שאלות על נהלים, זכאויות, תקצוב והיערכות — והוא עונה בשפה פשוטה ומצרף את המסמך המקורי. בלי לחפש בעשרה מקומות.</p>
-          <a class="btn light" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">פתיחת אפליקציית העוגן</a>
-        </div>
-        <div class="ogen-side">
-          <h3><span class="pulse" aria-hidden="true"></span> הוויג׳ט פעיל באתר הזה</h3>
-          <p>מזהים את הכפתור הצף בפינת המסך? זה העוגן. לחצו עליו ושאלו כל שאלה — מכל עמוד באתר, בלי לעזוב את מה שאתם עושים.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec" id="links">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="num">2</span>
+    <div class="sec-head rv">
+      <span class="ghost num-face">02</span>
       <h2>קישורים חשובים</h2>
-      <p>הכתובות שכל בעל תפקיד צריך ביד — קליק אחד מכאן.</p>
+      <p class="sub">הכתובות שכל בעל תפקיד צריך ביד — קליק אחד מכאן.</p>
     </div>
-    <div class="links">
-      <a class="link-tile" href="https://drive.google.com/drive/folders/1-qrq5zqAzQIHNioklhwxuSasFpuNVc17" target="_blank" rel="noopener">
-        <span class="ic">📁</span><span>דרייב מנהלים<small>חומרי ניהול ואוגדנים</small></span>
+    <div class="links-grid">
+      <a class="lrow rv" href="https://drive.google.com/drive/folders/1-qrq5zqAzQIHNioklhwxuSasFpuNVc17" target="_blank" rel="noopener">
+        <span class="ln">01</span><span class="lt">דרייב מנהלים</span><span class="ls">חומרי ניהול ואוגדנים</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
-      <a class="link-tile" href="https://drive.google.com/drive/folders/1kjAS46iIFWbluTQDQtcvlsEfYC98kzuv" target="_blank" rel="noopener">
-        <span class="ic">💠</span><span>דרייב ייעוצי<small>ייעוץ, רווחה וכישורי חיים</small></span>
+      <a class="lrow rv" style="--d:.06s" href="https://drive.google.com/drive/folders/1kjAS46iIFWbluTQDQtcvlsEfYC98kzuv" target="_blank" rel="noopener">
+        <span class="ln">02</span><span class="lt">דרייב ייעוצי</span><span class="ls">ייעוץ, רווחה וכישורי חיים</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
-      <a class="link-tile" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">
-        <span class="ic">📜</span><span>חוזרי מנכ״ל<small>הוראות קבע והוראות שעה</small></span>
+      <a class="lrow rv" style="--d:.12s" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">
+        <span class="ln">03</span><span class="lt">חוזרי מנכ״ל</span><span class="ls">הוראות קבע והוראות שעה</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
-      <a class="link-tile" href="https://meytalp-dev.github.io/hopa-nihul/tashpaz.html" target="_blank" rel="noopener">
-        <span class="ic">🗓️</span><span>היערכות תשפ״ז<small>אתר ההיערכות לשנה״ל</small></span>
+      <a class="lrow rv" style="--d:.18s" href="https://meytalp-dev.github.io/hopa-nihul/tashpaz.html" target="_blank" rel="noopener">
+        <span class="ln">04</span><span class="lt">היערכות תשפ״ז</span><span class="ls">אתר ההיערכות לשנה״ל</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
-      <a class="link-tile" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
-        <span class="ic">🧭</span><span>מצפן ההדרכות<small>הדרכות פדגוגיות למורים</small></span>
+      <a class="lrow rv" style="--d:.24s" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
+        <span class="ln">05</span><span class="lt">מצפן ההדרכות</span><span class="ls">הדרכות פדגוגיות למורים</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
-      <a class="link-tile" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">
-        <span class="ic">⚓</span><span>אפליקציית העוגן<small>עוזר הידע של המינהל</small></span>
+      <a class="lrow rv" style="--d:.3s" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">
+        <span class="ln">06</span><span class="lt">אפליקציית העוגן</span><span class="ls">עוזר הידע של המינהל</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
       </a>
     </div>
   </div>
@@ -412,19 +527,25 @@
   <div class="wrap foot-in">
     <img src="logo.png" alt="">
     <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
-    <span class="spacer">pedagogiamh.co.il</span>
+    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
   </div>
 </footer>
 
 <script>
-  // טאבים נגישים: עכבר + חצים במקלדת
+  // ----- טאבים: מחוון מחליק + חצים במקלדת -----
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var ind = document.querySelector('.tab-ind');
+  function moveInd(tab){
+    ind.style.width = tab.offsetWidth + 'px';
+    ind.style.transform = 'translateX(' + (tab.offsetLeft - 5) + 'px)';
+  }
   function select(tab){
     tabs.forEach(function(t){
       var on = t === tab;
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       document.getElementById(t.getAttribute('aria-controls')).classList.toggle('on', on);
     });
+    moveInd(tab);
   }
   tabs.forEach(function(t, i){
     t.addEventListener('click', function(){ select(t); });
@@ -434,6 +555,28 @@
       var next = tabs[(i + d + tabs.length) % tabs.length];
       next.focus(); select(next);
     });
+  });
+  window.addEventListener('load', function(){ moveInd(tabs[0]); });
+  window.addEventListener('resize', function(){
+    var cur = tabs.filter(function(t){ return t.getAttribute('aria-selected') === 'true'; })[0];
+    if(cur) moveInd(cur);
+  });
+
+  // ----- חשיפה בגלילה -----
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  // ----- צל לסרגל בגלילה -----
+  var bar = document.getElementById('topbar');
+  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+
+  // ----- כפתור "שאלו את העוגן" פותח את הוויג'ט הצף -----
+  document.getElementById('open-ogen-btn').addEventListener('click', function(){
+    var launcher = document.querySelector('.ogenw-launcher');
+    if(launcher){ launcher.click(); }
+    else{ window.open('https://meytalp-dev.github.io/ogen/', '_blank'); }
   });
 </script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
