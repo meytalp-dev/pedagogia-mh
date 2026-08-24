@@ -208,7 +208,7 @@
   /* ---------- spaces: tabs + index lists ---------- */
   .tabs{position:relative; display:inline-flex; background:var(--surface); border:1.5px solid var(--line); border-radius:999px; padding:5px; margin-bottom:clamp(26px,3.5vw,38px); flex-wrap:wrap}
   .tab-ind{
-    position:absolute; top:5px; bottom:5px; border-radius:999px; background:var(--navy);
+    position:absolute; left:0; top:5px; bottom:5px; width:0; border-radius:999px; background:var(--navy);
     box-shadow:0 6px 18px oklch(38% 0.115 268 / .35);
     transition:transform .45s var(--ease), width .45s var(--ease); z-index:0;
   }
@@ -547,7 +547,7 @@
   var ind = document.querySelector('.tab-ind');
   function moveInd(tab){
     ind.style.width = tab.offsetWidth + 'px';
-    ind.style.transform = 'translateX(' + (tab.offsetLeft - 5) + 'px)';
+    ind.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
   }
   function select(tab){
     tabs.forEach(function(t){
@@ -567,6 +567,7 @@
     });
   });
   window.addEventListener('load', function(){ moveInd(tabs[0]); });
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(function(){ moveInd(tabs.filter(function(t){ return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0]); }); }
   window.addEventListener('resize', function(){
     var cur = tabs.filter(function(t){ return t.getAttribute('aria-selected') === 'true'; })[0];
     if(cur) moveInd(cur);
