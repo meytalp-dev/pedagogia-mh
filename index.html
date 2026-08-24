@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>המרכז הפדגוגי · משרד העבודה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12252E; --ink-soft:#3E5560; --accent:#0E7C66; --accent-soft:#E4F3EF;
+    --gold:#C9962E; --bg:#F7F5F0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Heebo',sans-serif; background:var(--bg); color:var(--ink);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{max-width:640px; text-align:center}
+  .badge{
+    display:inline-block; background:var(--accent-soft); color:var(--accent);
+    font-weight:600; font-size:14px; padding:6px 18px; border-radius:999px; margin-bottom:28px;
+    letter-spacing:.02em;
+  }
+  h1{font-size:clamp(32px,6vw,52px); font-weight:900; line-height:1.15; margin-bottom:16px}
+  h1 .thin{font-weight:300; display:block; font-size:.55em; color:var(--ink-soft); margin-top:8px}
+  .line{width:64px; height:4px; background:var(--gold); border-radius:2px; margin:28px auto}
+  p{font-size:18px; color:var(--ink-soft); line-height:1.7}
+  .soon{
+    margin-top:36px; font-size:15px; color:var(--ink-soft); opacity:.75;
+  }
+  .dots span{
+    display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent);
+    margin:0 3px; animation:pulse 1.4s infinite ease-in-out;
+  }
+  .dots span:nth-child(2){animation-delay:.2s}
+  .dots span:nth-child(3){animation-delay:.4s}
+  @keyframes pulse{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">חינוך מקצועי־טכנולוגי</div>
+    <h1>המרכז הפדגוגי
+      <span class="thin">זרוע העבודה · האגף להכשרה מקצועית</span>
+    </h1>
+    <div class="line"></div>
+    <p>מרחב הידע, הכלים והפרקטיקות של הפדגוגיה המקצועית —<br>למפקחות, למנהלים, למורים ולמדריכים.</p>
+    <p class="soon">האתר בבנייה ויעלה בקרוב</p>
+    <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+  </main>
+</body>
+</html>
