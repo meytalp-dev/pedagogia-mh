@@ -267,6 +267,28 @@
   .row.featured h3{font-size:clamp(23px,2.7vw,30px)}
   .row.featured .idx .n{color:var(--royal)}
 
+  /* ---------- field: photo mosaic (החינוך היוצר) ---------- */
+  .field-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
+  .field-grid figure{position:relative; margin:0; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--surface); aspect-ratio:4/3}
+  .field-grid figure.wide{grid-column:span 2}
+  .field-grid figure.pano{grid-column:1/-1; aspect-ratio:21/7}
+  .field-grid img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .8s var(--ease)}
+  .field-grid figure:hover img{transform:scale(1.045)}
+  .field-grid figcaption{
+    position:absolute; inset-inline:0; bottom:0; padding:44px 18px 14px; color:oklch(97% 0.008 255);
+    font-size:14.5px; font-weight:600; line-height:1.4;
+    background:linear-gradient(to top, oklch(27% 0.08 268 / .85), transparent);
+  }
+  .field-grid figcaption small{display:block; font-weight:400; font-size:12.5px; color:oklch(88% 0.03 255)}
+  .field-credit{margin-top:16px; font-size:13.5px; color:var(--ink-soft)}
+  .field-credit a{color:var(--royal); font-weight:600; text-decoration:none}
+  .field-credit a:hover{text-decoration:underline}
+  @media(max-width:760px){
+    .field-grid{grid-template-columns:1fr 1fr}
+    .field-grid figure.pano{aspect-ratio:16/9}
+    .field-grid figcaption{font-size:13px; padding:30px 12px 10px}
+  }
+
   /* ---------- links: editorial two-column ---------- */
   .links-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(28px,5vw,72px)}
   @media(max-width:760px){.links-grid{grid-template-columns:1fr}}
@@ -318,6 +340,7 @@
     <nav class="jump" aria-label="ניווט מהיר">
       <a href="#ogen">העוגן</a>
       <a href="#spaces">המרחבים</a>
+      <a href="#field">בשטח</a>
       <a href="#links">קישורים חשובים</a>
     </nav>
   </div>
@@ -497,10 +520,47 @@
   </div>
 </section>
 
-<section class="sec" id="links" style="padding-top:0">
+<section class="sec" id="field" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="ghost num-face">02</span>
+      <h2>כך זה נראה בשטח</h2>
+      <p class="sub">רגעים מתוך בתי הספר של החינוך היוצר — הפדגוגיה שהמרכז הזה משרת, בפעולה.</p>
+    </div>
+    <div class="field-grid">
+      <figure class="rv wide">
+        <img src="img/yotzer/workshop.jpg" alt="מדריך ותלמיד עובדים יחד על מסור סרט בסדנת מתכת" loading="lazy">
+        <figcaption>לומדים מקצוע ממי שחי אותו<small>הכשרה מעשית בסדנה — לב הפדגוגיה הדואלית</small></figcaption>
+      </figure>
+      <figure class="rv" style="--d:.08s">
+        <img src="img/yotzer/culinary.jpg" alt="תלמיד מגמת קולינריה במטבח מקצועי" loading="lazy">
+        <figcaption>מגמת קולינריה<small>מהמטבח הלימודי אל המקצוע</small></figcaption>
+      </figure>
+      <figure class="rv">
+        <img src="img/yotzer/microscope.jpg" alt="תלמידה מתבוננת במיקרוסקופ במעבדה" loading="lazy">
+        <figcaption>לומדים לחקור<small>עיון ומדעים לצד המקצוע</small></figcaption>
+      </figure>
+      <figure class="rv" style="--d:.08s">
+        <img src="img/yotzer/makerspace.jpg" alt="מורה ותלמידים סביב שולחן עבודה בחדר יצירה" loading="lazy">
+        <figcaption>חדר היצירה<small>למידה בעשייה, בקבוצה קטנה</small></figcaption>
+      </figure>
+      <figure class="rv" style="--d:.16s">
+        <img src="img/yotzer/navigation.jpg" alt="שני תלמידים לומדים ניווט על מפה ימית" loading="lazy">
+        <figcaption>מגמת ימאות<small>ניווט על המפה — תיאוריה שפוגשת ים</small></figcaption>
+      </figure>
+      <figure class="rv pano">
+        <img src="img/yotzer/media.jpg" alt="ארבעה תלמידי מגמת קולנוע עם מצלמות וציוד הקלטה ביער" loading="lazy">
+        <figcaption>מגמת קולנוע ומדיה<small>יוצאים מהכיתה — הסט הוא שיעור</small></figcaption>
+      </figure>
+    </div>
+    <p class="field-credit rv">התצלומים מתוך <a href="https://yotzer.education/" target="_blank" rel="noopener">אתר החינוך היוצר</a> — הרפורמה בחינוך המקצועי־טכנולוגי של מינהל הכשרה מקצועית.</p>
+  </div>
+</section>
+
+<section class="sec" id="links" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="ghost num-face">03</span>
       <h2>קישורים חשובים</h2>
       <p class="sub">הכתובות שכל בעל תפקיד צריך ביד — קליק אחד מכאן.</p>
     </div>
