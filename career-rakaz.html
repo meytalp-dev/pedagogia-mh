@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ארגז הכלים של רכז התעסוקה · המרכז הפדגוגי</title>
+<meta name="description" content="כל כלי העבודה של רכז התעסוקה: סדירויות ותקצוב המשרה, פרמטרים לבחינת מעסיק ומנטור, הגאנט השנתי, מטלות החניכות לפי מגמות, וסדנאות עבודה עם מעסיקים.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ארגז הכלים של רכז התעסוקה">
+<meta property="og:description" content="סדירויות, תקצוב, פרמטרים למעסיק ולמנטור, גאנט שנתי, מטלות חניכות לפי מגמות וסדנאות עבודה.">
+<meta property="og:url" content="https://pedagogiamh.co.il/career-rakaz.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
+<style>
+/* מטלות לפי תחומים — בלוקים נפתחים */
+details.dom{border:1px solid var(--border);border-radius:16px;margin:14px 0;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden}
+details.dom summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:14px;padding:15px 20px;font-weight:800;color:var(--navy);font-size:1.02rem;transition:background .2s}
+details.dom summary::-webkit-details-marker{display:none}
+details.dom summary:hover{background:var(--cyan-100)}
+details.dom summary .dn{font-weight:800;font-variant-numeric:tabular-nums;color:#0B7FA6;min-width:1.6em}
+details.dom summary .hint{margin-inline-start:auto;font-weight:600;font-size:.79rem;color:var(--text2);white-space:nowrap}
+details.dom[open] summary{border-bottom:1px solid var(--border)}
+details.dom .inner{padding:6px 20px 18px}
+details.dom h4{font-weight:800;color:var(--navy-800);font-size:.92rem;margin:14px 0 4px}
+details.dom p,details.dom li{font-size:.9rem}
+details.dom ul{list-style:none;margin:4px 0}
+details.dom ul>li{position:relative;padding:4px 20px 4px 0}
+details.dom ul>li::before{content:"";position:absolute;right:2px;top:14px;width:10px;height:2.5px;border-radius:2px;background:var(--cyan)}
+details.dom ol{margin:4px 22px 4px 0}
+details.dom ol>li{padding:3px 0}
+@media(max-width:560px){details.dom summary .hint{display:none}}
+</style>
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="career.html">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">נתיבי חניכות וקריירה · לבעלי תפקידים</span>
+    <h1>ארגז הכלים של <span class="accent">רכז התעסוקה</span></h1>
+    <p class="lead">הכול במקום אחד: סדירויות המשרה ותקצובה, הפרמטרים לבחינת מעסיקים ומנטורים, הגאנט השנתי של ליווי התלמידים, מטלות החניכות לפי מגמות — וסדנאות העבודה מול מעסיקים.</p>
+    <div class="meta-row">
+      <span class="src">המקור: <a class="lk" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה בדרייב</a></span>
+      <span>מחלקת חניכות ונוער · תחום תעסוקת נוער</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn ghost" href="career.html">◂ חזרה לנתיבי חניכות וקריירה</a>
+    </div>
+  </div>
+</section>
+
+<div class="toc">
+  <div class="article">
+    <h2>מה בעמוד</h2>
+    <div class="toc-grid">
+      <a class="lrow" href="#sedirut"><span class="ln">01</span><span class="lt">המשרה: תקצוב, קליטה ותנאי סף</span><span class="ls">סדירויות הרכז</span></a>
+      <a class="lrow" href="#params"><span class="ln">02</span><span class="lt">פרמטרים לבחינת מעסיק ומנטור</span><span class="ls">3 נקודות זמן</span></a>
+      <a class="lrow" href="#gantt"><span class="ln">03</span><span class="lt">הגאנט השנתי של הליווי</span><span class="ls">אוגוסט–יוני</span></a>
+      <a class="lrow" href="#feedback"><span class="ln">04</span><span class="lt">משוב המעסיק על התלמיד</span><span class="ls">נספח א׳</span></a>
+      <a class="lrow" href="#tasks"><span class="ln">05</span><span class="lt">מטלות בחניכות לפי מגמות</span><span class="ls">תנאי הסף</span></a>
+      <a class="lrow" href="#workshops"><span class="ln">06</span><span class="lt">סדנאות: פניות יזומות והצעת ערך</span><span class="ls">עבודה עם מעסיקים</span></a>
+    </div>
+  </div>
+</div>
+
+<article class="body-sec">
+  <div class="article">
+
+    <h2 class="sub-sec first rv" id="sedirut">המשרה: תקצוב, קליטה ותנאי סף</h2>
+    <p class="lead-p rv">רכז התעסוקה הוא דמות חינוכית משמעותית — לא תפקיד מנהלתי. כדי שיהיה פנוי להכשיר, ללוות ולהדריך את התלמידים, המשרד הסדיר את תקצוב המשרה, את הליך הקליטה ואת תנאי הסף.</p>
+
+    <div class="callout red rv">
+      <span class="ttl">חובה חוקית</span>
+      העסקת תלמידים מתבצעת אך ורק במסגרת חוק החניכות — כולל תלוש שכר והפרשות לביטוח לאומי. <strong>אין לאפשר העסקת נוער שאינה במסגרת החוק.</strong>
+    </div>
+
+    <h3 class="mini rv">נוסחת התקצוב</h3>
+    <p class="rv">התקצוב נקבע לפי מספר התלמידים בפועל בחודש נובמבר בשכבות י״א–י״ב: <strong>0.22 ש"ש לכל תלמיד.ה</strong> (על בסיס משרה של 24 שעות), ובנוסף <strong>0.08 ש"ש לכל תלמיד.ה עבור רכב</strong>.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>דוגמת חישוב — בית ספר עם 100 תלמידים בי״א–י״ב</caption>
+        <thead>
+          <tr><th>שלב</th><th>חישוב</th><th>תוצאה</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">סך ש"ש לרכז</td><td>100 × 0.22</td><td>22 ש"ש</td></tr>
+          <tr><td class="k">אחוז משרה (בסיס 24 ש׳)</td><td>22 ÷ 24</td><td>91.6% משרה</td></tr>
+          <tr><td class="k">בעוז לתמורה (בסיס 40 ש׳)</td><td>40 × 0.916</td><td>36.6 שעות שבועיות</td></tr>
+          <tr><td class="k">בתקן מנהלי (בסיס 42 ש׳)</td><td>42 × 0.916</td><td>38.4 שעות שבועיות</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">קליטת רכז.ת תעסוקה</h3>
+    <p class="rv">באיוש המשרה — קבועה או זמנית — <strong>מנהל תחום תעסוקה באגף להכשרה מקצועית מעורב בריאיון ובקליטה</strong>. אין להעסיק רכז.ת תעסוקה ללא אישורו ולפני ריאיון עבודה בנוכחותו.</p>
+
+    <h3 class="mini rv">תנאי הסף לתפקיד</h3>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead>
+          <tr><th>תנאי</th><th>סטטוס</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ניסיון של שנתיים בעבודה חינוכית ישירה עם בני נוער (גילאי 15–18)</td><td class="k">חובה</td></tr>
+          <tr><td>זמינות להיקף העבודה לפי השעות המוקצבות לבית הספר</td><td class="k">חובה</td></tr>
+          <tr><td>יכולת ניידות גבוהה — פגישות עם מעסיקים, חונכים ומנטורים</td><td class="k">חובה</td></tr>
+          <tr><td>יכולת עבודה בשעות גמישות</td><td class="k">חובה</td></tr>
+          <tr><td>היכרות וניסיון של שנתיים עם עולם העבודה: מגמות שוק, הכוונה תעסוקתית, גיוס, עבודה מול מעסיקים, זכויות עובדים</td><td class="k">יתרון משמעותי</td></tr>
+          <tr><td>יכולת וניסיון בנטוורקינג, שיווק, משא ומתן, מכירה ופרזנטציה</td><td class="k">יתרון משמעותי</td></tr>
+          <tr><td>תואר ראשון רלוונטי</td><td class="k">יתרון משמעותי</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv" id="params">פרמטרים לבחינת מעסיק ומנטור</h2>
+    <p class="lead-p rv">בכל התקשרות עם מעסיק יש לוודא שהוא מכיר את דרישות המשרד. את העמידה בפרמטרים בודקים <strong>בשלוש נקודות זמן: לפני תחילת העבודה, בפברואר וביוני</strong>. בעסק קטן שבו בעל העסק חונך אישית את התלמיד.ה — אין צורך בבדיקת מנטור נפרדת.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>שישה פרמטרים לבחינת מעסיק פוטנציאלי</caption>
+        <thead>
+          <tr><th>#</th><th>הפרמטר</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">1</td><td>המעסיק משלם לתלמיד.ה על פי חוק</td></tr>
+          <tr><td class="k">2</td><td>במקום התעסוקה יש מנטור קבוע שמלווה את התלמיד.ה לאורך השנה</td></tr>
+          <tr><td class="k">3</td><td>המעסיק מתחייב למלא חוות דעת מקצועית פעמיים בשנה (נספח א׳)</td></tr>
+          <tr><td class="k">4</td><td>המעסיק שותף לבניית תוכנית תעסוקתית על ציר התקדמות</td></tr>
+          <tr><td class="k">5</td><td>יש איש קשר מחויב ורתום לקשר עם בית הספר</td></tr>
+          <tr><td class="k">6</td><td>יש הלימה מקצועית בין מגמות הלימוד לתעסוקה עצמה</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>חמישה פרמטרים לבחינת מנטור אצל מעסיק</caption>
+        <thead>
+          <tr><th>#</th><th>הפרמטר</th><th>מתי בודקים</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">1</td><td>רקע מקצועי של שנתיים לפחות</td><td>בריאיון האישי</td></tr>
+          <tr><td class="k">2</td><td>יחסי אנוש טובים, מוטיבציה לחנוך וכישורי הנחיה בסיסיים</td><td>בריאיון האישי</td></tr>
+          <tr><td class="k">3</td><td>זמינות ללוות את התלמיד.ה לאורך שנה אחת לפחות</td><td>לפני · פברואר · יוני</td></tr>
+          <tr><td class="k">4</td><td>זמינות להעריך את העבודה ולתת משוב פעמיים בשנה (נספח א׳)</td><td>לפני · פברואר · יוני</td></tr>
+          <tr><td class="k">5</td><td>שותפות בבניית תוכנית תעסוקתית אישית שנתית</td><td>לפני · פברואר · יוני</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv" id="gantt">הגאנט השנתי של הליווי</h2>
+    <div class="planner rv">
+      <div class="p-row">
+        <div class="p-month"><div class="m">אוגוסט</div><div class="g">או בכל יצירת קשר עם מעסיק חדש</div><span class="lbl">בחינת התאמה</span></div>
+        <ul class="p-items">
+          <li>בחינת התאמת המעסיק לצורכי בית הספר והתלמיד.ה — לפי ששת הפרמטרים</li>
+          <li>אם יש התאמה — ריאיון אישי למנטור אצל המעסיק, לפי חמשת הפרמטרים</li>
+        </ul>
+      </div>
+      <div class="p-row">
+        <div class="p-month"><div class="m">ספטמבר</div><div class="g">או בכניסת תלמיד.ה לתעסוקה</div><span class="lbl">הכנה וליווי</span></div>
+        <ul class="p-items">
+          <li><strong>שיחת הכנה אישית</strong> לפני המפגש עם המנטור: מה מסקרן אותך? איך אתה מדמיין את המקום? ממה אתה חושש? מה תרצה לבקש מהמנטור? מה הציפיות שלך?</li>
+          <li><strong>ליווי ביום הראשון:</strong> הרכז.ת נוכח.ת בפגישת ההיכרות ותיאום הציפיות עם המנטור — התנהגות במקום העבודה (הגעה, הפסקות, קוד לבוש), ציפיות מקצועיות (משימות וסדר יום) וציפיות לימודיות (חיבור לתוכנית הלימודים)</li>
+          <li>מומלץ לעודד את התלמיד.ה לראיין את המנטור: איך התחלת בתחום? איך נראה יום עבודה? אילו כישורים צריך? מה אתה אוהב בעבודה? איך הארגון משפיע על הקהילה?</li>
+        </ul>
+      </div>
+      <div class="p-row">
+        <div class="p-month"><div class="m">אוקטובר</div><div class="g">שבוע אחרי הכניסה לעבודה</div><span class="lbl">רפלקציה</span></div>
+        <ul class="p-items">
+          <li>שיחה אישית על היום הראשון: איך הייתה החוויה? מה למדתם? האם המקום עורר רצון לעבוד בו? מה הכי פחות אהבתם? איך האווירה בארגון? תארו את המנטור ואת תפקידו</li>
+        </ul>
+      </div>
+      <div class="p-row">
+        <div class="p-month"><div class="m">פברואר</div><span class="lbl">בדיקה חוזרת</span></div>
+        <ul class="p-items">
+          <li>בחינה מחודשת של התאמת המעסיק והמנטור + איסוף משוב על התלמידים (נספח א׳)</li>
+        </ul>
+      </div>
+      <div class="p-row">
+        <div class="p-month"><div class="m">יוני</div><span class="lbl">סיכום והוקרה</span></div>
+        <ul class="p-items">
+          <li>בחינה מחודשת של ההתאמה + משוב שני על התלמידים</li>
+          <li><strong>אירוע הוקרה למעסיקים ולמנטורים</strong> — תעודת הוקרה, פרסום, ערב הוקרה וחשיפה לקהילה</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="sub-sec rv" id="feedback">משוב המעסיק על התלמיד — נספח א׳</h2>
+    <p class="lead-p rv">את הטופס ממלא המעסיק/המנטור פעמיים בשנה (פברואר ויוני). פרטי הפתיחה: שם התלמיד.ה, כיתה, מגמה, מקום העבודה, שם המנטור ומועד תחילת ההעסקה. את ההשפעה מדרגים בסולם 1–4 (4 = במידה רבה) ב־18 תחומים:</p>
+    <div class="tik-grid rv">
+      <div class="tik-item"><b>01</b> לעמוד מול קהל ולהציג רעיון</div>
+      <div class="tik-item"><b>02</b> לתקשר עם לקוחות ולתת שירות</div>
+      <div class="tik-item"><b>03</b> לצבור ניסיון מקצועי משמעותי</div>
+      <div class="tik-item"><b>04</b> מקום העבודה נותן משמעות ושייכות</div>
+      <div class="tik-item"><b>05</b> גאווה בעצמו ובעבודתו</div>
+      <div class="tik-item"><b>06</b> לחפש הזדמנויות לקדם את מקום העבודה</div>
+      <div class="tik-item"><b>07</b> רצון ללמוד ולהשתפר במקצוע</div>
+      <div class="tik-item"><b>08</b> שיתוף פעולה ועבודת צוות</div>
+      <div class="tik-item"><b>09</b> חיבור למקצוע</div>
+      <div class="tik-item"><b>10</b> לקיחת אחריות והשפעה</div>
+      <div class="tik-item"><b>11</b> התמודדות עם מצבי לחץ</div>
+      <div class="tik-item"><b>12</b> לתת ולקבל ביקורת בונה</div>
+      <div class="tik-item"><b>13</b> שיפור הקשר עם המורים</div>
+      <div class="tik-item"><b>14</b> יישום הנלמד במגמה</div>
+      <div class="tik-item"><b>15</b> ביטוי רעיונות ושכנוע</div>
+      <div class="tik-item"><b>16</b> התייעצות ושמיעת דעות</div>
+      <div class="tik-item"><b>17</b> פעולה במצבי אי־ודאות</div>
+      <div class="tik-item"><b>18</b> הבנה שהשקעה מביאה שיפור</div>
+    </div>
+    <p class="rv" style="font-size:.9rem;color:var(--text2)">בסוף הטופס — שאלות פתוחות: מהות עבודת התלמיד.ה, "רציתי להוסיף", והצעות לשיפור התהליך. הטופס המלא — <a class="lk" href="https://drive.google.com/file/d/1xCzUWg8Kqa5zzry8ilOE9L3phl0M53xV/view" target="_blank" rel="noopener">בנספח א׳ של מסמך הפרמטרים</a>.</p>
+
+    <h2 class="sub-sec rv" id="tasks">מטלות בחניכות לפי מגמות</h2>
+    <p class="lead-p rv">מסמך המטלות מגדיר את <strong>ההתנסויות הבסיסיות הנדרשות לכל תלמיד.ה בכל מגמה</strong> — פרוטוקול לבית הספר ולחונך. הרשימות הן <strong>תנאי סף ודרישות מינימום בלבד</strong>: השאיפה היא להתנסות רחבה יותר. ככלל, מטלות י״א מבוססות ידע ומיומנות, ומטלות י״ב מורכבות ומבוססות אחריות. לחצו על תחום לפירוט:</p>
+
+    <details class="dom rv">
+      <summary><span class="dn">01</span>חשמל ובקרת אקלים<span class="hint">קירור ומיזוג · חשמלאות</span></summary>
+      <div class="inner">
+        <h4>קירור ומיזוג אוויר (מגמות 3828, 3735)</h4>
+        <ul>
+          <li>בדיקות חשמליות במתקן, הכרת מחזור קירור/חימום, חיבור והפעלת מערכת עם קרר</li>
+          <li>זיהוי סוגי קררים, קווי דחיסה/יניקה/נוזל, חלקים וסדר חיבורים במעגל</li>
+          <li>מילוי וריקון קרר (כולל עבודה עם חומרים דליקים/נפיצים/רעילים — ולחוד עם חומרים שאינם כאלה), מיחזור קרר</li>
+          <li>שימוש בסעפת שעונים ומכשירי מדידה — לחצים, טמפרטורה, מהירות אוויר</li>
+          <li>דיאגנוזה ואבחון תקלות, בדיקות נזילות, השפעת לכלוך על פילטרים וסוללות</li>
+          <li>פעולות בצנרת נחושת: חיתוך, כיפוף, הרחבה, הפשלה והלחמה</li>
+          <li>טיפול בחיווט ופירוק רכיבים חשמליים — שלא תחת מתח ובאישור חשמלאי</li>
+          <li>ביצוע ואקום והבנת חשיבותו, התקנת יחידות עיבוי ואידוי, התקנת מזגנים ביתיים לפי תקן 994</li>
+        </ul>
+        <h4>חשמלאות (מגמות 1401, 3850, 4865, 3827)</h4>
+        <p><strong>שער בטיחות:</strong> החונך סוקר הגנות מפני חשמול ובוחן את החניכים במבחן בכתב — רק מי שעובר ממשיך להתנסות.</p>
+        <ul>
+          <li>עבודות תשתית: חפירת תעלות, חורים, טיח וביטון; הרכבת מובילים, תעלות וצנרת; השחלת מוליכים והנחת כבלים</li>
+          <li>קריאת תוכניות חשמל: לוחות, סוגי הארקות והגנות במתקן</li>
+          <li>פירוק והרכבה — חד־פאזי ותלת־פאזי: אביזרי הגנה ומיתוג, שקעים, מפסקים, לחצנים, מא"זים, ממסר פחת, שעון שבת, ממסר צעד, קונטקטורים, בתי מנורות, לדים וקוצבי זמן</li>
+          <li>הכרת כלים, מוליכים וכבלים (צבעים ושימושים), קילוף וחיבור סופיות נעלי כבל</li>
+          <li>מדידות: מתח, זרם, התנגדות לולאת התקלה והתנגדות בידוד — בדגש על רבי־מודדים</li>
+          <li>חציבה בקירות ותקרה, הרכבת קופסאות בתוך הטיח ומעליו</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">02</span>חינוך וטיפול<span class="hint">מחנכת שנות ינקות</span></summary>
+      <div class="inner">
+        <h4>מחנכת שנות ינקות — סוג 1 (915)</h4>
+        <ul>
+          <li><strong>צפייה והתנסות במעון:</strong> משחק במעון ובחצר, טיפול פיזי, מוזיקה ותנועה, ספרות ילדים, משחקים דידקטיים, אמנות ומחשב, ניצול סיטואציות מזדמנות ללמידה</li>
+          <li><strong>מסגרות חלופיות לגיל הרך:</strong> ביקורים במעון רב־תכליתי, רג'יו אמיליה, מונטסורי, גן זורם, אנתרופוסופי, משלב, חינוך ביתי — והכרת הפילוסופיות החינוכיות שבבסיסן</li>
+          <li><strong>תצפית, תיעוד ודיווח:</strong> תצפית סגורה/פתוחה/משתתפת, תכנון מוקדי צפייה, הפרדה בין תיאור לפרשנות, כתיבה משקפת מציאות, ניתוח ורפלקציה</li>
+          <li><strong>התנסות פעילה כמחנכת:</strong> הקראת סיפור והפעלה בעקבותיו, הגשת חומרי יצירה ומשחקים דידקטיים, פעילות בחצר ובמתקנים, פעילות מוזיקה ותנועה, פעילות פרטנית וקבוצתית, הגשת מזון והאכלה, החתלה ורחצה, הכנה לשינה וארגון אחריה, תיווך במשחק דרמטי</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">03</span>מחשבים<span class="hint">תקשוב · סלולר · תכנות</span></summary>
+      <div class="inner">
+        <h4>תפעול מערכות תקשוב וסלולר (3521)</h4>
+        <ul>
+          <li><strong>י״א:</strong> פירוק והרכבת מחשבים והתקנת מערכות הפעלה, תמיכה בעמדות קצה ורשתות LAN‏ (TCP/IP), תמיכת help desk והשתלטות מרחוק, תיקוני סלולר דרג א׳–ב׳ (מסכים, סוללות, גיבויים), התקנת רשת ביתית ונתבים, הגדרת ציוד סיסקו, טיפול בתקלות חומרה וציוד היקפי</li>
+          <li><strong>י״ב:</strong> שירות ותחזוקה שוטפת בעסקים (הרשאות, תקלות רשת ואינטרנט), תיקוני סלולר מקצועיים דרג ג׳–ד׳ (הלחמות והחלפת רכיבים על הלוח), פריסת תשתית כבלים למשרדים</li>
+        </ul>
+        <h4>תקשוב, מיגון ואבטחה (3526)</h4>
+        <ul>
+          <li><strong>י״א:</strong> כמו לעיל — מחשבים, רשתות ותמיכה</li>
+          <li><strong>י״ב:</strong> בנוסף — הטמעת מערכות מיגון בסביבת האינטרנט, חיווט וכבילה, מכשירי מדידה, סלילת קווי תקשורת ובקרה, חיבור פיזי ותכנות של מערכות מיגון, הגדרת DVR/NVR</li>
+        </ul>
+        <h4>פיתוח פתרונות חדשניים בתכנות (3641)</h4>
+        <ul>
+          <li><strong>י״א:</strong> אתרים בסיסיים — דפי נחיתה, אתרי תדמית, תיקי עבודות וגלריות</li>
+          <li><strong>י״ב:</strong> אתרים מתקדמים — בלוגים, חנויות, CRM, ניהול הרשאות; ממשקי משתמש דינמיים; מסדי נתונים; פתרון בעיות בענן</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">04</span>טיפוח החן<span class="hint">עיצוב שיער · איפור · קוסמטיקה</span></summary>
+      <div class="inner">
+        <h4>עיצוב שיער (603, 611 — ובשילובי איפור וסטיילינג: 616, 617, 638, 639)</h4>
+        <ul>
+          <li>היגיינה סביבתית ואישית, הכנת לקוח לטיפול</li>
+          <li>הכרה ועבודה עם כל המכשירים החשמליים (פן, מחליק, בייביליס) וכל החומרים הכימיים במספרה</li>
+          <li>חפיפה ושטיפה, עיסוי קרקפת, כל שיטות גלגול הרולים</li>
+          <li>צביעה חוזרת ובתולית, שטיפת צבע, גוונים, פסים, ניקוי פיגמנט</li>
+          <li>תסרוקות וטכניקות חדשניות: יום, ערב, כלה ופנטזיה; קישוטים ואביזרים; תוספות והלחמות שיער</li>
+          <li>תספורות: בסיסיות, קו ישר, קארה, מדורג — ילדים, גברים ונשים; אחזקת מספריים</li>
+          <li>החלקות כימיות, סלסול כימי, טיפולים מונעים: יובש, נשירה, קשקשים</li>
+        </ul>
+        <h4>איפור (במגמות המשולבות)</h4>
+        <ul>
+          <li>סוגי מייק־אפ, פריימר, צלליות וסומק; התאמה לצורות פנים (מורפולוגיה), לצבע ולסוג העור</li>
+          <li>איפור יום, ערב וכלה; שימוש נכון במברשות</li>
+          <li>ניקוי והסרת איפור: מי פנים, חלב פנים, קרם לחות, שמן הידרופילי, ג'לים וסבונים</li>
+        </ul>
+        <h4>קוסמטיקה (615)</h4>
+        <ul>
+          <li>הכנת מיטת טיפולים, ניקוי ראשוני של פנים וצוואר, אבחון סוג העור וגיליון אבחון</li>
+          <li>פילינג, התפחת עור, הוצאת קומדונים וניקוי עמוק, מכשור חשמלי, עיסוי פנים וצוואר, מסכות, שעווה חמה וקרה, איפור, ניקיון עמדת העבודה</li>
+        </ul>
+        <p><strong>לכל תלמיד.ה בתחום מוכן תיק עבודות (בוק)</strong> עם תמונות מהעבודות שבוצעו בי״א–י״ב.</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">05</span>ניהול, שיווק ופיננסים<span class="hint">לוגיסטיקה · דיגיטל · הנה"ח</span></summary>
+      <div class="inner">
+        <h4>ניהול לוגיסטיקה וטכנולוגיה (8155) · ניהול מלאי ורכש (8165)</h4>
+        <p>הרשימה מדורגת — מתחילת י״א ועד סוף י״ב:</p>
+        <ol>
+          <li>בטיחות: נהלים, זיהוי סכנות ודרכי התגוננות</li>
+          <li>תחזוקה וטיפול מונע לסחורה במחסן</li>
+          <li>אחסון ומחסן: מבנה, מעברים, אמצעי אחסון ושינוע, איתור פריט, מק"טים</li>
+          <li>סבב עבודה במחסנים שונים: אוטומטי, חצי־אוטומטי, ידני, הסגר</li>
+          <li>תנועות מלאי: קליטה, ניפוק, העברה בין מחסנים</li>
+          <li>ספירת מלאי ודיווחים</li>
+          <li>עבודה מול ספקים ולקוחות</li>
+          <li>עדכון ושליפת נתונים מהמחשב</li>
+        </ol>
+        <h4>שיווק ופרסום בדיגיטל (8154) · מובילי תוכן במדיה חברתית (8143)</h4>
+        <ul>
+          <li>חשיפה להקמת עסק: רישום, רישיון, חשבון בנק; קריאת תוכנית עסקית</li>
+          <li>יישומי Google‏ (Drive, Sheets, Forms, Docs, Slides), ניהול קבצים ולו"ז משותף</li>
+          <li>כתיבה ויצירת תוכן פרסומי, קמפיין חברתי ועסקי ברשתות — כולל תפעול שוטף ופתרון בעיות</li>
+          <li>עיצוב גרפי: עריכה ועיבוד תמונה, עבודה לפי בריף לקוח, אפקטים ואנימציה</li>
+          <li>צילום: סטילס מבוים ותיעודי, הקמת אולפן וסט צילומים, עריכת וידאו, שכבות ותיקוני צבע בפוטושופ</li>
+        </ul>
+        <h4>בניית אתרים ושיווק באינטרנט (8222)</h4>
+        <ul>
+          <li>אתר תדמית ואתר חנות ב־WordPress ו־Elementor; אתרים ב־HTML ו־CSS; אופטימיזציית קוד; DOM וכלי מפתחים</li>
+          <li>עיבוד תמונה (Canva, Photoshop), כתיבה שיווקית, קמפיין ממומן, פרופיל קישורים וניתוח נתונים</li>
+        </ul>
+        <h4>הנהלת חשבונות ומנהל משרד (8157, 8125, 8127) — י״ב</h4>
+        <ul>
+          <li>הקמת חברה בחשבשבת: פרטי חברה, אינדקס חשבונות ופקודות יומן</li>
+          <li>סידור מסמכים וכתיבת פקודות יומן (כולל סטורנו), סיווג חשבוניות ודיווח למע"מ</li>
+          <li>הפקת דוחות: מנות, איתור תנועות, כרטסות, מאזן בוחן; ניהול קופה קטנה; התאמות בנק ואשראי</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">06</span>תיירות וקולינריה<span class="hint">קולינריה · טבחות · קונדיטאות</span></summary>
+      <div class="inner">
+        <h4>קולינריה (1626) · טבחות (1301) · קונדיטאות ואפייה (1382)</h4>
+        <ul>
+          <li>הכרת התפריטים והמאכלים של המקום ברמה מתקדמת — טעמים, מרקמים, צורות והגשה</li>
+          <li>בטיחות, תברואה והיגיינה אישית; נהלי שריפה/תאונה ומיקום ערכת עזרה ראשונה</li>
+          <li>הכנות מקדימות (Mise en place), הזמנת חומרים, אחסון ואריזה של תבשילים</li>
+          <li>מעבר במחלקות המטבח השונות — תרגול בכל מחלקה; קבלת הזמנות וביצוען תחת פיקוח</li>
+          <li>סיוע בהכנת מתכונים: חיתוכים, רביכות, רטבים, נוזלים וחומרי עיבוי; הרכבת מנות ועיצובן</li>
+          <li>עיבודי בשר ועוף (עצמות, שומן, טחינה, קשירה), עיבודי דגים (ניקוי, קשקשים, קילוף עור), טיפול בפירות וירקות (שטיפה וחיטוי, חיתוך ועיצוב, השחזת סכינים)</li>
+          <li>הכנות בסיסיות: בצקים, מילויים, ציפויים, דוקסל, מרינדות, מטיניון ועוד</li>
+          <li>תפעול נכון וטיפול בציוד, בכלים ובמכשירים</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">07</span>ייצור ומיכון מערכות<span class="hint">אלומיניום · תיב"מ · מסגרות</span></summary>
+      <div class="inner">
+        <p>בכל המגמות הרשימה מדורגת — מתחילת י״א ועד סוף י״ב:</p>
+        <h4>מבנאות אלומיניום (1104)</h4>
+        <ol>
+          <li>קריאת שרטוט: היטלים, חתכים, מידות, חומרים; קריאת דוחות ותכנות בתוכנת "אל־קל"</li>
+          <li>הכנת פרופילים: בחירה לפי שרטוט, מדידה, חיתוך, עבודה עם מבלטים</li>
+          <li>הרכבת מוצרים: קידוח, מברגה, אקדח ניטים</li>
+          <li>עבודה בשטח: מדידות והתקנת מוצרים</li>
+        </ol>
+        <h4>תיב"מ — תיכון וייצור באמצעות מחשב (2341)</h4>
+        <ol>
+          <li>קריאת שרטוט: סבולות מידה וגיאומטריה, טיב פני שטח, הברגות</li>
+          <li>מדידות: קליבר, מיקרומטר, מדידי GO-NO GO, מקבילוני ג'ונסון</li>
+          <li>הכנת חומר גלם: מדידה, ניסור, הורדת גרדים</li>
+          <li>מכונות קונבנציונליות: מחרטה, כרסומת, מקדחה</li>
+          <li>מחרטת CNC וכרסומת CNC: לוח בקרה, דפינת חומר וכלים, הפעלה, עריכה, OFFSET</li>
+        </ol>
+        <h4>מסגרות מבנים וריתוך (2345)</h4>
+        <ol>
+          <li>קריאת שרטוט כולל סמלי ריתוך</li>
+          <li>הכנת חומרים: חיתוך פרופילים ופחים, כיפוף פחים, הורדת גרדים</li>
+          <li>הרכבה: קידוח, הברגה, דיסק חיתוך</li>
+          <li>ריתוך אלקטרודה, TIG ו־MIG בתנוחות שונות</li>
+          <li>עבודה בשטח: מדידות והתקנות</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">08</span>חקלאות ונוי<span class="hint">אקו-ים · אגרו-אקולוגיה</span></summary>
+      <div class="inner">
+        <h4>אקו־ים — שימוש אקולוגי במשאבי ים (9952)</h4>
+        <ul>
+          <li>תפעול מערכות מים מתוקים/מלוחים — הנדסת מים טכנית, פיזית וכימית</li>
+          <li>חקלאות מים וימית: מערכות גידול, ביולוגיה ומעבדות</li>
+          <li>אוקיינוגרפיה פיזיקלית: גלים, רוחות, זרמים, מטאורולוגיה (שיט, גלישה, ספנות)</li>
+          <li>ניטור והתפלה: מתקני התפלה, איסוף וניטור מים, עבודת מעבדה</li>
+          <li>מחקרים ימיים, שימור סביבתי ימי וחופי, אקולוגיה ימית</li>
+          <li>עבודה בים כולל צלילה; שיט והפעלת ציוד ימי כולל ROV</li>
+        </ul>
+        <h4>אקו־חקלאות — אגרו־אקולוגיה (9942)</h4>
+        <ul>
+          <li><strong>מטעים, כרמים, גד"ש, ירקות, תבלינים ופרחים:</strong> כל תחומי הגידול בגישה שומרת סביבה — עשבייה, הזנה, דילול, מזיקים ומחלות, השקיה, ניטור והדברה, קטיף, אריזה ושיווק</li>
+          <li><strong>גינון ועיצוב:</strong> כנ"ל, בתוספת גיזום</li>
+          <li><strong>אילנאות:</strong> ליווי האילנאי כעוזר — הכרת עצים, הערכת סיכונים וסקרי עצים</li>
+          <li><strong>פיקוח הגנת הצומח:</strong> עוזר פקח — ניטור מחלות ומזיקים והמלצות טיפול</li>
+          <li><strong>חקר השפעות סביבתיות:</strong> אסיסטנט חוקר/מדריך — חינוך, רגולציה, זיהום ושיקום אקוסיסטמות</li>
+          <li><strong>גידולים מתקדמים:</strong> מצעים מנותקים, נבטים, פטריות, הידרופוניקה, אקוופוניקה ואירופוניקה</li>
+          <li><strong>תיירות חקלאית, טכנולוגיות ומיכון</strong> (כולל רחפנים ומכונות מיון), <strong>מבני גידול והשקיה</strong> (חממות, סוכות ופרגולות)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">09</span>רכב<span class="hint">אוטוטרוניקה · צמ"ה</span></summary>
+      <div class="inner">
+        <h4>אוטוטרוניקה (2249) · התמחות כלי צמ"ה (2355)</h4>
+        <div class="callout amber" style="margin:12px 0">
+          <span class="ttl">כללי השגחה</span>
+          <strong>בי״א:</strong> הסרה והצבה של מכללים בלבד, בהשגחה ובהנחיה ישירה של החונך — אין לבצע פעולות ללא הוראות מילוליות והשגחה צמודה. <strong>בי״ב:</strong> פירוק, תיקון והרכבה + בדיקות אבחון בסיסיות — עדיין בהנחיה ובהשגחה צמודה.
+        </div>
+        <h4>חשמל רכב (חש"ר)</h4>
+        <ul>
+          <li>מתנע: פירוק, בדיקה מכנית (תותבים, קולקטור, משלב) והרכבה; אלטרנטור: פירוק ובדיקה</li>
+          <li>מערכת הצתה אלקטרונית DIS וחיישניה (בעזרת סורק תקלות), בדיקת מצבר בעומס, כיוון אורות</li>
+          <li>קו דלק בבנזין ובדיזל: משאבות, מתזים, ווסת לחץ, מרססים, תזמון משאבת CR; בדיקת דחיסה; מערכות EGR/PCV</li>
+          <li>מיזוג אוויר: לחץ קרר, מיחזור, ממסרי הפעלה</li>
+          <li>מעגלים חשמליים: ממסר אחזקה עצמית, בדיקת דיודה/נגד/טרנזיסטור ברב־מודד, חלון ומראה חשמליים, נעילה מרכזית, אימובילייזר</li>
+        </ul>
+        <h4>מכונאות רכב (מכ"ר)</h4>
+        <ul>
+          <li>ראש מנוע: פירוק, בדיקה והרכבה; כיוון שסתומים; תזמון OHC; מכלול בוכנה</li>
+          <li>משאבת מים ובדיקת דליפה בלחץ; משאבת שמן ושסתום פורק לחץ</li>
+          <li>מצמד על גלגל תנופה; תיבות הילוכים מכניות ואוטומטיות (גל ראשי, סנכרון, מערכת פלנטרית)</li>
+          <li>בלמים: תוף, דיסק, משאבה מרכזית כפולה, חיישני ABS</li>
+          <li>מתלה קדמי (קפיץ ובולם), הגה מסרק, הגה כוח הידראולי/חשמלי, זוויות היגוי</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">10</span>אמנות עיבוד העץ<span class="hint">רהיטים · CNC בעץ</span></summary>
+      <div class="inner">
+        <h4>טכנולוגיות עץ ורהיטים (1605) · מפעיל ומתכנת CNC בעץ (1679)</h4>
+        <ul>
+          <li><strong>תכנון ושרטוט:</strong> שלבי תכנון מוצר ושיקוליו, קריאת תרשימים ותוכניות, שרטוט בקני מידה וסקיצות ידניות, תכנון ממוחשב (סיב"מ) דו־ותלת־ממדי</li>
+          <li><strong>ייצור:</strong> כתיבת תוכנית עבודה לפי שלבי ביצוע, כיוון והפעלה עצמאית של מכונות בסיסיות ותעשייתיות, הפעלת מכונת CNC לפי תוכנית ותחזוקתה, כלים חשמליים ידניים</li>
+          <li><strong>חומרים וטכניקות:</strong> זיהוי חומרים וכלים, מחברי עץ ובחירתם, כיפוף ולמינציה לחלקים עקומים, גימור וציפויים סינתטיים, צביעה בחדר צבע</li>
+          <li><strong>תחזוקה ובטיחות:</strong> איתור תקלות והחלפת חלקים, השחזת כלים, ניקוי ותחזוקה שוטפת, בטיחות אישית ומניעת שריפות, ביקורת איכות</li>
+          <li><strong>פרויקט גמר:</strong> ביצוע עצמאי של מוצר + תיק עבודה המשלב את כל הידע (אפשר לשלב CNC)</li>
+        </ul>
+      </div>
+    </details>
+
+    <h2 class="sub-sec rv" id="workshops">סדנאות: עבודה מול מעסיקים ולקוחות</h2>
+    <p class="lead-p rv">שתי סדנאות מעשיות לרכזי תעסוקה ולצוותים המובילים עסקים חינוכיים — איך פונים למעסיקים ולקוחות חדשים, ואיך מדייקים את הצעת הערך.</p>
+
+    <h3 class="mini rv">סדנה 1 · פניות יזומות</h3>
+    <p class="rv">עסקה היא מערכת יחסים שאנחנו יוזמים — ולכל שלב בה נדרשת תקשורת אחרת. ארבעה שלבי עבודה:</p>
+    <div class="cycle rv">
+      <div class="cy-step">איתור לקוחות — רשימת 3 לקוחות פוטנציאליים באזור: שם הארגון, מרחק, פרטים, כתבה ברשת ואיש קשר</div>
+      <div class="cy-step">דיוק הצעת הערך — "השירות שלנו הוא… עבור… לטובת… בשונה ממתחרים… וכולל…"</div>
+      <div class="cy-step">בחירת ערוץ הפנייה לפי שלב הקשר: מודעות ← הצעה ← אמינות</div>
+      <div class="cy-step">כלים נלווים — פלייר לוואטסאפ כפולו־אפ מיידי: מה הלקוח צריך לדעת? איך מדגימים איכות? מה הנראות הנכונה?</div>
+    </div>
+    <p class="rv">מושג מפתח: <strong>לקוח אידיאלי (ICP)</strong> — האדם שהכי זקוק לשירות שלכם, שאליו מכוונות אסטרטגיות השיווק.</p>
+
+    <h3 class="mini rv">סדנה 2 · דיוק הצעת הערך</h3>
+    <p class="rv"><strong>הצעת ערך</strong> היא ביטוי התועלת הייחודית שהלקוח יקבל מהעסקה. הסדנה נשענת על "משולש הזהות העסקית": במה אני טוב? מי הלקוח שלי? מה הלקוח שלי צריך? — ועל מודל ארבעת המ"מים (4P) מנקודת מבט הלקוח:</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>ארבעת המ"מים — וסיפורי המקרה שממחישים כל אחד</caption>
+        <thead>
+          <tr><th>מ"מ</th><th>השאלה</th><th>סיפור המקרה מהסדנה</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">מוצר (Product)</td><td>מהם מאפייני השירות עצמו?</td><td>שמפו בבקבוק גדול לא נמכר בכפרי הודו — כי הקונות חיות על שכר יומי. המוצר לא הותאם.</td></tr>
+          <tr><td class="k">מקום (Place)</td><td>איפה השירות מוצע?</td><td>קינוחים בשער המפעל לא נמכרים — המיקום והתזמון לא פוגשים את העובדים.</td></tr>
+          <tr><td class="k">מחיר (Price)</td><td>איך המחיר נתפס ביחס לדומים?</td><td>אבקת כביסה זהה במחיר מוזל לא נקנית — מחיר נמוך מדי משדר איכות נמוכה.</td></tr>
+          <tr><td class="k">מאמץ מכירה (Promotion)</td><td>איך מקדמים את החשיפה והמכירה?</td><td>קמפיין ברשתות חברתיות לא מגיע לקהל החרדי — ערוץ הקידום לא מתאים לקהל.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout rv">
+      <span class="ttl">שיווק עוסק בצורך</span>
+      "אם הכלי היחיד בידיכם הוא פטיש — תתפתו לראות כל בעיה כמסמר" (מאסלו). זהו את מה שהלקוחות באמת צריכים — שירות איכותי? זול? קרוב? חוויה? — ובנו את היכולות שעונות בדיוק על הצורך הזה.
+    </div>
+
+    <div class="source-box rv">
+      <div class="t">המסמכים המקוריים<small>העמוד הזה הוא מהדורה דיגיטלית של חמשת מסמכי הרכז — הנוסח המחייב הוא במסמכים המקוריים.</small></div>
+      <a class="btn" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה ↗</a>
+    </div>
+
+  </div>
+</article>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>המרכז הפדגוגי</span></div></div>
+
+<script src="site.js"></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>
