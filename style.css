@@ -179,3 +179,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
   .pagehead h1{font-size:1.9rem}
   .foot .row{justify-content:center;text-align:center}
 }
+
+/* anchored cards land below the sticky nav */
+.card[id]{scroll-margin-top:112px}
