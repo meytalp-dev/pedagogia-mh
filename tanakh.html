@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תנ"ך כללי · המרכז הפדגוגי</title>
+<meta name="description" content="תוכנית הלימודים בתנ&quot;ך כללי — תנ&quot;ך דרך הרגליים והלב: 5 מודולות, סיורי שטח, חקר דיגיטלי ובחינת גמר. תשתית ערכית לכיתות ט'–י&quot;ב.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">04</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">05</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחבים ומדורים</div>
+    <a href="counseling.html">מרחב ייעוצי</a>
+    <a href="procedures.html">נהלים</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html">מרחב פיקוח</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="dis">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a class="dis">למידה בחירום</a>
+      <a class="dis">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <a class="lnk" href="counseling.html">מרחב ייעוצי</a>
+  <a class="lnk" href="procedures.html">נהלים</a>
+  <a class="lnk dis">מסמכים חשובים</a>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <a class="lnk" href="supervision.html">מרחב פיקוח</a>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead" style="padding-top:40px">
+  <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="subjects.html">תחומי דעת</a> ‹ תנ"ך</div>
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <h1 class="rv d1" style="font-size:2.6rem;margin:10px 0 4px">תנ"ך כללי</h1>
+      <p class="rv d1 lead">"תנ"ך דרך הרגליים והלב" — מהטקסט אל השטח: ניתוח בכיתה, סיורים בנופי המקרא וחקר דיגיטלי. תשתית ערכית לכלל התלמידים, ט'–י"ב.</p>
+    </div>
+    <div class="rv d1 pills trackpills" style="padding-bottom:8px">
+      <span class="pill on" data-track="all" style="font-size:.84rem;padding:6px 20px">הכול</span>
+      <span class="pill" data-track="gmr" style="font-size:.84rem;padding:6px 20px;color:var(--navy)">גמר</span>
+      <span class="pill" data-track="bgr" style="font-size:.84rem;padding:6px 20px;color:#145FA8">בגרות</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid c4 rv d2" style="padding:14px var(--px) 0;gap:13px">
+  <div class="card" style="padding:14px 18px;text-align:center"><div style="font-size:1.55rem;font-weight:800;color:var(--navy)">5</div><div style="font-size:.8rem;color:var(--text2)">מודולות — משורשים ועד חוקרים ויוצרים</div></div>
+  <div class="card" style="padding:14px 18px;text-align:center"><div style="font-size:1.55rem;font-weight:800;color:var(--navy)">240</div><div style="font-size:.8rem;color:var(--text2)">שעות · שעתיים שבועיות ט'–י"ב</div></div>
+  <div class="card" style="padding:14px 18px;text-align:center"><div style="font-size:1.55rem;font-weight:800;color:var(--navy)">2</div><div style="font-size:.8rem;color:var(--text2)">סיורי שדה בשיתוף רכזי הטיולים והשל"ח</div></div>
+  <div class="card" style="padding:14px 18px;text-align:center"><div style="font-size:1.55rem;font-weight:800;color:var(--navy)">70%</div><div style="font-size:.8rem;color:var(--text2)">מהזמן: בראשית, שמות, חוק ונבואה</div></div>
+</div>
+
+<div class="grid c2" style="padding:22px var(--px);gap:16px">
+  <div class="card rv d1" style="padding:26px;border-top:4px solid var(--navy)" data-track="gmr">
+    <span class="tag gmr">נתיב גמר · בחינת גמר בתנ"ך</span>
+    <h3 style="font-size:1.3rem;margin:12px 0 10px">תעודת גמר</h3>
+    <div style="display:grid;gap:8px;font-size:.9rem">
+      <a href="https://docs.google.com/document/d/1-v2tsn9jjlz1oxh_TF0gecPjh_4E_TK8C9XRMbsr3sk/edit" target="_blank" rel="noopener" style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:inherit;text-decoration:none"><span><b>תוכנית הלימודים המלאה</b> — חינוך יוצר, יולי 2026</span><span class="tag tea">מסמך</span></a>
+      <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px"><b>מטלת הגמר — "חוקרים ויוצרים":</b> תחקיר בסוגיה מקראית (טקסט + שני פרשנים + מקור אקטואלי) ← מצגת וסרטון הדמיה ← הצגה והגנה בפני קהל</div>
+      <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px"><b>הערכה:</b> מטלת גמר במחוון + בחינת הגמר בתנ"ך של משרד העבודה; הערכה חלופית לאורך המודולות (למשל 30/70 במודולת השורשים)</div>
+      <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px"><b>ייחוד:</b> התלמידים מדריכים בעצמם תחנות בסיורי השטח — משביל האבות ועד אתרי שיבת ציון בירושלים</div>
+    </div>
+  </div>
+  <div class="card rv d2" style="padding:26px;border-top:4px solid var(--cyan)" data-track="bgr">
+    <span class="tag bgr">נתיב בגרות ומאגרי לימוד</span>
+    <h3 style="font-size:1.3rem;margin:12px 0 10px;color:#0B7FA6">בגרות ומקורות</h3>
+    <div style="display:grid;gap:8px;font-size:.9rem">
+      <a href="https://www.929.org.il" target="_blank" rel="noopener" style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:inherit;text-decoration:none"><span><b>929 — תנ"ך ביחד</b> — פרק יומי עם פרשנות עכשווית</span><span class="tag tea">פתוח</span></a>
+      <a href="https://www.sefaria.org.il" target="_blank" rel="noopener" style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:inherit;text-decoration:none"><span><b>ספריא</b> — תנ"ך ומפרשים בספרייה דיגיטלית פתוחה</span><span class="tag tea">פתוח</span></a>
+      <a href="https://tanach.herzog.ac.il" target="_blank" rel="noopener" style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:inherit;text-decoration:none"><span><b>תנ"ך הרצוג</b> — מקראות גדולות הכתר ועיונים</span><span class="tag tea">פתוח</span></a>
+      <a href="https://pop.education.gov.il" target="_blank" rel="noopener" style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;color:inherit;text-decoration:none"><span><b>פורטל עובדי הוראה</b> — תחום תנ"ך: מיקודים ושאלונים</span><span class="tag tea">פתוח</span></a>
+      <div style="background:var(--blue-bg);border-radius:10px;padding:10px 14px">שאלות עמ"ר והיבחנות מותאמת ← <b style="color:#145FA8">חלופות הערכה</b> (בהכנה)</div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:8px var(--px) 8px" data-track="gmr">
+  <h2 style="font-size:1.4rem;margin-bottom:14px">מסע הלמידה — 5 מודולות</h2>
+  <div class="grid c2" style="gap:8px;font-size:.9rem">
+    <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px"><span><b>1 · שורשים</b> — עלילות הראשית, סיפורי האבות ויוסף</span><span class="tag tea">70 ש'</span></div>
+    <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px"><span><b>2 · משעבוד לחירות</b> — התהוות האומה ומנהיגות משה</span><span class="tag tea">40 ש'</span></div>
+    <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px"><span><b>3 · מצפן ומוסר</b> — חוק, חברה ונבואה: מהגנת השכיר לתלוש השכר</span><span class="tag tea">50 ש'</span></div>
+    <div style="background:var(--soft-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px"><span><b>4 · תנ"ך מחוץ לספר</b> — שיבת ציון, תהלים וסיורי שטח</span><span class="tag tea">40 ש'</span></div>
+    <div style="background:var(--blue-bg);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px"><span><b>5 · השיא: חוקרים ויוצרים</b> — מטלת גמר ובחינת גמר</span><span class="tag cyn">40 ש'</span></div>
+  </div>
+  <p style="font-size:.82rem;color:var(--text2);margin-top:10px">חברותא דיגיטלית, מציאות רבודה לשחזור נוף מקראי, ודיבייט על חוק מקראי מול חוק ישראלי מודרני — הטקסט העתיק פוגש את הכלים של היום.</p>
+</div>
+
+<div class="notice rv" style="margin:24px var(--px) 48px;border-inline-start:4px solid var(--teal)" data-track="both">
+  <b style="color:#087565">סטטוס:</b> תוכנית הלימודים היא טיוטה לאישור הפיקוח (יולי 2026). מבנה שאלון בחינת הגמר העדכני באימות — הנוסח המחייב הוא זה שיאושר על ידי הפיקוח.
+</div>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>תנ"ך · עודכן 25.8.2026</span></div></div>
+
+<script src="site.js"></script>
+<script>
+document.querySelectorAll('.trackpills .pill').forEach(p=>p.addEventListener('click',()=>{
+  document.querySelectorAll('.trackpills .pill').forEach(x=>x.classList.remove('on'));
+  p.classList.add('on');
+  const t=p.dataset.track;
+  document.querySelectorAll('[data-track]').forEach(el=>{
+    el.style.display=(t==='all'||el.dataset.track===t||el.dataset.track==='both')?'':'none';
+  });
+}));
+</script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>

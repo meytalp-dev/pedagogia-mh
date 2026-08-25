@@ -14,210 +14,74 @@
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:        oklch(27% 0.06 268);
-    --ink-soft:   oklch(46% 0.035 262);
-    --navy:       oklch(38% 0.115 268);
-    --navy-deep:  oklch(30% 0.10 268);
-    --royal:      oklch(54% 0.165 262);
-    --sky:        oklch(76% 0.085 250);
-    --sky-tint:   oklch(95.5% 0.017 250);
-    --bg:         oklch(97.6% 0.006 255);
-    --surface:    oklch(99.2% 0.003 255);
-    --line:       oklch(89% 0.014 255);
-    --line-soft:  oklch(93% 0.010 255);
-    --amber-ink:  oklch(52% 0.10 80);
-    --amber-bg:   oklch(96% 0.03 90);
-    --red:        oklch(50% 0.17 25);
-    --ease:cubic-bezier(.16,1,.3,1);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth; scroll-padding-top:76px}
-  body{
-    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
-    line-height:1.7; overflow-x:clip;
-  }
-  h1,h2,h3,h4{font-family:'Frank Ruhl Libre',serif; line-height:1.14; letter-spacing:-.01em}
-  a{color:inherit}
-  img{max-width:100%}
-  p+p{margin-top:.85em}
-  strong{font-weight:700}
-  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
-  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
-  .article{max-width:860px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
-
-  a.lk{color:var(--royal); text-decoration:none; font-weight:600; border-bottom:1.5px solid var(--sky); transition:.2s}
-  a.lk:hover{background:var(--sky-tint); border-bottom-color:var(--royal)}
-  a.lk::after{content:"↗"; font-size:.7em; margin-inline-start:3px; color:var(--sky)}
-
-  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
-  .rv.in{opacity:1; transform:none}
-
-  /* ---------- top bar ---------- */
-  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
-  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
-  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
-  .top-in img{height:50px; width:auto}
-  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
-  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
-  nav.jump{margin-inline-start:auto; display:flex; gap:22px}
-  nav.jump a{
-    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
-    position:relative; padding:6px 2px; transition:color .25s;
-  }
-  nav.jump a::after{
-    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
-    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
-  }
-  nav.jump a:hover{color:var(--navy)}
-  nav.jump a:hover::after{transform:scaleX(1)}
-  @media(max-width:700px){nav.jump{display:none}}
-
-  /* ---------- hero ---------- */
-  .hero{position:relative; padding:clamp(44px,7vh,76px) 0 clamp(30px,4vh,44px); border-bottom:1px solid var(--line)}
-  .kicker{
-    display:inline-flex; align-items:center; gap:12px;
-    color:var(--royal); font-weight:700; font-size:15px;
-  }
-  .kicker::before{
-    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
-    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
-  }
-  @keyframes draw{to{transform:scaleX(1)}}
-  .hero h1{
-    font-size:clamp(32px,5vw,56px); font-weight:900; color:var(--navy-deep);
-    margin:14px 0 14px; max-width:22ch; text-wrap:balance;
-  }
-  .hero p.lead{font-size:clamp(16px,1.5vw,18.5px); color:var(--ink-soft); max-width:58ch}
-  .hero .meta-row{display:flex; flex-wrap:wrap; gap:12px 22px; margin-top:22px; align-items:center; font-size:14px; color:var(--ink-soft)}
-  .hero .meta-row .src a{color:var(--royal); font-weight:700}
-  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
-  .hero-stagger > *:nth-child(1){animation-delay:.05s}
-  .hero-stagger > *:nth-child(2){animation-delay:.14s}
-  .hero-stagger > *:nth-child(3){animation-delay:.22s}
-  .hero-stagger > *:nth-child(4){animation-delay:.3s}
-  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
-
-  /* ---------- article body ---------- */
-  .body-sec{padding:clamp(36px,6vh,60px) 0 clamp(28px,4vh,44px)}
-  h2.sub-sec{
-    font-size:clamp(22px,2.8vw,29px); font-weight:900; color:var(--navy-deep);
-    margin:clamp(34px,5vw,48px) 0 10px; padding-top:24px; border-top:1px solid var(--line);
-    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
-  }
-  h2.sub-sec::before{content:""; width:34px; height:8px; background:var(--royal); flex:0 0 auto; transform:translateY(-4px); border-radius:2px; box-shadow:40px 0 0 -3px var(--sky)}
-  h2.sub-sec.first{border-top:none; padding-top:0; margin-top:0}
-  h3.mini{
-    font-size:18.5px; font-weight:700; color:var(--navy); margin:24px 0 8px;
-    display:flex; align-items:center; gap:12px; font-family:'Frank Ruhl Libre',serif;
-  }
-  h3.mini::after{content:""; flex:1; height:1px; background:var(--line); max-width:170px}
-  .lead-p{font-size:17px; color:var(--ink-soft)}
-
-  ol.ed{list-style:none; counter-reset:ed; margin:16px 0}
-  ol.ed>li{
-    counter-increment:ed; position:relative;
-    padding:10px 54px 10px 0; border-bottom:1px solid var(--line-soft);
-  }
-  ol.ed>li:last-child{border-bottom:none}
-  ol.ed>li::before{
-    content:counter(ed,decimal-leading-zero); position:absolute; right:0; top:8px;
-    font-family:'Karantina',serif; font-weight:700; font-size:26px; line-height:1.2; color:var(--royal);
-    width:40px;
-  }
-  ul.ed{list-style:none; margin:14px 0}
-  ul.ed>li{position:relative; padding:7px 26px 7px 0}
-  ul.ed>li::before{content:""; position:absolute; right:2px; top:18px; width:12px; height:2.5px; border-radius:2px; background:var(--royal)}
-  ul.ed.tight>li{padding-top:4px; padding-bottom:4px}
-
-  .callout{
-    margin:26px 0; padding:20px 26px;
-    background:var(--surface); border:1px solid var(--line); border-inline-start:4px solid var(--royal);
-    border-radius:0 14px 14px 0; box-shadow:0 14px 34px -26px oklch(30% 0.1 268 / .4);
-    font-size:16px;
-  }
-  .callout.amber{border-inline-start-color:var(--amber-ink); background:var(--amber-bg)}
-  .callout.red{border-inline-start-color:var(--red)}
-  .callout .ttl{font-family:'Frank Ruhl Libre',serif; font-weight:700; display:block; margin-bottom:6px; font-size:18px; color:var(--navy-deep)}
-
-  .tbl-scroll{overflow-x:auto; margin:18px 0}
-  table.doc{
-    width:100%; border-collapse:collapse; font-size:15px; background:var(--surface);
-    border:1px solid var(--line); border-top:3px solid var(--navy);
-    min-width:540px; box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
-  }
-  table.doc caption{
-    caption-side:top; text-align:right; font-family:'Frank Ruhl Libre',serif; font-weight:900;
-    font-size:19px; padding:0 2px 10px; color:var(--navy-deep);
-  }
-  table.doc caption::after{content:""; display:block; width:52px; height:3px; background:var(--royal); border-radius:2px; margin-top:6px}
-  table.doc th{
-    font-weight:700; font-size:13px; letter-spacing:.08em; color:oklch(90% 0.03 255);
-    background:var(--navy); padding:10px 16px; text-align:right;
-  }
-  table.doc td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
-  table.doc tr:last-child td{border-bottom:none}
-  table.doc td.k{
-    font-weight:700; background:var(--sky-tint); border-inline-start:1px solid var(--line-soft);
-    font-family:'Frank Ruhl Libre',serif; font-size:15.5px; color:var(--navy-deep);
-  }
-  table.doc tr:nth-child(even) td:not(.k){background:oklch(98.6% 0.005 255)}
-
-  /* ---------- source box ---------- */
-  .source-box{
-    margin:clamp(36px,6vh,56px) 0 0; padding:22px 26px;
-    background:var(--sky-tint); border:1px solid var(--line); border-radius:16px;
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-  }
-  .source-box .t{font-weight:700; color:var(--navy-deep)}
-  .source-box .t small{display:block; font-weight:400; font-size:13.5px; color:var(--ink-soft)}
-  .source-box a.btn{
-    margin-inline-start:auto;
-    display:inline-flex; align-items:center; gap:10px; text-decoration:none;
-    font-weight:700; font-size:15px; padding:11px 24px; border-radius:999px;
-    background:var(--navy); color:oklch(98% 0.005 255);
-    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s;
-  }
-  .source-box a.btn:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 12px 28px oklch(38% 0.115 268 / .3)}
-
-  /* ---------- footer ---------- */
-  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:clamp(40px,6vh,64px)}
-  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
-  .foot-in img{height:42px}
-  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
-  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
-
-  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
-  .ogenw-launcher svg{transform:scale(1.28)}
-  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
-  .ogenw-panel{bottom:118px !important}
-
-  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
-    .rv{opacity:1; transform:none}
-  }
-  @media print{
-    header.top{display:none}
-    .rv{opacity:1; transform:none}
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 </head>
 <body>
 
-<header class="top" id="topbar">
-  <div class="wrap top-in">
-    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
-    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
-    <nav class="jump" aria-label="ניווט">
-      <a href="tashpaz.html">היערכות תשפ״ז</a>
-      <a href="drive-menahalim.html">דרייב מנהלים</a>
-      <a href="index.html">לעמוד הראשי</a>
-    </nav>
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">04</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">05</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחבים ומדורים</div>
+    <a href="counseling.html">מרחב ייעוצי</a>
+    <a href="procedures.html">נהלים</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html">מרחב פיקוח</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
   </div>
-</header>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="dis">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a class="dis">למידה בחירום</a>
+      <a class="dis">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <a class="lnk" href="counseling.html">מרחב ייעוצי</a>
+  <a class="lnk active" href="procedures.html">נהלים</a>
+  <a class="lnk dis">מסמכים חשובים</a>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <a class="lnk" href="supervision.html">מרחב פיקוח</a>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -287,22 +151,10 @@
   </div>
 </article>
 
-<footer>
-  <div class="wrap foot-in">
-    <img src="logo.png" alt="">
-    <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
-    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
-  </div>
-</footer>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>המרכז הפדגוגי</span></div></div>
 
-<script>
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, {threshold:.12});
-  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
-  var bar = document.getElementById('topbar');
-  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
-</script>
+<script src="site.js"></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 </body>
 </html>

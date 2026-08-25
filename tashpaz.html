@@ -14,444 +14,75 @@
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:        oklch(27% 0.06 268);
-    --ink-soft:   oklch(46% 0.035 262);
-    --navy:       oklch(38% 0.115 268);
-    --navy-deep:  oklch(30% 0.10 268);
-    --royal:      oklch(54% 0.165 262);
-    --sky:        oklch(76% 0.085 250);
-    --sky-tint:   oklch(95.5% 0.017 250);
-    --bg:         oklch(97.6% 0.006 255);
-    --surface:    oklch(99.2% 0.003 255);
-    --line:       oklch(89% 0.014 255);
-    --line-soft:  oklch(93% 0.010 255);
-    --amber-ink:  oklch(52% 0.10 80);
-    --amber-bg:   oklch(96% 0.03 90);
-    --red:        oklch(50% 0.17 25);
-    --ease:cubic-bezier(.16,1,.3,1);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth; scroll-padding-top:76px}
-  body{
-    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
-    line-height:1.7; overflow-x:clip;
-  }
-  h1,h2,h3,h4{font-family:'Frank Ruhl Libre',serif; line-height:1.14; letter-spacing:-.01em}
-  a{color:inherit}
-  img{max-width:100%}
-  p+p{margin-top:.85em}
-  strong{font-weight:700}
-  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
-  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
-  .narrow{max-width:780px}
-
-  a.lk{color:var(--royal); text-decoration:none; font-weight:600; border-bottom:1.5px solid var(--sky); transition:.2s}
-  a.lk:hover{background:var(--sky-tint); border-bottom-color:var(--royal)}
-  a.lk::after{content:"↗"; font-size:.7em; margin-inline-start:3px; color:var(--sky)}
-
-  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
-  .rv.in{opacity:1; transform:none}
-
-  /* ---------- top bar ---------- */
-  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
-  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
-  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
-  .top-in img{height:50px; width:auto}
-  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
-  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
-  nav.jump{margin-inline-start:auto; display:flex; gap:22px; align-items:center}
-  nav.jump a{
-    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
-    position:relative; padding:6px 2px; transition:color .25s;
-  }
-  nav.jump a::after{
-    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
-    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
-  }
-  nav.jump a:hover{color:var(--navy)}
-  nav.jump a:hover::after{transform:scaleX(1)}
-  .nav-meter{display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:700; color:var(--ink-soft); white-space:nowrap}
-  .nav-meter .bar{width:64px; height:4px; background:var(--line); border-radius:99px; overflow:hidden}
-  .nav-meter .bar i{display:block; height:100%; width:0; background:var(--royal); border-radius:99px; transition:width .5s var(--ease)}
-  .nav-meter b{font-family:'Karantina',serif; font-weight:700; font-size:19px; color:var(--royal); min-width:3ch}
-  @media(max-width:900px){nav.jump a{display:none}}
-
-  /* ---------- hero ---------- */
-  .hero{position:relative; padding:clamp(52px,9vh,96px) 0 clamp(38px,6vh,64px); border-bottom:1px solid var(--line)}
-  .kicker{
-    display:inline-flex; align-items:center; gap:12px;
-    color:var(--royal); font-weight:700; font-size:15px;
-  }
-  .kicker::before{
-    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
-    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
-  }
-  @keyframes draw{to{transform:scaleX(1)}}
-  .hero h1{
-    font-size:clamp(40px,6.6vw,80px); font-weight:900; color:var(--navy-deep);
-    margin:16px 0 10px; max-width:16ch;
-  }
-  .hero h1 .accent{color:var(--royal)}
-  .hero .subtitle{font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:clamp(19px,2.2vw,26px); color:var(--ink-soft); margin-bottom:18px}
-  .hero p.lead{font-size:clamp(16.5px,1.6vw,19.5px); color:var(--ink-soft); max-width:56ch}
-  .hero .cta-row{display:flex; flex-wrap:wrap; gap:14px; margin-top:30px; align-items:center}
-  .btn{
-    display:inline-flex; align-items:center; gap:10px; text-decoration:none; cursor:pointer;
-    font-family:inherit; font-weight:700; font-size:16.5px; padding:14px 30px; border-radius:999px;
-    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s, color .25s, border-color .25s;
-  }
-  .btn:active{transform:scale(.97)}
-  .btn .arr{transition:transform .3s var(--ease)}
-  .btn:hover .arr{transform:translateX(-5px)}
-  .btn.solid{background:var(--navy); color:oklch(98% 0.005 255); border:1.5px solid var(--navy); box-shadow:0 10px 26px oklch(38% 0.115 268 / .28)}
-  .btn.solid:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 16px 36px oklch(38% 0.115 268 / .36)}
-  .btn.ghost{border:1.5px solid var(--line); background:var(--surface); color:var(--navy)}
-  .btn.ghost:hover{border-color:var(--royal); color:var(--royal); transform:translateY(-2px)}
-  .src-note{font-size:13.5px; color:var(--ink-soft)}
-  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
-  .hero-stagger > *:nth-child(1){animation-delay:.05s}
-  .hero-stagger > *:nth-child(2){animation-delay:.14s}
-  .hero-stagger > *:nth-child(3){animation-delay:.22s}
-  .hero-stagger > *:nth-child(4){animation-delay:.3s}
-  .hero-stagger > *:nth-child(5){animation-delay:.4s}
-  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
-
-  /* ---------- TOC ---------- */
-  .toc{padding:clamp(36px,6vh,60px) 0; border-bottom:1px solid var(--line)}
-  .toc h2{font-size:15px; font-family:'Assistant',sans-serif; font-weight:700; letter-spacing:.28em; color:var(--ink-soft); margin-bottom:22px}
-  .toc-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(28px,5vw,72px)}
-  @media(max-width:760px){.toc-grid{grid-template-columns:1fr}}
-  .lrow{
-    display:flex; align-items:baseline; gap:16px; padding:13px 4px; border-bottom:1px solid var(--line-soft);
-    text-decoration:none; position:relative;
-  }
-  .lrow .ln{font-family:'Karantina',serif; font-weight:700; font-size:24px; color:oklch(76% 0.05 255); min-width:32px; transition:color .3s}
-  .lrow:hover .ln{color:var(--royal)}
-  .lrow .lt{font-weight:700; font-size:16.5px; color:var(--navy-deep); position:relative}
-  .lrow .lt::after{
-    content:""; position:absolute; inset-inline:0; bottom:-3px; height:2px; background:var(--royal);
-    transform:scaleX(0); transform-origin:right; transition:transform .4s var(--ease);
-  }
-  .lrow:hover .lt::after{transform:scaleX(1)}
-
-  /* ---------- sections ---------- */
-  .sec{padding:clamp(52px,8vh,88px) 0 clamp(20px,3vh,30px); position:relative}
-  .sec-head{display:flex; align-items:flex-end; gap:22px; margin-bottom:clamp(24px,3.5vw,36px); position:relative}
-  .sec-head .ghost{
-    font-family:'Karantina',serif; font-weight:700; font-size:clamp(84px,11vw,150px); line-height:.72;
-    color:transparent; -webkit-text-stroke:1.5px oklch(80% 0.05 255); user-select:none; flex-shrink:0;
-  }
-  .sec-head .th{min-width:0}
-  .sec-head .over{font-size:14px; font-weight:700; letter-spacing:.18em; color:var(--royal); margin-bottom:6px}
-  .sec-head h2{font-size:clamp(28px,4vw,42px); font-weight:900; color:var(--navy-deep); text-wrap:balance}
-  .sec-head p.sub{font-size:15px; color:var(--ink-soft); max-width:58ch; margin-top:8px}
-
-  h3.sub-sec{
-    font-size:clamp(21px,2.6vw,27px); font-weight:900; color:var(--navy-deep);
-    margin:clamp(38px,5vw,52px) 0 10px; padding-top:26px; border-top:1px solid var(--line);
-    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
-  }
-  h3.sub-sec::before{content:""; width:34px; height:8px; background:var(--royal); flex:0 0 auto; transform:translateY(-4px); border-radius:2px; box-shadow:40px 0 0 -3px var(--sky)}
-  h3.sub-sec.first{border-top:none; padding-top:0}
-  h4.mini{
-    font-size:18.5px; font-weight:700; color:var(--navy); margin:26px 0 8px;
-    display:flex; align-items:center; gap:12px;
-  }
-  h4.mini::after{content:""; flex:1; height:1px; background:var(--line); max-width:170px}
-  .lead-p{font-size:17.5px; color:var(--ink-soft)}
-  .tag-soon{
-    font-size:12.5px; font-weight:700; color:var(--amber-ink); background:var(--amber-bg);
-    border:1px solid oklch(88% 0.05 90); padding:3px 12px; border-radius:999px; white-space:nowrap;
-  }
-
-  /* ---------- lists ---------- */
-  ol.ed{list-style:none; counter-reset:ed; margin:16px 0}
-  ol.ed>li{
-    counter-increment:ed; position:relative;
-    padding:10px 54px 10px 0; border-bottom:1px solid var(--line-soft);
-  }
-  ol.ed>li:last-child{border-bottom:none}
-  ol.ed>li::before{
-    content:counter(ed,decimal-leading-zero); position:absolute; right:0; top:8px;
-    font-family:'Karantina',serif; font-weight:700; font-size:26px; line-height:1.2; color:var(--royal);
-    width:40px;
-  }
-  ul.ed{list-style:none; margin:14px 0}
-  ul.ed>li{position:relative; padding:7px 26px 7px 0}
-  ul.ed>li::before{content:""; position:absolute; right:2px; top:18px; width:12px; height:2.5px; border-radius:2px; background:var(--royal)}
-  ul.ed.tight>li{padding-top:4px; padding-bottom:4px}
-
-  /* ---------- callout ---------- */
-  .callout{
-    margin:26px 0; padding:20px 26px;
-    background:var(--surface); border:1px solid var(--line); border-inline-start:4px solid var(--royal);
-    border-radius:0 14px 14px 0; box-shadow:0 14px 34px -26px oklch(30% 0.1 268 / .4);
-    font-size:16px;
-  }
-  .callout.amber{border-inline-start-color:var(--amber-ink); background:var(--amber-bg)}
-  .callout.red{border-inline-start-color:var(--red)}
-  .callout .ttl{font-family:'Frank Ruhl Libre',serif; font-weight:700; display:block; margin-bottom:6px; font-size:18px; color:var(--navy-deep)}
-
-  /* ---------- tables ---------- */
-  .tbl-scroll{overflow-x:auto; margin:18px 0}
-  table.doc{
-    width:100%; border-collapse:collapse; font-size:15px; background:var(--surface);
-    border:1px solid var(--line); border-top:3px solid var(--navy);
-    min-width:540px; box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
-    border-radius:0 0 12px 12px; overflow:hidden;
-  }
-  table.doc caption{
-    caption-side:top; text-align:right; font-family:'Frank Ruhl Libre',serif; font-weight:900;
-    font-size:19px; padding:0 2px 10px; color:var(--navy-deep);
-  }
-  table.doc caption::after{content:""; display:block; width:52px; height:3px; background:var(--royal); border-radius:2px; margin-top:6px}
-  table.doc th{
-    font-weight:700; font-size:13px; letter-spacing:.08em; color:oklch(90% 0.03 255);
-    background:var(--navy); padding:10px 16px; text-align:right;
-  }
-  table.doc td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
-  table.doc tr:last-child td{border-bottom:none}
-  table.doc td.k{
-    font-weight:700; background:var(--sky-tint); border-inline-start:1px solid var(--line-soft);
-    font-family:'Frank Ruhl Libre',serif; font-size:15.5px; color:var(--navy-deep);
-  }
-  table.doc tr:nth-child(even) td:not(.k){background:oklch(98.6% 0.005 255)}
-
-  /* ---------- journey planner ---------- */
-  .planner{border-top:2px solid var(--navy); margin-top:8px}
-  .p-row{
-    display:grid; grid-template-columns:220px 1fr; gap:30px;
-    padding:28px 6px; border-bottom:1px solid var(--line);
-    transition:background .25s;
-  }
-  .p-row:hover{background:var(--surface)}
-  .p-month{position:relative; padding-inline-start:2px}
-  .p-month .m{font-family:'Frank Ruhl Libre',serif; font-weight:900; font-size:24px; line-height:1.2; color:var(--navy-deep)}
-  .p-month .g{font-size:14px; color:var(--ink-soft); margin-top:3px}
-  .p-month .lbl{
-    display:inline-block; margin-top:12px; font-size:12.5px; font-weight:700; letter-spacing:.1em;
-    color:var(--royal); border:1.5px solid var(--sky); background:var(--sky-tint); padding:2px 12px; border-radius:999px;
-  }
-  .p-month::after{
-    content:""; position:absolute; top:8px; bottom:2px; inset-inline-end:-15px; width:1.5px;
-    background:linear-gradient(var(--sky), transparent);
-  }
-  .p-items{list-style:none}
-  .p-items li{
-    position:relative; padding:7px 24px 7px 0; font-size:15.5px;
-    border-bottom:1px solid var(--line-soft);
-  }
-  .p-items li:last-child{border-bottom:none}
-  .p-items li::before{content:""; position:absolute; right:2px; top:18px; width:10px; height:2.5px; border-radius:2px; background:var(--royal)}
-  .p-items li.deadline::before{
-    content:"◆"; width:auto; height:auto; background:none; top:7px; right:0;
-    color:var(--red); font-size:.62rem;
-  }
-  .p-items li.deadline{font-weight:600}
-  .p-items .when{color:var(--red); font-weight:700; font-size:14px}
-  .legend-line{display:flex; gap:26px; flex-wrap:wrap; font-size:14px; color:var(--ink-soft); margin:14px 0 0}
-  .legend-line span b{color:var(--red)}
-  @media (max-width:640px){
-    .p-row{grid-template-columns:1fr; gap:10px; padding:22px 0}
-    .p-month::after{display:none}
-  }
-
-  /* ---------- readiness meter ---------- */
-  .meter-head{
-    display:flex; align-items:center; gap:30px; flex-wrap:wrap;
-    background:var(--navy-deep); color:oklch(96% 0.01 255);
-    padding:28px 32px; margin:22px 0 30px; border-radius:20px;
-    position:relative; overflow:clip;
-    box-shadow:0 26px 60px -34px oklch(25% 0.09 268 / .8);
-  }
-  .meter-head::before{
-    content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
-    background:
-      radial-gradient(520px 300px at 12% 120%, oklch(54% 0.165 262 / .38), transparent 65%),
-      radial-gradient(420px 280px at 92% -20%, oklch(76% 0.085 250 / .24), transparent 60%);
-  }
-  .meter-head>*{position:relative}
-  .meter-head .pct{
-    font-family:'Karantina',serif; font-weight:700; font-size:64px; line-height:1; color:var(--sky);
-    min-width:3ch; text-align:center;
-  }
-  .meter-head .mid{flex:1; min-width:230px}
-  .meter-head .mid .t{font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:19px}
-  .meter-head .mbar{height:7px; background:oklch(100% 0 0 / .16); border-radius:99px; overflow:hidden; margin-top:12px}
-  .meter-head .mbar i{
-    display:block; height:100%; width:0; border-radius:99px;
-    background:linear-gradient(90deg, var(--royal), var(--sky));
-    transition:width .7s var(--ease);
-  }
-  .meter-head .cnt{font-size:14px; color:oklch(84% 0.03 255); margin-top:8px}
-  .meter-head .note{color:var(--sky); font-weight:600}
-  .btn-reset{
-    border:1.5px solid oklch(100% 0 0 / .3); background:transparent; color:oklch(90% 0.02 255);
-    font-family:inherit; font-weight:600; font-size:14px; border-radius:999px;
-    padding:9px 20px; cursor:pointer; transition:.2s;
-  }
-  .btn-reset:hover{background:oklch(100% 0 0 / .12); color:#fff}
-
-  .check-cols{columns:2; column-gap:26px}
-  @media (max-width:760px){.check-cols{columns:1}}
-  .check-block{
-    break-inside:avoid; background:var(--surface); border:1px solid var(--line); border-radius:16px;
-    margin-bottom:26px; overflow:hidden; box-shadow:0 14px 32px -26px oklch(30% 0.1 268 / .5);
-  }
-  .cb-head{
-    display:flex; justify-content:space-between; align-items:baseline; gap:10px;
-    padding:12px 20px 11px; background:var(--navy); color:oklch(97% 0.008 255);
-  }
-  .cb-head h4{font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:17px}
-  .cb-head .c{font-family:'Karantina',serif; font-weight:700; color:var(--sky); font-size:20px}
-  .check-block.done .cb-head{background:var(--royal)}
-  .check-block.done .cb-head .c::after{content:" ✓"}
-  label.ci{
-    display:flex; gap:13px; align-items:flex-start;
-    padding:10px 20px; cursor:pointer; font-size:14.5px; line-height:1.55;
-    border-bottom:1px solid var(--line-soft);
-    transition:background .15s;
-  }
-  label.ci:last-child{border-bottom:none}
-  label.ci:hover{background:var(--sky-tint)}
-  label.ci input{
-    appearance:none; flex:0 0 18px; width:18px; height:18px; margin-top:4px;
-    border:1.8px solid var(--ink-soft); border-radius:5px; background:var(--surface); cursor:pointer;
-    display:grid; place-content:center; transition:.15s;
-  }
-  label.ci input::before{
-    content:"✓"; font-size:12px; font-weight:900; color:oklch(98% 0.005 255); transform:scale(0); transition:.12s;
-  }
-  label.ci input:checked{border-color:var(--royal); background:var(--royal)}
-  label.ci input:checked::before{transform:scale(1)}
-  label.ci input:checked ~ span{color:var(--ink-soft)}
-
-  /* ---------- tik grid ---------- */
-  .tik-grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-    gap:1px; margin:20px 0; background:var(--line);
-    border:1px solid var(--line); border-top:3px solid var(--navy);
-    border-radius:0 0 14px 14px; overflow:hidden;
-    box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
-  }
-  .tik-item{
-    background:var(--surface); padding:13px 16px; font-size:14.5px; line-height:1.45;
-    display:flex; gap:12px; align-items:baseline; transition:background .15s;
-  }
-  .tik-item:hover{background:var(--sky-tint)}
-  .tik-item b{
-    font-family:'Karantina',serif; font-weight:700; color:var(--royal); font-size:21px;
-    min-width:1.6em;
-  }
-
-  /* ---------- work cycle ---------- */
-  .cycle{
-    counter-reset:cy; display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:12px; margin:22px 0;
-  }
-  .cy-step{
-    counter-increment:cy; position:relative;
-    background:var(--surface); border:1px solid var(--line); border-radius:14px;
-    padding:16px 14px 14px; font-size:14.5px; font-weight:600; line-height:1.4; color:var(--navy-deep);
-    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s;
-  }
-  .cy-step:hover{transform:translateY(-3px); border-color:var(--sky); box-shadow:0 14px 30px -18px oklch(30% 0.1 268 / .4)}
-  .cy-step::before{
-    content:"0" counter(cy); display:block;
-    font-family:'Karantina',serif; font-weight:700; font-size:30px; line-height:1; color:var(--royal); margin-bottom:6px;
-  }
-  .cycle-caption{font-size:14px; color:var(--ink-soft); margin-bottom:6px}
-
-  /* ---------- weights + basket ---------- */
-  .weights{margin:18px 0; max-width:600px}
-  .w-row{display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line-soft)}
-  .w-row .wl{font-size:15.5px}
-  .w-row .wn{font-family:'Karantina',serif; font-weight:700; font-size:28px; color:var(--navy-deep); min-width:3ch; text-align:left}
-  .w-row .track{grid-column:1/-1; height:9px; background:var(--sky-tint); border-radius:99px; overflow:hidden}
-  .w-row .track i{display:block; height:100%; border-radius:99px; background:var(--navy)}
-  .w-row:nth-child(2) .track i{background:var(--royal)}
-  .w-row:nth-child(3) .track i{background:var(--sky)}
-  .w-row:nth-child(4) .track i{background:oklch(70% 0.03 262)}
-
-  .basket{display:flex; gap:3px; margin:18px 0 8px; height:66px; border-radius:14px; overflow:hidden; box-shadow:0 16px 34px -24px oklch(30% 0.1 268 / .5)}
-  .basket .seg{
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
-    color:oklch(98% 0.005 255); font-size:13px; font-weight:600; line-height:1.25; text-align:center;
-    padding:4px;
-  }
-  .basket .seg b{font-family:'Karantina',serif; font-size:24px; font-weight:700}
-  .basket .s1{width:35%; background:var(--navy-deep)}
-  .basket .s2{width:25%; background:var(--navy)}
-  .basket .s3{width:20%; background:var(--royal)}
-  .basket .s4{width:20%; background:oklch(60% 0.09 258)}
-  .basket-caption{font-size:14px; color:var(--ink-soft)}
-
-  /* ---------- letter ---------- */
-  .letter .salut{font-family:'Frank Ruhl Libre',serif; font-weight:900; font-size:23px; color:var(--navy-deep); margin-bottom:14px}
-  .letter .body-first::first-letter{
-    font-family:'Frank Ruhl Libre',serif; font-weight:900; font-size:3.4em; float:right;
-    line-height:.82; padding:5px 0 0 14px; color:var(--royal);
-  }
-
-  /* ---------- closing ---------- */
-  .closing{
-    margin:clamp(48px,8vh,80px) auto 0; text-align:center; max-width:39em;
-    padding:clamp(40px,6vh,56px) 20px 0; border-top:1px solid var(--line); position:relative;
-  }
-  .closing::before{
-    content:"✦"; position:absolute; top:-13px; left:50%; transform:translateX(-50%);
-    color:var(--royal); background:var(--bg); padding:0 16px; font-size:15px;
-  }
-  .closing .q{
-    font-family:'Frank Ruhl Libre',serif; font-weight:900; font-size:clamp(23px,3.6vw,32px);
-    color:var(--navy-deep); line-height:1.5;
-  }
-  .closing .who{color:var(--royal); font-weight:700; font-size:14.5px; margin-top:10px; letter-spacing:.08em}
-  .signature{margin-top:26px; font-family:'Frank Ruhl Libre',serif}
-  .signature b{font-size:20px; font-weight:900; display:block; color:var(--navy-deep)}
-  .signature span{display:block; color:var(--ink-soft); font-size:15px; font-family:'Assistant',sans-serif}
-
-  /* ---------- footer ---------- */
-  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:clamp(40px,6vh,64px)}
-  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
-  .foot-in img{height:42px}
-  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
-  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
-
-  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
-  .ogenw-launcher svg{transform:scale(1.28)}
-  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
-  .ogenw-panel{bottom:118px !important}
-
-  a:focus-visible, button:focus-visible, input:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
-    .rv{opacity:1; transform:none}
-  }
-  @media print{
-    header.top,.btn-reset,.cta-row{display:none}
-    .rv{opacity:1; transform:none}
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 </head>
 <body>
 
-<header class="top" id="topbar">
-  <div class="wrap top-in">
-    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
-    <div class="brand-txt">היערכות תשפ״ז<small>המרכז הפדגוגי · מינהל הכשרה מקצועית</small></div>
-    <nav class="jump" aria-label="ניווט מהיר">
-      <a href="#journey">המסע בשנה</a>
-      <a href="#meter">מד המוכנות</a>
-      <a href="#ch1">הפרקים</a>
-      <a href="index.html">לעמוד הראשי</a>
-      <span class="nav-meter" title="מוכנות בית הספר"><span class="bar"><i id="navBarFill"></i></span><b id="navPct">0%</b></span>
-    </nav>
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">04</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">05</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחבים ומדורים</div>
+    <a href="counseling.html">מרחב ייעוצי</a>
+    <a href="procedures.html">נהלים</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html">מרחב פיקוח</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
   </div>
-</header>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="dis">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a class="dis">למידה בחירום</a>
+      <a class="dis">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <a class="lnk" href="counseling.html">מרחב ייעוצי</a>
+  <a class="lnk" href="procedures.html">נהלים</a>
+  <a class="lnk dis">מסמכים חשובים</a>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <a class="lnk" href="supervision.html">מרחב פיקוח</a>
+  <div class="tools">
+    <span class="nav-meter" title="מוכנות בית הספר"><span class="bar"><i id="navBarFill"></i></span><b id="navPct">0%</b></span>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
 
 <section class="hero">
   <div class="wrap hero-stagger">
@@ -462,7 +93,7 @@
     <div class="cta-row">
       <a class="btn solid" href="#meter">מד המוכנות האישי <span class="arr">←</span></a>
       <a class="btn ghost" href="#journey">המסע בשנה</a>
-      <span class="src-note">המקור: <a class="lk" href="https://drive.google.com/file/d/15IyOMOodbuTswQmtGZYyoVsAR4OS6bSV/view" target="_blank" rel="noopener">מסמך ההיערכות בדרייב</a></span>
+      <span class="src-note">המקור: <a class="lk" href="https://drive.google.com/file/d/15IyOMOodbuTswQmtGZYyoVsAR4OS6bSV/view" target="_blank" rel="noopener">מסמך ההיערכות בדרייב</a> · <a class="lk" href="docs/heerchut-tashpaz.pdf" download>הורדת PDF</a></span>
     </div>
   </div>
 </section>
@@ -520,7 +151,7 @@
         <li>הגשת תוכנית ללמידה מרחוק/היברידית, תיק צל"ח מעודכן ופגישת צוות צל"ח</li>
         <li>הקמת צוותים בין־מקצועיים וישיבות התנעה, כולל כתיבת תוכניות עבודה שנתיות בנושאים: הגברת נוכחות ומניעת נשירה (קידום מחוללי חוסן נעורים), אקלים חינוכי מיטבי, הכלה ושילוב תלמידים, צוות צל"ח</li>
         <li>העברת שאלוני איתור מצוקה והגברת נוכחות (ה"ן)</li>
-        <li class="deadline">גריעת תלמידים שלא התחילו את השנה — <span class="when">עד 20.9</span>, בהתאם <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/12xrweERQCaXeePyOZM1sqKYSDJPCEiY4/view">להנחיות</a></li>
+        <li class="deadline">גריעת תלמידים שלא התחילו את השנה — <span class="when">עד 20.9</span>, בהתאם <a class="lk" href="klita-miyun.html">להנחיות</a></li>
         <li class="deadline">ועדה מלווה — מפגש תחילת שנה: <span class="when">לקיים עד דצמבר</span></li>
       </ul>
     </div>
@@ -803,7 +434,7 @@
   <p><a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1EYy0grXrfIArYmlv1OSvpLbiIvHmiOIs">מענים ללמידה מרחוק — אגרת כלים למענה פדגוגי ורגשי מיטבי</a></p>
 
   <h3 class="sub-sec rv" id="persistence">התמדה ומניעת נשירה</h3>
-  <p>התמדה וביקור סדיר מהווים תשתית חינוכית קריטית. <strong>בתי הספר מחויבים לעבוד על פי <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1IVhADxZTGfPr_Pe0ryFgLNrKMbGgPFRK/view">ההנחיות לדיווח וטיפול בבעיות ביקור סדיר ומניעת נשירה</a>.</strong></p>
+  <p>התמדה וביקור סדיר מהווים תשתית חינוכית קריטית. <strong>בתי הספר מחויבים לעבוד על פי <a class="lk" href="bikur-sadir.html">ההנחיות לדיווח וטיפול בבעיות ביקור סדיר ומניעת נשירה</a>.</strong></p>
 
   <div class="tbl-scroll rv">
   <table class="doc">
@@ -812,10 +443,10 @@
     <tr><td class="k">הנחיות למניעת נשירה</td><td>עבודה סדורה על פי ההנחיות שפורסמו.</td></tr>
     <tr><td class="k">צוות בין־מקצועי למניעת נשירה</td><td>הקמת צוות בין־מקצועי לעידוד התמדה ומניעת נשירה, המתכנס לפחות שלוש פעמים בשנה: <strong>תחילת שנה</strong> — בניית תוכנית עבודה המבוססת על נתוני הנשירה משנה קודמת, נתוני המצוקה והאקלים; <strong>אמצע שנה</strong> — בקרה ודיוק תוכניות העבודה וההתערבויות האישיות; <strong>סוף שנה</strong> — הפקת לקחים והסקת מסקנות לקראת השנה הבאה. תוכנית העבודה תכלול צעדים לאיתור תלמידים בסכנת נשירה ובנשירה סמויה, מיפוי המענים והמשאבים העומדים לרשות ביה"ס, וצעדים לחיזוק הקשר עם ההורים ולתמיכה בהם. כלל המפגשים יתועדו, תוך הקפדה על חיסיון תלמידים (אין להעביר אבחונים וחוות דעת פסיכולוגיות ופסיכיאטריות).</td></tr>
     <tr><td class="k">דיווח נוכחות</td><td>בכל שיעור יש לדווח נוכחות במערכת הממוחשבת.</td></tr>
-    <tr><td class="k">דו"ח תלמידים בסכנת נשירה</td><td><strong>אחת לחודש</strong> — באחריות המנהל להכין טופס מעקב ולהעבירו במייל למפקחת המערך הטיפולי, למפקח ביה"ס ולמחוז (<a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1X2lWmpbzOQ4F-aYxiAwRMlApO8FKR05R/edit">טופס דיווח חודשי</a>).</td></tr>
-    <tr><td class="k">גריעת תלמיד/ה ממצבת התלמידים</td><td>יש לפעול על פי ההנחיות ולעדכן באופן מיידי במייל את מפקח ביה"ס והמפקחת על המערך הטיפולי. בעדכון יש לציין את שם התלמיד, הכיתה וסיבת הגריעה (<a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1hqRte7yAPZi-vZCbRahOpesr6ZU5OOGK/edit">מכתב סיום לימודים</a>).</td></tr>
+    <tr><td class="k">דו"ח תלמידים בסכנת נשירה</td><td><strong>אחת לחודש</strong> — באחריות המנהל להכין טופס מעקב ולהעבירו במייל למפקחת המערך הטיפולי, למפקח ביה"ס ולמחוז (<a class="lk" href="tofes-divuach-chodshi.html">טופס דיווח חודשי</a>).</td></tr>
+    <tr><td class="k">גריעת תלמיד/ה ממצבת התלמידים</td><td>יש לפעול על פי ההנחיות ולעדכן באופן מיידי במייל את מפקח ביה"ס והמפקחת על המערך הטיפולי. בעדכון יש לציין את שם התלמיד, הכיתה וסיבת הגריעה (<a class="lk" href="michtav-sium-limudim.html">מכתב סיום לימודים</a>).</td></tr>
     <tr><td class="k">ועדות התמדה</td><td>שלוש פעמים בשנה (בתיאום מראש).</td></tr>
-    <tr><td class="k">דיווח לקב"ס</td><td>יש לעמוד בקשר רציף עם הקב"ס על כלל התלמידים עם בעיות התנהגות, התמדה ונוכחות שאינה סדירה (<a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1CHHuL4BZ-o1mO9AzOFNUz2BNE5fvU0b_/edit">מכתב הודעה לקב"ס</a>).</td></tr>
+    <tr><td class="k">דיווח לקב"ס</td><td>יש לעמוד בקשר רציף עם הקב"ס על כלל התלמידים עם בעיות התנהגות, התמדה ונוכחות שאינה סדירה (<a class="lk" href="michtav-kabas.html">מכתב הודעה לקב"ס</a>).</td></tr>
     <tr><td class="k">ועדה מלווה</td><td>פעמיים בשנה — הצגת נתונים על התמדה, נשירה, מסקנות ותוכנית פעולה.</td></tr>
   </table>
   </div>
@@ -1022,7 +653,7 @@
     <tr><td class="k">מצפן פדגוגי</td><td><a class="lk" target="_blank" rel="noopener" href="https://meytalp-dev.github.io/hopa-nihul/docs/mazpen-pedagogi.pdf">אגרת פדגוגית ללמידה משמעותית — מיומנויות רלוונטיות ויישום</a></td></tr>
     <tr><td class="k">ועדה מלווה</td><td>ועדה מקצועית שתלווה את ביה"ס פעמיים בשנה. <a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות ועדה מלווה</a> · <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1mGiiKKrhSmaFUMbJsMK6tK4zEw2N_MC9">מכתבי הכנה ומצגות ועדה מלווה</a></td></tr>
     <tr><td class="k">סל תוכניות</td><td>סל תקציבי גמיש המיועד לחיזוק ההיבטים המקצועיים, הערכיים, החברתיים והאישיים של התלמידים, באמצעות פעילויות המקדמות חניכות, פדגוגיה חדשנית, חוסן אישי, מניעת נשירה, שייכות ומעורבות קהילתית. התקציב מאפשר לבית הספר להתאים מענים לצרכיו ולקדם את מטרותיו החינוכיות בהתאם לתפיסת החינוך היוצר והפדגוגיה הדואלית (<a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1x_qt-ezw-JqX5WLkzVcSZzHhz5NkJbHr">מסמך סל תוכניות מעודכן</a>). ישנה גמישות בין הסעיפים באישור מפקח ביה"ס; לא ניתן להשתמש בתקציב זה לטובת שעות הוראה.</td></tr>
-    <tr><td class="k">מדידה והערכה — תחום פדגוגיה</td><td>1. <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1i9qZpkKX6Yerd1i3Ufo_NLS_oR5BApr0">שאלוני אקלים פדגוגיה צוות ותלמידים</a>. &nbsp;2. פגישת למידה עם המפקח: תוכנית פעולה מבוססת נתוני שאלוני אקלים ופדגוגיה — צוות ותלמידים (<a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1xu4maDy35LUQ2oT9wOw135JjYNr3w61G/edit">מכתב מקדים לפגישה</a>). &nbsp;3. <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1uXnaFQB4T3rIEedznWD9SYf7FD8iVHf2">מאגר מענים לפדגוגיה מיטיבה</a> בעקבות תוצאות השאלונים.</td></tr>
+    <tr><td class="k">מדידה והערכה — תחום פדגוגיה</td><td>1. <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1i9qZpkKX6Yerd1i3Ufo_NLS_oR5BApr0">שאלוני אקלים פדגוגיה צוות ותלמידים</a>. &nbsp;2. פגישת למידה עם המפקח: תוכנית פעולה מבוססת נתוני שאלוני אקלים ופדגוגיה — צוות ותלמידים (<a class="lk" href="michtav-aklim.html">מכתב מקדים לפגישה</a>). &nbsp;3. <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1uXnaFQB4T3rIEedznWD9SYf7FD8iVHf2">מאגר מענים לפדגוגיה מיטיבה</a> בעקבות תוצאות השאלונים.</td></tr>
     <tr><td class="k">עידוד הרחבת השכלה לעובדי הוראה</td><td>עידוד השכלה גבוהה ותעודות הוראה — <a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/service/grant-teaching-staff-vocational-schools">בקשת מענק באתר משרד העבודה</a>, מתעדכן בכל שנה.</td></tr>
     <tr><td class="k">עידוד משלחות לפולין</td><td>הנחיות אישור מלגות יפורסמו במהלך חודש ינואר.</td></tr>
     <tr><td class="k">עזרים ומשאבים טכנולוגיים</td><td>חינוך יוצר: <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/">אתר החינוך היוצר</a>, בוט <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/chatbot/">beLLAi</a> — בינה יוצרת · <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1Gn9B2r0MFYEw-kyXhyMNcTQg9hEvAwjD/view">פדגוגיה דואלית באנימציה</a></td></tr>
@@ -1052,7 +683,7 @@
     <tr><td class="k">מת"לים</td><td>השתלמות שנתית — 30 שעות (מפגש פיזי אחד ו־7 מפגשי זום). מדריכה: סימונה, 052־4586974</td><td>רויטל אמיר — מפקחת פדגוגית ארצית</td></tr>
     <tr><td class="k">ליווי מורים חדשים</td><td>השתלמות 30 שעות בזום להכשרת מורים למטרת ליווי מורים חדשים במערכת</td><td>רויטל אמיר — מפקחת פדגוגית ארצית</td></tr>
     <tr><td class="k">רכזי תקשוב</td><td>תוכנית שנתית — 30 שעות</td><td>—</td></tr>
-    <tr><td class="k">בנות שירות לאומי</td><td>3 מפגשי הכשרה שנתיים ומפגש אמצע שנה עם הרכזת המלווה את בנות השירות (<a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1PmfGG4FwvqSZ3hpEhA5lH8XD0P68ZR6m/view">הנחיות קליטת בני ובנות שירות</a>)</td><td>רויטל אמיר — מפקחת פדגוגית ארצית · עידית 052־8985785</td></tr>
+    <tr><td class="k">בנות שירות לאומי</td><td>3 מפגשי הכשרה שנתיים ומפגש אמצע שנה עם הרכזת המלווה את בנות השירות (<a class="lk" href="sherut-leumi.html">הנחיות קליטת בני ובנות שירות</a>)</td><td>רויטל אמיר — מפקחת פדגוגית ארצית · עידית 052־8985785</td></tr>
     <tr><td class="k">הדרכה בכלל מקצועות הלימוד (ליבה והומניסטיקה)</td><td>קבוצות פעילות בשפה העברית ובשפה הערבית + הדרכה קבוצתית אחת לחודש + הדרכה פרטנית על פי הצורך ודרישת ביה"ס (<a class="lk" href="kvutzot-hadracha.html">קובץ כלל קבוצות ההדרכה ופרטי המדריכים</a>)</td><td>מפקחים פדגוגיים</td></tr>
   </table>
   </div>
@@ -1072,7 +703,7 @@
 
   <h3 class="sub-sec rv" id="matzevet">מצבת מורים</h3>
   <ol class="ed rv">
-    <li>להלן הנחיות בעלי תפקידים — <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1lYBUe9PxhalQAekAKLwg5diX5ag_iN6d/view">בעלי תפקידים: חלוקת שעות ודגשים</a>.</li>
+    <li>להלן הנחיות בעלי תפקידים — <a class="lk" href="baaley-tafkidim.html">בעלי תפקידים: חלוקת שעות ודגשים</a>.</li>
     <li>בכל קליטה של בעל תפקיד (סגן, רכז פדגוגי, רכז חברתי, רכז חניכות, מת"לית, רכזת הכלה ושילוב) יש לעדכן ולקבל את אישור הפיקוח.</li>
     <li>קבלת יועץ חינוכי מחייבת אישור של הפיקוח הייעוצי־טיפולי. יועץ חינוכי יכול לקבל רישיון ייעוץ רק לאחר תואר שני בייעוץ חינוכי ותעודת הוראה.</li>
     <li>במידה שמורה מבקש לטוס לחו"ל באמצע שנה — נדרש אישור רשת ופיקוח.</li>
@@ -1110,12 +741,12 @@
 
   <h4 class="mini">רשימת ההנחיות</h4>
   <ul class="ed rv">
-    <li><strong>חדש</strong> — <a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1PRpSY_9xjRfwo_xYdCBV60XWwjsHzLWi/view">הנחיות לקליטה ומיון תלמידים</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/12xrweERQCaXeePyOZM1sqKYSDJPCEiY4/view">הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה, כולל סיום לימודים</a></li>
+    <li><strong>חדש</strong> — <a class="lk" href="klita-miyun.html">הנחיות לקליטה ומיון תלמידים</a></li>
+    <li><a class="lk" href="bikur-sadir.html">הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה, כולל סיום לימודים</a></li>
     <li><a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1hAlB8jYy7YlBkk4YwHbma58SEaqg49jU">הנחיות לניהול, דיווח וטיפול באירועי חירום ו/או אירוע חריג, כולל הרחקת תלמיד</a></li>
-    <li><a class="lk" href="klita-miyun.html">הנחיות לקידום ההכלה הבית ספרית — קליטה, טיפול והתמודדות מיטיבה לתלמידים הזכאים לשירותי חינוך מיוחד</a> (<a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1mvo_vFo5vBv-L3tdXaJ21dhH0ODBCxf2">תיקיית המקור</a>)</li>
+    <li><a class="lk" href="hachala.html">הנחיות לקידום ההכלה הבית ספרית — קליטה, טיפול והתמודדות מיטיבה לתלמידים הזכאים לשירותי חינוך מיוחד</a> (<a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1mvo_vFo5vBv-L3tdXaJ21dhH0ODBCxf2">תיקיית המקור</a>)</li>
     <li><a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות להפעלת ועדה מלווה</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1PmfGG4FwvqSZ3hpEhA5lH8XD0P68ZR6m/view">הנחיות לקליטת מתנדבי שירות לאומי</a></li>
+    <li><a class="lk" href="sherut-leumi.html">הנחיות לקליטת מתנדבי שירות לאומי</a></li>
     <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/BlobFolder/policy/youth-renovations/he/prof-licensure_youth-renovations.pdf">הנחיות שיפוצים והצטיידות</a></li>
     <li><a class="lk" href="chasimat-kfulim.html">הנחיות חסימת תלמידים כפולים</a></li>
     <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/collectors/policies?OfficeId=85d16bf0-1c3e-486a-97cd-2b07d89e6934">הנחיות נוספות שפורסמו — באתר משרד העבודה</a></li>
@@ -1253,13 +884,7 @@
 
 </div><!-- /wrap -->
 
-<footer>
-  <div class="wrap foot-in">
-    <img src="logo.png" alt="">
-    <p>היערכות לשנת הלימודים תשפ"ז · המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
-    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
-  </div>
-</footer>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>המרכז הפדגוגי</span></div></div>
 
 <script>
 (function(){
@@ -1305,12 +930,10 @@
     });
   },{threshold:.08,rootMargin:'0px 0px -6% 0px'});
   document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
-
-  /* ---------- צל לסרגל ---------- */
-  var bar=document.getElementById('topbar');
-  addEventListener('scroll',function(){bar.classList.toggle('scrolled',scrollY>8)},{passive:true});
 })();
 </script>
+<script src="site.js"></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 </body>
 </html>
