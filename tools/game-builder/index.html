@@ -328,10 +328,25 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           </div>
           <textarea id="aiPrompt" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;נוסחאות כימיות – שמות וסמלים"></textarea>
           <div class="hint">כתבו רק את הנושא – סוג המשחק, המקצוע והכיתה נלקחים מהשלב הקודם.</div>
-          <button class="ai-btn" id="aiGenBtn" onclick="generateWithAI()">
-            <span class="btn-text">✨ צרו משחק עם AI</span>
-            <div class="spinner"></div>
-          </button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <button class="ai-btn" style="flex:1;min-width:220px" onclick="copyChatPrompt()">
+              <span class="btn-text">1️⃣ 📋 העתיקו את הפרומפט</span>
+            </button>
+            <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="ai-btn" style="flex:1;min-width:220px;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" onclick="revealPasteBox()">
+              <span class="btn-text">2️⃣ ✨ פתחו את Gemini והדביקו</span>
+            </a>
+          </div>
+          <div id="chatPasteBox" style="display:none">
+            <textarea id="chatAnswer" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
+            <button class="ai-btn" onclick="buildFromChatAnswer()"><span class="btn-text">🧩 בנו את המשחק מהתשובה</span></button>
+          </div>
+          <details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:13px;color:var(--gray)">מתקדם: יצירה אוטומטית עם מפתח API</summary>
+            <button class="ai-btn" id="aiGenBtn" style="margin-top:8px" onclick="generateWithAI()">
+              <span class="btn-text">✨ צרו משחק עם AI</span>
+              <div class="spinner"></div>
+            </button>
+          </details>
         </div>
 
         <div class="hint" style="margin-bottom:20px;font-size:13px;color:var(--gray)">
@@ -866,14 +881,10 @@ function addItem() {
 }
 
 // ===== AI GENERATION =====
-async function generateWithAI() {
+function buildGamePrompt() {
   const topic = document.getElementById('aiPrompt').value.trim();
   const gName = document.getElementById('gameName').value.trim();
-  if (!topic && !gName) { showToast('כתבו על מה המשחק'); return; }
-
-  const btn = document.getElementById('aiGenBtn');
-  btn.classList.add('loading');
-  btn.disabled = true;
+  if (!topic && !gName) { showToast('כתבו על מה המשחק'); return null; }
 
   const subject = details.subject || document.getElementById('gameSubject').value || 'כללי';
   const grade = details.grade || document.getElementById('gameGrade').value || 'כיתה י';
@@ -908,6 +919,93 @@ async function generateWithAI() {
     prompt = base + `צור ${num} שאלות ברמת קושי עולה (מקל לקשה) למשחק מיליונר. 4 אפשרויות, הסבר קצר. פזר תשובה נכונה בין 0-3.\nJSON: {"items":[{"text":"שאלה","options":["א","ב","ג","ד"],"correct":0,"explanation":"הסבר"}]}\nהחזר JSON תקין בלבד.`;
   }
 
+  return prompt;
+}
+
+function applyGameAIResult(parsed) {
+  if (parsed.items) {
+    const gt = gameType;
+    if (gt === 'trivia' || gt === 'millionaire') {
+      items = parsed.items.map(q => ({
+        text: q.text || '', options: q.options || ['','','',''],
+        correct: typeof q.correct === 'number' ? q.correct : 0,
+        explanation: q.explanation || ''
+      }));
+    } else if (gt === 'wheel') {
+      items = parsed.items.map(q => ({
+        text: q.text || '', options: q.options || ['','','',''],
+        correct: typeof q.correct === 'number' ? q.correct : 0,
+        explanation: ''
+      }));
+    } else if (gt === 'matching') {
+      items = parsed.items.map(p => ({ right: p.right || '', left: p.left || '' }));
+      if (parsed.columnRightTitle) details.columnRightTitle = parsed.columnRightTitle;
+      if (parsed.columnLeftTitle) details.columnLeftTitle = parsed.columnLeftTitle;
+    } else if (gt === 'memory') {
+      items = parsed.items.map(p => ({ front: p.front || '', back: p.back || '' }));
+    } else if (gt === 'ordering') {
+      items = parsed.items.map((p, i) => ({ text: p.text || '', position: p.position || i + 1 }));
+      if (parsed.instruction) details.instruction = parsed.instruction;
+    } else if (gt === 'escape') {
+      items = parsed.items.map(r => ({
+        title: r.title || '', story: r.story || '', riddle: r.riddle || '',
+        answer: r.answer || '', hint: r.hint || ''
+      }));
+    } else if (gt === 'truefalse') {
+      items = parsed.items.map(q => ({
+        text: q.text || '', correct: q.correct !== false,
+        explanation: q.explanation || ''
+      }));
+    } else if (gt === 'fillblank') {
+      items = parsed.items.map(q => ({
+        sentence: q.sentence || '', answer: q.answer || '', hint: q.hint || ''
+      }));
+    } else if (gt === 'sentence') {
+      items = parsed.items.map(q => ({ sentence: q.sentence || '' }));
+    } else if (gt === 'groups') {
+      items = parsed.items.map(g => ({
+        name: g.name || '', items: g.items || ['','','','']
+      }));
+    } else if (gt === 'hangman') {
+      items = parsed.items.map(w => ({ word: w.word || '', hint: w.hint || '' }));
+    }
+  }
+  renderItemEditors();
+  showToast('הפריטים נוצרו בהצלחה! תוכלו לערוך אותם');
+  renderItemEditors();
+  showToast('הפריטים נטענו בהצלחה! תוכלו לערוך אותם');
+}
+
+// --- Chat flow: copy prompt -> paste Gemini answer, no API key ---
+function copyChatPrompt() {
+  const p = buildGamePrompt();
+  if (!p) return;
+  navigator.clipboard.writeText(p).then(() => {
+    showToast('הפרומפט הועתק! עכשיו פתחו את Gemini והדביקו');
+    revealPasteBox();
+  }).catch(() => showToast('ההעתקה נכשלה — נסו שוב'));
+}
+function revealPasteBox() { document.getElementById('chatPasteBox').style.display = 'block'; }
+function buildFromChatAnswer() {
+  let text = document.getElementById('chatAnswer').value.trim();
+  if (!text) { showToast('הדביקו קודם את התשובה של Gemini'); return; }
+  text = text.replace(/```json/gi, '```');
+  const fenced = text.split('```');
+  if (fenced.length >= 3) text = fenced[1];
+  const first = text.indexOf('{'); const last = text.lastIndexOf('}');
+  if (first === -1 || last === -1) { showToast('לא נמצא JSON בתשובה — ודאו שהעתקתם את כל התשובה'); return; }
+  try {
+    applyGameAIResult(JSON.parse(text.slice(first, last + 1)));
+    document.getElementById('chatAnswer').value = '';
+  } catch(e) { showToast('התשובה לא תקינה — בקשו מ-Gemini: החזר JSON תקין בלבד, ונסו שוב'); }
+}
+
+async function generateWithAI() {
+  const promptText = buildGamePrompt();
+  if (!promptText) return;
+  const btn = document.getElementById('aiGenBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
   try {
     const apiKey = getGeminiKey();
     if (!apiKey) { btn.classList.remove('loading'); btn.disabled = false; document.getElementById('aiKeySetup').style.display = 'block'; showToast('יש להזין מפתח Gemini API קודם'); return; }
@@ -915,7 +1013,7 @@ async function generateWithAI() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
+        contents: [{ parts: [{ text: promptText }] }],
         generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
       })
     });
@@ -923,57 +1021,7 @@ async function generateWithAI() {
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('תשובה ריקה מ-Gemini');
-
-    const parsed = JSON.parse(text);
-    if (parsed.items) {
-      const gt = gameType;
-      if (gt === 'trivia' || gt === 'millionaire') {
-        items = parsed.items.map(q => ({
-          text: q.text || '', options: q.options || ['','','',''],
-          correct: typeof q.correct === 'number' ? q.correct : 0,
-          explanation: q.explanation || ''
-        }));
-      } else if (gt === 'wheel') {
-        items = parsed.items.map(q => ({
-          text: q.text || '', options: q.options || ['','','',''],
-          correct: typeof q.correct === 'number' ? q.correct : 0,
-          explanation: ''
-        }));
-      } else if (gt === 'matching') {
-        items = parsed.items.map(p => ({ right: p.right || '', left: p.left || '' }));
-        if (parsed.columnRightTitle) details.columnRightTitle = parsed.columnRightTitle;
-        if (parsed.columnLeftTitle) details.columnLeftTitle = parsed.columnLeftTitle;
-      } else if (gt === 'memory') {
-        items = parsed.items.map(p => ({ front: p.front || '', back: p.back || '' }));
-      } else if (gt === 'ordering') {
-        items = parsed.items.map((p, i) => ({ text: p.text || '', position: p.position || i + 1 }));
-        if (parsed.instruction) details.instruction = parsed.instruction;
-      } else if (gt === 'escape') {
-        items = parsed.items.map(r => ({
-          title: r.title || '', story: r.story || '', riddle: r.riddle || '',
-          answer: r.answer || '', hint: r.hint || ''
-        }));
-      } else if (gt === 'truefalse') {
-        items = parsed.items.map(q => ({
-          text: q.text || '', correct: q.correct !== false,
-          explanation: q.explanation || ''
-        }));
-      } else if (gt === 'fillblank') {
-        items = parsed.items.map(q => ({
-          sentence: q.sentence || '', answer: q.answer || '', hint: q.hint || ''
-        }));
-      } else if (gt === 'sentence') {
-        items = parsed.items.map(q => ({ sentence: q.sentence || '' }));
-      } else if (gt === 'groups') {
-        items = parsed.items.map(g => ({
-          name: g.name || '', items: g.items || ['','','','']
-        }));
-      } else if (gt === 'hangman') {
-        items = parsed.items.map(w => ({ word: w.word || '', hint: w.hint || '' }));
-      }
-    }
-    renderItemEditors();
-    showToast('הפריטים נוצרו בהצלחה! תוכלו לערוך אותם');
+    applyGameAIResult(JSON.parse(text));
   } catch(e) {
     console.error('AI Error:', e);
     showToast('שגיאה: ' + e.message);

@@ -779,7 +779,7 @@ ${S.notes?'בקשות מיוחדות: '+S.notes:''}
   // 🔒 המפתח לא בקוד — נשמר ב-localStorage של המשתמש בלבד
   let userKey = localStorage.getItem('infographic-gemini-key') || '';
   if (!userKey) {
-    userKey = (prompt('הכניסו מפתח Gemini API שלכם (נשמר רק במכשיר שלכם, לא נשלח לשום שרת):\nליצירת מפתח: https://aistudio.google.com/apikey') || '').trim();
+    userKey = (prompt('נדרש מפתח Gemini API חינמי — היכנסו עם Gmail אישי (לא מייל ארגוני!). המפתח נשמר רק במכשיר שלכם:\nליצירת מפתח: https://aistudio.google.com/apikey') || '').trim();
     if (userKey) localStorage.setItem('infographic-gemini-key', userKey);
   }
   if (!userKey) {

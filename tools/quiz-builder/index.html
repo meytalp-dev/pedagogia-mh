@@ -337,10 +337,27 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           <div id="aiKeySetup2"></div>
           <textarea id="aiPrompt2" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;משוואות עם נעלם אחד – פתרון ובדיקה"></textarea>
           <div class="hint">כתבו רק את הנושא – אין צורך לכתוב "צור שאלות". המקצוע והכיתה נלקחים מהשלב הקודם.</div>
-          <button class="ai-btn" id="aiGenBtn" onclick="generateWithAI()">
-            <span class="btn-text">✨ צרו שאלות עם AI</span>
-            <div class="spinner"></div>
-          </button>
+
+          <!-- Chat flow: copy prompt -> Gemini -> paste answer (no API key needed) -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <button class="ai-btn" style="flex:1;min-width:220px" onclick="copyChatPrompt()">
+              <span class="btn-text">1️⃣ 📋 העתיקו את הפרומפט</span>
+            </button>
+            <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="ai-btn" style="flex:1;min-width:220px;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" onclick="revealPasteBox()">
+              <span class="btn-text">2️⃣ ✨ פתחו את Gemini והדביקו</span>
+            </a>
+          </div>
+          <div id="chatPasteBox" style="display:none">
+            <textarea id="chatAnswer" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
+            <button class="ai-btn" onclick="buildFromChatAnswer()"><span class="btn-text">🧩 בנו את השאלון מהתשובה</span></button>
+          </div>
+          <details style="margin-top:8px">
+            <summary style="cursor:pointer;font-size:13px;color:var(--gray)">מתקדם: יצירה אוטומטית עם מפתח API</summary>
+            <button class="ai-btn" id="aiGenBtn" style="margin-top:8px" onclick="generateWithAI()">
+              <span class="btn-text">✨ צרו שאלות עם AI</span>
+              <div class="spinner"></div>
+            </button>
+          </details>
         </div>
 
         <div class="hint" style="margin-bottom:20px;font-size:13px;color:var(--gray)">
@@ -478,39 +495,22 @@ function renderAIKeySetup() {
 }
 
 // ===== AI GENERATION =====
-async function generateWithAI() {
-  const apiKey = getGeminiKey();
-  if (!apiKey) {
-    showToast('יש להגדיר Gemini API Key קודם');
-    return;
-  }
-
-  // Gather context
+function buildQuizPrompt() {
   const quizName = document.getElementById('quizName').value.trim();
   const subject = document.getElementById('quizSubject').value;
   const grade = document.getElementById('quizGrade').value;
   const topic = document.getElementById('aiPrompt2').value.trim();
-
-  if (!topic && !quizName) {
-    showToast('כתבו על מה השאלון או מלאו את שם השאלון');
-    return;
-  }
-
-  const btn = document.getElementById('aiGenBtn');
-  btn.classList.add('loading');
-  btn.disabled = true;
+  if (!topic && !quizName) { showToast('כתבו על מה השאלון או מלאו את שם השאלון'); return null; }
 
   const numDiag = 2;
   const numPerSet = parseInt(document.getElementById('qPerSet').value);
   const levels = ['basic', 'medium', 'advanced'];
-
   const levelDescriptions = {
     basic: 'שאלות בסיסיות – זיהוי, התאמה, שינון, הבנה ישירה',
     medium: 'שאלות בינוניות – הבנה, יישום, קישור בין מושגים',
     advanced: 'שאלות מתקדמות – ניתוח, השוואה, חשיבה ביקורתית'
   };
-
-  const prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה. צור שאלון בעברית.
+  return `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה. צור שאלון בעברית.
 
 נושא השאלון: "${topic || quizName}"
 מקצוע: ${subject || 'כללי'}
@@ -537,13 +537,86 @@ async function generateWithAI() {
 {"text": "טקסט השאלה", "options": ["תשובה1","תשובה2","תשובה3","תשובה4"], "correct": מספר 0-3, "explanation": "הסבר קצר"}
 
 החזר JSON תקין בלבד, בלי טקסט נוסף.`;
+}
+
+function applyQuizAIResult(parsed) {
+  const levels = ['basic', 'medium', 'advanced'];
+  if (parsed.diagnosticQuestions) {
+    diagnosticQuestions = parsed.diagnosticQuestions.map(q => ({
+      text: q.text || '',
+      options: q.options || ['','','',''],
+      correct: typeof q.correct === 'number' ? q.correct : 0,
+      explanation: q.explanation || ''
+    }));
+  }
+  for (const level of levels) {
+    const key = level + 'Questions';
+    if (parsed[key]) {
+      questionSets[level] = parsed[key].map(q => ({
+        text: q.text || '',
+        options: q.options || ['','','',''],
+        correct: typeof q.correct === 'number' ? q.correct : 0,
+        explanation: q.explanation || ''
+      }));
+    }
+  }
+  renderDiagEditors();
+  showToast('השאלות נטענו בהצלחה! תוכלו לערוך אותן');
+}
+
+// --- Chat flow: copy prompt -> paste Gemini answer, no API key ---
+function copyChatPrompt() {
+  const prompt = buildQuizPrompt();
+  if (!prompt) return;
+  navigator.clipboard.writeText(prompt).then(() => {
+    showToast('הפרומפט הועתק! עכשיו פתחו את Gemini והדביקו');
+    revealPasteBox();
+  }).catch(() => showToast('ההעתקה נכשלה — נסו שוב'));
+}
+
+function revealPasteBox() {
+  document.getElementById('chatPasteBox').style.display = 'block';
+}
+
+function buildFromChatAnswer() {
+  let text = document.getElementById('chatAnswer').value.trim();
+  if (!text) { showToast('הדביקו קודם את התשובה של Gemini'); return; }
+  // strip markdown fences and surrounding chatter
+  text = text.replace(/```json/gi, '```');
+  const fenced = text.split('```');
+  if (fenced.length >= 3) text = fenced[1];
+  const first = text.indexOf('{'); const last = text.lastIndexOf('}');
+  if (first === -1 || last === -1) { showToast('לא נמצא JSON בתשובה — ודאו שהעתקתם את כל התשובה'); return; }
+  try {
+    const parsed = JSON.parse(text.slice(first, last + 1));
+    applyQuizAIResult(parsed);
+    document.getElementById('chatAnswer').value = '';
+  } catch(e) {
+    showToast('התשובה לא תקינה — בקשו מ-Gemini: "החזר JSON תקין בלבד" ונסו שוב');
+  }
+}
+
+async function generateWithAI() {
+  const apiKey = getGeminiKey();
+  if (!apiKey) {
+    const key = prompt(['נדרש מפתח Gemini API חינמי (חד-פעמי, נשמר רק במכשיר שלכם).', '1. היכנסו עם Gmail אישי (לא מייל ארגוני!) ל: aistudio.google.com/apikey', '2. לחצו Create API key והעתיקו', '3. הדביקו כאן:'].join(String.fromCharCode(10)));
+    if (key && key.trim()) localStorage.setItem('ort-gemini-key', key.trim());
+    else return;
+  }
+
+  const promptText = buildQuizPrompt();
+  if (!promptText) return;
+
+  const btn = document.getElementById('aiGenBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
 
   try {
-    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
+    const res = await fetch(GEMINI_URL + '?key=' + getGeminiKey(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
+        contents: [{ parts: [{ text: promptText }] }],
         generationConfig: {
           responseMimeType: 'application/json',
           temperature: 0.7
@@ -559,35 +632,7 @@ async function generateWithAI() {
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('תשובה ריקה מ-Gemini');
-
-    const parsed = JSON.parse(text);
-
-    // Fill diagnostic questions
-    if (parsed.diagnosticQuestions) {
-      diagnosticQuestions = parsed.diagnosticQuestions.map(q => ({
-        text: q.text || '',
-        options: q.options || ['','','',''],
-        correct: typeof q.correct === 'number' ? q.correct : 0,
-        explanation: q.explanation || ''
-      }));
-    }
-
-    // Fill question sets
-    for (const level of levels) {
-      const key = level + 'Questions';
-      if (parsed[key]) {
-        questionSets[level] = parsed[key].map(q => ({
-          text: q.text || '',
-          options: q.options || ['','','',''],
-          correct: typeof q.correct === 'number' ? q.correct : 0,
-          explanation: q.explanation || ''
-        }));
-      }
-    }
-
-    // Render editors with generated data
-    renderDiagEditors();
-    showToast('השאלות נוצרו בהצלחה! תוכלו לערוך אותן');
+    applyQuizAIResult(JSON.parse(text));
 
   } catch(e) {
     console.error('AI Error:', e);
