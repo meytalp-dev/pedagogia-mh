@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תרגול מבחני גמר — דשבורד מורה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Heebo', 'Assistant', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--pink); top: -150px; right: -150px; }
+  .blob-2 { width: 400px; height: 400px; background: var(--teal); bottom: -100px; left: -100px; }
+
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-title { font-size: 18px; font-weight: 700; }
+  .topbar-actions { display: flex; gap: 12px; align-items: center; }
+  .topbar a, .topbar button {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    background: none;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .topbar a:hover, .topbar button:hover { color: var(--ink); border-color: var(--border); }
+
+  .page {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hidden { display: none !important; }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    margin-bottom: 14px;
+    background: #fff;
+    color: var(--ink);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12);
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    transition: box-shadow 0.15s;
+  }
+  .btn-primary {
+    background: var(--pink);
+    color: white;
+    width: 100%;
+    padding: 14px;
+  }
+  .btn-primary:hover { box-shadow: 0 8px 24px rgba(236, 72, 153, 0.3); }
+  .btn-small {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .btn-secondary {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-save { background: var(--green); color: white; }
+
+  /* Login */
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 460px;
+    margin: 60px auto;
+  }
+  .login-card h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .login-card .sub { color: var(--muted); margin-bottom: 28px; font-size: 14px; }
+
+  /* Dashboard */
+  .dash-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .dash-head h1 { font-size: 26px; font-weight: 700; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .stat-card .label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .stat-card .value { font-size: 26px; font-weight: 700; }
+  .stat-card .value.pink { color: var(--pink); }
+  .stat-card .value.cyan { color: var(--cyan); }
+  .stat-card .value.green { color: var(--green); }
+  .stat-card .value.yellow { color: var(--yellow); }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--card);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+  .tab {
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .tab.active { background: var(--pink); color: white; }
+
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .filter-box {
+    background: var(--card);
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    flex: 1;
+    min-width: 180px;
+  }
+  .filter-box label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .filter-box select, .filter-box input {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    font-size: 14px;
+  }
+
+  .submissions-table {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--bg);
+    padding: 14px 16px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover { background: var(--bg); }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+  .badge-complete { background: #d1fae5; color: #065f46; }
+  .badge-partial { background: #e0f2fe; color: #075985; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  /* Review modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal {
+    background: var(--card);
+    border-radius: 18px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-head {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-head h2 { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 4px 10px;
+  }
+  .modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-foot {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .meta-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    background: var(--bg);
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .meta-item .k { font-size: 12px; color: var(--muted); }
+  .meta-item .v { font-weight: 600; }
+
+  .answer-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .answer-card.correct { border-color: #86efac; background: #f0fdf4; }
+  .answer-card.incorrect { border-color: #fca5a5; background: #fef2f2; }
+  .answer-card.pending { border-color: #fcd34d; background: #fffbeb; }
+  .ans-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .ans-q { font-weight: 500; font-size: 14px; }
+  .ans-meta { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .ans-student {
+    padding: 8px 10px;
+    background: #fff;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  .ans-student .lbl { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+  .grade-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .grade-input input {
+    width: 80px;
+    margin: 0;
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+
+  /* Answer key editor */
+  .ak-exam-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .ak-q {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .ak-q:last-child { border-bottom: none; }
+  .ak-q-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--cyan);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .ak-q-text { flex: 1; }
+  .ak-keys { display: flex; gap: 4px; }
+  .ak-key-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .ak-key-btn.selected {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+
+  @media (max-width: 768px) {
+    .dash-head { flex-direction: column; align-items: flex-start; }
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5) { display: none; }
+  }
+
+  /* ===== Mode tabs (Practice vs Teacher) ===== */
+  .mode-tabs {
+    max-width: 720px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+    display: flex;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 6px;
+    box-sizing: content-box;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+  .mode-tab small {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .mode-tab.active { background: var(--cyan); color: white; }
+  .mode-tab.active small { color: rgba(255,255,255,0.85); }
+  .mode-tab[data-mode="teacher"].active { background: var(--pink); }
+
+  /* ===== Practice-mode styles ===== */
+  .p-picker-head { margin-bottom: 20px; }
+  .p-picker-head h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .p-picker-head p { color: var(--muted); font-size: 15px; }
+  .p-mode-banner {
+    background: linear-gradient(135deg, #ecfeff, #f0fdfa);
+    border: 1px solid #a5f3fc;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .p-mode-banner svg { flex-shrink: 0; color: var(--teal); margin-top: 2px; }
+  .p-banner-title { font-weight: 700; margin-bottom: 4px; font-size: 15px; }
+  .p-banner-text { color: var(--muted); font-size: 14px; }
+
+  .p-sector-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+  .p-sector-tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .p-sector-tab.active { background: var(--cyan); color: white; }
+
+  .p-subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .p-subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .p-subject-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+  .p-exam-list { display: flex; flex-direction: column; gap: 8px; }
+  .p-exam-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    gap: 10px;
+  }
+  .p-exam-item.ready { cursor: pointer; }
+  .p-exam-item.ready:hover { border-color: var(--cyan); background: #fff; }
+  .p-exam-item.pending { opacity: 0.55; cursor: not-allowed; }
+  .p-exam-title { font-size: 14px; font-weight: 500; }
+  .p-exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .p-badge {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 12px; white-space: nowrap;
+  }
+  .p-badge-ready { background: #d1fae5; color: #065f46; }
+  .p-badge-pending { background: #fef3c7; color: #92400e; }
+  .p-badge-partial { background: #e0f2fe; color: #075985; }
+  .p-exam-item-main { flex: 1; min-width: 0; }
+  .p-share-icons { display: flex !important; gap: 6px; align-items: center; flex-shrink: 0; }
+  .p-share-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #fff; border: 1px solid var(--border);
+    display: flex !important; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0; color: var(--muted);
+    transition: all 0.15s; touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .p-share-btn:hover { color: var(--cyan); border-color: var(--cyan); background: #ecfeff; }
+  .p-share-btn.wa:hover { color: #25D366; border-color: #25D366; background: #f0fdf4; }
+  .p-share-btn svg { width: 16px; height: 16px; }
+  .p-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 1000; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  }
+  .p-toast.show { opacity: 1; }
+  @media (max-width: 640px) {
+    .p-exam-item { flex-wrap: wrap; }
+    .p-exam-item-main { flex-basis: 100%; }
+    .p-share-icons { margin-inline-start: auto; }
+  }
+
+  .p-exam-head {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .p-exam-head h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .p-exam-meta-row {
+    display: flex; gap: 20px; color: var(--muted); font-size: 14px; flex-wrap: wrap;
+  }
+  .p-progress-bar {
+    height: 6px; background: var(--border);
+    border-radius: 3px; margin-top: 16px; overflow: hidden;
+  }
+  .p-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--teal));
+    width: 0; transition: width 0.3s;
+  }
+
+  .p-section-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  }
+  .p-section-card h2 {
+    font-size: 19px; font-weight: 700; color: var(--cyan); margin-bottom: 6px;
+  }
+  .p-sect-instr { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .p-passage {
+    background: #fafbfc;
+    border-inline-start: 4px solid var(--teal);
+    padding: 16px 20px; border-radius: 10px;
+    margin-bottom: 20px; font-size: 15px; line-height: 1.8;
+  }
+  .p-p-title { font-weight: 700; color: var(--teal); margin-bottom: 8px; font-size: 14px; }
+
+  .p-question {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 14px; transition: border-color 0.15s;
+  }
+  .p-question.answered { border-color: #bfdbfe; background: #f0f9ff; }
+  .p-diagram {
+    margin: 8px 0 14px 38px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .p-diagram svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  .p-diagram table { border-collapse: collapse; margin: 0 auto; }
+  .p-diagram th, .p-diagram td { border: 1px solid var(--border); padding: 8px 12px; font-size: 14px; }
+  .p-diagram th { background: var(--bg); font-weight: 600; }
+  .p-q-header { display: flex; gap: 10px; margin-bottom: 12px; align-items: flex-start; }
+  .p-q-number {
+    background: var(--cyan); color: white; font-weight: 700;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .p-q-text { font-weight: 500; font-size: 15px; flex: 1; }
+  .p-q-points {
+    color: var(--muted); font-size: 12px;
+    background: var(--bg); padding: 2px 8px; border-radius: 10px; flex-shrink: 0;
+  }
+  .p-options { display: flex; flex-direction: column; gap: 8px; padding-inline-start: 38px; }
+  .p-option {
+    display: flex; gap: 10px; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; transition: all 0.15s; align-items: flex-start;
+  }
+  .p-option:hover { background: var(--bg); }
+  .p-option.selected { border-color: var(--cyan); background: #ecfeff; }
+  .p-option input { width: auto; margin: 4px 0 0 0; accent-color: var(--cyan); }
+  .p-option-label { flex: 1; font-size: 14px; }
+  .p-option-key { font-weight: 700; color: var(--cyan); min-width: 18px; }
+
+  .p-option.review-correct { border-color: var(--green); background: #dcfce7; }
+  .p-option.review-correct .p-option-key { color: #166534; }
+  .p-option.review-wrong { border-color: var(--red); background: #fee2e2; }
+  .p-option.review-wrong .p-option-key { color: #991b1b; }
+  .p-option-mark { font-size: 16px; font-weight: 700; margin-inline-start: 6px; }
+  .p-review-note {
+    margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px;
+  }
+  .p-review-note.ok { background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; }
+  .p-review-note.bad { background: #fef2f2; color: #7f1d1d; border: 1px solid #fecaca; }
+  .p-review-note.open { background: #fefce8; color: #713f12; border: 1px solid #fde68a; }
+
+  .p-submit-row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; padding: 24px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 16px;
+    position: sticky; bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .p-submit-row .info { font-size: 14px; color: var(--muted); }
+  .p-submit-row .info strong { color: var(--ink); }
+  .p-submit-btn { background: var(--green); color: white; padding: 14px 32px; border: none; border-radius: 10px; font-weight: 600; font-family: inherit; font-size: 15px; cursor: pointer; }
+  .p-submit-btn:hover { box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3); }
+
+  .p-result-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
+    max-width: 720px; margin: 0 auto 24px; text-align: center;
+  }
+  .p-result-circle {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; font-weight: 800;
+    background: conic-gradient(var(--green) var(--score, 0%), var(--border) var(--score, 0%));
+    position: relative;
+  }
+  .p-result-circle::before {
+    content: ''; position: absolute; inset: 12px;
+    border-radius: 50%; background: var(--card);
+  }
+  .p-result-circle .score-num { position: relative; color: var(--ink); }
+  .p-result-card h2 { font-size: 22px; margin-bottom: 6px; font-weight: 700; }
+  .p-result-card .sub { color: var(--muted); margin-bottom: 24px; }
+  .p-result-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 24px;
+  }
+  .p-stat-box { background: var(--bg); padding: 16px 8px; border-radius: 10px; }
+  .p-stat-num { font-size: 22px; font-weight: 700; }
+  .p-stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .p-result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .p-options { padding-inline-start: 0; }
+    .p-submit-row { flex-direction: column; }
+    .p-submit-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="topbar">
+  <div class="topbar-title" id="topbar-title">מאגר תרגול מבחני גמר</div>
+  <div class="topbar-actions" id="topbar-actions">
+    <button onclick="openFeedback()" title="דיווח על בעיה או הערה">דווח/הערה</button>
+    <a href="index.html">חזרה</a>
+  </div>
+</div>
+
+<!-- Mode tabs (Practice vs Teacher) -->
+<div class="mode-tabs" id="mode-tabs">
+  <div class="mode-tab active" data-mode="practice" onclick="switchMode('practice')">
+    תרגול חופשי
+    <small>ללא רישום · ללא ציון נשמר</small>
+  </div>
+  <div class="mode-tab" data-mode="teacher" onclick="switchMode('teacher')">
+    כניסת מורה
+    <small>עם ציון ודשבורד לכיתה</small>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedback-modal" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-head">
+      <h2>דווח על בעיה / הערה</h2>
+      <button class="modal-close" onclick="closeFeedback()">×</button>
+    </div>
+    <div class="modal-body">
+      <label>נושא</label>
+      <select id="fb-subject">
+        <option>באג או תקלה</option>
+        <option>בעיה במחוון / תשובה שגויה</option>
+        <option>בקשה לפיצ'ר חדש</option>
+        <option>שאלה כללית</option>
+        <option>אחר</option>
+      </select>
+      <label>ההודעה</label>
+      <textarea id="fb-message" rows="5" placeholder="תאר/י את הבעיה או ההערה..."></textarea>
+      <label>מייל או טלפון לחזרה (אופציונלי)</label>
+      <input id="fb-contact" type="text" placeholder="כדי שנוכל לחזור אליך">
+      <div id="fb-error" style="color:var(--red);font-size:13px;margin-top:4px;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-small btn-secondary" onclick="closeFeedback()">ביטול</button>
+      <button id="fb-submit" class="btn-small btn-save" onclick="sendFeedback()">שליחה</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+<div id="mode-teacher" class="hidden">
+  <!-- SCREEN 1: LOGIN / REGISTER -->
+  <div id="screen-login">
+    <div style="text-align:center;margin:20px auto 40px;max-width:720px;">
+      <div style="display:inline-block;background:#fff;padding:6px 14px;border-radius:20px;font-size:13px;color:var(--muted);border:1px solid var(--border);margin-bottom:16px;">משרד העבודה · תשפ"ו</div>
+      <h1 style="font-size:clamp(28px,4.5vw,44px);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;background:linear-gradient(135deg,var(--pink),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">מאגר מבחני גמר במקצועות הליבה</h1>
+      <p style="font-size:17px;color:var(--muted);max-width:560px;margin:0 auto;">מאגר תרגול למבחני גמר של משרד העבודה — מגזר כללי ומגזר ערבי, בכל מקצועות הליבה</p>
+    </div>
+
+    <div class="login-card">
+      <div style="display:flex;gap:4px;margin-bottom:20px;background:var(--bg);padding:4px;border-radius:10px;">
+        <div id="tab-login" class="tab active" style="flex:1;text-align:center;" onclick="switchAuthTab('login')">יש לי חשבון</div>
+        <div id="tab-register" class="tab" style="flex:1;text-align:center;" onclick="switchAuthTab('register')">רישום חדש</div>
+      </div>
+
+      <div id="pane-login">
+        <h1>כניסת מורה</h1>
+        <p class="sub">הזיני את השם ו-PIN שבחרת בעת הרישום</p>
+        <label for="login-name">שם מלא</label>
+        <input id="login-name" type="text" placeholder="לדוגמה: מיטל פלג">
+        <label for="login-pin">PIN</label>
+        <input id="login-pin" type="password" inputmode="numeric" maxlength="8" placeholder="4+ ספרות" autocomplete="current-password">
+        <button class="btn-primary" onclick="teacherLogin()">כניסה לדשבורד</button>
+        <div id="login-error" style="color:var(--red);font-size:13px;margin-top:10px;text-align:center;"></div>
+      </div>
+
+      <div id="pane-register" class="hidden">
+        <h1>רישום מורה חדש</h1>
+        <p class="sub">רישום חד-פעמי. אחרי הרישום תקבלי קוד אישי לשיתוף עם הכיתה שלך.</p>
+        <label for="reg-name">שם מלא</label>
+        <input id="reg-name" type="text" placeholder="לדוגמה: מיטל פלג">
+        <label for="reg-email">מייל (אופציונלי)</label>
+        <input id="reg-email" type="email" placeholder="לשחזור גישה עתידי">
+        <label for="reg-pin">בחרי PIN</label>
+        <input id="reg-pin" type="password" inputmode="numeric" maxlength="8" placeholder="4+ ספרות, לזכור">
+        <button class="btn-primary" onclick="teacherRegister()">רישום</button>
+        <div id="reg-error" style="color:var(--red);font-size:13px;margin-top:10px;text-align:center;"></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;padding-bottom:20px;color:var(--muted);font-size:13px;">
+      <div>פותח ע"י <strong style="color:var(--ink);">מיטל פלג</strong></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: Registration success (share link) -->
+  <div id="screen-welcome" class="hidden">
+    <div class="login-card" style="max-width:620px;">
+      <h1>ברוכה הבאה!</h1>
+      <p class="sub">הרישום הצליח. הנה הקוד האישי שלך והקישור לשיתוף עם התלמידים.</p>
+
+      <div style="background:linear-gradient(135deg,#ecfeff,#fce7f3);padding:24px;border-radius:14px;margin-bottom:20px;text-align:center;">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">הקוד האישי שלך</div>
+        <div id="welcome-code" style="font-size:32px;font-weight:800;color:var(--pink);letter-spacing:2px;font-family:'Heebo',monospace;">—</div>
+      </div>
+
+      <label>קישור לשיתוף עם הכיתה</label>
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <input id="welcome-link" type="text" readonly style="margin:0;flex:1;font-size:13px;">
+        <button class="btn-small btn-secondary" onclick="copyShareLink()">העתק</button>
+      </div>
+
+      <div style="background:#fef9c3;border:1px solid #fde047;padding:12px;border-radius:10px;font-size:13px;margin-bottom:20px;">
+        <strong>חשוב:</strong> שלחי את הקישור הזה לתלמידים דרך WhatsApp/מייל. רק תלמידים שנכנסים דרך הקישור הזה יופיעו בדשבורד שלך. לא צריך לשלוח את ה-PIN!
+      </div>
+
+      <button class="btn-primary" onclick="goToDashboard()">המשך לדשבורד</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: DASHBOARD -->
+  <div id="screen-dash" class="hidden">
+    <div class="dash-head">
+      <h1>ציונים ובדיקה</h1>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-small btn-secondary" onclick="refreshData()">רענון</button>
+        <button class="btn-small btn-secondary" onclick="exportCSV()">ייצוא CSV</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="label">סה״כ הגשות</div><div class="value pink" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="label">ממתינות לבדיקה</div><div class="value yellow" id="stat-pending">0</div></div>
+      <div class="stat-card"><div class="label">ציונים ממוצעים</div><div class="value cyan" id="stat-avg">—</div></div>
+      <div class="stat-card"><div class="label">תלמידים שונים</div><div class="value green" id="stat-students">0</div></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-view="all" onclick="switchView('all')">כל ההגשות</div>
+      <div class="tab" data-view="pending" onclick="switchView('pending')">ממתינות לבדיקה</div>
+      <div class="tab" data-view="answer-keys" onclick="switchView('answer-keys')">מחוונים</div>
+    </div>
+
+    <div id="view-submissions">
+      <div class="filters">
+        <div class="filter-box">
+          <label>סינון כיתה</label>
+          <select id="filter-class" onchange="renderTable()">
+            <option value="">כל הכיתות</option>
+          </select>
+        </div>
+        <div class="filter-box">
+          <label>סינון מבחן</label>
+          <select id="filter-exam" onchange="renderTable()">
+            <option value="">כל המבחנים</option>
+          </select>
+        </div>
+        <div class="filter-box">
+          <label>חיפוש תלמיד</label>
+          <input id="filter-search" type="text" placeholder="שם או ת"ז" oninput="renderTable()">
+        </div>
+      </div>
+      <div class="submissions-table">
+        <table>
+          <thead>
+            <tr>
+              <th>תלמיד</th>
+              <th>כיתה</th>
+              <th>מבחן</th>
+              <th>תאריך</th>
+              <th>זמן</th>
+              <th>ציון</th>
+              <th>סטטוס</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="submissions-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="view-answer-keys" class="hidden">
+      <div style="background:#fef9c3;border:1px solid #fde047;padding:14px;border-radius:10px;margin-bottom:20px;font-size:14px;">
+        <strong>מחוון אוטומטי:</strong> סמן/י את התשובות הנכונות לכל מבחן. אחרי שמירה, שאלות אמריקאיות יחושבו אוטומטית לתלמידים שהגישו.
+      </div>
+      <div id="ak-list"></div>
+    </div>
+  </div>
+</div><!-- /mode-teacher -->
+
+<!-- ===== PRACTICE MODE ===== -->
+<div id="mode-practice" class="hidden">
+
+  <!-- P-SCREEN 1: PICKER -->
+  <div id="p-screen-picker">
+    <div class="p-picker-head" style="text-align:center;margin:30px auto 24px;max-width:720px;">
+      <div style="display:inline-block;background:#fff;padding:6px 14px;border-radius:20px;font-size:13px;color:var(--muted);border:1px solid var(--border);margin-bottom:16px;">משרד העבודה · תשפ"ו</div>
+      <h1 style="font-size:clamp(26px,4.5vw,42px);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;background:linear-gradient(135deg,var(--cyan),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">מאגר מבחני גמר במקצועות הליבה</h1>
+      <p style="font-size:16px;color:var(--muted);max-width:560px;margin:0 auto;">תרגול חופשי עם בדיקה וציון אוטומטיים — ללא רישום, ללא שליחה לאף אחד.</p>
+    </div>
+
+    <div class="p-mode-banner">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <div>
+        <div class="p-banner-title">מצב תרגול — התוצאה לא נשלחת לאף אחד</div>
+        <div class="p-banner-text">
+          הכול רץ רק בדפדפן שלך. שאלות אמריקאיות נבדקות אוטומטית; שאלות פתוחות מיועדות לבדיקה עצמית.
+          זהו מסלול פתוח לכל מי שרוצה לתרגל. (ללא ציון שנשמר, בלי דשבורד.)
+        </div>
+      </div>
+    </div>
+
+    <div class="p-sector-tabs" id="p-sector-tabs"></div>
+    <div id="p-subject-grid" class="p-subject-grid"></div>
+  </div>
+
+  <!-- P-SCREEN 2: EXAM -->
+  <div id="p-screen-exam" class="hidden">
+    <div class="p-exam-head">
+      <h1 id="p-exam-title"></h1>
+      <div class="p-exam-meta-row">
+        <span id="p-exam-code"></span>
+        <span id="p-exam-duration"></span>
+        <span id="p-exam-points"></span>
+      </div>
+      <div class="p-progress-bar"><div class="p-progress-fill" id="p-progress-fill"></div></div>
+    </div>
+    <div id="p-exam-content"></div>
+    <div class="p-submit-row">
+      <div class="info">
+        ענית על <strong id="p-answered-count">0</strong> מתוך <strong id="p-total-count">0</strong> שאלות
+      </div>
+      <button id="p-submit-btn" class="p-submit-btn" onclick="pCheckAnswers()">בדיקה וציון</button>
+    </div>
+  </div>
+
+  <!-- P-SCREEN 3: RESULT + REVIEW -->
+  <div id="p-screen-result" class="hidden">
+    <div class="p-result-card">
+      <div class="p-result-circle" id="p-result-circle">
+        <span class="score-num" id="p-result-score">—</span>
+      </div>
+      <h2 id="p-result-title">סיימת את התרגול</h2>
+      <p class="sub" id="p-result-subtitle"></p>
+      <div class="p-result-stats">
+        <div class="p-stat-box"><div class="p-stat-num" id="p-stat-correct">—</div><div class="p-stat-label">תשובות נכונות</div></div>
+        <div class="p-stat-box"><div class="p-stat-num" id="p-stat-points">—</div><div class="p-stat-label">נקודות שצברת</div></div>
+        <div class="p-stat-box"><div class="p-stat-num" id="p-stat-open">—</div><div class="p-stat-label">שאלות לבדיקה עצמית</div></div>
+      </div>
+      <div class="p-result-actions">
+        <button class="btn-small btn-save" onclick="pRetryExam()">תרגל שוב</button>
+        <button class="btn-small btn-secondary" onclick="pBackToPicker()">בחר/י מבחן אחר</button>
+      </div>
+    </div>
+    <div id="p-review-content"></div>
+  </div>
+
+</div><!-- /mode-practice -->
+</div><!-- /.page -->
+
+<!-- Review Modal -->
+<div id="review-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">בדיקת מבחן</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn-small btn-danger" onclick="deleteSubmission()">מחק הגשה</button>
+      <button class="btn-small btn-save" onclick="saveReview()">שמור ציון סופי</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw83vpmGZHpVeq3qs6hMXXtP8v6BNiFqNxElIU2azI9ML-uisdcaLuiR72cpsSZ4xjP/exec';
+
+  let TEACHER = null;
+  let CATALOG = null;
+  let SUBMISSIONS = [];
+  let ANSWER_KEYS = {};
+  let CURRENT_SUB = null;
+  let CURRENT_VIEW = 'all';
+
+  async function init() {
+    const saved = localStorage.getItem('pe_teacher');
+    if (saved) {
+      TEACHER = JSON.parse(saved);
+      await loadAll();
+      showScreen('dash');
+    }
+  }
+
+  function switchAuthTab(tab) {
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('pane-login').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('pane-register').classList.toggle('hidden', tab !== 'register');
+  }
+
+  async function teacherLogin() {
+    const name = document.getElementById('login-name').value.trim();
+    const pin = document.getElementById('login-pin').value.trim();
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    if (!name || !pin) { errEl.textContent = 'יש למלא שם ו-PIN'; return; }
+    if (!APPS_SCRIPT_URL) { errEl.textContent = 'המערכת לא מחוברת ל-Apps Script'; return; }
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'login-teacher', name, pin })
+      });
+      const data = await res.json();
+      if (!data.ok) { errEl.textContent = data.error || 'שגיאת כניסה'; return; }
+      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, loginAt: new Date().toISOString() };
+      localStorage.setItem('pe_teacher', JSON.stringify(TEACHER));
+      await loadAll();
+      showScreen('dash');
+    } catch (e) {
+      errEl.textContent = 'תקלה ברשת. נסי שוב.';
+    }
+  }
+
+  async function teacherRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pin = document.getElementById('reg-pin').value.trim();
+    const errEl = document.getElementById('reg-error');
+    errEl.textContent = '';
+    if (!name || !pin) { errEl.textContent = 'שם ו-PIN חובה'; return; }
+    if (pin.length < 4) { errEl.textContent = 'PIN חייב 4 ספרות לפחות'; return; }
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'register-teacher', name, email, pin })
+      });
+      const data = await res.json();
+      if (!data.ok) { errEl.textContent = data.error || 'שגיאת רישום'; return; }
+      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, loginAt: new Date().toISOString() };
+      localStorage.setItem('pe_teacher', JSON.stringify(TEACHER));
+      showWelcome();
+    } catch (e) {
+      errEl.textContent = 'תקלה ברשת. נסי שוב.';
+    }
+  }
+
+  function showWelcome() {
+    document.getElementById('welcome-code').textContent = TEACHER.teacherCode;
+    const shareUrl = location.origin + location.pathname.replace(/teacher\.html$/, 'student.html') + '?t=' + TEACHER.teacherCode;
+    document.getElementById('welcome-link').value = shareUrl;
+    showScreen('welcome');
+  }
+
+  function copyShareLink() {
+    const inp = document.getElementById('welcome-link');
+    inp.select();
+    navigator.clipboard.writeText(inp.value).then(() => {
+      alert('הקישור הועתק!');
+    }).catch(() => {
+      document.execCommand('copy');
+      alert('הקישור הועתק!');
+    });
+  }
+
+  async function goToDashboard() {
+    await loadAll();
+    showScreen('dash');
+  }
+
+  function showScreen(s) {
+    document.getElementById('screen-login').classList.toggle('hidden', s !== 'login');
+    document.getElementById('screen-welcome').classList.toggle('hidden', s !== 'welcome');
+    document.getElementById('screen-dash').classList.toggle('hidden', s !== 'dash');
+    if (s === 'dash') {
+      const actions = document.getElementById('topbar-actions');
+      const shareUrl = location.origin + location.pathname.replace(/teacher\.html$/, 'student.html') + '?t=' + TEACHER.teacherCode;
+      actions.innerHTML = `
+        <button onclick="copyDashLink('${shareUrl}')" title="העתקת קישור לשיתוף">קישור לתלמידים</button>
+        <span style="font-size:13px;color:var(--muted);">${TEACHER.name} · ${TEACHER.teacherCode}</span>
+        <button onclick="logout()">יציאה</button>
+      `;
+    }
+  }
+
+  function copyDashLink(url) {
+    navigator.clipboard.writeText(url).then(() => alert('קישור הועתק! שלחי לתלמידים שלך דרך WhatsApp'));
+  }
+
+  function logout() {
+    localStorage.removeItem('pe_teacher');
+    location.reload();
+  }
+
+  // ---------- Feedback ----------
+  function openFeedback() {
+    document.getElementById('feedback-modal').classList.remove('hidden');
+    document.getElementById('fb-error').textContent = '';
+  }
+  function closeFeedback() {
+    document.getElementById('feedback-modal').classList.add('hidden');
+  }
+  async function sendFeedback() {
+    const subject = document.getElementById('fb-subject').value;
+    const message = document.getElementById('fb-message').value.trim();
+    const contact = document.getElementById('fb-contact').value.trim();
+    const errEl = document.getElementById('fb-error');
+    errEl.textContent = '';
+    if (!message) { errEl.textContent = 'יש למלא את ההודעה'; return; }
+
+    const btn = document.getElementById('fb-submit');
+    btn.disabled = true; btn.textContent = 'שולח…';
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'submit-feedback',
+          role: 'teacher',
+          name: (TEACHER && TEACHER.name) || '',
+          contact,
+          subject,
+          message,
+          url: location.href
+        })
+      });
+      alert('תודה! ההודעה נשלחה.');
+      document.getElementById('fb-message').value = '';
+      document.getElementById('fb-contact').value = '';
+      closeFeedback();
+    } catch (e) {
+      errEl.textContent = 'תקלה בשליחה. נסי שוב.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'שליחה';
+    }
+  }
+
+  async function loadAll() {
+    await Promise.all([loadCatalog(), loadSubmissions(), loadAnswerKeys()]);
+    populateFilters();
+    renderStats();
+    renderTable();
+  }
+
+  async function loadCatalog() {
+    const res = await fetch('exams/index.json');
+    CATALOG = await res.json();
+  }
+
+  async function loadSubmissions() {
+    if (!APPS_SCRIPT_URL) {
+      SUBMISSIONS = JSON.parse(localStorage.getItem('pe_submissions') || '[]');
+      return;
+    }
+    try {
+      const url = APPS_SCRIPT_URL + '?action=submissions&teacherCode=' + encodeURIComponent(TEACHER.teacherCode);
+      const res = await fetch(url);
+      const data = await res.json();
+      SUBMISSIONS = data.submissions || [];
+    } catch (e) {
+      console.error(e);
+      SUBMISSIONS = [];
+    }
+  }
+
+  async function loadAnswerKeys() {
+    if (!APPS_SCRIPT_URL) {
+      ANSWER_KEYS = JSON.parse(localStorage.getItem('pe_answer_keys') || '{}');
+      return;
+    }
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?action=answer-keys');
+      const data = await res.json();
+      ANSWER_KEYS = data.keys || {};
+    } catch (e) {
+      ANSWER_KEYS = JSON.parse(localStorage.getItem('pe_answer_keys') || '{}');
+    }
+  }
+
+  async function refreshData() { await loadAll(); }
+
+  function populateFilters() {
+    const classes = [...new Set(SUBMISSIONS.map(s => s.student.class))].sort();
+    const fc = document.getElementById('filter-class');
+    fc.innerHTML = '<option value="">כל הכיתות</option>' + classes.map(c => `<option>${c}</option>`).join('');
+
+    const exams = {};
+    SUBMISSIONS.forEach(s => exams[s.examId] = s.examTitle);
+    const fe = document.getElementById('filter-exam');
+    fe.innerHTML = '<option value="">כל המבחנים</option>' + Object.entries(exams).map(([id, title]) => `<option value="${id}">${title}</option>`).join('');
+  }
+
+  function renderStats() {
+    document.getElementById('stat-total').textContent = SUBMISSIONS.length;
+    const pending = SUBMISSIONS.filter(s => s.reviewStatus === 'pending').length;
+    document.getElementById('stat-pending').textContent = pending;
+    const scored = SUBMISSIONS.filter(s => s.finalScore != null);
+    const avg = scored.length ? Math.round(scored.reduce((a,b) => a + b.finalScore, 0) / scored.length) : null;
+    document.getElementById('stat-avg').textContent = avg != null ? avg : '—';
+    const students = new Set(SUBMISSIONS.map(s => s.student.name + '|' + s.student.class)).size;
+    document.getElementById('stat-students').textContent = students;
+  }
+
+  function switchView(v) {
+    CURRENT_VIEW = v;
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === v));
+    document.getElementById('view-submissions').classList.toggle('hidden', v === 'answer-keys');
+    document.getElementById('view-answer-keys').classList.toggle('hidden', v !== 'answer-keys');
+    if (v === 'answer-keys') {
+      renderAnswerKeys();
+    } else {
+      renderTable();
+    }
+  }
+
+  function renderTable() {
+    const cls = document.getElementById('filter-class').value;
+    const exam = document.getElementById('filter-exam').value;
+    const search = document.getElementById('filter-search').value.trim().toLowerCase();
+    let filtered = SUBMISSIONS;
+    if (CURRENT_VIEW === 'pending') filtered = filtered.filter(s => s.reviewStatus === 'pending');
+    if (cls) filtered = filtered.filter(s => s.student.class === cls);
+    if (exam) filtered = filtered.filter(s => s.examId === exam);
+    if (search) filtered = filtered.filter(s => {
+      return (s.student.name || '').toLowerCase().includes(search) ||
+             (s.student.id || '').includes(search);
+    });
+    filtered = [...filtered].sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+
+    const body = document.getElementById('submissions-body');
+    if (filtered.length === 0) {
+      body.innerHTML = `<tr><td colspan="8"><div class="empty-state">אין הגשות להצגה</div></td></tr>`;
+      return;
+    }
+    body.innerHTML = filtered.map(s => {
+      const score = s.finalScore != null
+        ? s.finalScore + '/' + s.autoScore.totalExamPoints
+        : (s.autoScore.earnedPoints || 0) + '/' + (s.autoScore.totalPointsWithKey || s.autoScore.totalExamPoints);
+      const status = s.reviewStatus === 'pending'
+        ? '<span class="badge badge-pending">ממתין לבדיקה</span>'
+        : s.finalScore != null
+          ? '<span class="badge badge-complete">נבדק</span>'
+          : '<span class="badge badge-partial">אוטומטי</span>';
+      const dt = new Date(s.endTime);
+      const dateStr = dt.toLocaleDateString('he-IL');
+      const mins = Math.floor((s.durationSec || 0) / 60);
+      return `
+        <tr class="clickable" onclick="openReview('${s.submissionId}')">
+          <td><strong>${s.student.name}</strong>${s.student.id ? `<div style="font-size:11px;color:var(--muted);">${s.student.id}</div>` : ''}</td>
+          <td>${s.student.class}</td>
+          <td><div>${s.subject}</div><div style="font-size:11px;color:var(--muted);">${s.examTitle.slice(0,40)}</div></td>
+          <td>${dateStr}</td>
+          <td>${mins} דק'</td>
+          <td><strong>${score}</strong></td>
+          <td>${status}</td>
+          <td style="text-align:left;color:var(--muted);">›</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function openReview(subId) {
+    CURRENT_SUB = SUBMISSIONS.find(s => s.submissionId === subId);
+    if (!CURRENT_SUB) return;
+
+    document.getElementById('modal-title').textContent = `${CURRENT_SUB.student.name} · ${CURRENT_SUB.examTitle}`;
+    const body = document.getElementById('modal-body');
+    const s = CURRENT_SUB.autoScore;
+    const duration = Math.floor((CURRENT_SUB.durationSec || 0) / 60);
+
+    const metaRow = `
+      <div class="meta-row">
+        <div class="meta-item"><div class="k">כיתה</div><div class="v">${CURRENT_SUB.student.class}</div></div>
+        <div class="meta-item"><div class="k">תעודת זהות</div><div class="v">${CURRENT_SUB.student.id || '—'}</div></div>
+        <div class="meta-item"><div class="k">זמן</div><div class="v">${duration} דק'</div></div>
+        <div class="meta-item"><div class="k">ציון אוטומטי</div><div class="v">${s.earnedPoints || 0}/${s.totalPointsWithKey || s.totalExamPoints}</div></div>
+        <div class="meta-item"><div class="k">ממתין לבדיקה</div><div class="v">${s.pendingReview || 0}</div></div>
+      </div>
+    `;
+
+    const answersHtml = CURRENT_SUB.answers.map((a, idx) => {
+      let cls = 'pending';
+      let status = '<span class="badge badge-pending">ממתין</span>';
+      if (a.isCorrect === true) { cls = 'correct'; status = '<span class="badge badge-complete">נכון</span>'; }
+      else if (a.isCorrect === false) { cls = 'incorrect'; status = '<span class="badge" style="background:#fee2e2;color:#991b1b;">שגוי</span>'; }
+
+      const gradeInputId = 'grade_' + idx;
+      const currentGrade = a.manualScore != null ? a.manualScore : '';
+      const needsGrading = a.isCorrect === null;
+
+      let studentAnswerHtml = '';
+      if (a.type === 'multiple-choice') {
+        studentAnswerHtml = `
+          <div class="ans-student">
+            <div class="lbl">תשובת התלמיד:</div>
+            <div>${a.answer ? `<strong>${a.answer}.</strong>` : '<em style="color:var(--muted);">לא ענה</em>'}
+            ${a.correctAnswer ? ` · תשובה נכונה: <strong>${a.correctAnswer}</strong>` : ''}</div>
+          </div>
+        `;
+      } else {
+        studentAnswerHtml = `
+          <div class="ans-student">
+            <div class="lbl">תשובת התלמיד:</div>
+            <div>${a.answer ? a.answer.replace(/\n/g, '<br>') : '<em style="color:var(--muted);">לא ענה</em>'}</div>
+          </div>
+        `;
+      }
+
+      let gradeHtml = '';
+      if (needsGrading) {
+        gradeHtml = `
+          <div class="grade-input">
+            <span style="font-size:13px;color:var(--muted);">ציון ידני:</span>
+            <input id="${gradeInputId}" type="number" min="0" max="${a.points}" value="${currentGrade}" placeholder="0-${a.points}" data-qidx="${idx}">
+            <span style="font-size:13px;color:var(--muted);">מתוך ${a.points}</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="answer-card ${cls}">
+          <div class="ans-head">
+            <div class="ans-q"><strong>${a.questionNumber}.</strong> ${a.questionText}</div>
+            <div class="ans-meta">${a.points} נק' · ${status}</div>
+          </div>
+          ${studentAnswerHtml}
+          ${gradeHtml}
+        </div>
+      `;
+    }).join('');
+
+    body.innerHTML = metaRow + answersHtml;
+    document.getElementById('review-modal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('review-modal').classList.add('hidden');
+    CURRENT_SUB = null;
+  }
+
+  async function saveReview() {
+    if (!CURRENT_SUB) return;
+    const inputs = document.querySelectorAll('#modal-body input[data-qidx]');
+    let manualPoints = 0;
+    inputs.forEach(inp => {
+      const idx = parseInt(inp.dataset.qidx);
+      const val = parseFloat(inp.value);
+      if (!isNaN(val)) {
+        CURRENT_SUB.answers[idx].manualScore = val;
+        manualPoints += val;
+      }
+    });
+
+    const autoPoints = CURRENT_SUB.autoScore.earnedPoints || 0;
+    CURRENT_SUB.finalScore = autoPoints + manualPoints;
+    CURRENT_SUB.reviewStatus = 'reviewed';
+    CURRENT_SUB.reviewedBy = TEACHER.name;
+    CURRENT_SUB.reviewedAt = new Date().toISOString();
+
+    await saveSubmission(CURRENT_SUB);
+    closeModal();
+    renderStats();
+    renderTable();
+  }
+
+  async function saveSubmission(sub) {
+    if (!APPS_SCRIPT_URL) {
+      const all = JSON.parse(localStorage.getItem('pe_submissions') || '[]');
+      const idx = all.findIndex(s => s.submissionId === sub.submissionId);
+      if (idx >= 0) all[idx] = sub; else all.push(sub);
+      localStorage.setItem('pe_submissions', JSON.stringify(all));
+      return;
+    }
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'update', data: sub })
+      });
+    } catch (e) { console.error(e); }
+  }
+
+  async function deleteSubmission() {
+    if (!CURRENT_SUB) return;
+    if (!confirm('למחוק הגשה זו?')) return;
+    SUBMISSIONS = SUBMISSIONS.filter(s => s.submissionId !== CURRENT_SUB.submissionId);
+    if (!APPS_SCRIPT_URL) {
+      localStorage.setItem('pe_submissions', JSON.stringify(SUBMISSIONS));
+    } else {
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ action: 'delete', submissionId: CURRENT_SUB.submissionId })
+        });
+      } catch (e) { console.error(e); }
+    }
+    closeModal();
+    renderStats();
+    renderTable();
+  }
+
+  // ---------- Answer keys editor ----------
+  async function renderAnswerKeys() {
+    const container = document.getElementById('ak-list');
+    const readyExams = [];
+    for (const sector of CATALOG.sectors) {
+      for (const sub of sector.subjects) {
+        for (const ex of sub.exams) {
+          if (ex.status === 'ready') readyExams.push({ ...ex, sectorName: sector.name, subjectName: sub.name });
+        }
+      }
+    }
+    if (readyExams.length === 0) {
+      container.innerHTML = '<div class="empty-state">אין מבחנים זמינים להגדרת מחוון</div>';
+      return;
+    }
+
+    let html = '';
+    for (const meta of readyExams) {
+      const examRes = await fetch('exams/' + meta.id + '.json');
+      const exam = await examRes.json();
+      const key = ANSWER_KEYS[exam.id] || {};
+      const questions = [];
+      for (const section of exam.sections) {
+        if (section.passages) section.passages.forEach(p => p.questions.forEach(q => questions.push(q)));
+        if (section.questions) section.questions.forEach(q => questions.push(q));
+      }
+
+      html += `
+        <div class="ak-exam-card" data-exam="${exam.id}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div>
+              <h3 style="font-size:16px;">${exam.title}</h3>
+              <div style="font-size:12px;color:var(--muted);">${meta.sectorName} · ${meta.subjectName} · ${questions.length} שאלות</div>
+            </div>
+            <button class="btn-small btn-save" onclick="saveAnswerKey('${exam.id}')">שמור מחוון</button>
+          </div>
+          ${questions.filter(q => q.type === 'multiple-choice').map((q, i) => `
+            <div class="ak-q">
+              <div class="ak-q-num">${q.number}</div>
+              <div class="ak-q-text">${q.question}</div>
+              <div class="ak-keys">
+                ${q.options.map(opt => `
+                  <button class="ak-key-btn ${key[q.id] === opt.key ? 'selected' : ''}"
+                          data-qid="${q.id}" data-key="${opt.key}"
+                          onclick="toggleKey(event, '${exam.id}', '${q.id}', '${opt.key}')">${opt.key}</button>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+  }
+
+  function toggleKey(ev, examId, qid, key) {
+    if (!ANSWER_KEYS[examId]) ANSWER_KEYS[examId] = {};
+    ANSWER_KEYS[examId][qid] = key;
+    const card = ev.target.closest('.ak-exam-card');
+    card.querySelectorAll(`[data-qid="${qid}"]`).forEach(btn => {
+      btn.classList.toggle('selected', btn.dataset.key === key);
+    });
+  }
+
+  async function saveAnswerKey(examId) {
+    const key = ANSWER_KEYS[examId] || {};
+    if (!APPS_SCRIPT_URL) {
+      localStorage.setItem('pe_answer_keys', JSON.stringify(ANSWER_KEYS));
+    } else {
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ action: 'save-answer-key', examId, key })
+        });
+      } catch (e) { console.error(e); }
+    }
+    // Re-grade existing submissions for this exam
+    SUBMISSIONS.filter(s => s.examId === examId).forEach(s => regrade(s, key));
+    if (!APPS_SCRIPT_URL) localStorage.setItem('pe_submissions', JSON.stringify(SUBMISSIONS));
+    renderStats();
+    alert('המחוון נשמר. כל ההגשות הקיימות חושבו מחדש.');
+  }
+
+  function regrade(sub, key) {
+    let correct = 0, earnedPoints = 0, totalPointsWithKey = 0, pendingReview = 0, pendingPoints = 0, totalMC = 0;
+    sub.answers.forEach(a => {
+      if (a.type === 'multiple-choice') {
+        totalMC++;
+        if (key[a.questionId] != null) {
+          a.correctAnswer = key[a.questionId];
+          totalPointsWithKey += a.points;
+          a.isCorrect = a.answer === a.correctAnswer;
+          if (a.isCorrect) { correct++; earnedPoints += a.points; }
+        } else {
+          a.isCorrect = null;
+          pendingReview++;
+          pendingPoints += a.points;
+        }
+      } else if (a.type === 'open') {
+        if (a.manualScore == null) { pendingReview++; pendingPoints += a.points; }
+      }
+    });
+    sub.autoScore = { correct, totalMC, earnedPoints, totalPointsWithKey, pendingReview, pendingPoints, totalExamPoints: sub.autoScore.totalExamPoints };
+    if (pendingReview === 0 && sub.finalScore == null) {
+      sub.finalScore = earnedPoints;
+      sub.reviewStatus = 'auto-complete';
+    }
+  }
+
+  // ---------- CSV export ----------
+  function exportCSV() {
+    if (SUBMISSIONS.length === 0) { alert('אין נתונים לייצוא'); return; }
+    const headers = ['שם','כיתה','ת"ז','מבחן','מקצוע','תאריך','זמן (דק)','ציון','סטטוס'];
+    const rows = SUBMISSIONS.map(s => [
+      s.student.name,
+      s.student.class,
+      s.student.id || '',
+      s.examTitle,
+      s.subject,
+      new Date(s.endTime).toLocaleDateString('he-IL'),
+      Math.floor((s.durationSec || 0) / 60),
+      s.finalScore != null ? s.finalScore : (s.autoScore.earnedPoints || 0),
+      s.reviewStatus
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+    const csv = '\ufeff' + headers.join(',') + '\n' + rows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `practice-exams-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ============================================================
+  // PRACTICE MODE — no registration, no Sheet
+  // ============================================================
+  let P_CURRENT_EXAM = null;
+  let P_ANSWERS = {};
+
+  function switchMode(mode) {
+    document.querySelectorAll('.mode-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.mode === mode);
+    });
+    document.getElementById('mode-teacher').classList.toggle('hidden', mode !== 'teacher');
+    document.getElementById('mode-practice').classList.toggle('hidden', mode !== 'practice');
+    if (mode === 'practice') {
+      pInit();
+    }
+    window.scrollTo(0, 0);
+  }
+
+  async function pInit() {
+    if (!CATALOG) {
+      const res = await fetch('exams/index.json');
+      CATALOG = await res.json();
+    }
+    pRenderSectorTabs();
+    pRenderSubjects(CATALOG.sectors[0].id);
+  }
+
+  function pRenderSectorTabs() {
+    const tabs = document.getElementById('p-sector-tabs');
+    tabs.innerHTML = CATALOG.sectors.map((s, i) => `
+      <div class="p-sector-tab ${i === 0 ? 'active' : ''}" data-sector="${s.id}" onclick="pSwitchSector('${s.id}')">${s.name}</div>
+    `).join('');
+  }
+
+  function pSwitchSector(id) {
+    document.querySelectorAll('.p-sector-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.sector === id);
+    });
+    pRenderSubjects(id);
+  }
+
+  function pRenderSubjects(sectorId) {
+    const sector = CATALOG.sectors.find(s => s.id === sectorId);
+    const grid = document.getElementById('p-subject-grid');
+    grid.innerHTML = sector.subjects.map(sub => `
+      <div class="p-subject-card">
+        <h3>${sub.name}</h3>
+        <div class="p-exam-list">
+          ${sub.exams.map(ex => {
+            const ready = ex.status === 'ready';
+            let badge;
+            if (!ready) badge = '<span class="p-badge p-badge-pending">בקרוב</span>';
+            else if (ex.answerKeyReady) badge = '<span class="p-badge p-badge-ready">ציון אוטומטי</span>';
+            else badge = '<span class="p-badge p-badge-partial">תרגול בלבד</span>';
+            const onclick = ready ? `onclick="pHandleExamClick(event,'${ex.id}')"` : '';
+            const safeTitle = String(ex.title).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const share = ready ? `
+              <div class="p-share-icons">
+                <button class="p-share-btn" title="העתק קישור לתלמידים" onclick="event.stopPropagation();pCopyExamLink('${ex.id}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </button>
+                <button class="p-share-btn wa" title="שלח בוואטסאפ" onclick="event.stopPropagation();pShareExamWA('${ex.id}','${safeTitle}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                </button>
+              </div>
+            ` : '';
+            return `
+              <div class="p-exam-item ${ready ? 'ready' : 'pending'}" ${onclick}>
+                <div class="p-exam-item-main">
+                  <div class="p-exam-title">${ex.title}</div>
+                  ${ex.questionCount ? `<div class="p-exam-meta">${ex.questionCount} שאלות · ${ex.durationMinutes} דקות</div>` : ''}
+                </div>
+                ${badge}
+                ${share}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function pHandleExamClick(ev, examId) {
+    if (ev.target.closest('.p-share-btn')) return;
+    pStartExam(examId);
+  }
+
+  function pBuildExamShareUrl(examId) {
+    const base = location.origin + location.pathname.replace(/teacher\.html$/, 'student.html');
+    const code = (TEACHER && TEACHER.teacherCode) ? TEACHER.teacherCode : '';
+    return base + '?t=' + encodeURIComponent(code) + '&e=' + encodeURIComponent(examId);
+  }
+
+  function pShowToast(msg) {
+    let t = document.getElementById('p-exam-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'p-exam-toast';
+      t.className = 'p-toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function pCopyExamLink(examId) {
+    const url = pBuildExamShareUrl(examId);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        () => pShowToast('הקישור הועתק — שלחי לתלמידים'),
+        () => pFallbackCopy(url)
+      );
+    } else {
+      pFallbackCopy(url);
+    }
+  }
+
+  function pFallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); pShowToast('הקישור הועתק — שלחי לתלמידים'); }
+    catch (e) { pShowToast('לא הצלחתי להעתיק'); }
+    document.body.removeChild(ta);
+  }
+
+  function pShareExamWA(examId, title) {
+    const url = pBuildExamShareUrl(examId);
+    const msg = 'תרגול: ' + title + '\n' + url;
+    const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+    window.open(waUrl, '_blank');
+  }
+
+  async function pStartExam(examId) {
+    const res = await fetch('exams/' + examId + '.json');
+    P_CURRENT_EXAM = await res.json();
+    P_ANSWERS = {};
+    pRenderExam();
+    pShowScreen('exam');
+    window.scrollTo(0, 0);
+  }
+
+  function pRetryExam() {
+    P_ANSWERS = {};
+    pRenderExam();
+    pShowScreen('exam');
+    window.scrollTo(0, 0);
+  }
+
+  function pBackToPicker() {
+    P_CURRENT_EXAM = null;
+    P_ANSWERS = {};
+    document.getElementById('p-review-content').innerHTML = '';
+    pShowScreen('picker');
+    window.scrollTo(0, 0);
+  }
+
+  function pShowScreen(s) {
+    document.getElementById('p-screen-picker').classList.toggle('hidden', s !== 'picker');
+    document.getElementById('p-screen-exam').classList.toggle('hidden', s !== 'exam');
+    document.getElementById('p-screen-result').classList.toggle('hidden', s !== 'result');
+  }
+
+  function pRenderExam() {
+    document.getElementById('p-exam-title').textContent = P_CURRENT_EXAM.title;
+    document.getElementById('p-exam-code').textContent = P_CURRENT_EXAM.examCode ? 'שאלון ' + P_CURRENT_EXAM.examCode : '';
+    document.getElementById('p-exam-duration').textContent = P_CURRENT_EXAM.durationMinutes + ' דקות';
+    document.getElementById('p-exam-points').textContent = P_CURRENT_EXAM.totalPoints + ' נק\'';
+
+    const btn = document.getElementById('p-submit-btn');
+    btn.disabled = false;
+    btn.textContent = 'בדיקה וציון';
+
+    const container = document.getElementById('p-exam-content');
+    const parts = [];
+    let totalQs = 0;
+
+    for (const section of P_CURRENT_EXAM.sections) {
+      let secHtml = `<div class="p-section-card"><h2>${pEscape(section.title)}</h2>`;
+      if (section.instructions) secHtml += `<div class="p-sect-instr">${pEscape(section.instructions)}</div>`;
+      if (section.passages) {
+        for (const passage of section.passages) {
+          secHtml += `<div class="p-passage"><div class="p-p-title">${pEscape(passage.title)}</div><div>${pEscape(passage.text)}</div></div>`;
+          for (const q of passage.questions) { secHtml += pRenderQuestion(q); totalQs++; }
+        }
+      }
+      if (section.questions) {
+        for (const q of section.questions) { secHtml += pRenderQuestion(q); totalQs++; }
+      }
+      secHtml += '</div>';
+      parts.push(secHtml);
+    }
+    container.innerHTML = parts.join('');
+    document.getElementById('p-total-count').textContent = totalQs;
+    pUpdateProgress();
+  }
+
+  function pRenderQuestion(q) {
+    if (q.type === 'multiple-choice') {
+      return `
+        <div class="p-question" id="pq-${q.id}">
+          <div class="p-q-header">
+            <div class="p-q-number">${q.number}</div>
+            <div class="p-q-text">${pEscape(q.question)}</div>
+            <div class="p-q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
+          <div class="p-options">
+            ${q.options.map(opt => `
+              <label class="p-option" onclick="pSelectAnswer('${q.id}','${opt.key}')">
+                <input type="radio" name="p-${q.id}" value="${opt.key}">
+                <span class="p-option-key">${opt.key}.</span>
+                <span class="p-option-label">${pEscape(opt.text)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    if (q.type === 'open') {
+      return `
+        <div class="p-question" id="pq-${q.id}">
+          <div class="p-q-header">
+            <div class="p-q-number">${q.number}</div>
+            <div class="p-q-text">${pEscape(q.question)}</div>
+            <div class="p-q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
+          <textarea placeholder="כתוב/י את תשובתך…" oninput="pSaveOpen('${q.id}', this.value)" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;min-height:110px;resize:vertical;"></textarea>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function pSelectAnswer(qid, key) {
+    P_ANSWERS[qid] = { type: 'mc', value: key };
+    const qEl = document.getElementById('pq-' + qid);
+    qEl.classList.add('answered');
+    qEl.querySelectorAll('.p-option').forEach(el => {
+      const inp = el.querySelector('input');
+      el.classList.toggle('selected', inp.value === key);
+      inp.checked = inp.value === key;
+    });
+    pUpdateProgress();
+  }
+
+  function pSaveOpen(qid, text) {
+    if (text.trim()) {
+      P_ANSWERS[qid] = { type: 'open', value: text };
+      document.getElementById('pq-' + qid).classList.add('answered');
+    } else {
+      delete P_ANSWERS[qid];
+      document.getElementById('pq-' + qid).classList.remove('answered');
+    }
+    pUpdateProgress();
+  }
+
+  function pUpdateProgress() {
+    const answered = Object.keys(P_ANSWERS).length;
+    const total = parseInt(document.getElementById('p-total-count').textContent) || 1;
+    document.getElementById('p-answered-count').textContent = answered;
+    document.getElementById('p-progress-fill').style.width = (answered / total * 100) + '%';
+  }
+
+  function pFlattenQs(exam) {
+    const out = [];
+    for (const sec of exam.sections) {
+      if (sec.passages) sec.passages.forEach(p => p.questions.forEach(q => out.push(q)));
+      if (sec.questions) sec.questions.forEach(q => out.push(q));
+    }
+    return out;
+  }
+
+  function pCheckAnswers() {
+    const answered = Object.keys(P_ANSWERS).length;
+    if (answered === 0) { alert('ענה/עני לפחות על שאלה אחת לפני הבדיקה'); return; }
+    if (!confirm(`לבדוק את התרגול? ענית על ${answered} שאלות.`)) return;
+
+    const qs = pFlattenQs(P_CURRENT_EXAM);
+    let correct = 0, totalMC = 0;
+    let earnedPoints = 0, totalPointsWithKey = 0;
+    let openCount = 0;
+    const records = [];
+
+    for (const q of qs) {
+      const ans = P_ANSWERS[q.id];
+      const rec = { q, ans, isCorrect: null };
+      if (q.type === 'multiple-choice') {
+        totalMC++;
+        if (q.correctAnswer != null) {
+          totalPointsWithKey += q.points;
+          rec.correctAnswer = q.correctAnswer;
+          if (ans && ans.value === q.correctAnswer) {
+            rec.isCorrect = true; correct++; earnedPoints += q.points;
+          } else if (ans) {
+            rec.isCorrect = false;
+          }
+        }
+      } else if (q.type === 'open') {
+        openCount++;
+      }
+      records.push(rec);
+    }
+
+    const pct = totalPointsWithKey > 0 ? Math.round(earnedPoints / totalPointsWithKey * 100) : 0;
+    document.getElementById('p-result-score').textContent = totalPointsWithKey > 0 ? pct : '—';
+    document.getElementById('p-result-circle').style.setProperty('--score', pct + '%');
+    document.getElementById('p-stat-correct').textContent = correct + '/' + totalMC;
+    document.getElementById('p-stat-points').textContent = totalPointsWithKey > 0 ? earnedPoints + '/' + totalPointsWithKey : '—';
+    document.getElementById('p-stat-open').textContent = openCount;
+
+    let subtitle;
+    if (totalPointsWithKey === 0) {
+      subtitle = 'אין עדיין מחוון לשאלות במבחן הזה — רק תרגול חופשי. הריצו בדיקה עצמית מול החומר.';
+      document.getElementById('p-result-title').textContent = 'סיימת את התרגול';
+    } else {
+      subtitle = `ענית נכון על ${correct} מתוך ${totalMC} שאלות אמריקאיות${openCount > 0 ? ' · ' + openCount + ' שאלות פתוחות נותרו לבדיקה עצמית' : ''}`;
+      document.getElementById('p-result-title').textContent = pct >= 55 ? 'עברת את התרגול!' : 'סיימת — יש על מה לחזור';
+    }
+    document.getElementById('p-result-subtitle').textContent = subtitle;
+
+    pRenderReview(records);
+    pShowScreen('result');
+    window.scrollTo(0, 0);
+  }
+
+  function pRenderReview(records) {
+    const container = document.getElementById('p-review-content');
+    const groups = [];
+    for (const section of P_CURRENT_EXAM.sections) {
+      let html = `<div class="p-section-card"><h2>${pEscape(section.title)}</h2>`;
+      if (section.passages) {
+        for (const passage of section.passages) {
+          html += `<div class="p-passage"><div class="p-p-title">${pEscape(passage.title)}</div><div>${pEscape(passage.text)}</div></div>`;
+          for (const q of passage.questions) {
+            const rec = records.find(r => r.q.id === q.id);
+            if (rec) html += pRenderReviewItem(rec);
+          }
+        }
+      }
+      if (section.questions) {
+        for (const q of section.questions) {
+          const rec = records.find(r => r.q.id === q.id);
+          if (rec) html += pRenderReviewItem(rec);
+        }
+      }
+      html += '</div>';
+      groups.push(html);
+    }
+    container.innerHTML = groups.join('');
+  }
+
+  function pRenderReviewItem(rec) {
+    const q = rec.q;
+    if (q.type === 'multiple-choice') {
+      const userKey = rec.ans ? rec.ans.value : null;
+      const optsHtml = q.options.map(opt => {
+        let cls = 'p-option'; let mark = '';
+        const isUser = opt.key === userKey;
+        const isCorrect = opt.key === q.correctAnswer;
+        if (q.correctAnswer != null) {
+          if (isCorrect) { cls += ' review-correct'; mark = '<span class="p-option-mark">✓</span>'; }
+          else if (isUser) { cls += ' review-wrong'; mark = '<span class="p-option-mark">✗</span>'; }
+        } else if (isUser) { cls += ' selected'; }
+        return `<div class="${cls}"><span class="p-option-key">${opt.key}.</span><span class="p-option-label">${pEscape(opt.text)}</span>${mark}</div>`;
+      }).join('');
+
+      let note = '';
+      if (q.correctAnswer == null) note = `<div class="p-review-note open">אין מחוון — בדוק/י מול המורה או החומר.</div>`;
+      else if (!rec.ans) note = `<div class="p-review-note bad">לא ענית — התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
+      else if (rec.isCorrect) note = `<div class="p-review-note ok">צדקת! (+${q.points} נק')</div>`;
+      else note = `<div class="p-review-note bad">התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
+
+      return `
+        <div class="p-question">
+          <div class="p-q-header">
+            <div class="p-q-number">${q.number}</div>
+            <div class="p-q-text">${pEscape(q.question)}</div>
+            <div class="p-q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
+          <div class="p-options">${optsHtml}</div>
+          ${note}
+        </div>
+      `;
+    }
+    if (q.type === 'open') {
+      const userText = rec.ans ? rec.ans.value : '';
+      return `
+        <div class="p-question">
+          <div class="p-q-header">
+            <div class="p-q-number">${q.number}</div>
+            <div class="p-q-text">${pEscape(q.question)}</div>
+            <div class="p-q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
+          ${userText ? `<div style="background:#f8fafc;padding:12px 14px;border-radius:10px;border:1px solid var(--border);white-space:pre-wrap;font-size:14px;line-height:1.7;">${pEscape(userText)}</div>` : '<div class="p-review-note bad">לא ענית על שאלה זו.</div>'}
+          <div class="p-review-note open">שאלה פתוחה — בדיקה עצמית מול חומר הלמידה או עם המורה.</div>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function pEscape(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // ============================================================
+  // Bootstrap — choose initial mode
+  // ============================================================
+  async function bootstrap() {
+    const params = new URLSearchParams(location.search);
+    const urlMode = params.get('mode');
+    const hasSavedTeacher = !!localStorage.getItem('pe_teacher');
+
+    let initial;
+    if (urlMode === 'practice' || urlMode === 'teacher') {
+      initial = urlMode;
+    } else if (hasSavedTeacher) {
+      initial = 'teacher';
+    } else {
+      initial = 'practice';
+    }
+
+    if (initial === 'teacher') {
+      await init();
+      switchMode('teacher');
+    } else {
+      switchMode('practice');
+    }
+  }
+
+  bootstrap();
+</script>
+</body>
+</html>

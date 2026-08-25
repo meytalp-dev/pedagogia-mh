@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>מערך שיעור – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&family=Rubik:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F0F4F8;--card:#fff;--border:#E2E8F0;
+  --primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;
+  --secondary:#E76F7A;--sec-l:#FDE8EA;
+  --blue:#4A90D9;--blue-l:#DBEAFE;
+  --purple:#7C3AED;--purple-l:#EDE7F6;
+  --green:#52B788;--green-l:#D8F3DC;
+  --orange:#F4A261;--orange-l:#FEF0E1;
+  --dark:#1E293B;--gray:#64748B;
+  --correct:#16a34a;--wrong:#dc2626;
+  --shadow:0 2px 20px -4px rgba(0,0,0,.06);
+  --shadow-md:0 8px 28px rgba(0,0,0,.07);
+  --r:20px;
+}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ===== LOGIN ===== */
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary),var(--blue));display:flex;justify-content:center;align-items:center;z-index:200;transition:opacity .5s}
+.login-screen.hidden{opacity:0;pointer-events:none}
+.login-box{background:#fff;border-radius:24px;padding:48px 40px;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.login-box h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:800;color:var(--primary);margin-bottom:8px}
+.login-box .login-sub{color:var(--gray);font-size:.95rem;margin-bottom:28px}
+.login-box input,.login-box select{width:100%;padding:14px 18px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;margin-bottom:14px;outline:none;transition:border-color .2s}
+.login-box input:focus,.login-box select:focus{border-color:var(--primary)}
+.login-btn{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:background .2s;margin-top:8px}
+.login-btn:hover{background:var(--primary-d)}
+
+/* ===== APP HEADER ===== */
+#app{display:none}
+.app-header{background:#fff;border-bottom:1px solid var(--border);padding:16px 24px 0;position:sticky;top:0;z-index:100}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.header-title{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:700;color:var(--dark)}
+.header-subtitle{font-size:.85rem;color:var(--gray)}
+.student-info{font-size:.85rem;color:var(--primary);font-weight:600;text-align:left}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:0;-webkit-overflow-scrolling:touch}
+.tab-btn{padding:10px 20px;border:none;background:var(--bg);color:var(--gray);border-radius:12px 12px 0 0;font-family:'Heebo',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab-btn.active{background:var(--primary);color:#fff}
+.tab-btn:hover:not(.active){background:#e2e8f0}
+
+/* ===== TAB CONTENT ===== */
+.tab-content{display:none;padding:24px;max-width:900px;margin:0 auto}
+.tab-content.active{display:block;animation:fadeUp .4s ease}
+
+/* ===== SLIDES ===== */
+.slide-container{position:relative;background:#fff;border-radius:24px;box-shadow:var(--shadow-md);min-height:480px;overflow:hidden}
+.slide{position:absolute;inset:0;padding:48px 40px;opacity:0;transition:opacity .5s;pointer-events:none;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto}
+.slide.active .anim{animation:fadeUp .6s ease both}
+.slide.active .d1{animation-delay:.1s}.slide.active .d2{animation-delay:.2s}.slide.active .d3{animation-delay:.3s}.slide.active .d4{animation-delay:.4s}.slide.active .d5{animation-delay:.5s}.slide.active .d6{animation-delay:.6s}
+.title-slide{text-align:center;background:linear-gradient(135deg,var(--primary-l) 0%,var(--blue-l) 100%)}
+.slide-emoji{font-size:3rem;margin-bottom:16px}
+.slide-title{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark);margin-bottom:20px;line-height:1.3}
+.slide-subtitle{font-size:1.05rem;color:var(--gray);margin-bottom:24px;line-height:1.6}
+.badge{display:inline-block;background:var(--primary);color:#fff;padding:6px 18px;border-radius:20px;font-size:.85rem;font-weight:600;margin-bottom:16px}
+.tip{background:var(--primary-l);border-radius:14px;padding:16px 20px;text-align:right;font-size:.95rem;line-height:1.7;color:var(--dark)}
+.tip strong{color:var(--primary-d)}
+
+/* Step items in slides */
+.step-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.step-item:last-child{border-bottom:none}
+.icon-box{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ib-primary{background:var(--primary-l)}.ib-blue{background:var(--blue-l)}.ib-purple{background:var(--purple-l)}.ib-orange{background:var(--orange-l)}.ib-green{background:var(--green-l)}.ib-sec{background:var(--sec-l)}
+.step-content h4{font-weight:700;font-size:1.05rem;margin-bottom:4px}
+.step-content p{color:var(--gray);line-height:1.5;font-size:.95rem}
+
+/* Slide cards */
+.slide-cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.slide-card{flex:1;min-width:140px;background:var(--bg);border-radius:14px;padding:16px;text-align:center}
+.slide-card .sc-icon{font-size:1.8rem;margin-bottom:8px}
+.slide-card h4{font-weight:700;font-size:.95rem;margin-bottom:4px}
+.slide-card p{font-size:.85rem;color:var(--gray);line-height:1.4}
+
+/* Question slide */
+.question-box{background:var(--orange-l);border-radius:16px;padding:24px;text-align:center;margin-top:16px}
+.question-box p{font-size:1.1rem;font-weight:600;color:var(--dark);line-height:1.6}
+
+/* Slide navigation */
+.slide-nav{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px;background:#fff;border-top:1px solid var(--border);border-radius:0 0 24px 24px}
+.slide-nav button{width:40px;height:40px;border-radius:50%;border:none;background:var(--bg);color:var(--dark);font-size:1.2rem;cursor:pointer;transition:all .2s;font-family:'Heebo',sans-serif}
+.slide-nav button:hover:not(:disabled){background:var(--primary);color:#fff}
+.slide-nav button:disabled{opacity:.3;cursor:not-allowed}
+.slide-counter{font-size:.85rem;color:var(--gray);font-weight:600;min-width:60px;text-align:center}
+.progress-bar{height:4px;background:var(--bg);border-radius:2px;overflow:hidden;flex:1;max-width:300px}
+.progress-fill{height:100%;background:var(--primary);transition:width .3s;border-radius:2px}
+
+/* ===== GAMES ===== */
+.game-card{background:#fff;border-radius:24px;padding:32px;box-shadow:var(--shadow);margin-bottom:24px}
+.game-title{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.game-desc{color:var(--gray);font-size:.9rem;margin-bottom:24px}
+.quiz-progress{font-size:.85rem;color:var(--gray);margin-bottom:8px}
+.quiz-question{font-size:1.1rem;font-weight:700;margin-bottom:16px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{padding:14px 20px;border:2px solid #e2e8f0;border-radius:14px;cursor:pointer;transition:all .2s;font-size:1rem;background:#fff;text-align:right;font-family:'Heebo',sans-serif}
+.quiz-opt:hover:not(.disabled){border-color:var(--primary);background:var(--primary-l)}
+.quiz-opt.correct{border-color:var(--correct);background:#dcfce7;color:#166534}
+.quiz-opt.wrong{border-color:var(--wrong);background:#fef2f2;color:#991b1b}
+.quiz-opt.disabled{pointer-events:none}
+.quiz-feedback{margin-top:16px;padding:14px 20px;border-radius:14px;font-weight:600;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:#dcfce7;color:#166534}
+.quiz-feedback.wrong{background:#fef2f2;color:#991b1b}
+.quiz-next{margin-top:16px;padding:12px 28px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-weight:600;cursor:pointer;display:none;font-size:1rem}
+.quiz-next.show{display:inline-block}
+.quiz-score{text-align:center;padding:40px}
+.quiz-score h3{font-family:'Rubik',sans-serif;font-size:1.5rem;margin-bottom:8px}
+.quiz-score .score-num{font-size:3rem;font-weight:900;color:var(--primary)}
+
+/* Matching */
+.match-container{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.match-col{flex:1;min-width:200px;display:flex;flex-direction:column;gap:10px}
+.match-col-title{font-weight:700;text-align:center;margin-bottom:8px;color:var(--gray);font-size:.9rem}
+.match-item{padding:14px 18px;border:2px solid #e2e8f0;border-radius:14px;cursor:pointer;transition:all .2s;font-size:.95rem;text-align:center;background:#fff;user-select:none}
+.match-item.selected{border-color:var(--primary);background:var(--primary-l);transform:scale(1.03)}
+.match-item.matched{border-color:var(--correct);background:#dcfce7;pointer-events:none;opacity:.7}
+.match-item.wrong-flash{border-color:var(--wrong);background:#fef2f2;animation:shake .4s}
+.match-score{text-align:center;margin-top:16px;font-weight:600;color:var(--gray)}
+
+/* True/False */
+.tf-card{background:var(--bg);border-radius:16px;padding:24px;margin-bottom:16px;text-align:center}
+.tf-statement{font-size:1.1rem;font-weight:600;margin-bottom:16px;line-height:1.5}
+.tf-buttons{display:flex;gap:12px;justify-content:center}
+.tf-btn{padding:12px 32px;border:2px solid #e2e8f0;border-radius:14px;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s;background:#fff}
+.tf-btn:hover{transform:scale(1.05)}
+.tf-btn.correct-answer{border-color:var(--correct);background:#dcfce7;color:#166534}
+.tf-btn.wrong-answer{border-color:var(--wrong);background:#fef2f2;color:#991b1b}
+.tf-btn.disabled{pointer-events:none;opacity:.6}
+.tf-feedback{margin-top:12px;font-weight:600;font-size:.9rem;display:none}
+.tf-feedback.show{display:block}
+
+/* ===== ACTIVITY ===== */
+.activity-card{background:#fff;border-radius:24px;padding:32px;box-shadow:var(--shadow);margin-bottom:24px}
+.activity-step{display:flex;gap:16px;margin-bottom:20px;align-items:flex-start}
+.activity-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex-shrink:0;font-size:1.1rem}
+.activity-text h4{font-weight:700;margin-bottom:4px;font-size:1.05rem}
+.activity-text p{color:var(--gray);line-height:1.5}
+.bonus-card{background:var(--primary-l);border:2px solid var(--primary);border-radius:24px;padding:28px}
+.bonus-card h3{color:var(--primary-d);margin-bottom:12px;font-family:'Rubik',sans-serif}
+.bonus-card p{line-height:1.6}
+
+/* ===== SUMMARY ===== */
+.summary-card{background:#fff;border-radius:24px;padding:32px;box-shadow:var(--shadow)}
+.summary-point{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;padding:16px;background:var(--bg);border-radius:14px}
+.summary-icon{font-size:1.5rem;flex-shrink:0}
+.summary-text{font-size:1rem;line-height:1.6}
+.exit-ticket{background:linear-gradient(135deg,var(--primary-l),var(--blue-l));border-radius:16px;padding:28px;margin-top:24px;text-align:center}
+.exit-ticket h3{font-size:1.2rem;margin-bottom:12px;color:var(--primary-d);font-family:'Rubik',sans-serif}
+.exit-textarea{width:100%;padding:16px;border:2px solid #e2e8f0;border-radius:14px;font-family:'Heebo',sans-serif;font-size:1rem;min-height:100px;resize:vertical;outline:none;margin-bottom:12px}
+.exit-textarea:focus{border-color:var(--primary)}
+.submit-btn{padding:12px 32px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s}
+.submit-btn:hover{background:var(--primary-d)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ===== LOADING ===== */
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:300}
+.loading-screen.hidden{display:none}
+.spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:24px}
+.loading-text{font-size:1.1rem;color:var(--gray);font-weight:600}
+.error-box{background:#fef2f2;border:2px solid var(--wrong);border-radius:16px;padding:32px;text-align:center;max-width:400px}
+.error-box h2{color:var(--wrong);margin-bottom:12px;font-family:'Rubik',sans-serif}
+.error-box p{color:var(--gray);line-height:1.6}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:14px 28px;border-radius:14px;font-weight:600;z-index:9999;transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+@media(max-width:600px){
+  .login-box{padding:32px 24px}
+  .slide{padding:32px 24px}
+  .slide-title{font-size:1.4rem}
+  .game-card,.activity-card,.summary-card{padding:24px}
+  .tab-btn{padding:8px 14px;font-size:.8rem}
+  .match-container{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <div class="loading-text">טוען מערך שיעור...</div>
+</div>
+
+<!-- Login Screen -->
+<div class="login-screen hidden" id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:3rem;margin-bottom:12px" id="loginEmoji"></div>
+    <h1 id="loginTitle"></h1>
+    <p class="login-sub" id="loginSub"></p>
+    <input type="text" id="studentName" placeholder="השם שלך" required>
+    <select id="studentClass">
+      <option value="">בחרו כיתה</option>
+      <option value="ט1">ט'1</option><option value="ט2">ט'2</option>
+      <option value="י1">י'1</option><option value="י2">י'2</option>
+      <option value="יא1">יא'1</option><option value="יא2">יא'2</option>
+      <option value="יב1">יב'1</option><option value="יב2">יב'2</option>
+    </select>
+    <button class="login-btn" onclick="startLesson()">בואו נתחיל!</button>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <header class="app-header">
+    <div class="header-top">
+      <div>
+        <div class="header-title" id="appTitle"></div>
+        <div class="header-subtitle" id="appSubtitle"></div>
+      </div>
+      <div class="student-info" id="studentInfo"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('presentation',this)">מצגת</button>
+      <button class="tab-btn" onclick="switchTab('games',this)">משחקים לימודיים</button>
+      <button class="tab-btn" onclick="switchTab('group',this)">פעילות קבוצתית</button>
+      <button class="tab-btn" onclick="switchTab('summary',this)">סיכום</button>
+    </div>
+  </header>
+
+  <div class="tab-content active" id="tab-presentation">
+    <div class="slide-container" id="slideContainer"></div>
+    <div class="slide-nav">
+      <button onclick="changeSlide(-1)" id="prevBtn" disabled>&#x2192;</button>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="slide-counter" id="slideCounter">1 / 1</span>
+      <button onclick="changeSlide(1)" id="nextBtn">&#x2190;</button>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-games">
+    <div id="quizSection"></div>
+    <div id="matchSection"></div>
+    <div id="tfSection"></div>
+  </div>
+
+  <div class="tab-content" id="tab-group" id="groupContent"></div>
+
+  <div class="tab-content" id="tab-summary" id="summaryContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG =====
+var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
+var lessonData = null;
+var studentName = '';
+var studentClass = '';
+var currentSlide = 0;
+var totalSlides = 0;
+
+// ===== LOAD LESSON =====
+(function init() {
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+
+  // Check if lesson data is embedded (for standalone HTML export)
+  if (window.__LESSON_DATA__) {
+    lessonData = window.__LESSON_DATA__;
+    showLogin();
+    return;
+  }
+
+  // Check for demo/inline data in hash
+  if (window.location.hash === '#demo') {
+    lessonData = getDemoData();
+    showLogin();
+    return;
+  }
+
+  if (!id) {
+    showError('לא צוין מזהה שיעור', 'הקישור חסר פרמטר id. בקשו קישור חדש מהמורה.');
+    return;
+  }
+
+  // Load from Google Sheets
+  loadFromSheets(id);
+})();
+
+function loadFromSheets(id) {
+  // Use JSONP pattern (script tag) to avoid CORS
+  var cbName = 'lessonCallback_' + Date.now();
+  window[cbName] = function(data) {
+    delete window[cbName];
+    if (data && data.lessonJSON) {
+      try {
+        lessonData = JSON.parse(data.lessonJSON);
+        lessonData.title = lessonData.title || data.name || 'מערך שיעור';
+        lessonData.subject = lessonData.subject || data.subject || '';
+        lessonData.teacherEmail = lessonData.teacherEmail || data.email || '';
+        showLogin();
+      } catch(e) {
+        showError('שגיאה בטעינה', 'הנתונים לא תקינים. נסו שוב או פנו למורה.');
+      }
+    } else {
+      showError('שיעור לא נמצא', 'לא נמצא מערך שיעור עם המזהה הזה. בקשו קישור חדש.');
+    }
+  };
+  var script = document.createElement('script');
+  script.src = SHEETS_URL + '?action=getLesson&id=' + encodeURIComponent(id) + '&callback=' + cbName;
+  script.onerror = function() {
+    showError('שגיאת תקשורת', 'לא ניתן להתחבר לשרת. בדקו את חיבור האינטרנט.');
+  };
+  document.head.appendChild(script);
+
+  // Timeout after 10 seconds
+  setTimeout(function() {
+    if (window[cbName]) {
+      delete window[cbName];
+      showError('זמן טעינה ארוך', 'השרת לא מגיב. נסו לרענן את הדף.');
+    }
+  }, 10000);
+}
+
+function showError(title, msg) {
+  document.getElementById('loadingScreen').innerHTML =
+    '<div class="error-box"><h2>' + title + '</h2><p>' + msg + '</p></div>';
+}
+
+function showLogin() {
+  document.getElementById('loadingScreen').classList.add('hidden');
+  var ls = document.getElementById('loginScreen');
+  ls.classList.remove('hidden');
+  document.getElementById('loginEmoji').textContent = lessonData.emoji || '';
+  document.getElementById('loginTitle').textContent = lessonData.title || 'מערך שיעור';
+  document.getElementById('loginSub').textContent = (lessonData.subject || '') + ' | המרכז הפדגוגי · מינהל הכשרה מקצועית';
+  document.title = 'מערך שיעור – ' + (lessonData.title || '');
+}
+
+// ===== START LESSON =====
+function startLesson() {
+  var name = document.getElementById('studentName').value.trim();
+  var cls = document.getElementById('studentClass').value;
+  if (!name) { showToast('נא להזין שם'); return; }
+  if (!cls) { showToast('נא לבחור כיתה'); return; }
+  studentName = name;
+  studentClass = cls;
+  document.getElementById('studentInfo').textContent = name + ' | ' + cls;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').style.display = '';
+  setTimeout(function() { document.getElementById('loginScreen').style.display = 'none'; }, 500);
+
+  // Render all content
+  document.getElementById('appTitle').textContent = lessonData.title || '';
+  document.getElementById('appSubtitle').textContent = lessonData.subject || '';
+  renderSlides();
+  renderGames();
+  renderActivity();
+  renderSummary();
+}
+
+// ===== TABS =====
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + tabId).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ===== SLIDES =====
+function renderSlides() {
+  var slides = lessonData.slides || [];
+  totalSlides = slides.length;
+  var container = document.getElementById('slideContainer');
+  var html = '';
+
+  slides.forEach(function(s, i) {
+    var isTitle = s.type === 'title';
+    var cls = 'slide' + (i === 0 ? ' active' : '') + (isTitle ? ' title-slide' : '');
+    html += '<div class="' + cls + '">';
+
+    if (s.emoji) html += '<div class="anim d1 slide-emoji">' + s.emoji + '</div>';
+    if (isTitle && s.badge) html += '<div class="anim d2 badge">' + s.badge + '</div>';
+    if (s.title) html += '<h1 class="anim ' + (isTitle ? 'd3' : 'd1') + ' slide-title">' + s.title + '</h1>';
+    if (s.subtitle) html += '<p class="anim ' + (isTitle ? 'd4' : 'd2') + ' slide-subtitle">' + s.subtitle + '</p>';
+
+    // Content types
+    if (s.items && s.type === 'steps') {
+      html += '<div class="anim d3" style="display:flex;flex-direction:column;gap:4px">';
+      s.items.forEach(function(item) {
+        var ibClass = item.iconClass || 'ib-primary';
+        html += '<div class="step-item"><div class="icon-box ' + ibClass + '">' + (item.icon || '') + '</div><div class="step-content"><h4>' + (item.title || '') + '</h4><p>' + (item.text || '') + '</p></div></div>';
+      });
+      html += '</div>';
+    }
+
+    if (s.items && s.type === 'cards') {
+      html += '<div class="anim d3 slide-cards">';
+      s.items.forEach(function(item) {
+        html += '<div class="slide-card"><div class="sc-icon">' + (item.icon || '') + '</div><h4>' + (item.title || '') + '</h4><p>' + (item.text || '') + '</p></div>';
+      });
+      html += '</div>';
+    }
+
+    if (s.items && (s.type === 'content' || s.type === 'list')) {
+      html += '<div class="anim d3" style="display:flex;flex-direction:column;gap:4px">';
+      s.items.forEach(function(item) {
+        if (item.title) {
+          var ibClass = item.iconClass || 'ib-primary';
+          html += '<div class="step-item"><div class="icon-box ' + ibClass + '">' + (item.icon || '') + '</div><div class="step-content"><h4>' + (item.title || '') + '</h4><p>' + (item.text || '') + '</p></div></div>';
+        } else {
+          html += '<div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:1rem;line-height:1.6">' + (item.text || item.icon || '') + '</div>';
+        }
+      });
+      html += '</div>';
+    }
+
+    if (s.question) {
+      html += '<div class="anim d4 question-box"><p>' + s.question + '</p></div>';
+    }
+
+    if (s.tip) {
+      html += '<div class="anim d5 tip">' + s.tip + '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+  updateSlideNav();
+}
+
+function changeSlide(dir) {
+  var slides = document.querySelectorAll('#slideContainer .slide');
+  if (!slides.length) return;
+  slides[currentSlide].classList.remove('active');
+  currentSlide = Math.max(0, Math.min(totalSlides - 1, currentSlide + dir));
+  slides[currentSlide].classList.add('active');
+  updateSlideNav();
+}
+
+function updateSlideNav() {
+  document.getElementById('prevBtn').disabled = currentSlide === 0;
+  document.getElementById('nextBtn').disabled = currentSlide >= totalSlides - 1;
+  document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+  document.getElementById('progressFill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') changeSlide(1);
+  if (e.key === 'ArrowRight') changeSlide(-1);
+});
+
+// Touch/swipe
+var touchStartX = 0;
+document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', function(e) {
+  var diff = touchStartX - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 50) { if (diff > 0) changeSlide(1); else changeSlide(-1); }
+});
+
+// ===== GAMES =====
+var quizData = [], quizIndex = 0, quizScore = 0;
+var matchData = [], matchSelected = null, matchCorrect = 0;
+var tfData = [], tfScore = 0, tfAnswered = 0;
+
+function renderGames() {
+  var games = lessonData.games || {};
+
+  // Quiz
+  if (games.quiz && games.quiz.length) {
+    quizData = games.quiz;
+    document.getElementById('quizSection').innerHTML =
+      '<div class="game-card"><div class="game-title"><span>&#x1f3af;</span> חידון טריוויה</div><div class="game-desc">ענו על ' + quizData.length + ' שאלות ובדקו כמה למדתם!</div><div id="quizContainer"></div></div>';
+    renderQuizQuestion();
+  }
+
+  // Matching
+  if (games.matching && games.matching.length) {
+    matchData = games.matching;
+    document.getElementById('matchSection').innerHTML =
+      '<div class="game-card"><div class="game-title"><span>&#x1f517;</span> משחק התאמה</div><div class="game-desc">התאימו כל מושג להגדרה הנכונה שלו</div><div id="matchContainer"></div><div class="match-score" id="matchScoreEl">התאמות: 0 / ' + matchData.length + '</div></div>';
+    initMatch();
+  }
+
+  // True/False
+  if (games.truefalse && games.truefalse.length) {
+    tfData = games.truefalse;
+    document.getElementById('tfSection').innerHTML =
+      '<div class="game-card"><div class="game-title"><span>&#x2705;</span> נכון או לא נכון?</div><div class="game-desc">קראו כל משפט והחליטו</div><div id="tfContainer"></div><div class="match-score" id="tfScoreEl">ציון: 0 / 0</div></div>';
+    initTF();
+  }
+}
+
+// Quiz
+function renderQuizQuestion() {
+  if (quizIndex >= quizData.length) { showQuizScore(); return; }
+  var q = quizData[quizIndex];
+  var html = '<div class="quiz-progress">שאלה ' + (quizIndex + 1) + ' מתוך ' + quizData.length + '</div>';
+  html += '<div class="quiz-question">' + q.q + '</div><div class="quiz-options">';
+  q.opts.forEach(function(o, i) { html += '<div class="quiz-opt" onclick="checkQuiz(' + i + ')">' + o + '</div>'; });
+  html += '</div><div class="quiz-feedback" id="quizFeedback"></div>';
+  html += '<button class="quiz-next" id="quizNext" onclick="nextQuiz()">השאלה הבאה &#x2190;</button>';
+  document.getElementById('quizContainer').innerHTML = html;
+}
+function checkQuiz(sel) {
+  var q = quizData[quizIndex];
+  var opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o, i) {
+    o.classList.add('disabled');
+    if (i === q.correct) o.classList.add('correct');
+    if (i === sel && i !== q.correct) o.classList.add('wrong');
+  });
+  var fb = document.getElementById('quizFeedback');
+  if (sel === q.correct) {
+    quizScore++;
+    fb.textContent = q.explain ? q.explain : 'נכון! כל הכבוד!';
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    fb.textContent = q.explain ? q.explain : 'לא נכון. התשובה הנכונה מסומנת בירוק.';
+    fb.className = 'quiz-feedback show wrong';
+  }
+  document.getElementById('quizNext').classList.add('show');
+}
+function nextQuiz() { quizIndex++; renderQuizQuestion(); }
+function showQuizScore() {
+  var pct = Math.round(quizScore / quizData.length * 100);
+  document.getElementById('quizContainer').innerHTML =
+    '<div class="quiz-score"><h3>סיימתם את החידון!</h3><div class="score-num">' + quizScore + '/' + quizData.length + '</div><p style="color:var(--gray);margin-top:8px">' +
+    (pct >= 70 ? 'מצוין! שליטה טובה בחומר!' : 'כדאי לחזור על החומר ולנסות שוב') + '</p></div>';
+  sendScore('חידון טריוויה', quizScore, quizData.length);
+}
+
+// Matching
+function initMatch() {
+  var shuffled = matchData.slice().sort(function() { return Math.random() - 0.5; });
+  var html = '<div class="match-container"><div class="match-col"><div class="match-col-title">מושג</div>';
+  matchData.forEach(function(m, i) { html += '<div class="match-item" data-type="term" data-idx="' + i + '" onclick="selectMatch(this)">' + (m.right || m.term) + '</div>'; });
+  html += '</div><div class="match-col"><div class="match-col-title">הגדרה</div>';
+  shuffled.forEach(function(m) {
+    var origIdx = matchData.indexOf(m);
+    html += '<div class="match-item" data-type="def" data-idx="' + origIdx + '" onclick="selectMatch(this)">' + (m.left || m.def) + '</div>';
+  });
+  html += '</div></div>';
+  document.getElementById('matchContainer').innerHTML = html;
+}
+function selectMatch(el) {
+  if (el.classList.contains('matched')) return;
+  if (matchSelected && matchSelected.dataset.type === el.dataset.type) {
+    matchSelected.classList.remove('selected');
+    matchSelected = el; el.classList.add('selected'); return;
+  }
+  if (!matchSelected) { matchSelected = el; el.classList.add('selected'); return; }
+  if (matchSelected.dataset.idx === el.dataset.idx) {
+    matchSelected.classList.remove('selected'); matchSelected.classList.add('matched'); el.classList.add('matched');
+    matchCorrect++;
+    document.getElementById('matchScoreEl').textContent = 'התאמות: ' + matchCorrect + ' / ' + matchData.length;
+    if (matchCorrect === matchData.length) {
+      document.getElementById('matchScoreEl').innerHTML = '<span style="color:var(--correct);font-size:1.1rem">&#x1f389; מצוין! התאמתם את כל המושגים!</span>';
+      sendScore('משחק התאמה', matchData.length, matchData.length);
+    }
+  } else {
+    el.classList.add('wrong-flash'); matchSelected.classList.add('wrong-flash');
+    var ms = matchSelected;
+    setTimeout(function() { el.classList.remove('wrong-flash','selected'); ms.classList.remove('wrong-flash','selected'); }, 500);
+  }
+  matchSelected = null;
+}
+
+// True/False
+function initTF() {
+  var html = '';
+  tfData.forEach(function(item, i) {
+    html += '<div class="tf-card" id="tf-' + i + '"><div class="tf-statement">' + (item.statement || item.s) + '</div>';
+    html += '<div class="tf-buttons"><button class="tf-btn" onclick="checkTF(' + i + ',true)">&#x2714;&#xfe0f; נכון</button>';
+    html += '<button class="tf-btn" onclick="checkTF(' + i + ',false)">&#x2716;&#xfe0f; לא נכון</button></div>';
+    html += '<div class="tf-feedback" id="tf-fb-' + i + '"></div></div>';
+  });
+  document.getElementById('tfContainer').innerHTML = html;
+}
+function checkTF(idx, answer) {
+  var item = tfData[idx];
+  var card = document.getElementById('tf-' + idx);
+  var btns = card.querySelectorAll('.tf-btn');
+  var fb = document.getElementById('tf-fb-' + idx);
+  var correct = item.correct === undefined ? item.answer : item.correct;
+  btns.forEach(function(b) { b.classList.add('disabled'); });
+  var isCorrect = answer === correct;
+  if (isCorrect) {
+    tfScore++; btns[answer ? 0 : 1].classList.add('correct-answer');
+    fb.textContent = item.explain || 'נכון!'; fb.style.color = 'var(--correct)';
+  } else {
+    btns[answer ? 0 : 1].classList.add('wrong-answer');
+    btns[correct ? 0 : 1].classList.add('correct-answer');
+    fb.textContent = item.explain || (correct ? 'התשובה הנכונה: נכון' : 'התשובה הנכונה: לא נכון');
+    fb.style.color = 'var(--wrong)';
+  }
+  fb.classList.add('show'); tfAnswered++;
+  document.getElementById('tfScoreEl').textContent = 'ציון: ' + tfScore + ' / ' + tfAnswered;
+  if (tfAnswered === tfData.length) {
+    sendScore('נכון או לא נכון', tfScore, tfData.length);
+  }
+}
+
+// ===== ACTIVITY =====
+function renderActivity() {
+  var act = lessonData.activity;
+  if (!act) return;
+  var colors = ['var(--primary)', 'var(--blue)', 'var(--purple)', 'var(--orange)', 'var(--green)'];
+  var html = '<div class="activity-card">';
+  if (act.emoji) html += '<div style="font-size:2.5rem;text-align:center;margin-bottom:16px">' + act.emoji + '</div>';
+  html += '<h2 style="text-align:center;font-family:Rubik,sans-serif;margin-bottom:8px">' + (act.title || 'פעילות קבוצתית') + '</h2>';
+  if (act.subtitle) html += '<p style="text-align:center;color:var(--gray);margin-bottom:28px">' + act.subtitle + '</p>';
+
+  (act.steps || []).forEach(function(step, i) {
+    html += '<div class="activity-step"><div class="activity-num" style="background:' + colors[i % colors.length] + '">' + (i + 1) + '</div>';
+    html += '<div class="activity-text"><h4>' + (step.title || '') + '</h4><p>' + (step.text || '') + '</p></div></div>';
+  });
+  html += '</div>';
+
+  if (act.bonus) {
+    html += '<div class="bonus-card"><h3>&#x1f4a1; משימת בונוס</h3><p>' + act.bonus + '</p></div>';
+  }
+
+  document.getElementById('tab-group').innerHTML = html;
+}
+
+// ===== SUMMARY =====
+function renderSummary() {
+  var sum = lessonData.summary;
+  if (!sum) return;
+  var html = '<div class="summary-card"><h2 style="font-family:Rubik,sans-serif;margin-bottom:24px;text-align:center">&#x1f4dd; סיכום השיעור</h2>';
+
+  (sum.points || []).forEach(function(p) {
+    html += '<div class="summary-point"><div class="summary-icon">' + (p.emoji || '&#x1f4a1;') + '</div>';
+    html += '<div class="summary-text">' + (p.text || '') + '</div></div>';
+  });
+  html += '</div>';
+
+  if (sum.exitTicket) {
+    html += '<div class="exit-ticket"><h3>&#x1f3ab; כרטיס יציאה</h3>';
+    html += '<p style="color:var(--gray);margin-bottom:16px">כתבו תשובה קצרה לפני שיוצאים מהשיעור</p>';
+    html += '<p style="font-weight:700;font-size:1.1rem;margin-bottom:16px;color:var(--dark)">' + sum.exitTicket + '</p>';
+    html += '<textarea class="exit-textarea" id="exitAnswer" placeholder="כתבו את התשובה שלכם כאן..."></textarea>';
+    html += '<button class="submit-btn" onclick="submitExitTicket()">&#x1f4e8; שלחו תשובה</button></div>';
+  }
+
+  document.getElementById('tab-summary').innerHTML = html;
+}
+
+function submitExitTicket() {
+  var answer = document.getElementById('exitAnswer').value.trim();
+  if (!answer) { showToast('נא לכתוב תשובה'); return; }
+  sendScore('כרטיס יציאה', 0, 0, answer);
+  showToast('התשובה נשלחה! תודה!');
+  var btn = document.querySelector('.submit-btn');
+  btn.disabled = true; btn.textContent = 'נשלח!';
+}
+
+// ===== GOOGLE SHEETS =====
+function sendScore(activity, score, total, text) {
+  var sheetName = lessonData.sheetsName || lessonData.title || 'מערך שיעור';
+  var data = {
+    action: 'submit',
+    sheet: sheetName,
+    name: studentName,
+    class: studentClass,
+    activity: activity,
+    score: score,
+    total: total,
+    percent: total > 0 ? Math.round(score / total * 100) : '',
+    text: text || '',
+    email: lessonData.teacherEmail || '',
+    date: new Date().toLocaleString('he-IL')
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(function() {});
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+// ===== DEMO DATA =====
+function getDemoData() {
+  return {
+    title: 'שיעור לדוגמה',
+    subject: 'מקצוע לדוגמה',
+    emoji: '&#x1f4da;',
+    teacherEmail: 'demo@ort.org.il',
+    slides: [
+      { type:'title', emoji:'&#x1f4da;', badge:'מקצוע לדוגמה', title:'שיעור לדוגמה', subtitle:'זהו שיעור הדגמה לבדיקת הנגן' },
+      { type:'steps', emoji:'&#x1f4a1;', title:'נקודות מרכזיות', items:[
+        {icon:'1️⃣', iconClass:'ib-primary', title:'נקודה ראשונה', text:'הסבר קצר על הנקודה הראשונה'},
+        {icon:'2️⃣', iconClass:'ib-blue', title:'נקודה שנייה', text:'הסבר קצר על הנקודה השנייה'},
+        {icon:'3️⃣', iconClass:'ib-purple', title:'נקודה שלישית', text:'הסבר קצר על הנקודה השלישית'}
+      ]},
+      { type:'content', emoji:'&#x2753;', title:'שאלת הבנה', question:'מה למדנו עד כה? נסו לענות בזוגות.' }
+    ],
+    games: {
+      quiz: [
+        {q:'מה הנקודה הראשונה?', opts:['תשובה א','תשובה ב','תשובה ג','תשובה ד'], correct:0, explain:'נכון! תשובה א היא הנכונה.'},
+        {q:'מה הנקודה השנייה?', opts:['תשובה א','תשובה ב','תשובה ג','תשובה ד'], correct:1, explain:'נכון! תשובה ב.'}
+      ],
+      matching: [
+        {right:'מושג 1', left:'הגדרה 1'},
+        {right:'מושג 2', left:'הגדרה 2'},
+        {right:'מושג 3', left:'הגדרה 3'}
+      ],
+      truefalse: [
+        {statement:'זהו משפט נכון', correct:true, explain:'נכון!'},
+        {statement:'זהו משפט לא נכון', correct:false, explain:'אכן לא נכון.'}
+      ]
+    },
+    activity: {
+      emoji:'&#x1f91d;', title:'פעילות קבוצתית', subtitle:'עבודה בזוגות',
+      steps: [
+        {title:'התחלקו לזוגות', text:'כל זוג מקבל משימה.'},
+        {title:'דונו ביחד', text:'דברו על הנושא ורשמו 3 נקודות.'},
+        {title:'הציגו', text:'כל זוג מציג לכיתה את הנקודות שלו.'}
+      ],
+      bonus: 'צלמו סרטון של 30 שניות שמסכם את מה שלמדתם!'
+    },
+    summary: {
+      points: [
+        {emoji:'&#x1f4a1;', text:'<strong>נקודה 1:</strong> הסבר קצר על הנקודה הראשונה.'},
+        {emoji:'&#x1f4a1;', text:'<strong>נקודה 2:</strong> הסבר קצר על הנקודה השנייה.'},
+        {emoji:'&#x1f4a1;', text:'<strong>נקודה 3:</strong> הסבר קצר על הנקודה השלישית.'}
+      ],
+      exitTicket: 'כתבו דבר אחד חדש שלמדתם היום ושאלה אחת שנשארה לכם.'
+    }
+  };
+}
+</script>
+</body>
+</html>

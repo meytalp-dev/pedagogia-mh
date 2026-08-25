@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תרגול מבחני גמר — כניסת תלמיד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Heebo', 'Assistant', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.25;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--cyan); top: -150px; right: -150px; }
+  .blob-2 { width: 400px; height: 400px; background: var(--pink); bottom: -100px; left: -100px; }
+
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-title { font-size: 18px; font-weight: 700; }
+  .topbar-back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .topbar-back:hover { color: var(--ink); }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hidden { display: none !important; }
+
+  /* Login */
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 520px;
+    margin: 40px auto;
+  }
+  .login-card h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .login-card .sub { color: var(--muted); margin-bottom: 28px; }
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    margin-bottom: 18px;
+    background: #fff;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+  }
+  textarea { min-height: 120px; resize: vertical; font-family: inherit; }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  button:active { transform: translateY(1px); }
+  .btn-primary {
+    background: var(--cyan);
+    color: white;
+    width: 100%;
+    padding: 14px;
+  }
+  .btn-primary:hover { box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--muted); }
+
+  /* Exam picker */
+  .picker-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .picker-head h1 { font-size: 28px; font-weight: 700; }
+  .user-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .user-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  .sector-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+  .sector-tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .sector-tab.active {
+    background: var(--cyan);
+    color: white;
+  }
+
+  .subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .subject-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .exam-list { display: flex; flex-direction: column; gap: 8px; }
+  .exam-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .exam-item.ready { cursor: pointer; }
+  .exam-item.ready:hover {
+    border-color: var(--cyan);
+    background: #fff;
+  }
+  .exam-item.pending {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .exam-title { font-size: 14px; font-weight: 500; }
+  .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .badge-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+  .badge-ready { background: #d1fae5; color: #065f46; }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+
+  /* Exam taking */
+  .exam-head {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .exam-head h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .exam-meta-row {
+    display: flex;
+    gap: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-top: 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--teal));
+    width: 0;
+    transition: width 0.3s;
+  }
+
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .section-card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 6px;
+  }
+  .section-card .sect-instr {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .passage {
+    background: #fafbfc;
+    border-inline-start: 4px solid var(--teal);
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .passage .p-title {
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .question {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .question.answered { border-color: #bfdbfe; background: #f0f9ff; }
+  .q-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .q-number {
+    background: var(--cyan);
+    color: white;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .q-text { font-weight: 500; font-size: 15px; flex: 1; }
+  .q-points {
+    color: var(--muted);
+    font-size: 12px;
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; padding-inline-start: 38px; }
+  .option {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    align-items: flex-start;
+  }
+  .option:hover { background: var(--bg); }
+  .option.selected {
+    border-color: var(--cyan);
+    background: #ecfeff;
+  }
+  .option input { width: auto; margin: 4px 0 0 0; accent-color: var(--cyan); }
+  .option-label { flex: 1; font-size: 14px; }
+  .option-key {
+    font-weight: 700;
+    color: var(--cyan);
+    min-width: 18px;
+  }
+
+  .submit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: sticky;
+    bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .submit-row .info { font-size: 14px; color: var(--muted); }
+  .submit-row .info strong { color: var(--ink); }
+  .submit-btn {
+    background: var(--green);
+    color: white;
+    padding: 14px 32px;
+  }
+  .submit-btn:hover { box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3); }
+  .submit-btn:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Result */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 40px auto;
+  }
+  .result-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 800;
+    background: conic-gradient(var(--green) var(--score, 0%), var(--border) var(--score, 0%));
+    position: relative;
+  }
+  .result-circle::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: var(--card);
+  }
+  .result-circle .score-num { position: relative; color: var(--ink); }
+  .result-info h2 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .result-info p { color: var(--muted); margin-bottom: 24px; }
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-box {
+    background: var(--bg);
+    padding: 16px 8px;
+    border-radius: 10px;
+  }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .notice {
+    background: #fef9c3;
+    border: 1px solid #fde047;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    text-align: right;
+  }
+  .notice strong { color: #854d0e; }
+
+  @media (max-width: 640px) {
+    .options { padding-inline-start: 0; }
+    .submit-row { flex-direction: column; }
+    .submit-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="topbar">
+  <div class="topbar-title">תרגול מבחני גמר</div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button onclick="openFeedback()" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;">דווח/הערה</button>
+    <a href="index.html" class="topbar-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      חזרה
+    </a>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedback-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:50;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="font-size:18px;font-weight:700;">דווח על בעיה / הערה</h2>
+      <button onclick="closeFeedback()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);padding:4px 10px;">×</button>
+    </div>
+    <div style="padding:20px 22px;overflow-y:auto;flex:1;">
+      <label>נושא</label>
+      <select id="fb-subject">
+        <option>באג או תקלה</option>
+        <option>שאלה / תשובה שנראית שגויה</option>
+        <option>בעיית תצוגה</option>
+        <option>שאלה כללית</option>
+        <option>אחר</option>
+      </select>
+      <label>ההודעה</label>
+      <textarea id="fb-message" rows="5" placeholder="תאר/י את הבעיה או ההערה..."></textarea>
+      <label>שם (אופציונלי)</label>
+      <input id="fb-name" type="text" placeholder="שם מלא">
+      <label>מייל או טלפון (אופציונלי)</label>
+      <input id="fb-contact" type="text" placeholder="לחזרה במידת הצורך">
+      <div id="fb-error" style="color:var(--red);font-size:13px;margin-top:4px;"></div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+      <button class="btn-secondary" onclick="closeFeedback()" style="padding:8px 16px;font-size:14px;">ביטול</button>
+      <button id="fb-submit" onclick="sendFeedback()" style="background:var(--green);color:white;padding:8px 20px;font-size:14px;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit;">שליחה</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <!-- SCREEN 1: LOGIN -->
+  <div id="screen-login">
+    <div style="text-align:center;margin:20px auto 40px;max-width:720px;">
+      <div style="display:inline-block;background:#fff;padding:6px 14px;border-radius:20px;font-size:13px;color:var(--muted);border:1px solid var(--border);margin-bottom:16px;">משרד העבודה · תשפ"ו</div>
+      <h1 style="font-size:clamp(26px,4.5vw,42px);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;background:linear-gradient(135deg,var(--cyan),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">מאגר מבחני גמר במקצועות הליבה</h1>
+      <p style="font-size:16px;color:var(--muted);max-width:520px;margin:0 auto;">תרגול מבחני גמר אינטראקטיבי — ציון אוטומטי לשאלות אמריקאיות ובדיקת מורה לשאלות פתוחות</p>
+    </div>
+
+    <div class="login-card">
+      <div id="teacher-banner" class="hidden" style="background:linear-gradient(135deg,#ecfeff,#fce7f3);padding:14px;border-radius:10px;margin-bottom:20px;text-align:center;font-size:14px;">
+        <div style="color:var(--muted);font-size:12px;margin-bottom:2px;">מורה:</div>
+        <div id="teacher-name-display" style="font-weight:700;font-size:16px;">—</div>
+      </div>
+
+      <div id="no-teacher-warning" class="hidden" style="background:#fef2f2;border:1px solid #fca5a5;padding:14px;border-radius:10px;margin-bottom:20px;font-size:14px;">
+        <strong style="color:#991b1b;">חסר קישור ממורה</strong>
+        <div style="color:#7f1d1d;margin-top:4px;">בקשי מהמורה שלך את הקישור האישי שלה ותכנסי דרכו.</div>
+      </div>
+
+      <h1>כניסת תלמיד/ה</h1>
+      <p class="sub">פעם ראשונה → רישום. פעם הבאה → כניסה עם אותם שם+PIN.</p>
+
+      <label for="student-name">שם מלא</label>
+      <input id="student-name" type="text" placeholder="לדוגמה: יעל כהן" autocomplete="name">
+
+      <label for="student-class">כיתה</label>
+      <select id="student-class">
+        <option value="">בחרי כיתה…</option>
+        <option>ט</option><option>ט1</option><option>ט2</option>
+        <option>י</option><option>י1</option><option>י2</option><option>י3</option>
+        <option>יא</option><option>יא1</option><option>יא2</option><option>יא3</option>
+        <option>יב</option><option>יב1</option><option>יב2</option><option>יב3</option>
+      </select>
+
+      <label for="student-pin">PIN אישי (4+ ספרות)</label>
+      <input id="student-pin" type="password" inputmode="numeric" maxlength="8" placeholder="לזכור! יידרש בפעם הבאה">
+
+      <button class="btn-primary" onclick="login()">כניסה</button>
+      <div id="login-error" style="color:var(--red);font-size:13px;margin-top:10px;text-align:center;"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;padding-bottom:20px;color:var(--muted);font-size:13px;">
+      <div>פותח ע"י <strong style="color:var(--ink);">מיטל פלג</strong></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: EXAM PICKER -->
+  <div id="screen-picker" class="hidden">
+    <div class="picker-head">
+      <h1>בחר/י מבחן לתרגול</h1>
+      <div class="user-chip"><span class="dot"></span><span id="user-display"></span></div>
+    </div>
+
+    <div class="sector-tabs">
+      <div class="sector-tab active" data-sector="general" onclick="switchSector('general')">מגזר כללי</div>
+      <div class="sector-tab" data-sector="arab" onclick="switchSector('arab')">מגזר ערבי</div>
+    </div>
+
+    <div id="subject-grid" class="subject-grid"></div>
+  </div>
+
+  <!-- SCREEN 3: EXAM TAKING -->
+  <div id="screen-exam" class="hidden">
+    <div class="exam-head">
+      <h1 id="exam-title"></h1>
+      <div class="exam-meta-row">
+        <span id="exam-code"></span>
+        <span id="exam-duration"></span>
+        <span id="exam-points"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div id="exam-content"></div>
+    <div class="submit-row">
+      <div class="info">
+        ענית על <strong id="answered-count">0</strong> מתוך <strong id="total-count">0</strong> שאלות
+      </div>
+      <button id="submit-btn" class="submit-btn" onclick="submitExam()">הגש מבחן</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: RESULT -->
+  <div id="screen-result" class="hidden">
+    <div class="result-card">
+      <div class="result-circle" id="result-circle">
+        <span class="score-num" id="result-score">—</span>
+      </div>
+      <div class="result-info">
+        <h2 id="result-title">המבחן הוגש בהצלחה</h2>
+        <p id="result-subtitle"></p>
+      </div>
+      <div class="result-stats">
+        <div class="stat-box"><div class="stat-num" id="stat-correct">—</div><div class="stat-label">נכונות</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-total">—</div><div class="stat-label">סה"כ</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-pending">—</div><div class="stat-label">ממתינות למורה</div></div>
+      </div>
+      <div id="result-notice" class="notice hidden"></div>
+      <button class="btn-primary" onclick="location.reload()">חזרה לבחירת מבחן</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // CONFIG — paste the Apps Script Web App URL here after deploy
+  // ============================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw83vpmGZHpVeq3qs6hMXXtP8v6BNiFqNxElIU2azI9ML-uisdcaLuiR72cpsSZ4xjP/exec';
+
+  let CATALOG = null;
+  let CURRENT_EXAM = null;
+  let USER = null;
+  let TEACHER = null;
+  let answers = {};
+  let startTime = null;
+
+  // ---------- init ----------
+  async function init() {
+    // Parse teacher code + optional exam id from URL
+    const params = new URLSearchParams(location.search);
+    const teacherCode = params.get('t');
+    const deepExamId = params.get('e');
+    window.__pendingExamId = deepExamId || null;
+
+    if (teacherCode && APPS_SCRIPT_URL) {
+      try {
+        const res = await fetch(APPS_SCRIPT_URL + '?action=teacher-info&teacherCode=' + encodeURIComponent(teacherCode));
+        const data = await res.json();
+        if (data.teacher) {
+          TEACHER = data.teacher;
+          document.getElementById('teacher-banner').classList.remove('hidden');
+          document.getElementById('teacher-name-display').textContent = TEACHER.name;
+        } else {
+          document.getElementById('no-teacher-warning').classList.remove('hidden');
+        }
+      } catch (e) {
+        document.getElementById('no-teacher-warning').classList.remove('hidden');
+      }
+    } else if (!teacherCode) {
+      document.getElementById('no-teacher-warning').classList.remove('hidden');
+    }
+
+    // Restore session if exists AND teacher code matches
+    const saved = localStorage.getItem('pe_user');
+    if (saved) {
+      const savedUser = JSON.parse(saved);
+      if (savedUser.teacherCode === teacherCode) {
+        USER = savedUser;
+        await loadCatalog();
+        if (window.__pendingExamId) {
+          const examId = window.__pendingExamId;
+          window.__pendingExamId = null;
+          startExam(examId);
+        } else {
+          showScreen('picker');
+        }
+      }
+    }
+  }
+
+  async function loadCatalog() {
+    if (CATALOG) return;
+    const res = await fetch('exams/index.json');
+    CATALOG = await res.json();
+  }
+
+  // ---------- login / register ----------
+  async function login() {
+    const name = document.getElementById('student-name').value.trim();
+    const cls = document.getElementById('student-class').value;
+    const pin = document.getElementById('student-pin').value.trim();
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+
+    if (!name || !cls || !pin) { errEl.textContent = 'יש למלא שם, כיתה ו-PIN'; return; }
+    if (pin.length < 4) { errEl.textContent = 'PIN חייב 4 ספרות לפחות'; return; }
+    if (!TEACHER) { errEl.textContent = 'חסר קישור ממורה. בקשי קישור אישי ונסי שוב.'; return; }
+
+    if (!APPS_SCRIPT_URL) {
+      // Fallback
+      USER = { name, class: cls, pin, teacherCode: TEACHER.teacherCode, teacherName: TEACHER.name, loginAt: new Date().toISOString() };
+      localStorage.setItem('pe_user', JSON.stringify(USER));
+      await loadCatalog();
+      goToAfterLogin();
+      return;
+    }
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'register-or-login-student', name, class: cls, pin, teacherCode: TEACHER.teacherCode })
+      });
+      const data = await res.json();
+      if (!data.ok) { errEl.textContent = data.error || 'שגיאה'; return; }
+
+      USER = { name, class: cls, pin, teacherCode: TEACHER.teacherCode, teacherName: TEACHER.name, mode: data.mode, loginAt: new Date().toISOString() };
+      localStorage.setItem('pe_user', JSON.stringify(USER));
+      await loadCatalog();
+      goToAfterLogin();
+    } catch (e) {
+      errEl.textContent = 'תקלה ברשת. נסי שוב.';
+    }
+  }
+
+  function goToAfterLogin() {
+    if (window.__pendingExamId) {
+      const examId = window.__pendingExamId;
+      window.__pendingExamId = null;
+      startExam(examId);
+    } else {
+      showScreen('picker');
+    }
+  }
+
+  // ---------- picker ----------
+  function showScreen(s) {
+    ['login','picker','exam','result'].forEach(x => {
+      document.getElementById('screen-' + x).classList.toggle('hidden', x !== s);
+    });
+    if (s === 'picker') {
+      document.getElementById('user-display').textContent = `${USER.name} · ${USER.class}`;
+      renderSubjects('general');
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function switchSector(id) {
+    document.querySelectorAll('.sector-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.sector === id);
+    });
+    renderSubjects(id);
+  }
+
+  function renderSubjects(sectorId) {
+    const sector = CATALOG.sectors.find(s => s.id === sectorId);
+    const grid = document.getElementById('subject-grid');
+    grid.innerHTML = sector.subjects.map(sub => `
+      <div class="subject-card">
+        <h3>${sub.name}</h3>
+        <div class="exam-list">
+          ${sub.exams.map(ex => {
+            const ready = ex.status === 'ready';
+            const badge = ready
+              ? '<span class="badge-status badge-ready">זמין</span>'
+              : '<span class="badge-status badge-pending">בקרוב</span>';
+            const onclick = ready ? `onclick="startExam('${ex.id}')"` : '';
+            return `
+              <div class="exam-item ${ready ? 'ready' : 'pending'}" ${onclick}>
+                <div>
+                  <div class="exam-title">${ex.title}</div>
+                  ${ex.questionCount ? `<div class="exam-meta">${ex.questionCount} שאלות · ${ex.durationMinutes} דקות</div>` : ''}
+                </div>
+                ${badge}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---------- exam taking ----------
+  async function startExam(examId) {
+    const res = await fetch('exams/' + examId + '.json');
+    CURRENT_EXAM = await res.json();
+    answers = {};
+    startTime = new Date();
+    renderExam();
+    showScreen('exam');
+  }
+
+  function renderExam() {
+    document.getElementById('exam-title').textContent = CURRENT_EXAM.title;
+    document.getElementById('exam-code').textContent = 'שאלון ' + (CURRENT_EXAM.examCode || '');
+    document.getElementById('exam-duration').textContent = CURRENT_EXAM.durationMinutes + ' דקות';
+    document.getElementById('exam-points').textContent = CURRENT_EXAM.totalPoints + ' נק\'';
+
+    const container = document.getElementById('exam-content');
+    const parts = [];
+    let totalQs = 0;
+
+    for (const section of CURRENT_EXAM.sections) {
+      let secHtml = `<div class="section-card"><h2>${section.title}</h2>`;
+      if (section.instructions) secHtml += `<div class="sect-instr">${section.instructions}</div>`;
+
+      if (section.passages) {
+        for (const passage of section.passages) {
+          secHtml += `<div class="passage"><div class="p-title">${passage.title}</div><div>${passage.text}</div></div>`;
+          for (const q of passage.questions) {
+            secHtml += renderQuestion(q);
+            totalQs++;
+          }
+        }
+      }
+      if (section.questions) {
+        for (const q of section.questions) {
+          secHtml += renderQuestion(q);
+          totalQs++;
+        }
+      }
+      secHtml += '</div>';
+      parts.push(secHtml);
+    }
+
+    container.innerHTML = parts.join('');
+    document.getElementById('total-count').textContent = totalQs;
+    updateProgress();
+  }
+
+  function renderQuestion(q) {
+    if (q.type === 'multiple-choice') {
+      return `
+        <div class="question" id="q-${q.id}">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${q.question}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          <div class="options">
+            ${q.options.map(opt => `
+              <label class="option" onclick="selectAnswer('${q.id}','${opt.key}')">
+                <input type="radio" name="${q.id}" value="${opt.key}">
+                <span class="option-key">${opt.key}.</span>
+                <span class="option-label">${opt.text}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    if (q.type === 'open') {
+      return `
+        <div class="question" id="q-${q.id}">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${q.question}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          <textarea placeholder="כתוב/י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function selectAnswer(qid, key) {
+    answers[qid] = { type: 'mc', value: key };
+    const qEl = document.getElementById('q-' + qid);
+    qEl.classList.add('answered');
+    qEl.querySelectorAll('.option').forEach(el => {
+      const inp = el.querySelector('input');
+      el.classList.toggle('selected', inp.value === key);
+      inp.checked = inp.value === key;
+    });
+    updateProgress();
+  }
+
+  function saveOpenAnswer(qid, text) {
+    if (text.trim()) {
+      answers[qid] = { type: 'open', value: text };
+      document.getElementById('q-' + qid).classList.add('answered');
+    } else {
+      delete answers[qid];
+      document.getElementById('q-' + qid).classList.remove('answered');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const total = parseInt(document.getElementById('total-count').textContent) || 1;
+    document.getElementById('answered-count').textContent = answered;
+    document.getElementById('progress-fill').style.width = (answered / total * 100) + '%';
+  }
+
+  // ---------- submit ----------
+  async function submitExam() {
+    const answered = Object.keys(answers).length;
+    if (answered === 0) {
+      alert('ענה/עני לפחות על שאלה אחת לפני הגשה');
+      return;
+    }
+    if (!confirm(`האם להגיש את המבחן? ענית על ${answered} שאלות.`)) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'שולח…';
+
+    // Auto-grade multiple choice where correct answer is known
+    let correct = 0, totalMC = 0, pendingReview = 0;
+    let earnedPoints = 0, totalPointsWithKey = 0, pendingPoints = 0;
+    const gradedAnswers = [];
+    const allQuestions = flattenQuestions(CURRENT_EXAM);
+
+    for (const q of allQuestions) {
+      const ans = answers[q.id];
+      const record = {
+        questionId: q.id,
+        questionNumber: q.number,
+        questionText: q.question,
+        type: q.type,
+        points: q.points,
+        answer: ans ? ans.value : null
+      };
+      if (q.type === 'multiple-choice') {
+        totalMC++;
+        if (q.correctAnswer != null) {
+          totalPointsWithKey += q.points;
+          record.correctAnswer = q.correctAnswer;
+          if (ans && ans.value === q.correctAnswer) {
+            record.isCorrect = true;
+            correct++;
+            earnedPoints += q.points;
+          } else {
+            record.isCorrect = false;
+          }
+        } else {
+          record.isCorrect = null;
+          pendingReview++;
+          pendingPoints += q.points;
+        }
+      } else if (q.type === 'open') {
+        record.isCorrect = null;
+        pendingReview++;
+        pendingPoints += q.points;
+      }
+      gradedAnswers.push(record);
+    }
+
+    const submission = {
+      submissionId: 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      examId: CURRENT_EXAM.id,
+      examTitle: CURRENT_EXAM.title,
+      sector: CURRENT_EXAM.sector,
+      subject: CURRENT_EXAM.subjectName,
+      student: { name: USER.name, class: USER.class, id: USER.id || '' },
+      teacherCode: USER.teacherCode || '',
+      teacherName: USER.teacherName || '',
+      startTime: startTime.toISOString(),
+      endTime: new Date().toISOString(),
+      durationSec: Math.round((Date.now() - startTime.getTime()) / 1000),
+      answers: gradedAnswers,
+      autoScore: {
+        correct, totalMC,
+        earnedPoints, totalPointsWithKey,
+        pendingReview, pendingPoints,
+        totalExamPoints: CURRENT_EXAM.totalPoints
+      },
+      finalScore: null,
+      reviewStatus: pendingReview > 0 ? 'pending' : 'auto-complete'
+    };
+
+    await sendToBackend(submission);
+    showResult(submission);
+  }
+
+  function flattenQuestions(exam) {
+    const out = [];
+    for (const section of exam.sections) {
+      if (section.passages) section.passages.forEach(p => p.questions.forEach(q => out.push(q)));
+      if (section.questions) section.questions.forEach(q => out.push(q));
+    }
+    return out;
+  }
+
+  async function sendToBackend(submission) {
+    if (!APPS_SCRIPT_URL) {
+      // Fallback — save to localStorage
+      const all = JSON.parse(localStorage.getItem('pe_submissions') || '[]');
+      all.push(submission);
+      localStorage.setItem('pe_submissions', JSON.stringify(all));
+      return;
+    }
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'submit', data: submission })
+      });
+    } catch (e) {
+      console.error('Backend error:', e);
+      const all = JSON.parse(localStorage.getItem('pe_submissions') || '[]');
+      all.push(submission);
+      localStorage.setItem('pe_submissions', JSON.stringify(all));
+    }
+  }
+
+  function showResult(submission) {
+    const s = submission.autoScore;
+    document.getElementById('stat-correct').textContent = s.correct + '/' + s.totalMC;
+    document.getElementById('stat-total').textContent = s.totalMC + (s.pendingReview > 0 ? '+' + s.pendingReview : '');
+    document.getElementById('stat-pending').textContent = s.pendingReview;
+
+    const notice = document.getElementById('result-notice');
+    if (s.pendingReview > 0) {
+      document.getElementById('result-title').textContent = 'המבחן הוגש — ממתין לבדיקת מורה';
+      document.getElementById('result-subtitle').textContent = 'המורה תבדוק ידנית ותשלח את הציון הסופי';
+      if (s.totalPointsWithKey > 0) {
+        document.getElementById('result-score').textContent = s.earnedPoints + '/' + s.totalPointsWithKey;
+        const pct = Math.round(s.earnedPoints / s.totalPointsWithKey * 100);
+        document.getElementById('result-circle').style.setProperty('--score', pct + '%');
+      } else {
+        document.getElementById('result-score').textContent = '…';
+        document.getElementById('result-circle').style.setProperty('--score', '0%');
+      }
+      notice.innerHTML = `<strong>שימו לב:</strong> ${s.pendingReview} שאלות ממתינות לבדיקת המורה (שאלות פתוחות או שאלות אמריקאיות שטרם הוגדרה להן תשובה נכונה).`;
+      notice.classList.remove('hidden');
+    } else {
+      const pct = Math.round(s.earnedPoints / s.totalExamPoints * 100);
+      document.getElementById('result-score').textContent = pct;
+      document.getElementById('result-circle').style.setProperty('--score', pct + '%');
+      document.getElementById('result-title').textContent = 'המבחן הוגש בהצלחה';
+      document.getElementById('result-subtitle').textContent = `צברת ${s.earnedPoints} מתוך ${s.totalExamPoints} נקודות`;
+    }
+    showScreen('result');
+  }
+
+  // ---------- Feedback ----------
+  function openFeedback() {
+    document.getElementById('feedback-modal').style.display = 'flex';
+    document.getElementById('fb-error').textContent = '';
+    if (USER && !document.getElementById('fb-name').value) {
+      document.getElementById('fb-name').value = USER.name || '';
+    }
+  }
+  function closeFeedback() {
+    document.getElementById('feedback-modal').style.display = 'none';
+  }
+  async function sendFeedback() {
+    const subject = document.getElementById('fb-subject').value;
+    const message = document.getElementById('fb-message').value.trim();
+    const name = document.getElementById('fb-name').value.trim();
+    const contact = document.getElementById('fb-contact').value.trim();
+    const errEl = document.getElementById('fb-error');
+    errEl.textContent = '';
+    if (!message) { errEl.textContent = 'יש למלא את ההודעה'; return; }
+
+    const btn = document.getElementById('fb-submit');
+    btn.disabled = true; btn.textContent = 'שולח…';
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'submit-feedback',
+          role: 'student',
+          name: name || (USER && USER.name) || 'אנונימי',
+          contact,
+          subject,
+          message,
+          url: location.href
+        })
+      });
+      alert('תודה! ההודעה נשלחה.');
+      document.getElementById('fb-message').value = '';
+      document.getElementById('fb-contact').value = '';
+      closeFeedback();
+    } catch (e) {
+      errEl.textContent = 'תקלה בשליחה. נסי שוב.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'שליחה';
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

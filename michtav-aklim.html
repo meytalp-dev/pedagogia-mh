@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פגישת למידה על שאלוני האקלים · המרכז הפדגוגי</title>
+<meta name="description" content="מכתב מקדים לפגישת הלמידה על תוצאות שאלוני האקלים עם המפקח הפדגוגי הכולל: מבנה טבלת ההכנה וכל היגדי שאלון המורים ושאלון התלמידים.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="פגישת למידה על שאלוני האקלים">
+<meta property="og:description" content="מכתב מקדים לפגישת הלמידה על תוצאות שאלוני האקלים עם המפקח הפדגוגי הכולל: מבנה טבלת ההכנה וכל היגדי שאלון המורים ושאלון התלמידים.">
+<meta property="og:url" content="https://pedagogiamh.co.il/michtav-aklim.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        oklch(27% 0.06 268);
+    --ink-soft:   oklch(46% 0.035 262);
+    --navy:       oklch(38% 0.115 268);
+    --navy-deep:  oklch(30% 0.10 268);
+    --royal:      oklch(54% 0.165 262);
+    --sky:        oklch(76% 0.085 250);
+    --sky-tint:   oklch(95.5% 0.017 250);
+    --bg:         oklch(97.6% 0.006 255);
+    --surface:    oklch(99.2% 0.003 255);
+    --line:       oklch(89% 0.014 255);
+    --line-soft:  oklch(93% 0.010 255);
+    --amber-ink:  oklch(52% 0.10 80);
+    --amber-bg:   oklch(96% 0.03 90);
+    --red:        oklch(50% 0.17 25);
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:76px}
+  body{
+    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
+    line-height:1.7; overflow-x:clip;
+  }
+  h1,h2,h3,h4{font-family:'Frank Ruhl Libre',serif; line-height:1.14; letter-spacing:-.01em}
+  a{color:inherit}
+  img{max-width:100%}
+  p+p{margin-top:.85em}
+  strong{font-weight:700}
+  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+  .article{max-width:860px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+
+  a.lk{color:var(--royal); text-decoration:none; font-weight:600; border-bottom:1.5px solid var(--sky); transition:.2s}
+  a.lk:hover{background:var(--sky-tint); border-bottom-color:var(--royal)}
+  a.lk::after{content:"↗"; font-size:.7em; margin-inline-start:3px; color:var(--sky)}
+
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
+  .rv.in{opacity:1; transform:none}
+
+  /* ---------- top bar ---------- */
+  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
+  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
+  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
+  .top-in img{height:50px; width:auto}
+  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
+  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+  nav.jump{margin-inline-start:auto; display:flex; gap:22px}
+  nav.jump a{
+    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
+    position:relative; padding:6px 2px; transition:color .25s;
+  }
+  nav.jump a::after{
+    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
+  }
+  nav.jump a:hover{color:var(--navy)}
+  nav.jump a:hover::after{transform:scaleX(1)}
+  @media(max-width:700px){nav.jump{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:clamp(44px,7vh,76px) 0 clamp(30px,4vh,44px); border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-flex; align-items:center; gap:12px;
+    color:var(--royal); font-weight:700; font-size:15px;
+  }
+  .kicker::before{
+    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
+    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
+  .hero h1{
+    font-size:clamp(32px,5vw,56px); font-weight:900; color:var(--navy-deep);
+    margin:14px 0 14px; max-width:22ch; text-wrap:balance;
+  }
+  .hero p.lead{font-size:clamp(16px,1.5vw,18.5px); color:var(--ink-soft); max-width:58ch}
+  .hero .meta-row{display:flex; flex-wrap:wrap; gap:12px 22px; margin-top:22px; align-items:center; font-size:14px; color:var(--ink-soft)}
+  .hero .meta-row .src a{color:var(--royal); font-weight:700}
+  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
+  .hero-stagger > *:nth-child(1){animation-delay:.05s}
+  .hero-stagger > *:nth-child(2){animation-delay:.14s}
+  .hero-stagger > *:nth-child(3){animation-delay:.22s}
+  .hero-stagger > *:nth-child(4){animation-delay:.3s}
+  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
+
+  /* ---------- article body ---------- */
+  .body-sec{padding:clamp(36px,6vh,60px) 0 clamp(28px,4vh,44px)}
+  h2.sub-sec{
+    font-size:clamp(22px,2.8vw,29px); font-weight:900; color:var(--navy-deep);
+    margin:clamp(34px,5vw,48px) 0 10px; padding-top:24px; border-top:1px solid var(--line);
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  }
+  h2.sub-sec::before{content:""; width:34px; height:8px; background:var(--royal); flex:0 0 auto; transform:translateY(-4px); border-radius:2px; box-shadow:40px 0 0 -3px var(--sky)}
+  h2.sub-sec.first{border-top:none; padding-top:0; margin-top:0}
+  h3.mini{
+    font-size:18.5px; font-weight:700; color:var(--navy); margin:24px 0 8px;
+    display:flex; align-items:center; gap:12px; font-family:'Frank Ruhl Libre',serif;
+  }
+  h3.mini::after{content:""; flex:1; height:1px; background:var(--line); max-width:170px}
+  .lead-p{font-size:17px; color:var(--ink-soft)}
+
+  ol.ed{list-style:none; counter-reset:ed; margin:16px 0}
+  ol.ed>li{
+    counter-increment:ed; position:relative;
+    padding:10px 54px 10px 0; border-bottom:1px solid var(--line-soft);
+  }
+  ol.ed>li:last-child{border-bottom:none}
+  ol.ed>li::before{
+    content:counter(ed,decimal-leading-zero); position:absolute; right:0; top:8px;
+    font-family:'Karantina',serif; font-weight:700; font-size:26px; line-height:1.2; color:var(--royal);
+    width:40px;
+  }
+  ul.ed{list-style:none; margin:14px 0}
+  ul.ed>li{position:relative; padding:7px 26px 7px 0}
+  ul.ed>li::before{content:""; position:absolute; right:2px; top:18px; width:12px; height:2.5px; border-radius:2px; background:var(--royal)}
+  ul.ed.tight>li{padding-top:4px; padding-bottom:4px}
+
+  .callout{
+    margin:26px 0; padding:20px 26px;
+    background:var(--surface); border:1px solid var(--line); border-inline-start:4px solid var(--royal);
+    border-radius:0 14px 14px 0; box-shadow:0 14px 34px -26px oklch(30% 0.1 268 / .4);
+    font-size:16px;
+  }
+  .callout.amber{border-inline-start-color:var(--amber-ink); background:var(--amber-bg)}
+  .callout.red{border-inline-start-color:var(--red)}
+  .callout .ttl{font-family:'Frank Ruhl Libre',serif; font-weight:700; display:block; margin-bottom:6px; font-size:18px; color:var(--navy-deep)}
+
+  .tbl-scroll{overflow-x:auto; margin:18px 0}
+  table.doc{
+    width:100%; border-collapse:collapse; font-size:15px; background:var(--surface);
+    border:1px solid var(--line); border-top:3px solid var(--navy);
+    min-width:540px; box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
+  }
+  table.doc caption{
+    caption-side:top; text-align:right; font-family:'Frank Ruhl Libre',serif; font-weight:900;
+    font-size:19px; padding:0 2px 10px; color:var(--navy-deep);
+  }
+  table.doc caption::after{content:""; display:block; width:52px; height:3px; background:var(--royal); border-radius:2px; margin-top:6px}
+  table.doc th{
+    font-weight:700; font-size:13px; letter-spacing:.08em; color:oklch(90% 0.03 255);
+    background:var(--navy); padding:10px 16px; text-align:right;
+  }
+  table.doc td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+  table.doc tr:last-child td{border-bottom:none}
+  table.doc td.k{
+    font-weight:700; background:var(--sky-tint); border-inline-start:1px solid var(--line-soft);
+    font-family:'Frank Ruhl Libre',serif; font-size:15.5px; color:var(--navy-deep);
+  }
+  table.doc tr:nth-child(even) td:not(.k){background:oklch(98.6% 0.005 255)}
+
+  /* ---------- source box ---------- */
+  .source-box{
+    margin:clamp(36px,6vh,56px) 0 0; padding:22px 26px;
+    background:var(--sky-tint); border:1px solid var(--line); border-radius:16px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .source-box .t{font-weight:700; color:var(--navy-deep)}
+  .source-box .t small{display:block; font-weight:400; font-size:13.5px; color:var(--ink-soft)}
+  .source-box a.btn{
+    margin-inline-start:auto;
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+    font-weight:700; font-size:15px; padding:11px 24px; border-radius:999px;
+    background:var(--navy); color:oklch(98% 0.005 255);
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s;
+  }
+  .source-box a.btn:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 12px 28px oklch(38% 0.115 268 / .3)}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:clamp(40px,6vh,64px)}
+  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
+  .foot-in img{height:42px}
+  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
+  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
+
+  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
+  .ogenw-launcher svg{transform:scale(1.28)}
+  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
+  .ogenw-panel{bottom:118px !important}
+
+  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
+    .rv{opacity:1; transform:none}
+  }
+  @media print{
+    header.top{display:none}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top" id="topbar">
+  <div class="wrap top-in">
+    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
+    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
+    <nav class="jump" aria-label="ניווט">
+      <a href="tashpaz.html">היערכות תשפ״ז</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="index.html">לעמוד הראשי</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">מדידה והערכה</span>
+    <h1>פגישת למידה על שאלוני האקלים עם המפקח הפדגוגי הכולל</h1>
+    <p class="lead">מכתב מקדים לקראת פגישת החשיבה על תוצאות שאלון האקלים: איך מתבוננים בתוצאות, אילו שאלות שואלים ואיך בונים תוכניות מבוססות נתונים — כולל כל היגדי שאלון המורים ושאלון התלמידים.</p>
+    <div class="meta-row">
+      <span>שאלון אקלים תשפ״ו · 13/01/2025</span>
+      <span class="src">המקור: <a class="lk" href="https://docs.google.com/document/d/1xu4maDy35LUQ2oT9wOw135JjYNr3w61G/edit" target="_blank" rel="noopener">המסמך בדרייב</a></span>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <h2 class="sub-sec first rv">מטרת הפגישה</h2>
+    <p class="lead-p rv">כחלק מתהליך שאלוני האקלים תתקיים פגישת חשיבה עם המפקח הפדגוגי הכולל, ללמידת התוצאות ולבניית תוכניות מבוססות נתונים.</p>
+    <p class="rv">בפגישה זו המוקד יהיה פדגוגי, ויידונו השאלות הפדגוגיות הן באקלים צוות והן באקלים תלמידים. כמו כן ננסה להבין את מידת ההלימה ואת המקומות שבהם יש פערים בין תחושות הצוות והתלמידים, וכן את תמונת המצב הפדגוגית ביחס לתחומים אחרים שנמדדו בשאלון.</p>
+
+    <div class="callout amber rv">
+      <span class="ttl">הכנה לפגישה</span>
+      בית הספר ממלא את הטבלה כהכנה לפגישה. רצוי לשלוח את הטבלה למפקח לפני קיום הפגישה.
+    </div>
+
+    <h2 class="sub-sec rv">מה נעשה ביחס לכל היגד</h2>
+    <ol class="ed rv">
+      <li>להתבונן בתוצאה.</li>
+      <li>לשאול שאלות ביחס לתוצאה.</li>
+      <li>לחשוב על מענים אפשריים בכוחות ובמשאבי הפְּנים הנוכחיים של בית הספר.</li>
+      <li>להגדיר מדדי הצלחה שיוכלו לסמן התקדמות בתחום זה.</li>
+    </ol>
+
+    <h2 class="sub-sec rv">מבנה טבלת העבודה</h2>
+    <p class="rv">בטבלת ההכנה, לצד כל היגד, ארבע עמודות עבודה:</p>
+    <ul class="ed tight rv">
+      <li><strong>התוצאה</strong> — התוצאה שהתקבלה בהיגד.</li>
+      <li><strong>התבוננות בנתונים</strong> — מה השאלה שנשאל?</li>
+      <li><strong>תוכנית פעולה</strong> — מה המענים האפשריים בכוחות בית הספר?</li>
+      <li><strong>מדדי הצלחה</strong> — כיצד נמדוד התקדמות?</li>
+    </ul>
+
+    <h2 class="sub-sec rv">היגדי שאלון האקלים — מורים</h2>
+    <ol class="ed rv">
+      <li>באיזו תדירות אתה משלב שיטות חדשניות בהוראה? (למידה פעילה, למידה בשילוב טכנולוגיה, פיתוח מיומנויות ולמידה התנסותית וחווייתית)</li>
+      <li>באיזו מידה אתה משלב פיתוח מיומנויות רכות (כגון: עבודת צוות, תקשורת, פתרון בעיות, למידה עצמית) בשיעורים שלך?</li>
+      <li>באיזו מידה אתה מצליח לשלב למידה בין־תחומית שמחברת בין תחומי ידע שונים ומשלבת יצירתיות וחדשנות?</li>
+      <li>באיזו מידה את/ה מרגיש/ה שמערכת בית הספר תומכת בך (כגון ציוד, תוכנות, חומרי לימוד) להוראה רלוונטית ועדכנית?</li>
+      <li>עד כמה אתה מרגיש שבית הספר מספק הזדמנויות לפיתוח מקצועי המותאם לצרכים האישיים שלך כמורה?</li>
+      <li>באיזו מידה את/ה מרגיש/ה שמערכת בית הספר תומכת בך עם תשתית ראויה לעבודה ושילוב טכנולוגיות בהוראה ולמידה?</li>
+      <li>באיזו מידה אתה מרגיש שהצוות החינוכי מקבל הכשרה מספקת בנושא שילוב טכנולוגיות חדשות בהוראה?</li>
+      <li>באיזו מידה את/ה מרגיש/ה שמערכת בית הספר תומכת בך עם הזדמנויות לשתף ידע וניסיון, חוויות הצלחה וכישלון עם עמיתים בבית הספר?</li>
+      <li>עד כמה קיימת בבית הספר תרבות של למידה מתמדת והתפתחות מקצועית בקרב צוות המורים?</li>
+      <li>באיזו מידה את/ה מרגיש/ה שמערכת בית הספר תומכת בך עם הכשרה, משאבים ואפשרויות לקדם למידה דיפרנציאלית ולראות כל תלמיד בכיתה?</li>
+      <li>עד כמה אתה מרגיש שאתה מצליח לקדם כל תלמיד בכיתה שלך?</li>
+      <li>עד כמה אתה משתמש בהערכה חלופית ממבחן בכיתה שלך? (עבודה, פרויקטים, עמידה מול הכיתה, תוצר דיגיטלי)</li>
+      <li>עד כמה את/ה מרגיש/ה שאתה מקדם את פיתוח היכולות האישיות של התלמידים ולמימוש הפוטנציאל שלהם?</li>
+      <li>עד כמה אתה מכיר את תפיסת החינוך הדואלית־הומניסטית של החינוך היוצר?</li>
+    </ol>
+
+    <h2 class="sub-sec rv">היגדי שאלון האקלים — תלמידים</h2>
+    <ol class="ed rv">
+      <li>עד כמה הלמידה בבית הספר עוזרת לך להתקדם בלימודים?</li>
+      <li>עד כמה אתה מרגיש שמורים מתייחסים לצרכים האישיים שלך בלמידה ומנסים לעזור לך להצליח?</li>
+      <li>עד כמה השיעורים בבית הספר מעניינים ומאפשרים לך להיות מעורב ופעיל בלמידה בכיתה?</li>
+      <li>עד כמה יש לך הזדמנויות להשתמש בחוזקות שלך בעבודות, בפרויקטים או בסדנאות שלומדים?</li>
+      <li>עד כמה אתה נהנה להשתתף בשיעורים וללמוד בבית הספר?</li>
+      <li>עד כמה המורים מקפידים לעדכן אותי ולשוחח על מצבי הלימודי?</li>
+      <li>עד כמה המורים מקשרים את החומר הנלמד לנושאים נוספים, למשל למקצועות אחרים, לאירועים בחדשות, למקצוע המגמה, לחיי היום־יום וכו'?</li>
+      <li>עד כמה המורים נותנים לתלמידים משימות לפי יכולת ואופי הלמידה שלהם?</li>
+      <li>עד כמה את/ה פעיל/ה בהליך הלמידה? לדוגמה: שואלים שאלות, מציגים עבודה לפני הכיתה, מביעים את דעותיהם או מעלים רעיונות.</li>
+      <li>עד כמה המורים נותנים לי תחושה שאני יכול להצליח בלימודים?</li>
+    </ol>
+
+    <p class="rv" style="font-size:14px; color:var(--ink-soft)">מחלקת חניכות ונוער, אגף בכיר להכשרה מקצועית ופיתוח כוח אדם · <a class="lk" href="https://www.labor.gov.il" target="_blank" rel="noopener">www.labor.gov.il</a> · רחוב בנק ישראל 5, ירושלים</p>
+
+    <div class="source-box rv">
+      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
+      <a class="btn" href="https://docs.google.com/document/d/1xu4maDy35LUQ2oT9wOw135JjYNr3w61G/edit" target="_blank" rel="noopener">פתיחה בדרייב ↗</a>
+    </div>
+
+  </div>
+</article>
+
+<footer>
+  <div class="wrap foot-in">
+    <img src="logo.png" alt="">
+    <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
+    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
+  </div>
+</footer>
+
+<script>
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var bar = document.getElementById('topbar');
+  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>

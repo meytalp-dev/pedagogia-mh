@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחולל משחקים – אורט בית הערבה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+:root {
+  --bg:#F0F4F8;--card:#ffffff;
+  --primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;
+  --secondary:#E76F7A;--sec-l:#FDE8EA;
+  --green:#52B788;--green-l:#D8F3DC;
+  --blue:#4A90D9;--blue-l:#DBEAFE;
+  --accent:#E9A319;--accent-l:#FEF3C7;
+  --dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;
+  --border:rgba(0,0,0,.06);
+  --shadow:0 2px 20px -4px rgba(0,0,0,.06);
+  --shadow-md:0 8px 28px rgba(0,0,0,.07);
+  --r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+.header{text-align:center;padding:40px 20px 12px}
+.header h1{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.header p{color:var(--gray);font-size:15px}
+.auth-bar{display:flex;justify-content:center;padding:16px 20px 8px}
+.auth-profile{display:flex;align-items:center;gap:12px;background:white;padding:10px 20px;border-radius:50px;box-shadow:var(--shadow)}
+.auth-profile img{width:32px;height:32px;border-radius:50%}
+.auth-profile .name{font-size:14px;font-weight:600}
+.auth-profile .email{font-size:12px;color:var(--gray)}
+.auth-profile .logout-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-l);padding:4px;transition:color .2s}
+.auth-profile .logout-btn:hover{color:var(--secondary)}
+.steps{display:flex;justify-content:center;gap:8px;padding:16px 20px 32px;max-width:500px;margin:0 auto}
+.step{display:flex;align-items:center;gap:8px;flex:1}
+.step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:'Rubik',sans-serif;border:2px solid var(--border);color:var(--gray-l);background:white;transition:all .3s;flex-shrink:0}
+.step.active .step-circle{background:var(--primary);color:white;border-color:var(--primary)}
+.step.done .step-circle{background:var(--green);color:white;border-color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--border);border-radius:2px}
+.step.done .step-line{background:var(--green)}
+.step:last-child .step-line{display:none}
+.step-label{display:none}
+@media(min-width:600px){
+  .step-label{display:block;font-size:12px;color:var(--gray-l);white-space:nowrap}
+  .step.active .step-label{color:var(--primary);font-weight:600}
+  .step.done .step-label{color:var(--green)}
+}
+.container{max-width:800px;margin:0 auto;padding:0 20px 60px}
+.card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:var(--bg);transition:all .3s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(42,157,143,.08)}
+.form-group textarea{min-height:60px;resize:vertical;line-height:1.5}
+.form-group .hint{font-size:12px;color:var(--gray-l);margin-top:4px}
+.form-group .error{font-size:12px;color:var(--secondary);margin-top:4px;display:none}
+.form-group.invalid input,.form-group.invalid select{border-color:var(--secondary)}
+.form-group.invalid .error{display:block}
+.form-row{display:flex;gap:16px}
+.form-row .form-group{flex:1}
+@media(max-width:500px){.form-row{flex-direction:column}}
+.game-type-group{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+.game-type-card{padding:16px 10px;border:2px solid var(--border);border-radius:16px;text-align:center;cursor:pointer;transition:all .3s;background:white}
+.game-type-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.game-type-card.active{border-color:var(--primary);background:var(--primary-l)}
+.game-type-card .gt-icon{font-size:28px;margin-bottom:6px}
+.game-type-card .gt-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.game-type-card .gt-desc{font-size:11px;color:var(--gray)}
+@media(max-width:768px){.game-type-group{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.game-type-group{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:360px){.game-type-group{grid-template-columns:1fr}}
+.range-group{display:flex;align-items:center;gap:16px;margin-top:8px}
+.range-group input[type="range"]{flex:1;accent-color:var(--primary)}
+.range-val{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;color:var(--primary);min-width:32px;text-align:center}
+.section-title{font-family:'Rubik',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.section-title .badge{width:32px;height:32px;border-radius:10px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:16px}
+.ai-box{background:linear-gradient(135deg,#EDE9FE,#DBEAFE);border:2px solid #C4B5FD;border-radius:16px;padding:24px;margin-bottom:24px}
+.ai-box-title{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;color:#5B21B6;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ai-box textarea{width:100%;padding:14px 18px;border:2px solid rgba(139,92,246,.2);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:white;min-height:80px;resize:vertical;line-height:1.5;transition:all .3s}
+.ai-box textarea:focus{outline:none;border-color:#8B5CF6;box-shadow:0 0 0 4px rgba(139,92,246,.1)}
+.ai-box .hint{font-size:12px;color:#7C3AED;margin-top:6px;margin-bottom:12px}
+.ai-btn{padding:14px 28px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px;width:100%}
+.ai-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(109,40,217,.3)}
+.ai-btn:disabled{opacity:.5;pointer-events:none}
+.ai-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.ai-btn.loading .spinner{display:block}
+.ai-btn.loading .btn-text{display:none}
+.item-editor{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;transition:all .3s}
+.item-editor:hover{border-color:rgba(0,0,0,.1)}
+.item-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:12px}
+.item-header .num-badge{width:28px;height:28px;border-radius:8px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Rubik',sans-serif;flex-shrink:0;margin-left:10px}
+.item-header .item-preview{font-size:14px;color:var(--gray);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-editor.collapsed .item-body{display:none}
+.item-editor.collapsed .item-header{margin-bottom:0}
+.toggle-icon{font-size:14px;color:var(--gray-l);transition:transform .3s}
+.item-editor.collapsed .toggle-icon{transform:rotate(180deg)}
+.opts-grid{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opt-row{display:flex;align-items:center;gap:8px}
+.opt-label{width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--gray);flex-shrink:0}
+.opt-input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:white;transition:border-color .3s}
+.opt-input:focus{outline:none;border-color:var(--primary)}
+.opt-radio{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:14px;flex-shrink:0;color:transparent}
+.opt-radio:hover{border-color:var(--green)}
+.opt-radio.selected{background:var(--green);color:white;border-color:var(--green)}
+.pair-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:10px}
+.pair-row input{padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:white;transition:border-color .3s}
+.pair-row input:focus{outline:none;border-color:var(--primary)}
+.pair-arrow{font-size:18px;color:var(--gray-l);text-align:center}
+.tf-toggle{display:flex;gap:8px;margin-top:8px}
+.tf-btn{flex:1;padding:14px;border:2px solid var(--border);border-radius:12px;background:white;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center}
+.tf-btn:hover{border-color:var(--primary)}
+.tf-btn.active-true{background:var(--green-l);border-color:var(--green);color:#2D7A54}
+.tf-btn.active-false{background:var(--sec-l);border-color:var(--secondary);color:#B44050}
+.group-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.group-items-grid input{padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:white;transition:border-color .3s}
+.group-items-grid input:focus{outline:none;border-color:var(--primary)}
+.delete-btn{background:none;border:none;color:var(--secondary);font-size:13px;cursor:pointer;padding:8px 0;font-family:'Heebo',sans-serif;transition:opacity .2s}
+.delete-btn:hover{opacity:.7}
+.add-btn{width:100%;padding:14px;border:2px dashed var(--border);border-radius:14px;background:none;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;color:var(--gray-l);cursor:pointer;transition:all .3s;margin-top:8px}
+.add-btn:hover{border-color:var(--primary);color:var(--primary)}
+.review-card{background:var(--bg);border-radius:16px;padding:24px;margin-bottom:20px}
+.review-card h3{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px}
+.review-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.review-tag{background:white;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.review-items{display:flex;flex-direction:column;gap:8px}
+.review-item{background:white;padding:12px 16px;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:10px}
+.review-item .ri-num{width:24px;height:24px;border-radius:6px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.preview-frame{width:100%;height:500px;border:2px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;background:white}
+.preview-frame iframe{width:100%;height:100%;border:none}
+.publish-section{margin-top:24px;padding:24px;background:linear-gradient(135deg,var(--green-l),var(--primary-l));border:2px solid var(--green);border-radius:16px}
+.publish-title{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;color:var(--primary-d);margin-bottom:8px}
+.publish-desc{font-size:13px;color:var(--gray);margin-bottom:16px}
+.btn-publish{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-publish:hover{background:#3da076;transform:translateY(-2px);box-shadow:0 6px 20px rgba(82,183,136,.3)}
+.btn-publish:disabled{opacity:.5;pointer-events:none}
+.btn-publish .pub-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.btn-publish.loading .pub-spinner{display:block}
+.btn-publish.loading .pub-text{display:none}
+.published-result{display:none;margin-top:16px;padding:16px;background:white;border-radius:12px}
+.published-result.show{display:block}
+.published-msg{font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px}
+.published-link{display:flex;gap:8px}
+.published-link input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;background:var(--bg);direction:ltr}
+.published-link button{padding:10px 18px;background:var(--primary);color:white;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.export-btns{display:flex;gap:10px;flex-wrap:wrap}
+.nav-buttons{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
+.btn{padding:14px 28px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-d)}
+.btn-outline{background:white;color:var(--primary);border:2px solid var(--primary)}
+.screen{display:none}.screen.active{display:block}
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:20px}
+.login-card{background:var(--card);border-radius:var(--r);padding:48px 36px;box-shadow:var(--shadow-md);text-align:center;max-width:420px;width:100%;animation:fadeUp .45s ease}
+.login-card .login-icon{font-size:64px;margin-bottom:16px}
+.login-card h2{font-family:'Rubik',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px}
+.login-card p{color:var(--gray);font-size:15px;margin-bottom:28px}
+.draft-banner{display:none;align-items:center;justify-content:space-between;background:var(--accent-l);border:2px solid var(--accent);border-radius:14px;padding:14px 20px;margin-bottom:20px;animation:fadeUp .3s ease}
+.draft-banner p{font-size:14px;font-weight:600;color:#92400E}
+.draft-btns{display:flex;gap:8px}
+.draft-load,.draft-dismiss{padding:8px 16px;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.draft-load{background:var(--accent);color:white}
+.draft-dismiss{background:white;color:var(--gray)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;padding:14px 28px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;transition:all .4s ease;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div id="loginView">
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="login-icon">🎮</div>
+      <h2>מחולל משחקים</h2>
+      <p>היכנסו עם חשבון Google כדי ליצור משחקים לימודיים</p>
+      <div id="g_id_onload" data-client_id="18351568270-9bos1rm966pnv8i6bcf7vmlkk1luqdte.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with" data-shape="rectangular" data-logo_alignment="center" data-width="300"></div>
+    </div>
+  </div>
+</div>
+<!-- APP -->
+<div id="appView" style="display:none">
+  <div class="header"><h1>🎮 מחולל משחקים</h1><p>צרו משחקים לימודיים אינטראקטיביים עם בינה מלאכותית</p></div>
+  <div class="auth-bar"><div class="auth-profile"><img id="userPhoto" src="" alt=""><div><div class="name" id="userName"></div><div class="email" id="userEmail"></div></div><button class="logout-btn" onclick="logout()" title="התנתקות">✕</button></div></div>
+  <div class="steps">
+    <div class="step active"><div class="step-circle">1</div><span class="step-label">פרטים</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">2</div><span class="step-label">תוכן</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">3</div><span class="step-label">סקירה</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">4</div><span class="step-label">פרסום</span></div>
+  </div>
+  <div class="container">
+    <div id="draftBanner" class="draft-banner" style="display:none"><p>נמצאה טיוטה שלא הושלמה. לטעון אותה?</p><div class="draft-btns"><button class="draft-load" onclick="loadDraft()">טען טיוטה</button><button class="draft-dismiss" onclick="dismissDraft()">התחל מחדש</button></div></div>
+    <!-- STEP 1 -->
+    <div class="screen active" id="step1"><div class="card">
+      <div class="section-title"><div class="badge">1</div> פרטי המשחק</div>
+      <div class="form-group"><label>שם המשחק</label><input type="text" id="gameName" placeholder="לדוגמה: חידון על המרד הגדול, התאמת בניינים..."><div class="error">יש להזין שם משחק</div></div>
+      <div class="form-row"><div class="form-group"><label>מקצוע</label><select id="gameSubject"><option value="">בחרו מקצוע</option><option>עברית</option><option>מתמטיקה</option><option>היסטוריה</option><option>אנגלית</option><option>מדעים</option><option>חשבונאות</option></select><div class="error">יש לבחור מקצוע</div></div><div class="form-group"><label>כיתה</label><select id="gameGrade"><option value="">בחרו כיתה</option><option>כיתה ט</option><option>כיתה י</option><option>כיתה יא</option><option>כיתה יב</option></select><div class="error">יש לבחור כיתה</div></div></div>
+      <div class="form-group"><label>סוג משחק</label><div class="game-type-group" id="gameTypeGroup"></div></div>
+      <div class="form-group"><label id="rangeLabel">מספר שאלות</label><div class="range-group"><input type="range" id="numItems" min="3" max="20" value="8" oninput="document.getElementById('numItemsVal').textContent=this.value"><div class="range-val" id="numItemsVal">8</div></div></div>
+      <div class="nav-buttons"><a href="../quizzes/index.html" class="btn btn-outline" style="text-decoration:none;text-align:center">חזרה למאגר</a><button class="btn btn-primary" onclick="goToStep(2)">הבא ←</button></div>
+    </div></div>
+    <!-- STEP 2 -->
+    <div class="screen" id="step2"><div class="card">
+      <div class="section-title"><div class="badge">2</div> <span id="step2Title">פריטי המשחק</span></div>
+      <div class="ai-box"><div class="ai-box-title">✨ יצירה עם בינה מלאכותית</div><textarea id="aiPrompt" placeholder="כתבו רק את הנושא הספציפי"></textarea><div class="hint">כתבו רק את הנושא – סוג המשחק, המקצוע והכיתה נלקחים מהשלב הקודם.</div><button class="ai-btn" id="aiGenBtn" onclick="generateWithAI()"><span class="btn-text">✨ צרו משחק עם AI</span><div class="spinner"></div></button></div>
+      <div class="hint" style="margin-bottom:20px;font-size:13px;color:var(--gray)">או כתבו פריטים ידנית:</div>
+      <div id="itemEditors"></div>
+      <div class="nav-buttons"><button class="btn btn-outline" onclick="goToStep(1)">חזרה →</button><button class="btn btn-primary" onclick="goToStep(3)">הבא ←</button></div>
+    </div></div>
+    <!-- STEP 3 -->
+    <div class="screen" id="step3"><div class="card">
+      <div class="section-title"><div class="badge">3</div> סקירה</div>
+      <div id="reviewContent"></div>
+      <div class="nav-buttons"><button class="btn btn-outline" onclick="goToStep(2)">חזרה →</button><button class="btn btn-primary" onclick="goToStep(4)">הבא ←</button></div>
+    </div></div>
+    <!-- STEP 4 -->
+    <div class="screen" id="step4"><div class="card">
+      <div class="section-title"><div class="badge">4</div> תצוגה מקדימה ופרסום</div>
+      <div class="preview-frame"><iframe id="previewFrame" sandbox="allow-scripts"></iframe></div>
+      <div class="publish-section"><div class="publish-title">🚀 פרסום המשחק</div><div class="publish-desc">לחצו כדי לפרסם את המשחק. תקבלו קישור שאפשר לשלוח לתלמידים.</div><button class="btn-publish" id="publishBtn" onclick="publishGame()"><div class="pub-spinner"></div><span class="pub-text">פרסמו משחק</span></button><div class="published-result" id="publishedResult"><div class="published-msg">✓ המשחק פורסם בהצלחה! שלחו את הקישור לתלמידים:</div><div class="published-link"><input type="text" id="publishedUrl" readonly><button onclick="copyPublishedLink()">העתק קישור</button></div></div></div>
+      <div class="export-btns" style="margin-top:20px"><button class="btn btn-primary" onclick="refreshPreview()">🔄 רענון תצוגה</button><button class="btn btn-outline" onclick="downloadGame()">⬇ הורדה</button><button class="btn btn-outline" onclick="copyHTML()">📋 העתקת HTML</button></div>
+      <div class="nav-buttons"><button class="btn btn-outline" onclick="goToStep(3)">חזרה →</button></div>
+    </div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div style="position:fixed;bottom:18px;right:20px;z-index:200;opacity:.45;pointer-events:none"><img src="../logo.png" alt="Lerani" style="height:32px;width:auto"></div>

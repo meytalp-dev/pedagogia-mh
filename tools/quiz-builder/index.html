@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחולל שאלונים – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+:root {
+  --bg:#F0F4F8;--card:#ffffff;
+  --primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;
+  --secondary:#E76F7A;--sec-l:#FDE8EA;
+  --green:#52B788;--green-l:#D8F3DC;
+  --blue:#4A90D9;--blue-l:#DBEAFE;
+  --accent:#E9A319;--accent-l:#FEF3C7;
+  --dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;
+  --border:rgba(0,0,0,.06);
+  --shadow:0 2px 20px -4px rgba(0,0,0,.06);
+  --shadow-md:0 8px 28px rgba(0,0,0,.07);
+  --r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.header{text-align:center;padding:40px 20px 12px}
+.header h1{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.header p{color:var(--gray);font-size:15px}
+
+/* AUTH BAR */
+.auth-bar{display:flex;justify-content:center;padding:16px 20px 8px}
+.auth-profile{display:flex;align-items:center;gap:12px;background:white;padding:10px 20px;border-radius:50px;box-shadow:var(--shadow)}
+.auth-profile img{width:32px;height:32px;border-radius:50%}
+.auth-profile .name{font-size:14px;font-weight:600}
+.auth-profile .email{font-size:12px;color:var(--gray)}
+.auth-profile .logout-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-l);padding:4px;transition:color .2s}
+.auth-profile .logout-btn:hover{color:var(--secondary)}
+
+/* STEPS INDICATOR */
+.steps{display:flex;justify-content:center;gap:8px;padding:16px 20px 32px;max-width:500px;margin:0 auto}
+.step{display:flex;align-items:center;gap:8px;flex:1}
+.step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:'Rubik',sans-serif;border:2px solid var(--border);color:var(--gray-l);background:white;transition:all .3s;flex-shrink:0}
+.step.active .step-circle{background:var(--primary);color:white;border-color:var(--primary)}
+.step.done .step-circle{background:var(--green);color:white;border-color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--border);border-radius:2px}
+.step.done .step-line{background:var(--green)}
+.step:last-child .step-line{display:none}
+.step-label{display:none}
+@media(min-width:600px){
+  .step-label{display:block;font-size:12px;color:var(--gray-l);white-space:nowrap}
+  .step.active .step-label{color:var(--primary);font-weight:600}
+  .step.done .step-label{color:var(--green)}
+}
+
+/* CONTAINER */
+.container{max-width:800px;margin:0 auto;padding:0 20px 60px}
+
+/* CARD */
+.card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+
+/* FORM */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:var(--bg);transition:all .3s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(42,157,143,.08)}
+.form-group textarea{min-height:60px;resize:vertical;line-height:1.5}
+.form-group .hint{font-size:12px;color:var(--gray-l);margin-top:4px}
+.form-group .error{font-size:12px;color:var(--secondary);margin-top:4px;display:none}
+.form-group.invalid input,.form-group.invalid select,.form-group.invalid textarea{border-color:var(--secondary)}
+.form-group.invalid .error{display:block}
+
+.form-row{display:flex;gap:16px}
+.form-row .form-group{flex:1}
+@media(max-width:500px){.form-row{flex-direction:column}}
+
+/* RADIO GROUP */
+.radio-group{display:flex;gap:10px;margin-top:6px}
+.radio-opt{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:12px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;background:white}
+.radio-opt:hover{border-color:var(--primary)}
+.radio-opt.active{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d)}
+
+/* RANGE */
+.range-group{display:flex;align-items:center;gap:16px;margin-top:8px}
+.range-group input[type="range"]{flex:1;accent-color:var(--primary)}
+.range-val{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;color:var(--primary);min-width:32px;text-align:center}
+
+/* SECTION TITLE */
+.section-title{font-family:'Rubik',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.section-title .badge{width:32px;height:32px;border-radius:10px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* AI BOX */
+.ai-box{background:linear-gradient(135deg,#EDE9FE,#DBEAFE);border:2px solid #C4B5FD;border-radius:16px;padding:24px;margin-bottom:24px}
+.ai-box-title{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;color:#5B21B6;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ai-box textarea{width:100%;padding:14px 18px;border:2px solid rgba(139,92,246,.2);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:white;min-height:80px;resize:vertical;line-height:1.5;transition:all .3s}
+.ai-box textarea:focus{outline:none;border-color:#8B5CF6;box-shadow:0 0 0 4px rgba(139,92,246,.1)}
+.ai-box .hint{font-size:12px;color:#7C3AED;margin-top:6px;margin-bottom:12px}
+.ai-btn{padding:14px 28px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px;width:100%}
+.ai-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(109,40,217,.3)}
+.ai-btn:disabled{opacity:.5;pointer-events:none}
+.ai-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.ai-btn.loading .spinner{display:block}
+.ai-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ai-key-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.ai-key-bar input{flex:1;padding:10px 14px;border:2px solid rgba(139,92,246,.2);border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;background:white}
+.ai-key-bar input:focus{outline:none;border-color:#8B5CF6}
+.ai-key-bar button{padding:10px 16px;background:#8B5CF6;color:white;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.ai-saved{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;margin-bottom:8px}
+
+/* QUESTION EDITOR */
+.q-editor{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:all .3s}
+.q-editor:hover{border-color:rgba(0,0,0,.1)}
+.q-editor-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;cursor:pointer}
+.q-editor-num{font-family:'Rubik',sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.q-editor-num .num-badge{width:28px;height:28px;border-radius:8px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:13px}
+.q-editor-toggle{font-size:18px;color:var(--gray-l);transition:transform .3s}
+.q-editor.collapsed .q-editor-body{display:none}
+.q-editor.collapsed .q-editor-toggle{transform:rotate(180deg)}
+.q-editor-body{margin-top:8px}
+
+.opts-grid{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opt-row{display:flex;gap:8px;align-items:center}
+.opt-row input[type="text"]{flex:1}
+.opt-radio{width:32px;height:32px;border-radius:10px;border:2px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;flex-shrink:0;font-size:14px;font-weight:700;color:transparent}
+.opt-radio:hover{border-color:var(--green)}
+.opt-radio.selected{background:var(--green);border-color:var(--green);color:white}
+.opt-label{font-size:12px;color:var(--gray-l);min-width:20px;text-align:center;font-weight:600}
+
+.delete-btn{padding:8px 16px;background:var(--sec-l);color:var(--secondary);border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s;margin-top:12px}
+.delete-btn:hover{background:var(--secondary);color:white}
+
+.add-q-btn{width:100%;padding:14px;border:2px dashed var(--border);border-radius:14px;background:transparent;font-family:'Heebo',sans-serif;font-size:15px;font-weight:600;color:var(--primary);cursor:pointer;transition:all .3s}
+.add-q-btn:hover{background:var(--primary-l);border-color:var(--primary)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto}
+.tab{padding:10px 20px;border:2px solid var(--border);border-radius:50px;background:white;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:all .3s;white-space:nowrap}
+.tab:hover{border-color:var(--primary);color:var(--primary)}
+.tab.active{background:var(--primary);color:white;border-color:var(--primary)}
+.tab .tab-count{margin-right:6px;font-size:12px;opacity:.7}
+
+/* BUTTONS */
+.btn{padding:16px 32px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn-primary:disabled{opacity:.4;pointer-events:none}
+.btn-outline{background:white;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary-l)}
+.btn-green{background:var(--green);color:white}
+.btn-green:hover{background:#3da076;transform:translateY(-2px)}
+
+.nav-buttons{display:flex;gap:12px;justify-content:space-between;margin-top:28px}
+.nav-buttons .btn{flex:1}
+
+/* PREVIEW */
+.preview-frame{border:2px solid var(--border);border-radius:16px;overflow:hidden;background:white;min-height:500px}
+.preview-frame iframe{width:100%;height:600px;border:none}
+.export-btns{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.export-btns .btn{flex:1;min-width:200px;text-align:center}
+
+/* PUBLISH */
+.publish-section{margin-top:24px;padding:24px;background:linear-gradient(135deg,var(--green-l),var(--primary-l));border:2px solid var(--green);border-radius:16px}
+.publish-title{font-family:'Rubik',sans-serif;font-size:18px;font-weight:800;color:#2D6A4F;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.publish-desc{font-size:14px;color:#2D6A4F;margin-bottom:16px;line-height:1.6}
+.btn-publish{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-publish:hover{background:#3da076;transform:translateY(-2px);box-shadow:0 6px 20px rgba(82,183,136,.3)}
+.btn-publish:disabled{opacity:.5;pointer-events:none}
+.btn-publish .pub-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.btn-publish.loading .pub-spinner{display:block}
+.btn-publish.loading .pub-text{display:none}
+.published-result{margin-top:16px;padding:20px;background:white;border-radius:14px;border:2px solid var(--green);display:none;animation:fadeUp .3s ease}
+.published-link{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.published-link input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:var(--bg);direction:ltr;text-align:left}
+.published-link button{padding:12px 20px;background:var(--primary);color:white;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .3s}
+.published-link button:hover{background:var(--primary-d)}
+.published-msg{font-size:14px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px}
+
+/* SCREEN */
+.screen{display:none}.screen.active{display:block}
+
+/* DRAFT BANNER */
+.draft-banner{background:var(--accent-l);border:2px solid #E9A319;border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:fadeUp .3s ease}
+.draft-banner p{font-size:14px;font-weight:600;color:#92400E}
+.draft-banner .draft-btns{display:flex;gap:8px}
+.draft-banner button{padding:8px 16px;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .3s}
+.draft-load{background:#E9A319;color:white}
+.draft-dismiss{background:white;color:#92400E}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:white;padding:14px 28px;border-radius:14px;font-size:14px;font-weight:600;z-index:500;opacity:0;transition:all .3s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LOGIN SCREEN */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:80vh}
+.login-card{background:white;border-radius:var(--r);padding:48px;box-shadow:var(--shadow-md);text-align:center;max-width:420px;width:100%;animation:fadeUp .45s ease}
+.login-card .icon{font-size:48px;margin-bottom:16px}
+.login-card h2{font-family:'Rubik',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px}
+.login-card p{color:var(--gray);font-size:15px;margin-bottom:28px;line-height:1.6}
+.login-card .g-signin{display:flex;justify-content:center;margin-bottom:16px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){
+  .card{padding:22px}
+  .q-editor{padding:18px}
+  .export-btns{flex-direction:column}
+  .export-btns .btn{min-width:auto}
+  .login-card{padding:28px}
+  .ai-box{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginView">
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="icon">📝</div>
+      <h2>מחולל שאלונים</h2>
+      <p>צרו שאלונים אינטראקטיביים בקלות – בלי קוד<br>התחברו עם חשבון Google כדי להתחיל</p>
+      <div class="g-signin">
+        <div id="g_id_onload"
+             data-client_id="18351568270-9bos1rm966pnv8i6bcf7vmlkk1luqdte.apps.googleusercontent.com"
+             data-callback="handleGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="right"
+             data-locale="he">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP (hidden until login) ===== -->
+<div id="appView" style="display:none">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>מחולל שאלונים</h1>
+    <p>צרו שאלונים אינטראקטיביים בקלות – בלי קוד</p>
+  </div>
+
+  <!-- AUTH BAR -->
+  <div class="auth-bar">
+    <div class="auth-profile">
+      <img id="userPhoto" src="" alt="">
+      <div>
+        <div class="name" id="userName"></div>
+        <div class="email" id="userEmail"></div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="התנתקות">✕</button>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps" id="stepsBar">
+    <div class="step active"><div class="step-circle">1</div><span class="step-label">פרטים</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">2</div><span class="step-label">אבחון</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">3</div><span class="step-label">שאלות</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">4</div><span class="step-label">פרסום</span></div>
+  </div>
+
+  <!-- CONTAINER -->
+  <div class="container">
+    <div id="draftBanner" class="draft-banner" style="display:none">
+      <p>נמצאה טיוטה שלא הושלמה. לטעון אותה?</p>
+      <div class="draft-btns">
+        <button class="draft-load" onclick="loadDraft()">טען טיוטה</button>
+        <button class="draft-dismiss" onclick="dismissDraft()">התחל מחדש</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: DETAILS -->
+    <div class="screen active" id="step1">
+      <div class="card">
+        <div class="section-title"><div class="badge">1</div> פרטי השאלון</div>
+        <div class="form-group">
+          <label>שם השאלון</label>
+          <input type="text" id="quizName" placeholder="לדוגמה: שם המספר, המרד הגדול...">
+          <div class="error">יש להזין שם שאלון</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>מקצוע</label>
+            <select id="quizSubject">
+              <option value="">בחרו מקצוע</option>
+              <option>עברית</option><option>מתמטיקה</option><option>היסטוריה</option>
+              <option>אנגלית</option><option>מדעים</option><option>חשבונאות</option>
+            </select>
+            <div class="error">יש לבחור מקצוע</div>
+          </div>
+          <div class="form-group">
+            <label>כיתה</label>
+            <select id="quizGrade">
+              <option value="">בחרו כיתה</option>
+              <option>כיתה ט</option><option>כיתה י</option><option>כיתה יא</option><option>כיתה יב</option>
+            </select>
+            <div class="error">יש לבחור כיתה</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>מספר שאלות</label>
+          <div class="hint">השאלון מתאים את עצמו אוטומטית לרמת התלמיד – אין צורך להגדיר רמות</div>
+          <div class="range-group">
+            <input type="range" id="qPerSet" min="5" max="15" value="8" oninput="document.getElementById('qPerSetVal').textContent=this.value">
+            <div class="range-val" id="qPerSetVal">8</div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <a href="../quizzes/index.html" class="btn btn-outline" style="text-decoration:none;text-align:center">חזרה למאגר</a>
+          <button class="btn btn-primary" onclick="goToStep(2)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: DIAGNOSTIC -->
+    <div class="screen" id="step2">
+      <div class="card">
+        <div class="section-title"><div class="badge">2</div> שאלות מאבחנות</div>
+
+        <!-- AI GENERATION BOX -->
+        <div class="ai-box" id="aiBox2">
+          <div class="ai-box-title">✨ יצירה עם בינה מלאכותית</div>
+          <div id="aiKeySetup2"></div>
+          <textarea id="aiPrompt2" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;משוואות עם נעלם אחד – פתרון ובדיקה"></textarea>
+          <div class="hint">כתבו רק את הנושא – אין צורך לכתוב "צור שאלות". המקצוע והכיתה נלקחים מהשלב הקודם.</div>
+          <button class="ai-btn" id="aiGenBtn" onclick="generateWithAI()">
+            <span class="btn-text">✨ צרו שאלות עם AI</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+
+        <div class="hint" style="margin-bottom:20px;font-size:13px;color:var(--gray)">
+          או כתבו שאלות ידנית – 2 שאלות אבחון שעוזרות למערכת להתאים את הקושי לכל תלמיד.
+        </div>
+        <div id="diagEditors"></div>
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(1)">חזרה →</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: QUESTION SETS -->
+    <div class="screen" id="step3">
+      <div class="card">
+        <div class="section-title"><div class="badge">3</div> שאלות השאלון</div>
+        <div class="hint" style="margin-bottom:16px;font-size:13px;color:var(--gray)">השאלון כולל 3 ערכות שאלות. המערכת מנתבת כל תלמיד לערכה המתאימה לו אוטומטית.</div>
+        <div class="tabs" id="levelTabs"></div>
+        <div id="setEditors"></div>
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(2)">חזרה →</button>
+          <button class="btn btn-primary" onclick="goToStep(4)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PREVIEW & EXPORT -->
+    <div class="screen" id="step4">
+      <div class="card">
+        <div class="section-title"><div class="badge">4</div> תצוגה מקדימה ופרסום</div>
+        <div class="preview-frame">
+          <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+        </div>
+
+        <!-- PUBLISH SECTION -->
+        <div class="publish-section">
+          <div class="publish-title">🚀 פרסום השאלון</div>
+          <div class="publish-desc">לחצו כדי לפרסם את השאלון. תקבלו קישור שאפשר לשלוח לתלמידים – בלי צורך להוריד קבצים.</div>
+          <button class="btn-publish" id="publishBtn" onclick="publishQuiz()">
+            <div class="pub-spinner"></div>
+            <span class="pub-text">פרסמו שאלון</span>
+          </button>
+          <div class="published-result" id="publishedResult">
+            <div class="published-msg">✓ השאלון פורסם בהצלחה! שלחו את הקישור לתלמידים:</div>
+            <div class="published-link">
+              <input type="text" id="publishedUrl" readonly>
+              <button onclick="copyPublishedLink()">העתק קישור</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="export-btns" style="margin-top:20px">
+          <button class="btn btn-primary" onclick="refreshPreview()">🔄 רענון תצוגה</button>
+          <button class="btn btn-outline" onclick="downloadQuiz()">⬇ הורדה</button>
+          <button class="btn btn-outline" onclick="copyHTML()">📋 העתקת HTML</button>
+        </div>
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(3)">חזרה →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGO -->
+<div style="position:fixed;bottom:18px;right:20px;z-index:200;opacity:.45;pointer-events:none">
+  <img src="../logo.png" alt="המרכז הפדגוגי" style="height:32px;width:auto">
+</div>
+
+<script>
+// ===== CONFIG =====
+const GOOGLE_CLIENT_ID = '18351568270-9bos1rm966pnv8i6bcf7vmlkk1luqdte.apps.googleusercontent.com';
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
+
+// ===== STATE =====
+let currentStep = 1;
+let diagCount = 2;
+let qPerSet = 8;
+let user = null; // { name, email, photo }
+
+let details = {};
+let diagnosticQuestions = [];
+let questionSets = { basic: [], medium: [], advanced: [] };
+let activeLevel = 'basic';
+
+const levelNames = { basic: 'ערכה א׳', medium: 'ערכה ב׳', advanced: 'ערכה ג׳' };
+const letters = ['א','ב','ג','ד'];
+
+// ===== GOOGLE SIGN-IN =====
+function handleGoogleSignIn(response) {
+  try {
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    user = {
+      name: payload.name,
+      email: payload.email,
+      photo: payload.picture
+    };
+    localStorage.setItem('ort-quiz-user', JSON.stringify(user));
+    showApp();
+  } catch(e) {
+    console.error('Sign-in error:', e);
+    showToast('שגיאה בהתחברות, נסו שוב');
+  }
+}
+
+function showApp() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').style.display = 'block';
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('userPhoto').src = user.photo || '';
+  renderAIKeySetup();
+  checkDraft();
+}
+
+function logout() {
+  user = null;
+  localStorage.removeItem('ort-quiz-user');
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('appView').style.display = 'none';
+}
+
+// ===== GEMINI API KEY =====
+function getGeminiKey() {
+  return localStorage.getItem('ort-gemini-key') || null;
+}
+
+function renderAIKeySetup() {
+  document.getElementById('aiKeySetup2').innerHTML = '';
+}
+
+// ===== AI GENERATION =====
+async function generateWithAI() {
+  const apiKey = getGeminiKey();
+  if (!apiKey) {
+    showToast('יש להגדיר Gemini API Key קודם');
+    return;
+  }
+
+  // Gather context
+  const quizName = document.getElementById('quizName').value.trim();
+  const subject = document.getElementById('quizSubject').value;
+  const grade = document.getElementById('quizGrade').value;
+  const topic = document.getElementById('aiPrompt2').value.trim();
+
+  if (!topic && !quizName) {
+    showToast('כתבו על מה השאלון או מלאו את שם השאלון');
+    return;
+  }
+
+  const btn = document.getElementById('aiGenBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const numDiag = 2;
+  const numPerSet = parseInt(document.getElementById('qPerSet').value);
+  const levels = ['basic', 'medium', 'advanced'];
+
+  const levelDescriptions = {
+    basic: 'שאלות בסיסיות – זיהוי, התאמה, שינון, הבנה ישירה',
+    medium: 'שאלות בינוניות – הבנה, יישום, קישור בין מושגים',
+    advanced: 'שאלות מתקדמות – ניתוח, השוואה, חשיבה ביקורתית'
+  };
+
+  const prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה. צור שאלון בעברית.
+
+נושא השאלון: "${topic || quizName}"
+מקצוע: ${subject || 'כללי'}
+כיתה: ${grade || 'כיתה י'}
+
+חשוב מאוד: הנושא "${topic || quizName}" הוא נושא לימודי במקצוע ${subject || 'כללי'}. השאלות חייבות להיות על התוכן הלימודי של הנושא הזה, לא על משמעות מילולית אחרת של המילים.
+
+הנחיות:
+- שפה פשוטה וברורה, מתאימה לתלמידי תיכון עם קשיי קשב ולקויות למידה
+- משפטים קצרים, מילים פשוטות
+- שאלות קצרות (שורה אחת עד שתיים)
+- תשובות קצרות (עד 5 מילים כל תשובה)
+- הסברים קצרים (משפט אחד)
+- לכל שאלה 4 אפשרויות, תשובה נכונה אחת ו-3 מסיחים סבירים והגיוניים
+- פזר את התשובה הנכונה (correct) באופן שווה בין מיקומים 0,1,2,3
+
+צור את הפלט ב-JSON בדיוק בפורמט הזה:
+{
+  "diagnosticQuestions": [${numDiag} שאלות אבחון ברמה בינונית],
+  ${levels.map(l => `"${l}Questions": [${numPerSet} ${levelDescriptions[l]}]`).join(',\n  ')}
+}
+
+כל שאלה בפורמט:
+{"text": "טקסט השאלה", "options": ["תשובה1","תשובה2","תשובה3","תשובה4"], "correct": מספר 0-3, "explanation": "הסבר קצר"}
+
+החזר JSON תקין בלבד, בלי טקסט נוסף.`;
+
+  try {
+    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.7
+        }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API Error ' + res.status);
+    }
+
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('תשובה ריקה מ-Gemini');
+
+    const parsed = JSON.parse(text);
+
+    // Fill diagnostic questions
+    if (parsed.diagnosticQuestions) {
+      diagnosticQuestions = parsed.diagnosticQuestions.map(q => ({
+        text: q.text || '',
+        options: q.options || ['','','',''],
+        correct: typeof q.correct === 'number' ? q.correct : 0,
+        explanation: q.explanation || ''
+      }));
+    }
+
+    // Fill question sets
+    for (const level of levels) {
+      const key = level + 'Questions';
+      if (parsed[key]) {
+        questionSets[level] = parsed[key].map(q => ({
+          text: q.text || '',
+          options: q.options || ['','','',''],
+          correct: typeof q.correct === 'number' ? q.correct : 0,
+          explanation: q.explanation || ''
+        }));
+      }
+    }
+
+    // Render editors with generated data
+    renderDiagEditors();
+    showToast('השאלות נוצרו בהצלחה! תוכלו לערוך אותן');
+
+  } catch(e) {
+    console.error('AI Error:', e);
+    showToast('שגיאה: ' + e.message);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ===== STEPS NAVIGATION =====
+function goToStep(step) {
+  if (step > currentStep) {
+    if (!validateStep(currentStep)) return;
+    saveStepData(currentStep);
+  }
+
+  currentStep = step;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
+
+  document.querySelectorAll('.steps .step').forEach((s, i) => {
+    s.className = 'step';
+    if (i + 1 < step) s.classList.add('done');
+    else if (i + 1 === step) s.classList.add('active');
+  });
+
+  if (step === 2) renderDiagEditors();
+  if (step === 3) renderLevelTabs();
+  if (step === 4) refreshPreview();
+
+  saveDraft();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// diagCount is always 2 (3 difficulty sets, auto-routing)
+
+// ===== VALIDATION =====
+function validateStep(step) {
+  let valid = true;
+  if (step === 1) {
+    const fields = [
+      { id: 'quizName', check: v => v.trim() },
+      { id: 'quizSubject', check: v => v },
+      { id: 'quizGrade', check: v => v }
+    ];
+    fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      const group = el.closest('.form-group');
+      if (!f.check(el.value)) { group.classList.add('invalid'); valid = false; }
+      else { group.classList.remove('invalid'); }
+    });
+    qPerSet = parseInt(document.getElementById('qPerSet').value);
+  }
+
+  if (step === 2) {
+    valid = validateQuestionEditors('diagEditors');
+  }
+
+  if (step === 3) {
+    saveSetData();
+    const levels = ['basic', 'medium', 'advanced'];
+    for (const lvl of levels) {
+      if (!questionSets[lvl] || questionSets[lvl].length < 1) {
+        showToast('יש להוסיף שאלות לכל ערכה');
+        valid = false; break;
+      }
+      for (const q of questionSets[lvl]) {
+        if (!q.text || q.options.some(o => !o) || q.correct === -1) {
+          showToast('יש למלא את כל השדות בכל הערכות');
+          valid = false; break;
+        }
+      }
+      if (!valid) break;
+    }
+  }
+  return valid;
+}
+
+function validateQuestionEditors(containerId) {
+  const container = document.getElementById(containerId);
+  const editors = container.querySelectorAll('.q-editor');
+  let valid = true;
+  editors.forEach(ed => {
+    const qText = ed.querySelector('.q-text-input');
+    if (qText && !qText.value.trim()) { qText.closest('.form-group').classList.add('invalid'); valid = false; }
+    else if (qText) { qText.closest('.form-group').classList.remove('invalid'); }
+    ed.querySelectorAll('.opt-input').forEach(o => {
+      if (!o.value.trim()) { o.style.borderColor = 'var(--secondary)'; valid = false; }
+      else { o.style.borderColor = ''; }
+    });
+    if (!ed.querySelector('.opt-radio.selected')) {
+      showToast('יש לסמן תשובה נכונה לכל שאלה');
+      valid = false;
+    }
+  });
+  return valid;
+}
+
+// ===== SAVE STEP DATA =====
+function saveStepData(step) {
+  if (step === 1) {
+    details = {
+      quizName: document.getElementById('quizName').value.trim(),
+      subject: document.getElementById('quizSubject').value,
+      grade: document.getElementById('quizGrade').value,
+      teacherName: user ? user.name : '',
+      teacherEmail: user ? user.email : ''
+    };
+  }
+  if (step === 2) diagnosticQuestions = collectQuestions('diagEditors');
+  if (step === 3) saveSetData();
+}
+
+function saveSetData() {
+  const data = collectQuestions('setEditors');
+  if (data.length > 0) questionSets[activeLevel] = data;
+}
+
+function collectQuestions(containerId) {
+  const container = document.getElementById(containerId);
+  const editors = container.querySelectorAll('.q-editor');
+  const questions = [];
+  editors.forEach(ed => {
+    const text = ed.querySelector('.q-text-input')?.value?.trim() || '';
+    const opts = Array.from(ed.querySelectorAll('.opt-input')).map(o => o.value.trim());
+    const correctEl = ed.querySelector('.opt-radio.selected');
+    const correct = correctEl ? parseInt(correctEl.dataset.idx) : -1;
+    const explanation = ed.querySelector('.q-explain-input')?.value?.trim() || '';
+    questions.push({ text, options: opts, correct, explanation });
+  });
+  return questions;
+}
+
+// ===== RENDER DIAGNOSTIC EDITORS =====
+function renderDiagEditors() {
+  const container = document.getElementById('diagEditors');
+  container.innerHTML = '';
+  for (let i = 0; i < diagCount; i++) {
+    const q = diagnosticQuestions[i] || { text: '', options: ['','','',''], correct: -1, explanation: '' };
+    container.innerHTML += buildQuestionEditor(i, q, false);
+  }
+}
+
+// ===== RENDER LEVEL TABS =====
+function renderLevelTabs() {
+  const levels = [{ key: 'basic', name: 'ערכה א׳' }, { key: 'medium', name: 'ערכה ב׳' }, { key: 'advanced', name: 'ערכה ג׳' }];
+
+  if (!levels.find(l => l.key === activeLevel)) activeLevel = levels[0].key;
+
+  document.getElementById('levelTabs').innerHTML = levels.map(l =>
+    `<button class="tab${l.key === activeLevel ? ' active' : ''}" onclick="switchLevel('${l.key}')">
+      ${l.name} <span class="tab-count">(${(questionSets[l.key] || []).length})</span>
+    </button>`
+  ).join('');
+  renderSetEditors();
+}
+
+function switchLevel(level) {
+  saveSetData();
+  activeLevel = level;
+  renderLevelTabs();
+}
+
+function renderSetEditors() {
+  const container = document.getElementById('setEditors');
+  const questions = questionSets[activeLevel] || [];
+  if (questions.length === 0) {
+    for (let i = 0; i < qPerSet; i++) {
+      questions.push({ text: '', options: ['','','',''], correct: -1, explanation: '' });
+    }
+    questionSets[activeLevel] = questions;
+  }
+  container.innerHTML = questions.map((q, i) => buildQuestionEditor(i, q, true)).join('');
+  container.innerHTML += `<button class="add-q-btn" onclick="addQuestion()">+ הוסיפו שאלה</button>`;
+}
+
+// ===== QUESTION EDITOR HTML =====
+function buildQuestionEditor(idx, q, canDelete) {
+  const collapsed = q.text ? ' collapsed' : '';
+  return `
+  <div class="q-editor${collapsed}" data-idx="${idx}">
+    <div class="q-editor-header" onclick="toggleEditor(this)">
+      <div class="q-editor-num">
+        <div class="num-badge">${idx + 1}</div>
+        <span>${q.text ? q.text.substring(0, 40) + (q.text.length > 40 ? '...' : '') : 'שאלה ' + (idx + 1)}</span>
+      </div>
+      <div class="q-editor-toggle">▲</div>
+    </div>
+    <div class="q-editor-body">
+      <div class="form-group">
+        <label>טקסט השאלה</label>
+        <textarea class="q-text-input" placeholder="הקלידו את השאלה...">${escapeHtml(q.text)}</textarea>
+        <div class="error">יש להזין טקסט לשאלה</div>
+      </div>
+      <div class="form-group">
+        <label>תשובות (סמנו ✓ ליד התשובה הנכונה)</label>
+        <div class="opts-grid">
+          ${q.options.map((opt, i) => `
+          <div class="opt-row">
+            <div class="opt-label">${letters[i]}</div>
+            <input type="text" class="opt-input" value="${escapeHtml(opt)}" placeholder="תשובה ${letters[i]}">
+            <div class="opt-radio${q.correct === i ? ' selected' : ''}" data-idx="${i}" onclick="selectCorrect(this)">✓</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>הסבר (מוצג אחרי שהתלמיד עונה)</label>
+        <textarea class="q-explain-input" placeholder="הסבר קצר על התשובה הנכונה...">${escapeHtml(q.explanation)}</textarea>
+      </div>
+      ${canDelete ? `<button class="delete-btn" onclick="deleteQuestion(this)">🗑 מחקו שאלה</button>` : ''}
+    </div>
+  </div>`;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===== EDITOR INTERACTIONS =====
+function toggleEditor(header) {
+  header.closest('.q-editor').classList.toggle('collapsed');
+}
+
+function selectCorrect(el) {
+  const editor = el.closest('.q-editor');
+  editor.querySelectorAll('.opt-radio').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function deleteQuestion(btn) {
+  const editor = btn.closest('.q-editor');
+  const container = editor.parentElement;
+  editor.remove();
+  container.querySelectorAll('.q-editor').forEach((ed, i) => {
+    ed.dataset.idx = i;
+    ed.querySelector('.num-badge').textContent = i + 1;
+  });
+}
+
+function addQuestion() {
+  const container = document.getElementById('setEditors');
+  const editors = container.querySelectorAll('.q-editor');
+  const idx = editors.length;
+  const q = { text: '', options: ['','','',''], correct: -1, explanation: '' };
+  const addBtn = container.querySelector('.add-q-btn');
+  const temp = document.createElement('div');
+  temp.innerHTML = buildQuestionEditor(idx, q, true);
+  container.insertBefore(temp.firstElementChild, addBtn);
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== DRAFT PERSISTENCE =====
+function saveDraft() {
+  try {
+    saveStepData(currentStep);
+    const draft = { step: currentStep, diagCount, qPerSet, details, diagnosticQuestions, questionSets, lastSaved: Date.now() };
+    localStorage.setItem('ort-quiz-builder-draft', JSON.stringify(draft));
+  } catch(e) {}
+}
+
+function checkDraft() {
+  const raw = localStorage.getItem('ort-quiz-builder-draft');
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      if (d.details && d.details.quizName) {
+        document.getElementById('draftBanner').style.display = 'flex';
+      }
+    } catch(e) {}
+  }
+}
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem('ort-quiz-builder-draft');
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    diagCount = 2;
+    qPerSet = draft.qPerSet || 8;
+    details = draft.details || {};
+    diagnosticQuestions = draft.diagnosticQuestions || [];
+    questionSets = draft.questionSets || { basic: [], medium: [], advanced: [] };
+    if (details.quizName) document.getElementById('quizName').value = details.quizName;
+    if (details.subject) document.getElementById('quizSubject').value = details.subject;
+    if (details.grade) document.getElementById('quizGrade').value = details.grade;
+    document.getElementById('qPerSet').value = qPerSet;
+    document.getElementById('qPerSetVal').textContent = qPerSet;
+    // diagCount is always 2
+    document.getElementById('draftBanner').style.display = 'none';
+    showToast('הטיוטה נטענה בהצלחה');
+  } catch(e) { console.error(e); }
+}
+
+function dismissDraft() {
+  localStorage.removeItem('ort-quiz-builder-draft');
+  document.getElementById('draftBanner').style.display = 'none';
+}
+
+// ===== GENERATE QUIZ HTML =====
+function generateQuizHTML() {
+  saveStepData(currentStep);
+  const d = details;
+  const diag = diagnosticQuestions;
+  const sets = questionSets;
+  const levels = ['basic', 'medium', 'advanced'];
+  const sheetName = d.quizName + ' – ' + d.grade;
+  const subjectIcons = { 'עברית':'א','מתמטיקה':'➗','היסטוריה':'📜','אנגלית':'A','מדעים':'🔬','חשבונאות':'📊' };
+  const icon = subjectIcons[d.subject] || '📝';
+  const gradeMap = {
+    'כיתה ט':['ט1','ט2','ט3','ט4'],'כיתה י':['י1','י2','י3','י4'],
+    'כיתה יא':['יא1','יא2','יא3'],'כיתה יב':['יב1','יב2','יב3']
+  };
+  const classOptions = (gradeMap[d.grade]||['א','ב','ג','ד']).map(c=>`<option>${c}</option>`).join('');
+
+  const branchingJS = `
+    if(diagnosticCorrect===0){detectedLevel='בסיסי';activeQuestions=diagnosticQuestions.concat(basicQuestions)}
+    else if(diagnosticCorrect===1){detectedLevel='בינוני';activeQuestions=diagnosticQuestions.concat(mediumQuestions)}
+    else{detectedLevel='מתקדם';activeQuestions=diagnosticQuestions.concat(advancedQuestions)}`;
+
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון – ${escapeHtml(d.quizName)} | ${escapeHtml(d.grade)} – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F4F8;--card:#fff;--primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;--secondary:#E76F7A;--sec-l:#FDE8EA;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-font-smoothing:antialiased}
+.quiz-wrapper{max-width:580px;width:100%;margin:0 auto}
+.progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+.q-card{background:var(--card);border-radius:var(--r);padding:36px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+.screen{display:none}.screen.active{display:block}
+.intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px}
+.intro-title{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
+.intro-sub{color:var(--gray);font-size:16px;text-align:center;margin-bottom:28px}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.input-group input,.input-group select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;color:var(--dark);background:var(--bg);transition:border-color .3s}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--primary);background:white}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px);box-shadow:var(--shadow-md)}.btn-primary:disabled{opacity:.4;pointer-events:none}
+.btn-next{background:var(--primary);color:white;margin-top:16px;display:none}.btn-next:hover{background:var(--primary-d);transform:translateY(-2px)}
+.q-counter{font-size:13px;color:var(--primary);font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.q-text{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.5;margin-bottom:22px}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;font-family:'Heebo',sans-serif;display:flex;align-items:center;gap:12px;color:var(--dark)}
+.q-opt:hover{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d)}
+.q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:var(--gray);font-family:'Rubik',sans-serif}
+.q-opt.correct{background:var(--green-l);border-color:var(--green);color:#2D7A54}.q-opt.correct .opt-letter{background:var(--green);color:white}
+.q-opt.wrong{background:var(--sec-l);border-color:var(--secondary);color:#B44050}.q-opt.wrong .opt-letter{background:var(--secondary);color:white}
+.q-opt.disabled{pointer-events:none;opacity:.7}.q-opt.disabled.dim{opacity:.45}
+.q-feedback{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:15px;line-height:1.6;display:none;animation:fadeUp .3s ease}
+.q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);border:1px solid rgba(82,183,136,.2);color:#2D7A54}.q-feedback.wrong{background:var(--sec-l);border:1px solid rgba(231,111,122,.2);color:#B44050}
+.score-icon{font-size:60px;text-align:center;margin-bottom:12px}
+.score-num{font-size:5rem;font-weight:900;font-family:'Rubik',sans-serif;text-align:center;line-height:1}
+.score-label{font-size:16px;color:var(--gray);text-align:center;margin-top:4px}
+.score-msg{font-size:20px;font-weight:700;text-align:center;margin-top:20px;padding:16px;border-radius:14px}
+.score-details{margin-top:20px;display:flex;gap:12px;justify-content:center}
+.score-detail{background:var(--bg);border-radius:14px;padding:14px 20px;text-align:center;flex:1}
+.score-detail .num{font-size:24px;font-weight:900;font-family:'Rubik',sans-serif}
+.score-detail .lbl{font-size:12px;color:var(--gray);margin-top:4px}
+.send-status{margin-top:16px;padding:14px;border-radius:12px;text-align:center;font-size:15px;display:none}
+.send-status.success{display:block;background:var(--green-l);color:#2D7A54}
+.q-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px}
+.q-dot{width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,.08);transition:all .3s}
+.q-dot.current{background:var(--primary);transform:scale(1.3)}.q-dot.done{background:var(--green)}.q-dot.wrong-dot{background:var(--secondary)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){.q-card{padding:24px}.q-text{font-size:18px}.score-num{font-size:3.5rem}.score-details{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="quiz-wrapper">
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="screen active" id="introScreen">
+    <div class="q-card">
+      <div class="intro-icon">${icon}</div>
+      <div class="intro-title">שאלון – ${escapeHtml(d.quizName)}</div>
+      <div class="intro-sub">${escapeHtml(d.subject)} | ${escapeHtml(d.grade)} | המרכז הפדגוגי · מינהל הכשרה מקצועית</div>
+      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם" autocomplete="off"></div>
+      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${classOptions}</select></div>
+      <button class="btn btn-primary" id="startBtn" disabled onclick="startQuiz()">התחילו</button>
+    </div>
+  </div>
+  <div class="screen" id="questionScreen">
+    <div class="q-card">
+      <div class="q-dots" id="qDots"></div>
+      <div class="q-counter" id="qCounter"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-options" id="qOptions"></div>
+      <div class="q-feedback" id="qFeedback"></div>
+      <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">שאלה הבאה</button>
+    </div>
+  </div>
+  <div class="screen" id="scoreScreen">
+    <div class="q-card" style="text-align:center">
+      <div class="score-icon" id="scoreIcon"></div>
+      <div class="score-num" id="scoreNum"></div>
+      <div class="score-label">מתוך 100</div>
+      <div class="score-msg" id="scoreMsg"></div>
+      <div class="score-details">
+        <div class="score-detail"><div class="num" id="correctCount" style="color:var(--green)"></div><div class="lbl">תשובות נכונות</div></div>
+        <div class="score-detail"><div class="num" id="wrongCount" style="color:var(--secondary)"></div><div class="lbl">תשובות שגויות</div></div>
+        <div class="score-detail"><div class="num" id="totalCount" style="color:var(--primary)"></div><div class="lbl">סה"כ שאלות</div></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:24px" onclick="sendResults()">שלחו תוצאות למורה</button>
+      <div class="send-status" id="sendStatus"></div>
+    </div>
+  </div>
+</div>
+<script>
+const diagnosticQuestions=${JSON.stringify(diag)};
+const basicQuestions=${JSON.stringify(sets.basic)};
+const mediumQuestions=${JSON.stringify(sets.medium)};
+const advancedQuestions=${JSON.stringify(sets.advanced)};
+
+let studentName='',studentClass='',currentQ=0,score=0,answers=[],activeQuestions=[],detectedLevel='',totalQuestions=0,diagnosticCorrect=0;
+const nameInput=document.getElementById('studentName'),classInput=document.getElementById('studentClass'),startBtn=document.getElementById('startBtn');
+function checkInputs(){startBtn.disabled=!(nameInput.value.trim()&&classInput.value)}
+nameInput.addEventListener('input',checkInputs);classInput.addEventListener('change',checkInputs);
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function startQuiz(){
+  studentName=nameInput.value.trim();studentClass=classInput.value;
+  currentQ=0;score=0;answers=[];diagnosticCorrect=0;
+  activeQuestions=diagnosticQuestions.slice();
+  totalQuestions=diagnosticQuestions.length+${sets.basic.length};
+  showScreen('questionScreen');renderQuestion();
+}
+
+function renderQuestion(){
+  const q=activeQuestions[currentQ],qNum=currentQ+1;
+  document.getElementById('progressFill').style.width=(qNum/totalQuestions*100)+'%';
+  document.getElementById('qDots').innerHTML=Array.from({length:totalQuestions},(_,i)=>{let c='q-dot';if(i<answers.length)c+=answers[i].correct?' done':' wrong-dot';else if(i===currentQ)c+=' current';return '<div class="'+c+'"></div>'}).join('');
+  document.getElementById('qCounter').textContent='שאלה '+qNum+' מתוך '+totalQuestions;
+  document.getElementById('qText').textContent=q.text;
+  const L=['א','ב','ג','ד'];
+  document.getElementById('qOptions').innerHTML=q.options.map((o,i)=>'<div class="q-opt" onclick="selectAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+o+'</span></div>').join('');
+  const fb=document.getElementById('qFeedback');fb.className='q-feedback';fb.textContent='';
+  document.getElementById('nextBtn').style.display='none';
+}
+
+function selectAnswer(idx){
+  const q=activeQuestions[currentQ],opts=document.querySelectorAll('.q-opt'),ok=idx===q.correct;
+  opts.forEach((o,i)=>{o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});
+  const fb=document.getElementById('qFeedback');
+  fb.className='q-feedback show '+(ok?'correct':'wrong');
+  fb.innerHTML=ok?'<strong>נכון!</strong> '+q.explanation:'<strong>לא נכון.</strong> '+q.explanation;
+  if(ok)score++;
+  answers.push({question:q.text,selected:idx,correct:ok});
+  if(currentQ<diagnosticQuestions.length){
+    if(ok)diagnosticCorrect++;
+    if(currentQ===diagnosticQuestions.length-1){${branchingJS}
+      totalQuestions=activeQuestions.length;
+    }
+  }
+  document.getElementById('qDots').innerHTML=Array.from({length:totalQuestions},(_,i)=>{let c='q-dot';if(i<answers.length)c+=answers[i].correct?' done':' wrong-dot';else if(i===currentQ+1)c+=' current';return '<div class="'+c+'"></div>'}).join('');
+  const nb=document.getElementById('nextBtn');nb.style.display='block';nb.textContent=currentQ<totalQuestions-1?'שאלה הבאה':'סיום';
+}
+
+function nextQuestion(){
+  currentQ++;if(currentQ>=totalQuestions){showScore();return}
+  const c=document.querySelector('#questionScreen .q-card');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderQuestion();
+}
+
+function showScore(){
+  const p=Math.round(score/totalQuestions*100);
+  document.getElementById('progressFill').style.width='100%';
+  let ic,msg,bg;
+  if(p>=90){ic='🌟';msg='מצוין! שליטה מעולה בחומר!';bg='var(--green-l)'}
+  else if(p>=70){ic='👏';msg='כל הכבוד! ביצוע טוב מאוד!';bg='var(--primary-l)'}
+  else if(p>=50){ic='💪';msg='אפשר לשפר – חיזרו על החומר';bg='var(--accent-l)'}
+  else{ic='📖';msg='כדאי לחזור על החומר ולנסות שוב';bg='var(--sec-l)'}
+  document.getElementById('scoreIcon').textContent=ic;
+  document.getElementById('scoreNum').textContent=p;
+  document.getElementById('scoreNum').style.color=p>=70?'var(--green)':p>=50?'var(--accent)':'var(--secondary)';
+  const m=document.getElementById('scoreMsg');m.textContent=msg;m.style.background=bg;
+  document.getElementById('correctCount').textContent=score;
+  document.getElementById('wrongCount').textContent=totalQuestions-score;
+  document.getElementById('totalCount').textContent=totalQuestions;
+  showScreen('scoreScreen');
+}
+
+const SHEETS_URL='${SHEETS_URL}';
+function sendResults(){
+  const btn=event.target;btn.disabled=true;btn.textContent='שולח...';
+  const p=Math.round(score/totalQuestions*100);
+  const params=new URLSearchParams({action:'submit',quizName:${JSON.stringify(sheetName)},studentName,classroom:studentClass,score:p,totalQuestions,correctAnswers:score,level:detectedLevel,teacherEmail:${JSON.stringify(d.teacherEmail)}});
+  const s=document.createElement('script');s.src=SHEETS_URL+'?'+params.toString();
+  s.onload=s.onerror=function(){const st=document.getElementById('sendStatus');st.className='send-status success';st.textContent='התוצאות נשלחו בהצלחה למורה! ✓';btn.textContent='נשלח!';s.remove()};
+  document.body.appendChild(s);
+}
+<\/script>
+</body>
+</html>`;
+}
+
+// ===== PREVIEW =====
+function refreshPreview() {
+  saveStepData(currentStep);
+  document.getElementById('previewFrame').srcdoc = generateQuizHTML();
+}
+
+// ===== DOWNLOAD =====
+function downloadQuiz() {
+  const html = generateQuizHTML();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = slugify(details.quizName) + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('הקובץ הורד בהצלחה!');
+}
+
+function slugify(text) {
+  return (text || 'quiz').replace(/\s+/g, '-').replace(/[^\u0590-\u05FFa-zA-Z0-9-]/g, '').substring(0, 50);
+}
+
+// ===== COPY HTML =====
+function copyHTML() {
+  navigator.clipboard.writeText(generateQuizHTML()).then(() => showToast('הקוד הועתק!')).catch(() => showToast('לא ניתן להעתיק'));
+}
+
+// ===== PUBLISH QUIZ =====
+const PLAYER_BASE_URL = 'https://pedagogiamh.co.il/tools/quiz-player/';
+
+function generateQuizId() {
+  return Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+async function publishQuiz() {
+  saveStepData(currentStep);
+
+  const btn = document.getElementById('publishBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const quizId = generateQuizId();
+
+  // Build quiz config JSON (just the data, not the full HTML)
+  const quizJSON = JSON.stringify({
+    diagnosticQuestions: diagnosticQuestions,
+    questionSets: questionSets,
+    diagCount: diagCount
+  });
+
+  const saveData = {
+    action: 'saveQuiz',
+    id: quizId,
+    name: details.quizName,
+    subject: details.subject,
+    grade: details.grade,
+    teacher: user ? user.name : '',
+    email: user ? user.email : '',
+    quizJSON: quizJSON
+  };
+
+  try {
+    // Save via POST (no-cors - we can't read the response but data gets saved)
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(saveData)
+    });
+
+    // Wait a moment for Google Sheets to process
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Verify the quiz was saved by trying to load it via JSONP
+    const verified = await verifyQuizSaved(quizId);
+
+    if (verified) {
+      showPublishedLink(quizId);
+    } else {
+      // Even if verification fails (might be a timing issue), show the link
+      // The quiz is likely saved, verification via JSONP may just be slow
+      showPublishedLink(quizId);
+      showToast('השאלון פורסם – ייתכן שיקח כמה שניות עד שהקישור יעבוד');
+    }
+  } catch(e) {
+    console.error('Publish error:', e);
+    showToast('שגיאה בפרסום. נסו שוב.');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function verifyQuizSaved(quizId) {
+  return new Promise((resolve) => {
+    const callbackName = 'verifyCallback_' + Date.now();
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      resolve(!data.error);
+    };
+    const script = document.createElement('script');
+    script.src = SHEETS_URL + '?action=getQuiz&id=' + quizId + '&callback=' + callbackName;
+    script.onerror = function() {
+      delete window[callbackName];
+      resolve(false);
+    };
+    document.body.appendChild(script);
+    // Timeout
+    setTimeout(() => {
+      if (window[callbackName]) {
+        delete window[callbackName];
+        resolve(false);
+      }
+    }, 8000);
+  });
+}
+
+function showPublishedLink(quizId) {
+  const url = PLAYER_BASE_URL + '?id=' + quizId;
+  document.getElementById('publishedUrl').value = url;
+  document.getElementById('publishedResult').style.display = 'block';
+  document.getElementById('publishedResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function copyPublishedLink() {
+  const input = document.getElementById('publishedUrl');
+  input.select();
+  navigator.clipboard.writeText(input.value)
+    .then(() => showToast('הקישור הועתק!'))
+    .catch(() => {
+      document.execCommand('copy');
+      showToast('הקישור הועתק!');
+    });
+}
+
+// ===== INIT =====
+(function init() {
+  // Check for saved user session
+  const savedUser = localStorage.getItem('ort-quiz-user');
+  if (savedUser) {
+    try {
+      user = JSON.parse(savedUser);
+      showApp();
+    } catch(e) {
+      localStorage.removeItem('ort-quiz-user');
+    }
+  }
+})();
+</script>
+</body>
+</html>

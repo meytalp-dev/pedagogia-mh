@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משחק לימודי – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F4F8;--card:#fff;--primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;--secondary:#E76F7A;--sec-l:#FDE8EA;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.game-wrapper{max-width:620px;width:100%;margin:0 auto}
+.progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s;width:0%}
+.g-card{background:var(--card);border-radius:var(--r);padding:36px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+.screen{display:none}.screen.active{display:block}
+
+/* Loading */
+.loading-screen{text-align:center;padding:80px 20px}
+.spinner{width:48px;height:48px;border:4px solid var(--primary-l);border-top:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--gray);font-size:16px}
+.error-box{text-align:center;padding:60px 20px}
+.error-icon{font-size:48px;margin-bottom:16px}
+.error-title{font-size:22px;font-weight:700;margin-bottom:8px;color:var(--secondary)}
+.error-sub{color:var(--gray);font-size:15px;line-height:1.6}
+
+/* Intro */
+.intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px}
+.intro-title{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
+.intro-sub{color:var(--gray);font-size:16px;text-align:center;margin-bottom:28px}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.input-group input,.input-group select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;color:var(--dark);background:var(--bg);transition:border-color .3s}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--primary);background:white}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px)}.btn-primary:disabled{opacity:.4;pointer-events:none}
+.btn-next{background:var(--primary);color:white;margin-top:16px;display:none}.btn-next:hover{background:var(--primary-d);transform:translateY(-2px)}
+.game-type-badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary-l);color:var(--primary-d);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin:0 auto 16px;justify-content:center}
+
+/* Trivia */
+.q-counter{font-size:13px;color:var(--primary);font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.q-text{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.5;margin-bottom:22px}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;display:flex;align-items:center;gap:12px}
+.q-opt:hover{background:var(--primary-l);border-color:var(--primary)}
+.q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.q-opt.correct{background:var(--green-l);border-color:var(--green);color:#2D7A54}.q-opt.correct .opt-letter{background:var(--green);color:white}
+.q-opt.wrong{background:var(--sec-l);border-color:var(--secondary);color:#B44050}.q-opt.wrong .opt-letter{background:var(--secondary);color:white}
+.q-opt.disabled{pointer-events:none;opacity:.7}.q-opt.disabled.dim{opacity:.45}
+.q-feedback{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:15px;line-height:1.6;display:none}
+.q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);color:#2D7A54}.q-feedback.wrong{background:var(--sec-l);color:#B44050}
+
+/* Matching */
+.match-progress{text-align:center;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:16px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-title{font-size:13px;font-weight:700;color:var(--gray);text-align:center;margin-bottom:8px}
+.match-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;margin-bottom:8px}
+.match-item:hover{border-color:var(--primary)}
+.match-item.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:scale(1.03)}
+.match-item.matched{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none;opacity:.7}
+.match-item.wrong-flash{background:var(--sec-l);border-color:var(--secondary);animation:shake .4s ease}
+
+/* Ordering */
+.order-instruction{background:var(--primary-l);padding:14px 20px;border-radius:14px;text-align:center;font-size:15px;font-weight:600;color:var(--primary-d);margin-bottom:20px}
+.order-list{display:flex;flex-direction:column;gap:8px}
+.order-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .3s}
+.order-item .oi-num{width:30px;height:30px;border-radius:10px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.order-item .oi-text{flex:1;font-size:15px;font-weight:600}
+.order-item .oi-arrows{display:flex;flex-direction:column;gap:2px}
+.order-item .oi-arrows button{width:28px;height:22px;border:none;border-radius:6px;background:white;cursor:pointer;font-size:12px;transition:background .2s;border:1px solid var(--border)}
+.order-item .oi-arrows button:hover{background:var(--primary-l)}
+.order-item.correct-pos{border-color:var(--green);background:var(--green-l)}
+.order-item.wrong-pos{border-color:var(--secondary);background:var(--sec-l)}
+.check-btn{margin-top:16px}
+
+/* Escape Room */
+.escape-room-card{text-align:center}
+.escape-room-num{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--primary);color:white;font-size:20px;font-weight:800;font-family:'Rubik',sans-serif;margin-bottom:12px}
+.escape-room-title{font-family:'Rubik',sans-serif;font-size:22px;font-weight:800;margin-bottom:16px;color:var(--primary-d)}
+.escape-story{background:var(--bg);border-radius:14px;padding:18px 20px;font-size:15px;line-height:1.8;margin-bottom:16px;text-align:right}
+.escape-riddle{background:var(--accent-l);border-radius:14px;padding:18px 20px;font-size:16px;font-weight:700;line-height:1.6;margin-bottom:20px;text-align:center;border:2px solid var(--accent)}
+.escape-input-row{display:flex;gap:10px;margin-bottom:12px}
+.escape-input-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;text-align:center}
+.escape-input-row input:focus{outline:none;border-color:var(--primary)}
+.escape-input-row input.shake-input{animation:shake .4s ease;border-color:var(--secondary)}
+.escape-hint-btn{background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);width:auto;padding:10px 20px;font-size:14px;margin-bottom:12px}
+.escape-hint-btn:hover{background:var(--accent);color:white}
+.escape-hint-text{background:var(--accent-l);border-radius:12px;padding:14px 18px;font-size:14px;color:#92600e;margin-bottom:12px;display:none}
+.escape-feedback{padding:16px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
+.escape-feedback.correct{display:block;background:var(--green-l);color:#2D7A54}
+.escape-celebration{text-align:center;padding:30px 20px}
+.escape-celebration .big-icon{font-size:72px;margin-bottom:16px}
+.escape-celebration .big-text{font-family:'Rubik',sans-serif;font-size:26px;font-weight:900;color:var(--primary-d);margin-bottom:8px}
+
+/* Memory */
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.memory-card{aspect-ratio:1;border-radius:14px;cursor:pointer;position:relative;perspective:600px}
+.memory-card-inner{width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;position:relative}
+.memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
+.memory-card-face{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;font-size:14px;font-weight:700;padding:8px;text-align:center;word-break:break-word;line-height:1.3}
+.memory-card-back{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:white;font-size:28px}
+.memory-card-front{background:var(--bg);border:2px solid var(--border);color:var(--dark);transform:rotateY(180deg)}
+.memory-card.matched .memory-card-front{background:var(--green-l);border-color:var(--green);color:#2D7A54}
+.memory-card.matched{pointer-events:none}
+.memory-counter{text-align:center;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:8px}
+
+/* Wheel */
+.wheel-container{text-align:center;position:relative;margin-bottom:20px}
+.wheel-canvas-wrap{position:relative;display:inline-block;margin:0 auto}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:24px solid var(--dark);z-index:5;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))}
+.wheel-canvas{border-radius:50%;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.wheel-spin-btn{background:var(--primary);color:white;width:auto;padding:14px 40px;font-size:18px;margin-top:16px;border-radius:50px}
+.wheel-spin-btn:hover{background:var(--primary-d);transform:translateY(-2px)}
+.wheel-spin-btn:disabled{opacity:.4;pointer-events:none}
+.wheel-popup{margin-top:20px;display:none}
+.wheel-popup.show{display:block}
+.wheel-q-text{font-size:18px;font-weight:700;font-family:'Rubik',sans-serif;margin-bottom:16px;line-height:1.5}
+.wheel-counter{font-size:13px;color:var(--gray);font-weight:600;margin-bottom:10px}
+
+/* True/False */
+.tf-statement{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;text-align:center;line-height:1.6;padding:30px 20px;margin-bottom:24px;background:var(--bg);border-radius:14px}
+.tf-buttons{display:flex;gap:12px;margin-bottom:16px}
+.tf-btn{flex:1;padding:20px;border:3px solid transparent;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;transition:all .3s;font-family:'Heebo',sans-serif}
+.tf-btn-true{background:var(--green-l);color:#2D7A54;border-color:var(--green)}.tf-btn-true:hover{background:var(--green);color:white;transform:translateY(-3px)}
+.tf-btn-false{background:var(--sec-l);color:#B44050;border-color:var(--secondary)}.tf-btn-false:hover{background:var(--secondary);color:white;transform:translateY(-3px)}
+.tf-btn.selected-correct{background:var(--green);color:white;transform:scale(1.05)}
+.tf-btn.selected-wrong{background:var(--secondary);color:white;transform:scale(1.05)}
+.tf-btn.disabled{pointer-events:none;opacity:.5}
+
+/* Fill Blank */
+.fb-sentence{font-size:19px;font-weight:600;line-height:1.8;text-align:center;margin-bottom:20px;padding:20px;background:var(--bg);border-radius:14px}
+.fb-blank{display:inline-block;min-width:80px;border-bottom:3px solid var(--primary);padding:2px 8px;color:var(--primary);font-weight:800}
+.fb-input-row{display:flex;gap:10px;margin-bottom:12px}
+.fb-input-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;text-align:center}
+.fb-input-row input:focus{outline:none;border-color:var(--primary)}
+.fb-hint-btn{background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);width:auto;padding:10px 20px;font-size:14px;margin-bottom:12px}
+.fb-hint-btn:hover{background:var(--accent);color:white}
+.fb-hint-text{background:var(--accent-l);border-radius:12px;padding:12px 16px;font-size:14px;color:#92600e;margin-bottom:12px;display:none}
+.fb-feedback{padding:14px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
+.fb-feedback.show{display:block}
+.fb-feedback.correct{background:var(--green-l);color:#2D7A54}
+.fb-feedback.wrong{background:var(--sec-l);color:#B44050}
+
+/* Sentence */
+.sentence-target{min-height:60px;background:var(--bg);border:2px dashed var(--border);border-radius:14px;padding:14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center;justify-content:center}
+.sentence-target.empty::after{content:'לחצו על מילים כדי לבנות את המשפט';color:var(--gray-l);font-size:14px}
+.sentence-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
+.word-chip{padding:10px 18px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;user-select:none}
+.word-chip-pool{background:var(--primary-l);color:var(--primary-d);border:2px solid var(--primary)}
+.word-chip-pool:hover{background:var(--primary);color:white;transform:translateY(-2px)}
+.word-chip-pool.used{opacity:.3;pointer-events:none}
+.word-chip-target{background:white;color:var(--dark);border:2px solid var(--border)}
+.word-chip-target:hover{border-color:var(--secondary);color:var(--secondary)}
+.sentence-feedback{padding:14px;border-radius:14px;text-align:center;font-size:15px;font-weight:700;margin-top:12px;display:none}
+.sentence-feedback.show{display:block}
+.sentence-feedback.correct{background:var(--green-l);color:#2D7A54}
+.sentence-feedback.wrong{background:var(--sec-l);color:#B44050}
+
+/* Groups (Connections) */
+.groups-lives{text-align:center;font-size:14px;font-weight:700;color:var(--gray);margin-bottom:12px}
+.groups-lives .heart{color:var(--secondary);font-size:18px;margin:0 2px}
+.groups-solved{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.groups-solved-group{border-radius:14px;padding:14px 18px;text-align:center;font-weight:700;font-size:15px;animation:fadeUp .4s ease}
+.groups-solved-group .group-name{font-size:13px;font-weight:800;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.groups-solved-group .group-items{font-size:15px;font-weight:600}
+.groups-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.groups-cell{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;word-break:break-word;min-height:56px;display:flex;align-items:center;justify-content:center}
+.groups-cell:hover{border-color:var(--primary)}
+.groups-cell.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:scale(1.03)}
+.groups-cell.wrong-flash{animation:shake .4s ease;background:var(--sec-l);border-color:var(--secondary)}
+.groups-check-btn{margin-top:0}
+.groups-colors-0{background:#D4F3EF;color:#1a7a6d}
+.groups-colors-1{background:#FDE8EA;color:#B44050}
+.groups-colors-2{background:#FEF3C7;color:#92600e}
+.groups-colors-3{background:#dbeafe;color:#1e40af}
+
+/* Hangman */
+.hangman-word{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;padding:20px}
+.hangman-letter-slot{width:36px;height:44px;border-bottom:3px solid var(--dark);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:'Rubik',sans-serif}
+.hangman-letter-slot.revealed{color:var(--green);border-color:var(--green)}
+.hangman-hint{background:var(--accent-l);border-radius:14px;padding:14px 18px;text-align:center;font-size:15px;font-weight:600;color:#92600e;margin-bottom:20px}
+.hangman-status{text-align:center;margin-bottom:16px;font-size:16px;font-weight:700;color:var(--gray)}
+.hangman-emoji{font-size:48px;text-align:center;margin-bottom:12px}
+.hangman-lives{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.hangman-lives .life-dot{width:16px;height:16px;border-radius:50%;background:var(--green);transition:all .3s}
+.hangman-lives .life-dot.lost{background:var(--secondary)}
+.hangman-keyboard{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
+.hangman-key{width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:var(--bg);font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:'Heebo',sans-serif}
+.hangman-key:hover{background:var(--primary-l);border-color:var(--primary)}
+.hangman-key.correct-key{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none}
+.hangman-key.wrong-key{background:var(--sec-l);border-color:var(--secondary);color:#B44050;pointer-events:none;opacity:.5}
+.hangman-result{padding:16px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
+.hangman-result.show{display:block}
+.hangman-result.win{background:var(--green-l);color:#2D7A54}
+.hangman-result.lose{background:var(--sec-l);color:#B44050}
+
+/* Millionaire */
+.mill-layout{display:flex;gap:20px;align-items:flex-start}
+.mill-main{flex:1;min-width:0}
+.mill-ladder{width:140px;flex-shrink:0;display:flex;flex-direction:column-reverse;gap:4px}
+.mill-ladder-item{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700;text-align:center;background:var(--bg);color:var(--gray);transition:all .3s;font-family:'Rubik',sans-serif}
+.mill-ladder-item.current{background:var(--accent);color:white;transform:scale(1.08);box-shadow:0 2px 10px rgba(233,163,25,.3)}
+.mill-ladder-item.passed{background:var(--green-l);color:#2D7A54}
+.mill-ladder-item.checkpoint{border:2px solid var(--accent);font-weight:800}
+.mill-ladder-item.checkpoint.passed{border-color:var(--green)}
+.mill-lifeline{display:flex;gap:10px;margin-bottom:16px;justify-content:center}
+.mill-lifeline-btn{padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);font-family:'Heebo',sans-serif}
+.mill-lifeline-btn:hover{background:var(--accent);color:white}
+.mill-lifeline-btn.used{opacity:.3;pointer-events:none;text-decoration:line-through}
+.mill-q-text{font-size:18px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.5;margin-bottom:18px}
+.mill-result{text-align:center;padding:20px}
+.mill-result .money{font-size:3rem;font-weight:900;font-family:'Rubik',sans-serif;color:var(--accent);margin-bottom:8px}
+
+/* Score */
+.score-icon{font-size:60px;text-align:center;margin-bottom:12px}
+.score-num{font-size:5rem;font-weight:900;font-family:'Rubik',sans-serif;text-align:center;line-height:1}
+.score-label{font-size:16px;color:var(--gray);text-align:center;margin-top:4px}
+.score-msg{font-size:20px;font-weight:700;text-align:center;margin-top:20px;padding:16px;border-radius:14px}
+.score-details{margin-top:20px;display:flex;gap:12px;justify-content:center}
+.score-detail{background:var(--bg);border-radius:14px;padding:14px 20px;text-align:center;flex:1}
+.score-detail .num{font-size:24px;font-weight:900;font-family:'Rubik',sans-serif}
+.score-detail .lbl{font-size:12px;color:var(--gray);margin-top:4px}
+.send-status{margin-top:16px;padding:14px;border-radius:12px;text-align:center;font-size:15px;display:none}
+.send-status.success{display:block;background:var(--green-l);color:#2D7A54}
+.retry-btn{margin-top:16px;background:var(--bg);color:var(--primary-d);border:2px solid var(--primary);font-weight:600}
+.retry-btn:hover{background:var(--primary-l)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes popIn{0%{transform:scale(0)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes celebrate{0%{transform:scale(1)}25%{transform:scale(1.1) rotate(-3deg)}50%{transform:scale(1.15) rotate(3deg)}75%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
+
+@media(max-width:500px){
+  .g-card{padding:24px}
+  .q-text{font-size:18px}
+  .score-num{font-size:3.5rem}
+  .score-details{flex-direction:column}
+  .match-grid{grid-template-columns:1fr;gap:24px}
+  .intro-title{font-size:22px}
+  .memory-grid{grid-template-columns:repeat(3,1fr)}
+  .groups-grid{grid-template-columns:repeat(4,1fr)}
+  .groups-cell{font-size:12px;padding:10px 4px;min-height:48px}
+  .hangman-key{width:34px;height:34px;font-size:16px}
+  .mill-layout{flex-direction:column}
+  .mill-ladder{width:100%;flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .mill-ladder-item{padding:6px 8px;font-size:11px}
+  .tf-btn{font-size:16px;padding:16px}
+  .wheel-canvas{max-width:280px;max-height:280px}
+}
+</style>
+</head>
+<body>
+<div class="game-wrapper">
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- Loading Screen -->
+  <div class="screen active" id="loadingScreen">
+    <div class="g-card loading-screen">
+      <div class="spinner"></div>
+      <div class="loading-text">טוען משחק...</div>
+    </div>
+  </div>
+
+  <!-- Error Screen -->
+  <div class="screen" id="errorScreen">
+    <div class="g-card error-box">
+      <div class="error-icon">😕</div>
+      <div class="error-title">המשחק לא נמצא</div>
+      <div class="error-sub" id="errorMsg">ייתכן שהקישור שגוי או שהמשחק הוסר.</div>
+    </div>
+  </div>
+
+  <!-- Intro Screen -->
+  <div class="screen" id="introScreen">
+    <div class="g-card">
+      <div class="intro-icon" id="gameIcon">🎮</div>
+      <div class="intro-title" id="gameTitle">משחק לימודי</div>
+      <div class="intro-sub" id="gameSub"></div>
+      <div style="display:flex;justify-content:center;margin-bottom:20px">
+        <div class="game-type-badge" id="gameTypeBadge"></div>
+      </div>
+      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם"></div>
+      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
+      <button class="btn btn-primary" id="startBtn" disabled onclick="startGame()">התחילו!</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div class="screen" id="gameScreen"><div class="g-card" id="gameArea"></div></div>
+
+  <!-- Score Screen -->
+  <div class="screen" id="scoreScreen">
+    <div class="g-card" style="text-align:center">
+      <div class="score-icon" id="scoreIcon"></div>
+      <div class="score-num" id="scoreNum"></div>
+      <div class="score-label" id="scoreLabel">מתוך 100</div>
+      <div class="score-msg" id="scoreMsg"></div>
+      <div class="score-details">
+        <div class="score-detail"><div class="num" id="correctCount" style="color:var(--green)"></div><div class="lbl">נכונים</div></div>
+        <div class="score-detail"><div class="num" id="wrongCount" style="color:var(--secondary)"></div><div class="lbl">שגויים</div></div>
+        <div class="score-detail"><div class="num" id="totalCount" style="color:var(--primary)"></div><div class="lbl">סה"כ</div></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:24px" onclick="sendResults()">שלחו תוצאות למורה</button>
+      <div class="send-status" id="sendStatus"></div>
+      <button class="btn retry-btn" onclick="retryGame()">שחקו שוב</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
+
+let gameConfig = null;
+let gameMeta = null;
+let studentName = '', studentClass = '';
+let score = 0, totalItems = 0, correctItems = 0;
+let isMillionaire = false;
+let millionaireMoneyReached = 0;
+
+const gameTypeNames = {
+  trivia: 'טריוויה', matching: 'התאמה', ordering: 'סדר נכון',
+  escape: 'חדר בריחה', memory: 'זיכרון', wheel: 'גלגל המזל',
+  truefalse: 'נכון / לא נכון', fillblank: 'השלמת חסר',
+  sentence: 'סדר את המשפט', groups: 'קבוצות',
+  hangman: 'נחשו את המילה', millionaire: 'מיליונר'
+};
+const gameTypeIcons = {
+  trivia: '🎯', matching: '🔗', ordering: '📋',
+  escape: '🔐', memory: '🧠', wheel: '🎡',
+  truefalse: '✅', fillblank: '✏️',
+  sentence: '🔤', groups: '🎨',
+  hangman: '🔮', millionaire: '💰'
+};
+
+const nameInput = document.getElementById('studentName');
+const classInput = document.getElementById('studentClass');
+const startBtn = document.getElementById('startBtn');
+function checkInputs() { startBtn.disabled = !(nameInput.value.trim() && classInput.value); }
+nameInput.addEventListener('input', checkInputs);
+classInput.addEventListener('change', checkInputs);
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function setProgress(fraction) {
+  document.getElementById('progressFill').style.width = (fraction * 100) + '%';
+}
+
+function animateCard() {
+  const c = document.getElementById('gameArea');
+  c.style.animation = 'none'; c.offsetHeight; c.style.animation = 'fadeUp .45s ease';
+}
+
+// ===== LOAD GAME FROM GOOGLE SHEETS =====
+function loadGame() {
+  const params = new URLSearchParams(window.location.search);
+  const gameId = params.get('id');
+
+  if (!gameId) {
+    showError('לא צוין מזהה משחק', 'הקישור חסר פרמטר id. בקשו מהמורה קישור חדש.');
+    return;
+  }
+
+  const callbackName = 'gameCallback_' + Date.now();
+  window[callbackName] = function(data) {
+    delete window[callbackName];
+    if (data.error) {
+      showError('המשחק לא נמצא', 'ייתכן שהקישור שגוי או שהמשחק הוסר.');
+      return;
+    }
+    try {
+      gameMeta = data;
+      gameConfig = JSON.parse(data.gameJSON);
+      setupIntro();
+    } catch (e) {
+      showError('שגיאה בטעינת המשחק', 'הנתונים לא תקינים. נסו לרענן את הדף.');
+    }
+  };
+
+  const script = document.createElement('script');
+  script.src = SHEETS_URL + '?action=getGame&id=' + encodeURIComponent(gameId) + '&callback=' + callbackName;
+  script.onerror = function() {
+    delete window[callbackName];
+    showError('שגיאה בחיבור', 'לא ניתן להתחבר לשרת. בדקו את החיבור לאינטרנט.');
+  };
+
+  setTimeout(function() {
+    if (window[callbackName]) {
+      delete window[callbackName];
+      showError('זמן הטעינה עבר', 'השרת לא מגיב. נסו לרענן את הדף.');
+    }
+  }, 15000);
+
+  document.body.appendChild(script);
+}
+
+function showError(title, msg) {
+  document.querySelector('.error-title').textContent = title;
+  document.getElementById('errorMsg').textContent = msg;
+  showScreen('errorScreen');
+}
+
+function setupIntro() {
+  const subjectIcons = { 'עברית':'א', 'מתמטיקה':'➗', 'היסטוריה':'📜', 'אנגלית':'A', 'מדעים':'🔬', 'חשבונאות':'📊' };
+  const icon = subjectIcons[gameMeta.subject] || '🎮';
+  const gt = gameConfig.gameType;
+
+  document.getElementById('gameIcon').textContent = icon;
+  document.getElementById('gameTitle').textContent = 'משחק – ' + escapeHtml(gameMeta.name);
+  document.getElementById('gameSub').textContent = escapeHtml(gameMeta.subject) + ' | ' + escapeHtml(gameMeta.grade) + ' | המרכז הפדגוגי · מינהל הכשרה מקצועית';
+  document.getElementById('gameTypeBadge').textContent = (gameTypeIcons[gt] || '🎮') + ' ' + (gameTypeNames[gt] || gt);
+
+  document.title = 'משחק – ' + gameMeta.name + ' | המרכז הפדגוגי · מינהל הכשרה מקצועית';
+
+  const gradeMap = {
+    'כיתה ט': ['ט1','ט2','ט3','ט4'], 'כיתה י': ['י1','י2','י3','י4'],
+    'כיתה יא': ['יא1','יא2','יא3'], 'כיתה יב': ['יב1','יב2','יב3']
+  };
+  const classes = gradeMap[gameMeta.grade] || ['א','ב','ג','ד'];
+  const sel = document.getElementById('studentClass');
+  classes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    sel.appendChild(opt);
+  });
+
+  showScreen('introScreen');
+}
+
+// ===== START GAME =====
+function startGame() {
+  studentName = nameInput.value.trim();
+  studentClass = classInput.value;
+  score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
+  showScreen('gameScreen');
+
+  const initFn = {
+    trivia: initTrivia, matching: initMatching, ordering: initOrdering,
+    escape: initEscape, memory: initMemory, wheel: initWheel,
+    truefalse: initTrueFalse, fillblank: initFillBlank,
+    sentence: initSentence, groups: initGroups,
+    hangman: initHangman, millionaire: initMillionaire
+  };
+  (initFn[gameConfig.gameType] || initTrivia)();
+}
+
+function retryGame() {
+  document.getElementById('sendStatus').className = 'send-status';
+  document.getElementById('sendStatus').textContent = '';
+  score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
+  showScreen('gameScreen');
+
+  const initFn = {
+    trivia: initTrivia, matching: initMatching, ordering: initOrdering,
+    escape: initEscape, memory: initMemory, wheel: initWheel,
+    truefalse: initTrueFalse, fillblank: initFillBlank,
+    sentence: initSentence, groups: initGroups,
+    hangman: initHangman, millionaire: initMillionaire
+  };
+  (initFn[gameConfig.gameType] || initTrivia)();
+}
+
+// ==========================================
+// ===== TRIVIA =====
+// ==========================================
+let triviaQ = 0, triviaItems = [];
+function initTrivia() {
+  triviaItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = triviaItems.length; triviaQ = 0; score = 0; correctItems = 0;
+  renderTriviaQ();
+}
+function renderTriviaQ() {
+  const q = triviaItems[triviaQ], n = triviaQ + 1;
+  setProgress(n / totalItems);
+  const L = ['א','ב','ג','ד'];
+  document.getElementById('gameArea').innerHTML =
+    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div class="q-text">' + escapeHtml(q.text) + '</div>' +
+    '<div class="q-options">' + q.options.map((o, i) =>
+      '<div class="q-opt" onclick="triviaAnswer(' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+    ).join('') + '</div>' +
+    '<div class="q-feedback" id="qFeedback"></div>' +
+    '<button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>';
+}
+function triviaAnswer(idx) {
+  const q = triviaItems[triviaQ], ok = idx === q.correct;
+  document.querySelectorAll('.q-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.correct) o.classList.add('correct');
+    else if (i === idx && !ok) o.classList.add('wrong');
+    else o.classList.add('dim');
+  });
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(q.explanation || '') : '<strong>לא נכון.</strong> ' + escapeHtml(q.explanation || '');
+  if (ok) { score++; correctItems++; }
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('nextBtn').textContent = triviaQ < totalItems - 1 ? 'הבא' : 'סיום';
+}
+function nextTrivia() {
+  triviaQ++;
+  if (triviaQ >= totalItems) { showScore(); return; }
+  animateCard();
+  renderTriviaQ();
+}
+
+// ==========================================
+// ===== MATCHING =====
+// ==========================================
+let matchPairs = [], matchedCount = 0, selectedRight = null;
+function initMatching() {
+  matchPairs = [...gameConfig.items]; totalItems = matchPairs.length;
+  matchedCount = 0; selectedRight = null; score = 0; correctItems = 0;
+  const rightItems = shuffle(matchPairs.map((p, i) => ({ text: p.right, idx: i })));
+  const leftItems = shuffle(matchPairs.map((p, i) => ({ text: p.left, idx: i })));
+  const rTitle = gameConfig.columnRightTitle || 'מושג';
+  const lTitle = gameConfig.columnLeftTitle || 'הגדרה';
+  setProgress(0);
+  document.getElementById('gameArea').innerHTML =
+    '<div class="match-progress" id="matchProg">0 מתוך ' + totalItems + ' זוגות</div>' +
+    '<div class="match-grid">' +
+    '<div><div class="match-col-title">' + escapeHtml(rTitle) + '</div>' + rightItems.map(r =>
+      '<div class="match-item match-right" data-idx="' + r.idx + '" onclick="selectRight(this)">' + escapeHtml(r.text) + '</div>'
+    ).join('') + '</div>' +
+    '<div><div class="match-col-title">' + escapeHtml(lTitle) + '</div>' + leftItems.map(l =>
+      '<div class="match-item match-left" data-idx="' + l.idx + '" onclick="selectLeft(this)">' + escapeHtml(l.text) + '</div>'
+    ).join('') + '</div>' +
+    '</div>';
+}
+function selectRight(el) {
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll('.match-right').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected'); selectedRight = el;
+}
+function selectLeft(el) {
+  if (!selectedRight || el.classList.contains('matched')) return;
+  const rIdx = parseInt(selectedRight.dataset.idx), lIdx = parseInt(el.dataset.idx);
+  if (rIdx === lIdx) {
+    selectedRight.classList.remove('selected'); selectedRight.classList.add('matched');
+    el.classList.add('matched'); matchedCount++; correctItems++; score++;
+    document.getElementById('matchProg').textContent = matchedCount + ' מתוך ' + totalItems + ' זוגות';
+    setProgress(matchedCount / totalItems);
+    selectedRight = null;
+    if (matchedCount === totalItems) setTimeout(showScore, 600);
+  } else {
+    selectedRight.classList.add('wrong-flash'); el.classList.add('wrong-flash');
+    const r = selectedRight;
+    setTimeout(() => { r.classList.remove('selected', 'wrong-flash'); el.classList.remove('wrong-flash'); }, 500);
+    selectedRight = null;
+  }
+}
+
+// ==========================================
+// ===== ORDERING =====
+// ==========================================
+let orderItems = [];
+function initOrdering() {
+  orderItems = shuffle(gameConfig.items.map((item, i) => ({ ...item, correctPos: item.position || i + 1 })));
+  totalItems = orderItems.length; score = 0; correctItems = 0;
+  renderOrder();
+}
+function renderOrder() {
+  setProgress(0);
+  const inst = gameConfig.instruction || 'סדרו את הפריטים בסדר הנכון';
+  document.getElementById('gameArea').innerHTML =
+    '<div class="order-instruction">' + escapeHtml(inst) + '</div>' +
+    '<div class="order-list" id="orderList">' + orderItems.map((item, i) =>
+      '<div class="order-item" data-idx="' + i + '">' +
+      '<div class="oi-num">' + (i + 1) + '</div>' +
+      '<div class="oi-text">' + escapeHtml(item.text) + '</div>' +
+      '<div class="oi-arrows">' +
+      '<button onclick="moveItem(' + i + ',-1)">▲</button>' +
+      '<button onclick="moveItem(' + i + ',1)">▼</button>' +
+      '</div></div>'
+    ).join('') + '</div>' +
+    '<button class="btn btn-primary check-btn" onclick="checkOrder()">בדקו סדר</button>';
+}
+function moveItem(idx, dir) {
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= orderItems.length) return;
+  [orderItems[idx], orderItems[newIdx]] = [orderItems[newIdx], orderItems[idx]];
+  renderOrder();
+}
+function checkOrder() {
+  correctItems = 0;
+  orderItems.forEach((item, i) => { if (item.correctPos === i + 1) correctItems++; });
+  score = correctItems;
+  const items = document.querySelectorAll('.order-item');
+  items.forEach((el, i) => {
+    el.classList.add(orderItems[i].correctPos === i + 1 ? 'correct-pos' : 'wrong-pos');
+    el.querySelector('.oi-arrows').style.display = 'none';
+  });
+  document.querySelector('.check-btn').style.display = 'none';
+  setProgress(1);
+  setTimeout(showScore, 1500);
+}
+
+// ==========================================
+// ===== ESCAPE ROOM =====
+// ==========================================
+let escapeRooms = [], escapeIdx = 0, escapeHintsUsed = {};
+function initEscape() {
+  escapeRooms = [...gameConfig.items];
+  totalItems = escapeRooms.length;
+  escapeIdx = 0; score = 0; correctItems = 0;
+  escapeHintsUsed = {};
+  renderEscapeRoom();
+}
+function renderEscapeRoom() {
+  const room = escapeRooms[escapeIdx];
+  const n = escapeIdx + 1;
+  setProgress(n / (totalItems + 1));
+  document.getElementById('gameArea').innerHTML =
+    '<div class="escape-room-card">' +
+    '<div class="escape-room-num">' + n + '</div>' +
+    '<div class="escape-room-title">' + escapeHtml(room.title) + '</div>' +
+    '</div>' +
+    '<div class="escape-story">' + escapeHtml(room.story) + '</div>' +
+    '<div class="escape-riddle">' + escapeHtml(room.riddle) + '</div>' +
+    '<div class="escape-input-row">' +
+    '<input type="text" id="escapeInput" placeholder="הקלידו את התשובה...">' +
+    '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkEscapeAnswer()">בדקו</button>' +
+    '</div>' +
+    (room.hint ? '<button class="btn escape-hint-btn" onclick="showEscapeHint()">רמז</button>' : '') +
+    '<div class="escape-hint-text" id="escapeHint">' + escapeHtml(room.hint || '') + '</div>' +
+    '<div class="escape-feedback" id="escapeFeedback"></div>' +
+    '<button class="btn btn-next" id="escapeNextBtn" onclick="nextEscapeRoom()" style="display:none">החדר הבא</button>';
+
+  document.getElementById('escapeInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkEscapeAnswer();
+  });
+}
+function showEscapeHint() {
+  escapeHintsUsed[escapeIdx] = true;
+  document.getElementById('escapeHint').style.display = 'block';
+  const btn = document.querySelector('.escape-hint-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; }
+}
+function checkEscapeAnswer() {
+  const input = document.getElementById('escapeInput');
+  const answer = input.value.trim();
+  if (!answer) return;
+  const room = escapeRooms[escapeIdx];
+  const correct = answer.toLowerCase() === room.answer.trim().toLowerCase();
+  if (correct) {
+    const pts = escapeHintsUsed[escapeIdx] ? 0.5 : 1;
+    score += pts; correctItems++;
+    const fb = document.getElementById('escapeFeedback');
+    fb.className = 'escape-feedback correct';
+    fb.textContent = 'נכון! פתחתם את החדר!';
+    input.disabled = true;
+    const nextBtn = document.getElementById('escapeNextBtn');
+    nextBtn.style.display = 'block';
+    nextBtn.textContent = escapeIdx < totalItems - 1 ? 'החדר הבא' : 'סיום';
+  } else {
+    input.classList.add('shake-input');
+    setTimeout(() => input.classList.remove('shake-input'), 400);
+  }
+}
+function nextEscapeRoom() {
+  escapeIdx++;
+  if (escapeIdx >= totalItems) {
+    // Show escape celebration then score
+    setProgress(1);
+    document.getElementById('gameArea').innerHTML =
+      '<div class="escape-celebration">' +
+      '<div class="big-icon" style="animation:celebrate 1s ease">🎉</div>' +
+      '<div class="big-text">ברחתם בהצלחה!</div>' +
+      '<p style="color:var(--gray);margin-top:8px">פתחתם את כל ' + totalItems + ' החדרים</p>' +
+      '</div>';
+    // Adjust score for showScore: correctItems stays as-is, totalItems stays
+    // score is already accumulated with 0.5 or 1 per room
+    // We'll show based on score/totalItems
+    correctItems = Math.round(score); // approximate
+    totalItems = escapeRooms.length;
+    setTimeout(showScore, 2000);
+    return;
+  }
+  animateCard();
+  renderEscapeRoom();
+}
+
+// ==========================================
+// ===== MEMORY =====
+// ==========================================
+let memoryCards = [], memoryFlipped = [], memoryMatched = 0, memoryTotal = 0, memoryLocked = false;
+function initMemory() {
+  const items = gameConfig.items;
+  memoryTotal = items.length;
+  totalItems = memoryTotal;
+  memoryMatched = 0; score = 0; correctItems = 0; memoryLocked = false;
+
+  // Create card pairs: for each item {front, back}, create two cards with the same pairId
+  let cards = [];
+  items.forEach((item, i) => {
+    cards.push({ text: item.front, pairId: i, type: 'front' });
+    cards.push({ text: item.back, pairId: i, type: 'back' });
+  });
+  memoryCards = shuffle(cards);
+  memoryFlipped = [];
+
+  setProgress(0);
+  renderMemory();
+}
+function renderMemory() {
+  document.getElementById('gameArea').innerHTML =
+    '<div class="memory-counter" id="memoryCounter">0 מתוך ' + memoryTotal + ' זוגות</div>' +
+    '<div class="memory-grid">' +
+    memoryCards.map((card, i) =>
+      '<div class="memory-card' + (card.matched ? ' flipped matched' : '') + '" data-idx="' + i + '" onclick="flipMemoryCard(' + i + ')">' +
+      '<div class="memory-card-inner">' +
+      '<div class="memory-card-face memory-card-back">?</div>' +
+      '<div class="memory-card-face memory-card-front">' + escapeHtml(card.text) + '</div>' +
+      '</div></div>'
+    ).join('') +
+    '</div>';
+}
+function flipMemoryCard(idx) {
+  if (memoryLocked) return;
+  const card = memoryCards[idx];
+  if (card.matched) return;
+
+  const el = document.querySelectorAll('.memory-card')[idx];
+  if (el.classList.contains('flipped')) return;
+  if (memoryFlipped.length >= 2) return;
+
+  el.classList.add('flipped');
+  memoryFlipped.push(idx);
+
+  if (memoryFlipped.length === 2) {
+    memoryLocked = true;
+    const first = memoryCards[memoryFlipped[0]];
+    const second = memoryCards[memoryFlipped[1]];
+
+    if (first.pairId === second.pairId && memoryFlipped[0] !== memoryFlipped[1]) {
+      // Match!
+      setTimeout(() => {
+        memoryCards[memoryFlipped[0]].matched = true;
+        memoryCards[memoryFlipped[1]].matched = true;
+        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.add('matched');
+        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.add('matched');
+        memoryMatched++;
+        correctItems = memoryMatched;
+        score = memoryMatched;
+        document.getElementById('memoryCounter').textContent = memoryMatched + ' מתוך ' + memoryTotal + ' זוגות';
+        setProgress(memoryMatched / memoryTotal);
+        memoryFlipped = [];
+        memoryLocked = false;
+        if (memoryMatched === memoryTotal) setTimeout(showScore, 600);
+      }, 500);
+    } else {
+      // No match - flip back
+      setTimeout(() => {
+        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.remove('flipped');
+        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.remove('flipped');
+        memoryFlipped = [];
+        memoryLocked = false;
+      }, 1000);
+    }
+  }
+}
+
+// ==========================================
+// ===== WHEEL OF FORTUNE =====
+// ==========================================
+let wheelItems = [], wheelAnswered = [], wheelCurrentQ = -1, wheelSpinning = false, wheelCanvas = null, wheelCtx = null, wheelRotation = 0;
+function initWheel() {
+  wheelItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = wheelItems.length; score = 0; correctItems = 0;
+  wheelAnswered = new Array(totalItems).fill(false);
+  wheelCurrentQ = -1; wheelSpinning = false; wheelRotation = 0;
+  renderWheel();
+}
+function renderWheel() {
+  const size = 300;
+  document.getElementById('gameArea').innerHTML =
+    '<div class="wheel-container">' +
+    '<div class="wheel-canvas-wrap">' +
+    '<div class="wheel-pointer"></div>' +
+    '<canvas id="wheelCanvas" width="' + size + '" height="' + size + '" class="wheel-canvas"></canvas>' +
+    '</div>' +
+    '</div>' +
+    '<div style="text-align:center">' +
+    '<div class="wheel-counter" id="wheelCounter">' + correctItems + ' מתוך ' + totalItems + ' שאלות</div>' +
+    '<button class="btn wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">!סובבו</button>' +
+    '</div>' +
+    '<div class="wheel-popup" id="wheelPopup"></div>';
+
+  wheelCanvas = document.getElementById('wheelCanvas');
+  wheelCtx = wheelCanvas.getContext('2d');
+  drawWheel(0);
+  setProgress(0);
+}
+function drawWheel(rotation) {
+  const canvas = wheelCanvas, ctx = wheelCtx;
+  const size = canvas.width, cx = size / 2, cy = size / 2, r = size / 2 - 4;
+  const n = totalItems;
+  const colors = ['#2A9D8F','#E76F7A','#E9A319','#52B788','#6366f1','#ec4899','#f59e0b','#14b8a6','#8b5cf6','#f43f5e','#06b6d4','#84cc16'];
+
+  ctx.clearRect(0, 0, size, size);
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rotation);
+
+  for (let i = 0; i < n; i++) {
+    const startAngle = (2 * Math.PI / n) * i;
+    const endAngle = (2 * Math.PI / n) * (i + 1);
+    const midAngle = (startAngle + endAngle) / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = wheelAnswered[i] ? '#cbd5e1' : colors[i % colors.length];
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Text
+    ctx.save();
+    ctx.rotate(midAngle);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold ' + Math.max(10, Math.min(14, Math.floor(120 / n))) + 'px Heebo';
+    const label = (i + 1).toString();
+    ctx.fillText(label, r * 0.65, 4);
+    ctx.restore();
+  }
+
+  ctx.restore();
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+function spinWheel() {
+  if (wheelSpinning) return;
+  // Find unanswered questions
+  const unanswered = [];
+  for (let i = 0; i < totalItems; i++) { if (!wheelAnswered[i]) unanswered.push(i); }
+  if (unanswered.length === 0) return;
+
+  wheelSpinning = true;
+  document.getElementById('wheelSpinBtn').disabled = true;
+  document.getElementById('wheelPopup').className = 'wheel-popup';
+
+  // Pick a random unanswered question
+  const targetIdx = unanswered[Math.floor(Math.random() * unanswered.length)];
+  const n = totalItems;
+  const sliceAngle = 2 * Math.PI / n;
+  // The pointer is at the top (angle = -PI/2 = 3PI/2)
+  // We want the target slice to end up at the top
+  // Target slice center angle = sliceAngle * targetIdx + sliceAngle/2
+  // After rotation R, the slice at angle A ends up at angle A + R
+  // We want A + R = -PI/2 (mod 2PI) => R = -PI/2 - A + full_rotations
+  const targetAngle = sliceAngle * targetIdx + sliceAngle / 2;
+  const fullSpins = 4 + Math.floor(Math.random() * 3); // 4-6 full spins
+  const finalRotation = fullSpins * 2 * Math.PI + (3 * Math.PI / 2 - targetAngle);
+
+  const startRotation = wheelRotation;
+  const totalRotation = finalRotation - (startRotation % (2 * Math.PI));
+  const endRotation = startRotation + totalRotation + (totalRotation < 0 ? 2 * Math.PI : 0);
+
+  const duration = 3000;
+  const startTime = Date.now();
+
+  function animateSpin() {
+    const elapsed = Date.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const eased = 1 - Math.pow(1 - t, 3);
+    wheelRotation = startRotation + (endRotation - startRotation) * eased;
+    drawWheel(wheelRotation);
+
+    if (t < 1) {
+      requestAnimationFrame(animateSpin);
+    } else {
+      wheelSpinning = false;
+      wheelCurrentQ = targetIdx;
+      showWheelQuestion(targetIdx);
+    }
+  }
+  requestAnimationFrame(animateSpin);
+}
+function showWheelQuestion(idx) {
+  const q = wheelItems[idx];
+  const L = ['א','ב','ג','ד'];
+  const popup = document.getElementById('wheelPopup');
+  popup.className = 'wheel-popup show';
+  popup.innerHTML =
+    '<div class="wheel-q-text">' + escapeHtml(q.text) + '</div>' +
+    '<div class="q-options">' + q.options.map((o, i) =>
+      '<div class="q-opt" onclick="wheelAnswer(' + idx + ',' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+    ).join('') + '</div>' +
+    '<div class="q-feedback" id="wheelFeedback"></div>';
+}
+function wheelAnswer(qIdx, ansIdx) {
+  const q = wheelItems[qIdx];
+  const ok = ansIdx === q.correct;
+  const popup = document.getElementById('wheelPopup');
+  popup.querySelectorAll('.q-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.correct) o.classList.add('correct');
+    else if (i === ansIdx && !ok) o.classList.add('wrong');
+    else o.classList.add('dim');
+  });
+  if (ok) { score++; correctItems++; }
+  wheelAnswered[qIdx] = true;
+
+  const answeredCount = wheelAnswered.filter(Boolean).length;
+  document.getElementById('wheelCounter').textContent = answeredCount + ' מתוך ' + totalItems + ' שאלות';
+  setProgress(answeredCount / totalItems);
+
+  // Redraw wheel with answered section grayed
+  drawWheel(wheelRotation);
+
+  if (answeredCount >= totalItems) {
+    setTimeout(showScore, 1500);
+  } else {
+    // Show spin button again after delay
+    setTimeout(() => {
+      popup.className = 'wheel-popup';
+      document.getElementById('wheelSpinBtn').disabled = false;
+    }, 1500);
+  }
+}
+
+// ==========================================
+// ===== TRUE / FALSE =====
+// ==========================================
+let tfItems = [], tfIdx = 0;
+function initTrueFalse() {
+  tfItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = tfItems.length; tfIdx = 0; score = 0; correctItems = 0;
+  renderTrueFalse();
+}
+function renderTrueFalse() {
+  const item = tfItems[tfIdx], n = tfIdx + 1;
+  setProgress(n / totalItems);
+  document.getElementById('gameArea').innerHTML =
+    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div class="tf-statement">' + escapeHtml(item.text) + '</div>' +
+    '<div class="tf-buttons">' +
+    '<button class="tf-btn tf-btn-true" onclick="tfAnswer(true)">✓ נכון</button>' +
+    '<button class="tf-btn tf-btn-false" onclick="tfAnswer(false)">✗ לא נכון</button>' +
+    '</div>' +
+    '<div class="q-feedback" id="tfFeedback"></div>' +
+    '<button class="btn btn-next" id="tfNextBtn" onclick="nextTrueFalse()" style="display:none">הבא</button>';
+}
+function tfAnswer(answer) {
+  const item = tfItems[tfIdx];
+  const ok = answer === item.correct;
+
+  document.querySelectorAll('.tf-btn').forEach(b => b.classList.add('disabled'));
+  const trueBtn = document.querySelector('.tf-btn-true');
+  const falseBtn = document.querySelector('.tf-btn-false');
+
+  if (item.correct === true) {
+    trueBtn.classList.add('selected-correct');
+    if (!ok) falseBtn.classList.add('selected-wrong');
+  } else {
+    falseBtn.classList.add('selected-correct');
+    if (!ok) trueBtn.classList.add('selected-wrong');
+  }
+
+  if (ok) { score++; correctItems++; }
+
+  const fb = document.getElementById('tfFeedback');
+  fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(item.explanation || '') : '<strong>לא נכון.</strong> ' + escapeHtml(item.explanation || '');
+
+  const nextBtn = document.getElementById('tfNextBtn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = tfIdx < totalItems - 1 ? 'הבא' : 'סיום';
+}
+function nextTrueFalse() {
+  tfIdx++;
+  if (tfIdx >= totalItems) { showScore(); return; }
+  animateCard();
+  renderTrueFalse();
+}
+
+// ==========================================
+// ===== FILL IN THE BLANK =====
+// ==========================================
+let fbItems = [], fbIdx = 0;
+function initFillBlank() {
+  fbItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = fbItems.length; fbIdx = 0; score = 0; correctItems = 0;
+  renderFillBlank();
+}
+function renderFillBlank() {
+  const item = fbItems[fbIdx], n = fbIdx + 1;
+  setProgress(n / totalItems);
+
+  // Replace ___ or blanks with highlighted marker
+  const sentenceHtml = escapeHtml(item.sentence).replace(/_{2,}/g, '<span class="fb-blank">?</span>');
+
+  document.getElementById('gameArea').innerHTML =
+    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div class="fb-sentence">' + sentenceHtml + '</div>' +
+    '<div class="fb-input-row">' +
+    '<input type="text" id="fbInput" placeholder="הקלידו את התשובה...">' +
+    '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkFillBlank()">בדקו</button>' +
+    '</div>' +
+    (item.hint ? '<button class="btn fb-hint-btn" onclick="showFbHint()">רמז</button>' : '') +
+    '<div class="fb-hint-text" id="fbHintText">' + escapeHtml(item.hint || '') + '</div>' +
+    '<div class="fb-feedback" id="fbFeedback"></div>' +
+    '<button class="btn btn-next" id="fbNextBtn" onclick="nextFillBlank()" style="display:none">הבא</button>';
+
+  document.getElementById('fbInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkFillBlank();
+  });
+}
+function showFbHint() {
+  document.getElementById('fbHintText').style.display = 'block';
+  const btn = document.querySelector('.fb-hint-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; }
+}
+function checkFillBlank() {
+  const input = document.getElementById('fbInput');
+  if (input.disabled) return;
+  const answer = input.value.trim();
+  if (!answer) return;
+  const item = fbItems[fbIdx];
+  const ok = answer.toLowerCase() === item.answer.trim().toLowerCase();
+
+  input.disabled = true;
+  const fb = document.getElementById('fbFeedback');
+  fb.className = 'fb-feedback show ' + (ok ? 'correct' : 'wrong');
+
+  if (ok) {
+    fb.textContent = 'נכון!';
+    score++; correctItems++;
+  } else {
+    fb.innerHTML = '<strong>לא נכון.</strong> התשובה הנכונה: ' + escapeHtml(item.answer);
+  }
+
+  // Fill the blank with the answer
+  const blank = document.querySelector('.fb-blank');
+  if (blank) {
+    blank.textContent = item.answer;
+    blank.style.color = ok ? 'var(--green)' : 'var(--secondary)';
+    blank.style.borderColor = ok ? 'var(--green)' : 'var(--secondary)';
+  }
+
+  const nextBtn = document.getElementById('fbNextBtn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = fbIdx < totalItems - 1 ? 'הבא' : 'סיום';
+}
+function nextFillBlank() {
+  fbIdx++;
+  if (fbIdx >= totalItems) { showScore(); return; }
+  animateCard();
+  renderFillBlank();
+}
+
+// ==========================================
+// ===== SENTENCE ORDERING =====
+// ==========================================
+let sentItems = [], sentIdx = 0, sentBuilt = [], sentWords = [];
+function initSentence() {
+  sentItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = sentItems.length; sentIdx = 0; score = 0; correctItems = 0;
+  renderSentence();
+}
+function renderSentence() {
+  const item = sentItems[sentIdx], n = sentIdx + 1;
+  setProgress(n / totalItems);
+
+  // Split sentence into words and shuffle
+  sentWords = item.sentence.trim().split(/\s+/);
+  const shuffled = shuffle(sentWords.map((w, i) => ({ text: w, origIdx: i })));
+  sentBuilt = [];
+
+  document.getElementById('gameArea').innerHTML =
+    '<div class="q-counter">משפט ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div style="font-size:15px;font-weight:600;color:var(--gray);margin-bottom:12px;text-align:center">סדרו את המילים למשפט נכון:</div>' +
+    '<div class="sentence-target empty" id="sentTarget"></div>' +
+    '<div class="sentence-pool" id="sentPool">' +
+    shuffled.map((w, i) =>
+      '<div class="word-chip word-chip-pool" data-pool-idx="' + i + '" data-word="' + escapeHtml(w.text) + '" onclick="addWordToSentence(this)">' + escapeHtml(w.text) + '</div>'
+    ).join('') +
+    '</div>' +
+    '<button class="btn btn-primary check-btn" id="sentCheckBtn" onclick="checkSentence()" style="display:none">בדקו</button>' +
+    '<div class="sentence-feedback" id="sentFeedback"></div>' +
+    '<button class="btn btn-next" id="sentNextBtn" onclick="nextSentence()" style="display:none">הבא</button>';
+
+  // Store shuffled data for reference
+  window._sentShuffled = shuffled;
+}
+function addWordToSentence(el) {
+  if (el.classList.contains('used')) return;
+  el.classList.add('used');
+  const word = el.getAttribute('data-word');
+  const poolIdx = el.getAttribute('data-pool-idx');
+  sentBuilt.push({ word: word, poolIdx: poolIdx });
+  updateSentenceTarget();
+}
+function removeWordFromSentence(idx) {
+  const removed = sentBuilt.splice(idx, 1)[0];
+  // Restore pool chip
+  const poolChips = document.querySelectorAll('.word-chip-pool');
+  poolChips.forEach(c => {
+    if (c.getAttribute('data-pool-idx') === removed.poolIdx) {
+      c.classList.remove('used');
+    }
+  });
+  updateSentenceTarget();
+}
+function updateSentenceTarget() {
+  const target = document.getElementById('sentTarget');
+  if (sentBuilt.length === 0) {
+    target.className = 'sentence-target empty';
+    target.innerHTML = '';
+  } else {
+    target.className = 'sentence-target';
+    target.innerHTML = sentBuilt.map((w, i) =>
+      '<div class="word-chip word-chip-target" onclick="removeWordFromSentence(' + i + ')">' + escapeHtml(w.word) + '</div>'
+    ).join('');
+  }
+  // Show check button when all words placed
+  const checkBtn = document.getElementById('sentCheckBtn');
+  if (sentBuilt.length === sentWords.length) {
+    checkBtn.style.display = 'block';
+  } else {
+    checkBtn.style.display = 'none';
+  }
+}
+function checkSentence() {
+  const built = sentBuilt.map(w => w.word).join(' ');
+  const original = sentItems[sentIdx].sentence.trim();
+  const ok = built === original;
+
+  const fb = document.getElementById('sentFeedback');
+  fb.className = 'sentence-feedback show ' + (ok ? 'correct' : 'wrong');
+
+  if (ok) {
+    fb.textContent = 'מצוין! המשפט נכון!';
+    score++; correctItems++;
+  } else {
+    fb.innerHTML = '<strong>לא מדויק.</strong> המשפט הנכון: ' + escapeHtml(original);
+  }
+
+  document.getElementById('sentCheckBtn').style.display = 'none';
+  // Disable all interactions
+  document.querySelectorAll('.word-chip-pool').forEach(c => c.style.pointerEvents = 'none');
+  document.querySelectorAll('.word-chip-target').forEach(c => c.style.pointerEvents = 'none');
+
+  const nextBtn = document.getElementById('sentNextBtn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = sentIdx < totalItems - 1 ? 'הבא' : 'סיום';
+}
+function nextSentence() {
+  sentIdx++;
+  if (sentIdx >= totalItems) { showScore(); return; }
+  animateCard();
+  renderSentence();
+}
+
+// ==========================================
+// ===== GROUPS (Connections) =====
+// ==========================================
+let groupsData = [], groupsAllItems = [], groupsSelected = [], groupsSolved = [], groupsLives = 4;
+function initGroups() {
+  groupsData = [...gameConfig.items]; // each: {name, items:[4 strings]}
+  totalItems = groupsData.length; // number of groups (should be 4)
+  score = 0; correctItems = 0;
+  groupsSolved = [];
+  groupsSelected = [];
+  groupsLives = 4;
+
+  // Flatten all items with group index
+  let allItems = [];
+  groupsData.forEach((group, gi) => {
+    group.items.forEach(item => {
+      allItems.push({ text: item, groupIdx: gi });
+    });
+  });
+  groupsAllItems = shuffle(allItems);
+
+  renderGroups();
+}
+function renderGroups() {
+  setProgress(groupsSolved.length / totalItems);
+
+  // Lives display
+  let livesHtml = '<div class="groups-lives">';
+  for (let i = 0; i < 4; i++) {
+    livesHtml += '<span class="heart">' + (i < groupsLives ? '❤️' : '🖤') + '</span>';
+  }
+  livesHtml += ' <span style="margin-right:8px">' + groupsLives + ' ניסיונות נותרו</span></div>';
+
+  // Solved groups
+  const groupColors = ['groups-colors-0','groups-colors-1','groups-colors-2','groups-colors-3'];
+  let solvedHtml = '<div class="groups-solved">';
+  groupsSolved.forEach((gi, si) => {
+    const group = groupsData[gi];
+    solvedHtml += '<div class="groups-solved-group ' + groupColors[si % 4] + '">' +
+      '<div class="group-name">' + escapeHtml(group.name) + '</div>' +
+      '<div class="group-items">' + group.items.map(it => escapeHtml(it)).join(' • ') + '</div>' +
+      '</div>';
+  });
+  solvedHtml += '</div>';
+
+  // Remaining items grid
+  const remaining = groupsAllItems.filter(item => !groupsSolved.includes(item.groupIdx));
+  let gridHtml = '<div class="groups-grid">';
+  remaining.forEach((item, i) => {
+    const isSelected = groupsSelected.includes(i);
+    gridHtml += '<div class="groups-cell' + (isSelected ? ' selected' : '') + '" data-ridx="' + i + '" onclick="toggleGroupItem(' + i + ')">' + escapeHtml(item.text) + '</div>';
+  });
+  gridHtml += '</div>';
+
+  const selectedCount = groupsSelected.length;
+  document.getElementById('gameArea').innerHTML =
+    livesHtml + solvedHtml + gridHtml +
+    '<button class="btn btn-primary groups-check-btn" onclick="checkGroups()"' + (selectedCount !== 4 ? ' disabled' : '') + '>בדקו (' + selectedCount + '/4)</button>';
+}
+function toggleGroupItem(idx) {
+  const pos = groupsSelected.indexOf(idx);
+  if (pos >= 0) {
+    groupsSelected.splice(pos, 1);
+  } else {
+    if (groupsSelected.length >= 4) return;
+    groupsSelected.push(idx);
+  }
+  renderGroups();
+}
+function checkGroups() {
+  if (groupsSelected.length !== 4) return;
+
+  const remaining = groupsAllItems.filter(item => !groupsSolved.includes(item.groupIdx));
+  const selectedItems = groupsSelected.map(i => remaining[i]);
+
+  // Check if all selected items are from the same group
+  const groupIdx = selectedItems[0].groupIdx;
+  const allSame = selectedItems.every(item => item.groupIdx === groupIdx);
+
+  if (allSame) {
+    groupsSolved.push(groupIdx);
+    correctItems++;
+    score++;
+    groupsSelected = [];
+    if (groupsSolved.length >= totalItems) {
+      renderGroups();
+      setTimeout(showScore, 1000);
+    } else {
+      renderGroups();
+    }
+  } else {
+    // Wrong - shake and decrement lives
+    groupsLives--;
+    // Flash wrong
+    const cells = document.querySelectorAll('.groups-cell');
+    groupsSelected.forEach(idx => {
+      if (cells[idx]) cells[idx].classList.add('wrong-flash');
+    });
+    setTimeout(() => {
+      groupsSelected = [];
+      if (groupsLives <= 0) {
+        // Game over - reveal all groups
+        groupsSolved = groupsData.map((_, i) => i);
+        renderGroups();
+        setTimeout(showScore, 1500);
+      } else {
+        renderGroups();
+      }
+    }, 600);
+  }
+}
+
+// ==========================================
+// ===== HANGMAN =====
+// ==========================================
+let hangmanWords = [], hangmanIdx = 0, hangmanRevealed = [], hangmanWrong = 0, hangmanGuessedLetters = [], hangmanMaxWrong = 6;
+const hangmanEmojis = ['🙂','😐','😟','😰','😱','💀'];
+const hebrewLetters = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+function initHangman() {
+  hangmanWords = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
+  totalItems = hangmanWords.length; hangmanIdx = 0; score = 0; correctItems = 0;
+  startHangmanWord();
+}
+function startHangmanWord() {
+  const item = hangmanWords[hangmanIdx];
+  const word = item.word.trim();
+  hangmanRevealed = new Array(word.length).fill(false);
+  // Reveal spaces automatically
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === ' ') hangmanRevealed[i] = true;
+  }
+  hangmanWrong = 0;
+  hangmanGuessedLetters = [];
+  renderHangman();
+}
+function renderHangman() {
+  const item = hangmanWords[hangmanIdx];
+  const word = item.word.trim();
+  const n = hangmanIdx + 1;
+  setProgress(n / (totalItems + 1));
+
+  // Word display
+  let wordHtml = '<div class="hangman-word">';
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === ' ') {
+      wordHtml += '<div style="width:20px"></div>';
+    } else {
+      wordHtml += '<div class="hangman-letter-slot' + (hangmanRevealed[i] ? ' revealed' : '') + '">' + (hangmanRevealed[i] ? escapeHtml(word[i]) : '') + '</div>';
+    }
+  }
+  wordHtml += '</div>';
+
+  // Emoji and lives
+  const emojiIdx = Math.min(hangmanWrong, hangmanEmojis.length - 1);
+  let livesHtml = '<div class="hangman-emoji">' + hangmanEmojis[emojiIdx] + '</div>';
+  livesHtml += '<div class="hangman-lives">';
+  for (let i = 0; i < hangmanMaxWrong; i++) {
+    livesHtml += '<div class="life-dot' + (i < hangmanWrong ? ' lost' : '') + '"></div>';
+  }
+  livesHtml += '</div>';
+
+  // Hint
+  let hintHtml = item.hint ? '<div class="hangman-hint">רמז: ' + escapeHtml(item.hint) + '</div>' : '';
+
+  // Keyboard
+  let kbHtml = '<div class="hangman-keyboard">';
+  hebrewLetters.forEach(letter => {
+    let cls = 'hangman-key';
+    if (hangmanGuessedLetters.includes(letter)) {
+      const inWord = word.includes(letter);
+      cls += inWord ? ' correct-key' : ' wrong-key';
+    }
+    kbHtml += '<div class="' + cls + '" onclick="hangmanGuess(\'' + letter + '\')">' + letter + '</div>';
+  });
+  kbHtml += '</div>';
+
+  document.getElementById('gameArea').innerHTML =
+    '<div class="q-counter">מילה ' + n + ' מתוך ' + totalItems + '</div>' +
+    wordHtml + livesHtml + hintHtml + kbHtml +
+    '<div class="hangman-result" id="hangmanResult"></div>' +
+    '<button class="btn btn-next" id="hangmanNextBtn" onclick="nextHangman()" style="display:none">הבא</button>';
+}
+function hangmanGuess(letter) {
+  if (hangmanGuessedLetters.includes(letter)) return;
+  hangmanGuessedLetters.push(letter);
+
+  const word = hangmanWords[hangmanIdx].word.trim();
+  let found = false;
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] === letter) {
+      hangmanRevealed[i] = true;
+      found = true;
+    }
+  }
+
+  if (!found) {
+    hangmanWrong++;
+  }
+
+  renderHangman();
+
+  // Check win/lose
+  const allRevealed = hangmanRevealed.every(Boolean);
+  if (allRevealed) {
+    // Win
+    score++; correctItems++;
+    const res = document.getElementById('hangmanResult');
+    res.className = 'hangman-result show win';
+    res.textContent = 'כל הכבוד! ניחשתם את המילה!';
+    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
+    const nextBtn = document.getElementById('hangmanNextBtn');
+    nextBtn.style.display = 'block';
+    nextBtn.textContent = hangmanIdx < totalItems - 1 ? 'המילה הבאה' : 'סיום';
+  } else if (hangmanWrong >= hangmanMaxWrong) {
+    // Lose
+    const res = document.getElementById('hangmanResult');
+    res.className = 'hangman-result show lose';
+    res.textContent = 'המילה היתה: ' + word;
+    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
+    // Reveal all letters
+    for (let i = 0; i < word.length; i++) hangmanRevealed[i] = true;
+    renderHangman();
+    const res2 = document.getElementById('hangmanResult');
+    res2.className = 'hangman-result show lose';
+    res2.textContent = 'המילה היתה: ' + word;
+    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
+    const nextBtn = document.getElementById('hangmanNextBtn');
+    nextBtn.style.display = 'block';
+    nextBtn.textContent = hangmanIdx < totalItems - 1 ? 'המילה הבאה' : 'סיום';
+  }
+}
+function nextHangman() {
+  hangmanIdx++;
+  if (hangmanIdx >= totalItems) { showScore(); return; }
+  animateCard();
+  startHangmanWord();
+}
+
+// ==========================================
+// ===== MILLIONAIRE =====
+// ==========================================
+let millItems = [], millIdx = 0, millLadder = [], millUsed5050 = false, millCheckpoints = [];
+function initMillionaire() {
+  millItems = [...gameConfig.items];
+  totalItems = millItems.length; millIdx = 0; score = 0; correctItems = 0;
+  millUsed5050 = false;
+  isMillionaire = true;
+
+  // Build ladder based on number of questions
+  const fullLadder = [100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+  if (totalItems <= fullLadder.length) {
+    millLadder = fullLadder.slice(0, totalItems);
+  } else {
+    millLadder = fullLadder;
+  }
+
+  // Checkpoints at level 5 and 10 (0-indexed: 4 and 9)
+  millCheckpoints = [];
+  if (millLadder.length >= 5) millCheckpoints.push(4);
+  if (millLadder.length >= 10) millCheckpoints.push(9);
+
+  millionaireMoneyReached = 0;
+  renderMillionaire();
+}
+function renderMillionaire() {
+  const q = millItems[millIdx];
+  const n = millIdx + 1;
+  setProgress(n / totalItems);
+  const L = ['א','ב','ג','ד'];
+
+  // Ladder
+  let ladderHtml = '<div class="mill-ladder">';
+  for (let i = 0; i < millLadder.length; i++) {
+    let cls = 'mill-ladder-item';
+    if (i === millIdx) cls += ' current';
+    else if (i < millIdx) cls += ' passed';
+    if (millCheckpoints.includes(i)) cls += ' checkpoint';
+    ladderHtml += '<div class="' + cls + '">' + millLadder[i].toLocaleString() + ' ₪</div>';
+  }
+  ladderHtml += '</div>';
+
+  // Lifeline
+  let lifelineHtml = '<div class="mill-lifeline">' +
+    '<button class="mill-lifeline-btn' + (millUsed5050 ? ' used' : '') + '" onclick="mill5050()" id="mill5050Btn">50:50</button>' +
+    '</div>';
+
+  // Question
+  let qHtml =
+    '<div class="mill-main">' +
+    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
+    lifelineHtml +
+    '<div class="mill-q-text">' + escapeHtml(q.text) + '</div>' +
+    '<div class="q-options" id="millOptions">' + q.options.map((o, i) =>
+      '<div class="q-opt" id="millOpt' + i + '" onclick="millAnswer(' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+    ).join('') + '</div>' +
+    '<div class="q-feedback" id="millFeedback"></div>' +
+    '</div>';
+
+  document.getElementById('gameArea').innerHTML =
+    '<div class="mill-layout">' + qHtml + ladderHtml + '</div>';
+}
+function mill5050() {
+  if (millUsed5050) return;
+  millUsed5050 = true;
+  document.getElementById('mill5050Btn').classList.add('used');
+
+  const q = millItems[millIdx];
+  const correct = q.correct;
+  // Pick 2 wrong options to remove
+  let wrongIndices = [];
+  for (let i = 0; i < q.options.length; i++) {
+    if (i !== correct) wrongIndices.push(i);
+  }
+  // Remove 2 random wrong options
+  const toRemove = shuffle(wrongIndices).slice(0, 2);
+  toRemove.forEach(i => {
+    const opt = document.getElementById('millOpt' + i);
+    if (opt) {
+      opt.classList.add('disabled', 'dim');
+      opt.style.pointerEvents = 'none';
+    }
+  });
+}
+function millAnswer(idx) {
+  const q = millItems[millIdx];
+  const ok = idx === q.correct;
+
+  document.querySelectorAll('#millOptions .q-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.correct) o.classList.add('correct');
+    else if (i === idx && !ok) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('millFeedback');
+  fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(q.explanation || '') : '<strong>לא נכון!</strong> ' + escapeHtml(q.explanation || '');
+
+  if (ok) {
+    correctItems++;
+    millionaireMoneyReached = millLadder[millIdx];
+    millIdx++;
+    if (millIdx >= totalItems) {
+      // Won all!
+      setTimeout(() => {
+        score = correctItems;
+        showMillionaireScore();
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        animateCard();
+        renderMillionaire();
+      }, 1500);
+    }
+  } else {
+    // Wrong - fall to last checkpoint
+    let fallTo = 0;
+    for (const cp of millCheckpoints) {
+      if (cp < millIdx) fallTo = millLadder[cp];
+    }
+    millionaireMoneyReached = fallTo;
+    score = correctItems;
+    setTimeout(() => {
+      showMillionaireScore();
+    }, 2000);
+  }
+}
+function showMillionaireScore() {
+  setProgress(1);
+  const p = Math.round(correctItems / totalItems * 100);
+  let ic, msg, bg;
+  if (millionaireMoneyReached >= 1000000) { ic = '👑'; msg = 'מיליונר! ענקי!'; bg = 'var(--accent-l)'; }
+  else if (p >= 70) { ic = '💰'; msg = 'כל הכבוד! הרווחתם יפה!'; bg = 'var(--green-l)'; }
+  else if (p >= 50) { ic = '💵'; msg = 'לא רע! אפשר לשפר!'; bg = 'var(--primary-l)'; }
+  else { ic = '📖'; msg = 'כדאי לחזור על החומר'; bg = 'var(--sec-l)'; }
+
+  document.getElementById('scoreIcon').textContent = ic;
+  document.getElementById('scoreNum').textContent = millionaireMoneyReached.toLocaleString();
+  document.getElementById('scoreNum').style.color = millionaireMoneyReached >= 64000 ? 'var(--accent)' : millionaireMoneyReached >= 1000 ? 'var(--green)' : 'var(--secondary)';
+  document.getElementById('scoreLabel').textContent = 'הגעתם ל-' + millionaireMoneyReached.toLocaleString() + ' ₪';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('scoreMsg').style.background = bg;
+  document.getElementById('correctCount').textContent = correctItems;
+  document.getElementById('wrongCount').textContent = totalItems - correctItems;
+  document.getElementById('totalCount').textContent = totalItems;
+  showScreen('scoreScreen');
+}
+
+// ==========================================
+// ===== SCORE =====
+// ==========================================
+function showScore() {
+  const p = Math.round(correctItems / totalItems * 100);
+  setProgress(1);
+  let ic, msg, bg;
+  if (p >= 90) { ic = '🌟'; msg = 'מצוין! שליטה מעולה!'; bg = 'var(--green-l)'; }
+  else if (p >= 70) { ic = '👏'; msg = 'כל הכבוד! ביצוע טוב מאוד!'; bg = 'var(--primary-l)'; }
+  else if (p >= 50) { ic = '💪'; msg = 'אפשר לשפר – נסו שוב!'; bg = 'var(--accent-l)'; }
+  else { ic = '📖'; msg = 'כדאי לחזור על החומר'; bg = 'var(--sec-l)'; }
+  document.getElementById('scoreIcon').textContent = ic;
+  document.getElementById('scoreNum').textContent = p;
+  document.getElementById('scoreNum').style.color = p >= 70 ? 'var(--green)' : p >= 50 ? 'var(--accent)' : 'var(--secondary)';
+  document.getElementById('scoreLabel').textContent = 'מתוך 100';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('scoreMsg').style.background = bg;
+  document.getElementById('correctCount').textContent = correctItems;
+  document.getElementById('wrongCount').textContent = totalItems - correctItems;
+  document.getElementById('totalCount').textContent = totalItems;
+  showScreen('scoreScreen');
+}
+
+// ===== SEND RESULTS =====
+function sendResults() {
+  const btn = event.target; btn.disabled = true; btn.textContent = 'שולח...';
+  const p = isMillionaire ? millionaireMoneyReached : Math.round(correctItems / totalItems * 100);
+  const sheetName = gameMeta.name + ' – ' + gameMeta.grade;
+  const params = new URLSearchParams({
+    action: 'submit',
+    quizName: sheetName,
+    studentName: studentName,
+    classroom: studentClass,
+    score: p,
+    totalQuestions: totalItems,
+    correctAnswers: correctItems,
+    level: '',
+    teacherEmail: gameMeta.email || ''
+  });
+  const s = document.createElement('script');
+  s.src = SHEETS_URL + '?' + params.toString();
+  s.onload = s.onerror = function() {
+    const st = document.getElementById('sendStatus');
+    st.className = 'send-status success';
+    st.textContent = 'התוצאות נשלחו בהצלחה למורה! ✓';
+    btn.textContent = 'נשלח!';
+    s.remove();
+  };
+  document.body.appendChild(s);
+}
+
+// ===== INIT =====
+loadGame();
+</script>
+</body>
+</html>

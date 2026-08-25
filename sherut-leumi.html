@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>קליטת בני ובנות שירות לאומי · המרכז הפדגוגי</title>
+<meta name="description" content="הנחיות המינהל לקליטת מתנדבי ומתנדבות שירות לאומי בתיכונים המקצועיים: הגדרת התפקיד, אחריות בית הספר, מוגנות ודיווח וטבלת הסדירויות המצופות.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="קליטת בני ובנות שירות לאומי">
+<meta property="og:description" content="הנחיות המינהל לקליטת מתנדבי ומתנדבות שירות לאומי בתיכונים המקצועיים: הגדרת התפקיד, אחריות בית הספר, מוגנות ודיווח וטבלת הסדירויות המצופות.">
+<meta property="og:url" content="https://pedagogiamh.co.il/sherut-leumi.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        oklch(27% 0.06 268);
+    --ink-soft:   oklch(46% 0.035 262);
+    --navy:       oklch(38% 0.115 268);
+    --navy-deep:  oklch(30% 0.10 268);
+    --royal:      oklch(54% 0.165 262);
+    --sky:        oklch(76% 0.085 250);
+    --sky-tint:   oklch(95.5% 0.017 250);
+    --bg:         oklch(97.6% 0.006 255);
+    --surface:    oklch(99.2% 0.003 255);
+    --line:       oklch(89% 0.014 255);
+    --line-soft:  oklch(93% 0.010 255);
+    --amber-ink:  oklch(52% 0.10 80);
+    --amber-bg:   oklch(96% 0.03 90);
+    --red:        oklch(50% 0.17 25);
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:76px}
+  body{
+    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
+    line-height:1.7; overflow-x:clip;
+  }
+  h1,h2,h3,h4{font-family:'Frank Ruhl Libre',serif; line-height:1.14; letter-spacing:-.01em}
+  a{color:inherit}
+  img{max-width:100%}
+  p+p{margin-top:.85em}
+  strong{font-weight:700}
+  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+  .article{max-width:860px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+
+  a.lk{color:var(--royal); text-decoration:none; font-weight:600; border-bottom:1.5px solid var(--sky); transition:.2s}
+  a.lk:hover{background:var(--sky-tint); border-bottom-color:var(--royal)}
+  a.lk::after{content:"↗"; font-size:.7em; margin-inline-start:3px; color:var(--sky)}
+
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
+  .rv.in{opacity:1; transform:none}
+
+  /* ---------- top bar ---------- */
+  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
+  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
+  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
+  .top-in img{height:50px; width:auto}
+  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
+  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+  nav.jump{margin-inline-start:auto; display:flex; gap:22px}
+  nav.jump a{
+    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
+    position:relative; padding:6px 2px; transition:color .25s;
+  }
+  nav.jump a::after{
+    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
+  }
+  nav.jump a:hover{color:var(--navy)}
+  nav.jump a:hover::after{transform:scaleX(1)}
+  @media(max-width:700px){nav.jump{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:clamp(44px,7vh,76px) 0 clamp(30px,4vh,44px); border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-flex; align-items:center; gap:12px;
+    color:var(--royal); font-weight:700; font-size:15px;
+  }
+  .kicker::before{
+    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
+    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
+  .hero h1{
+    font-size:clamp(32px,5vw,56px); font-weight:900; color:var(--navy-deep);
+    margin:14px 0 14px; max-width:22ch; text-wrap:balance;
+  }
+  .hero p.lead{font-size:clamp(16px,1.5vw,18.5px); color:var(--ink-soft); max-width:58ch}
+  .hero .meta-row{display:flex; flex-wrap:wrap; gap:12px 22px; margin-top:22px; align-items:center; font-size:14px; color:var(--ink-soft)}
+  .hero .meta-row .src a{color:var(--royal); font-weight:700}
+  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
+  .hero-stagger > *:nth-child(1){animation-delay:.05s}
+  .hero-stagger > *:nth-child(2){animation-delay:.14s}
+  .hero-stagger > *:nth-child(3){animation-delay:.22s}
+  .hero-stagger > *:nth-child(4){animation-delay:.3s}
+  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
+
+  /* ---------- article body ---------- */
+  .body-sec{padding:clamp(36px,6vh,60px) 0 clamp(28px,4vh,44px)}
+  h2.sub-sec{
+    font-size:clamp(22px,2.8vw,29px); font-weight:900; color:var(--navy-deep);
+    margin:clamp(34px,5vw,48px) 0 10px; padding-top:24px; border-top:1px solid var(--line);
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  }
+  h2.sub-sec::before{content:""; width:34px; height:8px; background:var(--royal); flex:0 0 auto; transform:translateY(-4px); border-radius:2px; box-shadow:40px 0 0 -3px var(--sky)}
+  h2.sub-sec.first{border-top:none; padding-top:0; margin-top:0}
+  h3.mini{
+    font-size:18.5px; font-weight:700; color:var(--navy); margin:24px 0 8px;
+    display:flex; align-items:center; gap:12px; font-family:'Frank Ruhl Libre',serif;
+  }
+  h3.mini::after{content:""; flex:1; height:1px; background:var(--line); max-width:170px}
+  .lead-p{font-size:17px; color:var(--ink-soft)}
+
+  ol.ed{list-style:none; counter-reset:ed; margin:16px 0}
+  ol.ed>li{
+    counter-increment:ed; position:relative;
+    padding:10px 54px 10px 0; border-bottom:1px solid var(--line-soft);
+  }
+  ol.ed>li:last-child{border-bottom:none}
+  ol.ed>li::before{
+    content:counter(ed,decimal-leading-zero); position:absolute; right:0; top:8px;
+    font-family:'Karantina',serif; font-weight:700; font-size:26px; line-height:1.2; color:var(--royal);
+    width:40px;
+  }
+  ul.ed{list-style:none; margin:14px 0}
+  ul.ed>li{position:relative; padding:7px 26px 7px 0}
+  ul.ed>li::before{content:""; position:absolute; right:2px; top:18px; width:12px; height:2.5px; border-radius:2px; background:var(--royal)}
+  ul.ed.tight>li{padding-top:4px; padding-bottom:4px}
+
+  .callout{
+    margin:26px 0; padding:20px 26px;
+    background:var(--surface); border:1px solid var(--line); border-inline-start:4px solid var(--royal);
+    border-radius:0 14px 14px 0; box-shadow:0 14px 34px -26px oklch(30% 0.1 268 / .4);
+    font-size:16px;
+  }
+  .callout.amber{border-inline-start-color:var(--amber-ink); background:var(--amber-bg)}
+  .callout.red{border-inline-start-color:var(--red)}
+  .callout .ttl{font-family:'Frank Ruhl Libre',serif; font-weight:700; display:block; margin-bottom:6px; font-size:18px; color:var(--navy-deep)}
+
+  .tbl-scroll{overflow-x:auto; margin:18px 0}
+  table.doc{
+    width:100%; border-collapse:collapse; font-size:15px; background:var(--surface);
+    border:1px solid var(--line); border-top:3px solid var(--navy);
+    min-width:540px; box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
+  }
+  table.doc caption{
+    caption-side:top; text-align:right; font-family:'Frank Ruhl Libre',serif; font-weight:900;
+    font-size:19px; padding:0 2px 10px; color:var(--navy-deep);
+  }
+  table.doc caption::after{content:""; display:block; width:52px; height:3px; background:var(--royal); border-radius:2px; margin-top:6px}
+  table.doc th{
+    font-weight:700; font-size:13px; letter-spacing:.08em; color:oklch(90% 0.03 255);
+    background:var(--navy); padding:10px 16px; text-align:right;
+  }
+  table.doc td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+  table.doc tr:last-child td{border-bottom:none}
+  table.doc td.k{
+    font-weight:700; background:var(--sky-tint); border-inline-start:1px solid var(--line-soft);
+    font-family:'Frank Ruhl Libre',serif; font-size:15.5px; color:var(--navy-deep);
+  }
+  table.doc tr:nth-child(even) td:not(.k){background:oklch(98.6% 0.005 255)}
+
+  /* ---------- source box ---------- */
+  .source-box{
+    margin:clamp(36px,6vh,56px) 0 0; padding:22px 26px;
+    background:var(--sky-tint); border:1px solid var(--line); border-radius:16px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .source-box .t{font-weight:700; color:var(--navy-deep)}
+  .source-box .t small{display:block; font-weight:400; font-size:13.5px; color:var(--ink-soft)}
+  .source-box a.btn{
+    margin-inline-start:auto;
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+    font-weight:700; font-size:15px; padding:11px 24px; border-radius:999px;
+    background:var(--navy); color:oklch(98% 0.005 255);
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s;
+  }
+  .source-box a.btn:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 12px 28px oklch(38% 0.115 268 / .3)}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:clamp(40px,6vh,64px)}
+  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
+  .foot-in img{height:42px}
+  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
+  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
+
+  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
+  .ogenw-launcher svg{transform:scale(1.28)}
+  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
+  .ogenw-panel{bottom:118px !important}
+
+  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
+    .rv{opacity:1; transform:none}
+  }
+  @media print{
+    header.top{display:none}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top" id="topbar">
+  <div class="wrap top-in">
+    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
+    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
+    <nav class="jump" aria-label="ניווט">
+      <a href="tashpaz.html">היערכות תשפ״ז</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="index.html">לעמוד הראשי</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">הנחיות מינהל · תשפ״ז</span>
+    <h1>הנחיות לקליטת בני ובנות שירות לאומי בתיכונים המקצועיים</h1>
+    <p class="lead">הצוות הצעיר הוא חלק בלתי נפרד מהצוות החינוכי: ההנחיות המלאות להפעלת מתנדבי ומתנדבות השירות הלאומי — הגדרת התפקיד בשלושה צירים, חובות בית הספר, כללי מוגנות ודיווח וטבלת הסדירויות המצופות.</p>
+    <div class="meta-row">
+      <span>תוקף ההנחיות: החל משנת 2026 · תאריך עדכון: יוני 2026</span>
+      <span class="src">המקור: <a class="lk" href="https://drive.google.com/file/d/1PmfGG4FwvqSZ3hpEhA5lH8XD0P68ZR6m/view" target="_blank" rel="noopener">המסמך בדרייב</a></span>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <h2 class="sub-sec first rv">תעודת זהות של ההנחיות</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tr><td class="k">תחולה</td><td>בתי ספר בפיקוח המינהל להכשרה מקצועית — משרד העבודה.</td></tr>
+        <tr><td class="k">תוקף</td><td>החל משנת 2026 · תאריך עדכון: יוני 2026.</td></tr>
+        <tr><td class="k">תפוצה</td><td>מנהלי מחוזות, גופים מפעילים, מנהלי בתי הספר בפיקוח המינהל להכשרה מקצועית, עמותות השירות, המפקחים הפדגוגיים הכוללים, המפקחות על המערך הטיפולי והמפקחים המקצועיים.</td></tr>
+        <tr><td class="k">חוזרים ונהלים קשורים</td><td><a class="lk" href="https://mosdotold.education.gov.il/education-hr/volunteers/national-service" target="_blank" rel="noopener">הפעלת מתנדבי ומתנדבות שירות לאומי במשרד החינוך</a> · <a class="lk" href="https://meyda.education.gov.il/files/SherutLeumi/ulpana.pdf" target="_blank" rel="noopener">הנחיות להפעלת מתנדבי השירות הלאומי בתיכונים ובאולפנות</a></td></tr>
+      </table>
+    </div>
+    <p class="rv"><strong>תמצית ההנחיות:</strong> הנחיות אלו מפרטות את ההתנהלות התקינה המצופה מבית הספר בהפעלת מערך בני ובנות השירות כחלק מהצוות החינוכי, לרבות הגדרת התפקיד והמעטפת הבית־ספרית הנדרשת. בהנחיות מוגדרים תחומי האחריות בשלושה צירים — פדגוגי, חברתי ותומכי צוות — לצד חובות וזכויות בני ובנות השירות וציפיות מבתי הספר. ייעוד הצוות הצעיר הוא לתרום לקידום תלמידים, לחיזוק תחושת השייכות והמסוגלות ולתמיכה בעבודת הצוות החינוכי. כמו כן נקבעות הנחיות מחייבות בתחום המוגנות, הקשר האישי וחובת הדיווח.</p>
+    <p class="rv" style="font-size:14px; color:var(--ink-soft)">ההנחיות נכתבו בלשון זכר אך מתייחסות לשני המינים.</p>
+
+    <h2 class="sub-sec rv">תפיסה</h2>
+    <ul class="ed rv">
+      <li>בתי הספר המקצועיים מהווים מסגרת חינוכית ייחודית המשלבת למידה עיונית, הכשרה מקצועית והתנסות מעשית, במטרה להכין את התלמידים לעולם העבודה ולחיים בוגרים ועצמאיים. במסגרת זו נדרש מענה חינוכי רחב הכולל ליווי אישי, הרחבת מיומנויות למידה, פיתוח מסוגלות תעסוקתית ותמיכה רגשית וחברתית.</li>
+      <li>שילוב צוות צעיר, המורכב מבני ובנות שירות, מהווה נדבך משמעותי במענה זה, ומאפשר הרחבת המעטפת החינוכית תוך יצירת קשר בלתי אמצעי עם בני הנוער.</li>
+      <li><strong>הרחבת המעטפת החינוכית באמצעות קשר בלתי אמצעי:</strong> ייחודיותם של בני ובנות השירות נעוצה בשילוב שבין קרבה גילאית לתלמידים לבין מחויבות חינוכית, המאפשרת יצירת קשר אישי והנגשת דמויות הזדהות חיוביות.</li>
+      <li>הצוות הצעיר אינו גורם חיצוני, אלא חלק בלתי נפרד מהצוות החינוכי בבית הספר, הפועל בשותפות מלאה עם המורים, המחנכים, היועצים ובעלי התפקידים.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">הגדרות</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tr><th>מונח</th><th>הגדרה</th></tr>
+        <tr><td class="k">הצוות הצעיר / בני ובנות שירות</td><td>מתנדבים ומתנדבות במסגרת השירות הלאומי־אזרחי, המשתלבים כחלק אינטגרלי מהצוות החינוכי בבתי הספר המקצועיים, ופועלים בשלושה צירי פעילות מקבילים: פדגוגי, חברתי ותומך צוות.</td></tr>
+        <tr><td class="k">גוף קולט (בית הספר)</td><td>המסגרת החינוכית שבה משובצים בני ובנות השירות הלאומי. בית הספר אינו מהווה מעסיק ישיר של המתנדבים, אלא פועל כסביבה אחראית האמונה על הליווי המקצועי, האישי והרגשי שלהם, ועל אספקת יום פעילות מלא.</td></tr>
+        <tr><td class="k">גוף מפעיל (עמותת השירות)</td><td>העמותה המוכרת והמוסמכת שבאמצעותה מתבצעות קליטתם, הפעלתם והסדרת מעמדם החוקי של בני ובנות השירות, והמהווה את הכתובת המשותפת עם בית הספר ומשרד העבודה לניהול תקנון השירות ואירועים חריגים.</td></tr>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">מטרות ההנחיות</h2>
+    <ol class="ed rv">
+      <li><strong>מיסוד והסדרת עבודת מערך בני ובנות השירות</strong> — קביעת הנחיות ברורות ומחייבות להתנהלות התקינה המצופה מבית הספר בהפעלת המתנדבים כחלק מהצוות החינוכי.</li>
+      <li><strong>הגדרת גבולות תפקיד ותחומי אחריות</strong> — יצירת הבחנה מוגדרת בין תפקידי הצוות הצעיר לבין תפקידי הצוות הקבוע, למניעת העסקה חריגה או עצמאית.</li>
+      <li><strong>קביעת סטנדרט מחייב למוגנות ודיווח</strong> — עיגון נהלים קשיחים בנושאי מוגנות, מניעת הטרדות מיניות, שמירה על ביטחון המתנדבים וחובת דיווח מיידית במצבי סיכון של תלמידים או אירועים חריגים.</li>
+      <li><strong>עיגון חובות בית הספר למעטפת וליווי</strong> — הסדרת מחויבויות המוסד החינוכי כלפי המתנדבים, לרבות הקצאת ליווי אישי, רגשי ומקצועי קבוע, והבטחת סביבת עבודה בטוחה ומכבדת.</li>
+    </ol>
+
+    <h2 class="sub-sec rv">עקרונות</h2>
+    <ul class="ed rv">
+      <li>קליטת בני ובנות השירות תתבצע <strong>אך ורק באמצעות עמותה מוכרת</strong>. בית הספר אינו מהווה מעסיק ישיר אלא גוף קולט בלבד של מתנדבים/ות המופעלים באמצעות גוף מפעיל מוסמך.</li>
+      <li>חובה למנות <strong>איש צוות אחראי</strong> בבית הספר, שיהיה אמון על ליווי מקצועי ואישי של בני ובנות השירות — לרבות פיקוח על ביצוע שעות העבודה, הגדרת המשימות ושמירה על רווחתם.</li>
+      <li>היקף השירות עומד על <strong>8 שעות עבודה יומיות</strong>, ועל בית הספר לוודא כי היקף זה מתקיים באופן סדיר כחלק מתנאי השירות.</li>
+      <li>הצוות הצעיר מהווה חלק אינטגרלי מהצוות החינוכי בבית הספר ופועל בשותפות עם מורים, מחנכים, יועצים ובעלי תפקידים נוספים.</li>
+      <li>ייחודיות התפקיד נעוצה בשילוב בין קרבה גילאית לתלמידים לבין מחויבות חינוכית, המאפשרת יצירת קשר אישי משמעותי, הנגשת דמויות הזדהות חיוביות וחיזוק תחושת השייכות והמסוגלות. בבתי ספר מקצועיים, שבהם מושם דגש על פדגוגיה דואלית, תורם הצוות הצעיר לגישור בין עולמות הלמידה והחיים, לחיזוק ההתמדה ולבניית הרגלי עבודה ואחריות אישית מתוך עשייה.</li>
+      <li>תפקיד הצוות הצעיר מתבסס על <strong>שלושה תחומי אחריות מרכזיים</strong> — התחום הפדגוגי, התחום החברתי ותחום תומכי הצוות — אשר יחד מרכיבים את מכלול אחריותם של בני ובנות השירות ופועלים במקביל ובאופן משלים במסגרת העשייה הבית־ספרית.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">שלושת תחומי האחריות של הצוות הצעיר</h2>
+
+    <h3 class="mini rv">התחום הפדגוגי</h3>
+    <p class="rv">הצוות הצעיר פועל לסיוע פרטני לתלמידים או לעבודה בקבוצות קטנות, לתגבור לימודי בתוך הכיתה ומחוצה לה, לחיזוק מיומנויות למידה והרגלי התארגנות, לעידוד התמדה ונוכחות ולהשלמת פערים לימודיים — תוך עבודה בתיאום מלא עם המורה והצוות המקצועי בלבד. כמו כן הוא תורם לחיזוק הקשר בין למידה לעשייה ולעידוד אחריות אישית ומיומנויות תפקוד.</p>
+    <div class="callout red rv">
+      <span class="ttl">כלל מחייב</span>
+      חשוב להקפיד כי בת השירות אינה נשארת בשום מצב לבדה בכיתה עם תלמידים, אלא בנוכחות איש צוות חינוכי מוסמך ובהתאם לנהלי המסגרת.
+    </div>
+
+    <h3 class="mini rv">התחום החברתי</h3>
+    <p class="rv">הצוות הצעיר משתלב בפעילויות כיתתיות ובית־ספריות, תורם לגיבוש כיתתי ולחיזוק תחושת השייכות, מלווה תלמידים במרחבים בלתי פורמליים כגון הפסקות ופעילויות חברתיות, יוזם ומוביל פעילויות בהתאם לכישוריו האישיים ולחוזקותיו, ומהווה דמות צעירה, נגישה ומקרבת עבור התלמידים. בנוסף, במסגרת התפקיד וכחלק מהמשימות השוטפות יש לקיים שיחות אישיות המקדמות את התלמיד, את אתגריו ואת חלומותיו. כדאי ונכון לקיים שיחות אישיות באופן עקבי ומותאם, כחלק מבניית קשר אישי עם התלמידים, זיהוי צרכים ומתן מענה רגשי־חברתי התומך בתהליך החינוכי הכולל.</p>
+
+    <h3 class="mini rv">תחום תומכי הצוות</h3>
+    <p class="rv">הצוות הצעיר מסייע לצוות החינוכי במשימות ארגוניות הקשורות לתלמידים, מלווה תלמידים למרחבי למידה וסדנאות, תומך בהפעלת מרכזי למידה ותוכניות תגבור, מסייע בארגון פעילויות בית־ספריות ופועל בשותפות עם כלל הגורמים החינוכיים לצורך קידום רצף תפקודי וסדר יום מיטבי. <strong>ודגש: אין מדובר בהחלפת עובד קבוע או בתפקיד מנהלתי עצמאי.</strong></p>
+
+    <h2 class="sub-sec rv">התאמה לבתי ספר מקצועיים ולפדגוגיה דואלית</h2>
+    <ul class="ed rv">
+      <li>הצוות הצעיר פועל כחלק בלתי נפרד מהמערך החינוכי של תיכון מקצועי, ותפקידו מותאם לאופייה הייחודי של מסגרת זו.</li>
+      <li>בשונה ממסגרות עיוניות, תפקיד הצוות הצעיר בתיכון מקצועי כולל דגש מוגבר על ליווי תלמידים בתהליכי למידה יישומיים ובהתנסות מעשית, כחלק מתפיסה חינוכית המשלבת בין ידע עיוני לבין רכישת מיומנויות תעסוקתיות.</li>
+      <li>במסגרת זו נדרש הצוות לחזק תחושת מסוגלות תעסוקתית, לעודד התמדה, אחריות ועמידה בזמנים, ולסייע בחיבור בין הלמידה הבית־ספרית לבין יישומה בעולם העבודה.</li>
+      <li>נוכחות הצוות הצעיר במרחבים המקצועיים ובשגרת הלמידה תורמת להשתלבות מיטבית של התלמידים במגמות המקצועיות ולהפיכת הלמידה לרלוונטית, משמעותית ומחוברת לחיי היום־יום.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">אחריות בתי הספר בהפעלת המתנדבים</h2>
+    <ul class="ed rv">
+      <li><strong>ציפיות מבתי הספר:</strong> בתי הספר נדרשים לקלוט את הצוות הצעיר כחלק אינטגרלי מהמערך החינוכי. חובה למנות איש צוות אחראי המלווה את בת השירות מקצועית ואישית, ומפקח על שעות, משימות ורווחה.</li>
+      <li><strong>הרכז/ת הבית־ספרי/ת</strong> הוא/היא הגורם האחראי לליווי ולהנחיה שוטפת, לבניית תוכנית עבודה מסודרת הכוללת יעדים, תחומי אחריות ולוחות זמנים, ולשילוב בני ובנות השירות באופן עקבי ומשמעותי בשגרת בית הספר.</li>
+      <li>על בית הספר להבטיח <strong>הכשרה ראשונית והדרכה מתמשכת</strong>, לקיים ישיבות ליווי ומשוב, לספק מסגרת עבודה ברורה הכוללת גבולות תפקיד, ולדאוג לליווי רגשי ומקצועי כנדרש. כמו כן נדרש בית הספר להקפיד על סביבת עבודה מכבדת, בטוחה ותומכת, המאפשרת לצוות הצעיר למלא את תפקידו באופן מיטבי.</li>
+      <li>מומלץ לבחון <strong>מודלים שונים לשילוב</strong> בנות השירות במערך הבית־ספרי, כגון הצמדה למורה מקצועי, לכיתה מסוימת או לשכבה. בכל מודל שייבחר, חשוב כי רכז/ת בנות השירות הבית־ספרי/ת יקיימו קשר רציף ומשמעותי עם בנות השירות, ילוו אותן באופן שוטף ויכוונו את עשייתן בתחום החברתי־חינוכי. בנות השירות מהוות חלק בלתי נפרד מהעשייה החברתית, ולכן חשוב לשלבן באופן פעיל, יוזם ומותאם, לצד התלמידים ובשיתוף צוות בית הספר.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">אחריות בית הספר כלפי המתנדבים — מקצועית ואישית</h2>
+
+    <h3 class="mini rv">שעות נוכחות</h3>
+    <p class="rv">על מנת להשלים את שנת השירות במלואה, על המתנדב למלא 8 שעות עבודה בכל יום, ובית הספר מחויב להעסיק את בני השירות 8 שעות בכל יום.</p>
+    <div class="callout amber rv">
+      <span class="ttl">היקף העסקה חלקי</span>
+      מנהל שאינו יכול להתחייב על היקף העסקה מלא — באחריותו לעדכן את המינהל, על מנת שעמותת השירות תמצא מקום שירות משלים, כך שלבן/בת השירות יהיו מלוא השעות הנדרשות כתקן.
+    </div>
+
+    <h3 class="mini rv">רעיונות למשימות ולפרויקטים</h3>
+    <p class="rv">באחריות בית הספר לארגן משימות ופרויקטים עבור כל יום. לרשותכם מגוון רעיונות:</p>
+    <ul class="ed tight rv">
+      <li>שיעורים פרטניים ומרכז למידה</li>
+      <li>הכנת חומרי למידה דיגיטליים</li>
+      <li>סיוע בתפקידים משרדיים</li>
+      <li>רשתות חברתיות של בית הספר</li>
+      <li>התלוות לביקורי בית יחד עם אנשי הצוות</li>
+      <li>שיחות אישיות</li>
+      <li>מפגש אישי רכז — בנות שירות ומפגש הדרכה שבועי</li>
+      <li>עיצוב בית הספר</li>
+      <li>טלפונים לתלמידים שנעדרו מבית הספר</li>
+      <li>השלמת שיעורים בזום</li>
+      <li>ביקור במקומות העבודה יחד עם רכז התעסוקה — ועוד</li>
+    </ul>
+
+    <h3 class="mini rv">ליווי רגשי</h3>
+    <p class="rv">בית הספר מחויב להעניק לבני השירות מענה וליווי רגשי (אישי וקבוצתי) בתוך בית הספר, לפי הסדירויות הבאות: מפגש קבוצתי קבוע עם יועץ/ת, פסיכולוג/ית או עו״ס אחת לחודש, וכן מפגש אישי כ־3 פעמים בשנה — אלא אם קיים צורך בליווי מוגבר. המינהל יעניק הכוונה במקרים שבהם נדרשת התערבות פרטנית נוספת.</p>
+
+    <h3 class="mini rv">הכשרה מקצועית בית־ספרית</h3>
+    <p class="rv">בית הספר מחויב להעמיד איש צוות המרכז את בני ובנות השירות באופן קבוע, והמעניק הכשרה מקצועית אחת לשבוע באופן סדור במערכת השעות השבועית. בנוסף מתקיימת הכשרה שנתית מטעם המינהל.</p>
+
+    <h2 class="sub-sec rv">חובות וזכויות בני ובנות השירות</h2>
+    <p class="rv">בנות השירות והצוות הצעיר מהווים אנשי צוות חינוכי לכל דבר, ועל כן חלות עליהם חובות של נוכחות סדירה ומיטיבה, אחריות, ערנות ודיווח. כמו כן מוטלות עליהם אחריות אישית, בגרות, שפה מכבדת, אמינות והתנהגות הולמת. שעות השירות — 8 שעות עבודה בכל יום, ובאחריות בית הספר לארגן משימות ופרויקטים עבור כל יום.</p>
+    <div class="callout red rv">
+      <span class="ttl">איסורים בהצבת בנות השירות</span>
+      חל איסור על הצבת בנות שירות בתפקידים שאינם תואמים את הגדרת תפקידן ואת תחומי אחריותן. בהתאם לכך, אין:
+      <ul class="ed tight">
+        <li>להעסיק בנות שירות באופן קבוע או עצמאי בביצוע משימות הוראה — ובכלל זה הוראה בכיתה במקום מורה.</li>
+        <li>להציבן להשגחה שוטפת על תלמידים ללא פיקוח של איש צוות מוסמך.</li>
+        <li>להטיל עליהן עבודות מזכירות שוטפות לאורך יום העבודה, או משימות ניקיון ותחזוקה.</li>
+        <li>להטיל עליהן מתן טיפול רגשי מקצועי, אחריות משמעתית במקום צוות ההנהלה, או מילוי מקום של עובד/ת שנעדר/ת.</li>
+      </ul>
+    </div>
+    <h3 class="mini rv">הכשרות מקצועיות מטעם משרד העבודה</h3>
+    <p class="rv">בנוסף להכשרה הבית־ספרית מתקיים מערך הכשרה מטעם משרד העבודה, הכולל הכשרה חד־יומית בקיץ, ימי הכשרה פיזית במהלך השנה ומפגש הכשרה בזום. ימי ההכשרה השנתיים נחשבים כיום עבודה מלא, וחובה להגיע אליהם.</p>
+
+    <h2 class="sub-sec rv">מוגנות וחובות דיווח</h2>
+    <ul class="ed rv">
+      <li>בני ובנות השירות מהווים חלק מהצוות החינוכי, ועל כן חלה עליהם אחריות מלאה לשמירה על שלומם וביטחונם של התלמידים, תוך הקפדה על עקרונות של סודיות, מוגנות ודיווח.</li>
+      <li>על הצוות לשמור על פרטיות תלמידים, משפחות ואנשי צוות — בכפוף לכך שחובת הדיווח גוברת בכל מקרה של חשש לפגיעה או לסיכון.</li>
+      <li>במסגרת התפקיד נדרשים בני ובנות השירות לשמור על גבולות ברורים: תקשורת מכבדת ומקצועית, שמירת מרחק מיטיב, הימנעות ממגע שאינו מותאם, הימנעות מקשרים פרטיים בלתי ראויים עם תלמידים ושימוש אחראי במדיה וברשתות חברתיות.</li>
+      <li>עיקרון מנחה בעבודת הצוות הצעיר: <strong>אין להישאר לבד</strong> עם כל אירוע, חשש, דילמה או קושי — יש לשתף באופן מיידי גורם מקצועי מוסמך בבית הספר.</li>
+      <li>על הצוות לגלות ערנות מתמדת לסימני מצוקה — לרבות אלימות, הזנחה, נשירה, שימוש בחומרים מסוכנים, פגיעה עצמית או כל סיכון אחר — ולפעול ללא דיחוי. כל חשש לפגיעה בקטין או לסיכון תלמיד מחייב דיווח מיידי, בהתאם לנהלים ולחוק, לגורמים הרלוונטיים בבית הספר.</li>
+      <li>כל אירוע חריג מחייב דיווח מיידי גם לגורמים המוסמכים מחוץ לבית הספר — לרבות דיווח טלפוני לרפרנטית על בנות השירות במשרד העבודה, וכן תיעוד מלא באמצעות מילוי דו״ח אירוע חריג במערכת הייעודית.</li>
+    </ul>
+    <div class="callout red rv">
+      <span class="ttl">עקרון הפעולה המחייב</span>
+      בכל מצב של ספק יש לפעול כאילו מדובר במצב המחייב דיווח, ואין להותיר אף מקרה ללא שיתוף וטיפול.
+    </div>
+
+    <h2 class="sub-sec rv">בטיחות המתנדב/ת וניהול אירועים חריגים</h2>
+    <ul class="ed rv">
+      <li><strong>נוהל מניעה וטיפול בהטרדות ובפגיעות מיניות:</strong> ביטחונו/ה האישי של המתנדב/ת הוא ערך עליון. חובת בית הספר לייצר סביבת התנדבות בטוחה ומוגנת ככל הניתן, ולהעמיד כתובת שאליה ניתן לפנות בנושא זה.</li>
+      <li>במקרה חריג — חובה לעדכן באופן מיידי הן את האחראית מטעם משרד העבודה והן את העמותה.</li>
+      <li>במקרה של בעיות תפקודיות מתמשכות — יש לדווח ללא דיחוי לעמותה, לקיים בהתאם לצורך שיחה משותפת, ובמקביל לעדכן את האחראית מטעם השירות.</li>
+      <li>במקרה של הפסקת שירות של בת השירות, מכל סיבה שהיא — יש לעדכן הן את העמותה והן את האחראית מטעם משרד העבודה.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">נספח א׳: טבלת הסדירויות המצופות מבית הספר</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tr><th>תחום אחריות</th><th>הפעולה הנדרשת</th><th>תדירות / היקף</th></tr>
+        <tr><td class="k">ריכוז והובלה של תחום בני ובנות השירות</td><td>מינוי איש צוות אחראי לליווי, להנחיה ולתכלול.</td><td>קבוע, לאורך השנה</td></tr>
+        <tr><td class="k">תוכנית עבודה</td><td>בניית תוכנית מסודרת הכוללת יעדים, תחומי אחריות ולוחות זמנים. קיימת תוכנית עבודה כתובה ומעודכנת לפחות פעם בסמסטר.</td><td>בתחילת השנה ועדכון שוטף</td></tr>
+        <tr><td class="k">תוכנית עבודה שבועית</td><td>מערכת שבועית מסודרת מראש.</td><td>בכל תחילת שבוע</td></tr>
+        <tr><td class="k">הדרכה מקצועית</td><td>קיום מפגש הדרכה מקצועי סדור לבני ובנות השירות. ההדרכה המקצועית מופיעה במערכת השעות ומתקיים תיעוד מפגשים ונוכחות.</td><td>אחת לשבוע</td></tr>
+        <tr><td class="k">ליווי פרטני מקצועי</td><td>שיחות ליווי אישיות עם הרכז/איש הצוות האחראי.</td><td>אחת לחודש לפחות</td></tr>
+        <tr><td class="k">ליווי רגשי קבוצתי</td><td>מפגש קבוצתי עם גורם מקצועי (יועץ/ת, פסיכולוג/ית, עו״ס).</td><td>אחת לחודש</td></tr>
+        <tr><td class="k">ליווי רגשי פרטני</td><td>מפגשים אישיים, בהתאם לצורך או יותר.</td><td>לפחות 3–4 פעמים בשנה</td></tr>
+        <tr><td class="k">ישיבות משוב והערכה</td><td>שיחות משוב על תפקוד, התקדמות והתאמה לתפקיד.</td><td>אחת לתקופה (מומלץ אחת לחודש–חודשיים)</td></tr>
+        <tr><td class="k">היקף פעילות</td><td>מערכת יומית מסודרת הכוללת פירוט משימות, תכנון והבטחת יום פעילות מלא הכולל משימות מגוונות ומשמעותיות.</td><td>8 שעות יומיות</td></tr>
+        <tr><td class="k">הגדרת תפקיד</td><td>קביעת גבולות תפקיד ברורים, תחומי אחריות ומשימות. קיים מסמך תפקיד חתום/מאושר.</td><td>בתחילת השירות ועדכון לפי צורך</td></tr>
+        <tr><td class="k">שילוב במערכת</td><td>שילוב עקבי ומשמעותי בשגרת בית הספר (פדגוגי, חברתי וארגוני).</td><td>יומיומי</td></tr>
+        <tr><td class="k">הכשרה</td><td>השתתפות חובה במפגש הכשרה בקיץ ובמפגשי הכשרה לאורך השנה, מטעם המינהל.</td><td>בתחילת השנה ובמועדי ההכשרה המקצועית</td></tr>
+        <tr><td class="k">סביבת עבודה</td><td>הבטחת סביבה מכבדת, בטוחה ותומכת, כולל מניעת פגיעות והטרדות והעמדת כתובת לפנייה.</td><td>שוטף</td></tr>
+        <tr><td class="k">קשר עם גורמים חיצוניים</td><td>תיאום ושיח עם משרד העבודה ועמותת השירות בעת הצורך.</td><td>לפי צורך</td></tr>
+        <tr><td class="k">משמעות השירות</td><td>יצירת חוויית שירות משמעותית — אחריות, מעורבות ותפקידים ברורים.</td><td>שוטף</td></tr>
+      </table>
+    </div>
+
+    <div class="source-box rv">
+      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
+      <a class="btn" href="https://drive.google.com/file/d/1PmfGG4FwvqSZ3hpEhA5lH8XD0P68ZR6m/view" target="_blank" rel="noopener">פתיחה בדרייב ↗</a>
+    </div>
+
+  </div>
+</article>
+
+<footer>
+  <div class="wrap foot-in">
+    <img src="logo.png" alt="">
+    <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
+    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
+  </div>
+</footer>
+
+<script>
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var bar = document.getElementById('topbar');
+  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>

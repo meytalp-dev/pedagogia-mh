@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תרגול חופשי — מבחני גמר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+    --teal: #14b8a6;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Heebo', 'Assistant', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.25;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--teal); top: -150px; right: -150px; }
+  .blob-2 { width: 400px; height: 400px; background: var(--cyan); bottom: -100px; left: -100px; }
+
+  .topbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-title { font-size: 18px; font-weight: 700; }
+  .topbar-back {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .topbar-back:hover { color: var(--ink); }
+
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hidden { display: none !important; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 10px;
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  button:active { transform: translateY(1px); }
+  .btn-primary {
+    background: var(--cyan);
+    color: white;
+  }
+  .btn-primary:hover { box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--muted); }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    background: #fff;
+    color: var(--ink);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+  }
+  textarea { min-height: 110px; resize: vertical; }
+
+  /* Picker */
+  .picker-head { margin-bottom: 24px; }
+  .picker-head h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .picker-head p { color: var(--muted); font-size: 15px; }
+
+  .mode-banner {
+    background: linear-gradient(135deg, #ecfeff, #f0fdfa);
+    border: 1px solid #a5f3fc;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .mode-banner svg { flex-shrink: 0; color: var(--teal); margin-top: 2px; }
+  .mode-banner-title { font-weight: 700; margin-bottom: 4px; font-size: 15px; }
+  .mode-banner-text { color: var(--muted); font-size: 14px; }
+
+  .sector-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+  .sector-tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .sector-tab.active {
+    background: var(--cyan);
+    color: white;
+  }
+
+  .subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .subject-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .subject-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .exam-list { display: flex; flex-direction: column; gap: 8px; }
+  .exam-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .exam-item-main { flex: 1 1 auto; min-width: 0; }
+  .exam-item.ready { cursor: pointer; }
+  .exam-item.ready:hover {
+    border-color: var(--cyan);
+    background: #fff;
+  }
+  .exam-item.pending {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .exam-title { font-size: 14px; font-weight: 500; }
+  .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .badge-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .badge-ready { background: #d1fae5; color: #065f46; }
+  .badge-pending { background: #fef3c7; color: #92400e; }
+  .badge-partial { background: #e0f2fe; color: #075985; }
+
+  .share-icons {
+    display: flex !important;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .share-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--border);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    color: var(--muted);
+    transition: all 0.15s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .share-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: #ecfeff;
+  }
+  .share-btn.wa:hover {
+    color: #25D366;
+    border-color: #25D366;
+    background: #f0fdf4;
+  }
+  .share-btn svg { width: 16px; height: 16px; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* Exam taking */
+  .exam-head {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .exam-head h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .exam-meta-row {
+    display: flex;
+    gap: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-top: 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--teal));
+    width: 0;
+    transition: width 0.3s;
+  }
+
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .section-card h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 6px;
+  }
+  .section-card .sect-instr {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .passage {
+    background: #fafbfc;
+    border-inline-start: 4px solid var(--teal);
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .passage .p-title {
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .question {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .question.answered { border-color: #bfdbfe; background: #f0f9ff; }
+  .q-diagram {
+    margin: 8px 0 14px 38px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .q-diagram svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  .q-diagram table { border-collapse: collapse; margin: 0 auto; }
+  .q-diagram th, .q-diagram td { border: 1px solid var(--border); padding: 8px 12px; font-size: 14px; }
+  .q-diagram th { background: var(--bg); font-weight: 600; }
+  .q-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .q-number {
+    background: var(--cyan);
+    color: white;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .q-text { font-weight: 500; font-size: 15px; flex: 1; }
+  .q-points {
+    color: var(--muted);
+    font-size: 12px;
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .options { display: flex; flex-direction: column; gap: 8px; padding-inline-start: 38px; }
+  .option {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    align-items: flex-start;
+  }
+  .option:hover { background: var(--bg); }
+  .option.selected {
+    border-color: var(--cyan);
+    background: #ecfeff;
+  }
+  .option input { width: auto; margin: 4px 0 0 0; accent-color: var(--cyan); }
+  .option-label { flex: 1; font-size: 14px; }
+  .option-key {
+    font-weight: 700;
+    color: var(--cyan);
+    min-width: 18px;
+  }
+
+  /* Review-mode option styling (after submit) */
+  .option.review-correct {
+    border-color: var(--green);
+    background: #dcfce7;
+  }
+  .option.review-correct .option-key { color: #166534; }
+  .option.review-wrong {
+    border-color: var(--red);
+    background: #fee2e2;
+  }
+  .option.review-wrong .option-key { color: #991b1b; }
+  .option-mark {
+    font-size: 16px;
+    font-weight: 700;
+    margin-inline-start: 6px;
+  }
+  .review-note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .review-note.ok { background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; }
+  .review-note.bad { background: #fef2f2; color: #7f1d1d; border: 1px solid #fecaca; }
+  .review-note.open { background: #fefce8; color: #713f12; border: 1px solid #fde68a; }
+
+  .submit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: sticky;
+    bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .submit-row .info { font-size: 14px; color: var(--muted); }
+  .submit-row .info strong { color: var(--ink); }
+  .submit-btn {
+    background: var(--green);
+    color: white;
+    padding: 14px 32px;
+  }
+  .submit-btn:hover { box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3); }
+  .submit-btn:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Result summary */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 720px;
+    margin: 0 auto 24px;
+    text-align: center;
+  }
+  .result-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 800;
+    background: conic-gradient(var(--green) var(--score, 0%), var(--border) var(--score, 0%));
+    position: relative;
+  }
+  .result-circle::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: var(--card);
+  }
+  .result-circle .score-num { position: relative; color: var(--ink); }
+  .result-card h2 { font-size: 22px; margin-bottom: 6px; font-weight: 700; }
+  .result-card .sub { color: var(--muted); margin-bottom: 24px; }
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: var(--bg);
+    padding: 16px 8px;
+    border-radius: 10px;
+  }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .options { padding-inline-start: 0; }
+    .submit-row { flex-direction: column; }
+    .submit-btn { width: 100%; }
+    .page { padding: 24px 16px; }
+    .exam-item-main { flex-basis: 100%; }
+    .share-icons { margin-inline-start: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="topbar">
+  <div class="topbar-title">תרגול חופשי — מבחני גמר</div>
+  <a href="index.html" class="topbar-back">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    חזרה
+  </a>
+</div>
+
+<div class="page">
+
+  <!-- SCREEN 1: EXAM PICKER -->
+  <div id="screen-picker">
+    <div class="picker-head">
+      <h1>תרגול חופשי — בלי רישום</h1>
+      <p>בחר/י מבחן, ענה/י על השאלות — בסוף תקבל/י ציון אוטומטי ובדיקה.</p>
+    </div>
+
+    <div class="mode-banner">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <div>
+        <div class="mode-banner-title">מצב תרגול — התוצאה לא נשלחת לאף אחד</div>
+        <div class="mode-banner-text">
+          התרגול רץ רק בדפדפן שלך. אין שמירה לענן, אין דשבורד של מורה.
+          שאלות אמריקאיות נבדקות אוטומטית; שאלות פתוחות מיועדות לבדיקה עצמית.
+        </div>
+      </div>
+    </div>
+
+    <div class="sector-tabs" id="sector-tabs"></div>
+    <div id="subject-grid" class="subject-grid"></div>
+  </div>
+
+  <!-- SCREEN 2: EXAM -->
+  <div id="screen-exam" class="hidden">
+    <div class="exam-head">
+      <h1 id="exam-title"></h1>
+      <div class="exam-meta-row">
+        <span id="exam-code"></span>
+        <span id="exam-duration"></span>
+        <span id="exam-points"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div id="exam-content"></div>
+    <div class="submit-row">
+      <div class="info">
+        ענית על <strong id="answered-count">0</strong> מתוך <strong id="total-count">0</strong> שאלות
+      </div>
+      <button id="submit-btn" class="submit-btn" onclick="checkAnswers()">בדיקה וציון</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: RESULT + REVIEW (reuses exam-content block for inline review) -->
+  <div id="screen-result" class="hidden">
+    <div class="result-card">
+      <div class="result-circle" id="result-circle">
+        <span class="score-num" id="result-score">—</span>
+      </div>
+      <h2 id="result-title">סיימת את התרגול</h2>
+      <p class="sub" id="result-subtitle"></p>
+      <div class="result-stats">
+        <div class="stat-box"><div class="stat-num" id="stat-correct">—</div><div class="stat-label">תשובות נכונות</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-points">—</div><div class="stat-label">נקודות שצברת</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-open">—</div><div class="stat-label">שאלות לבדיקה עצמית</div></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-primary" onclick="retryExam()">תרגל שוב את אותו מבחן</button>
+        <button class="btn-secondary" onclick="backToPicker()">בחר/י מבחן אחר</button>
+      </div>
+    </div>
+
+    <div id="review-content"></div>
+  </div>
+
+</div>
+
+<script>
+  let CATALOG = null;
+  let CURRENT_EXAM = null;
+  let answers = {};
+
+  async function init() {
+    const res = await fetch('exams/index.json');
+    CATALOG = await res.json();
+
+    // Deep-link: ?e=EXAM_ID opens the exam directly
+    const params = new URLSearchParams(location.search);
+    const deepExamId = params.get('e');
+    if (deepExamId) {
+      const found = findExamInCatalog(deepExamId);
+      if (found && found.exam.status === 'ready') {
+        renderSectorTabs();
+        switchSector(found.sectorId);
+        await startExam(deepExamId);
+        return;
+      }
+    }
+
+    renderSectorTabs();
+    renderSubjects(CATALOG.sectors[0].id);
+  }
+
+  function findExamInCatalog(examId) {
+    for (const sector of CATALOG.sectors) {
+      for (const sub of sector.subjects) {
+        const exam = sub.exams.find(e => e.id === examId);
+        if (exam) return { sectorId: sector.id, subjectId: sub.id, exam };
+      }
+    }
+    return null;
+  }
+
+  function handleExamItemClick(ev, examId) {
+    if (ev.target.closest('.share-btn')) return;
+    startExam(examId);
+  }
+
+  function buildExamShareUrl(examId) {
+    const base = location.origin + location.pathname;
+    return base + '?e=' + encodeURIComponent(examId);
+  }
+
+  function showToast(msg) {
+    let t = document.getElementById('pe-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'pe-toast';
+      t.className = 'toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function copyExamLink(examId, title) {
+    const url = buildExamShareUrl(examId);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        () => showToast('הקישור הועתק — שלחי לתלמידים'),
+        () => fallbackCopy(url)
+      );
+    } else {
+      fallbackCopy(url);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('הקישור הועתק — שלחי לתלמידים'); }
+    catch (e) { showToast('לא הצלחתי להעתיק'); }
+    document.body.removeChild(ta);
+  }
+
+  function shareExamWA(examId, title) {
+    const url = buildExamShareUrl(examId);
+    const msg = 'תרגול: ' + title + '\n' + url;
+    const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(msg);
+    window.open(waUrl, '_blank');
+  }
+
+  function renderSectorTabs() {
+    const tabs = document.getElementById('sector-tabs');
+    tabs.innerHTML = CATALOG.sectors.map((s, i) => `
+      <div class="sector-tab ${i === 0 ? 'active' : ''}" data-sector="${s.id}" onclick="switchSector('${s.id}')">${s.name}</div>
+    `).join('');
+  }
+
+  function switchSector(id) {
+    document.querySelectorAll('.sector-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.sector === id);
+    });
+    renderSubjects(id);
+  }
+
+  function renderSubjects(sectorId) {
+    const sector = CATALOG.sectors.find(s => s.id === sectorId);
+    const grid = document.getElementById('subject-grid');
+    grid.innerHTML = sector.subjects.map(sub => `
+      <div class="subject-card">
+        <h3>${sub.name}</h3>
+        <div class="exam-list">
+          ${sub.exams.map(ex => {
+            const ready = ex.status === 'ready';
+            let badge;
+            if (!ready) badge = '<span class="badge-status badge-pending">בקרוב</span>';
+            else if (ex.answerKeyReady) badge = '<span class="badge-status badge-ready">ציון אוטומטי</span>';
+            else badge = '<span class="badge-status badge-partial">תרגול בלבד</span>';
+            const onclick = ready ? `onclick="handleExamItemClick(event,'${ex.id}')"` : '';
+            const share = ready ? `
+              <div class="share-icons">
+                <button class="share-btn" title="העתק קישור" onclick="event.stopPropagation();copyExamLink('${ex.id}','${escapeHtml(ex.title)}')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </button>
+                <button class="share-btn wa" title="שלח בוואטסאפ" onclick="event.stopPropagation();shareExamWA('${ex.id}','${escapeHtml(ex.title)}')">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                </button>
+              </div>
+            ` : '';
+            return `
+              <div class="exam-item ${ready ? 'ready' : 'pending'}" data-exam-id="${ex.id}" ${onclick}>
+                <div class="exam-item-main">
+                  <div class="exam-title">${ex.title}</div>
+                  ${ex.questionCount ? `<div class="exam-meta">${ex.questionCount} שאלות · ${ex.durationMinutes} דקות</div>` : ''}
+                </div>
+                ${badge}
+                ${share}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function startExam(examId) {
+    const res = await fetch('exams/' + examId + '.json');
+    CURRENT_EXAM = await res.json();
+    answers = {};
+    renderExam();
+    showScreen('exam');
+    window.scrollTo(0, 0);
+  }
+
+  function retryExam() {
+    answers = {};
+    renderExam();
+    showScreen('exam');
+    window.scrollTo(0, 0);
+  }
+
+  function backToPicker() {
+    CURRENT_EXAM = null;
+    answers = {};
+    document.getElementById('review-content').innerHTML = '';
+    showScreen('picker');
+    window.scrollTo(0, 0);
+  }
+
+  function showScreen(s) {
+    document.getElementById('screen-picker').classList.toggle('hidden', s !== 'picker');
+    document.getElementById('screen-exam').classList.toggle('hidden', s !== 'exam');
+    document.getElementById('screen-result').classList.toggle('hidden', s !== 'result');
+  }
+
+  function renderExam() {
+    document.getElementById('exam-title').textContent = CURRENT_EXAM.title;
+    document.getElementById('exam-code').textContent = CURRENT_EXAM.examCode ? 'שאלון ' + CURRENT_EXAM.examCode : '';
+    document.getElementById('exam-duration').textContent = CURRENT_EXAM.durationMinutes + ' דקות';
+    document.getElementById('exam-points').textContent = CURRENT_EXAM.totalPoints + ' נק\'';
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = false;
+    btn.textContent = 'בדיקה וציון';
+
+    const container = document.getElementById('exam-content');
+    const parts = [];
+    let totalQs = 0;
+
+    for (const section of CURRENT_EXAM.sections) {
+      let secHtml = `<div class="section-card"><h2>${escapeHtml(section.title)}</h2>`;
+      if (section.instructions) secHtml += `<div class="sect-instr">${escapeHtml(section.instructions)}</div>`;
+
+      if (section.passages) {
+        for (const passage of section.passages) {
+          secHtml += `<div class="passage"><div class="p-title">${escapeHtml(passage.title)}</div><div>${escapeHtml(passage.text)}</div></div>`;
+          for (const q of passage.questions) {
+            secHtml += renderQuestion(q);
+            totalQs++;
+          }
+        }
+      }
+      if (section.questions) {
+        for (const q of section.questions) {
+          secHtml += renderQuestion(q);
+          totalQs++;
+        }
+      }
+      secHtml += '</div>';
+      parts.push(secHtml);
+    }
+
+    container.innerHTML = parts.join('');
+    document.getElementById('total-count').textContent = totalQs;
+    updateProgress();
+  }
+
+  function renderQuestion(q) {
+    if (q.type === 'multiple-choice') {
+      return `
+        <div class="question" id="q-${q.id}">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${escapeHtml(q.question)}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="q-diagram">${q.html}</div>` : ''}
+          <div class="options">
+            ${q.options.map(opt => `
+              <label class="option" data-key="${opt.key}" onclick="selectAnswer('${q.id}','${opt.key}')">
+                <input type="radio" name="${q.id}" value="${opt.key}">
+                <span class="option-key">${opt.key}.</span>
+                <span class="option-label">${escapeHtml(opt.text)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    if (q.type === 'open') {
+      return `
+        <div class="question" id="q-${q.id}">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${escapeHtml(q.question)}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="q-diagram">${q.html}</div>` : ''}
+          <textarea placeholder="כתוב/י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function selectAnswer(qid, key) {
+    answers[qid] = { type: 'mc', value: key };
+    const qEl = document.getElementById('q-' + qid);
+    qEl.classList.add('answered');
+    qEl.querySelectorAll('.option').forEach(el => {
+      const inp = el.querySelector('input');
+      el.classList.toggle('selected', inp.value === key);
+      inp.checked = inp.value === key;
+    });
+    updateProgress();
+  }
+
+  function saveOpenAnswer(qid, text) {
+    if (text.trim()) {
+      answers[qid] = { type: 'open', value: text };
+      document.getElementById('q-' + qid).classList.add('answered');
+    } else {
+      delete answers[qid];
+      document.getElementById('q-' + qid).classList.remove('answered');
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const answered = Object.keys(answers).length;
+    const total = parseInt(document.getElementById('total-count').textContent) || 1;
+    document.getElementById('answered-count').textContent = answered;
+    document.getElementById('progress-fill').style.width = (answered / total * 100) + '%';
+  }
+
+  function flattenQuestions(exam) {
+    const out = [];
+    for (const section of exam.sections) {
+      if (section.passages) section.passages.forEach(p => p.questions.forEach(q => out.push(q)));
+      if (section.questions) section.questions.forEach(q => out.push(q));
+    }
+    return out;
+  }
+
+  function checkAnswers() {
+    const answered = Object.keys(answers).length;
+    if (answered === 0) {
+      alert('ענה/עני לפחות על שאלה אחת לפני הבדיקה');
+      return;
+    }
+    if (!confirm(`לבדוק את התרגול? ענית על ${answered} שאלות.`)) return;
+
+    const qs = flattenQuestions(CURRENT_EXAM);
+    let correct = 0, totalMC = 0;
+    let earnedPoints = 0, totalPointsWithKey = 0;
+    let openCount = 0, openAnswered = 0;
+    const records = [];
+
+    for (const q of qs) {
+      const ans = answers[q.id];
+      const rec = { q, ans, isCorrect: null };
+      if (q.type === 'multiple-choice') {
+        totalMC++;
+        if (q.correctAnswer != null) {
+          totalPointsWithKey += q.points;
+          rec.correctAnswer = q.correctAnswer;
+          if (ans && ans.value === q.correctAnswer) {
+            rec.isCorrect = true;
+            correct++;
+            earnedPoints += q.points;
+          } else if (ans) {
+            rec.isCorrect = false;
+          }
+        }
+      } else if (q.type === 'open') {
+        openCount++;
+        if (ans) openAnswered++;
+      }
+      records.push(rec);
+    }
+
+    const pct = totalPointsWithKey > 0 ? Math.round(earnedPoints / totalPointsWithKey * 100) : 0;
+
+    document.getElementById('result-score').textContent = totalPointsWithKey > 0 ? pct : '—';
+    document.getElementById('result-circle').style.setProperty('--score', pct + '%');
+    document.getElementById('stat-correct').textContent = correct + '/' + totalMC;
+    document.getElementById('stat-points').textContent = totalPointsWithKey > 0
+      ? earnedPoints + '/' + totalPointsWithKey
+      : '—';
+    document.getElementById('stat-open').textContent = openCount;
+
+    let subtitle;
+    if (totalPointsWithKey === 0) {
+      subtitle = 'אין עדיין מחוון לשאלות במבחן הזה — רק תרגול חופשי. הריץ/י בדיקה עצמית מול החומר.';
+      document.getElementById('result-title').textContent = 'סיימת את התרגול';
+    } else {
+      subtitle = `ענית נכון על ${correct} מתוך ${totalMC} שאלות אמריקאיות${openCount > 0 ? ' · ' + openCount + ' שאלות פתוחות נותרו לבדיקה עצמית' : ''}`;
+      document.getElementById('result-title').textContent = pct >= 55 ? 'עברת את התרגול!' : 'סיימת — יש על מה לחזור';
+    }
+    document.getElementById('result-subtitle').textContent = subtitle;
+
+    renderReview(records);
+    showScreen('result');
+    window.scrollTo(0, 0);
+  }
+
+  function renderReview(records) {
+    const container = document.getElementById('review-content');
+    const groups = [];
+    for (const section of CURRENT_EXAM.sections) {
+      const secRecs = records.filter(r =>
+        (section.passages && section.passages.some(p => p.questions.some(q => q.id === r.q.id))) ||
+        (section.questions && section.questions.some(q => q.id === r.q.id))
+      );
+      if (secRecs.length === 0) continue;
+      let html = `<div class="section-card"><h2>${escapeHtml(section.title)}</h2>`;
+
+      if (section.passages) {
+        for (const passage of section.passages) {
+          html += `<div class="passage"><div class="p-title">${escapeHtml(passage.title)}</div><div>${escapeHtml(passage.text)}</div></div>`;
+          for (const q of passage.questions) {
+            const rec = records.find(r => r.q.id === q.id);
+            if (rec) html += renderReviewItem(rec);
+          }
+        }
+      }
+      if (section.questions) {
+        for (const q of section.questions) {
+          const rec = records.find(r => r.q.id === q.id);
+          if (rec) html += renderReviewItem(rec);
+        }
+      }
+      html += '</div>';
+      groups.push(html);
+    }
+    container.innerHTML = groups.join('');
+  }
+
+  function renderReviewItem(rec) {
+    const q = rec.q;
+    if (q.type === 'multiple-choice') {
+      const userKey = rec.ans ? rec.ans.value : null;
+      const optsHtml = q.options.map(opt => {
+        let cls = 'option';
+        let mark = '';
+        const isUserPick = opt.key === userKey;
+        const isCorrect = opt.key === q.correctAnswer;
+        if (q.correctAnswer != null) {
+          if (isCorrect) { cls += ' review-correct'; mark = '<span class="option-mark">✓</span>'; }
+          else if (isUserPick) { cls += ' review-wrong'; mark = '<span class="option-mark">✗</span>'; }
+        } else if (isUserPick) {
+          cls += ' selected';
+        }
+        return `
+          <div class="${cls}">
+            <span class="option-key">${opt.key}.</span>
+            <span class="option-label">${escapeHtml(opt.text)}</span>
+            ${mark}
+          </div>
+        `;
+      }).join('');
+
+      let note = '';
+      if (q.correctAnswer == null) {
+        note = `<div class="review-note open">אין מחוון — בדוק/י מול המורה או החומר.</div>`;
+      } else if (!rec.ans) {
+        note = `<div class="review-note bad">לא ענית — התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
+      } else if (rec.isCorrect) {
+        note = `<div class="review-note ok">צדקת! (+${q.points} נק')</div>`;
+      } else {
+        note = `<div class="review-note bad">התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
+      }
+
+      return `
+        <div class="question">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${escapeHtml(q.question)}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="q-diagram">${q.html}</div>` : ''}
+          <div class="options">${optsHtml}</div>
+          ${note}
+        </div>
+      `;
+    }
+    if (q.type === 'open') {
+      const userText = rec.ans ? rec.ans.value : '';
+      return `
+        <div class="question">
+          <div class="q-header">
+            <div class="q-number">${q.number}</div>
+            <div class="q-text">${escapeHtml(q.question)}</div>
+            <div class="q-points">${q.points} נק'</div>
+          </div>
+          ${q.html ? `<div class="q-diagram">${q.html}</div>` : ''}
+          ${userText ? `<div style="background:#f8fafc;padding:12px 14px;border-radius:10px;border:1px solid var(--border);white-space:pre-wrap;font-size:14px;line-height:1.7;">${escapeHtml(userText)}</div>` : '<div class="review-note bad">לא ענית על שאלה זו.</div>'}
+          <div class="review-note open">שאלה פתוחה — בדיקה עצמית מול חומר הלמידה או עם המורה.</div>
+        </div>
+      `;
+    }
+    return '';
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  init();
+</script>
+</body>
+</html>

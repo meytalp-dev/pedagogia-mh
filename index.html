@@ -24,22 +24,25 @@
   <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
-    <div class="sect">המרחב הפדגוגי</div>
+    <div class="sect">מרחב פדגוגי</div>
     <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
     <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
     <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
-    <a href="counseling.html"><span class="n">04</span> מרחב ייעוצי</a>
-    <a href="procedures.html"><span class="n">05</span> נהלים</a>
-    <a class="dis"><span class="n">06</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
-    <a class="dis"><span class="n">07</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
-    <a class="dis"><span class="n">08</span> הערכה <span class="tag soon">בקרוב</span></a>
-    <a href="supervision.html"><span class="n">09</span> מרחב פיקוח</a>
+    <a class="dis"><span class="n">04</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">05</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחבים ומדורים</div>
+    <a href="counseling.html">מרחב ייעוצי</a>
+    <a href="procedures.html">נהלים</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html">מרחב פיקוח</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שואלים את העוגן</a>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
     <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
     <div class="sect">אודות</div>
     <a class="dis">מי אנחנו</a>
@@ -59,31 +62,43 @@
     <span class="mark">פ</span>
     <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <a class="lnk active" href="index.html">בית</a>
-  <a class="lnk" href="space.html">המרחב הפדגוגי</a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="dis">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a class="dis">למידה בחירום</a>
+      <a class="dis">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <a class="lnk" href="counseling.html">מרחב ייעוצי</a>
+  <a class="lnk" href="procedures.html">נהלים</a>
+  <a class="lnk dis">מסמכים חשובים</a>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <a class="lnk" href="supervision.html">מרחב פיקוח</a>
   <div class="tools">
-    <a class="ogen-btn">שואלים את העוגן</a>
     <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
   </div>
 </nav>
 
 <!-- hero -->
-<div style="position:relative;padding:70px var(--px) 58px;overflow:hidden">
+<div style="position:relative;padding:38px var(--px) 34px;overflow:hidden">
   <div style="position:absolute;top:-120px;left:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,var(--cyan-100),transparent 65%)"></div>
   <div style="position:absolute;bottom:-140px;right:38%;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,var(--blue-100),transparent 65%)"></div>
   <div class="hero-grid" style="display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:center;position:relative">
     <div>
-      <div class="kicker rv">הבית של הפדגוגיה בהכשרה המקצועית</div>
-      <h1 class="rv d1" style="font-size:clamp(2.1rem,4.5vw,3.1rem);margin:14px 0 16px">ידע, כלים ותוכניות —<br><span style="background:linear-gradient(90deg,var(--navy-800),#0B9BC9);-webkit-background-clip:text;background-clip:text;color:transparent">במקום אחד פתוח</span></h1>
-      <p class="rv d2" style="font-size:1.12rem;color:var(--text2);max-width:470px">מתחומי הדעת ועד הפיקוח: כל מה שמורה, מדריך ומנהל במינהל צריכים — בשפה אחת משותפת, בשני נתיבי תעודה.</p>
-      <div class="rv d3" style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+      <div class="kicker rv">מינהל הכשרה מקצועית · משרד העבודה</div>
+      <h1 class="rv d1" style="font-size:clamp(2rem,4.2vw,2.6rem);margin:12px 0 12px">הבית של<br><span style="background:linear-gradient(90deg,var(--navy-800),#0B9BC9);-webkit-background-clip:text;background-clip:text;color:transparent">הפדגוגיה המקצועית</span></h1>
+      <p class="rv d2" style="font-size:1.05rem;color:var(--text2);max-width:470px">ידע, כלים ותוכניות שמחברים בין למידה, מקצוע ועתיד.</p>
+      <div class="rv d3" style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
         <a class="btn primary" href="space.html">אל המרחב הפדגוגי</a>
-        <a class="btn line open-ogen">שואלים את העוגן</a>
+        <a class="btn line open-ogen">שאל את עוגן</a>
       </div>
     </div>
     <div class="rv d2" style="position:relative">
       <div style="border-radius:24px;background:#fff;border:1px solid var(--border);box-shadow:var(--sh-md);overflow:hidden">
-        <img src="img/yotzer/workshop.jpg" alt="מדריך ותלמיד עובדים יחד על מסור סרט בסדנת מתכת" style="aspect-ratio:16/10.5;width:100%;object-fit:cover;display:block">
+        <img src="img/yotzer/workshop.jpg" alt="מדריך ותלמיד עובדים יחד על מסור סרט בסדנת מתכת" style="aspect-ratio:16/8.5;width:100%;object-fit:cover;display:block">
         <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px">
           <b style="color:var(--navy);font-size:.92rem">הכשרה מעשית בסדנה · צילום: החינוך היוצר</b>
           <span class="tag cyn">מהשטח</span>
@@ -98,7 +113,7 @@
 <div style="padding:8px var(--px) 26px">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:6px">
     <h2 style="font-size:1.7rem">מה תרצו לקדם היום?</h2>
-    <a href="space.html" style="color:#0B7FA6;font-weight:700;font-size:.92rem;text-decoration:none">לכל תשעת התחומים ←</a>
+    <a href="space.html" style="color:#0B7FA6;font-weight:700;font-size:.92rem;text-decoration:none">לכל תחומי המרחב הפדגוגי ←</a>
   </div>
   <p style="color:var(--text2);font-size:.95rem;margin-bottom:18px">קיצורי דרך לפי מה שצריך עכשיו — כל כרטיס מוביל אל התחום המתאים במרחב הפדגוגי.</p>
   <div class="grid c3">
@@ -157,7 +172,7 @@
   <div class="card" style="padding:20px;text-align:center"><div class="num-count" data-count="64" style="font-size:2.1rem;font-weight:800;color:var(--navy)">64</div><div style="font-size:.88rem;color:var(--text2);font-weight:600">בתי ספר</div></div>
   <div class="card" style="padding:20px;text-align:center"><div class="num-count" data-count="9700" data-suffix="+" style="font-size:2.1rem;font-weight:800;color:var(--navy)">9,700+</div><div style="font-size:.88rem;color:var(--text2);font-weight:600">תלמידים</div></div>
   <div class="card" style="padding:20px;text-align:center"><div class="num-count" data-count="40" data-suffix="+" style="font-size:2.1rem;font-weight:800;color:var(--navy)">40+</div><div style="font-size:.88rem;color:var(--text2);font-weight:600">מגמות מקצועיות</div></div>
-  <div class="card" style="padding:20px;text-align:center"><div class="num-count" data-count="9" style="font-size:2.1rem;font-weight:800;color:var(--navy)">9</div><div style="font-size:.88rem;color:var(--text2);font-weight:600">תחומי המרחב</div></div>
+  <div class="card" style="padding:20px;text-align:center"><div class="num-count" data-count="7" style="font-size:2.1rem;font-weight:800;color:var(--navy)">7</div><div style="font-size:.88rem;color:var(--text2);font-weight:600">מקצועות ליבה</div></div>
 </div>
 
 <div class="foot">

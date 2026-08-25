@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>מחולל אינפוגרפיקה | Lerani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Karantina:wght@400;700&family=Secular+One&family=Suez+One&family=Rubik:wght@400;500;700;900&family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&family=Varela+Round&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'GveretLevin';src:url('../design-studio/fonts/GveretLevinAlefAlefAlef-Regular.otf') format('opentype');font-display:swap}
+@font-face{font-family:'DanaYad';src:url('../design-studio/fonts/DanaYadAlefAlefAlef-Normal.otf') format('opentype');font-display:swap}
+@font-face{font-family:'Carmela';src:url('../design-studio/fonts/Carmela.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Cafe';src:url('../design-studio/fonts/Cafe.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Tapuach';src:url('../design-studio/fonts/tapuach.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Paskol';src:url('../design-studio/fonts/Paskol.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Nehama';src:url('../design-studio/fonts/Nehama.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Petel';src:url('../design-studio/fonts/Petel.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'HummusChips';src:url('../design-studio/fonts/HummusChipsSalat.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Carnaval';src:url('../design-studio/fonts/carnaval.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'TzevaTari';src:url('../design-studio/fonts/TzevaTari.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Dragon';src:url('../design-studio/fonts/Dragon.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Kidma';src:url('../design-studio/fonts/Kidma-Book.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Kanisah';src:url('../design-studio/fonts/Kanisah.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Manual';src:url('../design-studio/fonts/manual.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Baznat';src:url('../design-studio/fonts/Baznat.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Noot';src:url('../design-studio/fonts/Noot.otf') format('opentype');font-display:swap}
+@font-face{font-family:'Liron';src:url('../design-studio/fonts/liron.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Hevel';src:url('../design-studio/fonts/hevel.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Levavot';src:url('../design-studio/fonts/levavot.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Takila';src:url('../design-studio/fonts/Takila.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Shmuel';src:url('../design-studio/fonts/shmuel.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'DinaTalBal';src:url('../design-studio/fonts/Dina-TalBal.otf') format('opentype');font-display:swap}
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#FAF5EC;--card:#fff;--text:#3A3A50;--muted:#8A847D;--border:#E8DDD0;--gold:#C9A96E;--accent:#D4766E}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ===== TOP BAR ===== */
+.topbar{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0}
+.topbar h1{font-size:1rem;font-weight:900;margin-left:auto}
+.topbar-sep{width:1px;height:28px;background:var(--border)}
+.topbar input{flex:1;font-family:'Heebo';font-size:.85rem;padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card);min-width:180px;transition:.2s}
+.topbar input:focus{outline:none;border-color:var(--gold)}
+.topbar textarea{width:200px;font-family:'Heebo';font-size:.78rem;padding:6px 10px;border:2px solid var(--border);border-radius:8px;background:var(--card);resize:none;height:36px;transition:.2s}
+.topbar textarea:focus{outline:none;border-color:var(--gold)}
+.tb{padding:7px 14px;border-radius:10px;border:2px solid var(--border);background:var(--card);font-family:'Heebo';font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.tb:hover{border-color:var(--gold)}
+.tb svg{width:15px;height:15px;flex-shrink:0}
+.tb.gen{background:var(--text);color:#fff;border-color:var(--text)}
+.tb.gen:hover{background:#2A2A40}
+.tb.gen:disabled{opacity:.5;cursor:not-allowed}
+.tb.gen.loading{background:var(--gold)}
+.tb.dl{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tb.dl:hover{background:#C06058}
+
+/* ===== SPLIT ===== */
+.split{display:flex;flex:1;min-height:0}
+.panel{width:340px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.panel-nav{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-tab{flex:1;padding:9px 6px;text-align:center;font-size:.7rem;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;background:none;border-top:none;border-right:none;border-left:none;font-family:'Heebo';color:var(--muted)}
+.panel-tab:hover{color:var(--text)}
+.panel-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.panel-tab svg{width:15px;height:15px;display:block;margin:0 auto 2px}
+.panel-body{flex:1;overflow-y:auto;padding:14px}
+
+/* Sections */
+.psec{margin-bottom:16px}
+.psec-title{font-size:.78rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.psec-title svg{width:14px;height:14px;flex-shrink:0}
+
+/* Layout picker */
+.layout-row{display:flex;gap:6px}
+.layout-opt{flex:1;border:2px solid var(--border);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:.2s;background:var(--card)}
+.layout-opt:hover{border-color:var(--gold)}
+.layout-opt.sel{border-color:var(--accent);background:#FFF8F5}
+.layout-opt svg{width:36px;height:26px;margin-bottom:3px}
+.layout-opt span{font-size:.65rem;font-weight:600;display:block}
+
+/* Count */
+.count-row{display:flex;align-items:center;gap:12px;justify-content:center}
+.cbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1rem;font-weight:700;cursor:pointer;font-family:'Heebo'}
+.cbtn:hover{border-color:var(--gold);background:#F0E6D3}
+.cval{font-size:1.1rem;font-weight:900;min-width:20px;text-align:center}
+
+/* Layout sub-templates */
+.sub-tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.sub-tpl{border:2px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:.2s;background:var(--card)}
+.sub-tpl:hover{border-color:var(--gold);box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.sub-tpl.sel{border-color:var(--accent);background:#FFF8F5}
+.sub-tpl svg{width:100%;height:50px;margin-bottom:4px}
+.sub-tpl span{font-size:.62rem;font-weight:600;display:block;color:var(--text)}
+.sub-tpl .sub-desc{font-size:.55rem;color:var(--muted);margin-top:2px}
+
+/* Palette grid */
+.pal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.pal-opt{border:2px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:var(--card)}
+.pal-opt:hover{border-color:var(--gold)}
+.pal-opt.sel{border-color:var(--accent);border-width:3px}
+.pal-colors{display:flex;height:20px}
+.pal-colors div{flex:1}
+.pal-label{padding:4px 6px;font-size:.62rem;font-weight:600;text-align:center}
+
+/* Font grid */
+.fnt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.fnt-opt{border:2px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;transition:.2s;background:var(--card);text-align:center}
+.fnt-opt:hover{border-color:var(--gold)}
+.fnt-opt.sel{border-color:var(--accent);border-width:3px}
+.fnt-opt .fp{font-size:1.2rem;line-height:1.2;margin-bottom:2px}
+.fnt-opt .fb{font-size:.68rem;color:var(--muted)}
+.fnt-opt .fn{font-size:.58rem;color:var(--gold);margin-top:3px;font-family:'Heebo'}
+
+/* Template grid */
+.tpl-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.tpl-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.3s;background:var(--card)}
+.tpl-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.tpl-card.sel{border-color:var(--accent);border-width:3px}
+.tpl-preview{height:120px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
+.tpl-info{padding:10px;border-top:1px solid var(--border)}
+.tpl-name{font-weight:700;font-size:.82rem;margin-bottom:2px}
+.tpl-desc{font-size:.7rem;color:var(--muted)}
+
+/* Image upload */
+.img-upload{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.img-upload:hover{border-color:var(--gold);background:#FAF0E0}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-upload svg{width:28px;height:28px;margin-bottom:6px;color:var(--muted)}
+.img-upload p{font-size:.75rem;color:var(--muted)}
+.img-preview{margin-top:8px;position:relative}
+.img-preview img{width:100%;border-radius:8px;display:block}
+.img-remove{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Preview area */
+.preview{flex:1;overflow:auto;padding:20px;background:#e8e4de;display:flex;justify-content:center;align-items:flex-start}
+.preview-frame{width:800px;max-width:100%;background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden;min-height:300px}
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;color:var(--muted);text-align:center;padding:40px}
+.placeholder svg{width:60px;height:60px;margin-bottom:14px;opacity:.3}
+.placeholder h3{font-size:1rem;margin-bottom:4px}
+.placeholder p{font-size:.78rem}
+
+/* ===== INFOGRAPHIC ===== */
+.infographic{padding:40px 32px;direction:rtl}
+.infographic *{direction:rtl}
+.info-header{text-align:center;margin-bottom:28px}
+.info-header-img{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:16px}
+.info-title{line-height:1.2;margin-bottom:8px}
+.info-subtitle{opacity:.7;line-height:1.6}
+
+[contenteditable]{outline:none;cursor:text;border-radius:4px;transition:.2s}
+[contenteditable]:hover{outline:2px dashed var(--gold)}
+[contenteditable]:focus{outline:2px solid var(--accent);background:rgba(212,118,110,.05)}
+
+/* Flow */
+.info-flow .info-step{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;position:relative}
+.info-flow .step-num{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0}
+.info-flow .step-content{flex:1;padding-top:8px}
+.info-flow .step-title{font-weight:700;font-size:1.1rem;margin-bottom:4px}
+.info-flow .step-desc{font-size:.9rem;opacity:.75;line-height:1.7}
+.info-flow .info-step:not(:last-child)::after{content:'';position:absolute;right:22px;top:46px;bottom:-24px;width:3px;border-radius:3px}
+
+/* Grid */
+.info-grid .info-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.info-grid .info-step{padding:20px;border-radius:14px;text-align:center}
+.info-grid .step-num{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;margin:0 auto 10px}
+.info-grid .step-title{font-weight:700;font-size:1rem;margin-bottom:6px}
+.info-grid .step-desc{font-size:.85rem;opacity:.7;line-height:1.6}
+
+/* Zigzag */
+.info-zigzag .info-step{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px}
+.info-zigzag .info-step:nth-child(even){flex-direction:row-reverse}
+.info-zigzag .info-step:nth-child(even) .step-content{text-align:left}
+.info-zigzag .step-num{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0}
+.info-zigzag .step-content{flex:1;padding-top:8px}
+.info-zigzag .step-title{font-weight:700;font-size:1.1rem;margin-bottom:4px}
+.info-zigzag .step-desc{font-size:.9rem;opacity:.75;line-height:1.7}
+
+.info-footer{text-align:center;margin-top:28px;padding-top:16px;font-size:.78rem;opacity:.5}
+
+/* Decorative styles for templates */
+.tpl-decorated .info-header{position:relative;padding-bottom:20px}
+.tpl-decorated .info-header::after{content:'';position:absolute;bottom:0;right:20%;left:20%;height:3px;border-radius:3px}
+.tpl-cards .info-step{background:var(--card);border-radius:14px;padding:20px;border:1px solid rgba(0,0,0,.06);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.tpl-cards .info-flow .info-step:not(:last-child)::after{display:none}
+.tpl-cards .info-flow .info-step{margin-bottom:12px}
+.tpl-ribbon .step-num{border-radius:8px!important;position:relative}
+.tpl-ribbon .step-title{border-bottom:2px solid;padding-bottom:4px;display:inline-block}
+.tpl-bubble .step-num{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.tpl-bubble .info-step{position:relative}
+.tpl-bubble .step-content{background:rgba(255,255,255,.6);border-radius:12px;padding:12px 16px!important}
+
+/* ===== WOW TEMPLATE: Zigzag Path ===== */
+.tpl-zigpath{position:relative}
+.tpl-zigpath .info-header{margin-bottom:36px}
+.tpl-zigpath .info-steps-wrap{position:relative;padding:0 20px}
+.tpl-zigpath .info-steps-wrap svg.path-line{position:absolute;top:0;right:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.tpl-zigpath .info-step{display:flex;align-items:center;gap:16px;margin-bottom:28px;position:relative;z-index:1}
+.tpl-zigpath .info-step:nth-child(odd){justify-content:flex-start;padding-right:0}
+.tpl-zigpath .info-step:nth-child(even){justify-content:flex-end;padding-left:0;flex-direction:row-reverse}
+.tpl-zigpath .step-num{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0;border:3px solid;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.tpl-zigpath .step-chip{padding:12px 24px;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);min-width:60%}
+.tpl-zigpath .step-title{font-weight:700;font-size:1rem;margin-bottom:2px}
+.tpl-zigpath .step-desc{font-size:.82rem;opacity:.7;line-height:1.5}
+
+/* ===== WOW TEMPLATE: Orbital ===== */
+.tpl-orbital .info-header{margin-bottom:16px}
+.tpl-orbital .orbit-wrap{position:relative;width:100%;padding-bottom:100%;max-width:500px;margin:0 auto}
+.tpl-orbital .orbit-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;text-align:center;z-index:2;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.tpl-orbital .orbit-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:2px dashed;opacity:.25}
+.tpl-orbital .orbit-ring.r1{width:70%;height:70%;transform:translate(-50%,-50%)}
+.tpl-orbital .orbit-ring.r2{width:95%;height:95%;transform:translate(-50%,-50%)}
+.tpl-orbital .orbit-step{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tpl-orbital .orbit-step .step-num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;box-shadow:0 3px 12px rgba(0,0,0,.1)}
+.tpl-orbital .orbit-step .step-chip{padding:4px 12px;border-radius:10px;font-size:.78rem;font-weight:600;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+
+/* ===== WOW TEMPLATE: Bento Grid ===== */
+.tpl-bento .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tpl-bento .bento-grid .info-step{padding:22px 18px;border-radius:18px;position:relative;overflow:hidden}
+.tpl-bento .bento-grid .info-step:nth-child(1){grid-column:span 2}
+.tpl-bento .bento-grid .info-step:nth-child(4){grid-column:span 2}
+.tpl-bento .bento-grid .step-num-badge{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:8px;display:inline-block;margin-bottom:8px;opacity:.8}
+.tpl-bento .bento-grid .step-title{font-weight:700;font-size:1.05rem;margin-bottom:4px}
+.tpl-bento .bento-grid .step-desc{font-size:.82rem;opacity:.65;line-height:1.6}
+.tpl-bento .bento-grid .info-step::after{content:'';position:absolute;top:-20px;left:-20px;width:60px;height:60px;border-radius:50%;opacity:.08}
+
+/* ===== WOW TEMPLATE: Floating Cards ===== */
+.tpl-float .float-stack{display:flex;flex-direction:column;gap:14px;max-width:600px;margin:0 auto}
+.tpl-float .info-step{background:#fff;border-radius:18px;padding:20px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.04);transition:transform .2s}
+.tpl-float .info-step:hover{transform:translateY(-2px)}
+.tpl-float .info-step:nth-child(odd){transform:translateX(12px)}
+.tpl-float .info-step:nth-child(even){transform:translateX(-12px)}
+.tpl-float .info-step:nth-child(odd):hover{transform:translateX(12px) translateY(-2px)}
+.tpl-float .info-step:nth-child(even):hover{transform:translateX(-12px) translateY(-2px)}
+.tpl-float .step-num{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.tpl-float .step-content{flex:1}
+.tpl-float .step-title{font-weight:700;font-size:1.05rem;margin-bottom:3px}
+.tpl-float .step-desc{font-size:.85rem;opacity:.65;line-height:1.6}
+
+/* ===== Flow: Decision Tree ===== */
+.info-decision{text-align:center}
+.info-decision .decision-start{display:inline-block;padding:14px 28px;border-radius:12px;font-weight:700;font-size:1.1rem;margin-bottom:16px}
+.info-decision .decision-node{display:inline-block;padding:14px 20px;transform:rotate(0deg);border-radius:12px;border:2px solid;margin:8px auto;font-weight:700;position:relative}
+.info-decision .decision-diamond{width:0;height:0;margin:0 auto}
+.info-decision .decision-branches{display:flex;gap:24px;justify-content:center;margin-top:12px}
+.info-decision .branch{flex:1;max-width:280px;text-align:center}
+.info-decision .branch-label{font-size:.78rem;font-weight:700;margin-bottom:8px;padding:4px 14px;border-radius:20px;display:inline-block}
+.info-decision .branch-box{padding:16px;border-radius:12px;margin-top:8px}
+.info-decision .branch-box .step-title{font-weight:700;font-size:1rem;margin-bottom:4px}
+.info-decision .branch-box .step-desc{font-size:.85rem;opacity:.7;line-height:1.6}
+.info-decision .decision-arrow{width:2px;height:20px;margin:0 auto;opacity:.3}
+.info-decision .decision-row{margin-bottom:20px}
+
+/* ===== Flow: Funnel ===== */
+.info-funnel{text-align:center}
+.info-funnel .funnel-step{margin:0 auto 8px;padding:14px 20px;border-radius:12px;transition:.2s;position:relative}
+.info-funnel .funnel-step .step-title{font-weight:700;font-size:1.05rem;margin-bottom:2px}
+.info-funnel .funnel-step .step-desc{font-size:.85rem;opacity:.7}
+.info-funnel .funnel-arrow{text-align:center;font-size:1.2rem;opacity:.3;margin:2px 0}
+
+/* ===== Zigzag: Timeline ===== */
+.info-timeline{position:relative;padding:20px 0}
+.info-timeline .timeline-line{position:absolute;top:0;bottom:0;right:50%;width:3px;border-radius:3px;transform:translateX(50%)}
+.info-timeline .timeline-step{display:flex;align-items:flex-start;margin-bottom:28px;position:relative}
+.info-timeline .timeline-step:nth-child(odd){flex-direction:row;padding-left:55%}
+.info-timeline .timeline-step:nth-child(even){flex-direction:row-reverse;padding-right:55%}
+.info-timeline .timeline-dot{width:18px;height:18px;border-radius:50%;position:absolute;right:50%;transform:translateX(50%);z-index:2;border:3px solid #fff}
+.info-timeline .timeline-content{padding:14px 18px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05);flex:1}
+.info-timeline .timeline-content .step-title{font-weight:700;font-size:1rem;margin-bottom:4px}
+.info-timeline .timeline-content .step-desc{font-size:.85rem;opacity:.7;line-height:1.6}
+
+/* ===== Zigzag: Snake ===== */
+.info-snake .snake-row{display:flex;gap:0;margin-bottom:4px;position:relative}
+.info-snake .snake-step{flex:1;padding:16px;text-align:center;border-radius:12px;position:relative}
+.info-snake .snake-step .step-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;margin:0 auto 8px}
+.info-snake .snake-step .step-title{font-weight:700;font-size:.95rem;margin-bottom:3px}
+.info-snake .snake-step .step-desc{font-size:.8rem;opacity:.7;line-height:1.5}
+.info-snake .snake-turn{text-align:center;font-size:1.5rem;opacity:.2;margin:0 4px}
+.info-snake .snake-connector{height:20px;display:flex;justify-content:center;align-items:center;opacity:.2}
+
+/* ===== Zigzag: Compare ===== */
+.info-compare .compare-header{display:flex;gap:16px;margin-bottom:16px}
+.info-compare .compare-col-title{flex:1;text-align:center;padding:12px;border-radius:12px;font-weight:700;font-size:1.1rem}
+.info-compare .compare-row{display:flex;gap:16px;margin-bottom:8px}
+.info-compare .compare-cell{flex:1;padding:14px;border-radius:10px;text-align:center}
+.info-compare .compare-cell .step-title{font-weight:700;font-size:.95rem;margin-bottom:3px}
+.info-compare .compare-cell .step-desc{font-size:.82rem;opacity:.7;line-height:1.5}
+
+/* ===== Grid: 3-columns ===== */
+.info-3col .info-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.info-3col .info-step{padding:20px 14px;border-radius:14px;text-align:center}
+.info-3col .step-num{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;margin:0 auto 10px}
+.info-3col .step-title{font-weight:700;font-size:1rem;margin-bottom:6px}
+.info-3col .step-desc{font-size:.85rem;opacity:.7;line-height:1.6}
+
+/* ===== Grid: Masonry ===== */
+.info-masonry .info-steps{column-count:2;column-gap:14px}
+.info-masonry .info-step{break-inside:avoid;padding:18px;border-radius:14px;margin-bottom:14px;text-align:center}
+.info-masonry .step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;margin:0 auto 8px}
+.info-masonry .step-title{font-weight:700;font-size:1rem;margin-bottom:4px}
+.info-masonry .step-desc{font-size:.85rem;opacity:.7;line-height:1.6}
+
+/* ===== Grid: Icons ===== */
+.info-icons .info-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.info-icons .info-step{text-align:center;padding:16px 10px}
+.info-icons .step-num{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;margin:0 auto 12px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.info-icons .step-title{font-weight:700;font-size:.95rem;margin-bottom:4px}
+.info-icons .step-desc{font-size:.82rem;opacity:.65;line-height:1.5}
+
+#exportBox{position:absolute;left:-9999px;top:0}
+
+@media(max-width:800px){
+  .split{flex-direction:column}
+  .panel{width:100%;border-left:none;border-bottom:1px solid var(--border);max-height:45vh}
+  .preview{min-height:50vh}
+  .topbar{flex-wrap:wrap}
+  .topbar input{min-width:120px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar with generate always visible -->
+<div class="topbar">
+  <h1>מחולל אינפוגרפיקה</h1>
+  <div class="topbar-sep"></div>
+  <input type="text" id="inpTopic" placeholder="על מה האינפוגרפיקה?">
+  <textarea id="inpNotes" placeholder="בקשות מיוחדות..."></textarea>
+  <button class="tb gen" id="genBtn" onclick="generate()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+    צור
+  </button>
+  <button class="tb dl" onclick="downloadPNG()" id="dlBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    הורדה
+  </button>
+</div>
+
+<div class="split">
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-nav">
+      <button class="panel-tab active" onclick="showTab('layout')" id="tab-layout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        סוג תוצר
+      </button>
+      <button class="panel-tab" onclick="showTab('templates')" id="tab-templates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        תבניות
+      </button>
+      <button class="panel-tab" onclick="showTab('colors')" id="tab-colors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+        צבעים
+      </button>
+      <button class="panel-tab" onclick="showTab('fonts')" id="tab-fonts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        גופנים
+      </button>
+      <button class="panel-tab" onclick="showTab('images')" id="tab-images">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        תמונה
+      </button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- TAB: LAYOUT (first!) -->
+      <div id="panelLayout">
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            סוג לייאאוט
+          </div>
+          <div class="layout-row">
+            <div class="layout-opt sel" onclick="pickLayout('flow',this)">
+              <svg viewBox="0 0 40 30" fill="none"><circle cx="8" cy="5" r="4" fill="var(--gold)" opacity=".3"/><rect x="15" y="3" width="22" height="2.5" rx="1" fill="var(--text)" opacity=".15"/><line x1="8" y1="9" x2="8" y2="13" stroke="var(--border)" stroke-width="1.5"/><circle cx="8" cy="17" r="4" fill="var(--accent)" opacity=".3"/><rect x="15" y="15" width="22" height="2.5" rx="1" fill="var(--text)" opacity=".15"/><line x1="8" y1="21" x2="8" y2="25" stroke="var(--border)" stroke-width="1.5"/><circle cx="8" cy="28" r="2.5" fill="var(--gold)" opacity=".2"/></svg>
+              <span>זרימה</span>
+            </div>
+            <div class="layout-opt" onclick="pickLayout('grid',this)">
+              <svg viewBox="0 0 40 30" fill="none"><rect x="2" y="2" width="16" height="12" rx="3" fill="var(--gold)" opacity=".12"/><rect x="22" y="2" width="16" height="12" rx="3" fill="var(--accent)" opacity=".12"/><rect x="2" y="18" width="16" height="12" rx="3" fill="var(--accent)" opacity=".08"/><rect x="22" y="18" width="16" height="12" rx="3" fill="var(--gold)" opacity=".08"/></svg>
+              <span>גריד</span>
+            </div>
+            <div class="layout-opt" onclick="pickLayout('zigzag',this)">
+              <svg viewBox="0 0 40 30" fill="none"><circle cx="6" cy="5" r="3.5" fill="var(--gold)" opacity=".3"/><rect x="13" y="3" width="24" height="2" rx="1" fill="var(--text)" opacity=".12"/><circle cx="34" cy="17" r="3.5" fill="var(--accent)" opacity=".3"/><rect x="3" y="15" width="24" height="2" rx="1" fill="var(--text)" opacity=".12"/><circle cx="6" cy="28" r="3" fill="var(--gold)" opacity=".2"/><rect x="13" y="27" width="20" height="2" rx="1" fill="var(--text)" opacity=".1"/></svg>
+              <span>זיגזג</span>
+            </div>
+          </div>
+        </div>
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+            תבניות לייאאוט
+          </div>
+          <div class="sub-tpl-grid" id="subTplGrid"></div>
+        </div>
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+            מספר שלבים
+          </div>
+          <div class="count-row">
+            <button class="cbtn" onclick="changeCount(-1)">-</button>
+            <span class="cval" id="countVal">5</span>
+            <button class="cbtn" onclick="changeCount(1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: TEMPLATES -->
+      <div id="panelTemplates" style="display:none">
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            ערכות עיצוב מוכנות
+          </div>
+          <div class="tpl-grid" id="tplGrid"></div>
+        </div>
+      </div>
+
+      <!-- TAB: COLORS -->
+      <div id="panelColors" style="display:none">
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            פלטת צבעים
+          </div>
+          <div class="pal-grid" id="palGrid"></div>
+        </div>
+      </div>
+
+      <!-- TAB: FONTS -->
+      <div id="panelFonts" style="display:none">
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            שילוב גופנים
+          </div>
+          <div class="fnt-grid" id="fntGrid"></div>
+        </div>
+      </div>
+
+      <!-- TAB: IMAGES -->
+      <div id="panelImages" style="display:none">
+        <div class="psec">
+          <div class="psec-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            תמונת כותרת
+          </div>
+          <div class="img-upload" id="headerImgUpload">
+            <input type="file" accept="image/*" onchange="uploadHeaderImg(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <p>לחצו להעלאת תמונה לכותרת</p>
+          </div>
+          <div class="img-preview" id="headerImgPreview" style="display:none">
+            <img id="headerImgEl">
+            <button class="img-remove" onclick="removeHeaderImg()">&times;</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="preview">
+    <div class="preview-frame" id="previewFrame">
+      <div class="placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <h3>האינפוגרפיקה תופיע כאן</h3>
+        <p>הזינו נושא ולחצו "צור", או בחרו תבנית</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="exportBox"></div>
+
+<script>
+const S = {
+  topic:'',notes:'',layout:'flow',stepCount:5,
+  paletteIdx:0,fontIdx:0,templateIdx:-1,
+  subTplIdx:0,
+  headerImg:null,
+  content:null
+};
+
+// Layout sub-templates per layout type
+const layoutSubTemplates={
+  flow:[
+    {id:'flow-linear',name:'תהליך ליניארי',desc:'שלבים עם קו מחבר',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><circle cx="12" cy="25" r="7" fill="var(--gold)" opacity=".3"/><text x="12" y="28" text-anchor="middle" font-size="7" font-weight="900" fill="var(--text)">1</text><line x1="19" y1="25" x2="31" y2="25" stroke="var(--border)" stroke-width="2"/><circle cx="40" cy="25" r="7" fill="var(--accent)" opacity=".3"/><text x="40" y="28" text-anchor="middle" font-size="7" font-weight="900" fill="var(--text)">2</text><line x1="47" y1="25" x2="59" y2="25" stroke="var(--border)" stroke-width="2"/><circle cx="68" cy="25" r="7" fill="var(--gold)" opacity=".3"/><text x="68" y="28" text-anchor="middle" font-size="7" font-weight="900" fill="var(--text)">3</text></svg>`},
+    {id:'flow-vertical',name:'זרימה אנכית',desc:'שלבים מלמעלה למטה עם חיצים',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="22" y="3" width="36" height="10" rx="4" fill="var(--gold)" opacity=".2"/><text x="40" y="10" text-anchor="middle" font-size="6" fill="var(--text)">שלב 1</text><path d="M40 13 L40 18" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="22" y="20" width="36" height="10" rx="4" fill="var(--accent)" opacity=".2"/><text x="40" y="27" text-anchor="middle" font-size="6" fill="var(--text)">שלב 2</text><path d="M40 30 L40 35" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ah)"/><rect x="22" y="37" width="36" height="10" rx="4" fill="var(--gold)" opacity=".2"/><text x="40" y="44" text-anchor="middle" font-size="6" fill="var(--text)">שלב 3</text><defs><marker id="ah" markerWidth="6" markerHeight="4" refX="3" refY="2" orient="auto"><path d="M0 0 L3 2 L0 4" fill="var(--accent)"/></marker></defs></svg>`},
+    {id:'flow-decision',name:'עץ החלטות',desc:'תרשים עם הסתעפויות כן/לא',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="25" y="2" width="30" height="9" rx="3" fill="var(--gold)" opacity=".25"/><text x="40" y="8" text-anchor="middle" font-size="5" fill="var(--text)">התחלה</text><line x1="40" y1="11" x2="40" y2="17" stroke="var(--border)" stroke-width="1"/><polygon points="40,17 50,25 40,33 30,25" fill="var(--accent)" opacity=".2" stroke="var(--accent)" stroke-width=".5"/><text x="40" y="27" text-anchor="middle" font-size="5" fill="var(--text)">?</text><line x1="30" y1="25" x2="15" y2="25" stroke="var(--border)" stroke-width="1"/><text x="23" y="23" font-size="4" fill="var(--accent)">לא</text><rect x="3" y="20" width="14" height="8" rx="3" fill="var(--gold)" opacity=".2"/><line x1="50" y1="25" x2="65" y2="25" stroke="var(--border)" stroke-width="1"/><text x="57" y="23" font-size="4" fill="#3A5A40">כן</text><rect x="63" y="20" width="14" height="8" rx="3" fill="#3A5A40" opacity=".2"/><line x1="40" y1="33" x2="40" y2="39" stroke="var(--border)" stroke-width="1"/><rect x="28" y="39" width="24" height="8" rx="3" fill="var(--accent)" opacity=".15"/></svg>`},
+    {id:'flow-funnel',name:'משפך',desc:'שלבים שמצטמצמים — מרחב לממוקד',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="5" y="4" width="70" height="9" rx="4" fill="var(--gold)" opacity=".2"/><text x="40" y="10" text-anchor="middle" font-size="5" fill="var(--text)">שלב 1</text><rect x="13" y="17" width="54" height="9" rx="4" fill="var(--accent)" opacity=".2"/><text x="40" y="23" text-anchor="middle" font-size="5" fill="var(--text)">שלב 2</text><rect x="21" y="30" width="38" height="9" rx="4" fill="var(--gold)" opacity=".25"/><text x="40" y="36" text-anchor="middle" font-size="5" fill="var(--text)">שלב 3</text><rect x="29" y="43" width="22" height="6" rx="3" fill="var(--accent)" opacity=".3"/><text x="40" y="47" text-anchor="middle" font-size="4" fill="var(--text)">תוצאה</text></svg>`}
+  ],
+  grid:[
+    {id:'grid-2x2',name:'רשת 2×2',desc:'4 כרטיסים בסידור מרובע',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="4" y="4" width="34" height="18" rx="4" fill="var(--gold)" opacity=".15"/><rect x="42" y="4" width="34" height="18" rx="4" fill="var(--accent)" opacity=".15"/><rect x="4" y="28" width="34" height="18" rx="4" fill="var(--accent)" opacity=".15"/><rect x="42" y="28" width="34" height="18" rx="4" fill="var(--gold)" opacity=".15"/></svg>`},
+    {id:'grid-3col',name:'3 עמודות',desc:'כרטיסים בשורה אחת רחבה',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="3" y="8" width="22" height="34" rx="4" fill="var(--gold)" opacity=".15"/><rect x="29" y="8" width="22" height="34" rx="4" fill="var(--accent)" opacity=".15"/><rect x="55" y="8" width="22" height="34" rx="4" fill="var(--gold)" opacity=".2"/></svg>`},
+    {id:'grid-masonry',name:'מזונרי',desc:'כרטיסים בגדלים שונים כמו פינטרסט',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="4" y="3" width="23" height="20" rx="3" fill="var(--gold)" opacity=".2"/><rect x="4" y="27" width="23" height="20" rx="3" fill="var(--accent)" opacity=".15"/><rect x="31" y="3" width="23" height="28" rx="3" fill="var(--accent)" opacity=".2"/><rect x="31" y="35" width="23" height="12" rx="3" fill="var(--gold)" opacity=".15"/><rect x="58" y="3" width="18" height="15" rx="3" fill="var(--gold)" opacity=".15"/><rect x="58" y="22" width="18" height="25" rx="3" fill="var(--accent)" opacity=".2"/></svg>`},
+    {id:'grid-icons',name:'אייקונים + טקסט',desc:'עיגול מרכזי עם הסבר מתחת',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><circle cx="16" cy="16" r="8" fill="var(--gold)" opacity=".2"/><rect x="6" y="28" width="20" height="3" rx="1" fill="var(--text)" opacity=".12"/><rect x="8" y="34" width="16" height="2" rx="1" fill="var(--text)" opacity=".08"/><circle cx="44" cy="16" r="8" fill="var(--accent)" opacity=".2"/><rect x="34" y="28" width="20" height="3" rx="1" fill="var(--text)" opacity=".12"/><rect x="36" y="34" width="16" height="2" rx="1" fill="var(--text)" opacity=".08"/><circle cx="68" cy="16" r="8" fill="var(--gold)" opacity=".2"/><rect x="58" y="28" width="20" height="3" rx="1" fill="var(--text)" opacity=".12"/><rect x="60" y="34" width="16" height="2" rx="1" fill="var(--text)" opacity=".08"/></svg>`}
+  ],
+  zigzag:[
+    {id:'zz-timeline',name:'ציר זמן',desc:'אירועים לאורך קו אופקי',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><line x1="5" y1="25" x2="75" y2="25" stroke="var(--border)" stroke-width="2"/><circle cx="15" cy="25" r="4" fill="var(--gold)" opacity=".3"/><rect x="7" y="6" width="16" height="8" rx="3" fill="var(--gold)" opacity=".15"/><line x1="15" y1="14" x2="15" y2="21" stroke="var(--border)" stroke-width="1"/><circle cx="40" cy="25" r="4" fill="var(--accent)" opacity=".3"/><rect x="32" y="32" width="16" height="8" rx="3" fill="var(--accent)" opacity=".15"/><line x1="40" y1="29" x2="40" y2="32" stroke="var(--border)" stroke-width="1"/><circle cx="65" cy="25" r="4" fill="var(--gold)" opacity=".3"/><rect x="57" y="6" width="16" height="8" rx="3" fill="var(--gold)" opacity=".15"/><line x1="65" y1="14" x2="65" y2="21" stroke="var(--border)" stroke-width="1"/></svg>`},
+    {id:'zz-snake',name:'נחש / S',desc:'שלבים בתנועת זיגזג מתפתלת',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="4" y="4" width="72" height="10" rx="4" fill="var(--gold)" opacity=".12"/><path d="M72 14 Q76 20 72 26" stroke="var(--border)" stroke-width="1.5" fill="none"/><rect x="4" y="20" width="72" height="10" rx="4" fill="var(--accent)" opacity=".12"/><path d="M8 30 Q4 36 8 42" stroke="var(--border)" stroke-width="1.5" fill="none"/><rect x="4" y="36" width="72" height="10" rx="4" fill="var(--gold)" opacity=".12"/></svg>`},
+    {id:'zz-compare',name:'השוואה',desc:'שני צדדים — יתרונות מול חסרונות',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><rect x="4" y="4" width="34" height="42" rx="5" fill="var(--gold)" opacity=".1"/><rect x="42" y="4" width="34" height="42" rx="5" fill="var(--accent)" opacity=".1"/><line x1="40" y1="4" x2="40" y2="46" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="3 2"/><text x="21" y="14" text-anchor="middle" font-size="6" font-weight="700" fill="#3A5A40">+</text><text x="59" y="14" text-anchor="middle" font-size="6" font-weight="700" fill="var(--accent)">−</text><rect x="8" y="20" width="26" height="4" rx="2" fill="var(--gold)" opacity=".15"/><rect x="8" y="28" width="22" height="4" rx="2" fill="var(--gold)" opacity=".12"/><rect x="8" y="36" width="24" height="4" rx="2" fill="var(--gold)" opacity=".1"/><rect x="46" y="20" width="26" height="4" rx="2" fill="var(--accent)" opacity=".15"/><rect x="46" y="28" width="22" height="4" rx="2" fill="var(--accent)" opacity=".12"/><rect x="46" y="36" width="24" height="4" rx="2" fill="var(--accent)" opacity=".1"/></svg>`},
+    {id:'zz-classic',name:'זיגזג קלאסי',desc:'שלבים מתחלפים ימין-שמאל',
+      svg:`<svg viewBox="0 0 80 50" fill="none"><circle cx="15" cy="10" r="5" fill="var(--gold)" opacity=".3"/><rect x="24" y="7" width="30" height="3" rx="1" fill="var(--text)" opacity=".1"/><rect x="24" y="12" width="20" height="2" rx="1" fill="var(--text)" opacity=".06"/><circle cx="65" cy="25" r="5" fill="var(--accent)" opacity=".3"/><rect x="26" y="22" width="30" height="3" rx="1" fill="var(--text)" opacity=".1"/><rect x="36" y="27" width="20" height="2" rx="1" fill="var(--text)" opacity=".06"/><circle cx="15" cy="40" r="5" fill="var(--gold)" opacity=".3"/><rect x="24" y="37" width="30" height="3" rx="1" fill="var(--text)" opacity=".1"/><rect x="24" y="42" width="20" height="2" rx="1" fill="var(--text)" opacity=".06"/></svg>`}
+  ]
+};
+
+const palettes=[
+  {name:'טורקיז קלאסי',colors:['#0D9488','#14B8A6','#E8784D','#0F766E','#D97706'],bg:'#F0FDFA',text:'#134E4A',accent:'#E8784D',stepBg:'#B2F5EA',line:'#99F6E4'},
+  {name:'אבן ירושלמית',colors:['#C9A96E','#89CFF0','#9DB5A0','#D4766E','#8B7355'],bg:'#FAF5EC',text:'#3A3A50',accent:'#D4766E',stepBg:'#EDE0CC',line:'#E0D0B8'},
+  {name:'פרחי מים',colors:['#E8A0BF','#B5C8E4','#A7D7C5','#9B7EC8','#D4766E'],bg:'#FFFAF8',text:'#4A3050',accent:'#E8A0BF',stepBg:'#F0D8E8',line:'#E8C0D8'},
+  {name:'אדמה וטרקוטה',colors:['#AB5B46','#B09385','#C9A96E','#8B6F4E','#D4766E'],bg:'#F8F3ED',text:'#2B2628',accent:'#AB5B46',stepBg:'#E5D8C8',line:'#D1C5BF'},
+  {name:'יער ירוק',colors:['#3A5A40','#578157','#A2B189','#C9A96E','#6B8F71'],bg:'#F5F3ED',text:'#2A3028',accent:'#578157',stepBg:'#D5DCC8',line:'#C5D0B8'},
+  {name:'אוקיינוס',colors:['#1B263C','#415C76','#88A8C8','#EDCA83','#5A7A9A'],bg:'#F5F6F4',text:'#1B263C',accent:'#EDCA83',stepBg:'#D0DDE8',line:'#B8C8D8'},
+  {name:'גלידה איטלקית',colors:['#FF8A8A','#F5D060','#6BC5D2','#7CC8A8','#C896D4'],bg:'#FFFDF5',text:'#3A3A50',accent:'#FF8A8A',stepBg:'#FFE8E8',line:'#FFD0D0'},
+  {name:'לבנדר ואפרסק',colors:['#B59BD5','#E8A880','#8CBFAA','#D4A060','#D4869E'],bg:'#FBF7FF',text:'#4A3F55',accent:'#B59BD5',stepBg:'#E4D8F0',line:'#D8C8E8'},
+  {name:'נקטרינה',colors:['#EF522C','#E22997','#D477C0','#FD9651','#C44820'],bg:'#FFF8F5',text:'#2D2028',accent:'#EF522C',stepBg:'#FFE0D0',line:'#FFD0C0'},
+  {name:'שקיעה חמה',colors:['#D4766E','#E9C46A','#2A9D8F','#E8A49E','#C9A96E'],bg:'#FDF6F0',text:'#3A3028',accent:'#D4766E',stepBg:'#FFE0D8',line:'#F0D0C8'},
+  {name:'ורוד ומנטה',colors:['#F3A2BE','#E9C46A','#7CBFB5','#D080A0','#A8D8C8'],bg:'#FFFBFC',text:'#3A3040',accent:'#F3A2BE',stepBg:'#FFE0EC',line:'#FFD0E0'},
+  {name:'מינימלי',colors:['#2A9D8F','#1a7a6d','#555555','#888888','#333333'],bg:'#FAFAFA',text:'#333333',accent:'#2A9D8F',stepBg:'#D8F0E8',line:'#C0E0D8'},
+  {name:'סחלב ומנגו',colors:['#FF90E8','#FFD275','#60C8C0','#FF9F1C','#D070C0'],bg:'#FFF5FC',text:'#2A2030',accent:'#FF90E8',stepBg:'#FFD8F0',line:'#FFD0F0'},
+  {name:'לימון ודובדבן',colors:['#FFCF56','#FF6B6B','#6A82FB','#E060A0','#FFB830'],bg:'#FFFDF0',text:'#2A2040',accent:'#FF6B6B',stepBg:'#FFF0C8',line:'#FFE8A0'},
+  {name:'תכלת ומרווה',colors:['#5AADE0','#7FBBEE','#7AA080','#89CFF0','#6B9F70'],bg:'#F5FAFF',text:'#2A3A50',accent:'#5AADE0',stepBg:'#D8ECFF',line:'#C8E0F8'},
+  {name:'קרם חם',colors:['#5A9090','#7A9570','#D4A574','#C9A0A0','#8AADAD'],bg:'#F5F0E8',text:'#4A3F35',accent:'#C9A0A0',stepBg:'#E0D5C5',line:'#D8D0C0'}
+];
+
+const fontPairs=[
+  // כתב יד + רגיל
+  {title:'GveretLevin',body:'Heebo',label:'גברת לוין + היבו',type:'handwriting'},
+  {title:'DanaYad',body:'Heebo',label:'דנה יד + היבו',type:'handwriting'},
+  {title:'Carmela',body:'Heebo',label:'כרמלה + היבו',type:'handwriting'},
+  {title:'Cafe',body:'Heebo',label:'קפה + היבו',type:'handwriting',ts:'2.8rem'},
+  {title:'Tapuach',body:'Heebo',label:'תפוח + היבו',type:'handwriting'},
+  {title:'Paskol',body:'Heebo',label:'פסקול + היבו',type:'handwriting'},
+  {title:'Petel',body:'Heebo',label:'פטל + היבו',type:'handwriting'},
+  {title:'Baznat',body:'Heebo',label:'בזנט + היבו',type:'handwriting'},
+  {title:'Noot',body:'Heebo',label:'נוט + היבו',type:'handwriting'},
+  {title:'Liron',body:'Heebo',label:'לירון + היבו',type:'handwriting'},
+  {title:'Hevel',body:'Heebo',label:'הבל + היבו',type:'handwriting'},
+  {title:'Levavot',body:'Heebo',label:'לבבות + היבו',type:'handwriting'},
+  {title:'Takila',body:'Heebo',label:'טקילה + היבו',type:'handwriting'},
+  {title:'Shmuel',body:'Heebo',label:'שמואל + היבו',type:'handwriting'},
+  {title:'DinaTalBal',body:'Heebo',label:'דינה טל בל + היבו',type:'handwriting'},
+  {title:'Manual',body:'Heebo',label:'מנואל + היבו',type:'handwriting'},
+  // דקורטיבי + רגיל
+  {title:'Nehama',body:'Assistant',label:'נחמה + אסיסטנט',type:'decorative'},
+  {title:'Karantina',body:'Heebo',label:'קרנטינה + היבו',type:'decorative'},
+  {title:'Dragon',body:'Heebo',label:'דרגון + היבו',type:'decorative'},
+  {title:'Kanisah',body:'Heebo',label:'כניסה + היבו',type:'decorative'},
+  {title:'HummusChips',body:'Assistant',label:'חומוס צ\'יפס + אסיסטנט',type:'decorative'},
+  {title:'Carnaval',body:'Heebo',label:'קרנבל + היבו',type:'decorative'},
+  {title:'TzevaTari',body:'Heebo',label:'צבע טרי + היבו',type:'decorative'},
+  {title:'Kidma',body:'Heebo',label:'קדמה + היבו',type:'decorative'},
+  // בולד / נקי
+  {title:'Secular One',body:'Heebo',label:'סקולר וואן + היבו',type:'bold'},
+  {title:'Suez One',body:'Frank Ruhl Libre',label:'סואץ + פרנק ריהל',type:'serif'},
+  {title:'Heebo',body:'Heebo',label:'היבו בולד + היבו',type:'clean',tw:900},
+  {title:'Rubik',body:'Rubik',label:'רוביק + רוביק',type:'clean',tw:900},
+];
+
+// Templates: visual style presets
+// fontIdx mapping: 0=GveretLevin,1=DanaYad,2=Carmela,3=Cafe,4=Tapuach,5=Paskol,6=Petel,
+// 7=Baznat,8=Noot,9=Liron,10=Hevel,11=Levavot,12=Takila,13=Shmuel,14=DinaTalBal,15=Manual,
+// 16=Nehama,17=Karantina,18=Dragon,19=Kanisah,20=HummusChips,21=Carnaval,22=TzevaTari,23=Kidma,
+// 24=SecularOne,25=SuezOne,26=Heebo,27=Rubik
+const templates=[
+  // WOW templates
+  {name:'נתיב זיגזג',desc:'שלבים לאורך נתיב מקווקו מתפתל',style:'tpl-zigpath',palIdx:14,fontIdx:0,layout:'zigpath',wow:true},
+  {name:'בנטו צבעוני',desc:'כרטיסים בגדלים שונים עם צבעי פסטל',style:'tpl-bento',palIdx:6,fontIdx:17,layout:'bento',wow:true},
+  {name:'כרטיסים צפים',desc:'כרטיסי 3D עם מספרים בגרדיאנט',style:'tpl-float',palIdx:7,fontIdx:2,layout:'float',wow:true},
+  // Classic templates
+  {name:'קלאסי נקי',desc:'עיגולי מספרים עם קו מחבר',style:'',palIdx:0,fontIdx:17,layout:'flow'},
+  {name:'כרטיסיות',desc:'כל שלב בכרטיס נפרד עם צל',style:'tpl-cards',palIdx:1,fontIdx:0,layout:'flow'},
+  {name:'סרט מודגש',desc:'מספרים מרובעים וכותרות עם קו תחתון',style:'tpl-ribbon',palIdx:4,fontIdx:24,layout:'flow'},
+  {name:'בועות רכות',desc:'צל על מספרים ורקע שקוף לטקסט',style:'tpl-bubble',palIdx:2,fontIdx:2,layout:'flow'},
+  {name:'גריד מינימלי',desc:'4/6 כרטיסים בסידור מסודר',style:'',palIdx:11,fontIdx:26,layout:'grid'},
+  {name:'זיגזג צבעוני',desc:'שלבים מתחלפים ימין-שמאל',style:'',palIdx:6,fontIdx:4,layout:'zigzag'},
+  {name:'מקצועי כהה',desc:'גוונים עמוקים + זהב, סגנון עסקי',style:'tpl-decorated',palIdx:5,fontIdx:25,layout:'flow'},
+  {name:'פסטל חלומי',desc:'ורוד ולבנדר, כתב יד רך',style:'tpl-bubble',palIdx:7,fontIdx:1,layout:'zigzag'},
+];
+
+function init(){
+  // Palettes
+  document.getElementById('palGrid').innerHTML=palettes.map((p,i)=>`
+    <div class="pal-opt ${i===0?'sel':''}" onclick="pickPalette(${i},this)">
+      <div class="pal-colors">${p.colors.map(c=>`<div style="background:${c}"></div>`).join('')}</div>
+      <div class="pal-label">${p.name}</div>
+    </div>`).join('');
+
+  // Fonts
+  document.getElementById('fntGrid').innerHTML=fontPairs.map((f,i)=>`
+    <div class="fnt-opt ${i===0?'sel':''}" onclick="pickFont(${i},this)">
+      <div class="fp" style="font-family:'${f.title}',sans-serif;font-weight:${f.tw||700}">שלום עולם</div>
+      <div class="fb" style="font-family:'${f.body}',sans-serif">טקסט גוף</div>
+      <div class="fn">${f.label}</div>
+    </div>`).join('');
+
+  // Layout sub-templates
+  renderSubTpls();
+
+  // Templates
+  renderTemplates();
+}
+
+// Layout category mapping for template filtering
+const layoutCategories={
+  flow:['flow','zigpath','float'],
+  grid:['grid','bento'],
+  zigzag:['zigzag']
+};
+
+function renderTemplates(){
+  const cats=layoutCategories[S.layout]||[S.layout];
+  document.getElementById('tplGrid').innerHTML=templates.map((t,i)=>{
+    // Filter: only show templates matching current layout category
+    if(!cats.includes(t.layout)) return '';
+    const p=palettes[t.palIdx];
+    const f=fontPairs[t.fontIdx];
+    const wowBadge=t.wow?'<div style="position:absolute;top:6px;left:6px;background:linear-gradient(135deg,#7c4dff,#e040fb);color:#fff;font-size:.55rem;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:1px">WOW</div>':'';
+    let miniPreview='';
+    if(t.layout==='zigpath') miniPreview=`<svg width="120" height="60" viewBox="0 0 120 60" fill="none"><path d="M100 10 Q60 10 60 30 Q60 50 20 50" stroke="${p.colors[0]}" stroke-width="2" stroke-dasharray="4 3" fill="none"/><circle cx="100" cy="10" r="8" fill="${p.colors[0]}" opacity=".2"/><circle cx="60" cy="30" r="8" fill="${p.colors[1]}" opacity=".2"/><circle cx="20" cy="50" r="8" fill="${p.colors[2]}" opacity=".2"/><text x="100" y="13" text-anchor="middle" font-size="7" font-weight="900" fill="${p.text}">1</text><text x="60" y="33" text-anchor="middle" font-size="7" font-weight="900" fill="${p.text}">2</text><text x="20" y="53" text-anchor="middle" font-size="7" font-weight="900" fill="${p.text}">3</text></svg>`;
+    else if(t.layout==='bento') miniPreview=`<div style="display:grid;grid-template-columns:2fr 1fr;gap:4px;width:100px"><div style="background:${p.colors[0]}35;border-radius:6px;height:24px"></div><div style="background:${p.colors[1]}35;border-radius:6px;height:24px"></div><div style="background:${p.colors[2]}35;border-radius:6px;height:24px"></div><div style="background:${p.colors[3]||p.colors[0]}35;border-radius:6px;height:24px;grid-column:span 2"></div></div>`;
+    else if(t.layout==='float') miniPreview=`<div style="display:flex;flex-direction:column;gap:4px;width:110px"><div style="background:#fff;border-radius:8px;padding:5px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:6px;transform:translateX(6px)"><div style="width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,${p.colors[0]},${p.colors[1]});display:flex;align-items:center;justify-content:center;color:#fff;font-size:.45rem;font-weight:900">1</div><span style="font-size:.5rem;font-weight:700;color:${p.text}">שלב ראשון</span></div><div style="background:#fff;border-radius:8px;padding:5px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:6px;transform:translateX(-6px)"><div style="width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,${p.colors[1]},${p.colors[2]});display:flex;align-items:center;justify-content:center;color:#fff;font-size:.45rem;font-weight:900">2</div><span style="font-size:.5rem;font-weight:700;color:${p.text}">שלב שני</span></div></div>`;
+    else miniPreview=`<div style="display:flex;gap:6px;margin-top:10px">${p.colors.slice(0,3).map((c,j)=>`<div style="width:24px;height:24px;border-radius:${t.style==='tpl-ribbon'?'6px':'50%'};background:${c};display:flex;align-items:center;justify-content:center;color:${p.bg};font-size:.6rem;font-weight:900">${j+1}</div>`).join('')}</div>`;
+
+    return `<div class="tpl-card" onclick="applyTemplate(${i},this)">
+      <div class="tpl-preview" style="background:${p.bg};position:relative">
+        ${wowBadge}
+        <div style="font-family:'${f.title}',sans-serif;font-size:.9rem;font-weight:${f.tw||700};color:${p.text};margin-bottom:6px">כותרת לדוגמה</div>
+        ${miniPreview}
+      </div>
+      <div class="tpl-info">
+        <div class="tpl-name">${t.name}</div>
+        <div class="tpl-desc">${t.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showTab(t){
+  document.querySelectorAll('.panel-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  ['Layout','Templates','Colors','Fonts','Images'].forEach(n=>{
+    document.getElementById('panel'+n).style.display=n.toLowerCase()===t?'block':'none';
+  });
+}
+
+function pickLayout(l,el){
+  S.layout=l;
+  S.subTplIdx=0;
+  S.templateIdx=-1;
+  document.querySelectorAll('.layout-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  renderSubTpls();
+  renderTemplates();
+  if(S.content) render();
+}
+
+function renderSubTpls(){
+  const subs=layoutSubTemplates[S.layout]||[];
+  document.getElementById('subTplGrid').innerHTML=subs.map((t,i)=>`
+    <div class="sub-tpl ${i===S.subTplIdx?'sel':''}" onclick="pickSubTpl(${i},this)">
+      ${t.svg}
+      <span>${t.name}</span>
+      <div class="sub-desc">${t.desc}</div>
+    </div>`).join('');
+}
+
+function pickSubTpl(i,el){
+  S.subTplIdx=i;
+  document.querySelectorAll('.sub-tpl').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  if(!S.content){
+    S.content={title:'כותרת האינפוגרפיקה',subtitle:'תת-כותרת מסבירה במשפט קצר',
+      steps:Array.from({length:S.stepCount},(_,j)=>({title:`שלב ${j+1}`,desc:'לחצו כאן לכתוב הסבר'}))};
+  }
+  render();
+}
+
+function changeCount(d){
+  S.stepCount=Math.max(3,Math.min(8,S.stepCount+d));
+  document.getElementById('countVal').textContent=S.stepCount;
+  if(S.content) render();
+}
+
+function pickPalette(i,el){
+  S.paletteIdx=i;
+  document.querySelectorAll('.pal-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  if(S.content) render();
+}
+
+function pickFont(i,el){
+  S.fontIdx=i;
+  document.querySelectorAll('.fnt-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  if(S.content) render();
+}
+
+function applyTemplate(i,el){
+  const t=templates[i];
+  S.templateIdx=i;
+  S.paletteIdx=t.palIdx;
+  S.fontIdx=t.fontIdx;
+  S.layout=t.layout;
+  S.subTplIdx=0;
+  document.querySelectorAll('.tpl-card').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  // Update other UI
+  document.querySelectorAll('.pal-opt').forEach((e,j)=>{e.classList.toggle('sel',j===S.paletteIdx)});
+  document.querySelectorAll('.fnt-opt').forEach((e,j)=>{e.classList.toggle('sel',j===S.fontIdx)});
+  document.querySelectorAll('.layout-opt').forEach(e=>e.classList.remove('sel'));
+  const layoutIdx=['flow','grid','zigzag'].indexOf(S.layout);
+  if(layoutIdx>=0) document.querySelectorAll('.layout-opt')[layoutIdx]?.classList.add('sel');
+  renderSubTpls();
+
+  if(!S.content){
+    // Create empty template content
+    S.content={title:'כותרת האינפוגרפיקה',subtitle:'תת-כותרת מסבירה במשפט קצר',
+      steps:Array.from({length:S.stepCount},(_,j)=>({title:`שלב ${j+1}`,desc:'לחצו כאן לכתוב הסבר'}))};
+  }
+  render();
+}
+
+// Image upload
+function uploadHeaderImg(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    S.headerImg=e.target.result;
+    document.getElementById('headerImgEl').src=S.headerImg;
+    document.getElementById('headerImgPreview').style.display='block';
+    document.getElementById('headerImgUpload').style.display='none';
+    if(S.content) render();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeHeaderImg(){
+  S.headerImg=null;
+  document.getElementById('headerImgPreview').style.display='none';
+  document.getElementById('headerImgUpload').style.display='block';
+  document.getElementById('headerImgUpload').querySelector('input').value='';
+  if(S.content) render();
+}
+
+// Generate with Gemini
+async function generate(){
+  const topic=document.getElementById('inpTopic').value.trim();
+  if(!topic){document.getElementById('inpTopic').focus();return}
+  S.topic=topic;
+  S.notes=document.getElementById('inpNotes').value.trim();
+
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.classList.add('loading');
+  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> מייצר...';
+
+  const prompt=`צור תוכן לאינפוגרפיקה בעברית על הנושא: "${topic}"
+${S.notes?'בקשות מיוחדות: '+S.notes:''}
+יש ליצור בדיוק ${S.stepCount} שלבים.
+החזר JSON בלבד (בלי markdown, בלי backticks) בפורמט:
+{"title":"כותרת קצרה וקליטה","subtitle":"תת-כותרת במשפט אחד","steps":[{"title":"שם השלב","desc":"הסבר קצר 1-2 משפטים"}]}
+כללים: שפה פשוטה, משפטים קצרים, כותרות עד 4 מילים, הסברים עד 20 מילים, תוכן מדויק`;
+
+  // 🔒 המפתח לא בקוד — נשמר ב-localStorage של המשתמש בלבד
+  let userKey = localStorage.getItem('infographic-gemini-key') || '';
+  if (!userKey) {
+    userKey = (prompt('הכניסו מפתח Gemini API שלכם (נשמר רק במכשיר שלכם, לא נשלח לשום שרת):\nליצירת מפתח: https://aistudio.google.com/apikey') || '').trim();
+    if (userKey) localStorage.setItem('infographic-gemini-key', userKey);
+  }
+  if (!userKey) {
+    alert('צריך מפתח Gemini API כדי להשתמש במחולל. אפשר ליצור חינם ב-aistudio.google.com/apikey');
+    btn.disabled=false;btn.classList.remove('loading');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg> צור';
+    return;
+  }
+
+  try{
+    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(userKey),{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:1024}})
+    });
+    const data=await res.json();
+    if (data.error) {
+      // מפתח לא תקף — מחיקה ובקשה מחדש
+      if (data.error.code === 400 || data.error.code === 403) localStorage.removeItem('infographic-gemini-key');
+      throw new Error(data.error.message || 'API error');
+    }
+    let text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    text=text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+    S.content=JSON.parse(text);
+  }catch(e){
+    console.error(e);
+    S.content={title:topic,subtitle:'לחצו לערוך',steps:Array.from({length:S.stepCount},(_,i)=>({title:`שלב ${i+1}`,desc:'לחצו כאן'}))};
+  }
+  render();
+  btn.disabled=false;btn.classList.remove('loading');
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg> צור';
+}
+
+function render(){
+  if(!S.content) return;
+  const pal=palettes[S.paletteIdx],font=fontPairs[S.fontIdx],tw=font.tw||700,c=S.content;
+  const frame=document.getElementById('previewFrame');
+  const tplStyle=S.templateIdx>=0?templates[S.templateIdx].style:'';
+  const steps=c.steps.slice(0,S.stepCount);
+
+  // Header image
+  const headerImgHTML=S.headerImg?`<img class="info-header-img" src="${S.headerImg}">`:'';
+
+  let stepsHTML='';
+  const gradients=[
+    `linear-gradient(135deg,${pal.colors[0]},${pal.colors[1]})`,
+    `linear-gradient(135deg,${pal.colors[1]},${pal.colors[2]})`,
+    `linear-gradient(135deg,${pal.colors[2]},${pal.colors[0]})`,
+    `linear-gradient(135deg,${pal.colors[3]||pal.colors[0]},${pal.colors[0]})`,
+    `linear-gradient(135deg,${pal.colors[4]||pal.colors[1]},${pal.colors[1]})`,
+    `linear-gradient(135deg,${pal.colors[0]},${pal.colors[4]||pal.colors[2]})`,
+    `linear-gradient(135deg,${pal.colors[1]},${pal.colors[3]||pal.colors[0]})`,
+    `linear-gradient(135deg,${pal.colors[2]},${pal.colors[4]||pal.colors[1]})`
+  ];
+
+  const subTpls=layoutSubTemplates[S.layout]||[];
+  const subId=subTpls[S.subTplIdx]?.id||'';
+
+  if(S.layout==='zigpath'){
+    stepsHTML=`<div class="info-steps-wrap">${steps.map((s,i)=>`
+      <div class="info-step">
+        <div class="step-num" style="background:${pal.bg};color:${pal.colors[i%pal.colors.length]};border-color:${pal.colors[i%pal.colors.length]}">${i+1}</div>
+        <div class="step-chip" style="background:${pal.stepBg}">
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  }else if(S.layout==='orbital'){
+    // Position steps around a circle
+    const positions=[
+      {top:'2%',left:'45%'},{top:'18%',left:'80%'},{top:'55%',left:'85%'},
+      {top:'78%',left:'55%'},{top:'72%',left:'18%'},{top:'35%',left:'5%'},
+      {top:'8%',left:'15%'},{top:'50%',left:'50%'}
+    ];
+    stepsHTML=`<div class="orbit-wrap">
+      <div class="orbit-ring r1" style="border-color:${pal.colors[0]}"></div>
+      <div class="orbit-ring r2" style="border-color:${pal.colors[1]}"></div>
+      <div class="orbit-center" style="background:${gradients[0]};color:${pal.bg}">
+        <span contenteditable="true" style="font-family:'${font.title}',sans-serif;font-size:.85rem">${S.topic||'נושא'}</span>
+      </div>
+      ${steps.map((s,i)=>{
+        const pos=positions[i%positions.length];
+        return `<div class="orbit-step" style="top:${pos.top};left:${pos.left}">
+          <div class="step-num" style="background:${gradients[i%gradients.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-chip" style="background:${pal.stepBg}" contenteditable="true">${s.title}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }else if(S.layout==='bento'){
+    const bentoColors=[
+      pal.colors[0]+'30',pal.colors[1]+'30',pal.colors[2]+'30',
+      pal.colors[3]?pal.colors[3]+'30':pal.colors[0]+'30',
+      pal.colors[4]?pal.colors[4]+'30':pal.colors[1]+'30',
+      pal.colors[0]+'28',pal.colors[1]+'28',pal.colors[2]+'28'
+    ];
+    stepsHTML=`<div class="bento-grid">${steps.map((s,i)=>`
+      <div class="info-step" style="background:${bentoColors[i%bentoColors.length]}">
+        <div class="step-num-badge" style="background:${pal.colors[i%pal.colors.length]}35;color:${pal.colors[i%pal.colors.length]};font-family:'${font.body}',sans-serif">0${i+1}</div>
+        <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+        <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+      </div>`).join('')}</div>`;
+  }else if(S.layout==='float'){
+    stepsHTML=`<div class="float-stack">${steps.map((s,i)=>`
+      <div class="info-step">
+        <div class="step-num" style="background:${gradients[i%gradients.length]};color:${pal.bg}">${i+1}</div>
+        <div class="step-content">
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  }else if(S.layout==='flow'){
+    if(subId==='flow-decision'){
+      // Decision tree layout
+      const root=steps[0]||{title:'התחלה',desc:''};
+      const question=steps[1]||{title:'שאלה?',desc:''};
+      const remaining=steps.slice(2);
+      const leftSteps=remaining.filter((_,i)=>i%2===0);
+      const rightSteps=remaining.filter((_,i)=>i%2===1);
+      stepsHTML=`<div class="info-decision">
+        <div class="decision-start" style="background:${gradients[0]};color:${pal.bg}">
+          <span contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw}">${root.title}</span>
+        </div>
+        <div class="decision-arrow" style="background:${pal.colors[0]}"></div>
+        <div class="decision-node" style="border-color:${pal.colors[1]};background:${pal.stepBg}">
+          <span contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${question.title}</span>
+        </div>
+        <div class="decision-branches">
+          <div class="branch">
+            <div class="branch-label" style="background:${pal.colors[0]}22;color:${pal.colors[0]}">כן</div>
+            ${leftSteps.map((s,i)=>`<div class="branch-box" style="background:${pal.stepBg};border:1px solid ${pal.colors[0]}33">
+              <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+              <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+            </div>`).join('')}
+          </div>
+          <div class="branch">
+            <div class="branch-label" style="background:${pal.accent}22;color:${pal.accent}">לא</div>
+            ${rightSteps.map((s,i)=>`<div class="branch-box" style="background:${pal.stepBg};border:1px solid ${pal.accent}33">
+              <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+              <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    }else if(subId==='flow-funnel'){
+      // Funnel layout
+      stepsHTML=`<div class="info-funnel">${steps.map((s,i)=>{
+        const w=100-i*(60/steps.length);
+        return `${i>0?'<div class="funnel-arrow" style="color:'+pal.colors[i%pal.colors.length]+'">&#9660;</div>':''}
+        <div class="funnel-step" style="width:${w}%;background:${pal.colors[i%pal.colors.length]}18;border:1px solid ${pal.colors[i%pal.colors.length]}33">
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>`;
+      }).join('')}</div>`;
+    }else{
+      // Default flow (linear / vertical)
+      stepsHTML=`<div class="info-flow">${steps.map((s,i)=>`
+        <div class="info-step">
+          <div class="step-num" style="background:${pal.colors[i%pal.colors.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-content">
+            <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+            <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+          </div>
+        </div>`).join('')}</div>`;
+    }
+  }else if(S.layout==='grid'){
+    if(subId==='grid-3col'){
+      stepsHTML=`<div class="info-3col"><div class="info-steps">${steps.map((s,i)=>`
+        <div class="info-step" style="background:${pal.stepBg};border:1px solid ${pal.colors[i%pal.colors.length]}33">
+          <div class="step-num" style="background:${pal.colors[i%pal.colors.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>`).join('')}</div></div>`;
+    }else if(subId==='grid-masonry'){
+      stepsHTML=`<div class="info-masonry"><div class="info-steps">${steps.map((s,i)=>`
+        <div class="info-step" style="background:${pal.stepBg};border:1px solid ${pal.colors[i%pal.colors.length]}33">
+          <div class="step-num" style="background:${pal.colors[i%pal.colors.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>`).join('')}</div></div>`;
+    }else if(subId==='grid-icons'){
+      stepsHTML=`<div class="info-icons"><div class="info-steps">${steps.map((s,i)=>`
+        <div class="info-step">
+          <div class="step-num" style="background:${gradients[i%gradients.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>`).join('')}</div></div>`;
+    }else{
+      // Default 2x2 grid
+      stepsHTML=`<div class="info-grid"><div class="info-steps">${steps.map((s,i)=>`
+        <div class="info-step" style="background:${pal.stepBg};border:1px solid ${pal.colors[i%pal.colors.length]}33">
+          <div class="step-num" style="background:${pal.colors[i%pal.colors.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+          <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+        </div>`).join('')}</div></div>`;
+    }
+  }else{
+    // Zigzag layouts
+    if(subId==='zz-timeline'){
+      stepsHTML=`<div class="info-timeline">
+        <div class="timeline-line" style="background:${pal.line}"></div>
+        ${steps.map((s,i)=>`
+        <div class="timeline-step">
+          <div class="timeline-dot" style="background:${pal.colors[i%pal.colors.length]}"></div>
+          <div class="timeline-content" style="background:${pal.stepBg}">
+            <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+            <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+          </div>
+        </div>`).join('')}
+      </div>`;
+    }else if(subId==='zz-snake'){
+      // Snake: rows of 3, alternating direction
+      const perRow=3;
+      let rows=[];
+      for(let i=0;i<steps.length;i+=perRow){
+        const chunk=steps.slice(i,i+perRow);
+        const rev=Math.floor(i/perRow)%2===1;
+        rows.push({steps:rev?[...chunk].reverse():chunk,reversed:rev,rowIdx:Math.floor(i/perRow)});
+      }
+      stepsHTML=`<div class="info-snake">${rows.map((row,ri)=>`
+        ${ri>0?`<div class="snake-connector"><svg width="40" height="20" viewBox="0 0 40 20"><path d="M20 0 Q${row.reversed?'35':'5'} 0 ${row.reversed?'35':'5'} 10 Q${row.reversed?'35':'5'} 20 20 20" stroke="${pal.line}" stroke-width="2" fill="none"/></svg></div>`:''}
+        <div class="snake-row" style="direction:ltr">
+          ${row.steps.map((s,si)=>{
+            const origIdx=ri*perRow+(row.reversed?row.steps.length-1-si:si);
+            return `<div class="snake-step" style="background:${pal.colors[origIdx%pal.colors.length]}12">
+              <div class="step-num" style="background:${pal.colors[origIdx%pal.colors.length]};color:${pal.bg}">${origIdx+1}</div>
+              <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+              <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+            </div>`;
+          }).join('')}
+        </div>`).join('')}</div>`;
+    }else if(subId==='zz-compare'){
+      const half=Math.ceil(steps.length/2);
+      const left=steps.slice(0,half);
+      const right=steps.slice(half);
+      stepsHTML=`<div class="info-compare">
+        <div class="compare-header">
+          <div class="compare-col-title" contenteditable="true" style="background:${pal.colors[0]}18;color:${pal.colors[0]};font-family:'${font.title}',sans-serif;font-weight:${tw}">צד א</div>
+          <div class="compare-col-title" contenteditable="true" style="background:${pal.accent}18;color:${pal.accent};font-family:'${font.title}',sans-serif;font-weight:${tw}">צד ב</div>
+        </div>
+        ${left.map((s,i)=>`<div class="compare-row">
+          <div class="compare-cell" style="background:${pal.colors[0]}0D">
+            <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+            <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+          </div>
+          <div class="compare-cell" style="background:${pal.accent}0D">
+            ${right[i]?`<div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${right[i].title}</div>
+            <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${right[i].desc}</div>`:''}
+          </div>
+        </div>`).join('')}
+      </div>`;
+    }else{
+      // Default zigzag
+      stepsHTML=`<div class="info-zigzag">${steps.map((s,i)=>`
+        <div class="info-step">
+          <div class="step-num" style="background:${pal.colors[i%pal.colors.length]};color:${pal.bg}">${i+1}</div>
+          <div class="step-content">
+            <div class="step-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-weight:${tw};color:${pal.text}">${s.title}</div>
+            <div class="step-desc" contenteditable="true" style="font-family:'${font.body}',sans-serif;color:${pal.text}">${s.desc}</div>
+          </div>
+        </div>`).join('')}</div>`;
+    }
+  }
+
+  const lineCSS=S.layout==='flow'?`.info-flow .info-step:not(:last-child)::after{background:${pal.line}}`:'';
+  const decoCSS=tplStyle==='tpl-decorated'?`.tpl-decorated .info-header::after{background:linear-gradient(90deg,transparent,${pal.accent},transparent)}`:'';
+
+  frame.innerHTML=`<style>${lineCSS}${decoCSS}</style>
+    <div class="infographic ${tplStyle}" style="background:${pal.bg}">
+      <div class="info-header">
+        ${headerImgHTML}
+        <div class="info-title" contenteditable="true" style="font-family:'${font.title}',sans-serif;font-size:${font.ts||'2.6rem'};font-weight:${tw};color:${pal.text}">${c.title}</div>
+        <div class="info-subtitle" contenteditable="true" style="font-family:'${font.body}',sans-serif;font-size:.95rem;color:${pal.text}">${c.subtitle}</div>
+      </div>
+      ${stepsHTML}
+      <div class="info-footer" style="color:${pal.text};border-top:1px solid ${pal.line}">
+        <span contenteditable="true" style="font-family:'${font.body}',sans-serif">Lerani -- למידה דיגיטלית</span>
+      </div>
+    </div>`;
+}
+
+function downloadPNG(){
+  const source=document.querySelector('#previewFrame .infographic');
+  if(!source){alert('קודם צרו אינפוגרפיקה');return}
+  const btn=document.getElementById('dlBtn');
+  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> מייצא...';
+  btn.disabled=true;
+
+  const container=document.getElementById('exportBox');
+  const clone=source.cloneNode(true);
+  clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  clone.style.width='900px';
+  container.innerHTML='';container.appendChild(clone);
+
+  const doIt=()=>{
+    html2canvas(clone,{scale:2,useCORS:true,backgroundColor:null,width:900,windowWidth:900}).then(canvas=>{
+      const a=document.createElement('a');
+      a.download=`infographic-${(S.topic||'design').replace(/\s+/g,'-').substring(0,30)}.png`;
+      a.href=canvas.toDataURL('image/png');a.click();
+      container.innerHTML='';
+      btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> הורדה';
+      btn.disabled=false;
+    }).catch(()=>{btn.innerHTML='שגיאה';btn.disabled=false;setTimeout(()=>{btn.innerHTML='הורדה'},2000)});
+  };
+
+  if(!window.html2canvas){
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=doIt;document.head.appendChild(s);
+  }else doIt();
+}
+
+init();
+</script>
+</body>
+</html>

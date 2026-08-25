@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה · המרכז הפדגוגי</title>
+<meta name="description" content="הנוהל המחייב למעקב נוכחות תלמידים, איתור נשירה סמויה, דיווח וטיפול — עד סיום לימודים בעת הצורך — בבתי הספר בפיקוח המינהל להכשרה מקצועית.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה">
+<meta property="og:description" content="הנוהל המחייב למעקב נוכחות תלמידים, איתור נשירה סמויה, דיווח וטיפול — עד סיום לימודים בעת הצורך — בבתי הספר בפיקוח המינהל להכשרה מקצועית.">
+<meta property="og:url" content="https://pedagogiamh.co.il/bikur-sadir.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        oklch(27% 0.06 268);
+    --ink-soft:   oklch(46% 0.035 262);
+    --navy:       oklch(38% 0.115 268);
+    --navy-deep:  oklch(30% 0.10 268);
+    --royal:      oklch(54% 0.165 262);
+    --sky:        oklch(76% 0.085 250);
+    --sky-tint:   oklch(95.5% 0.017 250);
+    --bg:         oklch(97.6% 0.006 255);
+    --surface:    oklch(99.2% 0.003 255);
+    --line:       oklch(89% 0.014 255);
+    --line-soft:  oklch(93% 0.010 255);
+    --amber-ink:  oklch(52% 0.10 80);
+    --amber-bg:   oklch(96% 0.03 90);
+    --red:        oklch(50% 0.17 25);
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:76px}
+  body{
+    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
+    line-height:1.7; overflow-x:clip;
+  }
+  h1,h2,h3,h4{font-family:'Frank Ruhl Libre',serif; line-height:1.14; letter-spacing:-.01em}
+  a{color:inherit}
+  img{max-width:100%}
+  p+p{margin-top:.85em}
+  strong{font-weight:700}
+  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+  .article{max-width:860px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+
+  a.lk{color:var(--royal); text-decoration:none; font-weight:600; border-bottom:1.5px solid var(--sky); transition:.2s}
+  a.lk:hover{background:var(--sky-tint); border-bottom-color:var(--royal)}
+  a.lk::after{content:"↗"; font-size:.7em; margin-inline-start:3px; color:var(--sky)}
+
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
+  .rv.in{opacity:1; transform:none}
+
+  /* ---------- top bar ---------- */
+  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
+  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
+  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
+  .top-in img{height:50px; width:auto}
+  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
+  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+  nav.jump{margin-inline-start:auto; display:flex; gap:22px}
+  nav.jump a{
+    text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
+    position:relative; padding:6px 2px; transition:color .25s;
+  }
+  nav.jump a::after{
+    content:""; position:absolute; inset-inline:0; bottom:0; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .35s var(--ease);
+  }
+  nav.jump a:hover{color:var(--navy)}
+  nav.jump a:hover::after{transform:scaleX(1)}
+  @media(max-width:700px){nav.jump{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:clamp(44px,7vh,76px) 0 clamp(30px,4vh,44px); border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-flex; align-items:center; gap:12px;
+    color:var(--royal); font-weight:700; font-size:15px;
+  }
+  .kicker::before{
+    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
+    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
+  .hero h1{
+    font-size:clamp(32px,5vw,56px); font-weight:900; color:var(--navy-deep);
+    margin:14px 0 14px; max-width:22ch; text-wrap:balance;
+  }
+  .hero p.lead{font-size:clamp(16px,1.5vw,18.5px); color:var(--ink-soft); max-width:58ch}
+  .hero .meta-row{display:flex; flex-wrap:wrap; gap:12px 22px; margin-top:22px; align-items:center; font-size:14px; color:var(--ink-soft)}
+  .hero .meta-row .src a{color:var(--royal); font-weight:700}
+  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
+  .hero-stagger > *:nth-child(1){animation-delay:.05s}
+  .hero-stagger > *:nth-child(2){animation-delay:.14s}
+  .hero-stagger > *:nth-child(3){animation-delay:.22s}
+  .hero-stagger > *:nth-child(4){animation-delay:.3s}
+  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
+
+  /* ---------- article body ---------- */
+  .body-sec{padding:clamp(36px,6vh,60px) 0 clamp(28px,4vh,44px)}
+  h2.sub-sec{
+    font-size:clamp(22px,2.8vw,29px); font-weight:900; color:var(--navy-deep);
+    margin:clamp(34px,5vw,48px) 0 10px; padding-top:24px; border-top:1px solid var(--line);
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  }
+  h2.sub-sec::before{content:""; width:34px; height:8px; background:var(--royal); flex:0 0 auto; transform:translateY(-4px); border-radius:2px; box-shadow:40px 0 0 -3px var(--sky)}
+  h2.sub-sec.first{border-top:none; padding-top:0; margin-top:0}
+  h3.mini{
+    font-size:18.5px; font-weight:700; color:var(--navy); margin:24px 0 8px;
+    display:flex; align-items:center; gap:12px; font-family:'Frank Ruhl Libre',serif;
+  }
+  h3.mini::after{content:""; flex:1; height:1px; background:var(--line); max-width:170px}
+  .lead-p{font-size:17px; color:var(--ink-soft)}
+
+  ol.ed{list-style:none; counter-reset:ed; margin:16px 0}
+  ol.ed>li{
+    counter-increment:ed; position:relative;
+    padding:10px 54px 10px 0; border-bottom:1px solid var(--line-soft);
+  }
+  ol.ed>li:last-child{border-bottom:none}
+  ol.ed>li::before{
+    content:counter(ed,decimal-leading-zero); position:absolute; right:0; top:8px;
+    font-family:'Karantina',serif; font-weight:700; font-size:26px; line-height:1.2; color:var(--royal);
+    width:40px;
+  }
+  ul.ed{list-style:none; margin:14px 0}
+  ul.ed>li{position:relative; padding:7px 26px 7px 0}
+  ul.ed>li::before{content:""; position:absolute; right:2px; top:18px; width:12px; height:2.5px; border-radius:2px; background:var(--royal)}
+  ul.ed.tight>li{padding-top:4px; padding-bottom:4px}
+
+  .callout{
+    margin:26px 0; padding:20px 26px;
+    background:var(--surface); border:1px solid var(--line); border-inline-start:4px solid var(--royal);
+    border-radius:0 14px 14px 0; box-shadow:0 14px 34px -26px oklch(30% 0.1 268 / .4);
+    font-size:16px;
+  }
+  .callout.amber{border-inline-start-color:var(--amber-ink); background:var(--amber-bg)}
+  .callout.red{border-inline-start-color:var(--red)}
+  .callout .ttl{font-family:'Frank Ruhl Libre',serif; font-weight:700; display:block; margin-bottom:6px; font-size:18px; color:var(--navy-deep)}
+
+  .tbl-scroll{overflow-x:auto; margin:18px 0}
+  table.doc{
+    width:100%; border-collapse:collapse; font-size:15px; background:var(--surface);
+    border:1px solid var(--line); border-top:3px solid var(--navy);
+    min-width:540px; box-shadow:0 16px 36px -28px oklch(30% 0.1 268 / .45);
+  }
+  table.doc caption{
+    caption-side:top; text-align:right; font-family:'Frank Ruhl Libre',serif; font-weight:900;
+    font-size:19px; padding:0 2px 10px; color:var(--navy-deep);
+  }
+  table.doc caption::after{content:""; display:block; width:52px; height:3px; background:var(--royal); border-radius:2px; margin-top:6px}
+  table.doc th{
+    font-weight:700; font-size:13px; letter-spacing:.08em; color:oklch(90% 0.03 255);
+    background:var(--navy); padding:10px 16px; text-align:right;
+  }
+  table.doc td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+  table.doc tr:last-child td{border-bottom:none}
+  table.doc td.k{
+    font-weight:700; background:var(--sky-tint); border-inline-start:1px solid var(--line-soft);
+    font-family:'Frank Ruhl Libre',serif; font-size:15.5px; color:var(--navy-deep);
+  }
+  table.doc tr:nth-child(even) td:not(.k){background:oklch(98.6% 0.005 255)}
+
+  /* ---------- source box ---------- */
+  .source-box{
+    margin:clamp(36px,6vh,56px) 0 0; padding:22px 26px;
+    background:var(--sky-tint); border:1px solid var(--line); border-radius:16px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .source-box .t{font-weight:700; color:var(--navy-deep)}
+  .source-box .t small{display:block; font-weight:400; font-size:13.5px; color:var(--ink-soft)}
+  .source-box a.btn{
+    margin-inline-start:auto;
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none;
+    font-weight:700; font-size:15px; padding:11px 24px; border-radius:999px;
+    background:var(--navy); color:oklch(98% 0.005 255);
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s;
+  }
+  .source-box a.btn:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 12px 28px oklch(38% 0.115 268 / .3)}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:clamp(40px,6vh,64px)}
+  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
+  .foot-in img{height:42px}
+  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
+  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
+
+  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
+  .ogenw-launcher svg{transform:scale(1.28)}
+  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
+  .ogenw-panel{bottom:118px !important}
+
+  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
+    .rv{opacity:1; transform:none}
+  }
+  @media print{
+    header.top{display:none}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top" id="topbar">
+  <div class="wrap top-in">
+    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
+    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
+    <nav class="jump" aria-label="ניווט">
+      <a href="tashpaz.html">היערכות תשפ״ז</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="index.html">לעמוד הראשי</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">הנחיות מינהל · תשפ״ז</span>
+    <h1>הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה</h1>
+    <p class="lead">הנוהל המחייב למעקב נוכחות תלמידים, איתור נשירה סמויה, דיווח לגורמי המשרד וטיפול — כולל סיום לימודים בעת הצורך — בבתי הספר בפיקוח המינהל להכשרה מקצועית. בתוקף החל משנת תשפ״ד · עדכון: תמוז תשפ״ו, יולי 2026.</p>
+    <div class="meta-row">
+      <span class="src">המקור: <a class="lk" href="https://drive.google.com/file/d/1IVhADxZTGfPr_Pe0ryFgLNrKMbGgPFRK/view" target="_blank" rel="noopener">המסמך בדרייב</a></span>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <h2 class="sub-sec first rv">במה מדובר</h2>
+    <p class="lead-p rv">הנחיות אלו מפרטות את ההתנהלות התקינה המצופה מהנהלת בית הספר וצוותו בתחום מעקב נוכחות תלמידים, טיפול בבעיות ביקור סדיר ובמידת הצורך — סיום לימודים. החוזר כולל את חלוקת האחריות ואת חובת הדיווח בכתב על פי הטפסים המצורפים. ההנחיות נכתבו בלשון זכר אך מתייחסות לשני המינים.</p>
+    <p class="rv"><strong>התחולה:</strong> בתי ספר בפיקוח המינהל להכשרה מקצועית — משרד העבודה.<br>
+    <strong>התפוצה:</strong> ממוני מחוזות, גופים מפעילים, מנהלי בתי הספר בפיקוח המינהל, המפקחים הפדגוגיים הכוללים, המפקחות על המערך הטיפולי, מפקחים מקצועיים, מפקחי קציני ביקור סדיר במשרד החינוך.</p>
+
+    <h3 class="mini rv">התפיסה</h3>
+    <p class="rv">מתפקידו של בית הספר ליצור, ככל האפשר, תנאים לימודיים, חינוכיים, רגשיים וחברתיים המותאמים ליכולותיו ולנטיותיו של התלמיד. תנאים אלה יהיו מותאמים לצרכיו ולכישרונותיו כמו גם לקשייו של התלמיד, ויאפשרו לו לפתח ידע בסיסי, השכלה, מיומנויות למידה וכישורי חיים, לפתח את אישיותו ואת יכולותיו הקוגניטיביות, הרגשיות והחברתיות — ולתפקד בחיים עצמאיים בחברה ולממש את עצמיותו באופן המלא ביותר.</p>
+    <p class="rv">בבסיס העבודה החינוכית עומדת התפיסה כי על בית הספר להכיל את התלמידים ולפעול על מנת ליצור עבורם אקלים חינוכי מיטבי ומרחב של משמעות, וכן לשלבם במסלולי למידה משמעותיים אשר יאפשרו את תרומתם לחברה בעתיד — וכדי למנוע את נשירתם.</p>
+
+    <h2 class="sub-sec rv">הגדרות</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tr><th>מונח</th><th>הגדרה</th></tr>
+        <tr><td class="k">בעיית ביקור סדיר</td><td>היעדרות תלמיד מעל 7 ימים בחודש, במצטבר או שלא במצטבר.</td></tr>
+        <tr><td class="k">נושר סמוי · נשירה סמויה</td><td>תלמיד הרשום ומשובץ בבית הספר, אך נעדר מלימודיו 7 ימי לימודים רצופים או בהיעדרות לא רצופה המצטברת ל־14 ימים ללא סיבה מוצדקת; <strong>או</strong> תלמיד הנעדר מלימודיו לעיתים כה תכופות, עד שלדעת מנהל בית הספר יש בכך הפרעה רצינית ללימודיו, ולמרות פעולות להשבתו לפי נוהל זה לא חזר ללימודיו; <strong>או</strong> תלמיד המתאפיין לפחות באחד מאלה: שוטטות בשטח בית הספר ומחוצה לו בשעות הלימודים, נוכחות פיזית בכיתת הלימוד אך ללא תפקוד לימודי, קושי למלא אחר חוקי בית הספר, קשיי הסתגלות וקשיים התנהגותיים ו/או לימודיים.</td></tr>
+        <tr><td class="k">תפקוד לקוי</td><td>התנהגות של תלמיד המגלה סימנים של נשירה סמויה כמוגדר לעיל.</td></tr>
+        <tr><td class="k">תלמיד בסכנת נשירה</td><td>תלמיד שמתקיימים לגביו התנאים לנשירה סמויה.</td></tr>
+        <tr><td class="k">תלמיד חולה בביתו</td><td>תלמיד אשר קיבל את אישור הפיקוח על הצוותים הטיפוליים ואת אישור המשרד לתוכנית ולשעות לימודיות בביתו בזמן מחלה.</td></tr>
+        <tr><td class="k">נושר</td><td>תלמיד שהיה רשום בבית הספר לנוער המפוקח על ידי משרד העבודה, אולם כבר אינו רשום בבית הספר.</td></tr>
+        <tr><td class="k">צוות בין־מקצועי למניעת נשירה</td><td>צוות שעניינו הכלה ומניעת נשירה, הגברת שייכות ומשמעות. הרכבו נקבע ע״י מנהל בית הספר וחבריו: מנהל ביה״ס, רכז פדגוגי, נציגות מחנכים, יועץ/ים, מדריך יועצים; ניתן לצרף את פסיכולוג בית הספר, רכז התעסוקה, קב״ס ו/או כל מי שיימצא לנכון על ידי מנהל בית הספר. מטרת הצוות ושגרות הפעילות מפורטות בהמשך.</td></tr>
+        <tr><td class="k">ועדת התמדה</td><td>ועדה שהרכבה נקבע ע״י מנהל בית הספר וכוללת את בעלי התפקידים: מנהל, יועץ, מחנך, קב״ס. מטרת הוועדה ושגרות הפעילות מפורטות בהמשך.</td></tr>
+        <tr><td class="k">קצין ביקור סדיר (קב״ס)</td><td>אדם שהוסמך על ידי שר החינוך ברשומות להיות קצין ביקור סדיר. תפקידיו נוגעים בשני היבטים עיקריים: האחד — בקרה ואכיפה של חוק לימוד חובה, ובכלל זה הבטחת לימודיו של ילד ונער בבית הספר; והשני — חינוכי־טיפולי, ועיקרו הנחיה וסיוע בגיבוש תוכניות להכלה ולמניעת נשירה. הקב״ס שייך למינהל החינוך ברשות המקומית במקום מגוריו של התלמיד. את פרטי ההתקשרות של כל הקב״סים ניתן למצוא <a class="lk" href="https://pob.education.gov.il/municipal-services/main-youth-at-risk/kabasim/" target="_blank" rel="noopener">באתר משרד החינוך</a> (בקושי באיתור קב״ס — ניתן לפנות למפקחות על המערך הטיפולי).</td></tr>
+        <tr><td class="k">גורמי המשרד לדיווח</td><td>המפקח הפדגוגי הכולל, המפקחת על הצוותים הטיפוליים והממונה המחוזי.</td></tr>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מטרות ההנחיות</h3>
+    <ul class="ed rv">
+      <li>הגדרת עקרונות ופעולות לעידוד התמדה ומניעת נשירה בבית הספר.</li>
+      <li>הגדרת אחריות הדיווח ודרכי הטיפול בבעיית ביקור סדיר ותפקוד לקוי של תלמידים.</li>
+      <li>הגדרת הנחיות לסיום לימודי תלמיד בבית הספר בעקבות בעיית ביקור סדיר ואי־תפקוד.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">עקרונות לעידוד התמדה ומניעת נשירה</h2>
+    <ol class="ed rv">
+      <li><strong>חיזוק הקשר האישי עם התלמידים:</strong> יחס אישי ומעורבות מצד המורים, היועצים ואנשי הצוות יגבירו את תחושת המחויבות והשייכות של התלמידים.</li>
+      <li><strong>מתן מענה לצרכים רגשיים וחברתיים:</strong> מתן תמיכה רגשית, פיתוח כישורים חברתיים ופעילויות גיבוש חברתי יכולים לעזור לתלמידים להתמודד עם האתגרים.</li>
+      <li><strong>התאמה אישית של תכנים לימודיים ומגמות הלימוד:</strong> תכנים מותאמים אישית ותוכניות למידה גמישות מאפשרים הצלחה לתלמידים שונים.</li>
+      <li><strong>התערבות מוקדמת:</strong> מעקב אחר נוכחות, ציונים והתנהגות וזיהוי מוקדם של תלמידים בסכנת נשירה יעזרו במניעת הנשירה אצל תלמידים הנמצאים בסיכון.</li>
+      <li><strong>סביבת לימודים מעודדת הצלחה:</strong> סביבה חינוכית המעודדת חוויה חיובית יומיומית בבית הספר, מוטיבציה ללמידה, ביטוי אישי, עידוד להצלחה ומתן הכרה — מקדמת ומסייעת במניעת נשירה.</li>
+    </ol>
+
+    <h3 class="mini rv">פעולות הצוות הבין־מקצועי</h3>
+    <ul class="ed rv">
+      <li><strong>הקמת צוות בין־מקצועי למניעת נשירה.</strong> הצוות יתכנס שלוש פעמים בשנה לפחות: <strong>תחילת שנה</strong> — בניית תוכנית העבודה; <strong>אמצע שנה</strong> — דיון בקרה ודיוק תוכניות העבודה וההתערבויות האישיות; <strong>סוף שנה</strong> — הפקת לקחים והסקת מסקנות לקראת השנה הבאה. מטרת הצוות: גיבוש מדיניות לעידוד ההתמדה ומניעת נשירה בבית הספר, הגברת השייכות והטמעה בקרב הצוות החינוכי. כלל מפגשי הצוות והעבודה בתחום יתועדו.</li>
+      <li><strong>גיבוש תוכנית עבודה חינוכית</strong> לעידוד התמדה ומניעת נשירה, המסתמכת על: נתוני נשירה מהשנה הקודמת לצד הפקת לקחים מתוכניות ההתערבות שבוצעו ומידת הצלחתן בפועל; נתוני המצוקה הכיתתיים/שכבתיים ונתוני האקלים החינוכי הבית־ספרי. התוכנית תכלול צעדים לאיתור תלמידים בסכנת נשירה ו/או בנשירה סמויה, ומיפוי המענים והמשאבים העומדים לרשות בית הספר (כגון: דרכי הוראה, היבחנות וסיוע, תגבורים פרטניים, טיפול רגשי, טיפול קבוצתי, קורסים ועוד), וכן צעדים לחיזוק הקשר בין בית הספר להורי התלמידים — לשיתוף ההורים, לקבלה והעברה של מידע ולתמיכה בהורים בכל הנוגע לתלמידים בסכנת נשירה.</li>
+      <li><strong>מעקב, מדידה והערכה:</strong> בקרה אחר יישום תוכנית העבודה ותוכניות ההתערבות האישיות והקבוצתיות, וקיום למידת עמיתים וחשיבה משותפת.</li>
+    </ul>
+    <div class="callout amber rv"><span class="ttl">חיסיון תלמידים</span>בעת כתיבת תוכנית העבודה יש להקפיד על חיסיון תלמידים ולא להעביר לצוות מסמכים חסויים על פי דין, כגון אבחונים וחוות דעת פסיכולוגיות ופסיכיאטריות.</div>
+
+    <h2 class="sub-sec rv">דיווח ומעקב שוטף על נוכחות תלמידים</h2>
+    <ul class="ed rv">
+      <li><strong>דיווח יומי שוטף:</strong> יש לדווח במערכות בית הספר, באופן שוטף, מדי שיעור ובתחילת כל שיעור, את נוכחות התלמידים.</li>
+      <li><strong>דיווח על תלמידים בעלי יותר מ־7 ימי היעדרות בחודש</strong> (באופן רציף או מצטבר): על בית הספר לדווח בסיום כל חודש לגורם המפעיל, למפקח הפדגוגי ולמפקחת על הצוותים הטיפוליים על נוכחות התלמידים שאינם לומדים או אינם מבקרים בבית הספר באופן סדיר, ועל סטטוס הטיפול בהם (<a class="lk" href="tofes-divuach-chodshi.html">נספח טופס 8.1</a>).</li>
+    </ul>
+
+    <h3 class="mini rv">מנהל בית הספר</h3>
+    <ul class="ed tight rv">
+      <li>רענון הנחיות הביקור הסדיר במסגרת ימי ההיערכות (במידת האפשר — זימון קב״ס למפגש עם צוות ההוראה).</li>
+      <li>אחריות על קיום מעקב יומי ושוטף אחר נוכחות התלמידים בשעות הלימוד בבית הספר.</li>
+      <li>ניתוח נתוני דוחות הנוכחות החודשיים, זיהוי מגמות, הפקת לקחים ונקיטת פעולות למניעת הנשירה בבית הספר.</li>
+      <li>אחריות כוללת על התנעת תהליכי איתור תלמידים בנשירה סמויה והפעלת תהליכים חינוכיים וטיפוליים כנדרש.</li>
+      <li>הוצאת דו״ח חודשי (בסיום כל חודש) לגורמי המשרד (מפקח פדגוגי ומפקחת על הצוותים הטיפוליים) וכן לנציג הרשת המפעילה. הדו״ח יכלול את שמות התלמידים אשר נשרו מרצונם וסיבת העזיבה, שמות תלמידים בתהליכי מעקב בשל נשירה סמויה (מעל 7 ימי היעדרות באותו חודש) וסיכום הפעולות שנעשו בחודש עם כל תלמיד (<a class="lk" href="tofes-divuach-chodshi.html">נספח טופס 8.1</a>).</li>
+      <li>קיום תיעוד הפעולות הנעשות עם תלמידים בתהליכי התמדה ומניעת נשירה.</li>
+    </ul>
+
+    <h3 class="mini rv">מחנך הכיתה</h3>
+    <ul class="ed tight rv">
+      <li>מעקב יומי אחר תלמידים שלא הגיעו ליום הלימודים, הכולל יצירת קשר ובירור מדוע התלמיד לא הגיע (שיחה עם ההורים / התלמיד).</li>
+      <li>אם התלמיד נעדר גם ביום המחרת — המחנך יבדוק מול ההורים את סיבת היעדרותו.</li>
+      <li>לאחר יומיים של היעדרות, מכל סיבה שהיא, יעדכן המחנך את יועץ הכיתה.</li>
+      <li>הגשת דו״ח נוכחות חודשי למנהל בית הספר וליועץ הכיתה: סיכום נוכחות התלמידים, איחורים, היעדרויות מוצדקות ושאינן מוצדקות, וכן התייחסות להיעדרות תלמידים משיעורים של מקצועות מסוימים. יש לתעד את הדוחות בתיק בית־ספרי.</li>
+    </ul>
+
+    <h3 class="mini rv">היועץ</h3>
+    <ul class="ed tight rv">
+      <li>איש הקשר של בית הספר עם גורמי הרווחה, עם גורמי טיפול ועם הקב״ס.</li>
+      <li>שמירה על קשר הדוק עם הקב״ס הבית־ספרי, קביעת נהלי עבודה שוטפים, הצגת נתוני נוכחות התלמידים ועדכון על תלמידים שאותרו עם בעיית ביקור סדיר ו/או תפקוד לקוי.</li>
+      <li>הזמנת הקב״ס לישיבות הצוות הבין־מקצועי בנושא נשירה סמויה וגלויה.</li>
+      <li>שותף לתהליכים הקשורים למעבר בין בתי ספר, וליווי התלמיד ומשפחתו עד לקליטת התלמיד במסגרת חלופית.</li>
+      <li>יש להקפיד לתעד את כל תהליכי העבודה עם התלמידים בתיק התלמיד.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">העדר רישום, אי־הגעה ועזיבה מרצון</h2>
+    <p class="rv">במקרים בהם תלמיד החליט כי אינו מעוניין להמשיך ללמוד בבית הספר מרצונו, יש לדווח על עזיבתו לגורמים הרלוונטיים על פי המקרים והמועדים הבאים:</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tr><th>המקרה</th><th>למי מדווח מנהל ביה״ס</th><th>מועד הדיווח</th></tr>
+        <tr><td class="k">העדר רישום לשנת הלימודים הקרובה</td><td>לקב״ס — על תלמיד שהיה רשום בשנת הלימודים החולפת ולא אישר את המשך לימודיו (נספח טופס 8.2)</td><td>לא יאוחר משבוע לפני פתיחת שנת הלימודים</td></tr>
+        <tr><td class="k">אי־הגעה ללימודים עם פתיחת שנת הלימודים</td><td>לקב״ס, לממונה המחוזי, למפקח הפדגוגי הכולל ולמפקחת על הצוותים הטיפוליים — על תלמיד המופיע ברשימת הרשומים אך לא הגיע ללימודים</td><td>לא יאוחר מיום 20.9</td></tr>
+        <tr><td class="k">עזיבת תלמיד מרצונו / רצון הוריו במהלך השנה</td><td>לקב״ס, למפקח הפדגוגי, לממונה המחוזי ולמפקחת על הצוותים הטיפוליים — בכל מועד שבו תלמיד הודיע על עזיבת בית הספר (נספח 8.3)</td><td>לא יאוחר משבוע לאחר הודעת התלמיד</td></tr>
+      </table>
+    </div>
+    <div class="callout rv"><span class="ttl">גריעה בעקבות עזיבה מרצון</span>במקרים בהם עזב תלמיד במהלך השנה מרצונו, יש לקיים שיחה עם התלמיד והוריו טרם הגריעה והדיווח. הגריעה מחייבת הודעה רשמית בכתב (מכתב סיום לימודים) להורים, עדכון המפקח הפדגוגי והמפקחת על הצוותים הטיפוליים, הודעה לקב״ס ברשות וכן ליחידת הבקרה והתפעול במחוז. בנוסף, יש לדווח במערכות המשרד הממוחשבות. בהודעה לגורמי המשרד יש לכלול את סיבת העזיבה (נספח 8.3).</div>
+
+    <h2 class="sub-sec rv">טיפול בבעיית ביקור סדיר ותפקוד לקוי</h2>
+    <p class="lead-p rv">בעיית ביקור סדיר ותפקוד לקוי של תלמיד מצריכה התערבות חינוכית־טיפולית משמעותית:</p>
+    <ol class="ed rv">
+      <li>החל מהיום השביעי להיעדרות התלמיד, במצטבר או שלא במצטבר (בתוך חודש), מנהל בית הספר, מחנך התלמיד ויועץ בית הספר יבדקו לעומק את סיבת ההיעדרות.</li>
+      <li><strong>בניית תוכנית התערבות אישית</strong> (לימודית, חברתית ורגשית) ע״י מחנך התלמיד ויועץ ביה״ס בהתייעצות עם המדריך על הייעוץ, הכוללת מיצוי אפשרויות הטיפול הפנים־בית־ספריות (כגון: שיחות אישיות, מעקב אישי, הזמנת הורים, שיעורים פרטניים, ביקורי בית נוספים, חונכות של בעלי תפקידים בבית הספר וכו׳). יש לתעד את התוכנית ולתייקה בתיקו האישי של התלמיד.
+        <ul class="ed tight">
+          <li>המנהל ישתף את הורי התלמיד בהכנת תוכנית ההתערבות האישית, ויציג להורים את התוכנית המתגבשת טרם הפעלתה לשם קבלת התייחסותם.</li>
+          <li>הסמכות לגיבוש התוכנית וליישומה היא של המנהל וצוותו. יש לגייס את התלמיד לשתף פעולה ולקבל את התוכנית הבית־ספרית במהלך תקופה של 15 ימים לפחות, ובמהלכה להמשיך פעולות חינוכיות ושיח על מנת ליישם את התוכנית.</li>
+          <li>במקרה שאותרו מספר תלמידים בנשירה סמויה בעלי מאפיינים דומים, ניתן לבנות תוכנית קבוצתית (עד 5 תלמידים בקבוצה). התוכנית תכלול התייחסות למאפייני התלמידים ולהיבטים רגשיים, לימודיים, חינוכיים וחברתיים.</li>
+        </ul>
+      </li>
+      <li><strong>ביצוע ביקור בית</strong> ע״י מחנך הכיתה ו/או היועץ החינוכי. במקרה שהילד עולה חדש, כדאי לצרף לביקור הבית אדם הדובר את שפת ההורים.</li>
+      <li><strong>יידוע הקב״ס בכתב</strong> (<a class="lk" href="michtav-kabas.html">נספח טופס 8.4</a>) ע״י היועץ, על בעיית ביקור סדיר ו/או תפקוד לקוי ועל התוכנית האישית שנבנתה.</li>
+      <li><strong>שליחת מכתב רשמי להורי התלמיד</strong> ע״י מנהל בית הספר, עם העתק לקב״ס, לגורמי המשרד ולתיק האישי, בדבר בעיית ביקור סדיר ו/או תפקוד לקוי (נספח טופס 8.5).</li>
+      <li>לאחר מיצוי פעולות ההתמדה (יישום התוכנית הפרטנית), ובמידה ובעיית הביקור הסדיר ו/או התפקוד הלקוי ממשיכים — מתקבלת החלטה ע״י הגורמים הרלוונטיים (מנהל, יועץ, מחנך בהתייעצות עם קב״ס) על הצורך בקיום ועדת התמדה. יש להתייעץ עם המפקחת על המערך הטיפולי ולוודא שכלל הפעולות הנדרשות נעשו טרם הוועדה.</li>
+    </ol>
+
+    <h3 class="mini rv">ועדת ההתמדה</h3>
+    <ul class="ed rv">
+      <li>על מנהל בית הספר לתאם בתחילת שנת הלימודים שלושה מועדים לוועדות התמדה בית־ספריות: <strong>דצמבר/ינואר · פברואר/מרץ · מאי/יוני</strong>. יש לקיים את הפעולות המקדימות (איתור תלמידים בנשירה סמויה, בניית תוכנית התערבות, ביקור בית, הזמנת הורים, מעורבות קב״ס, פגישות עם הורים וגורמים מקצועיים רלוונטיים בקהילה, מעקב אחרי קיום תוכנית ההתערבות).</li>
+      <li>מנהל בית הספר יזמן לוועדת ההתמדה, אחת לשליש, את התלמידים והוריהם אשר נערכו להם פעולות התמדה, עם הצוות הרלוונטי (יועץ, מחנך, קב״ס). רצוי לזמן בנוסף גורמים טיפוליים רלוונטיים.</li>
+      <li>במקרה שההורים פרודים/גרושים יש לזמן בנפרד כל אחד מההורים. די בהופעתו של הורה אחד בוועדה כדי לקיים את הוועדה, בתנאי שההורה הנעדר הוזמן כנדרש.</li>
+      <li>מטרת הוועדה: בניית תוכנית התערבות אישית להגברת שייכות ומניעת נשירה.</li>
+      <li>באחריות היועץ לשלוח למשתתפי הוועדה את סיכום הוועדה ואת התוכנית האישית המוצעת, וכן לתעד את הוועדה והתוכנית בתיק האישי של התלמיד.</li>
+    </ul>
+
+    <h3 class="mini rv">מעקב אחר החלטות ועדת ההתמדה</h3>
+    <ul class="ed rv">
+      <li>באחריות המנהל לוודא את ביצוע התוכנית בפועל.</li>
+      <li>יש לעדכן את הקב״ס אחת לשבועיים בהתקדמות התוכנית האישית.</li>
+      <li>במידה ולאחר 30 ימים מאז שהתקיימה הוועדה, ולמרות התוכנית האישית והליווי של בית הספר והקב״ס, התלמיד עדיין לא מגיע באופן סדיר ולא מתפקד כראוי — יש לכנס ועדת התמדה נוספת עם הצוות הרלוונטי, המפקח הפדגוגי הכולל, התלמיד והוריו.</li>
+      <li>הוועדה, בהשתתפות המפקח הפדגוגי הכולל, תחליט בין שתי אופציות:
+        <ul class="ed tight">
+          <li><strong>תוכנית התערבות נוספת</strong> לתקופה מוגדרת מראש (כ־15 יום), שבסיומה יוחלט האם להמשיך את תוכנית ההתערבות או לסיים את לימודי התלמיד ללא צורך בכינוס ועדה נוספת.</li>
+          <li><strong>סיום לימודים</strong> ומציאת מסגרת חינוכית חלופית.</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="callout red rv"><span class="ttl">שימו לב</span>לא ניתן להפסיק לימודים בכיתה י״ב; במקרה חריג יש להיוועץ עם המפקח הכולל. כל החלטה בנושא סיום לימודים תתקבל רק לאחר שמוצו כלל האפשרויות, תוך שקילת טובת התלמיד והשפעת ההחלטה על המשך התפתחותו האישית.</div>
+
+    <h2 class="sub-sec rv">סיום לימודים בעקבות בעיית ביקור סדיר ואי־תפקוד</h2>
+    <ol class="ed rv">
+      <li>בתום 30 יום מוועדת ההתמדה הראשונה, או בתום 15 יום מוועדת ההתמדה השנייה, אם התלמיד לא חזר ללמוד באופן סדיר בבית הספר על אף מאמצי הקב״ס והמסגרת החינוכית — תתקיים התייעצות עם המפקח הפדגוגי הכולל של ביה״ס בדבר סיום לימודיו.</li>
+      <li>המפקח הפדגוגי הכולל יבחן אם ננקטו כל הפעולות הנדרשות, ובהתאם לכך יוחלט האם יש מקום להמליץ למנהל בית הספר על סיום לימודיו של התלמיד בבית הספר.</li>
+      <li>לאחר קבלת ההחלטה על הפסקת לימודים, יש להוציא מכתב רשמי (<a class="lk" href="michtav-sium-limudim.html">נספח 8.6</a>) ולוודא שהקב״ס מחפש עבור התלמיד מסגרת חלופית.</li>
+      <li>יש לגרוע את התלמיד ממצבת התלמידים עד שבוע משליחת המכתב.</li>
+    </ol>
+
+    <h2 class="sub-sec rv">לוחות זמנים — מבט מרוכז</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>סיכום המועדים הקבועים בנוהל</caption>
+        <tr><th>הפעולה</th><th>אחריות</th><th>מועד / תדירות</th></tr>
+        <tr><td class="k">דיווח נוכחות במערכת</td><td>מחנך וצוות ההוראה</td><td>בכל שיעור, מדי יום לימודים</td></tr>
+        <tr><td class="k">עדכון יועץ הכיתה על היעדרות</td><td>מחנך</td><td>לאחר יומיים של היעדרות מכל סיבה</td></tr>
+        <tr><td class="k">דו״ח נוכחות חודשי למנהל וליועץ</td><td>מחנך</td><td>אחת לחודש</td></tr>
+        <tr><td class="k">דו״ח חודשי על נעדרים מעל 7 ימים (טופס 8.1)</td><td>מנהל — למפקח הפדגוגי, למפקחת על הצוותים הטיפוליים ולנציג הרשת המפעילה</td><td>בסיום כל חודש</td></tr>
+        <tr><td class="k">דיווח העדר רישום לשנה הקרובה (טופס 8.2)</td><td>מנהל — לקב״ס</td><td>עד שבוע לפני פתיחת שנת הלימודים</td></tr>
+        <tr><td class="k">דיווח אי־הגעה בפתיחת השנה</td><td>מנהל — לקב״ס, לממונה, למפקח הפדגוגי ולמפקחת</td><td>עד 20.9</td></tr>
+        <tr><td class="k">דיווח עזיבה מרצון (נספח 8.3)</td><td>מנהל — לקב״ס, למפקח הפדגוגי, לממונה ולמפקחת</td><td>עד שבוע מהודעת התלמיד</td></tr>
+        <tr><td class="k">בדיקת עומק של סיבת ההיעדרות</td><td>מנהל, מחנך ויועץ</td><td>מהיום השביעי להיעדרות בחודש</td></tr>
+        <tr><td class="k">תוכנית התערבות אישית</td><td>מחנך ויועץ, בשיתוף ההורים</td><td>תקופה של 15 ימים לפחות</td></tr>
+        <tr><td class="k">ועדות התמדה בית־ספריות</td><td>מנהל</td><td>שלושה מועדים: דצמבר/ינואר, פברואר/מרץ, מאי/יוני</td></tr>
+        <tr><td class="k">עדכון קב״ס בהתקדמות התוכנית</td><td>בית הספר</td><td>אחת לשבועיים מקיום הוועדה</td></tr>
+        <tr><td class="k">כינוס ועדת התמדה שנייה</td><td>מנהל, בהשתתפות המפקח הפדגוגי הכולל</td><td>לאחר 30 יום מקיום הוועדה הראשונה</td></tr>
+        <tr><td class="k">התייעצות על סיום לימודים</td><td>מנהל עם המפקח הפדגוגי הכולל</td><td>בתום 30 יום מוועדה ראשונה או 15 יום מוועדה שנייה</td></tr>
+        <tr><td class="k">גריעה ממצבת התלמידים</td><td>מנהל</td><td>עד שבוע משליחת מכתב סיום הלימודים (טופס 8.6)</td></tr>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">הנספחים</h2>
+    <ul class="ed rv">
+      <li><strong>טופס 8.1</strong> — דיווח חודשי: היעדרויות תלמידים (מעל 7 ימים בחודש) · <a class="lk" href="tofes-divuach-chodshi.html">לעמוד הטופס</a></li>
+      <li><strong>טופס 8.2</strong> — העדר רישום / אישור לימודים לשנת הלימודים הקרובה: ריכוז נתונים לקב״ס אודות תלמידים שהיו רשומים ולמדו בשנה החולפת אך טרם הסדירו או אישרו את המשך לימודיהם, ולא ידוע על רישומם למוסד חינוכי אחר.</li>
+      <li><strong>נספח 8.3</strong> — מכתב סיום לימודים בבית הספר בעקבות הודעת הורי תלמיד על עזיבה: נשלח לממונה המחוזי, למפקח הפדגוגי, למפקחת על הצוותים הטיפוליים ולקב״ס, כולל סיבת העזיבה והמהלכים שננקטו; העתק להורי התלמיד ולתיק האישי.</li>
+      <li><strong>טופס 8.4</strong> — הודעה לקב״ס בכתב על בעיית ביקור סדיר ו/או תפקוד לקוי · <a class="lk" href="michtav-kabas.html">לעמוד הטופס</a></li>
+      <li><strong>נספח 8.5</strong> — מכתב להורי התלמיד על בעיית ביקור סדיר ו/או תפקוד לקוי: מכתב רשמי הנשלח לאחר שבית הספר ביצע את הפעולות על פי ההנחיות, ובו הודעה על חובת ההורים לפי חוק לימוד חובה תש״ט–1949 והתראה כי אי־ביקור סדיר הינו עברה פלילית; יש לדרוש אישור קבלת המכתב. העתק: קב״ס, מפקח פדגוגי כולל, מפקחת על הצוותים הטיפוליים, תיק אישי.</li>
+      <li><strong>נספח 8.6</strong> — מכתב סיום לימודים בבית הספר בעקבות בעיית ביקור סדיר ו/או תפקוד לקוי · <a class="lk" href="michtav-sium-limudim.html">לעמוד המכתב</a></li>
+    </ul>
+
+    <h2 class="sub-sec rv">חוקים, חוזרים ונהלים קשורים</h2>
+    <ul class="ed tight rv">
+      <li><a class="lk" href="https://apps.education.gov.il/mankal/horaa.aspx?siduri=406" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך — ״ביקור סדיר למניעת נשירה״</a></li>
+      <li><a class="lk" href="https://apps.education.gov.il/mankal/horaa.aspx?siduri=492" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך — ״אקלים חינוכי מיטבי והתמודדות מוסדות חינוך עם אירועי אלימות וסיכון״</a></li>
+      <li><a class="lk" href="https://apps.education.gov.il/mankal/horaa.aspx?siduri=518" target="_blank" rel="noopener">נוהל משרד החינוך — ״הרחקה לצמיתות של תלמיד ממוסד חינוך והעברתו למוסד חינוך אחר״</a></li>
+      <li>הנחיות תלמידים חולים בביתם</li>
+    </ul>
+
+    <div class="source-box rv">
+      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
+      <a class="btn" href="https://drive.google.com/file/d/1IVhADxZTGfPr_Pe0ryFgLNrKMbGgPFRK/view" target="_blank" rel="noopener">פתיחה בדרייב ↗</a>
+    </div>
+
+  </div>
+</article>
+
+<footer>
+  <div class="wrap foot-in">
+    <img src="logo.png" alt="">
+    <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
+    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
+  </div>
+</footer>
+
+<script>
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var bar = document.getElementById('topbar');
+  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחולל סרטונים לימודיים | המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F0F4F8; --card:#ffffff;
+  --primary:#7c5cfc; --primary-l:#efe6fd; --primary-d:#5a3fd4;
+  --secondary:#ff6b8a; --green:#52B788; --accent:#ffd43b;
+  --dark:#1E293B; --gray:#64748B; --light-gray:#f8f9fa;
+  --shadow:0 2px 20px -4px rgba(0,0,0,.06);
+  --r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;padding-bottom:3rem}
+
+/* === HEADER === */
+.header{text-align:center;padding:2rem 1rem 0.5rem}
+.header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:var(--gray);font-size:0.95rem;margin-top:0.3rem}
+
+/* === AUTH === */
+#loginScreen{max-width:420px;margin:2rem auto;background:var(--card);border-radius:var(--r);padding:2rem;box-shadow:var(--shadow);text-align:center}
+#loginScreen h2{font-family:'Rubik',sans-serif;font-size:1.3rem;margin-bottom:1rem}
+#loginScreen input{width:100%;padding:0.7rem 1rem;border:2px solid #e8e8e8;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;margin-bottom:0.7rem;transition:border-color 0.2s}
+#loginScreen input:focus{outline:none;border-color:var(--primary)}
+#loginScreen button{width:100%;padding:0.75rem;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:transform 0.2s}
+#loginScreen button:hover{transform:translateY(-1px)}
+
+/* === APP === */
+#app{display:none;max-width:720px;margin:0 auto;padding:0 1rem}
+
+/* === AUTH BAR === */
+.auth-bar{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1rem;background:var(--card);border-radius:14px;margin-bottom:1rem;box-shadow:var(--shadow)}
+.auth-bar .user-info{display:flex;align-items:center;gap:0.5rem;font-size:0.9rem;color:var(--gray)}
+.auth-bar .user-info strong{color:var(--dark)}
+.auth-bar button{background:none;border:none;color:var(--gray);cursor:pointer;font-size:0.85rem;font-family:'Heebo',sans-serif}
+.auth-bar button:hover{color:var(--secondary)}
+
+/* === STEPS === */
+.steps{display:flex;justify-content:center;gap:0;margin-bottom:1.5rem}
+.step{display:flex;align-items:center;gap:0}
+.step-circle{width:36px;height:36px;border-radius:50%;background:#e8e8e8;color:var(--gray);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;transition:all 0.3s}
+.step-label{font-size:0.75rem;color:var(--gray);margin-right:0.3rem;margin-left:0.3rem}
+.step-line{width:40px;height:3px;background:#e8e8e8;border-radius:2px;transition:background 0.3s}
+.step.active .step-circle{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;box-shadow:0 4px 15px rgba(124,92,252,0.3)}
+.step.active .step-label{color:var(--primary);font-weight:700}
+.step.done .step-circle{background:var(--green);color:#fff}
+.step.done .step-line{background:var(--green)}
+
+/* === CARD === */
+.card{background:var(--card);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.card h2{font-family:'Rubik',sans-serif;font-size:1.2rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+
+/* === FORMS === */
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:0.3rem;color:var(--dark)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:0.65rem 0.9rem;border:2px solid #e8e8e8;border-radius:12px;font-family:'Heebo',sans-serif;font-size:0.95rem;transition:border-color 0.2s;background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary)}
+.form-group textarea{min-height:100px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+
+/* === BUTTONS === */
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.65rem 1.5rem;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;box-shadow:0 4px 15px rgba(124,92,252,0.2)}
+.btn-secondary{background:var(--light-gray);color:var(--dark)}
+.btn-green{background:var(--green);color:#fff}
+.btn-outline{background:transparent;border:2px solid #e8e8e8;color:var(--gray)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:0.45rem 1rem;font-size:0.85rem}
+.nav-row{display:flex;justify-content:space-between;margin-top:1.5rem}
+
+/* === SCREENS === */
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* === AI BOX === */
+.ai-box{background:linear-gradient(135deg,var(--primary-l),#f0e8ff);border:2px solid rgba(124,92,252,0.15);border-radius:16px;padding:1.2rem;margin-bottom:1.2rem}
+.ai-box h3{font-size:1rem;color:var(--primary);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem}
+.ai-box p{font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem}
+
+/* === KEY SETUP === */
+.key-setup{background:linear-gradient(135deg,#fff8dd,#fff0e0);border:2px solid rgba(230,126,34,0.2);border-radius:14px;padding:1rem;margin-bottom:1rem}
+.key-setup h4{font-size:0.95rem;color:#e67e22;margin-bottom:0.5rem}
+.key-setup p{font-size:0.82rem;color:var(--gray);line-height:1.6}
+.key-setup a{color:var(--primary);font-weight:600}
+.key-setup input{margin-top:0.5rem}
+
+/* === SCENE EDITOR === */
+.scene-editor{background:var(--light-gray);border:2px solid #eee;border-radius:16px;padding:1rem;margin-bottom:0.8rem;position:relative;transition:border-color 0.2s}
+.scene-editor:hover{border-color:var(--primary-l)}
+.scene-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem;cursor:pointer}
+.scene-num{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0}
+.scene-preview{font-size:0.9rem;color:var(--dark);font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scene-toggle{color:var(--gray);font-size:0.8rem;cursor:pointer;flex-shrink:0}
+.scene-body{display:none}
+.scene-editor.open .scene-body{display:block;animation:fadeIn 0.2s ease}
+.scene-editor.open .scene-toggle{transform:rotate(180deg)}
+.scene-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.5rem}
+.scene-delete{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:0.8rem;font-family:'Heebo',sans-serif}
+.scene-type-select{padding:0.3rem 0.6rem;border:1px solid #ddd;border-radius:8px;font-family:'Heebo',sans-serif;font-size:0.85rem;background:#fff}
+
+/* === ADD SCENE === */
+.add-scene-btn{width:100%;padding:0.8rem;border:2px dashed #ddd;border-radius:14px;background:transparent;color:var(--gray);font-size:0.9rem;cursor:pointer;font-family:'Heebo',sans-serif;transition:all 0.2s}
+.add-scene-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-l)}
+
+/* === PREVIEW === */
+.preview-container{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.phone-frame{position:relative;width:320px;height:570px;background:#fff;border-radius:2rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.12);border:3px solid #e8e8e8}
+.phone-frame iframe{width:100%;height:100%;border:none}
+.preview-controls{display:flex;gap:0.5rem}
+
+/* === PUBLISH === */
+.publish-options{display:flex;flex-direction:column;gap:0.8rem}
+.publish-card{background:var(--light-gray);border-radius:14px;padding:1.2rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:all 0.2s;border:2px solid transparent}
+.publish-card:hover{border-color:var(--primary);background:var(--primary-l)}
+.publish-icon{font-size:1.8rem;flex-shrink:0}
+.publish-text h3{font-size:1rem;margin-bottom:0.2rem}
+.publish-text p{font-size:0.82rem;color:var(--gray)}
+.published-url{margin-top:1rem;padding:0.7rem;background:#e6f9f0;border:2px solid var(--green);border-radius:12px;display:none;text-align:center}
+.published-url input{width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:8px;font-family:'Heebo',sans-serif;text-align:center;margin-bottom:0.5rem}
+
+/* === TOAST === */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.7rem 1.5rem;border-radius:14px;font-size:0.9rem;z-index:9999;transition:transform 0.3s;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* === LOADING === */
+.loading{display:inline-flex;align-items:center;gap:0.5rem;color:var(--primary);font-weight:600}
+.loading::after{content:'';width:18px;height:18px;border:3px solid var(--primary-l);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* === DRAFT BANNER === */
+.draft-banner{background:#fff8dd;border:2px solid #ffe066;border-radius:14px;padding:0.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.draft-banner p{font-size:0.9rem;font-weight:600}
+.draft-btns{display:flex;gap:0.5rem}
+
+/* === TYPE SELECTOR === */
+.type-selector{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.2rem}
+@media(max-width:500px){.type-selector{grid-template-columns:1fr}}
+.type-card{padding:1rem;border:2px solid #e8e8e8;border-radius:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.8rem}
+.type-card:hover{border-color:var(--primary-l);background:var(--light-gray)}
+.type-card.selected{border-color:var(--primary);background:var(--primary-l);box-shadow:0 4px 15px rgba(124,92,252,0.12)}
+.type-icon{font-size:1.8rem;flex-shrink:0}
+.type-info h3{font-size:0.95rem;font-weight:700;margin-bottom:0.15rem}
+.type-info p{font-size:0.78rem;color:var(--gray);line-height:1.4}
+
+/* === FULL-MODE PREVIEW === */
+.wide-frame{position:relative;width:100%;max-width:580px;aspect-ratio:16/9;background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.12);border:3px solid #e8e8e8}
+.wide-frame iframe{width:100%;height:100%;border:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#127909; מחולל סרטונים לימודיים</h1>
+  <p>סיכום 60 שניות או סרטון הקנייה מלא – בקליק</p>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <h2>&#128075; שלום! הזינו את הפרטים שלכם</h2>
+  <input type="text" id="loginName" placeholder="שם מלא">
+  <input type="email" id="loginEmail" placeholder="אימייל">
+  <button onclick="login()">&#9654; התחילו ליצור</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Auth Bar -->
+  <div class="auth-bar">
+    <div class="user-info">&#128100; <strong id="userName"></strong></div>
+    <button onclick="logout()">&#128682; יציאה</button>
+  </div>
+
+  <!-- Draft Banner -->
+  <div id="draftBanner" class="draft-banner" style="display:none">
+    <p>&#128196; נמצאה טיוטה. לטעון אותה?</p>
+    <div class="draft-btns">
+      <button class="btn btn-primary btn-sm" onclick="loadDraft()">&#10003; טען</button>
+      <button class="btn btn-outline btn-sm" onclick="dismissDraft()">&#10005; חדש</button>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active"><div class="step-circle">1</div><span class="step-label">פרטים</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">2</div><span class="step-label">סצנות</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">3</div><span class="step-label">תצוגה</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">4</div><span class="step-label">פרסום</span></div>
+  </div>
+
+  <!-- STEP 1: Details -->
+  <div class="screen active" id="step1">
+    <div class="card">
+      <h2>&#128221; פרטי הסרטון</h2>
+
+      <!-- Video Type Selector -->
+      <div class="type-selector">
+        <div class="type-card selected" onclick="setVideoType('summary')" id="typeSummary">
+          <div class="type-icon">&#9889;</div>
+          <div class="type-info">
+            <h3>סיכום 60 שניות</h3>
+            <p>סיכום מהיר בסגנון TikTok – 10 סצנות, קצב מהיר</p>
+          </div>
+        </div>
+        <div class="type-card" onclick="setVideoType('full')" id="typeFull">
+          <div class="type-icon">&#127916;</div>
+          <div class="type-info">
+            <h3>סרטון לימודי מלא</h3>
+            <p>הקנייה עם שאלות – קצר / בינוני / ארוך</p>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="videoType" value="summary">
+
+      <div class="form-group">
+        <label>שם הסרטון</label>
+        <input type="text" id="videoName" placeholder='למשל: "סיכום שיעור – משוואות"'>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>מקצוע</label>
+          <select id="subject">
+            <option value="">בחרו מקצוע</option>
+            <option>מתמטיקה</option>
+            <option>היסטוריה</option>
+            <option>אנגלית</option>
+            <option>עברית</option>
+            <option>מדעים</option>
+            <option>אזרחות</option>
+            <option>תנ"ך</option>
+            <option>תספורת ועיצוב שיער</option>
+            <option>קוסמטיקה</option>
+            <option>חשמל</option>
+            <option>מחשבים</option>
+            <option>אחר</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>כיתה</label>
+          <select id="grade">
+            <option value="">בחרו כיתה</option>
+            <option>ט</option>
+            <option>י</option>
+            <option>יא</option>
+            <option>יב</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>רמה</label>
+          <select id="level">
+            <option>בסיסי</option>
+            <option>בינוני</option>
+            <option>מתקדם</option>
+          </select>
+        </div>
+        <div class="form-group" id="durationGroup">
+          <label>אורך</label>
+          <select id="duration">
+            <option value="60">60 שניות (סיכום)</option>
+            <option value="120">2 דקות (קצר)</option>
+            <option value="300">5 דקות (בינוני)</option>
+            <option value="600">10 דקות (ארוך)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="styleGroup">
+        <label>סגנון</label>
+        <select id="style">
+          <option value="animated">מונפש – אנימציות חלקות</option>
+          <option value="normal">רגיל – נקי ומקצועי</option>
+          <option value="funny">מצחיק – הומור וסגנון צעיר</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>תוכן / נושא</label>
+        <textarea id="content" placeholder="כתבו את הנושא, או הדביקו תוכן מהשיעור שרוצים לסכם..."></textarea>
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn btn-primary" onclick="goToStep(2)">&#8592; הבא: סצנות</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Scenes -->
+  <div class="screen" id="step2">
+    <div class="card">
+      <h2>&#127916; עריכת סצנות</h2>
+
+      <!-- AI Box -->
+      <div class="ai-box">
+        <h3>&#10024; יצירה עם AI</h3>
+        <p>Gemini ייצר סצנות אוטומטית מהתוכן שהזנתם</p>
+        <button class="btn btn-primary" id="aiGenerateBtn" onclick="generateWithAI()">&#10024; ייצר סצנות עם AI</button>
+        <span class="loading" id="aiLoading" style="display:none">יוצר סצנות...</span>
+      </div>
+
+      <!-- Key Setup -->
+      <div class="key-setup" id="aiKeySetup" style="display:none">
+        <h4>&#128273; נדרש מפתח Gemini</h4>
+        <p>
+          1. היכנסו ל-<a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a><br>
+          2. לחצו "Create API Key"<br>
+          3. העתיקו והדביקו כאן:
+        </p>
+        <input type="text" id="geminiKeyInput" placeholder="הדביקו את המפתח כאן...">
+        <button class="btn btn-sm btn-green" onclick="saveGeminiKey()" style="margin-top:0.5rem">&#10003; שמור מפתח</button>
+      </div>
+
+      <!-- Scenes List -->
+      <div id="scenesList"></div>
+      <button class="add-scene-btn" onclick="addScene()">+ הוסיפו סצנה</button>
+
+      <div class="nav-row">
+        <button class="btn btn-secondary" onclick="goToStep(1)">&#8594; חזרה</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">&#8592; תצוגה מקדימה</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Preview -->
+  <div class="screen" id="step3">
+    <div class="card">
+      <h2>&#128250; תצוגה מקדימה</h2>
+      <div class="preview-container">
+        <div class="phone-frame" id="phoneFrame">
+          <iframe id="previewFramePhone" sandbox="allow-scripts"></iframe>
+        </div>
+        <div class="wide-frame" id="wideFrame" style="display:none">
+          <iframe id="previewFrameWide" sandbox="allow-scripts"></iframe>
+        </div>
+        <div class="preview-controls">
+          <button class="btn btn-outline btn-sm" onclick="refreshPreview()">&#128260; רענן</button>
+          <button class="btn btn-secondary btn-sm" onclick="goToStep(2)">&#9998; חזרה לעריכה</button>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-secondary" onclick="goToStep(2)">&#8594; חזרה</button>
+        <button class="btn btn-primary" onclick="goToStep(4)">&#8592; פרסום</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Publish -->
+  <div class="screen" id="step4">
+    <div class="card">
+      <h2>&#128640; פרסום והורדה</h2>
+      <div class="publish-options">
+        <div class="publish-card" onclick="downloadVideo()">
+          <span class="publish-icon">&#128229;</span>
+          <div class="publish-text">
+            <h3>הורדת קובץ HTML</h3>
+            <p>הורידו את הסרטון כקובץ HTML שאפשר לפתוח בדפדפן</p>
+          </div>
+        </div>
+        <div class="publish-card" onclick="copyHTML()">
+          <span class="publish-icon">&#128203;</span>
+          <div class="publish-text">
+            <h3>העתקת קוד HTML</h3>
+            <p>העתיקו את הקוד ללוח</p>
+          </div>
+        </div>
+      </div>
+      <div class="published-url" id="publishedResult">
+        <p style="font-weight:700;color:var(--green);margin-bottom:0.5rem">&#10003; הקובץ הורד בהצלחה!</p>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-secondary" onclick="goToStep(3)">&#8594; חזרה</button>
+        <span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// === CONFIG ===
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+// === STATE ===
+let currentStep = 1;
+let user = null;
+let details = {};
+let scenes = [];
+let videoType = 'summary'; // 'summary' or 'full'
+
+// === VIDEO TYPE ===
+function setVideoType(type) {
+  videoType = type;
+  document.getElementById('videoType').value = type;
+  document.getElementById('typeSummary').classList.toggle('selected', type === 'summary');
+  document.getElementById('typeFull').classList.toggle('selected', type === 'full');
+  // Show/hide duration & style for full mode
+  document.getElementById('durationGroup').style.display = type === 'full' ? 'block' : 'none';
+  document.getElementById('styleGroup').style.display = type === 'full' ? 'block' : 'none';
+  // Set defaults for summary
+  if (type === 'summary') {
+    document.getElementById('duration').value = '60';
+    document.getElementById('style').value = 'animated';
+  }
+}
+
+// Subject accent colors (used for 60-sec summary minimalist style)
+const SUBJECT_ACCENTS = {
+  'מתמטיקה': '#4F46E5',
+  'היסטוריה': '#B45309',
+  'מדעים': '#059669',
+  'עברית': '#7C3AED',
+  'תנ"ך': '#7C3AED',
+  'אנגלית': '#2563EB',
+  'תספורת ועיצוב שיער': '#EC4899',
+  'קוסמטיקה': '#EC4899',
+  'אזרחות': '#0891B2',
+  'חשמל': '#D97706',
+  'מחשבים': '#4F46E5'
+};
+
+// === AUTH ===
+function login() {
+  const name = document.getElementById('loginName').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!name || !email) { showToast('יש למלא שם ואימייל'); return; }
+  user = { name, email };
+  localStorage.setItem('ort-video-user', JSON.stringify(user));
+  showApp();
+}
+
+function logout() {
+  user = null;
+  localStorage.removeItem('ort-video-user');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'block';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('userName').textContent = user.name;
+  checkDraft();
+  checkGeminiKey();
+}
+
+// === AUTO LOGIN ===
+(function() {
+  const saved = localStorage.getItem('ort-video-user');
+  if (saved) { user = JSON.parse(saved); showApp(); }
+  // Init video type UI
+  setVideoType('summary');
+})();
+
+// === GEMINI KEY ===
+function getGeminiKey() { return localStorage.getItem('ort-gemini-key') || null; }
+
+function saveGeminiKey() {
+  const key = document.getElementById('geminiKeyInput').value.trim();
+  if (!key) { showToast('יש להדביק מפתח'); return; }
+  localStorage.setItem('ort-gemini-key', key);
+  document.getElementById('aiKeySetup').style.display = 'none';
+  showToast('המפתח נשמר!');
+}
+
+function checkGeminiKey() {
+  // Only hide key setup if key exists – don't auto-show it
+  const setup = document.getElementById('aiKeySetup');
+  if (setup && getGeminiKey()) setup.style.display = 'none';
+}
+
+// === NAVIGATION ===
+function goToStep(step) {
+  if (step > currentStep && !validateStep(currentStep)) return;
+  saveStepData();
+  currentStep = step;
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
+
+  document.querySelectorAll('.steps .step').forEach((s, i) => {
+    s.className = 'step';
+    if (i + 1 < step) s.classList.add('done');
+    else if (i + 1 === step) s.classList.add('active');
+  });
+
+  if (step === 2) { renderScenes(); checkGeminiKey(); }
+  if (step === 3) refreshPreview();
+
+  saveDraft();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+  if (step === 1) {
+    const name = document.getElementById('videoName').value.trim();
+    const subject = document.getElementById('subject').value;
+    const content = document.getElementById('content').value.trim();
+    if (!name) { showToast('יש למלא שם לסרטון'); return false; }
+    if (!subject) { showToast('יש לבחור מקצוע'); return false; }
+    if (!content) { showToast('יש למלא תוכן/נושא'); return false; }
+    return true;
+  }
+  if (step === 2) {
+    if (scenes.length < 3) { showToast('צריך לפחות 3 סצנות'); return false; }
+    return true;
+  }
+  return true;
+}
+
+function saveStepData() {
+  videoType = document.getElementById('videoType').value || 'summary';
+  details = {
+    videoType: videoType,
+    videoName: document.getElementById('videoName').value.trim(),
+    subject: document.getElementById('subject').value,
+    grade: document.getElementById('grade').value,
+    level: document.getElementById('level').value,
+    duration: videoType === 'summary' ? '60' : document.getElementById('duration').value,
+    style: videoType === 'summary' ? 'animated' : document.getElementById('style').value,
+    content: document.getElementById('content').value.trim()
+  };
+}
+
+// === DRAFT ===
+function saveDraft() {
+  try {
+    saveStepData();
+    localStorage.setItem('ort-video-draft', JSON.stringify({
+      step: currentStep, details, scenes, lastSaved: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function checkDraft() {
+  const raw = localStorage.getItem('ort-video-draft');
+  if (raw) document.getElementById('draftBanner').style.display = 'flex';
+}
+
+function loadDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem('ort-video-draft'));
+    if (!draft) return;
+    details = draft.details || {};
+    scenes = draft.scenes || [];
+    if (details.videoType) setVideoType(details.videoType);
+    if (details.videoName) document.getElementById('videoName').value = details.videoName;
+    if (details.subject) document.getElementById('subject').value = details.subject;
+    if (details.grade) document.getElementById('grade').value = details.grade;
+    if (details.level) document.getElementById('level').value = details.level;
+    if (details.duration) document.getElementById('duration').value = details.duration;
+    if (details.style) document.getElementById('style').value = details.style;
+    if (details.content) document.getElementById('content').value = details.content;
+    goToStep(draft.step || 1);
+  } catch(e) {}
+  document.getElementById('draftBanner').style.display = 'none';
+}
+
+function dismissDraft() {
+  localStorage.removeItem('ort-video-draft');
+  document.getElementById('draftBanner').style.display = 'none';
+}
+
+// === SCENES ===
+const sceneTypes = {
+  hook:    { label: 'פתיחה (Hook)', icon: '&#127916;' },
+  question:{ label: 'שאלה', icon: '&#10068;' },
+  content: { label: 'תוכן', icon: '&#128218;' },
+  list:    { label: 'רשימה', icon: '&#128203;' },
+  grid:    { label: 'כרטיסים (2x2)', icon: '&#128200;' },
+  warning: { label: 'אזהרה/חשוב', icon: '&#9888;' },
+  summary: { label: 'סיכום', icon: '&#9989;' },
+  ending:  { label: 'סיום', icon: '&#127775;' }
+};
+
+function addScene() {
+  scenes.push({ type: 'content', emoji: '', title: '', items: [], subtitle: '', duration: 6000 });
+  renderScenes();
+  // Open the new scene
+  setTimeout(() => {
+    const editors = document.querySelectorAll('.scene-editor');
+    if (editors.length) toggleScene(editors[editors.length - 1]);
+  }, 50);
+}
+
+function deleteScene(idx) {
+  scenes.splice(idx, 1);
+  renderScenes();
+  saveDraft();
+}
+
+function renderScenes() {
+  const container = document.getElementById('scenesList');
+  if (!scenes.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--gray);padding:2rem;">אין עדיין סצנות. לחצו "ייצר עם AI" או הוסיפו ידנית.</p>';
+    return;
+  }
+
+  let html = '';
+  scenes.forEach((scene, i) => {
+    const typeInfo = sceneTypes[scene.type] || sceneTypes.content;
+    html += `
+    <div class="scene-editor" data-idx="${i}">
+      <div class="scene-header" onclick="toggleScene(this.parentElement)">
+        <div class="scene-num">${i + 1}</div>
+        <span class="scene-preview">${escapeHtml(scene.title || 'סצנה ריקה')}</span>
+        <span class="scene-toggle">&#9660;</span>
+      </div>
+      <div class="scene-body">
+        <div class="form-row" style="margin-bottom:0.6rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>סוג סצנה</label>
+            <select class="scene-type-select" onchange="updateScene(${i},'type',this.value)">
+              ${Object.entries(sceneTypes).map(([k,v]) => `<option value="${k}" ${scene.type===k?'selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>אימוג'י</label>
+            <input type="text" value="${escapeHtml(scene.emoji)}" maxlength="4"
+              onchange="updateScene(${i},'emoji',this.value)" placeholder="&#9786;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>כותרת</label>
+          <input type="text" value="${escapeHtml(scene.title)}"
+            onchange="updateScene(${i},'title',this.value)" placeholder="כותרת הסצנה">
+        </div>
+        <div class="form-group">
+          <label>פריטים (שורה לכל פריט)</label>
+          <textarea rows="4" onchange="updateScene(${i},'items',this.value.split('\\n').filter(x=>x.trim()))"
+            placeholder="פריט 1&#10;פריט 2&#10;פריט 3">${(scene.items||[]).join('\n')}</textarea>
+        </div>
+        <div class="form-group">
+          <label>טקסט משנה (אופציונלי)</label>
+          <input type="text" value="${escapeHtml(scene.subtitle||'')}"
+            onchange="updateScene(${i},'subtitle',this.value)" placeholder="הערה, טיפ, הסבר קצר">
+        </div>
+        <div class="scene-actions">
+          <button class="scene-delete" onclick="deleteScene(${i})">&#128465; מחק סצנה</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function toggleScene(el) {
+  el.classList.toggle('open');
+}
+
+function updateScene(idx, field, value) {
+  scenes[idx][field] = value;
+  saveDraft();
+}
+
+// === AI GENERATION ===
+async function generateWithAI() {
+  const apiKey = getGeminiKey();
+  if (!apiKey) {
+    const setup = document.getElementById('aiKeySetup');
+    if (setup) setup.style.display = 'block';
+    showToast('יש להזין מפתח Gemini כדי לייצר עם AI');
+    return;
+  }
+
+  saveStepData();
+  const { videoName, subject, grade, level, duration, style, content } = details;
+  const isSummary = videoType === 'summary';
+
+  let sceneCount, styleName, prompt;
+
+  if (isSummary) {
+    sceneCount = '10';
+    prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה.
+יצור בדיוק 10 סצנות לסרטון סיכום שיעור ב-60 שניות בסגנון TikTok.
+
+פרטים:
+- שם: ${videoName}
+- מקצוע: ${subject}
+- כיתה: ${grade}
+- רמה: ${level}
+- אורך: 60 שניות (10 סצנות × 4-6 שניות)
+
+תוכן/נושא:
+${content}
+
+הנחיות:
+- שפה פשוטה וברורה, מתאימה לנוער בתיכון
+- משפטים קצרים מאוד, מנות ידע קטנות
+- קצב מהיר – כל סצנה 4-6 שניות
+- סצנה 1 = hook: כותרת + "60 שניות על מה למדנו"
+- סצנות 2-8 = content: נקודה מרכזית אחת לכל סצנה (2-4 פריטים קצרים)
+- סצנה 9 = summary: 3-5 נקודות מרכזיות לסיכום
+- סצנה 10 = ending: "עכשיו תורכם" + קריאה לפעולה
+- items = 2-4 פריטים קצרים לסצנה. משפט אחד לפריט!
+
+החזר JSON בלבד בפורמט:
+{
+  "scenes": [
+    {
+      "type": "hook|content|list|summary|ending",
+      "emoji": "אימוג'י אחד",
+      "title": "כותרת קצרה",
+      "items": ["פריט 1", "פריט 2"],
+      "subtitle": "טקסט משנה (אופציונלי, מחרוזת ריקה אם אין)"
+    }
+  ]
+}`;
+  } else {
+    const sceneCounts = { '120': '8-12', '300': '15-20', '600': '25-35' };
+    const styleNames = { animated: 'מונפש', normal: 'רגיל ומקצועי', funny: 'מצחיק עם הומור' };
+    sceneCount = sceneCounts[duration] || '15-20';
+    styleName = styleNames[style] || 'מונפש';
+
+    prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה.
+יצור סצנות לסרטון לימודי מלא (הקנייה).
+
+פרטים:
+- שם: ${videoName}
+- מקצוע: ${subject}
+- כיתה: ${grade}
+- רמה: ${level}
+- אורך: ${duration} שניות (${sceneCount} סצנות)
+- סגנון: ${styleName}
+
+תוכן/נושא:
+${content}
+
+הנחיות:
+- שפה פשוטה וברורה, מתאימה לנוער בתיכון
+- משפטים קצרים, מנות ידע קטנות
+- הסצנה הראשונה = hook (פתיחה מושכת)
+- הסצנה האחרונה = ending (סיום + קריאה לפעולה)
+- סצנה לפני אחרונה = summary (סיכום 3-5 נקודות)
+- כל 3-4 סצנות, הוסף סצנה מסוג "question" (שאלת הבנה אינטראקטיבית)
+- שאלה = type "question", title = השאלה, items = 4 תשובות, subtitle = אינדקס התשובה הנכונה (0-3)
+- שאר הסצנות = תוכן לימודי מגוון (content, list, grid, warning)
+- items = רשימת פריטים/נקודות בכל סצנה (2-6 פריטים)
+- אימוג'י אחד מתאים לכל סצנה
+${style === 'funny' ? '- הוסף הומור קל, בדיחות קשורות לנושא, סגנון צעיר' : ''}
+
+החזר JSON בלבד בפורמט:
+{
+  "scenes": [
+    {
+      "type": "hook|content|list|grid|warning|question|summary|ending",
+      "emoji": "אימוג'י אחד",
+      "title": "כותרת קצרה",
+      "items": ["פריט 1", "פריט 2"],
+      "subtitle": "טקסט משנה (או אינדקס תשובה נכונה לשאלה)"
+    }
+  ]
+}`;
+  }
+
+  const btn = document.getElementById('aiGenerateBtn');
+  const loading = document.getElementById('aiLoading');
+  btn.style.display = 'none';
+  loading.style.display = 'inline-flex';
+
+  try {
+    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'שגיאה בחיבור ל-Gemini');
+    }
+
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('תשובה ריקה מ-Gemini');
+
+    const parsed = JSON.parse(text);
+    if (!parsed.scenes?.length) throw new Error('לא התקבלו סצנות');
+
+    // Calculate duration per scene
+    const totalMs = parseInt(details.duration) * 1000;
+    const durPerScene = Math.round(totalMs / parsed.scenes.length);
+
+    scenes = parsed.scenes.map(s => ({
+      type: s.type || 'content',
+      emoji: s.emoji || '',
+      title: s.title || '',
+      items: Array.isArray(s.items) ? s.items : [],
+      subtitle: s.subtitle || '',
+      duration: durPerScene
+    }));
+
+    renderScenes();
+    saveDraft();
+    showToast(`נוצרו ${scenes.length} סצנות!`);
+  } catch (e) {
+    showToast('שגיאה: ' + e.message);
+  } finally {
+    btn.style.display = 'inline-flex';
+    loading.style.display = 'none';
+  }
+}
+
+// === PREVIEW ===
+function refreshPreview() {
+  saveStepData();
+  const html = generateVideoHTML();
+  const isSummary = videoType === 'summary';
+  document.getElementById('phoneFrame').style.display = isSummary ? 'block' : 'none';
+  document.getElementById('wideFrame').style.display = isSummary ? 'none' : 'block';
+  const frame = document.getElementById(isSummary ? 'previewFramePhone' : 'previewFrameWide');
+  frame.srcdoc = html;
+}
+
+// === GENERATE VIDEO HTML ===
+function generateVideoHTML() {
+  saveStepData();
+  const d = details;
+  const isSummary = videoType === 'summary';
+  return isSummary ? generateSummaryHTML(d) : generateFullHTML(d);
+}
+
+// ============================================
+// 60-SECOND SUMMARY – Minimalist TikTok Style
+// ============================================
+function generateSummaryHTML(d) {
+  const accent = SUBJECT_ACCENTS[d.subject] || '#6366F1';
+  const totalDur = scenes.reduce((a, s) => a + (s.duration || 6000), 0);
+  const totalSec = Math.floor(totalDur / 1000);
+  const mm = Math.floor(totalSec / 60);
+  const ss = totalSec % 60;
+  const timeLabel = `${mm}:${ss < 10 ? '0' : ''}${ss}`;
+
+  // Build scenes HTML – minimalist style
+  let scenesHTML = '';
+  scenes.forEach((scene, i) => {
+    const isActive = i === 0 ? ' active' : '';
+    let inner = '';
+
+    switch (scene.type) {
+      case 'hook':
+        inner = `
+          <div class="scene-num" data-anim="fadeUp" data-t="0">${esc(scene.emoji || '60')}</div>
+          <div class="big-title" data-anim="fadeUp" data-t="200">${esc(scene.title)}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeUp" data-t="500">${esc(scene.subtitle)}</div>` : ''}
+          ${scene.items.length ? `<div class="item-list" data-anim="fadeUp" data-t="700">
+            ${scene.items.map(item => `<div class="item"><span class="item-dot"></span>${esc(item)}</div>`).join('')}
+          </div>` : ''}`;
+        break;
+
+      case 'summary':
+        inner = `
+          <div class="scene-num" data-anim="fadeUp" data-t="0">${esc(scene.emoji || '')}</div>
+          <div class="caption" data-anim="fadeUp" data-t="150">${esc(scene.title)}</div>
+          <ul class="check-list">${scene.items.map((item, j) =>
+            `<li data-anim="fadeUp" data-t="${400 + j * 200}"><span class="check">&#10003;</span>${esc(item)}</li>`
+          ).join('')}</ul>`;
+        break;
+
+      case 'ending':
+        inner = `
+          <div class="scene-num" data-anim="fadeUp" data-t="0" style="font-size:2rem">${esc(scene.emoji)}</div>
+          <div class="big-title" data-anim="fadeUp" data-t="200">${esc(scene.title)}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeUp" data-t="500">${esc(scene.subtitle)}</div>` : ''}
+          <div class="school-tag" data-anim="fadeUp" data-t="800">&#127979; המרכז הפדגוגי · מינהל הכשרה מקצועית</div>`;
+        break;
+
+      default: // content, list
+        inner = `
+          ${i > 0 ? `<div class="scene-badge" data-anim="fadeUp" data-t="0">${i}</div>` : ''}
+          <div class="caption" data-anim="fadeUp" data-t="150">${esc(scene.emoji)} ${esc(scene.title)}</div>
+          <div class="item-list">${scene.items.map((item, j) =>
+            `<div class="item" data-anim="fadeUp" data-t="${350 + j * 180}"><span class="item-dot"></span>${esc(item)}</div>`
+          ).join('')}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeUp" data-t="${350 + scene.items.length * 180 + 150}">${esc(scene.subtitle)}</div>` : ''}`;
+    }
+
+    scenesHTML += `<div class="scene${isActive}" data-dur="${scene.duration || 6000}">${inner}</div>\n`;
+  });
+
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(d.videoName)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700&family=Rubik:wght@400;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{--accent:${accent}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#f5f5f5}
+body{display:flex;align-items:center;justify-content:center;font-family:'Heebo',sans-serif}
+#phone{position:relative;width:min(380px,100vw);height:min(100vh,680px);background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.08)}
+@media(max-width:420px){#phone{width:100vw;height:100vh;border-radius:0}}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1.6rem 3.5rem;opacity:0;transform:translateY(15px);transition:opacity .3s ease,transform .3s ease;pointer-events:none;overflow:hidden;background:#fff}
+.scene.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.scene::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;top:-100px;right:-100px;background:var(--accent);opacity:0.06;z-index:0}
+.big-title{font-family:'Rubik',sans-serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;line-height:1.3;color:#111;position:relative;z-index:2}
+.caption{font-family:'Rubik',sans-serif;font-size:clamp(1.2rem,4vw,1.6rem);font-weight:800;color:#111;line-height:1.4;position:relative;z-index:2;margin-bottom:0.6rem}
+.sub{font-size:0.9rem;color:#888;margin-top:0.5rem;line-height:1.5;position:relative;z-index:2}
+.scene-num{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Secular One',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:0.8rem;position:relative;z-index:2}
+.scene-badge{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;margin-bottom:0.6rem;position:relative;z-index:2}
+.item-list{width:100%;max-width:300px;position:relative;z-index:2;margin-top:0.5rem}
+.item{padding:0.4rem 0;border-bottom:1px solid #f0f0f0;font-size:1rem;color:#333;display:flex;align-items:center;gap:0.6rem}
+.item:last-child{border-bottom:none}
+.item-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.check-list{list-style:none;width:100%;max-width:280px;position:relative;z-index:2;margin-top:0.6rem}
+.check-list li{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;font-size:0.95rem;color:#333;font-weight:600;border-bottom:1px solid #f0f0f0}
+.check-list li:last-child{border-bottom:none}
+.check{color:var(--accent);font-weight:700;font-size:1.1rem;flex-shrink:0}
+.school-tag{margin-top:1.2rem;font-size:0.85rem;color:#888;position:relative;z-index:2}
+#progressWrap{position:absolute;bottom:0;left:0;right:0;height:2px;background:#eee;z-index:200;cursor:pointer}
+#progress{height:100%;width:0;background:var(--accent);transition:width .1s linear}
+#progressWrap:hover{height:4px}
+#timerBadge{position:absolute;top:0.7rem;left:0.7rem;background:rgba(255,255,255,.9);padding:0.15rem 0.5rem;border-radius:20px;font-size:0.7rem;color:#999;z-index:200;font-variant-numeric:tabular-nums;border:1px solid #eee}
+#topicBadge{position:absolute;top:0.7rem;right:0.7rem;background:rgba(255,255,255,.9);padding:0.15rem 0.5rem;border-radius:20px;font-size:0.7rem;color:var(--accent);z-index:200;font-weight:700;border:1px solid #eee}
+#pauseOverlay{position:absolute;inset:0;z-index:150;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;cursor:pointer}
+#pauseOverlay.show{display:flex}
+#pauseOverlay .p-btn{width:50px;height:50px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+#pauseOverlay .p-btn svg{width:20px;height:20px;fill:#fff;margin-right:-2px}
+#startOverlay{position:absolute;inset:0;z-index:300;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .4s}
+#startOverlay.hidden{opacity:0;pointer-events:none}
+#startOverlay h2{font-family:'Rubik',sans-serif;font-size:1.4rem;font-weight:900;color:#111;margin-bottom:0.2rem}
+#startOverlay .ss{font-size:0.85rem;color:#888;margin-bottom:1.5rem}
+#startOverlay .time-label{font-family:'Secular One',sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:1.5rem}
+#startOverlay .sb{width:60px;height:60px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.1);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+#startOverlay .sb svg{width:24px;height:24px;fill:#fff;margin-right:-2px}
+#startOverlay .tap{margin-top:1rem;font-size:0.75rem;color:#ccc}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="phone">
+<div id="startOverlay" onclick="startVideo()">
+<h2>${esc(d.videoName)}</h2>
+<div class="ss">${esc(d.subject)} | ${esc(d.grade)}</div>
+<div class="time-label">60 &#x2033;</div>
+<div class="sb"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+<div class="tap">&#9654; \u05DC\u05D7\u05E6\u05D5 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC</div>
+</div>
+<div id="pauseOverlay" onclick="togglePause()"><div class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div></div>
+${scenesHTML}
+<div id="timerBadge">0:00 / ${timeLabel}</div>
+<div id="topicBadge">${esc(d.subject)}</div>
+<div id="progressWrap" onclick="seekTo(event)"><div id="progress"></div></div>
+</div>
+<` + `script>
+const scenes=document.querySelectorAll('.scene'),T=${scenes.length};
+let c=0,run=false,st=null,ti=null,el=0;
+const D=[...scenes].map(s=>parseInt(s.dataset.dur)||6000),tot=D.reduce((a,b)=>a+b,0);
+function startVideo(){document.getElementById('startOverlay').classList.add('hidden');run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
+function tick(){if(!run)return;el+=50;document.getElementById('progress').style.width=Math.min(el/tot*100,100)+'%';const s=Math.floor(el/1000),ts=Math.floor(tot/1000);document.getElementById('timerBadge').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60)+' / '+Math.floor(ts/60)+':'+(ts%60<10?'0':'')+(ts%60)}
+function anim(i){scenes.forEach(s=>s.classList.remove('active'));c=i;scenes[c].classList.add('active');scenes[c].querySelectorAll('[data-anim]').forEach(e=>{const d=parseInt(e.dataset.t)||0;e.style.opacity='0';e.style.animation='none';setTimeout(()=>{e.style.animation='fadeUp .3s ease forwards'},d)})}
+function sn(){clearTimeout(st);if(c>=T-1)return;st=setTimeout(()=>{anim(c+1);sn()},D[c])}
+function togglePause(){const o=document.getElementById('pauseOverlay');if(run){run=false;clearTimeout(st);o.classList.add('show')}else{run=true;o.classList.remove('show');sn()}}
+function seekTo(e){const p=(e.clientX-e.currentTarget.getBoundingClientRect().left)/e.currentTarget.offsetWidth;let cum=0,t=p*tot;for(let i=0;i<T;i++){if(cum+D[i]>t){el=t;clearTimeout(st);anim(i);if(run)sn();return}cum+=D[i]}}
+document.getElementById('phone').addEventListener('click',e=>{if(!document.getElementById('startOverlay').classList.contains('hidden'))return;if(e.target.closest('#progressWrap')||e.target.closest('#startOverlay'))return;togglePause()});
+document.addEventListener('keydown',e=>{if(!document.getElementById('startOverlay').classList.contains('hidden')){if(e.key===' '||e.key==='Enter')startVideo();return}if(e.key===' '){e.preventDefault();togglePause()}else if(e.key==='ArrowLeft'&&c<T-1){clearTimeout(st);anim(c+1);if(run)sn()}else if(e.key==='ArrowRight'&&c>0){clearTimeout(st);anim(c-1);if(run)sn()}});
+let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>60){clearTimeout(st);d>0&&c<T-1?anim(c+1):d<0&&c>0&&anim(c-1);if(run)sn()}});
+<` + `/script>
+</body>
+</html>`;
+}
+
+// =============================================
+// FULL EDUCATIONAL VIDEO – 16:9 with Questions
+// =============================================
+function generateFullHTML(d) {
+  const accent = SUBJECT_ACCENTS[d.subject] || '#6366F1';
+  const totalDur = scenes.reduce((a, s) => a + (s.duration || 6000), 0);
+  const totalSec = Math.floor(totalDur / 1000);
+  const mm = Math.floor(totalSec / 60);
+  const ss = totalSec % 60;
+  const timeLabel = `${mm}:${ss < 10 ? '0' : ''}${ss}`;
+
+  const accentColors = [
+    ['#ff6b8a','#ffb088'], ['#7c5cfc','#b08cff'], ['#5b9ce6','#7babd4'],
+    ['#3db87a','#5abf92'], ['#e67e22','#f0a04b'], ['#ffd43b','#ffe066'],
+    ['#e6457a','#ff6b8a'], ['#5abf92','#7dd4ac'], ['#7babd4','#a8d8ea'],
+    ['#7c5cfc','#b08cff']
+  ];
+  const tagClasses = ['tag-pink','tag-purple','tag-blue','tag-green','tag-orange','tag-yellow'];
+  const dotClasses = ['dot-blue','dot-green','dot-pink','dot-purple','dot-orange','dot-yellow'];
+  const ecClasses = ['ec-pink','ec-purple','ec-blue','ec-green','ec-orange','ec-yellow'];
+
+  let scenesHTML = '';
+  scenes.forEach((scene, i) => {
+    const colors = accentColors[i % accentColors.length];
+    const isActive = i === 0 ? ' active' : '';
+    const ecClass = ecClasses[i % ecClasses.length];
+    const isQ = scene.type === 'question';
+
+    let inner = '';
+    switch (scene.type) {
+      case 'hook':
+        inner = `
+          <div class="emoji-circle ${ecClass}" data-anim="popIn" data-t="0">${esc(scene.emoji)}</div>
+          <div class="big-title" data-anim="slideUp" data-t="300">${esc(scene.title)}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeIn" data-t="800">${esc(scene.subtitle)}</div>` : ''}
+          ${scene.items.length ? `<div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:center;margin-top:0.8rem;position:relative;z-index:2">
+            ${scene.items.map((item, j) => `<span class="tag ${tagClasses[j % tagClasses.length]}" data-anim="zoomBounce" data-t="${500 + j * 200}">${esc(item)}</span>`).join('')}
+          </div>` : ''}`;
+        break;
+
+      case 'question':
+        const correctIdx = parseInt(scene.subtitle) || 0;
+        inner = `
+          <div class="q-badge" data-anim="popIn" data-t="0">&#10068; \u05E9\u05D0\u05DC\u05D4</div>
+          <div class="caption" data-anim="slideUp" data-t="300">${esc(scene.title)}</div>
+          <div class="q-options">${scene.items.map((item, j) =>
+            `<button class="q-opt" data-anim="slideUp" data-t="${600 + j * 200}" onclick="checkAns(this,${j},${correctIdx})">${esc(item)}</button>`
+          ).join('')}</div>
+          <button class="q-continue" style="display:none" onclick="continueFromQ()">\u05D4\u05DE\u05E9\u05DA &#8592;</button>`;
+        break;
+
+      case 'grid':
+        inner = `
+          ${i > 0 ? `<div class="num-bubble" style="background:linear-gradient(135deg,${colors[0]},${colors[1]})" data-anim="zoomBounce" data-t="0">${i}</div>` : ''}
+          <div class="caption" data-anim="slideUp" data-t="200">${esc(scene.emoji)} ${esc(scene.title)}</div>
+          <div class="icon-grid">${scene.items.map((item, j) =>
+            `<div class="icon-card" data-anim="zoomBounce" data-t="${500 + j * 250}"><span class="ic-label">${esc(item)}</span></div>`
+          ).join('')}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeIn" data-t="${500 + scene.items.length * 250 + 300}">${esc(scene.subtitle)}</div>` : ''}`;
+        break;
+
+      case 'warning':
+        inner = `
+          <div class="emoji-circle ec-orange" data-anim="popIn" data-t="0" style="font-size:2.5rem">${esc(scene.emoji || '&#x26A0;')}</div>
+          <div class="caption" data-anim="slideUp" data-t="300" style="color:#e67e22">${esc(scene.title)}</div>
+          <ul class="step-list">${scene.items.map((item, j) =>
+            `<li data-anim="slideUp" data-t="${600 + j * 300}"><span class="step-dot dot-orange">${j+1}</span>${esc(item)}</li>`
+          ).join('')}</ul>`;
+        break;
+
+      case 'summary':
+        inner = `
+          <div class="emoji-circle ec-blue" data-anim="popIn" data-t="0" style="font-size:2.5rem">${esc(scene.emoji || '')}</div>
+          <div class="caption" data-anim="slideUp" data-t="200">${esc(scene.title)}</div>
+          <ul class="check-list">${scene.items.map((item, j) =>
+            `<li data-anim="slideUp" data-t="${500 + j * 300}"><span class="check-mark">&#10003;</span>${esc(item)}</li>`
+          ).join('')}</ul>`;
+        break;
+
+      case 'ending':
+        inner = `
+          <div class="emoji-circle ${ecClass}" data-anim="popIn" data-t="0" style="width:100px;height:100px;font-size:3rem">${esc(scene.emoji)}</div>
+          <div class="big-title" data-anim="slideUp" data-t="400">${esc(scene.title)}</div>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeIn" data-t="800">${esc(scene.subtitle)}</div>` : ''}`;
+        break;
+
+      default:
+        inner = `
+          ${i > 0 ? `<div class="num-bubble" style="background:linear-gradient(135deg,${colors[0]},${colors[1]})" data-anim="zoomBounce" data-t="0">${i}</div>` : ''}
+          <div class="caption" data-anim="slideUp" data-t="200">${esc(scene.emoji)} ${esc(scene.title)}</div>
+          <ul class="step-list">${scene.items.map((item, j) =>
+            `<li data-anim="slideUp" data-t="${500 + j * 300}"><span class="step-dot ${dotClasses[j % dotClasses.length]}">${j+1}</span>${esc(item)}</li>`
+          ).join('')}</ul>
+          ${scene.subtitle ? `<div class="sub" data-anim="fadeIn" data-t="${500 + scene.items.length * 300 + 200}">${esc(scene.subtitle)}</div>` : ''}`;
+    }
+
+    scenesHTML += `<div class="scene${isActive}${isQ ? ' is-question' : ''}" data-dur="${scene.duration || 6000}">${inner}</div>\n`;
+  });
+
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(d.videoName)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Secular+One&family=Rubik:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--accent:${accent}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#1a1a2e}
+body{display:flex;align-items:center;justify-content:center;font-family:'Heebo',sans-serif}
+#screen{position:relative;width:min(960px,100vw);aspect-ratio:16/9;background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,.3)}
+@media(max-width:960px){#screen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0}}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.5rem 3rem;opacity:0;transform:translateY(30px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow:hidden;background:#fff}
+.scene.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.scene::before,.scene::after{content:'';position:absolute;border-radius:50%;z-index:0;opacity:.1}
+.scene::before{width:400px;height:400px;top:-120px;right:-120px;background:linear-gradient(135deg,#7babd4,#a8d8ea)}
+.scene::after{width:350px;height:350px;bottom:-80px;left:-80px;background:linear-gradient(135deg,#5abf92,#7dd4ac)}
+.scene:nth-child(odd)::before{background:linear-gradient(135deg,#ff6b8a,#ffb088)}
+.scene:nth-child(even)::after{background:linear-gradient(135deg,#7c5cfc,#b08cff)}
+.big-title{font-family:'Secular One',sans-serif;font-size:clamp(1.8rem,4vw,3rem);line-height:1.3;color:#1a1a2e;position:relative;z-index:2}
+.caption{font-family:'Rubik',sans-serif;font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#1a1a2e;line-height:1.4;position:relative;z-index:2}
+.sub{font-size:1.1rem;color:#666;margin-top:.6rem;line-height:1.6;position:relative;z-index:2}
+.tag{display:inline-block;padding:.3rem .8rem;border-radius:50px;font-size:.9rem;font-weight:700;position:relative;z-index:2;margin:.2rem}
+.tag-blue{background:#e8f4fd;color:#2b7de9}.tag-green{background:#e6f9f0;color:#1da363}
+.tag-pink{background:#fde8ee;color:#e63b7a}.tag-purple{background:#efe6fd;color:#7c5cfc}
+.tag-orange{background:#fff0e0;color:#e67e22}.tag-yellow{background:#fff8dd;color:#c89200}
+.emoji-circle{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;z-index:2;margin-bottom:1rem}
+.ec-pink{background:linear-gradient(135deg,#fde8ee,#fcc5d5)}.ec-blue{background:linear-gradient(135deg,#e8f4fd,#d0e8ff)}
+.ec-green{background:linear-gradient(135deg,#e6f9f0,#c8f5de)}.ec-orange{background:linear-gradient(135deg,#fff0e0,#ffd9b3)}
+.ec-purple{background:linear-gradient(135deg,#efe6fd,#d5c4fb)}.ec-yellow{background:linear-gradient(135deg,#fff8dd,#ffe99a)}
+.icon-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;width:100%;max-width:500px;position:relative;z-index:2;margin-top:1rem}
+.icon-card{background:#f8f9fa;border-radius:14px;padding:1rem;border:2px solid #eee;opacity:0}
+.icon-card .ic-label{font-size:1rem;font-weight:700;color:#333}
+.step-list{list-style:none;width:100%;max-width:500px;position:relative;z-index:2;margin-top:1rem}
+.step-list li{display:flex;align-items:center;gap:.8rem;padding:.6rem .8rem;margin-bottom:.4rem;background:#f8f9fa;border-radius:10px;font-size:1.05rem;font-weight:700;color:#333;opacity:0}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;flex-shrink:0;font-weight:900}
+.dot-blue{background:linear-gradient(135deg,#5b9ce6,#7babd4)}.dot-green{background:linear-gradient(135deg,#3db87a,#5abf92)}
+.dot-pink{background:linear-gradient(135deg,#e6457a,#ff6b8a)}.dot-purple{background:linear-gradient(135deg,#6a4ff0,#7c5cfc)}
+.dot-orange{background:linear-gradient(135deg,#e67e22,#f0a04b)}.dot-yellow{background:linear-gradient(135deg,#d4a017,#f0c040)}
+.num-bubble{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Secular One',sans-serif;font-size:1.5rem;color:#fff;margin-bottom:.7rem;position:relative;z-index:2;opacity:0}
+.check-list{list-style:none;width:100%;max-width:500px;position:relative;z-index:2;margin-top:1rem}
+.check-list li{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;font-size:1.1rem;color:#333;font-weight:700;opacity:0;border-bottom:1px solid #f0f0f0}
+.check-list li:last-child{border-bottom:none}
+.check-mark{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5abf92,#7dd4ac);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.q-badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 1rem;border-radius:50px;background:var(--accent);color:#fff;font-size:1rem;font-weight:700;position:relative;z-index:2;margin-bottom:0.8rem}
+.q-options{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;width:100%;max-width:550px;position:relative;z-index:2;margin-top:1rem}
+.q-opt{padding:0.8rem 1rem;border:2px solid #e8e8e8;border-radius:12px;background:#fff;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.2s;color:#333}
+.q-opt:hover{border-color:var(--accent);background:rgba(0,0,0,.02)}
+.q-opt.correct{border-color:#52B788;background:#e6f9f0;color:#1a7c4e}
+.q-opt.wrong{border-color:#e74c3c;background:#fde8e8;color:#c0392b}
+.q-opt.disabled{pointer-events:none;opacity:0.6}
+.q-continue{margin-top:1rem;padding:0.7rem 2rem;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;position:relative;z-index:2}
+#progressWrap{position:absolute;bottom:0;left:0;right:0;height:3px;background:#eee;z-index:200;cursor:pointer}
+#progress{height:100%;width:0;background:linear-gradient(90deg,#ff6b8a,#7c5cfc,#5abf92);background-size:300% 100%;animation:gm 3s linear infinite;transition:width .1s linear}
+@keyframes gm{0%{background-position:0 50%}100%{background-position:300% 50%}}
+#progressWrap:hover{height:6px}
+#timerBadge{position:absolute;top:.8rem;left:.8rem;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);padding:.2rem .6rem;border-radius:20px;font-size:.8rem;color:#999;z-index:200;font-variant-numeric:tabular-nums;border:1px solid #eee}
+#topicBadge{position:absolute;top:.8rem;right:.8rem;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);padding:.2rem .6rem;border-radius:20px;font-size:.75rem;color:var(--accent);z-index:200;font-weight:700;border:1px solid #eee}
+#ctrlBar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:0.5rem;z-index:200}
+.ctrl-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #eee;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all 0.2s;backdrop-filter:blur(6px)}
+.ctrl-btn:hover{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+#pauseOverlay{position:absolute;inset:0;z-index:150;background:rgba(255,255,255,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;cursor:pointer}
+#pauseOverlay.show{display:flex}
+#pauseOverlay .p-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#ff6b8a);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 25px rgba(124,92,252,.3)}
+#pauseOverlay .p-btn svg{width:28px;height:28px;fill:#fff;margin-right:-3px}
+#startOverlay{position:absolute;inset:0;z-index:300;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .5s}
+#startOverlay.hidden{opacity:0;pointer-events:none}
+#startOverlay h2{font-family:'Secular One',sans-serif;font-size:clamp(1.5rem,3vw,2.2rem);color:#1a1a2e;margin-bottom:.3rem}
+#startOverlay .ss{font-size:1rem;color:#999;margin-bottom:2rem}
+#startOverlay .sb{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#ff6b8a);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 35px rgba(124,92,252,.3);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+#startOverlay .sb svg{width:32px;height:32px;fill:#fff;margin-right:-3px}
+#startOverlay .tap{margin-top:1.2rem;font-size:.85rem;color:#ccc}
+#frameBadge{position:absolute;bottom:14px;right:12px;background:rgba(255,255,255,.85);padding:0.15rem 0.6rem;border-radius:20px;font-size:0.75rem;color:#999;z-index:200;border:1px solid #eee}
+@keyframes popIn{0%{transform:scale(0) rotate(-5deg);opacity:0}70%{transform:scale(1.1) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes zoomBounce{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<div id="screen">
+<div id="startOverlay" onclick="startVideo()">
+<div style="font-size:4rem;margin-bottom:1rem">${esc(scenes[0]?.emoji || '&#127916;')}</div>
+<h2>${esc(d.videoName)}</h2>
+<div class="ss">${esc(d.subject)} | ${esc(d.grade)} | ${esc(d.level)}</div>
+<div class="sb"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
+<div class="tap">&#9654; \u05DC\u05D7\u05E6\u05D5 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC</div>
+</div>
+<div id="pauseOverlay" onclick="togglePause()"><div class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div></div>
+${scenesHTML}
+<div id="timerBadge">0:00 / ${timeLabel}</div>
+<div id="topicBadge">${esc(d.subject)}</div>
+<div id="frameBadge">1 / ${scenes.length}</div>
+<div id="ctrlBar">
+<div class="ctrl-btn" onclick="prevScene()">&#9654;</div>
+<div class="ctrl-btn" onclick="togglePause()">&#9208;</div>
+<div class="ctrl-btn" onclick="nextScene()">&#9664;</div>
+</div>
+<div id="progressWrap" onclick="seekTo(event)"><div id="progress"></div></div>
+</div>
+<` + `script>
+const scenes=document.querySelectorAll('.scene'),T=${scenes.length};
+let c=0,run=false,st=null,ti=null,el=0,paused=false;
+const D=[...scenes].map(s=>parseInt(s.dataset.dur)||6000),tot=D.reduce((a,b)=>a+b,0);
+function startVideo(){document.getElementById('startOverlay').classList.add('hidden');run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
+function tick(){if(!run)return;el+=50;document.getElementById('progress').style.width=Math.min(el/tot*100,100)+'%';const s=Math.floor(el/1000),ts=Math.floor(tot/1000);document.getElementById('timerBadge').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60)+' / '+Math.floor(ts/60)+':'+(ts%60<10?'0':'')+(ts%60)}
+function anim(i){scenes.forEach(s=>s.classList.remove('active'));c=i;scenes[c].classList.add('active');document.getElementById('frameBadge').textContent=(c+1)+' / '+T;if(scenes[c].classList.contains('is-question')){run=false;clearTimeout(st)}scenes[c].querySelectorAll('[data-anim]').forEach(e=>{const a=e.dataset.anim,d=parseInt(e.dataset.t)||0;e.style.opacity='0';e.style.animation='none';setTimeout(()=>{e.style.animation=a+' .5s cubic-bezier(.4,0,.2,1) forwards'},d)})}
+function sn(){clearTimeout(st);if(c>=T-1)return;st=setTimeout(()=>{anim(c+1);sn()},D[c])}
+function togglePause(){const o=document.getElementById('pauseOverlay');if(run){run=false;clearTimeout(st);o.classList.add('show')}else{run=true;o.classList.remove('show');sn()}}
+function prevScene(){if(c>0){clearTimeout(st);anim(c-1);if(run)sn()}}
+function nextScene(){if(c<T-1){clearTimeout(st);anim(c+1);if(run)sn()}}
+function checkAns(btn,idx,correct){const opts=btn.parentElement.querySelectorAll('.q-opt');opts.forEach((o,j)=>{o.classList.add('disabled');if(j===correct)o.classList.add('correct');else if(j===idx&&idx!==correct)o.classList.add('wrong')});btn.closest('.scene').querySelector('.q-continue').style.display='inline-block'}
+function continueFromQ(){run=true;sn()}
+function seekTo(e){const p=(e.clientX-e.currentTarget.getBoundingClientRect().left)/e.currentTarget.offsetWidth;let cum=0,t=p*tot;for(let i=0;i<T;i++){if(cum+D[i]>t){el=t;clearTimeout(st);anim(i);if(run)sn();return}cum+=D[i]}}
+document.getElementById('screen').addEventListener('click',e=>{if(!document.getElementById('startOverlay').classList.contains('hidden'))return;if(e.target.closest('#progressWrap')||e.target.closest('#startOverlay')||e.target.closest('#ctrlBar')||e.target.closest('.q-opt')||e.target.closest('.q-continue'))return;togglePause()});
+document.addEventListener('keydown',e=>{if(!document.getElementById('startOverlay').classList.contains('hidden')){if(e.key===' '||e.key==='Enter')startVideo();return}if(e.key===' '){e.preventDefault();togglePause()}else if(e.key==='ArrowLeft'&&c<T-1){nextScene()}else if(e.key==='ArrowRight'&&c>0){prevScene()}});
+let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>60){d>0?nextScene():prevScene()}});
+<` + `/script>
+</body>
+</html>`;
+}
+
+// === DOWNLOAD ===
+function downloadVideo() {
+  const html = generateVideoHTML();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = slugify(details.videoName) + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('publishedResult').style.display = 'block';
+  showToast('הקובץ הורד בהצלחה!');
+}
+
+function copyHTML() {
+  navigator.clipboard.writeText(generateVideoHTML())
+    .then(() => showToast('הקוד הועתק!'))
+    .catch(() => showToast('לא ניתן להעתיק'));
+}
+
+// === UTILS ===
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function esc(str) { return escapeHtml(str); }
+
+function slugify(text) {
+  return (text || 'video').replace(/\s+/g, '-').replace(/[^\u0590-\u05FFa-zA-Z0-9-]/g, '').substring(0, 50);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

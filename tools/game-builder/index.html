@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מחולל משחקים – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F0F4F8;--card:#ffffff;
+  --primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;
+  --secondary:#E76F7A;--sec-l:#FDE8EA;
+  --green:#52B788;--green-l:#D8F3DC;
+  --blue:#4A90D9;--blue-l:#DBEAFE;
+  --accent:#E9A319;--accent-l:#FEF3C7;
+  --dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;
+  --border:rgba(0,0,0,.06);
+  --shadow:0 2px 20px -4px rgba(0,0,0,.06);
+  --shadow-md:0 8px 28px rgba(0,0,0,.07);
+  --r:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.header{text-align:center;padding:40px 20px 12px}
+.header h1{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.header p{color:var(--gray);font-size:15px}
+
+.auth-bar{display:flex;justify-content:center;padding:16px 20px 8px}
+.auth-profile{display:flex;align-items:center;gap:12px;background:white;padding:10px 20px;border-radius:50px;box-shadow:var(--shadow)}
+.auth-profile img{width:32px;height:32px;border-radius:50%}
+.auth-profile .name{font-size:14px;font-weight:600}
+.auth-profile .email{font-size:12px;color:var(--gray)}
+.auth-profile .logout-btn{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-l);padding:4px;transition:color .2s}
+.auth-profile .logout-btn:hover{color:var(--secondary)}
+
+.steps{display:flex;justify-content:center;gap:8px;padding:16px 20px 32px;max-width:500px;margin:0 auto}
+.step{display:flex;align-items:center;gap:8px;flex:1}
+.step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:'Rubik',sans-serif;border:2px solid var(--border);color:var(--gray-l);background:white;transition:all .3s;flex-shrink:0}
+.step.active .step-circle{background:var(--primary);color:white;border-color:var(--primary)}
+.step.done .step-circle{background:var(--green);color:white;border-color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--border);border-radius:2px}
+.step.done .step-line{background:var(--green)}
+.step:last-child .step-line{display:none}
+.step-label{display:none}
+@media(min-width:600px){
+  .step-label{display:block;font-size:12px;color:var(--gray-l);white-space:nowrap}
+  .step.active .step-label{color:var(--primary);font-weight:600}
+  .step.done .step-label{color:var(--green)}
+}
+
+.container{max-width:800px;margin:0 auto;padding:0 20px 60px}
+.card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:var(--bg);transition:all .3s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(42,157,143,.08)}
+.form-group textarea{min-height:60px;resize:vertical;line-height:1.5}
+.form-group .hint{font-size:12px;color:var(--gray-l);margin-top:4px}
+.form-group .error{font-size:12px;color:var(--secondary);margin-top:4px;display:none}
+.form-group.invalid input,.form-group.invalid select{border-color:var(--secondary)}
+.form-group.invalid .error{display:block}
+.form-row{display:flex;gap:16px}
+.form-row .form-group{flex:1}
+@media(max-width:500px){.form-row{flex-direction:column}}
+
+.game-type-group{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+.game-type-card{padding:16px 10px;border:2px solid var(--border);border-radius:16px;text-align:center;cursor:pointer;transition:all .3s;background:white}
+.game-type-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.game-type-card.active{border-color:var(--primary);background:var(--primary-l)}
+.game-type-card .gt-icon{font-size:28px;margin-bottom:6px}
+.game-type-card .gt-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.game-type-card .gt-desc{font-size:11px;color:var(--gray)}
+@media(max-width:800px){.game-type-group{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.game-type-group{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:400px){.game-type-group{grid-template-columns:1fr}}
+.tf-toggle{display:flex;gap:10px;margin-top:8px}
+.tf-toggle-btn{flex:1;padding:14px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-align:center;transition:all .3s;background:white}
+.tf-toggle-btn:hover{border-color:var(--primary)}
+.tf-toggle-btn.active-true{background:var(--green-l);border-color:var(--green);color:#2D7A54}
+.tf-toggle-btn.active-false{background:var(--sec-l);border-color:var(--secondary);color:#B44050}
+.group-items-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.group-items-grid input{flex:1;min-width:100px;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px}
+
+.range-group{display:flex;align-items:center;gap:16px;margin-top:8px}
+.range-group input[type="range"]{flex:1;accent-color:var(--primary)}
+.range-val{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;color:var(--primary);min-width:32px;text-align:center}
+
+.section-title{font-family:'Rubik',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.section-title .badge{width:32px;height:32px;border-radius:10px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:16px}
+
+.ai-box{background:linear-gradient(135deg,#EDE9FE,#DBEAFE);border:2px solid #C4B5FD;border-radius:16px;padding:24px;margin-bottom:24px}
+.ai-box-title{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;color:#5B21B6;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ai-box textarea{width:100%;padding:14px 18px;border:2px solid rgba(139,92,246,.2);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--dark);background:white;min-height:80px;resize:vertical;line-height:1.5;transition:all .3s}
+.ai-box textarea:focus{outline:none;border-color:#8B5CF6;box-shadow:0 0 0 4px rgba(139,92,246,.1)}
+.ai-box .hint{font-size:12px;color:#7C3AED;margin-top:6px;margin-bottom:12px}
+.ai-btn{padding:14px 28px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px;width:100%}
+.ai-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(109,40,217,.3)}
+.ai-btn:disabled{opacity:.5;pointer-events:none}
+.ai-btn .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.ai-btn.loading .spinner{display:block}
+.ai-btn.loading .btn-text{display:none}
+
+.item-editor{background:var(--bg);border:2px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;transition:all .3s}
+.item-editor:hover{border-color:rgba(0,0,0,.1)}
+.item-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:12px}
+.item-header .num-badge{width:28px;height:28px;border-radius:8px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:'Rubik',sans-serif;flex-shrink:0;margin-left:10px}
+.item-header .item-preview{font-size:14px;color:var(--gray);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-editor.collapsed .item-body{display:none}
+.item-editor.collapsed .item-header{margin-bottom:0}
+.toggle-icon{font-size:14px;color:var(--gray-l);transition:transform .3s}
+.item-editor.collapsed .toggle-icon{transform:rotate(180deg)}
+
+.opts-grid{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opt-row{display:flex;align-items:center;gap:8px}
+.opt-label{width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--gray);flex-shrink:0}
+.opt-input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:white;transition:border-color .3s}
+.opt-input:focus{outline:none;border-color:var(--primary)}
+.opt-radio{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:14px;flex-shrink:0;color:transparent}
+.opt-radio:hover{border-color:var(--green)}
+.opt-radio.selected{background:var(--green);color:white;border-color:var(--green)}
+
+.pair-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:10px}
+.pair-row input{padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--dark);background:white;transition:border-color .3s}
+.pair-row input:focus{outline:none;border-color:var(--primary)}
+.pair-arrow{font-size:18px;color:var(--gray-l);text-align:center}
+
+.delete-btn{background:none;border:none;color:var(--secondary);font-size:13px;cursor:pointer;padding:8px 0;font-family:'Heebo',sans-serif;transition:opacity .2s}
+.delete-btn:hover{opacity:.7}
+.add-btn{width:100%;padding:14px;border:2px dashed var(--border);border-radius:14px;background:none;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;color:var(--gray-l);cursor:pointer;transition:all .3s;margin-top:8px}
+.add-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+.review-card{background:var(--bg);border-radius:16px;padding:24px;margin-bottom:20px}
+.review-card h3{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px}
+.review-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.review-tag{background:white;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.review-items{display:flex;flex-direction:column;gap:8px}
+.review-item{background:white;padding:12px 16px;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:10px}
+.review-item .ri-num{width:24px;height:24px;border-radius:6px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+.preview-frame{width:100%;height:500px;border:2px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;background:white}
+.preview-frame iframe{width:100%;height:100%;border:none}
+
+.publish-section{margin-top:24px;padding:24px;background:linear-gradient(135deg,var(--green-l),var(--primary-l));border:2px solid var(--green);border-radius:16px}
+.publish-title{font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;color:var(--primary-d);margin-bottom:8px}
+.publish-desc{font-size:13px;color:var(--gray);margin-bottom:16px}
+.btn-publish{width:100%;padding:16px;background:var(--green);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-publish:hover{background:#3da076;transform:translateY(-2px);box-shadow:0 6px 20px rgba(82,183,136,.3)}
+.btn-publish:disabled{opacity:.5;pointer-events:none}
+.btn-publish .pub-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.btn-publish.loading .pub-spinner{display:block}
+.btn-publish.loading .pub-text{display:none}
+.published-result{display:none;margin-top:16px;padding:16px;background:white;border-radius:12px}
+.published-result.show{display:block}
+.published-msg{font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px}
+.published-link{display:flex;gap:8px}
+.published-link input{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;background:var(--bg);direction:ltr}
+.published-link button{padding:10px 18px;background:var(--primary);color:white;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+.export-btns{display:flex;gap:10px;flex-wrap:wrap}
+
+.nav-buttons{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
+.btn{padding:14px 28px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.btn:disabled{opacity:.4;pointer-events:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-d)}
+.btn-outline{background:white;color:var(--primary);border:2px solid var(--primary)}
+
+.screen{display:none}.screen.active{display:block}
+
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:20px}
+.login-card{background:var(--card);border-radius:var(--r);padding:48px 36px;box-shadow:var(--shadow-md);text-align:center;max-width:420px;width:100%;animation:fadeUp .45s ease}
+.login-card .login-icon{font-size:64px;margin-bottom:16px}
+.login-card h2{font-family:'Rubik',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px}
+.login-card p{color:var(--gray);font-size:15px;margin-bottom:28px}
+
+.draft-banner{display:none;align-items:center;justify-content:space-between;background:var(--accent-l);border:2px solid var(--accent);border-radius:14px;padding:14px 20px;margin-bottom:20px;animation:fadeUp .3s ease}
+.draft-banner p{font-size:14px;font-weight:600;color:#92400E}
+.draft-btns{display:flex;gap:8px}
+.draft-load,.draft-dismiss{padding:8px 16px;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.draft-load{background:var(--accent);color:white}
+.draft-dismiss{background:white;color:var(--gray)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:white;padding:14px 28px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;transition:all .4s ease;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginView">
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="login-icon">🎮</div>
+      <h2>מחולל משחקים</h2>
+      <p>הזינו את הפרטים שלכם כדי ליצור משחקים לימודיים</p>
+      <div style="text-align:right;margin-bottom:12px">
+        <label style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">שם מלא</label>
+        <input type="text" id="loginName" placeholder="למשל: מיטל פרידמן" style="width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;background:var(--bg)">
+      </div>
+      <div style="text-align:right;margin-bottom:20px">
+        <label style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">אימייל</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" dir="ltr" style="width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:15px;background:var(--bg)">
+      </div>
+      <button onclick="loginWithForm()" style="width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s">התחילו ליצור!</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appView" style="display:none">
+  <div class="header">
+    <h1>🎮 מחולל משחקים</h1>
+    <p>צרו משחקים לימודיים אינטראקטיביים עם בינה מלאכותית</p>
+  </div>
+
+  <div class="auth-bar">
+    <div class="auth-profile">
+      <img id="userPhoto" src="" alt="">
+      <div>
+        <div class="name" id="userName"></div>
+        <div class="email" id="userEmail"></div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="התנתקות">✕</button>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step active"><div class="step-circle">1</div><span class="step-label">פרטים</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">2</div><span class="step-label">תוכן</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">3</div><span class="step-label">סקירה</span><div class="step-line"></div></div>
+    <div class="step"><div class="step-circle">4</div><span class="step-label">פרסום</span></div>
+  </div>
+
+  <div class="container">
+    <div id="draftBanner" class="draft-banner" style="display:none">
+      <p>נמצאה טיוטה שלא הושלמה. לטעון אותה?</p>
+      <div class="draft-btns">
+        <button class="draft-load" onclick="loadDraft()">טען טיוטה</button>
+        <button class="draft-dismiss" onclick="dismissDraft()">התחל מחדש</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: DETAILS -->
+    <div class="screen active" id="step1">
+      <div class="card">
+        <div class="section-title"><div class="badge">1</div> פרטי המשחק</div>
+        <div class="form-group">
+          <label>שם המשחק</label>
+          <input type="text" id="gameName" placeholder="לדוגמה: חידון על המרד הגדול, התאמת בניינים...">
+          <div class="error">יש להזין שם משחק</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>מקצוע</label>
+            <select id="gameSubject">
+              <option value="">בחרו מקצוע</option>
+              <option>עברית</option><option>מתמטיקה</option><option>היסטוריה</option>
+              <option>אנגלית</option><option>מדעים</option><option>חשבונאות</option>
+            </select>
+            <div class="error">יש לבחור מקצוע</div>
+          </div>
+          <div class="form-group">
+            <label>כיתה</label>
+            <select id="gameGrade">
+              <option value="">בחרו כיתה</option>
+              <option>כיתה ט</option><option>כיתה י</option><option>כיתה יא</option><option>כיתה יב</option>
+            </select>
+            <div class="error">יש לבחור כיתה</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>סוג משחק</label>
+          <div class="game-type-group" id="gameTypeGroup"></div>
+        </div>
+
+        <div class="form-group">
+          <label>מספר פריטים</label>
+          <div class="range-group">
+            <input type="range" id="numItems" min="5" max="15" value="8" oninput="document.getElementById('numItemsVal').textContent=this.value">
+            <div class="range-val" id="numItemsVal">8</div>
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <a href="../quizzes/index.html" class="btn btn-outline" style="text-decoration:none;text-align:center">חזרה למאגר</a>
+          <button class="btn btn-primary" onclick="goToStep(2)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: ITEMS -->
+    <div class="screen" id="step2">
+      <div class="card">
+        <div class="section-title"><div class="badge">2</div> <span id="step2Title">פריטי המשחק</span></div>
+
+        <div class="ai-box">
+          <div class="ai-box-title">✨ יצירה עם בינה מלאכותית</div>
+          <div id="aiKeySetup" style="display:none;margin-bottom:16px;padding:16px;background:white;border-radius:14px;border:2px solid rgba(139,92,246,.2)">
+            <div style="font-size:14px;font-weight:600;color:#5B21B6;margin-bottom:8px">🔑 נדרש מפתח Gemini API (פעם אחת בלבד)</div>
+            <div style="background:#FEF3C7;border:2px solid #F59E0B;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:#92400E;font-weight:600">⚠️ חשוב: יש להיכנס עם חשבון Gmail <u>אישי</u> (לא מייל ארגוני של בית הספר!) – מייל ארגוני חוסם יצירת מפתחות.</div>
+            <div id="aiKeyInstructions" style="display:none;background:var(--bg);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid var(--border)">
+              <div style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:10px">📋 הוראות שלב אחרי שלב:</div>
+              <ol style="font-size:13px;color:var(--gray);line-height:2;padding-right:20px;margin:0">
+                <li>לחצו על הכפתור הסגול למטה – ייפתח אתר Google AI Studio</li>
+                <li>אם ביקשו להתחבר – <b>היכנסו עם Gmail אישי</b> (לא מייל בית ספר!)</li>
+                <li>לחצו על הכפתור <b>"Create API Key"</b></li>
+                <li>בחרו <b>"Create API key in new project"</b></li>
+                <li>המפתח יופיע – לחצו על <b>סמל ההעתקה</b> 📋 שלידו</li>
+                <li>חזרו לכאן והדביקו אותו בשדה למטה</li>
+              </ol>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+              <a href="https://aistudio.google.com/apikey" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#5B21B6;color:white;border-radius:10px;text-decoration:none;font-size:14px;font-weight:600">🔗 קבלו מפתח חינמי מ-Google</a>
+              <button onclick="document.getElementById('aiKeyInstructions').style.display=document.getElementById('aiKeyInstructions').style.display==='none'?'block':'none'" style="padding:10px 18px;background:var(--bg);color:#5B21B6;border:2px solid #C4B5FD;border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;cursor:pointer">❓ הוראות מפורטות</button>
+            </div>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="geminiKeyInput" placeholder="הדביקו את המפתח כאן..." dir="ltr" style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px">
+              <button onclick="saveGeminiKey()" style="padding:10px 20px;background:#5B21B6;color:white;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">שמרו</button>
+            </div>
+          </div>
+          <textarea id="aiPrompt" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;נוסחאות כימיות – שמות וסמלים"></textarea>
+          <div class="hint">כתבו רק את הנושא – סוג המשחק, המקצוע והכיתה נלקחים מהשלב הקודם.</div>
+          <button class="ai-btn" id="aiGenBtn" onclick="generateWithAI()">
+            <span class="btn-text">✨ צרו משחק עם AI</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+
+        <div class="hint" style="margin-bottom:20px;font-size:13px;color:var(--gray)">
+          או כתבו פריטים ידנית:
+        </div>
+        <div id="itemEditors"></div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(1)">חזרה →</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: REVIEW -->
+    <div class="screen" id="step3">
+      <div class="card">
+        <div class="section-title"><div class="badge">3</div> סקירה</div>
+        <div id="reviewContent"></div>
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(2)">חזרה →</button>
+          <button class="btn btn-primary" onclick="goToStep(4)">הבא ←</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PREVIEW & PUBLISH -->
+    <div class="screen" id="step4">
+      <div class="card">
+        <div class="section-title"><div class="badge">4</div> תצוגה מקדימה ופרסום</div>
+        <div class="preview-frame">
+          <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+        </div>
+
+        <div class="publish-section">
+          <div class="publish-title">🚀 פרסום המשחק</div>
+          <div class="publish-desc">לחצו כדי לפרסם את המשחק. תקבלו קישור שאפשר לשלוח לתלמידים.</div>
+          <button class="btn-publish" id="publishBtn" onclick="publishGame()">
+            <div class="pub-spinner"></div>
+            <span class="pub-text">פרסמו משחק</span>
+          </button>
+          <div class="published-result" id="publishedResult">
+            <div class="published-msg">✓ המשחק פורסם בהצלחה! שלחו את הקישור לתלמידים:</div>
+            <div class="published-link">
+              <input type="text" id="publishedUrl" readonly>
+              <button onclick="copyPublishedLink()">העתק קישור</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="export-btns" style="margin-top:20px">
+          <button class="btn btn-primary" onclick="refreshPreview()">🔄 רענון תצוגה</button>
+          <button class="btn btn-outline" onclick="downloadGame()">⬇ הורדה</button>
+          <button class="btn btn-outline" onclick="copyHTML()">📋 העתקת HTML</button>
+        </div>
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="goToStep(3)">חזרה →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div style="position:fixed;bottom:18px;right:20px;z-index:200;opacity:.45;pointer-events:none">
+  <img src="../logo.png" alt="המרכז הפדגוגי" style="height:32px;width:auto">
+</div>
+
+<script>
+// ===== CONFIG =====
+const GOOGLE_CLIENT_ID = '18351568270-9bos1rm966pnv8i6bcf7vmlkk1luqdte.apps.googleusercontent.com';
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+function getGeminiKey() {
+  return localStorage.getItem('ort-gemini-key') || null;
+}
+function saveGeminiKey() {
+  const key = document.getElementById('geminiKeyInput').value.trim();
+  if (!key) { showToast('יש להדביק מפתח'); return; }
+  localStorage.setItem('ort-gemini-key', key);
+  document.getElementById('aiKeySetup').style.display = 'none';
+  showToast('המפתח נשמר! תוכלו ליצור עם AI');
+}
+function checkGeminiKey() {
+  if (!getGeminiKey()) document.getElementById('aiKeySetup').style.display = 'block';
+  else document.getElementById('aiKeySetup').style.display = 'none';
+}
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
+const PLAYER_BASE_URL = 'https://pedagogiamh.co.il/tools/game-player/';
+
+// ===== STATE =====
+let currentStep = 1;
+let gameType = 'trivia';
+let numItems = 8;
+let user = null;
+let details = {};
+let items = [];
+const letters = ['א','ב','ג','ד'];
+
+const GT = {
+  trivia:{name:'טריוויה',icon:'🎯',desc:'שאלות עם 4 תשובות',min:3,max:20,def:8,label:'שאלות'},
+  matching:{name:'התאמה',icon:'🔗',desc:'חיבור בין זוגות',min:4,max:15,def:8,label:'זוגות'},
+  ordering:{name:'סדר נכון',icon:'📋',desc:'סידור בסדר הנכון',min:3,max:12,def:6,label:'פריטים'},
+  escape:{name:'חדר בריחה',icon:'🔐',desc:'פתרו חידות כדי לברוח',min:3,max:8,def:5,label:'חדרים'},
+  memory:{name:'זיכרון',icon:'🧠',desc:'מצאו זוגות תואמים',min:4,max:12,def:6,label:'זוגות'},
+  wheel:{name:'גלגל המזל',icon:'🎡',desc:'סובבו וענו על שאלות',min:4,max:15,def:8,label:'שאלות'},
+  truefalse:{name:'נכון / לא נכון',icon:'✅',desc:'האם המשפט נכון?',min:5,max:20,def:10,label:'משפטים'},
+  fillblank:{name:'השלמת חסר',icon:'✏️',desc:'מלאו את המילה החסרה',min:3,max:15,def:8,label:'משפטים'},
+  sentence:{name:'סדר את המשפט',icon:'🔤',desc:'סדרו מילים למשפט',min:3,max:10,def:6,label:'משפטים'},
+  groups:{name:'קבוצות',icon:'🎨',desc:'מיינו פריטים לקבוצות',min:3,max:5,def:4,label:'קבוצות'},
+  hangman:{name:'נחשו את המילה',icon:'🔮',desc:'נחשו אות אחרי אות',min:3,max:15,def:8,label:'מילים'},
+  millionaire:{name:'מיליונר',icon:'💰',desc:'ענו נכון, התקדמו לפרס',min:5,max:15,def:10,label:'שאלות'}
+};
+const gtKeys = Object.keys(GT);
+const gameTypeNames = {}; const gameTypeIcons = {};
+gtKeys.forEach(k => { gameTypeNames[k] = GT[k].name; gameTypeIcons[k] = GT[k].icon; });
+
+// ===== LOGIN =====
+function loginWithForm() {
+  const name = document.getElementById('loginName').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!name || !email) { showToast('יש למלא שם ואימייל'); return; }
+  user = { name, email, photo: '' };
+  localStorage.setItem('ort-game-user', JSON.stringify(user));
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').style.display = 'block';
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('userPhoto').src = user.photo || '';
+  renderTypeCards();
+  checkDraft();
+}
+
+function logout() {
+  user = null;
+  localStorage.removeItem('ort-game-user');
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('appView').style.display = 'none';
+}
+
+// Auto-login from localStorage
+(function() {
+  const saved = localStorage.getItem('ort-game-user');
+  if (saved) {
+    try {
+      user = JSON.parse(saved);
+      if (user.name && user.email) { showApp(); return; }
+    } catch(e) {}
+  }
+  // Pre-fill if saved
+  document.getElementById('loginView').style.display = 'block';
+})();
+
+// ===== RENDER TYPE CARDS =====
+function renderTypeCards() {
+  const container = document.getElementById('gameTypeGroup');
+  container.innerHTML = gtKeys.map(k => {
+    const g = GT[k];
+    return `<div class="game-type-card${k===gameType?' active':''}" data-type="${k}" onclick="setGameType('${k}')">
+      <div class="gt-icon">${g.icon}</div>
+      <div class="gt-name">${g.name}</div>
+      <div class="gt-desc">${g.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== GAME TYPE =====
+function setGameType(type) {
+  gameType = type;
+  const gt = GT[type];
+  document.querySelectorAll('.game-type-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.type === type);
+  });
+  const slider = document.getElementById('numItems');
+  slider.min = gt.min; slider.max = gt.max; slider.value = gt.def;
+  document.getElementById('numItemsVal').textContent = gt.def;
+  numItems = gt.def;
+  items = [];
+}
+
+// ===== STEPS =====
+function goToStep(step) {
+  if (step > currentStep && !validateStep(currentStep)) return;
+  if (step > currentStep) saveStepData(currentStep);
+  currentStep = step;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + step).classList.add('active');
+  document.querySelectorAll('.steps .step').forEach((s, i) => {
+    s.className = 'step';
+    if (i + 1 < step) s.classList.add('done');
+    else if (i + 1 === step) s.classList.add('active');
+  });
+  if (step === 2) { renderItemEditors(); checkGeminiKey(); }
+  if (step === 3) renderReview();
+  if (step === 4) refreshPreview();
+  saveDraft();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== VALIDATION =====
+function validateStep(step) {
+  let valid = true;
+  if (step === 1) {
+    ['gameName','gameSubject','gameGrade'].forEach(id => {
+      const el = document.getElementById(id);
+      const g = el.closest('.form-group');
+      if (!el.value.trim()) { g.classList.add('invalid'); valid = false; }
+      else g.classList.remove('invalid');
+    });
+    numItems = parseInt(document.getElementById('numItems').value);
+  }
+  if (step === 2) {
+    saveItemData();
+    if (items.length < 1) { showToast('יש להוסיף לפחות פריט אחד'); valid = false; }
+    const gt = gameType;
+    for (const item of items) {
+      if (gt === 'trivia' || gt === 'wheel' || gt === 'millionaire') {
+        if (!item.text || (item.options||[]).some(o => !o) || item.correct === -1) {
+          showToast('יש למלא את כל השדות בכל שאלה ולסמן תשובה נכונה'); valid = false; break;
+        }
+      } else if (gt === 'matching') {
+        if (!item.right || !item.left) { showToast('יש למלא את שני הצדדים בכל זוג'); valid = false; break; }
+      } else if (gt === 'memory') {
+        if (!item.front || !item.back) { showToast('יש למלא צד קדמי ואחורי לכל זוג'); valid = false; break; }
+      } else if (gt === 'ordering') {
+        if (!item.text) { showToast('יש למלא טקסט לכל פריט'); valid = false; break; }
+      } else if (gt === 'escape') {
+        if (!item.riddle || !item.answer) { showToast('יש למלא חידה ותשובה לכל חדר'); valid = false; break; }
+      } else if (gt === 'truefalse') {
+        if (!item.text) { showToast('יש למלא טקסט לכל משפט'); valid = false; break; }
+      } else if (gt === 'fillblank') {
+        if (!item.sentence || !item.answer) { showToast('יש למלא משפט ותשובה'); valid = false; break; }
+      } else if (gt === 'sentence') {
+        if (!item.sentence) { showToast('יש למלא משפט'); valid = false; break; }
+      } else if (gt === 'groups') {
+        if (!item.name || !(item.items||[]).every(i => i)) { showToast('יש למלא שם קבוצה ו-4 פריטים'); valid = false; break; }
+      } else if (gt === 'hangman') {
+        if (!item.word) { showToast('יש למלא מילה'); valid = false; break; }
+      }
+    }
+  }
+  return valid;
+}
+
+function saveStepData(step) {
+  if (step === 1) {
+    details = {
+      gameName: document.getElementById('gameName').value.trim(),
+      subject: document.getElementById('gameSubject').value,
+      grade: document.getElementById('gameGrade').value,
+      teacherName: user ? user.name : '',
+      teacherEmail: user ? user.email : ''
+    };
+  }
+  if (step === 2) saveItemData();
+}
+
+// ===== ITEM DATA COLLECTION =====
+function saveItemData() {
+  const container = document.getElementById('itemEditors');
+  const editors = container.querySelectorAll('.item-editor');
+  const newItems = [];
+  editors.forEach((ed, i) => {
+    const gt = gameType;
+    if (gt === 'trivia' || gt === 'wheel' || gt === 'millionaire') {
+      const text = ed.querySelector('.q-text')?.value?.trim() || '';
+      const opts = Array.from(ed.querySelectorAll('.opt-input')).map(o => o.value.trim());
+      const correctEl = ed.querySelector('.opt-radio.selected');
+      const correct = correctEl ? parseInt(correctEl.dataset.idx) : -1;
+      const explanation = ed.querySelector('.q-explain')?.value?.trim() || '';
+      newItems.push({ text, options: opts, correct, explanation });
+    } else if (gt === 'matching') {
+      const right = ed.querySelector('.pair-right')?.value?.trim() || '';
+      const left = ed.querySelector('.pair-left')?.value?.trim() || '';
+      newItems.push({ right, left });
+    } else if (gt === 'memory') {
+      const front = ed.querySelector('.pair-right')?.value?.trim() || '';
+      const back = ed.querySelector('.pair-left')?.value?.trim() || '';
+      newItems.push({ front, back });
+    } else if (gt === 'ordering') {
+      const text = ed.querySelector('.order-text')?.value?.trim() || '';
+      newItems.push({ text, position: i + 1 });
+    } else if (gt === 'escape') {
+      newItems.push({
+        title: ed.querySelector('.esc-title')?.value?.trim() || '',
+        story: ed.querySelector('.esc-story')?.value?.trim() || '',
+        riddle: ed.querySelector('.esc-riddle')?.value?.trim() || '',
+        answer: ed.querySelector('.esc-answer')?.value?.trim() || '',
+        hint: ed.querySelector('.esc-hint')?.value?.trim() || ''
+      });
+    } else if (gt === 'truefalse') {
+      const text = ed.querySelector('.q-text')?.value?.trim() || '';
+      const correctEl = ed.querySelector('.tf-toggle-btn.active-true');
+      const correct = correctEl ? true : false;
+      const explanation = ed.querySelector('.q-explain')?.value?.trim() || '';
+      newItems.push({ text, correct, explanation });
+    } else if (gt === 'fillblank') {
+      newItems.push({
+        sentence: ed.querySelector('.fb-sentence')?.value?.trim() || '',
+        answer: ed.querySelector('.fb-answer')?.value?.trim() || '',
+        hint: ed.querySelector('.fb-hint')?.value?.trim() || ''
+      });
+    } else if (gt === 'sentence') {
+      newItems.push({ sentence: ed.querySelector('.sent-text')?.value?.trim() || '' });
+    } else if (gt === 'groups') {
+      const name = ed.querySelector('.grp-name')?.value?.trim() || '';
+      const gitems = Array.from(ed.querySelectorAll('.grp-item')).map(o => o.value.trim());
+      newItems.push({ name, items: gitems });
+    } else if (gt === 'hangman') {
+      newItems.push({
+        word: ed.querySelector('.hm-word')?.value?.trim() || '',
+        hint: ed.querySelector('.hm-hint')?.value?.trim() || ''
+      });
+    }
+  });
+  items = newItems;
+}
+
+// ===== RENDER ITEM EDITORS =====
+function getDefaultItem(type, idx) {
+  if (type === 'trivia' || type === 'wheel' || type === 'millionaire') return { text: '', options: ['','','',''], correct: -1, explanation: '' };
+  if (type === 'matching') return { right: '', left: '' };
+  if (type === 'memory') return { front: '', back: '' };
+  if (type === 'ordering') return { text: '', position: idx + 1 };
+  if (type === 'escape') return { title: '', story: '', riddle: '', answer: '', hint: '' };
+  if (type === 'truefalse') return { text: '', correct: true, explanation: '' };
+  if (type === 'fillblank') return { sentence: '', answer: '', hint: '' };
+  if (type === 'sentence') return { sentence: '' };
+  if (type === 'groups') return { name: '', items: ['','','',''] };
+  if (type === 'hangman') return { word: '', hint: '' };
+  return { text: '' };
+}
+
+function getItemPreview(type, item, idx) {
+  const gt = GT[type];
+  const label = gt ? gt.label.replace(/ות$|ים$|ם$/,'') : 'פריט';
+  if (type === 'trivia' || type === 'wheel' || type === 'millionaire') return item.text ? item.text.substring(0, 40) : 'שאלה ' + (idx+1);
+  if (type === 'matching') return item.right ? item.right + ' ↔ ' + item.left : 'זוג ' + (idx+1);
+  if (type === 'memory') return item.front ? item.front + ' ↔ ' + item.back : 'זוג ' + (idx+1);
+  if (type === 'ordering') return item.text ? item.text.substring(0, 40) : 'פריט ' + (idx+1);
+  if (type === 'escape') return item.title ? item.title.substring(0, 40) : 'חדר ' + (idx+1);
+  if (type === 'truefalse') return item.text ? item.text.substring(0, 40) : 'משפט ' + (idx+1);
+  if (type === 'fillblank') return item.sentence ? item.sentence.substring(0, 40) : 'משפט ' + (idx+1);
+  if (type === 'sentence') return item.sentence ? item.sentence.substring(0, 40) : 'משפט ' + (idx+1);
+  if (type === 'groups') return item.name ? item.name : 'קבוצה ' + (idx+1);
+  if (type === 'hangman') return item.word ? item.word : 'מילה ' + (idx+1);
+  return 'פריט ' + (idx+1);
+}
+
+function isItemFilled(type, item) {
+  if (type === 'trivia' || type === 'wheel' || type === 'millionaire') return !!item.text;
+  if (type === 'matching') return !!item.right;
+  if (type === 'memory') return !!item.front;
+  if (type === 'escape') return !!item.title;
+  if (type === 'truefalse' || type === 'fillblank') return !!(item.text || item.sentence);
+  if (type === 'sentence') return !!item.sentence;
+  if (type === 'groups') return !!item.name;
+  if (type === 'hangman') return !!item.word;
+  return !!item.text;
+}
+
+function renderItemEditors() {
+  const container = document.getElementById('itemEditors');
+  if (items.length === 0) {
+    items = [];
+    for (let i = 0; i < numItems; i++) items.push(getDefaultItem(gameType, i));
+  }
+  let html = '';
+  items.forEach((item, i) => {
+    const collapsed = isItemFilled(gameType, item) ? ' collapsed' : '';
+    const preview = getItemPreview(gameType, item, i);
+    html += `<div class="item-editor${collapsed}" data-idx="${i}">
+      <div class="item-header" onclick="toggleItem(this)">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;overflow:hidden">
+          <div class="num-badge">${i+1}</div>
+          <span class="item-preview">${escapeHtml(preview)}</span>
+        </div>
+        <span class="toggle-icon">▲</span>
+      </div>
+      <div class="item-body">
+        ${buildItemEditor(i, item)}
+        <button class="delete-btn" onclick="deleteItem(this)">🗑 מחקו פריט</button>
+      </div>
+    </div>`;
+  });
+  html += `<button class="add-btn" onclick="addItem()">+ הוסיפו ${GT[gameType]?.label || 'פריט'}</button>`;
+  container.innerHTML = html;
+}
+
+function buildItemEditor(idx, item) {
+  const gt = gameType;
+  if (gt === 'trivia' || gt === 'wheel' || gt === 'millionaire') {
+    const showExplain = gt !== 'wheel';
+    return `
+      <div class="form-group"><label>טקסט השאלה</label>
+        <textarea class="q-text" placeholder="הקלידו את השאלה...">${escapeHtml(item.text)}</textarea>
+      </div>
+      <div class="form-group"><label>תשובות (סמנו ✓ ליד הנכונה)</label>
+        <div class="opts-grid">
+          ${(item.options||['','','','']).map((opt, i) => `
+          <div class="opt-row">
+            <div class="opt-label">${letters[i]}</div>
+            <input type="text" class="opt-input" value="${escapeHtml(opt)}" placeholder="תשובה ${letters[i]}">
+            <div class="opt-radio${item.correct === i ? ' selected' : ''}" data-idx="${i}" onclick="selectCorrect(this)">✓</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      ${showExplain ? `<div class="form-group"><label>הסבר</label>
+        <textarea class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
+      </div>` : ''}`;
+  } else if (gt === 'matching') {
+    return `<div class="pair-row">
+        <input type="text" class="pair-right" value="${escapeHtml(item.right)}" placeholder="מושג / מונח">
+        <div class="pair-arrow">↔</div>
+        <input type="text" class="pair-left" value="${escapeHtml(item.left)}" placeholder="הגדרה / תיאור">
+      </div>`;
+  } else if (gt === 'memory') {
+    return `<div class="pair-row">
+        <input type="text" class="pair-right" value="${escapeHtml(item.front)}" placeholder="צד קדמי (מושג)">
+        <div class="pair-arrow">↔</div>
+        <input type="text" class="pair-left" value="${escapeHtml(item.back)}" placeholder="צד אחורי (הגדרה)">
+      </div>`;
+  } else if (gt === 'ordering') {
+    return `<div class="form-group">
+        <label>פריט ${idx + 1} (במיקום הנכון)</label>
+        <input type="text" class="order-text" value="${escapeHtml(item.text)}" placeholder="טקסט הפריט...">
+      </div>`;
+  } else if (gt === 'escape') {
+    return `
+      <div class="form-group"><label>שם החדר</label>
+        <input type="text" class="esc-title" value="${escapeHtml(item.title)}" placeholder="למשל: חדר המעבדה">
+      </div>
+      <div class="form-group"><label>סיפור / תיאור</label>
+        <textarea class="esc-story" placeholder="תיאור קצר של החדר...">${escapeHtml(item.story)}</textarea>
+      </div>
+      <div class="form-group"><label>חידה / שאלה</label>
+        <textarea class="esc-riddle" placeholder="החידה שצריך לפתור...">${escapeHtml(item.riddle)}</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>תשובה</label>
+          <input type="text" class="esc-answer" value="${escapeHtml(item.answer)}" placeholder="התשובה הנכונה">
+        </div>
+        <div class="form-group"><label>רמז</label>
+          <input type="text" class="esc-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
+        </div>
+      </div>`;
+  } else if (gt === 'truefalse') {
+    return `
+      <div class="form-group"><label>המשפט</label>
+        <textarea class="q-text" placeholder="כתבו משפט שהוא נכון או לא נכון...">${escapeHtml(item.text)}</textarea>
+      </div>
+      <div class="form-group"><label>האם המשפט נכון?</label>
+        <div class="tf-toggle">
+          <div class="tf-toggle-btn${item.correct !== false ? ' active-true' : ''}" onclick="setTF(this,true)">✓ נכון</div>
+          <div class="tf-toggle-btn${item.correct === false ? ' active-false' : ''}" onclick="setTF(this,false)">✗ לא נכון</div>
+        </div>
+      </div>
+      <div class="form-group"><label>הסבר</label>
+        <textarea class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
+      </div>`;
+  } else if (gt === 'fillblank') {
+    return `
+      <div class="form-group"><label>משפט (סמנו ___ במקום המילה החסרה)</label>
+        <textarea class="fb-sentence" placeholder="למשל: בירת ישראל היא ___">${escapeHtml(item.sentence)}</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>תשובה</label>
+          <input type="text" class="fb-answer" value="${escapeHtml(item.answer)}" placeholder="המילה החסרה">
+        </div>
+        <div class="form-group"><label>רמז (אופציונלי)</label>
+          <input type="text" class="fb-hint" value="${escapeHtml(item.hint||'')}" placeholder="רמז">
+        </div>
+      </div>`;
+  } else if (gt === 'sentence') {
+    return `<div class="form-group">
+        <label>המשפט הנכון (המילים יעורבלו אוטומטית)</label>
+        <textarea class="sent-text" placeholder="כתבו משפט קצר...">${escapeHtml(item.sentence)}</textarea>
+      </div>`;
+  } else if (gt === 'groups') {
+    return `
+      <div class="form-group"><label>שם הקבוצה</label>
+        <input type="text" class="grp-name" value="${escapeHtml(item.name)}" placeholder="למשל: בעלי חיים">
+      </div>
+      <div class="form-group"><label>4 פריטים בקבוצה</label>
+        <div class="group-items-grid">
+          ${(item.items||['','','','']).map((it, i) =>
+            `<input type="text" class="grp-item" value="${escapeHtml(it)}" placeholder="פריט ${i+1}">`
+          ).join('')}
+        </div>
+      </div>`;
+  } else if (gt === 'hangman') {
+    return `<div class="form-row">
+        <div class="form-group"><label>המילה</label>
+          <input type="text" class="hm-word" value="${escapeHtml(item.word)}" placeholder="מילה לניחוש">
+        </div>
+        <div class="form-group"><label>רמז</label>
+          <input type="text" class="hm-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
+        </div>
+      </div>`;
+  }
+  return '';
+}
+
+function toggleItem(header) { header.closest('.item-editor').classList.toggle('collapsed'); }
+
+function selectCorrect(el) {
+  el.closest('.item-editor').querySelectorAll('.opt-radio').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function setTF(el, val) {
+  const toggle = el.closest('.tf-toggle');
+  toggle.querySelectorAll('.tf-toggle-btn').forEach(b => { b.className = 'tf-toggle-btn'; });
+  el.classList.add(val ? 'active-true' : 'active-false');
+}
+
+function deleteItem(btn) {
+  saveItemData();
+  const idx = parseInt(btn.closest('.item-editor').dataset.idx);
+  items.splice(idx, 1);
+  renderItemEditors();
+}
+
+function addItem() {
+  saveItemData();
+  items.push(getDefaultItem(gameType, items.length));
+  renderItemEditors();
+}
+
+// ===== AI GENERATION =====
+async function generateWithAI() {
+  const topic = document.getElementById('aiPrompt').value.trim();
+  const gName = document.getElementById('gameName').value.trim();
+  if (!topic && !gName) { showToast('כתבו על מה המשחק'); return; }
+
+  const btn = document.getElementById('aiGenBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const subject = details.subject || document.getElementById('gameSubject').value || 'כללי';
+  const grade = details.grade || document.getElementById('gameGrade').value || 'כיתה י';
+  const num = parseInt(document.getElementById('numItems').value);
+  const base = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה.\nנושא: "${topic || gName}"\nמקצוע: ${subject}\nכיתה: ${grade}\nהנחיות: שפה פשוטה וברורה, מתאימה לתלמידי תיכון עם קשיי קשב ולקויות למידה.\n`;
+  let prompt = '';
+  const gt = gameType;
+
+  if (gt === 'trivia') {
+    prompt = base + `צור ${num} שאלות טריוויה. שאלות קצרות, תשובות קצרות (עד 5 מילים), הסברים קצרים. 4 אפשרויות, תשובה נכונה אחת. פזר את התשובה הנכונה בין מיקומים 0-3.\nJSON: {"items":[{"text":"שאלה","options":["א","ב","ג","ד"],"correct":0,"explanation":"הסבר"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'matching') {
+    prompt = base + `צור ${num} זוגות התאמה. כל פריט קצר (עד 5 מילים). זוגות ברורים וחד-משמעיים.\nJSON: {"items":[{"right":"מושג","left":"הגדרה"}],"columnRightTitle":"כותרת ימין","columnLeftTitle":"כותרת שמאל"}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'ordering') {
+    prompt = base + `צור ${num} פריטים לסידור בסדר הנכון. כל פריט קצר (עד 6 מילים). הסדר חייב להיות ברור. הוסף הוראה.\nJSON: {"items":[{"text":"פריט","position":1}],"instruction":"סדרו מ... ל..."}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'escape') {
+    prompt = base + `צור חדר בריחה עם ${num} חדרים. כל חדר: כותרת קצרה, סיפור קצר (2-3 משפטים), חידה ברורה, תשובה חד-משמעית (מילה אחת), ורמז.\nJSON: {"items":[{"title":"שם החדר","story":"סיפור","riddle":"חידה","answer":"תשובה","hint":"רמז"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'memory') {
+    prompt = base + `צור ${num} זוגות לזיכרון. כל זוג: צד קדמי (מושג/מילה) וצד אחורי (הגדרה/תרגום). קצר וברור.\nJSON: {"items":[{"front":"מושג","back":"הגדרה"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'wheel') {
+    prompt = base + `צור ${num} שאלות לגלגל המזל. שאלות קצרות עם 4 אפשרויות. פזר תשובה נכונה בין 0-3.\nJSON: {"items":[{"text":"שאלה","options":["א","ב","ג","ד"],"correct":0}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'truefalse') {
+    prompt = base + `צור ${num} משפטי נכון/לא נכון. חלקם נכונים וחלקם לא. הוסף הסבר קצר.\nJSON: {"items":[{"text":"משפט","correct":true,"explanation":"הסבר"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'fillblank') {
+    prompt = base + `צור ${num} משפטים עם מילה חסרה. סמן את המקום הריק ב-___. תשובה חד-משמעית (מילה אחת). רמז אופציונלי.\nJSON: {"items":[{"sentence":"משפט עם ___ חסר","answer":"תשובה","hint":"רמז"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'sentence') {
+    prompt = base + `צור ${num} משפטים קצרים (4-8 מילים) שהמילים שלהם יעורבלו. המשפט חייב להיות ברור ונכון דקדוקית.\nJSON: {"items":[{"sentence":"משפט נכון"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'groups') {
+    prompt = base + `צור ${num} קבוצות, כל קבוצה עם שם ו-4 פריטים שייכים. הקבוצות חייבות להיות שונות מספיק שלא יהיה בלבול.\nJSON: {"items":[{"name":"שם הקבוצה","items":["פריט1","פריט2","פריט3","פריט4"]}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'hangman') {
+    prompt = base + `צור ${num} מילים לניחוש עם רמזים. מילים בעברית (3-8 אותיות). רמז קצר וברור.\nJSON: {"items":[{"word":"מילה","hint":"רמז"}]}\nהחזר JSON תקין בלבד.`;
+  } else if (gt === 'millionaire') {
+    prompt = base + `צור ${num} שאלות ברמת קושי עולה (מקל לקשה) למשחק מיליונר. 4 אפשרויות, הסבר קצר. פזר תשובה נכונה בין 0-3.\nJSON: {"items":[{"text":"שאלה","options":["א","ב","ג","ד"],"correct":0,"explanation":"הסבר"}]}\nהחזר JSON תקין בלבד.`;
+  }
+
+  try {
+    const apiKey = getGeminiKey();
+    if (!apiKey) { btn.classList.remove('loading'); btn.disabled = false; document.getElementById('aiKeySetup').style.display = 'block'; showToast('יש להזין מפתח Gemini API קודם'); return; }
+    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
+      })
+    });
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'API Error'); }
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('תשובה ריקה מ-Gemini');
+
+    const parsed = JSON.parse(text);
+    if (parsed.items) {
+      const gt = gameType;
+      if (gt === 'trivia' || gt === 'millionaire') {
+        items = parsed.items.map(q => ({
+          text: q.text || '', options: q.options || ['','','',''],
+          correct: typeof q.correct === 'number' ? q.correct : 0,
+          explanation: q.explanation || ''
+        }));
+      } else if (gt === 'wheel') {
+        items = parsed.items.map(q => ({
+          text: q.text || '', options: q.options || ['','','',''],
+          correct: typeof q.correct === 'number' ? q.correct : 0,
+          explanation: ''
+        }));
+      } else if (gt === 'matching') {
+        items = parsed.items.map(p => ({ right: p.right || '', left: p.left || '' }));
+        if (parsed.columnRightTitle) details.columnRightTitle = parsed.columnRightTitle;
+        if (parsed.columnLeftTitle) details.columnLeftTitle = parsed.columnLeftTitle;
+      } else if (gt === 'memory') {
+        items = parsed.items.map(p => ({ front: p.front || '', back: p.back || '' }));
+      } else if (gt === 'ordering') {
+        items = parsed.items.map((p, i) => ({ text: p.text || '', position: p.position || i + 1 }));
+        if (parsed.instruction) details.instruction = parsed.instruction;
+      } else if (gt === 'escape') {
+        items = parsed.items.map(r => ({
+          title: r.title || '', story: r.story || '', riddle: r.riddle || '',
+          answer: r.answer || '', hint: r.hint || ''
+        }));
+      } else if (gt === 'truefalse') {
+        items = parsed.items.map(q => ({
+          text: q.text || '', correct: q.correct !== false,
+          explanation: q.explanation || ''
+        }));
+      } else if (gt === 'fillblank') {
+        items = parsed.items.map(q => ({
+          sentence: q.sentence || '', answer: q.answer || '', hint: q.hint || ''
+        }));
+      } else if (gt === 'sentence') {
+        items = parsed.items.map(q => ({ sentence: q.sentence || '' }));
+      } else if (gt === 'groups') {
+        items = parsed.items.map(g => ({
+          name: g.name || '', items: g.items || ['','','','']
+        }));
+      } else if (gt === 'hangman') {
+        items = parsed.items.map(w => ({ word: w.word || '', hint: w.hint || '' }));
+      }
+    }
+    renderItemEditors();
+    showToast('הפריטים נוצרו בהצלחה! תוכלו לערוך אותם');
+  } catch(e) {
+    console.error('AI Error:', e);
+    showToast('שגיאה: ' + e.message);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ===== REVIEW =====
+function renderReview() {
+  saveStepData(currentStep === 2 ? 2 : currentStep);
+  const d = details;
+  const gt = gameType;
+  let itemsHTML = '';
+  items.forEach((item, i) => {
+    let content = '';
+    if (gt === 'trivia' || gt === 'wheel' || gt === 'millionaire') content = `${item.text} (${letters[item.correct]}: ${(item.options||[])[item.correct] || '?'})`;
+    else if (gt === 'matching') content = `${item.right} ↔ ${item.left}`;
+    else if (gt === 'memory') content = `${item.front} ↔ ${item.back}`;
+    else if (gt === 'ordering') content = item.text;
+    else if (gt === 'escape') content = `${item.title}: ${(item.riddle||'').substring(0,40)}...`;
+    else if (gt === 'truefalse') content = `${item.text} (${item.correct ? 'נכון' : 'לא נכון'})`;
+    else if (gt === 'fillblank') content = `${item.sentence} → ${item.answer}`;
+    else if (gt === 'sentence') content = item.sentence;
+    else if (gt === 'groups') content = `${item.name}: ${(item.items||[]).join(', ')}`;
+    else if (gt === 'hangman') content = `${item.word} (${item.hint})`;
+    else content = item.text || '';
+    itemsHTML += `<div class="review-item"><div class="ri-num">${i+1}</div>${escapeHtml(content)}</div>`;
+  });
+
+  document.getElementById('reviewContent').innerHTML = `
+    <div class="review-card">
+      <h3>${escapeHtml(d.gameName || '')}</h3>
+      <div class="review-meta">
+        <div class="review-tag">${gameTypeIcons[gameType]} ${gameTypeNames[gameType]}</div>
+        <div class="review-tag">📚 ${escapeHtml(d.subject || '')}</div>
+        <div class="review-tag">🎓 ${escapeHtml(d.grade || '')}</div>
+        <div class="review-tag">📝 ${items.length} ${GT[gameType]?.label || 'פריטים'}</div>
+      </div>
+      <div class="review-items">${itemsHTML}</div>
+    </div>`;
+}
+
+// ===== GENERATE GAME HTML =====
+function generateGameHTML() {
+  saveStepData(currentStep);
+  const d = details;
+  const subjectIcons = { 'עברית':'א','מתמטיקה':'➗','היסטוריה':'📜','אנגלית':'A','מדעים':'🔬','חשבונאות':'📊' };
+  const icon = subjectIcons[d.subject] || '🎮';
+  const gradeMap = {
+    'כיתה ט':['ט1','ט2','ט3','ט4'],'כיתה י':['י1','י2','י3','י4'],
+    'כיתה יא':['יא1','יא2','יא3'],'כיתה יב':['יב1','יב2','יב3']
+  };
+  const classOptions = (gradeMap[d.grade]||['א','ב','ג','ד']).map(c=>`<option>${c}</option>`).join('');
+  const sheetName = d.gameName + ' – ' + d.grade;
+  const gcfg = {
+    gameType, items, settings: { shuffleItems: true },
+    columnRightTitle: d.columnRightTitle || 'מושג',
+    columnLeftTitle: d.columnLeftTitle || 'הגדרה',
+    instruction: d.instruction || 'סדרו את הפריטים בסדר הנכון'
+  };
+
+  return generatePlayerHTML({
+    title: d.gameName, subject: d.subject, grade: d.grade, icon,
+    classOptions, sheetName, gameConfig: JSON.stringify(gcfg),
+    teacherEmail: d.teacherEmail || (user ? user.email : '')
+  });
+}
+
+function generatePlayerHTML(cfg) {
+  // Instead of embedding all player logic here, redirect to the game-player page
+  // For preview: use a minimal player that embeds the game config
+  // For download: generate a self-contained redirect page
+  const playerURL = PLAYER_BASE_URL;
+  const sheetName = cfg.sheetName;
+  const teacherEmail = cfg.teacherEmail;
+
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משחק – ${escapeHtml(cfg.title)} | המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F0F4F8;--card:#fff;--primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;--secondary:#E76F7A;--sec-l:#FDE8EA;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px;--blue:#4A90D9;--blue-l:#DBEAFE}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.game-wrapper{max-width:620px;width:100%;margin:0 auto}
+.progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s;width:0%}
+.g-card{background:var(--card);border-radius:var(--r);padding:36px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
+.screen{display:none}.screen.active{display:block}
+.intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px}
+.intro-title{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
+.intro-sub{color:var(--gray);font-size:16px;text-align:center;margin-bottom:28px}
+.input-group{margin-bottom:16px}.input-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
+.input-group input,.input-group select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;color:var(--dark);background:var(--bg);transition:border-color .3s}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--primary);background:white}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px)}.btn-primary:disabled{opacity:.4;pointer-events:none}
+.btn-next{background:var(--primary);color:white;margin-top:16px;display:none}.btn-next:hover{background:var(--primary-d);transform:translateY(-2px)}
+.q-counter{font-size:13px;color:var(--primary);font-weight:700;letter-spacing:1px;margin-bottom:6px}
+.q-text{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.5;margin-bottom:22px}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;display:flex;align-items:center;gap:12px}
+.q-opt:hover{background:var(--primary-l);border-color:var(--primary)}
+.q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.q-opt.correct{background:var(--green-l);border-color:var(--green);color:#2D7A54}.q-opt.correct .opt-letter{background:var(--green);color:white}
+.q-opt.wrong{background:var(--sec-l);border-color:var(--secondary);color:#B44050}.q-opt.wrong .opt-letter{background:var(--secondary);color:white}
+.q-opt.disabled{pointer-events:none;opacity:.7}.q-opt.disabled.dim{opacity:.45}
+.q-feedback{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:15px;line-height:1.6;display:none}
+.q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);color:#2D7A54}.q-feedback.wrong{background:var(--sec-l);color:#B44050}
+.match-progress{text-align:center;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:16px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-title{font-size:13px;font-weight:700;color:var(--gray);text-align:center;margin-bottom:8px}
+.match-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;margin-bottom:8px}
+.match-item:hover{border-color:var(--primary)}.match-item.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:scale(1.03)}
+.match-item.matched{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none;opacity:.7}
+.match-item.wrong-flash{background:var(--sec-l);border-color:var(--secondary);animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.order-instruction{background:var(--primary-l);padding:14px 20px;border-radius:14px;text-align:center;font-size:15px;font-weight:600;color:var(--primary-d);margin-bottom:20px}
+.order-list{display:flex;flex-direction:column;gap:8px}
+.order-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .3s}
+.order-item .oi-num{width:30px;height:30px;border-radius:10px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.order-item .oi-text{flex:1;font-size:15px;font-weight:600}
+.order-item .oi-arrows{display:flex;flex-direction:column;gap:2px}
+.order-item .oi-arrows button{width:28px;height:22px;border:none;border-radius:6px;background:white;cursor:pointer;font-size:12px;border:1px solid var(--border)}
+.order-item .oi-arrows button:hover{background:var(--primary-l)}
+.order-item.correct-pos{border-color:var(--green);background:var(--green-l)}.order-item.wrong-pos{border-color:var(--secondary);background:var(--sec-l)}
+.room-story{font-size:15px;line-height:1.8;color:var(--gray);margin-bottom:16px;padding:16px;background:var(--bg);border-radius:14px}
+.room-riddle{font-size:17px;font-weight:600;margin-bottom:16px;padding:16px;background:var(--accent-l);border-radius:14px;color:#92400E}
+.room-input{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px}
+.room-input:focus{outline:none;border-color:var(--primary)}.room-input.wrong{border-color:var(--secondary);animation:shake .4s}.room-input.correct{border-color:var(--green);background:var(--green-l)}
+.hint-btn{background:var(--accent-l);color:#92400E;border:2px solid var(--accent);border-radius:14px;padding:10px 20px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.hint-text{margin-top:8px;padding:12px;background:var(--accent-l);border-radius:12px;font-size:14px;color:#92400E;display:none}.hint-text.show{display:block}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.memory-card{aspect-ratio:1;perspective:600px;cursor:pointer}
+.memory-card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s}
+.memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
+.memory-card-front,.memory-card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;padding:8px;text-align:center;word-break:break-word}
+.memory-card-front{background:var(--primary);color:white;font-size:24px}
+.memory-card-back{background:var(--bg);border:2px solid var(--border);transform:rotateY(180deg)}
+.memory-card.matched .memory-card-back{background:var(--green-l);border-color:var(--green)}.memory-card.matched{pointer-events:none}
+.wheel-container{text-align:center;margin-bottom:20px}.wheel-wrap{position:relative;display:inline-block}
+.wheel-canvas{width:280px;height:280px}.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:24px}
+.tf-text{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.6;margin-bottom:24px;text-align:center}
+.tf-buttons{display:flex;gap:12px}.tf-btn{flex:1;padding:20px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:18px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center}
+.tf-btn-true{background:var(--green-l);color:#2D7A54;border-color:var(--green)}.tf-btn-true:hover{background:var(--green);color:white}
+.tf-btn-false{background:var(--sec-l);color:#B44050;border-color:var(--secondary)}.tf-btn-false:hover{background:var(--secondary);color:white}
+.tf-btn.correct{background:var(--green);color:white;border-color:var(--green);transform:scale(1.05)}
+.tf-btn.wrong{background:var(--secondary);color:white;border-color:var(--secondary);opacity:.5}.tf-btn.disabled{pointer-events:none}
+.fb-sentence{font-size:18px;line-height:2;margin-bottom:20px}.fb-blank{display:inline-block;border-bottom:3px solid var(--primary);padding:0 8px;min-width:80px;color:var(--primary);font-weight:700}
+.fb-input{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;margin-bottom:12px}
+.fb-input:focus{outline:none;border-color:var(--primary)}.fb-input.correct{border-color:var(--green);background:var(--green-l)}.fb-input.wrong{border-color:var(--secondary);background:var(--sec-l)}
+.sent-target{min-height:60px;padding:16px;background:var(--bg);border:2px dashed var(--border);border-radius:14px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.sent-target.correct{border-color:var(--green);background:var(--green-l)}.sent-target.wrong{border-color:var(--secondary);background:var(--sec-l)}
+.sent-words{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.word-chip{padding:10px 16px;background:var(--primary-l);color:var(--primary-d);border:2px solid var(--primary);border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s}
+.word-chip:hover{background:var(--primary);color:white}.word-chip.used{opacity:.3;pointer-events:none}
+.word-chip.in-target{background:white;border-color:var(--gray-l);color:var(--dark)}
+.groups-found{margin-bottom:16px}.group-solved{padding:12px;border-radius:12px;margin-bottom:8px;text-align:center;font-weight:600;font-size:14px;animation:fadeUp .4s ease}
+.groups-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.group-item{padding:14px 8px;border:2px solid var(--border);border-radius:12px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;background:var(--bg)}
+.group-item:hover{border-color:var(--primary)}.group-item.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d)}
+.group-item.shake{animation:shake .4s ease}.groups-lives{text-align:center;font-size:14px;color:var(--gray);margin-bottom:12px}
+.hm-word{font-size:32px;font-weight:900;font-family:'Rubik',sans-serif;text-align:center;letter-spacing:12px;margin-bottom:16px;direction:rtl}
+.hm-hint{text-align:center;color:var(--gray);font-size:15px;margin-bottom:20px}
+.hm-stage{text-align:center;font-size:48px;margin-bottom:12px}.hm-wrong-count{text-align:center;font-size:14px;color:var(--secondary);margin-bottom:16px}
+.hm-keyboard{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
+.hm-key{width:38px;height:38px;border:2px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s;background:white}
+.hm-key:hover{border-color:var(--primary);background:var(--primary-l)}
+.hm-key.correct-key{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none}
+.hm-key.wrong-key{background:var(--sec-l);border-color:var(--secondary);color:#B44050;pointer-events:none}
+.mill-layout{display:flex;gap:20px}.mill-question{flex:1}.mill-ladder{width:160px;display:flex;flex-direction:column-reverse;gap:4px}
+.mill-level{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;background:var(--bg);border:1px solid var(--border);transition:all .3s}
+.mill-level.current{background:var(--accent);color:white;border-color:var(--accent);transform:scale(1.05)}
+.mill-level.passed{background:var(--green-l);border-color:var(--green);color:#2D7A54}.mill-level.checkpoint{border-color:var(--accent);font-weight:800}
+.mill-lifeline{display:flex;gap:8px;margin-bottom:16px}
+.mill-lifeline-btn{padding:8px 16px;border:2px solid var(--blue);border-radius:10px;background:var(--blue-l);color:var(--blue);font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.mill-lifeline-btn:hover{background:var(--blue);color:white}.mill-lifeline-btn.used{opacity:.3;pointer-events:none}
+.score-icon{font-size:60px;text-align:center;margin-bottom:12px}
+.score-num{font-size:5rem;font-weight:900;font-family:'Rubik',sans-serif;text-align:center;line-height:1}
+.score-label{font-size:16px;color:var(--gray);text-align:center;margin-top:4px}
+.score-msg{font-size:20px;font-weight:700;text-align:center;margin-top:20px;padding:16px;border-radius:14px}
+.score-details{margin-top:20px;display:flex;gap:12px;justify-content:center}
+.score-detail{background:var(--bg);border-radius:14px;padding:14px 20px;text-align:center;flex:1}
+.score-detail .num{font-size:24px;font-weight:900;font-family:'Rubik',sans-serif}
+.score-detail .lbl{font-size:12px;color:var(--gray);margin-top:4px}
+.send-status{margin-top:16px;padding:14px;border-radius:12px;text-align:center;font-size:15px;display:none}
+.send-status.success{display:block;background:var(--green-l);color:#2D7A54}
+.retry-btn{margin-top:16px;background:var(--bg);color:var(--primary-d);border:2px solid var(--primary);font-weight:600}
+.retry-btn:hover{background:var(--primary-l)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){.g-card{padding:24px}.q-text{font-size:18px}.score-num{font-size:3.5rem}.score-details{flex-direction:column}.match-grid{grid-template-columns:1fr;gap:24px}.memory-grid{grid-template-columns:repeat(3,1fr)}.groups-grid{grid-template-columns:repeat(4,1fr)}.mill-layout{flex-direction:column-reverse}.mill-ladder{width:100%;flex-direction:row;flex-wrap:wrap;gap:4px}.mill-level{flex:1;min-width:60px;font-size:11px}}
+</style></head><body>
+<div class="game-wrapper">
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="screen active" id="introScreen">
+    <div class="g-card">
+      <div class="intro-icon">${cfg.icon}</div>
+      <div class="intro-title">משחק – ${escapeHtml(cfg.title)}</div>
+      <div class="intro-sub">${escapeHtml(cfg.subject)} | ${escapeHtml(cfg.grade)} | המרכז הפדגוגי · מינהל הכשרה מקצועית</div>
+      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם"></div>
+      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${cfg.classOptions}</select></div>
+      <button class="btn btn-primary" id="startBtn" disabled onclick="startGame()">התחילו!</button>
+    </div>
+  </div>
+  <div class="screen" id="gameScreen"><div class="g-card" id="gameArea"></div></div>
+  <div class="screen" id="scoreScreen">
+    <div class="g-card" style="text-align:center">
+      <div class="score-icon" id="scoreIcon"></div>
+      <div class="score-num" id="scoreNum"></div>
+      <div class="score-label" id="scoreLabel">מתוך 100</div>
+      <div class="score-msg" id="scoreMsg"></div>
+      <div class="score-details">
+        <div class="score-detail"><div class="num" id="correctCount" style="color:var(--green)"></div><div class="lbl">נכונים</div></div>
+        <div class="score-detail"><div class="num" id="wrongCount" style="color:var(--secondary)"></div><div class="lbl">שגויים</div></div>
+        <div class="score-detail"><div class="num" id="totalCount" style="color:var(--primary)"></div><div class="lbl">סה"כ</div></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:24px" onclick="sendResults()">שלחו תוצאות למורה</button>
+      <div class="send-status" id="sendStatus"></div>
+      <button class="btn retry-btn" onclick="location.reload()">שחקו שוב</button>
+    </div>
+  </div>
+</div>
+<script>
+var gameConfig=${cfg.gameConfig};
+var SHEETS_URL='${SHEETS_URL}';
+var sheetName=${JSON.stringify(sheetName)};
+var teacherEmail=${JSON.stringify(teacherEmail)};
+var studentName='',studentClass='',score=0,totalItems=0,correctItems=0;
+var nameInput=document.getElementById('studentName'),classInput=document.getElementById('studentClass'),startBtn=document.getElementById('startBtn');
+function checkInputs(){startBtn.disabled=!(nameInput.value.trim()&&classInput.value)}
+nameInput.addEventListener('input',checkInputs);classInput.addEventListener('change',checkInputs);
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function escapeHtml(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+function startGame(){
+  studentName=nameInput.value.trim();studentClass=classInput.value;score=0;correctItems=0;
+  showScreen('gameScreen');
+  var fn={trivia:initTrivia,matching:initMatching,ordering:initOrdering,escape:initEscape,memory:initMemory,wheel:initWheel,truefalse:initTrueFalse,fillblank:initFillBlank,sentence:initSentence,groups:initGroups,hangman:initHangman,millionaire:initMillionaire};
+  (fn[gameConfig.gameType]||initTrivia)();
+}
+
+function showScore(){
+  var p=Math.round(correctItems/totalItems*100);
+  document.getElementById('progressFill').style.width='100%';
+  var ic,msg,bg;
+  if(p>=90){ic='🌟';msg='מצוין! שליטה מעולה!';bg='var(--green-l)'}
+  else if(p>=70){ic='👏';msg='כל הכבוד! ביצוע טוב מאוד!';bg='var(--primary-l)'}
+  else if(p>=50){ic='💪';msg='אפשר לשפר – נסו שוב!';bg='var(--accent-l)'}
+  else{ic='📖';msg='כדאי לחזור על החומר';bg='var(--sec-l)'}
+  document.getElementById('scoreIcon').textContent=ic;
+  document.getElementById('scoreNum').textContent=p;
+  document.getElementById('scoreNum').style.color=p>=70?'var(--green)':p>=50?'var(--accent)':'var(--secondary)';
+  document.getElementById('scoreMsg').textContent=msg;document.getElementById('scoreMsg').style.background=bg;
+  document.getElementById('correctCount').textContent=correctItems;
+  document.getElementById('wrongCount').textContent=totalItems-correctItems;
+  document.getElementById('totalCount').textContent=totalItems;
+  showScreen('scoreScreen');
+}
+
+function sendResults(){
+  var btn=event.target;btn.disabled=true;btn.textContent='שולח...';
+  var p=Math.round(correctItems/totalItems*100);
+  var params=new URLSearchParams({action:'submit',quizName:sheetName,studentName:studentName,classroom:studentClass,score:p,totalQuestions:totalItems,correctAnswers:correctItems,level:'',teacherEmail:teacherEmail});
+  var s=document.createElement('script');s.src=SHEETS_URL+'?'+params.toString();
+  s.onload=s.onerror=function(){var st=document.getElementById('sendStatus');st.className='send-status success';st.textContent='התוצאות נשלחו בהצלחה למורה! ✓';btn.textContent='נשלח!';s.remove()};
+  document.body.appendChild(s);
+}
+
+/* ===== TRIVIA ===== */
+var triviaQ=0,triviaItems=[];
+function initTrivia(){triviaItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=triviaItems.length;triviaQ=0;score=0;correctItems=0;renderTriviaQ()}
+function renderTriviaQ(){var q=triviaItems[triviaQ],n=triviaQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];document.getElementById('gameArea').innerHTML='<div class="q-counter">שאלה '+n+' מתוך '+totalItems+'</div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="triviaAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>'}
+function triviaAnswer(idx){var q=triviaItems[triviaQ],ok=idx===q.correct;document.querySelectorAll('.q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong> '+escapeHtml(q.explanation||''):'<strong>לא נכון.</strong> '+escapeHtml(q.explanation||'');if(ok){score++;correctItems++}document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=triviaQ<totalItems-1?'הבא':'סיום'}
+function nextTrivia(){triviaQ++;if(triviaQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderTriviaQ()}
+
+/* ===== MATCHING ===== */
+var matchPairs=[],matchedCount=0,selectedRight=null;
+function initMatching(){matchPairs=gameConfig.items.slice();totalItems=matchPairs.length;matchedCount=0;selectedRight=null;score=0;correctItems=0;var ri=shuffle(matchPairs.map(function(p,i){return{text:p.right,idx:i}}));var li=shuffle(matchPairs.map(function(p,i){return{text:p.left,idx:i}}));var rT=gameConfig.columnRightTitle||'מושג',lT=gameConfig.columnLeftTitle||'הגדרה';document.getElementById('progressFill').style.width='0%';document.getElementById('gameArea').innerHTML='<div class="match-progress" id="matchProg">0 מתוך '+totalItems+' זוגות</div><div class="match-grid"><div><div class="match-col-title">'+escapeHtml(rT)+'</div>'+ri.map(function(r){return'<div class="match-item match-right" data-idx="'+r.idx+'" onclick="selectRight(this)">'+escapeHtml(r.text)+'</div>'}).join('')+'</div><div><div class="match-col-title">'+escapeHtml(lT)+'</div>'+li.map(function(l){return'<div class="match-item match-left" data-idx="'+l.idx+'" onclick="selectLeft(this)">'+escapeHtml(l.text)+'</div>'}).join('')+'</div></div>'}
+function selectRight(el){if(el.classList.contains('matched'))return;document.querySelectorAll('.match-right').forEach(function(r){r.classList.remove('selected')});el.classList.add('selected');selectedRight=el}
+function selectLeft(el){if(!selectedRight||el.classList.contains('matched'))return;var rI=parseInt(selectedRight.dataset.idx),lI=parseInt(el.dataset.idx);if(rI===lI){selectedRight.classList.remove('selected');selectedRight.classList.add('matched');el.classList.add('matched');matchedCount++;correctItems++;score++;document.getElementById('matchProg').textContent=matchedCount+' מתוך '+totalItems+' זוגות';document.getElementById('progressFill').style.width=(matchedCount/totalItems*100)+'%';selectedRight=null;if(matchedCount===totalItems)setTimeout(showScore,600)}else{selectedRight.classList.add('wrong-flash');el.classList.add('wrong-flash');var r=selectedRight;setTimeout(function(){r.classList.remove('selected','wrong-flash');el.classList.remove('wrong-flash')},500);selectedRight=null}}
+
+/* ===== ORDERING ===== */
+var orderItems=[];
+function initOrdering(){orderItems=shuffle(gameConfig.items.map(function(item,i){return{text:item.text,correctPos:item.position||i+1}}));totalItems=orderItems.length;score=0;correctItems=0;renderOrder()}
+function renderOrder(){document.getElementById('progressFill').style.width='0%';var inst=gameConfig.instruction||'סדרו את הפריטים בסדר הנכון';document.getElementById('gameArea').innerHTML='<div class="order-instruction">'+escapeHtml(inst)+'</div><div class="order-list">'+orderItems.map(function(item,i){return'<div class="order-item"><div class="oi-num">'+(i+1)+'</div><div class="oi-text">'+escapeHtml(item.text)+'</div><div class="oi-arrows"><button onclick="moveItem('+i+',-1)">▲</button><button onclick="moveItem('+i+',1)">▼</button></div></div>'}).join('')+'</div><button class="btn btn-primary" style="margin-top:16px" onclick="checkOrder()">בדקו סדר</button>'}
+function moveItem(idx,dir){var n=idx+dir;if(n<0||n>=orderItems.length)return;var t=orderItems[idx];orderItems[idx]=orderItems[n];orderItems[n]=t;renderOrder()}
+function checkOrder(){correctItems=0;orderItems.forEach(function(item,i){if(item.correctPos===i+1)correctItems++});score=correctItems;var els=document.querySelectorAll('.order-item');els.forEach(function(el,i){el.classList.add(orderItems[i].correctPos===i+1?'correct-pos':'wrong-pos');el.querySelector('.oi-arrows').style.display='none'});document.querySelector('[onclick="checkOrder()"]').style.display='none';document.getElementById('progressFill').style.width='100%';setTimeout(showScore,1500)}
+
+/* ===== ESCAPE ===== */
+var escRoom=0,escItems=[],escHint=[];
+function initEscape(){escItems=gameConfig.items.slice();totalItems=escItems.length;escRoom=0;score=0;correctItems=0;escHint=escItems.map(function(){return false});renderRoom()}
+function renderRoom(){var r=escItems[escRoom],n=escRoom+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';document.getElementById('gameArea').innerHTML='<div class="q-counter">חדר '+n+' מתוך '+totalItems+'</div><div class="q-text">🔐 '+escapeHtml(r.title||'חדר '+n)+'</div><div class="room-story">'+escapeHtml(r.story)+'</div><div class="room-riddle">🧩 '+escapeHtml(r.riddle)+'</div><input type="text" class="room-input" id="roomAnswer" placeholder="הקלידו תשובה..."><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-primary" style="flex:1" onclick="checkRoom()">בדקו</button>'+(escHint[escRoom]?'':'<button class="hint-btn" onclick="showEscHint()">💡 רמז</button>')+'</div><div class="hint-text" id="hintText">'+escapeHtml(r.hint)+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextRoom()">חדר הבא</button>'}
+function checkRoom(){var inp=document.getElementById('roomAnswer');var ans=inp.value.trim();var correct=escItems[escRoom].answer.trim();if(ans.toLowerCase()===correct.toLowerCase()){inp.classList.add('correct');inp.disabled=true;correctItems++;score+=escHint[escRoom]?0.5:1;var fb=document.getElementById('qFeedback');fb.className='q-feedback show correct';fb.innerHTML='<strong>נכון!</strong> עברתם לחדר הבא!';document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=escRoom<totalItems-1?'חדר הבא':'סיום'}else{inp.classList.add('wrong');setTimeout(function(){inp.classList.remove('wrong')},500)}}
+function showEscHint(){escHint[escRoom]=true;document.getElementById('hintText').classList.add('show')}
+function nextRoom(){escRoom++;if(escRoom>=totalItems){correctItems=Math.round(score);showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderRoom()}
+
+/* ===== MEMORY ===== */
+var memCards=[],flipped=[],memMatched=0,memLocked=false;
+function initMemory(){var items=gameConfig.items;totalItems=items.length;memMatched=0;score=0;correctItems=0;memCards=[];flipped=[];memLocked=false;items.forEach(function(item,i){memCards.push({id:i,text:item.front,pairId:i,type:'front'});memCards.push({id:i,text:item.back,pairId:i,type:'back'})});memCards=shuffle(memCards);document.getElementById('progressFill').style.width='0%';var html='<div class="match-progress" id="memProg">0 מתוך '+totalItems+' זוגות</div><div class="memory-grid">';memCards.forEach(function(card,i){html+='<div class="memory-card" data-idx="'+i+'" onclick="flipCard(this)"><div class="memory-card-inner"><div class="memory-card-front">?</div><div class="memory-card-back">'+escapeHtml(card.text)+'</div></div></div>'});html+='</div>';document.getElementById('gameArea').innerHTML=html}
+function flipCard(el){if(memLocked||el.classList.contains('flipped')||el.classList.contains('matched'))return;el.classList.add('flipped');flipped.push(el);if(flipped.length===2){memLocked=true;var i1=parseInt(flipped[0].dataset.idx),i2=parseInt(flipped[1].dataset.idx);var c1=memCards[i1],c2=memCards[i2];if(c1.pairId===c2.pairId&&c1.type!==c2.type){flipped.forEach(function(c){c.classList.add('matched')});memMatched++;correctItems++;score++;document.getElementById('memProg').textContent=memMatched+' מתוך '+totalItems+' זוגות';document.getElementById('progressFill').style.width=(memMatched/totalItems*100)+'%';flipped=[];memLocked=false;if(memMatched===totalItems)setTimeout(showScore,600)}else{setTimeout(function(){flipped.forEach(function(c){c.classList.remove('flipped')});flipped=[];memLocked=false},1000)}}}
+
+/* ===== WHEEL ===== */
+var wheelItems=[],wheelCur=0,wheelAnswered=[],wheelAngle=0,wheelSpinning=false;
+function initWheel(){wheelItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=wheelItems.length;wheelCur=0;score=0;correctItems=0;wheelAnswered=wheelItems.map(function(){return false});wheelAngle=0;wheelSpinning=false;renderWheel()}
+function renderWheel(){document.getElementById('progressFill').style.width='0%';document.getElementById('gameArea').innerHTML='<div class="wheel-container"><div class="wheel-wrap"><div class="wheel-pointer">▼</div><canvas class="wheel-canvas" id="wheelCanvas" width="280" height="280"></canvas></div><button class="btn btn-primary" style="margin-top:16px;width:auto;padding:16px 40px;display:inline-block" id="spinBtn" onclick="spinWheel()">🎡 סובבו!</button></div><div id="wheelQ" style="display:none"></div>';drawWheel()}
+function drawWheel(){var canvas=document.getElementById('wheelCanvas');if(!canvas)return;var ctx=canvas.getContext('2d');var cx=140,cy=140,r=130,n=wheelItems.length;var colors=["#2A9D8F","#E76F7A","#4A90D9","#E9A319","#52B788","#8B5CF6","#EC4899","#F59E0B","#10B981","#6366F1","#F97316","#14B8A6"];ctx.clearRect(0,0,280,280);var slice=2*Math.PI/n;var rot=wheelAngle*Math.PI/180;for(var i=0;i<n;i++){var sa=rot+i*slice;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,sa,sa+slice);ctx.fillStyle=wheelAnswered[i]?"#ddd":colors[i%colors.length];ctx.fill();ctx.strokeStyle="white";ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(sa+slice/2);ctx.fillStyle=wheelAnswered[i]?"#999":"white";ctx.font="bold 13px Heebo";ctx.textAlign="center";ctx.fillText(""+(i+1),r*0.65,5);ctx.restore()}ctx.beginPath();ctx.arc(cx,cy,20,0,2*Math.PI);ctx.fillStyle="white";ctx.fill();ctx.stroke()}
+function spinWheel(){if(wheelSpinning)return;var unanswered=[];wheelItems.forEach(function(_,i){if(!wheelAnswered[i])unanswered.push(i)});if(unanswered.length===0){showScore();return}wheelSpinning=true;document.getElementById('spinBtn').disabled=true;document.getElementById('wheelQ').style.display='none';var targetIdx=unanswered[Math.floor(Math.random()*unanswered.length)];wheelCur=targetIdx;var n=wheelItems.length;var sliceAngle=360/n;var targetAngle=360-(targetIdx*sliceAngle+sliceAngle/2);var spins=5;var finalAngle=wheelAngle+spins*360+targetAngle-wheelAngle%360;var startAngle=wheelAngle;var duration=3000;var startTime=Date.now();function animate(){var elapsed=Date.now()-startTime;var t=Math.min(elapsed/duration,1);var ease=1-Math.pow(1-t,3);wheelAngle=startAngle+(finalAngle-startAngle)*ease;drawWheel();if(t<1)requestAnimationFrame(animate);else{wheelSpinning=false;showWheelQ(targetIdx)}}requestAnimationFrame(animate)}
+function showWheelQ(idx){var q=wheelItems[idx];var L=['א','ב','ג','ד'];document.getElementById('wheelQ').style.display='block';document.getElementById('wheelQ').innerHTML='<div class="q-text" style="margin-top:16px">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="wheelAnswer('+idx+','+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div>'}
+function wheelAnswer(qIdx,ansIdx){var q=wheelItems[qIdx],ok=ansIdx===q.correct;document.querySelectorAll('#wheelQ .q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===ansIdx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.textContent=ok?'נכון!':'לא נכון.';if(ok){score++;correctItems++}wheelAnswered[qIdx]=true;document.getElementById('progressFill').style.width=(wheelAnswered.filter(Boolean).length/totalItems*100)+'%';setTimeout(function(){document.getElementById('wheelQ').style.display='none';var unanswered=wheelAnswered.filter(function(a){return!a}).length;if(unanswered===0)setTimeout(showScore,500);else{document.getElementById('spinBtn').disabled=false;drawWheel()}},1500)}
+
+/* ===== TRUEFALSE ===== */
+var tfQ=0,tfItems=[];
+function initTrueFalse(){tfItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=tfItems.length;tfQ=0;score=0;correctItems=0;renderTF()}
+function renderTF(){var q=tfItems[tfQ],n=tfQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="tf-text">'+escapeHtml(q.text)+'</div><div class="tf-buttons"><button class="tf-btn tf-btn-true" onclick="tfAnswer(true)">✓ נכון</button><button class="tf-btn tf-btn-false" onclick="tfAnswer(false)">✗ לא נכון</button></div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextTF()">הבא</button>'}
+function tfAnswer(answer){var q=tfItems[tfQ],ok=answer===q.correct;document.querySelectorAll('.tf-btn').forEach(function(b){b.classList.add('disabled')});if(answer){document.querySelector('.tf-btn-true').classList.add(ok?'correct':'wrong');if(!ok)document.querySelector('.tf-btn-false').classList.add('correct')}else{document.querySelector('.tf-btn-false').classList.add(ok?'correct':'wrong');if(!ok)document.querySelector('.tf-btn-true').classList.add('correct')}var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=(ok?'<strong>נכון!</strong> ':'<strong>לא נכון.</strong> ')+escapeHtml(q.explanation||'');if(ok){score++;correctItems++}document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=tfQ<totalItems-1?'הבא':'סיום'}
+function nextTF(){tfQ++;if(tfQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderTF()}
+
+/* ===== FILLBLANK ===== */
+var fbQ=0,fbItems=[];
+function initFillBlank(){fbItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=fbItems.length;fbQ=0;score=0;correctItems=0;renderFB()}
+function renderFB(){var q=fbItems[fbQ],n=fbQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var sentHTML=escapeHtml(q.sentence).replace(/___/g,'<span class="fb-blank">?</span>');document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="fb-sentence">'+sentHTML+'</div><input type="text" class="fb-input" id="fbInput" placeholder="הקלידו את המילה החסרה...">'+(q.hint?'<button class="hint-btn" style="margin-bottom:12px" onclick="document.getElementById(\\'fbHint\\').classList.add(\\'show\\')">💡 רמז</button><div class="hint-text" id="fbHint">'+escapeHtml(q.hint)+'</div>':'')+'<button class="btn btn-primary" style="margin-top:12px" onclick="checkFB()">בדקו</button><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextFB()">הבא</button>'}
+function checkFB(){var inp=document.getElementById('fbInput');var ans=inp.value.trim();var correct=fbItems[fbQ].answer.trim();var ok=ans.toLowerCase()===correct.toLowerCase();inp.classList.add(ok?'correct':'wrong');inp.disabled=true;var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong>':'<strong>לא נכון.</strong> התשובה: '+escapeHtml(correct);if(ok){score++;correctItems++}document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=fbQ<totalItems-1?'הבא':'סיום'}
+function nextFB(){fbQ++;if(fbQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderFB()}
+
+/* ===== SENTENCE ===== */
+var sentQ=0,sentItems=[],sentWords=[],sentBuilt=[],sentShuffled=[];
+function initSentence(){sentItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=sentItems.length;sentQ=0;score=0;correctItems=0;renderSent()}
+function renderSent(){var q=sentItems[sentQ],n=sentQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';sentWords=q.sentence.split(/\\s+/);sentBuilt=[];sentShuffled=shuffle(sentWords.map(function(w,i){return{text:w,idx:i}}));document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="sent-target" id="sentTarget">לחצו על מילים כדי לבנות את המשפט</div><div class="sent-words" id="sentWords">'+sentShuffled.map(function(w,i){return'<div class="word-chip" data-widx="'+i+'" onclick="addSentWord(this)">'+escapeHtml(w.text)+'</div>'}).join('')+'</div><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" id="checkSentBtn" onclick="checkSent()" disabled>בדקו</button><button class="btn" style="flex:0;background:var(--bg);color:var(--primary);border:2px solid var(--primary);padding:16px 24px" onclick="resetSent()">↺</button></div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextSent()">הבא</button>'}
+function addSentWord(el){if(el.classList.contains('used'))return;el.classList.add('used');var widx=parseInt(el.dataset.widx);sentBuilt.push(sentShuffled[widx].text);updateSentTarget();if(sentBuilt.length===sentWords.length)document.getElementById('checkSentBtn').disabled=false}
+function updateSentTarget(){var target=document.getElementById('sentTarget');if(sentBuilt.length===0){target.innerHTML='לחצו על מילים כדי לבנות את המשפט';return}target.innerHTML=sentBuilt.map(function(w,i){return'<div class="word-chip in-target" onclick="removeSentWord('+i+')">'+escapeHtml(w)+'</div>'}).join('')}
+function removeSentWord(idx){sentBuilt.splice(idx,1);document.querySelectorAll('#sentWords .word-chip').forEach(function(c){c.classList.remove('used')});sentBuilt.forEach(function(w){var chips=document.querySelectorAll('#sentWords .word-chip');for(var k=0;k<chips.length;k++){var widx=parseInt(chips[k].dataset.widx);if(sentShuffled[widx].text===w&&!chips[k].classList.contains('used')){chips[k].classList.add('used');break}}});updateSentTarget();document.getElementById('checkSentBtn').disabled=true}
+function resetSent(){sentBuilt=[];document.querySelectorAll('#sentWords .word-chip').forEach(function(c){c.classList.remove('used')});updateSentTarget();document.getElementById('checkSentBtn').disabled=true}
+function checkSent(){var ok=sentBuilt.join(' ')===sentWords.join(' ');document.getElementById('sentTarget').classList.add(ok?'correct':'wrong');var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong>':'<strong>לא נכון.</strong> הסדר הנכון: '+escapeHtml(sentWords.join(' '));if(ok){score++;correctItems++}document.getElementById('checkSentBtn').disabled=true;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=sentQ<totalItems-1?'הבא':'סיום'}
+function nextSent(){sentQ++;if(sentQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderSent()}
+
+/* ===== GROUPS ===== */
+var grpItems=[],grpSolved=[],grpLives=4,grpSelected=[];
+var grpColors=['var(--primary-l)','var(--sec-l)','var(--accent-l)','var(--blue-l)'];
+var grpBorders=['var(--primary)','var(--secondary)','var(--accent)','var(--blue)'];
+function initGroups(){var items=gameConfig.items;totalItems=items.length;grpSolved=[];grpLives=4;grpSelected=[];score=0;correctItems=0;grpItems=[];items.forEach(function(group,gi){group.items.forEach(function(item){grpItems.push({text:item,groupIdx:gi,groupName:group.name})})});grpItems=shuffle(grpItems);renderGrps()}
+function renderGrps(){document.getElementById('progressFill').style.width=(grpSolved.length/totalItems*100)+'%';var html='<div class="groups-found">';grpSolved.forEach(function(g,i){html+='<div class="group-solved" style="background:'+grpColors[i]+';border:2px solid '+grpBorders[i]+'">'+escapeHtml(g.name)+': '+g.items.map(function(t){return escapeHtml(t)}).join(', ')+'</div>'});html+='</div>';var remaining=grpItems.filter(function(item){return!grpSolved.some(function(g){return g.items.indexOf(item.text)>=0})});if(remaining.length>0){html+='<div class="groups-lives">';for(var h=0;h<grpLives;h++)html+='❤️';html+=' ('+grpLives+' ניסיונות)</div><div class="groups-grid">';remaining.forEach(function(item){var sel=grpSelected.indexOf(item.text)>=0?'selected':'';html+='<div class="group-item '+sel+'" onclick="toggleGrpItem(this)" data-text="'+escapeHtml(item.text)+'">'+escapeHtml(item.text)+'</div>'});html+='</div><button class="btn btn-primary" onclick="checkGrp()" '+(grpSelected.length===4?'':'disabled')+'>בדקו ('+grpSelected.length+'/4)</button>'}document.getElementById('gameArea').innerHTML=html}
+function toggleGrpItem(el){var text=el.dataset.text;var idx=grpSelected.indexOf(text);if(idx>=0)grpSelected.splice(idx,1);else{if(grpSelected.length>=4)return;grpSelected.push(text)}renderGrps()}
+function checkGrp(){if(grpSelected.length!==4)return;var first=null;for(var k=0;k<grpItems.length;k++){if(grpItems[k].text===grpSelected[0]){first=grpItems[k].groupIdx;break}}var allSame=grpSelected.every(function(t){for(var k=0;k<grpItems.length;k++){if(grpItems[k].text===t)return grpItems[k].groupIdx===first}return false});if(allSame){var gName='';for(var k=0;k<grpItems.length;k++){if(grpItems[k].groupIdx===first){gName=grpItems[k].groupName;break}}grpSolved.push({name:gName,items:grpSelected.slice()});correctItems++;score++;grpSelected=[];if(grpSolved.length===totalItems)setTimeout(showScore,500);else renderGrps()}else{grpLives--;document.querySelectorAll('.group-item.selected').forEach(function(el){el.classList.add('shake')});setTimeout(function(){grpSelected=[];if(grpLives<=0){gameConfig.items.forEach(function(g){if(!grpSolved.some(function(s){return s.name===g.name}))grpSolved.push({name:g.name,items:g.items})});setTimeout(showScore,500)}else renderGrps()},600)}}
+
+/* ===== HANGMAN ===== */
+var hmQ=0,hmItems=[],hmRevealed=[],hmWrong=0;
+var hmStages=['🙂','😐','😟','😰','😱','💀'];
+var hebrewLetters='אבגדהוזחטיכלמנסעפצקרשת';
+function initHangman(){hmItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=hmItems.length;hmQ=0;score=0;correctItems=0;startHmWord()}
+function startHmWord(){var word=hmItems[hmQ].word;hmRevealed=word.split('').map(function(){return false});hmWrong=0;renderHM()}
+function renderHM(){var q=hmItems[hmQ],n=hmQ+1;var word=q.word;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var wordDisplay=word.split('').map(function(ch,i){return hmRevealed[i]?ch:'_'}).join(' ');document.getElementById('gameArea').innerHTML='<div class="q-counter">מילה '+n+' מתוך '+totalItems+'</div><div class="hm-stage">'+hmStages[Math.min(hmWrong,5)]+'</div><div class="hm-wrong-count">'+(6-hmWrong)+' ניסיונות נותרו</div><div class="hm-word">'+escapeHtml(wordDisplay)+'</div><div class="hm-hint">💡 '+escapeHtml(q.hint)+'</div><div class="hm-keyboard">'+hebrewLetters.split('').map(function(l){return'<div class="hm-key" onclick="hmGuess(this)">'+l+'</div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextHM()">הבא</button>'}
+function hmGuess(el){if(el.classList.contains('correct-key')||el.classList.contains('wrong-key'))return;var letter=el.textContent;var word=hmItems[hmQ].word;var found=false;word.split('').forEach(function(ch,i){if(ch===letter){hmRevealed[i]=true;found=true}});el.classList.add(found?'correct-key':'wrong-key');if(!found)hmWrong++;var wordDisplay=word.split('').map(function(ch,i){return hmRevealed[i]?ch:'_'}).join(' ');document.querySelector('.hm-word').textContent=wordDisplay;document.querySelector('.hm-stage').textContent=hmStages[Math.min(hmWrong,5)];document.querySelector('.hm-wrong-count').textContent=(6-hmWrong)+' ניסיונות נותרו';if(hmRevealed.every(Boolean)){score++;correctItems++;var fb=document.getElementById('qFeedback');fb.className='q-feedback show correct';fb.innerHTML='<strong>כל הכבוד!</strong>';document.querySelectorAll('.hm-key').forEach(function(k){k.style.pointerEvents='none'});document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=hmQ<totalItems-1?'הבא':'סיום'}else if(hmWrong>=6){var fb=document.getElementById('qFeedback');fb.className='q-feedback show wrong';fb.innerHTML='<strong>לא הצלחתם.</strong> המילה: '+escapeHtml(word);document.querySelector('.hm-word').textContent=word.split('').join(' ');document.querySelectorAll('.hm-key').forEach(function(k){k.style.pointerEvents='none'});document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=hmQ<totalItems-1?'הבא':'סיום'}}
+function nextHM(){hmQ++;if(hmQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';startHmWord()}
+
+/* ===== MILLIONAIRE ===== */
+var millQ=0,millItems=[],millMoney=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000],millUsed5050=false;
+function initMillionaire(){millItems=gameConfig.items.slice();totalItems=millItems.length;millQ=0;score=0;correctItems=0;millUsed5050=false;if(totalItems<15)millMoney=millMoney.slice(0,totalItems);renderMill()}
+function renderMill(){var q=millItems[millQ],n=millQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];var ladder='<div class="mill-ladder">';millMoney.forEach(function(m,i){var cls='';if(i===millQ)cls='current';else if(i<millQ)cls='passed';if(i===4||i===9)cls+=' checkpoint';ladder+='<div class="mill-level '+cls+'">₪'+m.toLocaleString()+'</div>'});ladder+='</div>';document.getElementById('gameArea').innerHTML='<div class="mill-layout"><div class="mill-question"><div class="q-counter">שאלה '+n+' – ₪'+millMoney[millQ].toLocaleString()+'</div><div class="mill-lifeline"><button class="mill-lifeline-btn'+(millUsed5050?' used':'')+'" onclick="mill5050()">50:50</button></div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="millAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextMill()">הבא</button></div>'+ladder+'</div>'}
+function mill5050(){if(millUsed5050)return;millUsed5050=true;var q=millItems[millQ];var wrongIdxs=[];q.options.forEach(function(_,i){if(i!==q.correct)wrongIdxs.push(i)});var toRemove=shuffle(wrongIdxs).slice(0,2);var opts=document.querySelectorAll('.q-opt');toRemove.forEach(function(i){opts[i].classList.add('disabled','dim')});document.querySelector('.mill-lifeline-btn').classList.add('used')}
+function millAnswer(idx){var q=millItems[millQ],ok=idx===q.correct;document.querySelectorAll('.q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון! ₪'+millMoney[millQ].toLocaleString()+'</strong> '+escapeHtml(q.explanation||''):'<strong>לא נכון.</strong> '+escapeHtml(q.explanation||'');if(ok){score=millMoney[millQ];correctItems++;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=millQ<totalItems-1?'הבא':'סיום'}else{if(millQ>=10)score=millMoney[9];else if(millQ>=5)score=millMoney[4];else score=0;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent='סיום';millQ=totalItems}}
+function nextMill(){millQ++;if(millQ>=totalItems){showMillScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderMill()}
+function showMillScore(){document.getElementById('progressFill').style.width='100%';var ic,msg,bg;if(score>=millMoney[millMoney.length-1]){ic='🌟';msg='מיליונר!';bg='var(--green-l)'}else if(correctItems>=totalItems*0.7){ic='👏';msg='כל הכבוד!';bg='var(--primary-l)'}else if(correctItems>=totalItems*0.5){ic='💪';msg='אפשר לשפר!';bg='var(--accent-l)'}else{ic='📖';msg='כדאי לחזור על החומר';bg='var(--sec-l)'}document.getElementById('scoreIcon').textContent=ic;document.getElementById('scoreNum').textContent='₪'+score.toLocaleString();document.getElementById('scoreNum').style.color=correctItems>=totalItems*0.7?'var(--green)':correctItems>=totalItems*0.5?'var(--accent)':'var(--secondary)';document.getElementById('scoreLabel').textContent='מתוך ₪'+millMoney[millMoney.length-1].toLocaleString();document.getElementById('scoreMsg').textContent=msg;document.getElementById('scoreMsg').style.background=bg;document.getElementById('correctCount').textContent=correctItems;document.getElementById('wrongCount').textContent=totalItems-correctItems;document.getElementById('totalCount').textContent=totalItems;showScreen('scoreScreen')}
+<\\/script></body></html>`;
+}
+
+// ===== PREVIEW =====
+function refreshPreview() {
+  saveStepData(currentStep);
+  document.getElementById('previewFrame').srcdoc = generateGameHTML();
+}
+
+// ===== DOWNLOAD =====
+function downloadGame() {
+  const html = generateGameHTML();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = slugify(details.gameName) + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('הקובץ הורד בהצלחה!');
+}
+
+function slugify(text) {
+  return (text || 'game').replace(/\s+/g, '-').replace(/[^\u0590-\u05FFa-zA-Z0-9-]/g, '').substring(0, 50);
+}
+
+function copyHTML() {
+  navigator.clipboard.writeText(generateGameHTML()).then(() => showToast('הקוד הועתק!')).catch(() => showToast('לא ניתן להעתיק'));
+}
+
+// ===== PUBLISH =====
+function generateGameId() {
+  return Math.random().toString(36).substring(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+async function publishGame() {
+  saveStepData(currentStep);
+  const btn = document.getElementById('publishBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const gameId = generateGameId();
+  const gameJSON = JSON.stringify({
+    gameType, items,
+    settings: { shuffleItems: true },
+    columnRightTitle: details.columnRightTitle || 'מושג',
+    columnLeftTitle: details.columnLeftTitle || 'הגדרה',
+    instruction: details.instruction || 'סדרו את הפריטים בסדר הנכון'
+  });
+
+  const saveData = {
+    action: 'saveGame',
+    id: gameId,
+    name: details.gameName,
+    gameType: gameType,
+    subject: details.subject,
+    grade: details.grade,
+    teacher: user ? user.name : '',
+    email: user ? user.email : '',
+    gameJSON: gameJSON
+  };
+
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(saveData)
+    });
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const url = PLAYER_BASE_URL + '?id=' + gameId;
+    document.getElementById('publishedUrl').value = url;
+    document.getElementById('publishedResult').classList.add('show');
+    showToast('המשחק פורסם בהצלחה!');
+  } catch(e) {
+    showToast('שגיאה בפרסום: ' + e.message);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function copyPublishedLink() {
+  const url = document.getElementById('publishedUrl').value;
+  navigator.clipboard.writeText(url).then(() => showToast('הקישור הועתק!')).catch(() => showToast('לא ניתן להעתיק'));
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== DRAFT =====
+function saveDraft() {
+  try {
+    saveStepData(currentStep);
+    const draft = { step: currentStep, gameType, numItems, details, items, lastSaved: Date.now() };
+    localStorage.setItem('ort-game-builder-draft', JSON.stringify(draft));
+  } catch(e) {}
+}
+
+function checkDraft() {
+  const raw = localStorage.getItem('ort-game-builder-draft');
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      if (d.details && d.details.gameName) {
+        document.getElementById('draftBanner').style.display = 'flex';
+      }
+    } catch(e) {}
+  }
+}
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem('ort-game-builder-draft');
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    gameType = draft.gameType || 'trivia';
+    numItems = draft.numItems || 8;
+    details = draft.details || {};
+    items = draft.items || [];
+    if (details.gameName) document.getElementById('gameName').value = details.gameName;
+    if (details.subject) document.getElementById('gameSubject').value = details.subject;
+    if (details.grade) document.getElementById('gameGrade').value = details.grade;
+    document.getElementById('numItems').value = numItems;
+    document.getElementById('numItemsVal').textContent = numItems;
+    setGameType(gameType);
+    document.getElementById('draftBanner').style.display = 'none';
+    showToast('הטיוטה נטענה בהצלחה');
+  } catch(e) { console.error(e); }
+}
+
+function dismissDraft() {
+  localStorage.removeItem('ort-game-builder-draft');
+  document.getElementById('draftBanner').style.display = 'none';
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
