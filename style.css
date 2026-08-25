@@ -1,4 +1,4 @@
-/* ===== המרכז הפדגוגי · מינהל הכשרה מקצועית — שפת העוגן v3 ===== */
+/* ===== הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית — שפת העוגן v3 ===== */
 :root{
   --navy:#0D3B66; --navy-800:#124D7A;
   --blue:#1677FF; --blue-100:#E8F2FF;
@@ -43,7 +43,7 @@ img{max-width:100%}
 .nav a.lnk.dis:hover{color:var(--muted)}
 .nav .brand{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none}
 .nav .brand .mark{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem}
-.nav .brand b{font-size:1.08rem;color:var(--navy);display:block;line-height:1.2}
+.nav .brand b{font-size:.95rem;color:var(--navy);display:block;line-height:1.2;max-width:200px}
 .nav .brand span{font-size:.74rem;color:var(--muted);display:block}
 .nav a.lnk{color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:600;cursor:pointer;padding:6px 2px;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap}
 .nav a.lnk:hover{color:var(--navy)}

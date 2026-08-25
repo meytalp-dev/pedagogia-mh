@@ -1,4 +1,4 @@
-/* משותף לכל עמודי המרכז הפדגוגי */
+/* משותף לכל עמודי הבית של המנהיגות הפדגוגית היוצרת */
 function toggleMenu(open){document.body.classList.toggle('menu-open',open)}
 
 (function animateCounters(){
