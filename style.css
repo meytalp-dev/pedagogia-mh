@@ -144,10 +144,18 @@ body.menu-open .drawer{transform:none}
 .drawer a.dis:hover{background:none;padding-inline-start:12px}
 .drawer .foot-note{border-top:1px solid var(--border);padding:14px 24px;font-size:.8rem;color:var(--muted)}
 
-/* ===== הוויג'ט של העוגן — צף למעלה משמאל: משגר + תווית, הפאנל נפתח מתחתיהם ===== */
-.ogenw-launcher{bottom:auto !important;top:128px !important;left:22px !important}
-.ogenw-launcher-label{bottom:auto !important;top:146px !important;left:92px !important;font-size:14px !important}
-.ogenw-panel{top:200px !important;bottom:auto !important;left:22px !important;height:min(520px,calc(100dvh - 230px)) !important}
+/* ===== הוויג'ט של העוגן — בדסקטופ צף למעלה משמאל (שם יש שוליים פנויים), הפאנל נפתח מתחתיו.
+   בנייד ובטאבלט (עד 960px) אין שוליים פנויים למעלה והוא מסתיר את התוכן —
+   לכן שם לא דורסים כלום והוויג'ט חוזר לברירת המחדל שלו: פינה שמאלית תחתונה, פאנל במסך מלא. ===== */
+@media(min-width:961px){
+  .ogenw-launcher{bottom:auto !important;top:128px !important;left:22px !important}
+  .ogenw-launcher-label{bottom:auto !important;top:146px !important;left:92px !important;font-size:14px !important}
+  .ogenw-panel{top:200px !important;bottom:auto !important;left:22px !important;height:min(520px,calc(100dvh - 230px)) !important}
+}
+/* מרווח בתחתית הפוטר כדי שהכפתור הצף לא יסתיר את הקישורים בסוף העמוד */
+@media(max-width:960px){
+  .foot{padding-bottom:110px}
+}
 
 /* ===== accessibility ===== */
 a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:10px}
