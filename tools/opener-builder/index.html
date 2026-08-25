@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מחולל פעילויות פתיחה – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --primary:#2A9D8F;--primary-light:#E0F5F1;--primary-dark:#1E7A6E;
-  --secondary:#E76F7A;--accent:#52B788;--orange:#F4A261;--purple:#7C3AED;
-  --dark:#1E293B;--gray:#64748B;--light-gray:#F1F5F9;--white:#FFFFFF;
+  --primary:#124D7A;--primary-light:#E8F2FF;--primary-dark:#0D3B66;
+  --secondary:#087B9C;--accent:#52B788;--orange:#F4A261;--purple:#7C3AED;
+  --dark:#102A43;--gray:#52687A;--light-gray:#F1F5F9;--white:#FFFFFF;
   --shadow:0 4px 24px rgba(0,0,0,0.08);--shadow-lg:0 8px 40px rgba(0,0,0,0.12);
   --radius:16px;
 }
-body{font-family:'Heebo',sans-serif;background:var(--light-gray);color:var(--dark);min-height:100vh}
+body{font-family:'Assistant',sans-serif;background:var(--light-gray);color:var(--dark);min-height:100vh}
 
 /* ===== TOP BAR ===== */
 .topbar{background:var(--white);padding:16px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
-.topbar h1{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:700;color:var(--dark);flex:1}
+.topbar h1{font-family:'Assistant',sans-serif;font-size:1.3rem;font-weight:700;color:var(--dark);flex:1}
 .topbar .logo{font-size:1.6rem}
 
 /* ===== PROGRESS ===== */
@@ -37,13 +37,13 @@ body{font-family:'Heebo',sans-serif;background:var(--light-gray);color:var(--dar
 
 /* ===== CARDS ===== */
 .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
-.card h2{font-family:'Rubik',sans-serif;font-size:1.15rem;font-weight:600;margin-bottom:16px;color:var(--dark);display:flex;align-items:center;gap:8px}
+.card h2{font-family:'Assistant',sans-serif;font-size:1.15rem;font-weight:600;margin-bottom:16px;color:var(--dark);display:flex;align-items:center;gap:8px}
 
 /* ===== FORM ===== */
 label{display:block;font-weight:500;font-size:0.9rem;color:var(--gray);margin-bottom:6px}
 input[type="text"],input[type="number"],select,textarea{
   width:100%;border:2px solid #E2E8F0;border-radius:12px;padding:12px 16px;
-  font-family:'Heebo',sans-serif;font-size:1rem;outline:none;transition:border-color .25s;direction:rtl
+  font-family:'Assistant',sans-serif;font-size:1rem;outline:none;transition:border-color .25s;direction:rtl
 }
 input:focus,select:focus,textarea:focus{border-color:var(--primary)}
 textarea{resize:vertical;min-height:80px}
@@ -52,7 +52,7 @@ textarea{resize:vertical;min-height:80px}
 @media(max-width:600px){.form-grid{grid-template-columns:1fr}}
 
 /* ===== BUTTONS ===== */
-.btn{border:none;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:500;padding:12px 24px;border-radius:12px;font-size:0.95rem;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.btn{border:none;cursor:pointer;font-family:'Assistant',sans-serif;font-weight:500;padding:12px 24px;border-radius:12px;font-size:0.95rem;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:var(--white)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(42,157,143,0.3)}
 .btn-secondary{background:var(--light-gray);color:var(--dark)}
@@ -106,7 +106,7 @@ textarea{resize:vertical;min-height:80px}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
 .modal{background:var(--white);border-radius:var(--radius);padding:32px;max-width:500px;width:100%;box-shadow:var(--shadow-lg);text-align:center}
-.modal h3{font-family:'Rubik',sans-serif;font-size:1.3rem;margin-bottom:16px}
+.modal h3{font-family:'Assistant',sans-serif;font-size:1.3rem;margin-bottom:16px}
 .modal .link-box{background:var(--light-gray);padding:12px 16px;border-radius:12px;font-size:0.9rem;word-break:break-all;margin:16px 0;direction:ltr;text-align:left}
 .modal .qr-container{margin:20px auto;display:flex;justify-content:center}
 .modal .qr-container canvas{border-radius:12px}
@@ -116,18 +116,20 @@ textarea{resize:vertical;min-height:80px}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 /* ===== AI SECTION ===== */
-.ai-section{background:linear-gradient(135deg,#EDE9FE,#E0F5F1);border-radius:14px;padding:20px;margin:16px 0;border:2px dashed var(--purple)}
+.ai-section{background:linear-gradient(135deg,#EDE9FE,#E8F2FF);border-radius:14px;padding:20px;margin:16px 0;border:2px dashed var(--purple)}
 .ai-section h3{color:var(--purple);font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 
 /* ===== NAME INPUT ===== */
 .name-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px}
-.name-screen h2{font-family:'Rubik',sans-serif;font-size:1.8rem;margin-bottom:8px}
+.name-screen h2{font-family:'Assistant',sans-serif;font-size:1.8rem;margin-bottom:8px}
 .name-screen p{color:var(--gray);margin-bottom:24px}
 .name-form{width:100%;max-width:400px}
 .name-form input{margin-bottom:12px}
 </style>
 </head>
 <body>
+<div style="background:#fff;border-bottom:1px solid #D8E6F2;padding:8px 20px;display:flex;align-items:center;gap:10px;font-family:'Assistant',sans-serif;font-size:.85rem;position:relative;z-index:500"><a href="../index.html" style="color:#124D7A;text-decoration:none;font-weight:700">🧰 ארגז הכלים</a><span style="color:#BED4E7">|</span><span style="color:#60778A">המרכז הפדגוגי · מינהל הכשרה מקצועית</span></div>
+
 
 <!-- ===== NAME SCREEN ===== -->
 <div id="nameScreen" class="name-screen">
@@ -698,7 +700,10 @@ ${typeList}
 function getGeminiKey() {
   let key = localStorage.getItem('gemini_api_key');
   if (!key) {
-    key = prompt('הזינו Gemini API Key (ניתן לקבל ב-aistudio.google.com):');
+    key = prompt('נדרש מפתח Gemini API חינמי (חד-פעמי, נשמר רק במכשיר שלכם).
+1. היכנסו עם Gmail אישי (לא מייל ארגוני!) ל: aistudio.google.com/apikey
+2. לחצו Create API key והעתיקו
+3. הדביקו כאן:');
     if (key) localStorage.setItem('gemini_api_key', key);
   }
   return key;
@@ -746,13 +751,13 @@ function generateOpenerHTML() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>פעילויות פתיחה – ${d.name}</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--primary:#2A9D8F;--primary-light:#E0F5F1;--primary-dark:#1E7A6E;--secondary:#E76F7A;--accent:#52B788;--orange:#F4A261;--dark:#1E293B;--gray:#64748B;--light-gray:#F1F5F9;--white:#FFFFFF;--radius:16px}
-body{font-family:'Heebo',sans-serif;background:linear-gradient(135deg,#E0F5F1 0%,#F1F5F9 50%,#EDE9FE 100%);color:var(--dark);min-height:100vh}
+:root{--primary:#124D7A;--primary-light:#E8F2FF;--primary-dark:#0D3B66;--secondary:#087B9C;--accent:#52B788;--orange:#F4A261;--dark:#102A43;--gray:#52687A;--light-gray:#F1F5F9;--white:#FFFFFF;--radius:16px}
+body{font-family:'Assistant',sans-serif;background:linear-gradient(135deg,#E8F2FF 0%,#F1F5F9 50%,#EDE9FE 100%);color:var(--dark);min-height:100vh}
 header{text-align:center;padding:32px 20px 20px}
-header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:8px}
+header h1{font-family:'Assistant',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:8px}
 .meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
 .tag{background:var(--white);padding:4px 14px;border-radius:50px;font-size:0.85rem;color:var(--gray);box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .tag.hl{background:var(--primary);color:var(--white)}
@@ -770,7 +775,7 @@ header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* COMMON */
-.btn{border:none;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:500;padding:12px 24px;border-radius:12px;font-size:0.95rem;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.btn{border:none;cursor:pointer;font-family:'Assistant',sans-serif;font-weight:500;padding:12px 24px;border-radius:12px;font-size:0.95rem;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:var(--white)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(42,157,143,0.3)}
 .btn-secondary{background:var(--light-gray);color:var(--dark)}
@@ -782,7 +787,7 @@ header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin
 .teacher-note{background:#FFFBEB;border-right:4px solid var(--orange);padding:14px 18px;border-radius:12px;font-size:0.9rem;line-height:1.7;display:none;margin-bottom:16px}
 .teacher-note.show{display:block;animation:fadeUp .3s ease}
 
-.section-title{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:600;text-align:center;margin-bottom:20px}
+.section-title{font-family:'Assistant',sans-serif;font-size:1.3rem;font-weight:600;text-align:center;margin-bottom:20px}
 
 /* FULLSCREEN */
 .fs-overlay{position:fixed;inset:0;background:rgba(15,23,42,.97);z-index:1000;display:none;align-items:center;justify-content:center;padding:40px}
@@ -792,20 +797,20 @@ header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin
 .fs-content{color:var(--white);text-align:center;max-width:90vw;width:100%;font-size:1.4rem}
 
 /* QUESTION */
-.big-question{font-family:'Rubik',sans-serif;font-size:1.5rem;font-weight:600;text-align:center;line-height:1.8;margin-bottom:20px;padding:20px;background:var(--primary-light);border-radius:16px}
-.timer-display{text-align:center;font-size:2.5rem;font-family:'Rubik',sans-serif;font-weight:700;color:var(--primary);margin:16px 0}
+.big-question{font-family:'Assistant',sans-serif;font-size:1.5rem;font-weight:600;text-align:center;line-height:1.8;margin-bottom:20px;padding:20px;background:var(--primary-light);border-radius:16px}
+.timer-display{text-align:center;font-size:2.5rem;font-family:'Assistant',sans-serif;font-weight:700;color:var(--primary);margin:16px 0}
 .hint-box,.answer-box{padding:16px 20px;border-radius:14px;margin:12px 0;display:none;animation:fadeUp .3s ease;font-size:1.05rem}
 .hint-box{background:#FEF3C7;border-right:4px solid var(--orange)}
 .answer-box{background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);font-weight:600;font-size:1.2rem;text-align:center}
 
 /* STORY */
 .story-text{font-size:1.15rem;line-height:2;padding:24px;background:var(--primary-light);border-radius:16px;border-right:4px solid var(--primary);margin-bottom:16px}
-.discussion-q{font-family:'Rubik',sans-serif;font-size:1.15rem;font-weight:600;text-align:center;padding:16px;display:none;animation:fadeUp .3s ease}
+.discussion-q{font-family:'Assistant',sans-serif;font-size:1.15rem;font-weight:600;text-align:center;padding:16px;display:none;animation:fadeUp .3s ease}
 
 /* VOTE */
-.vote-q{font-family:'Rubik',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
+.vote-q{font-family:'Assistant',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
 .vote-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
-.vote-o{border:2px solid #E2E8F0;background:var(--light-gray);padding:14px 20px;border-radius:14px;font-family:'Heebo',sans-serif;font-size:1.05rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px}
+.vote-o{border:2px solid #E2E8F0;background:var(--light-gray);padding:14px 20px;border-radius:14px;font-family:'Assistant',sans-serif;font-size:1.05rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:10px}
 .vote-o:hover{border-color:var(--primary);background:var(--primary-light);transform:translateX(-4px)}
 .vote-o.voted{border-color:var(--primary);background:var(--primary-light)}
 .vote-letter{background:var(--primary);color:var(--white);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
@@ -823,12 +828,12 @@ header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin
 .chart-total{text-align:center;font-size:0.85rem;color:var(--gray);margin-top:8px}
 
 /* RIDDLE */
-.riddle-q{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:600;text-align:center;margin-bottom:20px}
-.hint-item{background:linear-gradient(135deg,#E0F5F1,#DBEAFE);padding:14px 20px;border-radius:14px;margin-bottom:10px;cursor:pointer;text-align:center;font-weight:500;color:var(--primary);transition:all .25s}
+.riddle-q{font-family:'Assistant',sans-serif;font-size:1.3rem;font-weight:600;text-align:center;margin-bottom:20px}
+.hint-item{background:linear-gradient(135deg,#E8F2FF,#E8F2FF);padding:14px 20px;border-radius:14px;margin-bottom:10px;cursor:pointer;text-align:center;font-weight:500;color:var(--primary);transition:all .25s}
 .hint-item:hover{transform:scale(1.02)}
 .hint-item.revealed{background:var(--white);border:2px solid var(--primary);cursor:default;text-align:right;display:flex;align-items:center;gap:10px}
 .hint-num{background:var(--primary);color:var(--white);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0}
-.riddle-answer{display:none;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);padding:20px;border-radius:16px;font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:700;text-align:center;animation:scaleIn .4s ease}
+.riddle-answer{display:none;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--white);padding:20px;border-radius:16px;font-family:'Assistant',sans-serif;font-size:1.3rem;font-weight:700;text-align:center;animation:scaleIn .4s ease}
 @keyframes scaleIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* TRUE/FALSE */
@@ -852,16 +857,16 @@ header h1{font-family:'Rubik',sans-serif;font-size:1.8rem;font-weight:700;margin
 
 /* IMAGE */
 .image-display{font-size:4rem;text-align:center;padding:32px;background:var(--primary-light);border-radius:20px;margin-bottom:16px;line-height:1.5}
-.image-q{font-family:'Rubik',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
+.image-q{font-family:'Assistant',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
 
 /* WORDCLOUD */
-.wc-prompt{font-family:'Rubik',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
+.wc-prompt{font-family:'Assistant',sans-serif;font-size:1.2rem;font-weight:600;text-align:center;margin-bottom:16px}
 .wc-input-row{display:flex;gap:10px;margin-bottom:16px}
-.wc-input{flex:1;border:2px solid #E2E8F0;border-radius:14px;padding:12px 18px;font-family:'Heebo',sans-serif;font-size:1.05rem;outline:none;direction:rtl}
+.wc-input{flex:1;border:2px solid #E2E8F0;border-radius:14px;padding:12px 18px;font-family:'Assistant',sans-serif;font-size:1.05rem;outline:none;direction:rtl}
 .wc-input:focus{border-color:var(--primary)}
 .wc-area{min-height:160px;border:2px dashed #E2E8F0;border-radius:16px;padding:20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px}
 .wc-area.has{border-color:var(--primary);background:var(--primary-light)}
-.wc-word{display:inline-block;padding:6px 16px;border-radius:50px;font-family:'Rubik',sans-serif;font-weight:500;color:var(--white);animation:popIn .3s ease}
+.wc-word{display:inline-block;padding:6px 16px;border-radius:50px;font-family:'Assistant',sans-serif;font-weight:500;color:var(--white);animation:popIn .3s ease}
 @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 .wc-word:hover{transform:scale(1.1);transition:transform .2s}
 .wc-empty{color:var(--gray)}
@@ -1078,7 +1083,7 @@ function generateActivityHTML(act, idx) {
         <div style="text-align:center;margin:20px 0">
           <canvas id="wheelCanvas_${idx}" width="320" height="320" style="max-width:100%"></canvas>
         </div>
-        <div style="text-align:center;font-family:'Rubik',sans-serif;font-size:1.5rem;font-weight:700;min-height:50px;margin:12px 0" id="wheelResult_${idx}"></div>
+        <div style="text-align:center;font-family:'Assistant',sans-serif;font-size:1.5rem;font-weight:700;min-height:50px;margin:12px 0" id="wheelResult_${idx}"></div>
         <div class="btn-group"><button class="btn btn-primary" onclick="spinWheel(${idx})">🎲 סובב!</button></div>
         <div class="wheel-init" data-idx="${idx}" data-items='${JSON.stringify(wheelItems).replace(/'/g, "&#39;")}'></div>`;
       break;
@@ -1222,7 +1227,7 @@ function chooseDilemma(actIdx, optIdx) {
 function generateWordcloudJS() {
   return `
 var wcData = {};
-var wcColors = ['linear-gradient(135deg,#2A9D8F,#52B788)','linear-gradient(135deg,#6366F1,#818CF8)','linear-gradient(135deg,#E76F7A,#F87171)','linear-gradient(135deg,#F4A261,#FBBF24)','linear-gradient(135deg,#7C3AED,#A78BFA)','linear-gradient(135deg,#0EA5E9,#38BDF8)','linear-gradient(135deg,#14B8A6,#5EEAD4)','linear-gradient(135deg,#EC4899,#F472B6)'];
+var wcColors = ['linear-gradient(135deg,#124D7A,#52B788)','linear-gradient(135deg,#6366F1,#818CF8)','linear-gradient(135deg,#087B9C,#F87171)','linear-gradient(135deg,#F4A261,#FBBF24)','linear-gradient(135deg,#7C3AED,#A78BFA)','linear-gradient(135deg,#0EA5E9,#38BDF8)','linear-gradient(135deg,#14B8A6,#5EEAD4)','linear-gradient(135deg,#EC4899,#F472B6)'];
 function addWC(actIdx) {
   var input = document.getElementById('wcinput_' + actIdx);
   if (!input) return;
@@ -1270,7 +1275,7 @@ function drawWheel(idx) {
   var n = items.length;
   if (n === 0) return;
   var cx = 160, cy = 160, r = 150;
-  var colors = ['#2A9D8F','#6366F1','#E76F7A','#F4A261','#52B788','#7C3AED','#0EA5E9','#EC4899','#14B8A6','#FBBF24'];
+  var colors = ['#124D7A','#6366F1','#087B9C','#F4A261','#52B788','#7C3AED','#0EA5E9','#EC4899','#14B8A6','#FBBF24'];
   var angle = wheelData[idx].angle;
   ctx.clearRect(0, 0, 320, 320);
   for (var i = 0; i < n; i++) {
@@ -1301,7 +1306,7 @@ function drawWheel(idx) {
   ctx.moveTo(cx - 12, 4);
   ctx.lineTo(cx + 12, 4);
   ctx.lineTo(cx, 24);
-  ctx.fillStyle = '#1E293B';
+  ctx.fillStyle = '#102A43';
   ctx.fill();
 }
 function spinWheel(idx) {
@@ -1343,11 +1348,11 @@ function checkFB(idx, chosen, correct) {
   if (!el) return;
   if (chosen === correct) {
     el.style.display = 'block';
-    el.style.background = 'linear-gradient(135deg,#52B788,#2A9D8F)';
+    el.style.background = 'linear-gradient(135deg,#52B788,#124D7A)';
     el.innerHTML = '✅ נכון! התשובה היא: ' + correct;
   } else {
     el.style.display = 'block';
-    el.style.background = 'linear-gradient(135deg,#E76F7A,#F87171)';
+    el.style.background = 'linear-gradient(135deg,#087B9C,#F87171)';
     el.innerHTML = '❌ לא נכון. התשובה הנכונה: ' + correct;
   }
   var opts = document.getElementById('fbOpts_' + idx);
@@ -1367,16 +1372,16 @@ function guessNumber(idx, correct, unit) {
   var pct = correct !== 0 ? (diff / Math.abs(correct)) * 100 : diff;
   el.style.display = 'block';
   if (diff === 0) {
-    el.style.background = 'linear-gradient(135deg,#52B788,#2A9D8F)';
+    el.style.background = 'linear-gradient(135deg,#52B788,#124D7A)';
     el.innerHTML = '🎯 מדויק! התשובה: ' + correct + ' ' + unit;
   } else if (pct < 10) {
-    el.style.background = 'linear-gradient(135deg,#52B788,#2A9D8F)';
+    el.style.background = 'linear-gradient(135deg,#52B788,#124D7A)';
     el.innerHTML = '🔥 כמעט! התשובה: ' + correct + ' ' + unit + ' (הפרש: ' + diff + ')';
   } else if (pct < 30) {
     el.style.background = 'linear-gradient(135deg,#F4A261,#FBBF24)';
     el.innerHTML = '👍 לא רע! התשובה: ' + correct + ' ' + unit + ' (הפרש: ' + diff + ')';
   } else {
-    el.style.background = 'linear-gradient(135deg,#E76F7A,#F87171)';
+    el.style.background = 'linear-gradient(135deg,#087B9C,#F87171)';
     el.innerHTML = '😮 רחוק... התשובה: ' + correct + ' ' + unit + ' (הפרש: ' + diff + ')';
   }
 }`;

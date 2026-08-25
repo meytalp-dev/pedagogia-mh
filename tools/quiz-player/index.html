@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>שאלון – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F0F4F8;--card:#fff;--primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;--secondary:#E76F7A;--sec-l:#FDE8EA;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#1E293B;--gray:#64748B;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
+:root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-font-smoothing:antialiased}
+body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-font-smoothing:antialiased}
 .quiz-wrapper{max-width:580px;width:100%;margin:0 auto}
 
 /* LOADING */
@@ -20,9 +20,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 /* ERROR */
 .error-screen{text-align:center;padding:60px 20px}
 .error-icon{font-size:56px;margin-bottom:16px}
-.error-title{font-family:'Rubik',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;color:var(--secondary)}
+.error-title{font-family:'Assistant',sans-serif;font-size:24px;font-weight:800;margin-bottom:8px;color:var(--secondary)}
 .error-text{color:var(--gray);font-size:16px;margin-bottom:24px}
-.error-btn{padding:14px 32px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .3s}
+.error-btn{padding:14px 32px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:all .3s}
 .error-btn:hover{background:var(--primary-d);transform:translateY(-2px)}
 
 /* QUIZ UI */
@@ -31,33 +31,33 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 .q-card{background:var(--card);border-radius:var(--r);padding:36px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
 .screen{display:none}.screen.active{display:block}
 .intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px}
-.intro-title{font-family:'Rubik',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
+.intro-title{font-family:'Assistant',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
 .intro-sub{color:var(--gray);font-size:16px;text-align:center;margin-bottom:28px}
 .input-group{margin-bottom:16px}
 .input-group label{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px}
-.input-group input,.input-group select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Heebo',sans-serif;font-size:16px;color:var(--dark);background:var(--bg);transition:border-color .3s}
+.input-group input,.input-group select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;color:var(--dark);background:var(--bg);transition:border-color .3s}
 .input-group input:focus,.input-group select:focus{outline:none;border-color:var(--primary);background:white}
-.btn{width:100%;padding:16px;border:none;border-radius:14px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-family:'Assistant',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s}
 .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px);box-shadow:var(--shadow-md)}.btn-primary:disabled{opacity:.4;pointer-events:none}
 .btn-next{background:var(--primary);color:white;margin-top:16px;display:none}.btn-next:hover{background:var(--primary-d);transform:translateY(-2px)}
 .q-counter{font-size:13px;color:var(--primary);font-weight:700;letter-spacing:1px;margin-bottom:6px}
-.q-text{font-size:20px;font-weight:700;font-family:'Rubik',sans-serif;line-height:1.5;margin-bottom:22px}
+.q-text{font-size:20px;font-weight:700;font-family:'Assistant',sans-serif;line-height:1.5;margin-bottom:22px}
 .q-options{display:flex;flex-direction:column;gap:10px}
-.q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;font-family:'Heebo',sans-serif;display:flex;align-items:center;gap:12px;color:var(--dark)}
+.q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;font-family:'Assistant',sans-serif;display:flex;align-items:center;gap:12px;color:var(--dark)}
 .q-opt:hover{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d)}
-.q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:var(--gray);font-family:'Rubik',sans-serif}
+.q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:var(--gray);font-family:'Assistant',sans-serif}
 .q-opt.correct{background:var(--green-l);border-color:var(--green);color:#2D7A54}.q-opt.correct .opt-letter{background:var(--green);color:white}
 .q-opt.wrong{background:var(--sec-l);border-color:var(--secondary);color:#B44050}.q-opt.wrong .opt-letter{background:var(--secondary);color:white}
 .q-opt.disabled{pointer-events:none;opacity:.7}.q-opt.disabled.dim{opacity:.45}
 .q-feedback{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:15px;line-height:1.6;display:none;animation:fadeUp .3s ease}
 .q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);border:1px solid rgba(82,183,136,.2);color:#2D7A54}.q-feedback.wrong{background:var(--sec-l);border:1px solid rgba(231,111,122,.2);color:#B44050}
 .score-icon{font-size:60px;text-align:center;margin-bottom:12px}
-.score-num{font-size:5rem;font-weight:900;font-family:'Rubik',sans-serif;text-align:center;line-height:1}
+.score-num{font-size:5rem;font-weight:900;font-family:'Assistant',sans-serif;text-align:center;line-height:1}
 .score-label{font-size:16px;color:var(--gray);text-align:center;margin-top:4px}
 .score-msg{font-size:20px;font-weight:700;text-align:center;margin-top:20px;padding:16px;border-radius:14px}
 .score-details{margin-top:20px;display:flex;gap:12px;justify-content:center}
 .score-detail{background:var(--bg);border-radius:14px;padding:14px 20px;text-align:center;flex:1}
-.score-detail .num{font-size:24px;font-weight:900;font-family:'Rubik',sans-serif}
+.score-detail .num{font-size:24px;font-weight:900;font-family:'Assistant',sans-serif}
 .score-detail .lbl{font-size:12px;color:var(--gray);margin-top:4px}
 .send-status{margin-top:16px;padding:14px;border-radius:12px;text-align:center;font-size:15px;display:none}
 .send-status.success{display:block;background:var(--green-l);color:#2D7A54}

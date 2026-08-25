@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ארגז כלים · המרכז הפדגוגי</title>
+<meta name="description" content="מחוללים דיגיטליים חינמיים למדריכים, רכזים ומנהלים — מערכי שיעור, שאלונים, משחקים, אינפוגרפיקה, סרטונים ותרגול מבחני גמר. בלי רישום, בלי חשבון.">
+<link rel="icon" type="image/png" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:10px var(--px) 30px}
+.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--text);box-shadow:var(--sh-sm);transition:all .2s var(--ease)}
+.tool-card:hover{box-shadow:var(--sh-md);transform:translateY(-3px);border-color:var(--border-strong)}
+.tool-card .emoji{font-size:2rem;line-height:1}
+.tool-card h3{font-size:1.08rem}
+.tool-card p{font-size:.86rem;color:var(--text2);flex:1}
+.tool-card .meta{display:flex;gap:6px;flex-wrap:wrap}
+.keynote{margin:6px var(--px) 26px;background:var(--blue-bg);border:1px solid var(--border);border-radius:18px;padding:22px 26px;max-width:880px}
+.keynote h3{font-size:1.02rem;margin-bottom:6px}
+.keynote p,.keynote li{font-size:.88rem;color:var(--text2)}
+.keynote ol{margin:8px 18px 0 0;display:grid;gap:4px}
+@media(max-width:720px){.tools-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="govbar">
+  <img src="../logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="../index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <a class="lnk" href="../index.html">דף הבית</a>
+  <a class="lnk" href="../subjects.html">תחומי דעת</a>
+  <a class="lnk active" href="index.html">ארגז כלים</a>
+  <a class="lnk" href="../space.html">מרחב פדגוגי</a>
+</nav>
+
+<div class="pagehead">
+  <div class="crumb rv"><a href="../index.html">בית</a> ‹ ארגז כלים</div>
+  <h1 class="rv d1">ארגז כלים דיגיטלי</h1>
+  <p class="rv d2 lead">מחוללים חינמיים ליצירת חומרי למידה — למדריכים ורכזים, אבל לא רק: גם למנהלים שבונים תוכנית עבודה, לרכזי שיווק שמכינים אינפוגרפיקה, ולכל מי שמדריך צוות. הכול עובד עצמאית בדפדפן — <b>בלי רישום ובלי חשבון</b>.</p>
+</div>
+
+<div class="tools-grid">
+  <a class="tool-card rv" href="lesson-generator/index.html">
+    <span class="emoji">📚</span>
+    <h3>מחולל מערכי שיעור</h3>
+    <p>מזינים נושא, מקצוע וכיתה — ומקבלים מערך שיעור אינטראקטיבי מלא, מותאם לתלמידי הכשרה מקצועית, כולל קישור לשיתוף.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה</span></div>
+  </a>
+
+  <a class="tool-card rv d1" href="practice-exams/index.html">
+    <span class="emoji">🎓</span>
+    <h3>תרגול מבחני גמר</h3>
+    <p>מאגר מבחני גמר במקצועות הליבה — מגזר כללי ומגזר ערבי. תרגול חופשי עם בדיקה אוטומטית, ומסלול מורה אופציונלי למעקב כיתתי.</p>
+    <div class="meta"><span class="tag gmr">גמר</span><span class="tag tea">בלי רישום</span></div>
+  </a>
+
+  <a class="tool-card rv d1" href="quiz-builder/index.html">
+    <span class="emoji">📝</span>
+    <h3>מחולל שאלונים</h3>
+    <p>שאלונים אינטראקטיביים בקלות — ידנית או עם AI. מתאים גם לבדיקת הבנה בשיעור וגם למשוב בהדרכות צוות והשתלמויות.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה והדרכה</span></div>
+  </a>
+
+  <a class="tool-card rv d2" href="game-builder/index.html">
+    <span class="emoji">🎮</span>
+    <h3>מחולל משחקים</h3>
+    <p>הופכים כל נושא למשחק לימודי — זיכרון, טריוויה, התאמה ועוד. שפה פשוטה, מותאם גם לתלמידים עם קשיי קשב ולקויות למידה.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">ללמידה פעילה</span></div>
+  </a>
+
+  <a class="tool-card rv d2" href="opener-builder/index.html">
+    <span class="emoji">🚀</span>
+    <h3>מחולל פעילויות פתיחה</h3>
+    <p>פתיחים קצרים שמכניסים את הכיתה לשיעור — או את הצוות לישיבה. שאלת מחשבה, חידה או הפעלה, מוכן תוך דקה.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">לשיעור ולישיבה</span></div>
+  </a>
+
+  <a class="tool-card rv d3" href="infographic-builder/index.html">
+    <span class="emoji">📊</span>
+    <h3>מחולל אינפוגרפיקה</h3>
+    <p>מסכמים נושא לימודי, נוהל או תוכנית באינפוגרפיקה מעוצבת — שימושי גם לשיווק בית הספר ולתקשור החלטות הנהלה.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה ושיווק</span></div>
+  </a>
+
+  <a class="tool-card rv d3" href="video-builder/index.html">
+    <span class="emoji">🎬</span>
+    <h3>מחולל סרטונים לימודיים</h3>
+    <p>סרטון הסבר קצר מכל נושא — לסיכום שיעור, ללמידה מרחוק או להצגת מגמה בפני הורים ותלמידים חדשים.</p>
+    <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">ללמידה ושיווק</span></div>
+  </a>
+</div>
+
+<div class="keynote rv">
+  <h3>🔑 הגדרה חד-פעמית: מפתח Gemini חינמי</h3>
+  <p>המחוללים מבוססי ה-AI עובדים עם מפתח אישי חינמי של Google — כך כל משתמש/ת עצמאי/ת לגמרי, בלי תלות באף אחד ובלי עלות. המפתח נשמר רק במכשיר שלכם ולא נשלח לשום שרת.</p>
+  <ol>
+    <li>נכנסים עם חשבון Gmail <b>אישי</b> (מייל ארגוני של בית הספר חוסם יצירת מפתחות) אל <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li>
+    <li>לוחצים על <b>Create API key</b> ומעתיקים את המפתח</li>
+    <li>מדביקים אותו במחולל כשמתבקשים — פעם אחת בלבד לכל מכשיר</li>
+  </ol>
+</div>
+
+<footer style="padding:26px var(--px);border-top:1px solid var(--border);font-size:.8rem;color:var(--muted)">
+  המרכז הפדגוגי · מינהל הכשרה מקצועית · משרד העבודה
+</footer>
+
+</body>
+</html>

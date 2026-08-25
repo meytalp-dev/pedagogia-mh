@@ -4,28 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>מחולל מערכי שיעור – המרכז הפדגוגי · מינהל הכשרה מקצועית</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&family=Rubik:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#F0F4F8;--card:#fff;--border:#E2E8F0;
-  --primary:#2A9D8F;--primary-l:#D4F3EF;--primary-d:#1a7a6d;
-  --secondary:#E76F7A;--sec-l:#FDE8EA;
-  --blue:#4A90D9;--blue-l:#DBEAFE;
+  --bg:#F8FBFF;--card:#fff;--border:#E2E8F0;
+  --primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;
+  --secondary:#087B9C;--sec-l:#E4FAF7;
+  --blue:#1677FF;--blue-l:#E8F2FF;
   --purple:#7C3AED;--purple-l:#EDE7F6;
   --green:#52B788;--green-l:#D8F3DC;
   --orange:#F4A261;--orange-l:#FEF0E1;
-  --dark:#1E293B;--gray:#64748B;
+  --dark:#102A43;--gray:#52687A;
   --shadow:0 2px 20px -4px rgba(0,0,0,.06);
   --shadow-md:0 8px 28px rgba(0,0,0,.07);
   --r:20px;
 }
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* Header */
 .page-header{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;padding:2.5rem 1.5rem 2rem;text-align:center;position:relative;overflow:hidden}
 .page-header::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:120%;height:80px;background:var(--bg);border-radius:50% 50% 0 0}
-.page-header h1{font-family:'Rubik',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;position:relative}
+.page-header h1{font-family:'Assistant',sans-serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;position:relative}
 .page-header p{font-size:.95rem;opacity:.85;margin-top:.5rem;position:relative}
 
 /* Steps indicator */
@@ -45,10 +45,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 /* Form */
 .form-card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow);margin-top:24px}
-.form-card h2{font-family:'Rubik',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.form-card h2{font-family:'Assistant',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .form-group{margin-bottom:18px}
 .form-group label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px;color:var(--dark)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;background:#fff}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:12px;font-family:'Assistant',sans-serif;font-size:1rem;outline:none;transition:border-color .2s;background:#fff}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
 .form-group textarea{min-height:120px;resize:vertical}
 .form-group.invalid input,.form-group.invalid select{border-color:var(--secondary)}
@@ -56,7 +56,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 /* Buttons */
 .btn-row{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
-.btn{padding:14px 32px;border:none;border-radius:12px;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn{padding:14px 32px;border:none;border-radius:12px;font-family:'Assistant',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--primary-d)}
 .btn-secondary{background:var(--bg);color:var(--dark);border:2px solid var(--border)}
@@ -65,7 +65,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 /* AI Setup */
 .ai-setup{background:var(--blue-l);border:2px solid var(--blue);border-radius:var(--r);padding:24px;margin-top:24px}
-.ai-setup h3{font-family:'Rubik',sans-serif;color:var(--blue);margin-bottom:12px;font-size:1.05rem}
+.ai-setup h3{font-family:'Assistant',sans-serif;color:var(--blue);margin-bottom:12px;font-size:1.05rem}
 .ai-setup p{font-size:.9rem;color:var(--gray);line-height:1.6;margin-bottom:12px}
 .ai-setup a{color:var(--blue);font-weight:600}
 .key-input{display:flex;gap:8px}
@@ -80,7 +80,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 /* Preview cards */
 .preview-section{margin-top:24px}
-.preview-section h3{font-family:'Rubik',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.preview-section h3{font-family:'Assistant',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .preview-card{background:var(--card);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:12px}
 .preview-card .pc-title{font-weight:700;font-size:1rem;margin-bottom:4px}
 .preview-card .pc-sub{font-size:.85rem;color:var(--gray);line-height:1.5}
@@ -89,18 +89,18 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 
 /* Publish */
 .publish-card{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:var(--shadow);margin-top:24px;text-align:center}
-.publish-card h2{font-family:'Rubik',sans-serif;margin-bottom:16px}
+.publish-card h2{font-family:'Assistant',sans-serif;margin-bottom:16px}
 .link-box{background:var(--bg);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;margin:16px 0;direction:ltr;text-align:left}
-.link-box input{flex:1;border:none;background:transparent;font-family:'Heebo',sans-serif;font-size:.9rem;color:var(--dark);outline:none}
-.link-box button{padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-family:'Heebo',sans-serif;font-weight:600;cursor:pointer;font-size:.85rem}
+.link-box input{flex:1;border:none;background:transparent;font-family:'Assistant',sans-serif;font-size:.9rem;color:var(--dark);outline:none}
+.link-box button{padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-family:'Assistant',sans-serif;font-weight:600;cursor:pointer;font-size:.85rem}
 .share-btns{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
-.share-btn{padding:12px 24px;border-radius:12px;border:2px solid var(--border);background:#fff;font-family:'Heebo',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s}
+.share-btn{padding:12px 24px;border-radius:12px;border:2px solid var(--border);background:#fff;font-family:'Assistant',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s}
 .share-btn:hover{border-color:var(--primary);color:var(--primary)}
 
 /* Stats */
 .stats-row{display:flex;gap:12px;justify-content:center;margin:20px 0;flex-wrap:wrap}
 .stat{background:var(--bg);border-radius:12px;padding:12px 20px;text-align:center}
-.stat .num{font-family:'Rubik',sans-serif;font-size:1.5rem;font-weight:800;color:var(--primary)}
+.stat .num{font-family:'Assistant',sans-serif;font-size:1.5rem;font-weight:800;color:var(--primary)}
 .stat .label{font-size:.75rem;color:var(--gray)}
 
 /* Toast */
@@ -119,6 +119,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--dark);min-h
 </style>
 </head>
 <body>
+<div style="background:#fff;border-bottom:1px solid #D8E6F2;padding:8px 20px;display:flex;align-items:center;gap:10px;font-family:'Assistant',sans-serif;font-size:.85rem;position:relative;z-index:500"><a href="../index.html" style="color:#124D7A;text-decoration:none;font-weight:700">🧰 ארגז הכלים</a><span style="color:#BED4E7">|</span><span style="color:#60778A">המרכז הפדגוגי · מינהל הכשרה מקצועית</span></div>
+
 
 <div class="page-header">
   <h1>מחולל מערכי שיעור</h1>

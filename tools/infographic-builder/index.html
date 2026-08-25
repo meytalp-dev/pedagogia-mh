@@ -6,7 +6,7 @@
 <title>מחולל אינפוגרפיקה | Lerani</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Karantina:wght@400;700&family=Secular+One&family=Suez+One&family=Rubik:wght@400;500;700;900&family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&family=Varela+Round&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Karantina:wght@400;700&family=Secular+One&family=Suez+One&family=Noto+Sans+Hebrew:wght@400;500;700;900&family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@400;700;900&family=Varela+Round&family=Alef:wght@400;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:'GveretLevin';src:url('../design-studio/fonts/GveretLevinAlefAlefAlef-Regular.otf') format('opentype');font-display:swap}
 @font-face{font-family:'DanaYad';src:url('../design-studio/fonts/DanaYadAlefAlefAlef-Normal.otf') format('opentype');font-display:swap}
@@ -33,18 +33,18 @@
 @font-face{font-family:'DinaTalBal';src:url('../design-studio/fonts/Dina-TalBal.otf') format('opentype');font-display:swap}
 
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#FAF5EC;--card:#fff;--text:#3A3A50;--muted:#8A847D;--border:#E8DDD0;--gold:#C9A96E;--accent:#D4766E}
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+:root{--bg:#F8FBFF;--card:#fff;--text:#102A43;--muted:#60778A;--border:#D8E6F2;--gold:#124D7A;--accent:#087B9C}
+body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
 
 /* ===== TOP BAR ===== */
 .topbar{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0}
 .topbar h1{font-size:1rem;font-weight:900;margin-left:auto}
 .topbar-sep{width:1px;height:28px;background:var(--border)}
-.topbar input{flex:1;font-family:'Heebo';font-size:.85rem;padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card);min-width:180px;transition:.2s}
+.topbar input{flex:1;font-family:'Assistant';font-size:.85rem;padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card);min-width:180px;transition:.2s}
 .topbar input:focus{outline:none;border-color:var(--gold)}
-.topbar textarea{width:200px;font-family:'Heebo';font-size:.78rem;padding:6px 10px;border:2px solid var(--border);border-radius:8px;background:var(--card);resize:none;height:36px;transition:.2s}
+.topbar textarea{width:200px;font-family:'Assistant';font-size:.78rem;padding:6px 10px;border:2px solid var(--border);border-radius:8px;background:var(--card);resize:none;height:36px;transition:.2s}
 .topbar textarea:focus{outline:none;border-color:var(--gold)}
-.tb{padding:7px 14px;border-radius:10px;border:2px solid var(--border);background:var(--card);font-family:'Heebo';font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.tb{padding:7px 14px;border-radius:10px;border:2px solid var(--border);background:var(--card);font-family:'Assistant';font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;white-space:nowrap}
 .tb:hover{border-color:var(--gold)}
 .tb svg{width:15px;height:15px;flex-shrink:0}
 .tb.gen{background:var(--text);color:#fff;border-color:var(--text)}
@@ -58,7 +58,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);heigh
 .split{display:flex;flex:1;min-height:0}
 .panel{width:340px;flex-shrink:0;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
 .panel-nav{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.panel-tab{flex:1;padding:9px 6px;text-align:center;font-size:.7rem;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;background:none;border-top:none;border-right:none;border-left:none;font-family:'Heebo';color:var(--muted)}
+.panel-tab{flex:1;padding:9px 6px;text-align:center;font-size:.7rem;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;background:none;border-top:none;border-right:none;border-left:none;font-family:'Assistant';color:var(--muted)}
 .panel-tab:hover{color:var(--text)}
 .panel-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
 .panel-tab svg{width:15px;height:15px;display:block;margin:0 auto 2px}
@@ -79,7 +79,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);heigh
 
 /* Count */
 .count-row{display:flex;align-items:center;gap:12px;justify-content:center}
-.cbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1rem;font-weight:700;cursor:pointer;font-family:'Heebo'}
+.cbtn{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1rem;font-weight:700;cursor:pointer;font-family:'Assistant'}
 .cbtn:hover{border-color:var(--gold);background:#F0E6D3}
 .cval{font-size:1.1rem;font-weight:900;min-width:20px;text-align:center}
 
@@ -108,7 +108,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);heigh
 .fnt-opt.sel{border-color:var(--accent);border-width:3px}
 .fnt-opt .fp{font-size:1.2rem;line-height:1.2;margin-bottom:2px}
 .fnt-opt .fb{font-size:.68rem;color:var(--muted)}
-.fnt-opt .fn{font-size:.58rem;color:var(--gold);margin-top:3px;font-family:'Heebo'}
+.fnt-opt .fn{font-size:.58rem;color:var(--gold);margin-top:3px;font-family:'Assistant'}
 
 /* Template grid */
 .tpl-grid{display:grid;grid-template-columns:1fr;gap:10px}
@@ -317,6 +317,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);heigh
 </style>
 </head>
 <body>
+<div style="background:#fff;border-bottom:1px solid #D8E6F2;padding:8px 20px;display:flex;align-items:center;gap:10px;font-family:'Assistant',sans-serif;font-size:.85rem;position:relative;z-index:500"><a href="../index.html" style="color:#124D7A;text-decoration:none;font-weight:700">🧰 ארגז הכלים</a><span style="color:#BED4E7">|</span><span style="color:#60778A">המרכז הפדגוגי · מינהל הכשרה מקצועית</span></div>
+
 
 <!-- Top bar with generate always visible -->
 <div class="topbar">
@@ -518,17 +520,17 @@ const layoutSubTemplates={
 
 const palettes=[
   {name:'טורקיז קלאסי',colors:['#0D9488','#14B8A6','#E8784D','#0F766E','#D97706'],bg:'#F0FDFA',text:'#134E4A',accent:'#E8784D',stepBg:'#B2F5EA',line:'#99F6E4'},
-  {name:'אבן ירושלמית',colors:['#C9A96E','#89CFF0','#9DB5A0','#D4766E','#8B7355'],bg:'#FAF5EC',text:'#3A3A50',accent:'#D4766E',stepBg:'#EDE0CC',line:'#E0D0B8'},
-  {name:'פרחי מים',colors:['#E8A0BF','#B5C8E4','#A7D7C5','#9B7EC8','#D4766E'],bg:'#FFFAF8',text:'#4A3050',accent:'#E8A0BF',stepBg:'#F0D8E8',line:'#E8C0D8'},
-  {name:'אדמה וטרקוטה',colors:['#AB5B46','#B09385','#C9A96E','#8B6F4E','#D4766E'],bg:'#F8F3ED',text:'#2B2628',accent:'#AB5B46',stepBg:'#E5D8C8',line:'#D1C5BF'},
-  {name:'יער ירוק',colors:['#3A5A40','#578157','#A2B189','#C9A96E','#6B8F71'],bg:'#F5F3ED',text:'#2A3028',accent:'#578157',stepBg:'#D5DCC8',line:'#C5D0B8'},
+  {name:'אבן ירושלמית',colors:['#124D7A','#89CFF0','#9DB5A0','#087B9C','#8B7355'],bg:'#F8FBFF',text:'#102A43',accent:'#087B9C',stepBg:'#EDE0CC',line:'#E0D0B8'},
+  {name:'פרחי מים',colors:['#E8A0BF','#B5C8E4','#A7D7C5','#9B7EC8','#087B9C'],bg:'#FFFAF8',text:'#4A3050',accent:'#E8A0BF',stepBg:'#F0D8E8',line:'#E8C0D8'},
+  {name:'אדמה וטרקוטה',colors:['#AB5B46','#B09385','#124D7A','#8B6F4E','#087B9C'],bg:'#F8F3ED',text:'#2B2628',accent:'#AB5B46',stepBg:'#E5D8C8',line:'#D1C5BF'},
+  {name:'יער ירוק',colors:['#3A5A40','#578157','#A2B189','#124D7A','#6B8F71'],bg:'#F5F3ED',text:'#2A3028',accent:'#578157',stepBg:'#D5DCC8',line:'#C5D0B8'},
   {name:'אוקיינוס',colors:['#1B263C','#415C76','#88A8C8','#EDCA83','#5A7A9A'],bg:'#F5F6F4',text:'#1B263C',accent:'#EDCA83',stepBg:'#D0DDE8',line:'#B8C8D8'},
-  {name:'גלידה איטלקית',colors:['#FF8A8A','#F5D060','#6BC5D2','#7CC8A8','#C896D4'],bg:'#FFFDF5',text:'#3A3A50',accent:'#FF8A8A',stepBg:'#FFE8E8',line:'#FFD0D0'},
+  {name:'גלידה איטלקית',colors:['#FF8A8A','#F5D060','#6BC5D2','#7CC8A8','#C896D4'],bg:'#FFFDF5',text:'#102A43',accent:'#FF8A8A',stepBg:'#FFE8E8',line:'#FFD0D0'},
   {name:'לבנדר ואפרסק',colors:['#B59BD5','#E8A880','#8CBFAA','#D4A060','#D4869E'],bg:'#FBF7FF',text:'#4A3F55',accent:'#B59BD5',stepBg:'#E4D8F0',line:'#D8C8E8'},
   {name:'נקטרינה',colors:['#EF522C','#E22997','#D477C0','#FD9651','#C44820'],bg:'#FFF8F5',text:'#2D2028',accent:'#EF522C',stepBg:'#FFE0D0',line:'#FFD0C0'},
-  {name:'שקיעה חמה',colors:['#D4766E','#E9C46A','#2A9D8F','#E8A49E','#C9A96E'],bg:'#FDF6F0',text:'#3A3028',accent:'#D4766E',stepBg:'#FFE0D8',line:'#F0D0C8'},
+  {name:'שקיעה חמה',colors:['#087B9C','#E9C46A','#124D7A','#E8A49E','#124D7A'],bg:'#FDF6F0',text:'#3A3028',accent:'#087B9C',stepBg:'#FFE0D8',line:'#F0D0C8'},
   {name:'ורוד ומנטה',colors:['#F3A2BE','#E9C46A','#7CBFB5','#D080A0','#A8D8C8'],bg:'#FFFBFC',text:'#3A3040',accent:'#F3A2BE',stepBg:'#FFE0EC',line:'#FFD0E0'},
-  {name:'מינימלי',colors:['#2A9D8F','#1a7a6d','#555555','#888888','#333333'],bg:'#FAFAFA',text:'#333333',accent:'#2A9D8F',stepBg:'#D8F0E8',line:'#C0E0D8'},
+  {name:'מינימלי',colors:['#124D7A','#0D3B66','#555555','#888888','#333333'],bg:'#FAFAFA',text:'#333333',accent:'#124D7A',stepBg:'#D8F0E8',line:'#C0E0D8'},
   {name:'סחלב ומנגו',colors:['#FF90E8','#FFD275','#60C8C0','#FF9F1C','#D070C0'],bg:'#FFF5FC',text:'#2A2030',accent:'#FF90E8',stepBg:'#FFD8F0',line:'#FFD0F0'},
   {name:'לימון ודובדבן',colors:['#FFCF56','#FF6B6B','#6A82FB','#E060A0','#FFB830'],bg:'#FFFDF0',text:'#2A2040',accent:'#FF6B6B',stepBg:'#FFF0C8',line:'#FFE8A0'},
   {name:'תכלת ומרווה',colors:['#5AADE0','#7FBBEE','#7AA080','#89CFF0','#6B9F70'],bg:'#F5FAFF',text:'#2A3A50',accent:'#5AADE0',stepBg:'#D8ECFF',line:'#C8E0F8'},
@@ -537,36 +539,36 @@ const palettes=[
 
 const fontPairs=[
   // כתב יד + רגיל
-  {title:'GveretLevin',body:'Heebo',label:'גברת לוין + היבו',type:'handwriting'},
-  {title:'DanaYad',body:'Heebo',label:'דנה יד + היבו',type:'handwriting'},
-  {title:'Carmela',body:'Heebo',label:'כרמלה + היבו',type:'handwriting'},
-  {title:'Cafe',body:'Heebo',label:'קפה + היבו',type:'handwriting',ts:'2.8rem'},
-  {title:'Tapuach',body:'Heebo',label:'תפוח + היבו',type:'handwriting'},
-  {title:'Paskol',body:'Heebo',label:'פסקול + היבו',type:'handwriting'},
-  {title:'Petel',body:'Heebo',label:'פטל + היבו',type:'handwriting'},
-  {title:'Baznat',body:'Heebo',label:'בזנט + היבו',type:'handwriting'},
-  {title:'Noot',body:'Heebo',label:'נוט + היבו',type:'handwriting'},
-  {title:'Liron',body:'Heebo',label:'לירון + היבו',type:'handwriting'},
-  {title:'Hevel',body:'Heebo',label:'הבל + היבו',type:'handwriting'},
-  {title:'Levavot',body:'Heebo',label:'לבבות + היבו',type:'handwriting'},
-  {title:'Takila',body:'Heebo',label:'טקילה + היבו',type:'handwriting'},
-  {title:'Shmuel',body:'Heebo',label:'שמואל + היבו',type:'handwriting'},
-  {title:'DinaTalBal',body:'Heebo',label:'דינה טל בל + היבו',type:'handwriting'},
-  {title:'Manual',body:'Heebo',label:'מנואל + היבו',type:'handwriting'},
+  {title:'GveretLevin',body:'Assistant',label:'גברת לוין + היבו',type:'handwriting'},
+  {title:'DanaYad',body:'Assistant',label:'דנה יד + היבו',type:'handwriting'},
+  {title:'Carmela',body:'Assistant',label:'כרמלה + היבו',type:'handwriting'},
+  {title:'Cafe',body:'Assistant',label:'קפה + היבו',type:'handwriting',ts:'2.8rem'},
+  {title:'Tapuach',body:'Assistant',label:'תפוח + היבו',type:'handwriting'},
+  {title:'Paskol',body:'Assistant',label:'פסקול + היבו',type:'handwriting'},
+  {title:'Petel',body:'Assistant',label:'פטל + היבו',type:'handwriting'},
+  {title:'Baznat',body:'Assistant',label:'בזנט + היבו',type:'handwriting'},
+  {title:'Noot',body:'Assistant',label:'נוט + היבו',type:'handwriting'},
+  {title:'Liron',body:'Assistant',label:'לירון + היבו',type:'handwriting'},
+  {title:'Hevel',body:'Assistant',label:'הבל + היבו',type:'handwriting'},
+  {title:'Levavot',body:'Assistant',label:'לבבות + היבו',type:'handwriting'},
+  {title:'Takila',body:'Assistant',label:'טקילה + היבו',type:'handwriting'},
+  {title:'Shmuel',body:'Assistant',label:'שמואל + היבו',type:'handwriting'},
+  {title:'DinaTalBal',body:'Assistant',label:'דינה טל בל + היבו',type:'handwriting'},
+  {title:'Manual',body:'Assistant',label:'מנואל + היבו',type:'handwriting'},
   // דקורטיבי + רגיל
   {title:'Nehama',body:'Assistant',label:'נחמה + אסיסטנט',type:'decorative'},
-  {title:'Karantina',body:'Heebo',label:'קרנטינה + היבו',type:'decorative'},
-  {title:'Dragon',body:'Heebo',label:'דרגון + היבו',type:'decorative'},
-  {title:'Kanisah',body:'Heebo',label:'כניסה + היבו',type:'decorative'},
+  {title:'Karantina',body:'Assistant',label:'קרנטינה + היבו',type:'decorative'},
+  {title:'Dragon',body:'Assistant',label:'דרגון + היבו',type:'decorative'},
+  {title:'Kanisah',body:'Assistant',label:'כניסה + היבו',type:'decorative'},
   {title:'HummusChips',body:'Assistant',label:'חומוס צ\'יפס + אסיסטנט',type:'decorative'},
-  {title:'Carnaval',body:'Heebo',label:'קרנבל + היבו',type:'decorative'},
-  {title:'TzevaTari',body:'Heebo',label:'צבע טרי + היבו',type:'decorative'},
-  {title:'Kidma',body:'Heebo',label:'קדמה + היבו',type:'decorative'},
+  {title:'Carnaval',body:'Assistant',label:'קרנבל + היבו',type:'decorative'},
+  {title:'TzevaTari',body:'Assistant',label:'צבע טרי + היבו',type:'decorative'},
+  {title:'Kidma',body:'Assistant',label:'קדמה + היבו',type:'decorative'},
   // בולד / נקי
-  {title:'Secular One',body:'Heebo',label:'סקולר וואן + היבו',type:'bold'},
+  {title:'Assistant',body:'Assistant',label:'סקולר וואן + היבו',type:'bold'},
   {title:'Suez One',body:'Frank Ruhl Libre',label:'סואץ + פרנק ריהל',type:'serif'},
-  {title:'Heebo',body:'Heebo',label:'היבו בולד + היבו',type:'clean',tw:900},
-  {title:'Rubik',body:'Rubik',label:'רוביק + רוביק',type:'clean',tw:900},
+  {title:'Assistant',body:'Assistant',label:'היבו בולד + היבו',type:'clean',tw:900},
+  {title:'Assistant',body:'Assistant',label:'רוביק + רוביק',type:'clean',tw:900},
 ];
 
 // Templates: visual style presets
