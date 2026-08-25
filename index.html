@@ -37,6 +37,7 @@
     <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
     <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
     <a href="supervision.html">מרחב פיקוח</a>
+    <a href="menahalim.html">מרחב מנהלים</a>
     <div class="sect">שירותים</div>
     <a class="open-ogen">⚓ שאל את עוגן</a>
     <a href="tools/">🧰 ארגז כלים · מחוללים</a>
@@ -79,6 +80,7 @@
   <a class="lnk dis">מסמכים חשובים</a>
   <a class="lnk dis">תוכניות עבודה</a>
   <a class="lnk" href="supervision.html">מרחב פיקוח</a>
+  <a class="lnk" href="menahalim.html">מרחב מנהלים</a>
   <div class="tools">
     <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
   </div>
@@ -149,6 +151,56 @@
       <h3 style="font-size:1.05rem;margin:12px 0 3px">לנהל בית ספר</h3>
       <p style="font-size:.86rem;color:var(--text2)">אוגדן שעות, תכנון תשפ"ז וקודי תקצוב — נהלים</p>
     </a>
+  </div>
+</div>
+
+<!-- announcements & trainings -->
+<style>
+.ann-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+@media(max-width:860px){.ann-grid{grid-template-columns:1fr}}
+.ann{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none}
+.ann:last-of-type{border-bottom:none;padding-bottom:2px}
+.ann .tag{flex:none;margin-top:2px}
+.ann b{color:var(--navy);font-size:.93rem;display:block}
+.ann span.sub{color:var(--text2);font-size:.85rem}
+</style>
+<div style="padding:8px var(--px) 34px">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:6px">
+    <h2 style="font-size:1.7rem">הודעות והשתלמויות</h2>
+  </div>
+  <p style="color:var(--text2);font-size:.95rem;margin-bottom:18px">עדכונים שוטפים מהמינהל ומסלולי פיתוח מקצועי — לצוותי ההוראה, לבעלי התפקידים ולהנהלה.</p>
+  <div class="ann-grid">
+    <div class="card" style="padding:22px 24px">
+      <h3 style="font-size:1.05rem;margin-bottom:6px;color:var(--navy)">📌 לוח הודעות</h3>
+      <!-- להוספת הודעה: מעתיקים בלוק <a class="ann"> אחד, מעדכנים תאריך, כותרת וקישור. החדשה למעלה. -->
+      <a class="ann" href="menahalim.html">
+        <span class="tag cyn">25.8</span>
+        <span><b>נפתח מרחב מנהלים באתר</b><span class="sub">כל הכלים למנהלי בתי הספר במקום אחד — מצפן ההדרכות, חוזרי מנכ"ל ותוכניות עבודה.</span></span>
+      </a>
+      <a class="ann" href="work-plans.html">
+        <span class="tag cyn">25.8</span>
+        <span><b>שאלון תוכניות עבודה לבעלי תפקידים זמין למילוי</b><span class="sub">שאלון מקוון עם צ'ק־ליסט ודשבורד מעקב — במרחב המנהלים.</span></span>
+      </a>
+      <a class="ann" href="tashpaz.html">
+        <span class="tag bgr">אוג'</span>
+        <span><b>מסמך ההיערכות לשנה"ל תשפ"ז פורסם</b><span class="sub">מכתב המינהל, מסע בשנה ומד מוכנות אינטראקטיבי.</span></span>
+      </a>
+    </div>
+    <div class="card" style="padding:22px 24px">
+      <h3 style="font-size:1.05rem;margin-bottom:6px;color:var(--navy)">🎓 השתלמויות ופיתוח מקצועי</h3>
+      <a class="ann" href="kvutzot-hadracha.html">
+        <span class="tag gmr">מורים</span>
+        <span><b>קבוצות הדרכה למורים מקצועיים</b><span class="sub">מפגשי הדרכה לפי תחומי דעת — פרטים והצטרפות.</span></span>
+      </a>
+      <a class="ann" href="hishtalmut-gmul.html">
+        <span class="tag gmr">מורים</span>
+        <span><b>השתלמויות לגמול</b><span class="sub">הנחיות, תנאים ותהליך ההכרה בהשתלמות.</span></span>
+      </a>
+      <a class="ann" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">
+        <span class="tag bgr">מנהלים</span>
+        <span><b>מצפן ההדרכות הפדגוגיות</b><span class="sub">מעקב ופיקוח על מערך ההדרכות הבית־ספרי.</span></span>
+      </a>
+    </div>
   </div>
 </div>
 
