@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מסלולים מותאמים וחלופות הערכה · המרכז הפדגוגי</title>
+<meta name="description" content="כל מסלולי ההיבחנות המותאמים וחלופות ההערכה במקום אחד: יהלו&quot;ם, שחל&quot;ב, תן למילים, שאלון 241, רשתות ביטחון, Ladders והתאמות ללקויות למידה.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
+    <a class="dis"><span class="n">05</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחבים ומדורים</div>
+    <a href="counseling.html">מרחב ייעוצי</a>
+    <a href="procedures.html">נהלים</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <a class="dis">תוכניות עבודה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html">מרחב פיקוח</a>
+    <a href="menahalim.html">מרחב מנהלים</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="dis">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a class="dis">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <a class="lnk" href="counseling.html">מרחב ייעוצי</a>
+  <a class="lnk" href="procedures.html">נהלים</a>
+  <a class="lnk dis">מסמכים חשובים</a>
+  <a class="lnk dis">תוכניות עבודה</a>
+  <a class="lnk" href="supervision.html">מרחב פיקוח</a>
+  <a class="lnk" href="menahalim.html">מרחב מנהלים</a>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead" style="padding-top:40px">
+  <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="subjects.html">תחומי דעת</a> ‹ מסלולים מותאמים</div>
+  <h1 class="rv d1" style="font-size:2.5rem;margin:10px 0 4px">מסלולים מותאמים וחלופות הערכה</h1>
+  <p class="rv d1 lead" style="max-width:700px">כל תלמיד יכול להגיע לתעודה — צריך רק להכיר את המסלול הנכון. כאן, לראשונה במקום אחד: כל מסלולי ההיבחנות המותאמים וחלופות ההערכה של משרד החינוך, עבור מורי המינהל הבונים מסלול לתלמיד מתקשה.</p>
+</div>
+
+<div style="padding:24px var(--px) 8px">
+  <h2 style="font-size:1.3rem;margin-bottom:14px">חלופות במקום בחינה חיצונית</h2>
+  <div class="grid c3" style="gap:13px">
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/pedagogia-historia/bhinot-bagrut-halofot-haraha/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">היסטוריה</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">יהלו"ם</h3>
+      <p style="font-size:.82rem;color:var(--text2)">למידה דיגיטלית עצמאית במקום בחינה חיצונית — יחידות מקוונות בקצב אישי</p>
+    </a>
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/pedagogia-historia/bhinot-bagrut-halofot-haraha/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">היסטוריה</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">שחל"ב</h3>
+      <p style="font-size:.82rem;color:var(--text2)">הערכה בית-ספרית במקום בחינת בגרות — בית הספר מעריך, המשרד מאשר</p>
+    </a>
+    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/ibahanut-halufot-aaraha/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">ספרות</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">"תן למילים"</h3>
+      <p style="font-size:.82rem;color:var(--text2)">מסלול דיגיטלי — יחידות מקוונות עם הערכה מעצבת במקום בחינה חיצונית</p>
+    </a>
+  </div>
+</div>
+
+<div style="padding:16px var(--px) 8px">
+  <h2 style="font-size:1.3rem;margin-bottom:14px">שאלונים מותאמים ורשתות ביטחון</h2>
+  <div class="grid c3" style="gap:13px">
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/bhinot-bagrut-umesimot/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">עברית</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">שאלון 241 המותאם + שאלוני עולים</h3>
+      <p style="font-size:.82rem;color:var(--text2)">שאלון מותאם ללקויות למידה ושאלוני עולים (272/274/284) — עם כל בחינות הבגרות והמשימות</p>
+    </a>
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/teaching-mathematics/examination-evaluation/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">מתמטיקה</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">רשתות ביטחון במעבר רמה</h3>
+      <p style="font-size:.82rem;color:var(--text2)">הגנה על הציון במעבר 5←4 ו-4←3 יח"ל · מאגרי שאלות לפי נושאים ונוסחאונים רשמיים</p>
+    </a>
+    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/ladders-program/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">אנגלית</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">תוכנית Ladders (סולמות)</h3>
+      <p style="font-size:.82rem;color:var(--text2)">תגבור ייעודי לתלמידים מתקשים ברמת 3 יח"ל — טיפוס מדורג בסולם</p>
+    </a>
+  </div>
+</div>
+
+<div style="padding:16px var(--px) 8px">
+  <h2 style="font-size:1.3rem;margin-bottom:14px">התאמות, תמיכה וגמישות</h2>
+  <div class="grid c3" style="gap:13px">
+    <a class="card rv" href="https://pop.education.gov.il/matriculation-exams-final-projects/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag cyn">כל המקצועות</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">התאמות ללקויות למידה וחרדת בחינות</h3>
+      <p style="font-size:.82rem;color:var(--text2)">מדור הבגרויות המרכזי — התאמות היבחנות, טוהר בחינות ומיקודים לכל המקצועות</p>
+    </a>
+    <a class="card rv" href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/group/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag cyn">י"א–י"ב</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">בגרופ — תגבור חינם</h3>
+      <p style="font-size:.82rem;color:var(--text2)">תגבור מקוון חינם באנגלית, מתמטיקה ולשון לקראת הבגרות</p>
+    </a>
+    <a class="card rv d1" href="https://pop.education.gov.il/flexible-matriculation-program/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag cyn">מדיניות</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">תוכנית הבגרות הגמישה</h3>
+      <p style="font-size:.82rem;color:var(--text2)">פריסת בחינות גמישה על פני שנות הלימוד — מידע והנחיות</p>
+    </a>
+  </div>
+</div>
+
+<div style="padding:16px var(--px) 8px">
+  <h2 style="font-size:1.3rem;margin-bottom:14px">בחינה בעל-פה ומשאבי רוחב</h2>
+  <div class="grid c3" style="gap:13px">
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/cobe-oral-exam/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag bgr">אנגלית</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">COBE / BOOST — בחינה בעל-פה</h3>
+      <p style="font-size:.82rem;color:var(--text2)">מבנה הבחינה בעל-פה, הנחיות והכנה</p>
+    </a>
+    <a class="card rv" href="http://meyda.education.gov.il/bagmgr/default.html#/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag cyn">כל המקצועות</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">מאגר שאלוני הבגרות הארצי</h3>
+      <p style="font-size:.82rem;color:var(--text2)">כל השאלונים, כל המועדים, כל המקצועות — פתוח להורדה</p>
+    </a>
+    <a class="card rv d1" href="https://students.education.gov.il/" target="_blank" rel="noopener" style="padding:20px">
+      <span class="tag cyn">לתלמיד</span>
+      <h3 style="font-size:1.02rem;margin:10px 0 4px">אתר התלמידים</h3>
+      <p style="font-size:.82rem;color:var(--text2)">שער התלמידים של משרד החינוך — ציונים, זכאות ומידע אישי</p>
+    </a>
+  </div>
+</div>
+
+<div class="notice rv" style="margin:24px var(--px) 48px;border-inline-start:4px solid var(--teal)">
+  <b style="color:#087565">הערה למורה:</b> רוב הקישורים פתוחים ללא הזדהות (אומתו 25.8.2026). הזכאות למסלול מותאם נקבעת מול הפיקוח ובית הספר — העמוד מרכז את המידע, ההחלטה פדגוגית. מתלבטים איזה מסלול מתאים לתלמיד? <a class="open-ogen" style="color:#087565;font-weight:700;cursor:pointer">שאלו את עוגן ⚓</a>
+</div>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>מסלולים מותאמים · עודכן 25.8.2026</span></div></div>
+
+<script src="site.js"></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>
