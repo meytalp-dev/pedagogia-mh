@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דרייב המנהלים · המרכז הפדגוגי</title>
+<meta name="description" content="כל חומרי הניהול של מינהל הכשרה מקצועית — תכנון תשפ״ז, אוגדני שעות, ועדה מלווה, תקציב ועוד — במקום אחד">
+<meta property="og:type" content="website">
+<meta property="og:title" content="דרייב המנהלים · המרכז הפדגוגי">
+<meta property="og:description" content="כל חומרי הניהול במקום אחד: תכנון תשפ״ז, אוגדני שעות, ועדה מלווה, תקציב, מורים חונכים ועובדי הוראה">
+<meta property="og:url" content="https://pedagogiamh.co.il/drive-menahalim.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Assistant:wght@400;600;700&family=Karantina:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        oklch(27% 0.06 268);
+    --ink-soft:   oklch(46% 0.035 262);
+    --navy:       oklch(38% 0.115 268);
+    --navy-deep:  oklch(30% 0.10 268);
+    --royal:      oklch(54% 0.165 262);
+    --sky:        oklch(76% 0.085 250);
+    --sky-tint:   oklch(95.5% 0.017 250);
+    --bg:         oklch(97.6% 0.006 255);
+    --surface:    oklch(99.2% 0.003 255);
+    --line:       oklch(89% 0.014 255);
+    --line-soft:  oklch(93% 0.010 255);
+    --amber-ink:  oklch(52% 0.10 80);
+    --amber-bg:   oklch(96% 0.03 90);
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Assistant',sans-serif; background:var(--bg); color:var(--ink);
+    line-height:1.65; overflow-x:clip;
+  }
+  h1,h2,h3{font-family:'Frank Ruhl Libre',serif; line-height:1.12; letter-spacing:-.01em}
+  a{color:inherit}
+  img{max-width:100%}
+  .num-face{font-family:'Karantina',serif; font-weight:700; letter-spacing:.02em}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 clamp(20px,4vw,40px)}
+
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); transition-delay:var(--d,0s)}
+  .rv.in{opacity:1; transform:none}
+
+  /* ---------- top bar ---------- */
+  header.top{position:sticky; top:0; z-index:80; background:color-mix(in oklch, var(--bg) 86%, white); backdrop-filter:blur(10px); transition:box-shadow .3s}
+  header.top.scrolled{box-shadow:0 1px 0 var(--line), 0 12px 30px oklch(30% 0.1 268 / .06)}
+  .top-in{display:flex; align-items:center; gap:16px; padding:12px 0}
+  .top-in img{height:50px; width:auto}
+  .brand-txt{font-weight:700; font-size:16px; color:var(--navy); line-height:1.25}
+  .brand-txt small{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+  .back-home{
+    margin-inline-start:auto; text-decoration:none; font-weight:600; font-size:15px; color:var(--ink-soft);
+    display:inline-flex; align-items:center; gap:8px; padding:6px 2px; transition:color .25s;
+  }
+  .back-home:hover{color:var(--royal)}
+  .back-home .arr{transition:transform .3s var(--ease)}
+  .back-home:hover .arr{transform:translateX(-4px)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:clamp(48px,8vh,88px) 0 clamp(36px,5vh,56px); border-bottom:1px solid var(--line)}
+  .kicker{
+    display:inline-flex; align-items:center; gap:12px;
+    color:var(--royal); font-weight:700; font-size:15px;
+  }
+  .kicker::before{
+    content:""; width:38px; height:2.5px; background:var(--royal); border-radius:2px;
+    transform:scaleX(0); transform-origin:right; animation:draw .8s .3s var(--ease) both;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
+  .hero h1{
+    font-size:clamp(42px,6.6vw,76px); font-weight:900; color:var(--navy-deep);
+    margin:16px 0 18px; max-width:14ch;
+  }
+  .hero h1 .accent{color:var(--royal)}
+  .hero p.lead{font-size:clamp(17px,1.6vw,20px); color:var(--ink-soft); max-width:56ch}
+  .hero .cta-row{display:flex; flex-wrap:wrap; gap:14px; margin-top:30px}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px; text-decoration:none; cursor:pointer;
+    font-family:inherit; font-weight:700; font-size:16.5px; padding:14px 30px; border-radius:999px;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .25s, color .25s, border-color .25s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn .arr{transition:transform .3s var(--ease)}
+  .btn:hover .arr{transform:translateX(-5px)}
+  .btn.solid{background:var(--navy); color:oklch(98% 0.005 255); border:1.5px solid var(--navy); box-shadow:0 10px 26px oklch(38% 0.115 268 / .28)}
+  .btn.solid:hover{background:var(--navy-deep); transform:translateY(-2px); box-shadow:0 16px 36px oklch(38% 0.115 268 / .36)}
+  .btn.ghost{border:1.5px solid var(--line); background:var(--surface); color:var(--navy)}
+  .btn.ghost:hover{border-color:var(--royal); color:var(--royal); transform:translateY(-2px)}
+  .hero-stagger > *{opacity:0; transform:translateY(24px); animation:rise .9s var(--ease) both}
+  .hero-stagger > *:nth-child(1){animation-delay:.05s}
+  .hero-stagger > *:nth-child(2){animation-delay:.16s}
+  .hero-stagger > *:nth-child(3){animation-delay:.28s}
+  .hero-stagger > *:nth-child(4){animation-delay:.4s}
+  @keyframes rise{from{opacity:0; transform:translateY(24px)}to{opacity:1; transform:none}}
+
+  /* ---------- section heads ---------- */
+  .sec{padding:clamp(48px,8vh,84px) 0; position:relative}
+  .sec-head{display:flex; align-items:flex-end; gap:22px; margin-bottom:clamp(26px,4vw,40px); position:relative}
+  .sec-head .ghost{
+    font-family:'Karantina',serif; font-weight:700; font-size:clamp(84px,11vw,150px); line-height:.72;
+    color:transparent; -webkit-text-stroke:1.5px oklch(80% 0.05 255); user-select:none;
+  }
+  .sec-head h2{font-size:clamp(30px,4.2vw,44px); font-weight:900; color:var(--navy-deep)}
+  .sec-head .sub{margin-inline-start:auto; max-width:300px; font-size:15px; color:var(--ink-soft); text-align:start; padding-bottom:6px}
+  @media(max-width:720px){.sec-head{flex-wrap:wrap}.sec-head .sub{margin-inline-start:0}}
+
+  /* ---------- index rows ---------- */
+  .index-list{border-top:1px solid var(--line)}
+  .row{
+    display:grid; grid-template-columns:74px minmax(0,1fr) auto; align-items:center; gap:clamp(14px,3vw,30px);
+    padding:clamp(20px,3vw,28px) 6px; border-bottom:1px solid var(--line);
+    text-decoration:none; position:relative; overflow:clip;
+  }
+  .row::before{
+    content:""; position:absolute; inset:0; background:var(--sky-tint);
+    transform:scaleY(0); transform-origin:bottom; transition:transform .45s var(--ease); z-index:-1;
+  }
+  a.row:hover::before{transform:scaleY(1)}
+  .row .idx{position:relative; height:44px}
+  .row .idx .n, .row .idx .a{
+    position:absolute; inset:0; display:flex; align-items:center;
+    font-family:'Karantina',serif; font-weight:700; font-size:44px; line-height:1; color:oklch(78% 0.05 255);
+    transition:transform .4s var(--ease), opacity .4s var(--ease);
+  }
+  .row .idx .a{color:var(--royal); transform:translateX(18px); opacity:0; font-size:36px}
+  a.row:hover .idx .n{transform:translateX(-18px); opacity:0}
+  a.row:hover .idx .a{transform:none; opacity:1}
+  .row h3{font-size:clamp(20px,2.3vw,26px); font-weight:700; color:var(--navy-deep); transition:color .3s}
+  a.row:hover h3{color:var(--royal)}
+  .row p{font-size:15px; color:var(--ink-soft); max-width:64ch; margin-top:2px}
+  .row .dest{font-size:13.5px; font-weight:700; color:var(--ink-soft); white-space:nowrap; display:flex; align-items:center; gap:8px}
+  .row .dest svg{transition:transform .35s var(--ease)}
+  a.row:hover .dest svg{transform:translate(-3px,-3px)}
+  .row.featured{background:var(--surface); border:1px solid var(--line); border-radius:20px; margin-bottom:14px; padding-inline:clamp(16px,2.5vw,28px)}
+  .row.featured::before{border-radius:20px}
+  .row.featured h3{font-size:clamp(23px,2.7vw,30px)}
+  .row.featured .idx .n{color:var(--royal)}
+
+  /* ---------- links: editorial two-column ---------- */
+  .links-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:clamp(28px,5vw,72px)}
+  @media(max-width:760px){.links-grid{grid-template-columns:1fr}}
+  .lrow{
+    display:flex; align-items:baseline; gap:18px; padding:19px 4px; border-bottom:1px solid var(--line);
+    text-decoration:none; position:relative;
+  }
+  .lrow .ln{font-family:'Karantina',serif; font-weight:700; font-size:26px; color:oklch(76% 0.05 255); min-width:34px; transition:color .3s}
+  .lrow:hover .ln{color:var(--royal)}
+  .lrow .lt{font-weight:700; font-size:17.5px; color:var(--navy-deep); position:relative}
+  .lrow .lt::after{
+    content:""; position:absolute; inset-inline:0; bottom:-3px; height:2px; background:var(--royal);
+    transform:scaleX(0); transform-origin:right; transition:transform .4s var(--ease);
+  }
+  .lrow:hover .lt::after{transform:scaleX(1)}
+  .lrow .ls{font-size:13.5px; color:var(--ink-soft); margin-inline-start:auto; text-align:start; white-space:nowrap}
+  .lrow svg{flex-shrink:0; align-self:center; color:var(--ink-soft); transition:transform .35s var(--ease), color .3s}
+  .lrow:hover svg{transform:translate(-3px,-3px); color:var(--royal)}
+  @media(max-width:560px){.lrow .ls{display:none}}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line); background:var(--surface); margin-top:20px}
+  .foot-in{display:flex; align-items:center; gap:18px; padding:30px 0; flex-wrap:wrap}
+  .foot-in img{height:42px}
+  .foot-in p{font-size:13.5px; color:var(--ink-soft)}
+  .foot-in .domain{margin-inline-start:auto; font-family:'Karantina',serif; font-size:20px; letter-spacing:.05em; color:var(--ink-soft)}
+
+  .ogenw-launcher{width:78px !important; height:78px !important; bottom:26px !important}
+  .ogenw-launcher svg{transform:scale(1.28)}
+  .ogenw-launcher-label{bottom:46px !important; font-size:15px !important; padding:10px 18px !important}
+  .ogenw-panel{bottom:118px !important}
+
+  a:focus-visible, button:focus-visible{outline:3px solid var(--royal); outline-offset:3px; border-radius:10px}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top" id="topbar">
+  <div class="wrap top-in">
+    <img src="logo.png" alt="משרד העבודה — מינהל הכשרה מקצועית">
+    <div class="brand-txt">המרכז הפדגוגי<small>מינהל הכשרה מקצועית</small></div>
+    <a class="back-home" href="index.html">לעמוד הראשי <span class="arr">←</span></a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-stagger">
+    <span class="kicker">מרחב מנהלים · כל החומרים במקום אחד</span>
+    <h1>דרייב <span class="accent">המנהלים</span></h1>
+    <p class="lead">כל חומרי הניהול של המינהל — תכנון תשפ״ז, אוגדני שעות, ועדה מלווה, תקציב, מורים חונכים ועובדי הוראה — מסודרים לפי תיקיות, בלחיצה אחת מכאן.</p>
+    <div class="cta-row">
+      <a class="btn solid" href="https://drive.google.com/drive/folders/1-qrq5zqAzQIHNioklhwxuSasFpuNVc17" target="_blank" rel="noopener">פתיחת הדרייב המלא <span class="arr">←</span></a>
+      <a class="btn ghost" href="tashpaz.html">עמוד ההיערכות תשפ״ז</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="folders">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="ghost num-face">01</span>
+      <h2>תיקיות הדרייב</h2>
+      <p class="sub">שש תיקיות — כל אחת נפתחת ישירות ב־Google Drive.</p>
+    </div>
+
+    <div class="index-list rv">
+      <a class="row featured" href="https://drive.google.com/drive/folders/1_eVj-yRfnhRH4hKTNPRyyysnt_nKEws1" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">01</span><span class="a">←</span></span>
+        <span><h3>תכנון תשפ״ז</h3><p>מסמך ההיערכות והתכנון לגופים המפעילים לשנת תשפ״ז — נקודת הפתיחה של השנה. לצפייה נוחה, המסמך זמין גם כעמוד ההיערכות המעוצב.</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+      <a class="row" href="https://drive.google.com/drive/folders/1_7xy-YenyrkwzVV0nTll8xX5MG2t8fYw" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">02</span><span class="a">←</span></span>
+        <span><h3>אוגדן שעות</h3><p>אוגדני השעות לשנת תשפ״ז — הבסיס לבניית מערכת השעות לפי המסלול הנבחר. כל שינוי במערכת — באישור המפקח הפדגוגי.</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+      <a class="row" href="https://drive.google.com/drive/folders/1mGiiKKrhSmaFUMbJsMK6tK4zEw2N_MC9" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">03</span><span class="a">←</span></span>
+        <span><h3>ועדה מלווה</h3><p>מכתבי הכנה ומצגות לוועדה המלווה — מפגש תחילת השנה (עד דצמבר) ומפגש סיום השנה (מאי–יולי).</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+      <a class="row" href="https://drive.google.com/drive/folders/1x_qt-ezw-JqX5WLkzVcSZzHhz5NkJbHr" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">04</span><span class="a">←</span></span>
+        <span><h3>תקציב</h3><p>מסמך סל התוכניות המעודכן והנחיות השימוש בתקציבים — כולל כללי הגמישות בין הסעיפים באישור מפקח בית הספר.</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+      <a class="row" href="https://drive.google.com/drive/folders/1BFTo7pzI43UQC5IRTsi6y2gBFqAw5-d5" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">05</span><span class="a">←</span></span>
+        <span><h3>מורים חונכים</h3><p>ליווי מורים מתמחים: הנחיות החונכות, ההכשרה הנדרשת למורה החונך והסדרת הדיווח מול משרד החינוך והרשת.</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+      <a class="row" href="https://drive.google.com/drive/folders/1wmRmBn3R_Vqbxcibl9eKHQ_3TBytKNFA" target="_blank" rel="noopener">
+        <span class="idx"><span class="n">06</span><span class="a">←</span></span>
+        <span><h3>עובדי הוראה</h3><p>חומרים ונהלים לעובדי הוראה — קליטה, פתיחת תיק במשרד החינוך ופיתוח מקצועי.</p></span>
+        <span class="dest">Google Drive <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="shortcuts" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="ghost num-face">02</span>
+      <h2>קיצורי דרך</h2>
+      <p class="sub">המסמכים והכלים שמנהלים מחפשים הכי הרבה.</p>
+    </div>
+    <div class="links-grid">
+      <a class="lrow rv" href="tashpaz.html">
+        <span class="ln">01</span><span class="lt">היערכות תשפ״ז — העמוד המעוצב</span><span class="ls">המסמך המלא, נוח לקריאה</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+      <a class="lrow rv" style="--d:.06s" href="https://drive.google.com/drive/folders/1SNrtDpBk7emBZS-j98hEWXWaRuz90RoP" target="_blank" rel="noopener">
+        <span class="ln">02</span><span class="lt">כלל ההנחיות</span><span class="ls">כל הנחיות המינהל בתיקייה אחת</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+      <a class="lrow rv" style="--d:.12s" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit" target="_blank" rel="noopener">
+        <span class="ln">03</span><span class="lt">הנחיות ועדה מלווה</span><span class="ls">המסמך המנחה לוועדה</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+      <a class="lrow rv" style="--d:.18s" href="https://docs.google.com/document/d/1X2lWmpbzOQ4F-aYxiAwRMlApO8FKR05R/edit" target="_blank" rel="noopener">
+        <span class="ln">04</span><span class="lt">טופס דיווח חודשי — סכנת נשירה</span><span class="ls">מועבר במייל אחת לחודש</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+      <a class="lrow rv" style="--d:.24s" href="https://yotzer.education/" target="_blank" rel="noopener">
+        <span class="ln">05</span><span class="lt">אתר החינוך היוצר</span><span class="ls">התפיסה, ספר ההפעלה והכלים</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+      <a class="lrow rv" style="--d:.3s" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">
+        <span class="ln">06</span><span class="lt">אפליקציית העוגן</span><span class="ls">תשובה לכל שאלת ניהול, עם מקור</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <img src="logo.png" alt="">
+    <p>המרכז הפדגוגי · משרד העבודה — מינהל הכשרה מקצועית</p>
+    <span class="domain num-face">PEDAGOGIAMH.CO.IL</span>
+  </div>
+</footer>
+
+<script>
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  var bar = document.getElementById('topbar');
+  addEventListener('scroll', function(){ bar.classList.toggle('scrolled', scrollY > 8); }, {passive:true});
+</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>

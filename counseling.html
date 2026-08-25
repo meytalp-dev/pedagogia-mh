@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מרחב ייעוצי · המרכז הפדגוגי</title>
+<meta name="description" content="הבית של היועצות והצוותים הטיפוליים — ליווי רגשי, מניעת נשירה וכישורי חיים לחניכי מינהל הכשרה מקצועית.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">המרחב הפדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a class="dis"><span class="n">02</span> נתיבי חניכות וקריירה <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="counseling.html"><span class="n">04</span> מרחב ייעוצי</a>
+    <a href="procedures.html"><span class="n">05</span> נהלים</a>
+    <a class="dis"><span class="n">06</span> למידה בחירום <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">07</span> שילוב AI בחינוך <span class="tag soon">בקרוב</span></a>
+    <a class="dis"><span class="n">08</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="supervision.html"><span class="n">09</span> מרחב פיקוח</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שואלים את העוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <a class="lnk" href="index.html">בית</a>
+  <a class="lnk active" href="space.html">המרחב הפדגוגי</a>
+  <div class="tools">
+    <a class="ogen-btn">שואלים את העוגן</a>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead split">
+  <div>
+    <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ מרחב ייעוצי</div>
+    <h1 class="rv d1">מרחב ייעוצי</h1>
+    <p class="rv d2 lead">הבית של היועצות והצוותים הטיפוליים — ליווי רגשי, מניעת נשירה וכישורי חיים לחניכי המינהל.</p>
+  </div>
+  <div class="rv d2 headshot">
+    <img src="img/yotzer/makerspace.jpg" alt="מורה יושבת עם קבוצת תלמידים סביב שולחן עבודה">
+    <span class="chip">מהשטח · החינוך היוצר</span>
+  </div>
+</div>
+
+<div class="rv d2 pills" style="padding:16px var(--px) 4px">
+  <span class="pill on">הכול</span>
+  <span class="pill">ליווי פרטני</span>
+  <span class="pill">עבודה קבוצתית</span>
+  <span class="pill">הורים ומשפחה</span>
+</div>
+
+<div class="grid c3" style="padding:24px var(--px) 10px">
+  <a class="card rv" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:#F0F2FF;color:#5B5FCF"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a7 7 0 0 1 14 0c0 5.4-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">ערכת הייעוץ</h3>
+    <p style="font-size:.86rem;color:var(--text2)">הערכה המלאה לצוות הייעוצי — שגרות ליווי, כלים ותרחישים.</p>
+  </a>
+  <a class="card rv" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M4 19c0-3 2.2-5 5-5s5 2 5 5M13.5 19c.2-2.4 1.6-4 3.5-4 1.7 0 3 1.3 3 4"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">כישורי חיים</h3>
+    <p style="font-size:.86rem;color:var(--text2)">מערכים לפי שכבה — זהות, תקשורת, גבולות, מוגנות ורשת.</p>
+  </a>
+  <a class="card rv" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24"><path d="M12 4v10M12 14l-4-4M12 14l4-4"/><path d="M5 20h14"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">מניעת נשירה</h3>
+    <p style="font-size:.86rem;color:var(--text2)">התוכנית למניעת נשירה בחברה הערבית — איתור, מעקב והתערבות.</p>
+  </a>
+  <a class="card rv d1" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><path d="M8 15s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/><circle cx="12" cy="12" r="9"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">SEL — למידה רגשית-חברתית</h3>
+    <p style="font-size:.86rem;color:var(--text2)">אוצר הכלים לפי חמשת אשכולות CASEL — מוכן להפעלה.</p>
+  </a>
+  <a class="card rv d1" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:#FFF7E4;color:#8A5A00"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5-4.9-2.6-4.9 2.6.9-5.5-4-3.9L9.5 8z"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">אס"א וחונכות</h3>
+    <p style="font-size:.86rem;color:var(--text2)">תוכניות ההעשרה וטיפוח הלומד — סל התוכניות המאוחד.</p>
+  </a>
+  <a class="card rv d1" href="drive-yeutz.html" style="padding:22px">
+    <div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg></div>
+    <h3 style="font-size:1.08rem;margin:12px 0 4px">שאלונים ומדידה</h3>
+    <p style="font-size:.86rem;color:var(--text2)">שאלוני אקלים ורווחה נפשית + כלי עיבוד מוכנים.</p>
+  </a>
+</div>
+
+<div class="notice rv d2" style="margin:20px var(--px) 48px;border-inline-start:4px solid #5B5FCF">
+  <b style="color:#5B5FCF">קו פתוח:</b> המפקחות על הצוותים הטיפוליים זמינות דרך העוגן או ב<a href="supervision.html" style="color:#0B7FA6;font-weight:700">מרחב הפיקוח</a> · במקרי חירום — הנחיות בעמוד למידה בחירום
+</div>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>מרחב ייעוצי · תחום 04</span></div></div>
+
+<script src="site.js"></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>
