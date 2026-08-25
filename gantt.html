@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לוח גאנט צוותים · תשפ"ז — המרכז הפדגוגי</title>
+<meta name="description" content="לוח גאנט שנתי לצוותי מינהל הכשרה מקצועית לשנה״ל תשפ״ז — השתלמויות רכזים חברתיים, מת״לים והתחום הייעוצי, לצד אירועים לאומיים, חגים וחופשות.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="לוח גאנט צוותים · תשפ&quot;ז — המרכז הפדגוגי">
+<meta property="og:description" content="כל מועדי ההשתלמויות, ימי העיון והאירועים הלאומיים של שנת תשפ&quot;ז — במבט אחד.">
+<meta property="og:url" content="https://pedagogiamh.co.il/gantt.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== לוח גאנט — צבעי פסטל לפי מסלול ===== */
+:root{
+  --g-rakaz-bg:#DCF3E3; --g-rakaz-bd:#A9DDBB; --g-rakaz-tx:#17603A;
+  --g-matalA-bg:#DBEBFF; --g-matalA-bd:#A9CDF3; --g-matalA-tx:#164E85;
+  --g-matalB-bg:#E8E3F9; --g-matalB-bd:#C7BCEC; --g-matalB-tx:#4E3D8F;
+  --g-yeutzi-bg:#FBE2EC; --g-yeutzi-bd:#F0B7CD; --g-yeutzi-tx:#97365C;
+  --g-national-bg:#FCEFD2; --g-national-bd:#EDD49A; --g-national-tx:#7A5A10;
+  --g-holiday-bg:#EAF0F5; --g-holiday-bd:#CBD9E4; --g-holiday-tx:#46606F;
+}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
+.legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
+.legend button .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.legend button.off{background:#fff!important;color:var(--muted)!important;border-color:var(--border)!important}
+.legend button.off .dot{background:var(--border-strong)!important}
+.gantt-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:var(--sh-sm)}
+.gantt{display:grid;grid-template-columns:172px repeat(10,minmax(148px,1fr));min-width:1300px}
+.gantt .mh{position:sticky;top:0;background:var(--soft-bg);border-bottom:1.5px solid var(--border-strong);padding:10px 8px;text-align:center;font-weight:800;font-size:.86rem;color:var(--navy);border-inline-start:1px solid var(--border)}
+.gantt .mh.now{background:var(--cyan-100);color:#0B7FA6}
+.gantt .th{background:var(--soft-bg);border-bottom:1.5px solid var(--border-strong);padding:10px 12px;font-weight:800;font-size:.86rem;color:var(--navy);position:sticky;right:0;z-index:5}
+.gantt .rh{padding:12px;font-weight:800;font-size:.85rem;line-height:1.35;border-top:1px solid var(--border);position:sticky;right:0;background:#fff;z-index:5;display:flex;flex-direction:column;gap:4px;justify-content:flex-start}
+.gantt .rh small{font-weight:600;font-size:.72rem;color:var(--text2)}
+.gantt .cell{border-top:1px solid var(--border);border-inline-start:1px solid var(--border);padding:7px 6px;display:flex;flex-direction:column;gap:5px;min-height:54px}
+.chip{border-radius:9px;border:1px solid;padding:4px 8px 5px;font-size:.76rem;line-height:1.3;font-weight:600;cursor:default}
+.chip b{display:block;font-size:.72rem;font-weight:800;opacity:.85}
+.chip.hidden,.gantt .cell .chip.hidden{display:none}
+.t-rakaz{background:var(--g-rakaz-bg);border-color:var(--g-rakaz-bd);color:var(--g-rakaz-tx)}
+.t-matalA{background:var(--g-matalA-bg);border-color:var(--g-matalA-bd);color:var(--g-matalA-tx)}
+.t-matalB{background:var(--g-matalB-bg);border-color:var(--g-matalB-bd);color:var(--g-matalB-tx)}
+.t-yeutzi{background:var(--g-yeutzi-bg);border-color:var(--g-yeutzi-bd);color:var(--g-yeutzi-tx)}
+.t-national{background:var(--g-national-bg);border-color:var(--g-national-bd);color:var(--g-national-tx)}
+.t-holiday{background:var(--g-holiday-bg);border-color:var(--g-holiday-bd);color:var(--g-holiday-tx)}
+.rh .rdot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
+/* אג'נדה חודשית */
+.agenda{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:10px}
+.agenda .mon{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--sh-sm)}
+.agenda .mon h3{font-size:1.02rem;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.agenda .ev{display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:.85rem}
+.agenda .ev .dot{flex:none;width:10px;height:10px;border-radius:50%;border:1px solid;margin-top:5px}
+.agenda .ev .dt{flex:none;font-weight:800;color:var(--navy);min-width:52px;font-size:.8rem;padding-top:1px}
+.agenda .ev .tt b{font-weight:700;color:var(--text)}
+.agenda .ev .tt small{display:block;color:var(--text2);font-size:.78rem}
+.agenda .ev.hidden{display:none}
+.tbd-strip{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.tbd-strip .chip{cursor:default;font-size:.82rem;padding:7px 13px;border-style:dashed}
+@media(max-width:700px){.gantt{min-width:1150px}.gantt .th,.gantt .rh{position:static}}
+</style>
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <a class="dis">מסמכים חשובים <span class="tag soon">בקרוב</span></a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>המרכז הפדגוגי</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="career.html">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead">
+  <div class="crumb rv"><a href="index.html">בית</a> ‹ <a href="hishtalmuyot.html">השתלמויות</a> ‹ לוח גאנט צוותים</div>
+  <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <h1>לוח גאנט · צוותי תשפ"ז</h1>
+    <span class="tag" style="background:var(--navy);color:#fff;font-size:.78rem">ספטמבר 2026 – יוני 2027</span>
+  </div>
+  <p class="rv d2 lead" style="max-width:700px">כל מועדי ההשתלמויות וימי העיון של צוותי המינהל — רכזים חברתיים, מת"לים והתחום הייעוצי — לצד ימי הזיכרון, האירועים הלאומיים, החגים והחופשות. לחיצה על מסלול במקרא מסננת את הלוח.</p>
+</div>
+
+<div style="padding:6px var(--px) 44px">
+
+  <div class="legend rv" id="legend"></div>
+
+  <div class="gantt-wrap rv d1">
+    <div class="gantt" id="gantt"></div>
+  </div>
+
+  <div class="callout amber rv" style="margin:18px 0 0;background:#FFF8E8;border:1px solid #EDD49A;border-radius:14px;padding:14px 18px;font-size:.9rem">
+    <b style="color:#7A5A10">📌 יום רביעי — יום ההשתלמויות של היועצים.</b>
+    כנסים, ימי עיון והשתלמויות התחום הייעוצי מתקיימים בימי רביעי — מנהלים מתבקשים לא לשבץ יועצים במערכת ולא לקבוע ישיבות קבועות ביום זה.
+  </div>
+
+  <h2 class="rv" style="font-size:1.25rem;margin:30px 0 4px">ממתינים לקביעת מועד</h2>
+  <div class="tbd-strip rv">
+    <span class="chip t-yeutzi">יום עיון פתיחת שנה · ישיבות חרדיות — טרם נקבע</span>
+    <span class="chip t-yeutzi">יום עיון ארצי לסיכום שנה — יפורסם בהמשך</span>
+    <span class="chip t-yeutzi">3 מפגשים פיזיים להדרכה קבוצתית בהנחיית המפקחות — יפורסם</span>
+  </div>
+
+  <h2 class="rv" style="font-size:1.25rem;margin:30px 0 12px">מהלך השנה — חודש אחר חודש</h2>
+  <div class="agenda rv d1" id="agenda"></div>
+
+  <div class="grid c3" style="padding:30px 0 0">
+    <a class="card rv" href="hishtalmuyot.html" style="padding:20px">
+      <h3 style="font-size:1.02rem;margin-bottom:4px">🎓 עמוד ההשתלמויות המלא</h3>
+      <p style="font-size:.85rem;color:var(--text2)">סילבוסים מלאים, שעות, מנחים וקישורי הרשמה — לכל אחד מהמסלולים.</p>
+    </a>
+    <a class="card rv d1" href="tashpaz.html" style="padding:20px">
+      <h3 style="font-size:1.02rem;margin-bottom:4px">🗓 היערכות תשפ"ז</h3>
+      <p style="font-size:.85rem;color:var(--text2)">מסמך ההיערכות המלא, מסע בשנה ומד מוכנות לפתיחת השנה.</p>
+    </a>
+    <a class="card rv d2" href="drive-yeutz.html" style="padding:20px">
+      <h3 style="font-size:1.02rem;margin-bottom:4px">📂 דרייב ייעוצי</h3>
+      <p style="font-size:.85rem;color:var(--text2)">חוברת התחום הייעוצי-טיפולי תשפ"ז וכל חומרי המרחב.</p>
+    </a>
+  </div>
+
+</div>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>לוח גאנט צוותים · תשפ"ז</span></div></div>
+
+<script src="site.js"></script>
+<script>
+/* ===== נתוני הלוח =====
+   להוספת אירוע: מוסיפים שורה למערך EVENTS —
+   {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
+   מסלולים: rakaz / matalA / matalB / yeutzi / national / holiday            */
+const TRACKS = {
+  rakaz:   {name:'רכזים חברתיים', sub:'חינוך חברתי יוצר'},
+  matalA:  {name:'מת"לים · ימי א\'', sub:'עדי ספיבק · 14:00–15:30'},
+  matalB:  {name:'מת"לים · ימי ב\'', sub:'עדי ספיבק · 14:00–15:30'},
+  yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי'},
+  national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון'},
+  holiday: {name:'חגים וחופשות', sub:''}
+};
+const EVENTS = [
+ /* --- רכזים חברתיים --- */
+ {t:'rakaz', d:'2026-10-14', n:'ליווי בוגרים', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2026-10-21', n:'כנס פיזי פתיחת שנה', s:'רכזים ומפקחים פדגוגיים · 9:00–15:00'},
+ {t:'rakaz', d:'2026-11-04', n:'ליווי בוגרים', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2026-11-18', n:'מפגש תמונת עתיד', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2026-12-23', n:'תמונת עתיד לפי אוכלוסייה', s:'כללי, חרדי וערבי · זום · 8:30–10:30'},
+ {t:'rakaz', d:'2027-01-13', n:'מעורבות תלמידים', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2027-01-20', n:'סיור חברה ערבית', s:'תמונת עתיד והכוון · 9:30–15:00'},
+ {t:'rakaz', d:'2027-02-10', n:'סיור חברה חרדית', s:'תמונת עתיד והכוון · 9:30–15:00'},
+ {t:'rakaz', d:'2027-02-17', n:'סיור חברה כללית', s:'תמונת עתיד והכוון · 9:30–15:00'},
+ {t:'rakaz', d:'2027-03-03', n:'נושא לפי בחירה', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2027-03-17', n:'נושא לפי בחירה', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2027-05-05', n:'נושא לפי בחירה', s:'זום · 8:30–10:30'},
+ {t:'rakaz', d:'2027-06-02', n:'זום משותף סיום שנה', s:'8:30–11:30'},
+ /* --- מת"לים ימי א' --- */
+ {t:'matalA', d:'2026-11-15', n:'ממיפוי לתכנית עבודה', s:'שימוש בכלי AI (מרי) · סינכרוני'},
+ {t:'matalA', d:'2026-11-29', n:'השאלה כמעניקה · א\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalA', d:'2026-12-13', n:'השאלה כמעניקה · ב\'', s:'סדנה לניתוח שאלות · סינכרוני'},
+ {t:'matalA', d:'2026-12-20', n:'הדמיון המנטאלי · א\'', s:'ניתוח היצגים חזותיים · סינכרוני'},
+ {t:'matalA', d:'2027-01-10', n:'הדמיון המנטאלי · ב\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalA', d:'2027-01-27', n:'נוירופדגוגיה · פא"פ', s:'מפגש פנים אל פנים · 9:00–14:00'},
+ {t:'matalA', d:'2027-02-14', n:'נוירופדגוגיה ומוטיבציה', s:'סינכרוני'},
+ {t:'matalA', d:'2027-02-28', n:'להבין את הבנת הנקרא · א\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalA', d:'2027-03-14', n:'להבין את הבנת הנקרא · ב\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalA', d:'2027-04-04', n:'כתיבה — מלכתחילה ובדיעבד', s:'הרחבת תשובה · סינכרוני'},
+ {t:'matalA', d:'2027-04-11', n:'קשב ותפקודים ניהוליים', s:'מיפוי תלמיד · מטלה · סינכרוני'},
+ {t:'matalA', d:'2027-05-30', n:'קשב · "תפירת החליפה"', s:'התאמת מענים · סינכרוני'},
+ /* --- מת"לים ימי ב' --- */
+ {t:'matalB', d:'2026-11-16', n:'ממיפוי לתכנית עבודה', s:'שימוש בכלי AI (מרי) · סינכרוני'},
+ {t:'matalB', d:'2026-11-30', n:'השאלה כמעניקה · א\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalB', d:'2026-12-14', n:'השאלה כמעניקה · ב\'', s:'סדנה לניתוח שאלות · סינכרוני'},
+ {t:'matalB', d:'2026-12-21', n:'הדמיון המנטאלי · א\'', s:'ניתוח היצגים חזותיים · סינכרוני'},
+ {t:'matalB', d:'2027-01-11', n:'הדמיון המנטאלי · ב\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalB', d:'2027-01-27', n:'נוירופדגוגיה · פא"פ', s:'מפגש פנים אל פנים · 9:00–14:00'},
+ {t:'matalB', d:'2027-02-15', n:'נוירופדגוגיה ומוטיבציה', s:'סינכרוני'},
+ {t:'matalB', d:'2027-03-01', n:'להבין את הבנת הנקרא · א\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalB', d:'2027-03-15', n:'להבין את הבנת הנקרא · ב\'', s:'תכנית משיקים · סינכרוני'},
+ {t:'matalB', d:'2027-04-05', n:'כתיבה — מלכתחילה ובדיעבד', s:'הרחבת תשובה · סינכרוני'},
+ {t:'matalB', d:'2027-04-12', n:'קשב ותפקודים ניהוליים', s:'מיפוי תלמיד · מטלה · סינכרוני'},
+ {t:'matalB', d:'2027-05-31', n:'קשב · "תפירת החליפה"', s:'התאמת מענים · סינכרוני'},
+ /* --- התחום הייעוצי-טיפולי --- */
+ {t:'yeutzi', d:'2026-10-14', n:'יום עיון לפתיחת שנה', s:'מחוזות דרום, ירושלים ומרכז'},
+ {t:'yeutzi', d:'2026-10-21', n:'יום עיון לפתיחת שנה', s:'מחוז חיפה והצפון'},
+ {t:'yeutzi', d:'2026-11-04', n:'תחילת השתלמויות ימי רביעי', s:'מועד מדויק לכל השתלמות — בסילבוס'},
+ {t:'yeutzi', d:'2027-01-13', n:'יום עיון פיזי של ההדרכות', s:''},
+ /* --- אירועים לאומיים --- */
+ {t:'national', d:'2026-09-01', n:'פתיחת שנה"ל תשפ"ז', s:''},
+ {t:'national', d:'2026-10-22', n:'יום הזיכרון ליצחק רבין', s:'י"ב בחשוון חל בשישי 23.10 — הטקסים בבתיה"ס ביום חמישי'},
+ {t:'national', d:'2026-11-09', n:'חג הסיגד', s:'כ"ט בחשוון · מורשת יהדות אתיופיה'},
+ {t:'national', d:'2026-12-20', n:'עשרה בטבת', s:'יום הקדיש הכללי'},
+ {t:'national', d:'2027-01-27', n:'היום הבינלאומי לזכר השואה', s:''},
+ {t:'national', d:'2027-05-04', n:'יום הזיכרון לשואה ולגבורה', s:'כ"ז בניסן · טקסים בבתי הספר'},
+ {t:'national', d:'2027-05-11', n:'יום הזיכרון לחללי מערכות ישראל', s:'ד\' באייר · טקסים בבתי הספר'},
+ {t:'national', d:'2027-05-12', n:'יום העצמאות', s:'ה\' באייר'},
+ {t:'national', d:'2027-06-04', n:'יום ירושלים', s:'כ"ח באייר'},
+ {t:'national', d:'2027-06-20', n:'סיום שנה"ל תשפ"ז', s:'על-יסודי'},
+ /* --- חגים וחופשות --- */
+ {t:'holiday', d:'2026-09-11', d2:'2026-09-13', n:'ראש השנה תשפ"ז', s:''},
+ {t:'holiday', d:'2026-09-20', d2:'2026-09-21', n:'יום הכיפורים', s:''},
+ {t:'holiday', d:'2026-09-25', d2:'2026-10-03', n:'סוכות ושמחת תורה', s:'חופשת החג'},
+ {t:'holiday', d:'2026-12-04', d2:'2026-12-12', n:'חנוכה', s:'הדלקה ראשונה בערב 4.12'},
+ {t:'holiday', d:'2026-12-25', n:'חג המולד', s:''},
+ {t:'holiday', d:'2027-01-23', n:'ט"ו בשבט', s:''},
+ {t:'holiday', d:'2027-02-08', n:'תחילת רמדאן', s:'מועד משוער'},
+ {t:'holiday', d:'2027-03-10', d2:'2027-03-12', n:'עיד אל-פיטר', s:'מועד משוער'},
+ {t:'holiday', d:'2027-03-23', d2:'2027-03-24', n:'פורים ושושן פורים', s:''},
+ {t:'holiday', d:'2027-04-21', d2:'2027-04-28', n:'פסח', s:'ליל הסדר 21.4 · שביעי של פסח 28.4'},
+ {t:'holiday', d:'2027-05-16', d2:'2027-05-18', n:'עיד אל-אדחא', s:'מועד משוער'},
+ {t:'holiday', d:'2027-05-25', n:'ל"ג בעומר', s:''},
+ {t:'holiday', d:'2027-06-10', d2:'2027-06-11', n:'שבועות', s:'ערב חג 10.6'}
+];
+
+/* ===== רינדור ===== */
+const MONTHS = [];
+for (let y=2026, m=9;; ){
+  MONTHS.push({y, m});
+  m++; if (m>12){m=1;y++}
+  if (y===2027 && m===7) break;
+}
+const HEB_MON = {1:'ינואר',2:'פברואר',3:'מרץ',4:'אפריל',5:'מאי',6:'יוני',7:'יולי',8:'אוגוסט',9:'ספטמבר',10:'אוקטובר',11:'נובמבר',12:'דצמבר'};
+const fmtDay = e => {
+  const [y,m,d] = e.d.split('-').map(Number);
+  if (e.d2){ const [,m2,d2] = e.d2.split('-').map(Number); return d+'.'+m+'–'+d2+'.'+m2; }
+  return d+'.'+m;
+};
+const gEl = document.getElementById('gantt');
+let html = '<div class="th">מסלול \\ חודש</div>';
+const now = new Date();
+MONTHS.forEach(mo=>{
+  const isNow = now.getFullYear()===mo.y && now.getMonth()+1===mo.m;
+  html += `<div class="mh${isNow?' now':''}">${HEB_MON[mo.m]} ${String(mo.y).slice(2)}׳</div>`;
+});
+Object.keys(TRACKS).forEach(tk=>{
+  const t = TRACKS[tk];
+  html += `<div class="rh" data-track="${tk}"><span><span class="rdot t-${tk}" style="border:1px solid"></span>${t.name}</span>${t.sub?`<small>${t.sub}</small>`:''}</div>`;
+  MONTHS.forEach(mo=>{
+    const evs = EVENTS.filter(e=>{
+      const [y,m] = e.d.split('-').map(Number);
+      return e.t===tk && y===mo.y && m===mo.m;
+    });
+    html += `<div class="cell">` + evs.map(e=>
+      `<div class="chip t-${e.t}" data-track="${e.t}" title="${(e.n+' — '+(e.s||'')).replace(/"/g,'&quot;')}"><b>${fmtDay(e)}</b>${e.n}</div>`
+    ).join('') + `</div>`;
+  });
+});
+gEl.innerHTML = html;
+
+/* אג'נדה */
+const aEl = document.getElementById('agenda');
+let ahtml = '';
+MONTHS.forEach(mo=>{
+  const evs = EVENTS.filter(e=>{
+    const [y,m] = e.d.split('-').map(Number);
+    return y===mo.y && m===mo.m;
+  }).sort((a,b)=>a.d.localeCompare(b.d));
+  if (!evs.length) return;
+  ahtml += `<div class="mon"><h3>${HEB_MON[mo.m]} ${mo.y}</h3>` + evs.map(e=>
+    `<div class="ev" data-track="${e.t}"><span class="dot t-${e.t}"></span><span class="dt">${fmtDay(e)}</span><span class="tt"><b>${e.n}</b>${e.s?`<small>${e.s}</small>`:''}</span></div>`
+  ).join('') + `</div>`;
+});
+aEl.innerHTML = ahtml;
+
+/* מקרא + סינון */
+const legendEl = document.getElementById('legend');
+const state = {};
+legendEl.innerHTML = Object.keys(TRACKS).map(tk=>{
+  state[tk]=true;
+  return `<button class="t-${tk}" data-track="${tk}"><span class="dot" style="background:currentColor"></span>${TRACKS[tk].name}</button>`;
+}).join('');
+legendEl.addEventListener('click', ev=>{
+  const btn = ev.target.closest('button'); if(!btn) return;
+  const tk = btn.dataset.track;
+  state[tk] = !state[tk];
+  btn.classList.toggle('off', !state[tk]);
+  document.querySelectorAll(`.chip[data-track="${tk}"], .ev[data-track="${tk}"]`).forEach(el=>el.classList.toggle('hidden', !state[tk]));
+});
+</script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+</body>
+</html>
