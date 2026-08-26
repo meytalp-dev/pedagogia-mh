@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מצבת תלמידים · מנהלים תשפ"ז · משרד העבודה</title>
+<meta name="description" content="דיווח מצבת תלמידים נוכחית לבתי הספר — משרד העבודה, מינהל הכשרה מקצועית">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128101;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:64px;width:auto;display:block}
+@media (max-width:480px){.logo{height:52px}}
+
+.hero{text-align:center;padding:22px 0 8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(30px,6.4vw,44px);line-height:1.16;margin:16px 0 12px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:18.5px;color:#3d4a70;max-width:46ch;margin:0 auto}
+.hero .lede b{color:var(--navy)}
+
+.livebar{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:18px;
+  font-size:15px;color:var(--muted);opacity:0;transition:opacity .5s var(--ease)}
+.livebar.on{opacity:1}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 0 rgba(18,179,159,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.livebar b{color:var(--navy);font-family:'Rubik',sans-serif}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:32px;margin-top:24px}
+@media (max-width:560px){.card{padding:22px 18px}}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+label.f{display:block;margin-bottom:7px;font-weight:700;font-size:16.5px;color:#25325a}
+label.f .req{color:var(--blue)}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px;line-height:1.45}
+input[type=text],input[type=number]{width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:14px;
+  background:#fbfcff;font-family:inherit;font-size:17px;color:var(--ink);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+input.bad{border-color:var(--danger);background:#fff7f8}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.err{display:none;color:var(--danger);font-size:14.5px;font-weight:600;margin-top:6px}
+.err.on{display:block}
+
+/* students field — the whole point of this form */
+.students{grid-column:1/-1;background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  border:2px solid #cfe3f7;border-radius:18px;padding:22px 22px 20px;margin-top:4px}
+.students .row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.students .sico{flex:0 0 auto;width:52px;height:52px;border-radius:15px;background:#fff;
+  display:grid;place-items:center;box-shadow:var(--shadow-s);color:var(--navy)}
+.students .sico svg{width:27px;height:27px}
+.students .stxt{flex:1 1 200px}
+.students .stxt .lb{display:block;font-weight:700;font-size:17.5px;color:var(--navy)}
+.students .stxt small{display:block;color:#4d6180;font-size:14.5px;font-weight:400;margin-top:2px}
+.students .sfield{flex:0 0 auto;display:flex;align-items:center;gap:9px}
+.students input{width:132px;text-align:center;font-family:'Rubik',sans-serif;font-weight:600;font-size:21px;
+  border-color:#bcd8f2;background:#fff}
+.students .unit{font-size:15.5px;color:#4d6180;font-weight:600}
+@media (max-width:560px){.students .sfield{width:100%}.students input{width:100%}}
+
+.actions{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:12px}
+button.go{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;
+  color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:16px;
+  padding:16px 46px;box-shadow:0 8px 24px rgba(24,92,255,.28);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease),filter .16s var(--ease)}
+button.go:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(24,92,255,.34)}
+button.go:active{transform:translateY(0)}
+button.go[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
+.smallnote{font-size:14.5px;color:var(--muted);text-align:center;max-width:44ch}
+
+/* result states */
+.result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
+.result.on{display:block;animation:pop .45s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.result h3{font-family:'Rubik',sans-serif;font-size:20px;margin:0 0 6px}
+.result p{margin:0;font-size:16px}
+.result .hd{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.result svg{width:26px;height:26px;flex:0 0 auto}
+.ok{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60}
+.ok h3{color:#0a5c51}
+.bad2{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.bad2 h3{color:#8c2b34}
+.retry{appearance:none;border:1.5px solid #d18f97;background:#fff;color:#8c2b34;border-radius:11px;
+  padding:9px 20px;font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer;margin-top:12px}
+.retry:hover{background:#fff0f1}
+
+.verify{margin-top:12px;padding-top:12px;border-top:1px dashed #9fe0d3;font-size:15px;display:flex;
+  align-items:center;gap:8px;color:#0c6d60}
+.verify svg{width:19px;height:19px}
+.verify b{font-family:'Rubik',sans-serif}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+.setup{display:none;margin-top:18px;background:#fffaf0;border:1.5px dashed #e3bd7e;border-radius:14px;
+  padding:16px 18px;font-size:15px;color:#7a5312}
+.setup.on{display:block}
+.setup code{background:#fff;border:1px solid #ecd9b4;border-radius:6px;padding:1px 6px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 4 9 4.5-9 4.5-9-4.5z"/><path d="M6.5 11v5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-5"/>
+      </svg>
+      מנהיגות פדגוגית יוצרת · תשפ״ז
+    </span>
+    <h1>מצבת תלמידים</h1>
+    <p class="lede">שאלון קצר — <b>ארבעה שדות, פחות מדקה</b>. אנחנו אוספים את מספר התלמידים
+      הרשומים בבית הספר שלכם <b>נכון להיום</b>, כדי שנעבוד על נתונים מדויקים לאורך השנה.</p>
+
+    <div class="livebar" id="livebar">
+      <span class="dot"></span>
+      <span>עד כה דיווחו <b id="liveCount">—</b> בתי ספר</span>
+    </div>
+  </div>
+
+  <div class="setup" id="setup">
+    <b>הטופס עדיין לא חובר לשרת.</b> אחרי פריסת ה-Apps Script, אפשר לבדוק מיד
+    בהוספת הכתובת ל-URL: <code>?api=https://script.google.com/.../exec</code>
+  </div>
+
+  <form class="card" id="form" novalidate>
+    <div class="grid">
+
+      <div>
+        <label class="f" for="first">שם פרטי <span class="req">*</span></label>
+        <input type="text" id="first" autocomplete="given-name" placeholder="לדוגמה: רויטל">
+        <div class="err" id="e_first">נא למלא שם פרטי</div>
+      </div>
+
+      <div>
+        <label class="f" for="last">שם משפחה <span class="req">*</span></label>
+        <input type="text" id="last" autocomplete="family-name" placeholder="לדוגמה: אמיר">
+        <div class="err" id="e_last">נא למלא שם משפחה</div>
+      </div>
+
+      <div class="full">
+        <label class="f" for="school">שם בית הספר <span class="req">*</span>
+          <span class="hint">השם המלא כפי שהוא מופיע במערכת</span>
+        </label>
+        <input type="text" id="school" autocomplete="organization" placeholder="לדוגמה: תיכון יוצר עתיד פלמחים">
+        <div class="err" id="e_school">נא למלא את שם בית הספר</div>
+      </div>
+
+      <div class="students">
+        <div class="row">
+          <div class="sico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="7.5" r="3"/>
+              <path d="M15 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 3 17.5V19"/>
+              <path d="M21 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3 3 0 0 1 0 5.6"/>
+            </svg>
+          </div>
+          <div class="stxt">
+            <label class="lb" for="students">כמות התלמידים בבית הספר כרגע <span class="req">*</span></label>
+            <small>מספר התלמידים הרשומים היום. הערכה קרובה עדיפה על שדה ריק.</small>
+          </div>
+          <div class="sfield">
+            <input type="number" id="students" min="1" max="20000" step="1" inputmode="numeric" placeholder="0">
+            <span class="unit">תלמידים</span>
+          </div>
+        </div>
+        <div class="err" id="e_students">נא למלא מספר תלמידים תקין</div>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button class="go" type="submit" id="submitBtn">שליחה</button>
+      <p class="smallnote">הנתון נשמר ומאומת מול השרת — תקבלו אישור רק אחרי שהשורה נקלטה בפועל.</p>
+    </div>
+
+    <div class="result ok" id="okBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="m8.2 12.3 2.5 2.5 5.1-5.4"/>
+        </svg>
+        <h3 id="okTitle">הנתונים נשמרו</h3>
+      </div>
+      <p id="okText"></p>
+      <div class="verify" id="verifyRow" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        <span>אומת מול הגיליון · <b id="verifyCount">—</b> בתי ספר דיווחו עד כה</span>
+      </div>
+    </div>
+
+    <div class="result bad2" id="badBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4.5 21 19H3z"/><path d="M12 10v4M12 16.6v.4"/>
+        </svg>
+        <h3>השליחה לא הושלמה</h3>
+      </div>
+      <p id="badText">לא הצלחנו לאמת שהנתונים נקלטו. הנתונים שמורים בדפדפן — אפשר לנסות שוב.</p>
+      <button class="retry" type="button" id="retryBtn">שליחה חוזרת</button>
+    </div>
+  </form>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית<br>
+    <a href="index.html">חזרה לאתר</a>
+  </footer>
+
+</div>
+
+<script>
+/* ==================================================================
+   כתובת ה-Apps Script.  אחרי הפריסה — להדביק כאן את כתובת ה-/exec.
+   עד אז אפשר לבדוק בלי לשנות קובץ:  talmidim.html?api=<כתובת>
+   ================================================================== */
+var API_URL = "";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+var PENDING_KEY = "talmidim-pending";
+
+/* ---------- מילוי מראש ממה שכבר הוקלד בדפים אחרים ---------- */
+(function(){
+  try{
+    var n = localStorage.getItem("melave-name") || "";
+    if (n && !$("first").value){
+      var parts = n.trim().split(/\s+/);
+      $("first").value = parts.shift() || "";
+      $("last").value  = parts.join(" ");
+    }
+    var s = localStorage.getItem("melave-school");
+    if (s) $("school").value = s;
+    var st = localStorage.getItem("melave-students");
+    if (st) $("students").value = st;
+  }catch(e){}
+})();
+
+/* ---------- מונה חי ---------- */
+function loadCount(target){
+  if (!API_URL) return Promise.resolve(null);
+  return fetch(API_URL + "?mode=count", {method:"GET"})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) return null;
+      if (target) { target.textContent = j.count; }
+      return j.count;
+    })
+    .catch(function(){ return null; });
+}
+
+(function(){
+  if (!API_URL){ $("setup").classList.add("on"); return; }
+  loadCount($("liveCount")).then(function(c){
+    if (c !== null) $("livebar").classList.add("on");
+  });
+})();
+
+/* ---------- ולידציה ---------- */
+function fail(id, on){
+  $(id).classList.toggle("bad", on);
+  $("e_" + id).classList.toggle("on", on);
+  return !on;
+}
+
+function collect(){
+  return {
+    first:    $("first").value.trim(),
+    last:     $("last").value.trim(),
+    school:   $("school").value.trim(),
+    students: $("students").value.trim()
+  };
+}
+
+function validate(d){
+  var n = parseInt(d.students, 10);
+  var okAll = true;
+  okAll = fail("first",  !d.first)  && okAll;
+  okAll = fail("last",   !d.last)   && okAll;
+  okAll = fail("school", !d.school) && okAll;
+  okAll = fail("students", !(n > 0 && n <= 20000)) && okAll;
+  return okAll;
+}
+
+/* ---------- שליחה + אימות ---------- */
+function send(d){
+  if (typeof google !== "undefined" && google.script && google.script.run){
+    return new Promise(function(res){
+      google.script.run
+        .withSuccessHandler(function(r){ res(r || {ok:false}); })
+        .withFailureHandler(function(){ res({ok:false}); })
+        .saveEntry(d);
+    });
+  }
+  if (!API_URL) return Promise.resolve({ok:false, error:"no_api"});
+  return fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify(d)
+  }).then(function(r){ return r.json(); })
+    .catch(function(){ return {ok:false, error:"network"}; });
+}
+
+function show(which){
+  $("okBox").classList.toggle("on",  which === "ok");
+  $("badBox").classList.toggle("on", which === "bad");
+}
+
+function submit(){
+  var d = collect();
+  if (!validate(d)) return;
+
+  try{
+    localStorage.setItem("melave-name", (d.first + " " + d.last).trim());
+    localStorage.setItem("melave-school", d.school);
+    localStorage.setItem("melave-students", d.students);
+    localStorage.setItem(PENDING_KEY, JSON.stringify(d));
+  }catch(e){}
+
+  var btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "שולח…";
+  show("");
+
+  send(d).then(function(r){
+    if (r && r.ok){
+      try{ localStorage.removeItem(PENDING_KEY); }catch(e){}
+      $("okTitle").textContent = r.updated ? "הנתונים עודכנו" : "הנתונים נשמרו";
+      $("okText").textContent  =
+        d.school + " — " + parseInt(d.students, 10).toLocaleString("he-IL") + " תלמידים. תודה!";
+      show("ok");
+      btn.textContent = "שליחה";
+      btn.disabled = false;
+
+      /* אימות: קוראים מחדש את המונה מהשרת */
+      loadCount(null).then(function(c){
+        if (c !== null){
+          $("verifyCount").textContent = c;
+          $("verifyRow").style.display = "flex";
+          $("liveCount").textContent = c;
+          $("livebar").classList.add("on");
+        }
+      });
+    } else {
+      $("badText").textContent = (r && r.error === "no_api")
+        ? "הטופס עדיין לא חובר לשרת. אנא פנו למנהל המערכת."
+        : "לא הצלחנו לאמת שהנתונים נקלטו. הנתונים שמורים בדפדפן — אפשר לנסות שוב.";
+      show("bad");
+      btn.textContent = "שליחה";
+      btn.disabled = false;
+    }
+  });
+}
+
+$("form").addEventListener("submit", function(ev){ ev.preventDefault(); submit(); });
+$("retryBtn").addEventListener("click", submit);
+
+["first","last","school","students"].forEach(function(id){
+  $(id).addEventListener("input", function(){
+    $(id).classList.remove("bad");
+    $("e_" + id).classList.remove("on");
+  });
+});
+</script>
+</body>
+</html>
