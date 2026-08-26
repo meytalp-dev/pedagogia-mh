@@ -86,6 +86,9 @@ input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--danger);
 .topic.sel b{color:var(--blue)}
 .topic.sel .ico{background:linear-gradient(120deg,var(--blue),var(--navy))}
 .topics.bad .topic{border-color:var(--danger);background:#fef6f7}
+.topic:last-child{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:12px;
+  text-align:right;padding:12px 16px}
+.topic:last-child .ico{margin:0;flex:0 0 auto}
 
 /* buttons */
 .nav{display:flex;gap:12px;align-items:center;margin-top:26px;flex-wrap:wrap;justify-content:center}
@@ -188,6 +191,11 @@ footer{padding:34px 0 40px;text-align:center;color:var(--muted);font-size:14px}
               <input type="radio" name="topic" value="תקציב">
               <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18.5 8V6.8a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v10.4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V16"/><path d="M20.5 12.9V11a1 1 0 0 0-1-1h-3.3a2 2 0 0 0 0 4h3.3a1 1 0 0 0 1-1z"/><path d="M7.5 8.2h5"/></svg></span><b>תקציב</b>
               <small>משאבים, תקנים ורכש</small>
+            </label>
+            <label class="topic">
+              <input type="radio" name="topic" value="אחר">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="7.8" cy="12" r=".7" fill="currentColor"/><circle cx="12" cy="12" r=".7" fill="currentColor"/><circle cx="16.2" cy="12" r=".7" fill="currentColor"/></svg></span><span><b>אחר</b>
+              <small>נושא אחר שחשוב לכם ולא ברשימה</small></span>
             </label>
           </div>
         </div>
@@ -358,18 +366,6 @@ $("again").addEventListener("click", function(){
   window.scrollTo({top:0, behavior:"smooth"});
   $("question").focus();
 });
-</script>
-<!-- פס התקדמות גלילה — צבעי מצגת המנהלים, כמו בשאר האתר -->
-<style>
-#pagebar{position:fixed;top:0;right:0;height:4px;width:0;z-index:900;pointer-events:none;
-  background:linear-gradient(to left,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3);border-radius:0 0 0 3px;transition:width .25s ease}
-@media print{#pagebar{display:none}}
-</style>
-<script>
-(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var b=document.createElement('div');b.id='pagebar';b.setAttribute('aria-hidden','true');document.body.appendChild(b);
-var t=false;function u(){t=false;var m=document.documentElement.scrollHeight-innerHeight;b.style.width=(m>200?(scrollY/m)*100:0)+'%'}
-addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
 </script>
 </body>
 </html>
