@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>מי מילא מצבת תלמידים — תשפ״ז</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#12224a; --blue:#2563a8; --line:#e3e8f0; --bg:#f6f8fb; --ink:#1b2333; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Heebo",Arial,sans-serif;padding:32px 16px}
+  .wrap{max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 26px 22px}
+  h1{margin:0 0 4px;font-size:24px;color:var(--navy)}
+  .sub{margin:0 0 20px;color:#5b6577;font-size:14px}
+  .sub b{color:var(--blue)}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th{background:var(--navy);color:#fff;font-weight:500;text-align:right;padding:10px 12px}
+  th:last-child,td:last-child{text-align:center;width:110px}
+  td{padding:9px 12px;border-bottom:1px solid var(--line)}
+  tbody tr:nth-child(even){background:#fafbfd}
+  td:last-child{font-weight:700;color:var(--blue)}
+  tfoot td{border-top:2px solid var(--navy);border-bottom:0;padding-top:12px;font-weight:700;color:var(--navy)}
+  @media print{ body{background:#fff;padding:0} .wrap{border:0;border-radius:0;padding:0}
+    th{background:#12224a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>מי מילא מצבת תלמידים</h1>
+  <p class="sub" id="sub">תשפ״ז · טוען נתונים…</p>
+  <table>
+    <thead><tr><th>שם מלא</th><th>בית ספר</th><th>תלמידים</th></tr></thead>
+    <tbody id="tb"></tbody>
+    <tfoot><tr><td id="cnt"></td><td></td><td id="sum"></td></tr></tfoot>
+  </table>
+</div>
+<script>
+var API = "https://script.google.com/macros/s/AKfycbyozBbEf78cLV61ODLyzhzLSyI2auAUMd8YVgp0qZLGs3O4MYAFhAQuVG7NIxjX0Mq7Lw/exec";
+
+/* גיבוי: תמונת מצב 26.8.2026 — מוצג אם השליפה החיה נכשלת */
+var SNAPSHOT = [
+ ["אבי בזה","אורט תל נוף",365],
+ ["נהוראי דרין","נחלים",274],
+ ["שי סודרי","עמל רמת דוד",245],
+ ["תמר צרפתי","תיכון חברתי חיפה",230],
+ ["ורד אזולאי","תיכון יוצר עתיד פלמחים",200],
+ ["מנחם דורון","חנוך לנער — מכון חסידי טכנולוגי",180],
+ ["חיתאם יאסין","תיכון בקהילה מהאראת שפרעם",174],
+ ["רמי מיכאלה","אורט אורמת יבנה",172],
+ ["מאיר ענתבי","קמפוס אור העתיד",165],
+ ["עינת וינברן","דרור גליל",162],
+ ["רווית גל","אורט בית הערבה",158],
+ ["נורה מחאג׳נה","בדאיאת",152],
+ ["אלישבע מונסונגו","תיכון הדר",150],
+ ["בנימין ועקנין","ישיבת עתיד אור מנחם",147],
+ ["שרי שמבורסקי","תיכון חושן",142],
+ ["אוהד להב","התיכון החברתי ת״א־יפו",140],
+ ["דרור לוי","אנרג׳יטק",135],
+ ["מוקי זמברג","עתיד צור ים",130],
+ ["נסרין נבואני","ח׳טוואת אבו סנאן",114],
+ ["מגי רביבו","תיכון יוצר עמל טכנולוגי אשדוד",112],
+ ["גל שמיר","תיכון שיח",109],
+ ["אודליה גלנוס איטח","עמל טק אין",98],
+ ["יהורם בן שטרית","תיכון עתיד קמ״ג",95],
+ ["לימור יעקבי","אורט דן גורמה",94],
+ ["גילה כהנא","תיכון קולינרי רימונים טבריה",85],
+ ["סיגל כהן","אורט צור ברק",84],
+ ["אמרי אביטן","תיכון החממה",80],
+ ["הדס ואיריס שרון ולוי","עתיד בת עמי",67],
+ ["שרית גולדרינג","טכנולוגי בית אל",60],
+ ["יוסי לוי","עוצמה זוקו",59],
+ ["אסף יוסף ימיני","עתיד אור דניאל נתניה",50],
+ ["מנחם בן מעש","ישיבת בדרך תמים — עתיד בית דוד",48],
+ ["ענבל לוי","התיכון החברתי מצפה רמון",35]
+];
+
+function esc(s){ return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];}); }
+function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+
+/* שורת הבדיקה בגיליון לא מוצגת */
+function isTest(r){
+  var s = String(r[1] || "").trim().toLowerCase();
+  return s === "ort" || s === "בדיקה" || String(r[0] || "").trim() === "מיטל פלג";
+}
+
+function render(rows, live){
+  rows = rows.filter(function(r){ return !isTest(r) && (r[0] || r[1]); });
+  document.getElementById("tb").innerHTML = rows.map(function(r){
+    return "<tr><td>"+esc(r[0])+"</td><td>"+esc(r[1])+"</td><td>"+r[2]+"</td></tr>";
+  }).join("");
+  document.getElementById("cnt").textContent = "סה״כ " + rows.length + " בתי ספר";
+  document.getElementById("sum").textContent = fmt(rows.reduce(function(a,r){return a+Number(r[2]||0);},0));
+  var d = new Date();
+  var t = ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+  document.getElementById("sub").innerHTML = live
+    ? "תשפ״ז · <b>נתונים חיים מהגיליון</b> · עודכן ב־" + t
+    : "תשפ״ז · נכון ל־26.8.2026";
+}
+
+render(SNAPSHOT, false);
+
+fetch(API + "?mode=list", {cache:"no-store"})
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    if (j && j.ok && j.rows && j.rows.length) render(j.rows, true);
+  })
+  .catch(function(){});
+</script>
+</body>
+</html>
