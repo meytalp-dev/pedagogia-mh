@@ -4,107 +4,175 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>מי מילא מצבת תלמידים — תשפ״ז</title>
+<title>מצבת תלמידים תשפ״ז — מעקב לפי פיקוח</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --navy:#12224a; --blue:#2563a8; --line:#e3e8f0; --bg:#f6f8fb; --ink:#1b2333; }
+  :root{ --navy:#12224a; --blue:#2563a8; --green:#12805c; --amber:#b07a12;
+         --line:#e3e8f0; --bg:#f6f8fb; --ink:#1b2333; --mute:#6b7688; }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Heebo",Arial,sans-serif;padding:32px 16px}
-  .wrap{max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 26px 22px}
-  h1{margin:0 0 4px;font-size:24px;color:var(--navy)}
-  .sub{margin:0 0 20px;color:#5b6577;font-size:14px}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Heebo",Arial,sans-serif;padding:30px 16px 60px}
+  .wrap{max-width:900px;margin:0 auto}
+  header{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:16px}
+  h1{margin:0 0 4px;font-size:25px;color:var(--navy)}
+  .sub{margin:0;color:var(--mute);font-size:14px}
   .sub b{color:var(--blue)}
+  .kpis{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+  .kpi{flex:1 1 150px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+  .kpi .n{font-size:26px;font-weight:700;color:var(--navy);line-height:1.2}
+  .kpi .l{font-size:13px;color:var(--mute)}
+  .kpi.ok .n{color:var(--green)} .kpi.wait .n{color:var(--amber)}
+  .barwrap{height:9px;background:#e9edf4;border-radius:6px;overflow:hidden;margin-top:16px}
+  .barwrap>div{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));width:0;transition:width .9s ease}
+  .grp{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+  .ghead{display:flex;align-items:center;gap:10px;padding:13px 18px;background:var(--navy);color:#fff}
+  .ghead .who{font-weight:500;font-size:16px;flex:1}
+  .ghead .cnt{font-size:14px;opacity:.9;white-space:nowrap}
   table{width:100%;border-collapse:collapse;font-size:15px}
-  th{background:var(--navy);color:#fff;font-weight:500;text-align:right;padding:10px 12px}
-  th:last-child,td:last-child{text-align:center;width:110px}
-  td{padding:9px 12px;border-bottom:1px solid var(--line)}
-  tbody tr:nth-child(even){background:#fafbfd}
-  td:last-child{font-weight:700;color:var(--blue)}
-  tfoot td{border-top:2px solid var(--navy);border-bottom:0;padding-top:12px;font-weight:700;color:var(--navy)}
-  @media print{ body{background:#fff;padding:0} .wrap{border:0;border-radius:0;padding:0}
-    th{background:#12224a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+  td{padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  tr.done{background:#fbfdfc}
+  tr.wait td{color:var(--mute)}
+  td.st{width:34px;text-align:center}
+  td.st svg{width:19px;height:19px;display:block;margin:0 auto}
+  tr.done td.st{color:var(--green)} tr.wait td.st{color:#c3ccd9}
+  td.school{font-weight:500}
+  tr.wait td.school{font-weight:400}
+  td.rep{color:var(--mute);font-size:14px}
+  td.num{width:80px;text-align:center;font-weight:700;color:var(--blue)}
+  tr.wait td.num{color:#c3ccd9;font-weight:400}
+  .approx{color:var(--amber);font-size:12px;margin-inline-start:5px;font-weight:400}
+  .note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-top:18px}
+  .note h2{margin:0 0 6px;font-size:17px;color:var(--navy)}
+  .note p{margin:0 0 10px;color:var(--mute);font-size:14px;line-height:1.6}
+  .legend{color:var(--mute);font-size:13px;margin-top:16px;text-align:center;line-height:1.8}
+  @media (max-width:560px){ td.rep{display:none} }
+  @media print{ body{background:#fff;padding:0} header,.grp,.note{border:0;box-shadow:none}
+    .ghead{background:#12224a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .grp{break-inside:avoid} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>מי מילא מצבת תלמידים</h1>
-  <p class="sub" id="sub">תשפ״ז · טוען נתונים…</p>
-  <table>
-    <thead><tr><th>שם מלא</th><th>בית ספר</th><th>תלמידים</th></tr></thead>
-    <tbody id="tb"></tbody>
-    <tfoot><tr><td id="cnt"></td><td></td><td id="sum"></td></tr></tfoot>
-  </table>
+  <header>
+    <h1>מצבת תלמידים תשפ״ז — מעקב לפי פיקוח</h1>
+    <p class="sub" id="sub">טוען נתונים…</p>
+    <div class="kpis">
+      <div class="kpi ok"><div class="n" id="k1">—</div><div class="l">בתי ספר דיווחו</div></div>
+      <div class="kpi wait"><div class="n" id="k2">—</div><div class="l">טרם דיווחו</div></div>
+      <div class="kpi"><div class="n" id="k3">—</div><div class="l">סה״כ תלמידים</div></div>
+    </div>
+    <div class="barwrap"><div id="bar"></div></div>
+  </header>
+  <div id="groups"></div>
+  <div id="extra"></div>
+  <p class="legend">
+    הרשימה הרשמית: 64 בתי ספר לפי קובץ פריסת הפיקוח (מפקח פדגוגי תשפ״ז).<br>
+    <span style="color:#b07a12">&#8776;</span> = שיוך משוער בין שם חופשי שהוקלד בטופס לשם הרשמי — שווה אימות.
+  </p>
 </div>
 <script>
 var API = "https://script.google.com/macros/s/AKfycbyozBbEf78cLV61ODLyzhzLSyI2auAUMd8YVgp0qZLGs3O4MYAFhAQuVG7NIxjX0Mq7Lw/exec";
+var ICON_OK   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+var ICON_WAIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+var SCHOOLS = [["עמל טייבה ב'", "ויסאם סואלחה", "עמל"], ["ערערה", "ויסאם סואלחה", "סכנין"], ["בית חנינה בנות", "ויסאם סואלחה", "סכנין"], ["בית חנינה בנים", "ויסאם סואלחה", "סכנין"], ["סור באהר", "ויסאם סואלחה", "סכנין"], ["כפר עקב", "ויסאם סואלחה", "סכנין"], ["אכסאל", "יסמין אמון", "סכנין"], ["אל אמאני סכנין", "יסמין אמון", "סכנין"], ["כפר יסיף", "יסמין אמון", "סכנין"], ["אלחכמה כסרא-סמיע", "יסמין אמון", "סכנין"], ["טורען", "יסמין אמון", "סכנין"], ["תיכון טכנולוגי אי טק סקול (מסעדה)", "יסמין אמון", "עתיד"], ["עתיד גליל מערבי ירכא בנים", "יסמין אמון", "עתיד"], ["ג'וליס בנות", "יסמין אמון", "עתיד"], ["תפן ליזמות", "יסמין אמון", "עתיד"], ["עתיד טק ביר אל מכסור", "יסמין אמון", "עתיד"], ["אורט כרמל", "יסמין אמון", "אורט"], ["נצרת", "יסמין אמון", "עמל"], ["עמל רהט", "יסמין אמון + סיגלית דאי", "עמל"], ["עתיד כפר חב\"ד", "יששכר חפץ", "עתיד"], ["עתיד בת עמי", "יששכר חפץ", "עתיד"], ["אור העתיד תורני מקצועי", "יששכר חפץ", "עתיד"], ["הקמפוס התורני עתיד", "יששכר חפץ", "עתיד"], ["בית דוד", "יששכר חפץ", "עתיד"], ["ישיבת חנוך לנער", "יששכר חפץ", "ישיבת חנוך לנער"], ["כפר זיתים", "יששכר חפץ", "כפר זיתים"], ["טל חרמון", "יששכר חפץ", "טל חרמון"], ["הדר", "יששכר חפץ", "בית שולמית"], ["נחלים", "יששכר חפץ", "נחלים"], ["אור דניאל", "יששכר חפץ", "עתיד"], ["מרחביה/מעיינות", "יששכר חפץ", "עמל"], ["אבו סנאן", "ליאת צבר", "סכנין"], ["רימונים", "ליאת צבר", "רימונים"], ["תיכון חברתי ת\"א", "ליאת צבר", "דרור"], ["התיכון החברתי חיפה", "ליאת צבר", "דרור"], ["דרור גליל", "ליאת צבר", "דרור"], ["רמת דוד", "ליאת צבר", "עמל"], ["אנרג'י טק", "ליאת צבר", "עמל"], ["תיכון שיח", "ליאת צבר", "עמל"], ["בית אל", "ליאת צבר", "בית אל"], ["תיכון עוצמ\"ה עתיד זוקו", "ליאת צבר", "עתיד"], ["צור ים", "ליאת צבר", "עתיד"], ["אום אל פחם בנות", "ליאת צבר", "סכנין"], ["עמל טק אין", "סיגלית דאי", "עמל"], ["עמל אשדוד", "סיגלית דאי", "עמל"], ["קמ\"ג דימונה", "סיגלית דאי", "עמל"], ["צור ברק", "סיגלית דאי", "אורט"], ["אורט תעשייה אווירית", "סיגלית דאי", "אורט"], ["אורט תל נוף", "סיגלית דאי", "אורט"], ["אורט אורמת", "סיגלית דאי", "אורט"], ["דן גורמה", "סיגלית דאי", "אורט"], ["עתיד פלמחים", "סיגלית דאי", "עתיד"], ["עתיד באר שבע", "סיגלית דאי", "עתיד"], ["תיכון החממה", "סיגלית דאי +רויטל אמיר", "עמל"], ["שפרעם", "רביב שורץ", "סכנין"], ["עתיד כרמיאל", "רביב שורץ", "עתיד"], ["אום אל פחם בנים", "רביב שורץ", "סכנין"], ["מצפה רמון", "רביב שורץ", "דרור"], ["חוש\"ן", "רויטל אמיר", "דרור"], ["אורט בית הערבה", "רויטל אמיר", "אורט"], ["לקייה", "שרונה בלוך", "סכנין"], ["שגב שלום", "שרונה בלוך", "סכנין"], ["סכנין תל שבע", "שרונה בלוך", "סכנין"], ["דרור נווה מדבר", "שרונה בלוך", "דרור"]];
+var ALIAS = {"טכנולוגי לבנים / בית חנינה": "בית חנינה בנים", "בית חנינא טכנולוגי לבנות": "בית חנינה בנות", "עמל נצרת": "נצרת", "עמל רמת דוד": "רמת דוד", "תיכון חברתי חיפה": "התיכון החברתי חיפה", "בית ספר לקייה": "לקייה", "תיכון יוצר עתיד פלמלים": "עתיד פלמחים", "ימינו כקדם כפר זיתים": "כפר זיתים", "חנוך לנער מכון חסידי טכנולוגי": "ישיבת חנוך לנער", "תיכון בקהילה מהאראת שפרעם": "שפרעם", "אורט אורמת יבנה": "אורט אורמת", "תיכון הדר": "הדר", "טכנולוגי רוואד אכסאל": "אכסאל", "תיכון חושן": "חוש\"ן", "התיכון החברתי ת״א-יפו": "תיכון חברתי ת\"א", "אנרג׳יטק": "אנרג'י טק", "אורט כרמל חיפה": "אורט כרמל", "עתיד צור ים": "צור ים", "תיכון יוצר עתיד בנות ג׳וליס": "ג'וליס בנות", "ח׳טוואת אבו סנאן": "אבו סנאן", "תיכון יוצר עמל טכנולוגי אשדוד": "עמל אשדוד", "שיח": "תיכון שיח", "עתיד יוצר אבדאע ביר טל מכסור": "עתיד טק ביר אל מכסור", "אוהלי תמימים עתיד כפר חב\"ד": "עתיד כפר חב\"ד", "תיכון עתיד קמ\"ג": "קמ\"ג דימונה", "מנאראת טורעאן": "טורען", "אורט דן גורמה": "דן גורמה", "תיכון קולינרי רימונים טבריה": "רימונים", "אורט צור גרק": "צור ברק", "אלחכמה כסרא סמיע": "אלחכמה כסרא-סמיע", "עתיד תפן": "תפן ליזמות", "טכנולוגי תל שבע": "סכנין תל שבע", "עמל טכנולוגי טייבה": "עמל טייבה ב'", "טכנולוגי בית אל": "בית אל", "עוצמה זוקו": "תיכון עוצמ\"ה עתיד זוקו", "סור באהר בנות": "סור באהר", "עתיד אור דניאל נתניה": "אור דניאל", "ישיבת בדרך תמים- עתיד בית דוד": "בית דוד", "התיכון החברתי מצפה רמון": "מצפה רמון"};
+var ASSUMED = {"אלאופוק א.א.פחם": "אום אל פחם בנים", "בדאיאת": "אום אל פחם בנות", "מסאראת ואדי עארה": "ערערה", "קמפוס אור העתיד": "אור העתיד תורני מקצועי", "תיכון מעיינות צפת": "מרחביה/מעיינות"};
+var SNAPSHOT = [["חכם דעיס", "טכנולוגי לבנים / בית חנינה", 430], ["אבי בזה", "אורט תל נוף", 365], ["פרדאוס אלבאז", "בית חנינא טכנולוגי לבנות", 334], ["בוטו נאיף", "עמל נצרת", 300], ["נהוראי דרין", "נחלים", 274], ["שי סודרי", "עמל רמת דוד", 245], ["תמר צרפתי", "תיכון חברתי חיפה", 230], ["עלי אלחואגרה", "בית ספר לקייה", 228], ["ורד אזולאי", "תיכון יוצר עתיד פלמלים", 200], ["יצחק שבתאי", "ימינו כקדם כפר זיתים", 188], ["מנחם דורון", "חנוך לנער מכון חסידי טכנולוגי", 180], ["חיתאם יאסין", "תיכון בקהילה מהאראת שפרעם", 174], ["רמי מיכאלה", "אורט אורמת יבנה", 172], ["מאיר ענתבי", "קמפוס אור העתיד", 165], ["עינת וינברן", "דרור גליל", 162], ["עזב מוחמד", "מסאראת ואדי עארה", 160], ["רווית גל", "אורט בית הערבה", 158], ["נורה מחאגנה מחאגנה", "בדאיאת", 152], ["אלישבע מונסונגו", "תיכון הדר", 150], ["רשאד חוסיין", "טכנולוגי רוואד אכסאל", 150], ["בנימין ועקנין", "ישיבת עתיד אור מנחם", 147], ["ג'אד מחאג'נה", "אלאופוק א.א.פחם", 144], ["שיראל פרץ", "תיכון יוצר עתיד מגשימים", 143], ["שרי שמבורסקי", "תיכון חושן", 142], ["אוהד להב", "התיכון החברתי ת״א-יפו", 140], ["דרור לוי", "אנרג׳יטק", 135], ["וליד דאו", "אורט כרמל חיפה", 135], ["מוקי זמברג", "עתיד צור ים", 130], ["עבד אבו אלקיעאן", "דרור נווה מדבר", 126], ["שאדיה נבאני", "תיכון יוצר עתיד בנות ג׳וליס", 118], ["נסרין נבואני", "ח׳טוואת אבו סנאן", 114], ["מגי רביבו", "תיכון יוצר עמל טכנולוגי אשדוד", 112], ["גל שמיר", "שיח", 109], ["סמואיל סעיד", "אלמנארה", 109], ["ופיק אגבארינ", "עתיד יוצר אבדאע ביר טל מכסור", 101], ["אודליה גלנוס איטח", "עמל טק אין", 98], ["ארז בנדטוביץ", "אוהלי תמימים עתיד כפר חב\"ד", 98], ["יהורם בן שטרית", "תיכון עתיד קמ\"ג", 95], ["עלי עדווי", "מנאראת טורעאן", 95], ["לימור יעקבי", "אורט דן גורמה", 94], ["גילה כהנא", "תיכון קולינרי רימונים טבריה", 85], ["סיגל כהן", "אורט צור גרק", 84], ["עלים עלואן", "אלחכמה כסרא סמיע", 84], ["אמרי אביטן", "תיכון החממה", 80], ["תומר פרידמן", "עתיד תפן", 80], ["שאקר בטיחאת", "טכנולוגי תל שבע", 78], ["זיאד חאג יחיא", "עמל טכנולוגי טייבה", 72], ["הדס ואיריס שרון ולוי", "עתיד בת עמי", 67], ["שרית גולדרינג", "טכנולוגי בית אל", 60], ["אסתי שלקובסקי", "תיכון מעיינות צפת", 60], ["יוסי לוי", "עוצמה זוקו", 59], ["סאגידה קאוואסמי", "סור באהר בנות", 51], ["אסף יוסף ימיני", "עתיד אור דניאל נתניה", 50], ["מנחם בן מעש", "ישיבת בדרך תמים- עתיד בית דוד", 48], ["ענבל לוי", "התיכון החברתי מצפה רמון", 35]];
 
-/* גיבוי: תמונת מצב 26.8.2026 — מוצג אם השליפה החיה נכשלת */
-var SNAPSHOT = [
- ["אבי בזה","אורט תל נוף",365],
- ["נהוראי דרין","נחלים",274],
- ["שי סודרי","עמל רמת דוד",245],
- ["תמר צרפתי","תיכון חברתי חיפה",230],
- ["ורד אזולאי","תיכון יוצר עתיד פלמחים",200],
- ["מנחם דורון","חנוך לנער — מכון חסידי טכנולוגי",180],
- ["חיתאם יאסין","תיכון בקהילה מהאראת שפרעם",174],
- ["רמי מיכאלה","אורט אורמת יבנה",172],
- ["מאיר ענתבי","קמפוס אור העתיד",165],
- ["עינת וינברן","דרור גליל",162],
- ["רווית גל","אורט בית הערבה",158],
- ["נורה מחאג׳נה","בדאיאת",152],
- ["אלישבע מונסונגו","תיכון הדר",150],
- ["בנימין ועקנין","ישיבת עתיד אור מנחם",147],
- ["שרי שמבורסקי","תיכון חושן",142],
- ["אוהד להב","התיכון החברתי ת״א־יפו",140],
- ["דרור לוי","אנרג׳יטק",135],
- ["מוקי זמברג","עתיד צור ים",130],
- ["נסרין נבואני","ח׳טוואת אבו סנאן",114],
- ["מגי רביבו","תיכון יוצר עמל טכנולוגי אשדוד",112],
- ["גל שמיר","תיכון שיח",109],
- ["אודליה גלנוס איטח","עמל טק אין",98],
- ["יהורם בן שטרית","תיכון עתיד קמ״ג",95],
- ["לימור יעקבי","אורט דן גורמה",94],
- ["גילה כהנא","תיכון קולינרי רימונים טבריה",85],
- ["סיגל כהן","אורט צור ברק",84],
- ["אמרי אביטן","תיכון החממה",80],
- ["הדס ואיריס שרון ולוי","עתיד בת עמי",67],
- ["שרית גולדרינג","טכנולוגי בית אל",60],
- ["יוסי לוי","עוצמה זוקו",59],
- ["אסף יוסף ימיני","עתיד אור דניאל נתניה",50],
- ["מנחם בן מעש","ישיבת בדרך תמים — עתיד בית דוד",48],
- ["ענבל לוי","התיכון החברתי מצפה רמון",35]
-];
-
-function esc(s){ return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];}); }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+function norm(s){
+  return String(s==null?"":s).replace(/[\u05f4\u05f3"'`.,\-\u2013\u2014\/()]/g," ")
+    .replace(/\s+/g," ").trim().toLowerCase();
+}
 
-/* שורת הבדיקה בגיליון לא מוצגת */
-function isTest(r){
-  var s = String(r[1] || "").trim().toLowerCase();
-  return s === "ort" || s === "בדיקה" || String(r[0] || "").trim() === "מיטל פלג";
+/* אינדקסים מנורמלים - עמידים בשינויי פיסוק וריווח בשם שהוקלד בטופס */
+var BY_NORM = {}, ALIAS_N = {}, ASSUMED_N = {};
+SCHOOLS.forEach(function(s){ BY_NORM[norm(s[0])] = s[0]; });
+Object.keys(ALIAS).forEach(function(k){ ALIAS_N[norm(k)] = ALIAS[k]; });
+Object.keys(ASSUMED).forEach(function(k){ ASSUMED_N[norm(k)] = ASSUMED[k]; });
+
+function resolve(school){
+  var n = norm(school);
+  if (BY_NORM[n])   return { name: BY_NORM[n], approx:false };
+  if (ALIAS_N[n])   return { name: ALIAS_N[n], approx:false };
+  if (ASSUMED_N[n]) return { name: ASSUMED_N[n], approx:true };
+  return null;
 }
 
 function render(rows, live){
-  rows = rows.filter(function(r){ return !isTest(r) && (r[0] || r[1]); });
-  document.getElementById("tb").innerHTML = rows.map(function(r){
-    return "<tr><td>"+esc(r[0])+"</td><td>"+esc(r[1])+"</td><td>"+r[2]+"</td></tr>";
-  }).join("");
-  document.getElementById("cnt").textContent = "סה״כ " + rows.length + " בתי ספר";
-  document.getElementById("sum").textContent = fmt(rows.reduce(function(a,r){return a+Number(r[2]||0);},0));
-  var d = new Date();
-  var t = ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+  var bySchool = {}, orphans = [], total = 0;
+  rows.forEach(function(r){
+    var school = String(r[1]||"").trim();
+    if (!school || norm(school) === "ort") return;      /* שורת הבדיקה */
+    var num = Number(r[2]) || 0;
+    total += num;
+    var hit = resolve(school);
+    if (hit) bySchool[hit.name] = { rep:String(r[0]||"").trim(), num:num, approx:hit.approx };
+    else orphans.push([String(r[0]||"").trim(), school, num]);
+  });
+
+  var sups = [], bySup = {};
+  SCHOOLS.forEach(function(s){
+    if (!bySup[s[1]]) { bySup[s[1]] = []; sups.push(s[1]); }
+    bySup[s[1]].push(s);
+  });
+
+  var done = 0, html = "";
+  sups.forEach(function(sup){
+    var list = bySup[sup], n = 0, rowsHtml = "";
+    list.sort(function(a,b){
+      var da = bySchool[a[0]] ? 1 : 0, db = bySchool[b[0]] ? 1 : 0;
+      if (da !== db) return db - da;
+      if (da) return bySchool[b[0]].num - bySchool[a[0]].num;
+      return a[0].localeCompare(b[0], "he");
+    });
+    list.forEach(function(s){
+      var hit = bySchool[s[0]];
+      if (hit) n++;
+      rowsHtml += '<tr class="'+(hit?"done":"wait")+'">'+
+        '<td class="st">'+(hit?ICON_OK:ICON_WAIT)+'</td>'+
+        '<td class="school">'+esc(s[0])+
+          (hit && hit.approx ? '<span class="approx" title="שיוך משוער - לאימות">&#8776;</span>' : '')+'</td>'+
+        '<td class="rep">'+(hit ? esc(hit.rep) : "טרם דיווח")+'</td>'+
+        '<td class="num">'+(hit ? hit.num : "&#8212;")+'</td></tr>';
+    });
+    done += n;
+    html += '<div class="grp"><div class="ghead"><span class="who">'+esc(sup)+'</span>'+
+            '<span class="cnt">'+n+' מתוך '+list.length+'</span></div>'+
+            '<table>'+rowsHtml+'</table></div>';
+  });
+  document.getElementById("groups").innerHTML = html;
+
+  var extra = "";
+  if (orphans.length){
+    extra = '<div class="note"><h2>דיווחים שטרם שויכו לרשימת הפיקוח ('+orphans.length+')</h2>'+
+      '<p>בתי ספר שדיווחו בשם שאינו מופיע בקובץ פריסת הפיקוח. הם נספרים בסך התלמידים, אך לא סומנו אצל אף מפקח.</p>'+
+      '<table>'+orphans.map(function(o){
+        return '<tr class="done"><td class="st">'+ICON_OK+'</td><td class="school">'+esc(o[1])+
+               '</td><td class="rep">'+esc(o[0])+'</td><td class="num">'+o[2]+'</td></tr>';
+      }).join("")+'</table></div>';
+  }
+  document.getElementById("extra").innerHTML = extra;
+
+  document.getElementById("k1").textContent = done + " / " + SCHOOLS.length;
+  document.getElementById("k2").textContent = SCHOOLS.length - done;
+  document.getElementById("k3").textContent = fmt(total);
+  setTimeout(function(){
+    document.getElementById("bar").style.width = (done / SCHOOLS.length * 100) + "%";
+  }, 60);
+
+  var d = new Date(), t = ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
   document.getElementById("sub").innerHTML = live
-    ? "תשפ״ז · <b>נתונים חיים מהגיליון</b> · עודכן ב־" + t
-    : "תשפ״ז · נכון ל־26.8.2026";
+    ? "<b>נתונים חיים מהגיליון</b> - עודכן ב-" + t
+    : "תמונת מצב מוטמעת - 26.8.2026";
 }
 
 render(SNAPSHOT, false);
 
 fetch(API + "?mode=list", {cache:"no-store"})
   .then(function(r){ return r.json(); })
-  .then(function(j){
-    if (j && j.ok && j.rows && j.rows.length) render(j.rows, true);
-  })
+  .then(function(j){ if (j && j.ok && j.rows && j.rows.length) render(j.rows, true); })
   .catch(function(){});
 </script>
 </body>
