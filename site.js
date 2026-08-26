@@ -84,6 +84,44 @@ document.addEventListener('animationend',e=>{
   });
 })();
 
+/* מתג שפה עברית/ערבית — תרגום Google בתוך העמוד, מופעל רק כשנבחרה ערבית */
+(function langSwitch(){
+  const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
+  const isAr=/\/ar$/.test(m?decodeURIComponent(m[1]):'');
+  function setLang(ar){
+    const domains=['','; domain='+location.hostname,'; domain=.'+location.hostname.replace(/^www\./,'')];
+    domains.forEach(d=>{
+      document.cookie='googtrans='+(ar?'/iw/ar':'')+'; path=/'+d+(ar?'':'; expires=Thu, 01 Jan 1970 00:00:00 GMT');
+    });
+    location.reload();
+  }
+  const holder=document.querySelector('.govbar .left');
+  if(holder){
+    const sw=document.createElement('span');
+    sw.className='langsw';
+    sw.innerHTML='<button type="button" data-lang="he"'+(isAr?'':' class="on"')+'>עברית</button>'+
+                 '<span class="lsep">|</span>'+
+                 '<button type="button" data-lang="ar" lang="ar"'+(isAr?' class="on"':'')+'>العربية</button>';
+    const old=[...holder.querySelectorAll('a.dis')].find(a=>a.textContent.trim()==='العربية');
+    if(old) old.replaceWith(sw); else holder.appendChild(sw);
+    sw.addEventListener('click',e=>{
+      const b=e.target.closest('button');
+      if(b && (b.dataset.lang==='ar')!==isAr) setLang(b.dataset.lang==='ar');
+    });
+  }
+  if(!isAr) return;
+  document.documentElement.classList.add('lang-ar');
+  const box=document.createElement('div');
+  box.id='google_translate_element'; box.style.display='none';
+  document.body.appendChild(box);
+  window.googleTranslateElementInit=function(){
+    new google.translate.TranslateElement({pageLanguage:'iw',includedLanguages:'ar',autoDisplay:false},'google_translate_element');
+  };
+  const s=document.createElement('script');
+  s.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  document.body.appendChild(s);
+})();
+
 function openOgen(){
   const l=document.querySelector('.ogenw-launcher');
   if(l){

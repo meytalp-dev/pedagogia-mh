@@ -98,6 +98,14 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .govbar .sep{color:var(--border-strong)}
 .govbar .left{margin-inline-start:auto;display:flex;gap:16px}
 .govbar a{color:var(--text2);text-decoration:none}
+.langsw{display:inline-flex;align-items:center;gap:8px}
+.langsw .lsep{color:var(--border-strong)}
+.langsw button{background:none;border:0;padding:0;font:inherit;color:var(--text2);cursor:pointer;opacity:.75}
+.langsw button:hover{opacity:1}
+.langsw button.on{opacity:1;font-weight:700;cursor:default}
+/* ניקוי הפס העליון של Google Translate כשמצב ערבית פעיל */
+.goog-te-banner-frame,#goog-gt-tt,.goog-te-balloon-frame,body>.skiptranslate{display:none!important}
+html.lang-ar body{top:0!important}
 
 .nav{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px var(--px);background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 .navitem{position:relative;display:inline-block}
@@ -246,7 +254,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
 @media(max-width:640px){
   :root{--px:18px}
   .nav a.lnk,.nav .navitem{display:none}
-  .govbar .left{display:none}
+  .govbar .left a.dis{display:none}
   .grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
   .pagehead h1{font-size:1.9rem}
   .foot .row{justify-content:center;text-align:center}
