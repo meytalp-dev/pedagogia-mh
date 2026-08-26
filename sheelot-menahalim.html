@@ -367,5 +367,17 @@ $("again").addEventListener("click", function(){
   $("question").focus();
 });
 </script>
+<!-- פס התקדמות גלילה — צבעי מצגת המנהלים, כמו בשאר האתר -->
+<style>
+#pagebar{position:fixed;top:0;right:0;height:4px;width:0;z-index:900;pointer-events:none;
+  background:linear-gradient(to left,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3);border-radius:0 0 0 3px;transition:width .25s ease}
+@media print{#pagebar{display:none}}
+</style>
+<script>
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var b=document.createElement('div');b.id='pagebar';b.setAttribute('aria-hidden','true');document.body.appendChild(b);
+var t=false;function u(){t=false;var m=document.documentElement.scrollHeight-innerHeight;b.style.width=(m>200?(scrollY/m)*100:0)+'%'}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
+</script>
 </body>
 </html>
