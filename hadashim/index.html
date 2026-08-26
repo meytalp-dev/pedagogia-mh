@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הדף המלווה · מפגש פתיחת שנה מנהלים</title>
+<meta name="description" content="הדף המלווה למפגש פתיחת השנה של מנהלי בתי הספר המקצועיים היוצרים — משרד העבודה, מינהל הכשרות מקצועיות.">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700;800&family=Suez+One&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Noto Sans Hebrew','Segoe UI',Arial,sans-serif;
+    min-height:100dvh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:22px; padding:40px 20px 34px;
+    color:#0B2B4C; text-align:center; background:#fff; position:relative; overflow-x:hidden;
+  }
+  .blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+  .blob.b1{width:46vmin;height:46vmin;top:-16vmin;left:-10vmin;background:rgba(242,178,51,.16);filter:blur(70px)}
+  .blob.b2{width:42vmin;height:42vmin;bottom:-14vmin;right:-10vmin;background:rgba(47,116,192,.12);filter:blur(70px)}
+  .bars{position:fixed;left:0;right:0;bottom:0;height:10px;display:flex;z-index:2}
+  .bars i{flex:1}
+  body > *:not(.blob):not(.bars){position:relative;z-index:1}
+
+  .logo img{height:46px;display:block}
+  .kicker{font-size:12.5px;font-weight:700;color:#C9962E;letter-spacing:3px}
+  h1{font-family:'Suez One','Noto Sans Hebrew',serif;font-weight:400;
+     font-size:clamp(23px,5.4vw,33px);line-height:1.3;color:#0B2B4C}
+  p.lead{font-size:clamp(15px,3.4vw,17.5px);color:#44546A;max-width:32ch;line-height:1.65}
+
+  .go{
+    display:inline-block;text-decoration:none;font-size:clamp(17px,4.2vw,22px);font-weight:800;
+    color:#fff;background:linear-gradient(135deg,#2F74C0,#0B2B4C);
+    padding:17px 44px;border-radius:60px;
+    box-shadow:0 12px 30px rgba(47,116,192,.38);
+    animation:glow 2.4s ease-in-out infinite alternate;transition:transform .2s;
+  }
+  .go:hover{transform:translateY(-3px) scale(1.03)}
+  @keyframes glow{
+    from{box-shadow:0 10px 26px rgba(47,116,192,.34)}
+    to{box-shadow:0 16px 42px rgba(47,116,192,.66),0 0 0 10px rgba(47,116,192,.08)}
+  }
+  .soon{
+    background:#fff;border-radius:18px;padding:22px 24px;max-width:400px;
+    box-shadow:0 10px 30px rgba(11,43,76,.12);border-top:5px solid #F2B233;
+  }
+  .soon b{display:block;font-size:17.5px;color:#0B2B4C;margin-bottom:6px}
+  .soon span{font-size:14.5px;color:#44546A;line-height:1.6}
+  .links{display:flex;gap:11px;flex-wrap:wrap;justify-content:center}
+  .links a{
+    text-decoration:none;font-size:14px;font-weight:700;color:#2F74C0;
+    background:rgba(47,116,192,.07);padding:10px 20px;border-radius:40px;
+    border:1px solid rgba(47,116,192,.25);transition:background .2s;
+  }
+  .links a:hover{background:rgba(47,116,192,.14)}
+  footer{font-size:12.5px;color:#6B7280;margin-top:4px}
+  .hide{display:none !important}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ▼▼▼  השורה היחידה שצריך לעדכן בין מפגש למפגש  ▼▼▼
+     כתובת ה-exec של הדף המלווה ב-Apps Script.
+     ה-QR והקישור המודפס לעולם לא משתנים — רק היעד כאן.
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+  const TARGET = "https://script.google.com/macros/s/AKfycbw9_HgKoNLs_PrlatuydhDdFEH68m3ZX_knLn0h-Fxh7gbC67piI4RYhPxi3gZLjH3J/exec";
+  const AUTO   = true; // true = מעבר אוטומטי אחרי הצגת המסך
+</script>
+
+<div class="blob b1"></div><div class="blob b2"></div>
+<div class="bars">
+  <i style="background:#2F74C0"></i><i style="background:#2F9F55"></i>
+  <i style="background:#F2B233"></i><i style="background:#EF5656"></i>
+  <i style="background:#8F7AC3"></i>
+</div>
+
+<div class="logo"><img src="../logo.png" alt="משרד העבודה · מינהל הכשרות מקצועיות"
+     onerror="this.parentNode.style.display='none'"></div>
+
+<div class="kicker">מפגש פתיחת שנה · תשפ״ז</div>
+<h1>הדף המלווה של המפגש</h1>
+
+<div id="ready" class="hide">
+  <p class="lead">כאן שולחים מילים, טיפים, פעולות ותוצרי חדרים — והם עולים למסך המשותף בזמן אמת.</p>
+  <p style="margin:22px 0 0"><a class="go" id="goBtn" href="#">כניסה לדף המלווה ←</a></p>
+</div>
+
+<div id="soon" class="soon">
+  <b>הדף ייפתח עם תחילת המפגש</b>
+  <span>שמרו את הכתובת הזו — היא לא משתנה בין מפגש למפגש.</span>
+</div>
+
+<div class="links">
+  <a href="../menahalim.html">מרחב מנהלים</a>
+  <a href="../menahalim-hadashim.html">מנהלים חדשים</a>
+  <a href="../index.html">לעמוד הבית</a>
+</div>
+
+<footer>משרד העבודה • מינהל הכשרות מקצועיות • חינוך יוצר</footer>
+
+<script>
+(function(){
+  if (!TARGET) return;
+  document.getElementById('soon').classList.add('hide');
+  document.getElementById('ready').classList.remove('hide');
+  document.getElementById('goBtn').href = TARGET;
+  if (AUTO) setTimeout(function(){ location.replace(TARGET); }, 1400);
+})();
+</script>
+</body>
+</html>
