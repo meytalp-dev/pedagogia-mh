@@ -6,7 +6,7 @@
 <title>פתיחת שנה תשפ״ז — מפגש מנהלים</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;500;700;800&family=Suez+One&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { height:100%; overflow:hidden; }
@@ -37,6 +37,16 @@
     position:absolute; inset:0;
     display:flex; flex-direction:column;
     line-height:1.22; white-space:pre-wrap;
+  }
+  /* display face for slide titles: Suez One + subtle navy→blue gradient */
+  span[style*="font-size:32.0px"][style*="color:#0B2B4C"],
+  span[style*="font-size:50.7px"][style*="color:#0B2B4C"],
+  span[style*="font-size:55px"][style*="color:#0B2B4C"] {
+    font-family:'Suez One','Noto Sans Hebrew',serif;
+    font-weight:400 !important;
+    background:linear-gradient(115deg, #0B2B4C 55%, #2F74C0);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
   }
   /* ---------- entrance micro-animations ---------- */
   .slide .el { opacity:0; }
