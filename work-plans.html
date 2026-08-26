@@ -52,8 +52,8 @@ nav .nav-group{margin-bottom:13px}
 nav .nav-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:#6d768d;padding:6px 10px;font-weight:700}
 nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:right;padding:8px 10px;
   border-radius:var(--r-sm);color:#c3cad9;font-size:13.5px;font-weight:500;transition:background .13s,color .13s;margin-bottom:1px}
-nav button:hover{background:rgba(255,255,255,.06);color:#fff}
-nav button.active{background:var(--brand-2);color:#fff;font-weight:600}
+nav button:hover{background:linear-gradient(180deg,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3) no-repeat right center/3px 72%,rgba(255,255,255,.06);color:#fff}
+nav button.active{background:linear-gradient(180deg,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3) no-repeat right center/3px 72%,var(--brand-2);color:#fff;font-weight:600}
 nav button .ico{width:18px;text-align:center;font-size:13px;flex:none}
 nav button .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 nav button .badge{margin-inline-start:auto;font-size:10.5px;background:rgba(255,255,255,.14);padding:1px 7px;border-radius:20px;font-weight:700;flex:none}
@@ -1646,6 +1646,18 @@ function importBackup(d){
     renderGate();
   }
 })();
+</script>
+<!-- פס התקדמות גלילה — צבעי מצגת המנהלים, כמו בשאר האתר -->
+<style>
+#pagebar{position:fixed;top:0;right:0;height:4px;width:0;z-index:900;pointer-events:none;
+  background:linear-gradient(to left,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3);border-radius:0 0 0 3px;transition:width .25s ease}
+@media print{#pagebar{display:none}}
+</style>
+<script>
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var b=document.createElement('div');b.id='pagebar';b.setAttribute('aria-hidden','true');document.body.appendChild(b);
+var t=false;function u(){t=false;var m=document.documentElement.scrollHeight-innerHeight;b.style.width=(m>200?(scrollY/m)*100:0)+'%'}
+addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
 </script>
 </body>
 </html>

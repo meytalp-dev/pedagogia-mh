@@ -126,7 +126,7 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 .lrow .ln{font-weight:800;font-variant-numeric:tabular-nums;font-size:.88rem;color:var(--muted);min-width:30px;transition:color .3s}
 .lrow:hover .ln{color:#0B7FA6}
 .lrow .lt{font-weight:700;font-size:.97rem;color:var(--navy);position:relative}
-.lrow .lt::after{content:"";position:absolute;inset-inline:0;bottom:-3px;height:2px;background:var(--cyan);transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease)}
+.lrow .lt::after{content:"";position:absolute;inset-inline:0;bottom:-3px;height:2px;background:var(--m-grad);transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease)}
 .lrow:hover .lt::after{transform:scaleX(1)}
 .lrow .ls{font-size:.8rem;color:var(--text2);margin-inline-start:auto;text-align:start;white-space:nowrap}
 .lrow svg{flex-shrink:0;align-self:center;color:var(--text2);transition:transform .3s var(--ease),color .3s;width:14px;height:14px}

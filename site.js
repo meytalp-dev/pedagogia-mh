@@ -15,6 +15,75 @@ function toggleMenu(open){document.body.classList.toggle('menu-open',open)}
   });
 })();
 
+/* פס התקדמות גלילה — הגרדיאנט הצבעוני של מצגת המנהלים, נבנה בכל עמוד ארוך */
+(function pageBar(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const bar=document.createElement('div'); bar.id='pagebar'; bar.setAttribute('aria-hidden','true');
+  document.body.appendChild(bar);
+  let ticking=false;
+  function update(){
+    ticking=false;
+    const max=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(max>200 ? (scrollY/max)*100 : 0)+'%';
+  }
+  addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});
+  update();
+})();
+
+/* חשיפה בגלילה — אלמנטים שמתחת לקו המסך נכנסים באנימציית המצגת (rise עם blur / cardIn) */
+(function scrollReveal(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const els=[...document.querySelectorAll('.card,.rv,.mokad,.linkcard,.tipcard,.row,.p-row,.cy-step')]
+    .filter(el=>el.getBoundingClientRect().top>innerHeight*.92);
+  if(!els.length) return;
+  document.documentElement.classList.add('sr-on');
+  const byParent=new Map();
+  els.forEach(el=>{
+    const n=byParent.get(el.parentElement)||0;
+    el.style.setProperty('--d',Math.min(n*70,350)+'ms');
+    byParent.set(el.parentElement,n+1);
+    el.classList.add('sr');
+  });
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{rootMargin:'0px 0px -7% 0px',threshold:.05});
+  els.forEach(el=>io.observe(el));
+})();
+
+/* בסיום אנימציית כניסה משחררים אותה — אחרת fill:both נועל את ה-transform וחוסם את ה-hover */
+document.addEventListener('animationend',e=>{
+  const el=e.target;
+  if(!(el instanceof Element)) return;
+  if(e.animationName==='rise'||e.animationName==='cardIn'){
+    el.classList.remove('sr','in');
+    el.style.animation='none';
+  }
+});
+
+/* תמונות רצות "מהשטח" — crossfade בין התמונות שבתוך .fieldshow, כולל החלפת כיתוב */
+(function fieldShows(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.fieldshow').forEach(box=>{
+    const imgs=[...box.querySelectorAll('img')];
+    if(imgs.length<2) return;
+    const cap=box.dataset.capTarget ? document.querySelector(box.dataset.capTarget) : null;
+    if(cap) cap.style.transition='opacity .35s ease';
+    let i=Math.max(0,imgs.findIndex(im=>im.classList.contains('on'))), paused=false;
+    box.addEventListener('pointerenter',()=>paused=true);
+    box.addEventListener('pointerleave',()=>paused=false);
+    setInterval(()=>{
+      if(paused||document.hidden) return;
+      imgs[i].classList.remove('on');
+      i=(i+1)%imgs.length;
+      imgs[i].classList.add('on');
+      if(cap&&imgs[i].dataset.cap){
+        cap.style.opacity=0;
+        setTimeout(()=>{cap.textContent=imgs[i].dataset.cap;cap.style.opacity=1},350);
+      }
+    }, +(box.dataset.interval||6000));
+  });
+})();
+
 function openOgen(){
   const l=document.querySelector('.ogenw-launcher');
   if(l){

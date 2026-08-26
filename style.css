@@ -13,6 +13,11 @@
   --sh-float:0 20px 60px rgba(13,59,102,.14);
   --ease:cubic-bezier(.2,.8,.2,1);
   --px:48px;
+  /* פלטת המפגש (מצגת מנהלים) — צבעי הדגשה לקידוד מוקדי אחריות ורכיבי תוכן */
+  --m-blue:#2F74C0; --m-green:#2F9F55; --m-yellow:#F2B233;
+  --m-red:#EF5656; --m-purple:#8F7AC3; --m-turq:#1FA6A0; --m-navy:#0B2B4C;
+  --m-grad:linear-gradient(to left,var(--m-blue),var(--m-green),var(--m-yellow),var(--m-red),var(--m-purple));
+  --m-grad-v:linear-gradient(180deg,var(--m-blue),var(--m-green),var(--m-yellow),var(--m-red),var(--m-purple));
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Assistant','Noto Sans Hebrew',sans-serif;background:var(--canvas);color:var(--text);line-height:1.6}
@@ -21,7 +26,71 @@ img{max-width:100%}
 
 .rv{animation:rise .55s var(--ease) both}
 .rv.d1{animation-delay:.07s}.rv.d2{animation-delay:.14s}.rv.d3{animation-delay:.21s}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes cardIn{from{opacity:0;transform:perspective(900px) translateY(24px) rotateX(8deg) scale(.96)}to{opacity:1;transform:none}}
+
+/* ===== חשיפה בגלילה (site.js מוסיף sr-on ל-html ו-in לאלמנטים שנכנסים למסך) ===== */
+html.sr-on .sr{opacity:0 !important;animation:none !important}
+html.sr-on .sr.in{animation:rise .6s cubic-bezier(.16,1,.3,1) var(--d,0s) both !important}
+html.sr-on .sr.in.card,html.sr-on .sr.in.mokad,html.sr-on .sr.in.linkcard{animation:cardIn .7s cubic-bezier(.16,1,.3,1) var(--d,0s) both !important}
+
+/* ===== פס התקדמות גלילה (בהשראת פס השקפים במצגת) ===== */
+#pagebar{position:fixed;top:0;right:0;height:4px;width:0;z-index:200;pointer-events:none;
+  background:var(--m-grad);border-radius:0 0 0 3px;transition:width .25s var(--ease)}
+
+/* ===== ברק חד-פעמי על כרטיס מודגש ===== */
+.shine{position:relative;overflow:hidden}
+.shine::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.65) 50%,transparent 62%);
+  transform:translateX(-170%);animation:shine 1.15s ease-out calc(var(--d,0s) + 1s) forwards}
+html.sr-on .sr.shine::after{animation:none}
+html.sr-on .sr.in.shine::after{animation:shine 1.15s ease-out calc(var(--d,0s) + .85s) forwards}
+@keyframes shine{to{transform:translateX(170%)}}
+
+/* ===== פעימת צל עדינה לתגים עגולים (box-shadow בלבד) ===== */
+@keyframes bubblePulse{0%,100%{box-shadow:0 2px 6px rgba(13,59,102,0)}50%{box-shadow:0 8px 22px rgba(13,59,102,.22)}}
+.pulse{animation:bubblePulse 4.6s ease-in-out 1.2s infinite}
+
+/* ===== תמונות רצות "מהשטח" — קרוסלת crossfade עם זום עדין ===== */
+.fieldshow{position:relative;overflow:hidden}
+.fieldshow img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;transform:scale(1.07);transition:opacity 1.1s ease,transform 9s linear}
+.fieldshow img.on{opacity:1;transform:scale(1)}
+
+/* ===== מוקדי אחריות — כרטיסים בקידוד הצבע של המפגש ===== */
+.mokdim{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.mokad{--mc:var(--m-blue);display:block;background:var(--surface);border:1px solid var(--border);
+  border-inline-start:5px solid var(--mc);border-radius:16px;padding:16px 18px 14px;
+  text-decoration:none;color:inherit;box-shadow:var(--sh-sm);position:relative;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.mokad .mk-head{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.mokad .dot{width:10px;height:10px;border-radius:50%;background:var(--mc);flex-shrink:0;animation:bubblePulse 4.6s ease-in-out 1.2s infinite}
+.mokad b{font-size:1.02rem;font-weight:800;color:var(--mc)}
+.mokad .who{font-size:.82rem;color:var(--text2);font-weight:600}
+.mokad .who span{color:var(--muted);font-weight:400}
+
+/* ===== כרטיס קישור (linkcard מהמצגת, מותאם לשפת האתר) ===== */
+.linkcard{--lc:var(--navy-800);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:26px 22px;
+  text-decoration:none;text-align:center;color:inherit;box-shadow:var(--sh-sm);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.linkcard:hover{border-color:var(--lc);box-shadow:var(--sh-md);transform:translateY(-3px)}
+.linkcard .lc-icon{font-size:42px;line-height:1}
+.linkcard .lc-title{font-size:1.2rem;font-weight:800;color:var(--lc)}
+.linkcard .lc-desc{font-size:.88rem;color:var(--text2);line-height:1.55;max-width:34ch}
+.linkcard .lc-url{font-size:.76rem;color:var(--muted);direction:ltr;font-weight:600;background:#fff;border:1px solid var(--border);border-radius:999px;padding:4px 13px}
+
+/* ===== כרטיסי דגשים / טיפים (בהשראת כרטיסי הטיפים החיים במצגת) ===== */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.tipcard{--tc:var(--m-blue);background:var(--surface);border:1px solid var(--border);
+  border-inline-start:5px solid var(--tc);border-radius:14px;padding:14px 18px;
+  font-size:.93rem;line-height:1.6;color:var(--text);box-shadow:var(--sh-sm)}
+.tipcard .tn{display:inline-grid;place-content:center;width:24px;height:24px;border-radius:50%;
+  background:var(--tc);color:#fff;font-weight:800;font-size:.8rem;margin-inline-end:8px;transform:translateY(5px)}
+.tipcard b.tt{color:var(--navy);font-weight:800}
+@media(max-width:760px){.tips-grid{grid-template-columns:1fr}}
+@media print{#pagebar{display:none}}
 
 /* ===== govbar + nav ===== */
 .govbar{background:#fff;border-bottom:1px solid var(--border);padding:7px var(--px);display:flex;align-items:center;gap:12px;font-size:.78rem;color:var(--muted)}
@@ -45,9 +114,12 @@ img{max-width:100%}
 .nav .brand .mark{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem}
 .nav .brand b{font-size:.95rem;color:var(--navy);display:block;line-height:1.2;max-width:200px}
 .nav .brand span{font-size:.74rem;color:var(--muted);display:block}
-.nav a.lnk{color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:600;cursor:pointer;padding:6px 2px;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap}
-.nav a.lnk:hover{color:var(--navy)}
-.nav a.lnk.active{color:var(--navy);border-bottom-color:var(--cyan)}
+.nav a.lnk{color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:600;cursor:pointer;padding:6px 2px;border-bottom:2.5px solid transparent;white-space:nowrap;
+  background:var(--m-grad) no-repeat bottom right;background-size:0% 2.5px;
+  transition:color .18s,background-size .3s var(--ease)}
+.nav a.lnk:hover{color:var(--navy);background-size:100% 2.5px}
+.nav a.lnk.active{color:var(--navy);background-size:100% 2.5px}
+.nav a.lnk.dis:hover{background-size:0% 2.5px}
 .nav .tools{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
 .nav .ogen-btn{background:var(--grad);color:#fff;border-radius:999px;padding:9px 22px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;white-space:nowrap}
 .nav .ogen-btn:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
@@ -75,8 +147,8 @@ img{max-width:100%}
 .card:hover .ic{transform:scale(1.07) rotate(-2deg)}
 a.card::after,.card.link::after{content:"←";position:absolute;bottom:14px;left:18px;color:#0B7FA6;font-weight:800;font-size:1rem;opacity:0;transform:translateX(8px);transition:all .28s var(--ease)}
 a.card:hover::after,.card.link:hover::after{opacity:1;transform:none}
-.card::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:0;background:linear-gradient(180deg,var(--cyan),var(--blue));transition:width .28s var(--ease)}
-a.card:hover::before{width:3px}
+.card::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:0;background:var(--m-grad-v);transition:width .28s var(--ease)}
+a.card:hover::before{width:4px}
 
 .kicker{font-size:.8rem;font-weight:800;letter-spacing:.1em;color:#0B7FA6;text-transform:uppercase}
 .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
