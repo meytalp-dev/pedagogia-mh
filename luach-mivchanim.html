@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לוח מבחנים · בגרויות וגמר תשפ"ז · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="כל מועדי בחינות הבגרות והגמר לשנת תשפ"ז, לפי מועד חורף, קיץ ומועד ב', עם סימון שבעת תחומי הדעת.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/pagenav.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <a href="rakaz-pedagogi-klim.html"><span class="n">05</span> כלים פדגוגיים · תשפ"ז</a>
+    <a class="dis"><span class="n">06</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">07</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">08</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">09</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">10</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>    <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז/ת הפדגוגי/ת</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="install.html">📲 עוגן והאתר בנייד</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hodaot.html">הודעות ועדכונים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="rakaz-pedagogi-klim.html">כלים פדגוגיים · תשפ"ז</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+      <a href="documents.html">כלים ניהוליים פדגוגיים</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>      <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="cherum-nehalim.html">חירום ואירוע חריג</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="vaada-melava.html">ועדה מלווה · ההנחיות המלאות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="tafkidim.html">כל התפקידים וההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז/ת הפדגוגי/ת</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">לוח גאנט והשתלמויות<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hishtalmuyot.html">דף ההשתלמויות · תשפ"ז</a>
+      <a href="gantt.html">לוח הגאנט · צוותים</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<style>
+  .exbar{position:sticky;top:var(--navh,66px);z-index:30;background:rgba(248,251,255,.95);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:11px var(--px)}
+  .expills{display:flex;flex-wrap:wrap;gap:8px}
+  .expill{border:1px solid var(--border-strong);background:#fff;color:var(--navy-800);
+    border-radius:999px;padding:7px 15px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
+  .expill:hover{border-color:var(--blue);color:var(--blue)}
+  .expill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+  .exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;
+    padding:26px var(--px) 40px}
+  .ex{display:flex;gap:13px;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:13px 15px;box-shadow:var(--sh-sm);transition:.18s}
+  .ex:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+  .ex.core{border-color:var(--border-strong);background:linear-gradient(180deg,#fff,var(--blue-bg))}
+  .exd{flex:0 0 54px;text-align:center;border-inline-end:1px solid var(--border);padding-inline-end:12px}
+  .exd b{display:block;font-size:1.5rem;color:var(--navy);line-height:1.1;font-weight:800}
+  .exd span{font-size:.74rem;color:var(--muted);font-weight:700}
+  .exb{min-width:0;flex:1}
+  .exb h4{font-size:.99rem;margin-bottom:5px;line-height:1.3}
+  .exm{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.79rem;color:var(--text2)}
+  .mtag{font-size:.71rem;font-weight:700;border-radius:999px;padding:1px 8px;border:1px solid}
+  .m-w{background:#E8F2FF;color:#124D7A;border-color:#C6DDF5}
+  .m-s{background:#FFF6E3;color:#8A6210;border-color:#F4E0B0}
+  .m-b{background:#F0EBFA;color:#5B4A8A;border-color:#DCD2F0}
+  .stag{font-size:.71rem;font-weight:700;border-radius:999px;padding:1px 8px;
+    background:var(--teal-100);color:#0A7268;border:1px solid #B9EDE7}
+  .exhide{display:none !important}
+  .srcbox{margin:0 var(--px) 40px;background:var(--surface);border:1px solid var(--border-strong);
+    border-radius:16px;padding:18px 20px;box-shadow:var(--sh-sm)}
+  .srcbox h3{font-size:1.05rem;margin-bottom:7px}
+  .srcbox p{font-size:.9rem;color:var(--text2);margin-bottom:10px}
+  .srclinks{display:flex;flex-wrap:wrap;gap:9px}
+  .srclinks a{font-size:.85rem;font-weight:700;color:var(--blue);text-decoration:none;
+    border:1px solid var(--border);border-radius:10px;padding:7px 13px;background:var(--blue-bg);transition:.15s}
+  .srclinks a:hover{border-color:var(--blue)}
+  .draft{border-inline-start:4px solid var(--m-yellow);background:#FFFBF2;border-radius:0 12px 12px 0;
+    padding:12px 15px;margin-top:14px;font-size:.89rem;color:#6B5312}
+</style>
+
+<div class="pagehead" style="padding-top:52px">
+  <div class="kicker rv">מועדי היבחנות · אגף בכיר בחינות</div>
+  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">לוח מבחנים · בגרויות וגמר תשפ"ז</h1>
+  <p class="rv d2 lead" style="font-size:1.06rem;max-width:700px">
+    כל מועדי הבחינות של שנת תשפ"ז במקום אחד, עם סימון של שבעת תחומי הדעת שלנו.
+    הנתונים נלקחו מלוחות המועדים הרשמיים של משרד החינוך.</p>
+</div>
+
+<div class="exbar"><div class="expills">
+  <button class="expill on" data-f="all">כל המקצועות</button>
+  <button class="expill" data-f="core">שבעת תחומי הדעת</button>
+  <button class="expill" data-f="חורף">מועד חורף</button>
+  <button class="expill" data-f="קיץ">מועד קיץ</button>
+  <button class="expill" data-f="מועד ב'">מועד ב'</button>
+</div></div>
+
+<div class="exgrid" id="exgrid">
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>28</b><span>דצמ</span></div><div class="exb"><h4>מחשבת ישראל דתי</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 28 בדצמבר 2026</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>4</b><span>ינו</span></div><div class="exb"><h4>עברית ליהודים</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 4 בינואר 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>4</b><span>ינו</span></div><div class="exb"><h4>עברית לערבים</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 4 בינואר 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>11</b><span>ינו</span></div><div class="exb"><h4>מתמטיקה</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 11 בינואר 2027</span><span class="stag">מתמטיקה</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>12</b><span>ינו</span></div><div class="exb"><h4>מתמטיקה</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שלישי · 12 בינואר 2027</span><span class="stag">מתמטיקה</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>14</b><span>ינו</span></div><div class="exb"><h4>תושבע"פ</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 14 בינואר 2027</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>14</b><span>ינו</span></div><div class="exb"><h4>מורשת דרוזית</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 14 בינואר 2027</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>18</b><span>ינו</span></div><div class="exb"><h4>אנגלית</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 18 בינואר 2027</span><span class="stag">אנגלית</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>19</b><span>ינו</span></div><div class="exb"><h4>אנגלית</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שלישי · 19 בינואר 2027</span><span class="stag">אנגלית</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>21</b><span>ינו</span></div><div class="exb"><h4>אזרחות</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 21 בינואר 2027</span><span class="stag">אזרחות</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>24</b><span>ינו</span></div><div class="exb"><h4>עברית לדרוזים</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום ראשון · 24 בינואר 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>25</b><span>ינו</span></div><div class="exb"><h4>תנ"ך</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 25 בינואר 2027</span><span class="stag">תנ"ך</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>25</b><span>ינו</span></div><div class="exb"><h4>מורשת דת איסלאם</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 25 בינואר 2027</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>25</b><span>ינו</span></div><div class="exb"><h4>מורשת נוצרית</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 25 בינואר 2027</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>28</b><span>ינו</span></div><div class="exb"><h4>ערבית לערבים ולדרוזים (לשון)</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 28 בינואר 2027</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>1</b><span>פבר</span></div><div class="exb"><h4>היסטוריה לכלל המגזרים</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום שני · 1 בפברואר 2027</span><span class="stag">היסטוריה</span></div></div></div>
+<div class="ex core" data-moed="חורף" data-core="1"><div class="exd"><b>4</b><span>פבר</span></div><div class="exb"><h4>ספרות ליהודים</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 4 בפברואר 2027</span><span class="stag">ספרות</span></div></div></div>
+<div class="ex" data-moed="חורף" data-core="0"><div class="exd"><b>4</b><span>פבר</span></div><div class="exb"><h4>ערבית לערבים ולדרוזים (ספרות)</h4><div class="exm"><span class="mtag m-w">חורף</span><span>יום חמישי · 4 בפברואר 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>29</b><span>אפר</span></div><div class="exb"><h4>ערבית לערבים (לשון) כולל הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 29 באפריל 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>2</b><span>מאי</span></div><div class="exb"><h4>ערבית לדרוזים (לשון)</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום ראשון · 2 במאי 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>5</b><span>מאי</span></div><div class="exb"><h4>מקצועות הגבר · מדעי המחשב · שפות זרות</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 5 במאי 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>9</b><span>מאי</span></div><div class="exb"><h4>דינים · יהדות</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום ראשון · 9 במאי 2027</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>17</b><span>מאי</span></div><div class="exb"><h4>עברית ליהודים</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 17 במאי 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>20</b><span>מאי</span></div><div class="exb"><h4>תנ"ך כולל הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 20 במאי 2027</span><span class="stag">תנ"ך</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>26</b><span>מאי</span></div><div class="exb"><h4>מתמטיקה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 26 במאי 2027</span><span class="stag">מתמטיקה</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>27</b><span>מאי</span></div><div class="exb"><h4>מתמטיקה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 27 במאי 2027</span><span class="stag">מתמטיקה</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h4>דיפלומטיה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 31 במאי 2027</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>1</b><span>יונ</span></div><div class="exb"><h4>אנגלית</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שלישי · 1 ביוני 2027</span><span class="stag">אנגלית</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h4>ביולוגיה מעבדה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 2 ביוני 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h4>ביולוגיה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 3 ביוני 2027</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>7</b><span>יונ</span></div><div class="exb"><h4>היסטוריה לכלל המגזרים כולל הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 7 ביוני 2027</span><span class="stag">היסטוריה</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>9</b><span>יונ</span></div><div class="exb"><h4>מורשות לכלל המגזרים · מחשבת ישראל</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 9 ביוני 2027</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>14</b><span>יונ</span></div><div class="exb"><h4>עברית לערבים ולדרוזים · מחשבה ומוסר · תלמוד ותושבע"פ</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 14 ביוני 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>17</b><span>יונ</span></div><div class="exb"><h4>ספרות לכלל המגזרים כולל הגבר · ערבית (ספרות)</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 17 ביוני 2027</span><span class="stag">ספרות</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>21</b><span>יונ</span></div><div class="exb"><h4>כימיה · מקצועות הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 21 ביוני 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>23</b><span>יונ</span></div><div class="exb"><h4>פיזיקה מעבדה</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 23 ביוני 2027</span></div></div></div>
+<div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>24</b><span>יונ</span></div><div class="exb"><h4>אזרחות כולל הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 24 ביוני 2027</span><span class="stag">אזרחות</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>28</b><span>יונ</span></div><div class="exb"><h4>פיזיקה · מוט"ל</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 28 ביוני 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>30</b><span>יונ</span></div><div class="exb"><h4>מקצועות הגבר</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 30 ביוני 2027</span></div></div></div>
+<div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>1</b><span>יול</span></div><div class="exb"><h4>פסיכומטרי</h4><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 1 ביולי 2027</span></div></div></div>
+<div class="ex core" data-moed="מועד ב'" data-core="1"><div class="exd"><b>5</b><span>יול</span></div><div class="exb"><h4>מועד ב' · שפת אם — עברית או ערבית</h4><div class="exm"><span class="mtag m-b">מועד ב'</span><span>יום שני · 5 ביולי 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex core" data-moed="מועד ב'" data-core="1"><div class="exd"><b>6</b><span>יול</span></div><div class="exb"><h4>מועד ב' · אנגלית אווטר</h4><div class="exm"><span class="mtag m-b">מועד ב'</span><span>יום שלישי · 6 ביולי 2027</span><span class="stag">אנגלית</span></div></div></div>
+<div class="ex core" data-moed="מועד ב'" data-core="1"><div class="exd"><b>7</b><span>יול</span></div><div class="exb"><h4>מועד ב' · אנגלית</h4><div class="exm"><span class="mtag m-b">מועד ב'</span><span>יום רביעי · 7 ביולי 2027</span><span class="stag">אנגלית</span></div></div></div>
+<div class="ex core" data-moed="מועד ב'" data-core="1"><div class="exd"><b>8</b><span>יול</span></div><div class="exb"><h4>מועד ב' · מתמטיקה</h4><div class="exm"><span class="mtag m-b">מועד ב'</span><span>יום חמישי · 8 ביולי 2027</span><span class="stag">מתמטיקה</span></div></div></div>
+</div>
+
+<div class="srcbox rv">
+  <h3>המקור הרשמי</h3>
+  <p>הלוח שלמעלה הוא העתק של לוחות המועדים של אגף בכיר בחינות. לפני כל החלטה מבצעית —
+     בדיקת מועדים מול המקור הרשמי היא באחריות בית הספר.</p>
+  <div class="srclinks">
+    <a href="https://meyda.education.gov.il/files/Exams/LuachWinExams2027Tyota.pdf" target="_blank" rel="noopener">לוח מועד חורף תשפ"ז (PDF)</a>
+    <a href="https://meyda.education.gov.il/files/Exams/LuachSumExams2027Tyota.pdf" target="_blank" rel="noopener">לוח מועד קיץ תשפ"ז (PDF)</a>
+    <a href="https://exams.education.gov.il/" target="_blank" rel="noopener">אגף בכיר בחינות</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות שלנו</a>
+  </div>
+  <div class="draft">
+    <b>שימו לב — הלוח מסומן "טיוטה" (12/07/2026).</b>
+    בלשון משרד החינוך: "מועדי הבחינות המפורטים בלוח זה כפופים לשינויים. משרד החינוך רשאי
+    לעדכן את מועדי הבחינות, סדרן או מתכונתן במהלך שנת הלימודים, בהתאם לצורך."
+  </div>
+</div>
+
+<script>
+(function(){
+  var pills = [].slice.call(document.querySelectorAll('.expill'));
+  var items = [].slice.call(document.querySelectorAll('#exgrid .ex'));
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      pills.forEach(function(x){ x.classList.remove('on'); });
+      p.classList.add('on');
+      var f = p.dataset.f;
+      items.forEach(function(it){
+        var show = (f === 'all') ||
+                   (f === 'core' && it.dataset.core === '1') ||
+                   (it.dataset.moed === f);
+        it.classList.toggle('exhide', !show);
+      });
+    });
+  });
+})();
+</script>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+
+<script src="site.js"></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
+</body>
+</html>

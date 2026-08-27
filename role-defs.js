@@ -52,12 +52,13 @@ const ROLE_DEFS = {
       ]}
     ]},
     { h: 'נספחים וקישורים ישירים', items: [
-      '<b>נספח א</b> — <a href="https://docs.google.com/spreadsheets/d/1L0Ieng_hfM3GKdDMhfTShHdIgg3rBqthxzrp-YJbmiE/edit" target="_blank" rel="noopener">תוכנית עבודה שנתית לרכז/ת פדגוגי/ת יוצר/ת</a> (גיליון Google · גרסת 6/2025).',
+      '<b>ארגז הכלים של הרכז/ת הפדגוגי/ת</b> — <a href="rakaz-pedagogi-klim.html">כל כלי העבודה לתשפ״ז באתר</a>: תוכנית עבודה שנתית, תבנית תכנון לימודי, תוכנית פדגוגית פרטנית, פריסת היבחנות, מיפוי בית ספרי, חוברת שאלונים ושאלוני פדגוגיה.',
+        '<b>נספח א</b> — <a href="docs/tochnit-avoda-rakaz-pedagogi.xlsx" download>תוכנית עבודה שנתית לרכז/ת פדגוגי/ת יוצר/ת</a> (גרסת 6/2025).',
       '<b>נספח ב</b> — <a href="https://yotzer.education/knowledge-center/%d7%94%d7%a9%d7%aa%d7%9c%d7%9e%d7%95%d7%aa-%d7%a8%d7%9b%d7%96%d7%95%d7%aa-%d7%95%d7%a8%d7%9b%d7%96%d7%99-%d7%a4%d7%93%d7%92%d7%95%d7%92%d7%99%d7%94/" target="_blank" rel="noopener">האתר הייעודי לרכזות ורכזי הפדגוגיה</a> — מרכז הידע של החינוך היוצר.',
       '<a href="https://meyda.education.gov.il/files/PortalShaar/rak-ped.pdf" target="_blank" rel="noopener">אוגדן לרכזים פדגוגיים</a> — משרד החינוך (מסמך קשור).'
     ]}
   ],
-  src: { url: 'https://drive.google.com/file/d/1qAGcNngUmp0aisIvg1xYopA4crG6C_RR/view' }
+  src: { url: 'docs/tafkid-rakaz-pedagogi.pdf' }
 },
 
 /* ───────────── רכז/ת חינוך חברתי ───────────── */
@@ -117,12 +118,12 @@ const ROLE_DEFS = {
     ]},
     { h: 'מסמכים וחוזרים קשורים', items: [
       '<a href="https://meyda.education.gov.il/files/yesodi/Hevra/rakaz_meshimot.pdf" target="_blank" rel="noopener">הגדרת תפקיד הרכז החברתי־ערכי</a> — משרד החינוך.',
-      '<a href="https://drive.google.com/file/d/18HAvxDz-H0wk9peJ6DogMq22T_XZSIyk/view" target="_blank" rel="noopener">חינוך חברתי יוצר — חולמים ומובילים יחד</a> (מחברת הרכזות החברתיות).',
+      '<a href="docs/chinuch-hevrati-yotzer-machberet.pdf" download>חינוך חברתי יוצר — חולמים ומובילים יחד</a> (מחברת הרכזות החברתיות).',
       '<a href="https://meyda.education.gov.il/files/hozermankal/K-2010-3b-9-7-6.docx" target="_blank" rel="noopener">חינוך חברתי וחינוך בלתי־פורמלי</a> — חוזר מנכ״ל.',
       '<a href="https://meyda.education.gov.il/files/noar/sel_1.pdf" target="_blank" rel="noopener">למידה חברתית ורגשית בחינוך החברתי העל־יסודי</a> / עמליה לוין, סימה גוטמן ושושי שפיגל.'
     ]}
   ],
-  src: { url: 'https://drive.google.com/file/d/15UOtPz9_Fqs7GDlk7AEC-ucIUt17Mbbz/view' }
+  src: { url: 'docs/tafkid-rakaz-hevrati.pdf' }
 },
 
 /* ───────────── רכז/ת צוות צעיר ───────────── */
@@ -238,7 +239,7 @@ const ROLE_DEFS = {
       'חניכות נוער — תקציר מנהלים (חוק החניכות התשי״ג־1953, שכר חניכות וביטוח) · הנחיות למילוי דוח תעסוקה.'
     ]}
   ],
-  src: { url: 'https://drive.google.com/file/d/136SF0uAehgixiEeS1kxfcwaPetEaWJuS/view', label: 'תיק החפיפה לרכז.ת חניכות' }
+  src: { url: 'docs/tik-chafifa-rakaz-chanichut.pdf', label: 'תיק החפיפה לרכז.ת חניכות' }
 },
 
 /* ───────────── מת"ל ───────────── */
@@ -296,10 +297,10 @@ const ROLE_DEFS = {
     { h: 'חוקים והוראות קשורים', items: [
       'חוק החניכות, התשי״ג־1953.',
       'חוק זכויות תלמידים עם לקויות למידה במוסדות על־תיכוניים.',
-      '<a href="https://drive.google.com/file/d/1MTYnx_IWj2er0MhqI5lrFhryUIYYamdo/view" target="_blank" rel="noopener">מטרות התל״א</a> — המינהל להכשרה מקצועית, משרד העבודה.'
+      '<a href="docs/matarot-tela.pdf" download>מטרות התל״א</a> — המינהל להכשרה מקצועית, משרד העבודה.'
     ]}
   ],
-  src: { url: 'https://drive.google.com/file/d/1elmK8NBH79VhhFyF3ybWWG5qZefAVYhz/view' }
+  src: { url: 'docs/tafkid-matal.pdf' }
 },
 
 /* ───────────── רכז/ת הכלה ושילוב ───────────── */
@@ -387,7 +388,7 @@ const ROLE_DEFS = {
       'נספח ה — הסכמת הורים למתן טיפול פסיכולוגי/תרפיה.'
     ]}
   ],
-  src: { url: 'https://drive.google.com/file/d/1EURTDcYEW9k6JSU-C4KauMKI--j3yRvL/view' }
+  src: { url: 'docs/tafkid-rakaz-hachala.pdf' }
 },
 
 /* ───────────── יועץ/ת חינוכי/ת ───────────── */
@@ -737,8 +738,12 @@ const ROLE_DEFS = {
            '<a class="btn line" href="baaley-tafkidim.html">למסמך ההנחיות המלא</a></div>';
     } else {
       h += '<div class="src"><span class="meta">מסמך רשמי · המינהל להכשרה מקצועית, משרד העבודה · תוקף ההנחיות: החל משנת תשפ״ו · עודכן יוני 2026</span>' +
-           '<a class="btn primary" href="' + d.src.url + '" target="_blank" rel="noopener">' +
-           (d.src.label || 'הגדרת התפקיד המלאה') + ' ↗</a></div>';
+           (function(){
+             var loc = d.src.url.indexOf('docs/') === 0;
+             return '<a class="btn primary" href="' + d.src.url + '"' +
+                    (loc ? ' download>' : ' target="_blank" rel="noopener">') +
+                    (d.src.label || 'הגדרת התפקיד המלאה') + (loc ? ' ⬇' : ' ↗') + '</a>';
+           })() + '</div>';
     }
     elBody.innerHTML = h;
     elBody.scrollTop = 0;

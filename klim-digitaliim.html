@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כלים דיגיטליים ומשחקים חינוכיים · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="מערכי שיעור מוכנים, מחוללי משחקים וכלי בינה מלאכותית לשבעת תחומי הדעת — נבחרו ונבדקו למינהל הכשרה מקצועית.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="cats.css">
+<link rel="stylesheet" href="/pagenav.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <a href="rakaz-pedagogi-klim.html"><span class="n">05</span> כלים פדגוגיים · תשפ"ז</a>
+    <a class="dis"><span class="n">06</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">07</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">08</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">09</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">10</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>    <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז/ת הפדגוגי/ת</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="install.html">📲 עוגן והאתר בנייד</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hodaot.html">הודעות ועדכונים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="rakaz-pedagogi-klim.html">כלים פדגוגיים · תשפ"ז</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+      <a href="documents.html">כלים ניהוליים פדגוגיים</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>      <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="cherum-nehalim.html">חירום ואירוע חריג</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="vaada-melava.html">ועדה מלווה · ההנחיות המלאות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="tafkidim.html">כל התפקידים וההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז/ת הפדגוגי/ת</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">לוח גאנט והשתלמויות<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hishtalmuyot.html">דף ההשתלמויות · תשפ"ז</a>
+      <a href="gantt.html">לוח הגאנט · צוותים</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead" style="padding-top:52px">
+  <div class="kicker rv">ארגז הכלים של המורה</div>
+  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">כלים דיגיטליים ומשחקים חינוכיים</h1>
+  <p class="rv d2 lead" style="font-size:1.06rem;max-width:720px">
+    מערכי שיעור מוכנים, מחוללי משחקים וכלי בינה מלאכותית — נבחרו ונבדקו עבור שבעת תחומי
+    הדעת שלנו. הכול חינם או בעל שכבת חינם שימושית.</p>
+</div>
+
+<!-- ===== שער הקטגוריות ===== -->
+<div class="cat-hub">
+  <div class="article">
+    <h2>מה בארגז · בחרו קטגוריה</h2>
+    <p class="cat-hub-lead">התוכן מסודר בארבע קטגוריות. בחרו קטגוריה — ורק היא תוצג. לחיצה על "הכול" פותחת את העמוד המלא.</p>
+    <div class="cat-grid">
+<button class="catcard" data-cat="repos" type="button"><span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></span><span class="ct"><b class="cn">01</b><b class="cttl">מאגרי מערכי שיעור</b><span class="csub">המרחב הפדגוגי · תל"י · קדמה · בית התוכן הירושלמי ועוד</span></span></button>
+<button class="catcard" data-cat="tools" type="button"><span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 11h3M8.5 9.5v3"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13.5" r="1"/></svg></span><span class="ct"><b class="cn">02</b><b class="cttl">כלים ומשחוק</b><span class="csub">Wordwall · Genially · Quizizz · Edpuzzle · Padlet ועוד</span></span></button>
+<button class="catcard" data-cat="ai" type="button"><span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5"/><path d="M2 12h3M19 12h3"/></svg></span><span class="ct"><b class="cn">03</b><b class="cttl">בינה מלאכותית למורה</b><span class="csub">"בינה בכיתה" · קורסי גמול · MagicSchool ו-Diffit</span></span></button>
+<button class="catcard" data-cat="subj" type="button"><span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H19v14H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M8 8h7M8 12h5"/></svg></span><span class="ct"><b class="cn">04</b><b class="cttl">לפי תחום דעת</b><span class="csub">לכל אחד משבעת התחומים — המקור הרשמי וכלים ייעודיים</span></span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== פס סינון דביק ===== -->
+<div class="cat-bar" id="catbar" data-default="all">
+  <div class="article cat-bar-in">
+    <span class="cb-label">קטגוריה:</span>
+    <div class="cb-pills" role="tablist" aria-label="קטגוריות ארגז הכלים">
+      <button class="cpill" data-cat="all" type="button">הכול</button>
+      <button class="cpill" data-cat="repos" type="button">מאגרי מערכי שיעור</button>
+      <button class="cpill" data-cat="tools" type="button">כלים ומשחוק</button>
+      <button class="cpill" data-cat="ai" type="button">בינה מלאכותית</button>
+      <button class="cpill" data-cat="subj" type="button">לפי תחום דעת</button>
+    </div>
+  </div>
+</div>
+
+<article class="body-sec">
+  <div class="article">
+
+<!-- ============ 01 · מאגרים ============ -->
+<section class="cat-panel" data-cat="repos" id="repos" aria-label="מאגרי מערכי שיעור">
+  <h2 class="sub-sec first rv">מאגרי מערכי שיעור</h2>
+  <p class="lead-p rv">נקודת הפתיחה של מורה שמחפש מערך מוכן. המאגר הרשמי של משרד החינוך הוא הבסיס — סביבו מאגרים משלימים שכתבו מורים בפועל.</p>
+
+  <div class="callout rv">
+    <span class="ttl">המרחב הפדגוגי — הבסיס לכל השאר</span>
+    תשע קטגוריות של כלי עזר להוראה: פרקטיקות להוראה איכותית, מודלים דיגיטליים, סביבות למידה, פודקאסט ועוד.
+    <a class="lk" href="https://pop.education.gov.il/teaching-tools/" target="_blank" rel="noopener">לכלי העזר להוראה ←</a>
+  </div>
+<div class="tbl-scroll rv"><table class="doc"><caption>מאגרים רב־תחומיים</caption><thead><tr><th>המאגר</th><th>מה יש בו</th><th>קישור</th></tr></thead><tbody><tr><td><strong>פרקטיקות להוראה איכותית</strong></td><td>פרקטיקות מובנות: יחסי מורה־תלמיד, מענה מותאם אישית, דרכי הערכה. שימושי לליווי מורים חדשים ולשיח מדריכים.</td><td><a class="lk" href="https://pop.education.gov.il/teaching-tools/teaching-practices/" target="_blank" rel="noopener">למאגר</a></td></tr><tr><td><strong>תל"י — מערכי שיעור ופעילות</strong></td><td>פעילויות ומערכים במגוון תחומים, כולל ערכי־חברתי וזהות. חלוקה לפי שכבות גיל.</td><td><a class="lk" href="https://tali.org.il/activities-collection/" target="_blank" rel="noopener">למאגר</a></td></tr><tr><td><strong>קדמה</strong></td><td>דמוקרטיה, זכויות אדם וצדק חברתי — נושאים שקשה למצוא להם חומר מוכן. חזק לאזרחות ולשעת חינוך.</td><td><a class="lk" href="https://kedma-edu.org.il/" target="_blank" rel="noopener">למאגר</a></td></tr><tr><td><strong>בית התוכן הירושלמי</strong></td><td>מערכי שיעור שכתבו מורים בפועל — מה שעבד בכיתה, לא חומר תיאורטי.</td><td><a class="lk" href="https://teacher.jlm.org.il/jerusalem-content-house/" target="_blank" rel="noopener">למאגר</a></td></tr><tr><td><strong>עמלנט · רשת עמל</strong> <span class="tag cyn">טכנולוגי</span></td><td>פיתוחי שיעור ומאות סרטונים בכל תחומי הדעת, כולל חומר לחינוך הטכנולוגי — קרוב לעולם ההכשרה המקצועית.</td><td><a class="lk" href="https://www.amalnet.k12.il/" target="_blank" rel="noopener">לאתר</a></td></tr><tr><td><strong>פורטל מס"ע · מכון מופ"ת</strong></td><td>"כלים קטנים גדולים" לשילוב בהוראה, לצד מאמרים על פדגוגיה דיגיטלית ולמידה מבוססת כשירויות.</td><td><a class="lk" href="https://portal.macam.ac.il/" target="_blank" rel="noopener">לפורטל</a></td></tr><tr><td><strong>קמפוס IL · קורסי משרד החינוך</strong> <span class="tag cyn">גמול</span></td><td>קורסים מקוונים חינם לפיתוח מקצועי. חלקם מוכרים לגמול השתלמות.</td><td><a class="lk" href="https://campus.gov.il/en/institution/ministry-of-education/" target="_blank" rel="noopener">לקורסים</a></td></tr><tr><td><strong>כאן לומדים</strong></td><td>מערכי שיעור למורים מקצועיים ולמחנכי כיתות, כולל טיפים לתכנון שיעור. קצר ונגיש.</td><td><a class="lk" href="https://www.kanlomdim.co.il/" target="_blank" rel="noopener">לאתר</a></td></tr></tbody></table></div>
+</section>
+
+<!-- ============ 02 · כלים ומשחוק ============ -->
+<section class="cat-panel" data-cat="tools" id="tools" aria-label="כלים דיגיטליים ומשחוק">
+  <h2 class="sub-sec first rv">כלים דיגיטליים ומשחקים חינוכיים</h2>
+  <p class="lead-p rv">הכלים מסודרים לפי <strong>מה שהמורה רוצה לעשות</strong>, לא לפי שם המוצר. מי שמחפש מאיפה להתחיל — Wordwall למשחק ו-Edpuzzle לסרטון הם שני הכלים עם התמורה הגבוהה ביותר להשקעה.</p>
+
+  <div class="callout amber rv">
+    <span class="ttl">שלושה מדריכים בעברית — לפני שקונים כלי</span>
+    "כלים קטנים גדולים" היא אנציקלופדיה מסודרת לפי סוג כלי;
+    CIET לוינסקי מסביר מתי כדאי כל אחד; ובקמפוס IL יש קורס גמול מלא על למידה מבוססת משחקים.
+    <a class="lk" href="https://digitalpedagogy.co/" target="_blank" rel="noopener">כלים קטנים גדולים ←</a>
+    <a class="lk" href="https://ciet.levinsky.ac.il/%D7%9E%D7%A9%D7%97%D7%A7%D7%99%D7%9D-%D7%95%D7%97%D7%99%D7%93%D7%95%D7%A0%D7%99%D7%9D/" target="_blank" rel="noopener">CIET לוינסקי ←</a>
+    <a class="lk" href="https://campus.gov.il/course/moe-edu-shelf-educationalgaming-he" target="_blank" rel="noopener">הקורס בקמפוס IL ←</a>
+  </div>
+<div class="tbl-scroll rv"><table class="doc"><caption>מחוללי משחקים וחידונים</caption><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Wordwall</strong> <span class="tag cyn">עברית מלאה</span></td><td>30+ תבניות משחק (התאמה, חידה, גלגל, מרוץ) מאותו מאגר שאלות. עברית מלאה ותמיכת RTL — הכי מתאים לכיתה דוברת עברית.</td><td><a class="lk" href="https://wordwall.net/he" target="_blank" rel="noopener">wordwall.net/he</a></td></tr><tr><td><strong>Genially</strong></td><td>חדר בריחה כיתתי, מצגת אינטראקטיבית ואינפוגרפיקה חיה. הכלי החזק ביותר כשרוצים חוויה ולא רק תרגול.</td><td><a class="lk" href="https://genially.com" target="_blank" rel="noopener">genially.com</a></td></tr><tr><td><strong>Quizizz</strong></td><td>חידון בקצב אישי — גם בשיעור חי וגם כשיעורי בית. יוצר חידון מתוך טקסט בעזרת AI.</td><td><a class="lk" href="https://quizizz.com" target="_blank" rel="noopener">quizizz.com</a></td></tr><tr><td><strong>Blooket</strong></td><td>מאגר שאלות אחד שהופך לכמה מצבי משחק שונים, בלי תשלום. טוב לחזרה לפני מבחן.</td><td><a class="lk" href="https://www.blooket.com" target="_blank" rel="noopener">blooket.com</a></td></tr><tr><td><strong>Baamboozle</strong> <span class="tag cyn">בלי מכשירים</span></td><td>משחק קבוצתי שרץ מהמחשב של המורה בלבד — הפתרון לכיתה שאין בה מכשירים לתלמידים.</td><td><a class="lk" href="https://www.baamboozle.com" target="_blank" rel="noopener">baamboozle.com</a></td></tr><tr><td><strong>TinyTap</strong></td><td>יצירת משחק לימודי מותאם אישית ושיתופו. מתאים גם להתאמות ולמסלולים מותאמים.</td><td><a class="lk" href="https://www.tinytap.com" target="_blank" rel="noopener">tinytap.com</a></td></tr></tbody></table></div><div class="tbl-scroll rv"><table class="doc"><caption>תוכן אינטראקטיבי ושיתוף</caption><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Edpuzzle</strong></td><td>הופך כל סרטון יוטיוב לשיעור פעיל: שאלות שנעצרות באמצע + דוח מי צפה ומי ענה. מצוין להיסטוריה ולאזרחות.</td><td><a class="lk" href="https://edpuzzle.com" target="_blank" rel="noopener">edpuzzle.com</a></td></tr><tr><td><strong>Padlet</strong></td><td>קיר שיתופי לסיעור מוחות, אוסף עבודות כיתתי או ציר זמן משותף. הכי מהיר להפעיל — בלי הרשמת תלמידים.</td><td><a class="lk" href="https://padlet.com" target="_blank" rel="noopener">padlet.com</a></td></tr><tr><td><strong>Nearpod</strong></td><td>מצגת + חידונים + לוח שיתופי בזרימה אחת, כולל מצב בקצב התלמיד.</td><td><a class="lk" href="https://nearpod.com" target="_blank" rel="noopener">nearpod.com</a></td></tr><tr><td><strong>Canva for Education</strong> <span class="tag cyn">חינם למורים</span></td><td>חשבון חינוכי חינם: פוסטרים, דפי עבודה ומצגות בעברית. שימושי גם למגמות עיצוב ופרסום.</td><td><a class="lk" href="https://www.canva.com/education/" target="_blank" rel="noopener">canva.com/education</a></td></tr><tr><td><strong>TimelineJS</strong></td><td>ציר זמן אינטראקטיבי שנבנה מגיליון Google שהתלמידים ממלאים. הכלי המדויק להיסטוריה ולספרות.</td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">timeline.knightlab.com</a></td></tr><tr><td><strong>ThingLink</strong></td><td>הופך תמונה או סיור 360° לנקודות מידע לחיצות.</td><td><a class="lk" href="https://www.thinglink.com" target="_blank" rel="noopener">thinglink.com</a></td></tr></tbody></table></div><div class="tbl-scroll rv"><table class="doc"><caption>הערכה מעצבת ומשוב בזמן אמת</caption><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Mentimeter</strong></td><td>ענן מילים, סקר מהיר וגרף חי מול הכיתה. טוב לפתיחת שיעור ולבירור עמדות.</td><td><a class="lk" href="https://www.mentimeter.com" target="_blank" rel="noopener">mentimeter.com</a></td></tr><tr><td><strong>Socrative</strong></td><td>בדיקת הבנה מהירה ו"כרטיס יציאה" בסוף השיעור, עם ניתוח תשובות.</td><td><a class="lk" href="https://www.socrative.com" target="_blank" rel="noopener">socrative.com</a></td></tr></tbody></table></div>
+</section>
+
+<!-- ============ 03 · AI ============ -->
+<section class="cat-panel" data-cat="ai" id="ai-cat" aria-label="בינה מלאכותית למורה">
+  <h2 class="sub-sec first rv">בינה מלאכותית בשירות המורה</h2>
+  <p class="lead-p rv">משרד החינוך הציב יעד לתשפ"ז: 80% מהתלמידים מכיתה ד' ומעלה יגיעו לכשירות AI בסיסית. זו הקטגוריה שרלוונטית לכל תחום דעת בלי יוצא מן הכלל.</p>
+
+  <div class="callout rv">
+    <span class="ttl">"בינה בכיתה" — המרכז הרשמי</span>
+    מדריכים, כלים מאושרים ושילוב לפי תחום דעת. זה המקור שאפשר להסתמך עליו מול הורים ומול הפיקוח.
+    <a class="lk" href="https://pop.education.gov.il/teaching-tools/ai-education/" target="_blank" rel="noopener">לבינה בכיתה ←</a>
+  </div>
+<div class="tbl-scroll rv"><table class="doc"><caption>מקורות והכשרה</caption><thead><tr><th>המקור</th><th>מה יש בו</th><th>קישור</th></tr></thead><tbody><tr><td><strong>כתיבת תוכנית לימודים באמצעות AI</strong></td><td>פרקטיקה מובנית של משרד החינוך — בניית תוכנית חודשית עם AI, כולל הערכה חלופית. מתאים כמערך הדרכה למורה חדש.</td><td><a class="lk" href="https://pop.education.gov.il/teaching-tools/teaching-practices/search-teaching-practices/writing-curriculum-using-ai/" target="_blank" rel="noopener">לפרקטיקה</a></td></tr><tr><td><strong>קורס: בינה מלאכותית כעוזר הוראה</strong> <span class="tag cyn">גמול</span></td><td>ניסוח פרומפטים, יצירת חומרי למידה אינטראקטיביים ותכנון שיעור. חינם, בקמפוס IL.</td><td><a class="lk" href="https://campus.gov.il/course/moe-edu-shelf-aiedu-he/" target="_blank" rel="noopener">לקורס</a></td></tr><tr><td><strong>MagicSchool</strong></td><td>בניית דף עבודה, מחוון, מכתב להורים ומשוב על עבודות — עשרות כלים מוכנים למורה.</td><td><a class="lk" href="https://www.magicschool.ai" target="_blank" rel="noopener">magicschool.ai</a></td></tr><tr><td><strong>Diffit</strong> <span class="tag cyn">מסלולים מותאמים</span></td><td>התאמת אותו טקסט לכמה רמות קריאה בתוך אותה כיתה. הכלי הכי שימושי למסלולים מותאמים ולכיתות הטרוגניות.</td><td><a class="lk" href="https://diffit.me" target="_blank" rel="noopener">diffit.me</a></td></tr><tr><td><strong>Brisk Teaching</strong></td><td>תוסף לדפדפן שנותן משוב על עבודות תלמידים ומזהה תהליך כתיבה.</td><td><a class="lk" href="https://www.briskteaching.com" target="_blank" rel="noopener">briskteaching.com</a></td></tr></tbody></table></div>
+  <div class="callout amber rv">
+    <span class="ttl">לפני שמכניסים AI לכיתה</span>
+    הכלים הבין־לאומיים אינם מאושרים אוטומטית לשימוש עם נתוני תלמידים.
+    אין להזין לתוכם שמות, ציונים או מידע מזהה. לעבודה מול תלמידים —
+    יש להתחיל מרשימת הכלים המאושרים ב"בינה בכיתה" ומהמדיניות המוסדית.
+    <a class="lk" href="ai.html">לעמוד שילוב AI בחינוך שלנו ←</a>
+  </div>
+</section>
+
+<!-- ============ 04 · לפי תחום דעת ============ -->
+<section class="cat-panel" data-cat="subj" id="subj" aria-label="ארגז כלים לפי תחום דעת">
+  <h2 class="sub-sec first rv">ארגז כלים לכל תחום דעת</h2>
+  <p class="lead-p rv">לכל אחד משבעת התחומים — העמוד הרשמי במרחב הפדגוגי כבסיס, ולצידו מקורות וכלים שמתאימים דווקא לתחום הזה.</p>
+<div class="tbl-scroll rv"><table class="doc"><caption>שבעת תחומי הדעת</caption><thead><tr><th>תחום</th><th>המקור הרשמי</th><th>ייעודי לתחום</th></tr></thead><tbody><tr><td><strong>מתמטיקה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · חטיבה עליונה</a></td><td><a class="lk" href="https://ymath.haifa.ac.il/" target="_blank" rel="noopener">מרכז מורים ארצי (חיפה)</a> · <a class="lk" href="https://www.geogebra.org" target="_blank" rel="noopener">GeoGebra</a> · <a class="lk" href="https://teacher.desmos.com" target="_blank" rel="noopener">Desmos</a></td></tr><tr><td><strong>אזרחות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/" target="_blank" rel="noopener">מרחב פדגוגי · אזרחות</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/citizenship-pedagogy/citizenship-task/" target="_blank" rel="noopener">מטלת הביצוע</a> · <a class="lk" href="https://kedma-edu.org.il/" target="_blank" rel="noopener">קדמה</a></td></tr><tr><td><strong>עברית — הבנה, הבעה ולשון</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · עברית</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/a-i/" target="_blank" rel="noopener">כלים דיגיטליים ו־AI</a> · <a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/havana-habaa-olim/" target="_blank" rel="noopener">עברית לעולים</a></td></tr><tr><td><strong>אנגלית</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/study_topics/" target="_blank" rel="noopener">מרחב פדגוגי · English</a></td><td><a class="lk" href="https://www.etai.org.il/" target="_blank" rel="noopener">ETAI</a> · <a class="lk" href="https://learnenglishteens.britishcouncil.org" target="_blank" rel="noopener">British Council Teens</a> · <a class="lk" href="https://www.linguahouse.com" target="_blank" rel="noopener">Linguahouse</a></td></tr><tr><td><strong>היסטוריה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/pedagogia-historia/learning-distance/" target="_blank" rel="noopener">מרחב פדגוגי · היסטוריה</a></td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">TimelineJS</a> · <a class="lk" href="https://www.storyboardthat.com" target="_blank" rel="noopener">Storyboard That</a></td></tr><tr><td><strong>ספרות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · ספרות</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/darkey-oraa/" target="_blank" rel="noopener">דרכי הוראה</a> · יחידות לפי יוצר: <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/shmuel-yosef-agnon/" target="_blank" rel="noopener">עגנון</a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/dalia-ravikovic/" target="_blank" rel="noopener">רביקוביץ</a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/haim-gouri/" target="_blank" rel="noopener">גורי</a></td></tr><tr><td><strong>תנ"ך</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · תנ"ך ממלכתי</a></td><td><a class="lk" href="https://edu.929.org.il/" target="_blank" rel="noopener">אתר תנ"ך ממלכתי · 929</a> — מערכי שיעור לי'–י"ב, נתיב בגרות גמיש והערכה חלופית</td></tr></tbody></table></div>
+  <div class="callout rv">
+    <span class="ttl">הממצא החזק ביותר בסקירה</span>
+    אתר <strong>929 חינוך</strong> לתנ"ך הוא היחיד שמכיל גם מערכי שיעור לכל השכבות, גם פעילויות
+    דיגיטליות, גם נתיב בגרות גמיש והערכה חלופית — וגם מדור נפרד למנהלים.
+    הוא מתחבר ישירות לעמוד המסלולים המותאמים שלנו.
+    <a class="lk" href="alternatives.html">למסלולים מותאמים וחלופות הערכה ←</a>
+  </div>
+
+  <div class="cat-next rv">
+    <a class="cgo-lnk" data-goto="repos" href="#repos">← חזרה למאגרי מערכי השיעור</a>
+    <a class="lk" href="subjects.html">לעמוד תחומי הדעת ←</a>
+  </div>
+</section>
+
+  </div>
+</article>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+
+<script src="site.js"></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="cats.js" defer></script>
+<script src="/pagenav.js" defer></script>
+</body>
+</html>
