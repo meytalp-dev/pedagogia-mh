@@ -451,3 +451,7 @@ kbd.kb{font:inherit;font-size:.78rem;font-weight:700;background:#fff;border:1px 
   .rmodal .sheet{margin:0;width:100%;max-height:100vh;height:100dvh;border-radius:0}
   .rmodal .top{padding:18px 18px 14px}.rmodal .bodyx{padding:6px 18px 26px}
 }
+/* קישורים בתוך מודל הגדרת התפקיד */
+.rmodal li a,.rmodal .note a{color:#0B7FA6;font-weight:700;text-decoration:none;border-bottom:1.5px solid rgba(11,127,166,.28);transition:border-color .15s,color .15s}
+.rmodal li a:hover,.rmodal .note a:hover{color:var(--navy);border-bottom-color:var(--navy)}
+.rmodal li a[target="_blank"]::after{content:" ↗";font-size:.82em;border:0}

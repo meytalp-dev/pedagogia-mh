@@ -84,17 +84,44 @@ document.addEventListener('animationend',e=>{
   });
 })();
 
-/* מתג שפה עברית/ערבית — תרגום Google בתוך העמוד, מופעל רק כשנבחרה ערבית */
+/* מתג שפה עברית/ערבית — תרגום Google בתוך העמוד.
+   ההעדפה נשמרת ב-sessionStorage (פר-לשונית) והעוגייה מסונכרנת אליה,
+   כדי שערבית לא "תידבק" לצמיתות. אפשר גם לכפות שפה עם ?lang=he / ?lang=ar */
 (function langSwitch(){
-  const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
-  const isAr=/\/ar$/.test(m?decodeURIComponent(m[1]):'');
-  function setLang(ar){
-    const domains=['','; domain='+location.hostname,'; domain=.'+location.hostname.replace(/^www\./,'')];
+  const ss={
+    get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},
+    set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},
+    del(k){try{sessionStorage.removeItem(k)}catch(e){}}
+  };
+  const domains=['','; domain='+location.hostname,'; domain=.'+location.hostname.replace(/^www\./,'')];
+  function cookieIsAr(){
+    const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
+    return /\/ar$/.test(m?decodeURIComponent(m[1]):'');
+  }
+  function writeCookie(ar){
     domains.forEach(d=>{
       document.cookie='googtrans='+(ar?'/iw/ar':'')+'; path=/'+d+(ar?'':'; expires=Thu, 01 Jan 1970 00:00:00 GMT');
     });
-    location.reload();
   }
+
+  /* 1. ?lang=he / ?lang=ar — דלת מילוט מפורשת */
+  const forced=new URLSearchParams(location.search).get('lang');
+  if(forced==='he'||forced==='ar'){
+    ss.set('lang',forced); ss.del('langSyncTries'); writeCookie(forced==='ar');
+    const u=new URL(location.href); u.searchParams.delete('lang');
+    location.replace(u.pathname+u.search+u.hash); return;
+  }
+
+  /* 2. סנכרון העוגייה להעדפת הלשונית — מנקה עוגייה שנשארה מגלישה קודמת */
+  const wantAr=ss.get('lang')==='ar';
+  if(wantAr!==cookieIsAr()){
+    writeCookie(wantAr);
+    const tries=+(ss.get('langSyncTries')||0);
+    if(tries<2){ ss.set('langSyncTries',tries+1); location.reload(); return; }
+  } else { ss.del('langSyncTries'); }
+  const isAr=wantAr&&cookieIsAr();
+
+  /* 3. המתג עצמו */
   const holder=document.querySelector('.govbar .left');
   if(holder){
     const sw=document.createElement('span');
@@ -106,9 +133,14 @@ document.addEventListener('animationend',e=>{
     if(old) old.replaceWith(sw); else holder.appendChild(sw);
     sw.addEventListener('click',e=>{
       const b=e.target.closest('button');
-      if(b && (b.dataset.lang==='ar')!==isAr) setLang(b.dataset.lang==='ar');
+      if(!b) return;
+      const ar=b.dataset.lang==='ar';
+      if(ar===isAr) return;
+      ss.set('lang',ar?'ar':'he'); ss.del('langSyncTries');
+      writeCookie(ar); location.reload();
     });
   }
+
   if(!isAr) return;
   document.documentElement.classList.add('lang-ar');
   const box=document.createElement('div');

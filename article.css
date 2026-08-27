@@ -308,3 +308,42 @@ label.ci input:checked ~ span{color:var(--text2)}
   .govbar,.nav,.drawer,.scrim,.btn-reset,.cta-row,.foot{display:none !important}
   body{background:#fff}
 }
+
+/* ---------- תפריט מדור: ניווט בין עמודי אותו נושא ---------- */
+.secnav{margin:20px 0 2px}
+.secnav .sn-lbl{
+  display:flex;align-items:center;gap:8px;
+  font-size:.72rem;font-weight:800;letter-spacing:.14em;color:#0B7FA6;margin-bottom:9px;
+}
+.secnav .sn-lbl::before{content:"";width:22px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.secnav .sn-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.secnav a,.secnav span.on{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);
+  background:#fff;color:var(--text2);text-decoration:none;
+  font-size:.855rem;font-weight:700;line-height:1.35;
+  transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
+}
+.secnav a .n,.secnav span.on .n{font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted);transition:color .2s}
+.secnav a:hover{border-color:var(--cyan);background:var(--cyan-100);color:var(--navy)}
+.secnav a:hover .n{color:#0B7FA6}
+.secnav span.on{background:var(--grad);border-color:transparent;color:#fff;box-shadow:var(--sh-sm);cursor:default}
+.secnav span.on .n{color:rgba(255,255,255,.72)}
+.secnav a.home{border-style:dashed}
+
+/* ---------- מעבר לעמוד הקודם / הבא במדור ---------- */
+.pagerow{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin:clamp(30px,5vh,46px) 0 0;padding-top:22px;border-top:1px solid var(--border);
+}
+.pagerow a{
+  display:block;padding:15px 18px;border:1px solid var(--border);border-radius:16px;
+  background:var(--surface);text-decoration:none;color:inherit;box-shadow:var(--sh-sm);
+  transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
+}
+.pagerow a:hover{transform:translateY(-2px);border-color:var(--cyan);box-shadow:var(--sh-md)}
+.pagerow a .dir{display:block;font-size:.74rem;font-weight:800;letter-spacing:.12em;color:#0B7FA6;margin-bottom:5px}
+.pagerow a .ttl{display:block;font-weight:800;color:var(--navy);font-size:1rem;line-height:1.35}
+.pagerow a.next{text-align:start}
+.pagerow a.prev{text-align:end;grid-column:2}
+@media(max-width:640px){.pagerow{grid-template-columns:1fr}.pagerow a.prev{grid-column:1;text-align:start}}
