@@ -812,8 +812,7 @@ document.getElementById('g-print').addEventListener('click', function () {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
   });
   var w = window.open('', '_blank');
-  w.document.write('<html dir="rtl" lang="he"><head><meta charset="utf-8"><title>מערך שיעור</title><style>body{font-family:Arial,sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap;font-size:14px}</style></head><body>' + txt + '<script src="/pagenav.js" defer></script>
-</body></html>');
+  w.document.write('<html dir="rtl" lang="he"><head><meta charset="utf-8"><title>מערך שיעור</title><style>body{font-family:Arial,sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap;font-size:14px}</style></head><body>' + txt + '</body></html>');
   w.document.close(); w.focus(); w.print();
 });
 </script>
