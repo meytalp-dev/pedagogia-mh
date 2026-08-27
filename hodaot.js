@@ -10,12 +10,13 @@
   'use strict';
 
   /* ===== לאחר פריסת "פיד ציבורי" ב-Apps Script — להדביק כאן את הכתובת ===== */
-  var FEED_URL = '';
-  /* דוגמה: "https://script.google.com/macros/s/AKfycb.../exec" */
+  var FEED_URL = 'https://script.google.com/macros/s/AKfycby8x1GYzIxMjHUsqnAItJ2AAQgCl4rqM16GeE11CJVBIRrf9rLV9iKkNYr-MTJSp2UVYw/exec';
 
-  var list  = document.getElementById('hlist');
-  var strip = document.getElementById('hstrip');
-  if (!list && !strip) return;
+  var list  = document.getElementById('hlist');   // עמוד ההודעות המלא
+  var strip = document.getElementById('hstrip');  // פס בשער המרחב הפדגוגי
+  var cards = document.getElementById('hcards');  // כרטיס "לוח הודעות" בדף הבית
+  var badge = document.getElementById('hbadge');  // מונה על כפתור ההודעות בדף הבית
+  if (!list && !strip && !cards && !badge) return;
 
   var ICON_LINK =
     '<svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>';
@@ -101,6 +102,27 @@
       }).join('') + '</div>';
   }
 
+  /* ---------- כרטיס "לוח הודעות" בדף הבית ----------
+     משתמש בסגנון .ann שכבר קיים בעמוד, כדי שייראה חלק מהמקטע. */
+  function renderCards(items) {
+    var top = items.slice(0, 4);
+    if (!top.length) {
+      cards.innerHTML = '<p style="color:var(--muted);font-size:.88rem;padding:10px 0">' +
+        'אין כרגע הודעות פעילות.</p>';
+      return;
+    }
+    cards.innerHTML = top.map(function (it) {
+      var d = new Date(it.created);
+      var when = isNaN(d) ? '' : d.getDate() + '.' + (d.getMonth() + 1);
+      var cl = it.type === 'הדרכה' ? 'gmr' : 'cyn';
+      return '<a class="ann" href="hodaot.html">' +
+        '<span class="tag ' + cl + '">' + esc(when) + '</span>' +
+        '<span><b>' + esc(it.title) + '</b>' +
+        (it.body ? '<span class="sub">' + esc(it.body) + '</span>' : '') +
+        '</span></a>';
+    }).join('');
+  }
+
   /* ---------- טעינה ---------- */
   if (!FEED_URL) {
     var icon = '<svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>' +
@@ -108,6 +130,7 @@
     if (list) state(list, icon, 'מערכת ההודעות טרם חוברה',
       'יש להדביק את כתובת פריסת "פיד ציבורי" במשתנה FEED_URL בקובץ hodaot.js.');
     if (strip) strip.innerHTML = '';
+    if (cards) cards.innerHTML = '';
     return;
   }
 
@@ -115,6 +138,8 @@
     var items = (data && data.items) || [];
     if (list)  { renderList(items); wireFilter(items); }
     if (strip) renderStrip(items);
+    if (cards) renderCards(items);
+    if (badge && items.length) { badge.textContent = items.length; badge.hidden = false; }
   }
 
   function fail() {
@@ -123,6 +148,7 @@
     if (list) state(list, icon, 'לא הצלחנו לטעון את ההודעות',
       'אפשר לרענן את העמוד, או לבדוק שפריסת הפיד ב-Apps Script פעילה.');
     if (strip) strip.innerHTML = '';
+    if (cards) cards.innerHTML = '';
   }
 
   /* אם fetch נחסם (CORS/רשת) — נופלים ל-JSONP, ש-Apps Script תומך בו */

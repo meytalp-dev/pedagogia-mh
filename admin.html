@@ -224,6 +224,35 @@
     padding:1px 7px;font-size:.86rem;direction:ltr;display:inline-block}
 </style>
 
+<style>
+  .adwrap{padding:30px var(--px) 56px;max-width:900px}
+  .adnote{border-inline-start:4px solid var(--m-yellow);background:#FFFBF2;
+    border-radius:0 12px 12px 0;padding:13px 16px;margin-bottom:20px;font-size:.92rem;color:#6B5312}
+  .adnote b{color:#8A6210}
+  .launch{background:var(--surface);border:1px solid var(--border-strong);border-radius:20px;
+    padding:34px 28px;text-align:center;box-shadow:var(--sh-md)}
+  .launch .lk-ic{width:56px;height:56px;margin:0 auto 14px;border-radius:16px;
+    background:var(--blue-bg);display:grid;place-items:center}
+  .launch .lk-ic svg{width:27px;height:27px;stroke:var(--navy-800);fill:none;
+    stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .launch h2{font-size:1.35rem;margin-bottom:7px}
+  .launch p{color:var(--text2);font-size:.96rem;max-width:520px;margin:0 auto 20px}
+  .btn-launch{display:inline-flex;align-items:center;gap:9px;background:var(--navy);color:#fff;
+    font-weight:800;font-size:1.02rem;text-decoration:none;border-radius:14px;padding:14px 30px;
+    box-shadow:var(--sh-sm);transition:.18s}
+  .btn-launch:hover{background:var(--navy-800);transform:translateY(-2px);box-shadow:var(--sh-md)}
+  .btn-launch svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.1;
+    stroke-linecap:round;stroke-linejoin:round}
+  .who-list{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px}
+  .who-list span{font-size:.79rem;font-family:monospace;direction:ltr;background:var(--soft-bg);
+    border:1px solid var(--border);border-radius:999px;padding:3px 11px;color:var(--text2)}
+  .help{margin-top:22px;background:var(--soft-bg);border:1px solid var(--border);
+    border-radius:14px;padding:16px 20px;text-align:start}
+  .help h3{font-size:1rem;margin-bottom:7px}
+  .help li{font-size:.9rem;color:var(--text2);margin:5px 0 5px 0;padding-inline-start:2px}
+  .help ul{padding-inline-start:20px}
+</style>
+
 <div class="pagehead" style="padding-top:52px">
   <div class="kicker rv">כניסה מוגבלת</div>
   <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">פאנל ניהול התוכן</h1>
@@ -237,30 +266,38 @@
     כל הודעה שתפורסם גלויה לכל מי שנכנס לאתר. אין לפרסם כאן שמות תלמידים, טלפונים,
     מסמכים ממולאים או מידע פנימי.
   </div>
-  <div id="adhost">
-    <div class="adsetup">
-      <svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg>
-      <h3>הפאנל טרם חובר</h3>
-      <p>יש לפרוס את סקריפט האדמין ולהדביק את כתובת הפריסה במשתנה
-      <code>ADMIN_URL</code> בראש הקובץ <code>admin.html</code>.</p>
+
+  <div class="launch rv">
+    <div class="lk-ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1.2"/></svg></div>
+    <h2>כניסה לפאנל הניהול</h2>
+    <p>הפאנל נפתח בחלון נפרד ומזהה אתכם דרך חשבון ה-Google שאיתו אתם מחוברים.</p>
+    <a class="btn-launch" id="golink" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+      פתיחת הפאנל
+    </a>
+    <div class="who-list">
+      <span>meytalp@bethaarava.ort.org.il</span>
+      <span>mlypeleg@gmail.com</span>
+      <span>revital.amir@labor.gov.il</span>
+      <span>revitalamir11@gmail.com</span>
     </div>
+  </div>
+
+  <div class="help rv">
+    <h3>אם מופיע "אין הרשאת ניהול · לא מזוהה"</h3>
+    <ul>
+      <li>ודאו שאתם מחוברים בדפדפן לאחד מהחשבונות שברשימה למעלה. אם יש כמה חשבונות Google פתוחים — גוגל עשויה לבחור את הלא־נכון.</li>
+      <li>אם הכתובת שלכם אמורה להיות ברשימה ואינה שם — צריך להוסיף אותה למשתנה <code>ADMINS</code> בסקריפט, להריץ שוב <code>setup</code>, ולפרוס גרסה חדשה.</li>
+      <li>בדקו שפריסת "פאנל אדמין" מוגדרת <b>Execute as: User accessing the web app</b> ו-<b>Who has access: Anyone with a Google Account</b>. אם ה-Execute as הוא "Me", גוגל לא חושפת לסקריפט את זהות המשתמש.</li>
+    </ul>
   </div>
 </div>
 
 <script>
-/* ===== לאחר פריסת "פאנל אדמין" ב-Apps Script — להדביק כאן את הכתובת ===== */
-var ADMIN_URL = "";
-/* דוגמה: "https://script.google.com/macros/s/AKfycb.../exec" */
-
-if (ADMIN_URL) {
-  var f = document.createElement('iframe');
-  f.className = 'adframe';
-  f.src = ADMIN_URL;
-  f.title = 'פאנל ניהול התוכן';
-  var host = document.getElementById('adhost');
-  host.innerHTML = '';
-  host.appendChild(f);
-}
+/* כתובת פריסת "פאנל אדמין" ב-Apps Script */
+var ADMIN_URL = "https://script.google.com/macros/s/AKfycbx826otQ5Yt7k-LCi4ESCVNx1iArLztIDfFFxCFd2YWGyhFl6Tx1KQOfG87a8aosd05PQ/exec";
+document.getElementById('golink').href = ADMIN_URL;
 </script>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>

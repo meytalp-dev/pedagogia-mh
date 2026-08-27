@@ -455,3 +455,12 @@ kbd.kb{font:inherit;font-size:.78rem;font-weight:700;background:#fff;border:1px 
 .rmodal li a,.rmodal .note a{color:#0B7FA6;font-weight:700;text-decoration:none;border-bottom:1.5px solid rgba(11,127,166,.28);transition:border-color .15s,color .15s}
 .rmodal li a:hover,.rmodal .note a:hover{color:var(--navy);border-bottom-color:var(--navy)}
 .rmodal li a[target="_blank"]::after{content:" ↗";font-size:.82em;border:0}
+
+/* ===== כפתור "הודעות ועדכונים" עם מונה חי (index.html) ===== */
+.btn.hbtn{position:relative}
+.btn.hbtn:hover{border-color:var(--m-red);background:#FDEEEA}
+.hbadge{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;
+  border-radius:999px;background:var(--m-red);color:#fff;font-size:.74rem;font-weight:800;
+  line-height:1;margin-inline-start:2px;animation:hpop .35s var(--ease) both}
+.hbadge[hidden]{display:none}
+@keyframes hpop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
