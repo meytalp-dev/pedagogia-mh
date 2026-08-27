@@ -5,7 +5,7 @@ name: build-knowledge
 on:
   push:
     branches: [main]
-    paths: ["**.html"]
+    paths: ["**.html", "tools/build-knowledge.mjs"]
   workflow_dispatch:
 
 permissions:
