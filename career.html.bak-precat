@@ -5,10 +5,10 @@
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>נתיבי חניכות וקריירה · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="תוכנית 'נתיבים לחניכות וקריירה' בשש קטגוריות: המודל ומרכיבי הליבה, החלוקה לשכבות ט׳–י״ב, מערכי שיעור מוכנים, חניכות בפועל וחוברת עשרת הצעדים לחניכות מיטבית, מובילים ורכזים וארגז כלים.">
+<meta name="description" content="תוכנית 'נתיבים לחניכות וקריירה' — ארבעת מרכיבי הליבה, החלוקה לשכבות ט׳–י״ב, עקרונות ההפעלה, תפיסת החניכות, שיעורי 'על קו הזינוק' וכלי העבודה של רכז התעסוקה.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="נתיבי חניכות וקריירה">
-<meta property="og:description" content="תוכנית 'נתיבים לחניכות וקריירה', תפיסת החניכות, עשרת הצעדים לחניכות מיטבית, מערכי שיעור מוכנים וכלי רכז התעסוקה — מסודר בשש קטגוריות.">
+<meta property="og:description" content="תוכנית 'נתיבים לחניכות וקריירה', תפיסת החניכות, שיעורי 'על קו הזינוק' וכלי רכז התעסוקה — הכול במקום אחד.">
 <meta property="og:url" content="https://pedagogiamh.co.il/career.html">
 <meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
 <meta property="og:locale" content="he_IL">
@@ -20,7 +20,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="article.css">
-<link rel="stylesheet" href="cats.css">
 </head>
 <body>
 
@@ -31,19 +30,12 @@
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
     <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
-    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
     <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
     <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
     <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
     <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
     <a href="documents.html"><span class="n">07</span> כלים ניהוליים פדגוגיים</a>
-    <div class="sect">חניכות וקריירה</div>
-    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
     <div class="sect">מרחב ייעוצי</div>
     <a href="counseling.html">שער המרחב הייעוצי</a>
     <a href="counseling.html#kit">ערכת הייעוץ</a>
@@ -103,25 +95,15 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
-      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="career.html">נתיבי חניכות וקריירה</a>
       <a class="dis">תוכניות לימודים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="ai.html">שילוב AI בחינוך</a>
       <a class="dis">הערכה</a>
       <a href="documents.html">כלים ניהוליים פדגוגיים</a>
-    </div>
-  </span>
-  <span class="navitem"><a class="lnk active" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
-    <div class="sub">
-      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
@@ -212,83 +194,17 @@
   </div>
 </section>
 
-<!-- ===== שער הקטגוריות ===== -->
-<div class="cat-hub">
+<div class="toc">
   <div class="article">
-    <h2>מה בתחום · בחרו קטגוריה</h2>
-    <p class="cat-hub-lead">התוכן של התחום מסודר בשש קטגוריות. בחרו קטגוריה — ורק היא תוצג. לחיצה על "הכול" פותחת את העמוד המלא.</p>
-    <div class="cat-grid">
-
-      <button class="catcard" data-cat="program" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M3 9h18M9 21V9"/></svg></span>
-        <span class="ct">
-          <b class="cn">01</b>
-          <b class="cttl">התוכנית והמודל</b>
-          <span class="csub">4 מרכיבי ליבה · 8 עקרונות הפעלה · מעגלי שותפים</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="grades" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h4v-5H3zM10 20h4v-9h-4zM17 20h4V6h-4z"/></svg></span>
-        <span class="ct">
-          <b class="cn">02</b>
-          <b class="cttl">התוכנית לפי שכבות</b>
-          <span class="csub">ט׳–י״ב · תמה מרכזית, תכנים וגורם מוביל</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="lessons" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6S9.6 4.6 3 5.1v13c6.6-.5 9 1.5 9 1.5s2.4-2 9-1.5v-13c-6.6-.5-9 1.5-9 1.5Z"/><path d="M12 6.6v13"/></svg></span>
-        <span class="ct">
-          <b class="cn">03</b>
-          <b class="cttl">מערכי שיעור מוכנים</b>
-          <span class="csub">"על קו הזינוק" + 23 מערכים לי״א–י״ב</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="chanichut" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><path d="M16.4 6.3a3.2 3.2 0 0 1 0 6.1M18 14.9c2.2.6 3.8 2.5 3.8 5.1"/></svg></span>
-        <span class="ct">
-          <b class="cn">04</b>
-          <b class="cttl">חניכות בפועל</b>
-          <span class="csub">התפיסה · 8 מודלים · עשרת הצעדים לחניכות מיטבית</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="leaders" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.2"/><path d="m8.4 13.4-1.6 7 5.2-2.8 5.2 2.8-1.6-7"/></svg></span>
-        <span class="ct">
-          <b class="cn">05</b>
-          <b class="cttl">מובילים ורכזים</b>
-          <span class="csub">מוביל.ת התוכנית · ההכשרה לגמול · ארגז רכז התעסוקה</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="tools" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7.5" width="19" height="12" rx="2.2"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M2.5 12.6h19"/></svg></span>
-        <span class="ct">
-          <b class="cn">06</b>
-          <b class="cttl">ארגז כלים וחומרים</b>
-          <span class="csub">קנבה · מודל I PRO · סוכן AI · דרייב ומקורות</span>
-        </span>
-      </button>
-
-    </div>
-  </div>
-</div>
-
-<!-- ===== פס סינון דביק ===== -->
-<div class="cat-bar" id="catbar">
-  <div class="article cat-bar-in">
-    <span class="cb-label">קטגוריה:</span>
-    <div class="cb-pills" role="tablist" aria-label="קטגוריות התחום">
-      <button class="cpill" data-cat="all" type="button">הכול</button>
-      <button class="cpill" data-cat="program" type="button">התוכנית והמודל</button>
-      <button class="cpill" data-cat="grades" type="button">לפי שכבות</button>
-      <button class="cpill" data-cat="lessons" type="button">מערכי שיעור</button>
-      <button class="cpill" data-cat="chanichut" type="button">חניכות בפועל</button>
-      <button class="cpill" data-cat="leaders" type="button">מובילים ורכזים</button>
-      <button class="cpill" data-cat="tools" type="button">ארגז כלים</button>
+    <h2>מה בתחום</h2>
+    <div class="toc-grid">
+      <a class="lrow" href="#program"><span class="ln">01</span><span class="lt">תוכנית "נתיבים לחניכות וקריירה"</span><span class="ls">המודל המלא</span></a>
+      <a class="lrow" href="#grades"><span class="ln">02</span><span class="lt">התוכנית לפי שכבות ט׳–י״ב</span><span class="ls">תמות ותכנים</span></a>
+      <a class="lrow" href="zinuk.html"><span class="ln">03</span><span class="lt">"על קו הזינוק" — שיעורי פתיחה</span><span class="ls">עמוד מלא</span></a>
+      <a class="lrow" href="#lessons-1112"><span class="ln">04</span><span class="lt">מערכי השיעור לשכבות י״א–י״ב</span><span class="ls">5 יחידות · 23 שיעורים</span></a>
+      <a class="lrow" href="chanichut.html"><span class="ln">05</span><span class="lt">תפיסת החניכות ושמונת המודלים</span><span class="ls">עמוד מלא</span></a>
+      <a class="lrow" href="career-rakaz.html"><span class="ln">06</span><span class="lt">ארגז הכלים של רכז התעסוקה</span><span class="ls">עמוד מלא</span></a>
+      <a class="lrow" href="#tools"><span class="ln">07</span><span class="lt">כלים וחומרים מהחינוך היוצר</span><span class="ls">קנבה · I PRO · AI</span></a>
     </div>
   </div>
 </div>
@@ -296,10 +212,7 @@
 <article class="body-sec">
   <div class="article">
 
-<!-- ============ 01 · התוכנית והמודל ============ -->
-<section class="cat-panel" data-cat="program" id="program" aria-label="התוכנית והמודל">
-
-    <h2 class="sub-sec first rv">תוכנית "נתיבים לחניכות וקריירה"</h2>
+    <h2 class="sub-sec first rv" id="program">תוכנית "נתיבים לחניכות וקריירה"</h2>
     <p class="lead-p rv">רפורמת החינוך היוצר עוסקת בתמורות העוברות על שוק העבודה. לצד ההכשרה המקצועית נדרשות מיומנויות של למידה עצמאית ורפלקטיבית, מיתוג אישי, אוריינות תעסוקתית ודיגיטלית, גישות יזמיות, חוסן מקצועי, חשיבה ביקורתית וקבלת החלטות. המיומנויות הללו נדרשות <strong>לכל התלמידים והתלמידות, בכל מגמה</strong> — ולכן פותחה באגף להכשרה מקצועית מודולת בסיס רוחבית, ארבע־שנתית, לכל בתי הספר.</p>
 
     <div class="callout rv">
@@ -359,13 +272,15 @@
       </table>
     </div>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="grades" type="button">התוכנית לפי שכבות ט׳–י״ב ←</button></div>
-</section>
+    <h3 class="mini rv">מוביל.ת התוכנית בבית הספר</h3>
+    <p class="rv">כל בית ספר ממנה מוביל.ה לתוכנית — מוקד הידע והמיומנויות הבית־ספרי, שאחראי.ת על תכלול התוכנית והפעלתה, הטמעת יסודותיה, הוראת תכנים מהסילבוס, ריכוז פורום נתיבים וקשר שוטף עם מוביל התוכנית באגף. נדרשות יכולת הוראה והנחיה סדנאית, ניהול שותפויות ומומחיות בעולמות התוכן — לצד השתתפות בהשתלמות ייעודית.</p>
 
-<!-- ============ 02 · לפי שכבות ============ -->
-<section class="cat-panel" data-cat="grades" id="grades" aria-label="התוכנית לפי שכבות">
+    <div class="callout petrol rv">
+      <span class="ttl">הכשרת מובילי התוכנית</span>
+      הכשרה ייעודית המוכרת לגמול השתלמות (<strong>30 ש"ש, 6 מפגשים היברידיים</strong> — א־סינכרוניים, מקוונים ופרונטליים לפי אזורים). בין הנושאים: עולם התעסוקה המשתנה ומודל הכישורים I-PRO, פיתוח תפיסת תפקיד של מוביל.ת כשירויות, עקרונות לבניית תוכנית לימודים בית־ספרית, חקר פרקטיקה ולמידת עמיתים, סימולציות והכנה לחניכות, ופאנל מעסיקים. <strong>תוצרי ההכשרה:</strong> תוכנית לימודים בית־ספרית מפורטת לפי שכבות + תוכנית הטמעה בקרב הצוות.
+    </div>
 
-    <h2 class="sub-sec first rv">איך זה נראה בשכבות השונות</h2>
+    <h2 class="sub-sec rv" id="grades">איך זה נראה בשכבות השונות</h2>
     <p class="lead-p rv">לכל שכבה רעיון מארגן התואם את הגיל, שממנו נגזרים הכישורים, התכנים ותוצר הלמידה השנתי.</p>
 
     <div class="tbl-scroll rv">
@@ -408,22 +323,8 @@
       ארבעה שיעורי פתיחה מוכנים להעברה בכיתות ט׳–י׳ — היכרות וגיבוש, השאלות שלנו, החלומות וההעדפות — עם תדריך מלא למורה. <a class="lk" href="zinuk.html">לעמוד השיעורים המלא</a>
     </div>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="lessons" type="button">מערכי השיעור המוכנים ←</button></div>
-</section>
-
-<!-- ============ 03 · מערכי שיעור ============ -->
-<section class="cat-panel" data-cat="lessons" id="lessons" aria-label="מערכי שיעור מוכנים">
-
-    <h2 class="sub-sec first rv">מערכי שיעור מוכנים להעברה</h2>
-    <p class="lead-p rv">כל מה שאפשר להיכנס איתו לכיתה מחר בבוקר — שיעורי הפתיחה של "על קו הזינוק" לשכבות ט׳–י׳, וחמש יחידות מלאות לשכבות י״א–י״ב.</p>
-
-    <div class="callout amber rv">
-      <span class="ttl">"על קו הזינוק" · ט׳–י׳ — 4 שיעורי פתיחה</span>
-      שיעורי פתיחת השנה: היכרות וגיבוש, השאלות שלנו, החלומות וההעדפות — עם תדריך מלא למורה, שקופיות ופעילויות. <a class="lk" href="zinuk.html">לעמוד השיעורים המלא ←</a>
-    </div>
-
-    <h3 class="mini rv">שכבות י״א–י״ב · 5 יחידות, 23 שיעורים</h3>
-    <p class="rv">מערכי קנבה מעוצבים עם שני מדריכים למורה (פיתוח: ק.מ.ה אורנים). היחידות ממַמשות בדיוק את תכני התוכנית לשכבות הבוגרות: ניהול סיכונים, משוב ותקשורת בי״א — ואוריינטציית עתיד ותהליכי פרידה בי״ב.</p>
+    <h2 class="sub-sec rv" id="lessons-1112">מערכי השיעור לשכבות י״א–י״ב</h2>
+    <p class="lead-p rv">חמש יחידות מוכנות להעברה — 23 שיעורים ויום מרוכז, במערכי קנבה מעוצבים עם שני מדריכים למורה (פיתוח: ק.מ.ה אורנים). היחידות ממַמשות בדיוק את תכני התוכנית לשכבות הבוגרות: ניהול סיכונים, משוב ותקשורת בי״א — ואוריינטציית עתיד ותהליכי פרידה בי״ב.</p>
 
     <h3 class="mini rv">שכבת י״א · התמחות והתפתחות מקצועית</h3>
     <div class="tbl-scroll rv">
@@ -443,7 +344,7 @@
         <caption>משוב ורפלקציה — 6 שיעורים + מדריך למורה</caption>
         <thead><tr><th>#</th><th>השיעור</th><th>מערך</th></tr></thead>
         <tbody>
-          <tr><td class="k"><span class="ik" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h11a2.5 2.5 0 0 1 2.5 2.5v13H6.5A2.5 2.5 0 0 1 4 17.5Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15h11"/></svg></span></td><td><strong>מדריך למורה</strong> ליחידת משוב ורפלקציה</td><td><a class="lk" href="https://www.canva.com/design/DAHMQux4Pqw/RRaF1dPMVHWCmMVM9832pA/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
+          <tr><td class="k">📘</td><td><strong>מדריך למורה</strong> ליחידת משוב ורפלקציה</td><td><a class="lk" href="https://www.canva.com/design/DAHMQux4Pqw/RRaF1dPMVHWCmMVM9832pA/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">1</td><td>תיעוד חוויות — "הקופסה השחורה"</td><td><a class="lk" href="https://www.canva.com/design/DAHMQql4P8U/mGsjS_63PoVw-nsmr__n-g/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">2</td><td>תיעוד חוויות — "העדשה והפילטר"</td><td><a class="lk" href="https://www.canva.com/design/DAHMQnTXvoA/P9JCpH9qGqN1wypFPvMz6A/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">3</td><td>קבלת משוב בונה — "אפוד המגן"</td><td><a class="lk" href="https://www.canva.com/design/DAHMQmOaonw/OvLN4osUvM4Vt7iPvJEQZA/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
@@ -470,7 +371,7 @@
         <caption>אוריינטציית עתיד — 4 שיעורים + יום מרוכז</caption>
         <thead><tr><th>#</th><th>השיעור</th><th>מערך</th></tr></thead>
         <tbody>
-          <tr><td class="k"><span class="ik" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></span></td><td><strong>יום מרוכז</strong> — סיור: חשיפה לאפשרויות פיתוח מקצועי ומגמות בשוק העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAHMEV7580s/9zfSzWb15t3tg4pAEDbuxQ/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
+          <tr><td class="k">☀</td><td><strong>יום מרוכז</strong> — סיור: חשיפה לאפשרויות פיתוח מקצועי ומגמות בשוק העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAHMEV7580s/9zfSzWb15t3tg4pAEDbuxQ/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">1–4</td><td>בחירה מושכלת והגדרת הצלחה: בניית תמונת עתיד · קבלת החלטות ובחירה מושכלת · הגדרת הצלחה · מפת הדרכים ומסיבת עתידים</td><td><a class="lk" href="https://www.canva.com/design/DAHMEbmrvfc/C13Hmt0Syljud1WvLVqCbQ/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
         </tbody>
       </table>
@@ -480,7 +381,7 @@
         <caption>רפלקציה מסכמת ותהליכי פרידה — 6 שיעורים + מדריך למורה</caption>
         <thead><tr><th>#</th><th>השיעור</th><th>מערך</th></tr></thead>
         <tbody>
-          <tr><td class="k"><span class="ik" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h11a2.5 2.5 0 0 1 2.5 2.5v13H6.5A2.5 2.5 0 0 1 4 17.5Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15h11"/></svg></span></td><td><strong>מדריך למורה</strong> — סיכום התהליך, טקס סיום, שיתוף אישי וקהילתי</td><td><a class="lk" href="https://www.canva.com/design/DAHOOY1bPQU/rPxMYog-C4lEctkytBTy3Q/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
+          <tr><td class="k">📘</td><td><strong>מדריך למורה</strong> — סיכום התהליך, טקס סיום, שיתוף אישי וקהילתי</td><td><a class="lk" href="https://www.canva.com/design/DAHOOY1bPQU/rPxMYog-C4lEctkytBTy3Q/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">1</td><td>לקראת סיום</td><td><a class="lk" href="https://www.canva.com/design/DAHOOUnz3h0/oyAot2rdMRRRj1uKyP4TDg/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">2</td><td>ספירת מלאי</td><td><a class="lk" href="https://www.canva.com/design/DAHOObIu_7w/_EX_zOqjUoV01He2f-xXhw/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">3</td><td>מגרש הגרוטאות</td><td><a class="lk" href="https://www.canva.com/design/DAHOOZocrMI/G6jUdgfUXvBcWQ0pl7vK0A/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
@@ -492,13 +393,7 @@
     </div>
     <p class="rv" style="font-size:.88rem;color:var(--text2)">ריכוז הקישורים המקורי: <a class="lk" href="docs/pituach-maarachey-netivim.pdf" target="_blank" rel="noopener">פיתוח מערכי נתיבים (PDF)</a> · פיתוח: ק.מ.ה אורנים</p>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="chanichut" type="button">חניכות בפועל ←</button></div>
-</section>
-
-<!-- ============ 04 · חניכות בפועל ============ -->
-<section class="cat-panel" data-cat="chanichut" id="chanichut-cat" aria-label="חניכות בפועל">
-
-    <h2 class="sub-sec first rv">חניכות משמעותית — התפיסה והכלים</h2>
+    <h2 class="sub-sec rv">חניכות משמעותית — התפיסה והכלים</h2>
     <p class="lead-p rv">החניכות בחינוך היוצר איננה נספח ללימודים אלא חלק ממהות בית הספר: למידה מהתנסות אותנטית, מפגש עם אנשים אמיתיים והתמודדות עם אתגרים אמיתיים. עמוד <a class="lk" href="chanichut.html">תפיסת החניכות</a> מרכז את התפיסה המלאה:</p>
     <ul class="ed rv">
       <li><strong>ארבעה עקרונות יסוד</strong> ללימודי מקצוע וחניכות — ועקרונות היישום, כולל סל של 200 שעות חניכות בשנה וסדירויות עבודה גמישות.</li>
@@ -507,49 +402,8 @@
       <li><strong>שמונה מודלים לחניכות</strong> — מהחניכות הקלאסית ועד עסק חינוכי, מודל היברידי ופרילנס — עם יתרונות, חסרונות ודוגמאות מהשטח.</li>
       <li><strong>תפקיד רכז.ת החניכות והחונך במקום העבודה</strong> — הגדרות, קריטריונים ומעטפת התמיכה.</li>
     </ul>
-    <p class="rv"><a class="lk" href="chanichut.html">לעמוד תפיסת החניכות המלא ←</a></p>
 
-    <h3 class="mini rv" id="asara-tzeadim">חוברת · עשרת הצעדים לחניכות מיטבית</h3>
-    <p class="rv">חוברת מעוצבת שמפרקת את החניכות לעשרה צעדים מעשיים — מהאיתור, ההתאמה והשיבוץ, דרך ההכנה של התלמיד.ה ושל המעסיק, ועד הליווי השוטף, המשוב והאופק התעסוקתי. כלי עבודה יומיומי לרכזי תעסוקה, למחנכים ולצוותי המגמה — ובסיס נוח לשיחה עם מעסיק חדש.</p>
-    <div class="embed-frame rv">
-      <iframe src="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view?embed" title="עשרת הצעדים לחניכות מיטבית" loading="lazy" allowfullscreen allow="fullscreen"></iframe>
-    </div>
-    <div class="source-box rv">
-      <div class="t">עשרת הצעדים לחניכות מיטבית<small>החוברת המלאה בקנבה — לצפייה, להורדה ולשיתוף עם הצוות ועם המעסיקים.</small></div>
-      <a class="btn" href="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view" target="_blank" rel="noopener">לפתיחת החוברת ↗</a>
-      <a class="btn alt" href="chanichut.html">תפיסת החניכות המלאה</a>
-    </div>
-
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="leaders" type="button">מובילים ורכזים ←</button></div>
-</section>
-
-<!-- ============ 05 · מובילים ורכזים ============ -->
-<section class="cat-panel" data-cat="leaders" id="leaders" aria-label="מובילים ורכזים">
-
-    <h2 class="sub-sec first rv">מי מוביל את התוכנית בבית הספר</h2>
-    <p class="lead-p rv">התוכנית עומדת על שני תפקידים בית־ספריים: מוביל.ת התוכנית, שמתכלל.ת את כל התכנים והשכבות — ורכז.ת התעסוקה, שמחזיק.ה את הקשר עם מקומות החניכות ואת סדירויות העבודה.</p>
-
-    <h3 class="mini rv">מוביל.ת התוכנית בבית הספר</h3>
-    <p class="rv">כל בית ספר ממנה מוביל.ה לתוכנית — מוקד הידע והמיומנויות הבית־ספרי, שאחראי.ת על תכלול התוכנית והפעלתה, הטמעת יסודותיה, הוראת תכנים מהסילבוס, ריכוז פורום נתיבים וקשר שוטף עם מוביל התוכנית באגף. נדרשות יכולת הוראה והנחיה סדנאית, ניהול שותפויות ומומחיות בעולמות התוכן — לצד השתתפות בהשתלמות ייעודית.</p>
-
-    <div class="callout petrol rv">
-      <span class="ttl">הכשרת מובילי התוכנית</span>
-      הכשרה ייעודית המוכרת לגמול השתלמות (<strong>30 ש"ש, 6 מפגשים היברידיים</strong> — א־סינכרוניים, מקוונים ופרונטליים לפי אזורים). בין הנושאים: עולם התעסוקה המשתנה ומודל הכישורים I-PRO, פיתוח תפיסת תפקיד של מוביל.ת כשירויות, עקרונות לבניית תוכנית לימודים בית־ספרית, חקר פרקטיקה ולמידת עמיתים, סימולציות והכנה לחניכות, ופאנל מעסיקים. <strong>תוצרי ההכשרה:</strong> תוכנית לימודים בית־ספרית מפורטת לפי שכבות + תוכנית הטמעה בקרב הצוות.
-    </div>
-
-    <h3 class="mini rv">רכז.ת התעסוקה</h3>
-    <div class="callout rv">
-      <span class="ttl">ארגז הכלים של רכז התעסוקה</span>
-      סדירויות העבודה, הפרמטרים והמטלות בחניכות, וסדנאות העבודה עם מעסיקים — מרוכזים בעמוד <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז התעסוקה ←</a>
-    </div>
-
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="tools" type="button">ארגז כלים וחומרים ←</button></div>
-</section>
-
-<!-- ============ 06 · ארגז כלים ============ -->
-<section class="cat-panel" data-cat="tools" id="tools" aria-label="ארגז כלים וחומרים">
-
-    <h2 class="sub-sec first rv">כלים וחומרים מהחינוך היוצר</h2>
+    <h2 class="sub-sec rv" id="tools">כלים וחומרים מהחינוך היוצר</h2>
     <p class="lead-p rv">באתר החינוך היוצר פועל מרחב ח.כ.ה — נתיבים לחניכות וקריירה, ובו מודלים מעוצבים לכל שכבה, מחברת מלווה וסוכן AI ייעודי למורה:</p>
 
     <div class="tbl-scroll rv">
@@ -561,15 +415,19 @@
         <tbody>
           <tr><td class="k">המודל לכיתה ט׳</td><td>מארז התוכנית המעוצב לשכבת ט׳</td><td><a class="lk" href="https://www.canva.com/design/DAGW0bD5A_g/lSLJkR6PxIZRLQElgBZLqg/view" target="_blank" rel="noopener">לצפייה בקנבה</a></td></tr>
           <tr><td class="k">המודל לכיתה י׳</td><td>מארז התוכנית המעוצב לשכבת י׳</td><td><a class="lk" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">לצפייה בקנבה</a></td></tr>
-          <tr><td class="k">עשרת הצעדים לחניכות מיטבית</td><td>חוברת מעוצבת — עשרה צעדים מעשיים מהאיתור והשיבוץ ועד המשוב והאופק התעסוקתי</td><td><a class="lk" href="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view" target="_blank" rel="noopener">לצפייה בקנבה</a></td></tr>
-          <tr><td class="k">מערכי י״א–י״ב</td><td>5 יחידות — 23 שיעורים, יום מרוכז ומדריכים למורה (ק.מ.ה אורנים)</td><td><a class="lk cgo-lnk" href="#lessons" data-goto="lessons">למדור באתר</a></td></tr>
+          <tr><td class="k">מערכי י״א–י״ב</td><td>5 יחידות — 23 שיעורים, יום מרוכז ומדריכים למורה (ק.מ.ה אורנים)</td><td><a class="lk" href="#lessons-1112">למדור באתר</a></td></tr>
           <tr><td class="k">מחברת דרך ט׳</td><td>מחברת אינטראקטיבית המלווה את תהליך הלמידה של כיתה ט׳</td><td><a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
           <tr><td class="k">מודל I PRO</td><td>מודל מארגן לכישורים בשוק העבודה (ג׳וינט ישראל בשותפות משרד העבודה) — הבסיס הרעיוני לתוכנית</td><td><a class="lk" href="https://www.career-skills.org/ipro" target="_blank" rel="noopener">לאתר המודל</a></td></tr>
           <tr><td class="k">סוכן AI למורה</td><td>עוזר AI ייעודי לתוכנית נתיבים</td><td><a class="lk" href="https://poe.com/netivim" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">ח.כ.ה · המודל וכלי העבודה</td><td>מרחב ח.כ.ה של החינוך היוצר, מרוכז ומסודר אצלנו — המודל לארבע השכבות, כלי העבודה, מודל I PRO וסוכן ה-AI</td><td><a class="lk" href="chaka.html">לעמוד ח.כ.ה</a> · <a class="lk" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">למקור ↗</a></td></tr>
+          <tr><td class="k">מרחב ח.כ.ה המלא</td><td>עמוד התוכנית באתר החינוך היוצר</td><td><a class="lk" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">לאתר</a></td></tr>
           <tr><td class="k">אינדקס עסקים חינוכיים</td><td>מאגר העסקים החינוכיים של בתי הספר היוצרים — השראה למודל "עסק חינוכי"</td><td><a class="lk" href="https://yotzer.education/indexbiz/" target="_blank" rel="noopener">לאינדקס</a></td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="callout rv">
+      <span class="ttl">לרכזי התעסוקה</span>
+      סדירויות העבודה, הפרמטרים והמטלות בחניכות, וסדנאות העבודה עם מעסיקים — מרוכזים בעמוד <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>.
     </div>
 
     <div class="source-box rv">
@@ -577,9 +435,6 @@
       <a class="btn" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה ↗</a>
       <a class="btn alt" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">ח.כ.ה — החינוך היוצר ↗</a>
     </div>
-
-    <div class="cat-next rv"><span>חזרה להתחלה</span><button class="cgo" data-goto="program" type="button">התוכנית והמודל ←</button></div>
-</section>
 
   </div>
 </article>
@@ -590,6 +445,5 @@
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
-<script src="cats.js" defer></script>
 </body>
 </html>

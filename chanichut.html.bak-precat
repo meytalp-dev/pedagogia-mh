@@ -5,7 +5,7 @@
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>תפיסת החניכות · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="לימודי מקצוע וחניכות בחינוך היוצר, מסודר בחמש קטגוריות: למה חניכות, עקרונות היסוד והיישום, כלי הבחינה — מסננת, פירמידה ועשרת הצעדים — שמונה מודלים לחניכות ומעטפת התמיכה.">
+<meta name="description" content="לימודי מקצוע וחניכות בחינוך היוצר: עקרונות היסוד, מסננת החניכות, פירמידת החניכות, שמונה מודלים לחניכות, תפקיד רכז החניכות והחונך במקום העבודה.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="תפיסת החניכות — לימודי מקצוע וחניכות בחינוך היוצר">
 <meta property="og:description" content="עקרונות היסוד, מסננת ופירמידת החניכות, שמונה מודלים לחניכות ותפקידי הרכז והחונך.">
@@ -20,7 +20,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="article.css">
-<link rel="stylesheet" href="cats.css">
 <style>
 /* מודלי החניכות — בלוקים נפתחים */
 details.model{border:1px solid var(--border);border-radius:16px;margin:14px 0;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden}
@@ -62,19 +61,12 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
     <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
-    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
     <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
     <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
     <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
     <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
     <a href="documents.html"><span class="n">07</span> כלים ניהוליים פדגוגיים</a>
-    <div class="sect">חניכות וקריירה</div>
-    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
     <div class="sect">מרחב ייעוצי</div>
     <a href="counseling.html">שער המרחב הייעוצי</a>
     <a href="counseling.html#kit">ערכת הייעוץ</a>
@@ -134,25 +126,15 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
-      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="career.html">נתיבי חניכות וקריירה</a>
       <a class="dis">תוכניות לימודים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="ai.html">שילוב AI בחינוך</a>
       <a class="dis">הערכה</a>
       <a href="documents.html">כלים ניהוליים פדגוגיים</a>
-    </div>
-  </span>
-  <span class="navitem"><a class="lnk active" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
-    <div class="sub">
-      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
@@ -246,81 +228,9 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
   </div>
 </section>
 
-<!-- ===== שער הקטגוריות ===== -->
-<div class="cat-hub">
-  <div class="article">
-    <h2>מה בעמוד · בחרו קטגוריה</h2>
-    <p class="cat-hub-lead">תפיסת החניכות מסודרת בחמש קטגוריות. בחרו קטגוריה — ורק היא תוצג. "הכול" פותח את המסמך המלא ברצף.</p>
-    <div class="cat-grid">
-
-      <button class="catcard" data-cat="why" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5.5-5.5 2 2-5.5z"/></svg></span>
-        <span class="ct">
-          <b class="cn">01</b>
-          <b class="cttl">למה חניכות?</b>
-          <span class="csub">הייעוד החינוכי של החניכות · "היפוך היוצרות"</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="principles" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M5.5 20V8.5M9.8 20V8.5M14.2 20V8.5M18.5 20V8.5M3 8.5 12 3.6l9 4.9z"/></svg></span>
-        <span class="ct">
-          <b class="cn">02</b>
-          <b class="cttl">עקרונות היסוד והיישום</b>
-          <span class="csub">4 עקרונות יסוד · סל 200 שעות · סדירויות גמישות</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="tools" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 4.5h17.6l-7.1 8.3V20l-3.4 1.4v-8.6z"/></svg></span>
-        <span class="ct">
-          <b class="cn">03</b>
-          <b class="cttl">כלי הבחינה והמעקב</b>
-          <span class="csub">מסננת החניכות · פירמידת החניכות · עשרת הצעדים</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="models" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.6" height="7.6" rx="1.7"/><rect x="13.4" y="3" width="7.6" height="7.6" rx="1.7"/><rect x="3" y="13.4" width="7.6" height="7.6" rx="1.7"/><rect x="13.4" y="13.4" width="7.6" height="7.6" rx="1.7"/></svg></span>
-        <span class="ct">
-          <b class="cn">04</b>
-          <b class="cttl">שמונה מודלים לחניכות</b>
-          <span class="csub">מקלאסית ועד עסק חינוכי, מודל היברידי ופרילנס</span>
-        </span>
-      </button>
-
-      <button class="catcard" data-cat="support" type="button">
-        <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 4.6 6v6c0 4.6 3.1 7.8 7.4 9.2 4.3-1.4 7.4-4.6 7.4-9.2V6z"/><path d="m9 12.1 2.2 2.2 4.1-4.3"/></svg></span>
-        <span class="ct">
-          <b class="cn">05</b>
-          <b class="cttl">מעטפת התמיכה</b>
-          <span class="csub">רכז.ת החניכות · החונך במקום העבודה · מעטפת אזורית</span>
-        </span>
-      </button>
-
-    </div>
-  </div>
-</div>
-
-<!-- ===== פס סינון דביק ===== -->
-<div class="cat-bar" id="catbar">
-  <div class="article cat-bar-in">
-    <span class="cb-label">קטגוריה:</span>
-    <div class="cb-pills" role="tablist" aria-label="קטגוריות תפיסת החניכות">
-      <button class="cpill" data-cat="all" type="button">הכול</button>
-      <button class="cpill" data-cat="why" type="button">למה חניכות?</button>
-      <button class="cpill" data-cat="principles" type="button">עקרונות</button>
-      <button class="cpill" data-cat="tools" type="button">כלי בחינה ומעקב</button>
-      <button class="cpill" data-cat="models" type="button">8 המודלים</button>
-      <button class="cpill" data-cat="support" type="button">מעטפת התמיכה</button>
-    </div>
-  </div>
-</div>
-
 <article class="body-sec">
   <div class="article">
 
-<section class="cat-panel" data-cat="why" id="why">
     <h2 class="sub-sec first rv">למה חניכות?</h2>
     <p class="lead-p rv">ייעודה של החניכות אינו מקצועי בלבד אלא חינוכי: פיתוח מיומנויות וכישורים שמגלמים את הפוטנציאל של התלמידים — לא רק במקצוע אלא במגוון תחומים. החניכות מעניקה לבני הנוער שייכות וחיבור לעולם האמיתי, משמעות ותחושת ערך, מסוגלות וזהות, כושר הסתגלות, אחריות ועצמאות.</p>
     <div class="callout petrol rv">
@@ -328,10 +238,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       הכוונה היא למעבר מִפְּרָט שמשרת תעשייה — למערכת שבה הפרט במרכז, על מלוא צרכיו, חוזקותיו, יכולותיו וחלומותיו. החניכות היא הזדמנות לתת לבני הנוער תפקיד אמיתי בעיצוב החברה.
     </div>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="principles" type="button">עקרונות היסוד והיישום ←</button></div>
-</section>
-<section class="cat-panel" data-cat="principles" id="principles">
-    <h2 class="sub-sec first rv">ארבעה עקרונות יסוד</h2>
+    <h2 class="sub-sec rv">ארבעה עקרונות יסוד</h2>
     <ol class="ed rv">
       <li><strong>מקצוע רב־ממדי, רחב ופותח אופקים.</strong> התמחויות והסמכות נוספות: תתי־תחומים, תחומים נושקים ותחומי מעטפת, אתיקה מקצועית, חיבור לאקו־סיסטם ולהתפתחות המקצוע.</li>
       <li><strong>דגש על מיומנויות.</strong> אוריינות המקצוע ושפה מקצועית, למידה עצמאית, סטנדרטיזציה — ולימודי מקצוע שמקדמים גם מיומנויות אחרות (אנגלית, מחשבים ועוד).</li>
@@ -349,10 +256,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       <li><strong>חניכות רחבה:</strong> היכרות עם התמונה הכוללת של תהליכי העבודה והתנסות מגוונת — רצף החלפת התנסויות לאורך השנים.</li>
     </ul>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="tools" type="button">כלי הבחינה והמעקב ←</button></div>
-</section>
-<section class="cat-panel" data-cat="tools" id="tools">
-    <h2 class="sub-sec first rv">כלי 1 · מסננת החניכות</h2>
+    <h2 class="sub-sec rv">כלי 1 · מסננת החניכות</h2>
     <p class="lead-p rv">כלי לבדיקת איכות והתאמה של מקום עבודה, בעיקר לפני השמת תלמידים. מקום שרוב הפרמטרים מתקיימים בו — מתאים; חלק מהעקרונות הם <strong>חובה</strong> (למשל תשלום על פי חוק), וחלק יכולים להתפתח בליווי הרכז.ת.</p>
 
     <div class="tbl-scroll rv">
@@ -396,18 +300,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       </table>
     </div>
 
-    <h3 class="mini rv" id="asara">כלי 3 · עשרת הצעדים לחניכות מיטבית</h3>
-    <p class="rv">חוברת מעוצבת שמפרקת את החניכות לעשרה צעדים מעשיים — מהאיתור, ההתאמה והשיבוץ, דרך ההכנה של התלמיד.ה ושל המעסיק, ועד הליווי השוטף, המשוב והאופק התעסוקתי. משלימה את המסננת ואת הפירמידה: המסננת בוחנת את המקום, הפירמידה עוקבת אחר התלמיד.ה — והחוברת מתארת את סדר הפעולות.</p>
-    <div class="source-box rv">
-      <div class="t">עשרת הצעדים לחניכות מיטבית<small>לצפייה, להורדה ולשיתוף עם הצוות ועם המעסיקים.</small></div>
-      <a class="btn" href="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view" target="_blank" rel="noopener">לפתיחת החוברת ↗</a>
-      <a class="btn alt" href="career.html#asara-tzeadim">לחוברת המוטמעת באתר</a>
-    </div>
-
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="models" type="button">שמונה מודלים לחניכות ←</button></div>
-</section>
-<section class="cat-panel" data-cat="models" id="models">
-    <h2 class="sub-sec first rv">שמונה מודלים לחניכות</h2>
+    <h2 class="sub-sec rv">שמונה מודלים לחניכות</h2>
     <p class="lead-p rv">מגוון המודלים נועד להתאים את החניכות לכמה שיותר תלמידים — לוקאלית, תרבותית ומגמתית — ולהרחיב את מעגל המעסיקים. כל בית ספר בוחר, ואפשר להפעיל כמה מודלים במקביל. לחצו לפתיחת כל מודל:</p>
 
     <details class="model rv">
@@ -573,10 +466,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       </div>
     </details>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="support" type="button">מעטפת התמיכה ←</button></div>
-</section>
-<section class="cat-panel" data-cat="support" id="support">
-    <h2 class="sub-sec first rv">מעטפת התמיכה</h2>
+    <h2 class="sub-sec rv">מעטפת התמיכה</h2>
     <p class="lead-p rv">ליווי הוליסטי, רציף ומבוסס אמון — משלב השיבוץ ועד אופק תעסוקתי — נשען על שלושה ערוצים:</p>
     <ol class="ed rv">
       <li><strong>רכז.ת החניכות</strong> — מתכלל.ת תחום החניכות: תמיכה דו־כיוונית בתלמידים ובמעסיקים. זהו תפקיד מקצועי מובחן הדורש כישורים שונים מכישורי הוראה ומשרה הולמת — לא תוספת שעות לתפקיד קיים.</li>
@@ -615,9 +505,6 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       <a class="btn" href="https://drive.google.com/file/d/1nB39wiq4kLBQKT1MEzh9mZWGoQFx-L8L/view" target="_blank" rel="noopener">פתיחה בדרייב ↗</a>
     </div>
 
-    <div class="cat-next rv"><span>חזרה להתחלה</span><button class="cgo" data-goto="why" type="button">למה חניכות? ←</button></div>
-</section>
-
   </div>
 </article>
 
@@ -627,6 +514,5 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
-<script src="cats.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פריסת הפיקוח הפדגוגי תשפ״ז · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="חלוקת בתי הספר בין המפקחים הפדגוגיים לשנת תשפ״ז — 64 מוסדות לפי מחוז, רשת ומגזר, כולל השוואה לתשפ״ו.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .pk-wrap{padding:8px var(--px) 48px}
+  .pk-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+  .pk-search{flex:1 1 240px;min-width:200px;border:1px solid var(--border);border-radius:999px;
+    padding:10px 44px 10px 18px;font:inherit;font-size:.92rem;color:var(--text);
+    background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2352687A' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat right 16px center/17px;
+    box-shadow:var(--sh-sm);outline:none;transition:border-color .2s var(--ease)}
+  .pk-search:focus{border-color:var(--blue)}
+  .pk-sel{border:1px solid var(--border);border-radius:999px;padding:10px 16px;font:inherit;font-size:.88rem;
+    font-weight:600;color:var(--text2);background:#fff;box-shadow:var(--sh-sm);cursor:pointer;outline:none}
+  .pk-sel:focus{border-color:var(--blue)}
+  .pk-sups{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+  .pk-sup{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;
+    border-radius:999px;padding:6px 10px 6px 14px;font-weight:700;font-size:.86rem;color:var(--text2);
+    cursor:pointer;transition:.2s var(--ease);box-shadow:var(--sh-sm)}
+  .pk-sup:hover{border-color:var(--border-strong);transform:translateY(-1px)}
+  .pk-sup .dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+  .pk-sup .n{background:var(--soft-bg);border-radius:999px;padding:1px 9px;font-size:.78rem;color:var(--muted)}
+  .pk-sup.on{background:var(--c);border-color:transparent;color:#fff}
+  .pk-sup.on .dot{background:#fff}
+  .pk-sup.on .n{background:rgba(255,255,255,.24);color:#fff}
+  .pk-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:var(--sh-sm)}
+  table.pk{width:100%;border-collapse:collapse;font-size:.9rem;min-width:860px}
+  table.pk th{position:sticky;top:0;z-index:2;background:var(--navy);color:#fff;font-weight:600;
+    text-align:right;padding:12px 14px;white-space:nowrap;font-size:.85rem}
+  table.pk td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  table.pk tbody tr:last-child td{border-bottom:0}
+  table.pk tbody tr:nth-child(even){background:#FAFCFF}
+  table.pk tbody tr:hover{background:var(--blue-bg)}
+  table.pk .semel{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;white-space:nowrap}
+  table.pk .school{font-weight:700;color:var(--navy)}
+  .sup-cell{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--text);white-space:nowrap}
+  .sup-cell .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+  .prev{color:var(--muted);font-size:.85rem;white-space:nowrap}
+  .chg{display:inline-block;margin-inline-start:6px;background:#FFF4E0;color:#8A5A00;border:1px solid #F0D6A2;
+    border-radius:999px;padding:0 8px;font-size:.72rem;font-weight:700;vertical-align:middle}
+  .pk-empty{padding:34px;text-align:center;color:var(--text2);font-weight:600}
+  .pk-count{font-size:.86rem;color:var(--text2);font-weight:600;margin:12px 2px 0}
+  .pk-count b{color:var(--navy)}
+  @media (max-width:720px){ .pk-wrap{padding:8px 16px 40px} }
+  @media print{ .govbar,.nav,.drawer,.scrim,.pk-bar,.pk-sups,.foot,#pagebar,.ogenw-launcher{display:none!important}
+    .pk-scroll{border:0;box-shadow:none;overflow:visible}
+    table.pk th{background:#0D3B66!important;-webkit-print-color-adjust:exact;print-color-adjust:exact} }
+</style>
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">07</span> כלים ניהוליים פדגוגיים</a>
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ"ז</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="install.html">📲 עוגן והאתר בנייד</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+      <a href="career.html">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+      <a href="documents.html">כלים ניהוליים פדגוגיים</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ"ז</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="tafkidim.html">כל התפקידים וההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+      <a href="https://drive.google.com/drive/folders/1BFTo7pzI43UQC5IRTsi6y2gBFqAw5-d5" target="_blank" rel="noopener">דרייב · מורים חונכים</a>
+      <a href="https://drive.google.com/drive/folders/13eEoLXekIZwwhZnTTKfJmbxaZtls14TC" target="_blank" rel="noopener">דרייב · פיתוח צוות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">לוח גאנט והשתלמויות<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hishtalmuyot.html">דף ההשתלמויות · תשפ"ז</a>
+      <a href="gantt.html">לוח הגאנט · צוותים</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<div class="pagehead">
+  <div class="crumb rv"><a href="index.html">בית</a> ‹ <a href="supervision.html">מרחב פיקוח</a> ‹ פריסת הפיקוח</div>
+  <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <h1>פריסת הפיקוח הפדגוגי</h1>
+    <span class="tag" style="background:var(--navy);color:#fff;font-size:.78rem">תשפ״ז</span>
+  </div>
+  <p class="rv d2 lead" style="max-width:690px">חלוקת המוסדות בין המפקחים הפדגוגיים לשנת תשפ״ז. אפשר לחפש מוסד, לסנן לפי מפקח/ת, מחוז, רשת או מגזר — ולראות מי ליווה את המוסד בתשפ״ו.</p>
+</div>
+
+<div class="grid c4 rv d2" style="padding:18px var(--px) 6px">
+  <div class="card" style="padding:18px;text-align:center"><div class="num-count" data-count="64" style="font-size:1.8rem;font-weight:800;color:var(--navy)">64</div><div style="font-size:.84rem;color:var(--text2);font-weight:600">מוסדות בפיקוח</div></div>
+  <div class="card" style="padding:18px;text-align:center"><div class="num-count" data-count="8" style="font-size:1.8rem;font-weight:800;color:var(--navy)">8</div><div style="font-size:.84rem;color:var(--text2);font-weight:600">מפקחים פדגוגיים</div></div>
+  <div class="card" style="padding:18px;text-align:center"><div class="num-count" data-count="4" style="font-size:1.8rem;font-weight:800;color:var(--navy)">4</div><div style="font-size:.84rem;color:var(--text2);font-weight:600">מחוזות</div></div>
+  <div class="card" style="padding:18px;text-align:center"><div class="num-count" data-count="22" style="font-size:1.8rem;font-weight:800;color:var(--navy)">22</div><div style="font-size:.84rem;color:var(--text2);font-weight:600">מוסדות שהחליפו מפקח/ת</div></div>
+</div>
+
+<div class="pk-wrap">
+  <div class="pk-sups rv" id="supBar" style="margin-top:14px">
+    <span class="pk-sup on" data-sup="" style="--c:#0D3B66"><span class="dot"></span>כל המפקחים<span class="n">64</span></span>
+    <span class="pk-sup" data-sup="יסמין אמון" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון<span class="n">13</span></span>
+    <span class="pk-sup" data-sup="יששכר חפץ" style="--c:#17857F"><span class="dot"></span>יששכר חפץ<span class="n">12</span></span>
+    <span class="pk-sup" data-sup="ליאת צבר" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר<span class="n">12</span></span>
+    <span class="pk-sup" data-sup="סיגלית דאי" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי<span class="n">12</span></span>
+    <span class="pk-sup" data-sup="ויסאם סואלחה" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה<span class="n">6</span></span>
+    <span class="pk-sup" data-sup="רביב שורץ" style="--c:#9A5B00"><span class="dot"></span>רביב שורץ<span class="n">4</span></span>
+    <span class="pk-sup" data-sup="שרונה בלוך" style="--c:#0E7490"><span class="dot"></span>שרונה בלוך<span class="n">4</span></span>
+    <span class="pk-sup" data-sup="רויטל אמיר" style="--c:#C0392B"><span class="dot"></span>רויטל אמיר<span class="n">3</span></span>
+  </div>
+
+  <div class="pk-bar rv d1">
+    <input class="pk-search" id="q" type="search" placeholder="חיפוש מוסד, סמל מוסד או מפקח/ת…" aria-label="חיפוש">
+    <select class="pk-sel" id="fDistrict" aria-label="מחוז"><option value="">כל המחוזות</option><option>באר שבע</option><option>חיפה</option><option>ירושלים</option><option>תל אביב</option></select>
+    <select class="pk-sel" id="fNet" aria-label="רשת"><option value="">כל הרשתות</option><option>אורט</option><option>בית אל</option><option>בית שולמית</option><option>דרור</option><option>טל חרמון</option><option>ישיבת חנוך לנער</option><option>כפר זיתים</option><option>נחלים</option><option>סכנין</option><option>עמל</option><option>עתיד</option><option>רימונים</option></select>
+    <select class="pk-sel" id="fSector" aria-label="מגזר"><option value="">כל המגזרים</option><option>חרדי</option><option>כללי</option><option>ערבי</option></select>
+    <select class="pk-sel" id="fChange" aria-label="שינוי"><option value="">הכול</option><option value="1">רק מוסדות שהחליפו מפקח/ת</option></select>
+  </div>
+
+  <div class="pk-scroll rv d1">
+    <table class="pk">
+      <thead><tr>
+        <th>סמל מוסד</th><th>שם המוסד</th><th>רשת</th><th>מחוז</th><th>מגזר</th>
+        <th>מפקח/ת פדגוגי/ת תשפ״ז</th><th>תשפ״ו</th>
+      </tr></thead>
+      <tbody id="tb">
+        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="64100 בית חנינה בנות סכנין ירושלים ערבי אחמד מחאמיד ויסאם סואלחה"><td class="semel">64100</td><td class="school">בית חנינה בנות</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="64102 בית חנינה בנים סכנין ירושלים ערבי אחמד מחאמיד ויסאם סואלחה"><td class="semel">64102</td><td class="school">בית חנינה בנים</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-t=" כפר עקב סכנין ירושלים ערבי - ויסאם סואלחה"><td class="semel">—</td><td class="school">כפר עקב</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">—<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-t=" סור באהר סכנין ירושלים ערבי - ויסאם סואלחה"><td class="semel">—</td><td class="school">סור באהר</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">—<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ויסאם סואלחה" data-d="תל אביב" data-n="עמל" data-s="ערבי" data-chg="1" data-t="44011 עמל טייבה ב&#x27; עמל תל אביב ערבי אחמד מחאמיד ויסאם סואלחה"><td class="semel">44011</td><td class="school">עמל טייבה ב&#x27;</td><td>עמל</td><td>תל אביב</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ויסאם סואלחה" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54101 ערערה סכנין חיפה ערבי אחמד מחאמיד ויסאם סואלחה"><td class="semel">54101</td><td class="school">ערערה</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="אורט" data-s="ערבי" data-chg="0" data-t="55003 אורט כרמל אורט חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">55003</td><td class="school">אורט כרמל</td><td>אורט</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54113 אכסאל סכנין חיפה ערבי אחמד מחאמיד יסמין אמון"><td class="semel">54113</td><td class="school">אכסאל</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54100 אל אמאני סכנין סכנין חיפה ערבי אחמד מחאמיד יסמין אמון"><td class="semel">54100</td><td class="school">אל אמאני סכנין</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54108 אלחכמה כסרא-סמיע סכנין חיפה ערבי אחמד מחאמיד יסמין אמון"><td class="semel">54108</td><td class="school">אלחכמה כסרא-סמיע</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-t="52918 ג&#x27;וליס בנות עתיד חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">52918</td><td class="school">ג&#x27;וליס בנות</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54109 טורען סכנין חיפה ערבי אחמד מחאמיד יסמין אמון"><td class="semel">54109</td><td class="school">טורען</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54102 כפר יסיף סכנין חיפה ערבי אחמד מחאמיד יסמין אמון"><td class="semel">54102</td><td class="school">כפר יסיף</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עמל" data-s="ערבי" data-chg="0" data-t="54008 נצרת עמל חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">54008</td><td class="school">נצרת</td><td>עמל</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-t="52916 עתיד גליל מערבי ירכא בנים עתיד חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">52916</td><td class="school">עתיד גליל מערבי ירכא בנים</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-t="52922 עתיד טק ביר אל מכסור עתיד חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">52922</td><td class="school">עתיד טק ביר אל מכסור</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-t="52909 תיכון טכנולוגי אי טק סקול (מסעדה) עתיד חיפה ערבי יסמין אמון יסמין אמון"><td class="semel">52909</td><td class="school">תיכון טכנולוגי אי טק סקול (מסעדה)</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="0" data-t="52920 תפן ליזמות עתיד חיפה כללי יסמין אמון יסמין אמון"><td class="semel">52920</td><td class="school">תפן ליזמות</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td></tr>
+        <tr data-sup="יסמין אמון|סיגלית דאי" data-d="באר שבע" data-n="עמל" data-s="ערבי" data-chg="0" data-t="84003 עמל רהט עמל באר שבע ערבי יסמין אמון + סיגלית דאי יסמין אמון + סיגלית דאי"><td class="semel">84003</td><td class="school">עמל רהט</td><td>עמל</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="dot"></span>יסמין אמון</span> <span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">יסמין אמון + סיגלית דאי</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="עתיד" data-s="חרדי" data-chg="1" data-t=" אור דניאל עתיד תל אביב חרדי  יששכר חפץ"><td class="semel">—</td><td class="school">אור דניאל</td><td>עתיד</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">—<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="יששכר חפץ" data-d="ירושלים" data-n="עתיד" data-s="חרדי" data-chg="0" data-t="62903 אור העתיד תורני מקצועי עתיד ירושלים חרדי יששכר חפץ יששכר חפץ"><td class="semel">62903</td><td class="school">אור העתיד תורני מקצועי</td><td>עתיד</td><td>ירושלים</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="באר שבע" data-n="עתיד" data-s="כללי" data-chg="0" data-t="82923 בית דוד עתיד באר שבע כללי יששכר חפץ יששכר חפץ"><td class="semel">82923</td><td class="school">בית דוד</td><td>עתיד</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="ירושלים" data-n="בית שולמית" data-s="חרדי" data-chg="0" data-t="61902 הדר בית שולמית ירושלים חרדי יששכר חפץ יששכר חפץ"><td class="semel">61902</td><td class="school">הדר</td><td>בית שולמית</td><td>ירושלים</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="באר שבע" data-n="עתיד" data-s="חרדי" data-chg="0" data-t="82922 הקמפוס התורני עתיד עתיד באר שבע חרדי יששכר חפץ יששכר חפץ"><td class="semel">82922</td><td class="school">הקמפוס התורני עתיד</td><td>עתיד</td><td>באר שבע</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="טל חרמון" data-s="חרדי" data-chg="0" data-t="58801 טל חרמון טל חרמון חיפה חרדי יששכר חפץ יששכר חפץ"><td class="semel">58801</td><td class="school">טל חרמון</td><td>טל חרמון</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="ישיבת חנוך לנער" data-s="חרדי" data-chg="0" data-t="55400 ישיבת חנוך לנער ישיבת חנוך לנער חיפה חרדי יששכר חפץ יששכר חפץ"><td class="semel">55400</td><td class="school">ישיבת חנוך לנער</td><td>ישיבת חנוך לנער</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="כפר זיתים" data-s="חרדי" data-chg="0" data-t="55501 כפר זיתים כפר זיתים חיפה חרדי יששכר חפץ יששכר חפץ"><td class="semel">55501</td><td class="school">כפר זיתים</td><td>כפר זיתים</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="עמל" data-s="חרדי" data-chg="0" data-t="54009 מרחביה/מעיינות עמל חיפה חרדי יששכר חפץ יששכר חפץ"><td class="semel">54009</td><td class="school">מרחביה/מעיינות</td><td>עמל</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="נחלים" data-s="חרדי" data-chg="0" data-t="46101 נחלים נחלים תל אביב חרדי יששכר חפץ יששכר חפץ"><td class="semel">46101</td><td class="school">נחלים</td><td>נחלים</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="עתיד" data-s="חרדי" data-chg="0" data-t="52923 עתיד בת עמי עתיד חיפה חרדי יששכר חפץ יששכר חפץ"><td class="semel">52923</td><td class="school">עתיד בת עמי</td><td>עתיד</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="עתיד" data-s="חרדי" data-chg="0" data-t="42924 עתיד כפר חב&quot;ד עתיד תל אביב חרדי יששכר חפץ יששכר חפץ"><td class="semel">42924</td><td class="school">עתיד כפר חב&quot;ד</td><td>עתיד</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54107 אבו סנאן סכנין חיפה ערבי אחמד מחאמיד ליאת צבר"><td class="semel">54107</td><td class="school">אבו סנאן</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="0" data-t="54105 אום אל פחם בנות סכנין חיפה ערבי ליאת צבר ליאת צבר"><td class="semel">54105</td><td class="school">אום אל פחם בנות</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-t="54021 אנרג&#x27;י טק עמל חיפה כללי ליאת צבר ליאת צבר"><td class="semel">54021</td><td class="school">אנרג&#x27;י טק</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="בית אל" data-s="כללי" data-chg="0" data-t="55621 בית אל בית אל חיפה כללי ליאת צבר ליאת צבר"><td class="semel">55621</td><td class="school">בית אל</td><td>בית אל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="דרור" data-s="כללי" data-chg="0" data-t="53405 דרור גליל דרור חיפה כללי ליאת צבר ליאת צבר"><td class="semel">53405</td><td class="school">דרור גליל</td><td>דרור</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="דרור" data-s="כללי" data-chg="0" data-t="53403 התיכון החברתי חיפה דרור חיפה כללי ליאת צבר ליאת צבר"><td class="semel">53403</td><td class="school">התיכון החברתי חיפה</td><td>דרור</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="1" data-t="52921 צור ים עתיד חיפה כללי קתרינה ברברשטיין ליאת צבר"><td class="semel">52921</td><td class="school">צור ים</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">קתרינה ברברשטיין<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="רימונים" data-s="כללי" data-chg="0" data-t="51511 רימונים רימונים חיפה כללי ליאת צבר ליאת צבר"><td class="semel">51511</td><td class="school">רימונים</td><td>רימונים</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-t="54017 רמת דוד עמל חיפה כללי ליאת צבר ליאת צבר"><td class="semel">54017</td><td class="school">רמת דוד</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="תל אביב" data-n="דרור" data-s="כללי" data-chg="0" data-t="43403 תיכון חברתי ת&quot;א דרור תל אביב כללי ליאת צבר ליאת צבר"><td class="semel">43403</td><td class="school">תיכון חברתי ת&quot;א</td><td>דרור</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="1" data-t="52919 תיכון עוצמ&quot;ה עתיד זוקו עתיד חיפה כללי רביב שורץ ליאת צבר"><td class="semel">52919</td><td class="school">תיכון עוצמ&quot;ה עתיד זוקו</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">רביב שורץ<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-t="54040 תיכון שיח עמל חיפה כללי ליאת צבר ליאת צבר"><td class="semel">54040</td><td class="school">תיכון שיח</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-t="45005 אורט אורמת אורט תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">45005</td><td class="school">אורט אורמת</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-t="45002 אורט תל נוף אורט תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">45002</td><td class="school">אורט תל נוף</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-t="45001 אורט תעשייה אווירית אורט תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">45001</td><td class="school">אורט תעשייה אווירית</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-t="45007 דן גורמה אורט תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">45007</td><td class="school">דן גורמה</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="ירושלים" data-n="עמל" data-s="כללי" data-chg="0" data-t="64001 עמל אשדוד עמל ירושלים כללי סיגלית דאי סיגלית דאי"><td class="semel">64001</td><td class="school">עמל אשדוד</td><td>עמל</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="עמל" data-s="כללי" data-chg="0" data-t="44050 עמל טק אין עמל תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">44050</td><td class="school">עמל טק אין</td><td>עמל</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="באר שבע" data-n="עתיד" data-s="כללי" data-chg="1" data-t="82918 עתיד באר שבע עתיד באר שבע כללי קתרינה ברברשטיין סיגלית דאי"><td class="semel">82918</td><td class="school">עתיד באר שבע</td><td>עתיד</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">קתרינה ברברשטיין<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="עתיד" data-s="כללי" data-chg="0" data-t="42919 עתיד פלמחים עתיד תל אביב כללי סיגלית דאי סיגלית דאי"><td class="semel">42919</td><td class="school">עתיד פלמחים</td><td>עתיד</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="ירושלים" data-n="אורט" data-s="כללי" data-chg="0" data-t="65079 צור ברק אורט ירושלים כללי סיגלית דאי סיגלית דאי"><td class="semel">65079</td><td class="school">צור ברק</td><td>אורט</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי" data-d="באר שבע" data-n="עמל" data-s="כללי" data-chg="0" data-t="82921 קמ&quot;ג דימונה עמל באר שבע כללי סיגלית דאי סיגלית דאי"><td class="semel">82921</td><td class="school">קמ&quot;ג דימונה</td><td>עמל</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td></tr>
+        <tr data-sup="סיגלית דאי|רויטל אמיר" data-d="תל אביב" data-n="עמל" data-s="כללי" data-chg="1" data-t="44008 תיכון החממה עמל תל אביב כללי סיגלית דאי סיגלית דאי +רויטל אמיר"><td class="semel">44008</td><td class="school">תיכון החממה</td><td>עמל</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="dot"></span>סיגלית דאי</span> <span class="sup-cell" style="--c:#C0392B"><span class="dot"></span>רויטל אמיר</span></td><td class="prev">סיגלית דאי<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="0" data-t="54112 אום אל פחם בנים סכנין חיפה ערבי רביב שורץ רביב שורץ"><td class="semel">54112</td><td class="school">אום אל פחם בנים</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td></tr>
+        <tr data-sup="רביב שורץ" data-d="באר שבע" data-n="דרור" data-s="כללי" data-chg="0" data-t="83424 מצפה רמון דרור באר שבע כללי רביב שורץ רביב שורץ"><td class="semel">83424</td><td class="school">מצפה רמון</td><td>דרור</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td></tr>
+        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="0" data-t="52901 עתיד כרמיאל עתיד חיפה כללי רביב שורץ רביב שורץ"><td class="semel">52901</td><td class="school">עתיד כרמיאל</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td></tr>
+        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="54106 שפרעם סכנין חיפה ערבי אחמד מחאמיד רביב שורץ"><td class="semel">54106</td><td class="school">שפרעם</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="dot"></span>רביב שורץ</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="רויטל אמיר" data-d="ירושלים" data-n="אורט" data-s="כללי" data-chg="0" data-t="65007 אורט בית הערבה אורט ירושלים כללי רויטל אמיר רויטל אמיר"><td class="semel">65007</td><td class="school">אורט בית הערבה</td><td>אורט</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#C0392B"><span class="dot"></span>רויטל אמיר</span></td><td class="prev">רויטל אמיר</td></tr>
+        <tr data-sup="רויטל אמיר" data-d="ירושלים" data-n="דרור" data-s="כללי" data-chg="0" data-t="63401 חוש&quot;ן דרור ירושלים כללי רויטל אמיר רויטל אמיר"><td class="semel">63401</td><td class="school">חוש&quot;ן</td><td>דרור</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#C0392B"><span class="dot"></span>רויטל אמיר</span></td><td class="prev">רויטל אמיר</td></tr>
+        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="דרור" data-s="ערבי" data-chg="1" data-t="83425 דרור נווה מדבר דרור באר שבע ערבי יסמין אמון שרונה בלוך"><td class="semel">83425</td><td class="school">דרור נווה מדבר</td><td>דרור</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="dot"></span>שרונה בלוך</span></td><td class="prev">יסמין אמון<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="84101 לקייה סכנין באר שבע ערבי אחמד מחאמיד שרונה בלוך"><td class="semel">84101</td><td class="school">לקייה</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="84104 סכנין תל שבע סכנין באר שבע ערבי אחמד מחאמיד שרונה בלוך"><td class="semel">84104</td><td class="school">סכנין תל שבע</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-t="84102 שגב שלום סכנין באר שבע ערבי אחמד מחאמיד שרונה בלוך"><td class="semel">84102</td><td class="school">שגב שלום</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td></tr>
+      </tbody>
+    </table>
+    <div class="pk-empty" id="empty" hidden>לא נמצאו מוסדות שמתאימים לסינון</div>
+  </div>
+  <div class="pk-count rv d2">מוצגים <b id="shown">64</b> מתוך 64 מוסדות · <span style="color:var(--muted)">מקור: פריסת פיקוח תשפ״ז, מינהל הכשרה מקצועית</span></div>
+
+  <div class="notice rv d2" style="margin-top:22px">
+    מוסד שמופיעים לידו שני שמות — ליווי משותף. עדכוני פריסה מתבצעים דרך הפיקוח הפדגוגי ·
+    <a href="supervision.html" style="color:var(--blue);font-weight:700">חזרה למרחב הפיקוח</a>
+  </div>
+</div>
+
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>פריסת הפיקוח · תשפ״ז</span></div></div>
+
+<script src="site.js"></script>
+<script>
+(function(){
+  var rows=[].slice.call(document.querySelectorAll('#tb tr'));
+  var q=document.getElementById('q'), shown=document.getElementById('shown'), empty=document.getElementById('empty');
+  var sels={sup:'', d:'', n:'', s:'', chg:''};
+  var map={fDistrict:'d', fNet:'n', fSector:'s', fChange:'chg'};
+
+  function apply(){
+    var t=q.value.trim().toLowerCase(), c=0;
+    rows.forEach(function(tr){
+      var ok = (!sels.sup || tr.dataset.sup.split('|').indexOf(sels.sup)>-1)
+            && (!sels.d   || tr.dataset.d===sels.d)
+            && (!sels.n   || tr.dataset.n===sels.n)
+            && (!sels.s   || tr.dataset.s===sels.s)
+            && (!sels.chg || tr.dataset.chg==='1')
+            && (!t        || tr.dataset.t.indexOf(t)>-1);
+      tr.hidden=!ok; if(ok) c++;
+    });
+    shown.textContent=c; empty.hidden=c>0;
+  }
+
+  q.addEventListener('input',apply);
+  Object.keys(map).forEach(function(id){
+    document.getElementById(id).addEventListener('change',function(){ sels[map[id]]=this.value; apply(); });
+  });
+  document.getElementById('supBar').addEventListener('click',function(ev){
+    var b=ev.target.closest('.pk-sup'); if(!b) return;
+    document.querySelectorAll('.pk-sup').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on'); sels.sup=b.dataset.sup; apply();
+  });
+})();
+</script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+</body>
+</html>

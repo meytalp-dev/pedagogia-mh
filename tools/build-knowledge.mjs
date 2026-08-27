@@ -24,7 +24,7 @@ const SITE = "https://pedagogiamh.co.il";
 const OUT = join(ROOT, "knowledge.json");
 
 const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
-const MAX_TOTAL_CHARS = 60000; // תקרה כוללת לכל הידע (נאכפת ע"י הקטנת תקרת העמוד)
+const MAX_TOTAL_CHARS = 80000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html"]);
@@ -91,13 +91,21 @@ function extractPage(html, url) {
     body = removeBlocks(body, new RegExp(re.source, "gi"));
   }
 
-  // קישורים חיצוניים שמופיעים בעמוד (בלי פונטים וכד')
+  // קישורים חיצוניים שמופיעים בעמוד (בלי פונטים וכד'), עם שם הקישור.
+  // השם חשוב: בלעדיו עוגן לא יודעת מה יש בכתובת, ולכן לא תדע להפנות לנוהל הנכון.
   const links = [];
-  for (const lm of body.matchAll(/href="(https?:\/\/[^"]+)"/g)) {
+  const seenUrls = new Set();
+  for (const lm of body.matchAll(/<a\b[^>]*href="(https?:\/\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
     const u = lm[1];
     if (/fonts\.googleapis|fonts\.gstatic|googletagmanager/.test(u)) continue;
     if (u.startsWith(SITE)) continue;
-    if (!links.includes(u)) links.push(u);
+    if (seenUrls.has(u)) continue;
+    seenUrls.add(u);
+    const label = decodeEntities(lm[2].replace(/<[^>]+>/g, " "))
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 60);
+    links.push(label ? label + " — " + u : u);
     if (links.length >= MAX_LINKS) break;
   }
 
@@ -140,7 +148,8 @@ if (existsSync(toolsIndex)) {
 
 /* ---------- אכיפת תקציב הגודל הכולל ---------- */
 let cap = MAX_PAGE_CHARS;
-const totalAt = (c) => pages.reduce((sum, p) => sum + Math.min(p.text.length, c), 0);
+const linkChars = (p) => (p.links || []).reduce((sum, l) => sum + l.length + 3, 0);
+const totalAt = (c) => pages.reduce((sum, p) => sum + Math.min(p.text.length, c) + linkChars(p), 0);
 while (cap > 300 && totalAt(cap) > MAX_TOTAL_CHARS) cap -= 100;
 for (const p of pages) p.text = clip(p.text, cap);
 

@@ -4,14 +4,8 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>קבוצות הדרכה ופרטי המדריכים · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="רשימת המדריכים המקצועיים לחברה היהודית ולחברה הערבית — תחומי הדעת, המדריכים והמפקחים המלווים.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="קבוצות הדרכה ופרטי המדריכים">
-<meta property="og:description" content="רשימת המדריכים המקצועיים לחברה היהודית ולחברה הערבית — תחומי הדעת, המדריכים והמפקחים המלווים.">
-<meta property="og:url" content="https://pedagogiamh.co.il/kvutzot-hadracha.html">
-<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
-<meta property="og:locale" content="he_IL">
+<title>למידה בחירום · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="למידה בחירום — עמוד המורה: מודל השיעור 15/25/10, מחולל מערכי שיעור מרחוק, בנק שגרות פתיחה, מסלול ללא מסך וקורסים חינם ללמידה מרחוק.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -19,7 +13,68 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="article.css">
+<style>
+.linklist{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.linklist li{font-size:.87rem;color:var(--text2);padding-inline-start:16px;position:relative}
+.linklist li::before{content:"9";position:absolute;inset-inline-start:0;color:#0B7FA6;font-weight:800}
+.linklist a{color:#0B7FA6;font-weight:700;text-decoration:none}
+.linklist a:hover{text-decoration:underline}
+.sechead{padding:34px var(--px) 0}
+.sechead h2{font-size:1.5rem;margin-top:6px}
+.sechead p{color:var(--text2);font-size:.95rem;max-width:680px}
+
+.model{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.model .seg{border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;background:var(--surface);box-shadow:var(--sh-sm);position:relative;overflow:hidden}
+.model .seg::before{content:"";position:absolute;top:0;inset-inline:0;height:4px;background:var(--sg,var(--cyan))}
+.model .min{font-size:2rem;font-weight:800;color:var(--sg,var(--cyan));line-height:1;font-variant-numeric:tabular-nums}
+.model .min small{font-size:.8rem;font-weight:700;color:var(--text2);margin-inline-start:5px}
+.model h4{font-size:1rem;margin:8px 0 4px;color:var(--navy)}
+.model p{font-size:.86rem;color:var(--text2);line-height:1.6}
+@media(max-width:860px){.model{grid-template-columns:1fr}}
+
+.gen{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:24px 26px;box-shadow:var(--sh-sm)}
+.gen .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.gen label{display:flex;flex-direction:column;gap:5px;font-size:.83rem;font-weight:700;color:var(--navy)}
+.gen input,.gen select,.gen textarea{font-family:'Assistant',sans-serif;font-size:.92rem;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;background:#fff;color:var(--text);width:100%}
+.gen input:focus,.gen select:focus,.gen textarea:focus{outline:none;border-color:var(--cyan)}
+.gen .wide{grid-column:1/-1}
+.gen .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+.gen .hint{font-size:.8rem;color:var(--muted);margin-top:10px}
+.out{margin-top:18px;border:1.5px dashed var(--border-strong);border-radius:16px;padding:18px 20px;background:#fff;display:none}
+.out.on{display:block}
+.out h4{font-size:.95rem;color:var(--navy);margin-bottom:8px}
+.out pre{white-space:pre-wrap;font-family:'Assistant',sans-serif;font-size:.87rem;line-height:1.7;color:var(--text);max-height:360px;overflow:auto;background:var(--soft-bg);border-radius:11px;padding:14px 16px}
+.out .row2{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.btn.sm{padding:9px 20px;font-size:.86rem}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:760px){.gen .fields{grid-template-columns:1fr}}
+
+.bank{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.bank .it{background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--bc,var(--cyan));border-radius:13px;padding:14px 17px;box-shadow:var(--sh-sm)}
+.bank .it b{display:block;color:var(--navy);font-size:.94rem;margin-bottom:3px}
+.bank .it span{font-size:.85rem;color:var(--text2);line-height:1.6}
+.bank .it .t{display:block;margin-top:7px;font-size:.74rem;font-weight:700;color:var(--muted)}
+@media(max-width:900px){.bank{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.bank{grid-template-columns:1fr}}
+
+.tabs{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:20px 24px 24px;box-shadow:var(--sh-sm)}
+.tabpanel{display:none}
+.tabpanel.on{display:block}
+.crs{list-style:none;display:flex;flex-direction:column;gap:2px;margin-top:14px}
+.crs li{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;padding:11px 0;border-bottom:1px solid var(--border)}
+.crs li:last-child{border-bottom:none}
+.crs a{color:var(--navy);font-weight:700;font-size:.95rem;text-decoration:none}
+.crs a:hover{color:#0B7FA6;text-decoration:underline}
+.crs .meta{font-size:.79rem;color:var(--muted);font-weight:600}
+.crs .d{flex-basis:100%;font-size:.84rem;color:var(--text2);line-height:1.55}
+.ladder{counter-reset:st}
+.ladder li::before{counter-increment:st;content:counter(st);flex:0 0 24px;height:24px;border-radius:50%;background:var(--blue-100);color:var(--navy-800);font-weight:800;font-size:.78rem;display:grid;place-content:center;align-self:center}
+
+.script{background:var(--soft-bg);border-radius:14px;padding:16px 20px;margin-top:14px;font-size:.9rem;line-height:1.85}
+.script q{color:var(--navy);font-weight:700;font-style:normal}
+.script q::before,.script q::after{content:'"'}
+</style>
 </head>
 <body>
 
@@ -102,7 +157,7 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
       <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
@@ -134,7 +189,7 @@
       <a href="drive-yeutz.html">דרייב ייעוצי</a>
     </div>
   </span>
-  <span class="navitem"><a class="lnk active" href="procedures.html">נהלים<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
     <div class="sub">
       <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
       <a href="procedures.html#tfasim">טפסים ומכתבים</a>
@@ -199,79 +254,3 @@
   </div>
 </nav>
 
-<section class="hero">
-  <div class="article hero-stagger">
-    <span class="kicker">הדרכה ופיתוח מקצועי</span>
-    <h1>קבוצות הדרכה ופרטי המדריכים</h1>
-    <p class="lead">רשימת המדריכים המקצועיים בתחומי הדעת — לחברה היהודית ולחברה הערבית — לצד המפקח/ת המלווה כל תחום.</p>
-    <div class="meta-row">
-      <span class="src">המקור: <a class="lk" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">הגיליון בדרייב</a></span>
-    </div>
-  </div>
-</section>
-
-<article class="body-sec">
-  <div class="article">
-
-    <h2 class="sub-sec first rv">מי מדריך במה?</h2>
-    <p class="lead-p rv">לכל תחום דעת מדריך/ה מקצועי/ת, ולצידם מפקח/ת מלווה. לכל מדריך/ה קבוצת ווטסאפ ייעודית לתחום.</p>
-
-    <div class="callout amber rv">
-      <span class="ttl">יצירת קשר עם המדריכים</span>
-      מטעמי פרטיות, מספרי הטלפון וקישורי הווטסאפ של המדריכים אינם מתפרסמים בעמוד זה. את פרטי הקשר המלאים תמצאו <a class="lk" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">בגיליון המקורי בדרייב</a>.
-    </div>
-
-    <h2 class="sub-sec rv">רשימת מדריכים לחברה היהודית</h2>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <thead>
-          <tr><th>תחום דעת</th><th>מדריך/ה</th><th>מפקח/ת</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="k">תנ״ך</td><td>טלי אהרון זיו</td><td>יששכר חפץ</td></tr>
-          <tr><td class="k">היסטוריה</td><td>דנה ברצורי</td><td>סיגל דאי</td></tr>
-          <tr><td class="k">אזרחות</td><td>ריקי פולק</td><td>סיגל דאי</td></tr>
-          <tr><td class="k">עברית — לשון והבעה</td><td>מוריה פלינט</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">אנגלית</td><td>סיוון נחליאלי</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">ספרות</td><td>נירה הראל</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>שירה סיבוני</td><td>רויטל אמיר</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h2 class="sub-sec rv">רשימת מדריכים לחברה הערבית</h2>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <thead>
-          <tr><th>תחום דעת</th><th>מדריך/ה</th><th>מפקח/ת</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="k">עברית לדוברי ערבית</td><td>סוהא ערדה</td><td>ויסאם סואלחה</td></tr>
-          <tr><td class="k">ערבית</td><td>ואאל טאהא</td><td>ויסאם סואלחה</td></tr>
-          <tr><td class="k">אנגלית</td><td>רוזין מטר דאו</td><td>יסמין אמון</td></tr>
-          <tr><td class="k">היסטוריה</td><td>עבד אלוהאב חבאיב</td><td>—</td></tr>
-          <tr><td class="k">אזרחות</td><td>חאלד גבארין</td><td>—</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>משה עשור</td><td>—</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>סולימאן ברייה</td><td>—</td></tr>
-          <tr><td class="k">מורשת אסלאמית</td><td>מנסור עתאמנה</td><td>—</td></tr>
-          <tr><td class="k">מורשת דרוזית</td><td>מזנה סלאלחה</td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="source-box rv">
-      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
-      <a class="btn" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">פתיחה בדרייב ↗</a>
-    </div>
-
-  </div>
-</article>
-
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
-
-<script src="site.js"></script>
-<script>window.OGEN_WIDGET_POSITION="left";</script>
-<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
-<script src="feedback.js" defer></script>
-</body>
-</html>
