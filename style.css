@@ -109,7 +109,7 @@ html.lang-ar body{top:0!important}
 
 .nav{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px var(--px);background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 .navitem{position:relative;display:inline-block}
-.navitem .sub{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-md);padding:8px;min-width:238px;opacity:0;visibility:hidden;transform:translateY(6px);transition:all .2s var(--ease);z-index:120}
+.navitem .sub{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-md);padding:8px;min-width:238px;max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;transform:translateY(6px);transition:all .2s var(--ease);z-index:120}
 .navitem:hover .sub,.navitem:focus-within .sub{opacity:1;visibility:visible;transform:none}
 .navitem .sub a{display:block;padding:9px 14px;border-radius:9px;color:var(--text);font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;transition:background .15s}
 .navitem .sub a:hover{background:var(--soft-bg);color:var(--navy)}
@@ -535,3 +535,8 @@ html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
 /* פריט משנה בתפריט (שערי הנתיב תחת "תחומי דעת") */
 .navitem .sub a.nested,.drawer .body a.nested{padding-inline-start:30px;font-size:.86rem;position:relative}
 .navitem .sub a.nested::before,.drawer .body a.nested::before{content:"";position:absolute;inset-inline-start:15px;top:50%;width:8px;height:1.5px;border-radius:2px;background:var(--cyan)}
+
+/* כותרת תת־תפריט בתוך התפריט הנפתח (למשל "רכז פדגוגי" תחת בעלי תפקידים) */
+.navitem .sub .sect{font-size:.71rem;font-weight:800;letter-spacing:.1em;color:#0B7FA6;
+  padding:10px 14px 4px;margin-top:4px;border-top:1px solid var(--border)}
+.navitem .sub .sect:first-child{margin-top:0;border-top:none}

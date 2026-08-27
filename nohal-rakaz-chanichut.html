@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>נוהל רכז החניכות והתעסוקה · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="נוהל המינהל להכשרה מקצועית לתפקיד רכז החניכות והתעסוקה בבתי הספר המקצועיים: הגדרת התפקיד, שגרות העבודה, מודל פירמידת החניכות, הרצף החינוכי-תעסוקתי מט׳ עד י״ב, וחובות הדיווח במנב״ס.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="נוהל רכז החניכות והתעסוקה">
+<meta property="og:description" content="נוהל המינהל להכשרה מקצועית לתפקיד רכז החניכות והתעסוקה בבתי הספר המקצועיים: הגדרת התפקיד, שגרות העבודה, מודל פירמידת החניכות, הרצף החינוכי-תעסוקתי מט׳ עד י״ב, וחובות הדיווח במנב״ס.">
+<meta property="og:url" content="https://pedagogiamh.co.il/nohal-rakaz-chanichut.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
+<link rel="stylesheet" href="/pagenav.css">
+</head>
+<body>
+
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <a class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">08</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>    <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <div class="sect">רכז פדגוגי</div>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+    <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+    <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+    <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+    <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+    <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+    <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+    <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+    <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">חינוך חברתי יוצר</div>
+    <a href="chevrati.html">שער המרחב החברתי</a>
+    <a href="chevrati-tfisa.html"><span class="n">01</span> התפיסה וארבעת העקרונות</a>
+    <a href="chevrati-tafkid.html"><span class="n">02</span> תפקיד הרכז/ת</a>
+    <a href="chevrati-tochnit.html"><span class="n">03</span> בניית תוכנית העבודה</a>
+    <a href="chevrati-hachshara.html"><span class="n">04</span> ההכשרה השנתית</a>
+    <a href="chevrati-meoravut.html"><span class="n">05</span> מעורבות ומנהיגות תלמידים</a>
+    <a href="chevrati-kehila.html"><span class="n">06</span> קהילה של משמעות</a>
+    <a href="chevrati-eretz.html"><span class="n">07</span> ״ארץ״ — הסביבה הפיזית</a>
+    <a href="chevrati-arachim.html"><span class="n">08</span> ערכים וטקסים</a>
+    <a href="chevrati-chosen.html"><span class="n">09</span> חוסן בתקופת משבר</a>
+    <a href="chevrati-tzevet.html"><span class="n">10</span> עבודה עם הצוות</a>
+    <a href="chevrati-merchavim.html"><span class="n">11</span> מרחבים בניהול עצמי</a>
+    <a href="chevrati-klim.html"><span class="n">12</span> ארגז הכלים · מעגל השנה</a>
+    <a href="chevrati-prida.html"><span class="n">13</span> פרידה וסיום</a>
+    <a href="chevrati-shitufim.html"><span class="n">14</span> שיתופים מהשטח</a>
+    <a href="chevrati-arabic.html"><span class="n">15</span> التربية الاجتماعية · بالعربية</a>
+    <a href="chevrati-matala.html"><span class="n">16</span> מטלת הסיכום</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="polin.html">מלגות למסע לפולין · תשפ"ז</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="install.html">📲 עוגן והאתר בנייד</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
+      <a href="hodaot.html">הודעות ועדכונים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+      <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+      <a href="documents.html">כלים ניהוליים פדגוגיים</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>      <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
+
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="cherum-nehalim.html">חירום ואירוע חריג</a>
+      <a href="polin.html">מלגות למסע לפולין · תשפ"ז</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="vaada-melava.html">ועדה מלווה · ההנחיות המלאות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="tafkidim.html">כל התפקידים וההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+      <div class="sect">רכז פדגוגי</div>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+      <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+      <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+      <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+      <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+      <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+      <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+      <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+      <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chevrati.html">חינוך חברתי יוצר<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chevrati.html">שער המרחב החברתי · כל החומרים</a>
+      <a href="chevrati-tfisa.html">התפיסה וארבעת העקרונות</a>
+      <a href="chevrati-tafkid.html">תפקיד הרכז/ת החברתי/ת</a>
+      <a href="chevrati-tochnit.html">בניית תוכנית העבודה</a>
+      <a href="chevrati-hachshara.html">ההכשרה השנתית ומפגשיה</a>
+      <a href="chevrati-meoravut.html">מעורבות ומנהיגות תלמידים</a>
+      <a href="chevrati-klim.html">ארגז הכלים · מעגל השנה</a>
+      <a href="chevrati-tzevet.html">עבודה עם הצוות החינוכי</a>
+      <a href="chevrati-arabic.html">التربية الاجتماعية · بالعربية</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">לוח גאנט והשתלמויות<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hishtalmuyot.html">דף ההשתלמויות · תשפ"ז</a>
+      <a href="gantt.html">לוח הגאנט · צוותים</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">הנחיות מינהל · תשפ״ז</span>
+    <h1>נוהל רכז החניכות והתעסוקה</h1>
+    <p class="lead">ההנחיות מגדירות את תפקידו, סמכויותיו, תחומי אחריותו וארגז הכלים המעשי של רכז החניכות והתעסוקה בבתי הספר המקצועיים. המסמך מסדיר את עקרונות הפדגוגיה הדואלית-הומניסטית במסגרת רפורמת "החינוך היוצר", ומתווה את תהליכי העבודה המובנים לאורך שלושת מעגלי הליבה — התלמידים והוריהם, המעסיקים בשוק העבודה וצוות בית הספר — לצד הסדרת היבטי הביטוח, זכויות הנוער והבקרה המנהלתית במערכת המנב״ס.</p>
+    <div class="meta-row">
+      <span class="src">תוקף ההנחיות: החל משנת תשפ״ז · תאריך עדכון: אוגוסט 2026</span>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <h2 class="sub-sec first rv">פרטי הנוהל</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">הגורם המפרסם</td><td>מדינת ישראל, משרד העבודה — המינהל להכשרה מקצועית</td></tr>
+          <tr><td class="k">התחולה</td><td>בתי ספר בפיקוח המינהל להכשרה מקצועית — משרד העבודה</td></tr>
+          <tr><td class="k">תוקף ההנחיות</td><td>החל משנת תשפ״ז</td></tr>
+          <tr><td class="k">תאריך עדכון</td><td>אוגוסט 2026</td></tr>
+          <tr><td class="k">התפוצה</td><td>מנהלי מחוזות · גופים מפעילים · מנהלי בתי הספר בפיקוח המינהל להכשרה מקצועית · המפקחים הפדגוגיים הכוללים · המפקחות על המערך הטיפולי · המפקחים המקצועיים · רכזי קשרי מעסיקים אזוריים · רכזי החניכות הבית-ספריים</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">חוקים, הוראות, חוזרים ונהלים קשורים</h3>
+    <ul class="ed rv">
+      <li>חוק החניכות, תשי״ג–1953.</li>
+      <li>חוק עבודת הנוער, תשי״ג–1953 ותקנותיו.</li>
+      <li>תקנות הביטוח הלאומי (ביטוח מפני פגיעה בעבודה), תשי״ד–1954.</li>
+      <li>הנחיות ופוליסות ביטוח תאונות אישיות 24/7 לתלמידים בפיקוח המינהל להכשרה מקצועית.</li>
+      <li>תוכנית "ח.כ.ה — נתיבים לחניכות וקריירה" (משרד העבודה, תוכנית חותם וג׳וינט-תבת).</li>
+      <li>נהלי דיווח נתוני תעסוקת תלמידים במערכת מנב״ס.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">התפיסה וההגדרות</h2>
+    <p class="rv">רפורמת "החינוך היוצר" של משרד העבודה מובילה שינוי עומק בחינוך המקצועי, ומבקשת לחבר באופן ישיר ואינטגרלי בין מערכת החינוך לבין עולם העבודה.</p>
+    <p class="rv">התפיסה הדואלית-הומניסטית רואה בלמידה מתוך עשייה ובהתנסות המעשית בסביבת תעסוקה אמיתית מנוף לפיתוח זהות אישית, מסוגלות עצמית, אחריות ומצוינות מקצועית.</p>
+    <div class="callout petrol rv">
+      <span class="ttl">החניכות אינה רכיב טכני</span>
+      <p>החניכות היא מרכיב חינוכי מהותי המאפשר לתלמיד ליישם ידע נלמד, להכיר את שוק העבודה הדינמי ולהתפתח כאזרח עצמאי ויוצר. רכז החניכות מהווה את החוליה המקשרת והמנווטת בין צורכי הלומד, דרישות בית הספר והציפיות של המעסיקים בשטח.</p>
+    </div>
+
+    <h3 class="mini rv">הגדרות</h3>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">רכז/ת חניכות (תעסוקה)</td><td>הגורם המקצועי המוביל בבית הספר, האחראי על פיתוח, ניהול, שיבוץ, ליווי ובקרה של מערך החניכות וההתנסות התעסוקתית.</td></tr>
+          <tr><td class="k">חניכות דואלית-הומניסטית</td><td>שילוב בין לימודים עיוניים ומקצועיים בבית הספר לבין עבודה מעשית מודרכת ומדורגת בשכר אצל מעסיק מאושר.</td></tr>
+          <tr><td class="k">מנטור / חונך במקום העבודה</td><td>גורם מקצועי מלווה אצל המעסיק, המעניק לחניך ליווי צמוד, מכשיר אותו במיומנויות המקצוע ומשמש כמודל לחיקוי.</td></tr>
+          <tr><td class="k">רכז קשרי מעסיקים אזורי</td><td>גורם שותף מטעם המינהל / הגוף המפעיל, המסייע לרכז הבית-ספרי בחיבורים מערכתיים ובפתיחת דלתות עסקיות.</td></tr>
+          <tr><td class="k">ממשקים ארגוניים</td><td>הרכז פועל כחלק ממוקד הניהול הבית-ספרי, ומקיים סדירויות קבועות מול מנהל המוסד, רכזי המגמות, מחנכים, יועצים, המפקח המקצועי, המעסיקים והורי התלמידים.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">מטרות הנוהל</h2>
+    <ol class="ed rv">
+      <li><strong>הסדרת שגרות העבודה והתהליכים המקצועיים:</strong> הגדרת מתווה אחיד ומובנה לתכנון, הפעלה, ליווי ובקרה של מערך החניכות בכלל בתי הספר בפיקוח המינהל להכשרה מקצועית.</li>
+      <li><strong>ביסוס סטנדרטים אחידים לאיכות מקומות החניכות:</strong> עיגון כלי סינון ובקרה (פירמידת החניכות) להבטחת סביבת עבודה בטוחה, הוגנת, חוקית ומעצימה.</li>
+      <li><strong>מיסוד הרצף החינוכי-תעסוקתי הארבע-שנתי:</strong> מתן מעטפת הנחיות להטמעת תוכנית ההכנה "ח.כ.ה" משכבת ט׳ ועד שכבת י״ב.</li>
+      <li><strong>עיגון חובת הדיווח והדיוק בנתונים:</strong> הסדרת אופן התיעוד וההזנה של נתוני התעסוקה במערכת המנב״ס לצורכי מעקב, ניתוח ובקרה ממשלתית.</li>
+    </ol>
+
+    <h2 class="sub-sec rv">עקרונות העבודה</h2>
+    <ul class="ed rv">
+      <li><strong>התלמיד במרכז כתלמיד-יוצר:</strong> ליווי תהליך הצמיחה האישי והמקצועי מתוך ראיית החוזקות, השאיפות והצרכים ההתפתחותיים של כל תלמיד.</li>
+      <li><strong>תעסוקה מעצימה ומדורגת:</strong> הקפדה על העסקה התואמת את תחום המגמה, בהתאם לרשימות המטלות של משרד העבודה, המספקת אופק מקצועי ומנטורינג איכותי.</li>
+      <li><strong>סנכרון רב-מערכתי הדוק:</strong> עבודה משולבת המייצרת רצף בין הבית, סדנאות הלימוד בבית הספר, וההתנסות במקום העבודה.</li>
+      <li><strong>ניהול מבוסס נתונים ובקרה מתמדת:</strong> ביצוע מעקב שוטף אחר נוכחות, נתוני השמה, שביעות רצון ואתגרים בשטח באמצעות כלי בקרה דיגיטליים וטבלאות מעקב.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">פעולות הרכז</h2>
+
+    <h3 class="mini rv">1 · מיפוי, היערכות ופיתוח תוכנית עבודה שנתית</h3>
+    <ul class="ed rv">
+      <li>ביצוע מיפוי פרטני בתחילת שנה לכלל תלמידי המגמות, הכולל: פרטים אישיים, אזור מגורים ונגישות תחבורתית, רמת מוכנות מקצועית והתנהגותית, תחומי עניין והערות הצוות החינוכי והמגמתי.</li>
+      <li>מעקב וסיוע לתלמידים בהשלמת חובות הסף לקראת יציאה לעבודה: הנפקת תעודת זהות, פתיחת חשבון בנק אישי והמצאת אישור רפואי תקף.</li>
+      <li>יצירה ועדכון מתמיד של מאגר מעסיקים בשיתוף רכזי המגמות, הכולל נתוני התקשרות, תחומי עיסוק, דוחות סיור מקצועי, בטיחות והתרשמות מסביבת העבודה.</li>
+      <li>ניסוח תוכנית עבודה שנתית מפורטת הכוללת יעדים מדידים (כגון אחוזי השמה רלוונטיים), לוחות זמנים, אבני דרך, פירוט פעולות והגדרת שותפים. התוכנית תוצג ותאושר על ידי מנהל בית הספר וראש תחום החניכות.</li>
+    </ul>
+
+    <h3 class="mini rv">2 · הטמעת הרצף החינוכי-תעסוקתי ותוכנית ח.כ.ה (ט׳–י״ב)</h3>
+    <p class="cycle-caption rv">ארבע שנות רצף, לכל שכבה מוקד משלה:</p>
+    <div class="cycle rv">
+      <div class="cy-step"><b>ט׳ · גילוי זהות ובחירה</b><br>סיוע בחשיפת התלמידים לתחומי עיסוק מגוונים, זיהוי חוזקות ונטיות מקצועיות כהכנה לבחירת מגמה.</div>
+      <div class="cy-step"><b>י׳ · הכנה לעולם העבודה ומיומנויות IPRO</b><br>הובלה ותיאום של סדנאות הכנה לקראת חניכות: כתיבת קו״ח, הכנה לראיון עבודה, תקשורת בינאישית, שיתוף פעולה, גמישות מחשבתית וזכויות עובדים. שילוב תהליך קבלת תעודת הזהות כסמל לבגרות ואחריות אזרחית-תעסוקתית.</div>
+      <div class="cy-step"><b>י״א · חניכות והתנסות מעשית</b><br>שילוב התלמידים במקומות חניכה מותאמים, קיום מפגשי רפלקציה ועיבוד חוויות, מתן דגש על התנהלות כלכלית נכונה וחיזוק החוסן המקצועי.</div>
+      <div class="cy-step"><b>י״ב · סיכום, פרידה והכנה לעתיד</b><br>ליווי תהליכי פרידה ממקום החניכה, סיוע בבניית תמונת עתיד והיערכות להמשך החיים הבוגרים: גיוס, שירות לאומי, לימודי המשך או השתלבות בתעסוקה.</div>
+    </div>
+
+    <h3 class="mini rv">3 · איתור, רתימה ושימור מעסיקים</h3>
+    <ul class="ed rv">
+      <li><strong>איתור ופנייה יזומה:</strong> מיפוי צורכי התלמידים ופנייה יזומה למעסיקים איכותיים בקהילה ובסביבה העסקית.</li>
+      <li><strong>בחינת תנאי סף (מסננת החניכות):</strong> בדיקה קפדנית של תנאי העסקה כחוק בטרם שיבוץ — תשלום שכר כחוק, הנפקת תלוש שכר, ביטוח לאומי ותאונות, מינוי מנטור מלווה, סביבה מכבדת ומוגנת והעסקה בתחום הנלמד במגמה.</li>
+      <li><strong>תיאום ציפיות מקצועי:</strong> הצגת רציונל התוכנית, הגדרת המודל המתאים למעסיק, וחשיפתו לרשימת המטלות ותהליכי הלמידה של משרד העבודה.</li>
+      <li><strong>שימור ופיתוח שותפויות:</strong> קיום קשר שוטף, שיחות משוב תקופתיות, פתרון משברים בזמן אמת, והרחבת שיתופי הפעולה — קליטת חניכים נוספים, השתתפות בכנסים וסיורי חשיפה.</li>
+    </ul>
+
+    <h3 class="mini rv">4 · ליווי תלמידים בשטח, מעקב תפקודי ורפלקציה</h3>
+    <ul class="ed rv">
+      <li>תמיכה הדוקה בימים הראשונים לעבודה, מעקב אחר נוכחות, משמעת, עמידה בזמנים והסתגלות לתנאי השטח.</li>
+      <li>שיח מתמיד עם התלמיד והחונך לבחינת התקדמות במיומנויות המקצועיות, חשיפה לאתגרים ודילמות, ומתן מענה לפערים שעולים.</li>
+      <li>קיום שיחות חתך ורפלקציה קבועות עם התלמידים לעיבוד חוויית העבודה, חיזוק תחושת המסוגלות וטיפוח מיומנויות תקשורת.</li>
+    </ul>
+
+    <h3 class="mini rv">5 · ביסוס ממשקי פנים ושותפויות</h3>
+    <ul class="ed rv">
+      <li><strong>ממשק מול רכזי מגמות:</strong> תיאום מקצועי לבחינת התאמת מקום העבודה לתוכנית הלימודים, חיבור למעסיקים מובילים בענף וסיוע בסגירת פערים מקצועיים.</li>
+      <li><strong>ממשק מול צוות חינוכי וטיפולי:</strong> קיום שיח שוטף עם המחנכים, היועצים והמערך הטיפולי לצורך זיהוי צרכים רגשיים או התנהגותיים ובניית מעטפת תמיכה מותאמת.</li>
+      <li><strong>שותפות מול הורי התלמידים:</strong> קיום שיחות תיאום ושיתוף הורים בטרם היציאה לחניכות, רתימתם לחיזוק המחויבות וההתמדה של התלמיד, ומתן מענה לחששות.</li>
+    </ul>
+
+    <h3 class="mini rv">6 · ניהול, דיווח ובקרה במערכת המנב״ס</h3>
+    <ul class="ed rv">
+      <li><strong>הזנת נתונים חודשית שוטפת:</strong> הזנה מלאה, מדויקת ופרטנית של נתוני כלל התלמידים בשכבות י״א–י״ב במערכת המנב״ס בסיום כל חודש קלנדרי, עבור החודש שחלף.</li>
+      <li><strong>חובת דיווח כוללת:</strong> הזנת פרטים עבור כלל התלמידים במוסד ללא יוצא מן הכלל — תלמידים המועסקים מחוץ לבית הספר, תלמידים במסגרות פנים-מוסדיות (מפעלון / שותפים), ותלמידים שאינם עובדים, תוך פירוט סיבת אי-העסקה.</li>
+      <li><strong>הפקת דוחות וניתוח סטטוס:</strong> הפקת דוחות חניכות חודשיים, ניתוח שיעורי השתלבות לפי מגמות, זיהוי מגמות נשר או חסמים, והצגת הממצאים להנהלה ולפיקוח.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">נספח א · פגישה ראשונה עם מעסיק</h2>
+    <p class="rv">כלי הכנה והנחיה לניהול פגישת היכרות ויצירת שיתוף פעולה איכותי מול מעסיק חדש.</p>
+
+    <h3 class="mini rv">שלב 1 · היערכות מקדימה לפגישה</h3>
+    <ol class="ed rv">
+      <li>איסוף רקע על בית העסק, תחומי פעילותו והיסטוריית שיתופי פעולה קודמים עם בתי ספר.</li>
+      <li>מיפוי צורכי בית הספר: כמות התלמידים הזקוקים לחניכות במגמה, אזורי מגורים וימי תעסוקה אפשריים במערכת.</li>
+      <li>הגדרת מטרת הפגישה: יצירת שת״פ חדש / חיזוק מוטיבציה / גיבוש מודל העסקה מותאם.</li>
+    </ol>
+
+    <h3 class="mini rv">שלב 2 · מהלך הפגישה</h3>
+    <ol class="ed rv">
+      <li><strong>היכרות ותיאום מוטיבציות:</strong> הצגת היתרונות למעסיק — הצמחת עובדים מקצועיים לעתיד, שילוב כוח אדם צעיר ונלהב.</li>
+      <li><strong>הצגת רציונל "החינוך היוצר" ותוכנית סולם:</strong> הסבר על הפדגוגיה הדואלית — התלמיד רוכש ידע עיוני בבית הספר, והחניכות היא ההכנה האמיתית לעולם המחר.</li>
+      <li><strong>בחינת מודל העסקה ודרישות סף:</strong> בדיקת תנאי הקבלה (ראיון עבודה, אישור רפואי), והצגת מחויבות המעסיק לחוק החניכות — שכר, תלוש, ביטוח ומנטור מלווה.</li>
+      <li><strong>סיור מקצועי בעסק:</strong> התרשמות בלתי-אמצעית מסביבת העבודה, רמת הבטיחות, התרבות הארגונית והעובדים.</li>
+      <li><strong>סיכום והגדרת פיילוט:</strong> הגדרת שיתוף הפעולה הראשוני כפיילוט מבוקר, קביעת מועד ליצירת הקשר הבאה ותיאום פגישת משוב עתידית.</li>
+    </ol>
+
+    <h3 class="mini rv">שלב 3 · פעולות לאחר הפגישה</h3>
+    <div class="callout rv">
+      <span class="ttl">סיכום כתוב למעסיק</span>
+      <p>הוצאת סיכום פגישה כתוב למעסיק, הכולל את מודל ההעסקה שנבחר, ההתניות שסוכמו ולוחות הזמנים לקליטת התלמידים.</p>
+    </div>
+
+    <h2 class="sub-sec rv">נספח ב · טופס מוכנות ליציאה לתעסוקה</h2>
+    <p class="rv">הטופס ימולא במשותף על ידי רכז החניכות, מורה המגמה, המחנך והורי התלמיד — בטרם שיבוץ התלמיד במקום עבודה.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">פרטי התלמיד</td><td>שם התלמיד · כתובת</td></tr>
+          <tr><td class="k">פרטי מקום העבודה המיועד</td><td>שם העסק · תפקיד מוצע ותיאור המשימות</td></tr>
+          <tr><td class="k">הערכת מיומנויות מקצועיות<br><small>ממלא: מורה המגמה</small></td><td>שליטה במיומנויות מקצועיות · תחומים הדורשים שיפור ומענה בית-ספרי מתוכנן</td></tr>
+          <tr><td class="k">הערכת מיומנויות תפקודיות ובינאישיות<br><small>ממלאים: רכז החניכות והמחנך</small></td><td>אחריות אישית והתמדה · תקשורת בינאישית ועבודת צוות · יכולת הסתגלות וקבלת סמכות</td></tr>
+          <tr><td class="k">שיחת תיאום מול ההורים</td><td>עמדת ההורים, ציפיות, חששות ודגשים מיוחדים</td></tr>
+          <tr><td class="k">חתימות ואישורים</td><td>חתימת רכז החניכות</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">נספח ג · מחוון פירמידת החניכות</h2>
+    <p class="rv">מחוון עבודה להערכת איכות מקומות החניכות, קביעת תוכניות ליווי וקידום אופק תעסוקתי.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead>
+          <tr><th>שלב בפירמידה</th><th>קריטריונים ומדדי בחינה</th><th>דרכי בקרה ומעקב של הרכז</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">שלב 1<br>תנאי סף — מסננת החניכות</td>
+            <td>שכר בהתאם לחוק עבודת נוער · הנפקת תלוש שכר כחוק וביטוח · סביבה פיזית מוגנת, בטוחה ומכבדת · מינוי מנטור מלווה בעסק · העסקה במקצוע הנלמד במגמה</td>
+            <td>ביצוע אינטייק מקדים, סיור בטיחות פיזי בעסק וחתימה על הסכם התקשרות</td>
+          </tr>
+          <tr>
+            <td class="k">שלב 2<br>מיומנויות מקצועיות</td>
+            <td>יישום הידע הנדרש מתוכנית הלימודים · עבודה מובנית על פי רשימת מטלות החניכות של משרד העבודה</td>
+            <td>חשיפת המעסיק לרשימת המטלות, תיאום נקודות בקרה עם רכז המגמה</td>
+          </tr>
+          <tr>
+            <td class="k">שלב 3<br>התפתחות ומצוינות</td>
+            <td>התנסויות מגוונות ומעוררות השראה · התמודדות עם בעיות ודילמות בעולם האמיתי · חיזוק כישורי תקשורת, עבודת צוות והגעה בזמן</td>
+            <td>קיום שיחות משוב תלת-צדדיות (תלמיד–מעסיק–רכז) וליווי מנטורינג הדוק</td>
+          </tr>
+          <tr>
+            <td class="k">שלב 4<br>אופק תעסוקתי</td>
+            <td>חיבור למגמות עדכניות בשוק העבודה · יצירת נטוורקינג ומפגש עם דמויות מופת · שילוב בהשתלמויות מקצועיות של העסק</td>
+            <td>מפגשי חשיבה עם הנהלת העסק לבחינת המשכיות תעסוקתית וקידום מקצועי</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">נספח ד · מבנה תוכנית העבודה השנתית</h2>
+    <p class="rv">פורמט רב-ממדי לתכנון ובקרה שנתית על פי מעגלי העשייה והשכבות.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead>
+          <tr><th>תחום / נושא</th><th>שכבה</th><th>יעד תוצאתי</th><th>משימות ופעולות מרכזיות</th><th>לוח זמנים</th><th>מדד להצלחה</th><th>שותפים לביצוע</th><th>הערות ובקרה</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">קשרי מעסיקים</td><td>י״א–י״ב</td><td>הרחבת מערך המעסיקים במגמות המאתגרות</td><td>איתור יזום, קיום כנסי חשיפה וסיורים מקצועיים</td><td>שוטף / יעד רבעוני</td><td>גיוס 3 מעסיקים חדשים לכל מגמה</td><td>רכז מגמה, רכז אזורי</td><td>דגש על מעסיקים גדולים</td></tr>
+          <tr><td class="k">שימור מעסיקים</td><td>י״א–י״ב</td><td>העמקת השותפות ומניעת נשר</td><td>ביקורי שטח, שיחות משוב, כנס הוקרה שנתי</td><td>חודשי / שוטף</td><td>ביקור בכל עסק אחת לחודשיים</td><td>מנטור בעסק, מנהל המוסד</td><td>בחירת מעסיקים מצטיינים</td></tr>
+          <tr><td class="k">הכנה לתעסוקה</td><td>י׳</td><td>מוכנות מלאה לחניכות לקראת י״א</td><td>העברת סדנאות IPRO, סימולציות ראיון, הוצאת ת״ז</td><td>ספטמבר–יוני</td><td>100% תלמידים בעלי ת״ז ותיק מוכנות</td><td>יועצת, מחנכים, חותם / ג׳וינט</td><td>סדנאות זכויות עובדים</td></tr>
+          <tr><td class="k">ליווי ורפלקציה</td><td>י״א–י״ב</td><td>חיזוק התמדה ומסוגלות התלמיד</td><td>שיחות חתך אישיות, מעגלי שיח ורפלקציה</td><td>שבועי / חודשי</td><td>שיחה אישית אחת לחודש לכל תלמיד</td><td>צוות טיפולי, מחנך</td><td>זיהוי קשיים מוקדם</td></tr>
+          <tr><td class="k">ממשקי פנים</td><td>כללי</td><td>סנכרון בית-ספרי מלא</td><td>ישיבות עבודה קבועות עם רכזי מגמות והנהלה</td><td>דו-שבועי</td><td>קיום ישיבות סדורות ומתועדות</td><td>הנהלה, רכזי מגמות</td><td>תיאום שעות וציונים</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">נספח ה · ניתוח נתונים וחסמים</h2>
+    <p class="rv">כלי לביצוע חקר נתונים תקופתי, הפקת לקחים וזיהוי מגמות בבית הספר.</p>
+
+    <h3 class="mini rv">טבלת מעקב נתוני השמה לפי מגמות</h3>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead>
+          <tr><th>שם המגמה</th><th>סה״כ תלמידים בשכבה</th><th>מועסקים כחוק בחניכות (%)</th><th>מועסקים במסגרת פנים-בית-ספרית</th><th>לא מועסקים (%)</th><th>מעסיקים עם מעל 3 תלמידים</th><th>אחוז נשר שנתי ממקומות עבודה</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td class="k">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td class="k">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td class="k">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+          <tr><td class="k">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">שאלות חקר וניתוח משמעויות לתכנון המשך</h3>
+    <ol class="ed rv">
+      <li><strong>ניתוח חסמים במגמות:</strong> אילו מגמות מתאפיינות בשיעור השמה נמוך או באתגרי גיוס מעסיקים? מהן הסיבות המרכזיות לכך?</li>
+      <li><strong>מאפייני תלמידים לא משולבים:</strong> מהם המאפיינים המשותפים לתלמידים שטרם השתלבו בתעסוקה — פער מקצועי, קושי תפקודי, נגישות תחבורתית? איזה מענה פנים-בית-ספרי נדרש עבורם?</li>
+      <li><strong>איכות ושימור מעסיקים:</strong> מה מאפיין את בתי העסק שבהם נרשמו שביעות רצון גבוהה ואחוז נשר נמוך? כיצד ניתן לשכפל מודלים אלו למעסיקים נוספים?</li>
+    </ol>
+
+    <h2 class="sub-sec rv">נספח ו · דוח תעסוקה חודשי במנב״ס</h2>
+    <div class="callout amber rv">
+      <span class="ttl">סדר פעולות מחייב</span>
+      <p>הדוח יבוצע עד סוף כל חודש קלנדרי. המערכת חוסמת שמירה חלקית — יש להזין את כלל השדות עבור כל תלמיד.</p>
+    </div>
+    <ol class="ed rv">
+      <li>כניסה לתפריט הראשי במנב״ס ובחירה בלשונית "תפריט האגף".</li>
+      <li>איתור מספר הפעולה המאושרת — דרך "פעולות מאושרות לשנת..." — לפי מגמה ומסלול.</li>
+      <li>הזנת מספר הפעולה בשדה "פעולה".</li>
+      <li>הזנת החודש המדווח (בפורמט MMYYYY) בשדה "דיווח תלמידים במקום עבודה לחודש", ולחיצה על הכפתור.</li>
+      <li>הזנה מלאה וקפדנית של כלל השדות עבור כל תלמיד:
+        <ul class="ed tight">
+          <li>שם מקום העבודה, יישוב, כתובת וטלפון.</li>
+          <li>פרטי אחראי ישיר / מנטור.</li>
+          <li>תאריך תחילת עבודה וסטטוס עבודה (עובד: כן / לא).</li>
+          <li>לתלמידים שאינם עובדים — חובה להזין את "סיבת אי-העסקה".</li>
+        </ul>
+      </li>
+      <li>בדיקת שלמות הנתונים ושמירה.</li>
+    </ol>
+
+    <div class="source-box rv">
+      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה של הנחיות המינהל להכשרה מקצועית, תשפ״ז. הנוסח המחייב הוא המסמך הרשמי של המינהל.</small></div>
+    </div>
+
+  </div>
+</article>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
+
+<script src="site.js"></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
+</body>
+</html>
