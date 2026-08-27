@@ -14,6 +14,11 @@
  *
  * כוונון עלות: MAX_TOTAL_CHARS קובע את גודל הידע שנשלח למודל בכל שאלה.
  * גדול יותר = עוגן יודע יותר פרטים, אבל כל שאלה עולה יותר טוקנים.
+ * התקציב מתחלק בין כל העמודים, ולכן ככל שנוספים עמודים כל אחד נחתך יותר.
+ * ב-80,000 (הערך המקורי) התקרה ירדה ל-700 תווים לעמוד ו-68 מתוך 71 העמודים
+ * נחתכו — עוגן ראה רבע מהאתר. 180,000 מחזיק את התקרה על MAX_PAGE_CHARS.
+ * העלות בפועל נמוכה מכפי שנראה: הידע יושב בבלוק עם cache_control, ולכן
+ * רק השאלה הראשונה בשיחה משלמת עליו מלא — שאלות ההמשך קוראות ממטמון ב-0.1×.
  */
 import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -24,7 +29,7 @@ const SITE = "https://pedagogiamh.co.il";
 const OUT = join(ROOT, "knowledge.json");
 
 const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
-const MAX_TOTAL_CHARS = 80000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
+const MAX_TOTAL_CHARS = 180000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
