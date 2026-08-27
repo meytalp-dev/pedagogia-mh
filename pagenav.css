@@ -20,8 +20,9 @@
   display:flex;align-items:center;gap:6px;flex:1;min-width:0;
   overflow-x:auto;overscroll-behavior-x:contain;scroll-behavior:smooth;
   scrollbar-width:none;-ms-overflow-style:none;padding:3px 0;
-  -webkit-mask-image:linear-gradient(to left,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
-  mask-image:linear-gradient(to left,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
+  --f-s:0px;--f-e:0px;
+  -webkit-mask-image:linear-gradient(to left,transparent 0,#000 var(--f-s),#000 calc(100% - var(--f-e)),transparent 100%);
+  mask-image:linear-gradient(to left,transparent 0,#000 var(--f-s),#000 calc(100% - var(--f-e)),transparent 100%);
 }
 .pn-tabs::-webkit-scrollbar{display:none}
 .pn-tab{
@@ -31,6 +32,7 @@
   font-size:.855rem;font-weight:700;line-height:1.35;white-space:nowrap;
   transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
 }
+.pn-tab .t{display:block;max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pn-tab .n{
   font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;
   color:var(--muted);transition:color .2s;
@@ -53,6 +55,7 @@
 
 /* ---------- כרטיסיות המדורים (״מה יש בעמוד״) ---------- */
 .pn-cards{margin:0 0 clamp(28px,4.5vw,42px)}
+.pn-cards.pn-wide{max-width:1340px;margin-inline:auto;padding:clamp(20px,3vw,30px) var(--px) 0}
 .pn-cards-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
 .pn-cards-head h2{
   font-size:.85rem;font-weight:800;letter-spacing:.2em;color:#0B7FA6;
@@ -80,8 +83,8 @@
 }
 .pn-card h3{font-size:1rem;font-weight:800;color:var(--navy);line-height:1.35;margin:0}
 .pn-card ul{list-style:none;margin:2px 0 0;display:flex;flex-direction:column;gap:3px}
-.pn-card li{position:relative;padding-inline-start:0;padding-inline-end:14px;font-size:.82rem;color:var(--text2);line-height:1.45}
-.pn-card li::before{content:"";position:absolute;inset-inline-end:1px;top:9px;width:8px;height:2px;border-radius:2px;background:var(--cyan)}
+.pn-card li{position:relative;padding-inline-start:15px;font-size:.82rem;color:var(--text2);line-height:1.45}
+.pn-card li::before{content:"";position:absolute;inset-inline-start:1px;top:9px;width:8px;height:2px;border-radius:2px;background:var(--cyan)}
 .pn-card .pn-go{
   margin-top:auto;padding-top:8px;font-size:.78rem;font-weight:700;color:var(--text2);
   display:flex;align-items:center;gap:6px;transition:color .25s;
@@ -92,3 +95,9 @@
 @media(max-width:520px){.pn-grid{grid-template-columns:1fr}.pn-card ul{display:none}}
 
 @media print{.pn,.pn-cards{display:none !important}}
+
+/* מדור מוסתר (סינון מסלולים) — גם הכרטיסייה שלו יורדת */
+.pn-tab.pn-off,.pn-card.pn-off{display:none}
+
+/* גלילה רכה גם בעמודים שאינם עמודי מסמך */
+@media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}

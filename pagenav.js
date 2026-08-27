@@ -43,6 +43,27 @@
 
   function pad(i) { return (i + 1 < 10 ? '0' : '') + (i + 1); }
 
+  /* המיכל שבו נכון להשתיל את הכרטיסיות: מטפסים מהכותרת עד לבלוק העליון בזרימת התוכן */
+  var HOLDERS = '.article,.wrap,main,article,body,.body-sec';
+  function anchorFor(el) {
+    var n = el, guard = 0;
+    while (n.parentElement && n.parentElement !== document.body &&
+           !n.parentElement.matches(HOLDERS) && guard++ < 8) n = n.parentElement;
+    return n;
+  }
+
+  /* הבלוק העליון שבו יושבת הכותרת הראשית — הפס נכנס מיד אחריו */
+  function bodyBlock(el) {
+    var n = el, guard = 0;
+    while (n && n.parentElement && n.parentElement !== document.body && guard++ < 12) n = n.parentElement;
+    return n && n.parentElement === document.body ? n : null;
+  }
+
+  /* מדור מוצג בפועל? (עמודים עם סינון מסלולים מסתירים בלוקים שלמים) */
+  function shown(el) {
+    return !!(el.offsetParent || el.getClientRects().length);
+  }
+
   /* ---------- איסוף המדורים ---------- */
   function fromExistingToc() {
     var links = document.querySelectorAll('.toc a[href^="#"]');
@@ -110,8 +131,12 @@
       var n = document.createElement('span');
       n.className = 'n';
       n.textContent = pad(i);
+      var t = document.createElement('span');
+      t.className = 't';
+      t.textContent = it.title;
+      a.title = it.title;
       a.appendChild(n);
-      a.appendChild(document.createTextNode(it.title));
+      a.appendChild(t);
       tabs.appendChild(a);
       it.tab = a;
     });
@@ -184,6 +209,7 @@
       a.appendChild(go);
 
       grid.appendChild(a);
+      it.card = a;
     });
 
     wrap.appendChild(head);
@@ -196,12 +222,18 @@
     var mainNav = document.querySelector('.nav');
     var hero = document.querySelector('.hero');
 
-    if (hero && hero.parentNode) hero.parentNode.insertBefore(bar, hero.nextSibling);
-    else if (mainNav && mainNav.parentNode) mainNav.parentNode.insertBefore(bar, mainNav.nextSibling);
+    var h1 = document.querySelector('h1');
+    var after = hero || (h1 ? bodyBlock(h1) : null) || mainNav;
+    if (after && after.parentNode) after.parentNode.insertBefore(bar, after.nextSibling);
     else document.body.insertBefore(bar, document.body.firstChild);
 
-    if (cards && firstHead && firstHead.parentNode) {
-      firstHead.parentNode.insertBefore(cards, firstHead);
+    if (cards) {
+      var at = anchorFor(firstHead);
+      if (at && at.parentNode) {
+        at.parentNode.insertBefore(cards, at);
+        /* מחוץ לעמוד־מסמך אין מיכל עם שוליים — נותנים לכרטיסיות רוחב ושוליים משלהן */
+        if (!cards.closest('.article')) cards.classList.add('pn-wide');
+      }
     }
 
     function sizes() {
@@ -215,14 +247,44 @@
     var offset = sizes();
     addEventListener('resize', function () { offset = sizes(); }, { passive: true });
 
+    /* התאמה לסינון מסלולים בעמודי תחומי הדעת: מדור שהוסתר — גם הכרטיסייה שלו מוסתרת */
+    function sync() {
+      items.forEach(function (it) {
+        var vis = shown(it.el);
+        it.hidden = !vis;
+        it.tab.classList.toggle('pn-off', !vis);
+        if (it.card) it.card.classList.toggle('pn-off', !vis);
+      });
+    }
+    sync();
+    document.addEventListener('click', function () { setTimeout(sync, 30); }, true);
+
+    /* דעיכה בקצוות רק כשבאמת יש עוד כרטיסיות מעבר לקצה */
+    var box = bar.__tabs;
+    function fades() {
+      var sl = Math.abs(box.scrollLeft), max = box.scrollWidth - box.clientWidth;
+      box.style.setProperty('--f-s', sl > 4 ? '22px' : '0px');
+      box.style.setProperty('--f-e', sl < max - 4 ? '22px' : '0px');
+    }
+    box.addEventListener('scroll', fades, { passive: true });
+    addEventListener('resize', fades, { passive: true });
+    fades();
+
     var ticking = false, active = -1;
     function spy() {
       ticking = false;
-      var line = offset + 26, cur = 0;
+      sync();
+      var line = offset + 26, cur = -1;
       for (var i = 0; i < items.length; i++) {
-        if (items[i].el.getBoundingClientRect().top <= line) cur = i; else break;
+        if (items[i].hidden) continue;
+        if (items[i].el.getBoundingClientRect().top <= line) cur = i;
+        else if (cur > -1) break;
       }
-      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) cur = items.length - 1;
+      if (cur < 0) { for (var j = 0; j < items.length; j++) { if (!items[j].hidden) { cur = j; break; } } }
+      if (cur < 0) return;
+      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
+        for (var k = items.length - 1; k >= 0; k--) { if (!items[k].hidden) { cur = k; break; } }
+      }
       if (cur === active) return;
       if (active > -1) {
         items[active].tab.classList.remove('on');
@@ -233,10 +295,11 @@
       tab.classList.add('on');
       tab.setAttribute('aria-current', 'true');
       /* גלילת הפס כך שהכרטיסייה הפעילה תמיד נראית */
-      var box = bar.__tabs, r = tab.getBoundingClientRect(), br = box.getBoundingClientRect();
+      var r = tab.getBoundingClientRect(), br = box.getBoundingClientRect();
       if (r.right > br.right - 8 || r.left < br.left + 8) {
         box.scrollLeft += (r.left + r.width / 2) - (br.left + br.width / 2);
       }
+      fades();
     }
     addEventListener('scroll', function () {
       if (!ticking) { ticking = true; requestAnimationFrame(spy); }
@@ -248,12 +311,15 @@
   ready(function () {
     var body = document.body;
     if (body.dataset.pn === 'off') return;
+    if (document.querySelector('.ptabs')) return;  /* לעמוד כבר יש מערכת כרטיסיות משלו */
 
     var existing = fromExistingToc();
     var items = existing || fromHeadings();
     if (!items) return;
 
-    var min = parseInt(body.dataset.pnMin, 10) || 4;
+    /* עמוד ״ארוך״: גובה של יותר מפעמיים וחצי מסך. שם די בשלושה מדורים כדי שתפריט יעזור. */
+    var long = document.documentElement.scrollHeight > innerHeight * 2.5;
+    var min = parseInt(body.dataset.pnMin, 10) || (long ? 3 : 4);
     if (items.length < min) return;
 
     var wantCards = !existing && body.dataset.pnCards !== 'off';
