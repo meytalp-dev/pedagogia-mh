@@ -464,3 +464,74 @@ kbd.kb{font:inherit;font-size:.78rem;font-weight:700;background:#fff;border:1px 
   line-height:1;margin-inline-start:2px;animation:hpop .35s var(--ease) both}
 .hbadge[hidden]{display:none}
 @keyframes hpop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+
+/* קישור השער בראש תפריט "מרחב פדגוגי" — מוביל קודם לשער ורק אחריו לעמודים */
+.navitem .sub a.gatelink{font-weight:800;color:var(--navy);background:var(--blue-100);
+  box-shadow:0 7px 0 -6px var(--border);margin-bottom:7px}
+.navitem .sub a.gatelink:hover{background:#CFE3F7;color:var(--navy)}
+
+/* ===== נתיב הלימוד: גמר / בגרות (track.js קובע data-tk על <html>) ===== */
+/* הסינון ב-CSS ולא ב-JS — כדי שהעמוד ייפתח כבר מסונן, בלי הבהוב.
+   data-track="both" (או בלי סימון כלל) מוצג תמיד. */
+html[data-tk="gmr"] [data-track="bgr"]:not(.pill),
+html[data-tk="bgr"] [data-track="gmr"]:not(.pill){display:none !important}
+
+/* מתג הנתיב — הבחירה הראשית בעמוד, לא כפתור בפינה */
+.trackbar{margin:6px var(--px) 0;padding:14px 20px;display:flex;flex-wrap:wrap;
+  align-items:center;gap:12px 20px;background:var(--surface);
+  border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm)}
+.trackbar .tb-lbl{display:flex;align-items:center;gap:9px;font-size:.74rem;font-weight:800;
+  letter-spacing:.14em;color:#0B7FA6;white-space:nowrap}
+.trackbar .tb-lbl::before{content:"";width:22px;height:5px;border-radius:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.trackbar .tb-hint{font-size:.83rem;color:var(--text2);margin-inline-start:auto}
+.trackpills{display:flex;gap:6px;flex-wrap:wrap;background:var(--soft-bg);
+  border-radius:999px;padding:4px}
+.trackpills .pill{border:none;background:transparent;padding:8px 24px;font-size:.9rem;
+  color:var(--text2);text-decoration:none;text-align:center;
+  transition:background .2s var(--ease),color .2s var(--ease),box-shadow .2s}
+.trackpills .pill:hover:not(.on){background:#fff;color:var(--navy)}
+.trackpills .pill:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+/* הכפתור הפעיל נקבע ב-CSS לפי data-tk — כדי שייצבע כבר בציור הראשון, בלי הבהוב.
+   הכיתה .on נשארת עבור עמודים שבהם הכפתורים הם קישורים (שערי הנתיב). */
+.trackpills .pill.on,
+html[data-tk="all"] .trackpills .pill[data-track="all"],
+html[data-tk="gmr"] .trackpills .pill[data-track="gmr"],
+html[data-tk="bgr"] .trackpills .pill[data-track="bgr"]{
+  background:var(--grad);color:#fff;box-shadow:var(--sh-sm)}
+.trackpills .pill[data-track="gmr"].on,
+html[data-tk="gmr"] .trackpills .pill[data-track="gmr"]{background:var(--navy)}
+.trackpills .pill[data-track="bgr"].on,
+html[data-tk="bgr"] .trackpills .pill[data-track="bgr"]{background:linear-gradient(135deg,#1677FF,#0B7FA6)}
+/* בלי אנימציית מעבר על המצב ההתחלתי */
+html[data-tk] .trackpills .pill{transition:none}
+.trackbar.ready .trackpills .pill{transition:background .2s var(--ease),color .2s var(--ease),box-shadow .2s}
+@media(max-width:640px){
+  .trackbar{margin-inline:12px;padding:12px 14px}
+  .trackbar .tb-hint{margin-inline-start:0;flex-basis:100%}
+  .trackpills{width:100%}.trackpills .pill{flex:1;padding-inline:10px;text-align:center}
+}
+
+/* זוג כרטיסי הנתיב: כשאחד מהם מסונן החוצה, הנותר תופס את מלוא הרוחב */
+html[data-tk="gmr"] .trackpair,
+html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
+
+/* שערי הנתיב — כרטיס מקצוע בדף גמר / בגרות */
+.trkcard{position:relative;display:flex;flex-direction:column;gap:6px;padding:20px 22px;
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  box-shadow:var(--sh-sm);text-decoration:none;color:inherit;overflow:clip;
+  transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s}
+.trkcard::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;
+  background:var(--tc,var(--cyan));transform:scaleX(0);transform-origin:right;
+  transition:transform .3s var(--ease)}
+.trkcard:hover{transform:translateY(-3px);border-color:var(--tc,var(--cyan));box-shadow:var(--sh-md)}
+.trkcard:hover::before{transform:scaleX(1)}
+.trkcard h3{font-size:1.05rem;margin:0}
+.trkcard .meta{font-size:.81rem;color:var(--text2);line-height:1.5}
+.trkcard .go{margin-top:auto;padding-top:10px;font-size:.79rem;font-weight:700;color:var(--text2);
+  transition:color .25s}
+.trkcard:hover .go{color:var(--tc,#0B7FA6)}
+
+/* פריט משנה בתפריט (שערי הנתיב תחת "תחומי דעת") */
+.navitem .sub a.nested,.drawer .body a.nested{padding-inline-start:30px;font-size:.86rem;position:relative}
+.navitem .sub a.nested::before,.drawer .body a.nested::before{content:"";position:absolute;inset-inline-start:15px;top:50%;width:8px;height:1.5px;border-radius:2px;background:var(--cyan)}

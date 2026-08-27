@@ -23,17 +23,19 @@
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
     <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a class="nested" href="bagrut.html">נתיב הבגרות</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
-    <a href="rakaz-pedagogi-klim.html"><span class="n">05</span> כלים פדגוגיים · תשפ"ז</a>
-    <a class="dis"><span class="n">06</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
-    <a href="emergency.html"><span class="n">07</span> למידה בחירום</a>
-    <a href="ai.html"><span class="n">08</span> שילוב AI בחינוך</a>
-    <a class="dis"><span class="n">09</span> הערכה <span class="tag soon">בקרוב</span></a>
-    <a href="documents.html"><span class="n">10</span> כלים ניהוליים פדגוגיים</a>
+    <a class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">08</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
 
     <div class="sect">חניכות וקריירה</div>
     <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
@@ -105,12 +107,14 @@
   </a>
   <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+      <a class="nested" href="bagrut.html">נתיב הבגרות</a>
       <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
-      <a href="rakaz-pedagogi-klim.html">כלים פדגוגיים · תשפ"ז</a>
       <a class="dis">תוכניות לימודים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="ai.html">שילוב AI בחינוך</a>
@@ -208,33 +212,6 @@
 </nav>
 
 <style>
-  /* ---- פס ההודעות בראש השער ---- */
-  #hstrip{margin:0 var(--px) 6px}
-  .striphead{display:flex;align-items:baseline;gap:10px;margin-bottom:9px}
-  .striphead b{font-size:1.02rem;color:var(--navy);font-weight:800}
-  .striphead a{margin-inline-start:auto;font-size:.84rem;font-weight:700;
-    color:var(--blue);text-decoration:none}
-  .striphead a:hover{text-decoration:underline}
-  .stripitems{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
-  .stripitem{display:flex;align-items:center;gap:9px;flex-wrap:wrap;
-    background:var(--surface);border:1px solid var(--border);border-radius:13px;
-    padding:11px 14px;text-decoration:none;color:inherit;box-shadow:var(--sh-sm);
-    transition:.18s;position:relative;overflow:hidden}
-  .stripitem:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
-  .stripitem::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px}
-  .stripitem.t-important::before{background:var(--m-red)}
-  .stripitem.t-guide::before{background:var(--m-blue)}
-  .stripitem b{font-size:.93rem;color:var(--navy);font-weight:700;flex:1;min-width:0}
-  .htag{font-size:.7rem;font-weight:700;border-radius:999px;padding:1px 9px;border:1px solid}
-  .tg-important{background:#FDECEC;color:#A82B2B;border-color:#F5C9C9}
-  .tg-guide{background:#E8F2FF;color:var(--navy-800);border-color:#C6DDF5}
-  .hdate{font-size:.75rem;color:var(--muted);font-weight:600}
-  .hstate{text-align:center;padding:20px;color:var(--muted);background:var(--soft-bg);
-    border:1px dashed var(--border-strong);border-radius:13px;font-size:.9rem}
-  .hstate svg{width:26px;height:26px;stroke:var(--muted);fill:none;stroke-width:1.6;
-    stroke-linecap:round;display:block;margin:0 auto 6px}
-  .hstate b{display:block;color:var(--navy);margin-bottom:3px}
-
   /* ---- קבוצות הכרטיסיות ---- */
   .grouphead{display:flex;align-items:center;gap:11px;padding:0 var(--px);margin:34px 0 2px}
   .grouphead h2{font-size:1.22rem;white-space:nowrap}
@@ -244,7 +221,24 @@
   .groupsub{padding:0 var(--px);color:var(--text2);font-size:.93rem;margin:6px 0 0;max-width:720px}
   .grid.c3{padding:18px var(--px) 6px}
   .lastgrid{padding-bottom:56px !important}
+
+  /* ---- פס "הגעת דרך קישור ישיר" (מוצג רק כשמגיעים עם ?next=) ---- */
+  .gatenote{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    margin:0 var(--px) 4px;padding:16px 18px;border-radius:16px;
+    background:linear-gradient(135deg,var(--blue-100),var(--cyan-100));
+    border:1px solid #C6DDF5;box-shadow:var(--sh-sm)}
+  .gatenote svg{width:26px;height:26px;flex:none;stroke:var(--navy);fill:none;
+    stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .gatenote .txt{flex:1;min-width:230px}
+  .gatenote b{display:block;color:var(--navy);font-size:1rem;font-weight:800;margin-bottom:3px}
+  .gatenote span{display:block;color:var(--text2);font-size:.88rem;line-height:1.5}
+  .gatenote .go{background:var(--navy);color:#fff;text-decoration:none;font-weight:700;
+    font-size:.9rem;padding:11px 20px;border-radius:11px;white-space:nowrap;transition:.18s}
+  .gatenote .go:hover{background:var(--navy-800);transform:translateY(-1px);box-shadow:var(--sh-md)}
+  .card.gtarget{outline:2px solid var(--blue);outline-offset:3px}
 </style>
+
+<div id="gatenext"></div>
 
 <div class="pagehead split" style="padding-top:52px">
   <div>
@@ -258,19 +252,44 @@
   </div>
 </div>
 
-<div id="hstrip"></div>
 
-<div class="grouphead rv"><h2>עדכונים ולוחות זמנים</h2><span class="cnt">2 עמודים</span><span class="ln"></span></div><p class="groupsub rv">מה חדש ומה מתקרב — נקודת הפתיחה של כל כניסה לאתר.</p><div class="grid c3"><a class="card rv" href="hodaot.html" style="padding:24px"><div class="ic" style="background:#FDEEEA;color:#B4553B"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">הודעות ועדכונים <span class="tag cyn">חדש</span></h3><p style="font-size:.87rem;color:var(--text2)">הודעות חשובות והודעות הדרכה מהמינהל, במקום אחד. מה שחדש נמצא למעלה.</p></a>
-<a class="card rv" href="luach-mivchanim.html" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M8 14h3M8 17h6"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">לוח מבחנים · בגרויות וגמר <span class="tag cyn">חדש</span></h3><p style="font-size:.87rem;color:var(--text2)">כל מועדי ההיבחנות של תשפ"ז — חורף, קיץ ומועד ב', עם סימון שבעת תחומי הדעת.</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span class="tag bgr">תשפ"ז</span><span class="tag gmr">44 מועדים</span></div></a></div><div class="grouphead rv"><h2>הוראה ולמידה</h2><span class="cnt">7 עמודים</span><span class="ln"></span></div><p class="groupsub rv">החומר שנכנס איתו לכיתה: תחומי הדעת, השאלונים, הכלים והתוכניות.</p><div class="grid c3"><a class="card rv" href="subjects.html" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><path d="M4 19V6a1 1 0 0 1 1-1h5l2 2h7a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 13h8M8 16h5"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">תחומי דעת · בגרות / גמר</h3><p style="font-size:.87rem;color:var(--text2)">שבעת מקצועות הליבה, כל אחד בשני נתיבי "הדרך לתעודה".</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span class="tag gmr">גמר</span><span class="tag bgr">בגרות</span></div></a>
+<div class="grouphead rv"><h2>עדכונים ולוחות זמנים</h2><span class="cnt">עמוד אחד</span><span class="ln"></span></div><p class="groupsub rv">מה חדש ומה מתקרב — נקודת הפתיחה של כל כניסה לאתר.</p><div class="grid c3"><a class="card rv" href="luach-mivchanim.html" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M8 14h3M8 17h6"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">לוח מבחנים · בגרויות וגמר <span class="tag cyn">חדש</span></h3><p style="font-size:.87rem;color:var(--text2)">כל מועדי ההיבחנות של תשפ"ז — חורף, קיץ ומועד ב', עם סימון שבעת תחומי הדעת.</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span class="tag bgr">תשפ"ז</span><span class="tag gmr">44 מועדים</span></div></a></div><div class="grouphead rv"><h2>הוראה ולמידה</h2><span class="cnt">7 עמודים</span><span class="ln"></span></div><p class="groupsub rv">החומר שנכנס איתו לכיתה: תחומי הדעת, השאלונים, הכלים והתוכניות.</p><div class="grid c3"><a class="card rv" href="subjects.html" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><path d="M4 19V6a1 1 0 0 1 1-1h5l2 2h7a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 13h8M8 16h5"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">תחומי דעת · בגרות / גמר</h3><p style="font-size:.87rem;color:var(--text2)">שבעת מקצועות הליבה, כל אחד בשני נתיבי "הדרך לתעודה".</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span class="tag gmr">גמר</span><span class="tag bgr">בגרות</span></div></a>
 <a class="card rv" href="bagrut-bank.html" style="padding:24px"><div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v3h3M9 12h6M9 16h4"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">מאגר שאלוני הבגרות</h3><p style="font-size:.87rem;color:var(--text2)">שאלוני הבגרות והגמר לפי מקצוע ומועד, מוכנים להורדה ולתרגול.</p></a>
 <a class="card rv" href="klim-digitaliim.html" style="padding:24px"><div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3"/><circle cx="16" cy="11.5" r="1"/><circle cx="18" cy="14" r="1"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">כלים דיגיטליים ומשחקים <span class="tag cyn">חדש</span></h3><p style="font-size:.87rem;color:var(--text2)">מערכי שיעור מוכנים, מחוללי משחקים וכלי AI — נבחרו ונבדקו לשבעת תחומי הדעת.</p><div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap"><span class="tag gmr">4 קטגוריות</span></div></a>
-<a class="card rv" href="rakaz-pedagogi-klim.html" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">כלים פדגוגיים · תשפ"ז</h3><p style="font-size:.87rem;color:var(--text2)">תכנון והוראה, מדידה ומיפוי, ומסמכי היסוד הפדגוגיים של המינהל.</p></a>
 <a class="card rv" href="emergency.html" style="padding:24px"><div class="ic" style="background:#FFF7E4;color:#8A5A00"><svg viewBox="0 0 24 24"><path d="M12 3 2.5 19.5h19z"/><path d="M12 10v4M12 17.2v.3"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">למידה בחירום</h3><p style="font-size:.87rem;color:var(--text2)">רצף הכשרה בשגרה ובחירום — לפי קהלים, כולל מדור רגשי.</p></a>
 <a class="card rv" href="ai.html" style="padding:24px"><div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9.5 16h5M2 12h3M19 12h3"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">שילוב AI בחינוך</h3><p style="font-size:.87rem;color:var(--text2)">כלים מאושרים, פרקטיקות מהשטח ומדיניות מוסדית.</p></a>
 <div class="card rv" style="padding:24px"><div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M15 4v3h3M9 11h6M9 14h6M9 17h4"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">תוכניות לימודים <span class="tag soon">בקרוב</span></h3><p style="font-size:.87rem;color:var(--text2)">התוכניות הרשמיות (מסלולי 55/56), תבנית שנתית ותרשים זרימה.</p></div></div><div class="grouphead rv"><h2>ניהול והערכה</h2><span class="cnt">3 עמודים</span><span class="ln"></span></div><p class="groupsub rv">הכלים של מי שמוביל את העשייה הפדגוגית — רכז, מנהל ומפקח.</p><div class="grid c3 lastgrid"><a class="card rv" href="documents.html" style="padding:24px"><div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v3h3M9 11h6M9 15h6"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">כלים ניהוליים פדגוגיים</h3><p style="font-size:.87rem;color:var(--text2)">המצפן הפדגוגי ואיגרות הפדגוגיה המיטיבה — תלמידים וצוות חינוכי.</p></a>
 <div class="card rv" style="padding:24px"><div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">הערכה <span class="tag soon">בקרוב</span></h3><p style="font-size:.87rem;color:var(--text2)">הערכה מעצבת, מחוונים, חלופות הערכה ומדידה מוסדית.</p></div>
 <div class="card rv" style="padding:24px"><div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M15 4v3h3M9 11h6M9 14h4"/></svg></div><h3 style="font-size:1.12rem;margin:12px 0 4px">תוכניות עבודה · מורים מקצועיים <span class="tag soon">בקרוב</span></h3><p style="font-size:.87rem;color:var(--text2)">תבניות ודוגמאות לתוכנית העבודה השנתית של המורה המקצועי. תוכניות העבודה לבעלי תפקידים — במרחב המנהלים.</p></div></div>
-<script src="hodaot.js" defer></script>
+<script>
+/* ?next=<עמוד> — מי שנותב לכאן מקישור ישיר (ראה gate.js) מקבל למעלה
+   פס עם כפתור "המשך אל", והכרטיס שלו מסומן ברשת כדי שידע איפה הוא יושב. */
+(function gateNext(){
+  var next=new URLSearchParams(location.search).get('next');
+  if(!next || /^[a-z]+:|^\/\/|^\//i.test(next)) return;
+  var file=next.split(/[?#]/)[0];
+  if(!/^[\w.-]+\.html$/.test(file)) return;
+  var card=document.querySelector('.card[href="'+file+'"]');
+  if(card) card.classList.add('gtarget');
+  var title='';
+  var h3=card&&card.querySelector('h3');
+  if(h3) title=h3.childNodes[0].textContent.trim();
+  if(!title){
+    var lnk=document.querySelector('.navitem .sub a[href="'+file+'"], .drawer a[href="'+file+'"]');
+    if(lnk) title=lnk.textContent.trim();
+  }
+  var box=document.getElementById('gatenext');
+  if(!box) return;
+  box.innerHTML=
+    '<div class="gatenote">'+
+      '<svg viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/>'+
+      '<path d="M2 21h18"/><path d="M11 12h.01"/><path d="M17 12h5"/><path d="M19 9l3 3-3 3"/></svg>'+
+      '<div class="txt"><b>הגעת דרך קישור ישיר'+(title?' אל "'+title+'"':'')+'</b>'+
+      '<span>זה השער של המרחב הפדגוגי — כל התחומים במקום אחד. אפשר להמשיך ישר לעמוד שחיפשת, או להתחיל מכאן.</span></div>'+
+      '<a class="go" href="'+next.replace(/"/g,'&quot;')+'">המשך אל '+(title||'העמוד')+' ←</a>'+
+    '</div>';
+})();
+</script>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span><a class="dis">הצהרת נגישות</a> · <a class="dis">יצירת קשר</a></span></div></div>
 

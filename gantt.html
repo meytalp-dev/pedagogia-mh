@@ -29,6 +29,7 @@
   --g-yeutzi-bg:#FBE2EC; --g-yeutzi-bd:#F0B7CD; --g-yeutzi-tx:#97365C;
   --g-national-bg:#FCEFD2; --g-national-bd:#EDD49A; --g-national-tx:#7A5A10;
   --g-holiday-bg:#EAF0F5; --g-holiday-bd:#CBD9E4; --g-holiday-tx:#46606F;
+  --g-exam-bg:#D8F0EC; --g-exam-bd:#A2DBD2; --g-exam-tx:#0A6A60;
 }
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
 .legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
@@ -36,7 +37,7 @@
 .legend button.off{background:#fff!important;color:var(--muted)!important;border-color:var(--border)!important}
 .legend button.off .dot{background:var(--border-strong)!important}
 .gantt-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:var(--sh-sm)}
-.gantt{display:grid;grid-template-columns:172px repeat(10,minmax(148px,1fr));min-width:1300px}
+.gantt{display:grid;grid-template-columns:172px repeat(11,minmax(148px,1fr));min-width:1430px}
 .gantt .mh{position:sticky;top:0;background:var(--soft-bg);border-bottom:1.5px solid var(--border-strong);padding:10px 8px;text-align:center;font-weight:800;font-size:.86rem;color:var(--navy);border-inline-start:1px solid var(--border)}
 .gantt .mh.now{background:var(--cyan-100);color:#0B7FA6}
 .gantt .th{background:var(--soft-bg);border-bottom:1.5px solid var(--border-strong);padding:10px 12px;font-weight:800;font-size:.86rem;color:var(--navy);position:sticky;right:0;z-index:5}
@@ -52,6 +53,9 @@
 .t-yeutzi{background:var(--g-yeutzi-bg);border-color:var(--g-yeutzi-bd);color:var(--g-yeutzi-tx)}
 .t-national{background:var(--g-national-bg);border-color:var(--g-national-bd);color:var(--g-national-tx)}
 .t-holiday{background:var(--g-holiday-bg);border-color:var(--g-holiday-bd);color:var(--g-holiday-tx)}
+.t-exam{background:var(--g-exam-bg);border-color:var(--g-exam-bd);color:var(--g-exam-tx)}
+.chip.lnkchip{cursor:pointer;text-decoration:none;display:block;transition:filter .15s var(--ease)}
+.chip.lnkchip:hover{filter:brightness(.955)}
 .rh .rdot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
 /* אג'נדה חודשית */
 .agenda{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:10px}
@@ -76,17 +80,19 @@
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
     <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a class="nested" href="bagrut.html">נתיב הבגרות</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
-    <a href="rakaz-pedagogi-klim.html"><span class="n">05</span> כלים פדגוגיים · תשפ"ז</a>
-    <a class="dis"><span class="n">06</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
-    <a href="emergency.html"><span class="n">07</span> למידה בחירום</a>
-    <a href="ai.html"><span class="n">08</span> שילוב AI בחינוך</a>
-    <a class="dis"><span class="n">09</span> הערכה <span class="tag soon">בקרוב</span></a>
-    <a href="documents.html"><span class="n">10</span> כלים ניהוליים פדגוגיים</a>
+    <a class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">08</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
 
     <div class="sect">חניכות וקריירה</div>
     <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
@@ -158,12 +164,14 @@
   </a>
   <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
+      <a class="nested" href="bagrut.html">נתיב הבגרות</a>
       <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
-      <a href="rakaz-pedagogi-klim.html">כלים פדגוגיים · תשפ"ז</a>
       <a class="dis">תוכניות לימודים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="ai.html">שילוב AI בחינוך</a>
@@ -317,12 +325,14 @@
 /* ===== נתוני הלוח =====
    להוספת אירוע: מוסיפים שורה למערך EVENTS —
    {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
-   מסלולים: rakaz / matalA / matalB / yeutzi / national / holiday            */
+   מסלולים: rakaz / matalA / matalB / yeutzi / exam / national / holiday
+   שדה u (לא חובה) הופך את הצ'יפ לקישור.                                     */
 const TRACKS = {
   rakaz:   {name:'רכזים חברתיים', sub:'חינוך חברתי יוצר'},
   matalA:  {name:'מת"לים · ימי א\'', sub:'עדי ספיבק · 14:00–15:30'},
   matalB:  {name:'מת"לים · ימי ב\'', sub:'עדי ספיבק · 14:00–15:30'},
   yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי'},
+  exam:    {name:'מועדי בחינות · בגרות', sub:'משרד החינוך · טיוטה 12.7.26'},
   national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון'},
   holiday: {name:'חגים וחופשות', sub:''}
 };
@@ -396,7 +406,17 @@ const EVENTS = [
  {t:'holiday', d:'2027-04-21', d2:'2027-04-28', n:'פסח', s:'ליל הסדר 21.4 · שביעי של פסח 28.4'},
  {t:'holiday', d:'2027-05-16', d2:'2027-05-18', n:'עיד אל-אדחא', s:'מועד משוער'},
  {t:'holiday', d:'2027-05-25', n:'ל"ג בעומר', s:''},
- {t:'holiday', d:'2027-06-10', d2:'2027-06-11', n:'שבועות', s:'ערב חג 10.6'}
+ {t:'holiday', d:'2027-06-10', d2:'2027-06-11', n:'שבועות', s:'ערב חג 10.6'},
+ /* --- מועדי בחינות · בגרות (אגף בכיר בחינות, טיוטה 12.7.2026) ---
+    פסי תקופה בלבד. הלוח המלא לפי מקצוע: luach-mivchanim.html                */
+ {t:'exam', d:'2026-12-28', n:'מועד חורף · נפתח', s:'מחשבת ישראל דתי · יום בחינה אחד בדצמבר', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-04', d2:'2027-01-28', n:'מועד חורף', s:'10 ימי בחינה · עברית 4.1 · מתמטיקה 11–12.1 · אנגלית 18–19.1 · אזרחות 21.1 · תנ"ך 25.1', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-02-01', d2:'2027-02-04', n:'מועד חורף · סיום', s:'היסטוריה 1.2 · ספרות 4.2', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-04-29', n:'מועד קיץ · נפתח', s:'ערבית לערבים (לשון) · 29.4, אסרו חג', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-02', d2:'2027-05-31', n:'מועד קיץ', s:'8 ימי בחינה · עברית 17.5 · תנ"ך 20.5 · מתמטיקה 26–27.5', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-01', d2:'2027-06-30', n:'מועד קיץ · שיא', s:'15 ימי בחינה · אנגלית 1.6 · היסטוריה 7.6 · ספרות 17.6 · אזרחות 24.6', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-01', n:'פסיכומטרי', s:'יום חמישי 1.7', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-05', d2:'2027-07-08', n:'מועד ב'', s:'שפת אם 5.7 · אנגלית 6–7.7 · מתמטיקה 8.7', u:'luach-mivchanim.html'}
 ];
 
 /* ===== רינדור ===== */
@@ -404,7 +424,7 @@ const MONTHS = [];
 for (let y=2026, m=9;; ){
   MONTHS.push({y, m});
   m++; if (m>12){m=1;y++}
-  if (y===2027 && m===7) break;
+  if (y===2027 && m===8) break;
 }
 const HEB_MON = {1:'ינואר',2:'פברואר',3:'מרץ',4:'אפריל',5:'מאי',6:'יוני',7:'יולי',8:'אוגוסט',9:'ספטמבר',10:'אוקטובר',11:'נובמבר',12:'דצמבר'};
 const fmtDay = e => {
@@ -427,9 +447,13 @@ Object.keys(TRACKS).forEach(tk=>{
       const [y,m] = e.d.split('-').map(Number);
       return e.t===tk && y===mo.y && m===mo.m;
     });
-    html += `<div class="cell">` + evs.map(e=>
-      `<div class="chip t-${e.t}" data-track="${e.t}" title="${(e.n+' — '+(e.s||'')).replace(/"/g,'&quot;')}"><b>${fmtDay(e)}</b>${e.n}</div>`
-    ).join('') + `</div>`;
+    html += `<div class="cell">` + evs.map(e=>{
+      const tt = (e.n+' — '+(e.s||'')).replace(/"/g,'&quot;');
+      const inner = `<b>${fmtDay(e)}</b>${e.n}`;
+      return e.u
+        ? `<a class="chip t-${e.t} lnkchip" data-track="${e.t}" href="${e.u}" title="${tt}">${inner}</a>`
+        : `<div class="chip t-${e.t}" data-track="${e.t}" title="${tt}">${inner}</div>`;
+    }).join('') + `</div>`;
   });
 });
 gEl.innerHTML = html;
@@ -444,7 +468,7 @@ MONTHS.forEach(mo=>{
   }).sort((a,b)=>a.d.localeCompare(b.d));
   if (!evs.length) return;
   ahtml += `<div class="mon"><h3>${HEB_MON[mo.m]} ${mo.y}</h3>` + evs.map(e=>
-    `<div class="ev" data-track="${e.t}"><span class="dot t-${e.t}"></span><span class="dt">${fmtDay(e)}</span><span class="tt"><b>${e.n}</b>${e.s?`<small>${e.s}</small>`:''}</span></div>`
+    `<div class="ev" data-track="${e.t}"><span class="dot t-${e.t}"></span><span class="dt">${fmtDay(e)}</span><span class="tt">${e.u?`<a href="${e.u}" style="color:inherit;text-decoration:none"><b>${e.n}</b></a>`:`<b>${e.n}</b>`}${e.s?`<small>${e.s}</small>`:''}</span></div>`
   ).join('') + `</div>`;
 });
 aEl.innerHTML = ahtml;
