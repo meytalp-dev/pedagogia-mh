@@ -36,6 +36,8 @@ const SKIP = new Set([
   "sikum-mishov.html",
   "matzevet-list.html",
   "talmidim.html",
+  "sikum-matzevet.html",
+  "admin.html",   // פאנל ניהול — לבעלי הרשאה בלבד
 ]);
 
 /* ---------- סיווג לפי מרחב ---------- */
@@ -116,6 +118,21 @@ const CAT_OF = {
 
   "install.html": "kelim",
   "tools/index.html": "kelim",
+  "klim-digitaliim.html": "kelim",
+  "hodaot.html": "kelim",
+
+  "rakaz-pedagogi-klim.html": "pedagogi",
+  "luach-mivchanim.html": "subjects",
+  "cherum-nehalim.html": "nehalim",
+  "vaada-melava.html": "pikuah",
+
+  "morim-honchim.html": "hadracha",
+  "honchim-hanchayot.html": "hadracha",
+  "honchim-maslul.html": "hadracha",
+  "honchim-haaracha.html": "hadracha",
+  "honchim-haaracha-emtza.html": "hadracha",
+  "honchim-sium.html": "hadracha",
+  "honchim-igeret.html": "hadracha",
 };
 
 /* מילות מפתח נוספות לעמודים שהניסוח בהם שונה ממה שמחפשים בפועל */
@@ -131,6 +148,11 @@ const EXTRA_KEYS = {
   "tools/index.html": "מחוללים משחקים חידונים מצגות אינפוגרפיקה AI",
   "gantt.html": "לוח שנה מועדים צוותים תאריכים",
   "hishtalmuyot.html": "פיתוח מקצועי גמול קורסים",
+  "morim-honchim.html": "מתמחים סטאז' רישיון הוראה חונך",
+  "honchim-hanchayot.html": "מתמחה סטאז' חונכות רישיון הוראה",
+  "vaada-melava.html": "ועדה מלווה מוסדית סיכום",
+  "cherum-nehalim.html": "חירום אירוע חריג מלחמה",
+  "luach-mivchanim.html": "מועדי בחינות בגרות גמר",
 };
 
 /* ---------- כלי עזר ---------- */

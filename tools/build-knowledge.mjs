@@ -27,7 +27,8 @@ const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
 const MAX_TOTAL_CHARS = 80000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
-const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html"]);
+const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
+  "admin.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html"]);
 
 /* מסיר אלמנט שלם מה-HTML כולל תגיות מקוננות מאותו סוג (למשל div בתוך div) */
 function removeBlocks(html, openerRe) {
