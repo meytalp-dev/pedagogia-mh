@@ -4,1662 +4,215 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מערכת תוכניות עבודה בית־ספריות</title>
+<title>תוכניות עבודה לבעלי תפקידים · בבנייה</title>
+<meta name="description" content="כל בעלי התפקידים בבתי הספר המקצועיים — הגדרות תפקיד, שעות, גמולים, נספח מילוי וכל חומרי הדרייב.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#f4f5f8; --surface:#ffffff; --surface-2:#fafbfc;
-  --line:#e3e6ec; --line-strong:#cfd4de;
-  --ink:#1d2233; --ink-2:#4d5568; --ink-3:#828b9e;
-  --brand:#2f4b7c; --brand-2:#4a6fa5; --brand-soft:#eaf0f8;
-  --accent:#c8622f; --accent-soft:#fdf0e8;
-  --ok:#2e7d5b; --ok-soft:#e6f4ee;
-  --warn:#b0851f; --warn-soft:#fbf3df;
-  --danger:#b4453c; --danger-soft:#fbeceb;
-  --r:12px; --r-sm:8px;
-  --shadow:0 1px 2px rgba(29,34,51,.05), 0 4px 14px rgba(29,34,51,.05);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{font-family:'Assistant','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);
-  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
-button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
-button{cursor:pointer;border:none;background:none}
-a{color:var(--brand-2)}
-
-/* ============ LAYOUT ============ */
-.app{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
-body.gated .app{display:none}
-.sidebar{background:#232a3d;color:#dfe3ec;display:flex;flex-direction:column;
-  position:sticky;top:0;height:100vh;overflow-y:auto}
-.brand{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
-.brand h1{font-size:16px;font-weight:700;letter-spacing:-.2px;line-height:1.3}
-.brand p{font-size:11.5px;color:#8e97ad;margin-top:3px}
-
-.who{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
-.who .line1{display:flex;align-items:center;gap:8px}
-.who .av{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;flex:none}
-.who .nm{font-size:13.5px;font-weight:700;line-height:1.25;color:#fff}
-.who .rl{font-size:11.5px;color:#8e97ad}
-.who .sc{font-size:11.5px;color:#8e97ad;margin-top:7px;display:flex;align-items:center;gap:5px}
-.who button.swap{width:100%;margin-top:9px;background:rgba(255,255,255,.08);color:#c2c9d8;
-  border-radius:7px;padding:6px;font-size:12px;font-weight:600}
-.who button.swap:hover{background:rgba(255,255,255,.16);color:#fff}
-
-nav{padding:11px 10px;flex:1}
-nav .nav-group{margin-bottom:13px}
-nav .nav-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:#6d768d;padding:6px 10px;font-weight:700}
-nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:right;padding:8px 10px;
-  border-radius:var(--r-sm);color:#c3cad9;font-size:13.5px;font-weight:500;transition:background .13s,color .13s;margin-bottom:1px}
-nav button:hover{background:linear-gradient(180deg,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3) no-repeat right center/3px 72%,rgba(255,255,255,.06);color:#fff}
-nav button.active{background:linear-gradient(180deg,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3) no-repeat right center/3px 72%,var(--brand-2);color:#fff;font-weight:600}
-nav button .ico{width:18px;text-align:center;font-size:13px;flex:none}
-nav button .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-nav button .badge{margin-inline-start:auto;font-size:10.5px;background:rgba(255,255,255,.14);padding:1px 7px;border-radius:20px;font-weight:700;flex:none}
-nav button.active .badge{background:rgba(255,255,255,.26)}
-
-.sidebar-foot{padding:0 16px 20px;display:flex;flex-direction:column;gap:5px}
-.sidebar-foot button{background:rgba(255,255,255,.07);color:#c2c9d8;border-radius:var(--r-sm);padding:7px;font-size:12px;font-weight:600;text-align:center}
-.sidebar-foot button:hover{background:rgba(255,255,255,.14);color:#fff}
-
-.main{overflow-x:hidden}
-.topbar{background:var(--surface);border-bottom:1px solid var(--line);padding:15px 30px;
-  display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:20}
-.topbar h2{font-size:20px;font-weight:700;letter-spacing:-.3px}
-.topbar .sub{font-size:12.5px;color:var(--ink-3);margin-top:1px}
-.topbar .spacer{flex:1}
-.content{padding:26px 30px 70px;max-width:1300px}
-
-/* ============ GATE ============ */
-#gate{display:none;min-height:100vh;padding:40px 20px;background:
-  radial-gradient(1100px 520px at 50% -10%, #33405c 0%, #232a3d 55%, #1b2133 100%)}
-body.gated #gate{display:block}
-.gate-wrap{max-width:920px;margin:0 auto}
-.gate-head{text-align:center;color:#fff;margin-bottom:26px}
-.gate-head .mark{width:52px;height:52px;border-radius:15px;background:rgba(255,255,255,.12);
-  display:grid;place-items:center;font-size:23px;margin:0 auto 13px;border:1px solid rgba(255,255,255,.18)}
-.gate-head h1{font-size:25px;font-weight:800;letter-spacing:-.6px}
-.gate-head p{font-size:14px;color:#a8b1c6;margin-top:5px}
-.gate-card{background:var(--surface);border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
-.gate-sec{padding:20px 24px;border-bottom:1px solid var(--line)}
-.gate-sec:last-child{border-bottom:none}
-.gate-sec h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.gate-sec h3 .n{width:21px;height:21px;border-radius:6px;background:var(--brand);color:#fff;
-  display:grid;place-items:center;font-size:11.5px;font-weight:800;flex:none}
-.gate-sec .desc{font-size:12.5px;color:var(--ink-3);margin-bottom:13px;padding-inline-start:29px}
-.people{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
-.person{display:flex;gap:10px;align-items:center;text-align:right;padding:11px 13px;border:1px solid var(--line);
-  border-radius:10px;background:var(--surface);transition:border-color .14s,box-shadow .14s,transform .07s;width:100%}
-.person:hover{border-color:var(--brand-2);box-shadow:0 3px 14px rgba(47,75,124,.14)}
-.person:active{transform:translateY(1px)}
-.person .av{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;flex:none}
-.person .t{flex:1;min-width:0}
-.person .t .n{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person .t .r{font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person .pc{font-size:11px;font-weight:800;color:var(--ink-3);flex:none}
-.person.unassigned .t .n{color:var(--ink-3);font-weight:600;font-style:italic}
-.gate-foot{background:var(--surface-2);padding:15px 24px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
-.gate-note{text-align:center;color:#8b95ac;font-size:12px;margin-top:16px;line-height:1.7}
-
-/* ============ COMPONENTS ============ */
-.btn{background:var(--brand);color:#fff;padding:8px 16px;border-radius:var(--r-sm);font-weight:600;font-size:13.5px;
-  transition:filter .15s,transform .05s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{filter:brightness(1.12)}
-.btn:active{transform:translateY(1px)}
-.btn.ghost{background:var(--surface);color:var(--ink-2);border:1px solid var(--line-strong)}
-.btn.ghost:hover{background:var(--surface-2);filter:none;border-color:var(--ink-3)}
-.btn.accent{background:var(--accent)}
-.btn.ok{background:var(--ok)}
-.btn.sm{padding:5px 11px;font-size:12.5px}
-.btn.danger{background:var(--danger-soft);color:var(--danger)}
-.btn.danger:hover{background:#f6d9d7;filter:none}
-.btn.block{width:100%;justify-content:center}
-
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-.card + .card{margin-top:18px}
-.card-head{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.card-head h3{font-size:16px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
-.card-head .step{width:24px;height:24px;border-radius:7px;background:var(--brand-soft);color:var(--brand);
-  display:grid;place-items:center;font-size:12.5px;font-weight:800;flex:none}
-.card-head p{font-size:12.5px;color:var(--ink-3);width:100%;margin-top:-2px}
-.card-head .spacer{flex:1}
-.card-body{padding:18px 20px}
-
-.field{margin-bottom:15px}
-.field:last-child{margin-bottom:0}
-.field label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
-input[type=text],input[type=email],input[type=password],textarea,select{width:100%;background:var(--surface);
-  border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:8px 11px;transition:border-color .15s,box-shadow .15s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(74,111,165,.13)}
-textarea{resize:vertical;min-height:60px;line-height:1.5}
-input::placeholder,textarea::placeholder{color:#aab2c2}
-input:disabled,select:disabled,textarea:disabled{background:var(--surface-2);color:var(--ink-3);cursor:not-allowed}
-
-.rows{display:flex;flex-direction:column;gap:9px}
-.row-item{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;
-  display:flex;gap:10px;align-items:flex-start}
-.row-item .num{width:22px;height:22px;border-radius:6px;background:var(--surface);border:1px solid var(--line-strong);
-  color:var(--ink-3);font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:none;margin-top:5px}
-.row-item .grow{flex:1;min-width:0}
-.row-item .del{color:var(--ink-3);font-size:16px;padding:3px 6px;border-radius:6px;flex:none;line-height:1;margin-top:4px}
-.row-item .del:hover{background:var(--danger-soft);color:var(--danger)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.mini-label{font-size:11px;font-weight:600;color:var(--ink-3);display:block;margin-bottom:3px}
-.add-btn{margin-top:10px;width:100%;border:1.5px dashed var(--line-strong);border-radius:var(--r-sm);padding:9px;
-  color:var(--brand-2);font-weight:600;font-size:13px;transition:background .15s,border-color .15s}
-.add-btn:hover{background:var(--brand-soft);border-color:var(--brand-2)}
-
-.empty{text-align:center;padding:34px 20px;color:var(--ink-3)}
-.empty .big{font-size:34px;margin-bottom:8px;opacity:.5}
-.empty h4{font-size:15px;color:var(--ink-2);margin-bottom:4px}
-.empty p{font-size:13px;max-width:460px;margin:0 auto}
-
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:18px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
-.stat .k{font-size:11.5px;color:var(--ink-3);font-weight:600;letter-spacing:.2px}
-.stat .v{font-size:26px;font-weight:800;letter-spacing:-.7px;margin-top:2px;line-height:1.1}
-.stat .n{font-size:11.5px;color:var(--ink-3);margin-top:2px}
-.stat.ok .v{color:var(--ok)} .stat.warn .v{color:var(--warn)} .stat.brand .v{color:var(--brand)} .stat.accent .v{color:var(--accent)}
-
-.bar{height:7px;background:var(--line);border-radius:20px;overflow:hidden;margin-top:8px}
-.bar > i{display:block;height:100%;background:var(--brand-2);border-radius:20px;transition:width .35s ease}
-.bar > i.ok{background:var(--ok)} .bar > i.warn{background:var(--warn)} .bar > i.low{background:var(--danger)}
-
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
-.pill.ok{background:var(--ok-soft);color:var(--ok)}
-.pill.warn{background:var(--warn-soft);color:var(--warn)}
-.pill.danger{background:var(--danger-soft);color:var(--danger)}
-.pill.brand{background:var(--brand-soft);color:var(--brand)}
-.pill.grey{background:#eef0f4;color:var(--ink-3)}
-
-table{width:100%;border-collapse:collapse;font-size:13.5px}
-th{text-align:right;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-3);font-weight:700;
-  padding:9px 12px;border-bottom:1.5px solid var(--line);background:var(--surface-2);white-space:nowrap}
-td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tbody tr:hover{background:var(--surface-2)}
-.tbl-wrap{overflow-x:auto;border-radius:var(--r)}
-
-.role-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
-.role-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;white-space:nowrap}
-
-.chk-group{margin-bottom:16px}
-.chk-group-head{display:flex;align-items:center;gap:9px;padding:9px 14px;background:var(--surface-2);
-  border:1px solid var(--line);border-radius:var(--r) var(--r) 0 0;font-weight:700;font-size:14px}
-.chk-group-head .spacer{flex:1}
-.chk-list{border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);background:var(--surface);overflow:hidden}
-.chk{display:flex;gap:11px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:flex-start;transition:background .12s}
-.chk:last-child{border-bottom:none}
-.chk:hover{background:var(--surface-2)}
-.chk input[type=checkbox]{width:17px;height:17px;flex:none;margin-top:2px;accent-color:var(--ok);cursor:pointer}
-.chk .txt{flex:1;min-width:0}
-.chk .txt .t{font-weight:500;line-height:1.45}
-.chk .txt .m{font-size:12px;color:var(--ink-3);margin-top:2px;display:flex;flex-wrap:wrap;gap:4px 12px}
-.chk.done .txt .t{text-decoration:line-through;color:var(--ink-3);font-weight:400}
-.chk .side{flex:none;display:flex;gap:6px;align-items:center}
-
-.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
-.filters select,.filters input{width:auto;min-width:130px;padding:6px 10px;font-size:13px;background:var(--surface)}
-.filters .lbl{font-size:12.5px;color:var(--ink-3);font-weight:600}
-
-.role-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;
-  box-shadow:var(--shadow);border-top:3px solid var(--line-strong)}
-.role-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:14px}
-.role-card h4{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:7px}
-.role-card .owner{font-size:12.5px;color:var(--ink-3);margin-top:1px}
-.role-card .mini-stats{display:flex;gap:14px;margin-top:11px;font-size:12px}
-.role-card .mini-stats b{display:block;font-size:17px;font-weight:800;letter-spacing:-.4px}
-.role-card .go{margin-top:12px;display:flex;gap:6px}
-.month-strip{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:9px}
-.month-cell{border-radius:5px;background:var(--line);height:30px;display:grid;place-items:center;
-  font-size:9.5px;font-weight:700;color:var(--ink-3)}
-.month-cell.has{background:var(--brand-soft);color:var(--brand)}
-.month-cell.full{background:var(--ok-soft);color:var(--ok)}
-
-.note{background:var(--brand-soft);border:1px solid #d3e0f0;border-radius:var(--r-sm);padding:11px 14px;
-  font-size:13px;color:var(--brand);display:flex;gap:9px;align-items:flex-start;margin-bottom:16px;line-height:1.6}
-.note.warn{background:var(--warn-soft);border-color:#f0e2ba;color:#7d5d0f}
-.note.ok{background:var(--ok-soft);border-color:#c6e5d7;color:#1f6349}
-.note b{font-weight:700}
-
-.steps-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:18px}
-.flow-step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);position:relative}
-.flow-step .n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;display:grid;place-items:center;
-  font-weight:800;font-size:13px;margin-bottom:9px}
-.flow-step h4{font-size:14px;font-weight:700;margin-bottom:4px}
-.flow-step p{font-size:12.5px;color:var(--ink-3);line-height:1.6}
-
-dialog{border:none;border-radius:var(--r);padding:0;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:540px;width:93vw;color:var(--ink)}
-dialog::backdrop{background:rgba(20,24,36,.55)}
-dialog .card-head{border-radius:var(--r) var(--r) 0 0}
-dialog .dlg-foot{padding:13px 20px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--surface-2);border-radius:0 0 var(--r) var(--r)}
-
-.toast{position:fixed;bottom:22px;left:22px;background:#232a3d;color:#fff;padding:11px 18px;border-radius:10px;
-  font-size:13.5px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.28);z-index:999;opacity:0;transform:translateY(12px);
-  transition:opacity .22s,transform .22s;pointer-events:none;max-width:420px}
-.toast.show{opacity:1;transform:translateY(0)}
-
-.sec-title{font-size:12.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.6px;margin:24px 0 10px}
-.sec-title:first-child{margin-top:0}
-.code-chip{font-family:'Courier New',monospace;background:var(--surface-2);border:1px solid var(--line-strong);
-  border-radius:6px;padding:2px 8px;font-size:12.5px;font-weight:700;letter-spacing:.5px}
-
-@media print{
-  .sidebar,.no-print,#gate{display:none !important}
-  .app{display:block}
-  .main{padding:0}
-  .topbar{position:static;border:none;padding:0 0 12px}
-  .content{padding:0;max-width:none}
-  .card{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
-  body{background:#fff;font-size:12px}
-  .chk-group{break-inside:avoid}
-  @page{margin:14mm}
-}
-@media (max-width:900px){
-  .app{grid-template-columns:1fr}
-  .sidebar{position:static;height:auto}
-  .grid-3,.grid-4{grid-template-columns:1fr 1fr}
-  .content,.topbar{padding-inline:16px}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/pagenav.css">
 </head>
-<body class="gated">
+<body>
 
-<!-- ================= GATE / כניסה ================= -->
-<div id="gate"><div class="gate-wrap" id="gateWrap"></div></div>
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="subjects.html"><span class="n">01</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="career.html"><span class="n">02</span> נתיבי חניכות וקריירה</a>
+    <a class="dis"><span class="n">03</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
+    <a href="emergency.html"><span class="n">04</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">05</span> שילוב AI בחינוך</a>
+    <a class="dis"><span class="n">06</span> הערכה <span class="tag soon">בקרוב</span></a>
+    <a href="documents.html"><span class="n">07</span> כלים ניהוליים פדגוגיים</a>
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
+    <div class="sect">מרחב ייעוצי</div>
+    <a href="counseling.html">שער המרחב הייעוצי</a>
+    <a href="counseling.html#kit">ערכת הייעוץ</a>
+    <a href="counseling.html#life-skills">כישורי חיים</a>
+    <a href="counseling.html#neshira">מניעת נשירה</a>
+    <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+    <a href="counseling.html#asa">אס"א וחונכות</a>
+    <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">נהלים ומסמכים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+    <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+    <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+    <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+    <div class="sect">שירותים</div>
+    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <a href="install.html">📲 עוגן והאתר בנייד</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <div class="sect">אודות</div>
+    <a class="dis">מי אנחנו</a>
+    <a class="dis">יצירת קשר</a>
+    <a class="dis">הצהרת נגישות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
 
-<!-- ================= APP ================= -->
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <h1>תוכניות עבודה בית־ספריות</h1>
-      <p id="brandSub">שנת הלימודים תשפ״ז</p>
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+      <a href="career.html">נתיבי חניכות וקריירה</a>
+      <a class="dis">תוכניות לימודים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="ai.html">שילוב AI בחינוך</a>
+      <a class="dis">הערכה</a>
+      <a href="documents.html">כלים ניהוליים פדגוגיים</a>
     </div>
-    <div class="who" id="whoBox"></div>
-    <nav id="nav"></nav>
-    <div class="sidebar-foot" id="sideFoot"></div>
-    <input type="file" id="fileInput" accept=".json" hidden>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <div>
-        <h2 id="pageTitle">דשבורד</h2>
-        <div class="sub" id="pageSub"></div>
-      </div>
-      <div class="spacer"></div>
-      <div id="topActions" class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"></div>
+  </span>
+  <span class="navitem"><a class="lnk" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
+      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
+      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
     </div>
-    <div class="content" id="content"></div>
-  </main>
+  </span>
+  <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="counseling.html#kit">ערכת הייעוץ</a>
+      <a href="counseling.html#life-skills">כישורי חיים</a>
+      <a href="counseling.html#neshira">מניעת נשירה</a>
+      <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
+      <a href="counseling.html#asa">אס"א וחונכות</a>
+      <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="procedures.html#hanchayot">הנחיות המינהל · תשפ"ז</a>
+      <a href="procedures.html#tfasim">טפסים ומכתבים</a>
+      <a href="procedures.html#hadracha">הדרכה ופיתוח מקצועי</a>
+      <a href="procedures.html#takzivim">תקציבים ייעודיים · קודי פעילות</a>
+      <a href="procedures.html#vaadat-tichnun">לוח ועדת התכנון</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
+      <a href="gantt.html">לוח גאנט צוותים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="supervision.html">מרחב פיקוח<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="supervision.html#vaadot">ועדות מלוות</a>
+      <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+      <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+      <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+      <a href="tashpaz.html">תכנון תשפ"ז</a>
+      <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+      <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+      <a href="drive-menahalim.html">דרייב מנהלים</a>
+      <a href="tashpaz.html">היערכות תשפ"ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="tafkidim.html">כל התפקידים וההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+      <a href="https://drive.google.com/drive/folders/1BFTo7pzI43UQC5IRTsi6y2gBFqAw5-d5" target="_blank" rel="noopener">דרייב · מורים חונכים</a>
+      <a href="https://drive.google.com/drive/folders/13eEoLXekIZwwhZnTTKfJmbxaZtls14TC" target="_blank" rel="noopener">דרייב · פיתוח צוות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">לוח גאנט והשתלמויות<span class="caret">▼</span></a>
+    <div class="sub">
+      <a href="hishtalmuyot.html">דף ההשתלמויות · תשפ"ז</a>
+      <a href="gantt.html">לוח הגאנט · צוותים</a>
+    </div>
+  </span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+<div style="background:linear-gradient(160deg,var(--blue-bg),#fff 70%);padding:60px var(--px) 46px">
+  <div style="max-width:720px">
+    <span class="tag" style="background:var(--navy);color:#fff;font-size:.78rem">בבנייה</span>
+    <h1 style="margin:14px 0 10px">תוכניות עבודה לבעלי תפקידים</h1>
+    <p class="rv d2 lead">המערכת סגורה כעת לעדכון ובנייה מחדש, ותיפתח בהמשך השנה.
+    בינתיים אפשר להיעזר בהגדרות התפקיד הרשמיות של משרד העבודה ובהנחיות השעות והגמולים.</p>
+    <div class="rv d3" style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn primary" href="tafkidim.html">מפת התפקידים וההגדרות</a>
+      <a class="btn line" href="baaley-tafkidim.html">שעות, גמולים ודגשים</a>
+      <a class="btn line" href="menahalim.html">חזרה למרחב מנהלים</a>
+    </div>
+  </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<dialog id="dlg">
-  <div class="card-head"><h3 id="dlgTitle">כותרת</h3></div>
-  <div class="card-body" id="dlgBody"></div>
-  <div class="dlg-foot">
-    <button class="btn" id="dlgOk">אישור</button>
-    <button class="btn ghost" id="dlgCancel">ביטול</button>
-  </div>
-</dialog>
-
-<script>
-/* ---- נקודת הזרקה לחבילות הפצה. אין לערוך את השורה הבאה ---- */
-/*__SEED_START__*//*__SEED_END__*/
-const SEEDED = (typeof __SEED__ !== 'undefined') ? __SEED__ : null;
-/* עותק נקי של הקובץ, נלכד לפני כל שינוי ב־DOM — משמש ליצירת חבילות */
-const PRISTINE_HTML = document.documentElement.outerHTML;
-
-/* =========================================================
-   1. CONFIG
-   ========================================================= */
-const MONTHS = ['ספטמבר','אוקטובר','נובמבר','דצמבר','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט'];
-
-const ROLES = [
-  {id:'hevrati',  name:'רכז/ת חברתי',       short:'חברתי',  color:'#c8622f', ico:'◆',
-   focus:'חיי חברה, מועצת תלמידים, טקסים, ימי שיא, מנהיגות ומעורבות חברתית'},
-  {id:'yoetzet',  name:'יועצת חינוכית',      short:'ייעוץ',  color:'#7a4f9c', ico:'●',
-   focus:'רווחה נפשית, מניעה, כישורי חיים, ליווי פרטני, קשר עם הורים וגורמי חוץ'},
-  {id:'matlit',   name:'מת״לית',             short:'מת״ל',   color:'#2e7d5b', ico:'▲',
-   focus:'למידה משמעותית, פדגוגיה דיגיטלית, הכשרת צוות, חדשנות והטמעת כלים'},
-  {id:'hachala',  name:'רכז/ת הכלה ושילוב',  short:'הכלה',   color:'#2f6f9e', ico:'■',
-   focus:'תלמידים עם צרכים מיוחדים, התאמות, תוכניות אישיות, עבודה עם צוותי חינוך מיוחד'},
-  {id:'pedagogi', name:'רכז/ת פדגוגי',       short:'פדגוגי', color:'#b0851f', ico:'★',
-   focus:'הישגים לימודיים, הערכה ומדידה, פיתוח מקצועי, מקצועות ליבה ובחינות'},
-  {id:'menahelet',name:'מנהל/ת בית הספר',    short:'ניהול',  color:'#2f4b7c', ico:'⬢',
-   focus:'חזון בית ספרי, אקלים, ניהול צוות, קשרי קהילה, תקציב ומשאבים'}
-];
-const ROLE_OTHER = {id:'other', name:'תפקיד נוסף', short:'נוסף', color:'#64748b', ico:'◇',
-  focus:'תחום נוסף שהוגדר על ידי בית הספר'};
-const ALL_ROLES = [...ROLES, ROLE_OTHER];
-const ROLE_BY_ID = Object.fromEntries(ALL_ROLES.map(r=>[r.id,r]));
-
-/* =========================================================
-   2. STATE + MIGRATION
-   ========================================================= */
-/* מפתח אחסון ייחודי לכל חבילה — כדי ששני קבצים על אותו מחשב לא ידרסו זה את זה */
-const KEY = 'work_plans_v2' + (SEEDED ? '::' + SEEDED.id : '');
-const OLD_KEYS = ['work_plans_network_v2','work_plans_network_v1'];
-
-const $ = s=>document.querySelector(s);
-const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money = n => new Intl.NumberFormat('he-IL').format(Math.round(n||0));
-const numOf = v => { const m=String(v??'').replace(/[^\d.]/g,''); return m? parseFloat(m)||0 : 0; };
-const uid = ()=> Math.random().toString(36).slice(2,10);
-const today = ()=> new Date().toLocaleDateString('he-IL');
-const initials = n => { const p=String(n||'').trim().split(/\s+/); return p.length>1? p[0][0]+p[1][0] : (p[0]||'?').slice(0,2); };
-
-function emptyPlan(){ return {updated:'', vision:'', goals:[], objectives:[], actions:[], monthly:[]}; }
-function newCode(){ return 'BS-' + Math.floor(1000+Math.random()*9000); }
-
-function newSchool(name){
-  const s = {id:uid(), code:newCode(), name, selfRegister:true, staff:[], plans:{}};
-  ROLES.forEach(r=>{
-    const st = {id:r.id, roleId:r.id, roleLabel:'', name:'', email:'', phone:''};
-    s.staff.push(st); s.plans[st.id] = emptyPlan();
-  });
-  return s;
-}
-function healSchool(s){
-  s.id ||= uid(); s.code ||= newCode(); s.plans ||= {};
-  if(s.selfRegister===undefined) s.selfRegister = true;
-  if(!Array.isArray(s.staff) || !s.staff.length){
-    s.staff = ROLES.map(r=>({id:r.id, roleId:r.id, roleLabel:'',
-      name:(s.plans[r.id]&&s.plans[r.id].owner)||'', email:'', phone:''}));
-  }
-  s.staff.forEach(st=>{
-    st.id ||= uid(); st.roleId ||= 'other';
-    st.roleLabel ??= ''; st.name ??= ''; st.email ??= ''; st.phone ??= '';
-    if(!s.plans[st.id]) s.plans[st.id] = emptyPlan();
-    const p = s.plans[st.id];
-    p.updated ??= ''; p.vision ??= '';
-    ['goals','objectives','actions','monthly'].forEach(k=> p[k] = Array.isArray(p[k])? p[k] : []);
-    delete p.owner;
-  });
-  return s;
-}
-function freshState(){
-  const s = newSchool('בית הספר שלי');
-  return {v:2, network:{name:'רשת בתי הספר', year:'תשפ״ז', pin:''},
-          schools:[s], activeSchool:s.id, activeStaff:'menahelet', view:'dashboard', session:null};
-}
-function load(){
-  /* חבילת הפצה: זריעת הנתונים ההתחלתיים רק אם אין עדיין נתונים מקומיים */
-  if(SEEDED){ try{ if(!localStorage.getItem(KEY)) localStorage.setItem(KEY, SEEDED.data); }catch(e){} }
-  let d = null;
-  try{ d = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){}
-  if(!d && !SEEDED){ for(const k of OLD_KEYS){ try{ d = JSON.parse(localStorage.getItem(k)||'null'); }catch(e){} if(d) break; } }
-  if(!d || !Array.isArray(d.schools) || !d.schools.length) return freshState();
-  d.v = 2;
-  d.network ||= {name:'רשת בתי הספר', year:'תשפ״ז', pin:''};
-  d.network.name ??= 'רשת בתי הספר'; d.network.year ??= 'תשפ״ז'; d.network.pin ??= '';
-  d.schools.forEach(healSchool);
-  if(!d.schools.find(s=>s.id===d.activeSchool)) d.activeSchool = d.schools[0].id;
-  d.session ??= null; d.view ||= 'dashboard';
-  return d;
-}
-let state = load();
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast('⚠ שגיאת שמירה — ייתכן שהאחסון מלא'); } }
-
-function school(){ return state.schools.find(s=>s.id===state.activeSchool) || state.schools[0]; }
-function staffList(s){ return (s||school()).staff; }
-function staffById(id, s){ return staffList(s).find(x=>x.id===id); }
-function activeStaff(){ return staffById(state.activeStaff) || staffList()[0]; }
-function plan(staffId){ const s=school(); return s.plans[staffId || state.activeStaff] || s.plans[staffList()[0].id]; }
-function roleOf(st){ return ROLE_BY_ID[st?.roleId] || ROLE_OTHER; }
-function roleName(st){ return (st?.roleLabel||'').trim() || roleOf(st).name; }
-function isPrincipal(){ return !!(state.session && state.session.principal); }
-function touch(id){ const p = plan(id); if(p) p.updated = today(); }
-
-/* =========================================================
-   3. SMALL UI HELPERS
-   ========================================================= */
-function toast(msg){
-  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600);
-}
-/* generic dialog: fields = [{key,label,type,value,placeholder,options}] */
-function form(title, fields, onOk, okLabel){
-  const d=$('#dlg');
-  $('#dlgTitle').textContent = title;
-  $('#dlgOk').textContent = okLabel || 'אישור';
-  $('#dlgBody').innerHTML = fields.map(f=>`
-    <div class="field">
-      <label>${esc(f.label)}</label>
-      ${f.type==='select'
-        ? `<select data-k="${f.key}">${f.options.map(o=>`<option value="${esc(o.v)}" ${o.v===f.value?'selected':''}>${esc(o.t)}</option>`).join('')}</select>`
-        : f.type==='checkbox'
-        ? `<label style="display:flex;gap:8px;align-items:center;font-weight:500;cursor:pointer"><input type="checkbox" data-k="${f.key}" ${f.value?'checked':''} style="width:17px;height:17px;accent-color:var(--brand)"> ${esc(f.note||'')}</label>`
-        : `<input type="${f.type||'text'}" data-k="${f.key}" value="${esc(f.value||'')}" placeholder="${esc(f.placeholder||'')}">`}
-      ${f.hint? `<div style="font-size:11.5px;color:var(--ink-3);margin-top:4px">${esc(f.hint)}</div>`:''}
-    </div>`).join('');
-  d.showModal();
-  const first = $('#dlgBody').querySelector('input,select'); if(first) setTimeout(()=>first.focus(),50);
-  const collect = ()=>{ const o={}; $('#dlgBody').querySelectorAll('[data-k]').forEach(el=>{
-    o[el.dataset.k] = el.type==='checkbox'? el.checked : el.value.trim(); }); return o; };
-  const ok=()=>{ const v=collect(); d.close(); cleanup(); onOk(v); };
-  const no=()=>{ d.close(); cleanup(); };
-  const key=e=>{ if(e.key==='Enter' && e.target.tagName!=='TEXTAREA'){ e.preventDefault(); ok(); } };
-  function cleanup(){ $('#dlgOk').removeEventListener('click',ok); $('#dlgCancel').removeEventListener('click',no); $('#dlgBody').removeEventListener('keydown',key); }
-  $('#dlgOk').addEventListener('click',ok); $('#dlgCancel').addEventListener('click',no); $('#dlgBody').addEventListener('keydown',key);
-}
-
-/* =========================================================
-   4. METRICS
-   ========================================================= */
-function planCompleteness(p, st){
-  let score=0;
-  if(st && st.name.trim()) score++;
-  if(p.vision.trim()) score++;
-  if(p.goals.filter(g=>g.text.trim()).length) score++;
-  if(p.objectives.filter(o=>o.text.trim()).length) score++;
-  if(p.actions.filter(a=>a.text.trim()).length) score++;
-  if(p.monthly.filter(m=>m.event.trim()).length) score++;
-  return Math.round(score/6*100);
-}
-function planStats(p, st){
-  const items=[...p.actions,...p.monthly];
-  const done=items.filter(i=>i.done).length;
-  return {
-    goals:p.goals.length, objectives:p.objectives.length, actions:p.actions.length, monthly:p.monthly.length,
-    total:items.length, done, pct: items.length? Math.round(done/items.length*100):0,
-    budget: p.monthly.reduce((a,m)=>a+numOf(m.cost),0),
-    monthsUsed: new Set(p.monthly.map(m=>m.month).filter(Boolean)).size,
-    completeness: planCompleteness(p, st)
-  };
-}
-function schoolStats(s){
-  const t={total:0,done:0,budget:0,plansFilled:0,goals:0,objectives:0,activities:0,completeness:0};
-  const list = staffList(s);
-  list.forEach(st=>{
-    const ps = planStats(s.plans[st.id], st);
-    t.total+=ps.total; t.done+=ps.done; t.budget+=ps.budget;
-    t.goals+=ps.goals; t.objectives+=ps.objectives; t.activities+=ps.monthly;
-    t.completeness+=ps.completeness;
-    if(ps.completeness>=50) t.plansFilled++;
-  });
-  t.staffCount = list.length;
-  t.assigned = list.filter(x=>x.name.trim()).length;
-  t.completeness = list.length? Math.round(t.completeness/list.length):0;
-  t.pct = t.total? Math.round(t.done/t.total*100):0;
-  return t;
-}
-const barClass = p => p>=80?'ok' : p>=45?'' : p>=20?'warn' : 'low';
-
-/* =========================================================
-   5. GATE — מסך כניסה
-   ========================================================= */
-function renderGate(){
-  document.body.classList.add('gated');
-  const multi = state.schools.length>1;
-  const s = school();
-  const list = staffList(s);
-
-  $('#gateWrap').innerHTML = `
-    <div class="gate-head">
-      <div class="mark">⬢</div>
-      <h1>תוכניות עבודה בית־ספריות</h1>
-      <p>${esc(state.network.name)} · שנת ${esc(state.network.year)}</p>
-    </div>
-
-    <div class="gate-card">
-      ${multi? `
-      <div class="gate-sec">
-        <h3><span class="n">1</span> באיזה בית ספר את/ה?</h3>
-        <div class="desc">הקובץ מכיל ${state.schools.length} בתי ספר. בחר/י את שלך.</div>
-        <select id="gateSchool" style="max-width:420px">
-          ${state.schools.map(x=>`<option value="${x.id}" ${x.id===s.id?'selected':''}>${esc(x.name)} · ${esc(x.code)}</option>`).join('')}
-        </select>
-      </div>`:`
-      <div class="gate-sec">
-        <h3><span class="n">1</span> בית הספר</h3>
-        <div class="desc" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
-          <b style="color:var(--ink);font-size:14px">${esc(s.name)}</b>
-          <span class="code-chip">${esc(s.code)}</span>
-          <button class="btn ghost sm" id="gateRename">שינוי שם</button>
-        </div>
-      </div>`}
-
-      <div class="gate-sec">
-        <h3><span class="n">2</span> מי את/ה?</h3>
-        <div class="desc">בחר/י את השם שלך מהרשימה. תיכנס/י ישירות לתוכנית העבודה שלך.</div>
-        <div class="people">
-          ${list.map(st=>{
-            const r=roleOf(st), c=planCompleteness(s.plans[st.id], st);
-            const named = !!st.name.trim();
-            return `<button class="person ${named?'':'unassigned'}" data-staff="${st.id}">
-              <div class="av" style="background:${r.color}">${named? esc(initials(st.name)) : r.ico}</div>
-              <div class="t">
-                <div class="n">${named? esc(st.name) : 'טרם שויך'}</div>
-                <div class="r">${esc(roleName(st))}</div>
-              </div>
-              <div class="pc">${c}%</div>
-            </button>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <div class="gate-foot">
-        <button class="btn" id="gatePrincipal">⬢ כניסה כמנהל/ת בית הספר</button>
-        ${s.selfRegister? `<button class="btn ghost" id="gateSelfReg">+ אני לא ברשימה — רישום עצמי</button>`:''}
-        <div style="flex:1"></div>
-        <button class="btn ghost sm" id="gateImport">⤒ ייבוא קובץ</button>
-      </div>
-    </div>
-
-    <div class="gate-note">
-      הנתונים נשמרים בדפדפן של המחשב הזה בלבד. בסיום המילוי — כפתור <b>״שליחת התוכנית שלי״</b> מייצר קובץ קטן שנשלח למנהלת.<br>
-      אין כאן סיסמאות אמיתיות ואין שרת — הזיהוי נועד לנוחות ולסדר, לא לאבטחת מידע.
-    </div>`;
-
-  const gs = $('#gateSchool');
-  if(gs) gs.onchange = ()=>{ state.activeSchool = gs.value; save(); renderGate(); };
-  const gr = $('#gateRename');
-  if(gr) gr.onclick = ()=> form('שם בית הספר', [{key:'name', label:'שם בית הספר', value:s.name}],
-    v=>{ if(v.name){ s.name=v.name; save(); renderGate(); } });
-
-  $('#gateWrap').querySelectorAll('[data-staff]').forEach(b=> b.onclick = ()=>{
-    const st = staffById(b.dataset.staff);
-    if(!st.name.trim()){
-      form('רישום בעל תפקיד', [
-        {key:'name',  label:'שם מלא', placeholder:'השם שלך'},
-        {key:'email', label:'דוא״ל (לא חובה)', type:'email', placeholder:'name@school.org.il'},
-        {key:'phone', label:'טלפון (לא חובה)', placeholder:'050-0000000'}
-      ], v=>{ if(!v.name) return toast('צריך למלא שם'); st.name=v.name; st.email=v.email; st.phone=v.phone;
-              save(); enterAs(st.id,false); }, 'רישום וכניסה');
-      return;
-    }
-    enterAs(st.id, false);
-  });
-
-  $('#gatePrincipal').onclick = ()=>{
-    if(state.network.pin){
-      form('כניסת מנהל/ת', [{key:'pin', label:'קוד גישה', type:'password',
-        hint:'קוד פשוט שהוגדר בהגדרות. אינו אבטחת מידע — רק מונע כניסה בשוגג.'}],
-        v=>{ if(v.pin!==state.network.pin) return toast('⚠ קוד שגוי');
-             enterAs(principalStaffId(), true); });
-    } else enterAs(principalStaffId(), true);
-  };
-  const sr = $('#gateSelfReg');
-  if(sr) sr.onclick = ()=> selfRegisterFlow();
-  $('#gateImport').onclick = ()=> $('#fileInput').click();
-}
-function principalStaffId(){
-  const s = school();
-  return (s.staff.find(x=>x.roleId==='menahelet') || s.staff[0]).id;
-}
-function selfRegisterFlow(){
-  const s = school();
-  form('רישום עצמי', [
-    {key:'name', label:'שם מלא', placeholder:'השם שלך'},
-    {key:'role', label:'התפקיד שלי', type:'select', value:'other',
-      options:[...ROLES.map(r=>({v:r.id,t:r.name})), {v:'other',t:'תפקיד אחר (יש למלא בשדה הבא)'}]},
-    {key:'label', label:'שם התפקיד (אם בחרת ״תפקיד אחר״)', placeholder:'למשל: רכז ביטחון'},
-    {key:'email', label:'דוא״ל (לא חובה)', type:'email'}
-  ], v=>{
-    if(!v.name) return toast('צריך למלא שם');
-    const st = {id:uid(), roleId:v.role, roleLabel:v.role==='other'? (v.label||'תפקיד נוסף') : '',
-                name:v.name, email:v.email||'', phone:''};
-    s.staff.push(st); s.plans[st.id] = emptyPlan();
-    save(); enterAs(st.id,false); toast(`נרשמת: ${v.name}`);
-  }, 'רישום וכניסה');
-}
-function enterAs(staffId, principal){
-  state.session = {schoolId: state.activeSchool, staffId, principal:!!principal};
-  state.activeStaff = staffId;
-  state.view = principal? 'dashboard' : 'form:'+staffId;
-  save(); document.body.classList.remove('gated'); render();
-  const st = staffById(staffId);
-  toast(principal? 'כניסה כמנהל/ת — יש לך גישה לכל התחומים' : `שלום ${st.name||''}`);
-}
-function logout(){ state.session=null; save(); renderGate(); }
-window.logout = logout;
-
-/* =========================================================
-   6. NAV + SHELL
-   ========================================================= */
-function navModel(){
-  const s = school(), me = activeStaff();
-  if(isPrincipal()){
-    return [
-      {group:'סקירה', items:[
-        {id:'dashboard', label:'דשבורד בית ספר', ico:'▤'},
-        {id:'calendar',  label:'לוח שנה מרוכז',  ico:'▦'},
-        {id:'network',   label:'מבט רשתי',       ico:'◈'},
-      ]},
-      {group:'תוכניות העבודה', items: staffList(s).map(st=>({
-        id:'form:'+st.id, label:(st.name.trim()||roleName(st)), ico:roleOf(st).ico,
-        color:roleOf(st).color, pct:planCompleteness(s.plans[st.id], st)}))},
-      {group:'צ׳ק־ליסטים', items:[
-        {id:'master', label:'צ׳ק־ליסט מנהלת', ico:'✦'},
-        {id:'mychecklist', label:'צ׳ק־ליסט לפי אדם', ico:'☑'},
-      ]},
-      {group:'ניהול', items:[
-        {id:'staff',      label:'מרשם בעלי תפקידים', ico:'👥'},
-        {id:'distribute', label:'הפצה ואיסוף',        ico:'⇄'},
-        {id:'settings',   label:'הגדרות',             ico:'⚙'},
-      ]},
-    ];
-  }
-  return [
-    {group:'התוכנית שלי', items:[
-      {id:'form:'+me.id, label:'תוכנית העבודה שלי', ico:roleOf(me).ico, color:roleOf(me).color,
-       pct:planCompleteness(plan(me.id), me)},
-      {id:'mychecklist', label:'הצ׳ק־ליסט שלי', ico:'☑'},
-    ]},
-    {group:'בית הספר', items:[
-      {id:'dashboard', label:'דשבורד בית ספר', ico:'▤'},
-      {id:'calendar',  label:'לוח שנה מרוכז',  ico:'▦'},
-    ]},
-  ];
-}
-function renderShell(){
-  const s = school(), me = activeStaff(), r = roleOf(me);
-  $('#brandSub').textContent = `${state.network.name} · ${state.network.year}`;
-
-  $('#whoBox').innerHTML = `
-    <div class="line1">
-      <div class="av" style="background:${isPrincipal()? 'var(--brand-2)' : r.color}">
-        ${isPrincipal()? '⬢' : (me.name.trim()? esc(initials(me.name)) : r.ico)}</div>
-      <div style="min-width:0">
-        <div class="nm">${esc(me.name.trim() || (isPrincipal()?'מנהל/ת':'לא שויך'))}</div>
-        <div class="rl">${isPrincipal()? 'הרשאת מנהל/ת · גישה מלאה' : esc(roleName(me))}</div>
-      </div>
-    </div>
-    <div class="sc">🏫 ${esc(s.name)} <span style="opacity:.6">·</span> ${esc(s.code)}</div>
-    <button class="swap" onclick="logout()">⇄ החלפת משתמש / בית ספר</button>`;
-
-  $('#nav').innerHTML = navModel().map(g=>`
-    <div class="nav-group">
-      <div class="nav-title">${esc(g.group)}</div>
-      ${g.items.map(it=>`
-        <button data-view="${it.id}" class="${state.view===it.id?'active':''}">
-          <span class="ico" ${it.color?`style="color:${it.color}"`:''}>${it.ico}</span>
-          <span class="lbl">${esc(it.label)}</span>
-          ${it.pct!==undefined? `<span class="badge">${it.pct}%</span>`:''}
-        </button>`).join('')}
-    </div>`).join('');
-  $('#nav').querySelectorAll('button').forEach(b=> b.onclick = ()=> go(b.dataset.view));
-
-  $('#sideFoot').innerHTML = isPrincipal()
-    ? `<button onclick="exportBackup()">⤓ גיבוי מלא (JSON)</button>
-       <button onclick="document.getElementById('fileInput').click()">⤒ ייבוא / איסוף קבצים</button>
-       <button onclick="exportCsv()">⤓ ייצוא לאקסל (CSV)</button>`
-    : `<button onclick="exportMyPlan()">⤓ שליחת התוכנית שלי</button>`;
-}
-function go(view){
-  state.view = view;
-  if(view.startsWith('form:')) state.activeStaff = view.slice(5);
-  save(); render();
-}
-window.go = go;
-
-function render(){
-  if(!state.session){ renderGate(); return; }
-  if(!staffById(state.session.staffId)) { state.session=null; return renderGate(); }
-  document.body.classList.remove('gated');
-  const v = state.view || 'dashboard';
-  const guarded = ['network','master','staff','distribute','settings'];
-  if(!isPrincipal()){
-    if(guarded.includes(v)) state.view = 'dashboard';
-    /* בעל תפקיד רגיל רואה רק את התוכנית שלו */
-    if(v.startsWith('form:') && v.slice(5)!==state.session.staffId){
-      state.activeStaff = state.session.staffId;
-      state.view = 'form:'+state.session.staffId;
-    }
-    if(state.view==='mychecklist') state.activeStaff = state.session.staffId;
-  }
-  renderShell();
-  const vv = state.view;
-  if(vv.startsWith('form:')) return viewForm();
-  ({dashboard:viewDashboard, calendar:viewCalendar, network:viewNetwork, mychecklist:viewMyChecklist,
-    master:viewMaster, staff:viewStaff, distribute:viewDistribute, settings:viewSettings}[vv] || viewDashboard)();
-}
-function setHead(title, sub, actions){
-  $('#pageTitle').textContent = title;
-  $('#pageSub').textContent = sub||'';
-  $('#topActions').innerHTML = actions||'';
-}
-
-/* =========================================================
-   7. VIEW: FORM
-   ========================================================= */
-function viewForm(){
-  const st = activeStaff(), r = roleOf(st), p = plan(st.id);
-  const mine = state.session.staffId===st.id;
-
-  setHead(`תוכנית עבודה — ${roleName(st)}`,
-    `${school().name} · ${state.network.year}${p.updated? ' · עודכן '+p.updated:''}`,
-    `<button class="btn ghost sm" onclick="state.activeStaff='${st.id}';go('mychecklist')">☑ צ׳ק־ליסט</button>
-     <button class="btn ok sm" onclick="exportMyPlan('${st.id}')">⤓ שליחת התוכנית</button>
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-
-  $('#content').innerHTML = `
-    <div class="note">
-      <span style="font-size:16px;line-height:1;color:${r.color}">${r.ico}</span>
-      <div><b>תחום האחריות:</b> ${esc(r.focus)}<br>
-      הכול נשמר אוטומטית תוך כדי כתיבה. הצ׳ק־ליסט והדשבורד של המנהלת מתעדכנים לבד ממה שנכתב כאן.
-      ${mine? '' : '<br><b>שים/י לב:</b> את/ה צופה בתוכנית של אדם אחר בהרשאת מנהל/ת.'}</div>
-    </div>
-
-    <div class="stats" id="formStats"></div>
-
-    <form id="planForm" autocomplete="off">
-      <div class="card">
-        <div class="card-head"><h3><span class="step">0</span> בעל/ת התפקיד</h3></div>
-        <div class="card-body"><div class="grid-3">
-          <div class="field" style="margin:0"><label>שם מלא</label>
-            <input type="text" data-sec="staff" data-field="name" value="${esc(st.name)}" placeholder="שם מלא"></div>
-          <div class="field" style="margin:0"><label>דוא״ל</label>
-            <input type="text" data-sec="staff" data-field="email" value="${esc(st.email)}" placeholder="name@school.org.il"></div>
-          <div class="field" style="margin:0"><label>תפקיד</label>
-            <input type="text" value="${esc(roleName(st))}" disabled></div>
-        </div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><h3><span class="step">1</span> מה אקדם בתחום שלי השנה</h3>
-          <p>האמירה המרכזית שממנה נגזר כל השאר. 2–4 שורות.</p></div>
-        <div class="card-body">
-          <textarea data-sec="meta" data-field="vision" rows="3"
-            placeholder="לדוגמה: השנה אקדם תרבות של מעורבות חברתית פעילה, שבה כל תלמיד בשכבות ז׳–ט׳ לוקח חלק לפחות בפרויקט קהילתי אחד, ומועצת התלמידים הופכת לגוף שמוביל יוזמות ולא רק מבצע.">${esc(p.vision)}</textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><h3><span class="step">2</span> מטרות</h3>
-          <p>לאן רוצים להגיע — ניסוח רחב ואיכותני. בדרך כלל 2–4 מטרות.</p></div>
-        <div class="card-body"><div class="rows" id="rowsGoals"></div>
-          <button type="button" class="add-btn" data-add="goals">+ הוספת מטרה</button></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><h3><span class="step">3</span> יעדים מדידים</h3>
-          <p>כל יעד חייב מספר: מה מודדים, מאיפה מתחילים, לאן מגיעים ומתי בודקים.</p></div>
-        <div class="card-body"><div class="rows" id="rowsObjectives"></div>
-          <button type="button" class="add-btn" data-add="objectives">+ הוספת יעד מדיד</button></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><h3><span class="step">4</span> הפעולות שאעשה כדי להצליח</h3>
-          <p>כל פעולה כאן הופכת אוטומטית לשורה בצ׳ק־ליסט.</p></div>
-        <div class="card-body"><div class="rows" id="rowsActions"></div>
-          <button type="button" class="add-btn" data-add="actions">+ הוספת פעולה</button></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><h3><span class="step">5</span> התוכנית שלי לפי חודשים</h3>
-          <p>אירוע · משתתפים · עלות · מה צריך · שותפים. מכאן נבנים לוח השנה והתקציב.</p>
-          <div class="spacer"></div>
-          <button type="button" class="btn ghost sm" id="btnFillMonths">מילוי שלד 12 חודשים</button></div>
-        <div class="card-body"><div class="rows" id="rowsMonthly"></div>
-          <button type="button" class="add-btn" data-add="monthly">+ הוספת פעילות חודשית</button></div>
-      </div>
-    </form>`;
-
-  drawGoals(); drawObjectives(); drawActions(); drawMonthly(); drawFormStats();
-
-  const f = $('#planForm');
-  f.addEventListener('input', e=>{
-    const el=e.target, sec=el.dataset.sec; if(!sec) return;
-    if(sec==='staff'){ st[el.dataset.field]=el.value; }
-    else if(sec==='meta'){ p[el.dataset.field]=el.value; }
-    else { const it=p[sec].find(x=>x.id===el.dataset.id); if(!it) return;
-           it[el.dataset.field]= el.type==='checkbox'? el.checked : el.value; }
-    touch(st.id); save(); drawFormStats(); renderShell();
-  });
-  f.querySelectorAll('[data-add]').forEach(b=> b.onclick = ()=> addRow(b.dataset.add));
-  $('#btnFillMonths').onclick = ()=>{
-    const have = new Set(p.monthly.map(m=>m.month));
-    MONTHS.forEach(m=>{ if(!have.has(m)) p.monthly.push(newRow('monthly',m)); });
-    p.monthly.sort((a,b)=>MONTHS.indexOf(a.month)-MONTHS.indexOf(b.month));
-    touch(st.id); save(); drawMonthly(); drawFormStats(); renderShell();
-    toast('נוספו שורות שלד לכל 12 החודשים');
-  };
-}
-function newRow(sec, month){
-  if(sec==='goals')      return {id:uid(), text:''};
-  if(sec==='objectives') return {id:uid(), text:'', indicator:'', baseline:'', target:'', dueMonth:''};
-  if(sec==='actions')    return {id:uid(), text:'', when:'', done:false};
-  return {id:uid(), month:month||'', event:'', participants:'', cost:'', needs:'', partners:'', done:false};
-}
-const DRAW = {goals:drawGoals, objectives:drawObjectives, actions:drawActions, monthly:drawMonthly};
-function addRow(sec){
-  plan()[sec].push(newRow(sec));
-  touch(); save(); DRAW[sec](); drawFormStats(); renderShell();
-  const c = $('#rows'+sec[0].toUpperCase()+sec.slice(1));
-  const last = c.querySelector('.row-item:last-child textarea, .row-item:last-child input, .row-item:last-child select');
-  if(last) last.focus();
-}
-function delRow(sec,id){
-  const p=plan(); p[sec]=p[sec].filter(x=>x.id!==id);
-  touch(); save(); DRAW[sec](); drawFormStats(); renderShell();
-}
-window.delRow = delRow;
-
-function drawFormStats(){
-  const el=$('#formStats'); if(!el) return;
-  const st=activeStaff(), s=planStats(plan(st.id), st);
-  el.innerHTML = `
-    <div class="stat brand"><div class="k">שלמות התוכנית</div><div class="v">${s.completeness}%</div>
-      <div class="bar"><i class="${barClass(s.completeness)}" style="width:${s.completeness}%"></i></div></div>
-    <div class="stat"><div class="k">מטרות · יעדים</div><div class="v">${s.goals} · ${s.objectives}</div>
-      <div class="n">${s.objectives? 'יעדים מדידים מוגדרים':'עדיין ללא יעדים מדידים'}</div></div>
-    <div class="stat"><div class="k">פעולות</div><div class="v">${s.actions}</div><div class="n">בצ׳ק־ליסט</div></div>
-    <div class="stat"><div class="k">פעילויות</div><div class="v">${s.monthly}</div><div class="n">ב־${s.monthsUsed} מתוך 12 חודשים</div></div>
-    <div class="stat accent"><div class="k">תקציב מבוקש</div><div class="v">₪${money(s.budget)}</div></div>`;
-}
-function emptyRow(t){ return `<div style="text-align:center;padding:22px;color:var(--ink-3);font-size:13.5px;background:var(--surface-2);border:1px dashed var(--line-strong);border-radius:var(--r-sm)">${esc(t)}</div>`; }
-
-function drawGoals(){
-  const p=plan();
-  $('#rowsGoals').innerHTML = p.goals.length? p.goals.map((g,i)=>`
-    <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="goals" data-id="${g.id}" data-field="text"
-        placeholder="לדוגמה: לחזק את תחושת השייכות והמסוגלות של תלמידי חטיבת הביניים">${esc(g.text)}</textarea>
-    </div><button type="button" class="del" onclick="delRow('goals','${g.id}')">×</button></div>`).join('')
-    : emptyRow('עדיין לא הוגדרו מטרות. התחילו מ־2–3 מטרות מרכזיות לשנה.');
-}
-function drawObjectives(){
-  const p=plan();
-  $('#rowsObjectives').innerHTML = p.objectives.length? p.objectives.map((o,i)=>`
-    <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="objectives" data-id="${o.id}" data-field="text"
-        placeholder="לדוגמה: 80% מתלמידי ז׳–ט׳ ישתתפו לפחות בפרויקט קהילתי אחד עד סוף מאי">${esc(o.text)}</textarea>
-      <div class="grid-4" style="margin-top:8px">
-        <div><span class="mini-label">מדד / איך נמדוד</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="indicator" value="${esc(o.indicator)}" placeholder="שאלון / דוח / ספירה"></div>
-        <div><span class="mini-label">נקודת פתיחה</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="baseline" value="${esc(o.baseline)}" placeholder="45%"></div>
-        <div><span class="mini-label">יעד</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="target" value="${esc(o.target)}" placeholder="80%"></div>
-        <div><span class="mini-label">מועד בדיקה</span>
-          <select data-sec="objectives" data-id="${o.id}" data-field="dueMonth"><option value="">— בחירה —</option>
-            ${MONTHS.map(m=>`<option ${o.dueMonth===m?'selected':''}>${m}</option>`).join('')}</select></div>
-      </div>
-    </div><button type="button" class="del" onclick="delRow('objectives','${o.id}')">×</button></div>`).join('')
-    : emptyRow('יעד מדיד = מספר + מועד. למשל: "מ־45% ל־80% עד מאי".');
-}
-function drawActions(){
-  const p=plan();
-  $('#rowsActions').innerHTML = p.actions.length? p.actions.map((a,i)=>`
-    <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="actions" data-id="${a.id}" data-field="text"
-        placeholder="לדוגמה: להקים צוות מוביל של 12 תלמידים ולקיים מפגש חודשי קבוע">${esc(a.text)}</textarea>
-      <div style="margin-top:8px;max-width:230px"><span class="mini-label">מועד יעד</span>
-        <select data-sec="actions" data-id="${a.id}" data-field="when"><option value="">— לאורך השנה —</option>
-          ${MONTHS.map(m=>`<option ${a.when===m?'selected':''}>${m}</option>`).join('')}</select></div>
-    </div><button type="button" class="del" onclick="delRow('actions','${a.id}')">×</button></div>`).join('')
-    : emptyRow('הפעולות הן הלב של הצ׳ק־ליסט — כל פעולה שתכתבו כאן תופיע שם.');
-}
-function drawMonthly(){
-  const p=plan();
-  $('#rowsMonthly').innerHTML = p.monthly.length? p.monthly.map((m,i)=>`
-    <div class="row-item" style="flex-direction:column;gap:8px">
-      <div style="display:flex;gap:10px;width:100%;align-items:flex-start">
-        <div class="num">${i+1}</div>
-        <div class="grow grid-2">
-          <div><span class="mini-label">חודש</span>
-            <select data-sec="monthly" data-id="${m.id}" data-field="month"><option value="">— בחירת חודש —</option>
-              ${MONTHS.map(x=>`<option ${m.month===x?'selected':''}>${x}</option>`).join('')}</select></div>
-          <div><span class="mini-label">האירוע / הפעילות</span>
-            <input type="text" data-sec="monthly" data-id="${m.id}" data-field="event" value="${esc(m.event)}" placeholder="שם האירוע"></div>
-        </div>
-        <button type="button" class="del" onclick="delRow('monthly','${m.id}')">×</button>
-      </div>
-      <div class="grid-4" style="width:100%;padding-inline-start:32px">
-        <div><span class="mini-label">משתתפים</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="participants" value="${esc(m.participants)}" placeholder="שכבה ט׳ · 120 תלמידים"></div>
-        <div><span class="mini-label">עלות (₪)</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="cost" value="${esc(m.cost)}" placeholder="3500"></div>
-        <div><span class="mini-label">מה צריך</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="needs" value="${esc(m.needs)}" placeholder="אולם, הסעות, הגברה"></div>
-        <div><span class="mini-label">מי השותפים</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="partners" value="${esc(m.partners)}" placeholder="יועצת, מתנ״ס, ועד הורים"></div>
-      </div>
-    </div>`).join('')
-    : emptyRow('אפשר להתחיל מכפתור "מילוי שלד 12 חודשים" ולמלא בהדרגה.');
-}
-
-/* =========================================================
-   8. CHECKLISTS
-   ========================================================= */
-function checklistFor(staffId, s){
-  s = s||school();
-  const p = s.plans[staffId]; if(!p) return [];
-  const out=[];
-  p.actions.forEach(a=>{ if(a.text.trim()) out.push({id:a.id,sec:'actions',staffId,kind:'פעולה',
-    text:a.text, month:a.when||'', done:!!a.done, meta:[]}); });
-  p.monthly.forEach(m=>{ if(m.event.trim()||m.needs.trim()) out.push({id:m.id,sec:'monthly',staffId,kind:'פעילות',
-    text:m.event||'(פעילות ללא שם)', month:m.month||'', done:!!m.done,
-    meta:[m.participants&&`👥 ${m.participants}`, m.cost&&`₪ ${m.cost}`,
-          m.needs&&`📦 ${m.needs}`, m.partners&&`🤝 ${m.partners}`].filter(Boolean)}); });
-  return out;
-}
-function toggleItem(staffId, sec, id, val){
-  const p = school().plans[staffId]; if(!p) return;
-  const it = p[sec].find(x=>x.id===id); if(!it) return;
-  it.done = val; p.updated = today(); save();
-}
-window.toggleItem = toggleItem;
-function chkHTML(items, showWho){
-  return items.map(i=>{
-    const st = staffById(i.staffId), r = roleOf(st);
-    return `<label class="chk ${i.done?'done':''}">
-      <input type="checkbox" ${i.done?'checked':''}
-        onchange="toggleItem('${i.staffId}','${i.sec}','${i.id}',this.checked);this.closest('.chk').classList.toggle('done',this.checked);">
-      <div class="txt"><div class="t">${esc(i.text)}</div>
-        ${(i.meta.length||showWho)? `<div class="m">
-          ${showWho? `<span class="role-chip"><span class="role-dot" style="background:${r.color}"></span>${esc(st.name.trim()||roleName(st))}</span>`:''}
-          ${i.meta.map(m=>`<span>${esc(m)}</span>`).join('')}</div>`:''}
-      </div>
-      <div class="side"><span class="pill ${i.kind==='פעולה'?'brand':'grey'}">${esc(i.kind)}</span>
-        ${i.month? `<span class="pill grey">${esc(i.month)}</span>`:''}</div>
-    </label>`;
-  }).join('');
-}
-
-function viewMyChecklist(){
-  const st = activeStaff(), r = roleOf(st), p = plan(st.id);
-  const all = checklistFor(st.id), done = all.filter(i=>i.done).length;
-  const pct = all.length? Math.round(done/all.length*100):0;
-
-  setHead(`צ׳ק־ליסט — ${roleName(st)}`, `${school().name} · נוצר אוטומטית מהתוכנית`,
-    `${isPrincipal()? `<select id="staffSwitch" style="width:auto;padding:7px 11px;font-weight:600">
-        ${staffList().map(x=>`<option value="${x.id}" ${x.id===st.id?'selected':''}>${esc(x.name.trim()||roleName(x))}</option>`).join('')}
-      </select>`:''}
-     <button class="btn ghost sm" onclick="go('form:${st.id}')">✎ עריכת התוכנית</button>
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-
-  const byMonth={}; all.forEach(i=>{ const k=i.month||'ללא חודש / לאורך השנה'; (byMonth[k]=byMonth[k]||[]).push(i); });
-  const order=[...MONTHS,'ללא חודש / לאורך השנה'].filter(m=>byMonth[m]);
-
-  $('#content').innerHTML = `
-    ${p.vision.trim()? `<div class="note"><span style="font-size:16px;line-height:1;color:${r.color}">${r.ico}</span>
-      <div><b>מה אני מקדם/ת השנה:</b> ${esc(p.vision)}</div></div>`:''}
-    <div class="stats">
-      <div class="stat ok"><div class="k">התקדמות</div><div class="v">${pct}%</div>
-        <div class="bar"><i class="ok" style="width:${pct}%"></i></div>
-        <div class="n">${done} מתוך ${all.length} הושלמו</div></div>
-      <div class="stat"><div class="k">פעולות</div><div class="v">${all.filter(i=>i.kind==='פעולה').length}</div></div>
-      <div class="stat"><div class="k">פעילויות</div><div class="v">${all.filter(i=>i.kind==='פעילות').length}</div></div>
-      <div class="stat accent"><div class="k">תקציב</div><div class="v">₪${money(planStats(p,st).budget)}</div></div>
-    </div>
-    ${all.length? order.map(m=>{
-      const items=byMonth[m], d=items.filter(i=>i.done).length;
-      return `<div class="chk-group"><div class="chk-group-head">
-        <span class="role-dot" style="background:${r.color}"></span><span>${esc(m)}</span>
-        <div class="spacer"></div><span class="pill ${d===items.length?'ok':'grey'}">${d}/${items.length}</span></div>
-        <div class="chk-list">${chkHTML(items,false)}</div></div>`;
-    }).join('')
-    : `<div class="card"><div class="card-body"><div class="empty"><div class="big">☑</div>
-        <h4>הצ׳ק־ליסט עדיין ריק</h4>
-        <p>הוא נבנה לבד ממה שממלאים בתוכנית — כל פעולה בסעיף 4 וכל פעילות חודשית בסעיף 5 מופיעה כאן כשורה לסימון.</p>
-        <button class="btn" style="margin-top:14px" onclick="go('form:${st.id}')">מעבר למילוי התוכנית</button>
-      </div></div></div>`}`;
-
-  const sw=$('#staffSwitch');
-  if(sw) sw.onchange=()=>{ state.activeStaff=sw.value; save(); render(); };
-}
-
-let masterFilter={who:'',month:'',status:'',q:''};
-function viewMaster(){
-  const s = school();
-  setHead('צ׳ק־ליסט מנהלת', `${s.name} · כל התחומים במקום אחד — נבנה ממה שכל בעל תפקיד מילא`,
-    `<button class="btn ghost sm" onclick="go('dashboard')">▤ דשבורד</button>
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-
-  const list = staffList(s);
-  const all = list.flatMap(st=>checklistFor(st.id));
-  const doneAll = all.filter(i=>i.done).length;
-  const pctAll = all.length? Math.round(doneAll/all.length*100):0;
-  const f = masterFilter;
-  const items = all.filter(i=>
-    (!f.who||i.staffId===f.who) && (!f.month||i.month===f.month) &&
-    (!f.status|| (f.status==='done'? i.done : !i.done)) &&
-    (!f.q || (i.text+' '+i.meta.join(' ')).toLowerCase().includes(f.q.toLowerCase())));
-
-  const groupByWho = !!f.month;
-  const groups={}; items.forEach(i=>{ const k=groupByWho? i.staffId : (i.month||'ללא חודש / לאורך השנה');
-    (groups[k]=groups[k]||[]).push(i); });
-  const order = groupByWho ? list.map(x=>x.id).filter(k=>groups[k])
-                           : [...MONTHS,'ללא חודש / לאורך השנה'].filter(k=>groups[k]);
-
-  $('#content').innerHTML = `
-    <div class="stats">
-      <div class="stat ok"><div class="k">ביצוע בית ספרי כולל</div><div class="v">${pctAll}%</div>
-        <div class="bar"><i class="ok" style="width:${pctAll}%"></i></div>
-        <div class="n">${doneAll} מתוך ${all.length} משימות</div></div>
-      ${list.slice(0,4).map(st=>{
-        const r=roleOf(st), it=checklistFor(st.id), d=it.filter(x=>x.done).length;
-        const p=it.length? Math.round(d/it.length*100):0;
-        return `<div class="stat"><div class="k" style="display:flex;align-items:center;gap:5px">
-          <span class="role-dot" style="background:${r.color}"></span>${esc(st.name.trim()||roleOf(st).short)}</div>
-          <div class="v" style="color:${r.color}">${p}%</div>
-          <div class="bar"><i style="width:${p}%;background:${r.color}"></i></div>
-          <div class="n">${d}/${it.length} משימות</div></div>`;
-      }).join('')}
-    </div>
-
-    <div class="filters no-print">
-      <span class="lbl">סינון:</span>
-      <select id="fWho"><option value="">כל בעלי התפקידים</option>
-        ${list.map(st=>`<option value="${st.id}" ${f.who===st.id?'selected':''}>${esc(st.name.trim()||roleName(st))}</option>`).join('')}</select>
-      <select id="fMonth"><option value="">כל החודשים</option>${MONTHS.map(m=>`<option ${f.month===m?'selected':''}>${m}</option>`).join('')}</select>
-      <select id="fStatus"><option value="">הכול</option>
-        <option value="open" ${f.status==='open'?'selected':''}>פתוח בלבד</option>
-        <option value="done" ${f.status==='done'?'selected':''}>הושלם בלבד</option></select>
-      <input type="text" id="fQ" placeholder="חיפוש חופשי…" value="${esc(f.q)}">
-      <button class="btn ghost sm" id="fClear">ניקוי</button>
-      <span style="margin-inline-start:auto;font-size:12.5px;color:var(--ink-3)">מוצגות ${items.length} מתוך ${all.length}</span>
-    </div>
-
-    ${items.length? order.map(k=>{
-      const g=groups[k], d=g.filter(i=>i.done).length;
-      const st = groupByWho? staffById(k) : null;
-      return `<div class="chk-group"><div class="chk-group-head">
-        ${st? `<span class="role-dot" style="background:${roleOf(st).color}"></span><span>${esc(st.name.trim()||roleName(st))} · ${esc(roleName(st))}</span>`
-            : `<span style="color:var(--brand)">▦</span><span>${esc(k)}</span>`}
-        <div class="spacer"></div><span class="pill ${d===g.length?'ok':d?'warn':'grey'}">${d}/${g.length}</span></div>
-        <div class="chk-list">${chkHTML(g, !groupByWho)}</div></div>`;
-    }).join('')
-    : `<div class="card"><div class="card-body"><div class="empty"><div class="big">✦</div><h4>אין משימות להצגה</h4>
-        <p>${all.length? 'נסו לשנות את הסינון.' : 'הצ׳ק־ליסט המרכז מתמלא לבד ככל שבעלי התפקידים ממלאים את תוכניות העבודה. ראו מסך ״הפצה ואיסוף״.'}</p>
-      </div></div></div>`}
-
-    <div class="card" style="margin-top:20px">
-      <div class="card-head"><h3>מעקב מילוי — מה עוד חסר</h3><p>למי לשלוח תזכורת</p></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>תפקיד</th><th>שם</th><th>אמירה</th><th>מטרות</th><th>יעדים</th><th>פעולות</th><th>חודשי</th><th>שלמות</th><th>עודכן</th></tr></thead>
-        <tbody>${list.map(st=>{
-          const p=s.plans[st.id], c=planCompleteness(p,st);
-          const miss='<span class="pill danger">חסר</span>';
-          return `<tr>
-            <td><span class="role-chip"><span class="role-dot" style="background:${roleOf(st).color}"></span>${esc(roleName(st))}</span></td>
-            <td>${st.name.trim()? esc(st.name):'<span class="pill danger">לא שויך</span>'}</td>
-            <td>${p.vision.trim()? '<span class="pill ok">✓</span>':miss}</td>
-            <td>${p.goals.filter(g=>g.text.trim()).length||miss}</td>
-            <td>${p.objectives.filter(o=>o.text.trim()).length||miss}</td>
-            <td>${p.actions.filter(a=>a.text.trim()).length||miss}</td>
-            <td>${p.monthly.filter(m=>m.event.trim()).length||miss}</td>
-            <td style="min-width:105px"><b>${c}%</b><div class="bar"><i class="${barClass(c)}" style="width:${c}%"></i></div></td>
-            <td style="font-size:12px;color:var(--ink-3)">${esc(p.updated||'—')}</td>
-          </tr>`;}).join('')}</tbody></table></div>
-    </div>`;
-
-  $('#fWho').onchange   = e=>{ masterFilter.who=e.target.value; viewMaster(); };
-  $('#fMonth').onchange = e=>{ masterFilter.month=e.target.value; viewMaster(); };
-  $('#fStatus').onchange= e=>{ masterFilter.status=e.target.value; viewMaster(); };
-  let qt; $('#fQ').oninput = e=>{ clearTimeout(qt); const v=e.target.value;
-    qt=setTimeout(()=>{ masterFilter.q=v; viewMaster(); const i=$('#fQ'); i.focus(); i.setSelectionRange(v.length,v.length); },350); };
-  $('#fClear').onclick  = ()=>{ masterFilter={who:'',month:'',status:'',q:''}; viewMaster(); };
-}
-
-/* =========================================================
-   9. DASHBOARD / CALENDAR / NETWORK
-   ========================================================= */
-function viewDashboard(){
-  const s=school(), t=schoolStats(s), list=staffList(s);
-  setHead(`דשבורד — ${s.name}`, `תמונת מצב של כל תוכניות העבודה · ${state.network.year}`,
-    `${isPrincipal()? `<button class="btn ghost sm" onclick="go('master')">✦ צ׳ק־ליסט מנהלת</button>`:''}
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-
-  const cards = list.map(st=>{
-    const r=roleOf(st), p=s.plans[st.id], ps=planStats(p,st);
-    const months = MONTHS.map(m=>{
-      const it=p.monthly.filter(x=>x.month===m);
-      const cls= it.length? (it.every(x=>x.done)?'full':'has') : '';
-      return `<div class="month-cell ${cls}" title="${esc(m)}: ${it.length} פעילויות">${m.slice(0,3)}</div>`;
-    }).join('');
-    return `<div class="role-card" style="border-top-color:${r.color}">
-      <h4><span class="role-dot" style="background:${r.color}"></span>${esc(roleName(st))}</h4>
-      <div class="owner">${st.name.trim()? esc(st.name):'<i>טרם שויך בעל תפקיד</i>'}${p.updated? ' · '+esc(p.updated):''}</div>
-      <div class="bar" style="margin-top:10px"><i class="${barClass(ps.completeness)}" style="width:${ps.completeness}%"></i></div>
-      <div style="font-size:11.5px;color:var(--ink-3);margin-top:4px">שלמות ${ps.completeness}% · ביצוע ${ps.pct}%</div>
-      <div class="mini-stats">
-        <div><b>${ps.goals}</b>מטרות</div><div><b>${ps.objectives}</b>יעדים</div>
-        <div><b>${ps.actions}</b>פעולות</div><div><b>${ps.monthly}</b>פעילויות</div>
-        <div><b style="font-size:14px">₪${money(ps.budget)}</b>תקציב</div></div>
-      <div class="month-strip">${months}</div>
-      <div class="go">
-        <button class="btn sm" onclick="go('form:${st.id}')">פתיחת התוכנית</button>
-        <button class="btn ghost sm" onclick="state.activeStaff='${st.id}';go('mychecklist')">צ׳ק־ליסט</button></div>
-    </div>`;
-  }).join('');
-
-  const budgets = list.map(st=>({st, b:planStats(s.plans[st.id],st).budget})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
-  const maxB = Math.max(1,...budgets.map(x=>x.b));
-  const objs = list.flatMap(st=> s.plans[st.id].objectives.filter(o=>o.text.trim()).map(o=>({st,o})));
-
-  $('#content').innerHTML = `
-    <div class="stats">
-      <div class="stat brand"><div class="k">שלמות תוכניות העבודה</div><div class="v">${t.completeness}%</div>
-        <div class="bar"><i class="${barClass(t.completeness)}" style="width:${t.completeness}%"></i></div>
-        <div class="n">${t.plansFilled} מתוך ${t.staffCount} תוכניות מלאות ברובן</div></div>
-      <div class="stat ok"><div class="k">ביצוע בפועל</div><div class="v">${t.pct}%</div>
-        <div class="bar"><i class="ok" style="width:${t.pct}%"></i></div>
-        <div class="n">${t.done} מתוך ${t.total} משימות</div></div>
-      <div class="stat"><div class="k">מטרות / יעדים</div><div class="v">${t.goals} / ${t.objectives}</div>
-        <div class="n">מטרות / יעדים מדידים</div></div>
-      <div class="stat"><div class="k">פעילויות מתוכננות</div><div class="v">${t.activities}</div><div class="n">לאורך השנה</div></div>
-      <div class="stat accent"><div class="k">תקציב בית ספרי</div><div class="v">₪${money(t.budget)}</div><div class="n">סיכום כל התחומים</div></div>
-    </div>
-
-    <div class="sec-title">תוכניות העבודה לפי בעלי תפקידים</div>
-    <div class="role-grid">${cards}</div>
-
-    <div class="card" style="margin-top:24px">
-      <div class="card-head"><h3>חלוקת התקציב בין התחומים</h3></div>
-      <div class="card-body">${budgets.length? budgets.map(x=>`
-        <div style="margin-bottom:11px">
-          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px">
-            <span class="role-chip"><span class="role-dot" style="background:${roleOf(x.st).color}"></span>${esc(x.st.name.trim()||roleName(x.st))}</span>
-            <span>₪${money(x.b)} <span style="color:var(--ink-3);font-weight:500">(${Math.round(x.b/t.budget*100)}%)</span></span></div>
-          <div class="bar"><i style="width:${x.b/maxB*100}%;background:${roleOf(x.st).color}"></i></div>
-        </div>`).join('')
-        : `<div class="empty"><div class="big">₪</div><h4>עדיין לא הוזנו עלויות</h4>
-           <p>ברגע שבעלי התפקידים ימלאו עלויות בתוכנית החודשית, תופיע כאן חלוקת התקציב.</p></div>`}</div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>כל היעדים המדידים בבית הספר</h3><p>התמונה שאפשר להציג לפיקוח או לוועד המנהל</p></div>
-      ${objs.length? `<div class="tbl-wrap"><table>
-        <thead><tr><th>תחום</th><th>יעד</th><th>מדד</th><th>מ־</th><th>ל־</th><th>בדיקה</th></tr></thead>
-        <tbody>${objs.map(({st,o})=>`<tr>
-          <td><span class="role-chip"><span class="role-dot" style="background:${roleOf(st).color}"></span>${esc(roleOf(st).short)}</span></td>
-          <td style="min-width:280px">${esc(o.text)}</td><td>${esc(o.indicator)||'—'}</td>
-          <td>${esc(o.baseline)||'—'}</td><td><b>${esc(o.target)||'—'}</b></td>
-          <td>${o.dueMonth? `<span class="pill grey">${esc(o.dueMonth)}</span>`:'—'}</td></tr>`).join('')}</tbody></table></div>`
-        : `<div class="card-body"><div class="empty"><div class="big">◎</div><h4>אין עדיין יעדים מדידים</h4>
-           <p>יעד מדיד הוא מה שהופך תוכנית עבודה למשהו שאפשר לבדוק בסוף השנה. עודדו כל בעל תפקיד להגדיר לפחות שניים.</p></div></div>`}
-    </div>`;
-}
-
-function viewCalendar(){
-  const s=school(), list=staffList(s);
-  setHead('לוח שנה מרוכז', `${s.name} · כל הפעילויות של כל התחומים לפי חודשים`,
-    `<button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-  const all = list.flatMap(st=> s.plans[st.id].monthly.filter(m=>m.event.trim()).map(m=>({...m, st})));
-  let busiest='—', bn=0; MONTHS.forEach(m=>{ const c=all.filter(x=>x.month===m).length; if(c>bn){bn=c;busiest=m;} });
-  const noMonth = all.filter(x=>!x.month);
-
-  $('#content').innerHTML = `
-    <div class="stats">
-      <div class="stat brand"><div class="k">סך פעילויות בשנה</div><div class="v">${all.length}</div></div>
-      <div class="stat"><div class="k">החודש העמוס ביותר</div><div class="v" style="font-size:20px">${esc(busiest)}</div>
-        <div class="n">${bn? bn+' פעילויות':''}</div></div>
-      <div class="stat accent"><div class="k">סך עלויות</div><div class="v">₪${money(all.reduce((a,x)=>a+numOf(x.cost),0))}</div></div>
-      <div class="stat ok"><div class="k">בוצעו</div><div class="v">${all.filter(x=>x.done).length}</div><div class="n">מתוך ${all.length}</div></div>
-    </div>
-    ${noMonth.length? `<div class="note warn"><span>⚠</span><div><b>${noMonth.length} פעילויות ללא חודש משויך</b> — הן לא יופיעו בלוח עד שייבחר להן חודש בטופס.</div></div>`:''}
-    ${MONTHS.map(mo=>{
-      const it=all.filter(x=>x.month===mo), b=it.reduce((a,x)=>a+numOf(x.cost),0);
-      return `<div class="card"><div class="card-head"><h3>${esc(mo)}</h3><div class="spacer"></div>
-        <span class="pill grey">${it.length} פעילויות</span>${b? `<span class="pill brand">₪${money(b)}</span>`:''}</div>
-        ${it.length? `<div class="tbl-wrap"><table>
-          <thead><tr><th>תחום</th><th>האירוע</th><th>משתתפים</th><th>עלות</th><th>מה צריך</th><th>שותפים</th><th>סטטוס</th></tr></thead>
-          <tbody>${it.map(x=>`<tr>
-            <td><span class="role-chip"><span class="role-dot" style="background:${roleOf(x.st).color}"></span>${esc(roleOf(x.st).short)}</span></td>
-            <td><b>${esc(x.event)}</b></td><td>${esc(x.participants)||'—'}</td>
-            <td>${x.cost? '₪'+esc(x.cost):'—'}</td><td>${esc(x.needs)||'—'}</td><td>${esc(x.partners)||'—'}</td>
-            <td>${x.done? '<span class="pill ok">בוצע</span>':'<span class="pill warn">מתוכנן</span>'}</td></tr>`).join('')}</tbody></table></div>`
-        : `<div class="card-body" style="padding:14px 20px;color:var(--ink-3);font-size:13px">אין פעילויות מתוכננות בחודש זה.</div>`}
-      </div>`;}).join('')}`;
-}
-
-function viewNetwork(){
-  setHead('מבט רשתי', `השוואה בין ${state.schools.length} בתי ספר`,
-    `<button class="btn ghost sm" onclick="go('distribute')">⇄ הפצה ואיסוף</button>
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-  const rows = state.schools.map(s=>({s, t:schoolStats(s)}));
-  const totalB = rows.reduce((a,x)=>a+x.t.budget,0);
-  const avgC = Math.round(rows.reduce((a,x)=>a+x.t.completeness,0)/rows.length);
-  const avgE = Math.round(rows.reduce((a,x)=>a+x.t.pct,0)/rows.length);
-
-  $('#content').innerHTML = `
-    <div class="stats">
-      <div class="stat brand"><div class="k">בתי ספר בקובץ</div><div class="v">${state.schools.length}</div></div>
-      <div class="stat"><div class="k">שלמות ממוצעת</div><div class="v">${avgC}%</div>
-        <div class="bar"><i class="${barClass(avgC)}" style="width:${avgC}%"></i></div></div>
-      <div class="stat ok"><div class="k">ביצוע ממוצע</div><div class="v">${avgE}%</div>
-        <div class="bar"><i class="ok" style="width:${avgE}%"></i></div></div>
-      <div class="stat accent"><div class="k">תקציב רשתי</div><div class="v">₪${money(totalB)}</div></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>מצב בתי הספר</h3><p>אחוז = כמה מהתוכנית מולאה בממוצע על פני כל בעלי התפקידים</p>
-        <div class="spacer"></div><button class="btn accent sm" id="netAdd">+ הוספת בית ספר</button></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>בית ספר</th><th>קוד</th><th>בעלי תפקידים</th><th>שלמות</th><th>ביצוע</th><th>יעדים</th><th>תקציב</th><th></th></tr></thead>
-        <tbody>${rows.map(({s,t})=>`<tr>
-          <td><b>${esc(s.name)}</b>${s.id===state.activeSchool?' <span class="pill brand">פעיל</span>':''}</td>
-          <td><span class="code-chip">${esc(s.code)}</span></td>
-          <td>${t.assigned}/${t.staffCount} שויכו</td>
-          <td style="min-width:120px"><b>${t.completeness}%</b><div class="bar"><i class="${barClass(t.completeness)}" style="width:${t.completeness}%"></i></div></td>
-          <td style="min-width:120px"><b>${t.pct}%</b><div class="bar"><i class="ok" style="width:${t.pct}%"></i></div></td>
-          <td>${t.objectives}</td><td>₪${money(t.budget)}</td>
-          <td><button class="btn ghost sm" onclick="switchSchool('${s.id}')">${s.id===state.activeSchool?'פתוח':'מעבר'}</button></td>
-        </tr>`).join('')}</tbody>
-        <tfoot><tr style="background:var(--surface-2);font-weight:700">
-          <td colspan="3">סה״כ</td><td>${avgC}%</td><td>${avgE}%</td>
-          <td>${rows.reduce((a,x)=>a+x.t.objectives,0)}</td><td>₪${money(totalB)}</td><td></td></tr></tfoot>
-      </table></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>השוואת תחומים בין בתי הספר</h3><p>שלמות התוכנית לפי תפקידי הליבה</p></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>בית ספר</th>${ROLES.map(r=>`<th style="text-align:center">${esc(r.short)}</th>`).join('')}</tr></thead>
-        <tbody>${state.schools.map(s=>`<tr><td><b>${esc(s.name)}</b></td>
-          ${ROLES.map(r=>{
-            const st = s.staff.find(x=>x.roleId===r.id);
-            if(!st) return `<td style="text-align:center;color:var(--ink-3)">—</td>`;
-            const c = planCompleteness(s.plans[st.id], st);
-            const bg=c>=80?'var(--ok-soft)':c>=45?'var(--brand-soft)':c>=20?'var(--warn-soft)':'var(--danger-soft)';
-            const fg=c>=80?'var(--ok)':c>=45?'var(--brand)':c>=20?'var(--warn)':'var(--danger)';
-            return `<td style="text-align:center"><span style="display:inline-block;min-width:44px;padding:2px 7px;border-radius:6px;background:${bg};color:${fg};font-weight:700;font-size:12.5px">${c}%</span></td>`;
-          }).join('')}</tr>`).join('')}</tbody>
-      </table></div>
-    </div>`;
-  $('#netAdd').onclick = addSchool;
-}
-function switchSchool(id){ state.activeSchool=id;
-  const st = staffList().find(x=>x.roleId==='menahelet')||staffList()[0];
-  state.activeStaff=st.id; state.session.schoolId=id; state.session.staffId=st.id;
-  save(); go('dashboard'); }
-window.switchSchool = switchSchool;
-
-/* =========================================================
-   10. VIEW: STAFF REGISTRY — מרשם בעלי תפקידים
-   ========================================================= */
-function viewStaff(){
-  const s = school();
-  setHead('מרשם בעלי תפקידים', `${s.name} · ${esc(s.code)} — כאן מגדירים מי ממלא כל תחום`,
-    `<button class="btn accent sm" id="addStaff">+ הוספת בעל תפקיד</button>
-     <button class="btn sm" onclick="window.print()">⎙ הדפסה</button>`);
-
-  $('#content').innerHTML = `
-    <div class="note"><span style="font-size:16px;line-height:1">👥</span>
-      <div>המרשם הוא הבסיס לכל השאר: מי שרשום כאן מופיע במסך הכניסה כשם לבחירה, מקבל תוכנית עבודה משלו,
-      צ׳ק־ליסט משלו, וכרטיס בדשבורד. מומלץ למלא את המרשם <b>לפני</b> שמפיצים את הקובץ לצוות.</div></div>
-
-    <div class="card">
-      <div class="card-head"><h3>הצוות הרשום</h3><p>${s.staff.filter(x=>x.name.trim()).length} מתוך ${s.staff.length} תפקידים שויכו לאדם</p></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>תפקיד</th><th>שם מלא</th><th>דוא״ל</th><th>טלפון</th><th>שלמות תוכנית</th><th>עודכן</th><th style="text-align:center">פעולות</th></tr></thead>
-        <tbody>${s.staff.map(st=>{
-          const r=roleOf(st), p=s.plans[st.id], c=planCompleteness(p,st);
-          return `<tr>
-            <td><span class="role-chip"><span class="role-dot" style="background:${r.color}"></span>${esc(roleName(st))}</span></td>
-            <td>${st.name.trim()? `<b>${esc(st.name)}</b>` : '<span class="pill danger">טרם שויך</span>'}</td>
-            <td style="font-size:12.5px;color:var(--ink-2)">${esc(st.email)||'—'}</td>
-            <td style="font-size:12.5px;color:var(--ink-2)">${esc(st.phone)||'—'}</td>
-            <td style="min-width:120px"><b>${c}%</b><div class="bar"><i class="${barClass(c)}" style="width:${c}%"></i></div></td>
-            <td style="font-size:12px;color:var(--ink-3)">${esc(p.updated||'—')}</td>
-            <td style="text-align:center;white-space:nowrap">
-              <button class="btn ghost sm" onclick="editStaff('${st.id}')">עריכה</button>
-              <button class="btn ghost sm" onclick="go('form:${st.id}')">תוכנית</button>
-              <button class="btn danger sm" onclick="removeStaff('${st.id}')">מחיקה</button>
-            </td></tr>`;}).join('')}</tbody>
-      </table></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>הגדרות בית הספר</h3></div>
-      <div class="card-body">
-        <div class="grid-3">
-          <div class="field" style="margin:0"><label>שם בית הספר</label>
-            <input type="text" id="scName" value="${esc(s.name)}"></div>
-          <div class="field" style="margin:0"><label>קוד בית ספר <span style="font-weight:400;color:var(--ink-3)">(לזיהוי באיחוד קבצים)</span></label>
-            <input type="text" id="scCode" value="${esc(s.code)}"></div>
-          <div class="field" style="margin:0"><label>רישום עצמי</label>
-            <label style="display:flex;gap:8px;align-items:center;font-size:13px;padding-top:8px;cursor:pointer">
-              <input type="checkbox" id="scSelf" ${s.selfRegister?'checked':''} style="width:17px;height:17px;accent-color:var(--brand)">
-              לאפשר לאנשים להוסיף את עצמם במסך הכניסה</label></div>
-        </div>
-      </div>
-    </div>`;
-
-  $('#addStaff').onclick = ()=> editStaff(null);
-  $('#scName').oninput = e=>{ s.name=e.target.value; save(); renderShell(); };
-  $('#scCode').oninput = e=>{ s.code=e.target.value; save(); renderShell(); };
-  $('#scSelf').onchange = e=>{ s.selfRegister=e.target.checked; save(); };
-}
-function editStaff(id){
-  const s=school(), st = id? staffById(id) : null;
-  form(st? 'עריכת בעל תפקיד' : 'הוספת בעל תפקיד', [
-    {key:'name',  label:'שם מלא', value:st?.name||'', placeholder:'שם מלא'},
-    {key:'role',  label:'תפקיד', type:'select', value:st?.roleId||'other',
-      options:[...ROLES.map(r=>({v:r.id,t:r.name})),{v:'other',t:'תפקיד אחר'}]},
-    {key:'label', label:'שם התפקיד המדויק', value:st?.roleLabel||'', placeholder:'למשל: רכזת מל״א / רכז ביטחון', hint:'להשאיר ריק כדי להשתמש בשם התפקיד הסטנדרטי'},
-    {key:'email', label:'דוא״ל', type:'email', value:st?.email||''},
-    {key:'phone', label:'טלפון', value:st?.phone||''}
-  ], v=>{
-    if(st){ st.name=v.name; st.roleId=v.role; st.roleLabel=v.label; st.email=v.email; st.phone=v.phone; }
-    else {
-      const n={id:uid(), roleId:v.role, roleLabel:v.label, name:v.name, email:v.email, phone:v.phone};
-      s.staff.push(n); s.plans[n.id]=emptyPlan();
-    }
-    save(); render(); toast(st? 'עודכן' : 'נוסף בעל תפקיד');
-  }, st? 'שמירה':'הוספה');
-}
-window.editStaff = editStaff;
-function removeStaff(id){
-  const s=school(), st=staffById(id);
-  const ps = planStats(s.plans[id], st);
-  const warn = ps.completeness>0? `\n\nשים/י לב: לתוכנית שלו יש ${ps.goals} מטרות, ${ps.objectives} יעדים ו־${ps.monthly} פעילויות — הכול יימחק.`:'';
-  if(!confirm(`למחוק את "${st.name.trim()||roleName(st)}" מהמרשם?${warn}`)) return;
-  s.staff = s.staff.filter(x=>x.id!==id); delete s.plans[id];
-  if(state.activeStaff===id) state.activeStaff = s.staff[0]?.id;
-  if(!s.staff.length){ toast('לא ניתן להשאיר בית ספר בלי אף בעל תפקיד'); return render(); }
-  save(); render(); toast('נמחק מהמרשם');
-}
-window.removeStaff = removeStaff;
-
-/* =========================================================
-   11. VIEW: DISTRIBUTE — הפצה ואיסוף
-   ========================================================= */
-function viewDistribute(){
-  const s = school();
-  setHead('הפצה ואיסוף', 'איך שולחים לבתי הספר ולבעלי התפקידים — ואיך אוספים בחזרה', '');
-
-  const received = s.staff.map(st=>({st, p:s.plans[st.id], c:planCompleteness(s.plans[st.id],st)}));
-  const got = received.filter(x=>x.c>=50).length;
-
-  $('#content').innerHTML = `
-    <div class="steps-flow">
-      <div class="flow-step"><div class="n">1</div><h4>מגדירים את המרשם</h4>
-        <p>במסך <b>מרשם בעלי תפקידים</b> ממלאים מי ממלא כל תחום. אפשר להוסיף גם תפקידים שלא ברשימת ברירת המחדל.</p></div>
-      <div class="flow-step"><div class="n">2</div><h4>מייצרים קובץ לכל בית ספר</h4>
-        <p>כפתור <b>״חבילה לבית ספר״</b> יוצר קובץ HTML עצמאי שמכיל רק את בית הספר הזה — עם המרשם שלו כבר בפנים.</p></div>
-      <div class="flow-step"><div class="n">3</div><h4>כל אחד ממלא ומחזיר</h4>
-        <p>בעל התפקיד פותח, בוחר את שמו במסך הכניסה, ממלא, ולוחץ <b>״שליחת התוכנית שלי״</b> — יורד קובץ קטן שנשלח במייל.</p></div>
-      <div class="flow-step"><div class="n">4</div><h4>אוספים חזרה לכאן</h4>
-        <p>כפתור <b>״ייבוא / איסוף״</b> קולט את הקבצים החוזרים ומשבץ כל תוכנית לבית הספר ולאדם הנכון אוטומטית.</p></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>הפצה — יצירת קבצים לשליחה</h3>
-        <p>כל חבילה היא קובץ HTML עצמאי שנפתח בכל מחשב בלי התקנה ובלי אינטרנט</p></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>בית ספר</th><th>קוד</th><th>בעלי תפקידים</th><th>שלמות</th><th style="text-align:center">חבילה לשליחה</th></tr></thead>
-        <tbody>${state.schools.map(x=>{
-          const t=schoolStats(x);
-          return `<tr>
-            <td><b>${esc(x.name)}</b></td><td><span class="code-chip">${esc(x.code)}</span></td>
-            <td>${t.assigned}/${t.staffCount} שויכו</td>
-            <td style="min-width:110px"><b>${t.completeness}%</b><div class="bar"><i class="${barClass(t.completeness)}" style="width:${t.completeness}%"></i></div></td>
-            <td style="text-align:center;white-space:nowrap">
-              <button class="btn sm" onclick="exportSchoolPackage('${x.id}',true)">⤓ חבילה ריקה</button>
-              <button class="btn ghost sm" onclick="exportSchoolPackage('${x.id}',false)">⤓ עם הנתונים</button>
-            </td></tr>`;}).join('')}</tbody>
-      </table></div>
-      <div class="card-body" style="border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-3)">
-        <b style="color:var(--ink-2)">חבילה ריקה</b> — המרשם והשמות בפנים, התוכניות ריקות. מתאים לתחילת שנה.
-        <span style="margin-inline:10px">·</span>
-        <b style="color:var(--ink-2)">עם הנתונים</b> — כולל מה שכבר מולא. מתאים להמשך עבודה או למעקב באמצע שנה.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>איסוף — מה כבר חזר</h3>
-        <p>${got} מתוך ${s.staff.length} תוכניות מולאו ברובן ב־${esc(s.name)}</p>
-        <div class="spacer"></div>
-        <button class="btn ok sm" onclick="document.getElementById('fileInput').click()">⤒ ייבוא קובץ חוזר</button></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>תפקיד</th><th>שם</th><th>סטטוס</th><th>שלמות</th><th>עודכן לאחרונה</th><th>דוא״ל לתזכורת</th></tr></thead>
-        <tbody>${received.map(({st,p,c})=>`<tr>
-          <td><span class="role-chip"><span class="role-dot" style="background:${roleOf(st).color}"></span>${esc(roleName(st))}</span></td>
-          <td>${st.name.trim()? esc(st.name):'<span class="pill danger">לא שויך</span>'}</td>
-          <td>${c>=80? '<span class="pill ok">הושלם</span>' : c>=30? '<span class="pill warn">בתהליך</span>' : '<span class="pill danger">טרם התחיל</span>'}</td>
-          <td style="min-width:110px"><b>${c}%</b><div class="bar"><i class="${barClass(c)}" style="width:${c}%"></i></div></td>
-          <td style="font-size:12px;color:var(--ink-3)">${esc(p.updated||'—')}</td>
-          <td style="font-size:12.5px">${st.email? `<a href="mailto:${esc(st.email)}?subject=${encodeURIComponent('תזכורת: תוכנית עבודה '+state.network.year)}">${esc(st.email)}</a>`:'—'}</td>
-        </tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>גיבוי כללי</h3></div>
-      <div class="card-body" style="display:flex;gap:9px;flex-wrap:wrap">
-        <button class="btn ghost" onclick="exportBackup()">⤓ גיבוי מלא (JSON) — כל בתי הספר</button>
-        <button class="btn ghost" onclick="exportCsv()">⤓ ייצוא לאקסל (CSV)</button>
-        <button class="btn ghost" onclick="document.getElementById('fileInput').click()">⤒ ייבוא / איחוד</button>
-      </div>
-    </div>`;
-}
-
-/* =========================================================
-   12. VIEW: SETTINGS
-   ========================================================= */
-function viewSettings(){
-  setHead('הגדרות', 'הגדרות רשת, קוד גישה וניהול בתי ספר', '');
-  $('#content').innerHTML = `
-    <div class="card">
-      <div class="card-head"><h3>פרטי הרשת</h3></div>
-      <div class="card-body"><div class="grid-3">
-        <div class="field" style="margin:0"><label>שם הרשת / הרשות</label>
-          <input type="text" id="netName" value="${esc(state.network.name)}"></div>
-        <div class="field" style="margin:0"><label>שנת עבודה</label>
-          <input type="text" id="netYear" value="${esc(state.network.year)}"></div>
-        <div class="field" style="margin:0"><label>קוד גישה למנהל/ת</label>
-          <input type="text" id="netPin" value="${esc(state.network.pin)}" placeholder="ריק = ללא קוד"></div>
-      </div>
-      <div class="note warn" style="margin:16px 0 0"><span>⚠</span>
-        <div>קוד הגישה הוא <b>נוחות ולא אבטחה</b>. הוא מונע כניסה בשוגג למסכי הניהול, אבל מי שיפתח את קוד המקור של הקובץ יראה אותו.
-        אין לשמור כאן מידע רגיש על תלמידים או עובדים.</div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>בתי ספר בקובץ</h3><div class="spacer"></div>
-        <button class="btn accent sm" id="setAdd">+ הוספת בית ספר</button></div>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>שם</th><th>קוד</th><th>בעלי תפקידים</th><th style="text-align:center">פעולות</th></tr></thead>
-        <tbody>${state.schools.map(s=>`<tr>
-          <td><b>${esc(s.name)}</b>${s.id===state.activeSchool?' <span class="pill brand">פעיל</span>':''}</td>
-          <td><span class="code-chip">${esc(s.code)}</span></td>
-          <td>${s.staff.length}</td>
-          <td style="text-align:center;white-space:nowrap">
-            <button class="btn ghost sm" onclick="switchSchool('${s.id}')">מעבר</button>
-            <button class="btn danger sm" onclick="deleteSchool('${s.id}')">מחיקה</button>
-          </td></tr>`).join('')}</tbody>
-      </table></div>
-    </div>
-
-    <div class="card">
-      <div class="card-head"><h3>איפוס</h3></div>
-      <div class="card-body">
-        <button class="btn danger" onclick="resetAll()">↺ מחיקת כל הנתונים בדפדפן הזה</button>
-        <div style="font-size:12.5px;color:var(--ink-3);margin-top:8px">מומלץ לייצא גיבוי מלא לפני. הפעולה בלתי הפיכה.</div>
-      </div>
-    </div>`;
-  $('#netName').oninput = e=>{ state.network.name=e.target.value; save(); renderShell(); };
-  $('#netYear').oninput = e=>{ state.network.year=e.target.value; save(); renderShell(); };
-  $('#netPin').oninput  = e=>{ state.network.pin=e.target.value.trim(); save(); };
-  $('#setAdd').onclick  = addSchool;
-}
-function addSchool(){
-  form('הוספת בית ספר', [{key:'name', label:'שם בית הספר', placeholder:'למשל: תיכון בית הערבה'}], v=>{
-    if(!v.name) return;
-    const s = newSchool(v.name);
-    state.schools.push(s); switchSchool(s.id);
-    toast(`נוסף: ${v.name} · קוד ${s.code}`);
-  }, 'הוספה');
-}
-window.addSchool = addSchool;
-function deleteSchool(id){
-  if(state.schools.length===1) return toast('לא ניתן למחוק את בית הספר היחיד');
-  const s = state.schools.find(x=>x.id===id);
-  if(!confirm(`למחוק את "${s.name}" ואת כל תוכניות העבודה שלו? פעולה בלתי הפיכה.`)) return;
-  state.schools = state.schools.filter(x=>x.id!==id);
-  if(state.activeSchool===id) switchSchool(state.schools[0].id); else { save(); render(); }
-  toast('בית הספר נמחק');
-}
-window.deleteSchool = deleteSchool;
-function resetAll(){
-  if(!confirm('למחוק את כל הנתונים של כל בתי הספר בדפדפן הזה? מומלץ קודם לייצא גיבוי.')) return;
-  localStorage.removeItem(KEY); OLD_KEYS.forEach(k=>localStorage.removeItem(k));
-  state = freshState(); save(); renderGate(); toast('הנתונים אופסו');
-}
-window.resetAll = resetAll;
-
-/* =========================================================
-   13. EXPORT / IMPORT
-   ========================================================= */
-function download(name, content, type){
-  const blob = new Blob([type==='text/csv'? '﻿'+content : content], {type:type+';charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-}
-const stamp = ()=> new Date().toISOString().slice(0,10);
-
-function exportBackup(){
-  download(`גיבוי-תוכניות-עבודה-${stamp()}.json`, JSON.stringify({kind:'backup', ...state, session:null}, null, 2), 'application/json');
-  toast('קובץ הגיבוי ירד');
-}
-window.exportBackup = exportBackup;
-
-function exportMyPlan(staffId){
-  const s=school(), id = staffId || state.session.staffId, st=staffById(id);
-  if(!st) return;
-  const pkg = {kind:'plan', exportedAt:today(), schoolCode:s.code, schoolName:s.name,
-    staffId:st.id, roleId:st.roleId, roleLabel:st.roleLabel, name:st.name, email:st.email, phone:st.phone,
-    plan: s.plans[st.id]};
-  const who = (st.name.trim()||roleName(st)).replace(/[\\/:*?"<>|]/g,'-');
-  download(`תוכנית-${who}-${s.name}-${stamp()}.json`, JSON.stringify(pkg,null,2), 'application/json');
-  toast('הקובץ ירד — שלחו אותו במייל למנהלת');
-}
-window.exportMyPlan = exportMyPlan;
-
-/* בניית קובץ HTML עצמאי שמכיל בית ספר אחד בלבד, עם המרשם שלו כבר בפנים */
-const SEED_RE = /\/\*__SEED_START__\*\/[\s\S]*?\/\*__SEED_END__\*\//;
-function exportSchoolPackage(schoolId, blank){
-  const src = state.schools.find(x=>x.id===schoolId); if(!src) return;
-  const copy = JSON.parse(JSON.stringify(src));
-  if(blank) copy.staff.forEach(st=> copy.plans[st.id] = emptyPlan());
-  const seed = {v:2, network:{...state.network}, schools:[copy], activeSchool:copy.id,
-                activeStaff:copy.staff[0].id, view:'dashboard', session:null};
-  const payload = {id: String(copy.code||copy.id).replace(/[^A-Za-z0-9_-]/g,''), data: JSON.stringify(seed)};
-  const block = '/*__SEED_START__*/var __SEED__=' +
-    JSON.stringify(payload).replace(/</g,'\\u003c').replace(/>/g,'\\u003e') +
-    ';/*__SEED_END__*/';
-
-  if(!SEED_RE.test(PRISTINE_HTML)){
-    toast('⚠ נקודת ההזרקה לא נמצאה — יורד קובץ JSON במקום');
-    download(`חבילה-${copy.name}-${stamp()}.json`, JSON.stringify(seed,null,2), 'application/json');
-    return;
-  }
-  const out = '<!DOCTYPE html>\n' + PRISTINE_HTML.replace(SEED_RE, block);
-  const safe = copy.name.replace(/[\\/:*?"<>|]/g,'-');
-  download(`תוכניות-עבודה-${safe}${blank?'':'-עם-נתונים'}.html`, out, 'text/html');
-  toast(`החבילה של ${copy.name} ירדה — אפשר לשלוח במייל`);
-}
-window.exportSchoolPackage = exportSchoolPackage;
-
-function exportCsv(){
-  const q = v=>`"${String(v??'').replace(/"/g,'""')}"`;
-  const head=['בית ספר','קוד','תפקיד','שם','סוג רשומה','חודש','תוכן','מדד','מ־','ל־','משתתפים','עלות','מה צריך','שותפים','בוצע'];
-  const lines=[head.map(q).join(',')];
-  state.schools.forEach(s=> s.staff.forEach(st=>{
-    const p=s.plans[st.id], base=[s.name,s.code,roleName(st),st.name];
-    if(p.vision.trim()) lines.push([...base,'אמירה מרכזית','',p.vision,'','','','','','','',''].map(q).join(','));
-    p.goals.forEach(g=> g.text.trim() && lines.push([...base,'מטרה','',g.text,'','','','','','','',''].map(q).join(',')));
-    p.objectives.forEach(o=> o.text.trim() && lines.push([...base,'יעד מדיד',o.dueMonth,o.text,o.indicator,o.baseline,o.target,'','','','',''].map(q).join(',')));
-    p.actions.forEach(a=> a.text.trim() && lines.push([...base,'פעולה',a.when,a.text,'','','','','','','',a.done?'כן':'לא'].map(q).join(',')));
-    p.monthly.forEach(m=> m.event.trim() && lines.push([...base,'פעילות חודשית',m.month,m.event,'','','',m.participants,m.cost,m.needs,m.partners,m.done?'כן':'לא'].map(q).join(',')));
-  }));
-  download(`תוכניות-עבודה-${stamp()}.csv`, lines.join('\r\n'), 'text/csv');
-  toast('קובץ CSV ירד — נפתח באקסל');
-}
-window.exportCsv = exportCsv;
-
-$('#fileInput').onchange = e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const rd=new FileReader();
-  rd.onload=()=>{ try{ handleImport(JSON.parse(rd.result)); }
-                  catch(err){ console.warn(err); toast('⚠ הקובץ אינו תקין'); }
-                  e.target.value=''; };
-  rd.readAsText(f,'utf-8');
-};
-function handleImport(d){
-  if(d && d.kind==='plan') return importPlan(d);
-  if(d && Array.isArray(d.schools)) return importBackup(d);
-  toast('⚠ לא זוהה סוג הקובץ');
-}
-function importPlan(d){
-  let s = state.schools.find(x=>x.code===d.schoolCode) || state.schools.find(x=>x.name===d.schoolName);
-  if(!s){
-    if(!confirm(`הקובץ שייך לבית ספר "${d.schoolName}" שאינו קיים כאן. להוסיף אותו?`)) return;
-    s = newSchool(d.schoolName || 'בית ספר חדש'); s.code = d.schoolCode || s.code; state.schools.push(s);
-  }
-  let st = s.staff.find(x=>x.id===d.staffId)
-        || s.staff.find(x=>x.name.trim() && x.name.trim()===String(d.name||'').trim())
-        || s.staff.find(x=>x.roleId===d.roleId && !x.name.trim());
-  if(!st){ st={id:d.staffId||uid(), roleId:d.roleId||'other', roleLabel:d.roleLabel||'', name:d.name||'', email:d.email||'', phone:d.phone||''};
-           s.staff.push(st); }
-  else { if(d.name) st.name=d.name; if(d.email) st.email=d.email; if(d.phone) st.phone=d.phone;
-         if(d.roleLabel) st.roleLabel=d.roleLabel; }
-  s.plans[st.id] = d.plan; healSchool(s);
-  state.activeSchool = s.id; save(); render();
-  toast(`התקבלה תוכנית: ${d.name||roleName(st)} · ${s.name}`);
-}
-function importBackup(d){
-  let added=0, merged=0;
-  d.schools.forEach(inc=>{
-    healSchool(inc);
-    const ex = state.schools.find(x=>x.code===inc.code) || state.schools.find(x=>x.name===inc.name);
-    if(!ex){ inc.id = inc.id||uid(); state.schools.push(inc); added++; return; }
-    inc.staff.forEach(ist=>{
-      const ip = inc.plans[ist.id];
-      let est = ex.staff.find(x=>x.id===ist.id)
-             || ex.staff.find(x=>x.name.trim() && x.name.trim()===ist.name.trim())
-             || ex.staff.find(x=>x.roleId===ist.roleId && !x.name.trim());
-      if(!est){ ex.staff.push(ist); ex.plans[ist.id]=ip; return; }
-      if(ist.name && !est.name) est.name=ist.name;
-      if(ist.email && !est.email) est.email=ist.email;
-      if(planCompleteness(ip,ist) > planCompleteness(ex.plans[est.id],est)) ex.plans[est.id]=ip;
-    });
-    healSchool(ex); merged++;
-  });
-  save(); render();
-  toast(`יובאו: ${added} בתי ספר חדשים · ${merged} אוחדו`);
-}
-
-/* =========================================================
-   14. BOOT
-   ========================================================= */
-(function boot(){
-  const s = state.session;
-  const sc = s && state.schools.find(x=>x.id===s.schoolId);
-  if(sc && sc.staff.some(x=>x.id===s.staffId)){
-    state.activeSchool = sc.id;
-    if(!sc.staff.some(x=>x.id===state.activeStaff)) state.activeStaff = s.staffId;
-    render();
-  } else {
-    state.session = null;
-    renderGate();
-  }
-})();
-</script>
-<!-- פס התקדמות גלילה — צבעי מצגת המנהלים, כמו בשאר האתר -->
-<style>
-#pagebar{position:fixed;top:0;right:0;height:4px;width:0;z-index:900;pointer-events:none;
-  background:linear-gradient(to left,#2F74C0,#2F9F55,#F2B233,#EF5656,#8F7AC3);border-radius:0 0 0 3px;transition:width .25s ease}
-@media print{#pagebar{display:none}}
-</style>
-<script>
-(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var b=document.createElement('div');b.id='pagebar';b.setAttribute('aria-hidden','true');document.body.appendChild(b);
-var t=false;function u(){t=false;var m=document.documentElement.scrollHeight-innerHeight;b.style.width=(m>200?(scrollY/m)*100:0)+'%'}
-addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{passive:true});u()})();
-</script>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>תוכניות עבודה · בבנייה</span></div></div>
+
+<script src="site.js"></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
 </body>
 </html>

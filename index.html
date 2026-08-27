@@ -59,7 +59,7 @@
     <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
     <div class="sect">מרחב מנהלים</div>
     <a href="menahalim.html">שער מרחב המנהלים</a>
-    <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
     <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
     <div class="sect">מנהלים חדשים</div>
     <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
@@ -160,7 +160,7 @@
   </span>
   <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
     <div class="sub">
-      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
       <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
       <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
       <a href="drive-menahalim.html">דרייב מנהלים</a>
@@ -181,7 +181,7 @@
     <div class="sub">
       <a href="tafkidim.html">כל התפקידים וההגדרות</a>
       <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
-      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
       <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
       <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
       <a href="https://drive.google.com/drive/folders/1BFTo7pzI43UQC5IRTsi6y2gBFqAw5-d5" target="_blank" rel="noopener">דרייב · מורים חונכים</a>
@@ -208,7 +208,12 @@
       <div class="kicker rv">מינהל הכשרה מקצועית · משרד העבודה</div>
       <h1 class="rv d1" style="font-size:clamp(2rem,4.2vw,2.6rem);margin:12px 0 12px">הבית של<br><span style="background:linear-gradient(90deg,var(--navy-800),#0B9BC9);-webkit-background-clip:text;background-clip:text;color:transparent">המנהיגות הפדגוגית היוצרת</span></h1>
       <p class="rv d2" style="font-size:1.05rem;color:var(--text2);max-width:470px">ידע, כלים ותוכניות שמחברים בין למידה, מקצוע ועתיד.</p>
-      <div class="rv d3" style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <form class="sp-form hero-search rv d3" action="chipus.html" method="get" role="search" style="margin-top:20px;max-width:470px">
+        <span class="sp-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
+        <input type="search" name="q" class="sp-in" placeholder="חיפוש באתר — נוהל, טופס, תחום דעת, דרייב…" aria-label="חיפוש באתר">
+        <button type="submit" class="sp-go">חיפוש</button>
+      </form>
+      <div class="rv d3" style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap">
         <a class="btn primary" href="space.html">אל המרחב הפדגוגי</a>
         <a class="btn line open-ogen">שאל את עוגן</a>
       </div>
@@ -305,10 +310,6 @@
         <span class="tag cyn">25.8</span>
         <span><b>נפתח מרחב מנהלים באתר</b><span class="sub">כל הכלים למנהלי בתי הספר במקום אחד — מצפן ההדרכות, חוזרי מנכ"ל ותוכניות עבודה.</span></span>
       </a>
-      <a class="ann" href="work-plans.html">
-        <span class="tag cyn">25.8</span>
-        <span><b>שאלון תוכניות עבודה לבעלי תפקידים זמין למילוי</b><span class="sub">שאלון מקוון עם צ'ק־ליסט ודשבורד מעקב — במרחב המנהלים.</span></span>
-      </a>
       <a class="ann" href="tashpaz.html">
         <span class="tag bgr">אוג'</span>
         <span><b>מסמך ההיערכות לשנה"ל תשפ"ז פורסם</b><span class="sub">מכתב המינהל, מסע בשנה ומד מוכנות אינטראקטיבי.</span></span>
@@ -374,6 +375,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="search.js" defer></script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>

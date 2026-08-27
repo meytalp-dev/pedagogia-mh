@@ -13,7 +13,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="/pagenav.css">
 <style>
 .linklist{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px}
 .linklist li{font-size:.87rem;color:var(--text2);padding-inline-start:16px;position:relative}
@@ -79,20 +78,6 @@
 /* ===== שיחת הקשר ===== */
 .script{background:var(--soft-bg);border-radius:14px;padding:16px 20px;margin-top:14px;font-size:.9rem;line-height:1.85}
 .script q{color:var(--navy);font-weight:700;font-style:normal}
-
-/* ===== כרטיסיות ניווט לעמוד ===== */
-.ptabs{position:sticky;top:var(--navh,64px);z-index:90;display:flex;gap:7px;overflow-x:auto;
-  padding:11px var(--px);margin-top:20px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);scrollbar-width:none}
-.ptabs::-webkit-scrollbar{display:none}
-.ptab{flex:0 0 auto;border:1.5px solid var(--border);background:#fff;border-radius:999px;
-  padding:9px 22px;font-family:'Assistant',sans-serif;font-weight:700;font-size:.9rem;
-  color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s var(--ease)}
-.ptab:hover{border-color:var(--cyan);color:var(--navy)}
-.ptab.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--sh-sm)}
-.ppanel{display:none}
-.ppanel.on{display:block;animation:rise .4s var(--ease) both}
-.ppanel>.sechead:first-child{padding-top:26px}
 </style>
 </head>
 <body>
@@ -303,16 +288,6 @@
   </a>
 </div>
 
-
-<nav class="ptabs" id="ptabs" role="tablist" aria-label="מדורי העמוד">
-  <button class="ptab on" role="tab" aria-selected="true" data-p="p-shiur">השיעור</button>
-  <button class="ptab" role="tab" aria-selected="false" data-p="p-nomask">ללא מסך</button>
-  <button class="ptab" role="tab" aria-selected="false" data-p="p-kesher">קשר וליווי</button>
-  <button class="ptab" role="tab" aria-selected="false" data-p="p-talmid">לתלמידים</button>
-  <button class="ptab" role="tab" aria-selected="false" data-p="p-korsim">קורסים וחומרים</button>
-</nav>
-
-<section class="ppanel on" id="p-shiur" role="tabpanel">
 <div class="sechead rv" id="model">
   <div class="kicker">הלב של העמוד</div>
   <h2>מודל השיעור בחירום — 15 / 25 / 10</h2>
@@ -439,9 +414,6 @@
   </div>
 </div>
 
-</section>
-
-<section class="ppanel" id="p-nomask" role="tabpanel">
 <div class="sechead rv" id="lomasach">
   <div class="kicker">שוויון · לא הערת שוליים</div>
   <h2>מסלול ללא מסך</h2>
@@ -465,9 +437,6 @@
   </div>
 </div>
 
-</section>
-
-<section class="ppanel" id="p-kesher" role="tabpanel">
 <div class="sechead rv" id="kesher">
   <div class="kicker">הכלי החזק ביותר</div>
   <h2>שיחת הקשר — ארבע דקות</h2>
@@ -518,10 +487,7 @@
   </div>
 </div>
 
-</section>
-
-<section class="ppanel" id="p-talmid" role="tabpanel">
-<div class="sechead rv" id="talmidim">
+<div class="sechead rv">
   <div class="kicker">להעביר לתלמידים</div>
   <h2>ללמוד לבד — מיומנות שמלמדים, לא מניחים</h2>
   <p>בחירום הלומד נדרש לנהל את עצמו, וזו בדיוק המיומנות שרוב התלמידים שלנו לא קיבלו. ארבעה כלים שאפשר לשלוח לקבוצה כמו שהם.</p>
@@ -533,9 +499,6 @@
   <div class="card rv" style="padding:20px 22px"><h3 style="font-size:1rem;margin:0 0 4px">אל תלמד/י לבד</h3><p style="font-size:.86rem;color:var(--text2)">חבר לימוד קבוע, שיחת טלפון של 20 דקות. גם בלי לדבר — פשוט לומדים במקביל.</p></div>
 </div>
 
-</section>
-
-<section class="ppanel" id="p-korsim" role="tabpanel">
 <div class="sechead rv" id="korsim">
   <div class="kicker">חומרי למידה מרחוק · קישורים ישירים</div>
   <h2>קורסים, מדריכים והעשרה</h2>
@@ -594,8 +557,6 @@
   </div>
 </div>
 </div>
-
-</section>
 
 <div class="card rv" style="margin:34px var(--px) 8px;padding:24px 26px;background:var(--grad);border:none;color:#fff">
   <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between">
@@ -737,73 +698,9 @@ document.getElementById('g-print').addEventListener('click', function () {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
   });
   var w = window.open('', '_blank');
-  w.document.write('<html dir="rtl" lang="he"><head><meta charset="utf-8"><title>מערך שיעור</title><style>body{font-family:Arial,sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap;font-size:14px}</style></head><body>' + txt + '<script src="/pagenav.js" defer></script>
-</body></html>');
+  w.document.write('<html dir="rtl" lang="he"><head><meta charset="utf-8"><title>מערך שיעור</title><style>body{font-family:Arial,sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap;font-size:14px}</style></head><body>' + txt + '</body></html>');
   w.document.close(); w.focus(); w.print();
 });
-</script>
-<script>
-/* ===== כרטיסיות הניווט של העמוד ===== */
-(function pageTabs(){
-  var bar=document.getElementById('ptabs'); if(!bar) return;
-  var nav=document.querySelector('.nav');
-  function setNavH(){
-    document.documentElement.style.setProperty('--navh',((nav&&nav.offsetHeight)||64)+'px');
-  }
-  setNavH(); window.addEventListener('resize',setNavH); window.addEventListener('load',setNavH);
-
-  /* עוגן בתוך העמוד -> הכרטיסייה שמכילה אותו */
-  var MAP={model:'p-shiur',mecholel:'p-shiur',ptichot:'p-shiur',yetzia:'p-shiur',
-           lomasach:'p-nomask',kesher:'p-kesher',rigshi:'p-kesher',
-           talmidim:'p-talmid',korsim:'p-korsim'};
-
-  function navH(){ return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--navh'))||64; }
-
-  function show(id,focusId){
-    var panel=document.getElementById(id); if(!panel) return;
-    bar.querySelectorAll('.ptab').forEach(function(t){
-      var on=(t.dataset.p===id);
-      t.classList.toggle('on',on);
-      t.setAttribute('aria-selected',on?'true':'false');
-    });
-    document.querySelectorAll('.ppanel').forEach(function(pn){ pn.classList.toggle('on',pn.id===id); });
-    /* אלמנטים שהוסתרו לא נחשפו בגלילה — משחררים אותם */
-    panel.querySelectorAll('.sr').forEach(function(el){ el.classList.add('in'); });
-
-    var top=bar.getBoundingClientRect().top+window.scrollY-navH()-6;
-    if(focusId){
-      var t=document.getElementById(focusId);
-      if(t){ setTimeout(function(){
-        window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-navH()-bar.offsetHeight-10,behavior:'smooth'});
-      },50); return; }
-    }
-    if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
-  }
-
-  bar.addEventListener('click',function(e){
-    var b=e.target.closest('.ptab'); if(!b) return;
-    show(b.dataset.p);
-    history.replaceState(null,'','#'+b.dataset.p);
-  });
-
-  /* קישורי העוגן בעמוד — כולל שלושת כרטיסי הפתיחה */
-  document.querySelectorAll('a[href^="#"]').forEach(function(a){
-    a.addEventListener('click',function(ev){
-      var id=a.getAttribute('href').slice(1); if(!id) return;
-      if(MAP[id]){ ev.preventDefault(); show(MAP[id],id); history.replaceState(null,'','#'+id); }
-      else{
-        var el=document.getElementById(id);
-        if(el&&el.classList.contains('ppanel')){ ev.preventDefault(); show(id); history.replaceState(null,'','#'+id); }
-      }
-    });
-  });
-
-  var h=decodeURIComponent(location.hash.slice(1));
-  if(h){
-    if(MAP[h]) show(MAP[h],h);
-    else{ var el=document.getElementById(h); if(el&&el.classList.contains('ppanel')) show(h); }
-  }
-})();
 </script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>

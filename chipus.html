@@ -4,14 +4,8 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>תמצית החינוך היוצר · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="תמצית החינוך היוצר למנהלים חדשים: הפדגוגיה הדואלית, שלושת היסודות, חמישה מסרים מרכזיים למנהל/ת, עקרונות המודל ואוכלוסיית התלמידים.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="תמצית החינוך היוצר">
-<meta property="og:description" content="תמצית החינוך היוצר למנהלים חדשים: הפדגוגיה הדואלית, שלושת היסודות, חמישה מסרים מרכזיים למנהל/ת, עקרונות המודל ואוכלוסיית התלמידים.">
-<meta property="og:url" content="https://pedagogiamh.co.il/tamtzit-hinuch-yotzer.html">
-<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
-<meta property="og:locale" content="he_IL">
+<title>חיפוש באתר · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="חיפוש בכל עמודי האתר, המסמכים ותיקיות הדרייב — עם סינון לפי מרחב ולפי סוג התוכן.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -19,8 +13,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="article.css">
-<link rel="stylesheet" href="/pagenav.css">
 </head>
 <body>
 
@@ -168,7 +160,7 @@
       <a href="tashpaz.html">היערכות תשפ"ז</a>
     </div>
   </span>
-  <span class="navitem"><a class="lnk active" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html">מנהלים חדשים<span class="caret">▼</span></a>
     <div class="sub">
       <a href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
       <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
@@ -200,75 +192,187 @@
   </div>
 </nav>
 
-<section class="hero">
-  <div class="article hero-stagger">
-    <span class="kicker">מנהלים חדשים · פרק 01</span>
-    <h1>תמצית החינוך היוצר</h1>
-    <p class="lead">החינוך היוצר מחבר בין ידע, עשייה ומקצוע — ומאפשר לתלמידים לחוות הצלחה בלמידה. זהו המודל החינוכי שבליבו תפעלו כמנהלות וכמנהלים.</p>
-    <div class="meta-row">
-      <span class="src">מתוך: <a class="lk" href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה למנהל/ת חדש/ה</a></span>
+
+<div class="pagehead">
+  <div class="crumb rv"><a href="index.html">בית</a> ‹ חיפוש באתר</div>
+  <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <h1>חיפוש באתר</h1>
+    <span class="tag" style="background:var(--navy);color:#fff;font-size:.78rem">עמודים · מסמכים · דרייב</span>
+  </div>
+  <p class="lead rv d2" style="max-width:70ch">כל מה שיש באתר במקום אחד — נהלים והנחיות, תחומי דעת, טפסים, תיקיות דרייב וקישורים חיצוניים. אפשר לצמצם לפי מרחב ולפי סוג התוכן, <span class="only-wide">ובכל עמוד באתר <kbd class="kb">Ctrl</kbd>+<kbd class="kb">K</kbd> פותח חיפוש מהיר.</span></p>
+</div>
+
+<div class="searchpage">
+  <form class="sp-form" id="spForm" role="search" autocomplete="off">
+    <span class="sp-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
+    <input type="search" id="spQ" class="sp-in" placeholder="מה לחפש? למשל: ביקור סדיר, אוגדן שעות, כישורי חיים, דרייב ייעוצי" aria-label="מה לחפש">
+    <button type="submit" class="sp-go">חיפוש</button>
+  </form>
+
+  <div class="sp-filters">
+    <div class="sp-frow">
+      <span class="sp-flabel">מרחב</span>
+      <div class="sp-pills" id="spCats" role="group" aria-label="סינון לפי מרחב"></div>
+    </div>
+    <div class="sp-frow">
+      <span class="sp-flabel">סוג</span>
+      <div class="sp-pills" id="spKinds" role="group" aria-label="סינון לפי סוג תוכן"></div>
+      <button type="button" class="sp-clear" id="spClear" hidden>ניקוי סינון</button>
     </div>
   </div>
-</section>
 
-<article class="body-sec">
-  <div class="article">
+  <div class="sp-count" id="spCount" aria-live="polite"></div>
+  <div class="sp-results" id="spResults"></div>
+</div>
 
-    <h2 class="sub-sec first rv">מהו החינוך היוצר</h2>
-    <p class="rv">החינוך היוצר הוא מודל חינוכי המבוסס על <b>פדגוגיה דואלית</b> המחברת בין למידה עיונית לבין התנסות מקצועית. המודל מבקש ליצור למידה רלוונטית לחיים ולחבר בין בית הספר לבין עולם העבודה והקהילה.</p>
-    <p class="rv">בתי הספר פועלים לפיתוח מסוגלות אישית, רכישת מקצוע משמעותי ויצירת הזדמנויות עתידיות לתלמידים. הלמידה מבוססת על שילוב בין מקצועות בסיס, מגמות מקצועיות והתנסות בעולם העבודה.</p>
-
-    <h3 class="mini rv">שלושת היסודות</h3>
-    <div class="cycle rv">
-      <div class="cy-step">למידה מתוך עשייה והתנסות</div>
-      <div class="cy-step">חיבור בין ידע תיאורטי למציאות מקצועית</div>
-      <div class="cy-step">פיתוח מסוגלות אישית וביטחון עצמי</div>
-    </div>
-
-    <h2 class="sub-sec rv">חמישה מסרים מרכזיים למנהל/ת</h2>
-    <ol class="ed rv">
-      <li><b>כל תלמיד יכול להצליח</b> כאשר הלמידה מותאמת לו ומחוברת לעולמות העניין שלו. מנהל בית הספר צריך ליצור סביבה המעודדת גילוי חוזקות והצלחות.</li>
-      <li><b>למידה משמעותית</b> נוצרת כאשר תלמידים מבינים את הקשר בין מה שהם לומדים לבין המציאות — לכן חשוב לחבר בין מקצועות הבסיס לבין המגמות המקצועיות.</li>
-      <li><b>החניכות</b> היא מרכיב מרכזי במודל החינוך היוצר ומהווה גשר בין בית הספר לבין עולם העבודה.</li>
-      <li><b>צוות חינוכי מקצועי ולומד</b> הוא תנאי בסיסי להצלחת בית הספר — ויש להשקיע בפיתוחו.</li>
-      <li><b>ניהול מבוסס נתונים</b> מאפשר לזהות אתגרים ולבנות תוכניות שיפור ממוקדות: נתונים משאלוני אקלים חינוכי, פדגוגי, תלמידים וצוות; נתוני גיוס לצבא; נתוני זכאות מקצועי, גמר ובגרות; נתוני חניכות ועוד.</li>
-    </ol>
-
-    <h2 class="sub-sec rv">עקרונות החינוך היוצר</h2>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <thead><tr><th>עיקרון</th><th>מה הוא אומר בפועל</th></tr></thead>
-        <tbody>
-          <tr><td class="k">למידה מתוך עשייה</td><td>תלמידים לומדים דרך התנסות, פרויקטים ועבודה מעשית</td></tr>
-          <tr><td class="k">חיבור לעולם העבודה</td><td>תהליכי הלמידה קשורים למציאות המקצועית ולדרישות השוק</td></tr>
-          <tr><td class="k">פיתוח מסוגלות אישית</td><td>בית הספר פועל לחיזוק הביטחון העצמי והאמונה ביכולת להצליח</td></tr>
-          <tr><td class="k">למידה רלוונטית</td><td>התכנים הנלמדים מחוברים לחיים ולצרכים עתידיים</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h2 class="sub-sec rv">אוכלוסיית התלמידים בבתי הספר המקצועיים</h2>
-    <p class="rv">בתי הספר המקצועיים פועלים עם אוכלוסיית תלמידים מגוונת מאוד. חלק מהתלמידים מגיעים מתוך עניין מקצועי וסקרנות לתחומי ידע טכנולוגיים ומעשיים, ואחרים מגיעים לאחר חוויות קושי במערכת החינוך העיונית.</p>
-    <div class="callout petrol rv">
-      <span class="ttl">מסלול הצלחה חדש</span>
-      <p>בתי הספר מבקשים ליצור עבור התלמידים מסלול הצלחה חדש המבוסס על למידה מעשית, פיתוח מיומנויות מקצועיות וחיזוק תחושת המסוגלות האישית. המטרה: לאפשר לכל תלמיד למצוא את מקומו ולהתפתח בהתאם לכישוריו.</p>
-    </div>
-
-    <div class="source-box rv">
-      <div class="t">המשך הערכה<small>הפרק הבא: תפקיד המנהל/ת — תחומי ההובלה, האשכולות הפדגוגיים והאוטונומיה.</small></div>
-      <a class="btn" href="tafkid-menahel.html">לפרק הבא · תפקיד המנהל/ת ←</a><a class="btn alt" href="menahalim-hadashim.html">חזרה לשער</a>
-    </div>
-
-  </div>
-</article>
-
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>חיפוש באתר</span></div></div>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>
+<script>
+/* ===== עמוד החיפוש — משתמש במנוע של search.js ===== */
+(function(){
+  var q=document.getElementById('spQ'), form=document.getElementById('spForm'),
+      catsEl=document.getElementById('spCats'), kindsEl=document.getElementById('spKinds'),
+      countEl=document.getElementById('spCount'), resEl=document.getElementById('spResults'),
+      clearBtn=document.getElementById('spClear');
+  var state={q:'',cat:'all',kind:'all'}, ix=null, timer=null;
+
+  var KIND_LABEL={page:'עמוד',drive:'דרייב',pdf:'מסמך',link:'קישור'};
+
+  function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  function pill(id,label,on){return '<button type="button" class="spill'+(on?' on':'')+'" data-v="'+id+'">'+esc(label)+'</button>'}
+
+  function buildFilters(){
+    catsEl.innerHTML=[{id:'all',label:'הכול'}].concat(ix.cats).map(function(c){return pill(c.id,c.label,c.id===state.cat)}).join('');
+    kindsEl.innerHTML=[{id:'all',label:'הכול'}].concat(SiteSearch.kinds).map(function(k){return pill(k.id,k.label,k.id===state.kind)}).join('');
+    bindPills(catsEl,'cat'); bindPills(kindsEl,'kind');
+  }
+  function bindPills(box,key){
+    [].forEach.call(box.querySelectorAll('.spill'),function(b){
+      b.addEventListener('click',function(){
+        state[key]=b.dataset.v;
+        [].forEach.call(box.querySelectorAll('.spill'),function(x){x.classList.toggle('on',x===b)});
+        run(true);
+      });
+    });
+  }
+
+  function counts(list){
+    var byCat={},byKind={};
+    list.forEach(function(r){byCat[r.cat]=(byCat[r.cat]||0)+1;byKind[r.kind]=(byKind[r.kind]||0)+1});
+    return {cat:byCat,kind:byKind};
+  }
+
+  function row(r){
+    var ext = r.kind!=='page';
+    var secs=(r.sections||[]).map(function(s){return '<a class="ssec" href="'+esc(s.url)+'">↳ '+esc(s.t)+'</a>'}).join('');
+    var where = ext && r.desc ? '<span class="sp-where">'+esc(r.desc.split(' · ').slice(0,2).join(' · '))+'</span>' : '';
+    return '<a class="sp-card" href="'+esc(r.url)+'"'+(ext?' target="_blank" rel="noopener"':'')+'>'+
+      '<span class="sres-ic i-'+r.kind+'">'+(SiteSearch.icon[r.kind]||SiteSearch.icon.link)+'</span>'+
+      '<span class="sp-tx">'+
+        '<span class="sp-t">'+SiteSearch.mark(r.title,state.q)+(ext?'<span class="sp-ext">↗</span>':'')+'</span>'+
+        '<span class="sp-s">'+SiteSearch.mark(r.snippet,state.q)+'</span>'+
+        (secs?'<span class="sres-secs">'+secs+'</span>':'')+
+      '</span>'+
+      '<span class="sp-meta"><span class="sp-kind k-'+r.kind+'">'+esc(KIND_LABEL[r.kind]||'')+'</span>'+
+        '<span class="sp-cat">'+esc(r.catLabel)+'</span>'+where+'</span>'+
+    '</a>';
+  }
+
+  function run(fromFilter){
+    var text=q.value.trim();
+    state.q=text;
+    var on = state.cat!=='all'||state.kind!=='all';
+    clearBtn.hidden=!on;
+    syncURL();
+    if(text.length<2){
+      countEl.textContent='';
+      resEl.innerHTML='<div class="sp-hint"><b>הקלידו מילה אחת ומעלה</b><span>החיפוש עובר על כותרות העמודים, התיאורים, כותרות המשנה והטקסט — וגם על שמות הקבצים ותיקיות הדרייב שמקושרים מהאתר.</span></div>';
+      return;
+    }
+    if(!ix) return;
+    SiteSearch.query(text,{}).then(function(list){
+      var c=counts(list);
+      paintCounts(c);
+      var shown=list.filter(function(r){
+        return (state.cat==='all'||r.cat===state.cat)&&(state.kind==='all'||r.kind===state.kind);
+      });
+      countEl.innerHTML = shown.length
+        ? '<b>'+shown.length+'</b> תוצאות עבור “'+esc(text)+'”'+(shown.length!==list.length?' <span>(מתוך '+list.length+' — הסינון פעיל)</span>':'')
+        : '';
+      if(!shown.length){
+        if(list.length){
+          resEl.innerHTML='<div class="sp-hint"><b>אין תוצאות בסינון הנוכחי</b>'+
+            '<span>ל“'+esc(text)+'” יש '+list.length+' תוצאות במרחבים ובסוגים אחרים — אפשר לנקות את הסינון.</span>'+
+            '<button type="button" class="sask" id="spReset">ניקוי הסינון</button></div>';
+          var rb=document.getElementById('spReset');
+          if(rb) rb.addEventListener('click',function(){clearBtn.click()});
+          return;
+        }
+        resEl.innerHTML='<div class="sp-hint"><b>לא נמצאו תוצאות ל“'+esc(text)+'”</b>'+
+          '<span>אפשר לנסות מילה בודדת, לבטל את הסינון, או לשאול את עוגן — הצ׳אטבוט של האתר.</span>'+
+          '<button type="button" class="sask" id="spAsk">⚓ שאלו את עוגן</button></div>';
+        var a=document.getElementById('spAsk');
+        if(a) a.addEventListener('click',function(){
+          var b=document.querySelector('.open-ogen')||document.getElementById('ogen-launcher');
+          if(b) b.click();
+        });
+        return;
+      }
+      resEl.innerHTML=shown.map(row).join('');
+    });
+  }
+
+  function paintCounts(c){
+    [].forEach.call(catsEl.querySelectorAll('.spill'),function(b){
+      var v=b.dataset.v, n=v==='all'?null:(c.cat[v]||0);
+      b.classList.toggle('dim',n===0);
+      var base=b.textContent.replace(/\s*\(\d+\)$/,'');
+      b.textContent=n===null?base:base+' ('+n+')';
+    });
+    [].forEach.call(kindsEl.querySelectorAll('.spill'),function(b){
+      var v=b.dataset.v, n=v==='all'?null:(c.kind[v]||0);
+      b.classList.toggle('dim',n===0);
+      var base=b.textContent.replace(/\s*\(\d+\)$/,'');
+      b.textContent=n===null?base:base+' ('+n+')';
+    });
+  }
+
+  function syncURL(){
+    var p=new URLSearchParams();
+    if(state.q) p.set('q',state.q);
+    if(state.cat!=='all') p.set('cat',state.cat);
+    if(state.kind!=='all') p.set('kind',state.kind);
+    var s=p.toString();
+    try{history.replaceState(null,'',s?location.pathname+'?'+s:location.pathname)}catch(e){}
+  }
+
+  form.addEventListener('submit',function(e){e.preventDefault();run()});
+  q.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(run,130)});
+  clearBtn.addEventListener('click',function(){
+    state.cat='all';state.kind='all';
+    [].forEach.call(catsEl.querySelectorAll('.spill'),function(x){x.classList.toggle('on',x.dataset.v==='all')});
+    [].forEach.call(kindsEl.querySelectorAll('.spill'),function(x){x.classList.toggle('on',x.dataset.v==='all')});
+    run();
+  });
+
+  function boot(){
+    var p=new URLSearchParams(location.search);
+    state.q=p.get('q')||''; state.cat=p.get('cat')||'all'; state.kind=p.get('kind')||'all';
+    q.value=state.q;
+    SiteSearch.ready().then(function(data){
+      ix=data; buildFilters(); run(); q.focus();
+    }).catch(function(){
+      resEl.innerHTML='<div class="sp-hint"><b>לא הצלחנו לטעון את אינדקס החיפוש</b><span>נסו לרענן את העמוד.</span></div>';
+    });
+  }
+  if(window.SiteSearch) boot(); else addEventListener('DOMContentLoaded',boot);
+})();
+</script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
-<script src="/pagenav.js" defer></script>
 </body>
 </html>

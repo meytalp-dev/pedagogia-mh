@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/pagenav.css">
 </head>
 <body>
 
@@ -53,7 +54,7 @@
     <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
     <div class="sect">מרחב מנהלים</div>
     <a href="menahalim.html">שער מרחב המנהלים</a>
-    <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+    <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
     <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
     <div class="sect">מנהלים חדשים</div>
     <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל/ת</a>
@@ -153,7 +154,7 @@
   </span>
   <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
     <div class="sub">
-      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
       <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
       <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
       <a href="drive-menahalim.html">דרייב מנהלים</a>
@@ -174,7 +175,7 @@
     <div class="sub">
       <a href="tafkidim.html">כל התפקידים וההגדרות</a>
       <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
-      <a href="work-plans.html">תוכניות עבודה · בעלי תפקידים</a>
+      <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
       <a href="ogdan-shaot.html">אוגדן שעות תשפ"ז</a>
       <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
       <a href="https://drive.google.com/drive/folders/1BFTo7pzI43UQC5IRTsi6y2gBFqAw5-d5" target="_blank" rel="noopener">דרייב · מורים חונכים</a>
@@ -220,6 +221,17 @@
   <div style="background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--cyan);border-radius:14px;padding:16px 20px">
     <b style="color:#0B7FA6">נתיב הבגרות</b>
     <p style="font-size:.87rem;color:var(--text2);margin-top:2px">קישורים אצורים ממשרד החינוך — שאלונים, מיקודים, קמפוס IL — וכל חלופות ההערכה למתקשים.</p>
+  </div>
+</div>
+
+<div class="rv d3" style="padding:14px var(--px) 0">
+  <div style="background:var(--blue-bg);border-radius:14px;padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.88rem">
+    <b style="color:#145FA8">תרגולים לבגרות</b>
+    <a href="hebrew.html#tirgulim" style="color:inherit">לשון · מאגר תרגולים מלא</a>
+    <a href="math.html#tirgulim-shelanu" style="color:inherit">מתמטיקה</a>
+    <a href="history.html#tirgulim-shelanu" style="color:inherit">היסטוריה</a>
+    <a href="literature.html#tirgulim-shelanu" style="color:inherit">ספרות</a>
+    <a href="english.html#tirgulim-shelanu" style="color:inherit">אנגלית</a>
   </div>
 </div>
 
@@ -287,8 +299,10 @@
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
 
 <script src="site.js"></script>
+<script src="search.js" defer></script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
 </body>
 </html>

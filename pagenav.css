@@ -1,0 +1,94 @@
+/* ===== pagenav.css — תפריט התמצאות בעמוד: כרטיסיות + פס ניווט דביק ===== */
+/* נבנה אוטומטית על ידי pagenav.js מתוך כותרות העמוד. אין צורך לתחזק ידנית. */
+
+:root{--pn-nav:64px}
+
+/* ---------- פס הניווט הדביק (התפריט העליון של העמוד) ---------- */
+.pn{
+  position:sticky;top:var(--pn-nav);z-index:90;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 8px 20px -18px rgba(13,59,102,.75);
+}
+.pn-in{max-width:1140px;margin:0 auto;padding:7px var(--px);display:flex;align-items:center;gap:12px}
+.pn-lbl{
+  display:flex;align-items:center;gap:8px;flex:0 0 auto;
+  font-size:.72rem;font-weight:800;letter-spacing:.14em;color:#0B7FA6;white-space:nowrap;
+}
+.pn-lbl::before{content:"";width:22px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+.pn-tabs{
+  display:flex;align-items:center;gap:6px;flex:1;min-width:0;
+  overflow-x:auto;overscroll-behavior-x:contain;scroll-behavior:smooth;
+  scrollbar-width:none;-ms-overflow-style:none;padding:3px 0;
+  -webkit-mask-image:linear-gradient(to left,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
+  mask-image:linear-gradient(to left,transparent 0,#000 18px,#000 calc(100% - 18px),transparent 100%);
+}
+.pn-tabs::-webkit-scrollbar{display:none}
+.pn-tab{
+  display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
+  padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);
+  background:#fff;color:var(--text2);text-decoration:none;
+  font-size:.855rem;font-weight:700;line-height:1.35;white-space:nowrap;
+  transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
+}
+.pn-tab .n{
+  font-size:.72rem;font-weight:800;font-variant-numeric:tabular-nums;
+  color:var(--muted);transition:color .2s;
+}
+.pn-tab:hover{border-color:var(--cyan);background:var(--cyan-100);color:var(--navy)}
+.pn-tab:hover .n{color:#0B7FA6}
+.pn-tab.on{
+  background:var(--grad);border-color:transparent;color:#fff;box-shadow:var(--sh-sm);
+}
+.pn-tab.on .n{color:rgba(255,255,255,.72)}
+.pn-up{
+  flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;
+  border:1.5px solid var(--border);background:#fff;color:var(--navy);
+  display:grid;place-content:center;transition:all .2s;
+}
+.pn-up:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.pn-up svg{width:15px;height:15px}
+@media(max-width:860px){.pn-lbl{display:none}}
+@media(max-width:640px){.pn-in{padding-inline:12px;gap:8px}.pn-tab{font-size:.8rem;padding:5px 12px}}
+
+/* ---------- כרטיסיות המדורים (״מה יש בעמוד״) ---------- */
+.pn-cards{margin:0 0 clamp(28px,4.5vw,42px)}
+.pn-cards-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.pn-cards-head h2{
+  font-size:.85rem;font-weight:800;letter-spacing:.2em;color:#0B7FA6;
+  margin:0;padding:0;border:none;display:block;
+}
+.pn-cards-head h2::before{display:none}
+.pn-cards-head .hint{font-size:.82rem;color:var(--text2)}
+.pn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:12px}
+.pn-card{
+  position:relative;display:flex;flex-direction:column;gap:7px;overflow:clip;
+  padding:15px 17px 14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm);
+  text-decoration:none;color:inherit;
+  transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s;
+}
+.pn-card::before{
+  content:"";position:absolute;inset-inline:0;top:0;height:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease);
+}
+.pn-card:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:var(--sh-md)}
+.pn-card:hover::before{transform:scaleX(1)}
+.pn-card .pn-n{
+  font-weight:800;font-variant-numeric:tabular-nums;font-size:.82rem;color:#0B7FA6;letter-spacing:.06em;
+}
+.pn-card h3{font-size:1rem;font-weight:800;color:var(--navy);line-height:1.35;margin:0}
+.pn-card ul{list-style:none;margin:2px 0 0;display:flex;flex-direction:column;gap:3px}
+.pn-card li{position:relative;padding-inline-start:0;padding-inline-end:14px;font-size:.82rem;color:var(--text2);line-height:1.45}
+.pn-card li::before{content:"";position:absolute;inset-inline-end:1px;top:9px;width:8px;height:2px;border-radius:2px;background:var(--cyan)}
+.pn-card .pn-go{
+  margin-top:auto;padding-top:8px;font-size:.78rem;font-weight:700;color:var(--text2);
+  display:flex;align-items:center;gap:6px;transition:color .25s;
+}
+.pn-card .pn-go svg{width:12px;height:12px;transition:transform .28s var(--ease)}
+.pn-card:hover .pn-go{color:#0B7FA6}
+.pn-card:hover .pn-go svg{transform:translateX(-4px)}
+@media(max-width:520px){.pn-grid{grid-template-columns:1fr}.pn-card ul{display:none}}
+
+@media print{.pn,.pn-cards{display:none !important}}
