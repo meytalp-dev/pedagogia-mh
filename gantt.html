@@ -54,6 +54,9 @@
 .t-national{background:var(--g-national-bg);border-color:var(--g-national-bd);color:var(--g-national-tx)}
 .t-holiday{background:var(--g-holiday-bg);border-color:var(--g-holiday-bd);color:var(--g-holiday-tx)}
 .t-exam{background:var(--g-exam-bg);border-color:var(--g-exam-bd);color:var(--g-exam-tx)}
+/* שורת הבחינות צפופה (עד 15 ביום בחודש) — צ׳יפ קומפקטי עם תאריך בשורה */
+.chip.t-exam{padding:3px 7px 4px;font-size:.73rem;line-height:1.25}
+.chip.t-exam b{display:inline;margin-inline-end:5px;opacity:.72}
 .chip.lnkchip{cursor:pointer;text-decoration:none;display:block;transition:filter .15s var(--ease)}
 .chip.lnkchip:hover{filter:brightness(.955)}
 .rh .rdot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-inline-end:6px}
@@ -410,15 +413,49 @@ const EVENTS = [
  {t:'holiday', d:'2027-05-25', n:'ל"ג בעומר', s:''},
  {t:'holiday', d:'2027-06-10', d2:'2027-06-11', n:'שבועות', s:'ערב חג 10.6'},
  /* --- מועדי בחינות · בגרות (אגף בכיר בחינות, טיוטה 12.7.2026) ---
-    פסי תקופה בלבד. הלוח המלא לפי מקצוע: luach-mivchanim.html                */
- {t:'exam', d:'2026-12-28', n:'מועד חורף · נפתח', s:'מחשבת ישראל דתי · יום בחינה אחד בדצמבר', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-01-04', d2:'2027-01-28', n:'מועד חורף', s:'10 ימי בחינה · עברית 4.1 · מתמטיקה 11–12.1 · אנגלית 18–19.1 · אזרחות 21.1 · תנ"ך 25.1', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-02-01', d2:'2027-02-04', n:'מועד חורף · סיום', s:'היסטוריה 1.2 · ספרות 4.2', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-04-29', n:'מועד קיץ · נפתח', s:'ערבית לערבים (לשון) · 29.4, אסרו חג', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-05-02', d2:'2027-05-31', n:'מועד קיץ', s:'8 ימי בחינה · עברית 17.5 · תנ"ך 20.5 · מתמטיקה 26–27.5', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-06-01', d2:'2027-06-30', n:'מועד קיץ · שיא', s:'15 ימי בחינה · אנגלית 1.6 · היסטוריה 7.6 · ספרות 17.6 · אזרחות 24.6', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-07-01', n:'פסיכומטרי', s:'יום חמישי 1.7', u:'luach-mivchanim.html'},
- {t:'exam', d:'2027-07-05', d2:'2027-07-08', n:"מועד ב'", s:'שפת אם 5.7 · אנגלית 6–7.7 · מתמטיקה 8.7', u:'luach-mivchanim.html'}
+    בחינה לכל יום היבחנות. הלוח המלא לפי מקצוע: luach-mivchanim.html         */
+ {t:'exam', d:'2026-12-28', n:'מחשבת ישראל דתי', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-04', n:'עברית ליהודים · עברית לערבים', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-11', n:'מתמטיקה', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-12', n:'מתמטיקה', s:'מועד חורף · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-14', n:'תושבע"פ · מורשת דרוזית', s:'מועד חורף · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-18', n:'אנגלית', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-19', n:'אנגלית', s:'מועד חורף · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-21', n:'אזרחות', s:'מועד חורף · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-24', n:'עברית לדרוזים', s:'מועד חורף · יום ראשון', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-25', n:'תנ"ך · מורשת דת איסלאם · מורשת נוצרית', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-01-28', n:'ערבית לערבים ולדרוזים (לשון)', s:'מועד חורף · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-02-01', n:'היסטוריה לכלל המגזרים', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-02-04', n:'ספרות ליהודים · ערבית לערבים ולדרוזים (ספרות)', s:'מועד חורף · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-04-29', n:'ערבית לערבים (לשון) כולל הגבר', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-02', n:'ערבית לדרוזים (לשון)', s:'מועד קיץ · יום ראשון', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-05', n:'מקצועות הגבר · מדעי המחשב · שפות זרות', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-09', n:'דינים · יהדות', s:'מועד קיץ · יום ראשון', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-17', n:'עברית ליהודים', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-20', n:'תנ"ך כולל הגבר', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-26', n:'מתמטיקה', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-27', n:'מתמטיקה', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-05-31', n:'דיפלומטיה', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-01', n:'אנגלית', s:'מועד קיץ · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-02', n:'ביולוגיה מעבדה', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-03', n:'ביולוגיה', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-07', n:'היסטוריה לכלל המגזרים כולל הגבר', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-08', n:'תאוריה', s:'מועד קיץ · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-09', n:'מורשות לכלל המגזרים · מחשבת ישראל דתי · מחשבת ישראל כללי', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-14', n:'עברית לערבים ולדרוזים · מחשבה ומוסר · תלמוד ותושבע"פ', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-15', n:'תאוריה', s:'מועד קיץ · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-17', n:'ספרות לכלל המגזרים · ערבית לערבים ולדרוזים (ספרות)', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-21', n:'כימיה · מקצועות הגבר', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-22', n:'תאוריה', s:'מועד קיץ · יום שלישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-23', n:'פיזיקה מעבדה', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-24', n:'אזרחות כולל הגבר', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-28', n:'פיזיקה · מוט"ל', s:'מועד קיץ · יום שני', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-06-30', n:'מקצועות הגבר', s:'מועד קיץ · יום רביעי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-01', n:'פסיכומטרי', s:'מועד קיץ · יום חמישי', u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-05', n:'שפת אם — עברית או ערבית', s:"מועד מועד ב' · יום שני", u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-06', n:'אנגלית אווטר', s:"מועד מועד ב' · יום שלישי", u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-07', n:'אנגלית', s:"מועד מועד ב' · יום רביעי", u:'luach-mivchanim.html'},
+ {t:'exam', d:'2027-07-08', n:'מתמטיקה', s:"מועד מועד ב' · יום חמישי", u:'luach-mivchanim.html'}
 ];
 
 /* ===== רינדור ===== */
