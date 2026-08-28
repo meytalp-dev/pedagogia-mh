@@ -1,17 +1,24 @@
 /* ===== pagenav.js — תפריט התמצאות אוטומטי לעמודים ארוכים =====
    בונה לבד, מתוך כותרות העמוד:
    1) פס ניווט דביק מתחת לתפריט הראשי — כרטיסייה לכל מדור, עם סימון המדור הנוכחי בגלילה.
-   2) רשת כרטיסיות "מה יש בעמוד" בראש התוכן, כולל תתי־הנושאים של כל מדור.
+   2) תפריט צד נפתח (המבורגר) לעמודים עמוסים — כל המדורים ותתי־הנושאים כרשימה היררכית.
+   3) רשת כרטיסיות "מה יש בעמוד" בראש התוכן — כבויה כברירת מחדל (opt-in בלבד).
    אין צורך לערוך את העמוד: מספיק לטעון את pagenav.css ואת הקובץ הזה.
-   כיבוי: <body data-pn="off"> · בלי כרטיסיות: <body data-pn-cards="off">
-   מינימום מדורים להצגה: 4 (או data-pn-min="3").
+   כיבוי הכול: <body data-pn="off"> · הדלקת הכרטיסיות: <body data-pn-cards="on">
+   מינימום מדורים להצגת הפס: 4 (או data-pn-min="3").
+
+   תפריט הצד נדלק לבד בעמוד עמוס, בשני מסלולים:
+   8 מדורים ראשיים ומעלה, או 12 שורות תוכן־עניינים ומעלה (מדורים + תתי־נושאים יחד) —
+   כך גם עמוד שער עם מעט מדורים ראשיים והרבה תתי־נושאים מקבל מפה מלאה.
+   עקיפה ידנית: <body data-pn-drawer="on"> / <body data-pn-drawer="off">
+   שינוי הסף: <body data-pn-drawer-min="6">
 ================================================================= */
 (function () {
   'use strict';
   if (window.__pagenavLoaded) return;
   window.__pagenavLoaded = true;
 
-  var SKIP = '.nav,.drawer,.govbar,.foot,.hero,.toc,.pn,.pn-cards,.sub,dialog,template,[data-pn-skip]';
+  var SKIP = '.nav,.drawer,.govbar,.foot,.hero,.toc,.pn,.pn-cards,.pnd,.sub,dialog,template,[data-pn-skip]';
   var NS = 'http://www.w3.org/2000/svg';
 
   function ready(fn) {
@@ -26,6 +33,15 @@
     return c.textContent.replace(/\s+/g, ' ').trim();
   }
 
+  /* אייקוני קו — SVG ב-currentColor, בלי אימוג'ים */
+  var PATHS = {
+    up:   ['M8 13V3M3.5 7.5 8 3l4.5 4.5'],
+    go:   ['M10 3.5 5.5 8l4.5 4.5'],
+    menu: ['M2.5 4h11', 'M2.5 8h11', 'M2.5 12h11'],
+    x:    ['M4 4l8 8', 'M12 4l-8 8'],
+    out:  ['M5.5 10.5 10.5 5.5', 'M6 5.5h4.5V10']
+  };
+
   function icon(kind) {
     var svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', '0 0 16 16');
@@ -35,9 +51,11 @@
     svg.setAttribute('stroke-linecap', 'round');
     svg.setAttribute('stroke-linejoin', 'round');
     svg.setAttribute('aria-hidden', 'true');
-    var p = document.createElementNS(NS, 'path');
-    p.setAttribute('d', kind === 'up' ? 'M8 13V3M3.5 7.5 8 3l4.5 4.5' : 'M10 3.5 5.5 8l4.5 4.5');
-    svg.appendChild(p);
+    (PATHS[kind] || PATHS.go).forEach(function (d) {
+      var p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', d);
+      svg.appendChild(p);
+    });
     return svg;
   }
 
@@ -62,6 +80,22 @@
   /* מדור מוצג בפועל? (עמודים עם סינון מסלולים מסתירים בלוקים שלמים) */
   function shown(el) {
     return !!(el.offsetParent || el.getClientRects().length);
+  }
+
+  /* יעד הקישור של תת־נושא: אם הכותרת יושבת בתוך קישור לעמוד אחר — כמו בעמוד שער
+     שכל שורה בו מפנה לעמוד משלה — הולכים לשם. אחרת עוגן בתוך העמוד. */
+  function subTarget(h, fallbackId) {
+    var a = h.closest('a[href]');
+    var href = a && a.getAttribute('href');
+    if (href && href.charAt(0) !== '#' && !/^javascript:/i.test(href)) {
+      return { href: href, out: true, el: h };
+    }
+    if (href && href.length > 1 && href.charAt(0) === '#') {
+      var t = document.getElementById(decodeURIComponent(href.slice(1)));
+      return { href: href, out: false, el: t || h };
+    }
+    if (!h.id) h.id = fallbackId;
+    return { href: '#' + encodeURIComponent(h.id), out: false, el: h };
   }
 
   /* ---------- איסוף המדורים ---------- */
@@ -98,12 +132,15 @@
     });
 
     /* שיוך תתי־נושאים למדור שמעליהם, לפי סדר העמוד */
-    var cur = null;
+    var cur = null, seq = 0;
     all.forEach(function (h) {
       var idx = isHead(h);
       if (idx > -1) { cur = out[idx]; return; }
       if (minis.indexOf(h) < 0) return;
-      if (cur && cur.subs.length < 5) cur.subs.push(clean(h));
+      if (!cur || cur.subs.length >= 12) return;
+      var t = subTarget(h, 'sub-' + (++seq));
+      t.title = clean(h);
+      cur.subs.push(t);
     });
     return out;
   }
@@ -156,7 +193,186 @@
     inner.appendChild(up);
     bar.appendChild(inner);
     bar.__tabs = tabs;
+    bar.__in = inner;
     return bar;
+  }
+
+  /* ---------- בניית תפריט הצד (המבורגר) ----------
+     חי לצד הפס הדביק, לא במקומו: הכפתור נכנס בראש הפס, החלונית עצמה על ה-body. */
+  function buildDrawer(items) {
+    var subCount = 0;
+    items.forEach(function (it) { subCount += it.subs.length; });
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pnd-btn';
+    btn.id = 'pn-drawer-btn';
+    btn.setAttribute('aria-controls', 'pn-drawer');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'פתיחת תפריט מדורי העמוד');
+    btn.appendChild(icon('menu'));
+    var btnT = document.createElement('span');
+    btnT.className = 'pnd-btn-t';
+    btnT.textContent = 'מדורים';
+    btn.appendChild(btnT);
+
+    var scrim = document.createElement('div');
+    scrim.className = 'pnd-scrim';
+
+    var panel = document.createElement('aside');
+    panel.className = 'pnd';
+    panel.id = 'pn-drawer';
+    panel.tabIndex = -1;
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('aria-labelledby', 'pn-drawer-ttl');
+
+    var head = document.createElement('div');
+    head.className = 'pnd-head';
+    var ttlBox = document.createElement('div');
+    var ttl = document.createElement('strong');
+    ttl.id = 'pn-drawer-ttl';
+    ttl.textContent = 'מדורי העמוד';
+    var cnt = document.createElement('span');
+    cnt.className = 'pnd-count';
+    cnt.textContent = items.length + ' מדורים' + (subCount ? ' · ' + subCount + ' תתי־נושאים' : '');
+    ttlBox.appendChild(ttl);
+    ttlBox.appendChild(cnt);
+    var x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'pnd-x';
+    x.setAttribute('aria-label', 'סגירת תפריט מדורי העמוד');
+    x.appendChild(icon('x'));
+    head.appendChild(ttlBox);
+    head.appendChild(x);
+
+    var body = document.createElement('nav');
+    body.className = 'pnd-body';
+    body.setAttribute('aria-label', 'מדורי העמוד');
+    var list = document.createElement('ol');
+    list.className = 'pnd-list';
+
+    var flatSubs = [];
+    items.forEach(function (it, i) {
+      var li = document.createElement('li');
+      li.className = 'pnd-item';
+
+      var a = document.createElement('a');
+      a.className = 'pnd-sec';
+      a.href = '#' + encodeURIComponent(it.id);
+      var n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = pad(i);
+      var t = document.createElement('span');
+      t.className = 't';
+      t.textContent = it.title;
+      a.appendChild(n);
+      a.appendChild(t);
+      li.appendChild(a);
+      it.dsec = a;
+      it.dli = li;
+
+      if (it.subs.length) {
+        var ul = document.createElement('ul');
+        ul.className = 'pnd-subs';
+        it.subs.forEach(function (s) {
+          var sli = document.createElement('li');
+          var sa = document.createElement('a');
+          sa.className = 'pnd-sub' + (s.out ? ' out' : '');
+          sa.href = s.href;
+          sa.appendChild(document.createTextNode(s.title));
+          if (s.out) sa.appendChild(icon('out'));
+          sli.appendChild(sa);
+          ul.appendChild(sli);
+          s.link = sa;
+          if (!s.out && s.el) flatSubs.push(s);
+        });
+        li.appendChild(ul);
+      }
+      list.appendChild(li);
+    });
+    body.appendChild(list);
+
+    panel.appendChild(head);
+    panel.appendChild(body);
+
+    /* --- פתיחה, סגירה ומלכודת פוקוס --- */
+    function isOpen() { return document.body.classList.contains('pnd-open'); }
+    function focusables() {
+      return [].slice.call(panel.querySelectorAll('a[href],button:not([disabled])'))
+        .filter(function (el) { return el.offsetParent || el.getClientRects().length; });
+    }
+    function scrollActiveIntoView() {
+      var on = list.querySelector('.pnd-sec.on');
+      if (!on || !isOpen()) return;
+      var r = on.getBoundingClientRect(), br = body.getBoundingClientRect();
+      if (r.top < br.top + 8 || r.bottom > br.bottom - 8) {
+        body.scrollTop += (r.top - br.top) - body.clientHeight / 3;
+      }
+    }
+    function open() {
+      if (isOpen()) return;
+      document.body.classList.add('pnd-open');
+      btn.setAttribute('aria-expanded', 'true');
+      btn.setAttribute('aria-label', 'סגירת תפריט מדורי העמוד');
+      panel.focus();
+      scrollActiveIntoView();
+    }
+    /* הפוקוס חוזר לכפתור שפתח — חוץ מלחיצה על קישור, ששם הדף ממילא קופץ ליעד */
+    function close(restore) {
+      if (!isOpen()) return;
+      document.body.classList.remove('pnd-open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-label', 'פתיחת תפריט מדורי העמוד');
+      if (restore !== false) btn.focus();
+    }
+
+    btn.addEventListener('click', function () { isOpen() ? close() : open(); });
+    x.addEventListener('click', function () { close(); });
+    scrim.addEventListener('click', function () { close(); });
+
+    /* לחיצה על קישור סוגרת — הניווט עצמו ממשיך כרגיל */
+    panel.addEventListener('click', function (e) {
+      if (e.target.closest('a[href]')) close(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen()) { e.preventDefault(); close(); }
+    });
+
+    panel.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var f = focusables();
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1], a = document.activeElement;
+      if (e.shiftKey && (a === first || a === panel)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+    });
+
+    /* הפוקוס לא בורח מהתפריט הפתוח — כפתור ההמבורגר עצמו מותר, הוא המתג */
+    document.addEventListener('focusin', function (e) {
+      if (isOpen() && e.target !== btn && !panel.contains(e.target)) panel.focus();
+    });
+
+    return {
+      btn: btn, panel: panel, scrim: scrim, subs: flatSubs, close: close,
+      mark: function (i) {
+        items.forEach(function (it, k) {
+          if (!it.dsec) return;
+          it.dsec.classList.toggle('on', k === i);
+          if (k === i) it.dsec.setAttribute('aria-current', 'true');
+          else it.dsec.removeAttribute('aria-current');
+        });
+        scrollActiveIntoView();
+      },
+      markSub: function (s) {
+        flatSubs.forEach(function (o) {
+          o.link.classList.toggle('on', o === s);
+          if (o === s) o.link.setAttribute('aria-current', 'true');
+          else o.link.removeAttribute('aria-current');
+        });
+      }
+    };
   }
 
   /* ---------- בניית כרטיסיות המדורים ---------- */
@@ -194,9 +410,9 @@
 
       if (it.subs.length) {
         var ul = document.createElement('ul');
-        it.subs.forEach(function (s) {
+        it.subs.slice(0, 5).forEach(function (s) {
           var li = document.createElement('li');
-          li.textContent = s;
+          li.textContent = s.title;
           ul.appendChild(li);
         });
         a.appendChild(ul);
@@ -218,7 +434,7 @@
   }
 
   /* ---------- מיקום, קיזוז גלילה וסימון המדור הנוכחי ---------- */
-  function install(bar, cards, items, firstHead) {
+  function install(bar, cards, drawer, items, firstHead) {
     var mainNav = document.querySelector('.nav');
     var hero = document.querySelector('.hero');
 
@@ -226,6 +442,14 @@
     var after = hero || (h1 ? bodyBlock(h1) : null) || mainNav;
     if (after && after.parentNode) after.parentNode.insertBefore(bar, after.nextSibling);
     else document.body.insertBefore(bar, document.body.firstChild);
+
+    /* כפתור ההמבורגר חי בתוך הפס הדביק (ראשון = הימני ב-RTL);
+       החלונית והרקע יושבים על ה-body כדי שלא ייחתכו בגלילת הפס. */
+    if (drawer) {
+      bar.__in.insertBefore(drawer.btn, bar.__in.firstChild);
+      document.body.appendChild(drawer.scrim);
+      document.body.appendChild(drawer.panel);
+    }
 
     if (cards) {
       var at = anchorFor(firstHead);
@@ -240,6 +464,7 @@
       var navH = mainNav ? Math.round(mainNav.getBoundingClientRect().height) : 0;
       document.documentElement.style.setProperty('--pn-nav', navH + 'px');
       var barH = Math.round(bar.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--pn-bar', barH + 'px');
       document.documentElement.style.scrollPaddingTop = (navH + barH + 14) + 'px';
       return navH + barH;
     }
@@ -254,6 +479,7 @@
         it.hidden = !vis;
         it.tab.classList.toggle('pn-off', !vis);
         if (it.card) it.card.classList.toggle('pn-off', !vis);
+        if (it.dli) it.dli.classList.toggle('pn-off', !vis);
       });
     }
     sync();
@@ -270,7 +496,7 @@
     addEventListener('resize', fades, { passive: true });
     fades();
 
-    var ticking = false, active = -1;
+    var ticking = false, active = -1, activeSub = null;
     function spy() {
       ticking = false;
       sync();
@@ -285,6 +511,18 @@
       if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
         for (var k = items.length - 1; k >= 0; k--) { if (!items[k].hidden) { cur = k; break; } }
       }
+      /* סימון תת־הנושא הנוכחי בתפריט הצד — רק לתתי־נושאים שהם עוגן בתוך העמוד */
+      if (drawer && drawer.subs.length) {
+        var s = null;
+        for (var m = 0; m < drawer.subs.length; m++) {
+          var o = drawer.subs[m];
+          if (!o.el.getClientRects().length) continue;
+          if (o.el.getBoundingClientRect().top <= line) s = o;
+          else if (s) break;
+        }
+        if (s !== activeSub) { activeSub = s; drawer.markSub(s); }
+      }
+
       if (cur === active) return;
       if (active > -1) {
         items[active].tab.classList.remove('on');
@@ -294,6 +532,7 @@
       var tab = items[cur].tab;
       tab.classList.add('on');
       tab.setAttribute('aria-current', 'true');
+      if (drawer) drawer.mark(cur);
       /* גלילת הפס כך שהכרטיסייה הפעילה תמיד נראית */
       var r = tab.getBoundingClientRect(), br = box.getBoundingClientRect();
       if (r.right > br.right - 8 || r.left < br.left + 8) {
@@ -322,9 +561,24 @@
     var min = parseInt(body.dataset.pnMin, 10) || (long ? 3 : 4);
     if (items.length < min) return;
 
-    var wantCards = !existing && body.dataset.pnCards !== 'off';
+    /* רשת הכרטיסיות ״מה יש בעמוד״ כבויה כברירת מחדל (החלטת מיטל, 28.8.26).
+       להחזרה בעמוד בודד: <body data-pn-cards="on"> — ואז יש להחזיר גם את כללי
+       ה־CSS של .pn-cards/.pn-grid/.pn-card שהוסרו מ־pagenav.css (זמינים בהיסטוריית git). */
+    var wantCards = body.dataset.pnCards === 'on' && !existing;
+
+    /* עמוד ״עמוס״: הפס האופקי כבר לא מספיק והמשתמש צריך מפה מלאה של העמוד.
+       שני מסלולים — הרבה מדורים ראשיים, או תוכן־עניינים ארוך גם כשהמדורים
+       הראשיים מעטים (עמוד שער כמו chevrati.html: 5 מדורים ו־16 תתי־נושאים). */
+    var subCount = 0;
+    items.forEach(function (it) { subCount += it.subs.length; });
+    var dmin = parseInt(body.dataset.pnDrawerMin, 10) || 8;
+    var busy = items.length >= dmin || (items.length + subCount) >= dmin + 4;
+    var pref = body.dataset.pnDrawer;
+    var wantDrawer = pref === 'on' || (pref !== 'off' && busy);
+
     var bar = buildBar(items);
+    var drawer = wantDrawer ? buildDrawer(items) : null;
     var cards = wantCards ? buildCards(items) : null;
-    install(bar, cards, items, items[0].el);
+    install(bar, cards, drawer, items, items[0].el);
   });
 })();

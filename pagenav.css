@@ -53,51 +53,116 @@
 @media(max-width:860px){.pn-lbl{display:none}}
 @media(max-width:640px){.pn-in{padding-inline:12px;gap:8px}.pn-tab{font-size:.8rem;padding:5px 12px}}
 
+/* ---------- תפריט הצד (המבורגר) לעמודים עמוסים ----------
+   נדלק אוטומטית ב-pagenav.js. הכפתור חי בתוך הפס הדביק, החלונית על ה-body.
+   שכבות: הפס 90 · תפריט הניווט הראשי של האתר 100 · הרקע כאן 240 · החלונית 250
+   (מתחת ל-.drawer/.scrim של תפריט האתר, 300/310, כדי שלא יתנגשו). */
+
+.pnd-btn{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;
+  height:34px;padding:0 12px;border-radius:11px;cursor:pointer;
+  border:1.5px solid var(--border);background:#fff;color:var(--navy);
+  font:inherit;font-size:.8rem;font-weight:800;line-height:1;
+  transition:border-color .2s,background .2s,color .2s,box-shadow .2s;
+}
+.pnd-btn svg{width:16px;height:16px;flex:0 0 auto}
+.pnd-btn:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.pnd-btn[aria-expanded="true"]{background:var(--grad);border-color:transparent;color:#fff;box-shadow:var(--sh-sm)}
+
+.pnd-scrim{
+  position:fixed;inset:0;z-index:240;
+  background:rgba(13,59,102,.34);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease);
+}
+body.pnd-open .pnd-scrim{opacity:1;pointer-events:auto}
+
+/* נפתח מצד ההתחלה הלוגי — ב-RTL זהו הצד הימני */
+.pnd{
+  position:fixed;inset-block:0;inset-inline-start:0;z-index:250;
+  width:min(360px,88vw);display:flex;flex-direction:column;
+  background:#fff;border-inline-end:1px solid var(--border);box-shadow:var(--sh-float);
+  visibility:hidden;transform:translateX(-100%);
+  transition:transform .3s var(--ease),visibility .3s;
+}
+[dir="rtl"] .pnd{transform:translateX(100%)}
+body.pnd-open .pnd{visibility:visible;transform:none;transition:transform .34s var(--ease)}
+.pnd:focus{outline:none}
+
+.pnd-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:16px 20px 14px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--soft-bg),#fff);
+}
+.pnd-head strong{display:block;color:var(--navy);font-size:1.02rem;font-weight:800;line-height:1.3}
+.pnd-count{display:block;margin-top:3px;font-size:.76rem;font-weight:700;color:var(--muted)}
+.pnd-x{
+  flex:0 0 auto;width:32px;height:32px;border-radius:10px;cursor:pointer;
+  border:1.5px solid var(--border);background:#fff;color:var(--navy);
+  display:grid;place-content:center;transition:all .2s;
+}
+.pnd-x:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.pnd-x svg{width:14px;height:14px}
+
+.pnd-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:10px 12px 22px}
+.pnd-list{list-style:none;margin:0;padding:0}
+.pnd-item{margin-bottom:2px}
+.pnd-item.pn-off{display:none}
+
+.pnd-sec{
+  display:flex;align-items:baseline;gap:9px;padding:9px 10px;border-radius:11px;
+  color:var(--text);text-decoration:none;font-weight:700;font-size:.93rem;line-height:1.4;
+  transition:background .15s,color .15s;
+}
+.pnd-sec .n{
+  flex:0 0 auto;font-size:.72rem;font-weight:800;
+  font-variant-numeric:tabular-nums;color:var(--muted);transition:color .15s;
+}
+.pnd-sec:hover{background:var(--soft-bg);color:var(--navy)}
+.pnd-sec.on{background:var(--cyan-100);color:var(--navy)}
+.pnd-sec.on .n{color:#0B7FA6}
+
+.pnd-subs{list-style:none;margin:0 0 8px;padding:0;padding-inline-start:19px;position:relative}
+.pnd-subs::before{
+  content:"";position:absolute;inset-block:4px;inset-inline-start:8px;
+  width:1.5px;border-radius:2px;background:var(--border);
+}
+.pnd-sub{
+  display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:9px;
+  color:var(--text2);text-decoration:none;font-size:.855rem;font-weight:600;line-height:1.4;
+  transition:background .15s,color .15s;
+}
+.pnd-sub svg{width:12px;height:12px;flex:0 0 auto;color:var(--muted)}
+.pnd-sub:hover{background:var(--soft-bg);color:var(--navy)}
+.pnd-sub:hover svg{color:var(--cyan)}
+.pnd-sub.on{color:var(--navy);font-weight:800;background:var(--soft-bg)}
+
+.pnd a:focus-visible,.pnd button:focus-visible,.pnd-btn:focus-visible{
+  outline:2px solid var(--blue);outline-offset:2px;
+}
+
+/* אנימציית פתיחה עדינה לרשימה עצמה */
+@keyframes pndIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+body.pnd-open .pnd-list{animation:pndIn .4s var(--ease) .06s both}
+
+@media(max-width:640px){
+  .pnd-btn-t{display:none}
+  .pnd-btn{width:34px;padding:0;justify-content:center}
+}
+@media (prefers-reduced-motion: reduce){
+  .pnd,body.pnd-open .pnd,.pnd-scrim{transition:none}
+  body.pnd-open .pnd-list{animation:none}
+}
+@media print{.pnd,.pnd-scrim,.pnd-btn{display:none !important}}
+
 /* ---------- כרטיסיות המדורים (״מה יש בעמוד״) ---------- */
-.pn-cards{margin:0 0 clamp(28px,4.5vw,42px)}
-.pn-cards.pn-wide{max-width:1340px;margin-inline:auto;padding:clamp(20px,3vw,30px) var(--px) 0}
-.pn-cards-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-.pn-cards-head h2{
-  font-size:.85rem;font-weight:800;letter-spacing:.2em;color:#0B7FA6;
-  margin:0;padding:0;border:none;display:block;
-}
-.pn-cards-head h2::before{display:none}
-.pn-cards-head .hint{font-size:.82rem;color:var(--text2)}
-.pn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:12px}
-.pn-card{
-  position:relative;display:flex;flex-direction:column;gap:7px;overflow:clip;
-  padding:15px 17px 14px;background:var(--surface);
-  border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm);
-  text-decoration:none;color:inherit;
-  transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s;
-}
-.pn-card::before{
-  content:"";position:absolute;inset-inline:0;top:0;height:3px;
-  background:linear-gradient(90deg,var(--cyan),var(--blue));
-  transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease);
-}
-.pn-card:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:var(--sh-md)}
-.pn-card:hover::before{transform:scaleX(1)}
-.pn-card .pn-n{
-  font-weight:800;font-variant-numeric:tabular-nums;font-size:.82rem;color:#0B7FA6;letter-spacing:.06em;
-}
-.pn-card h3{font-size:1rem;font-weight:800;color:var(--navy);line-height:1.35;margin:0}
-.pn-card ul{list-style:none;margin:2px 0 0;display:flex;flex-direction:column;gap:3px}
-.pn-card li{position:relative;padding-inline-start:15px;font-size:.82rem;color:var(--text2);line-height:1.45}
-.pn-card li::before{content:"";position:absolute;inset-inline-start:1px;top:9px;width:8px;height:2px;border-radius:2px;background:var(--cyan)}
-.pn-card .pn-go{
-  margin-top:auto;padding-top:8px;font-size:.78rem;font-weight:700;color:var(--text2);
-  display:flex;align-items:center;gap:6px;transition:color .25s;
-}
-.pn-card .pn-go svg{width:12px;height:12px;transition:transform .28s var(--ease)}
-.pn-card:hover .pn-go{color:#0B7FA6}
-.pn-card:hover .pn-go svg{transform:translateX(-4px)}
-@media(max-width:520px){.pn-grid{grid-template-columns:1fr}.pn-card ul{display:none}}
+/* הוסרו ב-28.8.26: הרשת כבויה כברירת מחדל ב-pagenav.js (data-pn-cards="on" מדליק).
+   כללי .pn-cards / .pn-cards-head / .pn-grid / .pn-card זמינים בהיסטוריית git
+   ויש להחזירם יחד עם ההדלקה. */
 
-@media print{.pn,.pn-cards{display:none !important}}
+@media print{.pn{display:none !important}}
 
-/* מדור מוסתר (סינון מסלולים) — גם הכרטיסייה שלו יורדת */
-.pn-tab.pn-off,.pn-card.pn-off{display:none}
+/* מדור מוסתר (סינון מסלולים) — גם הכרטיסייה שלו בפס יורדת */
+.pn-tab.pn-off{display:none}
 
 /* גלילה רכה גם בעמודים שאינם עמודי מסמך */
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}

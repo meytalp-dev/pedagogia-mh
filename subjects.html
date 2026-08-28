@@ -16,8 +16,23 @@
 <link rel="stylesheet" href="style.css">
 <script src="/track.js"></script>
 <link rel="stylesheet" href="/pagenav.css">
+<style>
+/* כותרות מדור — אותו כלל בדיוק כמו ב-article.css, שאינו נטען בעמוד נחיתה זה.
+   pagenav.js בונה מהן את פס ההתמצאות האוטומטי. */
+h2.sub-sec{
+  font-size:clamp(1.25rem,2.4vw,1.6rem);font-weight:800;color:var(--navy);
+  margin:clamp(26px,4vw,38px) 0 10px;padding-top:20px;border-top:1px solid var(--border);
+  display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;
+}
+h2.sub-sec::before{content:"";width:30px;height:7px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--blue));flex:0 0 auto;transform:translateY(-3px)}
+h2.sub-sec.first{border-top:none;padding-top:0;margin-top:0}
+h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
+/* בתוך המחולל הכותרת כבר מעוצבת — sub-sec משמש שם רק כעוגן ניווט */
+.gen h2.sub-sec{display:block;margin:8px 0 3px;padding-top:0;border-top:none}
+.gen h2.sub-sec::before{display:none}
+</style>
 </head>
-<body>
+<body data-pn-min="3">
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
 <aside class="drawer" aria-label="תפריט ראשי">
@@ -29,8 +44,8 @@
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
     <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
-    <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
-    <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+    <a href="bagrut.html">נתיב הבגרות</a>
+    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <a class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></a>
@@ -143,8 +158,8 @@
       <a href="hodaot.html">הודעות ועדכונים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
-      <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
-      <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+      <a href="bagrut.html">נתיב הבגרות</a>
+      <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
       <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a class="dis">תוכניות לימודים</a>
@@ -280,6 +295,258 @@
   </div>
 </div>
 
+<style>
+/* ===== מחולל שיעורים — מייצר מערך, מצגת ודף עבודה בתוך העמוד ===== */
+.gen{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:24px 26px;box-shadow:var(--sh-sm)}
+.gen .gen-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px}
+.gen .gen-head>svg{flex:none;width:26px;height:26px;color:var(--navy);margin-top:2px}
+.gen .gen-head h2{font-size:1.14rem;margin-bottom:3px}
+.gen .gen-head p{font-size:.88rem;color:var(--text2);line-height:1.65;max-width:76ch}
+.gen .step{display:flex;align-items:center;gap:10px;margin:22px 0 12px;font-size:.86rem;font-weight:800;color:var(--navy)}
+.gen .step i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--blue-bg);color:var(--navy);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.76rem;font-weight:800}
+.gen .step s{flex:1;height:1px;background:var(--border);text-decoration:none}
+.gen .step em{font-style:normal;font-weight:600;color:var(--muted);font-size:.8rem}
+.gen .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.gen label{display:flex;flex-direction:column;gap:5px;font-size:.83rem;font-weight:700;color:var(--navy)}
+.gen input,.gen select,.gen textarea{font-family:'Assistant',sans-serif;font-size:.92rem;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;background:#fff;color:var(--text);width:100%}
+.gen textarea{min-height:78px;resize:vertical;line-height:1.6}
+.gen input[type=file]{padding:8px 11px;font-size:.85rem}
+.gen input:focus,.gen select:focus,.gen textarea:focus{outline:none;border-color:var(--cyan)}
+.gen .wide{grid-column:1/-1}
+.gen .sub{font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.5}
+.gen .filebox{grid-column:1/-1;border:1.5px dashed var(--border-strong);border-radius:14px;padding:15px 17px;background:var(--soft-bg);display:grid;grid-template-columns:1fr 1fr;gap:13px 16px}
+.gen .filebox .wide{grid-column:1/-1}
+.gen .fname{display:none;align-items:center;gap:8px;font-size:.84rem;font-weight:700;color:var(--navy);background:#fff;border:1px solid var(--border);border-radius:11px;padding:9px 13px}
+.gen .fname.on{display:flex}
+.gen .fname svg{width:16px;height:16px;flex:none;color:var(--muted)}
+.gen .fname span{font-weight:500;color:var(--muted);font-size:.78rem}
+.gen .fname button{margin-inline-start:auto;background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:.95rem;padding:0 4px;width:auto}
+
+.gen .picks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gen .pick{position:relative;border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;background:#fff;cursor:pointer;transition:border-color .2s,background .2s}
+.gen .pick:hover{border-color:var(--cyan)}
+.gen .pick.on{border-color:var(--cyan);background:var(--cyan-100)}
+.gen .pick>input{position:absolute;inset-inline-start:12px;top:14px;width:1px;height:1px;opacity:0;margin:0;padding:0}
+.gen .pick>input:focus-visible+.pk-h{outline:2px solid var(--cyan);outline-offset:4px;border-radius:6px}
+.gen .pick .pk-h{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy);font-size:.95rem}
+.gen .pick .pk-h>svg{width:19px;height:19px;flex:none}
+.gen .pick .box{margin-inline-start:auto;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border-strong);flex:none;display:flex;align-items:center;justify-content:center;background:#fff}
+.gen .pick .box svg{width:11px;height:11px;color:#fff;opacity:0}
+.gen .pick.on .box{background:var(--navy);border-color:var(--navy)}
+.gen .pick.on .box svg{opacity:1}
+.gen .pick p{font-size:.8rem;color:var(--text2);line-height:1.55;margin-top:7px}
+.gen .pick .lvl{margin-top:11px;display:none}
+.gen .pick.on .lvl{display:block}
+.gen .pick .lvl select{font-size:.84rem;padding:8px 11px}
+
+.gen .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
+.gen .hint{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.65}
+.gen .btn svg{width:17px;height:17px}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gen .stat{display:none;margin-top:14px;font-size:.86rem;color:var(--text2);background:var(--soft-bg);border-radius:11px;padding:11px 15px;line-height:1.6}
+.gen .stat.on{display:block}
+
+/* התוצרים */
+.res{display:none;margin-top:8px}
+.res.on{display:block}
+.doc{border:1.5px solid var(--border);border-radius:18px;background:#fff;margin-top:16px;overflow:hidden;box-shadow:var(--sh-sm)}
+.doc .dh{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--soft-bg);border-bottom:1px solid var(--border)}
+.doc .dh h3{font-size:1rem;display:flex;align-items:center;gap:9px}
+.doc .dh h3 svg{width:18px;height:18px;flex:none;color:var(--navy)}
+.doc .dtools{display:flex;flex-wrap:wrap;gap:7px}
+.doc .dtools .btn{padding:7px 15px;font-size:.81rem;gap:6px}
+.doc .dtools .btn svg{width:14px;height:14px}
+.doc .body{padding:18px 22px;font-size:.92rem;line-height:1.75;color:var(--text);max-height:680px;overflow:auto}
+.doc .body h4{font-size:1rem;color:var(--navy);margin:16px 0 7px;font-weight:800}
+.doc .body h5{font-size:.92rem;color:var(--navy-800);margin:13px 0 5px;font-weight:800}
+.doc .body>:first-child{margin-top:0}
+.doc .body p{margin:0 0 9px}
+.doc .body ul,.doc .body ol{margin:0 0 11px;padding-inline-start:22px}
+.doc .body li{margin-bottom:5px}
+.doc .body hr{border:0;border-top:1px solid var(--border);margin:16px 0}
+.doc .body code{background:var(--soft-bg);border-radius:5px;padding:1px 6px;font-size:.86em}
+.doc .tblwrap{overflow-x:auto;margin:0 0 12px}
+.doc .body table{border-collapse:collapse;width:100%;font-size:.87rem}
+.doc .body th,.doc .body td{border:1px solid var(--border);padding:8px 11px;text-align:start;vertical-align:top}
+.doc .body th{background:var(--blue-bg);color:var(--navy);font-weight:800}
+.doc .slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
+.doc .slide{border:1px solid var(--border);border-radius:13px;padding:13px 15px;background:var(--soft-bg)}
+.doc .slide .n{font-size:.71rem;font-weight:800;color:var(--muted);letter-spacing:.04em}
+.doc .slide h5{color:var(--navy);font-size:.93rem;margin:4px 0 7px;font-weight:800}
+.doc .slide ul{margin:0;padding-inline-start:18px;font-size:.83rem;color:var(--text2);line-height:1.6}
+.doc .slide .note{margin-top:8px;font-size:.76rem;color:var(--muted);border-top:1px dashed var(--border-strong);padding-top:6px;line-height:1.5}
+
+/* מצב ביניים — הפרומפט הבנוי */
+.fb{display:none;margin-top:18px;border:1.5px dashed var(--border-strong);border-radius:16px;padding:17px 20px;background:var(--blue-bg)}
+.fb.on{display:block}
+.fb h4{font-size:.97rem;color:var(--navy);margin-bottom:5px}
+.fb .why{font-size:.84rem;color:var(--text2);line-height:1.65;margin-bottom:12px;max-width:78ch}
+.fb .pbox{background:#fff;border:1px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:11px}
+.fb .pbox .ph{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.fb .pbox .ph b{color:var(--navy);font-size:.9rem}
+.fb pre{white-space:pre-wrap;font-family:'Assistant',sans-serif;font-size:.84rem;line-height:1.65;color:var(--text);background:var(--soft-bg);border-radius:10px;padding:12px 14px;max-height:260px;overflow:auto;margin:0}
+.fb .ailinks{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+.btn.sm{padding:9px 20px;font-size:.86rem}
+@media(max-width:860px){.gen .picks{grid-template-columns:1fr}}
+@media(max-width:760px){.gen .fields,.gen .filebox{grid-template-columns:1fr}}
+@media print{.nav,.govbar,.drawer,.scrim,.foot,.trackbar,.gen .fields,.gen .picks,.gen .acts,.gen .step,.gen .gen-head,.fb,.doc .dtools{display:none!important}}
+</style>
+
+<div class="rv d1" style="padding:20px var(--px) 0" id="mecholel-shiur">
+<div class="gen">
+  <div class="gen-head">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 5.5A1.5 1.5 0 0 1 4.5 4H9a3 3 0 0 1 3 3v12a2.5 2.5 0 0 0-2.5-2.5H3z"/>
+      <path d="M21 5.5A1.5 1.5 0 0 0 19.5 4H15a3 3 0 0 0-3 3v12a2.5 2.5 0 0 1 2.5-2.5H21z"/>
+    </svg>
+    <div>
+      <span class="tag cyn">כלי AI</span>
+      <h2 class="sub-sec" id="sec-mecholel" style="margin-top:8px">מחולל שיעורים · מערך, מצגת ודף עבודה</h2>
+      <p>ממלאים את הפרטים, מעלים את החומר שאתם כבר עובדים איתו, מסמנים מה צריך — והתוצר נבנה כאן בעמוד, מוכן להעתקה, להורדה ולהדפסה. אפשר לסמן יותר מתוצר אחד.</p>
+    </div>
+  </div>
+
+  <div class="step"><i>1</i> מה מלמדים <s></s></div>
+
+  <div class="fields">
+    <label for="g-subj">תחום דעת
+      <select id="g-subj">
+        <option value="">בחרו תחום דעת…</option>
+        <option>אזרחות</option>
+        <option>עברית והבעה</option>
+        <option>מתמטיקה</option>
+        <option>אנגלית</option>
+        <option>היסטוריה</option>
+        <option>ספרות</option>
+        <option>תנ"ך</option>
+      </select>
+    </label>
+    <label for="g-grade">שכבת גיל
+      <select id="g-grade">
+        <option>כיתה י׳</option>
+        <option>כיתה י״א</option>
+        <option>כיתה י״ב</option>
+      </select>
+    </label>
+    <label class="wide" for="g-topic">נושא השיעור
+      <input id="g-topic" type="text" placeholder="למשל: מיצג טיעון בכתיבה טיעונית · פונקציה קווית · העלייה הרביעית">
+    </label>
+    <label for="g-len">משך השיעור
+      <select id="g-len">
+        <option>45 דקות</option>
+        <option>90 דקות</option>
+      </select>
+    </label>
+    <label for="g-track">נתיב
+      <select id="g-track">
+        <option>נתיב הגמר · תעודת גמר</option>
+        <option>נתיב הבגרות</option>
+        <option>מסלול מותאם · חלופות הערכה</option>
+      </select>
+    </label>
+
+    <div class="filebox">
+      <div class="wide" style="font-size:.83rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:17px;height:17px;flex:none"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/></svg>
+        החומר שלכם — המחולל בונה סביבו
+        <span class="sub" style="font-weight:500">אופציונלי</span>
+      </div>
+      <label for="g-file">קובץ מהמחשב
+        <input id="g-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.md,.rtf,.csv,.png,.jpg,.jpeg,.webp,.html">
+        <span class="sub">PDF, Word, מצגת, תמונה או טקסט</span>
+      </label>
+      <label for="g-link">או קישור לחומר
+        <input id="g-link" type="url" placeholder="https://…  (דרייב, אתר, שאלון)" dir="ltr">
+        <span class="sub">קישור פתוח לצפייה</span>
+      </label>
+      <div class="fname wide" id="g-fname">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/></svg>
+        <b id="g-fname-t"></b><span id="g-fname-s"></span>
+        <button type="button" id="g-fclear" aria-label="הסרת הקובץ">✕</button>
+      </div>
+      <label class="wide" for="g-paste">או הדביקו כאן קטע מהחומר
+        <textarea id="g-paste" placeholder="קטע מהמאמר, שאלה מהשאלון, פסקה מהתוכנית — כל טקסט שהשיעור צריך להיבנות סביבו."></textarea>
+        <span class="sub">קבצי טקסט נקראים אוטומטית. מקובץ PDF, Word או מצגת — הדבקת הקטע המרכזי כאן נותנת את התוצר המדויק ביותר.</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="step"><i>2</i> מה לייצר <em>אפשר לסמן יותר מאחד</em><s></s></div>
+
+  <div class="picks" id="g-picks">
+    <div class="pick on" data-kind="lesson">
+      <input type="checkbox" id="g-d-lesson" checked>
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        מערך שיעור
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>פתיחה, גוף וסיכום עם זמנים מדויקים, שאלות מנחות, חומרי עזר וכרטיס יציאה.</p>
+    </div>
+
+    <div class="pick" data-kind="deck">
+      <input type="checkbox" id="g-d-deck">
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/></svg>
+        מצגת
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>סדרת שקפים עם כותרת ותוכן לכל שקף. אפשר להוריד מצגת HTML שנפתחת בדפדפן, או להעתיק לכלי המצגות שלכם.</p>
+    </div>
+
+    <div class="pick" data-kind="sheet">
+      <input type="checkbox" id="g-d-sheet">
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/></svg>
+        דף עבודה
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>דף לתלמיד עם מקום לתשובות, בפורמט להדפסה — ברמת ההתאמה שתבחרו.</p>
+      <label class="lvl" for="g-level">רמת התאמה
+        <select id="g-level">
+          <option>רגיל</option>
+          <option>מותאם</option>
+          <option>מונגש</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="acts">
+    <button class="btn primary" id="g-run" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M4.9 6.3l2.9 2.9M16.2 14.8l2.9 2.9M3 12h4M17 12h4M4.9 17.7l2.9-2.9M16.2 9.2l2.9-2.9"/></svg>
+      בנו לי את החומרים
+    </button>
+    <button class="btn line sm" id="g-reset" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/></svg>
+      ניקוי
+    </button>
+  </div>
+
+  <div class="stat" id="g-stat"></div>
+
+  <p class="hint">התוצר נבנה על הפדגוגיה של המינהל: תמיד מותאם לנתיב שנבחר, תמיד מסתיים בכרטיס יציאה, ותמיד כתוב לתלמידי הכשרה מקצועית. עברו עליו והתאימו — הוא טיוטה טובה, לא תחליף לשיקול דעת שלכם.</p>
+
+  <div class="res" id="g-res"></div>
+
+  <div class="fb" id="g-fb">
+    <h4>ההנחיה שלכם מוכנה — הדביקו אותה בכלי ה-AI</h4>
+    <p class="why">הייצור החי בתוך העמוד עדיין לא הופעל, ולכן במקום להשאיר אתכם בלי כלום — בנינו את ההנחיה המלאה, על כל הפרטים שמילאתם ועל החומר שצירפתם. העתיקו אותה, הדביקו ב-ChatGPT, ב-Claude או ב-Gemini, ותקבלו בדיוק את התוצר שביקשתם. <b>זהו מצב ביניים בלבד</b> — כשהשרת יופעל, התוצר יופיע כאן בעמוד עצמו, בלי העתקה ובלי מעבר לכלי חיצוני.</p>
+    <div id="g-fb-list"></div>
+    <div class="ailinks">
+      <button class="btn line sm" type="button" data-ai="https://chatgpt.com/">העתיקו ופתחו ב-ChatGPT</button>
+      <button class="btn line sm" type="button" data-ai="https://claude.ai/new">העתיקו ופתחו ב-Claude</button>
+      <button class="btn line sm" type="button" data-ai="https://gemini.google.com/app">העתיקו ופתחו ב-Gemini</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="rv" style="padding:0 var(--px)">
+  <h2 class="sub-sec" id="sec-netivim">שני נתיבים לתעודה · גמר ובגרות</h2>
+</div>
+
 <div class="trackbar rv d2">
   <span class="tb-lbl">בחרו נתיב</span>
   <div class="trackpills" role="group" aria-label="בחירת נתיב לימוד">
@@ -301,9 +568,13 @@
   </a>
 </div>
 
-<div class="rv d3" style="padding:14px var(--px) 0">
+<div class="rv" style="padding:0 var(--px)">
+  <h2 class="sub-sec" id="sec-tirgulim">תרגולים לבגרות</h2>
+</div>
+
+<div class="rv d3" style="padding:6px var(--px) 0">
   <div style="background:var(--blue-bg);border-radius:14px;padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:.88rem">
-    <b style="color:#145FA8">תרגולים לבגרות</b>
+    <b style="color:#145FA8">לפי תחום דעת</b>
     <a href="hebrew.html?track=bgr#tirgulim" style="color:inherit">לשון · מאגר תרגולים מלא</a>
     <a href="math.html?track=bgr#tirgulim-shelanu" style="color:inherit">מתמטיקה</a>
     <a href="history.html?track=bgr#tirgulim-shelanu" style="color:inherit">היסטוריה</a>
@@ -312,7 +583,11 @@
   </div>
 </div>
 
-<div class="grid c4" style="padding:24px var(--px) 8px;gap:13px">
+<div class="rv" style="padding:0 var(--px)">
+  <h2 class="sub-sec" id="sec-tchumim">תחומי הדעת · שבעת מקצועות הליבה</h2>
+</div>
+
+<div class="grid c4" style="padding:10px var(--px) 8px;gap:13px">
   <a class="card rv" href="civics.html" style="padding:20px">
     <h3 style="font-size:1.05rem">אזרחות</h3>
     <p style="font-size:.8rem;color:var(--text2);margin:3px 0 12px">מגמה 2010 · מיזם אזרחי ונייר עמדה</p>
@@ -374,6 +649,480 @@
 </div>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+
+<script>
+/* ===== מחולל שיעורים =====
+   אותו מנגנון בדיוק כמו ב-emergency.html: כשעוגן תיפרס עם מצב lesson —
+   מדביקים כאן את כתובת ה-exec (ואת אותה כתובת גם ב-emergency.html),
+   והמחולל יעבור אוטומטית לייצור התוצר בתוך העמוד. שינוי של שורה אחת בלבד.
+   עד אז הוא מציג את ההנחיה הבנויה במלואה, מוכנה להדבקה בכלי AI. */
+var LESSON_BACKEND = "";
+
+(function lessonGen(){
+var MAXCHARS = 12000;      /* כמה טקסט מהחומר של המורה נכנס להנחיה */
+var MAXB64   = 1500000;    /* עד גודל כזה הקובץ מצורף גם כ-base64 לבקשה */
+
+var MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
+var LAST = [];             /* התוצרים/ההנחיות מהריצה האחרונה */
+
+function el(id){ return document.getElementById(id); }
+function val(id){ var e = el(id); return e ? (e.value || "").trim() : ""; }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+  return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]; }); }
+
+/* ---------- בחירת התוצרים ---------- */
+function picks(){
+  var out = [];
+  document.querySelectorAll("#g-picks .pick").forEach(function(p){
+    if (p.querySelector("input").checked) out.push(p.dataset.kind);
+  });
+  return out;
+}
+document.querySelectorAll("#g-picks .pick").forEach(function(p){
+  var box = p.querySelector("input");
+  function sync(){ p.classList.toggle("on", box.checked); }
+  p.addEventListener("click", function(e){
+    if (e.target.closest("select") || e.target.closest("option") || e.target.closest("label.lvl")) return;
+    box.checked = !box.checked; sync();
+  });
+  box.addEventListener("change", sync);
+  sync();
+});
+
+/* ---------- קליטת החומר של המורה ---------- */
+var TEXTY = /\.(txt|md|markdown|csv|json|html?|rtf)$/i;
+function kb(n){ return n < 1024 ? n + " בייט" : (n < 1048576 ? Math.round(n/1024) + " KB" : (n/1048576).toFixed(1) + " MB"); }
+
+el("g-file").addEventListener("change", function(){
+  var f = this.files && this.files[0];
+  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
+  if (!f) { el("g-fname").classList.remove("on"); return; }
+  MATERIAL.name = f.name; MATERIAL.size = f.size; MATERIAL.type = f.type || "";
+  el("g-fname-t").textContent = f.name;
+  el("g-fname-s").textContent = kb(f.size) + " · נקרא…";
+  el("g-fname").classList.add("on");
+
+  if (TEXTY.test(f.name) || /^text\//.test(f.type)) {
+    var r1 = new FileReader();
+    r1.onload = function(){
+      MATERIAL.text = String(r1.result || "").slice(0, MAXCHARS);
+      el("g-fname-s").textContent = kb(f.size) + " · התוכן נקרא ומצורף להנחיה";
+    };
+    r1.onerror = function(){ el("g-fname-s").textContent = kb(f.size) + " · לא הצלחנו לקרוא — הדביקו קטע למטה"; };
+    r1.readAsText(f);
+    return;
+  }
+  if (f.size <= MAXB64) {
+    var r2 = new FileReader();
+    r2.onload = function(){
+      var s = String(r2.result || ""); var i = s.indexOf(",");
+      MATERIAL.b64 = i > -1 ? s.slice(i+1) : "";
+      el("g-fname-s").textContent = kb(f.size) + " · הקובץ יצורף לבקשה. להעמקה — הדביקו את הקטע המרכזי למטה";
+    };
+    r2.readAsDataURL(f);
+  } else {
+    el("g-fname-s").textContent = kb(f.size) + " · גדול מדי לצירוף — הדביקו את הקטע המרכזי למטה";
+  }
+});
+el("g-fclear").addEventListener("click", function(){
+  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
+  el("g-file").value = ""; el("g-fname").classList.remove("on");
+});
+
+function materialText(){ return (MATERIAL.text || "") || val("g-paste"); }
+function materialBlock(){
+  var rows = [], link = val("g-link"), t = materialText();
+  if (MATERIAL.name) rows.push("· קובץ שהמורה העלה: " + MATERIAL.name + (MATERIAL.text ? " (התוכן מצורף למטה)" : " (הקובץ עצמו מצורף לבקשה)"));
+  if (link) rows.push("· קישור לחומר של המורה: " + link + " — אם אתה יכול לפתוח אותו, בנה את התוצר על מה שכתוב בו.");
+  if (t) rows.push("· תוכן החומר של המורה:\n\"\"\"\n" + t.slice(0, MAXCHARS) + "\n\"\"\"");
+  if (!rows.length) return "";
+  return "\nהחומר של המורה — זה הבסיס לתוצר:\n" + rows.join("\n") +
+         "\nבנה את התוצר סביב החומר הזה. אל תמציא תוכן מקביל, ואל תתעלם ממנו. אם החומר חלקי — אמור במפורש מה חסר.\n";
+}
+
+/* ---------- ההנחיות ---------- */
+function ctx(){
+  return [
+    "הקשר:",
+    "· בית ספר מקצועי בפיקוח משרד העבודה — מינהל הכשרה מקצועית. תלמידים במגמות טכניות, בנתיבי גמר ובגרות.",
+    "· תחום דעת: " + (val("g-subj") || "—"),
+    "· שכבה: " + val("g-grade"),
+    "· נושא השיעור: " + (val("g-topic") || "—"),
+    "· משך: " + val("g-len"),
+    "· נתיב: " + val("g-track")
+  ].join("\n") + "\n" + materialBlock();
+}
+var RULES = [
+  "כללים:",
+  "· עברית פשוטה. בלי הקדמות, בלי הסברים על עצמך ובלי ז׳רגון אקדמי — התחל ישר בתוצר.",
+  "· התאמה מפורשת לנתיב שנבחר: בנתיב הגמר לקשור למפרט הבחינה ולמסלול המקצועי; בנתיב הבגרות לקשור לשאלון ולמיקוד; במסלול מותאם להציע חלופת הערכה במקום מבחן.",
+  "· לקשור לעולם התוכן המקצועי של התלמידים — דוגמה מהמגמה עדיפה על דוגמה כללית.",
+  "· פורמט: Markdown. כותרות ב-## ו-###, רשימות ב-, טבלאות בצינורות |."
+].join("\n");
+
+function pLesson(){
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. כתוב מערך שיעור אחד, מוכן להעברה מחר בבוקר.","",ctx(),
+    "מבנה המערך, בהתאמה יחסית למשך שנבחר:",
+    "· טבלה בראש: מטרת השיעור · המיומנות · מה להכין מראש.",
+    "1. פתיחה — עוגן קצר שמחבר לנושא, ואז הסבר אחד ממוקד בלבד.",
+    "2. גוף השיעור — משימה אחת ברורה עם דוגמה פתורה, בשתי רמות: בסיס והעמקה.",
+    "3. סיכום — חזרה משותפת קצרה וכרטיס יציאה.","",
+    "חובה לכלול תמיד, גם אם לא ביקשתי:",
+    "א. זמן מדויק בדקות לכל פעילות, שסכומם הוא בדיוק המשך שנבחר.",
+    "ב. שאלות מנחות למורה — לפחות שש, מדורגות.",
+    "ג. חומרי עזר: מה צריך בכיתה, ומה אפשר לשלוח לתלמידים.",
+    "ד. כרטיס יציאה — שלוש שאלות קצרות.",
+    "ה. מה עושים עם תלמיד שמתקשה, ומה עם תלמיד שסיים מוקדם.",
+    "ו. שלוש שורות סיום: מה לבדוק לפני השיעור הבא.","", RULES].join("\n");
+}
+function pDeck(){
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה מצגת כיתתית לשיעור.","",ctx(),
+    "בנה בין 8 ל-12 שקפים שמלווים את השיעור מתחילתו ועד כרטיס היציאה. שקף אחד = רעיון אחד.","",
+    "פורמט הפלט — חובה בדיוק כך, בלי שום טקסט נוסף לפני או אחרי:",
+    "### שקופית 1",
+    "כותרת: הכותרת של השקף",
+    "- שורת תוכן ראשונה",
+    "- שורת תוכן שנייה",
+    "הערת מרצה: מה המורה אומר על השקף הזה, במשפט או שניים.",
+    "### שקופית 2",
+    "…וכן הלאה.","",
+    "כללי המצגת:",
+    "· עד 5 שורות תוכן בשקף, כל שורה עד 12 מילים. בלי פסקאות.",
+    "· שקף שני — מטרת השיעור. שקף אחרון — כרטיס יציאה.",
+    "· לפחות שקף אחד עם דוגמה פתורה ולפחות שקף אחד עם שאלה לדיון בכיתה.",
+    "· לכל שקף חובה הערת מרצה.","",
+    "כללים:",
+    "· עברית פשוטה, בלי ז׳רגון אקדמי.",
+    "· התאמה מפורשת לנתיב שנבחר.",
+    "· לקשור לעולם התוכן המקצועי של התלמידים."].join("\n");
+}
+function pSheet(){
+  var lvl = val("g-level") || "רגיל";
+  var levels = {
+    "רגיל":  "רמה רגילה: ניסוח סטנדרטי, 6–8 משימות, שאלה מסכמת אחת פתוחה.",
+    "מותאם": "רמה מותאמת: משפטים קצרים, כל משימה מפורקת לשלבים, פחות משימות ויותר מקום לתשובה, לפני כל חלק דוגמה פתורה. בלי שאלות מרובות-שלבים.",
+    "מונגש": "רמה מונגשת: שפה פשוטה מאוד ומשפט אחד בכל הוראה, אוצר מילים בסיסי, בנק מילים בראש הדף, שאלות סגורות והשלמות, מקום כתיבה גדול, בלי מטאפורות ובלי שאלות כפולות. מתאים לתלמידים עם לקויות למידה ולדוברי עברית כשפה שנייה."
+  };
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. כתוב דף עבודה לתלמיד — לא למורה.","",ctx(),
+    "רמת ההתאמה שנבחרה: " + lvl,
+    levels[lvl] || levels["רגיל"],"",
+    "מבנה דף העבודה:",
+    "· כותרת הדף, ושורות ריקות לשם התלמיד ולתאריך.",
+    "· פסקת פתיחה קצרה: מה לומדים בדף הזה, בשתי שורות.",
+    "· המשימות, ממוספרות, מהקל לקשה. אחרי כל שאלה שורות ריקות לתשובה (סמן אותן בקווים תחתונים).",
+    "· לפחות משימה אחת מבוססת על החומר שצורף, אם צורף חומר.",
+    "· משימת בונוס אחת לתלמיד שסיים מוקדם.",
+    "· בסוף הדף: ריבוע ״בדקתי את עצמי״ עם שלוש שאלות כן/לא.","",
+    "אחרי דף העבודה, תחת הכותרת ״## מחוון למורה״ — התשובות הנכונות וניקוד מוצע לכל משימה.","",
+    "כללים:",
+    "· פנייה ישירה לתלמיד בגוף שני. בלי הוראות למורה בתוך הדף עצמו.",
+    "· התוצר מיועד להדפסה — בלי אלמנטים אינטראקטיביים ובלי הפניות למסך.",
+    "· התאמה מפורשת לנתיב שנבחר.",
+    "· פורמט: Markdown."].join("\n");
+}
+var KINDS = {
+  lesson: { title:"מערך שיעור", file:"מערך-שיעור", prompt:pLesson,
+            icon:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/>' },
+  deck:   { title:"מצגת", file:"מצגת", prompt:pDeck,
+            icon:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/>' },
+  sheet:  { title:"דף עבודה", file:"דף-עבודה", prompt:pSheet,
+            icon:'<path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/>' }
+};
+
+/* ---------- עזרים ---------- */
+function copyText(t){
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
+  var a = document.createElement("textarea");
+  a.value = t; document.body.appendChild(a); a.select();
+  try { document.execCommand("copy"); } catch(e){}
+  a.remove(); return Promise.resolve();
+}
+function flash(btn, txt){
+  if (btn.dataset.busy) return;
+  var o = btn.innerHTML; btn.dataset.busy = "1"; btn.textContent = txt;
+  setTimeout(function(){ btn.innerHTML = o; delete btn.dataset.busy; }, 1700);
+}
+function download(name, text, mime){
+  var b = new Blob(["\ufeff" + text], { type: (mime || "text/plain") + ";charset=utf-8" });
+  var u = URL.createObjectURL(b), a = document.createElement("a");
+  a.href = u; a.download = name; document.body.appendChild(a); a.click();
+  a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
+}
+function slug(){
+  var s = (val("g-subj") + "-" + val("g-topic")).replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "-");
+  return s.replace(/^-+|-+$/g, "").slice(0, 60) || "שיעור";
+}
+function status(msg){
+  var s = el("g-stat");
+  if (!msg) { s.classList.remove("on"); s.textContent = ""; return; }
+  s.textContent = msg; s.classList.add("on");
+}
+
+/* ---------- הצגה מעוצבת של הפלט ---------- */
+function inline(s){
+  return esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/(^|\s)_([^_]+)_(?=\s|$)/g, "$1<i>$2</i>");
+}
+function md(src){
+  var lines = String(src || "").replace(/\r/g, "").split("\n");
+  var out = [], list = null, tbl = false, i;
+  function closeList(){ if (list) { out.push("</" + list + ">"); list = null; } }
+  function closeTbl(){ if (tbl) { out.push("</tbody></table></div>"); tbl = false; } }
+  for (i = 0; i < lines.length; i++) {
+    var L = lines[i], t = L.trim();
+    if (!t) { closeList(); closeTbl(); continue; }
+
+    if (/^\|.*\|$/.test(t)) {
+      var cells = t.replace(/^\||\|$/g, "").split("|").map(function(c){ return c.trim(); });
+      if (/^[\s|:-]+$/.test(t) && tbl) continue;
+      if (!tbl) {
+        closeList();
+        out.push('<div class="tblwrap"><table><thead><tr>' +
+          cells.map(function(c){ return "<th>" + inline(c) + "</th>"; }).join("") +
+          "</tr></thead><tbody>");
+        tbl = true;
+      } else {
+        out.push("<tr>" + cells.map(function(c){ return "<td>" + inline(c) + "</td>"; }).join("") + "</tr>");
+      }
+      continue;
+    }
+    closeTbl();
+
+    var h = t.match(/^(#{1,6})\s+(.*)$/);
+    if (h) { closeList(); out.push(h[1].length <= 2 ? "<h4>" + inline(h[2]) + "</h4>" : "<h5>" + inline(h[2]) + "</h5>"); continue; }
+    if (/^([-*_])\1{2,}$/.test(t)) { closeList(); out.push("<hr>"); continue; }
+
+    var b = t.match(/^[-*•·]\s+(.*)$/);
+    if (b) { if (list !== "ul") { closeList(); out.push("<ul>"); list = "ul"; } out.push("<li>" + inline(b[1]) + "</li>"); continue; }
+    var n = t.match(/^\d+[.)]\s+(.*)$/);
+    if (n) { if (list !== "ol") { closeList(); out.push("<ol>"); list = "ol"; } out.push("<li>" + inline(n[1]) + "</li>"); continue; }
+
+    closeList();
+    out.push("<p>" + inline(t) + "</p>");
+  }
+  closeList(); closeTbl();
+  return out.join("");
+}
+
+/* ---------- מצגת ---------- */
+function parseSlides(src){
+  var chunks = String(src || "").split(/^\s*(?:#{1,4}\s*)?(?:---\s*)?שקופית\s*\d+\s*(?:---)?\s*$/m);
+  var slides = [], i;
+  for (i = 1; i < chunks.length; i++) {
+    var title = "", bullets = [], note = "";
+    chunks[i].split("\n").forEach(function(L){
+      var t = L.trim(); if (!t) return;
+      var mT = t.match(/^\**\s*כותרת\s*\**\s*[:：]\s*(.*)$/);
+      if (mT) { title = mT[1].replace(/\*/g, "").trim(); return; }
+      var mN = t.match(/^\**\s*הער(?:ת מרצה|ה למורה|ות מרצה|ה)\s*\**\s*[:：]\s*(.*)$/);
+      if (mN) { note = mN[1].trim(); return; }
+      var mB = t.match(/^[-*•·]\s+(.*)$/);
+      if (mB) { bullets.push(mB[1].replace(/\*/g, "").trim()); return; }
+      if (!title) title = t.replace(/[#*]/g, "").trim(); else bullets.push(t.replace(/^[#*]+/, "").trim());
+    });
+    if (title || bullets.length) slides.push({ title: title || "שקף " + i, bullets: bullets, note: note });
+  }
+  return slides;
+}
+function slidesHTML(slides){
+  return '<div class="slides">' + slides.map(function(s, i){
+    return '<div class="slide"><div class="n">שקף ' + (i+1) + '</div><h5>' + esc(s.title) + "</h5>" +
+      (s.bullets.length ? "<ul>" + s.bullets.map(function(b){ return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>" : "") +
+      (s.note ? '<div class="note">הערת מרצה: ' + esc(s.note) + "</div>" : "") + "</div>";
+  }).join("") + "</div>";
+}
+function slidesText(slides){
+  return slides.map(function(s, i){
+    return "שקף " + (i+1) + ": " + s.title + "\n" +
+      s.bullets.map(function(b){ return "• " + b; }).join("\n") +
+      (s.note ? "\nהערת מרצה: " + s.note : "");
+  }).join("\n\n");
+}
+function deckFile(slides){
+  var head = esc(val("g-subj") + " · " + val("g-topic"));
+  var body = slides.map(function(s, i){
+    return '<section class="s"><div class="k">' + (i+1) + " / " + slides.length + "</div><h2>" + esc(s.title) + "</h2>" +
+      (s.bullets.length ? "<ul>" + s.bullets.map(function(b){ return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>" : "") +
+      (s.note ? '<div class="nt">' + esc(s.note) + "</div>" : "") + "</section>";
+  }).join("\n");
+  var css = "*{box-sizing:border-box;margin:0;padding:0}" +
+    "body{font-family:Assistant,Arial,sans-serif;background:#0D3B66;color:#102A43;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}" +
+    ".s{display:none;background:#fff;border-radius:22px;padding:56px 60px;width:min(1000px,94vw);min-height:min(600px,80vh);box-shadow:0 20px 60px rgba(0,0,0,.35);flex-direction:column}" +
+    ".s.on{display:flex}" +
+    ".k{font-size:.8rem;font-weight:700;color:#60778A;letter-spacing:.05em;margin-bottom:14px}" +
+    "h2{font-size:2.05rem;color:#0D3B66;line-height:1.25;margin-bottom:26px}" +
+    "ul{padding-inline-start:26px;font-size:1.28rem;line-height:1.85;color:#102A43}" +
+    "li{margin-bottom:10px}" +
+    ".nt{margin-top:auto;padding-top:22px;border-top:1px dashed #BED4E7;font-size:.95rem;color:#52687A;line-height:1.6}" +
+    ".bar{position:fixed;inset-block-end:16px;inset-inline-start:0;inset-inline-end:0;display:flex;gap:10px;justify-content:center}" +
+    ".bar button{font-family:inherit;font-size:.9rem;font-weight:700;border:0;border-radius:999px;padding:9px 22px;background:rgba(255,255,255,.92);color:#0D3B66;cursor:pointer}" +
+    "@media print{body{background:#fff;display:block;padding:0}.s{display:flex!important;page-break-after:always;box-shadow:none;border-radius:0;width:100%;min-height:100vh}.bar{display:none}}";
+  var js = "var S=document.querySelectorAll('.s'),i=0;" +
+    "function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach(function(s,k){s.classList.toggle('on',k===i)});}" +
+    "document.addEventListener('keydown',function(e){" +
+    "if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown')go(i+1);" +
+    "if(e.key==='ArrowRight'||e.key==='PageUp')go(i-1);});go(0);";
+  return "<!DOCTYPE html>\n<html lang=\"he\" dir=\"rtl\"><head><meta charset=\"utf-8\">" +
+    "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
+    "<title>" + head + "</title><style>" + css + "<\/style></head><body>\n" + body +
+    "\n<div class=\"bar\"><button onclick=\"go(i-1)\">הקודם</button><button onclick=\"go(i+1)\">הבא</button>" +
+    "<button onclick=\"window.print()\">הדפסה</button></div>\n<script>" + js + "<\/script></body></html>";
+}
+
+/* ---------- הדפסה ---------- */
+function printDoc(title, innerHTML){
+  var w = window.open("", "_blank");
+  if (!w) { alert("החלון נחסם — אפשרו חלונות קופצים כדי להדפיס."); return; }
+  w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(title) +
+    '</title><style>body{font-family:Assistant,Arial,sans-serif;line-height:1.75;padding:34px 44px;color:#102A43;font-size:14px}' +
+    'h1{font-size:19px;color:#0D3B66;margin:0 0 4px}.meta{font-size:12px;color:#60778A;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #D8E6F2}' +
+    'h4{font-size:16px;color:#0D3B66;margin:16px 0 6px}h5{font-size:14px;color:#124D7A;margin:12px 0 4px}' +
+    'p{margin:0 0 8px}ul,ol{padding-inline-start:22px;margin:0 0 10px}li{margin-bottom:4px}' +
+    'table{border-collapse:collapse;width:100%;font-size:13px;margin-bottom:12px}' +
+    'th,td{border:1px solid #BED4E7;padding:7px 10px;text-align:start;vertical-align:top}th{background:#EEF6FF;color:#0D3B66}' +
+    '.slide{border:1px solid #BED4E7;border-radius:10px;padding:12px 15px;margin-bottom:10px;page-break-inside:avoid}' +
+    '.slide .n{font-size:11px;color:#60778A;font-weight:700}.slide h5{margin:3px 0 6px}.slide .note{font-size:12px;color:#52687A;margin-top:7px;border-top:1px dashed #BED4E7;padding-top:5px}' +
+    'hr{border:0;border-top:1px solid #D8E6F2;margin:14px 0}' +
+    '</style></head><body><h1>' + esc(title) + '</h1><div class="meta">' +
+    esc([val("g-subj"), val("g-grade"), val("g-topic"), val("g-len"), val("g-track")].filter(Boolean).join(" · ")) +
+    '</div>' + innerHTML + "</body></html>");
+  w.document.close(); w.focus();
+  setTimeout(function(){ w.print(); }, 350);
+}
+
+/* ---------- בניית כרטיס תוצר ---------- */
+function renderDoc(kind, text){
+  var K = KINDS[kind], slides = (kind === "deck") ? parseSlides(text) : null;
+  var inner = (slides && slides.length) ? slidesHTML(slides) : md(text);
+  var box = document.createElement("div");
+  box.className = "doc";
+  box.innerHTML =
+    '<div class="dh"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + K.icon + "</svg>" + K.title +
+    (kind === "sheet" ? " · " + esc(val("g-level")) : "") + "</h3>" +
+    '<div class="dtools">' +
+      '<button class="btn line" type="button" data-a="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 5.5A1.5 1.5 0 0 0 13.5 4H6a2 2 0 0 0-2 2v7.5A1.5 1.5 0 0 0 5.5 15"/></svg>העתקה</button>' +
+      '<button class="btn line" type="button" data-a="dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>' +
+        (slides && slides.length ? "הורדת מצגת HTML" : "הורדה") + "</button>" +
+      (slides && slides.length ? '<button class="btn line" type="button" data-a="dltxt">הורדת טקסט לכלי מצגות</button>' : "") +
+      '<button class="btn line" type="button" data-a="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M6 16h12v5H6z"/></svg>הדפסה</button>' +
+    "</div></div>" +
+    '<div class="body">' + inner + "</div>";
+
+  var plain = (slides && slides.length) ? slidesText(slides) : text;
+  box.querySelector('[data-a="copy"]').addEventListener("click", function(){ copyText(plain); flash(this, "הועתק ✓"); });
+  box.querySelector('[data-a="print"]').addEventListener("click", function(){ printDoc(K.title + " · " + (val("g-topic") || val("g-subj")), inner); });
+  box.querySelector('[data-a="dl"]').addEventListener("click", function(){
+    if (slides && slides.length) download(K.file + "-" + slug() + ".html", deckFile(slides), "text/html");
+    else download(K.file + "-" + slug() + ".txt", plain, "text/plain");
+  });
+  var t2 = box.querySelector('[data-a="dltxt"]');
+  if (t2) t2.addEventListener("click", function(){ download(K.file + "-" + slug() + ".txt", plain, "text/plain"); });
+  return box;
+}
+
+/* ---------- מצב הביניים: ההנחיה הבנויה ---------- */
+function renderFallback(items){
+  var list = el("g-fb-list");
+  list.innerHTML = "";
+  items.forEach(function(it){
+    var d = document.createElement("div");
+    d.className = "pbox";
+    d.innerHTML = '<div class="ph"><b>ההנחיה ל' + esc(KINDS[it.kind].title) + '</b>' +
+      '<button class="btn line sm" type="button">העתיקו את ההנחיה</button></div><pre>' + esc(it.prompt) + "</pre>";
+    d.querySelector("button").addEventListener("click", function(){ copyText(it.prompt); flash(this, "הועתק ✓"); });
+    list.appendChild(d);
+  });
+  el("g-fb").classList.add("on");
+  el("g-fb").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+document.querySelectorAll("#g-fb [data-ai]").forEach(function(b){
+  b.addEventListener("click", function(){
+    if (!LAST.length) { alert("קודם מלאו את הפרטים ולחצו ״בנו לי את החומרים״"); return; }
+    copyText(LAST.map(function(it){ return it.prompt; }).join("\n\n=== ההנחיה הבאה ===\n\n")).then(function(){
+      window.open(b.dataset.ai, "_blank", "noopener");
+    });
+  });
+});
+
+/* ---------- הרצה ---------- */
+function checkFields(){
+  if (!val("g-subj")) { alert("נא לבחור תחום דעת"); el("g-subj").focus(); return false; }
+  if (!val("g-topic")) { alert("נא למלא את נושא השיעור"); el("g-topic").focus(); return false; }
+  if (!picks().length) { alert("נא לסמן לפחות תוצר אחד: מערך, מצגת או דף עבודה"); return false; }
+  return true;
+}
+function payload(prompt){
+  var p = { mode: "lesson", question: prompt }, link = val("g-link");
+  if (MATERIAL.name) { p.fileName = MATERIAL.name; p.fileType = MATERIAL.type; if (MATERIAL.b64) p.fileData = MATERIAL.b64; }
+  if (link) p.link = link;
+  return p;
+}
+function callBackend(prompt){
+  return fetch(LESSON_BACKEND, { method: "POST", body: JSON.stringify(payload(prompt)) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.ok !== false && (d.lesson || d.summary)) return d.lesson || d.summary;
+      throw new Error("empty");
+    });
+}
+
+el("g-run").addEventListener("click", function(){
+  if (!checkFields()) return;
+  var btn = this, kinds = picks();
+  LAST = kinds.map(function(k){ return { kind: k, prompt: KINDS[k].prompt() }; });
+
+  el("g-res").innerHTML = ""; el("g-res").classList.remove("on");
+  el("g-fb").classList.remove("on");
+
+  /* מצב ביניים — כל עוד LESSON_BACKEND ריק. מילוי הכתובת למעלה מפעיל את הייצור בעמוד. */
+  if (!LESSON_BACKEND) {
+    status("");
+    copyText(LAST[0].prompt);
+    renderFallback(LAST);
+    return;
+  }
+
+  var orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> בונה…'; btn.disabled = true;
+  el("g-res").classList.add("on");
+  var done = 0, failed = [];
+  status("בונה " + LAST.length + " תוצרים…");
+
+  LAST.reduce(function(chain, it){
+    return chain.then(function(){
+      status("בונה " + KINDS[it.kind].title + "… (" + (done + 1) + " מתוך " + LAST.length + ")");
+      return callBackend(it.prompt).then(function(txt){
+        it.result = txt;
+        el("g-res").appendChild(renderDoc(it.kind, txt));
+        done++;
+      }).catch(function(){ failed.push(it); });
+    });
+  }, Promise.resolve()).then(function(){
+    btn.innerHTML = orig; btn.disabled = false;
+    if (failed.length) {
+      status(done ? "חלק מהתוצרים לא נבנו — ההנחיות שלהם מוכנות למטה." : "");
+      renderFallback(failed);
+    } else {
+      status("");
+      el("g-res").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    if (!done) el("g-res").classList.remove("on");
+  });
+});
+
+el("g-reset").addEventListener("click", function(){
+  ["g-topic","g-link","g-paste"].forEach(function(id){ el(id).value = ""; });
+  el("g-subj").selectedIndex = 0;
+  el("g-file").value = ""; el("g-fname").classList.remove("on");
+  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" }; LAST = [];
+  el("g-res").innerHTML = ""; el("g-res").classList.remove("on");
+  el("g-fb").classList.remove("on"); el("g-fb-list").innerHTML = "";
+  status("");
+});
+})();
+</script>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>

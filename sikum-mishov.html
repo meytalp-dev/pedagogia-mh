@@ -151,6 +151,20 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 @media(prefers-reduced-motion:reduce){.dot,.rfr.spin .ic{animation:none}}
 @media print{.rfr{display:none}}
 </style>
+<link rel="stylesheet" href="/pagenav.css">
+<style>
+/* גשר טוקנים ל-pagenav.css — הדף עומד בפני עצמו ואינו טוען את style.css */
+.pn,.pnd,.pnd-btn,.pnd-scrim{
+ --px:22px; --ease:cubic-bezier(.2,.8,.2,1);
+ --border:var(--line); --text:var(--ink); --text2:var(--mut); --muted:var(--mut);
+ --cyan:var(--sky); --cyan-100:var(--ice); --soft-bg:var(--ice);
+ --grad:linear-gradient(135deg,var(--navy2),var(--blue));
+ --sh-sm:0 4px 14px rgba(11,43,76,.10);
+ --sh-float:0 20px 60px rgba(11,43,76,.18);
+}
+.pn-in{max-width:1080px}
+@media print{.pn{display:none !important}}
+</style>
 </head>
 <body>
 <div class="strip"></div>
@@ -206,7 +220,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5h17"/><rect x="5" y="11" width="3.6" height="7" rx="1"/><rect x="10.2" y="6.5" width="3.6" height="11.5" rx="1"/><rect x="15.4" y="9" width="3.6" height="9" rx="1"/></svg>
-      <h2>דירוג חלקי המפגש</h2></div>
+      <h2 class="sub-sec">דירוג חלקי המפגש</h2></div>
     <p class="lead">כל חלק דורג בנפרד בסולם 1–5. <span id="gapTxt"></span></p>
     <div class="card pad">
       <div class="bars" id="bars"></div>
@@ -216,35 +230,35 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M8.4 14.2a4.3 4.3 0 0 0 7.2 0"/><circle cx="9.2" cy="9.8" r=".9" fill="currentColor"/><circle cx="14.8" cy="9.8" r=".9" fill="currentColor"/></svg>
-      <h2>"האם המפגש תרם לי"</h2></div>
+      <h2 class="sub-sec">"האם המפגש תרם לי"</h2></div>
     <p class="lead" id="distLead"></p>
     <div class="dist" id="dist"></div>
   </section>
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.6l8.7 15.1H3.3z"/><path d="M12 9.6v4.2"/><circle cx="12" cy="16.4" r=".9" fill="currentColor"/></svg>
-      <h2>מה דורש מענה</h2><span class="editorial">נבחר ידנית</span></div>
+      <h2 class="sub-sec">מה דורש מענה</h2><span class="editorial">נבחר ידנית</span></div>
     <p class="lead">בקשות קונקרטיות שעלו מהטקסט הפתוח — הפריטים שכדאי לסגור לפני המפגש הבא.
       הרשימה נבחרה ידנית; <b>כל ההערות</b> מופיעות בטבלה בתחתית הדף, והיא מתעדכנת לבד.</p>
     <div class="asks">
       <div class="ask"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.4C10.6 5 8.4 4.4 5.5 4.4c-.9 0-1.7.1-2.5.3v13.2c.8-.2 1.6-.3 2.5-.3 2.9 0 5.1.7 6.5 2.1 1.4-1.4 3.6-2.1 6.5-2.1.9 0 1.7.1 2.5.3V4.7c-.8-.2-1.6-.3-2.5-.3-2.9 0-5.1.6-6.5 2z"/><path d="M12 6.4v13.3"/></svg>
-        <div><h3>חומרי בגרות למגזר החרדי חסרים בעוגן</h3>
+        <div><h3 class="mini">חומרי בגרות למגזר החרדי חסרים בעוגן</h3>
           <p>„לפי מה שהבנתי מ&quot;עוגן&quot; אין בו חומרים שמתאימים לבגרויות של החרדי. חשוב שתוסיפו.”</p>
           <div class="by">הדס · שרון</div></div></div>
       <div class="ask"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 8V6.8a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v10.4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V16"/><path d="M20.5 12.9V11a1 1 0 0 0-1-1h-3.3a2 2 0 0 0 0 4h3.3a1 1 0 0 0 1-1z"/></svg>
-        <div><h3>מה קורה עם תקציב החינוך היוצר?</h3>
+        <div><h3 class="mini">מה קורה עם תקציב החינוך היוצר?</h3>
           <p>„מה קורה עם התקציב של החינוך היוצר?”</p>
           <div class="by">יהורם בן שטרית · תיכון עתיד קמ&quot;ג</div></div></div>
       <div class="ask"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="5" width="16.8" height="15" rx="2"/><path d="M3.6 9.6h16.8"/><path d="M8.2 3.4v3.4M15.8 3.4v3.4"/></svg>
-        <div><h3>אין תמונת תכנון מאושרת ועדכנית לפתיחת השנה</h3>
+        <div><h3 class="mini">אין תמונת תכנון מאושרת ועדכנית לפתיחת השנה</h3>
           <p>„אין לי תמונת תכנון מאושר כוללת ועדכנית לפתיחת השנה, אשמח לקבל”</p>
           <div class="by">מוקי זמברג · עתיד צור ים</div></div></div>
       <div class="ask"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 4.6l9.4 7.4-9.4 7.4z"/></svg>
-        <div><h3>הקלטה של המפגש למי שלא הספיק</h3>
+        <div><h3 class="mini">הקלטה של המפגש למי שלא הספיק</h3>
           <p>„אתמול פתחנו את השנה. היום היה היום הראשון ללימודים סדירים ולכן לא הצלחתי להקשיב לכל המפגש. אשמח שתשלחו הקלטה ואקשיב שוב.”</p>
           <div class="by">אלישבע מונסונגו · תיכון הדר</div></div></div>
       <div class="ask"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.4v4.9l3.1 1.8"/></svg>
-        <div><h3>ותק מורים, הכרה בהשתלמויות ושכר — נושא שלא עלה</h3>
+        <div><h3 class="mini">ותק מורים, הכרה בהשתלמויות ושכר — נושא שלא עלה</h3>
           <p>„לא דיברנו על זה במפגש - טיפול בכל נושא ותק מורים, הכרה בהשתלמויות ומשם לשכר, רישום להשתלמויות במצפן. משפיע מאוד על שכר המורים, מייצר תסכולים - המנהל בחזית.”</p>
           <div class="by">אבי בז&#x27;ה · אורט תל נוף</div></div></div>
     </div>
@@ -252,45 +266,45 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.4v4.9l3.1 1.8"/></svg>
-      <h2>ההערה המתודית: זמן</h2></div>
+      <h2 class="sub-sec">ההערה המתודית: זמן</h2></div>
     <p class="lead">שתי הערות עצמאיות הצביעו על אותו דבר — הסוף נדחס. זה מתיישב עם הנתונים:
       "סגירה ושיתוף" הוא החלק המדורג הכי גבוה, ודווקא הוא קיבל הכי מעט זמן.</p>
     <div class="two">
-      <div class="note"><h3>ענבל לוי · התיכון החברתי מצפה רמון</h3>
+      <div class="note"><h3 class="mini">ענבל לוי · התיכון החברתי מצפה רמון</h3>
         <p>„הייתי שמחה אם היה עוד זמן לחלק האחרון, החשוב כל כך, שנדחס לדקות האחרונות. תודה גדולה!”</p></div>
-      <div class="note"><h3>עינת וינברן · דרור גליל</h3>
+      <div class="note"><h3 class="mini">עינת וינברן · דרור גליל</h3>
         <p>„היה מפגש חשוב ומחבר. אני חושבת שהיה טוב אם היה זמן נוסף למעבר על האתר המעולה!!! יישר כוח.”</p></div>
     </div>
   </section>
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 10.2c0-2.3 1.5-3.9 3.6-4.4l.5 1.6c-1.2.4-1.9 1.2-1.9 2.2h1.6v5.2H7.6v-4.6z"/><path d="M16.4 10.2c0-2.3 1.5-3.9 3.6-4.4l.5 1.6c-1.2.4-1.9 1.2-1.9 2.2h1.6v5.2h-4.6v-4.6z"/></svg>
-      <h2>מה שחזר שוב ושוב</h2></div>
+      <h2 class="sub-sec">מה שחזר שוב ושוב</h2></div>
     <p class="lead" id="siteLead"></p>
     <div class="qgrid" id="quotes"></div>
   </section>
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l2.4 4.9 5.4.8-3.9 3.8.92 5.4L12 15.75 7.18 18.3l.92-5.4-3.9-3.8 5.4-.8z"/></svg>
-      <h2>ארבעה לקחים להמשך</h2></div>
+      <h2 class="sub-sec">ארבעה לקחים להמשך</h2></div>
     <p class="lead">תקפים לכל מפגש שמובילים — צוות בית ספרי, ישיבת הנהלה, כנס לקוחות או השקה פנים-ארגונית.</p>
     <div class="card pad">
       <div class="lsn"><div class="n">1</div><div>
-        <h3>הפתיחה היא החלק החלש — לא התוכן</h3>
+        <h3 class="mini">הפתיחה היא החלק החלש — לא התוכן</h3>
         <p>„ברכות ופתיחה” מקבל את הציון הנמוך ביותר (<b id="l1a">—</b>), ובכל שאר החלקים הציונים גבוהים ואחידים.
         המסקנה: לקצר את הפרוטוקול בפתיחה ולהיכנס מהר יותר לעניין — נכון באותה מידה לישיבת הנהלה,
         לכנס לקוחות או להשקה פנימית.</p></div></div>
       <div class="lsn"><div class="n">2</div><div>
-        <h3>מה שנתת בסוף — הוא מה שנשאר</h3>
+        <h3 class="mini">מה שנתת בסוף — הוא מה שנשאר</h3>
         <p>„סגירה ושיתוף” מקבל את הציון הגבוה ביותר (<b id="l2a">—</b>), ושתי משתתפות ביקשו במפורש עוד זמן
         לחלק האחרון. חלק שמדורג הכי גבוה ומקבל הכי פחות זמן הוא סימן מובהק לתכנון זמן הפוך.</p></div></div>
       <div class="lsn"><div class="n">3</div><div>
-        <h3>הכלי גנב את ההצגה</h3>
+        <h3 class="mini">הכלי גנב את ההצגה</h3>
         <p>מתוך <b id="l3a">—</b> ההערות הפתוחות, <b id="l3b">—</b> מזכירות את האתר, את עוגן או את הכלים החדשים —
         לא את התכנים שהוצגו. כשמשיקים מוצר או פלטפורמה בתוך מפגש, ההשקה הופכת לאירוע המרכזי.
         שווה להקצות לה סלוט משלה במקום לתלות אותה בסוף.</p></div></div>
       <div class="lsn"><div class="n">4</div><div>
-        <h3>שאלות פתוחות = רשימת מטלות</h3>
+        <h3 class="mini">שאלות פתוחות = רשימת מטלות</h3>
         <p>חמש בקשות קונקרטיות (תקציב, בגרויות למגזר החרדי, תכנון שנה, הקלטה, ותק והשתלמויות) עלו מהטופס —
         ואף אחת מהן לא הייתה עולה בשיחה במליאה. טופס משוב קצר אחרי כל מפגש הוא מנגנון איסוף זול במיוחד.</p></div></div>
     </div>
@@ -298,7 +312,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 
   <section class="reveal">
     <div class="sechd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.4" y="4.6" width="17.2" height="14.8" rx="2"/><path d="M3.4 9.4h17.2M9.2 9.4v10"/></svg>
-      <h2>כל התשובות</h2></div>
+      <h2 class="sub-sec">כל התשובות</h2></div>
     <p class="lead" id="tableLead"></p>
     <div class="tw">
       <table>
@@ -520,5 +534,6 @@ load();
 setInterval(load, 60000);
 </script>
 <script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
 </body>
 </html>

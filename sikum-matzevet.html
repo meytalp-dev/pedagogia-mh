@@ -157,6 +157,20 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.fill{transition:none}}
 @media print{body{background:#fff}.tw{max-height:none}.reveal{opacity:1;transform:none}.rfr{display:none}}
 </style>
+<link rel="stylesheet" href="/pagenav.css">
+<style>
+/* גשר טוקנים ל-pagenav.css — הדף עומד בפני עצמו ואינו טוען את style.css */
+.pn,.pnd,.pnd-btn,.pnd-scrim{
+ --px:22px; --ease:cubic-bezier(.2,.8,.2,1);
+ --border:var(--line); --text:var(--ink); --text2:var(--mut); --muted:var(--mut);
+ --cyan:var(--sky); --cyan-100:var(--ice); --soft-bg:var(--ice);
+ --grad:linear-gradient(135deg,var(--navy2),var(--blue));
+ --sh-sm:0 4px 14px rgba(11,43,76,.10);
+ --sh-float:0 20px 60px rgba(11,43,76,.18);
+}
+.pn-in{max-width:1080px}
+@media print{.pn{display:none !important}}
+</style>
 </head>
 <body>
 <div class="strip"></div>
@@ -222,13 +236,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      <h2>שלוש שורות תחתונות</h2>
+      <h2 class="sub-sec">שלוש שורות תחתונות</h2>
     </div>
     <div class="card pad">
       <div class="lsn">
         <div class="n">1</div>
         <div>
-          <h3>ההיענות מלאה</h3>
+          <h3 class="mini">ההיענות מלאה</h3>
           <p>64 מתוך 64 המוסדות שבפיקוח דיווחו — 100%. תוך שלושה ימים מפתיחת הטופס במפגש
              פתיחת השנה נסגר כל הפער. זה כבר לא מדגם אלא תמונת מערכת מלאה.</p>
         </div>
@@ -236,7 +250,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">2</div>
         <div>
-          <h3>הפער בין בתי הספר גדול פי שנים־עשר</h3>
+          <h3 class="mini">הפער בין בתי הספר גדול פי שנים־עשר</h3>
           <p>מ־35 תלמידים (התיכון החברתי מצפה רמון) ועד 430 (בית חנינה בנים). זה לא רעש סטטיסטי —
              אלה שני סוגי מוסד שונים לחלוטין, שדורשים ליווי, תקצוב וסדירויות שונים.</p>
         </div>
@@ -244,7 +258,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">3</div>
         <div>
-          <h3>הבסיס לתכנון תשפ״ז מוכן</h3>
+          <h3 class="mini">הבסיס לתכנון תשפ״ז מוכן</h3>
           <p>9,498 תלמידים מדווחים מ־64 מוסדות — כל המערכת. אפשר לבנות על הנתון הזה תוכניות
              עבודה, פריסת השתלמויות והקצאת משאבים בלי הסתייגות של דיווחים חסרים.</p>
         </div>
@@ -256,7 +270,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V11M9 20V4M15 20V14M21 20V8"/></svg>
-      <h2>מצבת התלמידים לפי בית ספר</h2>
+      <h2 class="sub-sec">מצבת התלמידים לפי בית ספר</h2>
     </div>
     <p class="lead">כל 64 המוסדות שדיווחו, מהגדול לקטן. ירוק — חמשת הגדולים; כתום — חמשת הקטנים.</p>
     <div class="card pad">
@@ -269,7 +283,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      <h2>התפלגות לפי גודל</h2>
+      <h2 class="sub-sec">התפלגות לפי גודל</h2>
     </div>
     <p class="lead">איפה יושבת המסה של המערכת — ומי דורש התייחסות נפרדת.</p>
     <div class="dist">
@@ -284,13 +298,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
     </div>
     <div class="two" style="margin-top:15px">
       <div class="note">
-        <h3>שליש מבתי הספר, פחות מחמישית מהתלמידים</h3>
+        <h3 class="mini">שליש מבתי הספר, פחות מחמישית מהתלמידים</h3>
         <p>21 בתי ספר — שליש מהמדווחים — מחזיקים יחד 1,520 תלמידים בלבד, 16% מהמצבת.
            כל אחד מהם קטן מדי כדי להפעיל לבדו מגמה מלאה או השתלמות בית־ספרית, ולכן
            אשכולות אזוריים או ליווי משותף הם כנראה המודל הנכון עבורם.</p>
       </div>
       <div class="note">
-        <h3>12 בתי ספר = שליש מהמצבת</h3>
+        <h3 class="mini">12 בתי ספר = שליש מהמצבת</h3>
         <p>12 המוסדות שמעל 200 תלמידים מרכזים 3,433 תלמידים — 36% מהמדווחים. שינוי מדיניות בהם
            משפיע על המערכת בעוצמה שונה לחלוטין משינוי ב־21 הקטנים — שווה לתעדף בהתאם.</p>
       </div>
@@ -301,7 +315,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v4M12 11.5 6.6 16.8M12 11.5l5.4 5.3"/></svg>
-      <h2>לפי רשת</h2>
+      <h2 class="sub-sec">לפי רשת</h2>
     </div>
     <p class="lead">חלוקת הדיווחים בין הרשתות. המספרים משקפים רק את מי שדיווח עד כה, לא את גודל הרשת בפועל.</p>
     <div class="card pad">
@@ -318,7 +332,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <h2>לפי מפקח/ת</h2>
+      <h2 class="sub-sec">לפי מפקח/ת</h2>
     </div>
     <p class="lead">אותה תמונה, חתוכה לפי פריסת הפיקוח תשפ״ז — כדי שכל מפקח/ת יראה מי מבתי הספר
        שלו כבר דיווח ומי עוד חסר. הפס מציג את שיעור הדיווח מתוך המוסדות שבאחריותו.</p>
@@ -332,7 +346,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg>
-      <h2>כל הדיווחים</h2>
+      <h2 class="sub-sec">כל הדיווחים</h2>
     </div>
     <p class="lead">64 דיווחים, לפי סדר יורד של מצבת התלמידים — עם המפקח/ת המלווה של כל בית ספר. סימון <span class="apx">&#8776;</span> ליד השם = שיוך משוער בין השם שהוקלד בטופס לשם הרשמי.</p>
     <div class="tw">
@@ -347,7 +361,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="m9 11 3 3L22 4"/></svg>
-      <h2>הרשימה הושלמה — 64 מתוך 64</h2>
+      <h2 class="sub-sec">הרשימה הושלמה — 64 מתוך 64</h2>
     </div>
     <p class="lead">הצלבה מול רשימת 64 המוסדות שבפיקוח: כל מוסד דיווח. שני הדיווחים האחרונים
        שנכנסו — <b>ישיבת טל חרמון</b> (ליאואפר חזן, 198) אצל יששכר חפץ, ו<b>עתיד מסעדה</b>
@@ -362,13 +376,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
-      <h2>הערות לקריאת הנתונים</h2>
+      <h2 class="sub-sec">הערות לקריאת הנתונים</h2>
     </div>
     <div class="card pad">
       <div class="lsn">
         <div class="n">א</div>
         <div>
-          <h3>הנתון הוא דיווח עצמי של המנהל</h3>
+          <h3 class="mini">הנתון הוא דיווח עצמי של המנהל</h3>
           <p>המספרים נמסרו על ידי המנהלים בטופס, ולא נשלפו ממערכת רישום. הם מתאימים לתכנון
              ולסדרי גודל, אך לפני החלטות תקציביות מומלץ להצליב מול הנתונים הרשמיים.</p>
         </div>
@@ -376,7 +390,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">ב</div>
         <div>
-          <h3>שורת בדיקה הוסרה מהחישוב</h3>
+          <h3 class="mini">שורת בדיקה הוסרה מהחישוב</h3>
           <p>בגיליון קיימת שורה אחת שנרשמה בבדיקת המערכת (25.8, שם בית ספר "ort", 200 תלמידים).
              היא אינה נכללת באף אחד מהמספרים בעמוד זה — הגיליון עצמו יציג 65 שורות ו־9,698 תלמידים.</p>
         </div>
@@ -384,7 +398,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">ג</div>
         <div>
-          <h3>כל הדיווחים שויכו — חמישה מהם בהנחה</h3>
+          <h3 class="mini">כל הדיווחים שויכו — חמישה מהם בהנחה</h3>
           <p><b>אושרו (רויטל, 27.8):</b> "עתיד גליל מערבי ירכא" הוא <b>עתיד גליל מערבי ירכא בנים</b>
              (יסמין אמון) · "אלפראונה" הוא <b>שגב שלום</b> (שרונה בלוך) · "ישיבת עתיד אור מנחם" הוא
              <b>חב״ד אור מנחם אשקלון</b> (יששכר חפץ — מוסד שלא היה ברשימה ונוסף לה) · "אלמנארה" הוא
@@ -401,7 +415,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">ד</div>
         <div>
-          <h3>"מילאנו" לא תמיד אומר את הטופס הזה</h3>
+          <h3 class="mini">"מילאנו" לא תמיד אומר את הטופס הזה</h3>
           <p>בשלב מוקדם יותר הופיעו כאן כחסרים מוסדות ש<b>כן</b> מילאו — אבל טופס אחר:
              <b>עמל רהט</b> (ראיד הוזייל) מילא את טופס המשוב, ו<b>אורט תעשייה אווירית</b>
              (בני זיזו) מילא את סקר הצרכים. שניהם השלימו מאז את דיווח המצבת ומופיעים ברשימה.
@@ -411,7 +425,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <div class="lsn">
         <div class="n">ה</div>
         <div>
-          <h3>דיווח חוזר דורס את הקודם</h3>
+          <h3 class="mini">דיווח חוזר דורס את הקודם</h3>
           <p>מילוי נוסף מאותו בית ספר מעדכן את השורה הקיימת במקום ליצור כפילות — אפשר לשלוח
              את הקישור שוב בלי חשש, גם למי שכבר דיווח. זה כבר קרה בפועל: הדיווח של עמל רמת דוד (245)
              נרשם תחילה על שם נועה יעיש והוחלף בדיווח של שי סודרי. המספר נשמר, שם המדווח הקודם לא.</p>
@@ -423,7 +437,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   <section class="reveal">
     <div class="cta">
       <div>
-        <h3>הטופס פתוח וממשיך לקלוט עדכונים</h3>
+        <h3 class="mini">הטופס פתוח וממשיך לקלוט עדכונים</h3>
         <p>מספר שהשתנה? מילוי חוזר מעדכן את השורה הקיימת. העמוד הזה מתעדכן בכל טעינה.</p>
       </div>
       <a href="/talmidim.html">
@@ -658,5 +672,6 @@ function loadLive(){
 document.getElementById("rfrBtn").addEventListener("click", loadLive);
 loadLive();
 </script>
+<script src="/pagenav.js" defer></script>
 </body>
 </html>
