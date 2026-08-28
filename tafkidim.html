@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="/pagenav.css">
+<link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body>
 
@@ -38,13 +39,20 @@
     <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
 
     <div class="sect">חניכות וקריירה</div>
-    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
     <div class="sect">מרחב ייעוצי</div>
     <a href="counseling.html">שער המרחב הייעוצי</a>
     <a href="counseling.html#kit">ערכת הייעוץ</a>
@@ -153,15 +161,24 @@
 
     </div>
   </span>
-  <span class="navitem"><a class="lnk" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="chanichut.html">חניכות וקריירה<span class="caret">▼</span></a>
     <div class="sub">
-      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+      <div class="sect">חניכות · מקום העבודה</div>
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+      <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+      <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+      <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+      <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+      <div class="sect">נתיבים לקריירה · התוכנית בכיתה</div>
+      <a class="gatelink" href="career.html">שער התוכנית · כל התחום</a>
+      <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+      <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+      <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+      <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+      <a class="nested" href="zinuk.html">על קו הזינוק</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
@@ -318,10 +335,10 @@
   <div class="card" style="padding:22px">
     <div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3 12.5h18M12 12v2"/></svg></div>
     <h3 style="font-size:1.12rem;margin:12px 0 4px;color:var(--navy)"><a href="chanichut-rakaz.html" style="color:inherit;text-decoration:none">רכז חניכות</a></h3>
-    <p style="font-size:.88rem;color:var(--text2);margin:0 0 10px">תיק החפיפה של רכז/ת החניכות — הנוהל, שותפויות המעסיקים וכלי העבודה של רכז/ת התעסוקה.</p>
+    <p style="font-size:.88rem;color:var(--text2);margin:0 0 10px">תיק החפיפה של רכז/ת החניכות — הנוהל, שותפויות המעסיקים וכלי העבודה של רכז/ת החניכות.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.82rem;font-weight:600">
       <a href="nohal-rakaz-chanichut.html" style="color:#0B7FA6;text-decoration:none">נוהל רכז החניכות והתעסוקה</a><span style="color:var(--border-strong)">·</span>
-      <a href="career-rakaz.html" style="color:#0B7FA6;text-decoration:none">ארגז הכלים של רכז התעסוקה</a><span style="color:var(--border-strong)">·</span>
+      <a href="career-rakaz.html" style="color:#0B7FA6;text-decoration:none">ארגז הכלים של רכז/ת החניכות</a><span style="color:var(--border-strong)">·</span>
       <a href="chanichut.html" style="color:#0B7FA6;text-decoration:none">תפיסת החניכות</a>
     </div>
   </div>
@@ -460,5 +477,6 @@
 <script src="role-defs.js" defer></script>
 <script src="feedback.js" defer></script>
 <script src="/pagenav.js" defer></script>
+<script src="/toolbelt.js" defer></script>
 </body>
 </html>

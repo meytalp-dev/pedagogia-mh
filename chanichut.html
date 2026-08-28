@@ -22,27 +22,8 @@
 <link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="cats.css">
 <link rel="stylesheet" href="/pagenav.css">
+<link rel="stylesheet" href="/toolbelt.css">
 <style>
-/* מודלי החניכות — בלוקים נפתחים */
-details.model{border:1px solid var(--border);border-radius:16px;margin:14px 0;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden}
-details.model summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:14px;padding:16px 20px;font-weight:800;color:var(--navy);font-size:1.05rem;transition:background .2s}
-details.model summary::-webkit-details-marker{display:none}
-details.model summary:hover{background:var(--cyan-100)}
-details.model summary .mn{font-weight:800;font-variant-numeric:tabular-nums;color:#0B7FA6;min-width:1.6em}
-details.model summary .hint{margin-inline-start:auto;font-weight:600;font-size:.8rem;color:var(--text2);white-space:nowrap}
-details.model[open] summary{border-bottom:1px solid var(--border)}
-details.model .inner{padding:6px 20px 18px}
-details.model h4{font-weight:800;color:var(--navy-800);font-size:.92rem;margin:14px 0 4px}
-details.model p,details.model li{font-size:.92rem}
-details.model ul{list-style:none;margin:4px 0}
-details.model ul>li{position:relative;padding:4px 20px 4px 0}
-details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;width:10px;height:2.5px;border-radius:2px;background:var(--cyan)}
-.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
-@media(max-width:640px){.pros-cons{grid-template-columns:1fr}}
-.pros-cons>div{border:1px solid var(--border);border-radius:12px;padding:10px 14px;background:#fff}
-.pros-cons .p{border-inline-start:4px solid var(--teal)}
-.pros-cons .c{border-inline-start:4px solid #C08A00}
-.pros-cons b{display:block;font-size:.85rem;margin-bottom:4px;color:var(--navy)}
 /* פירמידת החניכות */
 .pyramid{display:flex;flex-direction:column;align-items:center;gap:6px;margin:20px 0 8px}
 .pyr-step{color:#fff;border-radius:12px;padding:10px 16px;text-align:center;font-weight:700;font-size:.9rem;box-shadow:var(--sh-sm)}
@@ -77,13 +58,20 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
     <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
 
     <div class="sect">חניכות וקריירה</div>
-    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
     <div class="sect">מרחב ייעוצי</div>
     <a href="counseling.html">שער המרחב הייעוצי</a>
     <a href="counseling.html#kit">ערכת הייעוץ</a>
@@ -192,15 +180,24 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
 
     </div>
   </span>
-  <span class="navitem"><a class="lnk active" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk active" href="chanichut.html">חניכות וקריירה<span class="caret">▼</span></a>
     <div class="sub">
-      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+      <div class="sect">חניכות · מקום העבודה</div>
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+      <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+      <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+      <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+      <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+      <div class="sect">נתיבים לקריירה · התוכנית בכיתה</div>
+      <a class="gatelink" href="career.html">שער התוכנית · כל התחום</a>
+      <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+      <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+      <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+      <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+      <a class="nested" href="zinuk.html">על קו הזינוק</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
@@ -349,8 +346,8 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
         <span class="ci" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 4.5h17.6l-7.1 8.3V20l-3.4 1.4v-8.6z"/></svg></span>
         <span class="ct">
           <b class="cn">03</b>
-          <b class="cttl">כלי הבחינה והמעקב</b>
-          <span class="csub">מסננת החניכות · פירמידת החניכות · עשרת הצעדים</span>
+          <b class="cttl">מסננת החניכות ופירמידת החניכות</b>
+          <span class="csub">שני כלי הבחינה והמעקב · ועשרת הצעדים לחניכות מיטבית</span>
         </span>
       </button>
 
@@ -368,7 +365,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
         <span class="ct">
           <b class="cn">05</b>
           <b class="cttl">מעטפת התמיכה</b>
-          <span class="csub">רכז.ת החניכות · החונך במקום העבודה · מעטפת אזורית</span>
+          <span class="csub">רכז/ת החניכות · החונך במקום העבודה · מעטפת אזורית</span>
         </span>
       </button>
 
@@ -384,7 +381,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       <button class="cpill" data-cat="all" type="button">הכול</button>
       <button class="cpill" data-cat="why" type="button">למה חניכות?</button>
       <button class="cpill" data-cat="principles" type="button">עקרונות</button>
-      <button class="cpill" data-cat="tools" type="button">כלי בחינה ומעקב</button>
+      <button class="cpill" data-cat="tools" type="button">מסננת ופירמידה</button>
       <button class="cpill" data-cat="models" type="button">8 המודלים</button>
       <button class="cpill" data-cat="support" type="button">מעטפת התמיכה</button>
     </div>
@@ -418,16 +415,16 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       <li><strong>סל שעות חניכות:</strong> כל תלמיד.ה עומד.ת במכסה של <strong>מינימום 200 שעות חניכות בשנה</strong>.</li>
       <li><strong>סדירות עבודה גמישה:</strong> יום שבועי קבוע · עבודה תקופתית מרוכזת · לפי פרויקטים · עבודת קיץ · ימים משתנים לפי תקופות השנה · בשעות הלימודים או אחר הצהריים.</li>
       <li><strong>בחירת מודל:</strong> כל בית ספר בוחר מודל חניכות (או כמה מודלים במקביל) בהתאם לאופיו ולמגמותיו, ובונה תוכנית חניכות שנתית שמקדמת כל תלמיד.ה בפירמידה.</li>
-      <li><strong>הלימה ללמידה:</strong> חיבור שוטף בין תכני הלימוד לחניכות — באחריות רכז.ת החניכות; ביטוי לחניכות בהערכה, בתעודה ובסדירויות הבית־ספריות.</li>
+      <li><strong>הלימה ללמידה:</strong> חיבור שוטף בין תכני הלימוד לחניכות — באחריות רכז/ת החניכות; ביטוי לחניכות בהערכה, בתעודה ובסדירויות הבית־ספריות.</li>
       <li><strong>סדנאות מתקדמות:</strong> התאמת הסדנאות לחידושים הטכנולוגיים ולמגמות העתיד במקצוע.</li>
       <li><strong>חניכות רחבה:</strong> היכרות עם התמונה הכוללת של תהליכי העבודה והתנסות מגוונת — רצף החלפת התנסויות לאורך השנים.</li>
     </ul>
 
-    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="tools" type="button">כלי הבחינה והמעקב ←</button></div>
+    <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="tools" type="button">מסננת החניכות ופירמידת החניכות ←</button></div>
 </section>
 <section class="cat-panel" data-cat="tools" id="tools">
     <h2 class="sub-sec first rv">כלי 1 · מסננת החניכות</h2>
-    <p class="lead-p rv">כלי לבדיקת איכות והתאמה של מקום עבודה, בעיקר לפני השמת תלמידים. מקום שרוב הפרמטרים מתקיימים בו — מתאים; חלק מהעקרונות הם <strong>חובה</strong> (למשל תשלום על פי חוק), וחלק יכולים להתפתח בליווי הרכז.ת.</p>
+    <p class="lead-p rv">כלי לבדיקת איכות והתאמה של מקום עבודה, בעיקר לפני השמת תלמידים. מקום שרוב הפרמטרים מתקיימים בו — מתאים; חלק מהעקרונות הם <strong>חובה</strong> (למשל תשלום על פי חוק), וחלק יכולים להתפתח בליווי רכז/ת החניכות.</p>
 
     <div class="tbl-scroll rv">
       <table class="doc">
@@ -443,6 +440,11 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
           <tr><td class="k">סביבה דינאמית ומשתנה</td><td>סביבת עבודה בהתפתחות מתמדת המחוברת לעולם העבודה · אפשרות לשינויים · מקום מעורר השראה</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="source-box rv">
+      <div class="t">מסננת החניכות · העמוד המלא<small>חמשת העקרונות, כל הפרקטיקות, מה חובה ומה יכול להתפתח בליווי — ואיך בודקים מקום עבודה בפועל.</small></div>
+      <a class="btn" href="chanichut-masnenet.html">לעמוד המלא של מסננת החניכות</a>
     </div>
 
     <h2 class="sub-sec rv">כלי 2 · פירמידת החניכות</h2>
@@ -470,182 +472,88 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       </table>
     </div>
 
+    <div class="source-box rv">
+      <div class="t">פירמידת החניכות · העמוד המלא<small>ארבעת השלבים, הפרקטיקות בכל שלב, והמיפוי הכיתתי — כל תלמיד.ה לפי מקומו.ה בפירמידה.</small></div>
+      <a class="btn" href="chanichut-piramida.html">לעמוד המלא של פירמידת החניכות</a>
+    </div>
+
     <h3 class="mini rv" id="asara">כלי 3 · עשרת הצעדים לחניכות מיטבית</h3>
     <p class="rv">חוברת מעוצבת שמפרקת את החניכות לעשרה צעדים מעשיים — מהאיתור, ההתאמה והשיבוץ, דרך ההכנה של התלמיד.ה ושל המעסיק, ועד הליווי השוטף, המשוב והאופק התעסוקתי. משלימה את המסננת ואת הפירמידה: המסננת בוחנת את המקום, הפירמידה עוקבת אחר התלמיד.ה — והחוברת מתארת את סדר הפעולות.</p>
     <div class="source-box rv">
       <div class="t">עשרת הצעדים לחניכות מיטבית<small>לצפייה, להורדה ולשיתוף עם הצוות ועם המעסיקים.</small></div>
       <a class="btn" href="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view" target="_blank" rel="noopener">לפתיחת החוברת ↗</a>
-      <a class="btn alt" href="career.html#asara-tzeadim">לחוברת המוטמעת באתר</a>
+      <a class="btn alt" href="#asara">לחוברת המוטמעת באתר</a>
     </div>
 
     <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="models" type="button">שמונה מודלים לחניכות ←</button></div>
 </section>
 <section class="cat-panel" data-cat="models" id="models">
     <h2 class="sub-sec first rv">שמונה מודלים לחניכות</h2>
-    <p class="lead-p rv">מגוון המודלים נועד להתאים את החניכות לכמה שיותר תלמידים — לוקאלית, תרבותית ומגמתית — ולהרחיב את מעגל המעסיקים. כל בית ספר בוחר, ואפשר להפעיל כמה מודלים במקביל. לחצו לפתיחת כל מודל:</p>
+    <p class="lead-p rv">מגוון המודלים נועד להתאים את החניכות לכמה שיותר תלמידים — לוקאלית, תרבותית ומגמתית — ולהרחיב את מעגל המעסיקים. כל בית ספר בוחר, ואפשר להפעיל כמה מודלים במקביל. לכל מודל עמוד משלו — המהות, העקרונות המרכזיים, המיומנויות שהוא מפתח, יתרונות וחסרונות ודוגמאות מהשטח:</p>
 
-    <details class="model rv">
-      <summary><span class="mn">1</span>חניכות קלאסית־מסורתית<span class="hint">מעסיק חיצוני · צוות קיים</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> התלמיד.ה משתלב.ת כחלק מצוות העובדים במקום עבודה אחד, בתפקידים התואמים את השלב הלימודי. עם הוותק — עולות הדרישות ומורכבות המשימות.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>מציאת מגוון מעסיקים וניהול הקשר על ידי רכז.ת החניכות — הגדרת מיומנויות, ליווי מנטורים, מעקב, פתרון קשיים וחיבור לחומר הלימודי</li>
-          <li>סדירות קבועה של ימי עבודה, עבודה לפי רשימת משימות מוסכמת מראש ההולמת את הנלמד בכיתה</li>
-          <li>ליווי אינטנסיבי יחסית על סביבת העבודה, דאגה ל־wellbeing, מנטור משקיע וקשר בין מורי המקצוע למקום העבודה</li>
-          <li>תעסוקה מגוונת ומתפתחת — לא מונוטונית</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>אחריות אישית, מקצועיות, עצמאות, יחסים בין־אישיים, קבלת סמכות, שותפות, למידה.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>חניכות במקצוע הנלמד · בימים קבועים ללא לימודים · התנסות מול אתגרים ולקוחות אמיתיים · היכרות עם ארגון: נהלים, קולגות, תרבות ארגונית</div>
-          <div class="c"><b>חסרונות</b>קושי במציאת מגוון מעסיקים · עבודות לא תמיד מותאמות למגמה · סכנת התקבעות לתפקידים מצומצמים</div>
-        </div>
-        <p><strong>דוגמה:</strong> דן גורמה, מגמת בישול — עבודה במסעדות, בתי קפה, קייטרינג ואולמות, בחיבור ישיר לתכנים הנלמדים.</p>
-      </div>
-    </details>
+    <div class="grid c2" style="margin:16px 0">
+      <a class="card rv" href="chanichut-model-1.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">1</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">חניכות קלאסית־מסורתית</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">מעסיק חיצוני · צוות קיים</span>
+      </a>
+      <a class="card rv" href="chanichut-model-2.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">2</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">ספק משנה</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">ביה"ס כמעסיק · עבודה בסדנה</span>
+      </a>
+      <a class="card rv" href="chanichut-model-3.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">3</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">צמוד מפעל</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">מפעל אחד · כל המגמה</span>
+      </a>
+      <a class="card rv" href="chanichut-model-4.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">4</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">צמוד בסיס</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">בסיס צבאי · אופק בצבא</span>
+      </a>
+      <a class="card rv" href="chanichut-model-5.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">5</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">צמוד אתגר סביבתי–חברתי–קהילתי</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">ביה"ס כשחקן שינוי</span>
+      </a>
+      <a class="card rv" href="chanichut-model-6.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">6</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">עסק חינוכי — תוכנית שותפים</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">עסק בית־ספרי מבוסס מגמה</span>
+      </a>
+      <a class="card rv" href="chanichut-model-7.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">7</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">מודל היברידי</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">בעבודה + מרחוק</span>
+      </a>
+      <a class="card rv" href="chanichut-model-8.html" style="padding:18px 20px 34px">
+        <span style="display:flex;align-items:baseline;gap:12px">
+          <b style="font-variant-numeric:tabular-nums;color:#0B7FA6;font-size:1.05rem">8</b>
+          <b style="color:var(--navy);font-size:1.02rem;line-height:1.35">עסק עצמאי — פרילנס</b>
+        </span>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">כיתה י"ב · עוסק פטור</span>
+      </a>
+    </div>
 
-    <details class="model rv">
-      <summary><span class="mn">2</span>ספק משנה<span class="hint">ביה"ס כמעסיק · עבודה בסדנה</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> חוזה ארוך טווח עם לקוח מרכזי שמספק עבודה לבית הספר; בית הספר הוא "המעסיק" ומשמש ספק משנה. העבודה מתבצעת בסדנה הבית־ספרית. רצוי כמה לקוחות או "לקוחות עוגן" — ועדיפות לשירות או מוצר בעל ערך חברתי.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>מתאים לשלב התחלתי בחניכות, ולפרק זמן חלקי בלבד מכלל ההתנסות</li>
-          <li>מצריך אחראי/מנהל עבודה מתוך בית הספר והגדרת מיומנויות לפיתוח — שלא תתבצע עבודה טכנית בלבד</li>
-          <li>הסדרת שכר: הקבלן מעביר תשלום לבית הספר/לרשת, והיא מוציאה תלושי שכר לתלמידים</li>
-          <li>אפשר להעמיק: קריאת חוזה ומפרטים, עמידה בהתחייבות, ניהול מו"מ עם ספקים, בקרת איכות</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>אחריות אישית, מקצועיות, התמדה, מיומנויות בסיס במקצוע, אוריינות שפתית ומקצועית.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>מענה לתלמידים עם קושי בנגישות למקומות עבודה · חניכות במקום מוגן ומוכר · תלושי שכר דרך ביה"ס · עבודה יציבה · מפגש אמיתי עם משימה ולקוח</div>
-          <div class="c"><b>חסרונות</b>מקבע תפקידים · רפטטיבי · עבודות בסיס · ללא מגע ישיר עם לקוחות · התלמיד לא פוגש ארגון אמיתי</div>
-        </div>
-        <p><strong>דוגמאות:</strong> טורעאן — שת"פ עם מפעל שניידר וחוסאם חשמל; עתיד ירכא — זרוע ביצוע של רשת עתיד לעבודות מסגרות ודפוס; ברלין — בי"ס למקצועות הבנייה כספק של העירייה.</p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">3</span>צמוד מפעל<span class="hint">מפעל אחד · כל המגמה</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> התלמידים לומדים מגמות הקשורות לעשיית המפעל הצמוד לבית הספר ומועסקים בו.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>המפעל חייב לתת מענה תעסוקתי לכלל תלמידי המגמה, עם גורם מתכלל מטעמו ומנטורים מוכשרים</li>
-          <li>ניתוח התעסוקות במפעל וארגון "גרף חניכות" לפי התפתחות כל תלמיד.ה או שנת לימוד</li>
-          <li>תוכנית עבודה משותפת המאזנת בין צרכי המפעל לצרכים החינוכיים — נקודת הקצה היא התפתחות התלמיד.ה, לא צורכי המפעל</li>
-          <li>תשומת לב שהחניכות לא תהיה טכנית ודלה במיומנויות המאה ה־21</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>אחריות, התמדה, עבודת צוות, עמידה בזמנים, מחויבות, מערכות יחסים.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>מתאים למי שמסתדרים במסגרות גדולות ושגרה קבועה · חניכות מובנית וברורה · השתלבות במערכת אמיתית ופוטנציאל המשך במפעל (מוביליות) · מגוון תפקידים במפעלים גדולים</div>
-          <div class="c"><b>חסרונות</b>גמישות מועטה · סכנת התקבעות לתפקידים מצומצמים</div>
-        </div>
-        <p><strong>דוגמאות:</strong> עמל אנרג'י טק — לימודי חשמל בצמידות למרכז ההכשרה של חברת חשמל בחדרה; אורט אורמת — מגמת CNC עם התנסות במפעל אורמת הצמוד.</p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">4</span>צמוד בסיס<span class="hint">בסיס צבאי · אופק בצבא</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> בית הספר ממוקם בתוך בסיס צבאי ומגמותיו קשורות אליו (בעיקר חשמל ומכונאות על כלים צבאיים). התלמידים מועסקים בתפקידים בבסיס, וברוב המקרים ממשיכים לשירות צבאי במקצוע שרכשו.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>הבסיס קולט את התלמידים לחניכות, מעמיד דמות מתכללת ומנטורים, ומספק עבודה משמעותית לכלל המגמה</li>
-          <li>קשר שוטף בין רכז.ת החניכות לדמות המתכללת — גם ל־wellbeing וגם ללימודי</li>
-          <li>איזון בין צורכי הבסיס לצרכים החינוכיים; תוכנית לימודים מותאמת לוקאלית להתנסות בבסיס</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>אחריות, תפיסה מערכתית, נהלים סדורים, משמעת, סולידריות, קולגיאליות.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>אופק מקצועי ותעסוקתי בצבא · הלימה מלאה בין הלימודים להתנסות</div>
-          <div class="c"><b>חסרונות</b>התחייבות לגיוס לחיל · תפקידים מצומצמים ומשימות מונוטוניות · הכוונה לתרבות צבאית בלי היכרות עם השוק האזרחי</div>
-        </div>
-        <p><strong>דוגמאות:</strong> בתי הספר של חיל האוויר בתל נוף וברמת דוד — המקצועות נגזרים מצורכי החיל, והבוגרים משובצים בו בהתאם למגמה.</p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">5</span>צמוד אתגר סביבתי–חברתי–קהילתי<span class="hint">ביה"ס כשחקן שינוי</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> בית הספר קם סביב אתגר סביבתי, חברתי או קהילתי, רותם רשת שותפים לחולל שינוי — והחניכות מבוססת על שותפים אלה. "היפוך היוצרות": בני הנוער לוקחים תפקיד אמיתי בעיצוב החברה, לא רק משתלבים בה.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>האתגר — מקומי או רחב — מכתיב את בחירת המגמות ואת חזון החניכות</li>
-          <li>השותפים מתחייבים לספק עבודה לכלל תלמידי המגמות</li>
-          <li>תוכנית הלימודים והחניכות דינאמיות ומשתנות לפי שלב ההתמודדות עם האתגר — פיתוח משותף של גורמים רבים בבית הספר</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>אחריות, יוזמה, משמעת, מערכות יחסים, ניהול זמן, התמדה, למידה.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>חיבור למשמעות · ריבוי מגמות, תפקידים והתנסויות · מרחב ליוזמות תלמידים · התאמה גבוהה לעקרונות החינוך היוצר</div>
-          <div class="c"><b>חסרונות</b>מותנה ביוזמה וחשיבה אסטרטגית · דורש עבודה עם ממשקים רבים · גמישות ועמימות</div>
-        </div>
-        <p><strong>דוגמאות:</strong> דרור גליל — מרכז פיתוח לבעיות חקלאי הגליל; חיפה אקו־ים — חממה לפתרונות זיהום במפרץ; מצפה רמון — מענה לצורכי התיירות המקומית; SCHOOL STUDIOS (esaacademy.org).</p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">6</span>עסק חינוכי — תוכנית שותפים<span class="hint">עסק בית־ספרי מבוסס מגמה</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> הקמת עסק בית־ספרי מבוסס מגמה (או ליווי יזמי למוצרים שתלמידים מפתחים) — הכנה להשתלבות בעולם החניכות והאתגרים העתידיים.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>העסק קשור באופן אימננטי לליבת המקצוע הנלמד, ונותן מענה תעסוקתי מלא בכיתות י"א–י"ב</li>
-          <li>העסקת "מנהל עסקי" לניהול העסק (בנוסף לרכז.ת החניכות), גיוס מנטורים עסקיים והכשרתם</li>
-          <li>בניית מודל עסקי, ניהול שוטף ומדידה של תפוקות מול יעדים</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>יזמות, הקמת עסק, עבודת צוות, פרזנטציה, עמידה ביעדים, תודעת שירות, מערכות יחסים.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>חניכות במקצועות שקשה לשבץ בחוץ · מעודד תשוקה ליזמות · ריבוי תפקידים והתנסויות · התמודדות עם לקוחות אמיתיים · גאווה ותחושת מסוגלות</div>
-          <div class="c"><b>חסרונות</b>ניהול עסק על כתפי ביה"ס · התנגשות אפשרית בין מטרות חינוכיות לעסקיות · מחויבות גבוהה מול מאפייני גיל הנעורים · פערים בין מגמות</div>
-        </div>
-        <p><strong>דוגמאות:</strong> אבו סנאן — מספרה · דרור — חושן סאונד וסטודיו צילום · עתיד כרמיאל — ספורט · תיכון הדר — סטודיו צילום · קמפוס תורני — עתיד יודאיקה · תיכון חברתי ת"א — אולפן מוסיקה · <strong>אורט בית הערבה — מעבדת מחשבים קהילתית</strong> · פינלנד — מקצועות הבנייה. רקע נוסף: <a class="lk" href="https://drive.google.com/file/d/1SFEqhJLYYT2qNtA9kSrr_mng6CungPsG/view" target="_blank" rel="noopener">תוכנית שותפים — הזנק לעסקים חברתיים</a> · <a class="lk" href="https://yotzer.education/indexbiz/" target="_blank" rel="noopener">אינדקס העסקים החינוכיים</a></p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">7</span>מודל היברידי<span class="hint">בעבודה + מרחוק</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> עבודה מטעם בית הספר או מעסיק, שחלקה מתבצעת מרחוק — במרחב ייעודי בבית הספר, בבית או בכל מקום אחר. מותאם לעולם העבודה המתחדש, ולכן משתנה ודורש מיומנויות גבוהות — ואמון רב בתלמיד.ה.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>סדר וארגון גבוהים בהגדרת משימות ופיקוח על ביצוען; פגישה שבועית עם רכז.ת החניכות לתכנון ומעקב</li>
-          <li>הגדרה משותפת של חלוקת העבודה בין מקום העבודה לעבודה מרחוק</li>
-          <li>שמירה על סדירות של נראות ושייכות — מעקב wellbeing והיות התלמיד.ה חלק מקבוצה חברתית</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>עצמאות, יוזמה, ניהול זמן, סדר וארגון, מיומנות תוך־אישית.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>מענה לתלמידים שמתקשים לצאת מהבית או במפגש עם לקוחות · מותאם לצורות ההעסקה המשתנות · גיוון וגמישות</div>
-          <div class="c"><b>חסרונות</b>דורש משמעת ועצמאות גבוהות · מצריך פיקוח ייעודי על העבודה מרחוק</div>
-        </div>
-        <p><strong>השראה:</strong> פלטפורמות עבודה מרחוק כמו XPLACE ו־Upwork.</p>
-      </div>
-    </details>
-
-    <details class="model rv">
-      <summary><span class="mn">8</span>עסק עצמאי — פרילנס<span class="hint">כיתה י"ב · עוסק פטור</span></summary>
-      <div class="inner">
-        <p><strong>המהות:</strong> עידוד תלמידים בשלב מתקדם (י"ב, אחרי שנות התנסות ותיק עבודות) לפתיחת עוסק פטור ומתן שירותי פרילנס — כולל שילוב בפלטפורמות פרילנסרים ותמיכה בליווי עסקי, ייעוץ פיננסי, רו"ח ושיווק.</p>
-        <h4>עקרונות מרכזיים</h4>
-        <ul>
-          <li>חשיפה לעולמות התוכן של ניהול עסק עצמאי — כולל חוקי מדינה והתנהלות כלכלית נכונה</li>
-          <li>רמת אמון גבוהה בין בית הספר לתלמיד.ה, עם תוכנית עבודה ודיווח מול איש צוות</li>
-          <li>איזון בין קשר קרוב ומלווה לבין מרחב גדול להתנסות אישית</li>
-        </ul>
-        <h4>מיומנויות שהמודל מפתח</h4>
-        <p>יזמות, עצמאות, הקמת עסק, אחריות, ניהול זמן ומשימות, תודעת שירות.</p>
-        <div class="pros-cons">
-          <div class="p"><b>יתרונות</b>מותאם לשוק העבודה ולצורות ההעסקה החדשות · פיתוח עבודה עצמאית, אחריות ומשמעת · גיוון וגמישות</div>
-          <div class="c"><b>חסרונות</b>דורש משמעת ועצמאות גבוהות · עלול לייצר פערי הכנסה ומעמד בין תלמידים</div>
-        </div>
-        <p><strong>השראה:</strong> ניסיון שת"פ במסגרת תוכנית שותפים לעבודות מידול בפרילנס למגמות יוצרנות, טכנולוגיות עתיד ו־CNC (creators3d.com).</p>
-      </div>
-    </details>
+    <div class="callout petrol rv">
+      <span class="ttl">בחירת מודל אינה מחליפה את כלי הבחינה</span>
+      לפני שמשבצים תלמידים בכל אחד משמונת המודלים — <a class="lk" href="chanichut-masnenet.html">מסננת החניכות</a> בודקת אם מקום העבודה מתאים לשמש מקום חניכות, ו<a class="lk" href="chanichut-piramida.html">פירמידת החניכות</a> עוקבת אחר כל תלמיד.ה בנפרד, משלב השיבוץ ועד האופק התעסוקתי.
+    </div>
 
     <div class="cat-next rv"><span>הקטגוריה הבאה</span><button class="cgo" data-goto="support" type="button">מעטפת התמיכה ←</button></div>
 </section>
@@ -653,9 +561,9 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
     <h2 class="sub-sec first rv">מעטפת התמיכה</h2>
     <p class="lead-p rv">ליווי הוליסטי, רציף ומבוסס אמון — משלב השיבוץ ועד אופק תעסוקתי — נשען על שלושה ערוצים:</p>
     <ol class="ed rv">
-      <li><strong>רכז.ת החניכות</strong> — מתכלל.ת תחום החניכות: תמיכה דו־כיוונית בתלמידים ובמעסיקים. זהו תפקיד מקצועי מובחן הדורש כישורים שונים מכישורי הוראה ומשרה הולמת — לא תוספת שעות לתפקיד קיים.</li>
+      <li><strong>רכז/ת החניכות</strong> — מתכלל.ת תחום החניכות: תמיכה דו־כיוונית בתלמידים ובמעסיקים. זהו תפקיד מקצועי מובחן הדורש כישורים שונים מכישורי הוראה ומשרה הולמת — לא תוספת שעות לתפקיד קיים.</li>
       <li><strong>מערכת בית־ספרית רחבה</strong> — רתימת מחנכים, יועצות, הנהלה ורכזי מגמות; סדירויות של ישיבות פדגוגיות ושיחות עדכון; פתרון משותף של קונפליקטים; גיוס גורמים תומכים מהקהילה.</li>
-      <li><strong>מנטורינג במקום העבודה</strong> — חונך.ת מהארגון: דמות ערכית־מקצועית שמלווה את הצמיחה, עוברת הכשרה, מלווה לאורך השנה על ידי רכז.ת החניכות וחברה בפורום חונכים ארצי.</li>
+      <li><strong>מנטורינג במקום העבודה</strong> — חונך.ת מהארגון: דמות ערכית־מקצועית שמלווה את הצמיחה, עוברת הכשרה, מלווה לאורך השנה על ידי רכז/ת החניכות וחברה בפורום חונכים ארצי.</li>
     </ol>
 
     <h3 class="mini rv">תפקידי החונך.ת במקום העבודה</h3>
@@ -664,7 +572,7 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
       <li>תמיכה מקצועית, אישית וחברתית — "איש הקשר" לאורך כל החניכות</li>
       <li>הקניית ידע, מיומנות, הרגלים ושיטות עבודה נכונות; קידום להצלחה בבחינות המקצועיות</li>
       <li>חיזוק הביטחון ותחושת המסוגלות; איתור חוזקות ונקודות לשיפור ומתן משוב מקדם</li>
-      <li>קשר רציף עם רכז.ת החניכות והמחנכים; היכרות עם מטרות הלמידה וחיבורן להתנסות</li>
+      <li>קשר רציף עם רכז/ת החניכות והמחנכים; היכרות עם מטרות הלמידה וחיבורן להתנסות</li>
       <li>דוגמה אישית ומודל לחיקוי; השתתפות בהכשרת מנטורים ובפורומים של מעסיקים</li>
     </ul>
 
@@ -680,8 +588,8 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
     <p class="rv">מכיוון שרוב רכזי החניכות הם עובדי הוראה שהתפקיד נוסף על משרתם, מקודמת תוכנית מעטפת שתסייע: <strong>מערך מעסיקים אזורי וארצי</strong> (איתור וגיוס מעסיקים אסטרטגיים, מנגנוני הוקרה ושימור קשר), <strong>התאמת מגמות לשוק העבודה</strong> (זיהוי ביקושים, המלצות על פתיחת וסגירת מגמות, תוכניות מצטיינים ולימודי המשך) ו<strong>הכשרות</strong> — סטנדרט להכשרת התלמיד אצל המעסיק, הכשרת מנטורים והכשרת רכזי חניכות.</p>
 
     <div class="callout rv">
-      <span class="ttl">כלי העבודה של הרכז.ת</span>
-      מסמך המטלות, הנהלים והפרמטרים בחניכות, משוב מנטורים, שאלון הערכת תלמידים, מכתבי שיבוץ/אזהרה/הוקרה/משוב — מרוכזים בעמוד <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>.
+      <span class="ttl">כלי העבודה של רכז/ת החניכות</span>
+      מסמך המטלות, הנהלים והפרמטרים בחניכות, משוב מנטורים, שאלון הערכת תלמידים, מכתבי שיבוץ/אזהרה/הוקרה/משוב — מרוכזים בעמוד <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>.
     </div>
 
     <div class="source-box rv">
@@ -691,6 +599,46 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
 
     <div class="cat-next rv"><span>חזרה להתחלה</span><button class="cgo" data-goto="why" type="button">למה חניכות? ←</button></div>
 </section>
+
+<h2 class="sub-sec rv" id="kol-hachanichut">כל עולם החניכות במקום אחד</h2>
+<p class="lead-p rv">החניכות היא מה שקורה במקום העבודה, ובעל/ת התפקיד שמתכלל/ת אותה הוא/היא רכז/ת החניכות. כל הכלים, הנהלים והעמודים של עולם החניכות — כאן, בלי קשר לקטגוריה שנבחרה למעלה.</p>
+
+<div class="grid c2" style="margin:16px 0">
+      <a class="card rv" href="#models" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">שמונת המודלים לחניכות</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">מקלאסית ומסורתית ועד עסק חינוכי, מודל היברידי ופרילנס — עמוד לכל מודל.</span>
+      </a>
+      <a class="card rv" href="chanichut-masnenet.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">מסננת החניכות</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">בודקת את מקום העבודה: האם הוא מתאים לשמש מקום חניכות. חמישה עקרונות ופרקטיקות.</span>
+      </a>
+      <a class="card rv" href="chanichut-piramida.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">פירמידת החניכות</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">עוקבת אחר כל תלמיד.ה: שיבוץ, שימור, חניכות משמעותית ואופק תעסוקתי.</span>
+      </a>
+      <a class="card rv" href="#asara" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">עשרת הצעדים לחניכות מיטבית</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">סדר הפעולות המעשי — מהאיתור והשיבוץ ועד המשוב והאופק התעסוקתי.</span>
+      </a>
+      <a class="card rv" href="career-rakaz.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">ארגז הכלים של רכז/ת החניכות</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">מסמך המטלות והנהלים, משוב מנטורים, שאלוני הערכה ומכתבים לשיבוץ ולהוקרה.</span>
+      </a>
+      <a class="card rv" href="chanichut-rakaz.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">תיק החפיפה של רכז/ת החניכות</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">כניסה לתפקיד: מיפוי תלמידים, מאגר מעסיקים ותוכנית עבודה שנתית.</span>
+      </a>
+      <a class="card rv" href="nohal-rakaz-chanichut.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">נוהל רכז/ת החניכות והתעסוקה</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">הנוהל המחייב — הגדרת התפקיד, הסמכויות והאחריות.</span>
+      </a>
+      <a class="card rv" href="mishov-maasik.html" style="padding:18px 20px 34px">
+        <b style="display:block;color:var(--navy);font-size:1.02rem">טופס משוב המעסיק</b>
+        <span style="display:block;margin-top:6px;font-size:.88rem;color:var(--text2)">משוב שוטף מהמעסיק על התלמיד.ה ועל החניכות — לשימוש רכז/ת החניכות.</span>
+      </a>
+</div>
+
+<p class="rv" style="color:var(--text2)">התוכנית הלימודית בכיתות ט׳–י״ב — מערכי השיעור, מארזי השכבות ומודל ח.כ.ה — היא תחום נפרד, ובעל/ת התפקיד בה הוא/היא מוביל/ת התוכנית: <a class="lk" href="career.html">נתיבים לקריירה · התוכנית המלאה</a>.</p>
 
   </div>
 </article>
@@ -704,5 +652,6 @@ details.model ul>li::before{content:"";position:absolute;right:2px;top:14px;widt
 <script src="feedback.js" defer></script>
 <script src="cats.js" defer></script>
 <script src="/pagenav.js" defer></script>
+<script src="/toolbelt.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+/* ===== toolbelt.css — ארגז הכלים של העמוד: חזרה לתוכן העניינים + הדפסת טבלאות =====
+   נבנה אוטומטית על ידי toolbelt.js מתוך תוכן העמוד. אין HTML ידני בשום עמוד.
+   כל var() כאן מקבל ערך גיבוי, כדי שעמוד עצמאי שאינו טוען את style.css
+   יקבל רכיב תקין ולא שבור.
+   כיבוי: <body data-tb="off"> · רק החזרה לתוכן: data-tb-toc="off" · רק הטבלאות: data-tb-print="off"
+================================================================================ */
+
+/* ---------- א. חזרה לתוכן העניינים ---------- */
+
+/* עוזר צדדי בסוף כל מדור — לא כפתור בולט */
+.tb-back{
+  display:flex;justify-content:flex-end;align-items:center;
+  margin:20px 0 4px;
+}
+.tb-back-a{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 3px;border-radius:8px;
+  color:var(--text2,#52687A);text-decoration:none;
+  font-size:.79rem;font-weight:700;line-height:1;white-space:nowrap;
+  opacity:.82;
+  transition:color .2s var(--ease,ease),opacity .2s var(--ease,ease);
+}
+.tb-back-a svg{
+  width:13px;height:13px;flex:0 0 auto;
+  transition:transform .2s var(--ease,ease);
+}
+.tb-back-a:hover{color:var(--navy,#0D3B66);opacity:1}
+.tb-back-a:hover svg{transform:translateY(-2px)}
+.tb-back-a:focus-visible{outline:2px solid var(--cyan,#27C6F3);outline-offset:3px;opacity:1}
+
+/* הפסים הדביקים (הניווט הראשי + pagenav) לא יחתכו את תוכן העניינים בקפיצה */
+.tb-toc-target{scroll-margin-top:calc(var(--pn-nav,64px) + var(--pn-bar,0px) + 14px)}
+
+/* ---------- ב. כלי הטבלה: הדפסה ושמירה כ-PDF ---------- */
+
+.tb-tools{
+  display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;
+  gap:8px;margin:18px 0 -4px;
+}
+.tb-btn{
+  display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;
+  height:30px;padding:0 12px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--border,#D8E6F2);
+  background:#fff;color:var(--navy,#0D3B66);
+  font:inherit;font-size:.78rem;font-weight:700;line-height:1;
+  transition:border-color .2s,background .2s,color .2s,box-shadow .2s,transform .12s;
+}
+.tb-btn svg{width:14px;height:14px;flex:0 0 auto}
+.tb-btn:hover{
+  border-color:var(--cyan,#27C6F3);
+  background:var(--soft-bg,#F2F7FC);
+  box-shadow:var(--sh-sm,0 4px 14px rgba(13,59,102,.06));
+}
+.tb-btn:active{transform:translateY(1px)}
+.tb-btn:focus-visible{outline:2px solid var(--cyan,#27C6F3);outline-offset:2px}
+
+/* ההסבר: היעד נבחר בדיאלוג ההדפסה של הדפדפן — אין כאן הורדה אוטומטית */
+.tb-note{
+  font-size:.71rem;font-weight:600;line-height:1.35;
+  color:var(--muted,#60778A);
+}
+
+/* המסגרת הנסתרת שבה נבנה מסמך ההדפסה */
+.tb-frame{
+  position:fixed;left:-10000px;top:0;
+  width:900px;height:700px;border:0;opacity:0;pointer-events:none;
+}
+
+/* ---------- הדפסת העמוד כולו: הכלים עצמם לא מודפסים ---------- */
+@media print{
+  .tb-tools,.tb-back,.tb-frame{display:none !important}
+}
+
+@media(max-width:640px){
+  .tb-note{display:none}
+  .tb-btn{font-size:.75rem;padding:0 10px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .tb-back-a,.tb-back-a svg,.tb-btn{transition:none}
+  .tb-back-a:hover svg{transform:none}
+  .tb-btn:active{transform:none}
+}

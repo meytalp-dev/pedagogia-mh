@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="cats.css">
 <link rel="stylesheet" href="/pagenav.css">
+<link rel="stylesheet" href="/toolbelt.css">
 <style>
 /* כרטיסי השכבות */
 .lvl-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:18px 0 6px}
@@ -75,13 +76,20 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
     <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
 
     <div class="sect">חניכות וקריירה</div>
-    <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-    <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-    <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-    <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-    <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
     <div class="sect">מרחב ייעוצי</div>
     <a href="counseling.html">שער המרחב הייעוצי</a>
     <a href="counseling.html#kit">ערכת הייעוץ</a>
@@ -190,15 +198,24 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 
     </div>
   </span>
-  <span class="navitem"><a class="lnk active" href="career.html">חניכות וקריירה<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk active" href="chanichut.html">חניכות וקריירה<span class="caret">▼</span></a>
     <div class="sub">
-      <a href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a>
-      <a href="career.html">נתיבים לקריירה · התוכנית המלאה</a>
-      <a href="chaka.html">ח.כ.ה · המודל וכלי העבודה</a>
-      <a href="zinuk.html">על קו הזינוק · שיעורי פתיחה</a>
-      <a href="career-rakaz.html">ארגז הכלים של רכז התעסוקה</a>
-      <a href="chanichut-rakaz.html">תיק החפיפה של רכז/ת החניכות</a>
-      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>
+      <div class="sect">חניכות · מקום העבודה</div>
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+      <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+      <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז/ת החניכות</a>
+      <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+      <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+      <div class="sect">נתיבים לקריירה · התוכנית בכיתה</div>
+      <a class="gatelink" href="career.html">שער התוכנית · כל התחום</a>
+      <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+      <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+      <a class="nested" href="career.html#lessons">כיתות י״א–י״ב</a>
+      <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+      <a class="nested" href="zinuk.html">על קו הזינוק</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="counseling.html">מרחב ייעוצי<span class="caret">▼</span></a>
@@ -305,7 +322,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 
 <section class="hero">
   <div class="article hero-stagger">
-    <span class="kicker">חניכות וקריירה · מהחינוך היוצר</span>
+    <span class="kicker">נתיבים לקריירה · מהחינוך היוצר</span>
     <h1>ח.כ.ה — <span class="accent">המודל וכלי העבודה</span></h1>
     <p class="lead">"הכשרת תלמידים ותלמידות בגישה אסטרטגית להתפתחות דינאמית בשוק העבודה ובניהול חייהם — וכפועל יוצא גם להעצים את ההכנה והליווי של התלמידים והתלמידות בחניכות." זהו מרחב ח.כ.ה של החינוך היוצר, מרוכז כאן במקום אחד: המודל לארבע השכבות, כלי העבודה, מודל הכישורים I PRO וסוכן ה-AI למורה.</p>
     <div class="meta-row">
@@ -318,29 +335,37 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
   </div>
 </section>
 
+<div class="toc" id="toc">
+  <div class="article">
+    <h2>מה בעמוד</h2>
+    <div class="toc-grid">
+      <a class="lrow" href="#model"><span class="ln">01</span><span class="lt">המודל · שכבה אחר שכבה</span><span class="ls">ט׳–י״ב</span></a>
+      <a class="lrow" href="#tools"><span class="ln">02</span><span class="lt">כלי עבודה</span><span class="ls">5 כלים</span></a>
+      <a class="lrow" href="#ipro"><span class="ln">03</span><span class="lt">מודל I PRO · כישורים לעולם עבודה משתנה</span><span class="ls">הבסיס הרעיוני</span></a>
+      <a class="lrow" href="#ai"><span class="ln">04</span><span class="lt">סוכן ה-AI למורה</span><span class="ls">שני עוזרים</span></a>
+      <a class="lrow" href="#more"><span class="ln">05</span><span class="lt">מה עוד יש במרחב החינוך היוצר</span><span class="ls">4 משאבים</span></a>
+    </div>
+  </div>
+</div>
+
 <article class="body-sec">
   <div class="article">
-
-    <div class="callout rv">
-      <span class="ttl">מה מצאתם כאן שאין באתר המקור</span>
-      במרחב המקורי המודלים לשכבות <strong>י״א ו-י״ב מסומנים "יעלה בקרוב"</strong>. אצלנו הם כבר כאן — 23 מערכי שיעור מוכנים להעברה, יום מרוכז ושני מדריכים למורה. גם חוברת התוכנית, שמסומנת שם "תעלה בקרוב", מופיעה כאן כמהדורה דיגיטלית מלאה.
-    </div>
 
     <h2 class="sub-sec first rv" id="model">המודל · שכבה אחר שכבה</h2>
     <p class="lead-p rv">לכל שכבה תמה מרכזית משלה ומארז תכנים מותאם. לחצו על שכבה כדי להגיע לחומרים שלה.</p>
 
     <div class="lvl-grid rv">
-      <a class="lvl" href="https://www.canva.com/design/DAGW0bD5A_g/lSLJkR6PxIZRLQElgBZLqg/view" target="_blank" rel="noopener" style="--lc:#27A6C9">
+      <a class="lvl" href="chaka-tet.html" style="--lc:#27A6C9">
         <span class="g">ט׳</span>
         <span class="th">"מה אני רוצה להיות כשאהיה גדול"</span>
-        <span class="ds">בחירה מושכלת של מגמה — מארז התוכנית המעוצב לשכבה, בקנבה.</span>
-        <span class="st live">מארז קנבה ↗</span>
+        <span class="ds">בחירה מושכלת של מגמה — כל תכני המארז מתומללים אצלנו, בעמוד השכבה.</span>
+        <span class="st live">לעמוד השכבה ←</span>
       </a>
-      <a class="lvl" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener" style="--lc:#0B7FA6">
+      <a class="lvl" href="chaka-yod.html" style="--lc:#0B7FA6">
         <span class="g">י׳</span>
         <span class="th">כניסה לשוק העבודה</span>
-        <span class="ds">לקראת היציאה לחניכות — מארז התוכנית המעוצב לשכבה, בקנבה.</span>
-        <span class="st live">מארז קנבה ↗</span>
+        <span class="ds">לקראת היציאה לחניכות — כל תכני המארז מתומללים אצלנו, בעמוד השכבה.</span>
+        <span class="st live">לעמוד השכבה ←</span>
       </a>
       <a class="lvl" href="career.html#lessons" style="--lc:#124D7A">
         <span class="g">י״א</span>
@@ -355,7 +380,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
         <span class="st plus">10 מערכים · אצלנו</span>
       </a>
     </div>
-    <p class="rv" style="font-size:.85rem;color:var(--text2)">שכבות ט׳–י׳: הקישור מוביל למארז המקורי בקנבה. שכבות י״א–י״ב: מערכי השיעור מרוכזים אצלנו בעמוד <a class="lk" href="career.html#lessons">מערכי שיעור מוכנים</a>, ומשם נפתחים ישירות בקנבה.</p>
+    <p class="rv" style="font-size:.85rem;color:var(--text2)">כל ארבע השכבות מתומללות אצלנו באתר. שכבות ט׳–י׳: לכל שכבה עמוד מלא משלה. שכבות י״א–י״ב: מערכי השיעור מרוכזים בעמוד <a class="lk" href="career.html#lessons">מערכי שיעור מוכנים</a>.</p>
 
     <div class="callout amber rv">
       <span class="ttl">פותחים את השנה בשכבות ט׳–י׳?</span>
@@ -393,7 +418,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 
       <a class="tool-row" href="career-rakaz.html">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7.5" width="19" height="12" rx="2.2"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M2.5 12.6h19"/></svg></span>
-        <span class="tb"><b>ארגז הכלים של רכז התעסוקה</b><span>סדירויות עבודה, פרמטרים ומטלות בחניכות, משוב מנטורים, שאלוני הערכה ומכתבים מוכנים.</span></span>
+        <span class="tb"><b>ארגז הכלים של רכז/ת החניכות</b><span>סדירויות עבודה, פרמטרים ומטלות בחניכות, משוב מנטורים, שאלוני הערכה ומכתבים מוכנים.</span></span>
         <span class="go">לארגז הכלים ←</span>
       </a>
 
@@ -469,5 +494,6 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
 <script src="/pagenav.js" defer></script>
+<script src="/toolbelt.js" defer></script>
 </body>
 </html>

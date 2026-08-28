@@ -92,6 +92,17 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 @media(max-width:760px){.tips-grid{grid-template-columns:1fr}}
 @media print{#pagebar{display:none}}
 
+/* ===== הדפסה: ביטול חשיפה-בגלילה =====
+   site.js מוסיף .sr לאלמנטים שמתחת לקו המסך, ו-html.sr-on .sr מאפס להם opacity.
+   בלי הכלל הזה, הדפסה של עמוד שלא נגללה מדפיסה את כל התוכן שמתחת לקו המסך בלתי נראה
+   (נמצא 28.8.26 — עמוד 2 ואילך של כל עמוד באתר יצא ריק). אין למחוק. */
+@media print{
+  html.sr-on .sr,html.sr-on .sr.in{opacity:1 !important;animation:none !important;transform:none !important;filter:none !important}
+  .scrim,.drawer,.sbox,.rmodal{display:none !important}
+  #pmh-cookies{display:none !important}
+  .ogenw-launcher,.ogenw-launcher-label,.ogenw-panel,.ogenw-scrim{display:none !important}
+}
+
 /* ===== govbar + nav ===== */
 .govbar{background:#fff;border-bottom:1px solid var(--border);padding:7px var(--px);display:flex;align-items:center;gap:12px;font-size:.78rem;color:var(--muted)}
 .govbar img{height:30px}
