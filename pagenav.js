@@ -540,7 +540,6 @@
       document.documentElement.style.setProperty('--pn-nav', navH + 'px');
       var barH = Math.round(bar.getBoundingClientRect().height);
       document.documentElement.style.setProperty('--pn-bar', barH + 'px');
-      document.documentElement.style.scrollPaddingTop = (navH + barH + 14) + 'px';
       return navH + barH;
     }
 

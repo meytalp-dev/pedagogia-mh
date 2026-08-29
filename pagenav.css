@@ -1,7 +1,7 @@
 /* ===== pagenav.css — תפריט התמצאות בעמוד: כרטיסיות + פס ניווט דביק ===== */
 /* נבנה אוטומטית על ידי pagenav.js מתוך כותרות העמוד. אין צורך לתחזק ידנית. */
 
-:root{--pn-nav:64px}
+:root{--pn-nav:64px;--pn-bar:0px} /* ערכי פתיחה; נמדדים מחדש ב-pagenav.js */
 
 /* ---------- פס הניווט הדביק (התפריט העליון של העמוד) ---------- */
 .pn{
@@ -133,7 +133,7 @@ body.pnd-open .pnd{visibility:visible;transform:none;transition:transform .34s v
 }
 .pnd-sub svg{width:12px;height:12px;flex:0 0 auto;color:var(--muted)}
 .pnd-sub:hover{background:var(--soft-bg);color:var(--navy)}
-.pnd-sub:hover svg{color:var(--cyan)}
+.pnd-sub:hover svg{color:var(--cyan-ink,#0C7095)}
 .pnd-sub.on{color:var(--navy);font-weight:800;background:var(--soft-bg)}
 
 .pnd a:focus-visible,.pnd button:focus-visible,.pnd-btn:focus-visible{

@@ -5,7 +5,7 @@
   --cyan:#27C6F3; --cyan-100:#E7F9FE;
   --teal:#00CDBB; --teal-100:#E4FAF7;
   --canvas:#F8FBFF; --surface:#FFFFFF; --soft-bg:#F2F7FC; --blue-bg:#EEF6FF;
-  --text:#102A43; --text2:#52687A; --muted:#60778A;
+  --text:#102A43; --text2:#52687A; --muted:#5C7285;
   --border:#D8E6F2; --border-strong:#BED4E7;
   --grad:linear-gradient(135deg,#124D7A,#087B9C);
   --sh-sm:0 4px 14px rgba(13,59,102,.06);
@@ -18,6 +18,12 @@
   --m-red:#EF5656; --m-purple:#8F7AC3; --m-turq:#1FA6A0; --m-navy:#0B2B4C;
   --m-grad:linear-gradient(to left,var(--m-blue),var(--m-green),var(--m-yellow),var(--m-red),var(--m-purple));
   --m-grad-v:linear-gradient(180deg,var(--m-blue),var(--m-green),var(--m-yellow),var(--m-red),var(--m-purple));
+  /* גווני הדיו — לטקסט בלבד. צבעי ההדגשה עצמם נועדו למילוי, מסגרת ונקודה;
+     הצהוב על לבן עומד על 1.88:1 והטורקיז על 2.99:1. כל גוון דיו עובר 4.5:1
+     על לבן, על רקע הגוף ועל הרקע הרך — ושומר על גון הצבע. */
+  --m-blue-ink:#2A66AA; --m-green-ink:#1F7A42; --m-yellow-ink:#8A6209;
+  --m-red-ink:#C42B2B; --m-purple-ink:#6E58A8; --m-turq-ink:#15736F;
+  --m-navy-ink:var(--m-navy); --cyan-ink:#0C7095; --teal-ink:#0A6E66; --blue-ink:#0B62DA;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Assistant','Noto Sans Hebrew',sans-serif;background:var(--canvas);color:var(--text);line-height:1.6}
@@ -68,14 +74,14 @@ html.sr-on .sr.in.shine::after{animation:shine 1.15s ease-out calc(var(--d,0s) +
 
 /* ===== מוקדי אחריות — כרטיסים בקידוד הצבע של המפגש ===== */
 .mokdim{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
-.mokad{--mc:var(--m-blue);display:block;background:var(--surface);border:1px solid var(--border);
+.mokad{--mc:var(--m-blue);--mc-ink:var(--m-blue-ink);display:block;background:var(--surface);border:1px solid var(--border);
   border-inline-start:5px solid var(--mc);border-radius:16px;padding:16px 18px 14px;
   text-decoration:none;color:inherit;box-shadow:var(--sh-sm);position:relative;
   transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
 a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .mokad .mk-head{display:flex;align-items:center;gap:9px;margin-bottom:5px}
 .mokad .dot{width:10px;height:10px;border-radius:50%;background:var(--mc);flex-shrink:0;animation:bubblePulse 4.6s ease-in-out 1.2s infinite}
-.mokad b{font-size:1.02rem;font-weight:800;color:var(--mc)}
+.mokad b{font-size:1.02rem;font-weight:800;color:var(--mc-ink,var(--mc))}
 .mokad .who{font-size:.82rem;color:var(--text2);font-weight:600}
 .mokad .who span{color:var(--muted);font-weight:400}
 
@@ -92,11 +98,11 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 
 /* ===== כרטיסי דגשים / טיפים (בהשראת כרטיסי הטיפים החיים במצגת) ===== */
 .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
-.tipcard{--tc:var(--m-blue);background:var(--surface);border:1px solid var(--border);
+.tipcard{--tc:var(--m-blue);--tc-ink:var(--m-blue-ink);background:var(--surface);border:1px solid var(--border);
   border-inline-start:5px solid var(--tc);border-radius:14px;padding:14px 18px;
   font-size:.93rem;line-height:1.6;color:var(--text);box-shadow:var(--sh-sm)}
 .tipcard .tn{display:inline-grid;place-content:center;width:24px;height:24px;border-radius:50%;
-  background:var(--tc);color:#fff;font-weight:800;font-size:.8rem;margin-inline-end:8px;transform:translateY(5px)}
+  background:var(--tc-ink,var(--tc));color:#fff;font-weight:800;font-size:.8rem;margin-inline-end:8px;transform:translateY(5px)}
 .tipcard b.tt{color:var(--navy);font-weight:800}
 @media(max-width:760px){.tips-grid{grid-template-columns:1fr}}
 @media print{#pagebar{display:none}}
@@ -284,6 +290,13 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
 }
 
 /* ===== responsive ===== */
+/* התפריט העליון — תשעה פריטים, מותג ושני כפתורים דורשים כ-1,400 פיקסלים.
+   מתחת לכך הוא נשבר לשלוש שורות — עוברים למגירה, שמכילה את כל המדורים. */
+@media(max-width:1080px){
+  .nav a.lnk,.nav .navitem{display:none}
+  .nav{gap:10px}
+  .nav .brand b{max-width:none}
+}
 @media(max-width:960px){
   :root{--px:24px}
   .grid.c4{grid-template-columns:1fr 1fr}
@@ -293,7 +306,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
 }
 @media(max-width:640px){
   :root{--px:18px}
-  .nav a.lnk,.nav .navitem{display:none}
   .govbar .left a.dis{display:none}
   .govbar .gov-mid{display:none}
   .grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
@@ -301,8 +313,10 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
   .foot .row{justify-content:center;text-align:center}
 }
 
-/* anchored cards land below the sticky nav */
-.card[id],h2[id],h3[id]{scroll-margin-top:112px}
+/* ===== מרווח הגלילה לעוגן — מקור אמת יחיד =====
+   --pn-nav ו---pn-bar נמדדים בזמן אמת ב-pagenav.js; בעמודים בלעדיו נשארות
+   ברירות המחדל. אין להוסיף scroll-margin-top על יעדי עוגן — הוא מצטבר. */
+html{scroll-padding-top:calc(var(--pn-nav,64px) + var(--pn-bar,0px) + 14px)}
 
 /* ===== חיפוש באתר — כפתור בתפריט, חלון מהיר ועמוד התוצאות ===== */
 .searchbtn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:.86rem;font-weight:700;
@@ -571,7 +585,7 @@ html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
 .trkcard .meta{font-size:.81rem;color:var(--text2);line-height:1.5}
 .trkcard .go{margin-top:auto;padding-top:10px;font-size:.79rem;font-weight:700;color:var(--text2);
   transition:color .25s}
-.trkcard:hover .go{color:var(--tc,#0B7FA6)}
+.trkcard:hover .go{color:var(--tc-ink,var(--tc,#0B7FA6))}
 
 /* פריט משנה בתפריט (שערי הנתיב תחת "תחומי דעת") */
 .navitem .sub a.nested,.drawer .body a.nested{padding-inline-start:30px;font-size:.86rem;position:relative}

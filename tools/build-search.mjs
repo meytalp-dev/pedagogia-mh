@@ -31,6 +31,8 @@ const SKIP = new Set([
   "bagmgr.html",
   "chipus.html",
   "work-plans-app.html",
+  "matzpen.html",        // המצפן — כלי עבודה עצמאי, לא תוכן לחיפוש
+  "matzpen-demo.html",   // הדגמה עם נתונים מומצאים — אסור שתופיע בחיפוש
   "mishov-menahalim.html",
   "sheelot-menahalim.html",
   "shut-menahalim.html",

@@ -28,8 +28,7 @@
 .tb-back-a:hover svg{transform:translateY(-2px)}
 .tb-back-a:focus-visible{outline:2px solid var(--cyan,#27C6F3);outline-offset:3px;opacity:1}
 
-/* הפסים הדביקים (הניווט הראשי + pagenav) לא יחתכו את תוכן העניינים בקפיצה */
-.tb-toc-target{scroll-margin-top:calc(var(--pn-nav,64px) + var(--pn-bar,0px) + 14px)}
+/* מרווח הקפיצה מטופל גלובלית ב-style.css (scroll-padding-top) */
 
 /* ---------- ב. כלי הטבלה: הדפסה ושמירה כ-PDF ---------- */
 
