@@ -29,7 +29,7 @@ const SITE = "https://pedagogiamh.co.il";
 const OUT = join(ROOT, "knowledge.json");
 
 const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
-const MAX_TOTAL_CHARS = 180000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
+const MAX_TOTAL_CHARS = 240000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
@@ -136,15 +136,122 @@ function clip(s, max) {
   return (lastBreak > max * 0.6 ? cut.slice(0, lastBreak) : cut).trim() + "…";
 }
 
+/* ---------- נתונים מובְנים שיושבים ב-JS ולא בטקסט העמוד ---------- */
+/* חילוץ הטקסט למעלה מוחק בלוקי <script>, ולכן טבלאות שנבנות בדפדפן מ-JS
+   (אוגדן השעות) לא הגיעו לעוגן בכלל — היא ענתה "אין לי את זה" על מספר
+   שמופיע באתר. כאן אנחנו קוראים את ה-JS ישירות והופכים אותו לשורות טקסט.
+   התוצר מסומן כ"נעוץ" (pinned): הוא נוסף לעמוד אחרי החיתוך ולא נספר
+   בתקציב, כדי שנתוני ליבה לא ייחתכו כשנוספים עמודים לאתר. */
+
+/* מוציא ליטרל JS מתוך קובץ ומחזיר אותו כאובייקט */
+function evalLiteral(src, re, label) {
+  const m = src.match(re);
+  if (!m) { console.warn(`אזהרה: לא נמצא ${label} — הנתונים לא ייכנסו לידע`); return null; }
+  try {
+    return Function(`"use strict"; return (${m[1]});`)();
+  } catch (e) {
+    console.warn(`אזהרה: ${label} לא נפרס (${e.message})`);
+    return null;
+  }
+}
+
+const KITA_LABEL = { "ט": "ט׳", "י": "י׳", "יא": "י״א", "יב": "י״ב", "קורס": "קורס" };
+
+/* טבלאות התפלגות שעות הליבה לפי מסלול וכיתה (מתוך המכתב המלווה),
+   שיושבות במערך HOURS בתוך <script> ב-ogdan-shaot.html */
+function ogdanCoreHours(pageHtml) {
+  const HOURS = evalLiteral(pageHtml, /var\s+HOURS\s*=\s*(\[[\s\S]*?\]);\s*\n/, "מערך HOURS בעמוד אוגדן השעות");
+  if (!HOURS) return "";
+  const out = [
+    "התפלגות שעות מקצועות הליבה לפי מסלול וכיתה (ש״ש שבועיות, מתוך המכתב המלווה לאוגדן).",
+    "אלה המספרים המחייבים לשאלות מסוג \"כמה שעות אזרחות בכיתה ט׳ במסלול 55\".",
+  ];
+  for (const p of HOURS) {
+    out.push(`מסלול ${p.id} — ${p.t}:`);
+    for (const r of p.rows) {
+      const cells = p.k.map((k, i) => `${k} ${r[i + 1]}`).join(", ");
+      out.push(`  ${r[0]}: ${cells}`);
+    }
+    if (p.sum) out.push(`  סה״כ שעות: ${p.k.map((k, i) => `${k} ${p.sum[i]}`).join(", ")}`);
+  }
+  return out.join("\n");
+}
+
+/* 1,077 שורות מגמה־כיתה מתוך ogdan-data.js, בפורמט דחוס עם מקרא.
+   מסלולים שחולקים בדיוק את אותה התפלגות מאוחדים לשורה אחת. */
+function ogdanMegamot(dataJs) {
+  const D = evalLiteral(dataJs, /window\.OGDAN\s*=\s*(\{[\s\S]*?\})\s*;?\s*$/, "window.OGDAN בקובץ ogdan-data.js");
+  if (!D || !D.rows) return "";
+
+  // קיבוץ: מגמה → חתימת שעות → המסלולים שחולקים אותה
+  const byMegama = new Map();
+  const perMaslul = new Map();
+  for (const r of D.rows) {
+    const key = r[1] + "|" + r[0];
+    if (!perMaslul.has(key)) perMaslul.set(key, []);
+    perMaslul.get(key).push(r);
+  }
+  for (const [key, rows] of perMaslul) {
+    const [megIdx, masIdx] = key.split("|");
+    const sig = rows
+      .map((r) => {
+        const kita = KITA_LABEL[D.kitot[r[2]]] || D.kitot[r[2]];
+        const pitzul = r[8] ? `,פ${r[8]}` : "";
+        return `${kita}=${r[9]}(${r[4]}+${r[5]}${pitzul})`;
+      })
+      .join(" ");
+    if (!byMegama.has(megIdx)) byMegama.set(megIdx, new Map());
+    const sigs = byMegama.get(megIdx);
+    if (!sigs.has(sig)) sigs.set(sig, []);
+    sigs.get(sig).push(D.maslulim[masIdx][0]);
+  }
+
+  const out = [
+    "כל מגמות האוגדן המקוצר לפי מסלול וכיתה. פורמט כל שורה:",
+    "סמל־מגמה שם [תחום] מ<מסלולים>: כיתה=סה״כ שעות(ש״ש עיוני+ש״ש מעשי,פ=פיצול)",
+    "מסלולים שחולקים בדיוק את אותה התפלגות שעות מאוחדים לשורה אחת.",
+    "שמות המסלולים: " + D.maslulim.map((m) => `${m[0]} ${m[1]}`).join(" · "),
+  ];
+  const tchumim = Object.entries(D.tchumim).filter(([, v]) => v).map(([k, v]) => `${k} ${v}`);
+  if (tchumim.length) out.push("שמות התחומים: " + tchumim.join(" · "));
+
+  for (const [megIdx, sigs] of byMegama) {
+    const m = D.megamot[megIdx];
+    for (const [sig, masList] of sigs) {
+      out.push(`${m[0]} ${m[2]} [ת${m[1] || "-"}] מ${masList.join(",")}: ${sig}`);
+    }
+  }
+  return out.join("\n");
+}
+
+/* מחזיר מפה: שם קובץ עמוד → טקסט נעוץ שיצורף לו */
+function buildPinned() {
+  const pinned = new Map();
+  const pagePath = join(ROOT, "ogdan-shaot.html");
+  const dataPath = join(ROOT, "ogdan-data.js");
+  if (!existsSync(pagePath) || !existsSync(dataPath)) return pinned;
+
+  const parts = [
+    ogdanCoreHours(readFileSync(pagePath, "utf8")),
+    ogdanMegamot(readFileSync(dataPath, "utf8")),
+  ].filter(Boolean);
+  if (parts.length) pinned.set("ogdan-shaot.html", parts.join("\n\n"));
+  return pinned;
+}
+
 /* ---------- איסוף העמודים ---------- */
 const files = readdirSync(ROOT)
   .filter((f) => f.endsWith(".html") && !SKIP.has(f))
   .sort();
 
+const pinned = buildPinned();
+
 const pages = [];
 for (const f of files) {
   const html = readFileSync(join(ROOT, f), "utf8");
-  pages.push(extractPage(html, `${SITE}/${f}`));
+  const page = extractPage(html, `${SITE}/${f}`);
+  if (pinned.has(f)) page.pinned = pinned.get(f);
+  pages.push(page);
 }
 // עמוד הכלים (רשימת כל הכלים הדיגיטליים); עמודי הכלים עצמם הם אפליקציות — אין בהם טקסט
 const toolsIndex = join(ROOT, "tools", "index.html");
@@ -157,7 +264,14 @@ let cap = MAX_PAGE_CHARS;
 const linkChars = (p) => (p.links || []).reduce((sum, l) => sum + l.length + 3, 0);
 const totalAt = (c) => pages.reduce((sum, p) => sum + Math.min(p.text.length, c) + linkChars(p), 0);
 while (cap > 300 && totalAt(cap) > MAX_TOTAL_CHARS) cap -= 100;
-for (const p of pages) p.text = clip(p.text, cap);
+// הטקסט הנעוץ נוסף אחרי החיתוך ואינו נספר בתקציב — נתוני ליבה לא נחתכים
+for (const p of pages) {
+  p.text = clip(p.text, cap);
+  if (p.pinned) {
+    p.text += "\n" + p.pinned;
+    delete p.pinned;
+  }
+}
 
 const total = pages.reduce((s, p) => s + p.text.length, 0);
 const out = {

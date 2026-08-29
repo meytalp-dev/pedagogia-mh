@@ -6,7 +6,7 @@ name: build-knowledge
 on:
   push:
     branches: [main]
-    paths: ["**.html", "tools/build-knowledge.mjs", "tools/build-search.mjs"]
+    paths: ["**.html", "ogdan-data.js", "tools/build-knowledge.mjs", "tools/build-search.mjs"]
   workflow_dispatch:
 
 permissions:
