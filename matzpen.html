@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מצפן החינוך היוצר</title>
+<script src="/analytics.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D3B66; --navy-2:#124D7A; --blue:#1677FF; --blue-soft:#E8F2FF;
+  --bg:#F4F7FB; --surface:#fff; --surface-2:#FAFCFE;
+  --line:#DEE7F0; --line-2:#C3D5E5;
+  --ink:#122B43; --ink-2:#51677C; --ink-3:#7C8FA3;
+  --l1:#8098AF; --l1-soft:#EEF2F6;
+  --l2:#2496C4; --l2-soft:#E6F4FA;
+  --l3:#2F9F62; --l3-soft:#E7F5EC;
+  --l4:#C08A22; --l4-soft:#FBF2DF;
+  --warn:#B4453C; --warn-soft:#FBECEB;
+  --r:14px; --r-sm:9px;
+  --sh:0 1px 2px rgba(13,59,102,.04), 0 6px 20px rgba(13,59,102,.06);
+  --sh-lift:0 10px 30px rgba(13,59,102,.13);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Assistant','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+h1,h2,h3,h4{color:var(--navy);line-height:1.3;font-weight:800}
+a{color:var(--navy-2)}
+.ico{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
+
+/* ================= LAYOUT ================= */
+.app{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+.side{background:#12283F;color:#D7E1EC;position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;overflow-y:auto}
+.side .brand{padding:20px 20px 15px;border-bottom:1px solid rgba(255,255,255,.09)}
+.side .brand h1{font-size:17px;color:#fff;font-weight:800;letter-spacing:-.2px;display:flex;gap:8px;align-items:center}
+.side .brand p{font-size:11.5px;color:#8AA0B6;margin-top:4px;line-height:1.45}
+.idbox{padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03)}
+.idbox label{display:block;font-size:10.5px;color:#8AA0B6;margin:0 0 3px;font-weight:600}
+.side .idbox input,.side .idbox select{width:100%;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.13);
+  color:#fff;border-radius:7px;padding:6px 9px;font-size:13px;margin-bottom:8px}
+.idbox input::placeholder{color:#7E93A8}
+.idbox select option{background:#12283F}
+.side .idbox input:focus,.side .idbox select:focus{background:rgba(255,255,255,.16);color:#fff;
+  border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,119,255,.28)}
+.idbox .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+nav{padding:10px 10px 4px;flex:1}
+nav .grp{font-size:10.5px;color:#728AA2;font-weight:700;padding:11px 10px 5px;letter-spacing:.3px}
+nav button{display:flex;align-items:center;gap:9px;width:100%;text-align:right;padding:8px 10px;
+  border-radius:8px;color:#C3D2E0;font-size:13.5px;transition:background .16s,color .16s}
+nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+nav button.on{background:var(--blue);color:#fff;font-weight:700}
+nav button .num{width:19px;height:19px;border-radius:6px;background:rgba(255,255,255,.13);
+  display:grid;place-items:center;font-size:10.5px;font-weight:800;flex:none}
+nav button.on .num{background:rgba(255,255,255,.26)}
+nav button .avg{margin-inline-start:auto;font-size:11px;font-weight:800;opacity:.8;
+  font-variant-numeric:tabular-nums}
+.sidefoot{padding:12px 14px 16px;border-top:1px solid rgba(255,255,255,.09);display:grid;gap:6px}
+.sidefoot button{background:rgba(255,255,255,.08);color:#C3D2E0;border-radius:8px;padding:7px 10px;
+  font-size:12.5px;display:flex;align-items:center;gap:7px;justify-content:center}
+.sidefoot button:hover{background:rgba(255,255,255,.15);color:#fff}
+.sidefoot .saved{font-size:10.5px;color:#728AA2;text-align:center;padding-top:3px}
+
+main{padding:30px 40px 90px;max-width:1180px}
+.topbar{display:none}
+section.view{display:none}
+section.view.on{display:block}
+
+/* ================= SHARED ================= */
+.head{margin-bottom:22px}
+.head .kick{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.4px;margin-bottom:5px;
+  display:flex;align-items:center;gap:6px}
+.head h2{font-size:30px;letter-spacing:-.5px}
+.head .def{margin-top:9px;font-size:15.5px;color:var(--ink-2);max-width:74ch;
+  border-inline-start:3px solid var(--line-2);padding-inline-start:13px}
+.sources{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sources .lbl{font-size:11.5px;color:var(--ink-3);font-weight:700;margin-inline-end:2px}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:3px 11px;
+  font-size:12px;color:var(--ink-2)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh);padding:22px 24px;margin-top:26px}
+.panel > h3{font-size:18px;display:flex;align-items:center;gap:8px}
+.panel .sub{font-size:13.5px;color:var(--ink-2);margin-top:6px;max-width:80ch}
+textarea{width:100%;min-height:62px;border:1px solid var(--line-2);border-radius:var(--r-sm);padding:10px 12px;
+  font-size:14px;line-height:1.55;resize:vertical;background:var(--surface-2);
+  transition:border-color .15s,box-shadow .15s}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(22,119,255,.13);background:#fff}
+
+/* ================= PRACTICE CARD ================= */
+.prac{margin-top:16px;padding:20px 22px 18px}
+.prac > header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.prac h3{font-size:17.5px}
+.prac .what{font-size:13.5px;color:var(--ink-3)}
+.prac .badge{margin-inline-start:auto;font-size:11.5px;font-weight:700;border-radius:99px;
+  padding:3px 10px;display:inline-flex;align-items:center;gap:5px}
+.badge.unrated{background:var(--l1-soft);color:var(--ink-3)}
+.badge.needsev{background:var(--warn-soft);color:var(--warn)}
+.badge.ok{background:var(--l3-soft);color:var(--l3)}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.lv{position:relative;text-align:start;border:1.5px solid var(--line);border-radius:11px;
+  padding:11px 12px 12px;background:var(--surface-2);
+  transition:border-color .18s var(--ease),background .18s,transform .18s var(--ease),box-shadow .18s}
+.lv:hover{border-color:var(--line-2);transform:translateY(-2px);box-shadow:var(--sh)}
+.lv .lvhead{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;margin-bottom:7px}
+.lv .lvtxt{font-size:12.8px;line-height:1.5;color:var(--ink-2)}
+.lv[data-l="0"] .lvhead{color:var(--l1)} .lv[data-l="1"] .lvhead{color:var(--l2)}
+.lv[data-l="2"] .lvhead{color:var(--l3)} .lv[data-l="3"] .lvhead{color:var(--l4)}
+.lv.sel{background:#fff;box-shadow:var(--sh-lift)}
+.lv[data-l="0"].sel{border-color:var(--l1);background:var(--l1-soft)}
+.lv[data-l="1"].sel{border-color:var(--l2);background:var(--l2-soft)}
+.lv[data-l="2"].sel{border-color:var(--l3);background:var(--l3-soft)}
+.lv[data-l="3"].sel{border-color:var(--l4);background:var(--l4-soft)}
+.lv.sel .lvtxt{color:var(--ink)}
+.lv .tick{position:absolute;inset-inline-end:9px;top:10px;opacity:0;transform:scale(.6);
+  transition:opacity .2s,transform .2s var(--ease)}
+.lv.sel .tick{opacity:1;transform:none}
+.ev{margin-top:13px}
+.ev label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+  color:var(--ink-2);margin-bottom:5px;flex-wrap:wrap}
+.ev .hint{font-weight:400;color:var(--ink-3);font-size:12px}
+.prac.flag{border-color:#EBC9C5}
+.prac.flag .ev textarea{border-color:#E0A9A3;background:#FEF8F7}
+
+/* ================= PERSONAL PAUSE ================= */
+.pause{background:linear-gradient(180deg,#FFFDF6,#FFF);border-color:#EADCB6}
+.pause > h3{color:#8A6B1A}
+.timer{display:flex;align-items:center;gap:10px;margin-top:14px;padding:11px 14px;background:#FFF8E6;
+  border:1px solid #EADCB6;border-radius:11px;flex-wrap:wrap}
+.timer .clock{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:#8A6B1A;
+  letter-spacing:-.5px;min-width:82px}
+.timer button{background:#8A6B1A;color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;
+  font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.timer button.ghost{background:transparent;color:#8A6B1A;border:1px solid #D9C48A}
+.timer .note{font-size:12px;color:#977A2E;margin-inline-start:auto;text-align:end;max-width:36ch}
+.timer.done .clock{color:var(--warn)}
+.q{margin-top:14px}
+.q label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.q label .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;
+  background:#F0E5C6;color:#8A6B1A;font-size:11.5px;font-weight:800;margin-inline-end:7px;vertical-align:.05em}
+.closing{margin-top:15px;font-size:13px;color:#8A6B1A;background:#FFF8E6;border-radius:9px;
+  padding:9px 13px;display:flex;gap:7px;align-items:flex-start}
+
+/* ================= TEAM Qs ================= */
+ol.teamq{margin:14px 0 0;padding:0;list-style:none;counter-reset:tq}
+ol.teamq li{counter-increment:tq;position:relative;padding:11px 0;padding-inline-start:38px;
+  border-top:1px solid var(--line);font-size:14.5px;color:var(--ink-2);line-height:1.55}
+ol.teamq li::before{content:counter(tq);position:absolute;inset-inline-start:0;top:11px;width:25px;height:25px;
+  border-radius:8px;background:var(--blue-soft);color:var(--navy);display:grid;place-items:center;
+  font-size:12px;font-weight:800}
+.deep{margin-top:16px;display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--ink-2);
+  background:var(--blue-soft);border-radius:10px;padding:11px 14px}
+.deep a{font-weight:700;white-space:nowrap}
+
+/* ================= PARTNERSHIP ================= */
+.partner{background:linear-gradient(180deg,#F3FBFA,#fff);border-color:#B9E4DE}
+.partner > h3{color:#116E66}
+
+/* ================= STORY ================= */
+.storygrid{display:grid;gap:16px;margin-top:6px}
+.fld label{display:block;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.fld .h{font-weight:400;color:var(--ink-3);font-size:13px}
+.stones{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stone{border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--surface-2)}
+.stone .cap{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:6px;display:flex;gap:6px;align-items:center}
+table.bridge{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.5px}
+table.bridge th{background:var(--blue-soft);color:var(--navy);font-size:12.5px;font-weight:800;
+  padding:9px 12px;text-align:start;border:1px solid var(--line)}
+table.bridge td{border:1px solid var(--line);padding:9px 12px;vertical-align:top;color:var(--ink-2)}
+table.bridge td:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+table.bridge textarea{min-height:46px;font-size:13px;border:none;background:transparent;padding:0}
+table.bridge textarea:focus{box-shadow:none;background:#fff}
+.anchor{margin-top:18px;background:var(--navy);color:#fff;border-radius:12px;padding:15px 18px;
+  display:flex;gap:11px;align-items:flex-start;font-size:14px}
+.anchor b{color:#8FD8FF}
+.anchor .ico{color:#8FD8FF;font-size:21px;margin-top:2px}
+
+/* ================= DASHBOARD ================= */
+.dashgrid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(340px,1.05fr);gap:20px;margin-top:6px}
+.radarwrap{padding:18px}
+.radarwrap h3{font-size:16px;margin-bottom:2px}
+.radarwrap .sub{font-size:12.5px;color:var(--ink-3)}
+.legend{display:flex;gap:16px;justify-content:center;margin-top:4px;font-size:12px;color:var(--ink-2)}
+.legend i{display:inline-block;width:15px;height:3px;border-radius:2px;margin-inline-end:5px;vertical-align:.25em}
+.bars{padding:18px 20px}
+.bars h3{font-size:16px;margin-bottom:14px}
+.brow{margin-bottom:13px}
+.brow .t{display:flex;align-items:baseline;gap:8px;font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.brow .t .v{margin-inline-start:auto;font-variant-numeric:tabular-nums;font-size:15px}
+.brow .t .delta{font-size:11.5px;font-weight:800;border-radius:99px;padding:1px 7px;
+  direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.delta.up{background:var(--l3-soft);color:var(--l3)} .delta.down{background:var(--warn-soft);color:var(--warn)}
+.delta.same{background:var(--l1-soft);color:var(--ink-3)}
+.track{height:9px;border-radius:99px;background:var(--l1-soft);overflow:visible;position:relative}
+.track .fill{height:100%;border-radius:99px;transition:width .6s var(--ease)}
+.track .prev{position:absolute;top:-3px;width:2px;height:15px;background:var(--ink-3);border-radius:2px}
+.dist{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+.dcell{border-radius:12px;padding:14px 12px;text-align:center;border:1px solid var(--line)}
+.dcell .n{font-size:28px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.dcell .l{font-size:12px;font-weight:700;margin-top:6px;display:flex;gap:5px;align-items:center;justify-content:center}
+.dcell .p{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-top:6px}
+.scell{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface-2)}
+.scell .n{font-size:26px;font-weight:800;color:var(--navy);line-height:1;font-variant-numeric:tabular-nums}
+.scell .l{font-size:12.5px;color:var(--ink-2);margin-top:5px}
+ul.gaps{list-style:none}
+ul.gaps li{font-size:13.5px;padding:9px 0;border-top:1px solid var(--line);display:flex;gap:9px;align-items:center}
+ul.gaps li:first-child{border-top:none}
+ul.gaps .pn{color:var(--ink-3);font-size:12px;margin-inline-start:auto;white-space:nowrap}
+.prevbox{margin-top:14px;background:var(--surface-2);border:1px dashed var(--line-2);border-radius:11px;padding:13px 15px}
+.prevbox .r{display:grid;grid-template-columns:1fr 88px;gap:9px;align-items:center;margin-top:7px;font-size:13px}
+.prevbox input{border:1px solid var(--line-2);border-radius:7px;padding:5px 9px;text-align:center;width:100%}
+
+/* ================= ACTION PLAN ================= */
+.plan{margin-top:16px;padding:0;overflow:hidden}
+.plan > header{background:var(--navy);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:9px;
+  font-weight:800;font-size:15px}
+.plan > header .rm{margin-inline-start:auto;background:rgba(255,255,255,.15);border-radius:7px;
+  padding:3px 10px;font-size:12px;color:#fff;display:inline-flex;align-items:center;gap:5px}
+.plan > header .rm:hover{background:rgba(255,255,255,.3)}
+.planbody{padding:18px 20px;display:grid;gap:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+select,input[type=text],input[type=date]{border:1px solid var(--line-2);border-radius:var(--r-sm);
+  padding:8px 11px;width:100%;background:var(--surface-2)}
+.arrow{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:11px;padding:10px 14px;flex-wrap:wrap}
+.arrow .cur,.arrow .tgt{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700}
+.arrow .cap{font-size:11.5px;color:var(--ink-3);font-weight:600}
+.btn{background:var(--navy);color:#fff;border-radius:10px;padding:10px 18px;font-weight:700;font-size:14px;
+  display:inline-flex;align-items:center;gap:7px;transition:background .16s,transform .16s}
+.btn:hover{background:var(--navy-2);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line-2)}
+.btn.ghost:hover{background:var(--blue-soft);border-color:var(--blue)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.empty{text-align:center;padding:40px 20px;color:var(--ink-3);font-size:14px}
+.empty .ico{font-size:34px;color:var(--line-2);display:block;margin:0 auto 10px}
+
+/* ================= GUIDE ================= */
+.guide ol{margin:0;padding-inline-start:20px}
+.guide ol li{margin:9px 0;font-size:14.5px;color:var(--ink-2)}
+.lvlegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:6px}
+.lvcard{border:1.5px solid var(--line);border-radius:12px;padding:14px}
+.lvcard .h{display:flex;align-items:center;gap:7px;font-weight:800;font-size:14px;margin-bottom:6px}
+.lvcard p{font-size:13px;color:var(--ink-2)}
+.lvcard[data-l="0"]{border-color:var(--l1)} .lvcard[data-l="0"] .h{color:var(--l1)}
+.lvcard[data-l="1"]{border-color:var(--l2)} .lvcard[data-l="1"] .h{color:var(--l2)}
+.lvcard[data-l="2"]{border-color:var(--l3)} .lvcard[data-l="2"] .h{color:var(--l3)}
+.lvcard[data-l="3"]{border-color:var(--l4)} .lvcard[data-l="3"] .h{color:var(--l4)}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3)}
+
+/* ================= TOAST ================= */
+#toast{position:fixed;bottom:24px;inset-inline-start:24px;background:var(--navy);color:#fff;
+  padding:11px 18px;border-radius:11px;font-size:13.5px;box-shadow:var(--sh-lift);z-index:99;
+  opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .25s var(--ease);
+  display:flex;align-items:center;gap:8px;max-width:min(90vw,420px)}
+#toast.on{opacity:1;transform:none}
+#scrim{display:none}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:1080px){ .levels{grid-template-columns:repeat(2,1fr)} .dashgrid{grid-template-columns:1fr} }
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;top:0;bottom:0;inset-inline-end:0;width:274px;transform:translateX(100%);z-index:60;
+    transition:transform .28s var(--ease)}
+  .side.open{transform:none}
+  .topbar{display:flex;align-items:center;gap:11px;position:sticky;top:0;z-index:40;background:var(--surface);
+    border-bottom:1px solid var(--line);padding:11px 16px;font-weight:800;color:var(--navy)}
+  .topbar button{width:34px;height:34px;border-radius:9px;background:var(--blue-soft);color:var(--navy);
+    display:grid;place-items:center;font-size:18px;flex:none}
+  main{padding:20px 16px 80px}
+  .head h2{font-size:23px}
+  .stones{grid-template-columns:1fr}
+  .dist{grid-template-columns:repeat(2,1fr)}
+  #scrim{display:block;position:fixed;inset:0;background:rgba(8,25,42,.45);z-index:50;opacity:0;
+    pointer-events:none;transition:opacity .25s}
+  #scrim.on{opacity:1;pointer-events:auto}
+}
+
+/* ================= PRINT ================= */
+@media print{
+  .side,.topbar,#toast,#scrim,.noprint{display:none!important}
+  .app{display:block} main{padding:0;max-width:none}
+  body{background:#fff;font-size:11.5px}
+  .panel,.card{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  section.view{display:block!important;page-break-after:always}
+  section.view:last-child{page-break-after:auto}
+  .lv:not(.sel){opacity:.4}
+  textarea{border:none;background:#fff;resize:none;padding:0}
+  .head h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true"><defs>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M15.9 8.1 14 14l-5.9 1.9L10 10z"/></symbol>
+<symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 21v-7"/><path d="M12 14c-3.3 0-5.5-2.2-5.5-5.5C9.8 8.5 12 10.7 12 14z"/><circle cx="12" cy="17.5" r="1"/></symbol>
+<symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 21v-9"/><path d="M12 12C8.7 12 6.5 9.8 6.5 6.5 9.8 6.5 12 8.7 12 12z"/><path d="M12 14c3.3 0 5.5-2.2 5.5-5.5C14.2 8.5 12 10.7 12 14z"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 21v-5"/><path d="M12 3 6.5 11h11z"/><path d="M12 8.5 4.5 17h15z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+<symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 20c0-3.5 2.8-5.4 6.2-5.4s6.2 1.9 6.2 5.4"/><circle cx="17.6" cy="8.8" r="2.4"/><path d="M17.6 14.8c2.6 0 3.9 1.7 3.9 4.6"/></symbol>
+<symbol id="i-tools" viewBox="0 0 24 24"><path d="M14.6 6.4a4.1 4.1 0 0 0 5.3 5.3l-8 8a2.3 2.3 0 0 1-3.3-3.3z"/><path d="m8.4 9.6-4-4 1.6-1.6 4 4"/><path d="m3.5 14.5 6-6"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13.5a4.4 4.4 0 0 0 6.6.5l2.6-2.6a4.4 4.4 0 0 0-6.2-6.2L11.5 6.6"/><path d="M14 10.5a4.4 4.4 0 0 0-6.6-.5l-2.6 2.6a4.4 4.4 0 0 0 6.2 6.2l1.4-1.4"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24"><path d="M9 15c-1.4 1-2 3.2-2 5.5 2.3 0 4.5-.6 5.5-2"/><path d="m9.4 15.1-2.7-2.7C7.9 5.9 12.4 3 19.5 3c0 7.1-2.9 11.6-9.4 12.8z"/><circle cx="14.6" cy="8.4" r="1.7"/></symbol>
+<symbol id="i-cycle" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 0 1-14.4 6.1"/><path d="M3.5 12a8.5 8.5 0 0 1 14.4-6.1"/><path d="M17.9 2.4v3.5h-3.5"/><path d="M6.1 21.6v-3.5h3.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6.5-10.5 11L4 12"/></symbol>
+<symbol id="i-mirror" viewBox="0 0 24 24"><ellipse cx="12" cy="9" rx="6.2" ry="7"/><path d="M12 16v5M9 21h6"/></symbol>
+<symbol id="i-bridge" viewBox="0 0 24 24"><path d="M2 16.5h20"/><path d="M2 16.5C2 10 6.5 6.5 12 6.5s10 3.5 10 10"/><path d="M7 16.5v-4M12 16.5V8.5M17 16.5v-4"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2.5 2.5 0 0 1 2.5-2.5H20v16.5H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19h16"/></symbol>
+<symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.6"/><path d="M12 21.5V7.6"/><path d="M5.5 12.5h-3a9.5 9.5 0 0 0 19 0h-3"/></symbol>
+<symbol id="i-radar" viewBox="0 0 24 24"><path d="M12 2.5 21.5 9.4 17.9 20.6H6.1L2.5 9.4z"/><path d="M12 7.4 17 11l-1.9 5.9H8.9L7 11z"/><path d="M12 12v.01"/></symbol>
+<symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M9 3.5h6v3H9z"/><path d="M15 5h2.5a1.5 1.5 0 0 1 1.5 1.5v13A1.5 1.5 0 0 1 17.5 20h-11A1.5 1.5 0 0 1 5 18.5v-12A1.5 1.5 0 0 1 6.5 5H9"/><path d="M8.5 11h7M8.5 15h4"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><path d="M7 18H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M7 15h10v6H7z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6.5h16"/><path d="M9 6.5V4h6v2.5"/><path d="M6 6.5 7 20a1.5 1.5 0 0 0 1.5 1.4h7A1.5 1.5 0 0 0 17 20l1-13.5"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 22 20H2z"/><path d="M12 9.5v4.5M12 17.2v.01"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.8"/><path d="M12 9.5v4h3"/><path d="M9.5 2.5h5"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.5 19 12 7.5 19.5z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 4v4.5h4.5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M19.5 12H4.5"/><path d="m10.5 6-6 6 6 6"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-quote" viewBox="0 0 24 24"><path d="M20.5 14.5a2.6 2.6 0 0 1-2.6 2.6H9.4L5 20.6v-3.5H4.6A2.6 2.6 0 0 1 2 14.5v-8A2.6 2.6 0 0 1 4.6 4h13.3a2.6 2.6 0 0 1 2.6 2.5z"/><path d="M7 8.5h9M7 12h5.5"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.1 7-11.1a7 7 0 1 0-14 0c0 5 7 11.1 7 11.1z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+</defs></svg>
+
+<div id="scrim"></div>
+
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand">
+      <h1><svg class="ico" style="font-size:20px"><use href="#i-compass"/></svg> מצפן החינוך היוצר</h1>
+      <p>כלי למיקום, לדיאלוג ולצמיחה · מינהל הכשרה מקצועית</p>
+    </div>
+    <div class="idbox">
+      <label for="f-school">בית הספר</label>
+      <input id="f-school" type="text" placeholder="שם בית הספר">
+      <div class="row2">
+        <div>
+          <label for="f-year">שנה</label>
+          <select id="f-year"><option>תשפ"ז</option><option>תשפ"ח</option><option>תשפ"ט</option></select>
+        </div>
+        <div>
+          <label for="f-round">מדידה</label>
+          <select id="f-round"><option>פתיחת שנה</option><option>סיום שנה</option></select>
+        </div>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="sidefoot">
+      <button id="b-print"><svg class="ico"><use href="#i-print"/></svg> הדפסה / PDF</button>
+      <button id="b-export"><svg class="ico"><use href="#i-download"/></svg> ייצוא קובץ</button>
+      <button id="b-import"><svg class="ico"><use href="#i-upload"/></svg> טעינת קובץ</button>
+      <button id="b-reset"><svg class="ico"><use href="#i-trash"/></svg> איפוס</button>
+      <div class="saved" id="saved">נשמר אוטומטית בדפדפן</div>
+      <input type="file" id="f-file" accept="application/json" hidden>
+    </div>
+  </aside>
+
+  <div>
+    <div class="topbar">
+      <button id="b-menu" aria-label="תפריט"><svg class="ico"><use href="#i-menu"/></svg></button>
+      <span id="tb-title">מצפן החינוך היוצר</span>
+    </div>
+    <main id="main"></main>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   מצפן החינוך היוצר — גרסה דיגיטלית
+   התוכן נשאב מקובץ "מצפן החינוך היוצר גרסה 9" ללא שינוי ניסוח.
+   מבוסס על ספר ההפעלה של החינוך היוצר — guidebook.yotzer.education
+   ============================================================ */
+const P = [{"title":"האדם והחברה במרכז","definition":"מעשה חינוכי מבוסס יצירה, אמון, חירות ואחריות, המעמיד במרכז את האנשים והיחסים הבינאישיים.","sources":"שאלון אח\"מ תלמידים (תחושת שייכות, מסוגלות, יחסים עם מבוגרים) · שאלון אח\"מ צוות (יחס ההנהלה, עבודת צוות) · תיעוד שיחות ליווי ופגישות אישיות · דוח פיקוח פדגוגי","practices":[{"name":"מבוגר משמעותי לכל תלמיד","what":"נוכחות עקבית של דמות מבוגרת מעגנת","levels":["אין הגדרה של מי מלווה את מי. קשרים נוצרים לפי סיטואציה, לא כמדיניות.","חלק מהמחנכות/ים בחרו לבנות קשר עמוק עם תלמידים ספציפיים, אך לא לכולם יש מלווה מוגדר.","לכל תלמיד.ה יש מבוגר.ת מוגדר.ת; הקשר מתועד ויש פגישות ליווי קבועות לאורך השנה.","פיתחנו מודל ליווי ייחודי, מכשירים אחרים ליישמו, ויש ראיות שהקשרים משפיעים לאורך זמן."]},{"name":"שיחות אישיות סדירות","what":"שיח אישי מתוכנן עם כל תלמיד.ה","levels":["שיחות אישיות מתקיימות רק כשיש בעיה או משבר; אין שגרה מתוכננת.","חלק מהמחנכות/ים קובעים שיחות אישיות, אך לא כנוהל בית ספרי לכולם.","כל מחנך.ת מקיים.ת שיחות אישיות מתוכננות לכל תלמיד.ה, עם תיעוד ומעקב.","שיחות הליווי הן כלי מרכזי ומפותח; הכשרנו את הצוות ומשתפים את הגישה עם מוסדות אחרים."]},{"name":"למידה מותאמת לפרט","what":"הכרה בחוזקות ובסגנון הלמידה של כל תלמיד","levels":["ההוראה אחידה לכולם; התאמות ניתנות רק לתלמידים עם אבחון רשמי.","חלק מהמורות/ים מתאימות/ים הוראה לתלמידים שונים, אך אין מדיניות בית ספרית.","יש לנו תכנית ממוקדת חוזקות; המורות/ים משתמשות/ים בשיטות למידה מגוונות בהתאם לצרכי הכיתה.","פיתחנו מודל פרסונליזציה מתועד; הוא כלי עבודה מרכזי ומשתפים אותו עם הרשת."]},{"name":"שגרות שיח ואחריות משותפת","what":"פגישות, משוב ושיח ישיר כחלק קבוע מחיי בית הספר — בין מורים, תלמידים והנהלה","levels":["השיח הניהולי והכיתתי מבוסס על הוראות ולוחות זמנים; שגרות של משוב דו-כיווני ושיח ישיר נמצאות בתחילת הדרך.","בחלק מהכיתות ובחלק מישיבות הצוות מתנהל שיח פתוח ומשוב; עדיין לא שגרה עקבית ומוסכמת לכלל הקהילה.","יש שגרות מוגדרות לשיח ישיר, משוב ואחריות הדדית — בין מורים, בין תלמידים ובין הנהלה לצוות.","שגרות השיח והאחריות ההדדית מזוהות כייחוד שלנו; הכשרנו מוסדות אחרים ביישומן."]},{"name":"פיתוח מקצועי של הצוות","what":"ליווי ופיתוח אישי לכל איש ואשת צוות","levels":["הפיתוח המקצועי הוא השתלמויות חיצוניות בלבד; אין ליווי אישי לאנשי הצוות.","חלק מהצוות מקבל ליווי; אין תכנית פיתוח מקצועי שיטתית לכולם.","כל איש/ת צוות מקבל.ת ליווי אישי, משוב בונה ומשתתף.ת בפיתוח מקצועי מותאם.","פיתחנו מודל ייחודי לפיתוח צוות; מנחים אותו גם במוסדות אחרים."]},{"name":"סיפור בית ספרי ודמות האדם היוצר","what":"מהות בית ספרית ייחודית וכיוון חינוכי ברור לכולם","levels":["אין לנו סיפור בית ספרי מגובש; קשה לנו להגדיר מה הייחוד החינוכי שלנו.","ההנהלה ניסחה זהות בית ספרית, אך היא לא מוכרת לרוב הצוות והתלמידים.","הסיפור הבית ספרי ודמות האדם היוצר מגובשים, ידועים לכולם ומשפיעים על ההחלטות.","אנחנו מחדשים את הסיפור בתהליך משתף עם תלמידים, צוות וקהילה; מנחים בתי ספר אחרים."]}],"personal":["למי מהתלמידים/ות אני מבוגר/ת משמעותי/ת היום — ומי בסביבתי אולי נשאר/ת בלי דמות כזו?","איך נראה הקשר שלי עם התלמידים ועם עמיתיי ביומיום — ומה הייתי רוצה לחזק בו?","מה צעד אחד שבידיי לעשות כבר החודש כדי לחזק אדם אחד בסביבתי?"],"team":["איך נראה אצלנו קשר מיטבי בין מבוגר.ת משמעותי.ת לתלמיד.ה — ומה צריך לקרות (זמן, הכשרה, מבנה) כדי שכל תלמיד.ה יזכה לקשר כזה?","מה יהפוך את השיחות האישיות משגרה טכנית לרגע משמעותי באמת — ואילו תנאים (מערכת שעות, מרחב, כלים) יאפשרו זאת לכל מחנך.ת?","איך תיראה למידה מותאמת לפרט במיטבה בכיתות שלנו — ומה המורות/ים צריכות/ים מאיתנו כדי להגיע לשם?","אילו שגרות שיח ומשוב, אם היו מתקיימות בקביעות, היו מחזקות הכי הרבה את האמון בבית הספר — ומה מאפשר או מונע אותן היום?","איך נראה פיתוח מקצועי שהצוות באמת צומח ממנו — ומה נדרש כדי שכל איש ואשת צוות אצלנו יחוו ליווי כזה?","מה יגרום לסיפור הבית ספרי ולדמות האדם היוצר לחיות בכל כיתה ושיעור — ומי צריך להיות שותף כדי שזה יקרה?"],"deep":"חלק א׳ — חזון וערכי ליבה · דמות האדם היוצר · שער 4 — הובלת הצוות והפיתוח המקצועי","key":"adam","icon":"people","num":1},{"title":"למידה דואלית ופיתוח מיומנויות","definition":"לימודי המקצוע והעבודה הם כלי פדגוגי מרכזי, ומשמשים כר ללמידה עיונית ומעשית, להתפתחות אישית ולפיתוח מיומנויות המאה ה-21.","sources":"דוח מטלות ותעסוקה במנב\"ס · משוב מנטורים (אמצע וסוף תקופת החניכות) · מחוון המגמה · דוח ניצול סל שעות והשתלמויות · תוצרי יחידות לימוד","practices":[{"name":"חניכות משולבת בלמידה","what":"חיבור בין מקום החניכות לתכנית הלימודים","levels":["החניכות והכיתה פועלות בנפרד; אין חיבור תכנוני ביניהן.","יש מורות/ים שמנסות/ים לחבר בין חניכות ולמידה, אך זה לא שיטתי.","קיים רצף פדגוגי מובנה בין הכיתה לחניכות; המנטור והמורה בקשר שוטף ומתואם.","מודל החניכות שלנו ייחודי ומתועד; מנחים מוסדות אחרים ביישומו."]},{"name":"למידה חוץ כיתתית","what":"סיורים ומפגשים בסביבת העבודה האמיתית","levels":["יציאות לפי הזדמנות, ללא תכנון פדגוגי, הכנה ועיבוד אחרי.","מתקיימים סיורים בחלק מהמגמות, אך לא לכלל השכבות ולא בתדירות עקבית.","יש תכנית סיורים שנתית לכל השכבות; כל סיור כולל הכנה ועיבוד פדגוגי.","הלמידה חוץ כיתתית היא עיקרון מוביל אצלנו; פיתחנו ומשתפים מפות למידה בשטח לרשת."]},{"name":"מפגשים עם מומחים","what":"אנשי מקצוע כשותפים בתהליך הלמידה","levels":["מפגשים עם אנשי מקצוע קורים לפי הזדמנות, ללא קשר לתכנית הלימודים.","יש מפגשים בחלק מהמגמות, אך הם לא מסונכרנים עם מה שנלמד בכיתה.","מפגשים עם מומחים הם חלק קבוע מתכנית הלימודים; מתוכננים בהלימה לנושאי הלמידה.","בנינו רשת מומחים רחבה; המפגשים מתועדים ומהווים מקור ידע לבתי ספר ברשת."]},{"name":"ספירלת הזרימה: יציאה, חוויה, תובנה","what":"המנוע הדידקטי — כל יחידת למידה עוברת שלושה שלבים ונפתחת לשאלה חדשה","levels":["השיעורים בנויים כהעברת ידע מהמורה לתלמיד; אין שלבי יציאה, חוויה ותובנה.","חלק מהמורות/ים בונות/ים שיעורים עם פעולה ועיבוד, אך זו לא שפה משותפת לצוות.","ספירלת הזרימה (יציאה-חוויה-תובנה) היא שפה משותפת לתכנון שיעורים ויחידות לימוד.","הצוות כולו מתכנן דרך הספירלה; התובנות פותחות שאלות חדשות ואנחנו מדגמנים את המודל ברשת."]},{"name":"תפקידים אותנטיים בחניכות","what":"אחריות אמיתית ולא רק צפייה ועזרה","levels":["התלמידים צופים ועוזרים בשוליים; אין להם אחריות ממשית במקום החניכות.","חלק מהמנטורים נותנים לתלמידים אחריות אמיתית, תלוי בנטיית המנטור.","כל תלמיד.ה ממלא.ת תפקיד אמיתי ומאתגר; המנטור מלווה ומקדם מקצועית.","יישמנו ופיתחנו מודל פירמידת חניכות; מכשירים מנטורים גם ברשת."]},{"name":"חיבור בין תחומי דעת","what":"למידה אינטרדיסציפלינרית משמעותית","levels":["כל מקצוע נלמד בבועה; אין שיח בין מורות/ים על חיבורים אפשריים.","ישנם שיתופי פעולה ספציפיים בין מורות/ים מסוימות/ים, אך לא כמדיניות.","מתכננים יחד יחידות לימוד משותפות; יש חיבורים מובנים בין תחומים.","הלמידה הרב-תחומית מפותחת ומתועדת; שגרות ידע משולבות בין כל המגמות."]},{"name":"פיתוח מיומנויות המאה ה-21","what":"חשיבה, יצירה, שיתוף פעולה, תקשורת — ביודעין ובמכוון","levels":["מיומנויות נרכשות אגב הלמידה; אין מיקוד מכוון ואין מפת מיומנויות.","חלק מהמקצועות מפתחים מיומנויות ביודעין, אך זה לא רוחבי לכלל בית הספר.","יש לנו מפת מיומנויות מוגדרת; לומדים ומעריכים אותן באופן מכוון בכלל בית הספר.","אנחנו מובילים מחקר ויישום של מיומנויות; יש לנו מסמך ייחודי שמשתפים ברשת."]},{"name":"רפלקציה כחלק מתהליך הלמידה","what":"תלמידים לומדים לחשוב על תהליך הלמידה שלהם — לא רק על התכנים","levels":["הלמידה מתמקדת בתכנים ובתוצרים; תרגול רפלקציה על תהליך הלמידה כמעט ואינו מתקיים.","חלק מהמורות/ים מזמינות/ים תלמידים לעצור ולחשוב על \"איך אני לומד.ת\"; עדיין לא שגרה משותפת.","רפלקציה על תהליך הלמידה מובנית בשיעורים ובפרויקטים; תלמידים יודעים לתאר איך הם לומדים.","תלמידים מובילים רפלקציה עצמית ועמיתים; \"ללמוד ללמוד\" הפך מיומנות מרכזית שאנחנו מדגמנים."]}],"personal":["איפה בעשייה שלי הלמידה יוצאת מהכיתה או מתחברת לעולם האמיתי — ואיפה היא נשארת תיאורטית?","איזו מיומנות אני מפתח/ת אצל התלמידים באופן מכוון — ואיזו נשארת מקרית?","מה התנסות אחת חדשה שאני מוכן/ה לנסות בתקופה הקרובה?"],"team":["איך נראית חניכות במיטבה — כזו שמזינה את הלמידה בכיתה ולהפך — ומה יאפשר את החיבור הזה אצלנו באופן קבוע?","מה הופך למידה חוץ כיתתית ומפגשים עם מומחים מחוויה חד-פעמית לחלק מהותי מהלמידה — ומה נדרש (תכנון, גיבוי, שותפים) כדי שזה יקרה?","איך תיראה יחידת לימוד שעוברת במלואה את ספירלת הזרימה — יציאה, חוויה, תובנה — ומה יעזור לכל מורה לתכנן כך?","מה מאפשר לתלמיד.ה לקבל אחריות אמיתית ותפקיד אותנטי בחניכות — ואיך נבנה יחד עם המנטורים את התנאים לכך?","איך ייראה בית הספר כשמיומנויות המאה ה-21 נלמדות ביודעין ובמכוון בכל המקצועות — ומה הצעד הראשון שיאפשר לנו להתחיל?","מה יהפוך רפלקציה לחלק טבעי מכל תהליך למידה — ואילו כלים ושגרות יאפשרו זאת למורות/ים ולתלמידים?"],"deep":"שער 2 — המנוע הפדגוגי של הלמידה הדואלית · פרק החניכות · המושגים: ספירלת הזרימה, פירמידת החניכות","key":"dualit","icon":"tools","num":2},{"title":"רלוונטיות לכל אדם","definition":"בית הספר כבית חינוכי רלוונטי לכל אדם, מתאים ומזמין לאוכלוסיות מגוונות עם כישורים שונים.","sources":"שאלון אח\"מ תלמידים (שייכות, אוטונומיה, חוויית למידה) · נתוני התמדה ונשירה במערכת · תיעוד תוצרים ואירועים קהילתיים · שגרת ניטור מעורבות","practices":[{"name":"חיבור הלמידה לחיי היומיום","what":"תכנים שתלמידים יכולים לנמק את הרלוונטיות שלהם","levels":["התכנים עוקבים אחר תוכנית הלימודים המקצועית; החיבור לחיי היומיום של התלמידים עדיין בתחילת הדרך.","חלק מהמורות/ים מחברות/ים לחיי היומיום, אך זה לא עקבי בכלל בית הספר.","תכני הלמידה מחוברים לחיים; תלמידים יכולים להסביר מה הרלוונטיות שלהם לחייהם.","רלוונטיות היא עיקרון תכנוני מוביל; שאלת \"למה זה רלוונטי לנו?\" מנחה כל תכנית לימודים."]},{"name":"בחירה בתהליך הלמידה","what":"אוטונומיה של התלמיד בדרך, בתכנים ובתוצרים","levels":["תוכנית לימודים אחידה לכולם; לתלמידים אין בחירה בתכנים או בדרך הלמידה.","יש בחירה מוגבלת בחלק מהמקצועות; לא כמדיניות רוחבית.","לתלמידים יש בחירה משמעותית בתכנים, בדרך הלמידה ובתוצרים — בכלל בית הספר.","פיתחנו מסגרת פרסונליזציה ייחודית; הגישה מייצרת למידה עמוקה ומשמשת השראה לאחרים."]},{"name":"שילוב קהילה ותרבות מקומית","what":"הקהילה כשותפה בלמידה ולא רק כנמען","levels":["הקהילה כמעט ואינה נוכחת בלמידה שלנו.","בחלק מהפרויקטים יש חיבור לקהילה, אך לא כעיקרון מנחה.","הקהילה והתרבות המקומית משולבות בתכנית הלימודים לאורך השנה.","הקהילה שותפה מלאה בתכנון הלמידה; בית הספר מהווה מרכז קהילתי-חינוכי."]},{"name":"ייצוג מגוון התרבויות בתכנים ובחיי בית הספר","what":"תכנים, פרויקטים ואירועים שמביאים לידי ביטוי את הרקעים השונים של התלמידים","levels":["התכנים והאירועים נבחרים לפי תוכנית לימודים מרכזית; ייצוג הרקעים השונים של התלמידים עדיין בתחילת הדרך.","בימי זיכרון ואירועים מיוחדים יש ביטוי לזהויות שונות; בלמידה השוטפת הנוכחות עדיין מוגבלת.","תכנים, פרויקטים ואירועים משקפים את מגוון הרקעים התרבותיים והאישיים של תלמידינו לאורך השנה.","המגוון התרבותי הוא כוח חינוכי מוצהר; תלמידים מובילים יוזמות שמביאות לידי ביטוי את ייחודם."]},{"name":"תוצרי למידה אותנטיים","what":"תוצרים בעלי ערך מחוץ לכיתה","levels":["תוצרי הלמידה הם מבחנים והגשות; אין עבודות בעלות ערך מחוץ לכיתה.","בחלק מהמגמות יש תוצרים אמיתיים, אך לא כחלק שיטתי.","תוצרי למידה אותנטיים מוצגים לקהילה ולשותפים — כחלק קבוע ומוצהר.","התוצרים שלנו משפיעים על הקהילה בפועל; בית הספר מוכר ומוערך על כך."]},{"name":"עיסוק בשאלות חיים ומשמעות","what":"ערכים, אחריות חברתית ועולם פנימי בלמידה","levels":["הלמידה ממוקדת בחומר בחינה; שאלות משמעות וערכים כמעט ואינן נוכחות.","נושאים ערכיים עולים בשיחות חינוך, אך לא משולבים בלמידה עצמה.","שאלות של משמעות, ערכים ואחריות חברתית נוכחים בלמידה ובשיח הכיתתי.","הלמידה הפילוסופית-ערכית היא עמוד שדרה חינוכי אצלנו; אנחנו מובילים בתחום זה."]},{"name":"מעקב שגרתי אחר מעורבות ושייכות","what":"שגרת ניטור מעורבות ופנייה אקטיבית לתלמידים שמעורבותם פוחתת","levels":["מעורבות תלמידים עולה לסדר היום בעיקר כשמתגלה קושי; שגרת מעקב מוסכמת עדיין בגיבוש.","המחנכות/ים מתרשמים מרמת המעורבות לפי תחושה; עדיין אין כלי מדידה משותף ותהליך מוסכם.","יש לנו שגרת ניטור מעורבות ושייכות; תלמידים שמעורבותם פוחתת מקבלים פנייה אקטיבית.","מודל הניטור שלנו הוא כלי מקצועי מפותח; מכשירים מוסדות נוספים בשימוש בו."]}],"personal":["מתי לאחרונה תלמיד/ה אמר/ה לי \"זה קשור אליי\" — ומה איפשר את הרגע הזה?","אילו קולות, תרבויות או תחומי עניין פחות נשמעים בעשייה שלי?","מה בחירה אחת אמיתית שאני יכול/ה לתת לתלמידים בתהליך הלמידה?"],"team":["איך נראה שיעור שבו כל תלמיד.ה יכול.ה לנמק למה הלמידה רלוונטית לחייו/ה — ומה יעזור למורות/ים לתכנן כך בקביעות?","איך תיראה בחירה אמיתית של תלמידים בדרך, בתכנים ובתוצרים במיטבה — ואילו מבנים (מערכת, הערכה, ליווי) יאפשרו אותה אצלנו?","מה יאפשר לקהילה ולתרבויות של תלמידינו להפוך משותפות סמליות לשותפות אמיתיות בלמידה — ומה הצעד הראשון?","איך נראה תוצר למידה אותנטי במיטבו — בעל ערך אמיתי מחוץ לכיתה — ומה נדרש כדי שכל תלמיד.ה ייצור אחד כזה השנה?","מה יאפשר לשאלות של משמעות, ערכים ואחריות חברתית לחיות בתוך הלמידה עצמה — ולא רק בשיחות חינוך?","איך תיראה שגרת ניטור מעורבות ושייכות במיטבה — ומה יאפשר לנו להגיע לכל תלמיד.ה שמעורבותו/ה פוחתת, בזמן?"],"deep":"פרק מעגלי היחסים · המושג: מסננת שבעת היחסים · חלק א׳ — רלוונטיות לכל אדם","key":"relevantit","icon":"link","num":3},{"title":"פתיחת אפשרויות ואופקים","definition":"חינוך הפותח אפשרויות ואופקים בהיבט האישי, החברתי, ההשכלתי והתעסוקתי, שבוגריו יוצרים ומובילים בחברה.","sources":"דוחות זכאות ובחינות · סקר בוגרים · נתוני אופק לימודי ותעסוקתי (מל\"ג, מה\"ט, משרד החינוך) · רשימת שותפויות, הסמכות ותעודות","practices":[{"name":"חשיפה למגוון אפשרויות עתידיות","what":"תמונת עתיד רחבה מעבר למגמה הספציפית","levels":["תלמידים לא מקבלים מידע שיטתי על אפשרויות מחוץ למגמה שלהם.","יש יום קריירה אחד בשנה; מידע קיים אך לא מוטמע בלמידה השוטפת.","חשיפה מתמשכת לאפשרויות המשך לאורך הלימודים; תלמידים בונים תמונת עתיד מציאותית.","פיתחנו פרקטיקת \"מיפוי עתיד\"; משתפים ומיישמים אותה ברשת."]},{"name":"מפגשים עם בוגרים ואנשי מקצוע","what":"קשר בין-דורי ורשת בוגרים כמשאב","levels":["מפגשים עם בוגרים קורים לפי הזדמנות, ללא קשר ללמידה.","יש מפגשים בחלק מהמגמות, אך לא שיטתיים ולא מחוברים לנושאי הלמידה.","מפגשים עם בוגרים ואנשי מקצוע הם שגרה קבועה. מחוברים לנושאי הלמידה.","בנינו רשת בוגרים פעילה ומאורגנת. חלקם חזרו כמנטורים ושותפים פעילים."]},{"name":"ליווי בבניית תמונת עתיד","what":"תהליך מובנה לחשיבה על עתיד אישי","levels":["אין תהליך ליווי. תלמידים מגיעים לסוף התיכון ללא תמונת עתיד ברורה.","היועצ.ת מלווה בסוף י\"ב; אין תהליך מובנה לאורך שנות הלימוד.","יש תהליך ליווי מובנה לבניית תמונת עתיד שמתחיל בי' ומתפתח לאורך השנים.","פיתחנו כלי ייחודי לבניית תמונת עתיד; בוגרים מדווחים על השפעתו לאורך זמן."]},{"name":"התנסות במצבי חיים אמיתיים","what":"הובלה, אחריות ויזמות מחוץ לכיתה","levels":["ההתנסות מוגבלת לחניכות; כמעט ואין אתגרים חיצוניים נוספים.","בנוסף לחניכות — תחרויות ופרויקטים קהילתיים, אך לא לכולם.","תלמידים מתנסים בהובלה, יזמות ואתגרים מגוונים כחלק מתכנית מובנית.","תלמידים מובילים יוזמות השפעה אמיתיות; בית הספר מוכר כמכשיר מנהיגי עתיד."]},{"name":"שיתופי פעולה עם גורמי חוץ","what":"רשת שותפים — תעשייה, אקדמיה, קהילה","levels":["הקשרים החיצוניים שלנו מוגבלים למקומות חניכות; אין רשת שותפים.","שיתופי פעולה עם כמה ארגונים, אך לא מאורגנים כרשת שותפים.","יש לנו רשת שותפים פעילה (תעשייה, אקדמיה, קהילה) שמשולבת בלמידה.","אנחנו מובילים מודל שיתוף פעולה ייחודי; ארגונים מבקשים מעצמם לשתף פעולה."]},{"name":"עידוד יזמות ויוזמות תלמידים","what":"מרחב, כלים ותמיכה ליוזמות תלמידים","levels":["יוזמות תלמידים נדירות; בית הספר לא יוצר מרחב ותמיכה לכך.","יוזמות קורות אצל מורות/ים ספציפיות/ים, לא כמדיניות עקבית.","אנחנו מעניקים מרחב, כלים ותמיכה פעילה ליוזמות תלמידים.","יצאו מבית הספר שלנו יזמות/ים ומובילות/ים מוכרות/ים; הגישה ליזמות משותפת ומוכרת."]},{"name":"הסמכות ותעודות מגוונות","what":"הון תעסוקתי מורחב בצאת התלמיד","levels":["תלמידים מקבלים תעודה מקצועית אחת; אין מסלולי הסמכה נוספים.","קיימות אפשרויות הסמכה נוספת, אך לא לכולם ולא שיטתית.","אנחנו מציעים מסלולי הסמכה מגוונים; תלמידים יוצאים עם הון תעסוקתי מורחב.","בוגרי בית הספר מוכרים כבעלי הסמכה רב-תחומית; מדווחים על יתרון תעסוקתי."]}],"personal":["איך העשייה שלי מרחיבה את תמונת העתיד של התלמידים — מעבר למה שהם מכירים מהבית?","אילו הנחות שלי על \"מה מתאים למי\" כדאי שאבחן מחדש?","איזה חיבור אחד (אדם, מקום, הזדמנות) אני יכול/ה לפתוח לתלמידים השנה?"],"team":["איך נראית חשיפה מיטבית למגוון אפשרויות עתידיות — מעבר למגמה הספציפית — ומה יאפשר לכל תלמיד.ה לחוות אותה?","מה יהפוך את רשת הבוגרים ואנשי המקצוע למשאב חי וזמין ללמידה — ומה נדרש כדי לבנות ולתחזק אותה לאורך זמן?","איך נראה ליווי מיטבי בבניית תמונת עתיד אישית — ומי ומה צריכים להיות בתהליך כדי שיקרה לכל תלמיד.ה?","אילו התנסויות אמיתיות של הובלה, אחריות ויזמות אנחנו יכולים לפתוח לתלמידים — ומה יאפשר להן לקרות אצלנו כבר השנה?","איך ייראו שיתופי הפעולה שלנו עם תעשייה, אקדמיה וקהילה במיטבם — ומה יאפשר להפוך קשרים מזדמנים לרשת שותפים פעילה?","מה יאפשר לכל בוגר.ת שלנו — לא רק למצטיינים — לצאת עם הון תעסוקתי מורחב של הסמכות, תעודות וניסיון?"],"deep":"פרק המגמה המקצועית · התעודה היוצרת ושתים-עשרה אבני היסוד · פרק צמיחה והתפתחות","key":"ofakim","icon":"rocket","num":4},{"title":"מודל חי ודינמי","definition":"החינוך היוצר הוא דינאמי, מתחדש תדיר ומושתת על פיתוח בר-קיימא.","sources":"שאלון תהודה בית-ספרית · שאלוני אח\"מ תלמידים וצוות · פרוטוקולי ישיבות וקהילות לומדות · תוצאות מצפן קודמות (השוואה עצמית)","practices":[{"name":"תהליכי רפלקציה קבועים","what":"שגרות לבחינה עצמית עם הצוות ועם התלמידים","levels":["רפלקציה מתקיימת רק בעת משבר; אין שגרה קבועה לכך.","ישנו שיח רפלקטיבי בחלק מישיבות הצוות, אך לא קבוע ולא מובנה.","יש לנו שגרות רפלקציה קבועות עם הצוות ועם התלמידים לאורך השנה.","הרפלקציה היא כלי עיצוב ארגוני אצלנו; מובילים תהליכי למידה מוסדית ומשתפים."]},{"name":"תהודה בית ספרית ונתונים לקבלת החלטות","what":"שאלון התהודה הבית ספרית ככלי מדידה שיטתי לשיפור מתמיד","levels":["ההחלטות מתקבלות על בסיס תחושות; כלי תהודה בית ספרית אינם מיושמים.","מילאנו שאלון תהודה בית ספרית, אך הממצאים לא הובילו לשינוי מובנה.","תהודה בית ספרית מיושמת בשגרה; הממצאים מנחים את תכנון השנה ואת פיתוח הצוות.","אנחנו מובילים תרבות \"מדידה-למידה-שיפור\"; מודל התהודה ושימוש בנתונים משותפים ברשת."]},{"name":"בחינה ועדכון של שגרות עבודה","what":"בדיקה תקופתית מוסכמת של מה עובד — ושינוי ממוקד בהתאם","levels":["השגרות שלנו יציבות לאורך זמן; בדיקה תקופתית מוסכמת של \"מה עובד ומה לשפר\" עדיין בתחילת הדרך.","אחרי אירועים משמעותיים (סוף מחצית, ימי הערכה) יש שיחה על שיפור, אך ההחלטות לא תמיד מיושמות.","אנחנו מקיימים בדיקה תקופתית קבועה של שגרות עבודה ומבצעים שינויים ממוקדים בהתאם לממצאים.","תרבות \"בדיקה-שיפור\" מוטמעת אצלנו; אנחנו מתעדים ומשתפים את התהליך עם מוסדות אחרים."]},{"name":"פיתוח ויישום יוזמות חדשות","what":"חדשנות יזומה מהצוות הפנימי","levels":["יוזמות מגיעות מגורמים חיצוניים; הצוות לא מוביל חדשנות.","יוזמות צומחות מהצוות, אך לא כולם שותפים ומעורבים.","יוזמות חינוכיות חדשות נוצרות, נבחנות ומוטמעות כחלק מתרבות הצמיחה שלנו.","אנחנו מובילים חדשנות חינוכית ברמה לאומית; יוזמות שלנו מאומצות על ידי בתי ספר אחרים."]},{"name":"למידת עמיתים בצוות","what":"קהילות לומדות פעילות בתוך בית הספר","levels":["כל מורה מלמד.ת בנפרד; שיתוף ידע אינו חלק מהשגרה.","ישיבות צוות עם אלמנטים של שיתוף, אך לא תהליך למידה מובנה.","יש לנו קהילות לומדות פעילות; הצוות לומד ומשפר יחד באופן שיטתי.","אנחנו מובילים קהילת למידה ברשת; מנהלים פורומים מקצועיים עם מוסדות אחרים."]},{"name":"שיתוף ידע עם רשת החינוך","what":"בית הספר כמקור ידע וגורם משפיע ברשת","levels":["אנחנו פועלים כיחידה סגורה; כמעט ואין שיתוף ידע עם בתי ספר אחרים.","יש קשרים עם בתי ספר אחרים; שיתוף הידע מקרי ולא מובנה.","אנחנו פעילים ברשת, משתפים תובנות ומשמשים מקור השראה.","אנחנו מובילים ברשת; מנהלים ימי עיון ומשתפים ידע ברמה לאומית."]},{"name":"שימוש במצפן ככלי לצמיחה מתמשכת","what":"חזרה תקופתית על המצפן כשגרה של בחינה עצמית, השוואה ותכנון שיפור","levels":["מילאנו את המצפן פעם אחת; הממצאים עדיין לא הובילו לדיון ממוקד ולתכנית שיפור.","השתמשנו במצפן כנקודת פתיחה; חלק מהתחומים קיבלו מענה, אחרים עדיין ממתינים לטיפול.","אנחנו חוזרים על המצפן בתדירות קבועה, משווים לתוצאות קודמות ומתכננים שיפור ממוקד.","המצפן הוא כלי חי בידינו; צמיחתנו מתועדת לאורך זמן ואנחנו משתפים את התהליך עם אחרים."]}],"personal":["מתי לאחרונה שיניתי משהו בעשייה שלי בעקבות משוב או נתון — ומה למדתי מזה?","איזו שגרה שלי כבר לא משרתת את המטרה — ומה הייתי מעדכן/ת בה?","מה למדתי לאחרונה מעמית/ה — ומה אני יכול/ה לשתף בעצמי?"],"team":["איך נראית שגרת רפלקציה מיטבית — כזו שבאמת משנה את דרך העבודה — ומה יאפשר לה להתקיים אצלנו בקביעות?","מה יאפשר לנתוני התהודה הבית-ספרית ושאלוני האח\"מ להפוך לבסיס אמיתי לקבלת החלטות — ולא רק לנתון שנאסף?","איך תיראה קהילה לומדת של הצוות במיטבה — ומה נדרש (זמן, מבנה, אמון) כדי שכל מורה ירצה להיות חלק ממנה?","מה מאפשר ליוזמות חדשות של הצוות לצמוח ולהבשיל אצלנו — ומה עלול לעצור אותן בדרך?","איך ייראה בית הספר שלנו כמקור ידע והשראה לרשת במיטבו — ומה הידע הייחודי שכבר היום שווה לשתף?","מה יהפוך את המצפן לכלי חי — שחוזרים אליו, משווים ומתכננים לפיו — ומה יאפשר לנו להתמיד בכך לאורך שנים?"],"deep":"פרק ההערכה — כלי התהודה הבית-ספרית ושאלוני אח\"מ · פרק צמיחה והתפתחות — עדכון מגמות ונוהל הכרה","key":"dinami","icon":"cycle","num":5}];
+
+const LV = [
+  {ic:'i-seed',   n:'מתחילים לגלות',   d:'אנחנו בונים שפה משותפת ומתחילים לנסות דרכי פעולה ברוח העיקרון'},
+  {ic:'i-sprout', n:'מתנסים ומדייקים', d:'העיקרון כבר בא לידי ביטוי בחלק מהעשייה, ואנחנו לומדים ומשפרים אותו'},
+  {ic:'i-tree',   n:'פועל באופן עקבי', d:'העיקרון מוטמע בסדירויות, בהחלטות ובתרבות הבית ספרית'},
+  {ic:'i-star',   n:'מומחים',          d:'בית הספר מהווה מודל לאחרים, משתף בידע ובפרקטיקות וממשיך להתחדש'}
+];
+const LVCOLOR = ['var(--l1)','var(--l2)','var(--l3)','var(--l4)'];
+const GUIDEBOOK = 'https://guidebook.yotzer.education/';
+
+const BRIDGE_ROWS = [
+  {part:'מקצוע וחניכות', prin:'עיקרון 2 (למידה דואלית) · עיקרון 4 (אפשרויות ואופקים)'},
+  {part:'למידה דואלית',  prin:'עיקרון 2 (למידה דואלית) · עיקרון 3 (רלוונטיות לכל אדם)'},
+  {part:'מעגלי יחסים',   prin:'עיקרון 1 (האדם והחברה במרכז) · עיקרון 3 (רלוונטיות לכל אדם)'},
+  {part:'פיתוח צוות',    prin:'עיקרון 1 (האדם והחברה במרכז) · עיקרון 5 (מודל חי ודינמי)'}
+];
+
+const KEY = 'matzpen_v1';
+const BLANK = {school:'', year:'תשפ"ז', round:'פתיחת שנה',
+  story:{need:'',assume:'',idea:'',stones:['','',''],bridge:['','','','']},
+  r:{}, pause:{}, partner:{}, plan:[{},{},{}], prev:{}};
+let state = load();
+
+function load(){
+  let d=null;
+  try{ d = JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+  return normalize(merge(structuredClone(BLANK), d||{}));
+}
+/* merge מחליף מערכים במלואם — קובץ מיובא ישן עלול להגיע עם מערך קצר */
+function normalize(s){
+  if(!Array.isArray(s.plan)) s.plan=[];
+  while(s.plan.length<3) s.plan.push({});
+  s.plan = s.plan.slice(0,3).map(x => (x && typeof x==='object') ? x : {});
+  s.story = s.story || {};
+  const pad = (arr,n) => { const a = Array.isArray(arr)?arr.slice(0,n):[]; while(a.length<n) a.push(''); return a; };
+  s.story.stones = pad(s.story.stones,3);
+  s.story.bridge = pad(s.story.bridge,BRIDGE_ROWS.length);
+  s.r=s.r||{}; s.pause=s.pause||{}; s.partner=s.partner||{}; s.prev=s.prev||{};
+  return s;
+}
+function merge(base, add){
+  for(const k in add){
+    if(add[k] && typeof add[k]==='object' && !Array.isArray(add[k]) && base[k] && typeof base[k]==='object')
+      merge(base[k], add[k]);
+    else if(add[k]!==undefined && add[k]!==null) base[k]=add[k];
+  }
+  return base;
+}
+let saveT;
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(()=>{
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); stamp(); }
+    catch(e){ toast('שגיאת שמירה — ייתכן שהאחסון של הדפדפן מלא','i-alert'); }
+  }, 250);
+}
+function stamp(){
+  const t = new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('saved').textContent = 'נשמר ' + t;
+}
+function toast(msg, ic){
+  const el=document.getElementById('toast');
+  el.innerHTML = '<svg class="ico" style="font-size:17px"><use href="#'+(ic||'i-check')+'"/></svg><span></span>';
+  el.querySelector('span').textContent = msg;
+  el.classList.add('on'); clearTimeout(toast._t);
+  toast._t = setTimeout(()=>el.classList.remove('on'), 2600);
+}
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon = (id,size) => '<svg class="ico"'+(size?' style="font-size:'+size+'"':'')+'><use href="#'+id+'"/></svg>';
+
+/* ---------- scoring ---------- */
+const rk = (pi,ci) => pi+'-'+ci;
+function rated(pi,ci){ const v=state.r[rk(pi,ci)]; return v && v.l!=null ? v : null; }
+function evOf(pi,ci){ const v=state.r[rk(pi,ci)]; return (v&&v.ev)||''; }
+function principleAvg(pi){
+  const vals = P[pi].practices.map((_,ci)=>rated(pi,ci)).filter(Boolean).map(v=>v.l+1);
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+}
+function principleCount(pi){
+  return P[pi].practices.filter((_,ci)=>rated(pi,ci)).length;
+}
+function totalPractices(){ return P.reduce((a,p)=>a+p.practices.length,0); }
+function allRated(){
+  const out=[];
+  P.forEach((p,pi)=>p.practices.forEach((pr,ci)=>{ const v=rated(pi,ci); if(v) out.push({pi,ci,pr,v}); }));
+  return out;
+}
+function overallAvg(){
+  const a = allRated(); return a.length ? a.reduce((s,x)=>s+x.v.l+1,0)/a.length : null;
+}
+/* פרקטיקה שדורגה 3 ומעלה בלי ראיה — הדירוג עדיין לא מעוגן */
+function unanchored(){
+  return allRated().filter(x => x.v.l>=2 && !evOf(x.pi,x.ci).trim());
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  document.getElementById('main').innerHTML =
+    viewGuide() + viewStory() + P.map((p,i)=>viewPrinciple(p,i)).join('') + viewDash() + viewPlan();
+  renderNav();
+  bind();
+  fillValues();
+  showView(current);
+}
+
+/* ---------- nav ---------- */
+let current = 'guide';
+function renderNav(){
+  const items = [
+    ['guide','הנחיות','i-book'],
+    ['story','הסיפור הבית-ספרי','i-quote']
+  ];
+  let h = '<div class="grp">פתיחה</div>';
+  h += items.map(([id,t,ic])=>navBtn(id,icon(ic)+' <span>'+t+'</span>')).join('');
+  h += '<div class="grp">חמשת העקרונות</div>';
+  P.forEach((p,i)=>{
+    const c = principleCount(i), tot = p.practices.length, a = principleAvg(i);
+    const badge = c===0 ? '' : (c<tot ? c+'/'+tot : a.toFixed(1));
+    h += navBtn('p'+i, '<span class="num">'+(i+1)+'</span><span>'+esc(p.title)+'</span>'+
+      (badge?'<span class="avg">'+badge+'</span>':''));
+  });
+  h += '<div class="grp">סיכום</div>';
+  h += navBtn('dash', icon('i-radar')+' <span>תמונת מצב</span>');
+  h += navBtn('plan', icon('i-clipboard')+' <span>תוכנית פעולה</span>');
+  document.getElementById('nav').innerHTML = h;
+  document.querySelectorAll('#nav button').forEach(b=>{
+    b.onclick = ()=>{ showView(b.dataset.v); document.getElementById('side').classList.remove('open');
+      document.getElementById('scrim').classList.remove('on'); };
+  });
+}
+function navBtn(id, inner){
+  return '<button data-v="'+id+'" class="'+(current===id?'on':'')+'">'+inner+'</button>';
+}
+function showView(id){
+  current = id;
+  document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('on', s.dataset.v===id));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===id));
+  const t = document.querySelector('section.view.on h2');
+  document.getElementById('tb-title').textContent = t ? t.textContent : 'מצפן החינוך היוצר';
+  if(id==='dash') drawDash();
+  if(id==='plan') drawPlan();
+  window.scrollTo({top:0});
+}
+
+/* ---------- view: guide ---------- */
+function viewGuide(){
+  return '<section class="view guide" data-v="guide">'+
+   '<div class="head"><div class="kick">'+icon('i-compass')+' ספר ההפעלה של החינוך היוצר</div>'+
+   '<h2>מצפן החינוך היוצר</h2>'+
+   '<div class="def">כלי למיקום, לדיאלוג ולצמיחה. <b>המצפן אינו כלי שיפוטי</b> — הוא מפת דרכים לצמיחה.</div></div>'+
+
+   '<div class="panel"><h3>'+icon('i-target')+' מהי מטרת המצפן?</h3>'+
+   '<div class="stat" style="margin-top:14px">'+
+   ['<b>למקם</b> — לבחון את העשייה הבית-ספרית מול הסטנדרטים של ספר ההפעלה, ולמקם את בית הספר ביחס לסטנדרט החינוך היוצר הכולל במערכת.',
+    '<b>לקיים דיאלוג</b> — לבסס שיח מקצועי עם הפיקוח, ההורים והשותפים על סמך דוגמאות וראיות מהשטח — לא רק תחושות.',
+    '<b>לצמוח</b> — לתכנן את הצעד הבא: מהרמה הנוכחית לרמת היעד, עם סימנים ברורים שיעידו על התקדמות.']
+    .map((t,i)=>'<div class="scell"><div class="n">'+(i+1)+'</div><div class="l">'+t+'</div></div>').join('')+
+   '</div></div>'+
+
+   '<div class="panel"><h3>'+icon('i-tree')+' ארבע רמות ההערכה</h3>'+
+   '<div class="lvlegend">'+LV.map((l,i)=>
+     '<div class="lvcard" data-l="'+i+'"><div class="h">'+icon(l.ic,'17px')+' '+l.n+'</div><p>'+l.d+'</p></div>').join('')+
+   '</div></div>'+
+
+   '<div class="panel"><h3>'+icon('i-clipboard')+' כיצד להשתמש?</h3><ol>'+
+   ['שבו עם הצוות המוביל ומלאו תחילה את <b>הסיפור הבית-ספרי</b> — נקודת המוצא של המצפן.',
+    '<b>עצירה אישית:</b> לפני כל מפגש, כל משתתף/ת עונה לעצמו/ה בכתב על שאלות "עצירה אישית" שבעמוד העיקרון, ומביא/ה תובנה אחת לפתיחת השיח.',
+    'עברו על העקרונות: קראו כל פרקטיקה ואת ארבע הרמות, ובחרו את הרמה שמתארת אתכם.',
+    '<b>עגנו בראיות:</b> כתבו 1–2 דוגמאות קונקרטיות. אם קשה למצוא דוגמה — ייתכן שהדירוג גבוה מדי.',
+    'היעזרו במקורות הנתונים המופיעים בראש כל עיקרון (שאלוני אח"מ, תהודה בית-ספרית, מנב"ס).',
+    '<b>גשר לשותפות:</b> מלאו בתחתית כל עיקרון במה תשמחו לעזרה — מהמטה, מהפיקוח או מהרשת. זהו הבסיס לשיחת שותפות, לא לביקורת.',
+    'עמוד <b>תמונת מצב</b> מתעדכן לבד: פרופיל מלא, ממוצע לכל עיקרון, התפלגות רמות והשוואה למדידה קודמת.',
+    'בחרו עד 3 פרקטיקות לקידום ומלאו את <b>תוכנית הפעולה</b>, כולל "איזו עזרה נדרשת — וממי?".',
+    'חיזרו למצפן פעמיים בשנה (תכנון בפתיחה, הערכה בסיום) — ההשוואה בין מדידות היא מדד ההתקדמות שלכם.']
+   .map(t=>'<li>'+t+'</li>').join('')+'</ol></div>'+
+
+   '<div class="panel"><h3>'+icon('i-alert')+' דוגמה למילוי תקין</h3>'+
+   '<div class="sub">פרקטיקה "מבוגר משמעותי לכל תלמיד" ← הרמה שלנו: <b>מתנסים ומדייקים</b> ← ראיות: '+
+   '"לכל מחנכות ז׳-ח׳ יש רשימת חניכים אישית. בשכבות הגבוהות עדיין אין ליווי מוגדר (מקור: מיפוי חניכה, נובמבר)."</div></div>'+
+
+   '<div class="foot">מצפן החינוך היוצר · גרסה 9 · פותח על בסיס '+
+   '<a href="'+GUIDEBOOK+'" target="_blank" rel="noopener">ספר ההפעלה של החינוך היוצר</a> וקנבס החינוך היוצר.<br>'+
+   'הנתונים נשמרים בדפדפן שלכם בלבד. השתמשו ב"ייצוא קובץ" כדי לשמור עותק או להעביר הלאה.</div>'+
+   '</section>';
+}
+
+/* ---------- view: story ---------- */
+function viewStory(){
+  return '<section class="view" data-v="story">'+
+   '<div class="head"><div class="kick">'+icon('i-quote')+' נקודת המוצא של המצפן</div>'+
+   '<h2>הסיפור הבית-ספרי</h2>'+
+   '<div class="def">המצפן מודד מול סטנדרט משותף, הסיפור מגדיר את הייחוד שלכם. ביחד הם מהווים סיפור שלם. '+
+   'מלאו על בסיס קנבס החינוך היוצר, לפני מילוי המצפנים.</div></div>'+
+
+   '<div class="panel"><div class="storygrid">'+
+   '<div class="fld"><label for="s-need">צורך מקומי <span class="h">— על איזה צורך של התלמידים בית הספר עונה?</span></label>'+
+   '<textarea id="s-need" data-story="need" rows="3"></textarea></div>'+
+   '<div class="fld"><label for="s-assume">הנחות יסוד <span class="h">— האמונות החינוכיות שמנחות אותנו</span></label>'+
+   '<textarea id="s-assume" data-story="assume" rows="3"></textarea></div>'+
+   '<div class="fld"><label for="s-idea">הרעיון המאחד <span class="h">— משפט אחד שמחבר את הכול</span></label>'+
+   '<textarea id="s-idea" data-story="idea" rows="2"></textarea></div>'+
+   '<div class="fld"><label>אבנים גדולות <span class="h">— מנופי השינוי שבחרתם כדי לענות על הצורך</span></label>'+
+   '<div class="stones">'+[0,1,2].map(i=>
+     '<div class="stone"><div class="cap">'+icon('i-target')+' אבן גדולה '+(i+1)+'</div>'+
+     '<textarea data-stone="'+i+'" rows="3"></textarea></div>').join('')+'</div></div>'+
+   '</div></div>'+
+
+   '<div class="panel"><h3>'+icon('i-bridge')+' טבלת הגשר: מהסיפור אל המצפן</h3>'+
+   '<div class="sub">אחרי מילוי המצפן — חיזרו לכאן ובדקו: אילו חלקים בסיפור מגובים בעשייה עקבית, ואילו עדיין על הנייר?</div>'+
+   '<table class="bridge"><thead><tr><th>חלק הפרוגרמה</th><th>המצפנים שבוחנים אותו</th>'+
+   '<th>מה מגובה בעשייה — ומה עדיין על הנייר?</th></tr></thead><tbody>'+
+   BRIDGE_ROWS.map((r,i)=>'<tr><td>'+esc(r.part)+'</td><td>'+esc(r.prin)+'</td>'+
+     '<td><textarea data-bridge="'+i+'" rows="2"></textarea></td></tr>').join('')+
+   '</tbody></table>'+
+   '<div class="anchor">'+icon('i-anchor')+'<div><b>שאלת העוגן</b> — חיזרו אליה בכל דירוג ובתוכנית הפעולה: '+
+   'האם העשייה הזו מקדמת את הרעיון המאחד שלנו?</div></div></div>'+
+   '</section>';
+}
+
+/* ---------- view: principle ---------- */
+function viewPrinciple(p, pi){
+  const src = p.sources.split('·').map(s=>s.trim()).filter(Boolean);
+  let h = '<section class="view" data-v="p'+pi+'">'+
+   '<div class="head"><div class="kick">'+icon('i-'+p.icon)+' עיקרון '+p.num+' מתוך 5</div>'+
+   '<h2>'+esc(p.title)+'</h2>'+
+   '<div class="def">'+esc(p.definition)+'</div>'+
+   '<div class="sources"><span class="lbl">מקורות נתונים מוצעים:</span>'+
+     src.map(s=>'<span class="chip">'+esc(s)+'</span>').join('')+'</div></div>';
+
+  p.practices.forEach((pr,ci)=>{
+    h += '<article class="card prac" id="prac-'+pi+'-'+ci+'">'+
+      '<header><h3>'+esc(pr.name)+'</h3><span class="what">'+esc(pr.what)+'</span>'+
+      '<span class="badge" data-badge="'+pi+'-'+ci+'"></span></header>'+
+      '<div class="levels">'+
+      pr.levels.map((txt,li)=>
+        '<button class="lv" data-l="'+li+'" data-p="'+pi+'" data-c="'+ci+'">'+
+        '<span class="tick" style="color:'+LVCOLOR[li]+'">'+icon('i-check','15px')+'</span>'+
+        '<span class="lvhead">'+icon(LV[li].ic,'15px')+' '+LV[li].n+'</span>'+
+        '<span class="lvtxt">'+esc(txt)+'</span></button>').join('')+
+      '</div>'+
+      '<div class="ev"><label for="ev-'+pi+'-'+ci+'">'+icon('i-pin','14px')+
+      ' דוגמאות וראיות מהשטח <span class="hint">— "אצלנו זה נראה כך…" · 1–2 דוגמאות קונקרטיות, עם מקור ותאריך</span></label>'+
+      '<textarea id="ev-'+pi+'-'+ci+'" data-ev="'+pi+'-'+ci+'" rows="2"></textarea></div>'+
+      '</article>';
+  });
+
+  h += '<div class="panel pause"><h3>'+icon('i-mirror')+' עצירה אישית — לפני השיח הצוותי</h3>'+
+   '<div class="sub">כל משתתף/ת עונה לעצמו/ה בכתב (כ-10 דקות) לפני השיח הצוותי. '+
+   'העבודה האישית מחזקת בעלות ואחריותיות על הלמידה — התובנות שלכם הן חומר הגלם של השיח.</div>'+
+   '<div class="timer" data-timer="'+pi+'">'+
+     '<span class="clock">10:00</span>'+
+     '<button class="t-go">'+icon('i-play','14px')+' התחלה</button>'+
+     '<button class="t-rs ghost">'+icon('i-reset','14px')+' איפוס</button>'+
+     '<span class="note">'+icon('i-timer','13px')+' עשר דקות של כתיבה שקטה — בלי דיון, בלי מסכים.</span>'+
+   '</div>'+
+   p.personal.map((q,qi)=>
+     '<div class="q"><label for="pp-'+pi+'-'+qi+'"><span class="n">'+(qi+1)+'</span>'+esc(q)+'</label>'+
+     '<textarea id="pp-'+pi+'-'+qi+'" data-pp="'+pi+'-'+qi+'" rows="2"></textarea></div>').join('')+
+   '<div class="closing">'+icon('i-arrow','15px')+
+   '<span>לסיום העצירה האישית: בחרו תובנה או שאלה אחת להביא לפתיחת השיח הצוותי.</span></div></div>';
+
+  h += '<div class="panel"><h3>'+icon('i-people')+' שאלות לשיח צוותי</h3>'+
+   '<ol class="teamq">'+p.team.map(q=>'<li>'+esc(q)+'</li>').join('')+'</ol>'+
+   '<div class="deep">'+icon('i-book','16px')+'<div><b>להעמקה בספר ההפעלה:</b> '+esc(p.deep)+
+   ' · <a href="'+GUIDEBOOK+'" target="_blank" rel="noopener">פתיחת ספר ההפעלה</a></div></div></div>';
+
+  h += '<div class="panel partner"><h3>'+icon('i-bridge')+' גשר לשותפות — במה נשמח לעזרה בעיקרון הזה?</h3>'+
+   '<div class="sub">מהמטה, מהפיקוח או מרשת בתי הספר (הכשרה, ליווי, משאבים, חיבורים). '+
+   'הכתיבה כאן היא בסיס לשיחת שותפות — אתם לא מחזיקים את השינוי לבד.</div>'+
+   '<textarea data-partner="'+pi+'" rows="3" style="margin-top:12px"></textarea></div>';
+
+  return h + '</section>';
+}
+
+/* ---------- view: dashboard ---------- */
+function viewDash(){
+  return '<section class="view" data-v="dash">'+
+   '<div class="head"><div class="kick">'+icon('i-radar')+' מתעדכן לבד מהדירוגים</div>'+
+   '<h2>תמונת מצב</h2>'+
+   '<div class="def">הפרופיל הבית-ספרי על פני חמשת העקרונות. הסולם הוא 1–4 לפי ארבע רמות ההערכה.</div></div>'+
+   '<div id="dash-body"></div></section>';
+}
+
+function drawDash(){
+  const body = document.getElementById('dash-body');
+  const a = allRated(), tot = totalPractices();
+  if(!a.length){
+    body.innerHTML = '<div class="card empty">'+icon('i-radar')+
+      'עדיין לא דורגה אף פרקטיקה.<br>עברו לעקרונות, ובחרו את הרמה שמתארת אתכם בכל פרקטיקה.</div>';
+    return;
+  }
+  const avgs = P.map((_,i)=>principleAvg(i));
+  const ov = overallAvg();
+  const dist = [0,0,0,0]; a.forEach(x=>dist[x.v.l]++);
+  const ua = unanchored();
+
+  let h = '<div class="dashgrid">'+
+    '<div class="card radarwrap"><h3>פרופיל חמשת העקרונות</h3>'+
+    '<div class="sub">ככל שהצורה מלאה יותר — העשייה מוטמעת יותר</div>'+
+    radarSVG(avgs)+
+    '<div class="legend"><span><i style="background:var(--blue)"></i>המדידה הנוכחית</span>'+
+    (hasPrev()?'<span><i style="background:var(--ink-3)"></i>מדידה קודמת</span>':'')+'</div></div>'+
+
+    '<div class="card bars"><h3>ממוצע לכל עיקרון</h3>'+
+    P.map((p,i)=>barRow(p,i,avgs[i])).join('')+
+    prevBox()+'</div></div>';
+
+  h += '<div class="panel"><h3>'+icon('i-tree')+' התפלגות הרמות</h3><div class="dist">'+
+    LV.map((l,i)=>'<div class="dcell" style="background:var(--l'+(i+1)+'-soft);border-color:var(--l'+(i+1)+')">'+
+      '<div class="n" style="color:var(--l'+(i+1)+')">'+dist[i]+'</div>'+
+      '<div class="l" style="color:var(--l'+(i+1)+')">'+icon(l.ic,'14px')+' '+l.n+'</div>'+
+      '<div class="p">'+Math.round(dist[i]/a.length*100)+'% מהמדורגות</div></div>').join('')+
+    '</div></div>';
+
+  h += '<div class="panel"><h3>'+icon('i-target')+' בקצרה</h3><div class="stat">'+
+    '<div class="scell"><div class="n">'+ov.toFixed(2)+'</div><div class="l">ממוצע כולל (מתוך 4)</div></div>'+
+    '<div class="scell"><div class="n">'+a.length+' / '+tot+'</div><div class="l">פרקטיקות שדורגו</div></div>'+
+    '<div class="scell"><div class="n">'+(dist[2]+dist[3])+'</div><div class="l">פרקטיקות מוטמעות (עקבי ומעלה)</div></div>'+
+    '<div class="scell"><div class="n" style="color:'+(ua.length?'var(--warn)':'var(--l3)')+'">'+ua.length+'</div>'+
+    '<div class="l">דירוגים גבוהים ללא ראיות</div></div>'+
+    '</div></div>';
+
+  if(ua.length){
+    h += '<div class="panel"><h3>'+icon('i-alert')+' דירוגים שטרם עוגנו בראיות</h3>'+
+      '<div class="sub">דירוג של "פועל באופן עקבי" ומעלה בלי דוגמה מהשטח. '+
+      'אם קשה למצוא דוגמה — ייתכן שהדירוג גבוה מדי. זו הרשימה שכדאי לעבור עליה לפני שיחה עם הפיקוח.</div>'+
+      '<ul class="gaps" style="margin-top:12px">'+ua.map(x=>
+        '<li>'+icon('i-alert','15px')+'<b>'+esc(x.pr.name)+'</b>'+
+        '<span class="pn">'+esc(P[x.pi].title)+' · '+LV[x.v.l].n+'</span></li>').join('')+'</ul></div>';
+  }
+
+  const low = a.slice().sort((x,y)=>x.v.l-y.v.l).slice(0,5);
+  h += '<div class="panel"><h3>'+icon('i-seed')+' מוקדי צמיחה אפשריים</h3>'+
+    '<div class="sub">חמש הפרקטיקות בדירוג הנמוך ביותר. בחרו מתוכן — או מכל מקום אחר — עד שלוש לתוכנית הפעולה.</div>'+
+    '<ul class="gaps" style="margin-top:12px">'+low.map(x=>
+      '<li>'+icon(LV[x.v.l].ic,'15px')+'<b>'+esc(x.pr.name)+'</b>'+
+      '<span class="pn">'+esc(P[x.pi].title)+' · '+LV[x.v.l].n+'</span></li>').join('')+'</ul></div>';
+
+  body.innerHTML = h;
+  bindPrev();
+}
+
+function hasPrev(){ return P.some((_,i)=> state.prev['p'+i] > 0); }
+
+function radarSVG(avgs){
+  const S=300, C=S/2, R=112, N=5;
+  const ang = i => -Math.PI/2 + i*2*Math.PI/N;
+  const pt = (i,v) => [C + Math.cos(ang(i))*R*(v/4), C + Math.sin(ang(i))*R*(v/4)];
+  let g='';
+  for(let ring=1; ring<=4; ring++){
+    const pts = Array.from({length:N},(_,i)=>pt(i,ring).join(',')).join(' ');
+    g += '<polygon points="'+pts+'" fill="none" stroke="var('+(ring===4?'--line-2':'--line')+')" stroke-width="1"/>';
+  }
+  for(let i=0;i<N;i++){
+    const [x,y]=pt(i,4);
+    g += '<line x1="'+C+'" y1="'+C+'" x2="'+x+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>';
+  }
+  const poly = vals => Array.from({length:N},(_,i)=>pt(i, vals[i]||0).join(',')).join(' ');
+  if(hasPrev()){
+    const pv = P.map((_,i)=> +state.prev['p'+i] || 0);
+    g += '<polygon points="'+poly(pv)+'" fill="none" stroke="var(--ink-3)" stroke-width="1.6" stroke-dasharray="5 4"/>';
+  }
+  const cur = avgs.map(v=>v||0);
+  g += '<polygon points="'+poly(cur)+'" fill="rgba(22,119,255,.16)" stroke="var(--blue)" stroke-width="2.4"/>';
+  cur.forEach((v,i)=>{ if(v){ const [x,y]=pt(i,v);
+    g += '<circle cx="'+x+'" cy="'+y+'" r="4" fill="#fff" stroke="var(--blue)" stroke-width="2.4"/>'; }});
+  let lbl='';
+  P.forEach((p,i)=>{
+    const [x,y]=pt(i,5.1);
+    const anchor = Math.abs(x-C)<6 ? 'middle' : (x>C ? 'start' : 'end');
+    const words = p.title.split(' ');
+    const lines = words.length>2 ? [words.slice(0,2).join(' '), words.slice(2).join(' ')] : [p.title];
+    lbl += lines.map((t,li)=>'<text x="'+x+'" y="'+(y+li*13)+'" text-anchor="'+anchor+'" '+
+      'font-size="11.5" font-weight="700" fill="var(--ink-2)">'+esc(t)+'</text>').join('');
+  });
+  return '<svg viewBox="-58 -22 '+(S+116)+' '+(S+62)+'" style="width:100%;height:auto;max-height:340px;display:block" '+
+    'role="img" aria-label="פרופיל חמשת העקרונות">'+g+lbl+'</svg>';
+}
+
+function barRow(p,i,avg){
+  const pv = +state.prev['p'+i] || 0;
+  let delta='';
+  if(avg!=null && pv>0){
+    const d = avg-pv, cls = d>.05?'up':(d<-.05?'down':'same');
+    delta = '<span class="delta '+cls+'">'+(d>0?'+':'')+d.toFixed(1)+'</span>';
+  }
+  const pct = avg!=null ? ((avg-1)/3*100) : 0;
+  const li = avg!=null ? Math.min(3, Math.max(0, Math.round(avg)-1)) : 0;
+  return '<div class="brow"><div class="t"><span>'+esc(p.title)+'</span>'+delta+
+    '<span class="v">'+(avg!=null?avg.toFixed(2):'—')+'</span></div>'+
+    '<div class="track"><div class="fill" style="width:'+pct+'%;background:'+LVCOLOR[li]+'"></div>'+
+    (pv>0?'<div class="prev" style="inset-inline-start:'+((pv-1)/3*100)+'%"></div>':'')+'</div></div>';
+}
+
+function prevBox(){
+  return '<div class="prevbox noprint"><b style="font-size:13px;color:var(--navy)">מדידה קודמת (למילוי ידני)</b>'+
+    '<div style="font-size:12px;color:var(--ink-3);margin-top:3px">'+
+    'הזינו את הממוצע של כל עיקרון מהמדידה הקודמת — ההשוואה היא מדד ההתקדמות שלכם.</div>'+
+    P.map((p,i)=>'<div class="r"><span>'+esc(p.title)+'</span>'+
+      '<input type="number" min="0" max="4" step="0.01" data-prev="p'+i+'" value="'+
+      (state.prev['p'+i]||'')+'" placeholder="—"></div>').join('')+'</div>';
+}
+function bindPrev(){
+  document.querySelectorAll('[data-prev]').forEach(inp=>{
+    inp.oninput = ()=>{
+      const v = parseFloat(inp.value);
+      if(isNaN(v)) delete state.prev[inp.dataset.prev]; else state.prev[inp.dataset.prev]=Math.min(4,Math.max(0,v));
+      save(); clearTimeout(bindPrev._t); bindPrev._t=setTimeout(drawDash,700);
+    };
+  });
+}
+
+/* ---------- view: action plan ---------- */
+function viewPlan(){
+  return '<section class="view" data-v="plan">'+
+   '<div class="head"><div class="kick">'+icon('i-clipboard')+' עד שלוש פרקטיקות לשנה</div>'+
+   '<h2>תוכנית פעולה</h2>'+
+   '<div class="def">בחרו עד 3 פרקטיקות לקידום השנה. הגדירו רמת יעד וסימנים שיעידו על התקדמות '+
+   '(נתון בשאלון אח"מ, סדירות חדשה, תוצר לקהילה).</div></div>'+
+   '<div class="anchor" style="margin-bottom:6px">'+icon('i-anchor')+
+   '<div><b>בדקו מול הסיפור:</b> האם הפרקטיקות שבחרתם מקדמות את הרעיון המאחד ואת האבנים הגדולות? '+
+   'אם לא — או שהבחירה תשתנה, או שהסיפור יתעדכן.</div></div>'+
+   '<div class="anchor" style="background:#0F5C56">'+icon('i-bridge')+
+   '<div><b>אתם לא מחזיקים את השינוי לבד:</b> "איזו עזרה נדרשת" הוא הבסיס לשיחה עם המפקח/ת ועם המטה — '+
+   'ממקום של שותפות, לא של שיפוט.</div></div>'+
+   '<div id="plan-body"></div></section>';
+}
+
+function drawPlan(){
+  const opts = ['<option value="">— בחרו פרקטיקה —</option>'].concat(
+    P.map((p,pi)=>'<optgroup label="'+esc(p.title)+'">'+
+      p.practices.map((pr,ci)=>'<option value="'+pi+'-'+ci+'">'+esc(pr.name)+'</option>').join('')+
+      '</optgroup>')).join('');
+
+  document.getElementById('plan-body').innerHTML = state.plan.map((row,ri)=>{
+    const sel = row.p||'';
+    const cur = sel ? rated(+sel.split('-')[0], +sel.split('-')[1]) : null;
+    const curTxt = cur ? icon(LV[cur.l].ic,'15px')+' <span style="color:'+LVCOLOR[cur.l]+'">'+LV[cur.l].n+'</span>'
+                       : '<span style="color:var(--ink-3);font-weight:400">טרם דורגה</span>';
+    return '<div class="card plan"><header>'+icon('i-target','17px')+' פרקטיקה '+(ri+1)+
+      (sel?'<button class="rm" data-clear="'+ri+'">'+icon('i-trash','13px')+' ניקוי</button>':'')+'</header>'+
+      '<div class="planbody">'+
+      '<div class="fld"><label>העיקרון והפרקטיקה</label>'+
+        '<select data-plan="'+ri+'" data-f="p">'+opts.replace('value="'+sel+'"','value="'+sel+'" selected')+'</select></div>'+
+      '<div class="arrow"><span class="cap">רמה נוכחית</span><span class="cur">'+curTxt+'</span>'+
+        icon('i-arrow','16px')+
+        '<span class="cap">רמת יעד</span>'+
+        '<select data-plan="'+ri+'" data-f="t" style="max-width:200px">'+
+        '<option value="">— בחרו —</option>'+
+        LV.map((l,i)=>'<option value="'+i+'"'+(row.t==i?' selected':'')+'>'+l.n+'</option>').join('')+
+        '</select></div>'+
+      '<div class="pgrid">'+
+        fld(ri,'steps','מה נעשה? (צעדים קונקרטיים)',3)+
+        fld(ri,'signs','מה יעיד שהתקדמנו?',3)+
+      '</div>'+
+      '<div class="pgrid">'+
+        inp(ri,'owner','אחראי.ת')+
+        inp(ri,'when','לו"ז ונקודת בדיקה')+
+      '</div>'+
+      fld(ri,'help','איזו עזרה נדרשת — וממי?',2)+
+      '</div></div>';
+  }).join('');
+
+  document.querySelectorAll('[data-plan]').forEach(el=>{
+    const ri = +el.dataset.plan, f = el.dataset.f;
+    el.value = state.plan[ri][f]!=null ? state.plan[ri][f] : '';
+    const ev = el.tagName==='SELECT' ? 'onchange' : 'oninput';
+    el[ev] = ()=>{ state.plan[ri][f] = el.value; save(); if(f==='p'||f==='t') drawPlan(); };
+  });
+  document.querySelectorAll('[data-clear]').forEach(b=>{
+    b.onclick = ()=>{ state.plan[+b.dataset.clear] = {}; save(); drawPlan(); };
+  });
+}
+function fld(ri,f,label,rows,cls){
+  return '<div class="fld'+(cls?' '+cls:'')+'"><label>'+esc(label)+'</label>'+
+    '<textarea data-plan="'+ri+'" data-f="'+f+'" rows="'+rows+'"></textarea></div>';
+}
+function inp(ri,f,label){
+  return '<div class="fld"><label>'+esc(label)+'</label>'+
+    '<input type="text" data-plan="'+ri+'" data-f="'+f+'"></div>';
+}
+
+/* ============================================================
+   BINDING
+   ============================================================ */
+function bind(){
+  document.querySelectorAll('.lv').forEach(b=>{
+    b.onclick = ()=>{
+      const pi=+b.dataset.p, ci=+b.dataset.c, li=+b.dataset.l, k=rk(pi,ci);
+      const cur = state.r[k] || {};
+      cur.l = (cur.l===li) ? null : li;          /* לחיצה חוזרת מבטלת דירוג */
+      state.r[k]=cur; save(); paint(pi,ci); renderNav();
+    };
+  });
+  document.querySelectorAll('[data-ev]').forEach(t=>{
+    t.oninput = ()=>{ const [pi,ci]=t.dataset.ev.split('-').map(Number);
+      const k=rk(pi,ci); state.r[k]=state.r[k]||{}; state.r[k].ev=t.value; save(); paint(pi,ci); };
+  });
+  document.querySelectorAll('[data-pp]').forEach(t=>{
+    t.oninput = ()=>{ state.pause[t.dataset.pp]=t.value; save(); };
+  });
+  document.querySelectorAll('[data-partner]').forEach(t=>{
+    t.oninput = ()=>{ state.partner[t.dataset.partner]=t.value; save(); };
+  });
+  document.querySelectorAll('[data-story]').forEach(t=>{
+    t.oninput = ()=>{ state.story[t.dataset.story]=t.value; save(); };
+  });
+  document.querySelectorAll('[data-stone]').forEach(t=>{
+    t.oninput = ()=>{ state.story.stones[+t.dataset.stone]=t.value; save(); };
+  });
+  document.querySelectorAll('[data-bridge]').forEach(t=>{
+    t.oninput = ()=>{ state.story.bridge[+t.dataset.bridge]=t.value; save(); };
+  });
+  document.querySelectorAll('[data-timer]').forEach(initTimer);
+  document.querySelectorAll('textarea').forEach(autoGrow);
+}
+function autoGrow(t){
+  const fit = ()=>{ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; };
+  t.addEventListener('input', fit); t._fit = fit;
+}
+
+function paint(pi,ci){
+  const v = state.r[rk(pi,ci)] || {};
+  document.querySelectorAll('.lv[data-p="'+pi+'"][data-c="'+ci+'"]').forEach(b=>
+    b.classList.toggle('sel', +b.dataset.l === v.l));
+  const badge = document.querySelector('[data-badge="'+pi+'-'+ci+'"]');
+  const card  = document.getElementById('prac-'+pi+'-'+ci);
+  const ev = (v.ev||'').trim();
+  if(v.l==null){
+    badge.className='badge unrated'; badge.innerHTML='טרם דורגה'; card.classList.remove('flag');
+  } else if(v.l>=2 && !ev){
+    badge.className='badge needsev';
+    badge.innerHTML = icon('i-alert','13px')+' טרם עוגן בראיות';
+    card.classList.add('flag');
+  } else {
+    badge.className='badge ok'; badge.innerHTML = icon('i-check','13px')+' '+LV[v.l].n;
+    card.classList.remove('flag');
+  }
+}
+
+function fillValues(){
+  document.getElementById('f-school').value = state.school||'';
+  document.getElementById('f-year').value   = state.year||'תשפ"ז';
+  document.getElementById('f-round').value  = state.round||'פתיחת שנה';
+  document.querySelectorAll('[data-ev]').forEach(t=>{ const [pi,ci]=t.dataset.ev.split('-'); t.value=evOf(+pi,+ci); });
+  document.querySelectorAll('[data-pp]').forEach(t=>t.value = state.pause[t.dataset.pp]||'');
+  document.querySelectorAll('[data-partner]').forEach(t=>t.value = state.partner[t.dataset.partner]||'');
+  document.querySelectorAll('[data-story]').forEach(t=>t.value = state.story[t.dataset.story]||'');
+  document.querySelectorAll('[data-stone]').forEach(t=>t.value = state.story.stones[+t.dataset.stone]||'');
+  document.querySelectorAll('[data-bridge]').forEach(t=>t.value = state.story.bridge[+t.dataset.bridge]||'');
+  P.forEach((p,pi)=>p.practices.forEach((_,ci)=>paint(pi,ci)));
+  document.querySelectorAll('textarea').forEach(t=>{ if(t._fit) t._fit(); });
+}
+
+/* ---------- timer ---------- */
+const timers = {};
+function initTimer(box){
+  const pi = box.dataset.timer;
+  const clock = box.querySelector('.clock'), go = box.querySelector('.t-go'), rs = box.querySelector('.t-rs');
+  timers[pi] = timers[pi] || {left:600, on:false, id:null};
+  const T = timers[pi];
+  clearInterval(T.id); T.on = false;   /* רינדור מחדש — האינטרוול הישן מצביע ל-DOM שכבר לא קיים */
+  const show = ()=>{
+    const m = Math.floor(Math.abs(T.left)/60), s = Math.abs(T.left)%60;
+    clock.textContent = (T.left<0?'-':'') + m + ':' + String(s).padStart(2,'0');
+    box.classList.toggle('done', T.left<=0);
+    go.innerHTML = (T.on ? icon('i-pause','14px')+' עצירה' : icon('i-play','14px')+' התחלה');
+  };
+  const tick = ()=>{ T.left--; show(); if(T.left===0) toast('עשר הדקות הסתיימו — בחרו תובנה אחת לשיח','i-mirror'); };
+  go.onclick = ()=>{
+    T.on = !T.on;
+    clearInterval(T.id);
+    if(T.on) T.id = setInterval(tick, 1000);
+    show();
+  };
+  rs.onclick = ()=>{ clearInterval(T.id); T.on=false; T.left=600; show(); };
+  show();
+}
+
+/* ---------- export / import / print ---------- */
+function fileName(ext){
+  const raw = 'מצפן-' + (state.school||'ללא-שם') + '-' + state.year + '-' + state.round;
+  return raw.replace(/["\/:*?<>|]/g,'').trim() + '.' + ext;
+}
+function doExport(){
+  const payload = {app:'matzpen', v:1, exported:new Date().toISOString(), state};
+  const blob = new Blob([JSON.stringify(payload,null,1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = fileName('json');
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1500);
+  toast('הקובץ ירד — שמרו אותו לצד המדידה הבאה','i-download');
+}
+function doImport(file){
+  const fr = new FileReader();
+  fr.onload = ()=>{
+    try{
+      const d = JSON.parse(fr.result);
+      const s = d && d.state ? d.state : d;
+      if(!s || typeof s!=='object' || !s.r) throw 0;
+      state = normalize(merge(structuredClone(BLANK), s));
+      save(); render();
+      toast('הקובץ נטען: ' + (state.school||'ללא שם') + ' · ' + state.round,'i-upload');
+    }catch(e){ toast('הקובץ אינו קובץ מצפן תקין','i-alert'); }
+  };
+  fr.readAsText(file);
+}
+
+/* ---------- boot ---------- */
+['school','year','round'].forEach(f=>{
+  document.getElementById('f-'+f).oninput = e => { state[f]=e.target.value; save(); };
+  document.getElementById('f-'+f).onchange = e => { state[f]=e.target.value; save(); };
+});
+document.getElementById('b-print').onclick  = ()=>window.print();
+document.getElementById('b-export').onclick = doExport;
+document.getElementById('b-import').onclick = ()=>document.getElementById('f-file').click();
+document.getElementById('f-file').onchange  = e => { if(e.target.files[0]) doImport(e.target.files[0]); e.target.value=''; };
+document.getElementById('b-reset').onclick  = ()=>{
+  if(!confirm('לאפס את כל המילוי? מומלץ לייצא קובץ קודם — הפעולה אינה הפיכה.')) return;
+  localStorage.removeItem(KEY); state = structuredClone(BLANK); render();
+  toast('המצפן אופס','i-reset');
+};
+document.getElementById('b-menu').onclick = ()=>{
+  document.getElementById('side').classList.toggle('open');
+  document.getElementById('scrim').classList.toggle('on');
+};
+document.getElementById('scrim').onclick = ()=>{
+  document.getElementById('side').classList.remove('open');
+  document.getElementById('scrim').classList.remove('on');
+};
+window.addEventListener('beforeprint', ()=>{
+  document.querySelectorAll('textarea').forEach(t=>{ t.style.height='auto'; t.style.height=(t.scrollHeight+2)+'px'; });
+});
+
+render();
+</script>
+</body>
+</html>
