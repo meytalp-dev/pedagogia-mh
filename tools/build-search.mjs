@@ -41,6 +41,12 @@ const SKIP = new Set([
   "admin.html",   // פאנל ניהול — לבעלי הרשאה בלבד
 ]);
 
+/* עמוד מוגן = עמוד שטוען את /auth.js.
+   הסינון נגזר מהקוד עצמו ולא מרשימה ידנית: העמודים המוגנים הצהירו על עצמם
+   בשורת ה-script, ולכן עמוד מוגן חדש נחסם אוטומטית גם אם ישכחו לעדכן כאן.
+   בלי זה תוכן שמאחורי שער ההרשאות נמשך לתוך search-index.json הציבורי. */
+const isGated = (src) => /<script[^>]+\bsrc=["'](?:\.{0,2}\/)?auth\.js/i.test(src);
+
 /* ---------- סיווג לפי מרחב ---------- */
 const CATS = [
   { id: "pedagogi", label: "מרחב פדגוגי" },
@@ -303,10 +309,19 @@ function extractPage(html, file) {
 }
 
 /* ---------- ריצה ---------- */
+const gated = [];
 const files = readdirSync(ROOT)
   .filter((f) => f.endsWith(".html") && !SKIP.has(f))
+  .filter((f) => {
+    if (!isGated(readFileSync(join(ROOT, f), "utf8"))) return true;
+    gated.push(f);
+    return false;
+  })
   .sort();
-if (existsSync(join(ROOT, "tools", "index.html"))) files.push("tools/index.html");
+if (
+  existsSync(join(ROOT, "tools", "index.html")) &&
+  !isGated(readFileSync(join(ROOT, "tools", "index.html"), "utf8"))
+) files.push("tools/index.html");
 
 const pages = [];
 const resources = [];
@@ -340,3 +355,6 @@ console.log(
   "search-index.json: " + pages.length + " עמודים, " +
   resources.length + " משאבים, " + (json.length / 1024).toFixed(0) + "KB"
 );
+if (gated.length) {
+  console.log("סוננו " + gated.length + " עמודים מוגנים (טוענים /auth.js): " + gated.sort().join(", "));
+}
