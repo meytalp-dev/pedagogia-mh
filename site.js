@@ -1,5 +1,72 @@
 /* משותף לכל עמודי הבית של המנהיגות הפדגוגית היוצרת */
-function toggleMenu(open){document.body.classList.toggle('menu-open',open)}
+/* ===== תפריט המגירה =====
+   toggleMenu נקראת מתוך onclick בכל 151 עמודי האתר (ההמבורגר, ה-X, הרקע המעומעם)
+   ולכן היא נשארת גלובלית עם אותה חתימה בדיוק. מה שנוסף מסביבה:
+   inert + aria-expanded, העברת פוקוס לתוך המגירה ובחזרה לכפתור שפתח,
+   לכידת Tab בתוך המגירה הפתוחה וסגירה ב-Escape.
+   ההסתרה עצמה נעשית ב-CSS (visibility ב-.drawer) כדי שהמגירה תהיה סגורה
+   ולא ממוקדת עוד לפני שהסקריפט הזה בכלל רץ. אותו דפוס כמו התפריט של pagenav.js. */
+(function drawerMenu(){
+  var lastTrigger=null;
+
+  function drawer(){return document.querySelector('.drawer')}
+  function burger(){return document.querySelector('.burger')}
+  function isOpen(){return document.body.classList.contains('menu-open')}
+  function focusables(d){
+    return [].slice.call(d.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+      .filter(function(el){return el.offsetWidth||el.offsetHeight||el.getClientRects().length});
+  }
+  /* מסנכרן inert/aria למצב בפועל — נקרא גם בטעינה, כדי שהמגירה הסגורה
+     תצא מסדר ה-Tab ומקורא המסך כבר ברגע הראשון */
+  function sync(){
+    var d=drawer(), b=burger(), open=isOpen();
+    if(d){ if(open) d.removeAttribute('inert'); else d.setAttribute('inert',''); }
+    if(b) b.setAttribute('aria-expanded',open?'true':'false');
+  }
+
+  window.toggleMenu=function(open){
+    var d=drawer(), b=burger();
+    var want=(open===undefined)?!isOpen():!!open;
+    if(want===isOpen()){ sync(); return; }
+    if(want) lastTrigger=(document.activeElement&&document.activeElement!==document.body)?document.activeElement:null;
+    document.body.classList.toggle('menu-open',want);
+    sync();
+    if(!d) return;
+    if(want){
+      var f=focusables(d);
+      if(f.length){
+        f[0].focus();
+        /* רשת ביטחון: אם דפדפן כלשהו עדיין לא סיים לעדכן את ה-visibility,
+           ה-focus הראשון נופל בשקט — מנסים שוב אחרי שהסגנון חושב מחדש */
+        if(document.activeElement!==f[0]) requestAnimationFrame(function(){
+          requestAnimationFrame(function(){ if(isOpen()) f[0].focus(); });
+        });
+      }
+    } else {
+      var back=(lastTrigger&&document.contains(lastTrigger))?lastTrigger:b;
+      var a=document.activeElement;
+      if(back&&(!a||a===document.body||d.contains(a))) back.focus();
+      lastTrigger=null;
+    }
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(!isOpen()) return;
+    if(e.key==='Escape'||e.key==='Esc'){ e.preventDefault(); window.toggleMenu(false); return; }
+    if(e.key!=='Tab') return;
+    var d=drawer(); if(!d) return;
+    var a=document.activeElement;
+    /* לוכדים רק כשהפוקוס כבר בתוך המגירה או על ההמבורגר — כדי לא להיאבק
+       על הפוקוס עם חלון החיפוש או עם הוויג'ט של העוגן */
+    if(!(d.contains(a)||a===burger())) return;
+    var f=focusables(d); if(!f.length) return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey&&(a===first||a===burger())){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey&&a===last){ e.preventDefault(); first.focus(); }
+  });
+
+  sync();
+})();
 
 (function animateCounters(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -60,27 +127,71 @@ document.addEventListener('animationend',e=>{
   }
 });
 
-/* תמונות רצות "מהשטח" — crossfade בין התמונות שבתוך .fieldshow, כולל החלפת כיתוב */
+/* תמונות רצות "מהשטח" — crossfade בין התמונות שבתוך .fieldshow, כולל החלפת כיתוב.
+   WCAG 2.2.2 (רמה A): להחלפה אוטומטית חייבת להיות דרך עצירה. ריחוף עכבר לבדו
+   לא קיים בנייד ולא במקלדת, ולכן מוזרק כאן כפתור השהיה/הפעלה אמיתי.
+   מי שביקש "פחות תנועה" מקבל את הקרוסלה עצורה מלכתחילה — עם כפתור להפעלה ידנית.
+   הטיימר נעצר באמת (clearInterval) כשהקרוסלה יוצאת מהמסך, כשהלשונית מוסתרת
+   וב-pagehide, ולא ממשיך לרוץ לריק כמו קודם. */
 (function fieldShows(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+  /* אייקוני קו, currentColor, עובי 1.8 — כמו שאר האייקונים באתר */
+  const ICON={
+    pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5v14"/><path d="M14.5 5v14"/></svg>',
+    play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2 18.5 12 8 18.8Z"/></svg>'
+  };
   document.querySelectorAll('.fieldshow').forEach(box=>{
     const imgs=[...box.querySelectorAll('img')];
     if(imgs.length<2) return;
     const cap=box.dataset.capTarget ? document.querySelector(box.dataset.capTarget) : null;
     if(cap) cap.style.transition='opacity .35s ease';
-    let i=Math.max(0,imgs.findIndex(im=>im.classList.contains('on'))), paused=false;
-    box.addEventListener('pointerenter',()=>paused=true);
-    box.addEventListener('pointerleave',()=>paused=false);
-    setInterval(()=>{
-      if(paused||document.hidden) return;
+    const delay=+(box.dataset.interval||6000);
+    let i=Math.max(0,imgs.findIndex(im=>im.classList.contains('on')));
+    let timer=null, capTimer=null, hovered=false, offscreen=false;
+    let playing=!reduce.matches;
+
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='fieldshow-toggle';
+    box.appendChild(btn);
+
+    function advance(){
+      if(hovered) return;
       imgs[i].classList.remove('on');
       i=(i+1)%imgs.length;
       imgs[i].classList.add('on');
       if(cap&&imgs[i].dataset.cap){
         cap.style.opacity=0;
-        setTimeout(()=>{cap.textContent=imgs[i].dataset.cap;cap.style.opacity=1},350);
+        clearTimeout(capTimer);
+        capTimer=setTimeout(()=>{cap.textContent=imgs[i].dataset.cap;cap.style.opacity=1},350);
       }
-    }, +(box.dataset.interval||6000));
+    }
+    function sync(){
+      const run=playing&&!offscreen&&!document.hidden;
+      if(run&&!timer) timer=setInterval(advance,delay);
+      else if(!run&&timer){ clearInterval(timer); timer=null; }
+    }
+    function render(){
+      btn.innerHTML=playing?ICON.pause:ICON.play;
+      const label=playing?'השהיית מצגת התמונות':'המשך מצגת התמונות';
+      btn.setAttribute('aria-label',label);
+      btn.title=label;
+      sync();
+    }
+    btn.addEventListener('click',()=>{playing=!playing;render()});
+
+    /* ריחוף העכבר נשאר כנוחות — אבל הוא כבר לא אמצעי העצירה היחיד */
+    box.addEventListener('pointerenter',()=>hovered=true);
+    box.addEventListener('pointerleave',()=>hovered=false);
+
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(es=>{offscreen=!es[0].isIntersecting;sync()},{threshold:0}).observe(box);
+    }
+    document.addEventListener('visibilitychange',sync);
+    addEventListener('pagehide',()=>{playing=false;clearTimeout(capTimer);sync()});
+    if(reduce.addEventListener) reduce.addEventListener('change',e=>{playing=!e.matches;render()});
+
+    render();
   });
 })();
 
@@ -126,9 +237,12 @@ document.addEventListener('animationend',e=>{
   if(holder){
     const sw=document.createElement('span');
     sw.className='langsw';
-    sw.innerHTML='<button type="button" data-lang="he"'+(isAr?'':' class="on"')+'>עברית</button>'+
-                 '<span class="lsep">|</span>'+
-                 '<button type="button" data-lang="ar" lang="ar"'+(isAr?' class="on"':'')+'>العربية</button>';
+    sw.setAttribute('role','group');
+    sw.setAttribute('aria-label','שפת התצוגה');
+    /* aria-pressed מספר לקורא המסך איזו שפה פעילה עכשיו — הצבע/המשקל לבדם לא נגישים */
+    sw.innerHTML='<button type="button" data-lang="he" aria-pressed="'+(isAr?'false':'true')+'"'+(isAr?'':' class="on"')+'>עברית</button>'+
+                 '<span class="lsep" aria-hidden="true">|</span>'+
+                 '<button type="button" data-lang="ar" lang="ar" aria-pressed="'+(isAr?'true':'false')+'"'+(isAr?' class="on"':'')+'>العربية</button>';
     const old=[...holder.querySelectorAll('a.dis')].find(a=>a.textContent.trim()==='العربية');
     if(old) old.replaceWith(sw); else holder.appendChild(sw);
     sw.addEventListener('click',e=>{
@@ -152,6 +266,26 @@ document.addEventListener('animationend',e=>{
   const s=document.createElement('script');
   s.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
   document.body.appendChild(s);
+
+  /* שפת המסמך חייבת להשתנות יחד עם התוכן (WCAG 3.1.1, רמה A):
+     כל עוד documentElement.lang נשאר "he", קורא מסך מקריא את הערבית בקול עברי.
+     Google Translate לא נוגע ב-lang בעצמו, ולכן מעדכנים כאן ידנית — אבל רק אחרי
+     שהתרגום באמת הוחל (הווידג'ט מוסיף ל-html את translated-rtl/translated-ltr).
+     בכוונה בלי timeout כגיבוי: אם התרגום נכשל, התוכן נשאר עברית ו-lang צריך
+     להישאר he. חזרה לעברית לא מטופלת כאן — היא טוענת את העמוד מחדש נקי. */
+  const html=document.documentElement;
+  function markArabic(){
+    if(html.lang==='ar') return;
+    html.lang='ar';
+    html.dir='rtl';
+  }
+  if(/\btranslated-(rtl|ltr)\b/.test(html.className)) markArabic();
+  else if(window.MutationObserver){
+    const mo=new MutationObserver(()=>{
+      if(/\btranslated-(rtl|ltr)\b/.test(html.className)){ markArabic(); mo.disconnect(); }
+    });
+    mo.observe(html,{attributes:true,attributeFilter:['class']});
+  }
 })();
 
 function openOgen(){

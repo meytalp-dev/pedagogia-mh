@@ -56,6 +56,15 @@ html.sr-on .sr.in.shine::after{animation:shine 1.15s ease-out calc(var(--d,0s) +
 .fieldshow img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
   opacity:0;transform:scale(1.07);transition:opacity 1.1s ease,transform 9s linear}
 .fieldshow img.on{opacity:1;transform:scale(1)}
+/* כפתור השהיה/הפעלה של הקרוסלה — WCAG 2.2.2: להחלפה אוטומטית חייבת להיות
+   דרך עצירה שזמינה גם במקלדת וגם בנייד (ריחוף עכבר לבדו לא נחשב). site.js מזריק אותו. */
+.fieldshow-toggle{position:absolute;z-index:2;inset-block-end:10px;inset-inline-end:10px;
+  width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.55);background:rgba(13,59,102,.55);color:#fff;cursor:pointer;
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);transition:background .2s var(--ease),border-color .2s var(--ease)}
+.fieldshow-toggle:hover{background:rgba(13,59,102,.82);border-color:#fff}
+.fieldshow-toggle svg{width:16px;height:16px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fieldshow-toggle:focus-visible{outline:3px solid #fff;outline-offset:2px}
 
 /* ===== מוקדי אחריות — כרטיסים בקידוד הצבע של המפגש ===== */
 .mokdim{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
@@ -232,9 +241,17 @@ a.card:hover::before{width:4px}
 
 /* ===== drawer ===== */
 .scrim{position:fixed;inset:0;background:rgba(13,59,102,.35);backdrop-filter:blur(2px);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
-.drawer{position:fixed;top:0;bottom:0;right:0;width:400px;max-width:92vw;background:#fff;z-index:310;box-shadow:var(--sh-float);transform:translateX(100%);transition:transform .3s var(--ease);display:flex;flex-direction:column}
+/* המגירה סגורה = visibility:hidden, לא רק מוזזת החוצה.
+   בלי זה כל ~87 הקישורים שבתוכה נשארים ממוקדים ב-Tab ומוקראים לקורא מסך
+   לפני הכותרת של העמוד (המגירה היא האלמנט הראשון ב-body) — כשל WCAG 2.0 A.
+   ה-visibility נכלל ב-transition כדי שההחלקה לא תישבר — אבל כאן במפורש
+   כמעבר של 0 שניות עם השהיה: בפתיחה הוא נדלק מיד (delay 0), ובסגירה הוא כבה
+   רק אחרי .3s, כשההחלקה החוצה כבר הסתיימה. זה ההבדל מ-.pnd ב-pagenav.css,
+   שמשתמש ב-visibility .3s: שם ה-visibility עדיין "hidden" בפריים הראשון של
+   הפתיחה, ולכן focus() מיידי על פריט בתוך הפאנל נופל בשקט. */
+.drawer{position:fixed;top:0;bottom:0;right:0;width:400px;max-width:92vw;background:#fff;z-index:310;box-shadow:var(--sh-float);visibility:hidden;transform:translateX(100%);transition:transform .3s var(--ease),visibility 0s linear .3s;display:flex;flex-direction:column}
 body.menu-open .scrim{opacity:1;pointer-events:auto}
-body.menu-open .drawer{transform:none}
+body.menu-open .drawer{visibility:visible;transform:none;transition:transform .3s var(--ease),visibility 0s linear 0s}
 .drawer .head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border)}
 .drawer .head b{color:var(--navy);font-size:1.05rem}
 .drawer .close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:1rem;color:var(--navy)}
