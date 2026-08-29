@@ -73,7 +73,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .btn:hover{transform:translateY(-1px)}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;box-shadow:0 4px 15px rgba(124,92,252,0.2)}
 .btn-secondary{background:var(--light-gray);color:var(--dark)}
-.btn-green{background:var(--green);color:#fff}
 .btn-outline{background:transparent;border:2px solid #e8e8e8;color:var(--gray)}
 .btn-outline:hover{border-color:var(--primary);color:var(--primary)}
 .btn-sm{padding:0.45rem 1rem;font-size:0.85rem}
@@ -83,18 +82,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .screen{display:none}
 .screen.active{display:block;animation:fadeIn 0.3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-/* === AI BOX === */
-.ai-box{background:linear-gradient(135deg,var(--primary-l),#f0e8ff);border:2px solid rgba(124,92,252,0.15);border-radius:16px;padding:1.2rem;margin-bottom:1.2rem}
-.ai-box h3{font-size:1rem;color:var(--primary);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem}
-.ai-box p{font-size:0.85rem;color:var(--gray);margin-bottom:0.8rem}
-
-/* === KEY SETUP === */
-.key-setup{background:linear-gradient(135deg,#fff8dd,#fff0e0);border:2px solid rgba(230,126,34,0.2);border-radius:14px;padding:1rem;margin-bottom:1rem}
-.key-setup h4{font-size:0.95rem;color:#e67e22;margin-bottom:0.5rem}
-.key-setup p{font-size:0.82rem;color:var(--gray);line-height:1.6}
-.key-setup a{color:var(--primary);font-weight:600}
-.key-setup input{margin-top:0.5rem}
 
 /* === SCENE EDITOR === */
 .scene-editor{background:var(--light-gray);border:2px solid #eee;border-radius:16px;padding:1rem;margin-bottom:0.8rem;position:relative;transition:border-color 0.2s}
@@ -134,11 +121,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 /* === TOAST === */
 #toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--dark);color:#fff;padding:0.7rem 1.5rem;border-radius:14px;font-size:0.9rem;z-index:9999;transition:transform 0.3s;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0)}
-
-/* === LOADING === */
-.loading{display:inline-flex;align-items:center;gap:0.5rem;color:var(--primary);font-weight:600}
-.loading::after{content:'';width:18px;height:18px;border:3px solid var(--primary-l);border-top-color:var(--primary);border-radius:50%;animation:spin 0.7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* === DRAFT BANNER === */
 .draft-banner{background:#fff8dd;border:2px solid #ffe066;border-radius:14px;padding:0.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
@@ -288,10 +270,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           <option value="funny">מצחיק – הומור וסגנון צעיר</option>
         </select>
       </div>
-      <div class="form-group">
-        <label for="content">תוכן / נושא</label>
-        <textarea id="content" placeholder="כתבו את הנושא, או הדביקו תוכן מהשיעור שרוצים לסכם..."></textarea>
-      </div>
       <div class="nav-row">
         <span></span>
         <button class="btn btn-primary" onclick="goToStep(2)">&#8592; הבא: סצנות</button>
@@ -303,26 +281,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   <div class="screen" id="step2">
     <div class="card">
       <h2>&#127916; עריכת סצנות</h2>
-
-      <!-- AI Box -->
-      <div class="ai-box">
-        <h3>&#10024; יצירה עם AI</h3>
-        <p>Gemini ייצר סצנות אוטומטית מהתוכן שהזנתם</p>
-        <button class="btn btn-primary" id="aiGenerateBtn" onclick="generateWithAI()">&#10024; ייצר סצנות עם AI</button>
-        <span class="loading" id="aiLoading" style="display:none">יוצר סצנות...</span>
-      </div>
-
-      <!-- Key Setup -->
-      <div class="key-setup" id="aiKeySetup" style="display:none">
-        <h4>&#128273; נדרש מפתח Gemini</h4>
-        <p>
-          1. היכנסו ל-<a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a><br>
-          2. לחצו "Create API Key"<br>
-          3. העתיקו והדביקו כאן:
-        </p>
-        <input type="text" id="geminiKeyInput" aria-label="מפתח Gemini API" placeholder="הדביקו את המפתח כאן...">
-        <button class="btn btn-sm btn-green" onclick="saveGeminiKey()" style="margin-top:0.5rem">&#10003; שמור מפתח</button>
-      </div>
 
       <!-- Scenes List -->
       <div id="scenesList"></div>
@@ -393,10 +351,6 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 <div id="toast"></div>
 
 <script>
-// === CONFIG ===
-const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-
 // === STATE ===
 let currentStep = 1;
 let user = null;
@@ -458,7 +412,6 @@ function showApp() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('userName').textContent = user.name;
   checkDraft();
-  checkGeminiKey();
 }
 
 // === AUTO LOGIN ===
@@ -469,23 +422,6 @@ function showApp() {
   // Init video type UI
   setVideoType('summary');
 })();
-
-// === GEMINI KEY ===
-function getGeminiKey() { return localStorage.getItem('ort-gemini-key') || null; }
-
-function saveGeminiKey() {
-  const key = document.getElementById('geminiKeyInput').value.trim();
-  if (!key) { showToast('יש להדביק מפתח'); return; }
-  localStorage.setItem('ort-gemini-key', key);
-  document.getElementById('aiKeySetup').style.display = 'none';
-  showToast('המפתח נשמר!');
-}
-
-function checkGeminiKey() {
-  // Only hide key setup if key exists – don't auto-show it
-  const setup = document.getElementById('aiKeySetup');
-  if (setup && getGeminiKey()) setup.style.display = 'none';
-}
 
 // === NAVIGATION ===
 function goToStep(step) {
@@ -502,7 +438,7 @@ function goToStep(step) {
     else if (i + 1 === step) s.classList.add('active');
   });
 
-  if (step === 2) { renderScenes(); checkGeminiKey(); }
+  if (step === 2) renderScenes();
   if (step === 3) refreshPreview();
 
   saveDraft();
@@ -513,10 +449,8 @@ function validateStep(step) {
   if (step === 1) {
     const name = document.getElementById('videoName').value.trim();
     const subject = document.getElementById('subject').value;
-    const content = document.getElementById('content').value.trim();
     if (!name) { showToast('יש למלא שם לסרטון'); return false; }
     if (!subject) { showToast('יש לבחור מקצוע'); return false; }
-    if (!content) { showToast('יש למלא תוכן/נושא'); return false; }
     return true;
   }
   if (step === 2) {
@@ -536,7 +470,7 @@ function saveStepData() {
     level: document.getElementById('level').value,
     duration: videoType === 'summary' ? '60' : document.getElementById('duration').value,
     style: videoType === 'summary' ? 'animated' : document.getElementById('style').value,
-    content: document.getElementById('content').value.trim()
+    content: null
   };
 }
 
@@ -568,7 +502,6 @@ function loadDraft() {
     if (details.level) document.getElementById('level').value = details.level;
     if (details.duration) document.getElementById('duration').value = details.duration;
     if (details.style) document.getElementById('style').value = details.style;
-    if (details.content) document.getElementById('content').value = details.content;
     goToStep(draft.step || 1);
   } catch(e) {}
   document.getElementById('draftBanner').style.display = 'none';
@@ -610,7 +543,7 @@ function deleteScene(idx) {
 function renderScenes() {
   const container = document.getElementById('scenesList');
   if (!scenes.length) {
-    container.innerHTML = '<p style="text-align:center;color:var(--gray);padding:2rem;">אין עדיין סצנות. לחצו "ייצר עם AI" או הוסיפו ידנית.</p>';
+    container.innerHTML = '<p style="text-align:center;color:var(--gray);padding:2rem;">אין עדיין סצנות. לחצו "הוסיפו סצנה" כדי להתחיל.</p>';
     return;
   }
 
@@ -671,157 +604,6 @@ function toggleScene(el) {
 function updateScene(idx, field, value) {
   scenes[idx][field] = value;
   saveDraft();
-}
-
-// === AI GENERATION ===
-async function generateWithAI() {
-  const apiKey = getGeminiKey();
-  if (!apiKey) {
-    const setup = document.getElementById('aiKeySetup');
-    if (setup) setup.style.display = 'block';
-    showToast('יש להזין מפתח Gemini כדי לייצר עם AI');
-    return;
-  }
-
-  saveStepData();
-  const { videoName, subject, grade, level, duration, style, content } = details;
-  const isSummary = videoType === 'summary';
-
-  let sceneCount, styleName, prompt;
-
-  if (isSummary) {
-    sceneCount = '10';
-    prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה.
-יצור בדיוק 10 סצנות לסרטון סיכום שיעור ב-60 שניות בסגנון TikTok.
-
-פרטים:
-- שם: ${videoName}
-- מקצוע: ${subject}
-- כיתה: ${grade}
-- רמה: ${level}
-- אורך: 60 שניות (10 סצנות × 4-6 שניות)
-
-תוכן/נושא:
-${content}
-
-הנחיות:
-- שפה פשוטה וברורה, מתאימה לנוער בתיכון
-- משפטים קצרים מאוד, מנות ידע קטנות
-- קצב מהיר – כל סצנה 4-6 שניות
-- סצנה 1 = hook: כותרת + "60 שניות על מה למדנו"
-- סצנות 2-8 = content: נקודה מרכזית אחת לכל סצנה (2-4 פריטים קצרים)
-- סצנה 9 = summary: 3-5 נקודות מרכזיות לסיכום
-- סצנה 10 = ending: "עכשיו תורכם" + קריאה לפעולה
-- items = 2-4 פריטים קצרים לסצנה. משפט אחד לפריט!
-
-החזר JSON בלבד בפורמט:
-{
-  "scenes": [
-    {
-      "type": "hook|content|list|summary|ending",
-      "emoji": "אימוג'י אחד",
-      "title": "כותרת קצרה",
-      "items": ["פריט 1", "פריט 2"],
-      "subtitle": "טקסט משנה (אופציונלי, מחרוזת ריקה אם אין)"
-    }
-  ]
-}`;
-  } else {
-    const sceneCounts = { '120': '8-12', '300': '15-20', '600': '25-35' };
-    const styleNames = { animated: 'מונפש', normal: 'רגיל ומקצועי', funny: 'מצחיק עם הומור' };
-    sceneCount = sceneCounts[duration] || '15-20';
-    styleName = styleNames[style] || 'מונפש';
-
-    prompt = `אתה מורה מנוסה בבית ספר מקצועי-טכנולוגי של מינהל הכשרה מקצועית במשרד העבודה.
-יצור סצנות לסרטון לימודי מלא (הקנייה).
-
-פרטים:
-- שם: ${videoName}
-- מקצוע: ${subject}
-- כיתה: ${grade}
-- רמה: ${level}
-- אורך: ${duration} שניות (${sceneCount} סצנות)
-- סגנון: ${styleName}
-
-תוכן/נושא:
-${content}
-
-הנחיות:
-- שפה פשוטה וברורה, מתאימה לנוער בתיכון
-- משפטים קצרים, מנות ידע קטנות
-- הסצנה הראשונה = hook (פתיחה מושכת)
-- הסצנה האחרונה = ending (סיום + קריאה לפעולה)
-- סצנה לפני אחרונה = summary (סיכום 3-5 נקודות)
-- כל 3-4 סצנות, הוסף סצנה מסוג "question" (שאלת הבנה אינטראקטיבית)
-- שאלה = type "question", title = השאלה, items = 4 תשובות, subtitle = אינדקס התשובה הנכונה (0-3)
-- שאר הסצנות = תוכן לימודי מגוון (content, list, grid, warning)
-- items = רשימת פריטים/נקודות בכל סצנה (2-6 פריטים)
-- אימוג'י אחד מתאים לכל סצנה
-${style === 'funny' ? '- הוסף הומור קל, בדיחות קשורות לנושא, סגנון צעיר' : ''}
-
-החזר JSON בלבד בפורמט:
-{
-  "scenes": [
-    {
-      "type": "hook|content|list|grid|warning|question|summary|ending",
-      "emoji": "אימוג'י אחד",
-      "title": "כותרת קצרה",
-      "items": ["פריט 1", "פריט 2"],
-      "subtitle": "טקסט משנה (או אינדקס תשובה נכונה לשאלה)"
-    }
-  ]
-}`;
-  }
-
-  const btn = document.getElementById('aiGenerateBtn');
-  const loading = document.getElementById('aiLoading');
-  btn.style.display = 'none';
-  loading.style.display = 'inline-flex';
-
-  try {
-    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
-      })
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || 'שגיאה בחיבור ל-Gemini');
-    }
-
-    const data = await res.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('תשובה ריקה מ-Gemini');
-
-    const parsed = JSON.parse(text);
-    if (!parsed.scenes?.length) throw new Error('לא התקבלו סצנות');
-
-    // Calculate duration per scene
-    const totalMs = parseInt(details.duration) * 1000;
-    const durPerScene = Math.round(totalMs / parsed.scenes.length);
-
-    scenes = parsed.scenes.map(s => ({
-      type: s.type || 'content',
-      emoji: s.emoji || '',
-      title: s.title || '',
-      items: Array.isArray(s.items) ? s.items : [],
-      subtitle: s.subtitle || '',
-      duration: durPerScene
-    }));
-
-    renderScenes();
-    saveDraft();
-    showToast(`נוצרו ${scenes.length} סצנות!`);
-  } catch (e) {
-    showToast('שגיאה: ' + e.message);
-  } finally {
-    btn.style.display = 'inline-flex';
-    loading.style.display = 'none';
-  }
 }
 
 // === PREVIEW ===
