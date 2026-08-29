@@ -24,10 +24,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body data-back="cherum-nehalim.html|חירום ואירוע חריג">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -122,19 +123,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -158,14 +160,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -238,7 +240,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -277,9 +279,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -287,7 +292,7 @@
     <h1>חובת דיווח והנחיות לפעולה</h1>
     <p class="lead">מי חייב לדווח, למי מדווחים ומי מיודע בתוך בית הספר — בארבעה תחומים: פגיעות מיניות, אובדנות, אלימות וסמים.</p>
 
-    <div class="meta-row"><span class="src">המקור: <a class="lk" href="docs/chovat-divuach-cherum.pdf" target="_blank" rel="noopener">מסמך חובת הדיווח המקורי</a></span></div>
+    <div class="meta-row"><span class="src">המקור: <a class="lk" href="docs/chovat-divuach-cherum.pdf" target="_blank" rel="noopener">מסמך חובת הדיווח המקורי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span></div>
   </div>
 </section>
 
@@ -295,7 +300,7 @@
   <div class="article">
 
     <h2 class="sub-sec first rv" id="klali">שבעה כללים שחלים על כל אירוע<small>לפני שנכנסים לטבלאות — העקרונות</small></h2>
-    <p class="lead-p rv">המסמך מתאר בתמציתיות את חובת הדיווח וההנחיות לפעולה באירועים של אלימות, סמים ואובדנות. הוא <strong>אינו תחליף לחוזר המנכ״ל</strong> — <a class="lk" href="https://apps.education.gov.il/Mankal/horaa.aspx?siduri=341" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך, הוראה מס׳ 341</a>.</p>
+    <p class="lead-p rv">המסמך מתאר בתמציתיות את חובת הדיווח וההנחיות לפעולה באירועים של אלימות, סמים ואובדנות. הוא <strong>אינו תחליף לחוזר המנכ״ל</strong> — <a class="lk" href="https://apps.education.gov.il/Mankal/horaa.aspx?siduri=341" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך, הוראה מס׳ 341<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>.</p>
     <ol class="ed rv">
       <li>המסמך יסייע לכם לשמור על כללי חובת הדיווח, וכן נועד להזכיר לכם כי <strong>בכל אירוע אתם לא לבד</strong> וכי מערך ההדרכה והפיקוח עומד לרשותכם.</li>
       <li>דיווח על חשד להתעללות או על פגיעה בתלמיד <strong>אינו הטלת אשמה</strong> ואין בו עברה על קוד אתי או מקצועי — אלא בקשה לחקירה ולבדיקה. חובת הבדיקה וההוכחה כי הפגיעה אכן התרחשה אינה מוטלת על המדווח, אלא על עו״ס לחוק נוער או על המשטרה.</li>
@@ -333,7 +338,7 @@
     </ol>
     <p class="rv">היועץ או הפסיכולוג החינוכי, רצוי בנוכחות המנהל ובתיאום מראש עם עו״ס לחוק נוער ועם המשטרה, יידעו את הורי התלמיד הפוגע — בנוכחות התלמיד — אודות הפגיעה ואודות הדיווח. יש לקחת בחשבון שיקולים של טובת התלמיד ושל אי־פגיעה במהלך החקירה.</p>
     <div class="callout rv"><span class="ttl">שתי פגישות שהמנהל חייב לקיים</span>על מנהל בית הספר להיפגש <strong>לפחות פעם אחת</strong> לשיחה עם התלמיד הנפגע ועם הוריו, כדי להעביר מסר של תמיכה בתלמיד והגנה עליו; וכן <strong>לפחות פעם אחת</strong> עם התלמיד הפוגע ועם הוריו, כדי להעביר להם את המסר שההתנהגות הפוגעת היא מחוץ לחוק ולנורמות ההתנהגות המקובלות, וכי יש צורך לטפל בהתנהגות זו כדי להפסיקה. כמו כן יש לומר לתלמיד הפוגע כי אף שהתנהגותו אינה מקובלת בשום אופן — בית הספר רואה את עצמו אחראי לו.</div>
-    <p class="rv"><a class="lk" href="https://cms.education.gov.il/EducationCMS/Applications/Mankal/EtsMedorim/2/2-1/HoraotKeva/K-2009-3b-2-1-11.htm" target="_blank" rel="noopener">חוזר מנכ״ל — התמודדות מערכת החינוך עם פגיעה מינית של תלמידים בתלמידים</a></p>
+    <p class="rv"><a class="lk" href="https://cms.education.gov.il/EducationCMS/Applications/Mankal/EtsMedorim/2/2-1/HoraotKeva/K-2009-3b-2-1-11.htm" target="_blank" rel="noopener">חוזר מנכ״ל — התמודדות מערכת החינוך עם פגיעה מינית של תלמידים בתלמידים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="ovdanut">אובדנות<small>אמירה אובדנית — מה עושים מהרגע הראשון</small></h2>
     <div class="tbl-scroll rv">
@@ -362,7 +367,7 @@
       <li>על היועץ לערוך חוזה עם התלמיד.</li>
       <li>בעת אירוע אובדני — על היועץ למפות מעגלי סיכון של כלל התלמידים.</li>
     </ul>
-    <p class="rv"><a class="lk" href="https://cms.education.gov.il/educationcms/applications/mankal/arc/se4ak2_9_1.htm" target="_blank" rel="noopener">חוזר מנכ״ל — אובדנות ילדים ובני נוער: מניעה והתערבות</a></p>
+    <p class="rv"><a class="lk" href="https://cms.education.gov.il/educationcms/applications/mankal/arc/se4ak2_9_1.htm" target="_blank" rel="noopener">חוזר מנכ״ל — אובדנות ילדים ובני נוער: מניעה והתערבות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="alimut">אלימות<small>ההבחנה בין סוגי האירועים קובעת מי מדווח ולמי</small></h2>
     <div class="tbl-scroll rv">
@@ -375,7 +380,7 @@
         <tr><td class="k">אלימות בין תלמידים</td><td>על מי שבפניו נחשפה הפגיעה</td><td>משטרה</td><td>יועץ, פסיכולוג, מנהל, מדריך · מפקחת על הייעוץ</td><td>דיווח למשטרה על פי חומרת האירוע</td></tr>
       </table>
     </div>
-    <p class="rv"><a class="lk" href="https://cms.education.gov.il/educationcms/applications/mankal/arc/s2ak2_1_2.htm" target="_blank" rel="noopener">חוזר מנכ״ל — אקלים חינוכי מיטבי והתמודדות עם אירועי אלימות וסיכון</a></p>
+    <p class="rv"><a class="lk" href="https://cms.education.gov.il/educationcms/applications/mankal/arc/s2ak2_1_2.htm" target="_blank" rel="noopener">חוזר מנכ״ל — אקלים חינוכי מיטבי והתמודדות עם אירועי אלימות וסיכון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="samim">סמים<small>חובת הדיווח כאן חלה על המנהל — וחמישה כללים שאסור לחצות</small></h2>
     <div class="tbl-scroll rv">
@@ -391,16 +396,18 @@
       <li>המנהל <strong>אינו רשאי</strong> לחקור תלמידים או להעסיק חוקר פרטי כדי לגלות משתמשים אחרים, או לדרוש בדיקות שתן — גם אם יש הסכמה בכתב של התלמידים ושל הוריהם. פעולות אלה הן בסמכות המשטרה.</li>
       <li>יש לבנות תוכנית חינוכית־טיפולית עבור התלמיד, בבית הספר או מחוצה לו.</li>
     </ol>
-    <p class="rv"><a class="lk" href="https://apps.education.gov.il/Mankal/horaa.aspx?siduri=341" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך — הוראה מס׳ 341</a></p>
+    <p class="rv"><a class="lk" href="https://apps.education.gov.il/Mankal/horaa.aspx?siduri=341" target="_blank" rel="noopener">חוזר מנכ״ל משרד החינוך — הוראה מס׳ 341<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
 
     <div class="source-box rv">
       <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
-      <a class="btn" href="docs/chovat-divuach-cherum.pdf" target="_blank" rel="noopener">פתיחת המסמך המקורי ⬇</a>
+      <a class="btn" href="docs/chovat-divuach-cherum.pdf" target="_blank" rel="noopener">פתיחת המסמך המקורי ⬇<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

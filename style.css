@@ -581,3 +581,23 @@ html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
 .navitem .sub .sect{font-size:.71rem;font-weight:800;letter-spacing:.1em;color:#0B7FA6;
   padding:10px 14px 4px;margin-top:4px;border-top:1px solid var(--border)}
 .navitem .sub .sect:first-child{margin-top:0;border-top:none}
+
+/* ===== דילוג לתוכן הראשי (WCAG 2.4.1, רמה A) ===== */
+.skip{position:fixed;inset-inline-start:16px;top:-100px;z-index:500;
+  background:var(--navy);color:#fff;padding:12px 22px;border-radius:0 0 12px 12px;
+  font-family:inherit;font-weight:700;font-size:.95rem;text-decoration:none;
+  box-shadow:var(--sh-md);transition:top .18s var(--ease)}
+.skip:focus{top:0}
+@media print{.skip{display:none}}
+
+/* ===== טקסט לקוראי מסך בלבד ===== */
+.sr-only{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* ===== "שאל את עוגן" במגירה — היה <a>, הומר ל-<button> לנגישות מקלדת.
+   .drawer a הוא סלקטור לפי תגית, ולכן הכפתור צריך את אותו עיצוב במפורש. ===== */
+.drawer .body button.open-ogen{display:flex;align-items:center;gap:12px;width:100%;
+  padding:11px 12px;border:0;border-radius:12px;background:none;color:var(--text);
+  font-family:inherit;font-weight:600;font-size:.95rem;text-align:start;cursor:pointer;
+  transition:background .15s,padding-inline-start .2s var(--ease)}
+.drawer .body button.open-ogen:hover{background:var(--soft-bg);padding-inline-start:18px}

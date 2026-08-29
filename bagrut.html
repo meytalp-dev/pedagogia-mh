@@ -59,10 +59,11 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 </style>
 </head>
 <body data-pn-min="3">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -157,19 +158,20 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -193,14 +195,14 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -273,7 +275,7 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -312,9 +314,12 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <div class="pagehead split">
   <div>
@@ -624,7 +629,7 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 
   <div class="callout amber rv">
     <span class="ttl">מה נחשב ״מינימום היבחנות״ — ומה החוברת לא אומרת</span>
-    חוברת סמלי השאלונים מגדירה <strong>איך נבחנים בכל מקצוע</strong> — יחידות, סמלים, סוג בחינה, משך ומשקל יחסי. היא <strong>אינה</strong> מסמך הזכאות: לא מופיעים בה סף היחידות המצטבר לתעודת בגרות, לא הכלל בדבר מספר המקצועות המוגברים ולא ציון עובר. את הסף המצרפי יש לקחת מ<a class="lk" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזר המנכ״ל</a> ומהודעות אגף בכיר בחינות בלבד. כל מספר שנשמע בשטח ואינו מגובה שם — אל תמסרו אותו כמחייב.
+    חוברת סמלי השאלונים מגדירה <strong>איך נבחנים בכל מקצוע</strong> — יחידות, סמלים, סוג בחינה, משך ומשקל יחסי. היא <strong>אינה</strong> מסמך הזכאות: לא מופיעים בה סף היחידות המצטבר לתעודת בגרות, לא הכלל בדבר מספר המקצועות המוגברים ולא ציון עובר. את הסף המצרפי יש לקחת מ<a class="lk" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזר המנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ומהודעות אגף בכיר בחינות בלבד. כל מספר שנשמע בשטח ואינו מגובה שם — אל תמסרו אותו כמחייב.
   </div>
 
   <h2 class="sub-sec rv" id="sec-megama-bagrut">
@@ -687,43 +692,43 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל עברית · הבנה, הבעה ולשון</h3>
       <p style="font-size:.82rem;color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל המתמטיקה</h3>
       <p style="font-size:.82rem;color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל האנגלית</h3>
       <p style="font-size:.82rem;color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל ההיסטוריה</h3>
       <p style="font-size:.82rem;color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל האזרחות</h3>
       <p style="font-size:.82rem;color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל הספרות</h3>
       <p style="font-size:.82rem;color:var(--text2)">ספרות ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל התנ"ך</h3>
       <p style="font-size:.82rem;color:var(--text2)">תנ"ך ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d1" href="https://pop-charedi.education.gov.il/topics/literature/high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">פורטל הספרות · המגזר החרדי</h3>
       <p style="font-size:.82rem;color:var(--text2)">נוסח החינוך החרדי · pop-charedi <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv d2" href="https://campus.gov.il/course_subjects/education-matriculation/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">קמפוס IL · קטגוריית ״בגרות״</h3>
       <p style="font-size:.82rem;color:var(--text2)">כל קורסי ההכנה לבגרות בקמפוס, בעמוד אחד <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <a class="card rv" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener" style="padding:18px 20px">
       <h3 style="font-size:1rem;margin-bottom:3px">חוזרי מנכ"ל · משרד החינוך</h3>
       <p style="font-size:.82rem;color:var(--text2)">הנוסח הרשמי והמחייב <span class="tag tea">פעיל</span></p>
-    </a>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
   </div>
 
   <h2 class="sub-sec rv" id="sec-reshet">
@@ -739,61 +744,61 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 20V9.5L12 4l7.5 5.5V20z"/><path d="M9.5 20v-6h5v6"/></svg>אזרחות</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/" target="_blank" rel="noopener">חומרי הוראה ולמידה · אזרחות חטיבה עליונה</a> — יחידות הוראה מתוקשבות, סרטונים ומערכי שיעור מסודרים לפי פרקי תוכנית הלימודים. למורה שמחפש חומר מוכן לשיעור בודד בלי לבנות מאפס.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/citizenship-enrichment/" target="_blank" rel="noopener">העשרה באזרחות</a> — מאמרים, חומרי אקטואליה וחומרי דיון להעמקה מעבר לספר הלימוד. מתאים לקבוצות מוגברות ולשיעורי דיון בכיתות שמתקשות להתחבר לחומר היבש.</li>
-    <li><a class="lk" href="https://lo.cet.ac.il/player/?document=4c335c6d-1117-4cfa-b02a-379aacbb3e17&amp;language=he&amp;sitekey=citizenship" target="_blank" rel="noopener">ממשל פתוח · מקבץ מערכי שיעור (מט"ח)</a> — מקבץ מערכי שיעור מוכנים בנושא שקיפות שלטונית וממשל פתוח, פתוח וחינמי. חומר טוב לאשכול "המשטר בישראל".</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/" target="_blank" rel="noopener">חומרי הוראה ולמידה · אזרחות חטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה מתוקשבות, סרטונים ומערכי שיעור מסודרים לפי פרקי תוכנית הלימודים. למורה שמחפש חומר מוכן לשיעור בודד בלי לבנות מאפס.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/citizenship-enrichment/" target="_blank" rel="noopener">העשרה באזרחות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרים, חומרי אקטואליה וחומרי דיון להעמקה מעבר לספר הלימוד. מתאים לקבוצות מוגברות ולשיעורי דיון בכיתות שמתקשות להתחבר לחומר היבש.</li>
+    <li><a class="lk" href="https://lo.cet.ac.il/player/?document=4c335c6d-1117-4cfa-b02a-379aacbb3e17&amp;language=he&amp;sitekey=citizenship" target="_blank" rel="noopener">ממשל פתוח · מקבץ מערכי שיעור (מט"ח)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מקבץ מערכי שיעור מוכנים בנושא שקיפות שלטונית וממשל פתוח, פתוח וחינמי. חומר טוב לאשכול "המשטר בישראל".</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h9.5L19 9v10.5H5z"/><path d="M14.5 4.5V9H19"/><path d="M8 12.5h7M8 16h4.5"/></svg>עברית · הבנה, הבעה ולשון</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/bhinot-bagrut-umesimot/" target="_blank" rel="noopener">בחינות בגרות ומשימות · עברית לחטיבה עליונה</a> — שאלוני בגרות לדוגמה ומשימות הערכה בהבנה, בהבעה ובלשון. זה הבסיס לתרגול מבחן, לצד מאגר התרגולים שנבנה כאן באתר.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/lashon/" target="_blank" rel="noopener">נושאים ומיומנויות · לשון</a> — פירוק פרקי הלשון לנושאים, עם חומרי הוראה לכל נושא בנפרד. שימושי לבניית תוכנית עבודה שנתית ולחלוקת החומר בין מורים.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/havana-vehabaa/" target="_blank" rel="noopener">הבנה והבעה · נושאים ומיומנויות</a> — חומרי הוראה לכתיבת טיעון, לסיכום ולמיזוג טקסטים — בדיוק המיומנויות שנופלות בבחינה.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/kehila-morim-ivrit/" target="_blank" rel="noopener">קהילת המורים לעברית ברשת</a> — מרחב שיתוף של מורי העברית בחטיבה העליונה, עם חומרים שמורים מעלים ופורום מקצועי. למורה בודד/ת בבית ספר קטן, זו הדרך להיות בקבוצה.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/bhinot-bagrut-umesimot/" target="_blank" rel="noopener">בחינות בגרות ומשימות · עברית לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — שאלוני בגרות לדוגמה ומשימות הערכה בהבנה, בהבעה ובלשון. זה הבסיס לתרגול מבחן, לצד מאגר התרגולים שנבנה כאן באתר.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/lashon/" target="_blank" rel="noopener">נושאים ומיומנויות · לשון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — פירוק פרקי הלשון לנושאים, עם חומרי הוראה לכל נושא בנפרד. שימושי לבניית תוכנית עבודה שנתית ולחלוקת החומר בין מורים.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/havana-vehabaa/" target="_blank" rel="noopener">הבנה והבעה · נושאים ומיומנויות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי הוראה לכתיבת טיעון, לסיכום ולמיזוג טקסטים — בדיוק המיומנויות שנופלות בבחינה.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/kehila-morim-ivrit/" target="_blank" rel="noopener">קהילת המורים לעברית ברשת<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרחב שיתוף של מורי העברית בחטיבה העליונה, עם חומרים שמורים מעלים ופורום מקצועי. למורה בודד/ת בבית ספר קטן, זו הדרך להיות בקבוצה.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 8h8M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg>מתמטיקה</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2015-05-31-10-59-23/2015-05-31-11-12-42" target="_blank" rel="noopener">המרכז הארצי למורים למתמטיקה · לומדים בחטיבה עליונה</a> — מרכז המורים הארצי שבאוניברסיטת חיפה: חומרי למידה, יישומונים דינמיים ופעילויות לכל רמות ההיבחנות, 3–5 יח"ל. מרכז מורים ארצי — לא אתר מסחרי.</li>
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/component/content/category/315-2015-12-30-13-37-15" target="_blank" rel="noopener">אתרים להכנה לבגרות · מרכז המורים הארצי</a> — רשימה מוערת של אתרי תרגול והכנה לבגרות במתמטיקה, שנבחרו על ידי מרכז המורים. חוסך את הסינון העצמאי בגוגל.</li>
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2-uncategorised/3095-035482-4" target="_blank" rel="noopener">שאלות לקראת בגרות · שאלון 035482</a> — מאגר שאלות תרגול ממוקד לשאלון 4 יח"ל, מוכן להעברה בכיתה או לתרגול עצמי.</li>
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2015-05-31-10-59-23/2015-05-31-11-12-42" target="_blank" rel="noopener">המרכז הארצי למורים למתמטיקה · לומדים בחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרכז המורים הארצי שבאוניברסיטת חיפה: חומרי למידה, יישומונים דינמיים ופעילויות לכל רמות ההיבחנות, 3–5 יח"ל. מרכז מורים ארצי — לא אתר מסחרי.</li>
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/component/content/category/315-2015-12-30-13-37-15" target="_blank" rel="noopener">אתרים להכנה לבגרות · מרכז המורים הארצי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של אתרי תרגול והכנה לבגרות במתמטיקה, שנבחרו על ידי מרכז המורים. חוסך את הסינון העצמאי בגוגל.</li>
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2-uncategorised/3095-035482-4" target="_blank" rel="noopener">שאלות לקראת בגרות · שאלון 035482<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר שאלות תרגול ממוקד לשאלון 4 יח"ל, מוכן להעברה בכיתה או לתרגול עצמי.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg>אנגלית</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/bagrut-archives/" target="_blank" rel="noopener">Bagrut Exams · ארכיון שאלוני הבגרות באנגלית</a> — ארכיון השאלונים מכל המודולים ומכל המועדים, במקור הרשמי של הפיקוח על הוראת האנגלית.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/dig-into-digital/" target="_blank" rel="noopener">Dig into Digital</a> — יחידות תוכן דיגיטליות באנגלית להוראה ולתרגול מיומנויות. מתאים במיוחד לכיתות שעובדות עם מחשב או טאבלט.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/teachers-resource-materials/" target="_blank" rel="noopener">Module E Vocabulary · חומרי עזר למורה</a> — רשימות אוצר המילים הנדרש למודול E וחומרי עזר נלווים. כלי עבודה יומיומי למורה שמלמד/ת 5 יח"ל.</li>
-    <li><a class="lk" href="https://sites.google.com/view/englishfromhome/home" target="_blank" rel="noopener">English from Home</a> — אתר משאבים חינמי מבית הפיקוח על הוראת האנגלית: פעילויות ותרגול לכל הרמות, מסודרים לפי מיומנות. שימושי גם ללמידה מרחוק ולהשלמות.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/bagrut-archives/" target="_blank" rel="noopener">Bagrut Exams · ארכיון שאלוני הבגרות באנגלית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — ארכיון השאלונים מכל המודולים ומכל המועדים, במקור הרשמי של הפיקוח על הוראת האנגלית.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/dig-into-digital/" target="_blank" rel="noopener">Dig into Digital<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות תוכן דיגיטליות באנגלית להוראה ולתרגול מיומנויות. מתאים במיוחד לכיתות שעובדות עם מחשב או טאבלט.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/teachers-resource-materials/" target="_blank" rel="noopener">Module E Vocabulary · חומרי עזר למורה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימות אוצר המילים הנדרש למודול E וחומרי עזר נלווים. כלי עבודה יומיומי למורה שמלמד/ת 5 יח"ל.</li>
+    <li><a class="lk" href="https://sites.google.com/view/englishfromhome/home" target="_blank" rel="noopener">English from Home<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — אתר משאבים חינמי מבית הפיקוח על הוראת האנגלית: פעילויות ותרגול לכל הרמות, מסודרים לפי מיומנות. שימושי גם ללמידה מרחוק ולהשלמות.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.4 2.1"/></svg>היסטוריה</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · היסטוריה ממלכתי לחטיבה עליונה</a> — יחידות הוראה ומערכי שיעור לפי פרקי תוכנית הלימודים, במקור הרשמי.</li>
-    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials.html" target="_blank" rel="noopener">יד ושם · חומרים חינוכיים בנושא השואה</a> — מאגר מערכי שיעור, עדויות, סביבות למידה וחומרי מולטימדיה. פתוח בחינם וללא הרשמה, ומהמקורות האיכותיים ביותר להוראת הפרק הזה.</li>
-    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials/learning-environment/lesson-class.html" target="_blank" rel="noopener">יד ושם · מערכי שיעור לפי שכבות גיל</a> — מערכים מוכנים ליום הזיכרון, מסודרים לפי שכבה — כולל הצעות ייעודיות לחטיבה העליונה עם דיון במליאה ועבודה בקבוצות.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya-hemed/chativa-elyona/pedagogia-historia-hemed/tools-sites-databases/" target="_blank" rel="noopener">ספרים, אתרים ומאגרי מידע · היסטוריה חמ"ד</a> — רשימה מוערת של מאגרי מקורות היסטוריים ואתרי מחקר. נבנתה לחמ"ד, אך רוב המאגרים שבה רלוונטיים לכל מורה להיסטוריה.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · היסטוריה ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה ומערכי שיעור לפי פרקי תוכנית הלימודים, במקור הרשמי.</li>
+    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials.html" target="_blank" rel="noopener">יד ושם · חומרים חינוכיים בנושא השואה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר מערכי שיעור, עדויות, סביבות למידה וחומרי מולטימדיה. פתוח בחינם וללא הרשמה, ומהמקורות האיכותיים ביותר להוראת הפרק הזה.</li>
+    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials/learning-environment/lesson-class.html" target="_blank" rel="noopener">יד ושם · מערכי שיעור לפי שכבות גיל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מערכים מוכנים ליום הזיכרון, מסודרים לפי שכבה — כולל הצעות ייעודיות לחטיבה העליונה עם דיון במליאה ועבודה בקבוצות.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya-hemed/chativa-elyona/pedagogia-historia-hemed/tools-sites-databases/" target="_blank" rel="noopener">ספרים, אתרים ומאגרי מידע · היסטוריה חמ"ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי מקורות היסטוריים ואתרי מחקר. נבנתה לחמ"ד, אך רוב המאגרים שבה רלוונטיים לכל מורה להיסטוריה.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>ספרות</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · ספרות ממלכתי לחטיבה עליונה</a> — מאמרי ניתוח והצעות למערכי שיעור על יצירות המיקוד, מסודרים לפי יצירה ולפי יוצר.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/skills/" target="_blank" rel="noopener">מיומנויות · ספרות ממלכתי</a> — חומרים לפיתוח מיומנויות הפרשנות והכתיבה הנדרשות בבחינה, ולא רק ידע על היצירות עצמן.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/flexible-program-literture/" target="_blank" rel="noopener">תוכנית הבגרויות הגמישה בספרות ממלכתי</a> — המסמך המלא של התוכנית הגמישה, שמשנה את מבנה ההיבחנות. חובה לקרוא לפני בניית תוכנית עבודה בכיתה י'.</li>
-    <li><a class="lk" href="https://benyehuda.org/authors" target="_blank" rel="noopener">פרויקט בן־יהודה · רשימת היוצרים</a> — הטקסטים המלאים של קלאסיקות הספרות העברית לפי יוצר, בחינם, ללא הרשמה וללא מגבלת זכויות יוצרים. מאפשר לחלק לתלמידים את היצירה עצמה בלי לצלם מספר.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · ספרות ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרי ניתוח והצעות למערכי שיעור על יצירות המיקוד, מסודרים לפי יצירה ולפי יוצר.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/skills/" target="_blank" rel="noopener">מיומנויות · ספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרים לפיתוח מיומנויות הפרשנות והכתיבה הנדרשות בבחינה, ולא רק ידע על היצירות עצמן.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/flexible-program-literture/" target="_blank" rel="noopener">תוכנית הבגרויות הגמישה בספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — המסמך המלא של התוכנית הגמישה, שמשנה את מבנה ההיבחנות. חובה לקרוא לפני בניית תוכנית עבודה בכיתה י'.</li>
+    <li><a class="lk" href="https://benyehuda.org/authors" target="_blank" rel="noopener">פרויקט בן־יהודה · רשימת היוצרים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסטים המלאים של קלאסיקות הספרות העברית לפי יוצר, בחינם, ללא הרשמה וללא מגבלת זכויות יוצרים. מאפשר לחלק לתלמידים את היצירה עצמה בלי לצלם מספר.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H18a1 1 0 0 1 1 1v13.5H6.5A1.5 1.5 0 0 0 5 20z"/><path d="M9 8.5h6M9 11.8h4"/></svg>תנ"ך</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/noseem_nilmadim/hitmazut_tanach/" target="_blank" rel="noopener">העשרה · ההתמצאות בתנ"ך</a> — חומרי העשרה לפיתוח מיומנות ההתמצאות במקרא, שהיא תנאי מקדים לכל שאר הלמידה בתחום.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/bible-hemed/high-school/pedagogy/teacher-enrichment-materials-databases/" target="_blank" rel="noopener">חומרי העשרה ומאגרי מידע למורה · תנ"ך חמ"ד</a> — רשימה מוערת של מאגרי פרשנות, מקורות וכלי עזר. נבנתה לחמ"ד, ורוב הכלים שבה משמשים גם בהוראה הממלכתית.</li>
-    <li><a class="lk" href="https://www.mikranet.org.il/teachers/" target="_blank" rel="noopener">מקראנט · אזור המורים</a> — סרטוני מיומנויות, הצעות הוראה וקהילת מורים בתנ"ך. חינמי, ומיועד ישירות למורה ולא לתלמיד.</li>
-    <li><a class="lk" href="https://www.sefaria.org.il/texts/Tanakh" target="_blank" rel="noopener">ספריא · ספריית התנ"ך</a> — הטקסט המלא עם פרשנים מקושרים ברמת הפסוק, בעברית. חינם, בלי פרסומות ובלי הרשמה — ואפשר לבנות ממנו דף מקורות לכיתה.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/noseem_nilmadim/hitmazut_tanach/" target="_blank" rel="noopener">העשרה · ההתמצאות בתנ"ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי העשרה לפיתוח מיומנות ההתמצאות במקרא, שהיא תנאי מקדים לכל שאר הלמידה בתחום.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/bible-hemed/high-school/pedagogy/teacher-enrichment-materials-databases/" target="_blank" rel="noopener">חומרי העשרה ומאגרי מידע למורה · תנ"ך חמ"ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי פרשנות, מקורות וכלי עזר. נבנתה לחמ"ד, ורוב הכלים שבה משמשים גם בהוראה הממלכתית.</li>
+    <li><a class="lk" href="https://www.mikranet.org.il/teachers/" target="_blank" rel="noopener">מקראנט · אזור המורים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — סרטוני מיומנויות, הצעות הוראה וקהילת מורים בתנ"ך. חינמי, ומיועד ישירות למורה ולא לתלמיד.</li>
+    <li><a class="lk" href="https://www.sefaria.org.il/texts/Tanakh" target="_blank" rel="noopener">ספריא · ספריית התנ"ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסט המלא עם פרשנים מקושרים ברמת הפסוק, בעברית. חינם, בלי פרסומות ובלי הרשמה — ואפשר לבנות ממנו דף מקורות לכיתה.</li>
   </ul>
 
   <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12.5" rx="2"/><path d="M3.5 10h17M8 6V3.8M16 6V3.8"/></svg>חוצה תחומים</h3>
   <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/teaching-units-stock/" target="_blank" rel="noopener">מאגר יחידות הוראה מתוקשבות</a> — מאגר רוחבי של יחידות הוראה מוכנות בכל תחומי הדעת, שאפשר לסנן לפי מקצוע ולפי שכבה. נקודת פתיחה טובה כשלא יודעים מאיפה להתחיל.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/teaching-units-stock/" target="_blank" rel="noopener">מאגר יחידות הוראה מתוקשבות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר רוחבי של יחידות הוראה מוכנות בכל תחומי הדעת, שאפשר לסנן לפי מקצוע ולפי שכבה. נקודת פתיחה טובה כשלא יודעים מאיפה להתחיל.</li>
   </ul>
 
   <div class="callout rv">
@@ -831,6 +836,8 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
   </div>
 
 </div>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
 

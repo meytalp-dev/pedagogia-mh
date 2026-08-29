@@ -19,10 +19,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -117,19 +118,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -153,14 +155,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -233,7 +235,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -272,9 +274,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 <div class="pagehead" style="padding-top:52px">
   <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="klim-digitaliim.html">ארגז הכלים הדיגיטלי</a> ‹ כלים דיגיטליים ומשחקים חינוכיים</div>
   <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">כלים דיגיטליים ומשחקים חינוכיים</h1>
@@ -289,28 +294,28 @@
     "כלים קטנים גדולים" היא אנציקלופדיה מסודרת לפי סוג כלי;
     CIET לוינסקי משווה בין Quizizz, Quizlet ו-Genially ומדרג מורכבות ועלות;
     ובמרחב הפדגוגי יש הפרקטיקה הרשמית "למידה באמצעות משחק" — ההבחנה בין משחוק ללמידה מבוססת משחק.
-    <a class="lk" href="https://digitalpedagogy.co/" target="_blank" rel="noopener">כלים קטנים גדולים ←</a>
-    <a class="lk" href="https://ciet.levinsky.ac.il/%D7%9E%D7%A9%D7%97%D7%A7%D7%99%D7%9D-%D7%95%D7%97%D7%99%D7%93%D7%95%D7%A0%D7%99%D7%9D/" target="_blank" rel="noopener">CIET לוינסקי ←</a>
-    <a class="lk" href="https://pop.education.gov.il/teaching-tools/teaching-practices/search-teaching-practices/learning-through-game/" target="_blank" rel="noopener">הפרקטיקה במרחב הפדגוגי ←</a>
+    <a class="lk" href="https://digitalpedagogy.co/" target="_blank" rel="noopener">כלים קטנים גדולים ←<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="lk" href="https://ciet.levinsky.ac.il/%D7%9E%D7%A9%D7%97%D7%A7%D7%99%D7%9D-%D7%95%D7%97%D7%99%D7%93%D7%95%D7%A0%D7%99%D7%9D/" target="_blank" rel="noopener">CIET לוינסקי ←<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="lk" href="https://pop.education.gov.il/teaching-tools/teaching-practices/search-teaching-practices/learning-through-game/" target="_blank" rel="noopener">הפרקטיקה במרחב הפדגוגי ←<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
   </div>
 
     <div class="callout rv">
       <span class="ttl">הדרכות לרני — לכלים שיש להם הדרכה ייעודית</span>
-      לשלושה מהכלים בעמוד יש מצגת הדרכה עצמאית בעברית באתר <a class="lk" href="https://lerani.co.il/" target="_blank" rel="noopener">לרני (Learni)</a> — Genially, Padlet ו-Canva.
+      לשלושה מהכלים בעמוד יש מצגת הדרכה עצמאית בעברית באתר <a class="lk" href="https://lerani.co.il/" target="_blank" rel="noopener">לרני (Learni)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — Genially, Padlet ו-Canva.
       הקישור להדרכה מופיע בטבלאות שלמטה, מתחת לקישור לכלי עצמו ומופרד ממנו. ליתר הכלים בעמוד אין כרגע הדרכה ייעודית בלרני, ולכן לא נוסף להם קישור.
       <span style="display:block;margin-top:6px;font-size:.84rem;color:var(--text2)">לרני הוא מקור חיצוני, ואינו באחריות מינהל הכשרה מקצועית.</span>
-      <a class="lk" href="https://lerani.co.il/training/" target="_blank" rel="noopener">כל מצגות ההדרכה בלרני ←</a>
-      <a class="lk" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות ←</a>
+      <a class="lk" href="https://lerani.co.il/training/" target="_blank" rel="noopener">כל מצגות ההדרכה בלרני ←<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+      <a class="lk" href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות ←<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
     <h2 class="sub-sec rv">מחוללי משחקים וחידונים</h2>
-<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Wordwall</strong> <span class="tag cyn">עברית מלאה</span></td><td>30+ תבניות משחק (התאמה, חידה, גלגל, מרוץ) מאותו מאגר שאלות. עברית מלאה ותמיכת RTL — הכי מתאים לכיתה דוברת עברית.</td><td><a class="lk" href="https://wordwall.net/he" target="_blank" rel="noopener">wordwall.net/he</a></td></tr><tr><td><strong>Genially</strong></td><td>חדר בריחה כיתתי, מצגת אינטראקטיבית ואינפוגרפיקה חיה. הכלי החזק ביותר כשרוצים חוויה ולא רק תרגול.</td><td><a class="lk" href="https://genially.com" target="_blank" rel="noopener">genially.com</a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/presentations/genially-course/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · קורס Genially</a></span></td></tr><tr><td><strong>Wayground</strong> <span class="tag cyn">לשעבר Quizizz</span></td><td>חידון בקצב אישי — גם בשיעור חי וגם כשיעורי בית. יוצר חידון מתוך טקסט בעזרת AI. הכלי שינה שם ל-Wayground; קישורי quizizz.com הישנים מפנים לכאן.</td><td><a class="lk" href="https://wayground.com" target="_blank" rel="noopener">wayground.com</a></td></tr><tr><td><strong>Blooket</strong></td><td>מאגר שאלות אחד שהופך לכמה מצבי משחק שונים, בלי תשלום. טוב לחזרה לפני מבחן.</td><td><a class="lk" href="https://www.blooket.com" target="_blank" rel="noopener">blooket.com</a></td></tr><tr><td><strong>Baamboozle</strong> <span class="tag cyn">בלי מכשירים</span></td><td>משחק קבוצתי שרץ מהמחשב של המורה בלבד — הפתרון לכיתה שאין בה מכשירים לתלמידים.</td><td><a class="lk" href="https://www.baamboozle.com" target="_blank" rel="noopener">baamboozle.com</a></td></tr><tr><td><strong>TinyTap</strong></td><td>יצירת משחק לימודי מותאם אישית ושיתופו. מתאים גם להתאמות ולמסלולים מותאמים.</td><td><a class="lk" href="https://www.tinytap.com" target="_blank" rel="noopener">tinytap.com</a></td></tr></tbody></table></div>
+<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Wordwall</strong> <span class="tag cyn">עברית מלאה</span></td><td>30+ תבניות משחק (התאמה, חידה, גלגל, מרוץ) מאותו מאגר שאלות. עברית מלאה ותמיכת RTL — הכי מתאים לכיתה דוברת עברית.</td><td><a class="lk" href="https://wordwall.net/he" target="_blank" rel="noopener">wordwall.net/he<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Genially</strong></td><td>חדר בריחה כיתתי, מצגת אינטראקטיבית ואינפוגרפיקה חיה. הכלי החזק ביותר כשרוצים חוויה ולא רק תרגול.</td><td><a class="lk" href="https://genially.com" target="_blank" rel="noopener">genially.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/presentations/genially-course/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · קורס Genially<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span></td></tr><tr><td><strong>Wayground</strong> <span class="tag cyn">לשעבר Quizizz</span></td><td>חידון בקצב אישי — גם בשיעור חי וגם כשיעורי בית. יוצר חידון מתוך טקסט בעזרת AI. הכלי שינה שם ל-Wayground; קישורי quizizz.com הישנים מפנים לכאן.</td><td><a class="lk" href="https://wayground.com" target="_blank" rel="noopener">wayground.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Blooket</strong></td><td>מאגר שאלות אחד שהופך לכמה מצבי משחק שונים, בלי תשלום. טוב לחזרה לפני מבחן.</td><td><a class="lk" href="https://www.blooket.com" target="_blank" rel="noopener">blooket.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Baamboozle</strong> <span class="tag cyn">בלי מכשירים</span></td><td>משחק קבוצתי שרץ מהמחשב של המורה בלבד — הפתרון לכיתה שאין בה מכשירים לתלמידים.</td><td><a class="lk" href="https://www.baamboozle.com" target="_blank" rel="noopener">baamboozle.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>TinyTap</strong></td><td>יצירת משחק לימודי מותאם אישית ושיתופו. מתאים גם להתאמות ולמסלולים מותאמים.</td><td><a class="lk" href="https://www.tinytap.com" target="_blank" rel="noopener">tinytap.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr></tbody></table></div>
 
     <h2 class="sub-sec rv">תוכן אינטראקטיבי ושיתוף</h2>
-<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Edpuzzle</strong></td><td>הופך כל סרטון יוטיוב לשיעור פעיל: שאלות שנעצרות באמצע + דוח מי צפה ומי ענה. מצוין להיסטוריה ולאזרחות.</td><td><a class="lk" href="https://edpuzzle.com" target="_blank" rel="noopener">edpuzzle.com</a></td></tr><tr><td><strong>Padlet</strong></td><td>קיר שיתופי לסיעור מוחות, אוסף עבודות כיתתי או ציר זמן משותף. הכי מהיר להפעיל — בלי הרשמת תלמידים.</td><td><a class="lk" href="https://padlet.com" target="_blank" rel="noopener">padlet.com</a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/presentations/padlet/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · Padlet</a></span></td></tr><tr><td><strong>Nearpod</strong></td><td>מצגת + חידונים + לוח שיתופי בזרימה אחת, כולל מצב בקצב התלמיד.</td><td><a class="lk" href="https://nearpod.com" target="_blank" rel="noopener">nearpod.com</a></td></tr><tr><td><strong>Canva for Education</strong> <span class="tag cyn">חינם למורים</span></td><td>חשבון חינוכי חינם: פוסטרים, דפי עבודה ומצגות בעברית. שימושי גם למגמות עיצוב ופרסום.</td><td><a class="lk" href="https://www.canva.com/education/" target="_blank" rel="noopener">canva.com/education</a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/training/canva/presentation.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · Canva</a></span></td></tr><tr><td><strong>TimelineJS</strong></td><td>ציר זמן אינטראקטיבי שנבנה מגיליון Google שהתלמידים ממלאים. הכלי המדויק להיסטוריה ולספרות.</td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">timeline.knightlab.com</a></td></tr><tr><td><strong>ThingLink</strong></td><td>הופך תמונה או סיור 360° לנקודות מידע לחיצות.</td><td><a class="lk" href="https://www.thinglink.com" target="_blank" rel="noopener">thinglink.com</a></td></tr></tbody></table></div>
+<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Edpuzzle</strong></td><td>הופך כל סרטון יוטיוב לשיעור פעיל: שאלות שנעצרות באמצע + דוח מי צפה ומי ענה. מצוין להיסטוריה ולאזרחות.</td><td><a class="lk" href="https://edpuzzle.com" target="_blank" rel="noopener">edpuzzle.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Padlet</strong></td><td>קיר שיתופי לסיעור מוחות, אוסף עבודות כיתתי או ציר זמן משותף. הכי מהיר להפעיל — בלי הרשמת תלמידים.</td><td><a class="lk" href="https://padlet.com" target="_blank" rel="noopener">padlet.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/presentations/padlet/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · Padlet<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span></td></tr><tr><td><strong>Nearpod</strong></td><td>מצגת + חידונים + לוח שיתופי בזרימה אחת, כולל מצב בקצב התלמיד.</td><td><a class="lk" href="https://nearpod.com" target="_blank" rel="noopener">nearpod.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Canva for Education</strong> <span class="tag cyn">חינם למורים</span></td><td>חשבון חינוכי חינם: פוסטרים, דפי עבודה ומצגות בעברית. שימושי גם למגמות עיצוב ופרסום.</td><td><a class="lk" href="https://www.canva.com/education/" target="_blank" rel="noopener">canva.com/education<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span style="display:block;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)"><a class="lk" href="https://lerani.co.il/training/canva/presentation.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:.84rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"/><path d="M6 11.4V16c0 1.6 2.7 2.9 6 2.9s6-1.3 6-2.9v-4.6"/></svg>הדרכת לרני · Canva<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span></td></tr><tr><td><strong>TimelineJS</strong></td><td>ציר זמן אינטראקטיבי שנבנה מגיליון Google שהתלמידים ממלאים. הכלי המדויק להיסטוריה ולספרות.</td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">timeline.knightlab.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>ThingLink</strong></td><td>הופך תמונה או סיור 360° לנקודות מידע לחיצות.</td><td><a class="lk" href="https://www.thinglink.com" target="_blank" rel="noopener">thinglink.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr></tbody></table></div>
 
     <h2 class="sub-sec rv">הערכה מעצבת ומשוב בזמן אמת</h2>
-<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Mentimeter</strong></td><td>ענן מילים, סקר מהיר וגרף חי מול הכיתה. טוב לפתיחת שיעור ולבירור עמדות.</td><td><a class="lk" href="https://www.mentimeter.com" target="_blank" rel="noopener">mentimeter.com</a></td></tr><tr><td><strong>Socrative</strong></td><td>בדיקת הבנה מהירה ו"כרטיס יציאה" בסוף השיעור, עם ניתוח תשובות.</td><td><a class="lk" href="https://www.socrative.com" target="_blank" rel="noopener">socrative.com</a></td></tr></tbody></table></div>
+<div class="tbl-scroll rv"><table class="doc"><thead><tr><th>הכלי</th><th>מתי להשתמש</th><th>קישור</th></tr></thead><tbody><tr><td><strong>Mentimeter</strong></td><td>ענן מילים, סקר מהיר וגרף חי מול הכיתה. טוב לפתיחת שיעור ולבירור עמדות.</td><td><a class="lk" href="https://www.mentimeter.com" target="_blank" rel="noopener">mentimeter.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>Socrative</strong></td><td>בדיקת הבנה מהירה ו"כרטיס יציאה" בסוף השיעור, עם ניתוח תשובות.</td><td><a class="lk" href="https://www.socrative.com" target="_blank" rel="noopener">socrative.com<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr></tbody></table></div>
 
   <div class="cat-next rv">
     <a class="lk" href="klim-maagarim.html">למאגרי מערכי השיעור ←</a>
@@ -321,6 +326,8 @@
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
 

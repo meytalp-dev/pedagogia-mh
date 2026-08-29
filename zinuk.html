@@ -24,10 +24,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -122,19 +123,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -158,14 +160,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -238,7 +240,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -277,9 +279,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -287,7 +292,7 @@
     <h1>על קו הזינוק <span class="accent">— שיעורי פתיחה לעולם העבודה</span></h1>
     <p class="lead">ארבעה שיעורים ייעודיים לקראת הכניסה לעולם התעסוקה: היכרות וגיבוש, השאלות שמעסיקות אותנו, החלומות שלנו וההעדפות המקצועיות. כאן — התדריך המלא למורה, שיעור אחר שיעור, כולל כל הפעילויות והחומרים.</p>
     <div class="meta-row">
-      <span class="src">המקור: <a class="lk" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה בדרייב</a></span>
+      <span class="src">המקור: <a class="lk" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה בדרייב<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
       <span>משרד העבודה · האגף להכשרה מקצועית וכ״א · החינוך היוצר</span>
     </div>
     <div class="cta-row">
@@ -368,7 +373,7 @@
         </tbody>
       </table>
     </div>
-    <p class="rv"><a class="lk" href="https://docs.google.com/presentation/d/1eHWj3j3yMAxsdB8xFC1xB99-zUluO5k_r-RJRivcZdo/edit" target="_blank" rel="noopener">מצגת השיעור הראשון</a></p>
+    <p class="rv"><a class="lk" href="https://docs.google.com/presentation/d/1eHWj3j3yMAxsdB8xFC1xB99-zUluO5k_r-RJRivcZdo/edit" target="_blank" rel="noopener">מצגת השיעור הראשון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <!-- ============ שיעור 2 ============ -->
     <h2 class="sub-sec rv" id="lesson2">שיעור שני · השאלות שלנו</h2>
@@ -387,7 +392,7 @@
       <li><strong>שומרים לסוף השנה.</strong> אוספים את השאלות — בסוף השנה נפתח שוב ונבדוק: על מה קיבלנו תשובה? מה עדיין מטריד? אילו שאלות חדשות נוספו?</li>
       <li><strong>סיכום.</strong> "מה לא ידעתי — ועכשיו אני יודע.ת?" — שיתוף במשהו קטן שלמדנו מהשאלות ומהשיח.</li>
     </ol>
-    <p class="rv"><a class="lk" href="https://docs.google.com/presentation/d/13tUdQYGvDI3Tg4IpO7LYnsSx-PvaZUq9W2pvBBBz5r8/edit" target="_blank" rel="noopener">מצגת השיעור השני</a></p>
+    <p class="rv"><a class="lk" href="https://docs.google.com/presentation/d/13tUdQYGvDI3Tg4IpO7LYnsSx-PvaZUq9W2pvBBBz5r8/edit" target="_blank" rel="noopener">מצגת השיעור השני<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <!-- ============ שיעור 3 ============ -->
     <h2 class="sub-sec rv" id="lesson3">שיעור שלישי · אני באתי לחלום!</h2>
@@ -407,9 +412,9 @@
       <li><strong>רגע לפני סיום.</strong> קוראים שוב את מה שכתבנו, חושבים על צעד אחד קטן שאפשר לעשות <strong>כבר היום</strong> לקידום החלום — ושולחים לעצמנו תזכורת בפלאפון!</li>
     </ol>
     <p class="rv">
-      <a class="lk" href="https://docs.google.com/presentation/d/15jOU_qb2EegFgJ6z5baJkKwqp5k757rlb5K1vC8nu6k/edit" target="_blank" rel="noopener">מצגת השיעור השלישי</a> ·
-      <a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">דף הכתיבה המעוצב (קנבה, עמ׳ 1)</a> ·
-      <a class="lk" href="https://youtu.be/lRaRVcddDRQ" target="_blank" rel="noopener">הסרטון לסיום</a>
+      <a class="lk" href="https://docs.google.com/presentation/d/15jOU_qb2EegFgJ6z5baJkKwqp5k757rlb5K1vC8nu6k/edit" target="_blank" rel="noopener">מצגת השיעור השלישי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
+      <a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">דף הכתיבה המעוצב (קנבה, עמ׳ 1)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
+      <a class="lk" href="https://youtu.be/lRaRVcddDRQ" target="_blank" rel="noopener">הסרטון לסיום<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </p>
 
     <!-- ============ שיעור 4 ============ -->
@@ -441,8 +446,8 @@
       <div class="tik-item"><b>12</b> …היגד פתוח — לבחירתכם</div>
     </div>
     <p class="rv">
-      <a class="lk" href="https://docs.google.com/presentation/d/1wnAK9Qf-Xge2pVxwrdgyVBnuDS1caJCmacZ9h2DGaHw/edit" target="_blank" rel="noopener">מצגת השיעור הרביעי</a> ·
-      <a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">השאלון והקלפים (קנבה, עמ׳ 2–3)</a>
+      <a class="lk" href="https://docs.google.com/presentation/d/1wnAK9Qf-Xge2pVxwrdgyVBnuDS1caJCmacZ9h2DGaHw/edit" target="_blank" rel="noopener">מצגת השיעור הרביעי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
+      <a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">השאלון והקלפים (קנבה, עמ׳ 2–3)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </p>
 
     <!-- ============ ריכוז חומרים ============ -->
@@ -454,23 +459,25 @@
           <tr><th>שיעור</th><th>חומר</th><th>קישור</th></tr>
         </thead>
         <tbody>
-          <tr><td class="k">1</td><td>ברוכים הבאים — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/1eHWj3j3yMAxsdB8xFC1xB99-zUluO5k_r-RJRivcZdo/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">2</td><td>השאלות שלנו — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/13tUdQYGvDI3Tg4IpO7LYnsSx-PvaZUq9W2pvBBBz5r8/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">3</td><td>אני באתי לחלום — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/15jOU_qb2EegFgJ6z5baJkKwqp5k757rlb5K1vC8nu6k/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">4</td><td>ההעדפות שלי — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/1wnAK9Qf-Xge2pVxwrdgyVBnuDS1caJCmacZ9h2DGaHw/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">3–4</td><td>דף כתיבה + שאלון + קלפים (קנבה)</td><td><a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">לפתיחה</a></td></tr>
-          <tr><td class="k">3</td><td>סרטון "לשחק על המים"</td><td><a class="lk" href="https://youtu.be/lRaRVcddDRQ" target="_blank" rel="noopener">לצפייה</a></td></tr>
+          <tr><td class="k">1</td><td>ברוכים הבאים — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/1eHWj3j3yMAxsdB8xFC1xB99-zUluO5k_r-RJRivcZdo/edit" target="_blank" rel="noopener">לפתיחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">2</td><td>השאלות שלנו — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/13tUdQYGvDI3Tg4IpO7LYnsSx-PvaZUq9W2pvBBBz5r8/edit" target="_blank" rel="noopener">לפתיחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">3</td><td>אני באתי לחלום — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/15jOU_qb2EegFgJ6z5baJkKwqp5k757rlb5K1vC8nu6k/edit" target="_blank" rel="noopener">לפתיחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">4</td><td>ההעדפות שלי — מצגת</td><td><a class="lk" href="https://docs.google.com/presentation/d/1wnAK9Qf-Xge2pVxwrdgyVBnuDS1caJCmacZ9h2DGaHw/edit" target="_blank" rel="noopener">לפתיחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">3–4</td><td>דף כתיבה + שאלון + קלפים (קנבה)</td><td><a class="lk" href="https://www.canva.com/design/DAGLIeF8FnY/NBf02uzfwaL29Lrfmcznow/edit" target="_blank" rel="noopener">לפתיחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">3</td><td>סרטון "לשחק על המים"</td><td><a class="lk" href="https://youtu.be/lRaRVcddDRQ" target="_blank" rel="noopener">לצפייה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="source-box rv">
       <div class="t">המסמכים המקוריים<small>העמוד הזה הוא מהדורה דיגיטלית של התדריך למורה וארבע מצגות השיעורים — הנוסח המחייב הוא בקבצים המקוריים.</small></div>
-      <a class="btn" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה בדרייב ↗</a>
+      <a class="btn" href="https://drive.google.com/drive/folders/1rQEZ2DYw2xCA-MGEKZnjO4xBSpX8WSVI" target="_blank" rel="noopener">תיקיית חונכות ותעסוקה בדרייב ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 
