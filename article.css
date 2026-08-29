@@ -347,3 +347,4 @@ label.ci input:checked ~ span{color:var(--text2)}
 .pagerow a.next{text-align:start}
 .pagerow a.prev{text-align:end;grid-column:2}
 @media(max-width:640px){.pagerow{grid-template-columns:1fr}.pagerow a.prev{grid-column:1;text-align:start}}
+h2.sub-sec small,h3.sub-sec small{font-size:.6em;font-weight:600;color:var(--text2);letter-spacing:0;line-height:1.4}

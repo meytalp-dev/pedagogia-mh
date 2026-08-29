@@ -26,6 +26,7 @@ const MAX_TEXT = 2600; // תווי טקסט לעמוד — מספיק להתאמ
 /* עמודים שאינם חלק מהאתר הציבורי (טפסים, גיליונות, תבניות) */
 const SKIP = new Set([
   "_doc-template.html",
+  "ogdan-megama.html",   // תבנית מגמה בודדת — נטענת עם ?m=<סמל>
   "em-head.tmp.html",
   "bagmgr.html",
   "chipus.html",
