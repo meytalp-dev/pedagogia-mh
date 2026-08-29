@@ -118,10 +118,6 @@ textarea{resize:vertical;min-height:80px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:var(--white);padding:12px 24px;border-radius:12px;font-size:0.9rem;z-index:300;transition:transform .4s ease;box-shadow:var(--shadow-lg)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-/* ===== AI SECTION ===== */
-.ai-section{background:linear-gradient(135deg,#EDE9FE,#E8F2FF);border-radius:14px;padding:20px;margin:16px 0;border:2px dashed var(--purple)}
-.ai-section h3{color:var(--purple);font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-
 /* ===== NAME INPUT ===== */
 .name-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px}
 .name-screen h2{font-family:'Assistant',sans-serif;font-size:1.8rem;margin-bottom:8px}
@@ -222,29 +218,6 @@ textarea{resize:vertical;min-height:80px}
     <div class="type-grid" id="typeGrid"></div>
   </div>
 
-  <!-- AI SECTION -->
-  <div class="ai-section" id="aiSection" style="display:none">
-    <h3>✨ יצירה אוטומטית עם AI</h3>
-    <p style="font-size:0.85rem;color:var(--gray);margin-bottom:12px">ה-AI ימלא את התוכן של כל הפעילויות שבחרתם לפי הנושא</p>
-    <div class="form-row">
-      <label for="aiTopic">הנושא המדויק</label>
-      <input type="text" id="aiTopic" placeholder="למשל: בניין התפעל בעברית">
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-sm btn-orange" style="flex:1;min-width:200px" onclick="copyChatPrompt()">1️⃣ 📋 העתיקו את הפרומפט</button>
-      <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="btn btn-sm btn-orange" style="flex:1;min-width:200px;text-align:center;text-decoration:none" onclick="revealPasteBox()">2️⃣ ✨ פתחו את Gemini והדביקו</a>
-    </div>
-    <div id="chatPasteBox" style="display:none;margin-bottom:10px">
-      <textarea id="chatAnswer" aria-label="הדבקת התשובה של Gemini" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="width:100%;min-height:90px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Assistant',sans-serif;font-size:14px;margin-bottom:8px"></textarea>
-      <button class="btn btn-sm btn-orange" onclick="buildFromChatAnswer()" style="width:100%">🧩 בנו את הפעילויות מהתשובה</button>
-    </div>
-    <details>
-      <summary style="cursor:pointer;font-size:13px;color:var(--gray)">מתקדם: יצירה אוטומטית עם מפתח API</summary>
-      <button class="btn btn-sm btn-orange" style="margin-top:8px" onclick="generateWithAI()" id="aiBtn">✨ צור תוכן עם AI</button>
-    </details>
-    <div id="aiStatus" style="font-size:0.85rem;margin-top:8px;color:var(--gray)"></div>
-  </div>
-
   <!-- ACTIVITY EDITORS -->
   <div id="activityEditors"></div>
 
@@ -301,7 +274,6 @@ textarea{resize:vertical;min-height:80px}
 // ===== CONFIG =====
 const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
 const PLAYER_BASE_URL = 'https://pedagogiamh.co.il/tools/opener-player/';
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 // ===== STATE =====
 let currentStep = 1;
@@ -416,7 +388,6 @@ function toggleType(key) {
   }
   renderTypeGrid();
   renderActivityEditors();
-  document.getElementById('aiSection').style.display = selectedTypes.length > 0 ? 'block' : 'none';
 }
 
 // ===== DEFAULT DATA =====
@@ -630,133 +601,6 @@ function saveActivityData() {
         break;
     }
   });
-}
-
-// ===== AI GENERATION =====
-function buildOpenerPrompt() {
-  const topic = document.getElementById('aiTopic').value.trim() || details.name;
-  if (!topic) { showToast('נא להזין נושא'); return null; }
-  const typeList = activities.map(a => {
-    const t = TYPES[a.type];
-    return `- ${a.type}: ${t.name}`;
-  }).join('\n');
-
-  const prompt = `אתה מורה יצירתי בבית ספר תיכון מקצועי בישראל. צור תוכן לפעילויות פתיחה לשיעור.
-
-הנושא: ${topic}
-מקצוע: ${details.subject}
-כיתה: ${details.grade}
-
-צור תוכן עבור הפעילויות הבאות:
-${typeList}
-
-כללים:
-- שפה פשוטה וברורה, מתאימה לבני נוער עם קשיי קשב
-- משפטים קצרים (עד 10 מילים)
-- תוכן מעניין ומפתיע שיוצר סקרנות
-- דוגמאות מחיי היום-יום
-
-החזר JSON בפורמט הבא:
-{
-  "activities": [
-    ${activities.map(a => {
-      switch(a.type) {
-        case 'question': return '{"type":"question","data":{"text":"שאלה מעוררת...","hint":"רמז...","answer":"תשובה/כיוון..."}}';
-        case 'story': return '{"type":"story","data":{"text":"סיפור קצר (3-4 משפטים)...","discussionQuestion":"שאלה לדיון..."}}';
-        case 'vote': return '{"type":"vote","data":{"question":"שאלה להצבעה...","options":["אפשרות 1","אפשרות 2","אפשרות 3","אפשרות 4"]}}';
-        case 'riddle': return '{"type":"riddle","data":{"question":"מי אני?","hints":["רמז 1","רמז 2","רמז 3","רמז 4"],"answer":"התשובה"}}';
-        case 'truefalse': return '{"type":"truefalse","data":{"statements":[{"text":"טענה...","isTrue":true,"explanation":"הסבר..."},{"text":"טענה...","isTrue":false,"explanation":"הסבר..."},{"text":"טענה...","isTrue":true,"explanation":"הסבר..."}]}}';
-        case 'dilemma': return '{"type":"dilemma","data":{"scenario":"תיאור דילמה...","options":[{"text":"אפשרות 1","result":"תוצאה 1"},{"text":"אפשרות 2","result":"תוצאה 2"}]}}';
-        case 'image': return '{"type":"image","data":{"emoji":"3-5 אמוג\'י מתאימים","question":"מה אתם רואים?"}}';
-        case 'wordcloud': return '{"type":"wordcloud","data":{"prompt":"כתבו מילה אחת שקשורה ל..."}}';
-        case 'wheel': return '{"type":"wheel","data":{"question":"מי עונה?","items":["פריט 1","פריט 2","פריט 3","פריט 4","פריט 5","פריט 6"]}}';
-        case 'fillblank': return '{"type":"fillblank","data":{"sentence":"משפט עם ___ במקום המילה החסרה","answer":"המילה הנכונה","options":["מסיח 1","מסיח 2","מסיח 3"]}}';
-        case 'guessnumber': return '{"type":"guessnumber","data":{"question":"כמה...?","answer":42,"unit":"יחידה"}}';
-        case 'twotruths': return '{"type":"twotruths","data":{"statements":[{"text":"אמת 1","isLie":false},{"text":"אמת 2","isLie":false},{"text":"שקר","isLie":true}]}}';
-        default: return '';
-      }
-    }).join(',\n    ')}
-  ]
-}`;
-
-  return prompt;
-}
-
-function applyOpenerAIResult(parsed) {
-  parsed.activities.forEach((aiAct, i) => {
-    if (i < activities.length && activities[i].type === aiAct.type) {
-      activities[i].data = aiAct.data;
-    }
-  });
-  renderActivityEditors();
-  showToast('התוכן נטען בהצלחה!');
-}
-
-// --- Chat flow: copy prompt -> paste Gemini answer, no API key ---
-function copyChatPrompt() {
-  const p = buildOpenerPrompt();
-  if (!p) return;
-  navigator.clipboard.writeText(p).then(() => {
-    showToast('הפרומפט הועתק! עכשיו פתחו את Gemini והדביקו');
-    revealPasteBox();
-  }).catch(() => showToast('ההעתקה נכשלה — נסו שוב'));
-}
-function revealPasteBox() { document.getElementById('chatPasteBox').style.display = 'block'; }
-function buildFromChatAnswer() {
-  let text = document.getElementById('chatAnswer').value.trim();
-  if (!text) { showToast('הדביקו קודם את התשובה של Gemini'); return; }
-  text = text.replace(/```json/gi, '```');
-  const fenced = text.split('```');
-  if (fenced.length >= 3) text = fenced[1];
-  const first = text.indexOf('{'); const last = text.lastIndexOf('}');
-  if (first === -1 || last === -1) { showToast('לא נמצא JSON בתשובה — ודאו שהעתקתם את כל התשובה'); return; }
-  try {
-    applyOpenerAIResult(JSON.parse(text.slice(first, last + 1)));
-    document.getElementById('chatAnswer').value = '';
-  } catch(e) { showToast('התשובה לא תקינה — בקשו מ-Gemini: החזר JSON תקין בלבד, ונסו שוב'); }
-}
-
-async function generateWithAI() {
-  const apiKey = getGeminiKey();
-  if (!apiKey) return;
-
-  const btn = document.getElementById('aiBtn');
-  const status = document.getElementById('aiStatus');
-  btn.disabled = true;
-  status.textContent = '⏳ יוצר תוכן... (עד 30 שניות)';
-
-  const prompt = buildOpenerPrompt();
-  if (!prompt) { btn.disabled = false; status.textContent = ''; return; }
-
-  try {
-    const res = await fetch(GEMINI_URL + '?key=' + apiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.8 }
-      })
-    });
-
-    const json = await res.json();
-    const text = json.candidates[0].content.parts[0].text;
-    const parsed = JSON.parse(text);
-
-    applyOpenerAIResult(parsed);
-    status.textContent = '✅ התוכן נוצר בהצלחה!';
-  } catch (e) {
-    status.textContent = '❌ שגיאה: ' + e.message;
-  }
-  btn.disabled = false;
-}
-
-function getGeminiKey() {
-  let key = localStorage.getItem('gemini_api_key');
-  if (!key) {
-    key = prompt(['נדרש מפתח Gemini API חינמי (חד-פעמי, נשמר רק במכשיר שלכם).', '1. היכנסו עם Gmail אישי (לא מייל ארגוני!) ל: aistudio.google.com/apikey', '2. לחצו Create API key והעתיקו', '3. הדביקו כאן:'].join(String.fromCharCode(10)));
-    if (key) localStorage.setItem('gemini_api_key', key);
-  }
-  return key;
 }
 
 // ===== PREVIEW =====
@@ -1545,7 +1389,6 @@ function loadDraft() {
     if (draft.activities) activities = draft.activities;
     renderTypeGrid();
     renderActivityEditors();
-    if (selectedTypes.length > 0) document.getElementById('aiSection').style.display = 'block';
   } catch (e) {}
 }
 
