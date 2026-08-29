@@ -68,6 +68,76 @@
   sync();
 })();
 
+/* ===== קיפול מדורי המגירה =====
+   94 קישורים ב-11 מדורים הם ארבעה עד חמישה מסכי גלילה בנייד —
+   מדור השירותים, שבו ארגז הכלים ועוגן, מתחיל אחרי 78 קישורים.
+   הסדר והתוכן לא משתנים — רק מדור סגור מתכווץ לשורה אחת.
+   המדור של העמוד הנוכחי נפתח לבד. מדור סגור מקבל hidden
+   ולכן יוצא מסדר ה-Tab ומקורא המסך, בדיוק כמו המגירה עצמה. */
+(function drawerSections(){
+  var body=document.querySelector('.drawer .body');
+  if(!body) return;
+  var sects=[].slice.call(body.children).filter(function(el){
+    return el.classList && el.classList.contains('sect');
+  });
+  if(sects.length<4) return;
+
+  var here=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+  var groups=[];
+
+  sects.forEach(function(sect,i){
+    var panel=document.createElement('div');
+    panel.className='dgroup';
+    panel.id='dgrp-'+(i+1);
+    var n=sect.nextSibling;
+    while(n && !(n.nodeType===1 && n.classList && n.classList.contains('sect'))){
+      var next=n.nextSibling;
+      panel.appendChild(n);
+      n=next;
+    }
+    var btn=document.createElement('button');
+    btn.type='button';
+    btn.className='dsect';
+    btn.setAttribute('aria-controls',panel.id);
+    var label=document.createElement('span');
+    label.textContent=sect.textContent;
+    btn.appendChild(label);
+    btn.insertAdjacentHTML('beforeend',
+      '<svg class="dcaret" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" '+
+      'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" '+
+      'stroke-linejoin="round"><path d="M4 6.5 8 10.5 12 6.5"/></svg>');
+    sect.parentNode.replaceChild(btn,sect);
+    btn.parentNode.insertBefore(panel,btn.nextSibling);
+    groups.push({btn:btn,panel:panel});
+  });
+
+  function setOpen(g,open){
+    g.panel.hidden=!open;
+    g.btn.setAttribute('aria-expanded',open?'true':'false');
+  }
+
+  /* המדור שמכיל את העמוד הנוכחי — ואם אין כזה, הראשון */
+  var active=-1;
+  groups.forEach(function(g,i){
+    if(active>-1) return;
+    var hit=[].slice.call(g.panel.querySelectorAll('a[href]')).some(function(a){
+      var h=(a.getAttribute('href')||'').split('#')[0].split('/').pop().toLowerCase();
+      return h && h===here;
+    });
+    if(hit) active=i;
+  });
+  if(active<0) active=0;
+  groups.forEach(function(g,i){ setOpen(g,i===active); });
+
+  body.addEventListener('click',function(e){
+    var btn=e.target.closest?e.target.closest('.dsect'):null;
+    if(!btn) return;
+    var g=groups.filter(function(x){return x.btn===btn})[0];
+    if(!g) return;
+    setOpen(g,g.panel.hidden);
+  });
+})();
+
 (function animateCounters(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.querySelectorAll('.num-count').forEach(el=>{

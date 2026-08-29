@@ -266,6 +266,17 @@ body.menu-open .drawer{visibility:visible;transform:none;transition:transform .3
 .drawer .dis{opacity:.55;cursor:default}
 .drawer .dis:hover{background:none;padding-inline-start:12px}
 .drawer .foot-note{border-top:1px solid var(--border);padding:14px 24px;font-size:.8rem;color:var(--muted)}
+/* מדורי המגירה נפתחים ונסגרים (נבנים ב-site.js).
+   הכפתור שומר על המראה של .sect בדיוק — רק לחיץ ועם חץ. */
+.drawer .dsect{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;background:none;border:0;font:inherit;text-align:start;cursor:pointer;
+  font-size:.76rem;font-weight:800;letter-spacing:.08em;color:#0B7FA6;
+  margin:20px 0 8px;padding:4px 2px;border-radius:8px;transition:background .15s}
+.drawer .dsect:hover{background:var(--soft-bg)}
+.drawer .dsect .dcaret{flex:none;transition:transform .2s var(--ease)}
+.drawer .dsect[aria-expanded="false"] .dcaret{transform:rotate(-90deg)}
+.drawer .dsect:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
 
 /* ===== הוויג'ט של העוגן — בדסקטופ צף למעלה משמאל (שם יש שוליים פנויים), הפאנל נפתח מתחתיו.
    בנייד ובטאבלט (עד 960px) אין שוליים פנויים למעלה והוא מסתיר את התוכן —
