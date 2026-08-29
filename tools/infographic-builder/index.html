@@ -33,6 +33,9 @@
 @font-face{font-family:'DinaTalBal';src:url('../design-studio/fonts/Dina-TalBal.otf') format('opentype');font-display:swap}
 
 *{margin:0;padding:0;box-sizing:border-box}
+/* איפוס עיצוב לכפתורים שהיו קודם div – שומר על מראה זהה */
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 :root{--bg:#F8FBFF;--card:#fff;--text:#102A43;--muted:#60778A;--border:#D8E6F2;--gold:#124D7A;--accent:#087B9C}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
 
@@ -90,7 +93,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
 .sub-tpl.sel{border-color:var(--accent);background:#FFF8F5}
 .sub-tpl svg{width:100%;height:50px;margin-bottom:4px}
 .sub-tpl span{font-size:.62rem;font-weight:600;display:block;color:var(--text)}
-.sub-tpl .sub-desc{font-size:.55rem;color:var(--muted);margin-top:2px}
+.sub-tpl .sub-desc{display:block;font-size:.55rem;color:var(--muted);margin-top:2px}
 
 /* Palette grid */
 .pal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
@@ -98,17 +101,17 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
 .pal-opt:hover{border-color:var(--gold)}
 .pal-opt.sel{border-color:var(--accent);border-width:3px}
 .pal-colors{display:flex;height:20px}
-.pal-colors div{flex:1}
-.pal-label{padding:4px 6px;font-size:.62rem;font-weight:600;text-align:center}
+.pal-colors div,.pal-colors span{flex:1}
+.pal-label{display:block;padding:4px 6px;font-size:.62rem;font-weight:600;text-align:center}
 
 /* Font grid */
 .fnt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .fnt-opt{border:2px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;transition:.2s;background:var(--card);text-align:center}
 .fnt-opt:hover{border-color:var(--gold)}
 .fnt-opt.sel{border-color:var(--accent);border-width:3px}
-.fnt-opt .fp{font-size:1.2rem;line-height:1.2;margin-bottom:2px}
-.fnt-opt .fb{font-size:.68rem;color:var(--muted)}
-.fnt-opt .fn{font-size:.58rem;color:var(--gold);margin-top:3px;font-family:'Assistant'}
+.fnt-opt .fp{display:block;font-size:1.2rem;line-height:1.2;margin-bottom:2px}
+.fnt-opt .fb{display:block;font-size:.68rem;color:var(--muted)}
+.fnt-opt .fn{display:block;font-size:.58rem;color:var(--gold);margin-top:3px;font-family:'Assistant'}
 
 /* Template grid */
 .tpl-grid{display:grid;grid-template-columns:1fr;gap:10px}
@@ -116,9 +119,9 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
 .tpl-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(0,0,0,.06)}
 .tpl-card.sel{border-color:var(--accent);border-width:3px}
 .tpl-preview{height:120px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;overflow:hidden}
-.tpl-info{padding:10px;border-top:1px solid var(--border)}
-.tpl-name{font-weight:700;font-size:.82rem;margin-bottom:2px}
-.tpl-desc{font-size:.7rem;color:var(--muted)}
+.tpl-info{display:block;padding:10px;border-top:1px solid var(--border)}
+.tpl-name{display:block;font-weight:700;font-size:.82rem;margin-bottom:2px}
+.tpl-desc{display:block;font-size:.7rem;color:var(--muted)}
 
 /* Image upload */
 .img-upload{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:.2s;position:relative}
@@ -324,8 +327,8 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
 <div class="topbar">
   <h1>מחולל אינפוגרפיקה</h1>
   <div class="topbar-sep"></div>
-  <input type="text" id="inpTopic" placeholder="על מה האינפוגרפיקה?">
-  <textarea id="inpNotes" placeholder="בקשות מיוחדות..."></textarea>
+  <input type="text" id="inpTopic" aria-label="נושא האינפוגרפיקה" placeholder="על מה האינפוגרפיקה?">
+  <textarea id="inpNotes" aria-label="בקשות מיוחדות לעיצוב" placeholder="בקשות מיוחדות..."></textarea>
   <button class="tb gen" id="genBtn" onclick="generate()">
     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
     צור
@@ -340,23 +343,23 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
   <!-- Panel -->
   <div class="panel">
     <div class="panel-nav">
-      <button class="panel-tab active" onclick="showTab('layout')" id="tab-layout">
+      <button type="button" class="panel-tab active" aria-pressed="true" onclick="showTab('layout')" id="tab-layout">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
         סוג תוצר
       </button>
-      <button class="panel-tab" onclick="showTab('templates')" id="tab-templates">
+      <button type="button" class="panel-tab" aria-pressed="false" onclick="showTab('templates')" id="tab-templates">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
         תבניות
       </button>
-      <button class="panel-tab" onclick="showTab('colors')" id="tab-colors">
+      <button type="button" class="panel-tab" aria-pressed="false" onclick="showTab('colors')" id="tab-colors">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
         צבעים
       </button>
-      <button class="panel-tab" onclick="showTab('fonts')" id="tab-fonts">
+      <button type="button" class="panel-tab" aria-pressed="false" onclick="showTab('fonts')" id="tab-fonts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
         גופנים
       </button>
-      <button class="panel-tab" onclick="showTab('images')" id="tab-images">
+      <button type="button" class="panel-tab" aria-pressed="false" onclick="showTab('images')" id="tab-images">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
         תמונה
       </button>
@@ -372,18 +375,18 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
             סוג לייאאוט
           </div>
           <div class="layout-row">
-            <div class="layout-opt sel" onclick="pickLayout('flow',this)">
+            <button type="button" class="plain-btn layout-opt sel" aria-pressed="true" onclick="pickLayout('flow',this)">
               <svg viewBox="0 0 40 30" fill="none"><circle cx="8" cy="5" r="4" fill="var(--gold)" opacity=".3"/><rect x="15" y="3" width="22" height="2.5" rx="1" fill="var(--text)" opacity=".15"/><line x1="8" y1="9" x2="8" y2="13" stroke="var(--border)" stroke-width="1.5"/><circle cx="8" cy="17" r="4" fill="var(--accent)" opacity=".3"/><rect x="15" y="15" width="22" height="2.5" rx="1" fill="var(--text)" opacity=".15"/><line x1="8" y1="21" x2="8" y2="25" stroke="var(--border)" stroke-width="1.5"/><circle cx="8" cy="28" r="2.5" fill="var(--gold)" opacity=".2"/></svg>
               <span>זרימה</span>
-            </div>
-            <div class="layout-opt" onclick="pickLayout('grid',this)">
+            </button>
+            <button type="button" class="plain-btn layout-opt" aria-pressed="false" onclick="pickLayout('grid',this)">
               <svg viewBox="0 0 40 30" fill="none"><rect x="2" y="2" width="16" height="12" rx="3" fill="var(--gold)" opacity=".12"/><rect x="22" y="2" width="16" height="12" rx="3" fill="var(--accent)" opacity=".12"/><rect x="2" y="18" width="16" height="12" rx="3" fill="var(--accent)" opacity=".08"/><rect x="22" y="18" width="16" height="12" rx="3" fill="var(--gold)" opacity=".08"/></svg>
               <span>גריד</span>
-            </div>
-            <div class="layout-opt" onclick="pickLayout('zigzag',this)">
+            </button>
+            <button type="button" class="plain-btn layout-opt" aria-pressed="false" onclick="pickLayout('zigzag',this)">
               <svg viewBox="0 0 40 30" fill="none"><circle cx="6" cy="5" r="3.5" fill="var(--gold)" opacity=".3"/><rect x="13" y="3" width="24" height="2" rx="1" fill="var(--text)" opacity=".12"/><circle cx="34" cy="17" r="3.5" fill="var(--accent)" opacity=".3"/><rect x="3" y="15" width="24" height="2" rx="1" fill="var(--text)" opacity=".12"/><circle cx="6" cy="28" r="3" fill="var(--gold)" opacity=".2"/><rect x="13" y="27" width="20" height="2" rx="1" fill="var(--text)" opacity=".1"/></svg>
               <span>זיגזג</span>
-            </div>
+            </button>
           </div>
         </div>
         <div class="psec">
@@ -399,9 +402,9 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
             מספר שלבים
           </div>
           <div class="count-row">
-            <button class="cbtn" onclick="changeCount(-1)">-</button>
+            <button type="button" class="cbtn" aria-label="הפחתת מספר השלבים" onclick="changeCount(-1)">-</button>
             <span class="cval" id="countVal">5</span>
-            <button class="cbtn" onclick="changeCount(1)">+</button>
+            <button type="button" class="cbtn" aria-label="הוספת שלב" onclick="changeCount(1)">+</button>
           </div>
         </div>
       </div>
@@ -447,13 +450,13 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
             תמונת כותרת
           </div>
           <div class="img-upload" id="headerImgUpload">
-            <input type="file" accept="image/*" onchange="uploadHeaderImg(this)">
+            <input type="file" id="headerImgFile" aria-label="העלאת תמונה לכותרת" accept="image/*" onchange="uploadHeaderImg(this)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
             <p>לחצו להעלאת תמונה לכותרת</p>
           </div>
           <div class="img-preview" id="headerImgPreview" style="display:none">
-            <img id="headerImgEl">
-            <button class="img-remove" onclick="removeHeaderImg()">&times;</button>
+            <img id="headerImgEl" alt="תמונת הכותרת שהועלתה">
+            <button type="button" class="img-remove" aria-label="הסרת תמונת הכותרת" onclick="removeHeaderImg()">&times;</button>
           </div>
         </div>
       </div>
@@ -595,18 +598,18 @@ const templates=[
 function init(){
   // Palettes
   document.getElementById('palGrid').innerHTML=palettes.map((p,i)=>`
-    <div class="pal-opt ${i===0?'sel':''}" onclick="pickPalette(${i},this)">
-      <div class="pal-colors">${p.colors.map(c=>`<div style="background:${c}"></div>`).join('')}</div>
-      <div class="pal-label">${p.name}</div>
-    </div>`).join('');
+    <button type="button" class="plain-btn pal-opt ${i===0?'sel':''}" aria-pressed="${i===0}" onclick="pickPalette(${i},this)">
+      <span class="pal-colors">${p.colors.map(c=>`<span style="background:${c}"></span>`).join('')}</span>
+      <span class="pal-label">${p.name}</span>
+    </button>`).join('');
 
   // Fonts
   document.getElementById('fntGrid').innerHTML=fontPairs.map((f,i)=>`
-    <div class="fnt-opt ${i===0?'sel':''}" onclick="pickFont(${i},this)">
-      <div class="fp" style="font-family:'${f.title}',sans-serif;font-weight:${f.tw||700}">שלום עולם</div>
-      <div class="fb" style="font-family:'${f.body}',sans-serif">טקסט גוף</div>
-      <div class="fn">${f.label}</div>
-    </div>`).join('');
+    <button type="button" class="plain-btn fnt-opt ${i===0?'sel':''}" aria-pressed="${i===0}" onclick="pickFont(${i},this)">
+      <span class="fp" style="font-family:'${f.title}',sans-serif;font-weight:${f.tw||700}">שלום עולם</span>
+      <span class="fb" style="font-family:'${f.body}',sans-serif">טקסט גוף</span>
+      <span class="fn">${f.label}</span>
+    </button>`).join('');
 
   // Layout sub-templates
   renderSubTpls();
@@ -636,23 +639,29 @@ function renderTemplates(){
     else if(t.layout==='float') miniPreview=`<div style="display:flex;flex-direction:column;gap:4px;width:110px"><div style="background:#fff;border-radius:8px;padding:5px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:6px;transform:translateX(6px)"><div style="width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,${p.colors[0]},${p.colors[1]});display:flex;align-items:center;justify-content:center;color:#fff;font-size:.45rem;font-weight:900">1</div><span style="font-size:.5rem;font-weight:700;color:${p.text}">שלב ראשון</span></div><div style="background:#fff;border-radius:8px;padding:5px 8px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;gap:6px;transform:translateX(-6px)"><div style="width:16px;height:16px;border-radius:5px;background:linear-gradient(135deg,${p.colors[1]},${p.colors[2]});display:flex;align-items:center;justify-content:center;color:#fff;font-size:.45rem;font-weight:900">2</div><span style="font-size:.5rem;font-weight:700;color:${p.text}">שלב שני</span></div></div>`;
     else miniPreview=`<div style="display:flex;gap:6px;margin-top:10px">${p.colors.slice(0,3).map((c,j)=>`<div style="width:24px;height:24px;border-radius:${t.style==='tpl-ribbon'?'6px':'50%'};background:${c};display:flex;align-items:center;justify-content:center;color:${p.bg};font-size:.6rem;font-weight:900">${j+1}</div>`).join('')}</div>`;
 
-    return `<div class="tpl-card" onclick="applyTemplate(${i},this)">
+    return `<button type="button" class="plain-btn tpl-card" aria-pressed="${i===S.templateIdx}" onclick="applyTemplate(${i},this)">
       <div class="tpl-preview" style="background:${p.bg};position:relative">
         ${wowBadge}
         <div style="font-family:'${f.title}',sans-serif;font-size:.9rem;font-weight:${f.tw||700};color:${p.text};margin-bottom:6px">כותרת לדוגמה</div>
         ${miniPreview}
       </div>
-      <div class="tpl-info">
-        <div class="tpl-name">${t.name}</div>
-        <div class="tpl-desc">${t.desc}</div>
-      </div>
-    </div>`;
+      <span class="tpl-info">
+        <span class="tpl-name">${t.name}</span>
+        <span class="tpl-desc">${t.desc}</span>
+      </span>
+    </button>`;
   }).join('');
+}
+
+// מסנכרן את aria-pressed למצב הבחירה הויזואלי
+function syncPressed(sel,cls){
+  document.querySelectorAll(sel).forEach(e=>e.setAttribute('aria-pressed',e.classList.contains(cls||'sel')?'true':'false'));
 }
 
 function showTab(t){
   document.querySelectorAll('.panel-tab').forEach(el=>el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
+  syncPressed('.panel-tab','active');
   ['Layout','Templates','Colors','Fonts','Images'].forEach(n=>{
     document.getElementById('panel'+n).style.display=n.toLowerCase()===t?'block':'none';
   });
@@ -664,6 +673,7 @@ function pickLayout(l,el){
   S.templateIdx=-1;
   document.querySelectorAll('.layout-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
+  syncPressed('.layout-opt');
   renderSubTpls();
   renderTemplates();
   if(S.content) render();
@@ -672,17 +682,18 @@ function pickLayout(l,el){
 function renderSubTpls(){
   const subs=layoutSubTemplates[S.layout]||[];
   document.getElementById('subTplGrid').innerHTML=subs.map((t,i)=>`
-    <div class="sub-tpl ${i===S.subTplIdx?'sel':''}" onclick="pickSubTpl(${i},this)">
+    <button type="button" class="plain-btn sub-tpl ${i===S.subTplIdx?'sel':''}" aria-pressed="${i===S.subTplIdx}" onclick="pickSubTpl(${i},this)">
       ${t.svg}
       <span>${t.name}</span>
-      <div class="sub-desc">${t.desc}</div>
-    </div>`).join('');
+      <span class="sub-desc">${t.desc}</span>
+    </button>`).join('');
 }
 
 function pickSubTpl(i,el){
   S.subTplIdx=i;
   document.querySelectorAll('.sub-tpl').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
+  syncPressed('.sub-tpl');
   if(!S.content){
     S.content={title:'כותרת האינפוגרפיקה',subtitle:'תת-כותרת מסבירה במשפט קצר',
       steps:Array.from({length:S.stepCount},(_,j)=>({title:`שלב ${j+1}`,desc:'לחצו כאן לכתוב הסבר'}))};
@@ -700,6 +711,7 @@ function pickPalette(i,el){
   S.paletteIdx=i;
   document.querySelectorAll('.pal-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
+  syncPressed('.pal-opt');
   if(S.content) render();
 }
 
@@ -707,6 +719,7 @@ function pickFont(i,el){
   S.fontIdx=i;
   document.querySelectorAll('.fnt-opt').forEach(e=>e.classList.remove('sel'));
   el.classList.add('sel');
+  syncPressed('.fnt-opt');
   if(S.content) render();
 }
 
@@ -725,6 +738,7 @@ function applyTemplate(i,el){
   document.querySelectorAll('.layout-opt').forEach(e=>e.classList.remove('sel'));
   const layoutIdx=['flow','grid','zigzag'].indexOf(S.layout);
   if(layoutIdx>=0) document.querySelectorAll('.layout-opt')[layoutIdx]?.classList.add('sel');
+  syncPressed('.tpl-card');syncPressed('.pal-opt');syncPressed('.fnt-opt');syncPressed('.layout-opt');
   renderSubTpls();
 
   if(!S.content){
