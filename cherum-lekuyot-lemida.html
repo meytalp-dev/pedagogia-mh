@@ -24,10 +24,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body data-back="cherum-nehalim.html|חירום ואירוע חריג">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -122,19 +123,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -158,14 +160,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -238,7 +240,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -277,9 +279,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -287,7 +292,7 @@
     <h1>לקויות למידה והפרעת קשב בלמידה המקוונת</h1>
     <p class="lead">כשלקות למידה והפרעת קשב פוגשות את הלמידה מרחוק: המלצות מערכתיות, רגשיות ופדגוגיות — ומענים ייעודיים בקשב, בשפה ובקריאה, בכתיבה ובחשבון.</p>
 
-    <div class="meta-row"><span class="src">המקור: <a class="lk" href="docs/lekuyot-lemida-lemida-mekuvenet.pdf" target="_blank" rel="noopener">המסמך המקורי של שפ״י</a></span></div>
+    <div class="meta-row"><span class="src">המקור: <a class="lk" href="docs/lekuyot-lemida-lemida-mekuvenet.pdf" target="_blank" rel="noopener">המסמך המקורי של שפ״י<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span></div>
   </div>
 </section>
 
@@ -374,7 +379,7 @@
     <h2 class="sub-sec rv" id="shiur">ההיערכות לשיעור והשיעור הסינכרוני<small>עיצוב אוניברסלי, הכנות, ומה קורה בזמן השיעור</small></h2>
     <h3 class="mini rv">היערכות מקדימה</h3>
     <p class="rv">יש לשים לב להיקף החומר שהתלמידים צריכים לקרוא מהמסך (מומלץ שיהיה מצומצם ככל הניתן) ולמהירות שבה הם צריכים לעבוד. חשוב לא להעמיס על התפקודים הניהוליים — קשב, בקרה, מעבר בין מטלות, זיכרון עבודה. מומלץ שמצגת השיעור, ההוראות והמטלות יהיו ברורות, ישירות, קצרות ונגישות, ושהמורה יקצה לתלמידים די זמן להבין את היעדים, את החומר ואת המטלות.</p>
-    <div class="callout rv"><span class="ttl">עיצוב אוניברסלי בלמידה (UDL)</span>העיקרון העומד ביסוד הגישה הוא ״מידה אחת המתאימה לכל״. היא אינה מתמקדת בתלמיד המתקשה אלא בכיתה השלמה, ומכוונת לעיצוב הוראה שנותן מענה למגוון רחב של צרכים. עבור תלמידים עם לקויות למידה וקשב הדגם משמעותי במיוחד, כי השיעור מובנה מראש בהתאם לחסמים שהם עלולים לחוות — ולמידה בגישה זו מקדמת על פי רוב גם את שאר תלמידי הכיתה. ניתן להיעזר ב<a class="lk" href="https://ecat.education.gov.il/%D7%9B%D7%9C%D7%99%D7%9D-%D7%93%D7%99%D7%92%D7%99%D7%98%D7%9C%D7%99%D7%99%D7%9D" target="_blank" rel="noopener">לשונית הכלים הדיגיטליים בקטלוג החינוכי</a> של משרד החינוך.</div>
+    <div class="callout rv"><span class="ttl">עיצוב אוניברסלי בלמידה (UDL)</span>העיקרון העומד ביסוד הגישה הוא ״מידה אחת המתאימה לכל״. היא אינה מתמקדת בתלמיד המתקשה אלא בכיתה השלמה, ומכוונת לעיצוב הוראה שנותן מענה למגוון רחב של צרכים. עבור תלמידים עם לקויות למידה וקשב הדגם משמעותי במיוחד, כי השיעור מובנה מראש בהתאם לחסמים שהם עלולים לחוות — ולמידה בגישה זו מקדמת על פי רוב גם את שאר תלמידי הכיתה. ניתן להיעזר ב<a class="lk" href="https://ecat.education.gov.il/%D7%9B%D7%9C%D7%99%D7%9D-%D7%93%D7%99%D7%92%D7%99%D7%98%D7%9C%D7%99%D7%99%D7%9D" target="_blank" rel="noopener">לשונית הכלים הדיגיטליים בקטלוג החינוכי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> של משרד החינוך.</div>
     <p class="rv">במהלך שיעור סינכרוני מומלץ לעודד את התלמידים להשתמש <strong>במחשב ולא בטלפון הנייד</strong>: המחשב מאפשר צפייה בתכנים בהגדלה משמעותית, ומסייע במיקוד בסביבת למידה מופחתת גירויים. עם זאת, לתלמידים בוגרים עם קשיים גרפו־מוטוריים הנשענים על הקלדה — רצוי לשלב בין שני המכשירים: האזנה וצפייה בשיעור במכשיר הנייד, וקריאה מעמיקה או הקלדת סיכום במחשב.</p>
 
     <h3 class="mini rv">הכנות לשיעור הסינכרוני</h3>
@@ -492,7 +497,7 @@
       <li><strong>הנגשה נוספת</strong> — בקבוצה הקטנה המורה יכול לשלב אמצעי הנגשה שאינם מותאמים לכיתה המלאה, כמו ניקוד טקסטים, ריווח והוספת אמצעים חזותיים.</li>
       <li><strong>העשרה שפתית</strong> — לקראת סוף השיעור אפשר לשחק משחקי העשרה שפתיים המתאימים למדיום: משחקי מילים, חידות, בדיחות, תשבצים ו״מצא את ההבדלים״. במסמך גוגל שיתופי אפשר לכתוב את כל מה שקורה במשחק, כך שהתלמיד ייחשף למיצג חזותי ושמיעתי בו־זמנית.</li>
     </ul>
-    <div class="callout rv"><span class="ttl">טכנולוגיה מסייעת לעקיפת קשיי קריאה</span><strong>למורים:</strong> אפשר להיכנס לאפליקציית <a class="lk" href="https://www.almareader.com/" target="_blank" rel="noopener">עלמה רידר</a> ולהשתמש בה עם קוד מזהה של משרד החינוך — היא מאפשרת להעלות קבצי טקסט ולהמיר אותם לקבצי קול MP3 (ההמרה נערכת בדרך כלל בשעות הלילה). <strong>לתלמידים:</strong> תוכנות הקראה אינן מתאימות כשהמטרה היא הקניית קריאה או שכלולה, אך כשהמטרה היא סיוע בהבנת התוכן — מומלץ לאפשר לתלמידים לעקוף את קשיי הקריאה באמצעותן. קיים מגוון תוכנות לבחירה על פי סוג המכשיר.</div>
+    <div class="callout rv"><span class="ttl">טכנולוגיה מסייעת לעקיפת קשיי קריאה</span><strong>למורים:</strong> אפשר להיכנס לאפליקציית <a class="lk" href="https://www.almareader.com/" target="_blank" rel="noopener">עלמה רידר<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ולהשתמש בה עם קוד מזהה של משרד החינוך — היא מאפשרת להעלות קבצי טקסט ולהמיר אותם לקבצי קול MP3 (ההמרה נערכת בדרך כלל בשעות הלילה). <strong>לתלמידים:</strong> תוכנות הקראה אינן מתאימות כשהמטרה היא הקניית קריאה או שכלולה, אך כשהמטרה היא סיוע בהבנת התוכן — מומלץ לאפשר לתלמידים לעקוף את קשיי הקריאה באמצעותן. קיים מגוון תוכנות לבחירה על פי סוג המכשיר.</div>
 
     <h2 class="sub-sec rv" id="ktiva">המלצות בתחום הכתיבה<small>המחשב ככלי שמפנה משאבים מהטכניקה לתוכן</small></h2>
     <p class="rv">עבור תלמידים עם לקות בכתיבה, הלמידה מרחוק יכולה להיות חסם — התלמיד נדרש למספר פעולות סימולטנית הדורשות ממנו מאמץ הבא על חשבון פיתוח הרעיון, ההתייחסות לתוכן ולמבנה. נוסף על כך נדרשות מוטיבציה גבוהה ומשמעת עצמית. חשוב לנתב את הלמידה המקוונת כך שתהיה כלי עזר בהיבטים של שגיאות כתיב, קושי בהעלאת רעיונות ובפיתוחם, וקושי ביכולת הארגון, התכנון והבקרה.</p>
@@ -501,7 +506,7 @@
       <li><strong>פונקציות נגישות</strong> — להנחות את התלמידים להשתמש בגזירה, העתקה והדבקה, המפחיתות תסכולים ואינן מתאפשרות בלמידה השגרתית בכיתה הגדולה.</li>
       <li><strong>תקציר השיעור</strong> — למנות לומד מיומן שיכתוב סיכום ״און ליין״, דבר שיאפשר לתלמיד עם לקות הכתיבה לפנות משאבים מעיסוק בפעולת הכתיבה.</li>
       <li><strong>שאלון מקוון</strong> — כלי יעיל במיוחד עבור תלמידים עם לקות כתיבה. מומלץ להתאימו למטלות שעוקפות את קשיי הכתיבה: שאלות סגורות, מחסן מילים או סימון קטע. אפשר להיעזר ב״גוגל פורמס״, ״קהוט״ ועוד.</li>
-      <li><strong>כתיבה משותפת</strong> — מעלה בדרך כלל את המוטיבציה ללמידה. אפשר להיעזר ב<a class="lk" href="https://pop.education.gov.il/" target="_blank" rel="noopener">פורטל עובדי הוראה</a>, ב״מרחב הפדגוגי״, ב<a class="lk" href="https://ebaghigh.cet.ac.il/" target="_blank" rel="noopener">״הילקוט הדיגיטלי״</a> ובמאגר המשימות ומבחני המדף באתר ראמ״ה.</li>
+      <li><strong>כתיבה משותפת</strong> — מעלה בדרך כלל את המוטיבציה ללמידה. אפשר להיעזר ב<a class="lk" href="https://pop.education.gov.il/" target="_blank" rel="noopener">פורטל עובדי הוראה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, ב״מרחב הפדגוגי״, ב<a class="lk" href="https://ebaghigh.cet.ac.il/" target="_blank" rel="noopener">״הילקוט הדיגיטלי״<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ובמאגר המשימות ומבחני המדף באתר ראמ״ה.</li>
       <li><strong>סיכום שיעור כתחליף לשיעור כתוב</strong> — סיכום באמצעות משחקים מפנה את התלמידים מהעיסוק בכתיבה הדורש מאמץ ואנרגיה, תורם לשיפור הזיכרון ומפנה מקום לאחסון המידע.</li>
       <li><strong>בקרה על הכתיבה</strong> — מומלץ לאפשר הגשת משימות בלמידה א־סינכרונית לאימייל האישי של המורה או באמצעות תוכנות הניהול הפדגוגי, כך שהמורה יוכל למשב את התוצר באופן אישי ולהחזירו לתיקון.</li>
     </ul>
@@ -533,16 +538,18 @@
     <h2 class="sub-sec rv" id="odot">על המסמך<small>מי כתב, ומתי עודכן</small></h2>
     <p class="rv">המסמך נכתב, לוקט ונערך על ידי צוות <strong>אגף לקויות למידה והפרעת קשב, שפ״י — המינהל הפדגוגי, משרד החינוך</strong>, בשיתוף מומחים מהאקדמיה ונציגי עמותת ״קווים ומחשבות״ (העמותה הישראלית להפרעת קשב). המהדורה הראשונה: אייר תש״ף, מאי 2020. עדכון והתאמה: תשפ״ד — ״חרבות ברזל״, אוקטובר 2023.</p>
     <p class="rv">ההתאמה ללמידה מרחוק היא נדבך נוסף ברצף ההתערבויות המומלצות בעבודה עם תלמידים עם לקות למידה וקשב. המסמך אינו מפרט את ההתערבויות השוטפות, אלא שם דגש ומיקוד על הלמידה מרחוק בהיבטים פסיכו־פדגוגיים ומערכתיים, לצד התייחסות להיבטים רגשיים.</p>
-    <p class="rv">קישורים לחומר נוסף: <a class="lk" href="http://meyda.education.gov.il/files/shefi/liikoheylemida/Etgarim_Belemida_Mekuvenet.pdf" target="_blank" rel="noopener">״למידה מקוונת: האתגרים העומדים בפני לומדים ומלמדים״ — פרופ׳ יורם עשת (מצגת)</a> · <a class="lk" href="http://meyda.education.gov.il/files/shefi/liikoheylemida/Sikum_Sicha_Lemida_Corona.pdf" target="_blank" rel="noopener">סיכום שיחת היוועצות עם פרופ׳ יורם עשת בנושא למידה מקוונת</a></p>
+    <p class="rv">קישורים לחומר נוסף: <a class="lk" href="http://meyda.education.gov.il/files/shefi/liikoheylemida/Etgarim_Belemida_Mekuvenet.pdf" target="_blank" rel="noopener">״למידה מקוונת: האתגרים העומדים בפני לומדים ומלמדים״ — פרופ׳ יורם עשת (מצגת)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="http://meyda.education.gov.il/files/shefi/liikoheylemida/Sikum_Sicha_Lemida_Corona.pdf" target="_blank" rel="noopener">סיכום שיחת היוועצות עם פרופ׳ יורם עשת בנושא למידה מקוונת<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
 
     <div class="source-box rv">
       <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
-      <a class="btn" href="docs/lekuyot-lemida-lemida-mekuvenet.pdf" target="_blank" rel="noopener">פתיחת המסמך המקורי ⬇</a>
+      <a class="btn" href="docs/lekuyot-lemida-lemida-mekuvenet.pdf" target="_blank" rel="noopener">פתיחת המסמך המקורי ⬇<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

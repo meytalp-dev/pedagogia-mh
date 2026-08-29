@@ -22,6 +22,11 @@
     --card: #ffffff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  .plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+  .plain-btn:focus-visible, button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--cyan);
+    outline-offset: 2px;
+  }
   body {
     font-family: 'Assistant', 'Assistant', sans-serif;
     background: var(--bg);
@@ -80,7 +85,7 @@
     max-width: 520px;
     margin: 40px auto;
   }
-  .login-card h1 {
+  .login-card h2 {
     font-size: 28px;
     margin-bottom: 8px;
     font-weight: 700;
@@ -223,8 +228,9 @@
     opacity: 0.55;
     cursor: not-allowed;
   }
-  .exam-title { font-size: 14px; font-weight: 500; }
-  .exam-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .exam-item-main { text-align: start; }
+  .exam-title { display: block; font-size: 14px; font-weight: 500; }
+  .exam-meta { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
   .badge-status {
     font-size: 11px;
     font-weight: 600;
@@ -468,10 +474,10 @@
   <div style="background:#fff;border-radius:18px;max-width:520px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
     <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
       <h2 style="font-size:18px;font-weight:700;">דווח על בעיה / הערה</h2>
-      <button onclick="closeFeedback()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);padding:4px 10px;">×</button>
+      <button type="button" onclick="closeFeedback()" aria-label="סגירת חלון הדיווח" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);padding:4px 10px;">×</button>
     </div>
     <div style="padding:20px 22px;overflow-y:auto;flex:1;">
-      <label>נושא</label>
+      <label for="fb-subject">נושא</label>
       <select id="fb-subject">
         <option>באג או תקלה</option>
         <option>שאלה / תשובה שנראית שגויה</option>
@@ -479,11 +485,11 @@
         <option>שאלה כללית</option>
         <option>אחר</option>
       </select>
-      <label>ההודעה</label>
+      <label for="fb-message">ההודעה</label>
       <textarea id="fb-message" rows="5" placeholder="תאר/י את הבעיה או ההערה..."></textarea>
-      <label>שם (אופציונלי)</label>
-      <input id="fb-name" type="text" placeholder="שם מלא">
-      <label>מייל או טלפון (אופציונלי)</label>
+      <label for="fb-name">שם (אופציונלי)</label>
+      <input id="fb-name" type="text" placeholder="למשל: יעל כהן">
+      <label for="fb-contact">מייל או טלפון (אופציונלי)</label>
       <input id="fb-contact" type="text" placeholder="לחזרה במידת הצורך">
       <div id="fb-error" style="color:var(--red);font-size:13px;margin-top:4px;"></div>
     </div>
@@ -514,7 +520,7 @@
         <div style="color:#7f1d1d;margin-top:4px;">בקשי מהמורה שלך את הקישור האישי שלה ותכנסי דרכו.</div>
       </div>
 
-      <h1>כניסת תלמיד/ה</h1>
+      <h2>כניסת תלמיד/ה</h2>
       <p class="sub">פעם ראשונה → רישום. פעם הבאה → כניסה עם אותם שם+PIN.</p>
 
       <label for="student-name">שם מלא</label>
@@ -549,8 +555,8 @@
     </div>
 
     <div class="sector-tabs">
-      <div class="sector-tab active" data-sector="general" onclick="switchSector('general')">מגזר כללי</div>
-      <div class="sector-tab" data-sector="arab" onclick="switchSector('arab')">מגזר ערבי</div>
+      <button type="button" class="sector-tab plain-btn active" data-sector="general" aria-pressed="true" onclick="switchSector('general')">מגזר כללי</button>
+      <button type="button" class="sector-tab plain-btn" data-sector="arab" aria-pressed="false" onclick="switchSector('arab')">מגזר ערבי</button>
     </div>
 
     <div id="subject-grid" class="subject-grid"></div>
@@ -722,7 +728,9 @@
 
   function switchSector(id) {
     document.querySelectorAll('.sector-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.sector === id);
+      const on = t.dataset.sector === id;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     renderSubjects(id);
   }
@@ -739,15 +747,15 @@
             const badge = ready
               ? '<span class="badge-status badge-ready">זמין</span>'
               : '<span class="badge-status badge-pending">בקרוב</span>';
-            const onclick = ready ? `onclick="startExam('${ex.id}')"` : '';
+            const attrs = ready ? `onclick="startExam('${ex.id}')"` : 'disabled';
             return `
-              <div class="exam-item ${ready ? 'ready' : 'pending'}" ${onclick}>
-                <div>
-                  <div class="exam-title">${ex.title}</div>
-                  ${ex.questionCount ? `<div class="exam-meta">${ex.questionCount} שאלות · ${ex.durationMinutes} דקות</div>` : ''}
-                </div>
+              <button type="button" class="exam-item ${ready ? 'ready' : 'pending'}" ${attrs}>
+                <span class="exam-item-main">
+                  <span class="exam-title">${ex.title}</span>
+                  ${ex.questionCount ? `<span class="exam-meta">${ex.questionCount} שאלות · ${ex.durationMinutes} דקות</span>` : ''}
+                </span>
                 ${badge}
-              </div>
+              </button>
             `;
           }).join('')}
         </div>
@@ -829,10 +837,10 @@
         <div class="question" id="q-${q.id}">
           <div class="q-header">
             <div class="q-number">${q.number}</div>
-            <div class="q-text">${q.question}</div>
+            <div class="q-text" id="qt-${q.id}">${q.question}</div>
             <div class="q-points">${q.points} נק'</div>
           </div>
-          <textarea placeholder="כתוב/י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
+          <textarea aria-labelledby="qt-${q.id}" placeholder="כתוב/י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
         </div>
       `;
     }

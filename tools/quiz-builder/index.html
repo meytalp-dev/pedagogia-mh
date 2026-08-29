@@ -23,6 +23,10 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
 
+/* איפוס עיצוב לכפתורים שהיו קודם div – שומר על מראה זהה */
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
 /* HEADER */
 .header{text-align:center;padding:40px 20px 12px}
 .header h1{font-family:'Assistant',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
@@ -286,13 +290,13 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="card">
         <div class="section-title"><div class="badge">1</div> פרטי השאלון</div>
         <div class="form-group">
-          <label>שם השאלון</label>
+          <label for="quizName">שם השאלון</label>
           <input type="text" id="quizName" placeholder="לדוגמה: שם המספר, המרד הגדול...">
           <div class="error">יש להזין שם שאלון</div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>מקצוע</label>
+            <label for="quizSubject">מקצוע</label>
             <select id="quizSubject">
               <option value="">בחרו מקצוע</option>
               <option>עברית</option><option>מתמטיקה</option><option>היסטוריה</option>
@@ -301,7 +305,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
             <div class="error">יש לבחור מקצוע</div>
           </div>
           <div class="form-group">
-            <label>כיתה</label>
+            <label for="quizGrade">כיתה</label>
             <select id="quizGrade">
               <option value="">בחרו כיתה</option>
               <option>כיתה ט</option><option>כיתה י</option><option>כיתה יא</option><option>כיתה יב</option>
@@ -311,7 +315,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
         </div>
 
         <div class="form-group">
-          <label>מספר שאלות</label>
+          <label for="qPerSet">מספר שאלות</label>
           <div class="hint">השאלון מתאים את עצמו אוטומטית לרמת התלמיד – אין צורך להגדיר רמות</div>
           <div class="range-group">
             <input type="range" id="qPerSet" min="5" max="15" value="8" oninput="document.getElementById('qPerSetVal').textContent=this.value">
@@ -335,7 +339,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
         <div class="ai-box" id="aiBox2">
           <div class="ai-box-title">✨ יצירה עם בינה מלאכותית</div>
           <div id="aiKeySetup2"></div>
-          <textarea id="aiPrompt2" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;משוואות עם נעלם אחד – פתרון ובדיקה"></textarea>
+          <textarea id="aiPrompt2" aria-label="נושא השאלון ליצירה עם בינה מלאכותית" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;משוואות עם נעלם אחד – פתרון ובדיקה"></textarea>
           <div class="hint">כתבו רק את הנושא – אין צורך לכתוב "צור שאלות". המקצוע והכיתה נלקחים מהשלב הקודם.</div>
 
           <!-- Chat flow: copy prompt -> Gemini -> paste answer (no API key needed) -->
@@ -348,7 +352,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
             </a>
           </div>
           <div id="chatPasteBox" style="display:none">
-            <textarea id="chatAnswer" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
+            <textarea id="chatAnswer" aria-label="הדבקת התשובה של Gemini" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
             <button class="ai-btn" onclick="buildFromChatAnswer()"><span class="btn-text">🧩 בנו את השאלון מהתשובה</span></button>
           </div>
           <details style="margin-top:8px">
@@ -390,7 +394,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="card">
         <div class="section-title"><div class="badge">4</div> תצוגה מקדימה ופרסום</div>
         <div class="preview-frame">
-          <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+          <iframe id="previewFrame" title="תצוגה מקדימה של השאלון" sandbox="allow-scripts"></iframe>
         </div>
 
         <!-- PUBLISH SECTION -->
@@ -404,7 +408,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           <div class="published-result" id="publishedResult">
             <div class="published-msg">✓ השאלון פורסם בהצלחה! שלחו את הקישור לתלמידים:</div>
             <div class="published-link">
-              <input type="text" id="publishedUrl" readonly>
+              <input type="text" id="publishedUrl" aria-label="קישור לשאלון שפורסם" readonly>
               <button onclick="copyPublishedLink()">העתק קישור</button>
             </div>
           </div>
@@ -784,7 +788,7 @@ function renderLevelTabs() {
   if (!levels.find(l => l.key === activeLevel)) activeLevel = levels[0].key;
 
   document.getElementById('levelTabs').innerHTML = levels.map(l =>
-    `<button class="tab${l.key === activeLevel ? ' active' : ''}" onclick="switchLevel('${l.key}')">
+    `<button type="button" class="tab${l.key === activeLevel ? ' active' : ''}" aria-pressed="${l.key === activeLevel}" onclick="switchLevel('${l.key}')">
       ${l.name} <span class="tab-count">(${(questionSets[l.key] || []).length})</span>
     </button>`
   ).join('');
@@ -811,21 +815,23 @@ function renderSetEditors() {
 }
 
 // ===== QUESTION EDITOR HTML =====
+let editorUid = 0;
 function buildQuestionEditor(idx, q, canDelete) {
   const collapsed = q.text ? ' collapsed' : '';
+  const sc = 'q' + (++editorUid);
   return `
   <div class="q-editor${collapsed}" data-idx="${idx}">
-    <div class="q-editor-header" onclick="toggleEditor(this)">
-      <div class="q-editor-num">
-        <div class="num-badge">${idx + 1}</div>
+    <button type="button" class="plain-btn q-editor-header" aria-expanded="${q.text ? 'false' : 'true'}" onclick="toggleEditor(this)">
+      <span class="q-editor-num">
+        <span class="num-badge">${idx + 1}</span>
         <span>${q.text ? q.text.substring(0, 40) + (q.text.length > 40 ? '...' : '') : 'שאלה ' + (idx + 1)}</span>
-      </div>
-      <div class="q-editor-toggle">▲</div>
-    </div>
+      </span>
+      <span class="q-editor-toggle">▲</span>
+    </button>
     <div class="q-editor-body">
       <div class="form-group">
-        <label>טקסט השאלה</label>
-        <textarea class="q-text-input" placeholder="הקלידו את השאלה...">${escapeHtml(q.text)}</textarea>
+        <label for="${sc}qtext${idx}">טקסט השאלה</label>
+        <textarea id="${sc}qtext${idx}" class="q-text-input" placeholder="הקלידו את השאלה...">${escapeHtml(q.text)}</textarea>
         <div class="error">יש להזין טקסט לשאלה</div>
       </div>
       <div class="form-group">
@@ -833,17 +839,17 @@ function buildQuestionEditor(idx, q, canDelete) {
         <div class="opts-grid">
           ${q.options.map((opt, i) => `
           <div class="opt-row">
-            <div class="opt-label">${letters[i]}</div>
-            <input type="text" class="opt-input" value="${escapeHtml(opt)}" placeholder="תשובה ${letters[i]}">
-            <div class="opt-radio${q.correct === i ? ' selected' : ''}" data-idx="${i}" onclick="selectCorrect(this)">✓</div>
+            <label class="opt-label" for="${sc}qopt${idx}_${i}">${letters[i]}</label>
+            <input type="text" id="${sc}qopt${idx}_${i}" class="opt-input" value="${escapeHtml(opt)}" placeholder="תשובה ${letters[i]}">
+            <button type="button" class="plain-btn opt-radio${q.correct === i ? ' selected' : ''}" data-idx="${i}" aria-pressed="${q.correct === i}" aria-label="סימון תשובה ${letters[i]} כתשובה הנכונה" onclick="selectCorrect(this)">✓</button>
           </div>`).join('')}
         </div>
       </div>
       <div class="form-group">
-        <label>הסבר (מוצג אחרי שהתלמיד עונה)</label>
-        <textarea class="q-explain-input" placeholder="הסבר קצר על התשובה הנכונה...">${escapeHtml(q.explanation)}</textarea>
+        <label for="${sc}qexp${idx}">הסבר (מוצג אחרי שהתלמיד עונה)</label>
+        <textarea id="${sc}qexp${idx}" class="q-explain-input" placeholder="הסבר קצר על התשובה הנכונה...">${escapeHtml(q.explanation)}</textarea>
       </div>
-      ${canDelete ? `<button class="delete-btn" onclick="deleteQuestion(this)">🗑 מחקו שאלה</button>` : ''}
+      ${canDelete ? `<button type="button" class="delete-btn" onclick="deleteQuestion(this)">🗑 מחקו שאלה</button>` : ''}
     </div>
   </div>`;
 }
@@ -857,13 +863,19 @@ function escapeHtml(str) {
 
 // ===== EDITOR INTERACTIONS =====
 function toggleEditor(header) {
-  header.closest('.q-editor').classList.toggle('collapsed');
+  const editor = header.closest('.q-editor');
+  editor.classList.toggle('collapsed');
+  header.setAttribute('aria-expanded', editor.classList.contains('collapsed') ? 'false' : 'true');
 }
 
 function selectCorrect(el) {
   const editor = el.closest('.q-editor');
-  editor.querySelectorAll('.opt-radio').forEach(r => r.classList.remove('selected'));
+  editor.querySelectorAll('.opt-radio').forEach(r => {
+    r.classList.remove('selected');
+    r.setAttribute('aria-pressed', 'false');
+  });
   el.classList.add('selected');
+  el.setAttribute('aria-pressed', 'true');
 }
 
 function deleteQuestion(btn) {
@@ -974,6 +986,8 @@ function generateQuizHTML() {
 :root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-font-smoothing:antialiased}
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 .quiz-wrapper{max-width:580px;width:100%;margin:0 auto}
 .progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
@@ -1025,8 +1039,8 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="intro-icon">${icon}</div>
       <div class="intro-title">שאלון – ${escapeHtml(d.quizName)}</div>
       <div class="intro-sub">${escapeHtml(d.subject)} | ${escapeHtml(d.grade)} | הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית</div>
-      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם" autocomplete="off"></div>
-      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${classOptions}</select></div>
+      <div class="input-group"><label for="studentName">שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם" autocomplete="off"></div>
+      <div class="input-group"><label for="studentClass">כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${classOptions}</select></div>
       <button class="btn btn-primary" id="startBtn" disabled onclick="startQuiz()">התחילו</button>
     </div>
   </div>
@@ -1083,14 +1097,14 @@ function renderQuestion(){
   document.getElementById('qCounter').textContent='שאלה '+qNum+' מתוך '+totalQuestions;
   document.getElementById('qText').textContent=q.text;
   const L=['א','ב','ג','ד'];
-  document.getElementById('qOptions').innerHTML=q.options.map((o,i)=>'<div class="q-opt" onclick="selectAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+o+'</span></div>').join('');
+  document.getElementById('qOptions').innerHTML=q.options.map((o,i)=>'<button type="button" class="plain-btn q-opt" onclick="selectAnswer('+i+')"><span class="opt-letter">'+L[i]+'</span><span>'+o+'</span></button>').join('');
   const fb=document.getElementById('qFeedback');fb.className='q-feedback';fb.textContent='';
   document.getElementById('nextBtn').style.display='none';
 }
 
 function selectAnswer(idx){
   const q=activeQuestions[currentQ],opts=document.querySelectorAll('.q-opt'),ok=idx===q.correct;
-  opts.forEach((o,i)=>{o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});
+  opts.forEach((o,i)=>{o.disabled=true;o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});
   const fb=document.getElementById('qFeedback');
   fb.className='q-feedback show '+(ok?'correct':'wrong');
   fb.innerHTML=ok?'<strong>נכון!</strong> '+q.explanation:'<strong>לא נכון.</strong> '+q.explanation;

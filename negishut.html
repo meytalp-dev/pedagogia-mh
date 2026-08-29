@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הודעות ועדכונים · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="הודעות חשובות והודעות הדרכה של מינהל הכשרה מקצועית — במקום אחד, מתעדכן שוטף.">
+<title>הצהרת נגישות · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="הצהרת הנגישות של האתר: רמת הנגישות שאליה האתר חותר (ת״י 5568 · WCAG 2.0 AA), מה כבר נעשה, אילו חלקים עדיין אינם נגישים, ואיך פונים בנושא נגישות.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="הצהרת נגישות · הבית של המנהיגות הפדגוגית היוצרת">
+<meta property="og:description" content="הצהרת הנגישות של האתר: רמת הנגישות שאליה האתר חותר (ת״י 5568 · WCAG 2.0 AA), מה כבר נעשה, אילו חלקים עדיין אינם נגישים, ואיך פונים בנושא נגישות.">
+<meta property="og:url" content="https://pedagogiamh.co.il/negishut.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -13,10 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
-<body>
+<body data-back="index.html|דף הבית" data-pn-min="3">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
@@ -167,7 +174,7 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
@@ -279,66 +286,143 @@
 <main id="main">
 
 
-<style>
-  .hbar{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--px) 4px}
-  .hpill{border:1px solid var(--border-strong);background:#fff;color:var(--navy-800);
-    border-radius:999px;padding:7px 15px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
-  .hpill:hover{border-color:var(--blue);color:var(--blue)}
-  .hpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .hlist{padding:22px var(--px) 44px;display:flex;flex-direction:column;gap:12px;max-width:900px}
-  .hitem{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:17px 20px;box-shadow:var(--sh-sm);transition:.18s;position:relative;overflow:hidden}
-  .hitem:hover{box-shadow:var(--sh-md)}
-  .hitem::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px}
-  .hitem.t-important::before{background:var(--m-red)}
-  .hitem.t-guide::before{background:var(--m-blue)}
-  .htop{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
-  .htop h3{font-size:1.1rem}
-  .htag{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid}
-  .tg-important{background:#FDECEC;color:#A82B2B;border-color:#F5C9C9}
-  .tg-guide{background:#E8F2FF;color:var(--navy-800);border-color:#C6DDF5}
-  .hdate{margin-inline-start:auto;font-size:.79rem;color:var(--muted);font-weight:600}
-  .hitem p{color:var(--text2);font-size:.95rem;white-space:pre-wrap;line-height:1.6}
-  .hlinks{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-  .hlinks a{font-size:.84rem;font-weight:700;color:var(--blue);text-decoration:none;
-    border:1px solid var(--border);background:var(--blue-bg);border-radius:10px;padding:6px 13px;
-    display:inline-flex;align-items:center;gap:6px;transition:.15s}
-  .hlinks a:hover{border-color:var(--blue)}
-  .hlinks svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .hstate{text-align:center;padding:46px 22px;color:var(--muted);background:var(--soft-bg);
-    border:1px dashed var(--border-strong);border-radius:16px}
-  .hstate svg{width:34px;height:34px;stroke:var(--muted);fill:none;stroke-width:1.6;
-    stroke-linecap:round;margin-bottom:10px}
-  .hstate b{display:block;color:var(--navy);font-size:1.02rem;margin-bottom:4px}
-  .hhide{display:none !important}
-</style>
-
-<div class="pagehead" style="padding-top:52px">
-  <div class="kicker rv">מה חדש במינהל</div>
-  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">הודעות ועדכונים</h1>
-  <p class="rv d2 lead" style="font-size:1.06rem;max-width:660px">
-    הודעות חשובות והודעות הדרכה, במקום אחד. מה שחדש נמצא למעלה.</p>
-</div>
-
-<div class="hbar">
-  <button class="hpill on" data-f="all">הכול</button>
-  <button class="hpill" data-f="חשוב">הודעות חשובות</button>
-  <button class="hpill" data-f="הדרכה">הודעות הדרכה</button>
-</div>
-
-<div class="hlist" id="hlist">
-  <div class="hstate">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    טוען הודעות…
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">נגישות</span>
+    <h1>הצהרת <span class="accent">נגישות</span></h1>
+    <p class="lead">מינהל הכשרה מקצועית במשרד העבודה רואה בנגישות האתר חלק מהשירות עצמו. בעמוד הזה כתוב לאיזו רמת נגישות האתר חותר, מה כבר נעשה, מה עדיין אינו נגיש — ואל מי פונים כשמשהו חוסם.</p>
+    <div class="meta-row">
+      <span class="src">תאריך הבדיקה האחרונה: 29.8.2026</span>
+      <span class="src">התקן: ת״י 5568 · WCAG 2.0 רמה AA</span>
+    </div>
   </div>
-</div>
+</section>
 
-<script src="hodaot.js" defer></script>
+<article class="body-sec">
+  <div class="article">
+
+    <div class="callout petrol rv">
+      <span class="ttl">בקצרה</span>
+      <p>האתר נבנה לפי עקרונות הנגישות ורובו נגיש — אבל <b>לא כולו</b>. מוקדי אי-הנגישות הידועים לנו מפורטים כאן במלואם, בלי לייפות. אם נתקלתם בחסם שאינו מופיע בעמוד הזה, אנחנו מבקשים לשמוע עליו.</p>
+    </div>
+
+    <h2 class="sub-sec first rv">על מה חלה ההצהרה</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">הגוף</td><td>מינהל הכשרה מקצועית · משרד העבודה</td></tr>
+          <tr><td class="k">האתר</td><td>הבית של המנהיגות הפדגוגית היוצרת — <span dir="ltr">pedagogiamh.co.il</span></td></tr>
+          <tr><td class="k">היקף ההצהרה</td><td>כלל עמודי האתר, לרבות הכלים והמחוללים שבתיקייה <span dir="ltr">/tools</span> ומסמכים המוטמעים בעמודים.</td></tr>
+          <tr><td class="k">מועד ההצהרה</td><td>29.8.2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- ===== למילוי ידני =====
+         אם השם המשפטי המדויק של הגוף האחראי לאתר שונה מ"מינהל הכשרה מקצועית · משרד העבודה"
+         (למשל שם אגף או יחידה ספציפית) — לעדכן בטבלה שלמעלה.
+         ======================= -->
+
+    <h2 class="sub-sec rv">רמת הנגישות שאליה האתר חותר</h2>
+    <p class="rv">האתר חותר לעמוד בדרישות <b>תקן ישראלי ת״י 5568 — קווים מנחים לנגישות תכנים באינטרנט</b>, ברמת התאמה <b>AA</b>, המבוסס על מסמך <span dir="ltr">WCAG 2.0</span> של ארגון <span dir="ltr">W3C</span>. זאת בהתאם ל<b>תקנה 35 לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013</b>.</p>
+    <p class="rv">האתר נבנה לצפייה בדפדפנים עדכניים (Chrome, Edge, Firefox, Safari) במחשב ובנייד, ותומך בהגדלת טקסט ובשינוי גודל התצוגה של הדפדפן.</p>
+
+    <h2 class="sub-sec rv">מה כבר נעשה</h2>
+    <ul class="ed rv">
+      <li><b>מבנה סמנטי ושפה מוצהרת</b> — כל עמוד מוגדר <span dir="ltr">lang="he" dir="rtl"</span>, עם היררכיית כותרות ורשימות אמיתיות ולא עיצוב בלבד.</li>
+      <li><b>סימון מיקוד ברור למקלדת</b> — קישורים וכפתורים באתר מקבלים מסגרת מיקוד גלויה בניווט במקלדת.</li>
+      <li><b>טקסט חלופי לתמונות</b> — כמעט כל התמונות באתר נושאות טקסט חלופי (נכון לבדיקה: 326 מתוך 328).</li>
+      <li><b>כיבוד העדפת ״הפחתת תנועה״</b> — מי שהגדיר במערכת ההפעלה הפחתת אנימציות לא יראה את פס ההתקדמות הנע ואת אנימציות הכניסה.</li>
+      <li><b>ניווט חלופי לכל עמוד</b> — תפריט ראשי, מגירת ״כל האתר״, פס ניווט פנימי בעמודים ארוכים ועמוד <a class="lk" href="chipus.html">חיפוש</a>, כך שאין תוכן שמגיעים אליו רק דרך מסלול אחד.</li>
+      <li><b>ניגודיות וטיפוגרפיה</b> — טקסט כהה על רקע בהיר בגוף התוכן, בגופן ייעודי לעברית.</li>
+      <li><b>באנר ההסכמה למדידה</b> — נגיש למקלדת, עם סימון מיקוד וכיבוד הפחתת תנועה.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">מה עדיין אינו נגיש</h2>
+    <p class="lead-p rv">אלה החסמים הידועים לנו נכון ל-29.8.2026. הם מפורטים כאן במלואם, גם כשאין להם עדיין מועד תיקון.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>מה</th><th>הפירוט</th><th>מצב</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="k">המחוללים והכלים האינטראקטיביים</td>
+            <td>הכלים שבתיקייה <span dir="ltr">/tools</span> — מחולל המשחקים, מחולל השיעורים, מחולל הפתיחים, מחולל השאלונים, מאגר התרגולים ומחולל האינפוגרפיקות — אינם ניתנים כיום להפעלה מלאה במקלדת בלבד. חלק מהפקדים בהם בנויים כאזורים לחיצים ולא ככפתורים (79 פקדים כאלה), ולכן אינם מקבלים מיקוד ואינם מופעלים בהקשה על Enter או על מקש הרווח.</td>
+            <td>ידוע · בטיפול</td>
+          </tr>
+          <tr>
+            <td class="k">שדות טופס ללא תווית מקושרת</td>
+            <td>בשדות ההזנה שבמחוללים (97 שדות) הטקסט המסביר מופיע כטקסט מציין מקום (<span dir="ltr">placeholder</span>) בלבד, בלי תווית קבועה המקושרת לשדה. קורא מסך עלול שלא להקריא את ייעוד השדה.</td>
+            <td>ידוע · בטיפול</td>
+          </tr>
+          <tr>
+            <td class="k">קישורים חיצוניים ללא חיווי</td>
+            <td>קישורים רבים באתר נפתחים בלשונית חדשה בלי שהדבר נאמר מראש בטקסט הקישור או בתיאור הנגיש שלו. המעבר עלול להפתיע משתמשי קורא מסך ותוכנות הגדלה.</td>
+            <td>ידוע · בטיפול</td>
+          </tr>
+          <tr>
+            <td class="k">מסמכים ותכנים מוטמעים</td>
+            <td>חלק מהמסמכים באתר הם קובצי PDF ומצגות שהופקו בידי גורמים חיצוניים, ונגישותם לא נבדקה ואינה בשליטתנו המלאה. כמו כן, בחמש מסגרות תוכן מוטמעות (<span dir="ltr">iframe</span>) חסרה כותרת מזהה.</td>
+            <td>ידוע · בטיפול</td>
+          </tr>
+          <tr>
+            <td class="k">קישור ״דילוג לתוכן״</td>
+            <td>באתר אין כיום קישור דילוג בראש העמוד, ולכן מי שמנווט במקלדת עובר את התפריט המלא בכל מעבר בין עמודים.</td>
+            <td>ידוע · בטיפול</td>
+          </tr>
+          <tr>
+            <td class="k">התצוגה בערבית</td>
+            <td>המתג ״العربية״ שבראש העמוד מפעיל תרגום מכונה של Google. אין מדובר בתרגום מקצועי, ואיכותו ונגישותו אינן בשליטתנו.</td>
+            <td>מגבלה ידועה</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber rv">
+      <span class="ttl">חשוב לדעת</span>
+      <p>האתר אינו מצהיר על עצמו כנגיש במלואו. כל עוד החסמים שלמעלה קיימים — הם מוצגים כאן, ואינם נמחקים מההצהרה עד שיתוקנו בפועל.</p>
+    </div>
+
+    <h2 class="sub-sec rv">איך נבדק האתר</h2>
+    <p class="rv">הבדיקה שבבסיס ההצהרה הזו נערכה ב-<b>29.8.2026</b> והיא <b>בדיקה פנימית</b> של צוות האתר: סריקה שיטתית של כלל עמודי האתר ושל קוד המקור, ולצידה בדיקות ידניות של ניווט במקלדת, מבנה כותרות, טקסט חלופי, ניגודיות והתנהגות בהגדלת תצוגה.</p>
+    <!-- ===== למילוי ידני =====
+         אם האתר נבדק (או ייבדק) על ידי מורשה נגישות השירות / מורשה נגישות מבנים, תשתיות וסביבה —
+         להוסיף כאן: שם הבודק/ת, מספר הרישיון ותאריך הבדיקה.
+         אם לא נערכה בדיקה כזו — להשאיר את הפסקה כפי שהיא. הנוסח הנוכחי מדויק.
+         ======================= -->
+
+    <h2 class="sub-sec rv">פנייה בנושא נגישות</h2>
+    <p class="rv">נתקלתם בעמוד, בקובץ או בכלי שאינם נגישים? נשמח שתדווחו — הפנייה מטופלת ומשמשת אותנו לתיקון בפועל. בפנייה כדאי לציין את כתובת העמוד, את הפעולה שניסיתם לבצע ואת הטכנולוגיה המסייעת שבה אתם משתמשים, אם יש כזו.</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">רכז/ת הנגישות</td><td><!-- למילוי: שם מלא ותפקיד -->[למילוי — שם רכז/ת הנגישות]</td></tr>
+          <tr><td class="k">טלפון</td><td><!-- למילוי: טלפון ארגוני בלבד -->[למילוי — טלפון ארגוני]</td></tr>
+          <tr><td class="k">דוא״ל</td><td><!-- למילוי: כתובת דוא״ל ארגונית בלבד, לא כתובת פרטית -->[למילוי — דוא״ל ארגוני]</td></tr>
+          <tr><td class="k">כתובת למשלוח דואר</td><td><!-- למילוי: כתובת המשרד -->[למילוי — כתובת ארגונית]</td></tr>
+          <tr><td class="k">זמן המענה</td><td><!-- למילוי: זמן המענה שהארגון מתחייב לו -->[למילוי — זמן מענה מתחייב]</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- ===== למילוי ידני — חובה לפי תקנה 35 =====
+         חמש השורות שבטבלה למעלה חייבות להתמלא לפני שההצהרה נחשבת שלמה.
+         חשוב: כתובות וטלפונים ארגוניים בלבד — לא פרטי קשר פרטיים של אף אדם.
+         ========================================== -->
+
+    <div class="callout rv">
+      <span class="ttl">עד שהפרטים יושלמו</span>
+      <p>אפשר לדווח על חסם נגישות גם באמצעות כפתור <b>״משוב על האתר״</b> שמופיע בכל עמוד, או דרך עמוד <a class="lk" href="kesher.html">יצירת קשר</a>. פנייה בנושא נגישות תסומן ותטופל בעדיפות.</p>
+    </div>
+
+    <div class="source-box rv">
+      <div class="t">עוד על האתר<small>מי עומד מאחוריו, למי הוא מיועד ואיך פונים אלינו.</small></div>
+      <a class="btn" href="about.html">מי אנחנו ←</a><a class="btn alt" href="kesher.html">יצירת קשר</a>
+    </div>
+
+  </div>
+</article>
 
 </main>
 
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>

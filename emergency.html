@@ -98,10 +98,11 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -196,19 +197,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -232,14 +234,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -312,7 +314,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -351,9 +353,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <div class="pagehead split">
   <div>
@@ -634,22 +639,22 @@
 
   <div class="tabpanel on" id="t1">
     <ul class="crs">
-      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/distance-teaching-learning-digital/" target="_blank" rel="noopener">הוראה ולמידה מרחוק במרחבים דיגיטליים</a><span class="meta">מרחב פדגוגי</span><span class="d">עמוד הריכוז הרשמי: ניהול הלמידה המקוונת, מיומנויות דיגיטליות, תקשורת עם הורים, למידה רגשית-חברתית ובטיחות ברשת.</span></li>
-      <li><a href="https://pop.education.gov.il/teaching-tools/teaching-practices/search-teaching-practices/learning-from-distance/" target="_blank" rel="noopener">למידה היברידית — שמונה צעדים וחמישה מודלים</a><span class="meta">מרחב פדגוגי</span><span class="d">המדריך המעשי ביותר שיש: תכנון יחידה, בחירת מודל, שילוב סינכרוני וא-סינכרוני, עם סרטונים ומערכי שיעור לדוגמה.</span></li>
-      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/virtual-classroom-meeting/" target="_blank" rel="noopener">מפגש חי מרחוק</a><span class="meta">מרחב פדגוגי</span><span class="d">Zoom, Meet ו-Teams — הצד הטכני יחד עם עקרונות פדגוגיים לשיעור סינכרוני.</span></li>
-      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/digital-classroom-learning-space/" target="_blank" rel="noopener">מרחב למידה בקצב אישי</a><span class="meta">מרחב פדגוגי</span><span class="d">תבניות מוכנות ל-Classroom, ל-Teams ול-Moodle ללמידה א-סינכרונית.</span></li>
-      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/academya-bareshet/kol-hashidurim/" target="_blank" rel="noopener">אקדמיה ברשת — כל השידורים</a><span class="meta">פתוח לכולם</span><span class="d">אלפי הרצאות ושיעורים מוקלטים לפי תחום ולפי שפה. שימושי גם למורה וגם לשליחה לתלמידים.</span></li>
+      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/distance-teaching-learning-digital/" target="_blank" rel="noopener">הוראה ולמידה מרחוק במרחבים דיגיטליים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">מרחב פדגוגי</span><span class="d">עמוד הריכוז הרשמי: ניהול הלמידה המקוונת, מיומנויות דיגיטליות, תקשורת עם הורים, למידה רגשית-חברתית ובטיחות ברשת.</span></li>
+      <li><a href="https://pop.education.gov.il/teaching-tools/teaching-practices/search-teaching-practices/learning-from-distance/" target="_blank" rel="noopener">למידה היברידית — שמונה צעדים וחמישה מודלים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">מרחב פדגוגי</span><span class="d">המדריך המעשי ביותר שיש: תכנון יחידה, בחירת מודל, שילוב סינכרוני וא-סינכרוני, עם סרטונים ומערכי שיעור לדוגמה.</span></li>
+      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/virtual-classroom-meeting/" target="_blank" rel="noopener">מפגש חי מרחוק<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">מרחב פדגוגי</span><span class="d">Zoom, Meet ו-Teams — הצד הטכני יחד עם עקרונות פדגוגיים לשיעור סינכרוני.</span></li>
+      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/digital-classroom-learning-space/" target="_blank" rel="noopener">מרחב למידה בקצב אישי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">מרחב פדגוגי</span><span class="d">תבניות מוכנות ל-Classroom, ל-Teams ול-Moodle ללמידה א-סינכרונית.</span></li>
+      <li><a href="https://pop.education.gov.il/sherutey-tiksuv-bachinuch/academya-bareshet/kol-hashidurim/" target="_blank" rel="noopener">אקדמיה ברשת — כל השידורים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">פתוח לכולם</span><span class="d">אלפי הרצאות ושיעורים מוקלטים לפי תחום ולפי שפה. שימושי גם למורה וגם לשליחה לתלמידים.</span></li>
     </ul>
   </div>
 
   <div class="tabpanel" id="t2">
     <p style="font-size:.9rem;color:var(--text2);margin-top:12px">חמישה קורסים מקוונים של משרד החינוך בקמפוס IL — <b>30 שעות סה״כ, בחינם, בקצב אישי ועם תעודה</b>. אפשר לעשות אותם כמסלול מלא או לבחור אחד.</p>
     <ul class="crs ladder">
-      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistancei-he/" target="_blank" rel="noopener">נערכים ללמידה מרחוק I: שיקולי דעת והיבטים טכנולוגיים</a><span class="meta">6 שעות</span></li>
-      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceii-he/" target="_blank" rel="noopener">למידה מרחוק II: היבטים פדגוגיים</a><span class="meta">6 שעות</span></li>
-      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceiii-he/" target="_blank" rel="noopener">למידה מרחוק III: עזרים דיגיטליים לגיוון דרכי הוראה והערכה</a><span class="meta">6 שעות</span></li>
-      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceiv-he/" target="_blank" rel="noopener">למידה מרחוק IV: תכנון למידה שבועית</a><span class="meta">6 שעות</span></li>
-      <li><a href="https://campus.gov.il/course/moe-edu-shelf-aiedu-he/" target="_blank" rel="noopener">בינה מלאכותית כעוזר הוראה</a><span class="meta">6 שעות</span><span class="d">ניסוח פרומפטים, יצירת תוכן ותכנון שיעור בעזרת AI — משלים ישירות את המחולל שלמעלה.</span></li>
+      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistancei-he/" target="_blank" rel="noopener">נערכים ללמידה מרחוק I: שיקולי דעת והיבטים טכנולוגיים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span></li>
+      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceii-he/" target="_blank" rel="noopener">למידה מרחוק II: היבטים פדגוגיים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span></li>
+      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceiii-he/" target="_blank" rel="noopener">למידה מרחוק III: עזרים דיגיטליים לגיוון דרכי הוראה והערכה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span></li>
+      <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceiv-he/" target="_blank" rel="noopener">למידה מרחוק IV: תכנון למידה שבועית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span></li>
+      <li><a href="https://campus.gov.il/course/moe-edu-shelf-aiedu-he/" target="_blank" rel="noopener">בינה מלאכותית כעוזר הוראה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span><span class="d">ניסוח פרומפטים, יצירת תוכן ותכנון שיעור בעזרת AI — משלים ישירות את המחולל שלמעלה.</span></li>
     </ul>
     <div class="notice" style="margin-top:14px">הקורסים מקנים תעודה. לבדיקת הכרה לגמול השתלמות — <a href="hishtalmut-gmul.html" style="color:#0B7FA6;font-weight:700">עמוד הגמול</a>.</div>
   </div>
@@ -657,21 +662,21 @@
   <div class="tabpanel" id="t3">
     <p style="font-size:.9rem;color:var(--text2);margin-top:12px">בחירום התלמידים צריכים לאן להיכנס גם בלי המורה. קמפוס IL פתוח לכולם, בחינם, בלי הרשמה מסובכת ובלי ועדה — אפשר לשלוח את הקישור לקבוצת הוואטסאפ היום.</p>
     <ul class="crs">
-      <li><a href="https://campus.gov.il/municipality/moe-2/" target="_blank" rel="noopener">לתלמידי תיכון — 46 קורסים להכנה לבגרות</a><span class="meta">חינם · בקצב אישי</span><span class="d">מתמטיקה, ביולוגיה, כימיה, פיזיקה, מדעי המחשב ולימודי בגרות כלליים. הכתובת הראשונה לשלוח אליה תלמיד לפני בגרות בחירום.</span></li>
-      <li><a href="https://campus.gov.il/catalog/" target="_blank" rel="noopener">קטלוג הקורסים המלא</a><span class="meta">מאות קורסים</span><span class="d">מסננים לפי נושא, שפה (כולל ערבית, רוסית ואנגלית), משך ומוסד. מקור מצוין למשימת העשרה שבועית.</span></li>
-      <li><a href="https://campus.gov.il/course/digitalil-gov-ai2-he/" target="_blank" rel="noopener">AI לשימוש בעבודה ובקריירה</a><span class="meta">חינם</span><span class="d">מתאים לתלמידי כיתות י״א–י״ב בנתיבי החניכות — מיומנות תעסוקתית אמיתית, לא מילוי זמן.</span></li>
+      <li><a href="https://campus.gov.il/municipality/moe-2/" target="_blank" rel="noopener">לתלמידי תיכון — 46 קורסים להכנה לבגרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">חינם · בקצב אישי</span><span class="d">מתמטיקה, ביולוגיה, כימיה, פיזיקה, מדעי המחשב ולימודי בגרות כלליים. הכתובת הראשונה לשלוח אליה תלמיד לפני בגרות בחירום.</span></li>
+      <li><a href="https://campus.gov.il/catalog/" target="_blank" rel="noopener">קטלוג הקורסים המלא<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">מאות קורסים</span><span class="d">מסננים לפי נושא, שפה (כולל ערבית, רוסית ואנגלית), משך ומוסד. מקור מצוין למשימת העשרה שבועית.</span></li>
+      <li><a href="https://campus.gov.il/course/digitalil-gov-ai2-he/" target="_blank" rel="noopener">AI לשימוש בעבודה ובקריירה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">חינם</span><span class="d">מתאים לתלמידי כיתות י״א–י״ב בנתיבי החניכות — מיומנות תעסוקתית אמיתית, לא מילוי זמן.</span></li>
     </ul>
   </div>
 
   <div class="tabpanel" id="t4">
     <ul class="crs">
-      <li><a href="https://www.amalnet.k12.il/e-learning1/" target="_blank" rel="noopener">עמל · למידה מרחוק בחירום</a><span class="d">מערכי שיעור וכלים שנבנו במיוחד למצב חירום, פתוח בלי הזדהות.</span></li>
-      <li><a href="https://www.amalnet.k12.il/lwl/" target="_blank" rel="noopener">עמל · למידה במרחבי החיים — קורס MOOC</a><span class="d">קורס אונליין ללמידה עצמית, מתאים גם למורים וגם כהעשרה לתלמידים.</span></li>
-      <li><a href="https://www.amalnet.k12.il/ai-tips/" target="_blank" rel="noopener">עמל · AI-TIPS</a><span class="d">פרקטיקות בינה מלאכותית שמקצרות הכנת חומרים מרחוק.</span></li>
-      <li><a href="https://brancoweiss.org.il/product/%d7%a8%d7%a7-%d7%99%d7%97%d7%93-%d7%9b%d7%9c%d7%99%d7%9d-%d7%95%d7%a9%d7%92%d7%a8%d7%95%d7%aa-%d7%9c%d7%a9%d7%a2%d7%aa-%d7%97%d7%99%d7%a8%d7%95%d7%9d/" target="_blank" rel="noopener">ברנקו וייס · רק יחד — כלים ושגרות לשעת חירום</a><span class="d">שגרות פתיחה ושיח רגשי מוכנים להפעלה, בחינם.</span></li>
-      <li><a href="https://brancoweiss.org.il/product/%d7%9e%d7%93%d7%99%d7%93%d7%94-%d7%94%d7%a2%d7%a8%d7%9b%d7%94-%d7%95%d7%9e%d7%a9%d7%95%d7%91-%d7%91%d7%9c%d7%9e%d7%99%d7%93%d7%94-%d7%9e%d7%a8%d7%97%d7%95%d7%a7/" target="_blank" rel="noopener">ברנקו וייס · מדידה, הערכה ומשוב בלמידה מרחוק</a><span class="d">איך יודעים שלמדו — כשאין מבחן בכיתה.</span></li>
-      <li><a href="https://atidedu.org.il/library/learning/" target="_blank" rel="noopener">עתיד · עקרונות ללמידה בחירום</a><span class="d">המסגרת הפדגוגית — מה משנים ומה משאירים.</span></li>
-      <li><a href="https://atidedu.org.il/library/lesson-plan/" target="_blank" rel="noopener">עתיד · וּבְחַרְתָּ — חוברת מערכים לזיכרון והנצחה</a><span class="d">מודל שלושה מעגלים: פרט – קהילה – מדינה. יחד עם <a href="https://atidedu.org.il/library/600days/" target="_blank" rel="noopener">600 ימים</a> ו<a href="https://atidedu.org.il/library/rememberthem/" target="_blank" rel="noopener">לזכור אותם</a>.</span></li>
+      <li><a href="https://www.amalnet.k12.il/e-learning1/" target="_blank" rel="noopener">עמל · למידה מרחוק בחירום<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">מערכי שיעור וכלים שנבנו במיוחד למצב חירום, פתוח בלי הזדהות.</span></li>
+      <li><a href="https://www.amalnet.k12.il/lwl/" target="_blank" rel="noopener">עמל · למידה במרחבי החיים — קורס MOOC<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">קורס אונליין ללמידה עצמית, מתאים גם למורים וגם כהעשרה לתלמידים.</span></li>
+      <li><a href="https://www.amalnet.k12.il/ai-tips/" target="_blank" rel="noopener">עמל · AI-TIPS<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">פרקטיקות בינה מלאכותית שמקצרות הכנת חומרים מרחוק.</span></li>
+      <li><a href="https://brancoweiss.org.il/product/%d7%a8%d7%a7-%d7%99%d7%97%d7%93-%d7%9b%d7%9c%d7%99%d7%9d-%d7%95%d7%a9%d7%92%d7%a8%d7%95%d7%aa-%d7%9c%d7%a9%d7%a2%d7%aa-%d7%97%d7%99%d7%a8%d7%95%d7%9d/" target="_blank" rel="noopener">ברנקו וייס · רק יחד — כלים ושגרות לשעת חירום<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">שגרות פתיחה ושיח רגשי מוכנים להפעלה, בחינם.</span></li>
+      <li><a href="https://brancoweiss.org.il/product/%d7%9e%d7%93%d7%99%d7%93%d7%94-%d7%94%d7%a2%d7%a8%d7%9b%d7%94-%d7%95%d7%9e%d7%a9%d7%95%d7%91-%d7%91%d7%9c%d7%9e%d7%99%d7%93%d7%94-%d7%9e%d7%a8%d7%97%d7%95%d7%a7/" target="_blank" rel="noopener">ברנקו וייס · מדידה, הערכה ומשוב בלמידה מרחוק<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">איך יודעים שלמדו — כשאין מבחן בכיתה.</span></li>
+      <li><a href="https://atidedu.org.il/library/learning/" target="_blank" rel="noopener">עתיד · עקרונות ללמידה בחירום<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">המסגרת הפדגוגית — מה משנים ומה משאירים.</span></li>
+      <li><a href="https://atidedu.org.il/library/lesson-plan/" target="_blank" rel="noopener">עתיד · וּבְחַרְתָּ — חוברת מערכים לזיכרון והנצחה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="d">מודל שלושה מעגלים: פרט – קהילה – מדינה. יחד עם <a href="https://atidedu.org.il/library/600days/" target="_blank" rel="noopener">600 ימים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ו<a href="https://atidedu.org.il/library/rememberthem/" target="_blank" rel="noopener">לזכור אותם<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>.</span></li>
     </ul>
   </div>
 </div>
@@ -696,6 +701,8 @@
 <div class="notice rv" style="margin:14px var(--px) 48px">
   התכנים החיצוניים בעמוד זה פתוחים לצפייה באדיבות משרד החינוך, קמפוס IL, רשת עמל, מכון ברנקו וייס ורשת עתיד — הקישור חופשי, זכויות היוצרים של בעלי התכנים.
 </div>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>למידה בחירום</span></div></div>
 

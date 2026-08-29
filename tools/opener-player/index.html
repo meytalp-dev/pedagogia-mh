@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+.plain-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 :root{
   --primary:#124D7A;--primary-light:#E8F2FF;--primary-dark:#0D3B66;
   --secondary:#087B9C;--accent:#52B788;--orange:#F4A261;
@@ -123,7 +125,8 @@ footer{text-align:center;padding:20px;color:var(--gray);font-size:0.75rem;margin
     <span class="tag hl" id="tagSubject"></span>
     <span class="tag" id="tagGrade"></span>
   </div>
-  <input type="text" id="studentName" placeholder="מה השם שלך?">
+  <label for="studentName" style="display:block;font-weight:600;font-size:0.9rem;margin-bottom:6px">השם שלך</label>
+  <input type="text" id="studentName" placeholder="למשל: נועה כהן">
   <button class="btn btn-primary btn-block" onclick="joinActivity()">🚀 הצטרפו!</button>
 </div>
 
@@ -234,9 +237,11 @@ function buildActivities() {
     const t = TYPES[act.type] || { icon: '📝', name: act.type };
 
     // Tab
-    const tab = document.createElement('div');
-    tab.className = 'tab' + (i === 0 ? ' active' : '');
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'tab plain-btn' + (i === 0 ? ' active' : '');
     tab.textContent = t.icon + ' ' + t.name;
+    tab.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
     tab.onclick = () => switchTab(i);
     tabsEl.appendChild(tab);
 
@@ -250,7 +255,10 @@ function buildActivities() {
 }
 
 function switchTab(idx) {
-  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+    t.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+  });
   document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === idx));
 }
 
@@ -261,7 +269,7 @@ function buildPanel(act, idx) {
       return `<div class="section-title">📊 סקר כיתתי</div>
         <div class="vote-q">${d.question || ''}</div>
         <div class="vote-opts">${(d.options||[]).map((o, j) =>
-          `<div class="vote-o" onclick="submitVote(${idx},${j})" id="vo_${idx}_${j}"><span class="vote-letter">${letters[j]||j+1}</span><span>${o}</span></div>`
+          `<button type="button" class="vote-o plain-btn" onclick="submitVote(${idx},${j})" id="vo_${idx}_${j}" aria-pressed="false"><span class="vote-letter">${letters[j]||j+1}</span><span>${o}</span></button>`
         ).join('')}</div>
         <div class="voted-msg" id="votedMsg_${idx}">✅ ההצבעה נשמרה!</div>`;
 
@@ -269,8 +277,8 @@ function buildPanel(act, idx) {
       return `<div class="section-title">☁️ ענן מילים</div>
         <div class="wc-prompt">${d.prompt || 'כתבו מילה...'}</div>
         <div class="wc-input-row">
-          <input type="text" class="wc-input" id="wcInput_${idx}" placeholder="כתבו מילה..." maxlength="20" onkeydown="if(event.key==='Enter')submitWord(${idx})">
-          <button class="btn btn-primary" onclick="submitWord(${idx})">➕</button>
+          <input type="text" class="wc-input" id="wcInput_${idx}" aria-label="כתבו מילה" placeholder="כתבו מילה..." maxlength="20" onkeydown="if(event.key==='Enter')submitWord(${idx})">
+          <button type="button" class="btn btn-primary" aria-label="הוסיפו מילה" onclick="submitWord(${idx})">➕</button>
         </div>
         <div class="wc-area" id="wcArea_${idx}"><span class="wc-empty">🌤️ הוסיפו מילים!</span></div>
         <div class="wc-count" id="wcCount_${idx}"></div>`;
@@ -279,7 +287,7 @@ function buildPanel(act, idx) {
       return `<div class="section-title">🏆 ניחוש מספר</div>
         <div class="big-question">${d.question || 'כמה...?'}</div>
         <div style="display:flex;gap:10px;justify-content:center">
-          <input type="number" class="wc-input" id="gnInput_${idx}" placeholder="הניחוש שלכם..." style="max-width:180px;text-align:center;font-size:1.2rem">
+          <input type="number" class="wc-input" id="gnInput_${idx}" aria-label="הניחוש שלכם" placeholder="הניחוש שלכם..." style="max-width:180px;text-align:center;font-size:1.2rem">
           <button class="btn btn-primary" onclick="submitGuess(${idx})">🏆 שלח</button>
         </div>
         <div class="result-box" id="gnResult_${idx}"></div>`;
@@ -288,7 +296,7 @@ function buildPanel(act, idx) {
       return `<div class="section-title">🎭 מה היית עושה?</div>
         <div class="dilemma-text">${d.scenario || ''}</div>
         <div class="dilemma-opts">${(d.options||[]).map((o, j) =>
-          `<div class="dilemma-o" onclick="submitDilemma(${idx},${j})">${o.text || 'אפשרות'}</div>`
+          `<button type="button" class="dilemma-o plain-btn" onclick="submitDilemma(${idx},${j})" aria-pressed="false">${o.text || 'אפשרות'}</button>`
         ).join('')}</div>
         <div class="voted-msg" id="dilemmaMsg_${idx}">✅ הבחירה נשמרה!</div>`;
 
@@ -304,8 +312,15 @@ function buildPanel(act, idx) {
 
 // ===== SUBMISSIONS =====
 function submitVote(actIdx, optIdx) {
-  document.querySelectorAll(`#panel_${actIdx} .vote-o`).forEach(o => o.classList.remove('voted'));
-  document.getElementById(`vo_${actIdx}_${optIdx}`).classList.add('voted');
+  document.querySelectorAll(`#panel_${actIdx} .vote-o`).forEach(o => {
+    o.classList.remove('voted');
+    o.disabled = false;
+    o.setAttribute('aria-pressed', 'false');
+  });
+  const chosen = document.getElementById(`vo_${actIdx}_${optIdx}`);
+  chosen.classList.add('voted');
+  chosen.disabled = true;
+  chosen.setAttribute('aria-pressed', 'true');
   document.getElementById(`votedMsg_${actIdx}`).style.display = 'block';
 
   sendToSheets({
@@ -377,8 +392,10 @@ function submitGuess(actIdx) {
 }
 
 function submitDilemma(actIdx, optIdx) {
-  document.querySelectorAll(`#panel_${actIdx} .dilemma-o`).forEach(o => o.classList.remove('chosen'));
-  event.target.closest('.dilemma-o').classList.add('chosen');
+  const opts = document.querySelectorAll(`#panel_${actIdx} .dilemma-o`);
+  opts.forEach(o => { o.classList.remove('chosen'); o.setAttribute('aria-pressed', 'false'); });
+  const picked = opts[optIdx];
+  if (picked) { picked.classList.add('chosen'); picked.setAttribute('aria-pressed', 'true'); }
   document.getElementById(`dilemmaMsg_${actIdx}`).style.display = 'block';
 
   sendToSheets({

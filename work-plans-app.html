@@ -136,7 +136,7 @@ body.gated #gate{display:block}
 
 .field{margin-bottom:15px}
 .field:last-child{margin-bottom:0}
-.field label{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.field label,.field .fld-title{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
 input[type=text],input[type=email],input[type=password],textarea,select{width:100%;background:var(--surface);
   border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:8px 11px;transition:border-color .15s,box-shadow .15s}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(74,111,165,.13)}
@@ -275,6 +275,7 @@ dialog .dlg-foot{padding:13px 20px;border-top:1px solid var(--line);display:flex
 </style>
 </head>
 <body class="gated">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <!-- ================= GATE / כניסה ================= -->
 <div id="gate"><div class="gate-wrap" id="gateWrap"></div></div>
@@ -293,7 +294,7 @@ dialog .dlg-foot{padding:13px 20px;border-top:1px solid var(--line);display:flex
     <input type="file" id="fileInput" accept=".json" hidden>
   </aside>
 
-  <main class="main">
+  <main id="main" class="main">
     <div class="topbar">
       <div>
         <h2 id="pageTitle">דשבורד</h2>
@@ -439,12 +440,12 @@ function form(title, fields, onOk, okLabel){
   $('#dlgOk').textContent = okLabel || 'אישור';
   $('#dlgBody').innerHTML = fields.map(f=>`
     <div class="field">
-      <label>${esc(f.label)}</label>
+      <label for="dlgf-${esc(f.key)}">${esc(f.label)}</label>
       ${f.type==='select'
-        ? `<select data-k="${f.key}">${f.options.map(o=>`<option value="${esc(o.v)}" ${o.v===f.value?'selected':''}>${esc(o.t)}</option>`).join('')}</select>`
+        ? `<select id="dlgf-${esc(f.key)}" data-k="${f.key}">${f.options.map(o=>`<option value="${esc(o.v)}" ${o.v===f.value?'selected':''}>${esc(o.t)}</option>`).join('')}</select>`
         : f.type==='checkbox'
-        ? `<label style="display:flex;gap:8px;align-items:center;font-weight:500;cursor:pointer"><input type="checkbox" data-k="${f.key}" ${f.value?'checked':''} style="width:17px;height:17px;accent-color:var(--brand)"> ${esc(f.note||'')}</label>`
-        : `<input type="${f.type||'text'}" data-k="${f.key}" value="${esc(f.value||'')}" placeholder="${esc(f.placeholder||'')}">`}
+        ? `<label style="display:flex;gap:8px;align-items:center;font-weight:500;cursor:pointer"><input type="checkbox" id="dlgf-${esc(f.key)}" data-k="${f.key}" ${f.value?'checked':''} style="width:17px;height:17px;accent-color:var(--brand)"> ${esc(f.note||'')}</label>`
+        : `<input type="${f.type||'text'}" id="dlgf-${esc(f.key)}" data-k="${f.key}" value="${esc(f.value||'')}" placeholder="${esc(f.placeholder||'')}">`}
       ${f.hint? `<div style="font-size:11.5px;color:var(--ink-3);margin-top:4px">${esc(f.hint)}</div>`:''}
     </div>`).join('');
   d.showModal();
@@ -521,7 +522,7 @@ function renderGate(){
       <div class="gate-sec">
         <h3><span class="n">1</span> באיזה בית ספר את/ה?</h3>
         <div class="desc">הקובץ מכיל ${state.schools.length} בתי ספר. בחר/י את שלך.</div>
-        <select id="gateSchool" style="max-width:420px">
+        <select id="gateSchool" aria-label="באיזה בית ספר את/ה?" style="max-width:420px">
           ${state.schools.map(x=>`<option value="${x.id}" ${x.id===s.id?'selected':''}>${esc(x.name)} · ${esc(x.code)}</option>`).join('')}
         </select>
       </div>`:`
@@ -762,12 +763,12 @@ function viewForm(){
       <div class="card">
         <div class="card-head"><h3><span class="step">0</span> בעל/ת התפקיד</h3></div>
         <div class="card-body"><div class="grid-3">
-          <div class="field" style="margin:0"><label>שם מלא</label>
-            <input type="text" data-sec="staff" data-field="name" value="${esc(st.name)}" placeholder="שם מלא"></div>
-          <div class="field" style="margin:0"><label>דוא״ל</label>
-            <input type="text" data-sec="staff" data-field="email" value="${esc(st.email)}" placeholder="name@school.org.il"></div>
-          <div class="field" style="margin:0"><label>תפקיד</label>
-            <input type="text" value="${esc(roleName(st))}" disabled></div>
+          <div class="field" style="margin:0"><label for="staffName">שם מלא</label>
+            <input type="text" id="staffName" data-sec="staff" data-field="name" value="${esc(st.name)}" placeholder="למשל: יעל כהן"></div>
+          <div class="field" style="margin:0"><label for="staffEmail">דוא״ל</label>
+            <input type="text" id="staffEmail" data-sec="staff" data-field="email" value="${esc(st.email)}" placeholder="name@school.org.il"></div>
+          <div class="field" style="margin:0"><label for="staffRole">תפקיד</label>
+            <input type="text" id="staffRole" value="${esc(roleName(st))}" disabled></div>
         </div></div>
       </div>
 
@@ -775,7 +776,7 @@ function viewForm(){
         <div class="card-head"><h3><span class="step">1</span> מה אקדם בתחום שלי השנה</h3>
           <p>האמירה המרכזית שממנה נגזר כל השאר. 2–4 שורות.</p></div>
         <div class="card-body">
-          <textarea data-sec="meta" data-field="vision" rows="3"
+          <textarea data-sec="meta" data-field="vision" rows="3" aria-label="מה אקדם בתחום שלי השנה"
             placeholder="לדוגמה: השנה אקדם תרבות של מעורבות חברתית פעילה, שבה כל תלמיד בשכבות ז׳–ט׳ לוקח חלק לפחות בפרויקט קהילתי אחד, ומועצת התלמידים הופכת לגוף שמוביל יוזמות ולא רק מבצע.">${esc(p.vision)}</textarea>
         </div>
       </div>
@@ -869,7 +870,7 @@ function drawGoals(){
   const p=plan();
   $('#rowsGoals').innerHTML = p.goals.length? p.goals.map((g,i)=>`
     <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="goals" data-id="${g.id}" data-field="text"
+      <textarea rows="2" data-sec="goals" data-id="${g.id}" data-field="text" aria-label="מטרה ${i+1}"
         placeholder="לדוגמה: לחזק את תחושת השייכות והמסוגלות של תלמידי חטיבת הביניים">${esc(g.text)}</textarea>
     </div><button type="button" class="del" onclick="delRow('goals','${g.id}')">×</button></div>`).join('')
     : emptyRow('עדיין לא הוגדרו מטרות. התחילו מ־2–3 מטרות מרכזיות לשנה.');
@@ -878,17 +879,17 @@ function drawObjectives(){
   const p=plan();
   $('#rowsObjectives').innerHTML = p.objectives.length? p.objectives.map((o,i)=>`
     <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="objectives" data-id="${o.id}" data-field="text"
+      <textarea rows="2" data-sec="objectives" data-id="${o.id}" data-field="text" aria-label="יעד מדיד ${i+1}"
         placeholder="לדוגמה: 80% מתלמידי ז׳–ט׳ ישתתפו לפחות בפרויקט קהילתי אחד עד סוף מאי">${esc(o.text)}</textarea>
       <div class="grid-4" style="margin-top:8px">
-        <div><span class="mini-label">מדד / איך נמדוד</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="indicator" value="${esc(o.indicator)}" placeholder="שאלון / דוח / ספירה"></div>
-        <div><span class="mini-label">נקודת פתיחה</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="baseline" value="${esc(o.baseline)}" placeholder="45%"></div>
-        <div><span class="mini-label">יעד</span>
-          <input type="text" data-sec="objectives" data-id="${o.id}" data-field="target" value="${esc(o.target)}" placeholder="80%"></div>
-        <div><span class="mini-label">מועד בדיקה</span>
-          <select data-sec="objectives" data-id="${o.id}" data-field="dueMonth"><option value="">— בחירה —</option>
+        <div><label class="mini-label" for="obj-${o.id}-indicator">מדד / איך נמדוד</label>
+          <input type="text" id="obj-${o.id}-indicator" data-sec="objectives" data-id="${o.id}" data-field="indicator" value="${esc(o.indicator)}" placeholder="שאלון / דוח / ספירה"></div>
+        <div><label class="mini-label" for="obj-${o.id}-baseline">נקודת פתיחה</label>
+          <input type="text" id="obj-${o.id}-baseline" data-sec="objectives" data-id="${o.id}" data-field="baseline" value="${esc(o.baseline)}" placeholder="45%"></div>
+        <div><label class="mini-label" for="obj-${o.id}-target">יעד</label>
+          <input type="text" id="obj-${o.id}-target" data-sec="objectives" data-id="${o.id}" data-field="target" value="${esc(o.target)}" placeholder="80%"></div>
+        <div><label class="mini-label" for="obj-${o.id}-due">מועד בדיקה</label>
+          <select id="obj-${o.id}-due" data-sec="objectives" data-id="${o.id}" data-field="dueMonth"><option value="">— בחירה —</option>
             ${MONTHS.map(m=>`<option ${o.dueMonth===m?'selected':''}>${m}</option>`).join('')}</select></div>
       </div>
     </div><button type="button" class="del" onclick="delRow('objectives','${o.id}')">×</button></div>`).join('')
@@ -898,10 +899,10 @@ function drawActions(){
   const p=plan();
   $('#rowsActions').innerHTML = p.actions.length? p.actions.map((a,i)=>`
     <div class="row-item"><div class="num">${i+1}</div><div class="grow">
-      <textarea rows="2" data-sec="actions" data-id="${a.id}" data-field="text"
+      <textarea rows="2" data-sec="actions" data-id="${a.id}" data-field="text" aria-label="פעולה ${i+1}"
         placeholder="לדוגמה: להקים צוות מוביל של 12 תלמידים ולקיים מפגש חודשי קבוע">${esc(a.text)}</textarea>
-      <div style="margin-top:8px;max-width:230px"><span class="mini-label">מועד יעד</span>
-        <select data-sec="actions" data-id="${a.id}" data-field="when"><option value="">— לאורך השנה —</option>
+      <div style="margin-top:8px;max-width:230px"><label class="mini-label" for="act-${a.id}-when">מועד יעד</label>
+        <select id="act-${a.id}-when" data-sec="actions" data-id="${a.id}" data-field="when"><option value="">— לאורך השנה —</option>
           ${MONTHS.map(m=>`<option ${a.when===m?'selected':''}>${m}</option>`).join('')}</select></div>
     </div><button type="button" class="del" onclick="delRow('actions','${a.id}')">×</button></div>`).join('')
     : emptyRow('הפעולות הן הלב של הצ׳ק־ליסט — כל פעולה שתכתבו כאן תופיע שם.');
@@ -913,23 +914,23 @@ function drawMonthly(){
       <div style="display:flex;gap:10px;width:100%;align-items:flex-start">
         <div class="num">${i+1}</div>
         <div class="grow grid-2">
-          <div><span class="mini-label">חודש</span>
-            <select data-sec="monthly" data-id="${m.id}" data-field="month"><option value="">— בחירת חודש —</option>
+          <div><label class="mini-label" for="mon-${m.id}-month">חודש</label>
+            <select id="mon-${m.id}-month" data-sec="monthly" data-id="${m.id}" data-field="month"><option value="">— בחירת חודש —</option>
               ${MONTHS.map(x=>`<option ${m.month===x?'selected':''}>${x}</option>`).join('')}</select></div>
-          <div><span class="mini-label">האירוע / הפעילות</span>
-            <input type="text" data-sec="monthly" data-id="${m.id}" data-field="event" value="${esc(m.event)}" placeholder="שם האירוע"></div>
+          <div><label class="mini-label" for="mon-${m.id}-event">האירוע / הפעילות</label>
+            <input type="text" id="mon-${m.id}-event" data-sec="monthly" data-id="${m.id}" data-field="event" value="${esc(m.event)}" placeholder="למשל: יום מעורבות קהילתית"></div>
         </div>
         <button type="button" class="del" onclick="delRow('monthly','${m.id}')">×</button>
       </div>
       <div class="grid-4" style="width:100%;padding-inline-start:32px">
-        <div><span class="mini-label">משתתפים</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="participants" value="${esc(m.participants)}" placeholder="שכבה ט׳ · 120 תלמידים"></div>
-        <div><span class="mini-label">עלות (₪)</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="cost" value="${esc(m.cost)}" placeholder="3500"></div>
-        <div><span class="mini-label">מה צריך</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="needs" value="${esc(m.needs)}" placeholder="אולם, הסעות, הגברה"></div>
-        <div><span class="mini-label">מי השותפים</span>
-          <input type="text" data-sec="monthly" data-id="${m.id}" data-field="partners" value="${esc(m.partners)}" placeholder="יועצת, מתנ״ס, ועד הורים"></div>
+        <div><label class="mini-label" for="mon-${m.id}-participants">משתתפים</label>
+          <input type="text" id="mon-${m.id}-participants" data-sec="monthly" data-id="${m.id}" data-field="participants" value="${esc(m.participants)}" placeholder="שכבה ט׳ · 120 תלמידים"></div>
+        <div><label class="mini-label" for="mon-${m.id}-cost">עלות (₪)</label>
+          <input type="text" id="mon-${m.id}-cost" data-sec="monthly" data-id="${m.id}" data-field="cost" value="${esc(m.cost)}" placeholder="3500"></div>
+        <div><label class="mini-label" for="mon-${m.id}-needs">מה צריך</label>
+          <input type="text" id="mon-${m.id}-needs" data-sec="monthly" data-id="${m.id}" data-field="needs" value="${esc(m.needs)}" placeholder="אולם, הסעות, הגברה"></div>
+        <div><label class="mini-label" for="mon-${m.id}-partners">מי השותפים</label>
+          <input type="text" id="mon-${m.id}-partners" data-sec="monthly" data-id="${m.id}" data-field="partners" value="${esc(m.partners)}" placeholder="יועצת, מתנ״ס, ועד הורים"></div>
       </div>
     </div>`).join('')
     : emptyRow('אפשר להתחיל מכפתור "מילוי שלד 12 חודשים" ולמלא בהדרגה.');
@@ -979,7 +980,7 @@ function viewMyChecklist(){
   const pct = all.length? Math.round(done/all.length*100):0;
 
   setHead(`צ׳ק־ליסט — ${roleName(st)}`, `${school().name} · נוצר אוטומטית מהתוכנית`,
-    `${isPrincipal()? `<select id="staffSwitch" style="width:auto;padding:7px 11px;font-weight:600">
+    `${isPrincipal()? `<select id="staffSwitch" aria-label="בחירת בעל/ת תפקיד" style="width:auto;padding:7px 11px;font-weight:600">
         ${staffList().map(x=>`<option value="${x.id}" ${x.id===st.id?'selected':''}>${esc(x.name.trim()||roleName(x))}</option>`).join('')}
       </select>`:''}
      <button class="btn ghost sm" onclick="go('form:${st.id}')">✎ עריכת התוכנית</button>
@@ -1057,13 +1058,13 @@ function viewMaster(){
 
     <div class="filters no-print">
       <span class="lbl">סינון:</span>
-      <select id="fWho"><option value="">כל בעלי התפקידים</option>
+      <select id="fWho" aria-label="סינון לפי בעל/ת תפקיד"><option value="">כל בעלי התפקידים</option>
         ${list.map(st=>`<option value="${st.id}" ${f.who===st.id?'selected':''}>${esc(st.name.trim()||roleName(st))}</option>`).join('')}</select>
-      <select id="fMonth"><option value="">כל החודשים</option>${MONTHS.map(m=>`<option ${f.month===m?'selected':''}>${m}</option>`).join('')}</select>
-      <select id="fStatus"><option value="">הכול</option>
+      <select id="fMonth" aria-label="סינון לפי חודש"><option value="">כל החודשים</option>${MONTHS.map(m=>`<option ${f.month===m?'selected':''}>${m}</option>`).join('')}</select>
+      <select id="fStatus" aria-label="סינון לפי סטטוס"><option value="">הכול</option>
         <option value="open" ${f.status==='open'?'selected':''}>פתוח בלבד</option>
         <option value="done" ${f.status==='done'?'selected':''}>הושלם בלבד</option></select>
-      <input type="text" id="fQ" placeholder="חיפוש חופשי…" value="${esc(f.q)}">
+      <input type="text" id="fQ" aria-label="חיפוש חופשי בצ׳ק־ליסט" placeholder="חיפוש חופשי…" value="${esc(f.q)}">
       <button class="btn ghost sm" id="fClear">ניקוי</button>
       <span style="margin-inline-start:auto;font-size:12.5px;color:var(--ink-3)">מוצגות ${items.length} מתוך ${all.length}</span>
     </div>
@@ -1322,11 +1323,11 @@ function viewStaff(){
       <div class="card-head"><h3>הגדרות בית הספר</h3></div>
       <div class="card-body">
         <div class="grid-3">
-          <div class="field" style="margin:0"><label>שם בית הספר</label>
-            <input type="text" id="scName" value="${esc(s.name)}"></div>
-          <div class="field" style="margin:0"><label>קוד בית ספר <span style="font-weight:400;color:var(--ink-3)">(לזיהוי באיחוד קבצים)</span></label>
-            <input type="text" id="scCode" value="${esc(s.code)}"></div>
-          <div class="field" style="margin:0"><label>רישום עצמי</label>
+          <div class="field" style="margin:0"><label for="scName">שם בית הספר</label>
+            <input type="text" id="scName" value="${esc(s.name)}" placeholder="למשל: אורט טל שחר"></div>
+          <div class="field" style="margin:0"><label for="scCode">קוד בית ספר <span style="font-weight:400;color:var(--ink-3)">(לזיהוי באיחוד קבצים)</span></label>
+            <input type="text" id="scCode" value="${esc(s.code)}" placeholder="למשל: BS-1234"></div>
+          <div class="field" style="margin:0"><span class="fld-title">רישום עצמי</span>
             <label style="display:flex;gap:8px;align-items:center;font-size:13px;padding-top:8px;cursor:pointer">
               <input type="checkbox" id="scSelf" ${s.selfRegister?'checked':''} style="width:17px;height:17px;accent-color:var(--brand)">
               לאפשר לאנשים להוסיף את עצמם במסך הכניסה</label></div>
@@ -1452,11 +1453,11 @@ function viewSettings(){
     <div class="card">
       <div class="card-head"><h3>פרטי הרשת</h3></div>
       <div class="card-body"><div class="grid-3">
-        <div class="field" style="margin:0"><label>שם הרשת / הרשות</label>
-          <input type="text" id="netName" value="${esc(state.network.name)}"></div>
-        <div class="field" style="margin:0"><label>שנת עבודה</label>
-          <input type="text" id="netYear" value="${esc(state.network.year)}"></div>
-        <div class="field" style="margin:0"><label>קוד גישה למנהל/ת</label>
+        <div class="field" style="margin:0"><label for="netName">שם הרשת / הרשות</label>
+          <input type="text" id="netName" value="${esc(state.network.name)}" placeholder="למשל: מינהל הכשרה מקצועית"></div>
+        <div class="field" style="margin:0"><label for="netYear">שנת עבודה</label>
+          <input type="text" id="netYear" value="${esc(state.network.year)}" placeholder="למשל: תשפ״ז"></div>
+        <div class="field" style="margin:0"><label for="netPin">קוד גישה למנהל/ת</label>
           <input type="text" id="netPin" value="${esc(state.network.pin)}" placeholder="ריק = ללא קוד"></div>
       </div>
       <div class="note warn" style="margin:16px 0 0"><span>⚠</span>

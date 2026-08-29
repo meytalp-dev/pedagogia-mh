@@ -44,10 +44,11 @@ details.dom ol>li{padding:3px 0}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -142,19 +143,20 @@ details.dom ol>li{padding:3px 0}
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -178,14 +180,14 @@ details.dom ol>li{padding:3px 0}
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -258,7 +260,7 @@ details.dom ol>li{padding:3px 0}
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -297,9 +299,12 @@ details.dom ol>li{padding:3px 0}
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 
 <section class="hero">
@@ -308,12 +313,12 @@ details.dom ol>li{padding:3px 0}
     <h1>כיתה ט׳ — <span class="accent">מה אני רוצה להיות כשאהיה גדול</span></h1>
     <p class="lead">בחירה מושכלת של מגמה. תשעה מפגשים שלוקחים את הכיתה מהיכרות ראשונה עם הקבוצה ועם עצמי ועד לוח השראה מסכם ובחירת המגמה לשנה הבאה — מטרות, כישורי I PRO, מודל חמש השאלות, ציוד, מהלך מלא וקישורים, מתומללים כאן מתוך מארז הקנבה של התוכנית כדי שאפשר יהיה לקרוא, לחפש ולהעתיק ממנו ישירות.</p>
     <div class="meta-row">
-      <span class="src-note">המקור: <a class="lk" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">"מערכים מובילים למורה · כיתה ט׳" בקנבה</a></span>
+      <span class="src-note">המקור: <a class="lk" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">"מערכים מובילים למורה · כיתה ט׳" בקנבה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
       <span>9 מפגשים · החינוך היוצר · מינהל הכשרה מקצועית</span>
     </div>
     <div class="cta-row">
       <a class="btn ghost" href="chaka.html">◂ חזרה למודל ח.כ.ה</a>
-      <a class="btn" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">מארז הקנבה המקורי ↗</a>
+      <a class="btn" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">מארז הקנבה המקורי ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </div>
 </section>
@@ -519,7 +524,7 @@ details.dom ol>li{padding:3px 0}
 
     <div class="callout rv">
       <span class="ttl">"מחברת דרך"</span>
-      מסמך אישי שכל תלמיד.ה מנהל.ת לאורך השנה. בכל מפגש התלמידים מוזמנים להעלות אליו את התוצר — תמונות מפת הכוחות, 9 העתידים, עץ התעסוקה המשפחתי, הוולוג, המיפוי, מפת הקריירה — כדי שבסוף השנה יהיה תיעוד שלם של המסע. במפגש הראשון פותחים אותו יחד ומדגימים שימוש. <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">למחברת הדרך ↗</a>
+      מסמך אישי שכל תלמיד.ה מנהל.ת לאורך השנה. בכל מפגש התלמידים מוזמנים להעלות אליו את התוצר — תמונות מפת הכוחות, 9 העתידים, עץ התעסוקה המשפחתי, הוולוג, המיפוי, מפת הקריירה — כדי שבסוף השנה יהיה תיעוד שלם של המסע. במפגש הראשון פותחים אותו יחד ומדגימים שימוש. <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">למחברת הדרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
     <h2 class="sub-sec rv" id="m1">01 · על קו הזינוק — העמקת היכרות עם הקבוצה ועם עצמי</h2>
     <p class="lead-p rv">מפגש הפתיחה של השנה: פתיחה והיכרות בדגש על כוחות, בגישה אקטיבית. המפגש מסייע למשתתפים.ות להכיר מעט יותר את עצמם ואת חברי הקבוצה, לאתר כוחות אישיים להצלחה והתעצמות, ולתאם ציפיות קבוצתי.</p>
@@ -584,7 +589,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org/practices/unusual-gallery" target="_blank" rel="noopener">גלריה יוצאת דופן ↗</a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a> · המערך מפנה גם למסמכי "גישת הכוחות" ו"SML — ניהול עצמי של למידה".</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org/practices/unusual-gallery" target="_blank" rel="noopener">גלריה יוצאת דופן ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · המערך מפנה גם למסמכי "גישת הכוחות" ו"SML — ניהול עצמי של למידה".</p>
     <h2 class="sub-sec rv" id="m2">02 · אל האופק וחזרה — 9 העתידים</h2>
     <p class="lead-p rv">המפגש ממשיך ברצף ישיר את המפגש הראשון ונותן מבט חדש להיכרות המשתתפים.ות עם עצמם בהווה ובעתיד. זה גם המפגש שבו נכנס לראשונה <strong>מודל חמש השאלות (SML)</strong> — דרך סימולציית ראיון בזוגות.</p>
 
@@ -651,7 +656,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=O19XAyvdOrw" target="_blank" rel="noopener">סרטון "9 העתידים" ↗</a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a> · המערך מפנה גם למסמכי "גישת הכוחות" ו"SML — ניהול עצמי של למידה".</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=O19XAyvdOrw" target="_blank" rel="noopener">סרטון "9 העתידים" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · המערך מפנה גם למסמכי "גישת הכוחות" ו"SML — ניהול עצמי של למידה".</p>
     <h2 class="sub-sec rv" id="m3">03 · מאיפה באתי — יצירת עץ תעסוקה משפחתי</h2>
     <p class="lead-p rv">מפגש ממוחשב שבו התלמידים חוקרים את ההיסטוריה התעסוקתית של המשפחה שלהם ובונים ממנה עץ. המטרה: מודעות לקשר בין הרקע המשפחתי לבחירות המקצועיות, חיזוק הזהות האישית דרך חקר, וביטוי יצירתי לתהליך.</p>
 
@@ -717,7 +722,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a> · המערך מפנה גם למסמך "עץ משפחה" של I PRO ולמסמך "SML — ניהול עצמי של למידה".</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · המערך מפנה גם למסמך "עץ משפחה" של I PRO ולמסמך "SML — ניהול עצמי של למידה".</p>
     <h2 class="sub-sec rv" id="m4">04 · מי אני — וולוג אישי תעסוקתי וראיונות מקצועיים</h2>
     <p class="lead-p rv">המפגש שיוצא מהכיתה אל כל בית הספר: כל תלמיד.ה מצלם.ת וולוג אישי־תעסוקתי בשלוש סביבות שונות, ואז הופך.ת למראיין.ת ומראיין.ת דמויות מעוררות השראה בבית הספר.</p>
 
@@ -781,7 +786,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=lnGaNY2T58g" target="_blank" rel="noopener">איך לצלם וולוג? ↗</a> · <a class="lk" href="https://www.canva.com/design/DAGZpFQqs_I/91kTwhwU4TAZKNMZ4bkoHA/view" target="_blank" rel="noopener">דף טיפים לצילום ↗</a> · <a class="lk" href="https://www.canva.com/design/DAGZpJOBoG8/B_YD-_kexGgQ-KdeMGc-Tw/view" target="_blank" rel="noopener">דף מנחה לראיון ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=lnGaNY2T58g" target="_blank" rel="noopener">איך לצלם וולוג? ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.canva.com/design/DAGZpFQqs_I/91kTwhwU4TAZKNMZ4bkoHA/view" target="_blank" rel="noopener">דף טיפים לצילום ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.canva.com/design/DAGZpJOBoG8/B_YD-_kexGgQ-KdeMGc-Tw/view" target="_blank" rel="noopener">דף מנחה לראיון ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
     <h2 class="sub-sec rv" id="m5">05 · בחירות בחיים — אם יוצאים מגיעים למקומות נפלאים</h2>
     <p class="lead-p rv">מפגש שיוצא אל הרחוב. אחרי משחק "בחירות מהירות" בכיתה, התלמידים יוצאים למפות את הסביבה העסקית סביב בית הספר — כי כל המבוגרים שסביבנו היו פעם בכיתה ט׳ ובחרו בחירות כאלה ואחרות. החלק השני הוא "אירוח בסלון" עם דמות מעוררת השראה.</p>
 
@@ -851,7 +856,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.canva.com/design/DAGZpvVZpSs/uWmSo8gBTVoRhEM0m5jK7A/view" target="_blank" rel="noopener">דפי עזר למיפוי עסקים ונקודות עניין ↗</a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.canva.com/design/DAGZpvVZpSs/uWmSo8gBTVoRhEM0m5jK7A/view" target="_blank" rel="noopener">דפי עזר למיפוי עסקים ונקודות עניין ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
     <h2 class="sub-sec rv" id="m6">06 · פאנל חלומות</h2>
     <p class="lead-p rv">מפגש שיא שכבתי — אירוח ושיח עם דמויות מעוררות השראה לכלל תלמידי שכבת ט׳. במקור זהו מפגש בעל מספר רכיבים, עם אופציה לסדרת פאנלים בהמשכים לאורך השנה. זה גם המפגש הראשון שנוגע בכל חמש שאלות ה-SML יחד.</p>
 
@@ -917,7 +922,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.canva.com/design/DAGaGUaDYz4/STfu8OyzJywBAkkjOMfq9g/view" target="_blank" rel="noopener">דף השאלות להנחיית הפאנל ↗</a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.canva.com/design/DAGaGUaDYz4/STfu8OyzJywBAkkjOMfq9g/view" target="_blank" rel="noopener">דף השאלות להנחיית הפאנל ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <div class="callout rv">
       <span class="ttl">מה חזר דל מהמקור</span>
@@ -989,7 +994,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=AJg9SXIcPiM" target="_blank" rel="noopener">"מפות שמחות" — הרצאת TED של דניאלה קוורצ'ה ↗</a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.youtube.com/watch?v=AJg9SXIcPiM" target="_blank" rel="noopener">"מפות שמחות" — הרצאת TED של דניאלה קוורצ'ה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
     <h2 class="sub-sec rv" id="m8">08 · אני מנהל את הקיץ או הוא אותי? — פרקטיקות ניהול זמן</h2>
     <p class="lead-p rv">המפגש שלפני הקיץ. מפגש משחקי ומהיר שמפזר משימות ניהול זמן ברחבי בית הספר, עם שעונים ודפי משימה, ומסתיים בבניית יומן משימות אישי לחופשה.</p>
 
@@ -1053,7 +1058,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a> · המערך מפנה גם למסמך "SML — ניהול עצמי של למידה". שקפי המשחקים עצמם נמצאים במארז הקנבה המקורי.</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · המערך מפנה גם למסמך "SML — ניהול עצמי של למידה". שקפי המשחקים עצמם נמצאים במארז הקנבה המקורי.</p>
     <h2 class="sub-sec rv" id="m9">09 · תוצר סופי — לוח השראה מסכם ובחירת מגמה</h2>
     <p class="lead-p rv">המפגש שסוגר את השנה. כל תלמיד.ה בונה לוח השראה דיגיטלי שמייצג את המטרות והשאיפות שלו.ה, הלוחות מתחברים למצגת כיתתית אחת, ואז יוצאים ל"קרוסלת מגמות" שבה משתפים באיזו מגמה בחרנו לשנה הבאה.</p>
 
@@ -1124,7 +1129,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗</a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗</a> · המצגת השיתופית ללוחות ההשראה אינה קיימת מראש — <strong>על המורה ליצור אותה עצמאית</strong> לפני המפגש.</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">קישורי המפגש: <a class="lk" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">מחברת דרך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · המצגת השיתופית ללוחות ההשראה אינה קיימת מראש — <strong>על המורה ליצור אותה עצמאית</strong> לפני המפגש.</p>
     <h2 class="sub-sec rv" id="siyur">המלצה — יום סיור מקצועי מסכם</h2>
     <p class="lead-p rv">המקור מוסיף לתשעת המפגשים המלצה מפורשת ליום שיא שכבתי בחודש האחרון ללימודים: <strong>סיור מקצועי בסביבת עבודה</strong>. המטרה — לחזק את הקשר בין התלמידים לעולם התעסוקה ולבחירת המגמה, לסכם את השנה בצורה חווייתית ומשמעותית, ולעודד דיון בנושאים מקצועיים ואישיים שעלו במהלך השנה. זו המלצה, לא מפגש חובה.</p>
 
@@ -1268,9 +1273,9 @@ details.dom ol>li{padding:3px 0}
           <tr><th>המארז</th><th>מה יש בו</th><th>קישור</th></tr>
         </thead>
         <tbody>
-          <tr><td class="k">מערכים מובילים למורה · כיתה ט׳</td><td>הסילבוס המלא — תשעת המערכים למורה, 23 עמודים. זה המקור שממנו תומלל העמוד הזה.</td><td><a class="lk" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">פאנל השליטה · כיתה ט׳</td><td>לוח הקישורים המרכזי של השכבה — תשע המשבצות וכל הקישורים הקבועים.</td><td><a class="lk" href="https://www.canva.com/design/DAGW0bD5A_g/lSLJkR6PxIZRLQElgBZLqg/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">מצגות מלוות · יחידות תוכן לכיתה</td><td>השקפים שמוקרנים לתלמידים בכל מפגש. מקושר מכל אחד מתשעת המערכים.</td><td><a class="lk" href="https://www.canva.com/design/DAGW1uPeSEI/CDaab4FkXZgj1kuqwGhdIg/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
+          <tr><td class="k">מערכים מובילים למורה · כיתה ט׳</td><td>הסילבוס המלא — תשעת המערכים למורה, 23 עמודים. זה המקור שממנו תומלל העמוד הזה.</td><td><a class="lk" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">פאנל השליטה · כיתה ט׳</td><td>לוח הקישורים המרכזי של השכבה — תשע המשבצות וכל הקישורים הקבועים.</td><td><a class="lk" href="https://www.canva.com/design/DAGW0bD5A_g/lSLJkR6PxIZRLQElgBZLqg/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">מצגות מלוות · יחידות תוכן לכיתה</td><td>השקפים שמוקרנים לתלמידים בכל מפגש. מקושר מכל אחד מתשעת המערכים.</td><td><a class="lk" href="https://www.canva.com/design/DAGW1uPeSEI/CDaab4FkXZgj1kuqwGhdIg/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -1287,16 +1292,16 @@ details.dom ol>li{padding:3px 0}
           <tr><th>הכלי</th><th>באיזה מפגש</th><th>קישור</th></tr>
         </thead>
         <tbody>
-          <tr><td class="k">"מחברת דרך"</td><td>בכל תשעת המפגשים</td><td><a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">למסמך ↗</a></td></tr>
-          <tr><td class="k">גלריה יוצאת דופן</td><td>01 · על קו הזינוק</td><td><a class="lk" href="https://www.career-skills.org/practices/unusual-gallery" target="_blank" rel="noopener">לתרגיל ↗</a></td></tr>
-          <tr><td class="k">סרטון "9 העתידים"</td><td>02 · אל האופק וחזרה</td><td><a class="lk" href="https://www.youtube.com/watch?v=O19XAyvdOrw" target="_blank" rel="noopener">לסרטון ↗</a></td></tr>
+          <tr><td class="k">"מחברת דרך"</td><td>בכל תשעת המפגשים</td><td><a class="lk" href="https://docs.google.com/document/d/1icGZA7VuvnndXYKABnZnKi54OpU4BiygHLAJyfaav-I/edit" target="_blank" rel="noopener">למסמך ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">גלריה יוצאת דופן</td><td>01 · על קו הזינוק</td><td><a class="lk" href="https://www.career-skills.org/practices/unusual-gallery" target="_blank" rel="noopener">לתרגיל ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">סרטון "9 העתידים"</td><td>02 · אל האופק וחזרה</td><td><a class="lk" href="https://www.youtube.com/watch?v=O19XAyvdOrw" target="_blank" rel="noopener">לסרטון ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
           <tr><td class="k">"עץ משפחה" של I PRO</td><td>03 · מאיפה באתי</td><td>מסמך מקור המצורף למארז</td></tr>
-          <tr><td class="k">איך לצלם וולוג?</td><td>04 · מי אני</td><td><a class="lk" href="https://www.youtube.com/watch?v=lnGaNY2T58g" target="_blank" rel="noopener">לסרטון ↗</a></td></tr>
-          <tr><td class="k">דף טיפים לצילום וולוג</td><td>04 · מי אני</td><td><a class="lk" href="https://www.canva.com/design/DAGZpFQqs_I/91kTwhwU4TAZKNMZ4bkoHA/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">דף מנחה לראיון</td><td>04 · מי אני</td><td><a class="lk" href="https://www.canva.com/design/DAGZpJOBoG8/B_YD-_kexGgQ-KdeMGc-Tw/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">דפי עזר למיפוי עסקים ונקודות עניין</td><td>05 · בחירות בחיים</td><td><a class="lk" href="https://www.canva.com/design/DAGZpvVZpSs/uWmSo8gBTVoRhEM0m5jK7A/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">דף שאלות להנחיית הפאנל</td><td>06 · פאנל חלומות</td><td><a class="lk" href="https://www.canva.com/design/DAGaGUaDYz4/STfu8OyzJywBAkkjOMfq9g/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">"מפות שמחות" — TED</td><td>07 · מפת קריירה</td><td><a class="lk" href="https://www.youtube.com/watch?v=AJg9SXIcPiM" target="_blank" rel="noopener">לסרטון ↗</a></td></tr>
+          <tr><td class="k">איך לצלם וולוג?</td><td>04 · מי אני</td><td><a class="lk" href="https://www.youtube.com/watch?v=lnGaNY2T58g" target="_blank" rel="noopener">לסרטון ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">דף טיפים לצילום וולוג</td><td>04 · מי אני</td><td><a class="lk" href="https://www.canva.com/design/DAGZpFQqs_I/91kTwhwU4TAZKNMZ4bkoHA/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">דף מנחה לראיון</td><td>04 · מי אני</td><td><a class="lk" href="https://www.canva.com/design/DAGZpJOBoG8/B_YD-_kexGgQ-KdeMGc-Tw/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">דפי עזר למיפוי עסקים ונקודות עניין</td><td>05 · בחירות בחיים</td><td><a class="lk" href="https://www.canva.com/design/DAGZpvVZpSs/uWmSo8gBTVoRhEM0m5jK7A/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">דף שאלות להנחיית הפאנל</td><td>06 · פאנל חלומות</td><td><a class="lk" href="https://www.canva.com/design/DAGaGUaDYz4/STfu8OyzJywBAkkjOMfq9g/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">"מפות שמחות" — TED</td><td>07 · מפת קריירה</td><td><a class="lk" href="https://www.youtube.com/watch?v=AJg9SXIcPiM" target="_blank" rel="noopener">לסרטון ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
           <tr><td class="k">שקפי משחקי ניהול הזמן</td><td>08 · אני מנהל את הקיץ?</td><td>נמצאים בתוך המערכים למורה שבמארז</td></tr>
           <tr><td class="k">מצגת שיתופית ללוחות ההשראה</td><td>09 · תוצר סופי</td><td>אינה קיימת מראש — על המורה ליצור אותה</td></tr>
           <tr><td class="k">"גישת הכוחות"</td><td>קישור קבוע במערכים 01–02</td><td>מסמך מקור המצורף למארז</td></tr>
@@ -1307,19 +1312,21 @@ details.dom ol>li{padding:3px 0}
 
     <div class="source-box rv">
       <div class="t">שני הכלים שמלווים את המורה<small>סוכן ה-AI של התוכנית ומודל הכישורים שעליו היא נשענת — שניהם מקושרים בסוף המארז.</small></div>
-      <a class="btn" href="https://poe.com/netivim" target="_blank" rel="noopener">סוכן ה-AI "נתיבים" ↗</a>
-      <a class="btn alt" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר מודל I PRO ↗</a>
+      <a class="btn" href="https://poe.com/netivim" target="_blank" rel="noopener">סוכן ה-AI "נתיבים" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+      <a class="btn alt" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר מודל I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">המקור מוסיף כלי שלישי: <a class="lk" href="https://skillcet.mindcet.org" target="_blank" rel="noopener">SkillCET של מיינדסט ↗</a> — כלי לתכנון מחדש, התאמה וגיוון של כל תכני המפגשים.</p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">המקור מוסיף כלי שלישי: <a class="lk" href="https://skillcet.mindcet.org" target="_blank" rel="noopener">SkillCET של מיינדסט ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — כלי לתכנון מחדש, התאמה וגיוון של כל תכני המפגשים.</p>
 
     <div class="source-box rv">
       <div class="t">המקור<small>העמוד הזה מתמלל ומסדר את מארז "מערכים מובילים למורה · כיתה ט׳". הנוסח והחומרים המחייבים הם המארזים המקוריים של החינוך היוצר.</small></div>
-      <a class="btn" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">מערכים מובילים למורה · כיתה ט׳ ↗</a>
+      <a class="btn" href="https://www.canva.com/design/DAGZ9HAW7v8/8uQ-MxAXKO8A1YW2C9hxWQ/view" target="_blank" rel="noopener">מערכים מובילים למורה · כיתה ט׳ ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
       <a class="btn alt" href="chaka.html">◂ חזרה למודל ח.כ.ה</a>
     </div>
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

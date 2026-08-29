@@ -19,10 +19,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -117,19 +118,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -153,14 +155,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -233,7 +235,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -272,9 +274,12 @@
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 <div class="pagehead" style="padding-top:52px">
   <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="klim-digitaliim.html">ארגז הכלים הדיגיטלי</a> ‹ ארגז כלים לכל תחום דעת</div>
   <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">ארגז כלים לכל תחום דעת</h1>
@@ -284,7 +289,7 @@
 <article class="body-sec">
   <div class="article">
     <h2 class="sub-sec first rv">שבעת תחומי הדעת</h2>
-<div class="tbl-scroll rv"><table class="doc"><caption>שבעת תחומי הדעת</caption><thead><tr><th>תחום</th><th>המקור הרשמי</th><th>ייעודי לתחום</th></tr></thead><tbody><tr><td><strong>מתמטיקה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · חטיבה עליונה</a></td><td><a class="lk" href="https://highmath.haifa.ac.il/" target="_blank" rel="noopener">מרכז מורים ארצי · על־יסודי (חיפה)</a> · <a class="lk" href="https://www.geogebra.org" target="_blank" rel="noopener">GeoGebra</a> · <a class="lk" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">מחשבון גרפי Desmos</a></td></tr><tr><td><strong>אזרחות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/" target="_blank" rel="noopener">מרחב פדגוגי · אזרחות</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/citizenship-pedagogy/citizenship-task/" target="_blank" rel="noopener">מטלת הביצוע</a> · <a class="lk" href="https://kedma-edu.org.il/kedma_material/" target="_blank" rel="noopener">מאגר המערכים של קדמה</a></td></tr><tr><td><strong>עברית — הבנה, הבעה ולשון</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · עברית</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/a-i/" target="_blank" rel="noopener">כלים דיגיטליים ו־AI</a> · <a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/havana-habaa-olim/" target="_blank" rel="noopener">עברית לעולים</a></td></tr><tr><td><strong>אנגלית</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/study_topics/" target="_blank" rel="noopener">מרחב פדגוגי · English</a></td><td><a class="lk" href="https://www.etai.org.il/" target="_blank" rel="noopener">ETAI · איגוד מורי האנגלית</a> · <a class="lk" href="https://learnenglishteens.britishcouncil.org/" target="_blank" rel="noopener">British Council Teens</a> · <a class="lk" href="https://www.linguahouse.com" target="_blank" rel="noopener">Linguahouse</a></td></tr><tr><td><strong>היסטוריה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · היסטוריה</a></td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">TimelineJS</a> · <a class="lk" href="https://www.storyboardthat.com" target="_blank" rel="noopener">Storyboard That</a></td></tr><tr><td><strong>ספרות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · ספרות</a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/darkey-oraa/" target="_blank" rel="noopener">דרכי הוראה</a> · יחידות לפי יוצר: <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/shmuel-yosef-agnon/" target="_blank" rel="noopener">עגנון</a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/dalia-ravikovic/" target="_blank" rel="noopener">רביקוביץ</a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/haim-gouri/" target="_blank" rel="noopener">גורי</a></td></tr><tr><td><strong>תנ"ך</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · תנ"ך ממלכתי</a></td><td><a class="lk" href="https://edu.929.org.il/" target="_blank" rel="noopener">אתר תנ"ך ממלכתי · 929</a> — מערכי שיעור לי'–י"ב, נתיב בגרות גמיש והערכה חלופית</td></tr></tbody></table></div>
+<div class="tbl-scroll rv"><table class="doc"><caption>שבעת תחומי הדעת</caption><thead><tr><th>תחום</th><th>המקור הרשמי</th><th>ייעודי לתחום</th></tr></thead><tbody><tr><td><strong>מתמטיקה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · חטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://highmath.haifa.ac.il/" target="_blank" rel="noopener">מרכז מורים ארצי · על־יסודי (חיפה)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.geogebra.org" target="_blank" rel="noopener">GeoGebra<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">מחשבון גרפי Desmos<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>אזרחות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/" target="_blank" rel="noopener">מרחב פדגוגי · אזרחות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/citizenship-pedagogy/citizenship-task/" target="_blank" rel="noopener">מטלת הביצוע<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://kedma-edu.org.il/kedma_material/" target="_blank" rel="noopener">מאגר המערכים של קדמה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>עברית — הבנה, הבעה ולשון</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · עברית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/a-i/" target="_blank" rel="noopener">כלים דיגיטליים ו־AI<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/havana-habaa-olim/" target="_blank" rel="noopener">עברית לעולים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>אנגלית</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/study_topics/" target="_blank" rel="noopener">מרחב פדגוגי · English<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://www.etai.org.il/" target="_blank" rel="noopener">ETAI · איגוד מורי האנגלית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://learnenglishteens.britishcouncil.org/" target="_blank" rel="noopener">British Council Teens<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.linguahouse.com" target="_blank" rel="noopener">Linguahouse<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>היסטוריה</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · היסטוריה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://timeline.knightlab.com" target="_blank" rel="noopener">TimelineJS<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.storyboardthat.com" target="_blank" rel="noopener">Storyboard That<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>ספרות</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · ספרות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/darkey-oraa/" target="_blank" rel="noopener">דרכי הוראה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · יחידות לפי יוצר: <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/shmuel-yosef-agnon/" target="_blank" rel="noopener">עגנון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/dalia-ravikovic/" target="_blank" rel="noopener">רביקוביץ<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, <a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/haim-gouri/" target="_blank" rel="noopener">גורי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr><tr><td><strong>תנ"ך</strong></td><td><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener">מרחב פדגוגי · תנ"ך ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td><td><a class="lk" href="https://edu.929.org.il/" target="_blank" rel="noopener">אתר תנ"ך ממלכתי · 929<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מערכי שיעור לי'–י"ב, נתיב בגרות גמיש והערכה חלופית</td></tr></tbody></table></div>
   <div class="callout rv">
     <span class="ttl">הממצא החזק ביותר בסקירה</span>
     אתר <strong>929 חינוך</strong> לתנ"ך הוא היחיד שמכיל גם מערכי שיעור לכל השכבות, גם חומרי
@@ -303,6 +308,8 @@
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
 

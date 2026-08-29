@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הודעות ועדכונים · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="הודעות חשובות והודעות הדרכה של מינהל הכשרה מקצועית — במקום אחד, מתעדכן שוטף.">
+<title>מדיניות פרטיות · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="מה נאסף באתר, מנגנון ההסכמה למדידה שברירת המחדל שלו היא דחייה, מה נשמר בדפדפן בלבד, ואילו שירותים חיצוניים נטענים.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="מדיניות פרטיות · הבית של המנהיגות הפדגוגית היוצרת">
+<meta property="og:description" content="מה נאסף באתר, מנגנון ההסכמה למדידה שברירת המחדל שלו היא דחייה, מה נשמר בדפדפן בלבד, ואילו שירותים חיצוניים נטענים.">
+<meta property="og:url" content="https://pedagogiamh.co.il/privacy.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -13,10 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
-<body>
+<body data-back="index.html|דף הבית" data-pn-min="3">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
@@ -167,7 +174,7 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
@@ -279,66 +286,121 @@
 <main id="main">
 
 
-<style>
-  .hbar{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--px) 4px}
-  .hpill{border:1px solid var(--border-strong);background:#fff;color:var(--navy-800);
-    border-radius:999px;padding:7px 15px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
-  .hpill:hover{border-color:var(--blue);color:var(--blue)}
-  .hpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .hlist{padding:22px var(--px) 44px;display:flex;flex-direction:column;gap:12px;max-width:900px}
-  .hitem{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:17px 20px;box-shadow:var(--sh-sm);transition:.18s;position:relative;overflow:hidden}
-  .hitem:hover{box-shadow:var(--sh-md)}
-  .hitem::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px}
-  .hitem.t-important::before{background:var(--m-red)}
-  .hitem.t-guide::before{background:var(--m-blue)}
-  .htop{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
-  .htop h3{font-size:1.1rem}
-  .htag{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid}
-  .tg-important{background:#FDECEC;color:#A82B2B;border-color:#F5C9C9}
-  .tg-guide{background:#E8F2FF;color:var(--navy-800);border-color:#C6DDF5}
-  .hdate{margin-inline-start:auto;font-size:.79rem;color:var(--muted);font-weight:600}
-  .hitem p{color:var(--text2);font-size:.95rem;white-space:pre-wrap;line-height:1.6}
-  .hlinks{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-  .hlinks a{font-size:.84rem;font-weight:700;color:var(--blue);text-decoration:none;
-    border:1px solid var(--border);background:var(--blue-bg);border-radius:10px;padding:6px 13px;
-    display:inline-flex;align-items:center;gap:6px;transition:.15s}
-  .hlinks a:hover{border-color:var(--blue)}
-  .hlinks svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .hstate{text-align:center;padding:46px 22px;color:var(--muted);background:var(--soft-bg);
-    border:1px dashed var(--border-strong);border-radius:16px}
-  .hstate svg{width:34px;height:34px;stroke:var(--muted);fill:none;stroke-width:1.6;
-    stroke-linecap:round;margin-bottom:10px}
-  .hstate b{display:block;color:var(--navy);font-size:1.02rem;margin-bottom:4px}
-  .hhide{display:none !important}
-</style>
-
-<div class="pagehead" style="padding-top:52px">
-  <div class="kicker rv">מה חדש במינהל</div>
-  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">הודעות ועדכונים</h1>
-  <p class="rv d2 lead" style="font-size:1.06rem;max-width:660px">
-    הודעות חשובות והודעות הדרכה, במקום אחד. מה שחדש נמצא למעלה.</p>
-</div>
-
-<div class="hbar">
-  <button class="hpill on" data-f="all">הכול</button>
-  <button class="hpill" data-f="חשוב">הודעות חשובות</button>
-  <button class="hpill" data-f="הדרכה">הודעות הדרכה</button>
-</div>
-
-<div class="hlist" id="hlist">
-  <div class="hstate">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    טוען הודעות…
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">אודות</span>
+    <h1>מדיניות <span class="accent">פרטיות</span></h1>
+    <p class="lead">מה נאסף באתר הזה, מה נשאר אצלכם בדפדפן ולא נשלח לשום מקום, ואילו שירותים חיצוניים נטענים. כתוב כאן במדויק, לפי מה שהקוד של האתר עושה בפועל.</p>
+    <div class="meta-row">
+      <span class="src">עודכן: 29.8.2026</span>
+      <span class="src">מינהל הכשרה מקצועית · משרד העבודה</span>
+    </div>
   </div>
-</div>
+</section>
 
-<script src="hodaot.js" defer></script>
+<article class="body-sec">
+  <div class="article">
+
+    <div class="callout petrol rv">
+      <span class="ttl">שלוש נקודות שמסדרות את התמונה</span>
+      <p>אין באתר הרשמה, אין חשבון משתמש ואין מסד נתונים של גולשים — הוא אתר <b>סטטי</b> · המדידה האנונימית <b>אינה נטענת כלל</b> עד שאתם מאשרים אותה במפורש, וברירת המחדל היא דחייה · חלק מהכלים באתר שומרים את מה שיצרתם <b>בדפדפן שלכם בלבד</b>, ולא שולחים אותו לשום שרת.</p>
+    </div>
+
+    <h2 class="sub-sec first rv">איך האתר בנוי</h2>
+    <p class="rv">האתר מתארח כאתר סטטי בשירות <b>GitHub Pages</b>. אין בו שרת יישומים שלנו, אין מסד נתונים ואין רישום משתמשים. כמו כל שרת אינטרנט, ספק האחסון עשוי לתעד את הבקשות המגיעות אליו (כתובת IP, סוג דפדפן ומועד) לצרכים תפעוליים ואבטחתיים. אין לנו גישה לתיעוד הזה ואיננו עושים בו שימוש.</p>
+
+    <h2 class="sub-sec rv">מדידת שימוש — רק באישורכם</h2>
+    <p class="rv">האתר יכול למדוד שימוש אנונימי באמצעות <b>Google Analytics 4</b>, כדי לדעת אילו תכנים מועילים ולשפר אותם. המנגנון בנוי כך:</p>
+    <ul class="ed rv">
+      <li><b>ברירת המחדל היא דחייה.</b> בכניסה הראשונה נטענת שכבת ההסכמה בלבד — שכבה שאינה יוצרת שום בקשת רשת ואינה כותבת עוגייה. כל קטגוריות האחסון השיווקי והמדידתי מסומנות מראש כ-<span dir="ltr">denied</span>.</li>
+      <li><b>סקריפט המדידה אינו נטען כלל</b> עד שתלחצו ״אישור״ בבאנר. בלי אישור מפורש לא נוצרת עוגיית מדידה ולא נשלח דבר ל-Google.</li>
+      <li><b>אם תלחצו ״דחייה״</b> — לא נטען דבר, ונשמרת אצלכם רק העובדה שבחרתם לדחות, כדי שלא נשאל שוב.</li>
+      <li><b>הבחירה נשמרת</b> באחסון המקומי של הדפדפן שלכם (<span dir="ltr">localStorage</span>, מפתח <span dir="ltr">pmh-consent</span>), ובגיבוי גם כעוגיית העדפה לשנה — למקרה שהדפדפן חוסם אחסון מקומי.</li>
+      <li><b>מה נמדד באישור</b> — אילו עמודים נצפו, כמה זמן נשארתם בכל עמוד ומזהה ביקור אנונימי. <b>לא</b> נשמרים שם, טלפון, דוא״ל או כל פרט מזהה אחר, ואין העברת מידע לגורמים מסחריים.</li>
+      <li><b>מדידה מקומית כבויה</b> — כשהאתר נפתח מקובץ מקומי או מ-<span dir="ltr">localhost</span>, המדידה אינה פועלת גם באישור.</li>
+    </ul>
+    <div class="callout rv">
+      <span class="ttl">לשנות את הבחירה — בכל רגע</span>
+      <p>הכפתור הזה פותח מחדש את באנר ההסכמה, ומאפשר לאשר או לדחות מחדש:</p>
+      <p><button type="button" class="btn solid" data-pmh-consent-open>הגדרות עוגיות</button></p>
+      <p>אפשר גם למחוק את העוגיות ואת האחסון המקומי של האתר דרך הגדרות הדפדפן — פעולה שמאפסת את הבחירה לחלוטין.</p>
+    </div>
+
+    <h2 class="sub-sec rv">מה נשמר בדפדפן שלכם בלבד</h2>
+    <p class="lead-p rv">הפריטים הבאים נשמרים <b>אצלכם במחשב או בנייד</b>, ואינם נשלחים לשרת שלנו:</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>מה נשמר</th><th>איפה</th><th>למה</th></tr></thead>
+        <tbody>
+          <tr><td class="k">בחירת ההסכמה למדידה</td><td><span dir="ltr">localStorage</span> + עוגיית העדפה</td><td>כדי לכבד את הבחירה ולא לשאול שוב בכל כניסה.</td></tr>
+          <tr><td class="k">העדפת שפה (עברית / ערבית)</td><td><span dir="ltr">sessionStorage</span> + עוגיית <span dir="ltr">googtrans</span></td><td>כדי שהבחירה תישמר בלשונית הפתוחה. היא נמחקת בסגירת הלשונית.</td></tr>
+          <tr><td class="k">סימון שראיתם את שער המרחב</td><td><span dir="ltr">sessionStorage</span></td><td>כדי שלא תנותבו שוב לעמוד השער באותה גלישה.</td></tr>
+          <tr><td class="k">טיוטות במחוללים</td><td><span dir="ltr">localStorage</span></td><td>משחקים, שיעורים, פתיחים, שאלונים ואינפוגרפיקות שאתם בונים — כדי שלא תאבדו את העבודה ברענון הדף.</td></tr>
+          <tr><td class="k">טיוטת טופס המשוב</td><td><span dir="ltr">localStorage</span></td><td>כדי שטקסט שכתבתם לא ילך לאיבוד אם החלון נסגר לפני השליחה.</td></tr>
+          <tr><td class="k">מפתח API אישי (אם הזנתם)</td><td><span dir="ltr">localStorage</span></td><td>חלק מהמחוללים מאפשרים לחבר מפתח <span dir="ltr">Gemini</span> אישי. המפתח נשמר בדפדפן שלכם ונשלח ישירות מהדפדפן אל Google — הוא אינו עובר דרכנו ואיננו רואים אותו.</td></tr>
+          <tr><td class="k">כניסה למרחב מוגן</td><td><span dir="ltr">localStorage</span></td><td>מי שנכנס למרחב הפיקוח או למרחב המנהלים — נשמרים בדפדפן שלו אסימון הכניסה, כתובת הדוא״ל, השם והמרחבים המורשים, עד לפקיעת ההרשאה. יציאה מהמערכת מוחקת אותם.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber rv">
+      <span class="ttl">שימו לב — מחשב משותף</span>
+      <p>אחסון מקומי נשאר בדפדפן עד שמוחקים אותו. במחשב משותף, ובמיוחד אם הזנתם מפתח API אישי, כדאי לנקות את נתוני האתר בהגדרות הדפדפן בסיום העבודה.</p>
+    </div>
+
+    <h2 class="sub-sec rv">שירותים חיצוניים שהאתר טוען</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>השירות</th><th>מתי נטען</th><th>מה עובר אליו</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Google Fonts</td><td>בכל עמוד</td><td>בקשת קובצי הגופן. כמו בכל בקשת רשת, מגיעה אל השירות כתובת ה-IP וזהות הדפדפן.</td></tr>
+          <tr><td class="k">Google Analytics</td><td><b>רק אחרי אישור מפורש</b> בבאנר ההסכמה</td><td>נתוני צפייה אנונימיים בעמודים ומשך שהייה. ראו הפירוט למעלה.</td></tr>
+          <tr><td class="k">Google Translate</td><td><b>רק אם בחרתם ״العربية״</b> במתג השפה</td><td>הסקריפט נטען ומתרגם את תוכן העמוד. בעברית — הסקריפט אינו נטען כלל.</td></tr>
+          <tr><td class="k">Google Apps Script</td><td>בשליחת טפסים ומשוב, ובטעינת לוח ההודעות</td><td>תוכן הטופס ששלחתם. הנתונים נשמרים בגיליון Google של המינהל.</td></tr>
+          <tr><td class="k">עוגן — הסוכן החכם</td><td>בכל עמוד; השיחה מתחילה רק בלחיצה</td><td>נטען מ-<span dir="ltr">meytalp-dev.github.io</span>. השאלה שכתבתם נשלחת לשירות כדי לייצר את התשובה.</td></tr>
+          <tr><td class="k">תוכן מוטמע (Google Drive, Docs, YouTube, Canva)</td><td>בעמודים שמציגים מסמך או סרטון מוטמע</td><td>מסגרת התוכן נטענת מהשירות החיצוני, שעשוי להגדיר עוגיות משלו בהתאם למדיניותו.</td></tr>
+          <tr><td class="k">Gemini API</td><td>רק במחוללים, ורק אם חיברתם מפתח אישי</td><td>הטקסט שהזנתם והמפתח שלכם, ישירות מהדפדפן אל Google.</td></tr>
+          <tr><td class="k">Google Sign-In</td><td>רק בעמודי המרחבים המוגנים, ורק אם בחרתם להיכנס עם חשבון Google</td><td>הזיהוי מ-Google נשלח לשירות ההרשאות של המינהל, שבודק את כתובת הדוא״ל שלכם מול גיליון ההרשאות. בכניסה עם סיסמה — Google אינו מעורב.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="rv">השימוש בשירותים החיצוניים כפוף למדיניות הפרטיות של מפעיליהם, ולא למדיניות הזו.</p>
+
+    <h2 class="sub-sec rv">טפסים, משוב ופניות</h2>
+    <ul class="ed rv">
+      <li><b>טופס המשוב על האתר</b> — נשלח דרך Google Apps Script אל גיליון של המינהל, ומופעלת התראה לצוות. השדות ״שם״ ו״אימייל לחזרה״ הם <b>לא חובה</b>: אפשר לשלוח משוב בלי לזהות את עצמכם. נשלחת גם כתובת העמוד שממנו נשלח המשוב, כדי שנדע במה מדובר.</li>
+      <li><b>טפסים אחרים באתר</b> — נשלחים באותה דרך, ונשמרים בגיליונות של המינהל. השימוש בנתונים הוא לצורך שלשמו נאספו בלבד.</li>
+      <li><b>עוגן</b> — השאלה שכתבתם נשלחת אל שירות הסוכן כדי לייצר תשובה. אין לכתוב בו פרטים מזהים על תלמידים או על עובדים.</li>
+      <li><b>אין לשלוח בערוצי האתר מידע אישי רגיש</b> — פרטים מזהים על תלמידים, הורים ועובדי הוראה, מספרי זהות או מידע רפואי. הערוצים האלה אינם מיועדים לכך.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">אבטחה, ילדים ושינויים במדיניות</h2>
+    <ul class="ed rv">
+      <li>האתר מוגש בפרוטוקול מאובטח (<span dir="ltr">HTTPS</span>) בלבד.</li>
+      <li>האתר מיועד לאנשי מקצוע בחינוך — מנהלים, מפקחים, מדריכים, מורים ויועצות — ואינו פונה לתלמידים ואינו אוסף מהם מידע.</li>
+      <li>חלק מהמרחבים באתר מוגנים בשער הרשאות, ואליהם נכנסים בעלי תפקידים מורשים בלבד.</li>
+      <li>מדיניות זו עשויה להתעדכן. תאריך העדכון האחרון מופיע בראש העמוד.</li>
+    </ul>
+    <!-- ===== למילוי ידני =====
+         נושאים שדורשים החלטה של בעלת האתר ולכן לא נכתבו:
+         (1) הגורם האחראי על מאגרי המידע (הגיליונות שאליהם נשלחים הטפסים) ומשך שמירת הנתונים.
+         (2) הליך מימוש זכות עיון / תיקון / מחיקה של מידע שנשלח בטופס, לפי חוק הגנת הפרטיות.
+         (3) האם המדיניות הזו כפופה למדיניות פרטיות כוללת של משרד העבודה — ואם כן, לקשר אליה.
+         ======================= -->
+
+    <h2 class="sub-sec rv">שאלות בנושא פרטיות</h2>
+    <p class="rv">שאלה על המדיניות הזו, בקשה לעיין במידע שנשלח דרך טופס באתר, או בקשה למחוק אותו — מוגשות דרך <a class="lk" href="kesher.html">עמוד יצירת הקשר</a>.</p>
+
+    <div class="source-box rv">
+      <div class="t">מסמכים נוספים<small>ההצהרה על נגישות האתר, ומי עומד מאחוריו.</small></div>
+      <a class="btn" href="negishut.html">הצהרת נגישות ←</a><a class="btn alt" href="about.html">מי אנחנו</a>
+    </div>
+
+  </div>
+</article>
 
 </main>
 
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>

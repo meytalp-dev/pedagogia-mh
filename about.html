@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הודעות ועדכונים · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="הודעות חשובות והודעות הדרכה של מינהל הכשרה מקצועית — במקום אחד, מתעדכן שוטף.">
+<title>מי אנחנו · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="האתר של הפיקוח הפדגוגי הארצי במינהל הכשרה מקצועית: מה תפקידו, למי האתר מיועד — מנהלים, מפקחים, מדריכים, מורים ויועצות — ומה אפשר למצוא בו.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="מי אנחנו · הבית של המנהיגות הפדגוגית היוצרת">
+<meta property="og:description" content="האתר של הפיקוח הפדגוגי הארצי במינהל הכשרה מקצועית: מה תפקידו, למי האתר מיועד — מנהלים, מפקחים, מדריכים, מורים ויועצות — ומה אפשר למצוא בו.">
+<meta property="og:url" content="https://pedagogiamh.co.il/about.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -13,10 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
-<body>
+<body data-back="index.html|דף הבית" data-pn-min="3">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
@@ -167,7 +174,7 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
@@ -279,66 +286,109 @@
 <main id="main">
 
 
-<style>
-  .hbar{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--px) 4px}
-  .hpill{border:1px solid var(--border-strong);background:#fff;color:var(--navy-800);
-    border-radius:999px;padding:7px 15px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
-  .hpill:hover{border-color:var(--blue);color:var(--blue)}
-  .hpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .hlist{padding:22px var(--px) 44px;display:flex;flex-direction:column;gap:12px;max-width:900px}
-  .hitem{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:17px 20px;box-shadow:var(--sh-sm);transition:.18s;position:relative;overflow:hidden}
-  .hitem:hover{box-shadow:var(--sh-md)}
-  .hitem::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px}
-  .hitem.t-important::before{background:var(--m-red)}
-  .hitem.t-guide::before{background:var(--m-blue)}
-  .htop{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
-  .htop h3{font-size:1.1rem}
-  .htag{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid}
-  .tg-important{background:#FDECEC;color:#A82B2B;border-color:#F5C9C9}
-  .tg-guide{background:#E8F2FF;color:var(--navy-800);border-color:#C6DDF5}
-  .hdate{margin-inline-start:auto;font-size:.79rem;color:var(--muted);font-weight:600}
-  .hitem p{color:var(--text2);font-size:.95rem;white-space:pre-wrap;line-height:1.6}
-  .hlinks{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-  .hlinks a{font-size:.84rem;font-weight:700;color:var(--blue);text-decoration:none;
-    border:1px solid var(--border);background:var(--blue-bg);border-radius:10px;padding:6px 13px;
-    display:inline-flex;align-items:center;gap:6px;transition:.15s}
-  .hlinks a:hover{border-color:var(--blue)}
-  .hlinks svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .hstate{text-align:center;padding:46px 22px;color:var(--muted);background:var(--soft-bg);
-    border:1px dashed var(--border-strong);border-radius:16px}
-  .hstate svg{width:34px;height:34px;stroke:var(--muted);fill:none;stroke-width:1.6;
-    stroke-linecap:round;margin-bottom:10px}
-  .hstate b{display:block;color:var(--navy);font-size:1.02rem;margin-bottom:4px}
-  .hhide{display:none !important}
-</style>
-
-<div class="pagehead" style="padding-top:52px">
-  <div class="kicker rv">מה חדש במינהל</div>
-  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">הודעות ועדכונים</h1>
-  <p class="rv d2 lead" style="font-size:1.06rem;max-width:660px">
-    הודעות חשובות והודעות הדרכה, במקום אחד. מה שחדש נמצא למעלה.</p>
-</div>
-
-<div class="hbar">
-  <button class="hpill on" data-f="all">הכול</button>
-  <button class="hpill" data-f="חשוב">הודעות חשובות</button>
-  <button class="hpill" data-f="הדרכה">הודעות הדרכה</button>
-</div>
-
-<div class="hlist" id="hlist">
-  <div class="hstate">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    טוען הודעות…
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">אודות</span>
+    <h1>מי <span class="accent">אנחנו</span></h1>
+    <p class="lead">״הבית של המנהיגות הפדגוגית היוצרת״ הוא האתר של הפיקוח הפדגוגי הארצי במינהל הכשרה מקצועית שבמשרד העבודה. כאן נאסף הידע המקצועי של המינהל ומסודר לפי מה שעושים איתו בפועל — מהשיעור הראשון ועד ועדת התכנון.</p>
+    <div class="meta-row">
+      <span class="src">מינהל הכשרה מקצועית · משרד העבודה</span>
+      <span class="src">64 בתי ספר · 9,700+ תלמידים</span>
+    </div>
   </div>
-</div>
+</section>
 
-<script src="hodaot.js" defer></script>
+<article class="body-sec">
+  <div class="article">
+
+    <div class="callout petrol rv">
+      <span class="ttl">בשורה אחת</span>
+      <p>אתר מקצועי אחד לכל מי שמוביל פדגוגיה בהכשרה המקצועית — במקום ידע שמפוזר בין דרייבים, מיילים וקבצים. כל תוכן כאן הוא תוכן ארצי או מינהלי, ולא חומר בית-ספרי פנימי.</p>
+    </div>
+
+    <h2 class="sub-sec first rv">הפיקוח הפדגוגי הארצי</h2>
+    <p class="rv">הפיקוח הפדגוגי הארצי הוא הגורם שאחראי במינהל הכשרה מקצועית על <b>איכות ההוראה והלמידה</b> בבתי הספר של החינוך היוצר: התוויית התפיסה הפדגוגית, ליווי מקצועי של ההנהלות והצוותים, פיתוח כלים ותוכניות, והמעטפת הפדגוגית של שנת הלימודים.</p>
+    <p class="rv">המסמכים המכוננים של העשייה הזו — <a class="lk" href="documents.html">המצפן הפדגוגי ואיגרות הפדגוגיה המיטיבה</a> — נכתבו בפיקוח הפדגוגי הארצי, והם השפה המשותפת שממנה נגזרים רוב התכנים באתר.</p>
+    <!-- ===== למילוי ידני =====
+         חסר כאן מידע שאין לו מקור באתר ולכן לא נכתב:
+         (1) מי מרכיב את הפיקוח הפדגוגי הארצי — תפקידים והיקף הצוות.
+         (2) מתי הוקם האתר ומי מתחזק אותו בפועל.
+         (3) הכפיפות הארגונית המדויקת בתוך המינהל.
+         מומלץ להוסיף פסקה קצרה כאן. לא הומצאו עובדות, שמות או תאריכים.
+         ======================= -->
+
+    <h2 class="sub-sec rv">למי האתר מיועד</h2>
+    <p class="lead-p rv">האתר נכתב עבור אנשי המקצוע שמובילים את העשייה הפדגוגית בהכשרה המקצועית:</p>
+    <ul class="ed rv">
+      <li><b>מנהלות ומנהלי בתי ספר</b> — כולל מדור נפרד ל<a class="lk" href="menahalim-hadashim.html">מנהלים חדשים</a>, שנבנה כערכת כניסה לשנה הראשונה.</li>
+      <li><b>מפקחות ומפקחים</b> — ועדות מלוות, כלי אבחון מוסדי, נתוני גמר ובגרות ופריסת הפיקוח.</li>
+      <li><b>מדריכות ומדריכים</b> — חומרי הדרכה, קבוצות הדרכה לפי תחומי דעת ומסלולי פיתוח מקצועי.</li>
+      <li><b>מורות ומורים</b> — מקצועיים ועיוניים כאחד: חומרי הוראה לפי תחום דעת, שאלוני בגרות וגמר, כלים דיגיטליים ולמידה בחירום.</li>
+      <li><b>יועצות ויועצים חינוכיים</b> — כישורי חיים, מניעת נשירה, SEL וכלי מדידה במרחב הייעוצי.</li>
+      <li><b>בעלי תפקידים בבית הספר</b> — רכזי חניכות, רכזים פדגוגיים ורכזי חינוך חברתי, כל אחד וארגז הכלים שלו.</li>
+    </ul>
+
+    <h2 class="sub-sec rv">מה אפשר למצוא כאן</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>המדור</th><th>מה יש בו</th></tr></thead>
+        <tbody>
+          <tr><td class="k"><a class="lk" href="space.html">המרחב הפדגוגי</a></td><td>שבעה תחומים בשפה אחת: לוח המבחנים, תחומי הדעת, שני נתיבי התעודה — בגרות וגמר — מאגר השאלונים, כלים דיגיטליים, שילוב AI בהוראה, למידה בחירום וכלים ניהוליים פדגוגיים.</td></tr>
+          <tr><td class="k"><a class="lk" href="chanichut.html">חניכות וקריירה</a></td><td>תפיסת החניכות ושמונת המודלים, ארגז הכלים של רכז/ת החניכות, ותוכנית ״נתיבים לקריירה״ מכיתה ט׳ ועד י״ב.</td></tr>
+          <tr><td class="k"><a class="lk" href="counseling.html">המרחב הייעוצי</a></td><td>ערכת הייעוץ, כישורי חיים, מניעת נשירה, SEL, שאלונים ומדידה ופרידה מתלמידי י״ב.</td></tr>
+          <tr><td class="k"><a class="lk" href="chevrati.html">חינוך חברתי יוצר</a></td><td>שישה-עשר עמודים: התפיסה וארבעת העקרונות, תפקיד הרכז/ת, בניית תוכנית העבודה, ההכשרה השנתית וארגז הכלים לפי מעגל השנה.</td></tr>
+          <tr><td class="k"><a class="lk" href="supervision.html">מרחב הפיקוח</a></td><td>ועדות מלוות, כלי אבחון מוסדי, נתוני גמר ובגרות ופריסת הפיקוח לתשפ״ז.</td></tr>
+          <tr><td class="k"><a class="lk" href="menahalim.html">מרחב המנהלים</a></td><td>הכלים הניהוליים, אוגדן השעות, היערכות השנה והמעטפת של ההנהלה.</td></tr>
+          <tr><td class="k"><a class="lk" href="tafkidim.html">בעלי תפקידים</a></td><td>הגדרות תפקיד, תקנים, חלוקת שעות וגמולים — ולצידם ארגז כלים לכל תפקיד.</td></tr>
+          <tr><td class="k"><a class="lk" href="procedures.html">נהלים</a></td><td>נהלי מינהל, תקציבים וקודי תקצוב, אירוע חריג, והדרכה ופיתוח מקצועי.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">שני כלים שכדאי להכיר</h2>
+    <div class="callout rv">
+      <span class="ttl">עוגן — הסוכן החכם של המינהל</span>
+      <p>עוגן עונה על שאלות בנהלים, בחוזרים, בתוכניות הלימודים ובתקצוב — עם הפניה למקור. הוא זמין בכל עמוד באתר: <a class="lk open-ogen" href="#">פתיחת שיחה עם עוגן</a>.</p>
+    </div>
+    <div class="callout rv">
+      <span class="ttl">חיפוש בכל האתר</span>
+      <p>עמוד ה<a class="lk" href="chipus.html">חיפוש</a> סורק את כל תכני האתר ומאפשר סינון לפי מדור. בכל עמוד אפשר גם לפתוח אותו במקלדת בהקשה על <span dir="ltr">Ctrl+K</span>.</p>
+    </div>
+
+    <h2 class="sub-sec rv">החינוך היוצר במספרים</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">בתי ספר</td><td>64</td></tr>
+          <tr><td class="k">תלמידים</td><td>9,700+</td></tr>
+          <tr><td class="k">מגמות מקצועיות</td><td>40+</td></tr>
+          <tr><td class="k">מקצועות ליבה</td><td>7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- ===== למילוי ידני =====
+         הנתונים שבטבלה נלקחו כלשונם מדף הבית (index.html). אין להם באתר תאריך עדכון
+         או מקור מצוטט. כדאי להוסיף כאן שורת מקור ומועד עדכון — למשל "נכון לתשפ״ז".
+         ======================= -->
+
+    <h2 class="sub-sec rv">מה לא נמצא כאן</h2>
+    <ul class="ed rv">
+      <li>האתר מפרסם <b>תוכן ארצי ומינהלי בלבד</b>. קבצים בית-ספריים פנימיים אינם מתפרסמים בו.</li>
+      <li>אין באתר <b>מידע אישי מזוהה</b> על תלמידים, מורים או בעלי תפקידים — לא בטפסים ולא במסמכים המקושרים.</li>
+      <li>האתר אינו מחליף את הפרסומים הרשמיים. בכל מקרה של סתירה — <a class="lk" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי המנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> והנהלים הרשמיים הם הקובעים.</li>
+    </ul>
+
+    <div class="source-box rv">
+      <div class="t">רוצים לפנות אלינו?<small>ערוצי הפנייה, ההצהרה על נגישות האתר והמדיניות בנוגע לפרטיות.</small></div>
+      <a class="btn" href="kesher.html">יצירת קשר ←</a><a class="btn alt" href="negishut.html">הצהרת נגישות</a>
+    </div>
+
+  </div>
+</article>
 
 </main>
 
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>

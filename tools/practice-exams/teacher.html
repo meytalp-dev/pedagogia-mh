@@ -22,6 +22,11 @@
     --card: #ffffff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  .plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+  .plain-btn:focus-visible, button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    outline: 3px solid var(--cyan);
+    outline-offset: 2px;
+  }
   body {
     font-family: 'Assistant', 'Assistant', sans-serif;
     background: var(--bg);
@@ -135,7 +140,7 @@
     max-width: 460px;
     margin: 60px auto;
   }
-  .login-card h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+  .login-card h1, .login-card h2 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
   .login-card .sub { color: var(--muted); margin-bottom: 28px; font-size: 14px; }
 
   /* Dashboard */
@@ -238,6 +243,7 @@
   }
   tr:last-child td { border-bottom: none; }
   tr.clickable { cursor: pointer; }
+  .row-open-btn { color: inherit; font-size: inherit; line-height: 1; }
   tr.clickable:hover { background: var(--bg); }
 
   .badge {
@@ -696,14 +702,14 @@
 
 <!-- Mode tabs (Practice vs Teacher) -->
 <div class="mode-tabs" id="mode-tabs">
-  <div class="mode-tab active" data-mode="practice" onclick="switchMode('practice')">
+  <button type="button" class="mode-tab plain-btn active" data-mode="practice" aria-pressed="true" onclick="switchMode('practice')">
     תרגול חופשי
     <small>ללא רישום · ללא ציון נשמר</small>
-  </div>
-  <div class="mode-tab" data-mode="teacher" onclick="switchMode('teacher')">
+  </button>
+  <button type="button" class="mode-tab plain-btn" data-mode="teacher" aria-pressed="false" onclick="switchMode('teacher')">
     כניסת מורה
     <small>עם ציון ודשבורד לכיתה</small>
-  </div>
+  </button>
 </div>
 
 <!-- Feedback Modal -->
@@ -711,10 +717,10 @@
   <div class="modal" style="max-width:520px;">
     <div class="modal-head">
       <h2>דווח על בעיה / הערה</h2>
-      <button class="modal-close" onclick="closeFeedback()">×</button>
+      <button type="button" class="modal-close" aria-label="סגירת חלון הדיווח" onclick="closeFeedback()">×</button>
     </div>
     <div class="modal-body">
-      <label>נושא</label>
+      <label for="fb-subject">נושא</label>
       <select id="fb-subject">
         <option>באג או תקלה</option>
         <option>בעיה במחוון / תשובה שגויה</option>
@@ -722,9 +728,9 @@
         <option>שאלה כללית</option>
         <option>אחר</option>
       </select>
-      <label>ההודעה</label>
+      <label for="fb-message">ההודעה</label>
       <textarea id="fb-message" rows="5" placeholder="תאר/י את הבעיה או ההערה..."></textarea>
-      <label>מייל או טלפון לחזרה (אופציונלי)</label>
+      <label for="fb-contact">מייל או טלפון לחזרה (אופציונלי)</label>
       <input id="fb-contact" type="text" placeholder="כדי שנוכל לחזור אליך">
       <div id="fb-error" style="color:var(--red);font-size:13px;margin-top:4px;"></div>
     </div>
@@ -747,12 +753,12 @@
 
     <div class="login-card">
       <div style="display:flex;gap:4px;margin-bottom:20px;background:var(--bg);padding:4px;border-radius:10px;">
-        <div id="tab-login" class="tab active" style="flex:1;text-align:center;" onclick="switchAuthTab('login')">יש לי חשבון</div>
-        <div id="tab-register" class="tab" style="flex:1;text-align:center;" onclick="switchAuthTab('register')">רישום חדש</div>
+        <button type="button" id="tab-login" class="tab plain-btn active" style="flex:1;text-align:center;" aria-pressed="true" onclick="switchAuthTab('login')">יש לי חשבון</button>
+        <button type="button" id="tab-register" class="tab plain-btn" style="flex:1;text-align:center;" aria-pressed="false" onclick="switchAuthTab('register')">רישום חדש</button>
       </div>
 
       <div id="pane-login">
-        <h1>כניסת מורה</h1>
+        <h2>כניסת מורה</h2>
         <p class="sub">הזיני את השם ו-PIN שבחרת בעת הרישום</p>
         <label for="login-name">שם מלא</label>
         <input id="login-name" type="text" placeholder="לדוגמה: מיטל פלג">
@@ -763,7 +769,7 @@
       </div>
 
       <div id="pane-register" class="hidden">
-        <h1>רישום מורה חדש</h1>
+        <h2>רישום מורה חדש</h2>
         <p class="sub">רישום חד-פעמי. אחרי הרישום תקבלי קוד אישי לשיתוף עם הכיתה שלך.</p>
         <label for="reg-name">שם מלא</label>
         <input id="reg-name" type="text" placeholder="לדוגמה: מיטל פלג">
@@ -792,7 +798,7 @@
         <div id="welcome-code" style="font-size:32px;font-weight:800;color:var(--pink);letter-spacing:2px;font-family:'Assistant',monospace;">—</div>
       </div>
 
-      <label>קישור לשיתוף עם הכיתה</label>
+      <label for="welcome-link">קישור לשיתוף עם הכיתה</label>
       <div style="display:flex;gap:8px;margin-bottom:20px;">
         <input id="welcome-link" type="text" readonly style="margin:0;flex:1;font-size:13px;">
         <button class="btn-small btn-secondary" onclick="copyShareLink()">העתק</button>
@@ -824,28 +830,28 @@
     </div>
 
     <div class="tabs">
-      <div class="tab active" data-view="all" onclick="switchView('all')">כל ההגשות</div>
-      <div class="tab" data-view="pending" onclick="switchView('pending')">ממתינות לבדיקה</div>
-      <div class="tab" data-view="answer-keys" onclick="switchView('answer-keys')">מחוונים</div>
+      <button type="button" class="tab plain-btn active" data-view="all" aria-pressed="true" onclick="switchView('all')">כל ההגשות</button>
+      <button type="button" class="tab plain-btn" data-view="pending" aria-pressed="false" onclick="switchView('pending')">ממתינות לבדיקה</button>
+      <button type="button" class="tab plain-btn" data-view="answer-keys" aria-pressed="false" onclick="switchView('answer-keys')">מחוונים</button>
     </div>
 
     <div id="view-submissions">
       <div class="filters">
         <div class="filter-box">
-          <label>סינון כיתה</label>
+          <label for="filter-class">סינון כיתה</label>
           <select id="filter-class" onchange="renderTable()">
             <option value="">כל הכיתות</option>
           </select>
         </div>
         <div class="filter-box">
-          <label>סינון מבחן</label>
+          <label for="filter-exam">סינון מבחן</label>
           <select id="filter-exam" onchange="renderTable()">
             <option value="">כל המבחנים</option>
           </select>
         </div>
         <div class="filter-box">
-          <label>חיפוש תלמיד</label>
-          <input id="filter-search" type="text" placeholder="שם או ת"ז" oninput="renderTable()">
+          <label for="filter-search">חיפוש תלמיד</label>
+          <input id="filter-search" type="text" placeholder="למשל: יעל כהן" oninput="renderTable()">
         </div>
       </div>
       <div class="submissions-table">
@@ -953,7 +959,7 @@
   <div class="modal">
     <div class="modal-head">
       <h2 id="modal-title">בדיקת מבחן</h2>
-      <button class="modal-close" onclick="closeModal()">×</button>
+      <button type="button" class="modal-close" aria-label="סגירת חלון הבדיקה" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-foot">
@@ -985,6 +991,8 @@
   function switchAuthTab(tab) {
     document.getElementById('tab-login').classList.toggle('active', tab === 'login');
     document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('tab-login').setAttribute('aria-pressed', tab === 'login' ? 'true' : 'false');
+    document.getElementById('tab-register').setAttribute('aria-pressed', tab === 'register' ? 'true' : 'false');
     document.getElementById('pane-login').classList.toggle('hidden', tab !== 'login');
     document.getElementById('pane-register').classList.toggle('hidden', tab !== 'register');
   }
@@ -1194,7 +1202,10 @@
 
   function switchView(v) {
     CURRENT_VIEW = v;
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === v));
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.view === v);
+      if (t.dataset.view) t.setAttribute('aria-pressed', t.dataset.view === v ? 'true' : 'false');
+    });
     document.getElementById('view-submissions').classList.toggle('hidden', v === 'answer-keys');
     document.getElementById('view-answer-keys').classList.toggle('hidden', v !== 'answer-keys');
     if (v === 'answer-keys') {
@@ -1244,7 +1255,7 @@
           <td>${mins} דק'</td>
           <td><strong>${score}</strong></td>
           <td>${status}</td>
-          <td style="text-align:left;color:var(--muted);">›</td>
+          <td style="text-align:left;color:var(--muted);"><button type="button" class="row-open-btn plain-btn" aria-label="פתיחת בדיקת ההגשה" onclick="event.stopPropagation();openReview('${s.submissionId}')">›</button></td>
         </tr>
       `;
     }).join('');
@@ -1302,7 +1313,7 @@
         gradeHtml = `
           <div class="grade-input">
             <span style="font-size:13px;color:var(--muted);">ציון ידני:</span>
-            <input id="${gradeInputId}" type="number" min="0" max="${a.points}" value="${currentGrade}" placeholder="0-${a.points}" data-qidx="${idx}">
+            <input id="${gradeInputId}" type="number" min="0" max="${a.points}" value="${currentGrade}" placeholder="0-${a.points}" data-qidx="${idx}" aria-label="ציון ידני לשאלה ${a.questionNumber}, מתוך ${a.points}">
             <span style="font-size:13px;color:var(--muted);">מתוך ${a.points}</span>
           </div>
         `;
@@ -1433,8 +1444,9 @@
               <div class="ak-q-text">${q.question}</div>
               <div class="ak-keys">
                 ${q.options.map(opt => `
-                  <button class="ak-key-btn ${key[q.id] === opt.key ? 'selected' : ''}"
+                  <button type="button" class="ak-key-btn ${key[q.id] === opt.key ? 'selected' : ''}"
                           data-qid="${q.id}" data-key="${opt.key}"
+                          aria-pressed="${key[q.id] === opt.key}"
                           onclick="toggleKey(event, '${exam.id}', '${q.id}', '${opt.key}')">${opt.key}</button>
                 `).join('')}
               </div>
@@ -1451,7 +1463,9 @@
     ANSWER_KEYS[examId][qid] = key;
     const card = ev.target.closest('.ak-exam-card');
     card.querySelectorAll(`[data-qid="${qid}"]`).forEach(btn => {
-      btn.classList.toggle('selected', btn.dataset.key === key);
+      const on = btn.dataset.key === key;
+      btn.classList.toggle('selected', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 
@@ -1534,7 +1548,9 @@
 
   function switchMode(mode) {
     document.querySelectorAll('.mode-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.mode === mode);
+      const on = t.dataset.mode === mode;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     document.getElementById('mode-teacher').classList.toggle('hidden', mode !== 'teacher');
     document.getElementById('mode-practice').classList.toggle('hidden', mode !== 'practice');
@@ -1556,13 +1572,15 @@
   function pRenderSectorTabs() {
     const tabs = document.getElementById('p-sector-tabs');
     tabs.innerHTML = CATALOG.sectors.map((s, i) => `
-      <div class="p-sector-tab ${i === 0 ? 'active' : ''}" data-sector="${s.id}" onclick="pSwitchSector('${s.id}')">${s.name}</div>
+      <button type="button" class="p-sector-tab plain-btn ${i === 0 ? 'active' : ''}" data-sector="${s.id}" aria-pressed="${i === 0}" onclick="pSwitchSector('${s.id}')">${s.name}</button>
     `).join('');
   }
 
   function pSwitchSector(id) {
     document.querySelectorAll('.p-sector-tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.sector === id);
+      const on = t.dataset.sector === id;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     pRenderSubjects(id);
   }
@@ -1580,14 +1598,18 @@
             if (!ready) badge = '<span class="p-badge p-badge-pending">בקרוב</span>';
             else if (ex.answerKeyReady) badge = '<span class="p-badge p-badge-ready">ציון אוטומטי</span>';
             else badge = '<span class="p-badge p-badge-partial">תרגול בלבד</span>';
-            const onclick = ready ? `onclick="pHandleExamClick(event,'${ex.id}')"` : '';
+            // The row nests its own share buttons, so it stays a div with role="button"
+            // (a button element may not contain nested buttons).
+            const onclick = ready
+              ? `role="button" tabindex="0" onclick="pHandleExamClick(event,'${ex.id}')" onkeydown="pHandleExamKey(event,'${ex.id}')"`
+              : '';
             const safeTitle = String(ex.title).replace(/'/g, "\\'").replace(/"/g, '&quot;');
             const share = ready ? `
               <div class="p-share-icons">
-                <button class="p-share-btn" title="העתק קישור לתלמידים" onclick="event.stopPropagation();pCopyExamLink('${ex.id}')">
+                <button type="button" class="p-share-btn" title="העתק קישור לתלמידים" aria-label="העתק קישור לתלמידים" onclick="event.stopPropagation();pCopyExamLink('${ex.id}')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                 </button>
-                <button class="p-share-btn wa" title="שלח בוואטסאפ" onclick="event.stopPropagation();pShareExamWA('${ex.id}','${safeTitle}')">
+                <button type="button" class="p-share-btn wa" title="שלח בוואטסאפ" aria-label="שלח את התרגול בוואטסאפ" onclick="event.stopPropagation();pShareExamWA('${ex.id}','${safeTitle}')">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.693.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
                 </button>
               </div>
@@ -1610,6 +1632,13 @@
 
   function pHandleExamClick(ev, examId) {
     if (ev.target.closest('.p-share-btn')) return;
+    pStartExam(examId);
+  }
+
+  function pHandleExamKey(ev, examId) {
+    if (ev.key !== 'Enter' && ev.key !== ' ' && ev.key !== 'Spacebar') return;
+    if (ev.target.closest('.p-share-btn')) return;
+    ev.preventDefault();
     pStartExam(examId);
   }
 
@@ -1755,11 +1784,11 @@
         <div class="p-question" id="pq-${q.id}">
           <div class="p-q-header">
             <div class="p-q-number">${q.number}</div>
-            <div class="p-q-text">${pEscape(q.question)}</div>
+            <div class="p-q-text" id="pqt-${q.id}">${pEscape(q.question)}</div>
             <div class="p-q-points">${q.points} נק'</div>
           </div>
           ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
-          <textarea placeholder="כתוב/י את תשובתך…" oninput="pSaveOpen('${q.id}', this.value)" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;min-height:110px;resize:vertical;"></textarea>
+          <textarea aria-labelledby="pqt-${q.id}" placeholder="כתוב/י את תשובתך…" oninput="pSaveOpen('${q.id}', this.value)" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;min-height:110px;resize:vertical;"></textarea>
         </div>
       `;
     }

@@ -21,6 +21,9 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased}
+/* איפוס עיצוב לכפתורים שנראים כמו כרטיס/שורה רגילים (נגישות מקלדת בלי שינוי מראה) */
+.plain-btn{all:unset;box-sizing:border-box;display:block;cursor:pointer}
+.plain-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 
 .header{text-align:center;padding:40px 20px 12px}
 .header h1{font-family:'Assistant',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
@@ -201,11 +204,11 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <h2>מחולל משחקים</h2>
       <p>הזינו את הפרטים שלכם כדי ליצור משחקים לימודיים</p>
       <div style="text-align:right;margin-bottom:12px">
-        <label style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">שם מלא</label>
+        <label for="loginName" style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">שם מלא</label>
         <input type="text" id="loginName" placeholder="למשל: מיטל פרידמן" style="width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:15px;background:var(--bg)">
       </div>
       <div style="text-align:right;margin-bottom:20px">
-        <label style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">אימייל</label>
+        <label for="loginEmail" style="display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:6px">אימייל</label>
         <input type="email" id="loginEmail" placeholder="your@email.com" dir="ltr" style="width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:15px;background:var(--bg)">
       </div>
       <button onclick="loginWithForm()" style="width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:'Assistant',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s">התחילו ליצור!</button>
@@ -252,13 +255,13 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="card">
         <div class="section-title"><div class="badge">1</div> פרטי המשחק</div>
         <div class="form-group">
-          <label>שם המשחק</label>
+          <label for="gameName">שם המשחק</label>
           <input type="text" id="gameName" placeholder="לדוגמה: חידון על המרד הגדול, התאמת בניינים...">
           <div class="error">יש להזין שם משחק</div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>מקצוע</label>
+            <label for="gameSubject">מקצוע</label>
             <select id="gameSubject">
               <option value="">בחרו מקצוע</option>
               <option>עברית</option><option>מתמטיקה</option><option>היסטוריה</option>
@@ -267,7 +270,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
             <div class="error">יש לבחור מקצוע</div>
           </div>
           <div class="form-group">
-            <label>כיתה</label>
+            <label for="gameGrade">כיתה</label>
             <select id="gameGrade">
               <option value="">בחרו כיתה</option>
               <option>כיתה ט</option><option>כיתה י</option><option>כיתה יא</option><option>כיתה יב</option>
@@ -277,12 +280,12 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
         </div>
 
         <div class="form-group">
-          <label>סוג משחק</label>
-          <div class="game-type-group" id="gameTypeGroup"></div>
+          <label id="gameTypeLabel">סוג משחק</label>
+          <div class="game-type-group" id="gameTypeGroup" role="group" aria-labelledby="gameTypeLabel"></div>
         </div>
 
         <div class="form-group">
-          <label>מספר פריטים</label>
+          <label for="numItems">מספר פריטים</label>
           <div class="range-group">
             <input type="range" id="numItems" min="5" max="15" value="8" oninput="document.getElementById('numItemsVal').textContent=this.value">
             <div class="range-val" id="numItemsVal">8</div>
@@ -322,10 +325,11 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
               <button onclick="document.getElementById('aiKeyInstructions').style.display=document.getElementById('aiKeyInstructions').style.display==='none'?'block':'none'" style="padding:10px 18px;background:var(--bg);color:#5B21B6;border:2px solid #C4B5FD;border-radius:10px;font-family:'Assistant',sans-serif;font-size:14px;font-weight:600;cursor:pointer">❓ הוראות מפורטות</button>
             </div>
             <div style="display:flex;gap:8px">
-              <input type="text" id="geminiKeyInput" placeholder="הדביקו את המפתח כאן..." dir="ltr" style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Assistant',sans-serif;font-size:14px">
+              <input type="text" id="geminiKeyInput" aria-label="מפתח Gemini API" placeholder="הדביקו את המפתח כאן..." dir="ltr" style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-family:'Assistant',sans-serif;font-size:14px">
               <button onclick="saveGeminiKey()" style="padding:10px 20px;background:#5B21B6;color:white;border:none;border-radius:10px;font-family:'Assistant',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap">שמרו</button>
             </div>
           </div>
+          <label for="aiPrompt" style="display:block;font-size:14px;font-weight:600;color:#5B21B6;margin-bottom:6px">נושא המשחק</label>
           <textarea id="aiPrompt" placeholder="כתבו רק את הנושא הספציפי, לדוגמה:&#10;בניינים בדקדוק – קל, נפעל, פיעל, הפעיל, התפעל&#10;המרד הגדול – סיבות, מהלך ותוצאות&#10;נוסחאות כימיות – שמות וסמלים"></textarea>
           <div class="hint">כתבו רק את הנושא – סוג המשחק, המקצוע והכיתה נלקחים מהשלב הקודם.</div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
@@ -337,7 +341,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
             </a>
           </div>
           <div id="chatPasteBox" style="display:none">
-            <textarea id="chatAnswer" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
+            <textarea id="chatAnswer" aria-label="הדבקת התשובה של Gemini" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="min-height:90px"></textarea>
             <button class="ai-btn" onclick="buildFromChatAnswer()"><span class="btn-text">🧩 בנו את המשחק מהתשובה</span></button>
           </div>
           <details style="margin-top:8px">
@@ -378,7 +382,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="card">
         <div class="section-title"><div class="badge">4</div> תצוגה מקדימה ופרסום</div>
         <div class="preview-frame">
-          <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+          <iframe id="previewFrame" title="תצוגה מקדימה של המשחק" sandbox="allow-scripts"></iframe>
         </div>
 
         <div class="publish-section">
@@ -391,7 +395,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           <div class="published-result" id="publishedResult">
             <div class="published-msg">✓ המשחק פורסם בהצלחה! שלחו את הקישור לתלמידים:</div>
             <div class="published-link">
-              <input type="text" id="publishedUrl" readonly>
+              <input type="text" id="publishedUrl" aria-label="קישור למשחק שפורסם" readonly>
               <button onclick="copyPublishedLink()">העתק קישור</button>
             </div>
           </div>
@@ -509,11 +513,11 @@ function renderTypeCards() {
   const container = document.getElementById('gameTypeGroup');
   container.innerHTML = gtKeys.map(k => {
     const g = GT[k];
-    return `<div class="game-type-card${k===gameType?' active':''}" data-type="${k}" onclick="setGameType('${k}')">
+    return `<button type="button" class="plain-btn game-type-card${k===gameType?' active':''}" data-type="${k}" aria-pressed="${k===gameType}" onclick="setGameType('${k}')">
       <div class="gt-icon">${g.icon}</div>
       <div class="gt-name">${g.name}</div>
       <div class="gt-desc">${g.desc}</div>
-    </div>`;
+    </button>`;
   }).join('');
 }
 
@@ -522,7 +526,9 @@ function setGameType(type) {
   gameType = type;
   const gt = GT[type];
   document.querySelectorAll('.game-type-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.type === type);
+    const on = c.dataset.type === type;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   const slider = document.getElementById('numItems');
   slider.min = gt.min; slider.max = gt.max; slider.value = gt.def;
@@ -723,13 +729,13 @@ function renderItemEditors() {
     const collapsed = isItemFilled(gameType, item) ? ' collapsed' : '';
     const preview = getItemPreview(gameType, item, i);
     html += `<div class="item-editor${collapsed}" data-idx="${i}">
-      <div class="item-header" onclick="toggleItem(this)">
+      <button type="button" class="plain-btn item-header" aria-expanded="${collapsed ? 'false' : 'true'}" onclick="toggleItem(this)">
         <div style="display:flex;align-items:center;gap:8px;flex:1;overflow:hidden">
           <div class="num-badge">${i+1}</div>
           <span class="item-preview">${escapeHtml(preview)}</span>
         </div>
-        <span class="toggle-icon">▲</span>
-      </div>
+        <span class="toggle-icon" aria-hidden="true">▲</span>
+      </button>
       <div class="item-body">
         ${buildItemEditor(i, item)}
         <button class="delete-btn" onclick="deleteItem(this)">🗑 מחקו פריט</button>
@@ -745,126 +751,137 @@ function buildItemEditor(idx, item) {
   if (gt === 'trivia' || gt === 'wheel' || gt === 'millionaire') {
     const showExplain = gt !== 'wheel';
     return `
-      <div class="form-group"><label>טקסט השאלה</label>
-        <textarea class="q-text" placeholder="הקלידו את השאלה...">${escapeHtml(item.text)}</textarea>
+      <div class="form-group"><label for="it${idx}-qtext">טקסט השאלה</label>
+        <textarea id="it${idx}-qtext" class="q-text" placeholder="הקלידו את השאלה...">${escapeHtml(item.text)}</textarea>
       </div>
-      <div class="form-group"><label>תשובות (סמנו ✓ ליד הנכונה)</label>
-        <div class="opts-grid">
+      <div class="form-group"><label id="it${idx}-optslbl">תשובות (סמנו ✓ ליד הנכונה)</label>
+        <div class="opts-grid" role="group" aria-labelledby="it${idx}-optslbl">
           ${(item.options||['','','','']).map((opt, i) => `
           <div class="opt-row">
-            <div class="opt-label">${letters[i]}</div>
-            <input type="text" class="opt-input" value="${escapeHtml(opt)}" placeholder="תשובה ${letters[i]}">
-            <div class="opt-radio${item.correct === i ? ' selected' : ''}" data-idx="${i}" onclick="selectCorrect(this)">✓</div>
+            <div class="opt-label" aria-hidden="true">${letters[i]}</div>
+            <input type="text" id="it${idx}-opt${i}" class="opt-input" value="${escapeHtml(opt)}" aria-label="תשובה ${letters[i]}" placeholder="תשובה ${letters[i]}">
+            <button type="button" class="plain-btn opt-radio${item.correct === i ? ' selected' : ''}" data-idx="${i}" aria-pressed="${item.correct === i}" aria-label="סמנו את תשובה ${letters[i]} כתשובה הנכונה" onclick="selectCorrect(this)">✓</button>
           </div>`).join('')}
         </div>
       </div>
-      ${showExplain ? `<div class="form-group"><label>הסבר</label>
-        <textarea class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
+      ${showExplain ? `<div class="form-group"><label for="it${idx}-qexplain">הסבר</label>
+        <textarea id="it${idx}-qexplain" class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
       </div>` : ''}`;
   } else if (gt === 'matching') {
     return `<div class="pair-row">
-        <input type="text" class="pair-right" value="${escapeHtml(item.right)}" placeholder="מושג / מונח">
-        <div class="pair-arrow">↔</div>
-        <input type="text" class="pair-left" value="${escapeHtml(item.left)}" placeholder="הגדרה / תיאור">
+        <input type="text" id="it${idx}-right" class="pair-right" value="${escapeHtml(item.right)}" aria-label="מושג / מונח" placeholder="מושג / מונח">
+        <div class="pair-arrow" aria-hidden="true">↔</div>
+        <input type="text" id="it${idx}-left" class="pair-left" value="${escapeHtml(item.left)}" aria-label="הגדרה / תיאור" placeholder="הגדרה / תיאור">
       </div>`;
   } else if (gt === 'memory') {
     return `<div class="pair-row">
-        <input type="text" class="pair-right" value="${escapeHtml(item.front)}" placeholder="צד קדמי (מושג)">
-        <div class="pair-arrow">↔</div>
-        <input type="text" class="pair-left" value="${escapeHtml(item.back)}" placeholder="צד אחורי (הגדרה)">
+        <input type="text" id="it${idx}-front" class="pair-right" value="${escapeHtml(item.front)}" aria-label="צד קדמי (מושג)" placeholder="צד קדמי (מושג)">
+        <div class="pair-arrow" aria-hidden="true">↔</div>
+        <input type="text" id="it${idx}-back" class="pair-left" value="${escapeHtml(item.back)}" aria-label="צד אחורי (הגדרה)" placeholder="צד אחורי (הגדרה)">
       </div>`;
   } else if (gt === 'ordering') {
     return `<div class="form-group">
-        <label>פריט ${idx + 1} (במיקום הנכון)</label>
-        <input type="text" class="order-text" value="${escapeHtml(item.text)}" placeholder="טקסט הפריט...">
+        <label for="it${idx}-order">פריט ${idx + 1} (במיקום הנכון)</label>
+        <input type="text" id="it${idx}-order" class="order-text" value="${escapeHtml(item.text)}" placeholder="טקסט הפריט...">
       </div>`;
   } else if (gt === 'escape') {
     return `
-      <div class="form-group"><label>שם החדר</label>
-        <input type="text" class="esc-title" value="${escapeHtml(item.title)}" placeholder="למשל: חדר המעבדה">
+      <div class="form-group"><label for="it${idx}-esctitle">שם החדר</label>
+        <input type="text" id="it${idx}-esctitle" class="esc-title" value="${escapeHtml(item.title)}" placeholder="למשל: חדר המעבדה">
       </div>
-      <div class="form-group"><label>סיפור / תיאור</label>
-        <textarea class="esc-story" placeholder="תיאור קצר של החדר...">${escapeHtml(item.story)}</textarea>
+      <div class="form-group"><label for="it${idx}-escstory">סיפור / תיאור</label>
+        <textarea id="it${idx}-escstory" class="esc-story" placeholder="תיאור קצר של החדר...">${escapeHtml(item.story)}</textarea>
       </div>
-      <div class="form-group"><label>חידה / שאלה</label>
-        <textarea class="esc-riddle" placeholder="החידה שצריך לפתור...">${escapeHtml(item.riddle)}</textarea>
+      <div class="form-group"><label for="it${idx}-escriddle">חידה / שאלה</label>
+        <textarea id="it${idx}-escriddle" class="esc-riddle" placeholder="החידה שצריך לפתור...">${escapeHtml(item.riddle)}</textarea>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>תשובה</label>
-          <input type="text" class="esc-answer" value="${escapeHtml(item.answer)}" placeholder="התשובה הנכונה">
+        <div class="form-group"><label for="it${idx}-escanswer">תשובה</label>
+          <input type="text" id="it${idx}-escanswer" class="esc-answer" value="${escapeHtml(item.answer)}" placeholder="התשובה הנכונה">
         </div>
-        <div class="form-group"><label>רמז</label>
-          <input type="text" class="esc-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
+        <div class="form-group"><label for="it${idx}-eschint">רמז</label>
+          <input type="text" id="it${idx}-eschint" class="esc-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
         </div>
       </div>`;
   } else if (gt === 'truefalse') {
     return `
-      <div class="form-group"><label>המשפט</label>
-        <textarea class="q-text" placeholder="כתבו משפט שהוא נכון או לא נכון...">${escapeHtml(item.text)}</textarea>
+      <div class="form-group"><label for="it${idx}-tftext">המשפט</label>
+        <textarea id="it${idx}-tftext" class="q-text" placeholder="כתבו משפט שהוא נכון או לא נכון...">${escapeHtml(item.text)}</textarea>
       </div>
-      <div class="form-group"><label>האם המשפט נכון?</label>
-        <div class="tf-toggle">
-          <div class="tf-toggle-btn${item.correct !== false ? ' active-true' : ''}" onclick="setTF(this,true)">✓ נכון</div>
-          <div class="tf-toggle-btn${item.correct === false ? ' active-false' : ''}" onclick="setTF(this,false)">✗ לא נכון</div>
+      <div class="form-group"><label id="it${idx}-tflbl">האם המשפט נכון?</label>
+        <div class="tf-toggle" role="group" aria-labelledby="it${idx}-tflbl">
+          <button type="button" class="plain-btn tf-toggle-btn${item.correct !== false ? ' active-true' : ''}" aria-pressed="${item.correct !== false}" onclick="setTF(this,true)">✓ נכון</button>
+          <button type="button" class="plain-btn tf-toggle-btn${item.correct === false ? ' active-false' : ''}" aria-pressed="${item.correct === false}" onclick="setTF(this,false)">✗ לא נכון</button>
         </div>
       </div>
-      <div class="form-group"><label>הסבר</label>
-        <textarea class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
+      <div class="form-group"><label for="it${idx}-tfexplain">הסבר</label>
+        <textarea id="it${idx}-tfexplain" class="q-explain" placeholder="הסבר קצר...">${escapeHtml(item.explanation||'')}</textarea>
       </div>`;
   } else if (gt === 'fillblank') {
     return `
-      <div class="form-group"><label>משפט (סמנו ___ במקום המילה החסרה)</label>
-        <textarea class="fb-sentence" placeholder="למשל: בירת ישראל היא ___">${escapeHtml(item.sentence)}</textarea>
+      <div class="form-group"><label for="it${idx}-fbsent">משפט (סמנו ___ במקום המילה החסרה)</label>
+        <textarea id="it${idx}-fbsent" class="fb-sentence" placeholder="למשל: בירת ישראל היא ___">${escapeHtml(item.sentence)}</textarea>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>תשובה</label>
-          <input type="text" class="fb-answer" value="${escapeHtml(item.answer)}" placeholder="המילה החסרה">
+        <div class="form-group"><label for="it${idx}-fbanswer">תשובה</label>
+          <input type="text" id="it${idx}-fbanswer" class="fb-answer" value="${escapeHtml(item.answer)}" placeholder="המילה החסרה">
         </div>
-        <div class="form-group"><label>רמז (אופציונלי)</label>
-          <input type="text" class="fb-hint" value="${escapeHtml(item.hint||'')}" placeholder="רמז">
+        <div class="form-group"><label for="it${idx}-fbhint">רמז (אופציונלי)</label>
+          <input type="text" id="it${idx}-fbhint" class="fb-hint" value="${escapeHtml(item.hint||'')}" placeholder="רמז">
         </div>
       </div>`;
   } else if (gt === 'sentence') {
     return `<div class="form-group">
-        <label>המשפט הנכון (המילים יעורבלו אוטומטית)</label>
-        <textarea class="sent-text" placeholder="כתבו משפט קצר...">${escapeHtml(item.sentence)}</textarea>
+        <label for="it${idx}-senttext">המשפט הנכון (המילים יעורבלו אוטומטית)</label>
+        <textarea id="it${idx}-senttext" class="sent-text" placeholder="כתבו משפט קצר...">${escapeHtml(item.sentence)}</textarea>
       </div>`;
   } else if (gt === 'groups') {
     return `
-      <div class="form-group"><label>שם הקבוצה</label>
-        <input type="text" class="grp-name" value="${escapeHtml(item.name)}" placeholder="למשל: בעלי חיים">
+      <div class="form-group"><label for="it${idx}-grpname">שם הקבוצה</label>
+        <input type="text" id="it${idx}-grpname" class="grp-name" value="${escapeHtml(item.name)}" placeholder="למשל: בעלי חיים">
       </div>
-      <div class="form-group"><label>4 פריטים בקבוצה</label>
-        <div class="group-items-grid">
+      <div class="form-group"><label id="it${idx}-grplbl">4 פריטים בקבוצה</label>
+        <div class="group-items-grid" role="group" aria-labelledby="it${idx}-grplbl">
           ${(item.items||['','','','']).map((it, i) =>
-            `<input type="text" class="grp-item" value="${escapeHtml(it)}" placeholder="פריט ${i+1}">`
+            `<input type="text" id="it${idx}-grpitem${i}" class="grp-item" value="${escapeHtml(it)}" aria-label="פריט ${i+1} בקבוצה" placeholder="פריט ${i+1}">`
           ).join('')}
         </div>
       </div>`;
   } else if (gt === 'hangman') {
     return `<div class="form-row">
-        <div class="form-group"><label>המילה</label>
-          <input type="text" class="hm-word" value="${escapeHtml(item.word)}" placeholder="מילה לניחוש">
+        <div class="form-group"><label for="it${idx}-hmword">המילה</label>
+          <input type="text" id="it${idx}-hmword" class="hm-word" value="${escapeHtml(item.word)}" placeholder="מילה לניחוש">
         </div>
-        <div class="form-group"><label>רמז</label>
-          <input type="text" class="hm-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
+        <div class="form-group"><label for="it${idx}-hmhint">רמז</label>
+          <input type="text" id="it${idx}-hmhint" class="hm-hint" value="${escapeHtml(item.hint)}" placeholder="רמז לתלמידים">
         </div>
       </div>`;
   }
   return '';
 }
 
-function toggleItem(header) { header.closest('.item-editor').classList.toggle('collapsed'); }
+function toggleItem(header) {
+  const collapsed = header.closest('.item-editor').classList.toggle('collapsed');
+  header.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+}
 
 function selectCorrect(el) {
-  el.closest('.item-editor').querySelectorAll('.opt-radio').forEach(r => r.classList.remove('selected'));
+  el.closest('.item-editor').querySelectorAll('.opt-radio').forEach(r => {
+    r.classList.remove('selected');
+    r.setAttribute('aria-pressed', 'false');
+  });
   el.classList.add('selected');
+  el.setAttribute('aria-pressed', 'true');
 }
 
 function setTF(el, val) {
   const toggle = el.closest('.tf-toggle');
-  toggle.querySelectorAll('.tf-toggle-btn').forEach(b => { b.className = 'tf-toggle-btn'; });
+  toggle.querySelectorAll('.tf-toggle-btn').forEach(b => {
+    b.classList.remove('active-true', 'active-false');
+    b.setAttribute('aria-pressed', 'false');
+  });
   el.classList.add(val ? 'active-true' : 'active-false');
+  el.setAttribute('aria-pressed', 'true');
 }
 
 function deleteItem(btn) {
@@ -1108,6 +1125,8 @@ function generatePlayerHTML(cfg) {
 :root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px;--blue:#1677FF;--blue-l:#E8F2FF}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.plain-btn{all:unset;box-sizing:border-box;display:block;cursor:pointer}
+.plain-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .game-wrapper{max-width:620px;width:100%;margin:0 auto}
 .progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s;width:0%}
@@ -1222,8 +1241,8 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="intro-icon">${cfg.icon}</div>
       <div class="intro-title">משחק – ${escapeHtml(cfg.title)}</div>
       <div class="intro-sub">${escapeHtml(cfg.subject)} | ${escapeHtml(cfg.grade)} | הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית</div>
-      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם"></div>
-      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${cfg.classOptions}</select></div>
+      <div class="input-group"><label for="studentName">שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם"></div>
+      <div class="input-group"><label for="studentClass">כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option>${cfg.classOptions}</select></div>
       <button class="btn btn-primary" id="startBtn" disabled onclick="startGame()">התחילו!</button>
     </div>
   </div>
@@ -1246,6 +1265,11 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   </div>
 </div>
 <script>
+// חסימת הפעלה במקלדת לכפתורים שכובו עם pointer-events:none (שומר על התנהגות זהה לעכבר)
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('button'):null;
+  if(t&&getComputedStyle(t).pointerEvents==='none'){e.preventDefault();e.stopPropagation();}
+},true);
 var gameConfig=${cfg.gameConfig};
 var SHEETS_URL='${SHEETS_URL}';
 var sheetName=${JSON.stringify(sheetName)};
@@ -1295,13 +1319,13 @@ function sendResults(){
 /* ===== TRIVIA ===== */
 var triviaQ=0,triviaItems=[];
 function initTrivia(){triviaItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=triviaItems.length;triviaQ=0;score=0;correctItems=0;renderTriviaQ()}
-function renderTriviaQ(){var q=triviaItems[triviaQ],n=triviaQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];document.getElementById('gameArea').innerHTML='<div class="q-counter">שאלה '+n+' מתוך '+totalItems+'</div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="triviaAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>'}
+function renderTriviaQ(){var q=triviaItems[triviaQ],n=triviaQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];document.getElementById('gameArea').innerHTML='<div class="q-counter">שאלה '+n+' מתוך '+totalItems+'</div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<button type="button" class="plain-btn q-opt" onclick="triviaAnswer('+i+')"><span class="opt-letter" aria-hidden="true">'+L[i]+'</span><span>'+escapeHtml(o)+'</span></button>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>'}
 function triviaAnswer(idx){var q=triviaItems[triviaQ],ok=idx===q.correct;document.querySelectorAll('.q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong> '+escapeHtml(q.explanation||''):'<strong>לא נכון.</strong> '+escapeHtml(q.explanation||'');if(ok){score++;correctItems++}document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=triviaQ<totalItems-1?'הבא':'סיום'}
 function nextTrivia(){triviaQ++;if(triviaQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderTriviaQ()}
 
 /* ===== MATCHING ===== */
 var matchPairs=[],matchedCount=0,selectedRight=null;
-function initMatching(){matchPairs=gameConfig.items.slice();totalItems=matchPairs.length;matchedCount=0;selectedRight=null;score=0;correctItems=0;var ri=shuffle(matchPairs.map(function(p,i){return{text:p.right,idx:i}}));var li=shuffle(matchPairs.map(function(p,i){return{text:p.left,idx:i}}));var rT=gameConfig.columnRightTitle||'מושג',lT=gameConfig.columnLeftTitle||'הגדרה';document.getElementById('progressFill').style.width='0%';document.getElementById('gameArea').innerHTML='<div class="match-progress" id="matchProg">0 מתוך '+totalItems+' זוגות</div><div class="match-grid"><div><div class="match-col-title">'+escapeHtml(rT)+'</div>'+ri.map(function(r){return'<div class="match-item match-right" data-idx="'+r.idx+'" onclick="selectRight(this)">'+escapeHtml(r.text)+'</div>'}).join('')+'</div><div><div class="match-col-title">'+escapeHtml(lT)+'</div>'+li.map(function(l){return'<div class="match-item match-left" data-idx="'+l.idx+'" onclick="selectLeft(this)">'+escapeHtml(l.text)+'</div>'}).join('')+'</div></div>'}
+function initMatching(){matchPairs=gameConfig.items.slice();totalItems=matchPairs.length;matchedCount=0;selectedRight=null;score=0;correctItems=0;var ri=shuffle(matchPairs.map(function(p,i){return{text:p.right,idx:i}}));var li=shuffle(matchPairs.map(function(p,i){return{text:p.left,idx:i}}));var rT=gameConfig.columnRightTitle||'מושג',lT=gameConfig.columnLeftTitle||'הגדרה';document.getElementById('progressFill').style.width='0%';document.getElementById('gameArea').innerHTML='<div class="match-progress" id="matchProg">0 מתוך '+totalItems+' זוגות</div><div class="match-grid"><div><div class="match-col-title">'+escapeHtml(rT)+'</div>'+ri.map(function(r){return'<button type="button" class="plain-btn match-item match-right" data-idx="'+r.idx+'" onclick="selectRight(this)">'+escapeHtml(r.text)+'</button>'}).join('')+'</div><div><div class="match-col-title">'+escapeHtml(lT)+'</div>'+li.map(function(l){return'<button type="button" class="plain-btn match-item match-left" data-idx="'+l.idx+'" onclick="selectLeft(this)">'+escapeHtml(l.text)+'</button>'}).join('')+'</div></div>'}
 function selectRight(el){if(el.classList.contains('matched'))return;document.querySelectorAll('.match-right').forEach(function(r){r.classList.remove('selected')});el.classList.add('selected');selectedRight=el}
 function selectLeft(el){if(!selectedRight||el.classList.contains('matched'))return;var rI=parseInt(selectedRight.dataset.idx),lI=parseInt(el.dataset.idx);if(rI===lI){selectedRight.classList.remove('selected');selectedRight.classList.add('matched');el.classList.add('matched');matchedCount++;correctItems++;score++;document.getElementById('matchProg').textContent=matchedCount+' מתוך '+totalItems+' זוגות';document.getElementById('progressFill').style.width=(matchedCount/totalItems*100)+'%';selectedRight=null;if(matchedCount===totalItems)setTimeout(showScore,600)}else{selectedRight.classList.add('wrong-flash');el.classList.add('wrong-flash');var r=selectedRight;setTimeout(function(){r.classList.remove('selected','wrong-flash');el.classList.remove('wrong-flash')},500);selectedRight=null}}
 
@@ -1315,14 +1339,14 @@ function checkOrder(){correctItems=0;orderItems.forEach(function(item,i){if(item
 /* ===== ESCAPE ===== */
 var escRoom=0,escItems=[],escHint=[];
 function initEscape(){escItems=gameConfig.items.slice();totalItems=escItems.length;escRoom=0;score=0;correctItems=0;escHint=escItems.map(function(){return false});renderRoom()}
-function renderRoom(){var r=escItems[escRoom],n=escRoom+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';document.getElementById('gameArea').innerHTML='<div class="q-counter">חדר '+n+' מתוך '+totalItems+'</div><div class="q-text">🔐 '+escapeHtml(r.title||'חדר '+n)+'</div><div class="room-story">'+escapeHtml(r.story)+'</div><div class="room-riddle">🧩 '+escapeHtml(r.riddle)+'</div><input type="text" class="room-input" id="roomAnswer" placeholder="הקלידו תשובה..."><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-primary" style="flex:1" onclick="checkRoom()">בדקו</button>'+(escHint[escRoom]?'':'<button class="hint-btn" onclick="showEscHint()">💡 רמז</button>')+'</div><div class="hint-text" id="hintText">'+escapeHtml(r.hint)+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextRoom()">חדר הבא</button>'}
+function renderRoom(){var r=escItems[escRoom],n=escRoom+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';document.getElementById('gameArea').innerHTML='<div class="q-counter">חדר '+n+' מתוך '+totalItems+'</div><div class="q-text">🔐 '+escapeHtml(r.title||'חדר '+n)+'</div><div class="room-story">'+escapeHtml(r.story)+'</div><div class="room-riddle">🧩 '+escapeHtml(r.riddle)+'</div><input type="text" class="room-input" id="roomAnswer" aria-label="התשובה לחידה" placeholder="הקלידו תשובה..."><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-primary" style="flex:1" onclick="checkRoom()">בדקו</button>'+(escHint[escRoom]?'':'<button class="hint-btn" onclick="showEscHint()">💡 רמז</button>')+'</div><div class="hint-text" id="hintText">'+escapeHtml(r.hint)+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextRoom()">חדר הבא</button>'}
 function checkRoom(){var inp=document.getElementById('roomAnswer');var ans=inp.value.trim();var correct=escItems[escRoom].answer.trim();if(ans.toLowerCase()===correct.toLowerCase()){inp.classList.add('correct');inp.disabled=true;correctItems++;score+=escHint[escRoom]?0.5:1;var fb=document.getElementById('qFeedback');fb.className='q-feedback show correct';fb.innerHTML='<strong>נכון!</strong> עברתם לחדר הבא!';document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=escRoom<totalItems-1?'חדר הבא':'סיום'}else{inp.classList.add('wrong');setTimeout(function(){inp.classList.remove('wrong')},500)}}
 function showEscHint(){escHint[escRoom]=true;document.getElementById('hintText').classList.add('show')}
 function nextRoom(){escRoom++;if(escRoom>=totalItems){correctItems=Math.round(score);showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderRoom()}
 
 /* ===== MEMORY ===== */
 var memCards=[],flipped=[],memMatched=0,memLocked=false;
-function initMemory(){var items=gameConfig.items;totalItems=items.length;memMatched=0;score=0;correctItems=0;memCards=[];flipped=[];memLocked=false;items.forEach(function(item,i){memCards.push({id:i,text:item.front,pairId:i,type:'front'});memCards.push({id:i,text:item.back,pairId:i,type:'back'})});memCards=shuffle(memCards);document.getElementById('progressFill').style.width='0%';var html='<div class="match-progress" id="memProg">0 מתוך '+totalItems+' זוגות</div><div class="memory-grid">';memCards.forEach(function(card,i){html+='<div class="memory-card" data-idx="'+i+'" onclick="flipCard(this)"><div class="memory-card-inner"><div class="memory-card-front">?</div><div class="memory-card-back">'+escapeHtml(card.text)+'</div></div></div>'});html+='</div>';document.getElementById('gameArea').innerHTML=html}
+function initMemory(){var items=gameConfig.items;totalItems=items.length;memMatched=0;score=0;correctItems=0;memCards=[];flipped=[];memLocked=false;items.forEach(function(item,i){memCards.push({id:i,text:item.front,pairId:i,type:'front'});memCards.push({id:i,text:item.back,pairId:i,type:'back'})});memCards=shuffle(memCards);document.getElementById('progressFill').style.width='0%';var html='<div class="match-progress" id="memProg">0 מתוך '+totalItems+' זוגות</div><div class="memory-grid">';memCards.forEach(function(card,i){html+='<button type="button" class="plain-btn memory-card" data-idx="'+i+'" aria-label="קלף זיכרון" onclick="flipCard(this)"><div class="memory-card-inner"><div class="memory-card-front">?</div><div class="memory-card-back">'+escapeHtml(card.text)+'</div></div></button>'});html+='</div>';document.getElementById('gameArea').innerHTML=html}
 function flipCard(el){if(memLocked||el.classList.contains('flipped')||el.classList.contains('matched'))return;el.classList.add('flipped');flipped.push(el);if(flipped.length===2){memLocked=true;var i1=parseInt(flipped[0].dataset.idx),i2=parseInt(flipped[1].dataset.idx);var c1=memCards[i1],c2=memCards[i2];if(c1.pairId===c2.pairId&&c1.type!==c2.type){flipped.forEach(function(c){c.classList.add('matched')});memMatched++;correctItems++;score++;document.getElementById('memProg').textContent=memMatched+' מתוך '+totalItems+' זוגות';document.getElementById('progressFill').style.width=(memMatched/totalItems*100)+'%';flipped=[];memLocked=false;if(memMatched===totalItems)setTimeout(showScore,600)}else{setTimeout(function(){flipped.forEach(function(c){c.classList.remove('flipped')});flipped=[];memLocked=false},1000)}}}
 
 /* ===== WHEEL ===== */
@@ -1331,7 +1355,7 @@ function initWheel(){wheelItems=gameConfig.settings.shuffleItems?shuffle(gameCon
 function renderWheel(){document.getElementById('progressFill').style.width='0%';document.getElementById('gameArea').innerHTML='<div class="wheel-container"><div class="wheel-wrap"><div class="wheel-pointer">▼</div><canvas class="wheel-canvas" id="wheelCanvas" width="280" height="280"></canvas></div><button class="btn btn-primary" style="margin-top:16px;width:auto;padding:16px 40px;display:inline-block" id="spinBtn" onclick="spinWheel()">🎡 סובבו!</button></div><div id="wheelQ" style="display:none"></div>';drawWheel()}
 function drawWheel(){var canvas=document.getElementById('wheelCanvas');if(!canvas)return;var ctx=canvas.getContext('2d');var cx=140,cy=140,r=130,n=wheelItems.length;var colors=["#124D7A","#087B9C","#1677FF","#E9A319","#52B788","#8B5CF6","#EC4899","#F59E0B","#10B981","#6366F1","#F97316","#14B8A6"];ctx.clearRect(0,0,280,280);var slice=2*Math.PI/n;var rot=wheelAngle*Math.PI/180;for(var i=0;i<n;i++){var sa=rot+i*slice;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,sa,sa+slice);ctx.fillStyle=wheelAnswered[i]?"#ddd":colors[i%colors.length];ctx.fill();ctx.strokeStyle="white";ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(sa+slice/2);ctx.fillStyle=wheelAnswered[i]?"#999":"white";ctx.font="bold 13px Heebo";ctx.textAlign="center";ctx.fillText(""+(i+1),r*0.65,5);ctx.restore()}ctx.beginPath();ctx.arc(cx,cy,20,0,2*Math.PI);ctx.fillStyle="white";ctx.fill();ctx.stroke()}
 function spinWheel(){if(wheelSpinning)return;var unanswered=[];wheelItems.forEach(function(_,i){if(!wheelAnswered[i])unanswered.push(i)});if(unanswered.length===0){showScore();return}wheelSpinning=true;document.getElementById('spinBtn').disabled=true;document.getElementById('wheelQ').style.display='none';var targetIdx=unanswered[Math.floor(Math.random()*unanswered.length)];wheelCur=targetIdx;var n=wheelItems.length;var sliceAngle=360/n;var targetAngle=360-(targetIdx*sliceAngle+sliceAngle/2);var spins=5;var finalAngle=wheelAngle+spins*360+targetAngle-wheelAngle%360;var startAngle=wheelAngle;var duration=3000;var startTime=Date.now();function animate(){var elapsed=Date.now()-startTime;var t=Math.min(elapsed/duration,1);var ease=1-Math.pow(1-t,3);wheelAngle=startAngle+(finalAngle-startAngle)*ease;drawWheel();if(t<1)requestAnimationFrame(animate);else{wheelSpinning=false;showWheelQ(targetIdx)}}requestAnimationFrame(animate)}
-function showWheelQ(idx){var q=wheelItems[idx];var L=['א','ב','ג','ד'];document.getElementById('wheelQ').style.display='block';document.getElementById('wheelQ').innerHTML='<div class="q-text" style="margin-top:16px">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="wheelAnswer('+idx+','+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div>'}
+function showWheelQ(idx){var q=wheelItems[idx];var L=['א','ב','ג','ד'];document.getElementById('wheelQ').style.display='block';document.getElementById('wheelQ').innerHTML='<div class="q-text" style="margin-top:16px">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<button type="button" class="plain-btn q-opt" onclick="wheelAnswer('+idx+','+i+')"><span class="opt-letter" aria-hidden="true">'+L[i]+'</span><span>'+escapeHtml(o)+'</span></button>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div>'}
 function wheelAnswer(qIdx,ansIdx){var q=wheelItems[qIdx],ok=ansIdx===q.correct;document.querySelectorAll('#wheelQ .q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===ansIdx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.textContent=ok?'נכון!':'לא נכון.';if(ok){score++;correctItems++}wheelAnswered[qIdx]=true;document.getElementById('progressFill').style.width=(wheelAnswered.filter(Boolean).length/totalItems*100)+'%';setTimeout(function(){document.getElementById('wheelQ').style.display='none';var unanswered=wheelAnswered.filter(function(a){return!a}).length;if(unanswered===0)setTimeout(showScore,500);else{document.getElementById('spinBtn').disabled=false;drawWheel()}},1500)}
 
 /* ===== TRUEFALSE ===== */
@@ -1344,16 +1368,16 @@ function nextTF(){tfQ++;if(tfQ>=totalItems){showScore();return}var c=document.ge
 /* ===== FILLBLANK ===== */
 var fbQ=0,fbItems=[];
 function initFillBlank(){fbItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=fbItems.length;fbQ=0;score=0;correctItems=0;renderFB()}
-function renderFB(){var q=fbItems[fbQ],n=fbQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var sentHTML=escapeHtml(q.sentence).replace(/___/g,'<span class="fb-blank">?</span>');document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="fb-sentence">'+sentHTML+'</div><input type="text" class="fb-input" id="fbInput" placeholder="הקלידו את המילה החסרה...">'+(q.hint?'<button class="hint-btn" style="margin-bottom:12px" onclick="document.getElementById(\\'fbHint\\').classList.add(\\'show\\')">💡 רמז</button><div class="hint-text" id="fbHint">'+escapeHtml(q.hint)+'</div>':'')+'<button class="btn btn-primary" style="margin-top:12px" onclick="checkFB()">בדקו</button><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextFB()">הבא</button>'}
+function renderFB(){var q=fbItems[fbQ],n=fbQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var sentHTML=escapeHtml(q.sentence).replace(/___/g,'<span class="fb-blank">?</span>');document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="fb-sentence">'+sentHTML+'</div><input type="text" class="fb-input" id="fbInput" aria-label="המילה החסרה" placeholder="הקלידו את המילה החסרה...">'+(q.hint?'<button class="hint-btn" style="margin-bottom:12px" onclick="document.getElementById(\\'fbHint\\').classList.add(\\'show\\')">💡 רמז</button><div class="hint-text" id="fbHint">'+escapeHtml(q.hint)+'</div>':'')+'<button class="btn btn-primary" style="margin-top:12px" onclick="checkFB()">בדקו</button><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextFB()">הבא</button>'}
 function checkFB(){var inp=document.getElementById('fbInput');var ans=inp.value.trim();var correct=fbItems[fbQ].answer.trim();var ok=ans.toLowerCase()===correct.toLowerCase();inp.classList.add(ok?'correct':'wrong');inp.disabled=true;var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong>':'<strong>לא נכון.</strong> התשובה: '+escapeHtml(correct);if(ok){score++;correctItems++}document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=fbQ<totalItems-1?'הבא':'סיום'}
 function nextFB(){fbQ++;if(fbQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderFB()}
 
 /* ===== SENTENCE ===== */
 var sentQ=0,sentItems=[],sentWords=[],sentBuilt=[],sentShuffled=[];
 function initSentence(){sentItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=sentItems.length;sentQ=0;score=0;correctItems=0;renderSent()}
-function renderSent(){var q=sentItems[sentQ],n=sentQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';sentWords=q.sentence.split(/\\s+/);sentBuilt=[];sentShuffled=shuffle(sentWords.map(function(w,i){return{text:w,idx:i}}));document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="sent-target" id="sentTarget">לחצו על מילים כדי לבנות את המשפט</div><div class="sent-words" id="sentWords">'+sentShuffled.map(function(w,i){return'<div class="word-chip" data-widx="'+i+'" onclick="addSentWord(this)">'+escapeHtml(w.text)+'</div>'}).join('')+'</div><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" id="checkSentBtn" onclick="checkSent()" disabled>בדקו</button><button class="btn" style="flex:0;background:var(--bg);color:var(--primary);border:2px solid var(--primary);padding:16px 24px" onclick="resetSent()">↺</button></div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextSent()">הבא</button>'}
+function renderSent(){var q=sentItems[sentQ],n=sentQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';sentWords=q.sentence.split(/\\s+/);sentBuilt=[];sentShuffled=shuffle(sentWords.map(function(w,i){return{text:w,idx:i}}));document.getElementById('gameArea').innerHTML='<div class="q-counter">משפט '+n+' מתוך '+totalItems+'</div><div class="sent-target" id="sentTarget">לחצו על מילים כדי לבנות את המשפט</div><div class="sent-words" id="sentWords">'+sentShuffled.map(function(w,i){return'<button type="button" class="plain-btn word-chip" data-widx="'+i+'" onclick="addSentWord(this)">'+escapeHtml(w.text)+'</button>'}).join('')+'</div><div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" id="checkSentBtn" onclick="checkSent()" disabled>בדקו</button><button class="btn" style="flex:0;background:var(--bg);color:var(--primary);border:2px solid var(--primary);padding:16px 24px" onclick="resetSent()">↺</button></div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextSent()">הבא</button>'}
 function addSentWord(el){if(el.classList.contains('used'))return;el.classList.add('used');var widx=parseInt(el.dataset.widx);sentBuilt.push(sentShuffled[widx].text);updateSentTarget();if(sentBuilt.length===sentWords.length)document.getElementById('checkSentBtn').disabled=false}
-function updateSentTarget(){var target=document.getElementById('sentTarget');if(sentBuilt.length===0){target.innerHTML='לחצו על מילים כדי לבנות את המשפט';return}target.innerHTML=sentBuilt.map(function(w,i){return'<div class="word-chip in-target" onclick="removeSentWord('+i+')">'+escapeHtml(w)+'</div>'}).join('')}
+function updateSentTarget(){var target=document.getElementById('sentTarget');if(sentBuilt.length===0){target.innerHTML='לחצו על מילים כדי לבנות את המשפט';return}target.innerHTML=sentBuilt.map(function(w,i){return'<button type="button" class="plain-btn word-chip in-target" onclick="removeSentWord('+i+')">'+escapeHtml(w)+'</button>'}).join('')}
 function removeSentWord(idx){sentBuilt.splice(idx,1);document.querySelectorAll('#sentWords .word-chip').forEach(function(c){c.classList.remove('used')});sentBuilt.forEach(function(w){var chips=document.querySelectorAll('#sentWords .word-chip');for(var k=0;k<chips.length;k++){var widx=parseInt(chips[k].dataset.widx);if(sentShuffled[widx].text===w&&!chips[k].classList.contains('used')){chips[k].classList.add('used');break}}});updateSentTarget();document.getElementById('checkSentBtn').disabled=true}
 function resetSent(){sentBuilt=[];document.querySelectorAll('#sentWords .word-chip').forEach(function(c){c.classList.remove('used')});updateSentTarget();document.getElementById('checkSentBtn').disabled=true}
 function checkSent(){var ok=sentBuilt.join(' ')===sentWords.join(' ');document.getElementById('sentTarget').classList.add(ok?'correct':'wrong');var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון!</strong>':'<strong>לא נכון.</strong> הסדר הנכון: '+escapeHtml(sentWords.join(' '));if(ok){score++;correctItems++}document.getElementById('checkSentBtn').disabled=true;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=sentQ<totalItems-1?'הבא':'סיום'}
@@ -1364,7 +1388,7 @@ var grpItems=[],grpSolved=[],grpLives=4,grpSelected=[];
 var grpColors=['var(--primary-l)','var(--sec-l)','var(--accent-l)','var(--blue-l)'];
 var grpBorders=['var(--primary)','var(--secondary)','var(--accent)','var(--blue)'];
 function initGroups(){var items=gameConfig.items;totalItems=items.length;grpSolved=[];grpLives=4;grpSelected=[];score=0;correctItems=0;grpItems=[];items.forEach(function(group,gi){group.items.forEach(function(item){grpItems.push({text:item,groupIdx:gi,groupName:group.name})})});grpItems=shuffle(grpItems);renderGrps()}
-function renderGrps(){document.getElementById('progressFill').style.width=(grpSolved.length/totalItems*100)+'%';var html='<div class="groups-found">';grpSolved.forEach(function(g,i){html+='<div class="group-solved" style="background:'+grpColors[i]+';border:2px solid '+grpBorders[i]+'">'+escapeHtml(g.name)+': '+g.items.map(function(t){return escapeHtml(t)}).join(', ')+'</div>'});html+='</div>';var remaining=grpItems.filter(function(item){return!grpSolved.some(function(g){return g.items.indexOf(item.text)>=0})});if(remaining.length>0){html+='<div class="groups-lives">';for(var h=0;h<grpLives;h++)html+='❤️';html+=' ('+grpLives+' ניסיונות)</div><div class="groups-grid">';remaining.forEach(function(item){var sel=grpSelected.indexOf(item.text)>=0?'selected':'';html+='<div class="group-item '+sel+'" onclick="toggleGrpItem(this)" data-text="'+escapeHtml(item.text)+'">'+escapeHtml(item.text)+'</div>'});html+='</div><button class="btn btn-primary" onclick="checkGrp()" '+(grpSelected.length===4?'':'disabled')+'>בדקו ('+grpSelected.length+'/4)</button>'}document.getElementById('gameArea').innerHTML=html}
+function renderGrps(){document.getElementById('progressFill').style.width=(grpSolved.length/totalItems*100)+'%';var html='<div class="groups-found">';grpSolved.forEach(function(g,i){html+='<div class="group-solved" style="background:'+grpColors[i]+';border:2px solid '+grpBorders[i]+'">'+escapeHtml(g.name)+': '+g.items.map(function(t){return escapeHtml(t)}).join(', ')+'</div>'});html+='</div>';var remaining=grpItems.filter(function(item){return!grpSolved.some(function(g){return g.items.indexOf(item.text)>=0})});if(remaining.length>0){html+='<div class="groups-lives">';for(var h=0;h<grpLives;h++)html+='❤️';html+=' ('+grpLives+' ניסיונות)</div><div class="groups-grid">';remaining.forEach(function(item){var sel=grpSelected.indexOf(item.text)>=0?'selected':'';html+='<button type="button" class="plain-btn group-item '+sel+'" aria-pressed="'+(sel?'true':'false')+'" onclick="toggleGrpItem(this)" data-text="'+escapeHtml(item.text)+'">'+escapeHtml(item.text)+'</button>'});html+='</div><button class="btn btn-primary" onclick="checkGrp()" '+(grpSelected.length===4?'':'disabled')+'>בדקו ('+grpSelected.length+'/4)</button>'}document.getElementById('gameArea').innerHTML=html}
 function toggleGrpItem(el){var text=el.dataset.text;var idx=grpSelected.indexOf(text);if(idx>=0)grpSelected.splice(idx,1);else{if(grpSelected.length>=4)return;grpSelected.push(text)}renderGrps()}
 function checkGrp(){if(grpSelected.length!==4)return;var first=null;for(var k=0;k<grpItems.length;k++){if(grpItems[k].text===grpSelected[0]){first=grpItems[k].groupIdx;break}}var allSame=grpSelected.every(function(t){for(var k=0;k<grpItems.length;k++){if(grpItems[k].text===t)return grpItems[k].groupIdx===first}return false});if(allSame){var gName='';for(var k=0;k<grpItems.length;k++){if(grpItems[k].groupIdx===first){gName=grpItems[k].groupName;break}}grpSolved.push({name:gName,items:grpSelected.slice()});correctItems++;score++;grpSelected=[];if(grpSolved.length===totalItems)setTimeout(showScore,500);else renderGrps()}else{grpLives--;document.querySelectorAll('.group-item.selected').forEach(function(el){el.classList.add('shake')});setTimeout(function(){grpSelected=[];if(grpLives<=0){gameConfig.items.forEach(function(g){if(!grpSolved.some(function(s){return s.name===g.name}))grpSolved.push({name:g.name,items:g.items})});setTimeout(showScore,500)}else renderGrps()},600)}}
 
@@ -1374,14 +1398,14 @@ var hmStages=['🙂','😐','😟','😰','😱','💀'];
 var hebrewLetters='אבגדהוזחטיכלמנסעפצקרשת';
 function initHangman(){hmItems=gameConfig.settings.shuffleItems?shuffle(gameConfig.items):gameConfig.items.slice();totalItems=hmItems.length;hmQ=0;score=0;correctItems=0;startHmWord()}
 function startHmWord(){var word=hmItems[hmQ].word;hmRevealed=word.split('').map(function(){return false});hmWrong=0;renderHM()}
-function renderHM(){var q=hmItems[hmQ],n=hmQ+1;var word=q.word;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var wordDisplay=word.split('').map(function(ch,i){return hmRevealed[i]?ch:'_'}).join(' ');document.getElementById('gameArea').innerHTML='<div class="q-counter">מילה '+n+' מתוך '+totalItems+'</div><div class="hm-stage">'+hmStages[Math.min(hmWrong,5)]+'</div><div class="hm-wrong-count">'+(6-hmWrong)+' ניסיונות נותרו</div><div class="hm-word">'+escapeHtml(wordDisplay)+'</div><div class="hm-hint">💡 '+escapeHtml(q.hint)+'</div><div class="hm-keyboard">'+hebrewLetters.split('').map(function(l){return'<div class="hm-key" onclick="hmGuess(this)">'+l+'</div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextHM()">הבא</button>'}
+function renderHM(){var q=hmItems[hmQ],n=hmQ+1;var word=q.word;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var wordDisplay=word.split('').map(function(ch,i){return hmRevealed[i]?ch:'_'}).join(' ');document.getElementById('gameArea').innerHTML='<div class="q-counter">מילה '+n+' מתוך '+totalItems+'</div><div class="hm-stage">'+hmStages[Math.min(hmWrong,5)]+'</div><div class="hm-wrong-count">'+(6-hmWrong)+' ניסיונות נותרו</div><div class="hm-word">'+escapeHtml(wordDisplay)+'</div><div class="hm-hint">💡 '+escapeHtml(q.hint)+'</div><div class="hm-keyboard">'+hebrewLetters.split('').map(function(l){return'<button type="button" class="plain-btn hm-key" onclick="hmGuess(this)">'+l+'</button>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextHM()">הבא</button>'}
 function hmGuess(el){if(el.classList.contains('correct-key')||el.classList.contains('wrong-key'))return;var letter=el.textContent;var word=hmItems[hmQ].word;var found=false;word.split('').forEach(function(ch,i){if(ch===letter){hmRevealed[i]=true;found=true}});el.classList.add(found?'correct-key':'wrong-key');if(!found)hmWrong++;var wordDisplay=word.split('').map(function(ch,i){return hmRevealed[i]?ch:'_'}).join(' ');document.querySelector('.hm-word').textContent=wordDisplay;document.querySelector('.hm-stage').textContent=hmStages[Math.min(hmWrong,5)];document.querySelector('.hm-wrong-count').textContent=(6-hmWrong)+' ניסיונות נותרו';if(hmRevealed.every(Boolean)){score++;correctItems++;var fb=document.getElementById('qFeedback');fb.className='q-feedback show correct';fb.innerHTML='<strong>כל הכבוד!</strong>';document.querySelectorAll('.hm-key').forEach(function(k){k.style.pointerEvents='none'});document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=hmQ<totalItems-1?'הבא':'סיום'}else if(hmWrong>=6){var fb=document.getElementById('qFeedback');fb.className='q-feedback show wrong';fb.innerHTML='<strong>לא הצלחתם.</strong> המילה: '+escapeHtml(word);document.querySelector('.hm-word').textContent=word.split('').join(' ');document.querySelectorAll('.hm-key').forEach(function(k){k.style.pointerEvents='none'});document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=hmQ<totalItems-1?'הבא':'סיום'}}
 function nextHM(){hmQ++;if(hmQ>=totalItems){showScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';startHmWord()}
 
 /* ===== MILLIONAIRE ===== */
 var millQ=0,millItems=[],millMoney=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000],millUsed5050=false;
 function initMillionaire(){millItems=gameConfig.items.slice();totalItems=millItems.length;millQ=0;score=0;correctItems=0;millUsed5050=false;if(totalItems<15)millMoney=millMoney.slice(0,totalItems);renderMill()}
-function renderMill(){var q=millItems[millQ],n=millQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];var ladder='<div class="mill-ladder">';millMoney.forEach(function(m,i){var cls='';if(i===millQ)cls='current';else if(i<millQ)cls='passed';if(i===4||i===9)cls+=' checkpoint';ladder+='<div class="mill-level '+cls+'">₪'+m.toLocaleString()+'</div>'});ladder+='</div>';document.getElementById('gameArea').innerHTML='<div class="mill-layout"><div class="mill-question"><div class="q-counter">שאלה '+n+' – ₪'+millMoney[millQ].toLocaleString()+'</div><div class="mill-lifeline"><button class="mill-lifeline-btn'+(millUsed5050?' used':'')+'" onclick="mill5050()">50:50</button></div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<div class="q-opt" onclick="millAnswer('+i+')"><div class="opt-letter">'+L[i]+'</div><span>'+escapeHtml(o)+'</span></div>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextMill()">הבא</button></div>'+ladder+'</div>'}
+function renderMill(){var q=millItems[millQ],n=millQ+1;document.getElementById('progressFill').style.width=(n/totalItems*100)+'%';var L=['א','ב','ג','ד'];var ladder='<div class="mill-ladder">';millMoney.forEach(function(m,i){var cls='';if(i===millQ)cls='current';else if(i<millQ)cls='passed';if(i===4||i===9)cls+=' checkpoint';ladder+='<div class="mill-level '+cls+'">₪'+m.toLocaleString()+'</div>'});ladder+='</div>';document.getElementById('gameArea').innerHTML='<div class="mill-layout"><div class="mill-question"><div class="q-counter">שאלה '+n+' – ₪'+millMoney[millQ].toLocaleString()+'</div><div class="mill-lifeline"><button class="mill-lifeline-btn'+(millUsed5050?' used':'')+'" onclick="mill5050()">50:50</button></div><div class="q-text">'+escapeHtml(q.text)+'</div><div class="q-options">'+q.options.map(function(o,i){return'<button type="button" class="plain-btn q-opt" onclick="millAnswer('+i+')"><span class="opt-letter" aria-hidden="true">'+L[i]+'</span><span>'+escapeHtml(o)+'</span></button>'}).join('')+'</div><div class="q-feedback" id="qFeedback"></div><button class="btn btn-next" id="nextBtn" onclick="nextMill()">הבא</button></div>'+ladder+'</div>'}
 function mill5050(){if(millUsed5050)return;millUsed5050=true;var q=millItems[millQ];var wrongIdxs=[];q.options.forEach(function(_,i){if(i!==q.correct)wrongIdxs.push(i)});var toRemove=shuffle(wrongIdxs).slice(0,2);var opts=document.querySelectorAll('.q-opt');toRemove.forEach(function(i){opts[i].classList.add('disabled','dim')});document.querySelector('.mill-lifeline-btn').classList.add('used')}
 function millAnswer(idx){var q=millItems[millQ],ok=idx===q.correct;document.querySelectorAll('.q-opt').forEach(function(o,i){o.classList.add('disabled');if(i===q.correct)o.classList.add('correct');else if(i===idx&&!ok)o.classList.add('wrong');else o.classList.add('dim')});var fb=document.getElementById('qFeedback');fb.className='q-feedback show '+(ok?'correct':'wrong');fb.innerHTML=ok?'<strong>נכון! ₪'+millMoney[millQ].toLocaleString()+'</strong> '+escapeHtml(q.explanation||''):'<strong>לא נכון.</strong> '+escapeHtml(q.explanation||'');if(ok){score=millMoney[millQ];correctItems++;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent=millQ<totalItems-1?'הבא':'סיום'}else{if(millQ>=10)score=millMoney[9];else if(millQ>=5)score=millMoney[4];else score=0;document.getElementById('nextBtn').style.display='block';document.getElementById('nextBtn').textContent='סיום';millQ=totalItems}}
 function nextMill(){millQ++;if(millQ>=totalItems){showMillScore();return}var c=document.getElementById('gameArea');c.style.animation='none';c.offsetHeight;c.style.animation='fadeUp .45s ease';renderMill()}

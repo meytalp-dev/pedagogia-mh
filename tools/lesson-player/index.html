@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+.plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+.plain-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 :root{
   --bg:#F8FBFF;--card:#fff;--border:#E2E8F0;
   --primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;
@@ -200,7 +202,9 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
     <div style="font-size:3rem;margin-bottom:12px" id="loginEmoji"></div>
     <h1 id="loginTitle"></h1>
     <p class="login-sub" id="loginSub"></p>
-    <input type="text" id="studentName" placeholder="השם שלך" required>
+    <label class="field-label" for="studentName">השם שלך</label>
+    <input type="text" id="studentName" placeholder="למשל: נועה כהן" required>
+    <label class="field-label" for="studentClass">הכיתה שלך</label>
     <select id="studentClass">
       <option value="">בחרו כיתה</option>
       <option value="ט1">ט'1</option><option value="ט2">ט'2</option>
@@ -233,10 +237,10 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   <div class="tab-content active" id="tab-presentation">
     <div class="slide-container" id="slideContainer"></div>
     <div class="slide-nav">
-      <button onclick="changeSlide(-1)" id="prevBtn" disabled>&#x2192;</button>
+      <button type="button" onclick="changeSlide(-1)" id="prevBtn" aria-label="השקופית הקודמת" disabled>&#x2192;</button>
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <span class="slide-counter" id="slideCounter">1 / 1</span>
-      <button onclick="changeSlide(1)" id="nextBtn">&#x2190;</button>
+      <button type="button" onclick="changeSlide(1)" id="nextBtn" aria-label="השקופית הבאה">&#x2190;</button>
     </div>
   </div>
 
@@ -502,7 +506,7 @@ function renderQuizQuestion() {
   var q = quizData[quizIndex];
   var html = '<div class="quiz-progress">שאלה ' + (quizIndex + 1) + ' מתוך ' + quizData.length + '</div>';
   html += '<div class="quiz-question">' + q.q + '</div><div class="quiz-options">';
-  q.opts.forEach(function(o, i) { html += '<div class="quiz-opt" onclick="checkQuiz(' + i + ')">' + o + '</div>'; });
+  q.opts.forEach(function(o, i) { html += '<button type="button" class="quiz-opt plain-btn" onclick="checkQuiz(' + i + ')">' + o + '</button>'; });
   html += '</div><div class="quiz-feedback" id="quizFeedback"></div>';
   html += '<button class="quiz-next" id="quizNext" onclick="nextQuiz()">השאלה הבאה &#x2190;</button>';
   document.getElementById('quizContainer').innerHTML = html;
@@ -512,6 +516,7 @@ function checkQuiz(sel) {
   var opts = document.querySelectorAll('.quiz-opt');
   opts.forEach(function(o, i) {
     o.classList.add('disabled');
+    o.disabled = true;
     if (i === q.correct) o.classList.add('correct');
     if (i === sel && i !== q.correct) o.classList.add('wrong');
   });
@@ -539,11 +544,11 @@ function showQuizScore() {
 function initMatch() {
   var shuffled = matchData.slice().sort(function() { return Math.random() - 0.5; });
   var html = '<div class="match-container"><div class="match-col"><div class="match-col-title">מושג</div>';
-  matchData.forEach(function(m, i) { html += '<div class="match-item" data-type="term" data-idx="' + i + '" onclick="selectMatch(this)">' + (m.right || m.term) + '</div>'; });
+  matchData.forEach(function(m, i) { html += '<button type="button" class="match-item plain-btn" data-type="term" data-idx="' + i + '" aria-pressed="false" onclick="selectMatch(this)">' + (m.right || m.term) + '</button>'; });
   html += '</div><div class="match-col"><div class="match-col-title">הגדרה</div>';
   shuffled.forEach(function(m) {
     var origIdx = matchData.indexOf(m);
-    html += '<div class="match-item" data-type="def" data-idx="' + origIdx + '" onclick="selectMatch(this)">' + (m.left || m.def) + '</div>';
+    html += '<button type="button" class="match-item plain-btn" data-type="def" data-idx="' + origIdx + '" aria-pressed="false" onclick="selectMatch(this)">' + (m.left || m.def) + '</button>';
   });
   html += '</div></div>';
   document.getElementById('matchContainer').innerHTML = html;
@@ -552,11 +557,14 @@ function selectMatch(el) {
   if (el.classList.contains('matched')) return;
   if (matchSelected && matchSelected.dataset.type === el.dataset.type) {
     matchSelected.classList.remove('selected');
-    matchSelected = el; el.classList.add('selected'); return;
+    matchSelected.setAttribute('aria-pressed', 'false');
+    matchSelected = el; el.classList.add('selected'); el.setAttribute('aria-pressed', 'true'); return;
   }
-  if (!matchSelected) { matchSelected = el; el.classList.add('selected'); return; }
+  if (!matchSelected) { matchSelected = el; el.classList.add('selected'); el.setAttribute('aria-pressed', 'true'); return; }
   if (matchSelected.dataset.idx === el.dataset.idx) {
     matchSelected.classList.remove('selected'); matchSelected.classList.add('matched'); el.classList.add('matched');
+    matchSelected.setAttribute('aria-pressed', 'false'); el.setAttribute('aria-pressed', 'false');
+    matchSelected.disabled = true; el.disabled = true;
     matchCorrect++;
     document.getElementById('matchScoreEl').textContent = 'התאמות: ' + matchCorrect + ' / ' + matchData.length;
     if (matchCorrect === matchData.length) {
@@ -566,7 +574,10 @@ function selectMatch(el) {
   } else {
     el.classList.add('wrong-flash'); matchSelected.classList.add('wrong-flash');
     var ms = matchSelected;
-    setTimeout(function() { el.classList.remove('wrong-flash','selected'); ms.classList.remove('wrong-flash','selected'); }, 500);
+    setTimeout(function() {
+      el.classList.remove('wrong-flash','selected'); ms.classList.remove('wrong-flash','selected');
+      el.setAttribute('aria-pressed', 'false'); ms.setAttribute('aria-pressed', 'false');
+    }, 500);
   }
   matchSelected = null;
 }
@@ -588,7 +599,7 @@ function checkTF(idx, answer) {
   var btns = card.querySelectorAll('.tf-btn');
   var fb = document.getElementById('tf-fb-' + idx);
   var correct = item.correct === undefined ? item.answer : item.correct;
-  btns.forEach(function(b) { b.classList.add('disabled'); });
+  btns.forEach(function(b) { b.classList.add('disabled'); b.disabled = true; });
   var isCorrect = answer === correct;
   if (isCorrect) {
     tfScore++; btns[answer ? 0 : 1].classList.add('correct-answer');
@@ -645,6 +656,7 @@ function renderSummary() {
     html += '<div class="exit-ticket"><h3>&#x1f3ab; כרטיס יציאה</h3>';
     html += '<p style="color:var(--gray);margin-bottom:16px">כתבו תשובה קצרה לפני שיוצאים מהשיעור</p>';
     html += '<p style="font-weight:700;font-size:1.1rem;margin-bottom:16px;color:var(--dark)">' + sum.exitTicket + '</p>';
+    html += '<label class="field-label" for="exitAnswer">התשובה שלכם</label>';
     html += '<textarea class="exit-textarea" id="exitAnswer" placeholder="כתבו את התשובה שלכם כאן..."></textarea>';
     html += '<button class="submit-btn" onclick="submitExitTicket()">&#x1f4e8; שלחו תשובה</button></div>';
   }

@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>הודעות ועדכונים · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="הודעות חשובות והודעות הדרכה של מינהל הכשרה מקצועית — במקום אחד, מתעדכן שוטף.">
+<title>יצירת קשר · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="איך פונים אלינו: עוגן, כפתור המשוב על האתר, החיפוש, ופנייה לפיקוח הפדגוגי הארצי לפי נושא.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="יצירת קשר · הבית של המנהיגות הפדגוגית היוצרת">
+<meta property="og:description" content="איך פונים אלינו: עוגן, כפתור המשוב על האתר, החיפוש, ופנייה לפיקוח הפדגוגי הארצי לפי נושא.">
+<meta property="og:url" content="https://pedagogiamh.co.il/kesher.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -13,10 +19,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
-<body>
+<body data-back="index.html|דף הבית" data-pn-min="3">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
@@ -167,7 +174,7 @@
     <span class="mark">פ</span>
     <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
   </a>
-  <span class="navitem"><a class="lnk active" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
+  <span class="navitem"><a class="lnk" href="space.html">מרחב פדגוגי<span class="caret">▼</span></a>
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="hodaot.html">הודעות ועדכונים</a>
@@ -279,66 +286,108 @@
 <main id="main">
 
 
-<style>
-  .hbar{display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--px) 4px}
-  .hpill{border:1px solid var(--border-strong);background:#fff;color:var(--navy-800);
-    border-radius:999px;padding:7px 15px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
-  .hpill:hover{border-color:var(--blue);color:var(--blue)}
-  .hpill.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .hlist{padding:22px var(--px) 44px;display:flex;flex-direction:column;gap:12px;max-width:900px}
-  .hitem{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-    padding:17px 20px;box-shadow:var(--sh-sm);transition:.18s;position:relative;overflow:hidden}
-  .hitem:hover{box-shadow:var(--sh-md)}
-  .hitem::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px}
-  .hitem.t-important::before{background:var(--m-red)}
-  .hitem.t-guide::before{background:var(--m-blue)}
-  .htop{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:6px}
-  .htop h3{font-size:1.1rem}
-  .htag{font-size:.72rem;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid}
-  .tg-important{background:#FDECEC;color:#A82B2B;border-color:#F5C9C9}
-  .tg-guide{background:#E8F2FF;color:var(--navy-800);border-color:#C6DDF5}
-  .hdate{margin-inline-start:auto;font-size:.79rem;color:var(--muted);font-weight:600}
-  .hitem p{color:var(--text2);font-size:.95rem;white-space:pre-wrap;line-height:1.6}
-  .hlinks{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-  .hlinks a{font-size:.84rem;font-weight:700;color:var(--blue);text-decoration:none;
-    border:1px solid var(--border);background:var(--blue-bg);border-radius:10px;padding:6px 13px;
-    display:inline-flex;align-items:center;gap:6px;transition:.15s}
-  .hlinks a:hover{border-color:var(--blue)}
-  .hlinks svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .hstate{text-align:center;padding:46px 22px;color:var(--muted);background:var(--soft-bg);
-    border:1px dashed var(--border-strong);border-radius:16px}
-  .hstate svg{width:34px;height:34px;stroke:var(--muted);fill:none;stroke-width:1.6;
-    stroke-linecap:round;margin-bottom:10px}
-  .hstate b{display:block;color:var(--navy);font-size:1.02rem;margin-bottom:4px}
-  .hhide{display:none !important}
-</style>
-
-<div class="pagehead" style="padding-top:52px">
-  <div class="kicker rv">מה חדש במינהל</div>
-  <h1 class="rv d1" style="font-size:2.4rem;margin:10px 0 8px">הודעות ועדכונים</h1>
-  <p class="rv d2 lead" style="font-size:1.06rem;max-width:660px">
-    הודעות חשובות והודעות הדרכה, במקום אחד. מה שחדש נמצא למעלה.</p>
-</div>
-
-<div class="hbar">
-  <button class="hpill on" data-f="all">הכול</button>
-  <button class="hpill" data-f="חשוב">הודעות חשובות</button>
-  <button class="hpill" data-f="הדרכה">הודעות הדרכה</button>
-</div>
-
-<div class="hlist" id="hlist">
-  <div class="hstate">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    טוען הודעות…
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">אודות</span>
+    <h1>יצירת <span class="accent">קשר</span></h1>
+    <p class="lead">חסר תוכן, נפלה טעות, משהו לא נפתח, או שיש שאלה מקצועית שאין לה תשובה באתר? כאן כתוב לאן פונים ובאיזה ערוץ — ואילו ערוצים כבר פועלים כאן ועכשיו.</p>
+    <div class="meta-row">
+      <span class="src">מינהל הכשרה מקצועית · משרד העבודה</span>
+    </div>
   </div>
-</div>
+</section>
 
-<script src="hodaot.js" defer></script>
+<article class="body-sec">
+  <div class="article">
+
+    <div class="callout petrol rv">
+      <span class="ttl">הכי מהר</span>
+      <p>לשאלה מקצועית — <a class="lk open-ogen" href="#">שאלו את עוגן</a>. לתוכן שחסר או לתקלה באתר — <b>כפתור ״משוב על האתר״</b> שמופיע בכל עמוד. שני הערוצים האלה פעילים ומקבלים מענה.</p>
+    </div>
+
+    <h2 class="sub-sec first rv">ערוצים שפועלים כבר עכשיו</h2>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>הערוץ</th><th>מתי משתמשים בו</th><th>איך מגיעים</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="k">עוגן — הסוכן החכם</td>
+            <td>שאלות בנהלים, בחוזרים, בתוכניות הלימודים ובתקצוב. עוגן משיב עם הפניה למקור שממנו נלקחה התשובה.</td>
+            <td><a class="lk open-ogen" href="#">פתיחת שיחה</a> — או כפתור העוגן שבפינת כל עמוד.</td>
+          </tr>
+          <tr>
+            <td class="k">משוב על האתר</td>
+            <td>תוכן שחסר, אי-דיוק או טעות, תקלה טכנית, ורעיונות לשיפור. אפשר להשאיר שם ואימייל לחזרה — או לשלוח בלי לזהות את עצמכם.</td>
+            <td>כפתור ״משוב על האתר״ הקבוע בפינת המסך, בכל עמוד באתר.</td>
+          </tr>
+          <tr>
+            <td class="k">חיפוש באתר</td>
+            <td>לפני שפונים — כדאי לבדוק. החיפוש סורק את כל תכני האתר ומאפשר סינון לפי מדור.</td>
+            <td><a class="lk" href="chipus.html">עמוד החיפוש</a>, או <span dir="ltr">Ctrl+K</span> מכל עמוד.</td>
+          </tr>
+          <tr>
+            <td class="k">פנייה בנושא נגישות</td>
+            <td>עמוד, קובץ או כלי שאינם נגישים.</td>
+            <td><a class="lk" href="negishut.html">הצהרת הנגישות</a> — שם מרוכזים פרטי הפנייה בנושא.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">פנייה לפיקוח הפדגוגי הארצי</h2>
+    <p class="rv">לפניות מקצועיות שמצריכות מענה אנושי — ליווי בית-ספרי, שאלות על תוכניות ועל נהלים, בקשות לחומרים ותיאום השתלמויות:</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <tbody>
+          <tr><td class="k">דוא״ל המינהל</td><td><!-- למילוי: כתובת דוא״ל ארגונית בלבד. אין לרשום כאן כתובת פרטית של אף אדם. -->[למילוי — דוא״ל ארגוני]</td></tr>
+          <tr><td class="k">טלפון</td><td><!-- למילוי: מספר טלפון של המשרד/המוקד. לא טלפון נייד פרטי. -->[למילוי — טלפון המשרד]</td></tr>
+          <tr><td class="k">שעות מענה</td><td><!-- למילוי: ימים ושעות -->[למילוי — ימים ושעות מענה]</td></tr>
+          <tr><td class="k">כתובת למשלוח דואר</td><td><!-- למילוי: כתובת המשרד -->[למילוי — כתובת ארגונית]</td></tr>
+          <tr><td class="k">אתר משרד העבודה</td><td><a class="lk" href="https://www.gov.il/" target="_blank" rel="noopener">gov.il<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- ===== למילוי ידני =====
+         ארבע השורות הראשונות בטבלה שלמעלה ממתינות לפרטים.
+         כלל מחייב באתר הזה: פרטי קשר ארגוניים בלבד — לא כתובת דוא״ל אישית,
+         לא טלפון נייד פרטי ולא שם פרטי של איש קשר, אלא אם מדובר בפרטים
+         שכבר מתפרסמים באופן רשמי מטעם המשרד.
+         ======================= -->
+
+    <h2 class="sub-sec rv">פנייה לפי נושא</h2>
+    <p class="lead-p rv">חלק מהנושאים מטופלים בגורם ייעודי, ולא בפנייה כללית:</p>
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <thead><tr><th>הנושא</th><th>לאן פונים</th></tr></thead>
+        <tbody>
+          <tr><td class="k">מפקח/ת בית הספר</td><td>ב<a class="lk" href="prisat-pikuah.html">פריסת הפיקוח לתשפ״ז</a> מופיע שיוך כל מוסד למפקח/ת.</td></tr>
+          <tr><td class="k">השתלמויות ופיתוח מקצועי</td><td><a class="lk" href="hishtalmuyot.html">עמוד ההשתלמויות לתשפ״ז</a> — מועדים, סילבוסים ופרטי הרשמה לכל מסלול.</td></tr>
+          <tr><td class="k">נהלים, תקציבים וקודי תקצוב</td><td><a class="lk" href="procedures.html">שער הנהלים</a>, ולשאלה נקודתית — <a class="lk open-ogen" href="#">עוגן</a>.</td></tr>
+          <tr><td class="k">נגישות האתר</td><td><a class="lk" href="negishut.html">הצהרת נגישות</a></td></tr>
+          <tr><td class="k">פרטיות ושימוש בנתונים</td><td><a class="lk" href="privacy.html">מדיניות הפרטיות</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sub-sec rv">מה לא לשלוח בערוצים האלה</h2>
+    <div class="callout amber rv">
+      <span class="ttl">בלי מידע אישי מזוהה</span>
+      <p>אין לשלוח בטופס המשוב או בעוגן <b>פרטים מזהים על תלמידים, הורים או עובדי הוראה</b> — שמות, תעודות זהות, מספרי טלפון, פרטי בריאות או מידע רגיש אחר. הערוצים האלה אינם מיועדים לטיפול בפניות פרטניות.</p>
+      <p>פנייה פרטנית בעניינו של תלמיד או עובד מוגשת דרך המסלולים הרשמיים של בית הספר והמינהל, ולא דרך האתר.</p>
+    </div>
+    <p class="rv">מה שכן עוזר לנו: כתובת העמוד שבו נתקלתם בבעיה, מה ניסיתם לעשות, ומה קרה במקום. תיאור כזה מקצר את הטיפול בהרבה.</p>
+
+    <div class="source-box rv">
+      <div class="t">לפני שפונים<small>אולי התשובה כבר כאן — בחיפוש, בעוגן או בעמוד ״מי אנחנו״.</small></div>
+      <a class="btn" href="chipus.html">חיפוש באתר ←</a><a class="btn alt" href="about.html">מי אנחנו</a>
+    </div>
+
+  </div>
+</article>
 
 </main>
 
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.8.2026</span></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>

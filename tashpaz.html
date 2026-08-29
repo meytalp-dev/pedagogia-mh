@@ -24,10 +24,11 @@
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -122,19 +123,20 @@
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -158,14 +160,14 @@
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -238,7 +240,7 @@
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -278,9 +280,12 @@
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
     <span class="nav-meter" title="מוכנות בית הספר"><span class="bar"><i id="navBarFill"></i></span><b id="navPct">0%</b></span>
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="wrap hero-stagger">
@@ -624,12 +629,12 @@
   <p>לצד ההיערכות הפדגוגית, הארגונית והמקצועית לשנה החדשה, חשוב להיערך גם למצבים המחייבים מעבר ללמידה מרחוק או להפעלה גמישה של בית הספר. לקראת היערכות תשפ"ז יש להיערך:</p>
   <ol class="ed rv">
     <li><strong>הגשת תוכנית בית ספרית ללמידה מרחוק/היברידית</strong>, תוך בניית מנגנונים ברורים לשמירה על קשר, למידה, תמיכה ומשמעות עבור כל תלמיד ותלמידה.</li>
-    <li>הכנת תיק צל"ח מעודכן — על פי <a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">הנחיות צל"ח</a>.</li>
+    <li>הכנת תיק צל"ח מעודכן — על פי <a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">הנחיות צל"ח<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>.</li>
     <li>פגישת צוות צל"ח, כולל חלוקת תפקידים.</li>
     <li>הכנת תשתית פדגוגית לכל מורה ותלמיד, כולל התנסות בלמידה מרחוק.</li>
     <li>ניתן לתאם עד 5 ימי לימוד מרחוק במהלך שנת הלימודים על מנת לתרגל ולפתח מיומנויות ללמידה מרחוק, למידה עצמאית, שילוב טכנולוגיות ועוד.</li>
   </ol>
-  <p><a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">מענים ללמידה מרחוק — אגרת כלים למענה פדגוגי ורגשי מיטבי</a></p>
+  <p><a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">מענים ללמידה מרחוק — אגרת כלים למענה פדגוגי ורגשי מיטבי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
   <h3 class="sub-sec rv" id="persistence">התמדה ומניעת נשירה</h3>
   <p>התמדה וביקור סדיר מהווים תשתית חינוכית קריטית. <strong>בתי הספר מחויבים לעבוד על פי <a class="lk" href="bikur-sadir.html">ההנחיות לדיווח וטיפול בבעיות ביקור סדיר ומניעת נשירה</a>.</strong></p>
@@ -777,11 +782,11 @@
 
   <h4 class="mini">פעולות באחריות הרכז/ת הפדגוגי/ת</h4>
   <ol class="ed rv">
-    <li><a class="lk" target="_blank" rel="noopener" href="docs/prisat-hivachanut-telat-shnatit.xlsx" download>פריסת היבחנות תלת־שנתית</a>.</li>
+    <li><a class="lk" target="_blank" rel="noopener" href="docs/prisat-hivachanut-telat-shnatit.xlsx" download>פריסת היבחנות תלת־שנתית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>.</li>
     <li>מופעי הערכה והצגת תוצרים.</li>
     <li>שיתופי פעולה אינטר־דיסציפלינריים.</li>
   </ol>
-  <p><a class="lk" target="_blank" rel="noopener" href="rakaz-pedagogi-klim.html">ארגז הכלים הפדגוגיים</a></p>
+  <p><a class="lk" target="_blank" rel="noopener" href="rakaz-pedagogi-klim.html">ארגז הכלים הפדגוגיים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
   <h3 class="sub-sec rv" id="gemer">היערכות כיתות תעודת מקצוע וגמר</h3>
   <h4 class="mini">מקצועות הליבה</h4>
@@ -834,12 +839,12 @@
 
   <div class="callout red rv">
     <span class="ttl">אזהרת שק"ד</span>
-    במקרים בהם ביה"ס ייחשד באירועי שק"ד (פער חריג בין ממוצע הציונים השנתי שהועבר למשרד החינוך לממוצע ציוני הבחינה) — תישלל זכותו להגשת ציון שנתי למשך כשנתיים/שלוש, כנהוג במשרד החינוך (<a class="lk" target="_blank" rel="noopener" href="https://mosdot.education.gov.il/students/matriculation/shaked/">מרכז אירועי שק"ד משה"ח</a>).
+    במקרים בהם ביה"ס ייחשד באירועי שק"ד (פער חריג בין ממוצע הציונים השנתי שהועבר למשרד החינוך לממוצע ציוני הבחינה) — תישלל זכותו להגשת ציון שנתי למשך כשנתיים/שלוש, כנהוג במשרד החינוך (<a class="lk" target="_blank" rel="noopener" href="https://mosdot.education.gov.il/students/matriculation/shaked/">מרכז אירועי שק"ד משה"ח<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>).
   </div>
 
   <h4 class="mini">ארגון זמן הלמידה</h4>
   <p>יש לקיים את שעות הלמידה על פי מערכת השעות שנקבעה, באופן רציף וסדיר, ולהקפיד לא לבטל שיעורים לצורך אירועים פדגוגיים כמו: ישיבות, אספות הורים, מועצות פדגוגיות וועדות מקצועיות.</p>
-  <p><a class="lk" target="_blank" rel="noopener" href="https://apps.education.gov.il/mankal/horaa.aspx?siduri=52#_Toc256000051">חוזר מנכ"ל משרד החינוך: שעות הפעילות במוסדות החינוך הרשמי של מדינת ישראל</a> · <a class="lk" target="_blank" rel="noopener" href="https://meyda.education.gov.il/files/HighSchool/irgun_lemida_highschool.pdf">ארגון הלמידה בחטיבה העליונה — משרד החינוך תשפ"ז</a></p>
+  <p><a class="lk" target="_blank" rel="noopener" href="https://apps.education.gov.il/mankal/horaa.aspx?siduri=52#_Toc256000051">חוזר מנכ"ל משרד החינוך: שעות הפעילות במוסדות החינוך הרשמי של מדינת ישראל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" target="_blank" rel="noopener" href="https://meyda.education.gov.il/files/HighSchool/irgun_lemida_highschool.pdf">ארגון הלמידה בחטיבה העליונה — משרד החינוך תשפ"ז<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
   <h3 class="sub-sec rv" id="maatefet">מעטפת פדגוגית מטעם מינהל הכשרה מקצועית <span class="tag-soon">בקרוב — אתר פדגוגי מלא · משרד העבודה</span></h3>
   <p class="lead-p">משאבים פדגוגיים העומדים לרשות בית הספר מטעם המינהל להכשרה מקצועית.</p>
@@ -848,13 +853,13 @@
   <table class="doc">
     <tr><th style="width:190px">הנושא</th><th>המשאב</th></tr>
     <tr><td class="k">השתלמות מוסדית</td><td>על מנהל בית הספר להציג למפקח הכולל את תהליכי הפיתוח המקצועי וההשתלמויות שהתקיימו בשנים האחרונות, ולציין את היעד הפדגוגי המרכזי שבית הספר מבקש לקדם השנה באמצעות ההשתלמות הנבחרת והשפעתה הצפויה על ההוראה, הלמידה והתלמידים. <strong>בהמשך יועבר לבתי הספר קטלוג השתלמויות לבחירה</strong> — בית הספר יתבקש לבחור השתלמות מתוך הקטלוג או להציע מנחה חלופי בהתאם ליעד הפדגוגי שבחר, בכפוף לאישור המפקח. ההשתלמויות יתחילו באוקטובר ויסתיימו עד חודש מאי. <a class="lk" href="hishtalmut-gmul.html">מסמך הפעלת השתלמות מוכרת לגמול — חינוך יוצר</a> · <a class="lk" href="format-silabus.html">פורמט הגשת סילבוס</a></td></tr>
-    <tr><td class="k">מצפן פדגוגי</td><td><a class="lk" target="_blank" rel="noopener" href="https://meytalp-dev.github.io/hopa-nihul/docs/mazpen-pedagogi.pdf">אגרת פדגוגית ללמידה משמעותית — מיומנויות רלוונטיות ויישום</a></td></tr>
-    <tr><td class="k">ועדה מלווה</td><td>ועדה מקצועית שתלווה את ביה"ס פעמיים בשנה. <a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות ועדה מלווה</a> · <a class="lk" target="_blank" rel="noopener" href="vaada-melava.html">מכתבי ההכנה והמצגות של הוועדה המלווה</a></td></tr>
-    <tr><td class="k">סל תוכניות</td><td>סל תקציבי גמיש המיועד לחיזוק ההיבטים המקצועיים, הערכיים, החברתיים והאישיים של התלמידים, באמצעות פעילויות המקדמות חניכות, פדגוגיה חדשנית, חוסן אישי, מניעת נשירה, שייכות ומעורבות קהילתית. התקציב מאפשר לבית הספר להתאים מענים לצרכיו ולקדם את מטרותיו החינוכיות בהתאם לתפיסת החינוך היוצר והפדגוגיה הדואלית (<a class="lk" target="_blank" rel="noopener" href="docs/sal-tochniyot-idkun2.pdf" download>מסמך סל תוכניות מעודכן</a>). ישנה גמישות בין הסעיפים באישור מפקח ביה"ס; לא ניתן להשתמש בתקציב זה לטובת שעות הוראה.</td></tr>
-    <tr><td class="k">מדידה והערכה — תחום פדגוגיה</td><td>1. <a class="lk" target="_blank" rel="noopener" href="rakaz-pedagogi-klim.html">שאלוני האקלים והפדגוגיה — צוות ותלמידים</a>. &nbsp;2. פגישת למידה עם המפקח: תוכנית פעולה מבוססת נתוני שאלוני אקלים ופדגוגיה — צוות ותלמידים (<a class="lk" href="michtav-aklim.html">מכתב מקדים לפגישה</a>). &nbsp;3. <a class="lk" target="_blank" rel="noopener" href="documents.html">מאגר מענים לפדגוגיה מיטיבה</a> בעקבות תוצאות השאלונים.</td></tr>
-    <tr><td class="k">עידוד הרחבת השכלה לעובדי הוראה</td><td>עידוד השכלה גבוהה ותעודות הוראה — <a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/service/grant-teaching-staff-vocational-schools">בקשת מענק באתר משרד העבודה</a>, מתעדכן בכל שנה.</td></tr>
+    <tr><td class="k">מצפן פדגוגי</td><td><a class="lk" target="_blank" rel="noopener" href="https://meytalp-dev.github.io/hopa-nihul/docs/mazpen-pedagogi.pdf">אגרת פדגוגית ללמידה משמעותית — מיומנויות רלוונטיות ויישום<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+    <tr><td class="k">ועדה מלווה</td><td>ועדה מקצועית שתלווה את ביה"ס פעמיים בשנה. <a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות ועדה מלווה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" target="_blank" rel="noopener" href="vaada-melava.html">מכתבי ההכנה והמצגות של הוועדה המלווה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+    <tr><td class="k">סל תוכניות</td><td>סל תקציבי גמיש המיועד לחיזוק ההיבטים המקצועיים, הערכיים, החברתיים והאישיים של התלמידים, באמצעות פעילויות המקדמות חניכות, פדגוגיה חדשנית, חוסן אישי, מניעת נשירה, שייכות ומעורבות קהילתית. התקציב מאפשר לבית הספר להתאים מענים לצרכיו ולקדם את מטרותיו החינוכיות בהתאם לתפיסת החינוך היוצר והפדגוגיה הדואלית (<a class="lk" target="_blank" rel="noopener" href="docs/sal-tochniyot-idkun2.pdf" download>מסמך סל תוכניות מעודכן<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>). ישנה גמישות בין הסעיפים באישור מפקח ביה"ס; לא ניתן להשתמש בתקציב זה לטובת שעות הוראה.</td></tr>
+    <tr><td class="k">מדידה והערכה — תחום פדגוגיה</td><td>1. <a class="lk" target="_blank" rel="noopener" href="rakaz-pedagogi-klim.html">שאלוני האקלים והפדגוגיה — צוות ותלמידים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>. &nbsp;2. פגישת למידה עם המפקח: תוכנית פעולה מבוססת נתוני שאלוני אקלים ופדגוגיה — צוות ותלמידים (<a class="lk" href="michtav-aklim.html">מכתב מקדים לפגישה</a>). &nbsp;3. <a class="lk" target="_blank" rel="noopener" href="documents.html">מאגר מענים לפדגוגיה מיטיבה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> בעקבות תוצאות השאלונים.</td></tr>
+    <tr><td class="k">עידוד הרחבת השכלה לעובדי הוראה</td><td>עידוד השכלה גבוהה ותעודות הוראה — <a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/service/grant-teaching-staff-vocational-schools">בקשת מענק באתר משרד העבודה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, מתעדכן בכל שנה.</td></tr>
     <tr><td class="k">עידוד משלחות לפולין</td><td>הנחיות אישור מלגות יפורסמו במהלך חודש ינואר.</td></tr>
-    <tr><td class="k">עזרים ומשאבים טכנולוגיים</td><td>חינוך יוצר: <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/">אתר החינוך היוצר</a>, בוט <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/chatbot/">beLLAi</a> — בינה יוצרת · פדגוגיה דואלית באנימציה</td></tr>
+    <tr><td class="k">עזרים ומשאבים טכנולוגיים</td><td>חינוך יוצר: <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/">אתר החינוך היוצר<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>, בוט <a class="lk" target="_blank" rel="noopener" href="https://yotzer.education/chatbot/">beLLAi<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — בינה יוצרת · פדגוגיה דואלית באנימציה</td></tr>
   </table>
   </div>
 
@@ -868,7 +873,7 @@
   <p class="basket-caption">גמישות בין הסעיפים — באישור מפקח ביה"ס · לא לשעות הוראה</p>
 
   <h3 class="sub-sec rv" id="kehilot">מעטפת פדגוגית — קהילות לומדות</h3>
-  <p><a class="lk" target="_blank" rel="noopener" href="https://meytalp-dev.github.io/ort-training/training-supervision/admin-school/setup.html">טופס רישום מורים לקהילות מקצועיות</a></p>
+  <p><a class="lk" target="_blank" rel="noopener" href="https://meytalp-dev.github.io/ort-training/training-supervision/admin-school/setup.html">טופס רישום מורים לקהילות מקצועיות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
   <div class="tbl-scroll rv">
   <table class="doc">
     <tr><th style="width:170px">תחום</th><th>הכשרה שנתית תשפ"ז</th><th style="width:220px">אחראי מטעם המינהל</th></tr>
@@ -910,7 +915,7 @@
 
   <h4 class="mini">מורה מתמחה — מורה חונך</h4>
   <p>יש לדווח על כל מורה מתמחה למפקח ביה"ס ולהסדיר מול משרד החינוך. יש לעדכן מי יהיה המורה החונך ובאיזה מקצוע, לקבל על כך אישור ולהעביר לרשת לצורך תשלום. יש לוודא שהמורה החונך עבר את ההכשרה הרלוונטית (דרכנו יש הכשרה).</p>
-  <p>כל עובד הוראה חדש נדרש לפתוח תיק במשרד החינוך; באחריות בית הספר והחונך לוודא שאכן זה נעשה (<a class="lk" target="_blank" rel="noopener" href="https://poh.education.gov.il/administrative/teaching-entry/open-file-new/">פתיחת תיק</a>).</p>
+  <p>כל עובד הוראה חדש נדרש לפתוח תיק במשרד החינוך; באחריות בית הספר והחונך לוודא שאכן זה נעשה (<a class="lk" target="_blank" rel="noopener" href="https://poh.education.gov.il/administrative/teaching-entry/open-file-new/">פתיחת תיק<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>).</p>
   <p><a class="lk" href="morim-honchim.html">כל החומרים למורים חונכים</a> · מייל לשליחת חוות דעת ותצפיות: <a class="lk" href="mailto:haaracha_yadanit@education.gov.il">haaracha_yadanit@education.gov.il</a></p>
 </section>
 
@@ -941,14 +946,14 @@
   <ul class="ed rv">
     <li><strong>חדש</strong> — <a class="lk" href="klita-miyun.html">הנחיות לקליטה ומיון תלמידים</a></li>
     <li><a class="lk" href="bikur-sadir.html">הנחיות לדיווח וטיפול בבעיית ביקור סדיר ומניעת נשירה, כולל סיום לימודים</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">הנחיות לניהול, דיווח וטיפול באירועי חירום ו/או אירוע חריג, כולל הרחקת תלמיד</a></li>
-    <li><a class="lk" href="hachala.html">הנחיות לקידום ההכלה הבית ספרית — קליטה, טיפול והתמודדות מיטיבה לתלמידים הזכאים לשירותי חינוך מיוחד</a> (<a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">ההנחיה המלאה</a>)</li>
-    <li><a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות להפעלת ועדה מלווה</a></li>
+    <li><a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">הנחיות לניהול, דיווח וטיפול באירועי חירום ו/או אירוע חריג, כולל הרחקת תלמיד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
+    <li><a class="lk" href="hachala.html">הנחיות לקידום ההכלה הבית ספרית — קליטה, טיפול והתמודדות מיטיבה לתלמידים הזכאים לשירותי חינוך מיוחד</a> (<a class="lk" target="_blank" rel="noopener" href="cherum-nehalim.html">ההנחיה המלאה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>)</li>
+    <li><a class="lk" target="_blank" rel="noopener" href="https://docs.google.com/document/d/1QNdCPPCZVw5VEnOCCKZPuOKPISGMgmKH/edit">הנחיות להפעלת ועדה מלווה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
     <li><a class="lk" href="sherut-leumi.html">הנחיות לקליטת מתנדבי שירות לאומי</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/BlobFolder/policy/youth-renovations/he/prof-licensure_youth-renovations.pdf">הנחיות שיפוצים והצטיידות</a></li>
+    <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/BlobFolder/policy/youth-renovations/he/prof-licensure_youth-renovations.pdf">הנחיות שיפוצים והצטיידות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
     <li><a class="lk" href="chasimat-kfulim.html">הנחיות חסימת תלמידים כפולים</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/collectors/policies?OfficeId=85d16bf0-1c3e-486a-97cd-2b07d89e6934">הנחיות נוספות שפורסמו — באתר משרד העבודה</a></li>
-    <li><a class="lk" target="_blank" rel="noopener" href="nehalim-minhal.html">כלל ההנחיות — נהלי מינהל</a></li>
+    <li><a class="lk" target="_blank" rel="noopener" href="https://www.gov.il/he/collectors/policies?OfficeId=85d16bf0-1c3e-486a-97cd-2b07d89e6934">הנחיות נוספות שפורסמו — באתר משרד העבודה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
+    <li><a class="lk" target="_blank" rel="noopener" href="nehalim-minhal.html">כלל ההנחיות — נהלי מינהל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></li>
   </ul>
   <p><strong>בהמשך יופיעו בתיקייה שתי הנחיות חדשות:</strong> הנחיות מלגות נסיעה לפולין (יפורסם בהמשך) · ילדים חולים בביתם (יפורסם בהמשך).</p>
 </section>
@@ -1081,6 +1086,8 @@
 </div>
 
 </div><!-- /wrap -->
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

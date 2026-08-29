@@ -15,6 +15,9 @@
   --r:20px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* איפוס עיצוב לכפתורים שהיו קודם div – שומר על מראה זהה */
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 html{scroll-behavior:smooth}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;padding-bottom:3rem}
 
@@ -122,8 +125,9 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .publish-card{background:var(--light-gray);border-radius:14px;padding:1.2rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:all 0.2s;border:2px solid transparent}
 .publish-card:hover{border-color:var(--primary);background:var(--primary-l)}
 .publish-icon{font-size:1.8rem;flex-shrink:0}
-.publish-text h3{font-size:1rem;margin-bottom:0.2rem}
-.publish-text p{font-size:0.82rem;color:var(--gray)}
+.publish-text{display:block}
+.publish-text h3,.publish-text .p-name{display:block;font-size:1rem;margin-bottom:0.2rem}
+.publish-text p,.publish-text .p-desc{display:block;font-size:0.82rem;color:var(--gray)}
 .published-url{margin-top:1rem;padding:0.7rem;background:#e6f9f0;border:2px solid var(--green);border-radius:12px;display:none;text-align:center}
 .published-url input{width:100%;padding:0.5rem;border:1px solid #ddd;border-radius:8px;font-family:'Assistant',sans-serif;text-align:center;margin-bottom:0.5rem}
 
@@ -147,9 +151,10 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .type-card{padding:1rem;border:2px solid #e8e8e8;border-radius:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.8rem}
 .type-card:hover{border-color:var(--primary-l);background:var(--light-gray)}
 .type-card.selected{border-color:var(--primary);background:var(--primary-l);box-shadow:0 4px 15px rgba(124,92,252,0.12)}
-.type-icon{font-size:1.8rem;flex-shrink:0}
-.type-info h3{font-size:0.95rem;font-weight:700;margin-bottom:0.15rem}
-.type-info p{font-size:0.78rem;color:var(--gray);line-height:1.4}
+.type-icon{display:block;font-size:1.8rem;flex-shrink:0}
+.type-info{display:block}
+.type-info h3,.type-info .t-name{display:block;font-size:0.95rem;font-weight:700;margin-bottom:0.15rem}
+.type-info p,.type-info .t-desc{display:block;font-size:0.78rem;color:var(--gray);line-height:1.4}
 
 /* === FULL-MODE PREVIEW === */
 .wide-frame{position:relative;width:100%;max-width:580px;aspect-ratio:16/9;background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.12);border:3px solid #e8e8e8}
@@ -168,8 +173,8 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 <!-- LOGIN -->
 <div id="loginScreen">
   <h2>&#128075; שלום! הזינו את הפרטים שלכם</h2>
-  <input type="text" id="loginName" placeholder="שם מלא">
-  <input type="email" id="loginEmail" placeholder="אימייל">
+  <input type="text" id="loginName" aria-label="שם מלא" placeholder="שם מלא">
+  <input type="email" id="loginEmail" aria-label="כתובת אימייל" placeholder="אימייל">
   <button onclick="login()">&#9654; התחילו ליצור</button>
 </div>
 
@@ -205,30 +210,30 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 
       <!-- Video Type Selector -->
       <div class="type-selector">
-        <div class="type-card selected" onclick="setVideoType('summary')" id="typeSummary">
-          <div class="type-icon">&#9889;</div>
-          <div class="type-info">
-            <h3>סיכום 60 שניות</h3>
-            <p>סיכום מהיר בסגנון TikTok – 10 סצנות, קצב מהיר</p>
-          </div>
-        </div>
-        <div class="type-card" onclick="setVideoType('full')" id="typeFull">
-          <div class="type-icon">&#127916;</div>
-          <div class="type-info">
-            <h3>סרטון לימודי מלא</h3>
-            <p>הקנייה עם שאלות – קצר / בינוני / ארוך</p>
-          </div>
-        </div>
+        <button type="button" class="plain-btn type-card selected" aria-pressed="true" onclick="setVideoType('summary')" id="typeSummary">
+          <span class="type-icon">&#9889;</span>
+          <span class="type-info">
+            <span class="t-name">סיכום 60 שניות</span>
+            <span class="t-desc">סיכום מהיר בסגנון TikTok – 10 סצנות, קצב מהיר</span>
+          </span>
+        </button>
+        <button type="button" class="plain-btn type-card" aria-pressed="false" onclick="setVideoType('full')" id="typeFull">
+          <span class="type-icon">&#127916;</span>
+          <span class="type-info">
+            <span class="t-name">סרטון לימודי מלא</span>
+            <span class="t-desc">הקנייה עם שאלות – קצר / בינוני / ארוך</span>
+          </span>
+        </button>
       </div>
       <input type="hidden" id="videoType" value="summary">
 
       <div class="form-group">
-        <label>שם הסרטון</label>
+        <label for="videoName">שם הסרטון</label>
         <input type="text" id="videoName" placeholder='למשל: "סיכום שיעור – משוואות"'>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>מקצוע</label>
+          <label for="subject">מקצוע</label>
           <select id="subject">
             <option value="">בחרו מקצוע</option>
             <option>מתמטיקה</option>
@@ -246,7 +251,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           </select>
         </div>
         <div class="form-group">
-          <label>כיתה</label>
+          <label for="grade">כיתה</label>
           <select id="grade">
             <option value="">בחרו כיתה</option>
             <option>ט</option>
@@ -258,7 +263,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>רמה</label>
+          <label for="level">רמה</label>
           <select id="level">
             <option>בסיסי</option>
             <option>בינוני</option>
@@ -266,7 +271,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           </select>
         </div>
         <div class="form-group" id="durationGroup">
-          <label>אורך</label>
+          <label for="duration">אורך</label>
           <select id="duration">
             <option value="60">60 שניות (סיכום)</option>
             <option value="120">2 דקות (קצר)</option>
@@ -276,7 +281,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
         </div>
       </div>
       <div class="form-group" id="styleGroup">
-        <label>סגנון</label>
+        <label for="style">סגנון</label>
         <select id="style">
           <option value="animated">מונפש – אנימציות חלקות</option>
           <option value="normal">רגיל – נקי ומקצועי</option>
@@ -284,7 +289,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
         </select>
       </div>
       <div class="form-group">
-        <label>תוכן / נושא</label>
+        <label for="content">תוכן / נושא</label>
         <textarea id="content" placeholder="כתבו את הנושא, או הדביקו תוכן מהשיעור שרוצים לסכם..."></textarea>
       </div>
       <div class="nav-row">
@@ -315,7 +320,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
           2. לחצו "Create API Key"<br>
           3. העתיקו והדביקו כאן:
         </p>
-        <input type="text" id="geminiKeyInput" placeholder="הדביקו את המפתח כאן...">
+        <input type="text" id="geminiKeyInput" aria-label="מפתח Gemini API" placeholder="הדביקו את המפתח כאן...">
         <button class="btn btn-sm btn-green" onclick="saveGeminiKey()" style="margin-top:0.5rem">&#10003; שמור מפתח</button>
       </div>
 
@@ -336,10 +341,10 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <h2>&#128250; תצוגה מקדימה</h2>
       <div class="preview-container">
         <div class="phone-frame" id="phoneFrame">
-          <iframe id="previewFramePhone" sandbox="allow-scripts"></iframe>
+          <iframe id="previewFramePhone" title="תצוגה מקדימה של הסרטון – מסך אנכי" sandbox="allow-scripts"></iframe>
         </div>
         <div class="wide-frame" id="wideFrame" style="display:none">
-          <iframe id="previewFrameWide" sandbox="allow-scripts"></iframe>
+          <iframe id="previewFrameWide" title="תצוגה מקדימה של הסרטון – מסך רחב" sandbox="allow-scripts"></iframe>
         </div>
         <div class="preview-controls">
           <button class="btn btn-outline btn-sm" onclick="refreshPreview()">&#128260; רענן</button>
@@ -358,20 +363,20 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
     <div class="card">
       <h2>&#128640; פרסום והורדה</h2>
       <div class="publish-options">
-        <div class="publish-card" onclick="downloadVideo()">
+        <button type="button" class="plain-btn publish-card" onclick="downloadVideo()">
           <span class="publish-icon">&#128229;</span>
-          <div class="publish-text">
-            <h3>הורדת קובץ HTML</h3>
-            <p>הורידו את הסרטון כקובץ HTML שאפשר לפתוח בדפדפן</p>
-          </div>
-        </div>
-        <div class="publish-card" onclick="copyHTML()">
+          <span class="publish-text">
+            <span class="p-name">הורדת קובץ HTML</span>
+            <span class="p-desc">הורידו את הסרטון כקובץ HTML שאפשר לפתוח בדפדפן</span>
+          </span>
+        </button>
+        <button type="button" class="plain-btn publish-card" onclick="copyHTML()">
           <span class="publish-icon">&#128203;</span>
-          <div class="publish-text">
-            <h3>העתקת קוד HTML</h3>
-            <p>העתיקו את הקוד ללוח</p>
-          </div>
-        </div>
+          <span class="publish-text">
+            <span class="p-name">העתקת קוד HTML</span>
+            <span class="p-desc">העתיקו את הקוד ללוח</span>
+          </span>
+        </button>
       </div>
       <div class="published-url" id="publishedResult">
         <p style="font-weight:700;color:var(--green);margin-bottom:0.5rem">&#10003; הקובץ הורד בהצלחה!</p>
@@ -405,6 +410,8 @@ function setVideoType(type) {
   document.getElementById('videoType').value = type;
   document.getElementById('typeSummary').classList.toggle('selected', type === 'summary');
   document.getElementById('typeFull').classList.toggle('selected', type === 'full');
+  document.getElementById('typeSummary').setAttribute('aria-pressed', type === 'summary' ? 'true' : 'false');
+  document.getElementById('typeFull').setAttribute('aria-pressed', type === 'full' ? 'true' : 'false');
   // Show/hide duration & style for full mode
   document.getElementById('durationGroup').style.display = type === 'full' ? 'block' : 'none';
   document.getElementById('styleGroup').style.display = type === 'full' ? 'block' : 'none';
@@ -612,42 +619,42 @@ function renderScenes() {
     const typeInfo = sceneTypes[scene.type] || sceneTypes.content;
     html += `
     <div class="scene-editor" data-idx="${i}">
-      <div class="scene-header" onclick="toggleScene(this.parentElement)">
-        <div class="scene-num">${i + 1}</div>
+      <button type="button" class="plain-btn scene-header" aria-expanded="false" onclick="toggleScene(this.parentElement)">
+        <span class="scene-num">${i + 1}</span>
         <span class="scene-preview">${escapeHtml(scene.title || 'סצנה ריקה')}</span>
         <span class="scene-toggle">&#9660;</span>
-      </div>
+      </button>
       <div class="scene-body">
         <div class="form-row" style="margin-bottom:0.6rem;">
           <div class="form-group" style="margin-bottom:0;">
-            <label>סוג סצנה</label>
-            <select class="scene-type-select" onchange="updateScene(${i},'type',this.value)">
+            <label for="scene${i}Type">סוג סצנה</label>
+            <select id="scene${i}Type" class="scene-type-select" onchange="updateScene(${i},'type',this.value)">
               ${Object.entries(sceneTypes).map(([k,v]) => `<option value="${k}" ${scene.type===k?'selected':''}>${v.label}</option>`).join('')}
             </select>
           </div>
           <div class="form-group" style="margin-bottom:0;">
-            <label>אימוג'י</label>
-            <input type="text" value="${escapeHtml(scene.emoji)}" maxlength="4"
+            <label for="scene${i}Emoji">אימוג'י</label>
+            <input type="text" id="scene${i}Emoji" value="${escapeHtml(scene.emoji)}" maxlength="4"
               onchange="updateScene(${i},'emoji',this.value)" placeholder="&#9786;">
           </div>
         </div>
         <div class="form-group">
-          <label>כותרת</label>
-          <input type="text" value="${escapeHtml(scene.title)}"
+          <label for="scene${i}Title">כותרת</label>
+          <input type="text" id="scene${i}Title" value="${escapeHtml(scene.title)}"
             onchange="updateScene(${i},'title',this.value)" placeholder="כותרת הסצנה">
         </div>
         <div class="form-group">
-          <label>פריטים (שורה לכל פריט)</label>
-          <textarea rows="4" onchange="updateScene(${i},'items',this.value.split('\\n').filter(x=>x.trim()))"
+          <label for="scene${i}Items">פריטים (שורה לכל פריט)</label>
+          <textarea id="scene${i}Items" rows="4" onchange="updateScene(${i},'items',this.value.split('\\n').filter(x=>x.trim()))"
             placeholder="פריט 1&#10;פריט 2&#10;פריט 3">${(scene.items||[]).join('\n')}</textarea>
         </div>
         <div class="form-group">
-          <label>טקסט משנה (אופציונלי)</label>
-          <input type="text" value="${escapeHtml(scene.subtitle||'')}"
+          <label for="scene${i}Sub">טקסט משנה (אופציונלי)</label>
+          <input type="text" id="scene${i}Sub" value="${escapeHtml(scene.subtitle||'')}"
             onchange="updateScene(${i},'subtitle',this.value)" placeholder="הערה, טיפ, הסבר קצר">
         </div>
         <div class="scene-actions">
-          <button class="scene-delete" onclick="deleteScene(${i})">&#128465; מחק סצנה</button>
+          <button type="button" class="scene-delete" onclick="deleteScene(${i})">&#128465; מחק סצנה</button>
         </div>
       </div>
     </div>`;
@@ -657,6 +664,8 @@ function renderScenes() {
 
 function toggleScene(el) {
   el.classList.toggle('open');
+  const h = el.querySelector('.scene-header');
+  if (h) h.setAttribute('aria-expanded', el.classList.contains('open') ? 'true' : 'false');
 }
 
 function updateScene(idx, field, value) {
@@ -902,6 +911,8 @@ function generateSummaryHTML(d) {
 <style>
 :root{--accent:${accent}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 html,body{height:100%;overflow:hidden;background:#f5f5f5}
 body{display:flex;align-items:center;justify-content:center;font-family:'Assistant',sans-serif}
 #phone{position:relative;width:min(380px,100vw);height:min(100vh,680px);background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.08)}
@@ -946,14 +957,14 @@ body{display:flex;align-items:center;justify-content:center;font-family:'Assista
 </head>
 <body>
 <div id="phone">
-<div id="startOverlay" onclick="startVideo()">
+<button type="button" id="startOverlay" class="plain-btn" onclick="startVideo()">
 <h2>${esc(d.videoName)}</h2>
 <div class="ss">${esc(d.subject)} | ${esc(d.grade)}</div>
 <div class="time-label">60 &#x2033;</div>
 <div class="sb"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
 <div class="tap">&#9654; \u05DC\u05D7\u05E6\u05D5 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC</div>
-</div>
-<div id="pauseOverlay" onclick="togglePause()"><div class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div></div>
+</button>
+<button type="button" id="pauseOverlay" class="plain-btn" aria-label="המשך הפעלה" onclick="togglePause()"><span class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></span></button>
 ${scenesHTML}
 <div id="timerBadge">0:00 / ${timeLabel}</div>
 <div id="topicBadge">${esc(d.subject)}</div>
@@ -963,7 +974,7 @@ ${scenesHTML}
 const scenes=document.querySelectorAll('.scene'),T=${scenes.length};
 let c=0,run=false,st=null,ti=null,el=0;
 const D=[...scenes].map(s=>parseInt(s.dataset.dur)||6000),tot=D.reduce((a,b)=>a+b,0);
-function startVideo(){document.getElementById('startOverlay').classList.add('hidden');run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
+function startVideo(){const so=document.getElementById('startOverlay');if(so.classList.contains('hidden'))return;so.classList.add('hidden');so.disabled=true;run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
 function tick(){if(!run)return;el+=50;document.getElementById('progress').style.width=Math.min(el/tot*100,100)+'%';const s=Math.floor(el/1000),ts=Math.floor(tot/1000);document.getElementById('timerBadge').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60)+' / '+Math.floor(ts/60)+':'+(ts%60<10?'0':'')+(ts%60)}
 function anim(i){scenes.forEach(s=>s.classList.remove('active'));c=i;scenes[c].classList.add('active');scenes[c].querySelectorAll('[data-anim]').forEach(e=>{const d=parseInt(e.dataset.t)||0;e.style.opacity='0';e.style.animation='none';setTimeout(()=>{e.style.animation='fadeUp .3s ease forwards'},d)})}
 function sn(){clearTimeout(st);if(c>=T-1)return;st=setTimeout(()=>{anim(c+1);sn()},D[c])}
@@ -1086,6 +1097,8 @@ function generateFullHTML(d) {
 <style>
 :root{--accent:${accent}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.plain-btn{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-radius:0;padding:0;margin:0;width:100%;font:inherit;color:inherit;text-align:inherit;line-height:inherit;cursor:pointer}
+.plain-btn:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
 html,body{height:100%;overflow:hidden;background:#1a1a2e}
 body{display:flex;align-items:center;justify-content:center;font-family:'Assistant',sans-serif}
 #screen{position:relative;width:min(960px,100vw);aspect-ratio:16/9;background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 20px 80px rgba(0,0,0,.3)}
@@ -1160,22 +1173,22 @@ body{display:flex;align-items:center;justify-content:center;font-family:'Assista
 </head>
 <body>
 <div id="screen">
-<div id="startOverlay" onclick="startVideo()">
+<button type="button" id="startOverlay" class="plain-btn" onclick="startVideo()">
 <div style="font-size:4rem;margin-bottom:1rem">${esc(scenes[0]?.emoji || '&#127916;')}</div>
 <h2>${esc(d.videoName)}</h2>
 <div class="ss">${esc(d.subject)} | ${esc(d.grade)} | ${esc(d.level)}</div>
 <div class="sb"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div>
 <div class="tap">&#9654; \u05DC\u05D7\u05E6\u05D5 \u05DC\u05D4\u05EA\u05D7\u05D9\u05DC</div>
-</div>
-<div id="pauseOverlay" onclick="togglePause()"><div class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></div></div>
+</button>
+<button type="button" id="pauseOverlay" class="plain-btn" aria-label="המשך הפעלה" onclick="togglePause()"><span class="p-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg></span></button>
 ${scenesHTML}
 <div id="timerBadge">0:00 / ${timeLabel}</div>
 <div id="topicBadge">${esc(d.subject)}</div>
 <div id="frameBadge">1 / ${scenes.length}</div>
 <div id="ctrlBar">
-<div class="ctrl-btn" onclick="prevScene()">&#9654;</div>
-<div class="ctrl-btn" onclick="togglePause()">&#9208;</div>
-<div class="ctrl-btn" onclick="nextScene()">&#9664;</div>
+<button type="button" class="plain-btn ctrl-btn" aria-label="סצנה קודמת" onclick="prevScene()">&#9654;</button>
+<button type="button" class="plain-btn ctrl-btn" aria-label="השהיה או המשך" onclick="togglePause()">&#9208;</button>
+<button type="button" class="plain-btn ctrl-btn" aria-label="סצנה הבאה" onclick="nextScene()">&#9664;</button>
 </div>
 <div id="progressWrap" onclick="seekTo(event)"><div id="progress"></div></div>
 </div>
@@ -1183,7 +1196,7 @@ ${scenesHTML}
 const scenes=document.querySelectorAll('.scene'),T=${scenes.length};
 let c=0,run=false,st=null,ti=null,el=0,paused=false;
 const D=[...scenes].map(s=>parseInt(s.dataset.dur)||6000),tot=D.reduce((a,b)=>a+b,0);
-function startVideo(){document.getElementById('startOverlay').classList.add('hidden');run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
+function startVideo(){const so=document.getElementById('startOverlay');if(so.classList.contains('hidden'))return;so.classList.add('hidden');so.disabled=true;run=true;el=0;anim(0);sn();ti=setInterval(tick,50)}
 function tick(){if(!run)return;el+=50;document.getElementById('progress').style.width=Math.min(el/tot*100,100)+'%';const s=Math.floor(el/1000),ts=Math.floor(tot/1000);document.getElementById('timerBadge').textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60)+' / '+Math.floor(ts/60)+':'+(ts%60<10?'0':'')+(ts%60)}
 function anim(i){scenes.forEach(s=>s.classList.remove('active'));c=i;scenes[c].classList.add('active');document.getElementById('frameBadge').textContent=(c+1)+' / '+T;if(scenes[c].classList.contains('is-question')){run=false;clearTimeout(st)}scenes[c].querySelectorAll('[data-anim]').forEach(e=>{const a=e.dataset.anim,d=parseInt(e.dataset.t)||0;e.style.opacity='0';e.style.animation='none';setTimeout(()=>{e.style.animation=a+' .5s cubic-bezier(.4,0,.2,1) forwards'},d)})}
 function sn(){clearTimeout(st);if(c>=T-1)return;st=setTimeout(()=>{anim(c+1);sn()},D[c])}

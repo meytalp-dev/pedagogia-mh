@@ -8,6 +8,9 @@
 <style>
 :root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+.sr-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.plain-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .game-wrapper{max-width:620px;width:100%;margin:0 auto}
 .progress-wrap{background:rgba(0,0,0,.04);border-radius:20px;height:8px;margin-bottom:24px;overflow:hidden}
@@ -96,7 +99,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 /* Memory */
 .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .memory-card{aspect-ratio:1;border-radius:14px;cursor:pointer;position:relative;perspective:600px}
-.memory-card-inner{width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;position:relative}
+.memory-card-inner{display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;position:relative}
 .memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
 .memory-card-face{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;font-size:14px;font-weight:700;padding:8px;text-align:center;word-break:break-word;line-height:1.3}
 .memory-card-back{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:white;font-size:28px}
@@ -275,13 +278,13 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   <div class="screen" id="introScreen">
     <div class="g-card">
       <div class="intro-icon" id="gameIcon">🎮</div>
-      <div class="intro-title" id="gameTitle">משחק לימודי</div>
+      <h1 class="intro-title" id="gameTitle">משחק לימודי</h1>
       <div class="intro-sub" id="gameSub"></div>
       <div style="display:flex;justify-content:center;margin-bottom:20px">
         <div class="game-type-badge" id="gameTypeBadge"></div>
       </div>
-      <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם"></div>
-      <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
+      <div class="input-group"><label for="studentName">שם מלא</label><input type="text" id="studentName" placeholder="למשל: נועה כהן"></div>
+      <div class="input-group"><label for="studentClass">כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
       <button class="btn btn-primary" id="startBtn" disabled onclick="startGame()">התחילו!</button>
     </div>
   </div>
@@ -496,7 +499,7 @@ function renderTriviaQ() {
     '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
     '<div class="q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options">' + q.options.map((o, i) =>
-      '<div class="q-opt" onclick="triviaAnswer(' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+      '<button type="button" class="q-opt plain-btn" onclick="triviaAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
     ).join('') + '</div>' +
     '<div class="q-feedback" id="qFeedback"></div>' +
     '<button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>';
@@ -505,6 +508,7 @@ function triviaAnswer(idx) {
   const q = triviaItems[triviaQ], ok = idx === q.correct;
   document.querySelectorAll('.q-opt').forEach((o, i) => {
     o.classList.add('disabled');
+    o.disabled = true;
     if (i === q.correct) o.classList.add('correct');
     else if (i === idx && !ok) o.classList.add('wrong');
     else o.classList.add('dim');
@@ -539,23 +543,25 @@ function initMatching() {
     '<div class="match-progress" id="matchProg">0 מתוך ' + totalItems + ' זוגות</div>' +
     '<div class="match-grid">' +
     '<div><div class="match-col-title">' + escapeHtml(rTitle) + '</div>' + rightItems.map(r =>
-      '<div class="match-item match-right" data-idx="' + r.idx + '" onclick="selectRight(this)">' + escapeHtml(r.text) + '</div>'
+      '<button type="button" class="match-item match-right plain-btn" data-idx="' + r.idx + '" aria-pressed="false" onclick="selectRight(this)">' + escapeHtml(r.text) + '</button>'
     ).join('') + '</div>' +
     '<div><div class="match-col-title">' + escapeHtml(lTitle) + '</div>' + leftItems.map(l =>
-      '<div class="match-item match-left" data-idx="' + l.idx + '" onclick="selectLeft(this)">' + escapeHtml(l.text) + '</div>'
+      '<button type="button" class="match-item match-left plain-btn" data-idx="' + l.idx + '" onclick="selectLeft(this)">' + escapeHtml(l.text) + '</button>'
     ).join('') + '</div>' +
     '</div>';
 }
 function selectRight(el) {
   if (el.classList.contains('matched')) return;
-  document.querySelectorAll('.match-right').forEach(r => r.classList.remove('selected'));
-  el.classList.add('selected'); selectedRight = el;
+  document.querySelectorAll('.match-right').forEach(r => { r.classList.remove('selected'); r.setAttribute('aria-pressed', 'false'); });
+  el.classList.add('selected'); el.setAttribute('aria-pressed', 'true'); selectedRight = el;
 }
 function selectLeft(el) {
   if (!selectedRight || el.classList.contains('matched')) return;
   const rIdx = parseInt(selectedRight.dataset.idx), lIdx = parseInt(el.dataset.idx);
   if (rIdx === lIdx) {
     selectedRight.classList.remove('selected'); selectedRight.classList.add('matched');
+    selectedRight.setAttribute('aria-pressed', 'false');
+    selectedRight.disabled = true; el.disabled = true;
     el.classList.add('matched'); matchedCount++; correctItems++; score++;
     document.getElementById('matchProg').textContent = matchedCount + ' מתוך ' + totalItems + ' זוגות';
     setProgress(matchedCount / totalItems);
@@ -564,7 +570,7 @@ function selectLeft(el) {
   } else {
     selectedRight.classList.add('wrong-flash'); el.classList.add('wrong-flash');
     const r = selectedRight;
-    setTimeout(() => { r.classList.remove('selected', 'wrong-flash'); el.classList.remove('wrong-flash'); }, 500);
+    setTimeout(() => { r.classList.remove('selected', 'wrong-flash'); r.setAttribute('aria-pressed', 'false'); el.classList.remove('wrong-flash'); }, 500);
     selectedRight = null;
   }
 }
@@ -588,8 +594,8 @@ function renderOrder() {
       '<div class="oi-num">' + (i + 1) + '</div>' +
       '<div class="oi-text">' + escapeHtml(item.text) + '</div>' +
       '<div class="oi-arrows">' +
-      '<button onclick="moveItem(' + i + ',-1)">▲</button>' +
-      '<button onclick="moveItem(' + i + ',1)">▼</button>' +
+      '<button type="button" aria-label="הזזה למעלה" onclick="moveItem(' + i + ',-1)">▲</button>' +
+      '<button type="button" aria-label="הזזה למטה" onclick="moveItem(' + i + ',1)">▼</button>' +
       '</div></div>'
     ).join('') + '</div>' +
     '<button class="btn btn-primary check-btn" onclick="checkOrder()">בדקו סדר</button>';
@@ -637,6 +643,7 @@ function renderEscapeRoom() {
     '<div class="escape-story">' + escapeHtml(room.story) + '</div>' +
     '<div class="escape-riddle">' + escapeHtml(room.riddle) + '</div>' +
     '<div class="escape-input-row">' +
+    '<label class="sr-label" for="escapeInput">התשובה שלכם</label>' +
     '<input type="text" id="escapeInput" placeholder="הקלידו את התשובה...">' +
     '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkEscapeAnswer()">בדקו</button>' +
     '</div>' +
@@ -726,11 +733,11 @@ function renderMemory() {
     '<div class="memory-counter" id="memoryCounter">0 מתוך ' + memoryTotal + ' זוגות</div>' +
     '<div class="memory-grid">' +
     memoryCards.map((card, i) =>
-      '<div class="memory-card' + (card.matched ? ' flipped matched' : '') + '" data-idx="' + i + '" onclick="flipMemoryCard(' + i + ')">' +
-      '<div class="memory-card-inner">' +
-      '<div class="memory-card-face memory-card-back">?</div>' +
-      '<div class="memory-card-face memory-card-front">' + escapeHtml(card.text) + '</div>' +
-      '</div></div>'
+      '<button type="button" class="memory-card plain-btn' + (card.matched ? ' flipped matched' : '') + '" data-idx="' + i + '"' + (card.matched ? ' disabled' : '') + ' onclick="flipMemoryCard(' + i + ')">' +
+      '<span class="memory-card-inner">' +
+      '<span class="memory-card-face memory-card-back">?</span>' +
+      '<span class="memory-card-face memory-card-front">' + escapeHtml(card.text) + '</span>' +
+      '</span></button>'
     ).join('') +
     '</div>';
 }
@@ -756,8 +763,10 @@ function flipMemoryCard(idx) {
       setTimeout(() => {
         memoryCards[memoryFlipped[0]].matched = true;
         memoryCards[memoryFlipped[1]].matched = true;
-        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.add('matched');
-        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.add('matched');
+        const cardA = document.querySelectorAll('.memory-card')[memoryFlipped[0]];
+        const cardB = document.querySelectorAll('.memory-card')[memoryFlipped[1]];
+        cardA.classList.add('matched'); cardB.classList.add('matched');
+        cardA.disabled = true; cardB.disabled = true;
         memoryMatched++;
         correctItems = memoryMatched;
         score = memoryMatched;
@@ -915,7 +924,7 @@ function showWheelQuestion(idx) {
   popup.innerHTML =
     '<div class="wheel-q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options">' + q.options.map((o, i) =>
-      '<div class="q-opt" onclick="wheelAnswer(' + idx + ',' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+      '<button type="button" class="q-opt plain-btn" onclick="wheelAnswer(' + idx + ',' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
     ).join('') + '</div>' +
     '<div class="q-feedback" id="wheelFeedback"></div>';
 }
@@ -925,6 +934,7 @@ function wheelAnswer(qIdx, ansIdx) {
   const popup = document.getElementById('wheelPopup');
   popup.querySelectorAll('.q-opt').forEach((o, i) => {
     o.classList.add('disabled');
+    o.disabled = true;
     if (i === q.correct) o.classList.add('correct');
     else if (i === ansIdx && !ok) o.classList.add('wrong');
     else o.classList.add('dim');
@@ -976,7 +986,7 @@ function tfAnswer(answer) {
   const item = tfItems[tfIdx];
   const ok = answer === item.correct;
 
-  document.querySelectorAll('.tf-btn').forEach(b => b.classList.add('disabled'));
+  document.querySelectorAll('.tf-btn').forEach(b => { b.classList.add('disabled'); b.disabled = true; });
   const trueBtn = document.querySelector('.tf-btn-true');
   const falseBtn = document.querySelector('.tf-btn-false');
 
@@ -1025,6 +1035,7 @@ function renderFillBlank() {
     '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
     '<div class="fb-sentence">' + sentenceHtml + '</div>' +
     '<div class="fb-input-row">' +
+    '<label class="sr-label" for="fbInput">התשובה שלכם</label>' +
     '<input type="text" id="fbInput" placeholder="הקלידו את התשובה...">' +
     '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkFillBlank()">בדקו</button>' +
     '</div>' +
@@ -1104,7 +1115,7 @@ function renderSentence() {
     '<div class="sentence-target empty" id="sentTarget"></div>' +
     '<div class="sentence-pool" id="sentPool">' +
     shuffled.map((w, i) =>
-      '<div class="word-chip word-chip-pool" data-pool-idx="' + i + '" data-word="' + escapeHtml(w.text) + '" onclick="addWordToSentence(this)">' + escapeHtml(w.text) + '</div>'
+      '<button type="button" class="word-chip word-chip-pool plain-btn" data-pool-idx="' + i + '" data-word="' + escapeHtml(w.text) + '" onclick="addWordToSentence(this)">' + escapeHtml(w.text) + '</button>'
     ).join('') +
     '</div>' +
     '<button class="btn btn-primary check-btn" id="sentCheckBtn" onclick="checkSentence()" style="display:none">בדקו</button>' +
@@ -1117,6 +1128,7 @@ function renderSentence() {
 function addWordToSentence(el) {
   if (el.classList.contains('used')) return;
   el.classList.add('used');
+  el.disabled = true;
   const word = el.getAttribute('data-word');
   const poolIdx = el.getAttribute('data-pool-idx');
   sentBuilt.push({ word: word, poolIdx: poolIdx });
@@ -1129,6 +1141,7 @@ function removeWordFromSentence(idx) {
   poolChips.forEach(c => {
     if (c.getAttribute('data-pool-idx') === removed.poolIdx) {
       c.classList.remove('used');
+      c.disabled = false;
     }
   });
   updateSentenceTarget();
@@ -1141,7 +1154,7 @@ function updateSentenceTarget() {
   } else {
     target.className = 'sentence-target';
     target.innerHTML = sentBuilt.map((w, i) =>
-      '<div class="word-chip word-chip-target" onclick="removeWordFromSentence(' + i + ')">' + escapeHtml(w.word) + '</div>'
+      '<button type="button" class="word-chip word-chip-target plain-btn" onclick="removeWordFromSentence(' + i + ')">' + escapeHtml(w.word) + '</button>'
     ).join('');
   }
   // Show check button when all words placed
@@ -1233,7 +1246,7 @@ function renderGroups() {
   let gridHtml = '<div class="groups-grid">';
   remaining.forEach((item, i) => {
     const isSelected = groupsSelected.includes(i);
-    gridHtml += '<div class="groups-cell' + (isSelected ? ' selected' : '') + '" data-ridx="' + i + '" onclick="toggleGroupItem(' + i + ')">' + escapeHtml(item.text) + '</div>';
+    gridHtml += '<button type="button" class="groups-cell plain-btn' + (isSelected ? ' selected' : '') + '" data-ridx="' + i + '" aria-pressed="' + (isSelected ? 'true' : 'false') + '" onclick="toggleGroupItem(' + i + ')">' + escapeHtml(item.text) + '</button>';
   });
   gridHtml += '</div>';
 
@@ -1355,7 +1368,7 @@ function renderHangman() {
       const inWord = word.includes(letter);
       cls += inWord ? ' correct-key' : ' wrong-key';
     }
-    kbHtml += '<div class="' + cls + '" onclick="hangmanGuess(\'' + letter + '\')">' + letter + '</div>';
+    kbHtml += '<button type="button" class="' + cls + ' plain-btn"' + (hangmanGuessedLetters.includes(letter) ? ' disabled' : '') + ' onclick="hangmanGuess(\'' + letter + '\')">' + letter + '</button>';
   });
   kbHtml += '</div>';
 
@@ -1466,7 +1479,7 @@ function renderMillionaire() {
 
   // Lifeline
   let lifelineHtml = '<div class="mill-lifeline">' +
-    '<button class="mill-lifeline-btn' + (millUsed5050 ? ' used' : '') + '" onclick="mill5050()" id="mill5050Btn">50:50</button>' +
+    '<button type="button" class="mill-lifeline-btn' + (millUsed5050 ? ' used' : '') + '"' + (millUsed5050 ? ' disabled' : '') + ' onclick="mill5050()" id="mill5050Btn">50:50</button>' +
     '</div>';
 
   // Question
@@ -1476,7 +1489,7 @@ function renderMillionaire() {
     lifelineHtml +
     '<div class="mill-q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options" id="millOptions">' + q.options.map((o, i) =>
-      '<div class="q-opt" id="millOpt' + i + '" onclick="millAnswer(' + i + ')"><div class="opt-letter">' + L[i] + '</div><span>' + escapeHtml(o) + '</span></div>'
+      '<button type="button" class="q-opt plain-btn" id="millOpt' + i + '" onclick="millAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
     ).join('') + '</div>' +
     '<div class="q-feedback" id="millFeedback"></div>' +
     '</div>';
@@ -1487,7 +1500,9 @@ function renderMillionaire() {
 function mill5050() {
   if (millUsed5050) return;
   millUsed5050 = true;
-  document.getElementById('mill5050Btn').classList.add('used');
+  const lifelineBtn = document.getElementById('mill5050Btn');
+  lifelineBtn.classList.add('used');
+  lifelineBtn.disabled = true;
 
   const q = millItems[millIdx];
   const correct = q.correct;
@@ -1503,6 +1518,7 @@ function mill5050() {
     if (opt) {
       opt.classList.add('disabled', 'dim');
       opt.style.pointerEvents = 'none';
+      opt.disabled = true;
     }
   });
 }
@@ -1512,6 +1528,7 @@ function millAnswer(idx) {
 
   document.querySelectorAll('#millOptions .q-opt').forEach((o, i) => {
     o.classList.add('disabled');
+    o.disabled = true;
     if (i === q.correct) o.classList.add('correct');
     else if (i === idx && !ok) o.classList.add('wrong');
   });

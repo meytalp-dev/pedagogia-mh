@@ -54,10 +54,11 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 </style>
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -152,19 +153,20 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -188,14 +190,14 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -268,7 +270,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -307,9 +309,12 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -317,7 +322,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
     <h1>ח.כ.ה — <span class="accent">המודל וכלי העבודה</span></h1>
     <p class="lead">"הכשרת תלמידים ותלמידות בגישה אסטרטגית להתפתחות דינאמית בשוק העבודה ובניהול חייהם — וכפועל יוצא גם להעצים את ההכנה והליווי של התלמידים והתלמידות בחניכות." זהו מרחב ח.כ.ה של החינוך היוצר, מרוכז כאן במקום אחד: המודל לארבע השכבות, כלי העבודה, מודל הכישורים I PRO וסוכן ה-AI למורה.</p>
     <div class="meta-row">
-      <span class="src">המקור: <a class="lk" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">מרחב ח.כ.ה באתר החינוך היוצר</a></span>
+      <span class="src">המקור: <a class="lk" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">מרחב ח.כ.ה באתר החינוך היוצר<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
       <span>החינוך היוצר · האגף להכשרה מקצועית וכ״א</span>
     </div>
     <div class="cta-row">
@@ -387,13 +392,13 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h11a2.5 2.5 0 0 1 2.5 2.5v13H6.5A2.5 2.5 0 0 1 4 17.5Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15h11M8 8.5h6M8 11.5h6"/></svg></span>
         <span class="tb"><b>מחברת דרך ט׳</b><span>מחברת אינטראקטיבית המלווה את תהליך הלמידה של תלמידי ותלמידות כיתה ט׳ — למילוי לאורך השנה.</span></span>
         <span class="go">לפתיחה ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
       <a class="tool-row" href="https://www.canva.com/design/DAGeTwh7yf0/W1z-DGMKgPT7mQTsxZWLtA/view" target="_blank" rel="noopener">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h9M4 12h16M4 17.5h9"/><circle cx="17.5" cy="6.5" r="2.2"/><circle cx="17.5" cy="17.5" r="2.2"/></svg></span>
         <span class="tb"><b>עשרת הצעדים לחניכות מיטבית</b><span>חוברת מעוצבת — עשרה צעדים מעשיים מהאיתור, ההתאמה והשיבוץ ועד הליווי, המשוב והאופק התעסוקתי.</span></span>
         <span class="go">לפתיחה ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
       <a class="tool-row" href="career.html">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.2"/><path d="M8 7.5h8M8 11.5h8M8 15.5h5"/></svg></span>
@@ -426,7 +431,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
 
     <div class="source-box rv">
       <div class="t">מודל I PRO<small>אתר המודל המלא — מפת הכישורים, ההגדרות והחומרים של ג'וינט ישראל תבת.</small></div>
-      <a class="btn" href="https://www.career-skills.org/ipro" target="_blank" rel="noopener">מעבר למודל I PRO ↗</a>
+      <a class="btn" href="https://www.career-skills.org/ipro" target="_blank" rel="noopener">מעבר למודל I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
       <a class="btn alt" href="career.html#program">ארבעת מרכיבי הליבה</a>
     </div>
 
@@ -434,7 +439,7 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
     <p class="lead-p rv">עוזר AI ייעודי לתוכנית נתיבים — בונה פעילויות, מסביר תכנים ועוזר להתאים את החומר לכיתה.</p>
     <div class="callout rv">
       <span class="ttl">שני עוזרים, שני תפקידים</span>
-      <strong>"נתיבים"</strong> — הסוכן של החינוך היוצר, ממוקד בתכני התוכנית: <a class="lk" href="https://poe.com/netivim" target="_blank" rel="noopener">לפתיחה בפו ↗</a>. <strong>עוגן</strong> — הצ'אטבוט של האתר הזה, יודע לענות על נהלים, טפסים וכל תוכן האתר: לחצו על העוגן בפינת המסך. לצידם, <a class="lk" href="ai.html">ארגז הכלים הדיגיטלי</a> שלנו מציע מחוללי מערכי שיעור, שאלונים ומשחקים.
+      <strong>"נתיבים"</strong> — הסוכן של החינוך היוצר, ממוקד בתכני התוכנית: <a class="lk" href="https://poe.com/netivim" target="_blank" rel="noopener">לפתיחה בפו ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>. <strong>עוגן</strong> — הצ'אטבוט של האתר הזה, יודע לענות על נהלים, טפסים וכל תוכן האתר: לחצו על העוגן בפינת המסך. לצידם, <a class="lk" href="ai.html">ארגז הכלים הדיגיטלי</a> שלנו מציע מחוללי מערכי שיעור, שאלונים ומשחקים.
     </div>
 
     <h2 class="sub-sec rv" id="more">מה עוד יש במרחב החינוך היוצר</h2>
@@ -446,36 +451,38 @@ a.tool-row:hover .ti{transform:scale(1.07) rotate(-3deg);background:var(--cyan-1
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 4.6 5h14.8L21 9.5M3 9.5h18M3 9.5V20h18V9.5M9 20v-6h6v6"/></svg></span>
         <span class="tb"><b>אינדקס עסקים חינוכיים</b><span>מאגר העסקים החינוכיים של בתי הספר היוצרים — השראה מעשית למודל "עסק חינוכי".</span></span>
         <span class="go">לאינדקס ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
       <a class="tool-row" href="https://yotzer.education/knowledge-center/קהילת-רכזי-ורכזות-חניכות/" target="_blank" rel="noopener">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.6 6-5.6s6 2.3 6 5.6"/><path d="M16.4 6.3a3.2 3.2 0 0 1 0 6.1M18 14.9c2.2.6 3.8 2.5 3.8 5.1"/></svg></span>
         <span class="tb"><b>קהילת רכזי ורכזות חניכות</b><span>מרחב הקהילה הארצית של רכזי החניכות — מפגשים, חומרים ולמידת עמיתים.</span></span>
         <span class="go">לקהילה ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
       <a class="tool-row" href="https://megamot.yotzer.education/" target="_blank" rel="noopener">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 3.5 7.6 12 12l8.5-4.4z"/><path d="M6.6 9.8v4.6c0 1.8 2.4 3.3 5.4 3.3s5.4-1.5 5.4-3.3V9.8M20.5 7.6v6"/></svg></span>
         <span class="tb"><b>מגמות מקצועיות</b><span>אתר המגמות של החינוך היוצר — האופק המקצועי בכל ענף, לחיבור החניכות למגמת הלימוד.</span></span>
         <span class="go">לאתר המגמות ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
       <a class="tool-row" href="https://guidebook.yotzer.education/" target="_blank" rel="noopener">
         <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6S9.6 4.6 3 5.1v13c6.6-.5 9 1.5 9 1.5s2.4-2 9-1.5v-13c-6.6-.5-9 1.5-9 1.5Z"/><path d="M12 6.6v13"/></svg></span>
         <span class="tb"><b>ספר ההפעלה של החינוך היוצר</b><span>המדריך המלא ליישום הרפורמה בבית הספר — כולל הפרקים על חניכות ועל תוכנית נתיבים.</span></span>
         <span class="go">לספר ההפעלה ↗</span>
-      </a>
+      <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
 
     </div>
 
     <div class="source-box rv">
       <div class="t">המרחב המקורי<small>העמוד הזה מרכז ומסדר את החומרים של מרחב ח.כ.ה — הנוסח והחומרים המחייבים הם באתר החינוך היוצר.</small></div>
-      <a class="btn" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">מרחב ח.כ.ה באתר החינוך היוצר ↗</a>
+      <a class="btn" href="https://yotzer.education/elementor-793/" target="_blank" rel="noopener">מרחב ח.כ.ה באתר החינוך היוצר ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
       <a class="btn alt" href="career.html">התוכנית המלאה אצלנו</a>
     </div>
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

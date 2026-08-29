@@ -44,10 +44,11 @@ details.dom ol>li{padding:3px 0}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <div class="scrim" onclick="toggleMenu(false)"></div>
-<aside class="drawer" aria-label="תפריט ראשי">
-  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)">✕</button></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט">✕</button></div>
   <div class="body">
     <a href="index.html"><span class="n">◂</span> דף הבית</a>
     <div class="sect">מרחב פדגוגי</div>
@@ -142,19 +143,20 @@ details.dom ol>li{padding:3px 0}
     <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
     <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
     <div class="sect">שירותים</div>
-    <a class="open-ogen">⚓ שאל את עוגן</a>
+    <button type="button" class="open-ogen">⚓ שאל את עוגן</button>
     <a href="install.html">📲 עוגן והאתר בנייד</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="drive-yeutz.html">דרייב ייעוצי</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ"ז</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
-    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
-    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     <div class="sect">אודות</div>
-    <a class="dis">מי אנחנו</a>
-    <a class="dis">יצירת קשר</a>
-    <a class="dis">הצהרת נגישות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
   </div>
   <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
 </aside>
@@ -178,14 +180,14 @@ details.dom ol>li{padding:3px 0}
     <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
       <div class="sub">
         <a class="dis" aria-disabled="true" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</a>
-        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות</a>
-        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל</a>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ"ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ"ז</a>
       </div>
     </span>
   </div>
-  <div class="left"><a class="dis">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
+  <div class="left"><a href="negishut.html">נגישות</a><a class="dis">English</a><a class="dis">العربية</a></div>
 </div>
 <nav class="nav">
   <a class="brand" href="index.html">
@@ -258,7 +260,7 @@ details.dom ol>li{padding:3px 0}
       <a href="tafkid-menahel.html">תפקיד המנהל/ת</a>
       <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
       <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ'ק ליסט</a>
-      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="tafkidim.html">בעלי תפקידים<span class="caret">▼</span></a>
@@ -297,9 +299,12 @@ details.dom ol>li{padding:3px 0}
   <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ"ז</a></span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
   <div class="tools">
-    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+
+<main id="main">
+
 
 <section class="hero">
   <div class="article hero-stagger">
@@ -307,12 +312,12 @@ details.dom ol>li{padding:3px 0}
     <h1>כיתה י׳ — <span class="accent">כניסה לשוק העבודה</span></h1>
     <p class="lead">זו השכבה שבסופה התלמיד.ה יוצא.ת לחניכות בפועל. עשרה מפגשים שלוקחים את הכיתה מ"מה השתנה בי?" ועד סימולציה של יום אמיתי במקום עבודה — מטרות, כישורי I PRO, ציוד, מהלך מלא וקישורים, מתומללים כאן מתוך מארזי הקנבה של התוכנית כדי שאפשר יהיה לקרוא, לחפש ולהעתיק מהם ישירות.</p>
     <div class="meta-row">
-      <span class="src-note">המקור: <a class="lk" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">פאנל השליטה של כיתה י׳ בקנבה</a></span>
+      <span class="src-note">המקור: <a class="lk" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">פאנל השליטה של כיתה י׳ בקנבה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
       <span>10 מארזים · החינוך היוצר · מינהל הכשרה מקצועית</span>
     </div>
     <div class="cta-row">
       <a class="btn ghost" href="chaka.html">◂ חזרה למודל ח.כ.ה</a>
-      <a class="btn" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">מארז הקנבה המקורי ↗</a>
+      <a class="btn" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">מארז הקנבה המקורי ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
   </div>
 </section>
@@ -454,7 +459,7 @@ details.dom ol>li{padding:3px 0}
 
     <div class="callout petrol rv">
       <span class="ttl">שני עוזרים דיגיטליים שמופיעים בסוף כל מארז</span>
-      <a class="lk" href="https://poe.com/netivim" target="_blank" rel="noopener">הבוט "נתיבים" ↗</a> — ייעוץ, הדרכה ואפשרויות חשיבה על התוכנית ויישומה בכיתה; ו<a class="lk" href="https://skillcet.mindcet.org" target="_blank" rel="noopener">SkillCET של מיינדסט ↗</a> — כלי לתכנון מחדש, התאמה וגיוון של תכני המפגשים.
+      <a class="lk" href="https://poe.com/netivim" target="_blank" rel="noopener">הבוט "נתיבים" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — ייעוץ, הדרכה ואפשרויות חשיבה על התוכנית ויישומה בכיתה; ו<a class="lk" href="https://skillcet.mindcet.org" target="_blank" rel="noopener">SkillCET של מיינדסט ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — כלי לתכנון מחדש, התאמה וגיוון של תכני המפגשים.
     </div>
 
     <h2 class="sub-sec rv" id="zinuk">01 · על קו הזינוק — "מה השתנה בי?!"</h2>
@@ -511,7 +516,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">המצגת לכיתה כוללת גם גלריית "מי זוכר?!" ממפגשי כיתה ט׳ (מעגל כוחות, מחברת דרך, תיאום ציפיות) — <a class="lk" href="https://www.canva.com/design/DAGeDIqpMWs/Ae-FHVE-ANh-RsdnguWSAA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">המצגת לכיתה כוללת גם גלריית "מי זוכר?!" ממפגשי כיתה ט׳ (מעגל כוחות, מחברת דרך, תיאום ציפיות) — <a class="lk" href="https://www.canva.com/design/DAGeDIqpMWs/Ae-FHVE-ANh-RsdnguWSAA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="intro">02 · Intro לעולם העבודה — "מונית הכסף"</h2>
     <p class="lead-p rv">היכרות עם עולם התעסוקה. המפגש מסייע להכיר לעומק את שוק העבודה, את מושגי היסוד המגדירים אותו ואת התובנות שעליהן הוא בנוי — ודרך מושגי היסוד מוביל את המשתתפים גם לאיתור המשמעות של המימוש האישי התעסוקתי העתידי שלהם.</p>
@@ -523,7 +528,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · I GROW — למידה עצמאית</td></tr>
           <tr><td class="k">ציוד נדרש</td><td>פתקיות צבעוניות · דפים · עטים · <strong>כרטיסיות למשחק מונית הכסף</strong></td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה</td></tr>
-          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGfAIZypBI/ujwYQ8LmDjUr16bJZkGOLg/edit" target="_blank" rel="noopener">כרטיסיות "מונית הכסף" ↗</a></td></tr>
+          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGfAIZypBI/ujwYQ8LmDjUr16bJZkGOLg/edit" target="_blank" rel="noopener">כרטיסיות "מונית הכסף" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -557,7 +562,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGeDNS7tYE/-aGU69RamRAGprCS6K9ExQ/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGeDNS7tYE/-aGU69RamRAGprCS6K9ExQ/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="ofek">03 · אל האופק וחזרה — "יום צל"</h2>
     <p class="lead-p rv">המפגש הראשון שמוציא את התלמידים מהכיתה אל השטח. מטרתו להכין את התלמידים ל"יום צל" — התלוות לאיש מקצוע במקום עבודה — כך שיגיעו עם שאלות מוכנות, סקרנות ומודעות לתהליך; ולתרגם את החוויה לתובנות פרקטיות על הלמידה במגמה ועל בחירת מקצוע בעתיד.</p>
@@ -575,7 +580,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">ציוד נדרש</td><td>פתקיות צבעוניות · דפים · עטים</td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה + מקום העבודה בפועל</td></tr>
           <tr><td class="k">מבנה מומלץ</td><td><strong>שלושה מפגשים נפרדים:</strong> הכנה · יום הצל עצמו · עיבוד ההתנסות</td></tr>
-          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGh0as3e4w/gdMFOtz9ldc9SY2h-EoZcg/edit" target="_blank" rel="noopener">דף הכנה ל"יום צל" ↗</a></td></tr>
+          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGh0as3e4w/gdMFOtz9ldc9SY2h-EoZcg/edit" target="_blank" rel="noopener">דף הכנה ל"יום צל" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -614,7 +619,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGeDCV_XzY/Z66zzy5q72JqpOK10qIFTQ/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGeDCV_XzY/Z66zzy5q72JqpOK10qIFTQ/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="ipun">04 · אפיון המקצוע שלי — התנעת פרויקט קבוצתי</h2>
     <p class="lead-p rv">המפגש מחזק את ההיכרות עם מושגי היסוד של עולם התעסוקה — ענפים, מקצועות, תעשיות, הכשרות ומיומנויות — ומתניע פרויקט של צוותי עבודה: הפקת סרטון, מצגת או תוצר דיגיטלי אחר, תוך תרגול חקר מקצועי, איסוף מידע וראיונות בתחום התעסוקה.</p>
@@ -631,7 +636,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · <strong>I MIX — עבודת צוות</strong></td></tr>
           <tr><td class="k">ציוד נדרש</td><td>פתקיות צבעוניות · דפים · עטים</td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה</td></tr>
-          <tr><td class="k">מקור מידע ייעודי</td><td><a class="lk" href="https://avodata.labor.gov.il" target="_blank" rel="noopener">עבודאטה — מאגר הנתונים התעסוקתי של משרד העבודה ↗</a></td></tr>
+          <tr><td class="k">מקור מידע ייעודי</td><td><a class="lk" href="https://avodata.labor.gov.il" target="_blank" rel="noopener">עבודאטה — מאגר הנתונים התעסוקתי של משרד העבודה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -685,7 +690,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGfA0Nv-MU/41MJ98hjq4nlWHO-ekb7oA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGfA0Nv-MU/41MJ98hjq4nlWHO-ekb7oA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="welcome">05 · WELCOME לעולם העבודה — מבוא לקורות חיים</h2>
     <p class="lead-p rv">המפגש מספק היכרות ראשונית עם תהליך הכניסה לעולם העבודה: מנועי חיפוש עבודה, פלטפורמות מובילות ומקורות ידע. המשתתפים נחשפים לדגשים ולהמלצות בכתיבת קורות חיים ומתנסים בעצמם בכתיבתם — תוך איסוף חוזקות וכוחות בתהליך הכתיבה.</p>
@@ -697,7 +702,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · <strong>I NET — מיתוג ורישות</strong></td></tr>
           <tr><td class="k">ציוד נדרש</td><td><strong>חדר מחשבים</strong> · טושים ללוח</td></tr>
           <tr><td class="k">מרחב למידה</td><td>חדר מחשבים — המפגש היחיד בשכבה שדורש אותו במפורש</td></tr>
-          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGirHh--ig/mV1F7BKl67qpK_hfk0ckfg/edit" target="_blank" rel="noopener">אופני חיפוש עבודה + טיפים ↗</a> · <a class="lk" href="https://www.canva.com/design/DAGirDeUbv8/qOpcIrz3Ko1IFtv_LT60og/edit" target="_blank" rel="noopener">טופס קורות חיים ↗</a></td></tr>
+          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGirHh--ig/mV1F7BKl67qpK_hfk0ckfg/edit" target="_blank" rel="noopener">אופני חיפוש עבודה + טיפים ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.canva.com/design/DAGirDeUbv8/qOpcIrz3Ko1IFtv_LT60og/edit" target="_blank" rel="noopener">טופס קורות חיים ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -739,7 +744,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGirCgEgbk/funeXeGnxE-JxsLGdmROIw/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGirCgEgbk/funeXeGnxE-JxsLGdmROIw/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="shuk">06 · שוק "קח תן" — ניהול עצמי ומדדי הצלחה</h2>
     <p class="lead-p rv">המפגש מספק פלטפורמה לתרגול והתנסות ביכולות ניהול עצמי, תוך זיהוי נקודות אישיות לשימור ולשיפור — בחיים בכלל ובלימודים במגמה בפרט. המשתתפים מכירים את המושג <strong>מדד הצלחה</strong>, מאפיינים אותו, ומתנסים בזיהוי מטרות לעתיד ובמדידתן.</p>
@@ -798,7 +803,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGjfi8p5eo/QwQL5M-vlqPCY7HbHtlHvg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGjfi8p5eo/QwQL5M-vlqPCY7HbHtlHvg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="action">07 · 3…2…1… אקשן — סימולציות לקראת היציאה לחניכות</h2>
     <p class="lead-p rv">כאן התוכנית הלימודית פוגשת לראשונה במפורש את החניכות. המפגש מספק כלים להבנת ההבדלים בין חניכות לעבודה רגילה, והתלמידים מתנסים בסימולציות מעשיות מתוך תרחישים מעולם החניכות — ומתרגלים התמודדות עם מצבים, תחושות ומחשבות שעלולים לפגוש אותם בשנה הבאה.</p>
@@ -823,7 +828,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · I GROW — למידה לאורך החיים</td></tr>
           <tr><td class="k">ציוד נדרש</td><td>טושים ללוח · <strong>הכנת כרטיסיות סימולציה מראש</strong></td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה — שהופכת לזירת סימולציות בארבע תחנות</td></tr>
-          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGjlYtTGm4/Tu7trcIPByvE8DAESERnAQ/edit" target="_blank" rel="noopener">טבלת השוואה חניכות מול עבודה ↗</a> · <a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">כרטיסיות הסימולציות ↗</a></td></tr>
+          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGjlYtTGm4/Tu7trcIPByvE8DAESERnAQ/edit" target="_blank" rel="noopener">טבלת השוואה חניכות מול עבודה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">כרטיסיות הסימולציות ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -865,7 +870,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)">רשימת הסימולציות המלאה לפי תחנות, שמות, סיטואציות והנחיות — <a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">בקובץ הסימולציות בקנבה ↗</a>. <a class="lk" href="https://www.canva.com/design/DAGj12RPMlA/r6IO62UYq6ibGkAZjraEzw/view" target="_blank" rel="noopener">למארז המלא ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)">רשימת הסימולציות המלאה לפי תחנות, שמות, סיטואציות והנחיות — <a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">בקובץ הסימולציות בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>. <a class="lk" href="https://www.canva.com/design/DAGj12RPMlA/r6IO62UYq6ibGkAZjraEzw/view" target="_blank" rel="noopener">למארז המלא ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="panel">08 · פאנל י״ב — "זמן לתכלס"</h2>
     <p class="lead-p rv">מפגש שיא עם תלמידי י״ב, רגע לפני סיום התיכון. המפגש מאפשר לעסוק בשאלות ובנושאים שמעסיקים את תלמידי י׳ לקראת שנת החניכות — תוך קבלת מענה אותנטי ופרקטי מתלמידים מנוסים: הפגת חששות, קבלת טיפים ושיתוף בחוויות. לצידו, כתיבת מכתב אישי לעצמי ככלי להתבוננות פנימית וחיזוק מוטיבציה.</p>
@@ -882,7 +887,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · I GROW — למידה לאורך החיים</td></tr>
           <tr><td class="k">ציוד נדרש</td><td>דפים לבנים · טושים · רמקול · נרות (לא חובה) · טלפונים</td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה — מסודרת כמסיבת עיתונאים</td></tr>
-          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGjq6BCquY/OjCGSRIP-E4bVmLh3PwZfA/edit" target="_blank" rel="noopener">בנק שאלות לפאנל ↗</a> · <a class="lk" href="https://www.futureme.org/" target="_blank" rel="noopener">FutureMe — לשליחת המכתב לעצמי ↗</a></td></tr>
+          <tr><td class="k">חומר עזר ייעודי</td><td><a class="lk" href="https://www.canva.com/design/DAGjq6BCquY/OjCGSRIP-E4bVmLh3PwZfA/edit" target="_blank" rel="noopener">בנק שאלות לפאנל ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.futureme.org/" target="_blank" rel="noopener">FutureMe — לשליחת המכתב לעצמי ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -924,7 +929,7 @@ details.dom ol>li{padding:3px 0}
       </div>
     </details>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGj17CfPUI/EarVeRNY3x-hws41Tz52zg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGj17CfPUI/EarVeRNY3x-hws41Tz52zg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="siyum">09 · הדברים שחייבים לדעת ?! — משחק מסכם שנה</h2>
     <p class="lead-p rv">"המרוץ לחניכות" — שעשועון טריוויה על השנה האחרונה: התכנים שעברו, השנה במגמה, השנה הבאה ועולם התעסוקה בכלל. שלושה סבבים, טבלת ניקוד על הלוח, ומעגל סיכום שנתי בסוף.</p>
@@ -941,7 +946,7 @@ details.dom ol>li{padding:3px 0}
           <tr><td class="k">כישורי I PRO</td><td>I AM — פרואקטיביות · I GROW — למידה לאורך החיים</td></tr>
           <tr><td class="k">ציוד נדרש</td><td>דפים לבנים · <strong>טושים מחיקים — אחד לכל תלמיד.ה</strong> · <strong>שמרדפים — אחד לכל תלמיד.ה</strong> · רמקול</td></tr>
           <tr><td class="k">מרחב למידה</td><td>הכיתה — התלמידים יושבים בחצי מעגל</td></tr>
-          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGk3JYoWs4/p854uLIhakzJG91PxM1KCw/edit" target="_blank" rel="noopener">בנק השאלות לחידון ↗</a> · <a class="lk" href="https://www.canva.com/design/DAGk3FZdnns/eo2f4LbP5zpKU7ZmaV0k-w/edit" target="_blank" rel="noopener">שאלות מנחות לשיחת הסיכום ↗</a></td></tr>
+          <tr><td class="k">חומרי עזר ייעודיים</td><td><a class="lk" href="https://www.canva.com/design/DAGk3JYoWs4/p854uLIhakzJG91PxM1KCw/edit" target="_blank" rel="noopener">בנק השאלות לחידון ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> · <a class="lk" href="https://www.canva.com/design/DAGk3FZdnns/eo2f4LbP5zpKU7ZmaV0k-w/edit" target="_blank" rel="noopener">שאלות מנחות לשיחת הסיכום ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -975,7 +980,7 @@ details.dom ol>li{padding:3px 0}
     <h3 class="mini rv">מעגל הסיכום</h3>
     <p class="rv">בסיום מחשבים את סך הנקודות ומכריזים על שלושת המקומות הראשונים. המערך מדגיש את המסר שאיתו נסגרת השנה: <strong>"במשחק הנוכחי היו מנצחים, אבל בסופו של דבר כולם יוצאים ממש עוד רגע לחניכות — וכלל התלמידים הרוויחו וזכו במהלך השנה האחרונה בידע חדש, הכוונה והכנה לקראת השנה הבאה והכניסה לעולם התעסוקה."</strong> הופכים את חצי הגורן למעגל ומקיימים שיחת סיכום קצרה: שיתוף תחושות, מחשבות ושאלות לקראת השנה הבאה. גם המורה מסכמת בעצמה את השנה, ונותנת דגשים, המלצות ואיחולים.</p>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGk3IMbcbs/eOJ0AuCjMlnpLkOvRhtrHA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGk3IMbcbs/eOJ0AuCjMlnpLkOvRhtrHA/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="hadmaya">10 · המלצה — "יום הדמיה"</h2>
     <p class="lead-p rv">יום שיא שכבתי בחודש האחרון ללימודים, שמדמה יום "אמיתי" בחניכות במקום עבודה מארח. המטרה: להעניק לתלמידים התנסות מעשית בעולם העבודה דרך יום אינטראקטיבי שמדמה באופן מציאותי ראיונות עבודה, מפגש עם מעסיקים, ביצוע משימות מקצועיות והתמודדות עם סיטואציות שיחכו להם בשנת החניכות.</p>
@@ -1028,7 +1033,7 @@ details.dom ol>li{padding:3px 0}
     </ul>
     <p class="rv">פעילות יצירתית אופציונלית לסיום: בניית קולאז׳ מהתמונות שתיעדו התלמידים, ויצירת פוסטר מסכם בכותרת "מה לקחנו מהיום ומהשנה?"</p>
 
-    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGi0YnbQP0/oG42oS4qrITacAFKClpxMg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗</a></p>
+    <p class="rv" style="font-size:.88rem;color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAGi0YnbQP0/oG42oS4qrITacAFKClpxMg/view" target="_blank" rel="noopener">למארז המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
 
     <h2 class="sub-sec rv" id="gesher">הגשר לחניכות</h2>
     <p class="lead-p rv">כאן נפגשים שני התחומים. <strong>נתיבים לקריירה</strong> היא התוכנית הלימודית שמתקיימת בכיתה, ומי שמוביל אותה הוא מוביל/ת התוכנית. <strong>החניכות</strong> היא ההתנסות בשכר במקום עבודה אמיתי, ומי שאחראי עליה הוא רכז/ת החניכות והתעסוקה. שני התחומים אינם ממוזגים — יש להם בעלי תפקידים שונים, כלים שונים ולוחות זמנים שונים — אבל בכיתה י׳ הם נוגעים זה בזה: מה שנבנה בכיתה במהלך השנה הוא בדיוק מה שהתלמיד.ה ייקח.תיקח איתו למקום העבודה בכיתה י״א.</p>
@@ -1122,17 +1127,17 @@ details.dom ol>li{padding:3px 0}
           <tr><th>#</th><th>המארז</th><th>מה יש בו</th><th>קישור</th></tr>
         </thead>
         <tbody>
-          <tr><td class="k">—</td><td>פאנל השליטה כיתה י׳</td><td>לוח הקישורים המרכזי של השכבה</td><td><a class="lk" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">01</td><td>על קו הזינוק</td><td>מצגת + מערך למורה · 25 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDIqpMWs/Ae-FHVE-ANh-RsdnguWSAA/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">02</td><td>היכרות עם עולם התעסוקה</td><td>מצגת + מערך למורה · 13 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDNS7tYE/-aGU69RamRAGprCS6K9ExQ/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">03</td><td>אל האופק וחזרה</td><td>מצגת + מערך למורה · 16 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDCV_XzY/Z66zzy5q72JqpOK10qIFTQ/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">04</td><td>אפיון המקצוע שלי</td><td>מצגת + מערך למורה · 11 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGfA0Nv-MU/41MJ98hjq4nlWHO-ekb7oA/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">05</td><td>Welcome לעולם העבודה</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGirCgEgbk/funeXeGnxE-JxsLGdmROIw/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">06</td><td>שוק "קח תן"</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGjfi8p5eo/QwQL5M-vlqPCY7HbHtlHvg/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">07</td><td>3…2…1… אקשן</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGj12RPMlA/r6IO62UYq6ibGkAZjraEzw/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">08</td><td>פאנל י״ב — זמן לתכלס</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGj17CfPUI/EarVeRNY3x-hws41Tz52zg/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">09</td><td>הדברים שחייבים לדעת ?!</td><td>מצגת + מערך למורה · 25 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGk3IMbcbs/eOJ0AuCjMlnpLkOvRhtrHA/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">10</td><td>המלצה — יום הדמיה</td><td>מדריך למורה · 2 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGi0YnbQP0/oG42oS4qrITacAFKClpxMg/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
+          <tr><td class="k">—</td><td>פאנל השליטה כיתה י׳</td><td>לוח הקישורים המרכזי של השכבה</td><td><a class="lk" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">01</td><td>על קו הזינוק</td><td>מצגת + מערך למורה · 25 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDIqpMWs/Ae-FHVE-ANh-RsdnguWSAA/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">02</td><td>היכרות עם עולם התעסוקה</td><td>מצגת + מערך למורה · 13 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDNS7tYE/-aGU69RamRAGprCS6K9ExQ/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">03</td><td>אל האופק וחזרה</td><td>מצגת + מערך למורה · 16 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGeDCV_XzY/Z66zzy5q72JqpOK10qIFTQ/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">04</td><td>אפיון המקצוע שלי</td><td>מצגת + מערך למורה · 11 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGfA0Nv-MU/41MJ98hjq4nlWHO-ekb7oA/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">05</td><td>Welcome לעולם העבודה</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGirCgEgbk/funeXeGnxE-JxsLGdmROIw/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">06</td><td>שוק "קח תן"</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGjfi8p5eo/QwQL5M-vlqPCY7HbHtlHvg/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">07</td><td>3…2…1… אקשן</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGj12RPMlA/r6IO62UYq6ibGkAZjraEzw/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">08</td><td>פאנל י״ב — זמן לתכלס</td><td>מצגת + מערך למורה · 15 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGj17CfPUI/EarVeRNY3x-hws41Tz52zg/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">09</td><td>הדברים שחייבים לדעת ?!</td><td>מצגת + מערך למורה · 25 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGk3IMbcbs/eOJ0AuCjMlnpLkOvRhtrHA/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">10</td><td>המלצה — יום הדמיה</td><td>מדריך למורה · 2 עמודים</td><td><a class="lk" href="https://www.canva.com/design/DAGi0YnbQP0/oG42oS4qrITacAFKClpxMg/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
         </tbody>
       </table>
     </div>
@@ -1149,19 +1154,19 @@ details.dom ol>li{padding:3px 0}
           <tr><th>הכלי</th><th>באיזה מפגש</th><th>קישור</th></tr>
         </thead>
         <tbody>
-          <tr><td class="k">מעגל קלפי הצלחה</td><td>בכל עשרת המפגשים</td><td><a class="lk" href="https://www.canva.com/design/DAGeQYt9kWA/MVHV999PXtuoH_e8V2OY3Q/view" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">מפת "הכנה לעולם העבודה"</td><td>בכל המפגשים — יש ליצור עותק</td><td><a class="lk" href="https://padlet.com/efratabc/padlet-ejptu2hm7fbjb67v" target="_blank" rel="noopener">ללוח הפאדלט ↗</a></td></tr>
-          <tr><td class="k">כרטיסיות "מונית הכסף"</td><td>02 · Intro לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGfAIZypBI/ujwYQ8LmDjUr16bJZkGOLg/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">דף הכנה ל"יום צל"</td><td>03 · אל האופק וחזרה</td><td><a class="lk" href="https://www.canva.com/design/DAGh0as3e4w/gdMFOtz9ldc9SY2h-EoZcg/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">עבודאטה — נתוני תעסוקה</td><td>04 · אפיון המקצוע שלי</td><td><a class="lk" href="https://avodata.labor.gov.il" target="_blank" rel="noopener">לאתר ↗</a></td></tr>
-          <tr><td class="k">אופני חיפוש עבודה + טיפים</td><td>05 · Welcome לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGirHh--ig/mV1F7BKl67qpK_hfk0ckfg/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">טופס קורות חיים</td><td>05 · Welcome לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGirDeUbv8/qOpcIrz3Ko1IFtv_LT60og/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">טבלת השוואה חניכות מול עבודה</td><td>07 · 3…2…1… אקשן</td><td><a class="lk" href="https://www.canva.com/design/DAGjlYtTGm4/Tu7trcIPByvE8DAESERnAQ/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">כרטיסיות הסימולציות</td><td>07 · 3…2…1… אקשן</td><td><a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">בנק שאלות לפאנל י״ב</td><td>08 · פאנל י״ב</td><td><a class="lk" href="https://www.canva.com/design/DAGjq6BCquY/OjCGSRIP-E4bVmLh3PwZfA/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">FutureMe — מכתב לעצמי</td><td>08 · פאנל י״ב</td><td><a class="lk" href="https://www.futureme.org/" target="_blank" rel="noopener">לאתר ↗</a></td></tr>
-          <tr><td class="k">בנק השאלות לחידון</td><td>09 · הדברים שחייבים לדעת</td><td><a class="lk" href="https://www.canva.com/design/DAGk3JYoWs4/p854uLIhakzJG91PxM1KCw/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
-          <tr><td class="k">שאלות מנחות לשיחת סיכום</td><td>09 · הדברים שחייבים לדעת</td><td><a class="lk" href="https://www.canva.com/design/DAGk3FZdnns/eo2f4LbP5zpKU7ZmaV0k-w/edit" target="_blank" rel="noopener">לפתיחה ↗</a></td></tr>
+          <tr><td class="k">מעגל קלפי הצלחה</td><td>בכל עשרת המפגשים</td><td><a class="lk" href="https://www.canva.com/design/DAGeQYt9kWA/MVHV999PXtuoH_e8V2OY3Q/view" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">מפת "הכנה לעולם העבודה"</td><td>בכל המפגשים — יש ליצור עותק</td><td><a class="lk" href="https://padlet.com/efratabc/padlet-ejptu2hm7fbjb67v" target="_blank" rel="noopener">ללוח הפאדלט ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">כרטיסיות "מונית הכסף"</td><td>02 · Intro לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGfAIZypBI/ujwYQ8LmDjUr16bJZkGOLg/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">דף הכנה ל"יום צל"</td><td>03 · אל האופק וחזרה</td><td><a class="lk" href="https://www.canva.com/design/DAGh0as3e4w/gdMFOtz9ldc9SY2h-EoZcg/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">עבודאטה — נתוני תעסוקה</td><td>04 · אפיון המקצוע שלי</td><td><a class="lk" href="https://avodata.labor.gov.il" target="_blank" rel="noopener">לאתר ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">אופני חיפוש עבודה + טיפים</td><td>05 · Welcome לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGirHh--ig/mV1F7BKl67qpK_hfk0ckfg/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">טופס קורות חיים</td><td>05 · Welcome לעולם העבודה</td><td><a class="lk" href="https://www.canva.com/design/DAGirDeUbv8/qOpcIrz3Ko1IFtv_LT60og/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">טבלת השוואה חניכות מול עבודה</td><td>07 · 3…2…1… אקשן</td><td><a class="lk" href="https://www.canva.com/design/DAGjlYtTGm4/Tu7trcIPByvE8DAESERnAQ/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">כרטיסיות הסימולציות</td><td>07 · 3…2…1… אקשן</td><td><a class="lk" href="https://www.canva.com/design/DAGj162wywo/glWaOBY9lgOoUWmPT78LlQ/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">בנק שאלות לפאנל י״ב</td><td>08 · פאנל י״ב</td><td><a class="lk" href="https://www.canva.com/design/DAGjq6BCquY/OjCGSRIP-E4bVmLh3PwZfA/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">FutureMe — מכתב לעצמי</td><td>08 · פאנל י״ב</td><td><a class="lk" href="https://www.futureme.org/" target="_blank" rel="noopener">לאתר ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">בנק השאלות לחידון</td><td>09 · הדברים שחייבים לדעת</td><td><a class="lk" href="https://www.canva.com/design/DAGk3JYoWs4/p854uLIhakzJG91PxM1KCw/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
+          <tr><td class="k">שאלות מנחות לשיחת סיכום</td><td>09 · הדברים שחייבים לדעת</td><td><a class="lk" href="https://www.canva.com/design/DAGk3FZdnns/eo2f4LbP5zpKU7ZmaV0k-w/edit" target="_blank" rel="noopener">לפתיחה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></td></tr>
           <tr><td class="k">"גישת הכוחות"</td><td>קישור קבוע בכל המארזים</td><td>מסמך מקור המצורף למארזי הקנבה</td></tr>
         </tbody>
       </table>
@@ -1169,18 +1174,20 @@ details.dom ol>li{padding:3px 0}
 
     <div class="source-box rv">
       <div class="t">שני הכלים שמלווים את המורה<small>סוכן ה-AI של התוכנית ומודל הכישורים שעליו היא נשענת — מקושרים בכל אחד מעשרת המארזים.</small></div>
-      <a class="btn" href="https://poe.com/netivim" target="_blank" rel="noopener">סוכן ה-AI "נתיבים" ↗</a>
-      <a class="btn alt" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר מודל I PRO ↗</a>
+      <a class="btn" href="https://poe.com/netivim" target="_blank" rel="noopener">סוכן ה-AI "נתיבים" ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+      <a class="btn alt" href="https://www.career-skills.org" target="_blank" rel="noopener">אתר מודל I PRO ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
     <div class="source-box rv">
       <div class="t">המקור<small>העמוד הזה מתמלל ומסדר את מארזי הקנבה של שכבה י׳. הנוסח והחומרים המחייבים הם המארזים המקוריים של החינוך היוצר.</small></div>
-      <a class="btn" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">פאנל השליטה כיתה י׳ ↗</a>
+      <a class="btn" href="https://www.canva.com/design/DAGeC9moxPY/4zZKdun2t6vU_LD_yxFQ7Q/view" target="_blank" rel="noopener">פאנל השליטה כיתה י׳ ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
       <a class="btn alt" href="chaka.html">◂ חזרה למודל ח.כ.ה</a>
     </div>
 
   </div>
 </article>
+
+</main>
 
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div></div>
 

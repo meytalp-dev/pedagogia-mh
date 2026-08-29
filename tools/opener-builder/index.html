@@ -15,6 +15,9 @@
   --radius:16px;
 }
 body{font-family:'Assistant',sans-serif;background:var(--light-gray);color:var(--dark);min-height:100vh}
+/* איפוס עיצוב לכפתורים שנראים כמו כרטיס/שורה רגילים (נגישות מקלדת בלי שינוי מראה) */
+.plain-btn{all:unset;box-sizing:border-box;display:block;cursor:pointer}
+.plain-btn:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 
 /* ===== TOP BAR ===== */
 .topbar{background:var(--white);padding:16px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
@@ -136,9 +139,11 @@ textarea{resize:vertical;min-height:80px}
   <div style="font-size:3rem;margin-bottom:16px">🎯</div>
   <h2>מחולל פעילויות פתיחה</h2>
   <p>יצירת פעילויות פתיחה אינטראקטיביות לשיעור</p>
-  <div class="name-form">
-    <input type="text" id="teacherName" placeholder="שם המורה">
-    <input type="text" id="teacherEmail" placeholder="אימייל (אופציונלי)">
+  <div class="name-form" style="text-align:right">
+    <label for="teacherName">שם המורה</label>
+    <input type="text" id="teacherName" placeholder="למשל: רותי לוי">
+    <label for="teacherEmail">אימייל (אופציונלי)</label>
+    <input type="text" id="teacherEmail" placeholder="למשל: ruti@school.org.il">
     <button class="btn btn-primary btn-block" onclick="enterApp()">כניסה למחולל</button>
   </div>
 </div>
@@ -155,11 +160,11 @@ textarea{resize:vertical;min-height:80px}
 
 <!-- PROGRESS -->
 <div class="progress-bar">
-  <div class="step-circle active" id="sc1" onclick="goToStep(1)">1</div>
+  <button type="button" class="plain-btn step-circle active" id="sc1" onclick="goToStep(1)" aria-label="שלב 1 – פרטי שיעור">1</button>
   <div class="step-line" id="sl1"></div>
-  <div class="step-circle" id="sc2" onclick="goToStep(2)">2</div>
+  <button type="button" class="plain-btn step-circle" id="sc2" onclick="goToStep(2)" aria-label="שלב 2 – פעילויות">2</button>
   <div class="step-line" id="sl2"></div>
-  <div class="step-circle" id="sc3" onclick="goToStep(3)">3</div>
+  <button type="button" class="plain-btn step-circle" id="sc3" onclick="goToStep(3)" aria-label="שלב 3 – תצוגה ופרסום">3</button>
 </div>
 <div class="step-labels">
   <span>פרטי שיעור</span>
@@ -172,12 +177,12 @@ textarea{resize:vertical;min-height:80px}
   <div class="card">
     <h2>📋 פרטי השיעור</h2>
     <div class="form-row">
-      <label>שם הפעילות / נושא *</label>
+      <label for="openerName">שם הפעילות / נושא *</label>
       <input type="text" id="openerName" placeholder="למשל: בניין התפעל">
     </div>
     <div class="form-grid">
       <div class="form-row">
-        <label>מקצוע *</label>
+        <label for="openerSubject">מקצוע *</label>
         <select id="openerSubject">
           <option value="">בחרו מקצוע</option>
           <option value="עברית">עברית</option>
@@ -193,7 +198,7 @@ textarea{resize:vertical;min-height:80px}
         </select>
       </div>
       <div class="form-row">
-        <label>כיתה *</label>
+        <label for="openerGrade">כיתה *</label>
         <select id="openerGrade">
           <option value="">בחרו כיתה</option>
           <option value="ט">כיתה ט׳</option>
@@ -222,14 +227,15 @@ textarea{resize:vertical;min-height:80px}
     <h3>✨ יצירה אוטומטית עם AI</h3>
     <p style="font-size:0.85rem;color:var(--gray);margin-bottom:12px">ה-AI ימלא את התוכן של כל הפעילויות שבחרתם לפי הנושא</p>
     <div class="form-row">
-      <input type="text" id="aiTopic" placeholder="הנושא המדויק (למשל: בניין התפעל בעברית)">
+      <label for="aiTopic">הנושא המדויק</label>
+      <input type="text" id="aiTopic" placeholder="למשל: בניין התפעל בעברית">
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
       <button class="btn btn-sm btn-orange" style="flex:1;min-width:200px" onclick="copyChatPrompt()">1️⃣ 📋 העתיקו את הפרומפט</button>
       <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="btn btn-sm btn-orange" style="flex:1;min-width:200px;text-align:center;text-decoration:none" onclick="revealPasteBox()">2️⃣ ✨ פתחו את Gemini והדביקו</a>
     </div>
     <div id="chatPasteBox" style="display:none;margin-bottom:10px">
-      <textarea id="chatAnswer" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="width:100%;min-height:90px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Assistant',sans-serif;font-size:14px;margin-bottom:8px"></textarea>
+      <textarea id="chatAnswer" aria-label="הדבקת התשובה של Gemini" placeholder="3️⃣ העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="width:100%;min-height:90px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Assistant',sans-serif;font-size:14px;margin-bottom:8px"></textarea>
       <button class="btn btn-sm btn-orange" onclick="buildFromChatAnswer()" style="width:100%">🧩 בנו את הפעילויות מהתשובה</button>
     </div>
     <details>
@@ -254,7 +260,7 @@ textarea{resize:vertical;min-height:80px}
     <h2>👁️ תצוגה מקדימה</h2>
     <div class="preview-tabs" id="previewTabs"></div>
     <div class="preview-frame">
-      <iframe id="previewIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+      <iframe id="previewIframe" title="תצוגה מקדימה של פעילות הפתיחה" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
   </div>
   <div class="card">
@@ -388,8 +394,10 @@ function renderTypeGrid() {
   const grid = document.getElementById('typeGrid');
   grid.innerHTML = '';
   Object.entries(TYPES).forEach(([key, t]) => {
-    const div = document.createElement('div');
-    div.className = 'type-card' + (selectedTypes.includes(key) ? ' selected' : '');
+    const div = document.createElement('button');
+    div.type = 'button';
+    div.className = 'plain-btn type-card' + (selectedTypes.includes(key) ? ' selected' : '');
+    div.setAttribute('aria-pressed', selectedTypes.includes(key) ? 'true' : 'false');
     div.innerHTML = `<span class="type-icon">${t.icon}</span><div class="type-name">${t.name}</div><div class="type-desc">${t.desc}${t.shared ? ' 📱' : ''}</div>`;
     div.onclick = () => toggleType(key);
     grid.appendChild(div);
@@ -438,14 +446,14 @@ function renderActivityEditors() {
     const div = document.createElement('div');
     div.className = 'accordion' + (i === 0 ? ' open' : '');
     div.innerHTML = `
-      <div class="accordion-header" onclick="toggleAccordion(this)">
-        <span class="acc-icon">${t.icon}</span>
+      <button type="button" class="plain-btn accordion-header" aria-expanded="${i === 0 ? 'true' : 'false'}" onclick="toggleAccordion(this)">
+        <span class="acc-icon" aria-hidden="true">${t.icon}</span>
         <span class="acc-title">${t.name}${t.shared ? ' 📱' : ''}</span>
-        <span class="acc-arrow">▼</span>
-      </div>
+        <span class="acc-arrow" aria-hidden="true">▼</span>
+      </button>
       <div class="accordion-body">
         ${buildEditor(act.type, act.data, i)}
-        <span class="remove-activity" onclick="removeActivity(${i})">🗑️ הסר פעילות</span>
+        <button type="button" class="plain-btn remove-activity" onclick="removeActivity(${i})">🗑️ הסר פעילות</button>
       </div>`;
     container.appendChild(div);
   });
@@ -455,77 +463,78 @@ function buildEditor(type, data, idx) {
   const p = `act_${idx}_`;
   switch(type) {
     case 'question': return `
-      <div class="form-row"><label>השאלה *</label><textarea id="${p}text" placeholder="שאלה שמעוררת סקרנות...">${data.text}</textarea></div>
-      <div class="form-row"><label>רמז (אופציונלי)</label><input type="text" id="${p}hint" value="${data.hint}" placeholder="רמז שעוזר לחשוב..."></div>
-      <div class="form-row"><label>תשובה / כיוון חשיבה</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="התשובה או כיוון לדיון"></div>`;
+      <div class="form-row"><label for="${p}text">השאלה *</label><textarea id="${p}text" placeholder="שאלה שמעוררת סקרנות...">${data.text}</textarea></div>
+      <div class="form-row"><label for="${p}hint">רמז (אופציונלי)</label><input type="text" id="${p}hint" value="${data.hint}" placeholder="רמז שעוזר לחשוב..."></div>
+      <div class="form-row"><label for="${p}answer">תשובה / כיוון חשיבה</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="התשובה או כיוון לדיון"></div>`;
 
     case 'story': return `
-      <div class="form-row"><label>הסיפור / העובדה המפתיעה *</label><textarea id="${p}text" placeholder="סיפור קצר (3-4 משפטים) שמחבר לנושא...">${data.text}</textarea></div>
-      <div class="form-row"><label>שאלה לדיון</label><input type="text" id="${p}discussionQuestion" value="${data.discussionQuestion}" placeholder="מה דעתכם?"></div>`;
+      <div class="form-row"><label for="${p}text">הסיפור / העובדה המפתיעה *</label><textarea id="${p}text" placeholder="סיפור קצר (3-4 משפטים) שמחבר לנושא...">${data.text}</textarea></div>
+      <div class="form-row"><label for="${p}discussionQuestion">שאלה לדיון</label><input type="text" id="${p}discussionQuestion" value="${data.discussionQuestion}" placeholder="מה דעתכם?"></div>`;
 
     case 'vote': return `
-      <div class="form-row"><label>שאלת ההצבעה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="למשל: איזה משפט נכון?"></div>
-      ${data.options.map((o, j) => `<div class="form-row"><label>אפשרות ${j+1}</label><input type="text" id="${p}opt${j}" value="${o}" placeholder="אפשרות ${j+1}"></div>`).join('')}
+      <div class="form-row"><label for="${p}question">שאלת ההצבעה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="למשל: איזה משפט נכון?"></div>
+      ${data.options.map((o, j) => `<div class="form-row"><label for="${p}opt${j}">אפשרות ${j+1}</label><input type="text" id="${p}opt${j}" value="${o}" placeholder="אפשרות ${j+1}"></div>`).join('')}
       <button class="btn btn-sm btn-secondary" onclick="addVoteOption(${idx})">+ אפשרות</button>`;
 
     case 'riddle': return `
-      <div class="form-row"><label>שאלת החידה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="מי אני? / מה אני?"></div>
-      ${data.hints.map((h, j) => `<div class="form-row"><label>רמז ${j+1}</label><input type="text" id="${p}hint${j}" value="${h}" placeholder="רמז ${j+1}..."></div>`).join('')}
-      <div class="form-row"><label>התשובה *</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="התשובה לחידה"></div>`;
+      <div class="form-row"><label for="${p}question">שאלת החידה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="מי אני? / מה אני?"></div>
+      ${data.hints.map((h, j) => `<div class="form-row"><label for="${p}hint${j}">רמז ${j+1}</label><input type="text" id="${p}hint${j}" value="${h}" placeholder="רמז ${j+1}..."></div>`).join('')}
+      <div class="form-row"><label for="${p}answer">התשובה *</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="התשובה לחידה"></div>`;
 
     case 'truefalse': return data.statements.map((s, j) => `
       <div style="background:var(--light-gray);padding:14px;border-radius:12px;margin-bottom:10px">
-        <div class="form-row"><label>טענה ${j+1} *</label><input type="text" id="${p}st${j}" value="${s.text}" placeholder="טענה ${j+1}..."></div>
-        <div class="form-row"><label>נכון או לא?</label>
+        <div class="form-row"><label for="${p}st${j}">טענה ${j+1} *</label><input type="text" id="${p}st${j}" value="${s.text}" placeholder="טענה ${j+1}..."></div>
+        <div class="form-row"><label for="${p}tf${j}">נכון או לא?</label>
           <select id="${p}tf${j}"><option value="true" ${s.isTrue?'selected':''}>נכון ✅</option><option value="false" ${!s.isTrue?'selected':''}>לא נכון ❌</option></select></div>
-        <div class="form-row"><label>הסבר קצר</label><input type="text" id="${p}ex${j}" value="${s.explanation}" placeholder="למה?"></div>
+        <div class="form-row"><label for="${p}ex${j}">הסבר קצר</label><input type="text" id="${p}ex${j}" value="${s.explanation}" placeholder="למה?"></div>
       </div>`).join('') + `<button class="btn btn-sm btn-secondary" onclick="addStatement(${idx})">+ טענה</button>`;
 
     case 'dilemma': return `
-      <div class="form-row"><label>תיאור הסיטואציה *</label><textarea id="${p}scenario" placeholder="תארו דילמה או סיטואציה מחיי היום-יום...">${data.scenario}</textarea></div>
+      <div class="form-row"><label for="${p}scenario">תיאור הסיטואציה *</label><textarea id="${p}scenario" placeholder="תארו דילמה או סיטואציה מחיי היום-יום...">${data.scenario}</textarea></div>
       ${data.options.map((o, j) => `
         <div style="background:var(--light-gray);padding:14px;border-radius:12px;margin-bottom:10px">
-          <div class="form-row"><label>אפשרות ${j+1} *</label><input type="text" id="${p}dopt${j}" value="${o.text}" placeholder="אפשרות ${j+1}"></div>
-          <div class="form-row"><label>תוצאה/הסבר</label><input type="text" id="${p}dres${j}" value="${o.result}" placeholder="מה קורה אם בוחרים בזה?"></div>
+          <div class="form-row"><label for="${p}dopt${j}">אפשרות ${j+1} *</label><input type="text" id="${p}dopt${j}" value="${o.text}" placeholder="אפשרות ${j+1}"></div>
+          <div class="form-row"><label for="${p}dres${j}">תוצאה/הסבר</label><input type="text" id="${p}dres${j}" value="${o.result}" placeholder="מה קורה אם בוחרים בזה?"></div>
         </div>`).join('')}`;
 
     case 'image': return `
-      <div class="form-row"><label>אמוג'י / ויזואל *</label><input type="text" id="${p}emoji" value="${data.emoji}" placeholder="למשל: 🏛️🔥⚔️" style="font-size:2rem;text-align:center"></div>
-      <div class="form-row"><label>שאלה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="מה אתם רואים? מה קרה כאן?"></div>`;
+      <div class="form-row"><label for="${p}emoji">אמוג'י / ויזואל *</label><input type="text" id="${p}emoji" value="${data.emoji}" placeholder="למשל: 🏛️🔥⚔️" style="font-size:2rem;text-align:center"></div>
+      <div class="form-row"><label for="${p}question">שאלה *</label><input type="text" id="${p}question" value="${data.question}" placeholder="מה אתם רואים? מה קרה כאן?"></div>`;
 
     case 'wordcloud': return `
-      <div class="form-row"><label>הנחיה לתלמידים *</label><input type="text" id="${p}prompt" value="${data.prompt}" placeholder="כתבו מילה אחת שקשורה ל..."></div>`;
+      <div class="form-row"><label for="${p}prompt">הנחיה לתלמידים *</label><input type="text" id="${p}prompt" value="${data.prompt}" placeholder="כתבו מילה אחת שקשורה ל..."></div>`;
 
     case 'wheel': return `
-      <div class="form-row"><label>כותרת (אופציונלי)</label><input type="text" id="${p}question" value="${data.question}" placeholder="למשל: מי עונה?"></div>
-      ${(data.items||[]).map((item, j) => `<div class="form-row"><label>פריט ${j+1}</label><input type="text" id="${p}item${j}" value="${item}" placeholder="שם תלמיד / שאלה / פריט"></div>`).join('')}
+      <div class="form-row"><label for="${p}question">כותרת (אופציונלי)</label><input type="text" id="${p}question" value="${data.question}" placeholder="למשל: מי עונה?"></div>
+      ${(data.items||[]).map((item, j) => `<div class="form-row"><label for="${p}item${j}">פריט ${j+1}</label><input type="text" id="${p}item${j}" value="${item}" placeholder="שם תלמיד / שאלה / פריט"></div>`).join('')}
       <button class="btn btn-sm btn-secondary" onclick="addWheelItem(${idx})">+ פריט</button>`;
 
     case 'fillblank': return `
-      <div class="form-row"><label>המשפט (סמנו ___ במקום המילה החסרה) *</label><input type="text" id="${p}sentence" value="${data.sentence}" placeholder="למשל: בניין ___ מתחיל באותיות הת"></div>
-      <div class="form-row"><label>התשובה הנכונה *</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="המילה החסרה"></div>
-      ${(data.options||[]).map((o, j) => `<div class="form-row"><label>אפשרות מסיחה ${j+1}</label><input type="text" id="${p}fopt${j}" value="${o}" placeholder="תשובה שגויה ${j+1}"></div>`).join('')}`;
+      <div class="form-row"><label for="${p}sentence">המשפט (סמנו ___ במקום המילה החסרה) *</label><input type="text" id="${p}sentence" value="${data.sentence}" placeholder="למשל: בניין ___ מתחיל באותיות הת"></div>
+      <div class="form-row"><label for="${p}answer">התשובה הנכונה *</label><input type="text" id="${p}answer" value="${data.answer}" placeholder="המילה החסרה"></div>
+      ${(data.options||[]).map((o, j) => `<div class="form-row"><label for="${p}fopt${j}">אפשרות מסיחה ${j+1}</label><input type="text" id="${p}fopt${j}" value="${o}" placeholder="תשובה שגויה ${j+1}"></div>`).join('')}`;
 
     case 'guessnumber': return `
-      <div class="form-row"><label>השאלה * (למשל: כמה תלמידים יש בבית הספר?)</label><input type="text" id="${p}question" value="${data.question}" placeholder="כמה...?"></div>
+      <div class="form-row"><label for="${p}question">השאלה * (למשל: כמה תלמידים יש בבית הספר?)</label><input type="text" id="${p}question" value="${data.question}" placeholder="כמה...?"></div>
       <div class="form-grid">
-        <div class="form-row"><label>התשובה הנכונה (מספר) *</label><input type="number" id="${p}answer" value="${data.answer || ''}" placeholder="42"></div>
-        <div class="form-row"><label>יחידת מידה (אופציונלי)</label><input type="text" id="${p}unit" value="${data.unit}" placeholder="ק״מ / שנים / אנשים"></div>
+        <div class="form-row"><label for="${p}answer">התשובה הנכונה (מספר) *</label><input type="number" id="${p}answer" value="${data.answer || ''}" placeholder="42"></div>
+        <div class="form-row"><label for="${p}unit">יחידת מידה (אופציונלי)</label><input type="text" id="${p}unit" value="${data.unit}" placeholder="ק״מ / שנים / אנשים"></div>
       </div>`;
 
     case 'twotruths': return `
       <p style="font-size:0.85rem;color:var(--gray);margin-bottom:12px">כתבו 3 טענות – 2 נכונות ואחת שקר. התלמידים צריכים למצוא את השקר!</p>
       ${(data.statements||[]).map((s, j) => `
         <div style="background:var(--light-gray);padding:14px;border-radius:12px;margin-bottom:10px">
-          <div class="form-row"><label>טענה ${j+1} *</label><input type="text" id="${p}tt${j}" value="${s.text}" placeholder="טענה ${j+1}..."></div>
-          <div class="form-row"><label>סוג</label>
+          <div class="form-row"><label for="${p}tt${j}">טענה ${j+1} *</label><input type="text" id="${p}tt${j}" value="${s.text}" placeholder="טענה ${j+1}..."></div>
+          <div class="form-row"><label for="${p}lie${j}">סוג</label>
             <select id="${p}lie${j}"><option value="false" ${!s.isLie?'selected':''}>אמת ✅</option><option value="true" ${s.isLie?'selected':''}>שקר ❌</option></select></div>
         </div>`).join('')}`;
   }
 }
 
 function toggleAccordion(el) {
-  el.parentElement.classList.toggle('open');
+  const open = el.parentElement.classList.toggle('open');
+  el.setAttribute('aria-expanded', open ? 'true' : 'false');
 }
 
 function removeActivity(idx) {
@@ -761,12 +770,15 @@ function refreshPreview() {
   tabsEl.innerHTML = '';
   activities.forEach((act, i) => {
     const t = TYPES[act.type];
-    const tab = document.createElement('div');
-    tab.className = 'preview-tab' + (i === 0 ? ' active' : '');
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'plain-btn preview-tab' + (i === 0 ? ' active' : '');
+    tab.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
     tab.textContent = t.icon + ' ' + t.name;
     tab.onclick = () => {
-      tabsEl.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+      tabsEl.querySelectorAll('.preview-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
       tab.classList.add('active');
+      tab.setAttribute('aria-pressed', 'true');
       const iframe = document.getElementById('previewIframe');
       iframe.contentWindow.postMessage({ action: 'switchTab', index: i }, '*');
     };
@@ -779,7 +791,7 @@ function generateOpenerHTML() {
   const d = details;
   const tabsHTML = activities.map((act, i) => {
     const t = TYPES[act.type];
-    return `<div class="tab ${i === 0 ? 'active' : ''}" onclick="switchTab(${i})">${t.icon} ${t.name}</div>`;
+    return `<button type="button" class="plain-btn tab ${i === 0 ? 'active' : ''}" aria-pressed="${i === 0}" onclick="switchTab(${i})">${t.icon} ${t.name}</button>`;
   }).join('');
 
   const activitiesHTML = activities.map((act, i) => {
@@ -797,6 +809,8 @@ function generateOpenerHTML() {
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--primary:#124D7A;--primary-light:#E8F2FF;--primary-dark:#0D3B66;--secondary:#087B9C;--accent:#52B788;--orange:#F4A261;--dark:#102A43;--gray:#52687A;--light-gray:#F1F5F9;--white:#FFFFFF;--radius:16px}
 body{font-family:'Assistant',sans-serif;background:linear-gradient(135deg,#E8F2FF 0%,#F1F5F9 50%,#EDE9FE 100%);color:var(--dark);min-height:100vh}
+.plain-btn{all:unset;box-sizing:border-box;display:block;cursor:pointer}
+.plain-btn:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 header{text-align:center;padding:32px 20px 20px}
 header h1{font-family:'Assistant',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:8px}
 .meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
@@ -941,7 +955,7 @@ footer{text-align:center;padding:24px;color:var(--gray);font-size:0.8rem}
 <script>
 // Tab switching
 function switchTab(idx) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach((t,i) => { t.classList.toggle('active', i===idx); t.setAttribute('aria-pressed', i===idx ? 'true' : 'false'); });
   document.querySelectorAll('.activity-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
 }
 
@@ -1045,7 +1059,7 @@ function generateActivityHTML(act, idx) {
       noteText = 'הקרינו על המסך. כל תלמיד ניגש ולוחץ על התשובה שלו. הגרף מתעדכן בזמן אמת. אפשר גם לשתף קישור לטלפונים.';
       const letters = ['א','ב','ג','ד','ה','ו'];
       const optsHTML = (d.options || []).map((o, j) =>
-        `<div class="vote-o" onclick="doVote(${idx},${j})"><span class="vote-letter">${letters[j] || j+1}</span><span>${o || 'אפשרות'}</span></div>`
+        `<button type="button" class="plain-btn vote-o" onclick="doVote(${idx},${j})"><span class="vote-letter" aria-hidden="true">${letters[j] || j+1}</span><span>${o || 'אפשרות'}</span></button>`
       ).join('');
       const barsHTML = (d.options || []).map((o, j) =>
         `<div class="bar-row"><span class="bar-label">${letters[j] || j+1}</span><div class="bar-bg"><div class="bar c${j%4}" id="vbar_${idx}_${j}" style="width:0"><span></span></div></div></div>`
@@ -1061,7 +1075,7 @@ function generateActivityHTML(act, idx) {
     case 'riddle':
       noteText = 'חשפו רמז אחד בכל פעם. תנו לתלמידים לנחש אחרי כל רמז. מי שמצליח עם הכי פחות רמזים – מנצח!';
       const hintsHTML = (d.hints || []).map((h, j) =>
-        `<div class="hint-item" id="rhint_${idx}_${j}" onclick="revealRiddleHint(${idx},${j})">לחצו לגלות רמז ${j+1}</div>`
+        `<button type="button" class="plain-btn hint-item" id="rhint_${idx}_${j}" onclick="revealRiddleHint(${idx},${j})">לחצו לגלות רמז ${j+1}</button>`
       ).join('');
       contentHTML = `
         <div class="section-title">${t.icon} חידה / ניחוש</div>
@@ -1074,9 +1088,9 @@ function generateActivityHTML(act, idx) {
     case 'truefalse':
       noteText = 'לחצו על כל טענה כדי לגלות אם היא נכונה או לא. אפשר לבקש מתלמידים להרים יד לפני שחושפים.';
       const stmtsHTML = (d.statements || []).map((s, j) =>
-        `<div class="tf-card" id="tfc_${idx}_${j}" onclick="flipTF(${idx},${j})">
+        `<button type="button" class="plain-btn tf-card" id="tfc_${idx}_${j}" onclick="flipTF(${idx},${j})">
           <div><div>${s.text || 'טענה'}</div><div class="tf-result" id="tfr_${idx}_${j}">${s.isTrue ? '✅ נכון!' : '❌ לא נכון!'} ${s.explanation || ''}</div></div>
-        </div>`
+        </button>`
       ).join('');
       contentHTML = `
         <div class="section-title">${t.icon} נכון / לא נכון</div>
@@ -1086,7 +1100,7 @@ function generateActivityHTML(act, idx) {
     case 'dilemma':
       noteText = 'הציגו את הסיטואציה. בקשו מתלמידים לבחור צד. אפשר לשתף קישור לטלפונים כדי שכולם יצביעו.';
       const dilOptsHTML = (d.options || []).map((o, j) =>
-        `<div class="dilemma-o" onclick="chooseDilemma(${idx},${j})">${o.text || 'אפשרות'}<div class="dilemma-result">${o.result || ''}</div></div>`
+        `<button type="button" class="plain-btn dilemma-o" onclick="chooseDilemma(${idx},${j})">${o.text || 'אפשרות'}<div class="dilemma-result">${o.result || ''}</div></button>`
       ).join('');
       contentHTML = `
         <div class="section-title">${t.icon} מה היית עושה?</div>
@@ -1108,7 +1122,7 @@ function generateActivityHTML(act, idx) {
         <div class="section-title">${t.icon} מילה אחת – ענן מילים</div>
         <div class="wc-prompt">${d.prompt || 'כתבו מילה אחת...'}</div>
         <div class="wc-input-row">
-          <input type="text" class="wc-input" id="wcinput_${idx}" placeholder="כתבו מילה..." maxlength="20" onkeydown="if(event.key==='Enter')addWC(${idx})">
+          <input type="text" class="wc-input" id="wcinput_${idx}" aria-label="המילה שלכם" placeholder="כתבו מילה..." maxlength="20" onkeydown="if(event.key==='Enter')addWC(${idx})">
           <button class="btn btn-primary" onclick="addWC(${idx})">➕</button>
         </div>
         <div class="wc-area" id="wcarea_${idx}"><span class="wc-empty">🌤️ הענן ריק... הוסיפו מילים!</span></div>
@@ -1149,7 +1163,7 @@ function generateActivityHTML(act, idx) {
         <div class="section-title">${t.icon} ניחוש מספר</div>
         <div class="big-question">${d.question || 'כמה...?'}</div>
         <div style="display:flex;gap:10px;justify-content:center;margin:16px 0">
-          <input type="number" class="wc-input" id="gnInput_${idx}" placeholder="הניחוש שלכם..." style="max-width:200px;text-align:center;font-size:1.3rem">
+          <input type="number" class="wc-input" id="gnInput_${idx}" aria-label="הניחוש שלכם" placeholder="הניחוש שלכם..." style="max-width:200px;text-align:center;font-size:1.3rem">
           <button class="btn btn-primary" onclick="guessNumber(${idx}, ${d.answer || 0}, '${d.unit || ''}')">🏆 בדוק!</button>
         </div>
         <div class="answer-box" id="gnResult_${idx}"></div>`;
@@ -1158,7 +1172,7 @@ function generateActivityHTML(act, idx) {
     case 'twotruths':
       noteText = '3 טענות על הנושא – 2 אמת ואחת שקר. התלמידים צריכים לזהות את השקר. מצוין לעורר דיון!';
       const ttStmts = (d.statements || []).map((s, j) =>
-        `<div class="tf-card" id="ttc_${idx}_${j}" onclick="checkTT(${idx},${j},${s.isLie})">${s.text || 'טענה'}<div class="tf-result" id="ttr_${idx}_${j}">${s.isLie ? '❌ זה השקר!' : '✅ זו אמת!'}</div></div>`
+        `<button type="button" class="plain-btn tf-card" id="ttc_${idx}_${j}" onclick="checkTT(${idx},${j},${s.isLie})">${s.text || 'טענה'}<div class="tf-result" id="ttr_${idx}_${j}">${s.isLie ? '❌ זה השקר!' : '✅ זו אמת!'}</div></button>`
       ).join('');
       contentHTML = `
         <div class="section-title">${t.icon} שני אמתות ושקר – מצאו את השקר!</div>
@@ -1226,6 +1240,7 @@ function revealRiddleHint(actIdx, hintIdx) {
   el.classList.add('revealed');
   el.innerHTML = '<span class="hint-num">' + (hintIdx+1) + '</span><span>' + (hints[hintIdx] || '') + '</span>';
   el.onclick = null;
+  if ('disabled' in el) el.disabled = true;
   riddleState[actIdx].revealed = hintIdx + 1;
   if (riddleState[actIdx].revealed >= (hints.length || 4)) {
     var btn = document.getElementById('rbtn_' + actIdx);

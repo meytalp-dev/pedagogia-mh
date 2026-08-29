@@ -73,9 +73,13 @@
 
   /* הבלוק העליון שבו יושבת הכותרת הראשית — הפס נכנס מיד אחריו */
   function bodyBlock(el) {
+    /* מאז שנוסף <main id="main"> לכל העמודים (נגישות, WCAG 2.4.1) העצירה
+       חייבת להיות גם עליו — אחרת הטיפוס מגיע ל-<main> עצמו והפס הדביק
+       נדחף אחרי סגירתו, כלומר לתחתית המסמך. */
+    function isStop(p) { return p === document.body || p.tagName === 'MAIN'; }
     var n = el, guard = 0;
-    while (n && n.parentElement && n.parentElement !== document.body && guard++ < 12) n = n.parentElement;
-    return n && n.parentElement === document.body ? n : null;
+    while (n && n.parentElement && !isStop(n.parentElement) && guard++ < 12) n = n.parentElement;
+    return n && n.parentElement && isStop(n.parentElement) ? n : null;
   }
 
   /* מדור מוצג בפועל? (עמודים עם סינון מסלולים מסתירים בלוקים שלמים) */
