@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>פאנל ניהול התוכן · הבית של המנהיגות הפדגוגית היוצרת</title>
 <meta name="description" content="פאנל ניהול לכתיבת הודעות והעלאת קבצים לאתר — לבעלי הרשאה בלבד.">
+<meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0D3B66">
@@ -311,7 +312,7 @@
   .btn-launch svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.1;
     stroke-linecap:round;stroke-linejoin:round}
   .who-list{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px}
-  .who-list span{font-size:.79rem;font-family:monospace;direction:ltr;background:var(--soft-bg);
+  .who-list span{font-size:.79rem;background:var(--soft-bg);
     border:1px solid var(--border);border-radius:999px;padding:3px 11px;color:var(--text2)}
   .help{margin-top:22px;background:var(--soft-bg);border:1px solid var(--border);
     border-radius:14px;padding:16px 20px;text-align:start}
@@ -344,17 +345,14 @@
       פתיחת הפאנל
     </a>
     <div class="who-list">
-      <span>meytalp@bethaarava.ort.org.il</span>
-      <span>mlypeleg@gmail.com</span>
-      <span>revital.amir@labor.gov.il</span>
-      <span>revitalamir11@gmail.com</span>
+      <span>הפאנל פתוח לחשבונות שהוגדרו ברשימת ה-ADMINS בסקריפט</span>
     </div>
   </div>
 
   <div class="help rv">
     <h3>אם מופיע "אין הרשאת ניהול · לא מזוהה"</h3>
     <ul>
-      <li>ודאו שאתם מחוברים בדפדפן לאחד מהחשבונות שברשימה למעלה. אם יש כמה חשבונות Google פתוחים — גוגל עשויה לבחור את הלא־נכון.</li>
+      <li>ודאו שאתם מחוברים בדפדפן לאחד מהחשבונות המורשים. אם יש כמה חשבונות Google פתוחים — גוגל עשויה לבחור את הלא־נכון.</li>
       <li>אם הכתובת שלכם אמורה להיות ברשימה ואינה שם — צריך להוסיף אותה למשתנה <code>ADMINS</code> בסקריפט, להריץ שוב <code>setup</code>, ולפרוס גרסה חדשה.</li>
       <li>בדקו שפריסת "פאנל אדמין" מוגדרת <b>Execute as: User accessing the web app</b> ו-<b>Who has access: Anyone with a Google Account</b>. אם ה-Execute as הוא "Me", גוגל לא חושפת לסקריפט את זהות המשתמש.</li>
     </ul>
