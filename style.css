@@ -109,6 +109,18 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .govbar .sep{color:var(--border-strong)}
 .govbar .left{margin-inline-start:auto;display:flex;gap:16px}
 .govbar a{color:var(--text2);text-decoration:none}
+
+/* שני מרחבי ההנהלה — באמצע הפס העליון (הועברו מהתפריט הראשי) */
+.govbar{position:relative;z-index:130}
+.govbar .gov-mid{margin-inline:auto;display:flex;align-items:center;gap:18px}
+.govbar .gov-mid .lnk{display:inline-flex;align-items:center;font-size:.82rem;font-weight:700;
+  color:var(--navy);text-decoration:none;cursor:pointer;padding:4px 2px;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:border-color .2s var(--ease),opacity .2s}
+.govbar .gov-mid .lnk:hover{border-bottom-color:var(--cyan)}
+.govbar .gov-mid .lnk.active{border-bottom-color:var(--navy)}
+.govbar .gov-mid .caret{font-size:.6rem;color:var(--muted);margin-inline-start:4px}
+.govbar .gov-mid .sub{top:calc(100% + 7px);font-size:1rem}
+@media(max-width:1180px){.govbar .gov-mid{gap:12px}.govbar span:nth-of-type(2),.govbar .sep{display:none}}
 .langsw{display:inline-flex;align-items:center;gap:8px}
 .langsw .lsep{color:var(--border-strong)}
 .langsw button{background:none;border:0;padding:0;font:inherit;color:var(--text2);cursor:pointer;opacity:.75}
@@ -266,6 +278,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
   :root{--px:18px}
   .nav a.lnk,.nav .navitem{display:none}
   .govbar .left a.dis{display:none}
+  .govbar .gov-mid{display:none}
   .grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
   .pagehead h1{font-size:1.9rem}
   .foot .row{justify-content:center;text-align:center}
