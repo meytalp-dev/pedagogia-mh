@@ -39,7 +39,8 @@
     go:   ['M10 3.5 5.5 8l4.5 4.5'],
     menu: ['M2.5 4h11', 'M2.5 8h11', 'M2.5 12h11'],
     x:    ['M4 4l8 8', 'M12 4l-8 8'],
-    out:  ['M5.5 10.5 10.5 5.5', 'M6 5.5h4.5V10']
+    out:  ['M5.5 10.5 10.5 5.5', 'M6 5.5h4.5V10'],
+    back: ['M6 3.5 10.5 8 6 12.5']
   };
 
   function icon(kind) {
@@ -145,6 +146,73 @@
     return out;
   }
 
+
+  /* ---------- מדורים שהם עמודים נפרדים ----------
+     בעמוד עמוס עדיף שכל מדור יהיה עמוד משלו. מגדירים בעמוד רשימה מוסתרת:
+       <nav data-pn-links hidden><a href="takziv-101.html">קליטת עולים</a>…</nav>
+     וכל קישור הופך לכרטיסייה בפס — שפותחת עמוד, לא קופצת בתוך העמוד.        */
+  function fromPageLinks() {
+    var host = document.querySelector('[data-pn-links]');
+    if (!host) return null;
+    var links = [].slice.call(host.querySelectorAll('a[href]'));
+    if (links.length < 2) return null;
+    return links.map(function (a, i) {
+      return {
+        el: null, id: 'pl-' + i, href: a.getAttribute('href'),
+        title: clean(a), subs: [], ext: /^https?:/i.test(a.getAttribute('href'))
+      };
+    });
+  }
+
+  /* ---------- שבב "חזרה" ----------
+     <body data-back="procedures.html|נהלים"> — ואם אין, נגזר מפירורי הלחם.  */
+  function backInfo() {
+    var d = (document.body.dataset.back || '').trim();
+    if (d) {
+      var parts = d.split('|');
+      return { href: parts[0].trim(), label: (parts[1] || '').trim() || 'חזרה' };
+    }
+    var crumbs = document.querySelectorAll('.crumb a[href], .breadcrumb a[href]');
+    if (crumbs.length) {
+      var last = crumbs[crumbs.length - 1];
+      return { href: last.getAttribute('href'), label: clean(last) };
+    }
+    return null;
+  }
+
+  function buildBack(info) {
+    var a = document.createElement('a');
+    a.className = 'pn-back';
+    a.href = info.href;
+    a.appendChild(icon('back'));
+    var t = document.createElement('span');
+    t.textContent = 'חזרה ל' + info.label;
+    a.appendChild(t);
+    a.title = 'חזרה ל' + info.label;
+    return a;
+  }
+
+  /* פס מינימלי — לעמוד שאין בו מספיק מדורים לפס מלא, אבל כן צריך כפתור חזרה */
+  function buildBackOnlyBar(info) {
+    var bar = document.createElement('nav');
+    bar.className = 'pn pn-backonly';
+    bar.id = 'pagenav';
+    bar.setAttribute('aria-label', 'ניווט');
+    var inner = document.createElement('div');
+    inner.className = 'pn-in';
+    inner.appendChild(buildBack(info));
+    var up = document.createElement('button');
+    up.className = 'pn-up'; up.type = 'button';
+    up.title = 'חזרה לראש העמוד';
+    up.setAttribute('aria-label', 'חזרה לראש העמוד');
+    up.appendChild(icon('up'));
+    up.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    inner.appendChild(up);
+    bar.appendChild(inner);
+    bar.__in = inner; bar.__tabs = document.createElement('div');
+    return bar;
+  }
+
   /* ---------- בניית הפס הדביק ---------- */
   function buildBar(items) {
     var bar = document.createElement('nav');
@@ -164,7 +232,8 @@
     items.forEach(function (it, i) {
       var a = document.createElement('a');
       a.className = 'pn-tab';
-      a.href = '#' + encodeURIComponent(it.id);
+      if (it.href) { a.href = it.href; a.classList.add('is-page'); }
+      else a.href = '#' + encodeURIComponent(it.id);
       var n = document.createElement('span');
       n.className = 'n';
       n.textContent = pad(i);
@@ -445,6 +514,8 @@
 
     /* כפתור ההמבורגר חי בתוך הפס הדביק (ראשון = הימני ב-RTL);
        החלונית והרקע יושבים על ה-body כדי שלא ייחתכו בגלילת הפס. */
+    if (bar.__back) bar.__in.insertBefore(bar.__back, bar.__in.firstChild);
+
     if (drawer) {
       bar.__in.insertBefore(drawer.btn, bar.__in.firstChild);
       document.body.appendChild(drawer.scrim);
@@ -552,14 +623,24 @@
     if (body.dataset.pn === 'off') return;
     if (document.querySelector('.ptabs')) return;  /* לעמוד כבר יש מערכת כרטיסיות משלו */
 
-    var existing = fromExistingToc();
-    var items = existing || fromHeadings();
-    if (!items) return;
+    var back = backInfo();
+    var pageLinks = fromPageLinks();
+    var existing = pageLinks ? null : fromExistingToc();
+    var items = pageLinks || existing || fromHeadings();
+
+    /* אין מספיק מדורים לפס מלא — אבל אם זה עמוד־בן, עדיין מגיע לו כפתור חזרה */
+    if (!items) {
+      if (back) install(buildBackOnlyBar(back), null, null, [], null);
+      return;
+    }
 
     /* עמוד ״ארוך״: גובה של יותר מפעמיים וחצי מסך. שם די בשלושה מדורים כדי שתפריט יעזור. */
     var long = document.documentElement.scrollHeight > innerHeight * 2.5;
     var min = parseInt(body.dataset.pnMin, 10) || (long ? 3 : 4);
-    if (items.length < min) return;
+    if (!pageLinks && items.length < min) {
+      if (back) install(buildBackOnlyBar(back), null, null, [], null);
+      return;
+    }
 
     /* רשת הכרטיסיות ״מה יש בעמוד״ כבויה כברירת מחדל (החלטת מיטל, 28.8.26).
        להחזרה בעמוד בודד: <body data-pn-cards="on"> — ואז יש להחזיר גם את כללי
@@ -577,6 +658,21 @@
     var wantDrawer = pref === 'on' || (pref !== 'off' && busy);
 
     var bar = buildBar(items);
+    if (back) bar.__back = buildBack(back);
+
+    /* במצב "כל מדור הוא עמוד" אין מה לעקוב אחריו בגלילה — רק כרטיסיות שמנווטות */
+    if (pageLinks) {
+      var here = location.pathname.split('/').pop();
+      items.forEach(function (it) {
+        if (it.href && it.href.split('#')[0].split('/').pop() === here) {
+          it.tab.classList.add('on');
+          it.tab.setAttribute('aria-current', 'page');
+        }
+      });
+      install(bar, null, null, [], null);
+      return;
+    }
+
     var drawer = wantDrawer ? buildDrawer(items) : null;
     var cards = wantCards ? buildCards(items) : null;
     install(bar, cards, drawer, items, items[0].el);
