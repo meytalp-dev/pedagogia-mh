@@ -15,11 +15,38 @@
  * 4) Deploy → Manage deployments → עפרון "Edit" → Version: "New version" → Deploy
  *    (חשוב! בלי "New version" השינויים לא יעלו)
  * 5) ה-URL נשאר אותו URL — אין צורך לעדכן בקבצי HTML
+ * 6) פעם אחת בלבד — להגדיר את כתובת הדוא"ל לקבלת דיווחים,
+ *    ראי את ההסבר אצל הפונקציה adminEmail_ שכמה שורות מכאן
  *
  * ═══════════════════════════════════════════════════════════════
  */
 
-const ADMIN_EMAIL = 'mlypeleg@gmail.com';
+/**
+ * כתובת הדוא"ל שאליה נשלחים דיווחי משוב מהמערכת.
+ *
+ * הכתובת אינה כתובה בתוך הקוד (הקוד יושב בריפוזיטורי ציבורי) —
+ * היא נשמרת כ"מאפיין סקריפט" בהגדרות הפרויקט.
+ *
+ * איך מגדירים (פעם אחת, בעורך Apps Script):
+ *   1) בתפריט הצד — Project Settings  (גלגל שיניים · "הגדרות הפרויקט")
+ *   2) לגלול למטה ל-Script Properties  ("מאפייני סקריפט")
+ *   3) Add script property  ("הוספת מאפיין")
+ *        Property (שם):  ADMIN_EMAIL
+ *        Value   (ערך):  הכתובת שאליה יגיעו הדיווחים
+ *   4) Save script properties  ("שמירה")
+ *   שינוי הכתובת בעתיד — לערוך את הערך שם. אין צורך לגעת בקוד ולא לפרוס מחדש.
+ *
+ * אם המאפיין לא הוגדר — הדיווחים יישלחו לכתובת של החשבון שמריץ את הסקריפט,
+ * כך שדבר לא הולך לאיבוד. בכל מקרה כל דיווח נשמר גם בטאב feedback בגיליון.
+ */
+function adminEmail_() {
+  let v = '';
+  try { v = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL') || ''; } catch (e) {}
+  v = String(v).trim();
+  if (v) return v;
+  try { return String(Session.getEffectiveUser().getEmail() || '').trim(); } catch (e) {}
+  return '';
+}
 
 const SHEET_SUBMISSIONS = 'submissions';
 const SHEET_ANSWER_KEYS = 'answer_keys';
@@ -379,6 +406,12 @@ function submitFeedback_(body) {
   sh.appendRow([new Date(), role, name, contact, subject, message, url]);
 
   try {
+    const admin = adminEmail_();
+    if (!admin) {
+      // אין כתובת יעד — הדיווח כבר נשמר בגיליון, רק המייל לא נשלח
+      log_('email-skip', 'ADMIN_EMAIL לא הוגדר במאפייני הסקריפט');
+      return { ok: true };
+    }
     const roleHe = role === 'teacher' ? 'מורה' : (role === 'student' ? 'תלמיד/ה' : role);
     const htmlBody =
       '<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;">' +
@@ -395,8 +428,8 @@ function submitFeedback_(body) {
       '</div>';
 
     MailApp.sendEmail({
-      to: ADMIN_EMAIL,
-      replyTo: contact && contact.indexOf('@') > -1 ? contact : ADMIN_EMAIL,
+      to: admin,
+      replyTo: contact && contact.indexOf('@') > -1 ? contact : admin,
       subject: '[תרגול מבחנים] ' + subject + ' — ' + roleHe,
       htmlBody: htmlBody
     });
