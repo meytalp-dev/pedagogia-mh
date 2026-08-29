@@ -28,7 +28,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Assistant','Noto Sans Hebrew',sans-serif;background:var(--canvas);color:var(--text);line-height:1.6}
 h1,h2,h3,h4{color:var(--navy);line-height:1.25;font-weight:800}
-img{max-width:100%}
+/* מידות width/height על התג נותנות לדפדפן לשריין מקום לפני הטעינה;
+   height:auto מוודא שהמידות הללו לא נועלות את הפרופורציה כשהרוחב מוגבל. */
+img{max-width:100%;height:auto}
 
 .rv{animation:rise .55s var(--ease) both}
 .rv.d1{animation-delay:.07s}.rv.d2{animation-delay:.14s}.rv.d3{animation-delay:.21s}
@@ -120,7 +122,7 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 
 /* ===== govbar + nav ===== */
 .govbar{background:#fff;border-bottom:1px solid var(--border);padding:7px var(--px);display:flex;align-items:center;gap:12px;font-size:.78rem;color:var(--muted)}
-.govbar img{height:30px}
+.govbar img{height:30px;width:auto}
 .govbar .sep{color:var(--border-strong)}
 .govbar .left{margin-inline-start:auto;display:flex;gap:16px}
 .govbar a{color:var(--text2);text-decoration:none}
@@ -185,13 +187,16 @@ html.lang-ar body{top:0!important}
 .tag.soon{background:#FFF7E4;color:#8A5A00}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--sh-sm);transition:all .25s var(--ease);position:relative;overflow:hidden;display:block;color:inherit;text-decoration:none}
-.card:hover{box-shadow:var(--sh-md);transform:translateY(-3px);border-color:var(--border-strong)}
+/* הריחוף שמרים ומחליף מסגרת הוא הבטחה שיקרה משהו בלחיצה.
+   446 מתוך 668 הכרטיסים הם תיבות תוכן סטטיות — האפקט שמור לכרטיסים
+   שהם קישור, ול-.card.link שנועד לבדיוק למקרים שהקישור נמצא בפנים. */
+a.card:hover,.card.link:hover{box-shadow:var(--sh-md);transform:translateY(-3px);border-color:var(--border-strong)}
 .card .ic{transition:transform .3s var(--ease)}
-.card:hover .ic{transform:scale(1.07) rotate(-2deg)}
+a.card:hover .ic,.card.link:hover .ic{transform:scale(1.07) rotate(-2deg)}
 a.card::after,.card.link::after{content:"←";position:absolute;bottom:14px;left:18px;color:#0B7FA6;font-weight:800;font-size:1rem;opacity:0;transform:translateX(8px);transition:all .28s var(--ease)}
 a.card:hover::after,.card.link:hover::after{opacity:1;transform:none}
 .card::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:0;background:var(--m-grad-v);transition:width .28s var(--ease)}
-a.card:hover::before{width:4px}
+a.card:hover::before,.card.link:hover::before{width:4px}
 
 .kicker{font-size:.8rem;font-weight:800;letter-spacing:.1em;color:#0B7FA6;text-transform:uppercase}
 .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -238,7 +243,7 @@ a.card:hover::before{width:4px}
 /* ===== footer ===== */
 .foot{background:var(--navy);color:#B9CBE0;padding:34px var(--px);font-size:.86rem;margin-top:auto}
 .foot .row{display:flex;flex-wrap:wrap;gap:22px;align-items:center;justify-content:space-between}
-.foot img{height:34px;filter:brightness(0) invert(1);opacity:.9}
+.foot img{height:34px;width:auto;filter:brightness(0) invert(1);opacity:.9}
 .foot .partners{display:flex;gap:22px;font-weight:700;color:#7E99B8;font-size:.88rem;align-items:center}
 .foot a{color:#DCE8F5;text-decoration:none}
 
@@ -290,6 +295,36 @@ body.menu-open .drawer{visibility:visible;transform:none;transition:transform .3
 @media(max-width:960px){
   .foot{padding-bottom:110px}
 }
+
+
+/* ===== רכיבי ליבה שהיו רק ב-article.css =====
+   שמונה עמודים משתמשים במחלקות האלה בלי לטעון את גיליון המאמר — ואז קישור
+   בתוך טקסט יוצא כחול מקווקו, וכותרת מדור מאבדת את קו ההפרדה ואת הסמן.
+   המקום שלהן הוא כאן — גיליון המאמר טוען תמיד אחרי זה. ===== */
+a.lk{color:#0B7FA6;text-decoration:none;font-weight:600;border-bottom:1.5px solid var(--cyan-100);transition:.2s}
+a.lk:hover{background:var(--cyan-100);border-bottom-color:#0B7FA6}
+a.lk::after{content:"↗";font-size:.7em;margin-inline-start:3px;color:var(--cyan-ink,#0C7095)}
+h2.sub-sec,h3.sub-sec{
+  font-size:clamp(1.25rem,2.4vw,1.6rem);font-weight:800;color:var(--navy);
+  margin:clamp(30px,4.5vw,44px) 0 10px;padding-top:22px;border-top:1px solid var(--border);
+  display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;
+}
+h2.sub-sec::before,h3.sub-sec::before{content:"";width:30px;height:7px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--blue));flex:0 0 auto;transform:translateY(-3px)}
+h2.sub-sec.first,h3.sub-sec.first{border-top:none;padding-top:0;margin-top:0}
+h2.mini,h3.mini,h4.mini{
+  font-size:1.05rem;font-weight:800;color:var(--navy-800);margin:22px 0 8px;
+  display:flex;align-items:center;gap:12px;
+}
+h2.mini::after,h3.mini::after,h4.mini::after{content:"";flex:1;height:1px;background:var(--border);max-width:170px}
+.callout{
+  margin:22px 0;padding:16px 22px;background:var(--surface);
+  border:1px solid var(--border);border-inline-start:4px solid var(--cyan);
+  border-radius:0 14px 14px 0;box-shadow:var(--sh-sm);font-size:.95rem;
+}
+.callout.amber{border-inline-start-color:#C08A00;background:#FFFBF0}
+.callout.red{border-inline-start-color:#C0392B}
+.callout .ttl{font-weight:800;display:block;margin-bottom:5px;font-size:1rem;color:var(--navy)}
+.callout.petrol{border-inline-start-color:var(--teal)}
 
 /* ===== accessibility ===== */
 a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:10px}

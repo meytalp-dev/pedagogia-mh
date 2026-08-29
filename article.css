@@ -10,9 +10,6 @@ strong{font-weight:700}
 .num-face{font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.01em}
 
 /* ---------- קישורי טקסט ---------- */
-a.lk{color:#0B7FA6;text-decoration:none;font-weight:600;border-bottom:1.5px solid var(--cyan-100);transition:.2s}
-a.lk:hover{background:var(--cyan-100);border-bottom-color:#0B7FA6}
-a.lk::after{content:"↗";font-size:.7em;margin-inline-start:3px;color:var(--cyan-ink,#0C7095)}
 
 /* ---------- hero של עמוד מסמך ---------- */
 .hero{padding:36px 0 26px;border-bottom:1px solid var(--border);background:#fff}
@@ -40,18 +37,6 @@ a.lk::after{content:"↗";font-size:.7em;margin-inline-start:3px;color:var(--cya
 
 /* ---------- גוף מאמר ---------- */
 .body-sec{padding:34px 0 26px}
-h2.sub-sec,h3.sub-sec{
-  font-size:clamp(1.25rem,2.4vw,1.6rem);font-weight:800;color:var(--navy);
-  margin:clamp(30px,4.5vw,44px) 0 10px;padding-top:22px;border-top:1px solid var(--border);
-  display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;
-}
-h2.sub-sec::before,h3.sub-sec::before{content:"";width:30px;height:7px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--blue));flex:0 0 auto;transform:translateY(-3px)}
-h2.sub-sec.first,h3.sub-sec.first{border-top:none;padding-top:0;margin-top:0}
-h2.mini,h3.mini,h4.mini{
-  font-size:1.05rem;font-weight:800;color:var(--navy-800);margin:22px 0 8px;
-  display:flex;align-items:center;gap:12px;
-}
-h2.mini::after,h3.mini::after,h4.mini::after{content:"";flex:1;height:1px;background:var(--border);max-width:170px}
 .lead-p{font-size:1.02rem;color:var(--text2)}
 .tag-soon{display:inline-block;font-size:.74rem;font-weight:700;padding:3px 12px;border-radius:999px;background:#FFF7E4;color:#8A5A00;white-space:nowrap}
 
@@ -67,17 +52,6 @@ ul.ed{list-style:none;margin:12px 0}
 ul.ed>li{position:relative;padding:7px 24px 7px 0}
 ul.ed>li::before{content:"";position:absolute;right:2px;top:17px;width:11px;height:2.5px;border-radius:2px;background:var(--cyan)}
 ul.ed.tight>li{padding-top:4px;padding-bottom:4px}
-
-/* ---------- callout ---------- */
-.callout{
-  margin:22px 0;padding:16px 22px;background:var(--surface);
-  border:1px solid var(--border);border-inline-start:4px solid var(--cyan);
-  border-radius:0 14px 14px 0;box-shadow:var(--sh-sm);font-size:.95rem;
-}
-.callout.amber{border-inline-start-color:#C08A00;background:#FFFBF0}
-.callout.red{border-inline-start-color:#C0392B}
-.callout .ttl{font-weight:800;display:block;margin-bottom:5px;font-size:1rem;color:var(--navy)}
-.callout.petrol{border-inline-start-color:var(--teal)}
 
 /* ---------- טבלאות ---------- */
 .tbl-scroll{overflow-x:auto;margin:16px 0;border-radius:14px}
