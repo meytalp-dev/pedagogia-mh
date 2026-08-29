@@ -29,7 +29,7 @@ const SITE = "https://pedagogiamh.co.il";
 const OUT = join(ROOT, "knowledge.json");
 
 const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
-const MAX_TOTAL_CHARS = 240000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
+const MAX_TOTAL_CHARS = 290000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
@@ -224,18 +224,26 @@ function ogdanMegamot(dataJs) {
   return out.join("\n");
 }
 
-/* מחזיר מפה: שם קובץ עמוד → טקסט נעוץ שיצורף לו */
-function buildPinned() {
+/* מחזיר מפה: שם קובץ עמוד → טקסט נעוץ שיצורף לו.
+   את מערך HOURS מחפשים בכל עמודי האתר ולא בקובץ קבוע: הטבלאות כבר עברו
+   פעם אחת מ-ogdan-shaot.html ל-ogdan-hitpalgut.html, והצמדה לשם קובץ
+   שברה את החילוץ בשקט. */
+function buildPinned(files) {
   const pinned = new Map();
-  const pagePath = join(ROOT, "ogdan-shaot.html");
-  const dataPath = join(ROOT, "ogdan-data.js");
-  if (!existsSync(pagePath) || !existsSync(dataPath)) return pinned;
+  const add = (file, text) => {
+    if (!text) return;
+    pinned.set(file, pinned.has(file) ? pinned.get(file) + "\n\n" + text : text);
+  };
 
-  const parts = [
-    ogdanCoreHours(readFileSync(pagePath, "utf8")),
-    ogdanMegamot(readFileSync(dataPath, "utf8")),
-  ].filter(Boolean);
-  if (parts.length) pinned.set("ogdan-shaot.html", parts.join("\n\n"));
+  const hoursFile = files.find((f) =>
+    /var\s+HOURS\s*=\s*\[/.test(readFileSync(join(ROOT, f), "utf8")));
+  if (hoursFile) add(hoursFile, ogdanCoreHours(readFileSync(join(ROOT, hoursFile), "utf8")));
+  else console.warn("אזהרה: מערך HOURS לא נמצא באף עמוד — טבלאות שעות הליבה לא ייכנסו לידע");
+
+  const dataPath = join(ROOT, "ogdan-data.js");
+  if (existsSync(dataPath) && files.includes("ogdan-shaot.html")) {
+    add("ogdan-shaot.html", ogdanMegamot(readFileSync(dataPath, "utf8")));
+  }
   return pinned;
 }
 
@@ -244,7 +252,7 @@ const files = readdirSync(ROOT)
   .filter((f) => f.endsWith(".html") && !SKIP.has(f))
   .sort();
 
-const pinned = buildPinned();
+const pinned = buildPinned(files);
 
 const pages = [];
 for (const f of files) {
