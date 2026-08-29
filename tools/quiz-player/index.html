@@ -8,6 +8,8 @@
 <style>
 :root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
+.plain-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
 body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-font-smoothing:antialiased}
 .quiz-wrapper{max-width:580px;width:100%;margin:0 auto}
 
@@ -100,10 +102,10 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
     <div class="screen active" id="introScreen">
       <div class="q-card">
         <div class="intro-icon" id="quizIcon">📝</div>
-        <div class="intro-title" id="quizTitle">שאלון</div>
+        <h1 class="intro-title" id="quizTitle">שאלון</h1>
         <div class="intro-sub" id="quizSub"></div>
-        <div class="input-group"><label>שם מלא</label><input type="text" id="studentName" placeholder="הכניסו את השם שלכם" autocomplete="off"></div>
-        <div class="input-group"><label>כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
+        <div class="input-group"><label for="studentName">שם מלא</label><input type="text" id="studentName" placeholder="למשל: נועה כהן" autocomplete="off"></div>
+        <div class="input-group"><label for="studentClass">כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
         <button class="btn btn-primary" id="startBtn" disabled onclick="startQuiz()">התחילו</button>
       </div>
     </div>
@@ -299,7 +301,7 @@ function renderQuestion() {
   document.getElementById('qText').textContent = q.text;
 
   document.getElementById('qOptions').innerHTML = q.options.map((o, i) =>
-    '<div class="q-opt" onclick="selectAnswer(' + i + ')"><div class="opt-letter">' + LETTERS[i] + '</div><span>' + escapeHTML(o) + '</span></div>'
+    '<button type="button" class="q-opt plain-btn" onclick="selectAnswer(' + i + ')"><span class="opt-letter">' + LETTERS[i] + '</span><span>' + escapeHTML(o) + '</span></button>'
   ).join('');
 
   const fb = document.getElementById('qFeedback');
@@ -322,6 +324,7 @@ function selectAnswer(idx) {
 
   opts.forEach((o, i) => {
     o.classList.add('disabled');
+    o.disabled = true;
     if (i === q.correct) o.classList.add('correct');
     else if (i === idx && !ok) o.classList.add('wrong');
     else o.classList.add('dim');
