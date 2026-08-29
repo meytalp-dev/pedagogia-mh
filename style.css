@@ -149,13 +149,11 @@ html.lang-ar body{top:0!important}
 .navitem{position:relative;display:inline-block}
 .navitem .sub{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-md);padding:8px;min-width:238px;max-height:calc(100vh - 96px);overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;transform:translateY(6px);transition:all .2s var(--ease);z-index:120}
 .navitem:hover .sub,.navitem:focus-within .sub{opacity:1;visibility:visible;transform:none}
-.navitem .sub a{display:block;padding:9px 14px;border-radius:9px;color:var(--text);font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;transition:background .15s}
+.navitem .sub a,.navitem .sub .dis{display:block;padding:9px 14px;border-radius:9px;color:var(--text);font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;transition:background .15s}
 .navitem .sub a:hover{background:var(--soft-bg);color:var(--navy)}
-.navitem .sub a.dis{color:var(--muted);cursor:default}
-.navitem .sub a.dis:hover{background:none;color:var(--muted)}
+.navitem .sub .dis{color:var(--muted);cursor:default}
+.navitem .sub .dis:hover{background:none;color:var(--muted)}
 .navitem>.lnk .caret{font-size:.65rem;color:var(--muted);margin-inline-start:3px}
-.nav a.lnk.dis{color:var(--muted);cursor:default}
-.nav a.lnk.dis:hover{color:var(--muted)}
 .nav .brand{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none}
 .nav .brand .mark{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.05rem}
 .nav .brand b{font-size:.95rem;color:var(--navy);display:block;line-height:1.2;max-width:200px}
@@ -165,7 +163,6 @@ html.lang-ar body{top:0!important}
   transition:color .18s,background-size .3s var(--ease)}
 .nav a.lnk:hover{color:var(--navy);background-size:100% 2.5px}
 .nav a.lnk.active{color:var(--navy);background-size:100% 2.5px}
-.nav a.lnk.dis:hover{background-size:0% 2.5px}
 .nav .tools{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
 .nav .ogen-btn{background:var(--grad);color:#fff;border-radius:999px;padding:9px 22px;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;white-space:nowrap}
 .nav .ogen-btn:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
@@ -263,11 +260,11 @@ body.menu-open .drawer{visibility:visible;transform:none;transition:transform .3
 .drawer .close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:1rem;color:var(--navy)}
 .drawer .body{overflow-y:auto;padding:10px 24px 24px;flex:1}
 .drawer .sect{font-size:.76rem;font-weight:800;letter-spacing:.08em;color:#0B7FA6;margin:20px 0 8px}
-.drawer a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--text);text-decoration:none;font-weight:600;font-size:.95rem;cursor:pointer;transition:background .15s,padding-inline-start .2s var(--ease)}
+.drawer a,.drawer .dis{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--text);text-decoration:none;font-weight:600;font-size:.95rem;cursor:pointer;transition:background .15s,padding-inline-start .2s var(--ease)}
 .drawer a:hover{background:var(--soft-bg);padding-inline-start:18px}
-.drawer a .n{font-size:.75rem;font-weight:800;color:var(--muted);width:22px;flex-shrink:0}
-.drawer a.dis{opacity:.55;cursor:default}
-.drawer a.dis:hover{background:none;padding-inline-start:12px}
+.drawer a .n,.drawer .dis .n{font-size:.75rem;font-weight:800;color:var(--muted);width:22px;flex-shrink:0}
+.drawer .dis{opacity:.55;cursor:default}
+.drawer .dis:hover{background:none;padding-inline-start:12px}
 .drawer .foot-note{border-top:1px solid var(--border);padding:14px 24px;font-size:.8rem;color:var(--muted)}
 
 /* ===== הוויג'ט של העוגן — בדסקטופ צף למעלה משמאל (שם יש שוליים פנויים), הפאנל נפתח מתחתיו.
@@ -306,7 +303,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
 }
 @media(max-width:640px){
   :root{--px:18px}
-  .govbar .left a.dis{display:none}
+  .govbar .left .dis{display:none}
   .govbar .gov-mid{display:none}
   .grid.c2,.grid.c3,.grid.c4{grid-template-columns:1fr}
   .pagehead h1{font-size:1.9rem}

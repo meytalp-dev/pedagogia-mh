@@ -243,7 +243,7 @@ document.addEventListener('animationend',e=>{
     sw.innerHTML='<button type="button" data-lang="he" aria-pressed="'+(isAr?'false':'true')+'"'+(isAr?'':' class="on"')+'>עברית</button>'+
                  '<span class="lsep" aria-hidden="true">|</span>'+
                  '<button type="button" data-lang="ar" lang="ar" aria-pressed="'+(isAr?'true':'false')+'"'+(isAr?' class="on"':'')+'>العربية</button>';
-    const old=[...holder.querySelectorAll('a.dis')].find(a=>a.textContent.trim()==='العربية');
+    const old=[...holder.querySelectorAll('.dis')].find(a=>a.textContent.trim()==='العربية');
     if(old) old.replaceWith(sw); else holder.appendChild(sw);
     sw.addEventListener('click',e=>{
       const b=e.target.closest('button');
