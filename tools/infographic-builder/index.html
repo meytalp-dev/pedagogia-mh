@@ -52,10 +52,23 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
 .tb svg{width:15px;height:15px;flex-shrink:0}
 .tb.gen{background:var(--text);color:#fff;border-color:var(--text)}
 .tb.gen:hover{background:#2A2A40}
-.tb.gen:disabled{opacity:.5;cursor:not-allowed}
-.tb.gen.loading{background:var(--gold)}
+.tb:disabled{opacity:.5;cursor:not-allowed}
 .tb.dl{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tb.dl:hover{background:#C06058}
+
+/* ===== PROMPT BAR ===== */
+.promptbar{flex-shrink:0;background:#fff;border-bottom:1px solid var(--border);padding:12px 16px;max-height:46vh;overflow-y:auto}
+.pb-lead{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.pb-grid{display:flex;gap:14px;flex-wrap:wrap}
+.pb-col{flex:1;min-width:270px;display:flex;flex-direction:column}
+.pb-col label{font-size:.78rem;font-weight:700;margin-bottom:6px}
+.pb-box{width:100%;height:112px;font-family:'Assistant';font-size:.78rem;line-height:1.6;padding:8px 10px;border:2px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);resize:vertical;transition:.2s}
+.pb-box:focus{outline:none;border-color:var(--gold)}
+.pb-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pb-row .tb{text-decoration:none;color:var(--text)}
+.pb-row .tb.gen{color:#fff}
+.pb-status{font-size:.75rem;font-weight:700;color:var(--gold);margin-top:6px;min-height:1.2em}
+.pb-note{font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.5}
 
 /* ===== SPLIT ===== */
 .split{display:flex;flex:1;min-height:0}
@@ -329,14 +342,49 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);h
   <div class="topbar-sep"></div>
   <input type="text" id="inpTopic" aria-label="נושא האינפוגרפיקה" placeholder="על מה האינפוגרפיקה?">
   <textarea id="inpNotes" aria-label="בקשות מיוחדות לעיצוב" placeholder="בקשות מיוחדות..."></textarea>
-  <button class="tb gen" id="genBtn" onclick="generate()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
-    צור
+  <button type="button" class="tb gen" id="genBtn" onclick="buildAndShowPrompt()" aria-expanded="false" aria-controls="promptBar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+    בנו לי את הפרומפט
   </button>
   <button class="tb dl" onclick="downloadPNG()" id="dlBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     הורדה
   </button>
+</div>
+
+<!-- Prompt bar: build the prompt, copy it into a chat, paste the answer back -->
+<div class="promptbar" id="promptBar" hidden>
+  <p class="pb-lead">מעתיקים את הפרומפט לצ׳אט AI שכבר יש לכם, ומדביקים כאן בחזרה את התשובה — בלי הרשמה ובלי מפתח.</p>
+  <div class="pb-grid">
+    <div class="pb-col">
+      <label for="promptText">הפרומפט המוכן</label>
+      <textarea class="pb-box" id="promptText" readonly></textarea>
+      <div class="pb-row">
+        <button type="button" class="tb gen" onclick="copyPromptText()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+          העתקה
+        </button>
+        <a class="tb" href="https://chatgpt.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>
+          פתחו ChatGPT
+        </a>
+        <a class="tb" href="https://gemini.google.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>
+          פתחו Gemini
+        </a>
+      </div>
+      <p class="pb-note">הקישורים נפתחים בלשונית חדשה, עם החשבון שכבר יש לכם.</p>
+    </div>
+    <div class="pb-col">
+      <label for="chatAnswer">התשובה שקיבלתם</label>
+      <textarea class="pb-box" id="chatAnswer" placeholder="הדביקו כאן את כל התשובה מהצ׳אט"></textarea>
+      <div class="pb-row">
+        <button type="button" class="tb gen" onclick="buildFromChatAnswer()">בנו מהתשובה</button>
+        <button type="button" class="tb" onclick="closePromptBar()">סגירה</button>
+      </div>
+    </div>
+  </div>
+  <p class="pb-status" id="copyStatus" role="status" aria-live="polite"></p>
 </div>
 
 <div class="split">
@@ -772,58 +820,71 @@ function removeHeaderImg(){
   if(S.content) render();
 }
 
-// Generate with Gemini
-async function generate(){
-  const topic=document.getElementById('inpTopic').value.trim();
-  if(!topic){document.getElementById('inpTopic').focus();return}
-  S.topic=topic;
-  S.notes=document.getElementById('inpNotes').value.trim();
-
-  const btn=document.getElementById('genBtn');
-  btn.disabled=true;btn.classList.add('loading');
-  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> מייצר...';
-
-  const prompt=`צור תוכן לאינפוגרפיקה בעברית על הנושא: "${topic}"
+// Prompt flow: build the prompt, copy it into a chat, paste the answer back
+function buildInfographicPrompt(){
+  return `צור תוכן לאינפוגרפיקה בעברית על הנושא: "${S.topic}"
 ${S.notes?'בקשות מיוחדות: '+S.notes:''}
 יש ליצור בדיוק ${S.stepCount} שלבים.
 החזר JSON בלבד (בלי markdown, בלי backticks) בפורמט:
 {"title":"כותרת קצרה וקליטה","subtitle":"תת-כותרת במשפט אחד","steps":[{"title":"שם השלב","desc":"הסבר קצר 1-2 משפטים"}]}
 כללים: שפה פשוטה, משפטים קצרים, כותרות עד 4 מילים, הסברים עד 20 מילים, תוכן מדויק`;
+}
 
-  // 🔒 המפתח לא בקוד — נשמר ב-localStorage של המשתמש בלבד
-  let userKey = localStorage.getItem('infographic-gemini-key') || '';
-  if (!userKey) {
-    userKey = (prompt('נדרש מפתח Gemini API חינמי — היכנסו עם Gmail אישי (לא מייל ארגוני!). המפתח נשמר רק במכשיר שלכם:\nליצירת מפתח: https://aistudio.google.com/apikey') || '').trim();
-    if (userKey) localStorage.setItem('infographic-gemini-key', userKey);
-  }
-  if (!userKey) {
-    alert('צריך מפתח Gemini API כדי להשתמש במחולל. אפשר ליצור חינם ב-aistudio.google.com/apikey');
-    btn.disabled=false;btn.classList.remove('loading');
-    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg> צור';
-    return;
-  }
+function buildAndShowPrompt(){
+  const topic=document.getElementById('inpTopic').value.trim();
+  if(!topic){document.getElementById('inpTopic').focus();return}
+  S.topic=topic;
+  S.notes=document.getElementById('inpNotes').value.trim();
+  document.getElementById('promptText').value=buildInfographicPrompt();
+  document.getElementById('promptBar').hidden=false;
+  document.getElementById('genBtn').setAttribute('aria-expanded','true');
+  setCopyStatus('הפרומפט מוכן. העתיקו אותו והדביקו בצ׳אט.');
+}
 
+function closePromptBar(){
+  document.getElementById('promptBar').hidden=true;
+  document.getElementById('genBtn').setAttribute('aria-expanded','false');
+}
+
+function setCopyStatus(msg){
+  const el=document.getElementById('copyStatus');
+  el.textContent='';
+  if(msg) setTimeout(()=>{el.textContent=msg},60);
+}
+
+function copyPromptText(){
+  const ta=document.getElementById('promptText');
+  if(!ta.value){setCopyStatus('קודם בנו את הפרומפט');return}
+  const done='הפרומפט הועתק. הדביקו אותו בצ׳אט.';
+  const fallback=()=>{
+    let ok=false;
+    try{ta.focus();ta.select();ok=document.execCommand('copy')}catch(e){ok=false}
+    setCopyStatus(ok?done:'ההעתקה לא הצליחה. סמנו את הטקסט בתיבה והעתיקו ידנית.');
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(()=>setCopyStatus(done)).catch(fallback);
+  }else{
+    fallback();
+  }
+}
+
+function buildFromChatAnswer(){
+  const el=document.getElementById('chatAnswer');
+  let text=el.value.trim();
+  if(!text){setCopyStatus('הדביקו קודם את התשובה מהצ׳אט');el.focus();return}
+  text=text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+  const first=text.indexOf('{'),last=text.lastIndexOf('}');
+  if(first===-1||last===-1){setCopyStatus('לא נמצא תוכן תקין בתשובה — ודאו שהעתקתם את כולה');return}
   try{
-    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(userKey),{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:1024}})
-    });
-    const data=await res.json();
-    if (data.error) {
-      // מפתח לא תקף — מחיקה ובקשה מחדש
-      if (data.error.code === 400 || data.error.code === 403) localStorage.removeItem('infographic-gemini-key');
-      throw new Error(data.error.message || 'API error');
-    }
-    let text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
-    text=text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
-    S.content=JSON.parse(text);
+    const parsed=JSON.parse(text.slice(first,last+1));
+    if(!parsed||!Array.isArray(parsed.steps)) throw new Error('bad shape');
+    S.content=parsed;
+    render();
+    el.value='';
+    setCopyStatus('האינפוגרפיקה נבנתה מהתשובה. אפשר לערוך כל טקסט ישירות על התצוגה.');
   }catch(e){
-    console.error(e);
-    S.content={title:topic,subtitle:'לחצו לערוך',steps:Array.from({length:S.stepCount},(_,i)=>({title:`שלב ${i+1}`,desc:'לחצו כאן'}))};
+    setCopyStatus('התשובה לא תקינה — בקשו מהצ׳אט להחזיר JSON תקין בלבד, ונסו שוב');
   }
-  render();
-  btn.disabled=false;btn.classList.remove('loading');
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg> צור';
 }
 
 function render(){

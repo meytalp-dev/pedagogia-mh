@@ -65,20 +65,16 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .btn-secondary:hover{border-color:var(--primary);color:var(--primary)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* AI Setup */
-.ai-setup{background:var(--blue-l);border:2px solid var(--blue);border-radius:var(--r);padding:24px;margin-top:24px}
-.ai-setup h3{font-family:'Assistant',sans-serif;color:var(--blue);margin-bottom:12px;font-size:1.05rem}
-.ai-setup p{font-size:.9rem;color:var(--gray);line-height:1.6;margin-bottom:12px}
-.ai-setup a{color:var(--blue);font-weight:600}
-.key-input{display:flex;gap:8px}
-.key-input input{flex:1}
-.key-input button{padding:12px 20px;white-space:nowrap}
-
-/* Loading */
-.loading-box{background:var(--card);border-radius:var(--r);padding:48px 32px;box-shadow:var(--shadow);margin-top:24px;text-align:center}
-.spinner{width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
-.loading-msg{font-size:1.1rem;color:var(--gray);font-weight:600;margin-bottom:8px}
-.loading-sub{font-size:.85rem;color:var(--gray)}
+/* Prompt flow */
+.prompt-step{margin-top:22px}
+.prompt-step label{display:block;font-weight:600;font-size:.9rem;margin-bottom:6px;color:var(--dark)}
+.prompt-out{width:100%;min-height:180px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-family:'Assistant',sans-serif;font-size:.9rem;line-height:1.6;background:var(--bg);color:var(--dark);resize:vertical;outline:none}
+.prompt-out:focus{border-color:var(--primary)}
+.chat-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.chat-links .btn{flex:1;min-width:180px;justify-content:center;text-decoration:none}
+.copy-status{font-size:.85rem;font-weight:600;color:var(--primary-d);margin-top:10px;min-height:1.3em}
+.note{font-size:.8rem;color:var(--gray);line-height:1.6;margin-top:10px}
+.ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* Preview cards */
 .preview-section{margin-top:24px}
@@ -110,13 +106,12 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 @media(max-width:600px){
-  .form-card,.loading-box,.publish-card{padding:24px}
+  .form-card,.publish-card{padding:24px}
   .btn-row{flex-direction:column}
   .btn{width:100%;justify-content:center}
-  .key-input{flex-direction:column}
+  .chat-links .btn{min-width:0}
 }
 </style>
 </head>
@@ -126,7 +121,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 
 <div class="page-header">
   <h1>מחולל מערכי שיעור</h1>
-  <p>צרו מערך שיעור מלא בלחיצה אחת עם AI</p>
+  <p>בונים פרומפט, מדביקים בצ׳אט AI ומקבלים מערך שיעור מלא</p>
   <div class="steps-bar">
     <div class="step-dot active" id="dot1">1</div>
     <div class="step-line" id="line1"></div>
@@ -189,57 +184,52 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       </div>
     </div>
 
-    <!-- API Key setup -->
-    <div class="ai-setup" id="aiSetup">
-      <h3>🔑 מפתח Gemini AI</h3>
-      <p>כדי ליצור תוכן אוטומטית, צריך מפתח Gemini חינמי.<br>
-        <a href="https://aistudio.google.com/apikey" target="_blank">לחצו כאן לקבלת מפתח →</a>
-      </p>
-      <label for="geminiKey" style="display:block;font-weight:600;font-size:.9rem;margin-bottom:6px">מפתח Gemini</label>
-      <div class="key-input">
-        <input type="password" id="geminiKey" placeholder="הדביקו את המפתח כאן">
-        <button class="btn btn-primary" onclick="saveKey()">שמור</button>
-      </div>
-      <div class="hint" style="margin-top:8px">המפתח נשמר בדפדפן שלכם בלבד ולא נשלח לשום מקום אחר</div>
-    </div>
-
     <div class="btn-row">
       <button class="btn btn-primary" onclick="goToStep2()">המשך ליצירה ←</button>
     </div>
   </div>
 
-  <!-- Step 2: Generate -->
+  <!-- Step 2: Prompt -->
   <div class="screen" id="screen2">
     <div class="form-card" id="generateCard">
-      <h2>🤖 יצירה עם AI</h2>
-      <p style="color:var(--gray);margin-bottom:20px">AI ייצור מערך שיעור מלא: שקפים, משחקים, פעילות קבוצתית וסיכום — דרך צ'אט Gemini, בלי מפתח ובלי חשבון מיוחד.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-        <button class="btn btn-primary" style="flex:1;min-width:220px" onclick="copyChatPrompt()">1️⃣ 📋 העתיקו את הפרומפט</button>
-        <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="btn btn-primary" style="flex:1;min-width:220px;text-align:center;text-decoration:none" onclick="revealPasteBox()">2️⃣ ✨ פתחו את Gemini והדביקו</a>
-      </div>
-      <div id="chatPasteBox" style="display:none">
-        <label for="chatAnswer" style="display:block;font-weight:600;font-size:.9rem;margin-bottom:6px">3️⃣ התשובה של Gemini</label>
-        <textarea id="chatAnswer" placeholder="העתיקו את כל התשובה של Gemini והדביקו אותה כאן" style="width:100%;min-height:90px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font-family:'Assistant',sans-serif;font-size:14px;margin-bottom:8px"></textarea>
-        <button class="btn btn-primary" onclick="buildFromChatAnswer()" style="width:100%">🧩 בנו את מערך השיעור מהתשובה</button>
-      </div>
-      <details style="margin-top:12px">
-        <summary style="cursor:pointer;font-size:13px;color:var(--gray)">מתקדם: יצירה אוטומטית עם מפתח API</summary>
-        <div style="text-align:center;margin-top:8px">
-          <button class="btn btn-primary" onclick="generateLesson()" id="generateBtn" style="padding:18px 48px;font-size:1.1rem">
-            ✨ צור מערך שיעור
-          </button>
-        </div>
-      </details>
-    </div>
+      <h2>
+        <svg class="ico" style="width:22px;height:22px" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/><path d="m17.5 13 1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/></svg>
+        הפרומפט לצ׳אט
+      </h2>
+      <p style="color:var(--gray);margin-bottom:20px">בונים כאן את הבקשה, מעתיקים אותה לצ׳אט AI שכבר יש לכם, ומדביקים בחזרה את התשובה — בלי הרשמה ובלי מפתח.</p>
 
-    <div class="loading-box" id="loadingBox" style="display:none">
-      <div class="spinner"></div>
-      <div class="loading-msg" id="loadingMsg">מייצר שקפים...</div>
-      <div class="loading-sub">זה לוקח כ-30 שניות</div>
+      <button type="button" class="btn btn-primary" onclick="buildAndShowPrompt()">בנו לי את הפרומפט</button>
+
+      <div class="prompt-step" id="promptStep" hidden>
+        <label for="promptText">הפרומפט המוכן</label>
+        <textarea class="prompt-out" id="promptText" readonly></textarea>
+        <button type="button" class="btn btn-primary" style="margin-top:12px" onclick="copyPromptText()">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+          העתקה
+        </button>
+        <p class="copy-status" id="copyStatus" role="status" aria-live="polite"></p>
+        <div class="chat-links">
+          <a class="btn btn-secondary" href="https://chatgpt.com" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>
+            פתחו ChatGPT
+          </a>
+          <a class="btn btn-secondary" href="https://gemini.google.com" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>
+            פתחו Gemini
+          </a>
+        </div>
+        <p class="note">הקישורים נפתחים בלשונית חדשה. נכנסים עם החשבון שכבר יש לכם, מדביקים את הפרומפט, ומעתיקים משם את כל התשובה שתתקבל.</p>
+      </div>
+
+      <div class="prompt-step" id="chatPasteBox" hidden>
+        <label for="chatAnswer">התשובה שקיבלתם</label>
+        <textarea class="prompt-out" id="chatAnswer" style="min-height:130px" placeholder="הדביקו כאן את כל התשובה מהצ׳אט"></textarea>
+        <button type="button" class="btn btn-primary" style="margin-top:12px" onclick="buildFromChatAnswer()">בנו מהתשובה</button>
+      </div>
     </div>
 
     <div class="btn-row" id="step2Nav">
-      <button class="btn btn-secondary" onclick="goToStep(1)">→ חזרה</button>
+      <button type="button" class="btn btn-secondary" onclick="goToStep(1)">→ חזרה</button>
     </div>
   </div>
 
@@ -268,8 +258,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(2)">→ חזרה</button>
-      <button class="btn btn-secondary" onclick="generateLesson()">🔄 צור מחדש</button>
+      <button type="button" class="btn btn-secondary" onclick="goToStep(2)">→ חזרה</button>
       <button class="btn btn-primary" onclick="publishLesson()">פרסם ←</button>
     </div>
   </div>
@@ -305,28 +294,11 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 
 <script>
 // ===== CONFIG =====
-var GEMINI_MODEL = 'gemini-2.5-flash';
-var GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent';
 var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNCzoJTRJBK_IAkJE0IiGGcx18buwJQ0XSRgOcJ2FmbMtA5ojU/exec';
 var PLAYER_URL = 'https://pedagogiamh.co.il/tools/lesson-player/';
 
 var lessonJSON = null;
 var lessonId = null;
-
-// ===== API KEY =====
-function getKey() { return localStorage.getItem('ort-gemini-key') || ''; }
-function saveKey() {
-  var k = document.getElementById('geminiKey').value.trim();
-  if (!k) { showToast('נא להזין מפתח'); return; }
-  localStorage.setItem('ort-gemini-key', k);
-  document.getElementById('aiSetup').style.display = 'none';
-  showToast('המפתח נשמר!');
-}
-
-// Check if key exists on load
-(function() {
-  if (getKey()) document.getElementById('aiSetup').style.display = 'none';
-})();
 
 // ===== NAVIGATION =====
 function goToStep(n) {
@@ -357,21 +329,10 @@ function goToStep2() {
   });
 
   if (!valid) { showToast('נא למלא את כל השדות'); return; }
-  // API key is optional — the chat flow works without it
-
   goToStep(2);
 }
 
-// ===== GENERATE =====
-var loadingMessages = [
-  'מנתח את הנושא...',
-  'יוצר שקפים...',
-  'מכין משחקים לימודיים...',
-  'כותב פעילות קבוצתית...',
-  'מסכם את השיעור...',
-  'כמעט מוכן!'
-];
-
+// ===== BUILD =====
 function applyLessonJSON(parsed) {
   var topic = document.getElementById('lessonTopic').value.trim();
   var subject = document.getElementById('lessonSubject').value;
@@ -387,23 +348,49 @@ function applyLessonJSON(parsed) {
   goToStep(3);
 }
 
-// --- Chat flow: copy prompt -> paste Gemini answer, no API key ---
-function copyChatPrompt() {
+// --- Prompt flow: build the prompt, copy it into a chat, paste the answer back ---
+function buildAndShowPrompt() {
   var topic = document.getElementById('lessonTopic').value.trim();
   var subject = document.getElementById('lessonSubject').value;
   var grade = document.getElementById('lessonGrade').value;
   var notes = document.getElementById('lessonNotes').value.trim();
   if (!topic) { showToast('חזרו לשלב הקודם ומלאו נושא'); return; }
-  var p = buildPrompt(topic, subject, grade, notes);
-  navigator.clipboard.writeText(p).then(function() {
-    showToast('הפרומפט הועתק! עכשיו פתחו את Gemini והדביקו');
-    revealPasteBox();
-  }).catch(function() { showToast('ההעתקה נכשלה — נסו שוב'); });
+  document.getElementById('promptText').value = buildPrompt(topic, subject, grade, notes);
+  document.getElementById('promptStep').hidden = false;
+  document.getElementById('chatPasteBox').hidden = false;
+  setCopyStatus('');
 }
-function revealPasteBox() { document.getElementById('chatPasteBox').style.display = 'block'; }
+
+function setCopyStatus(msg) {
+  var el = document.getElementById('copyStatus');
+  el.textContent = '';
+  if (msg) setTimeout(function() { el.textContent = msg; }, 60);
+}
+
+function copyPromptText() {
+  var ta = document.getElementById('promptText');
+  if (!ta.value) { showToast('קודם בנו את הפרומפט'); return; }
+  var done = 'הפרומפט הועתק. הדביקו אותו בצ׳אט.';
+  function fallback() {
+    var ok = false;
+    try { ta.focus(); ta.select(); ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    if (ok) { setCopyStatus(done); showToast('הפרומפט הועתק!'); }
+    else { setCopyStatus('ההעתקה לא הצליחה. סמנו את הטקסט בתיבה והעתיקו ידנית.'); }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(function() {
+      setCopyStatus(done);
+      showToast('הפרומפט הועתק!');
+    }).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
 function buildFromChatAnswer() {
-  var text = document.getElementById('chatAnswer').value.trim();
-  if (!text) { showToast('הדביקו קודם את התשובה של Gemini'); return; }
+  var el = document.getElementById('chatAnswer');
+  var text = el.value.trim();
+  if (!text) { showToast('הדביקו קודם את התשובה מהצ׳אט'); return; }
   text = text.replace(/```json/gi, '```');
   var fenced = text.split('```');
   if (fenced.length >= 3) text = fenced[1];
@@ -411,57 +398,8 @@ function buildFromChatAnswer() {
   if (first === -1 || last === -1) { showToast('לא נמצא JSON בתשובה — ודאו שהעתקתם את כל התשובה'); return; }
   try {
     applyLessonJSON(JSON.parse(text.slice(first, last + 1)));
-    document.getElementById('chatAnswer').value = '';
-  } catch(e) { showToast('התשובה לא תקינה — בקשו מ-Gemini: החזר JSON תקין בלבד, ונסו שוב'); }
-}
-
-async function generateLesson() {
-  var topic = document.getElementById('lessonTopic').value.trim();
-  var subject = document.getElementById('lessonSubject').value;
-  var grade = document.getElementById('lessonGrade').value;
-  var notes = document.getElementById('lessonNotes').value.trim();
-
-  // Show loading
-  document.getElementById('generateCard').style.display = 'none';
-  document.getElementById('step2Nav').style.display = 'none';
-  var lb = document.getElementById('loadingBox');
-  lb.style.display = '';
-
-  var msgIdx = 0;
-  var msgInterval = setInterval(function() {
-    msgIdx = (msgIdx + 1) % loadingMessages.length;
-    document.getElementById('loadingMsg').textContent = loadingMessages[msgIdx];
-  }, 4000);
-
-  var prompt = buildPrompt(topic, subject, grade, notes);
-
-  try {
-    if (!getKey()) { clearInterval(msgInterval); lb.style.display = 'none'; document.getElementById('generateCard').style.display = ''; document.getElementById('step2Nav').style.display = ''; showToast('אין מפתח API — השתמשו במסלול ההעתקה לג׳מיני למעלה'); return; }
-    var res = await fetch(GEMINI_URL + '?key=' + getKey(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
-      })
-    });
-
-    if (!res.ok) throw new Error('API error: ' + res.status);
-
-    var data = await res.json();
-    var text = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
-    if (!text) throw new Error('No content returned');
-
-    clearInterval(msgInterval);
-    applyLessonJSON(JSON.parse(text));
-
-  } catch (err) {
-    clearInterval(msgInterval);
-    lb.style.display = 'none';
-    document.getElementById('generateCard').style.display = '';
-    document.getElementById('step2Nav').style.display = '';
-    showToast('שגיאה: ' + err.message);
-  }
+    el.value = '';
+  } catch (e) { showToast('התשובה לא תקינה — בקשו מהצ׳אט להחזיר JSON תקין בלבד, ונסו שוב'); }
 }
 
 function buildPrompt(topic, subject, grade, notes) {
@@ -676,9 +614,11 @@ function resetAll() {
   document.getElementById('lessonSubject').value = '';
   document.getElementById('lessonGrade').value = '';
   document.getElementById('lessonNotes').value = '';
-  document.getElementById('generateCard').style.display = '';
-  document.getElementById('step2Nav').style.display = '';
-  document.getElementById('loadingBox').style.display = 'none';
+  document.getElementById('promptText').value = '';
+  document.getElementById('chatAnswer').value = '';
+  document.getElementById('promptStep').hidden = true;
+  document.getElementById('chatPasteBox').hidden = true;
+  setCopyStatus('');
   goToStep(1);
 }
 
