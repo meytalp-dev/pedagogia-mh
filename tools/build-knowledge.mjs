@@ -35,6 +35,12 @@ const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמו�
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
   "admin.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html"]);
 
+/* עמוד מוגן = עמוד שטוען את /auth.js.
+   הסינון נגזר מהקוד עצמו ולא מרשימה ידנית: העמודים המוגנים הצהירו על עצמם
+   בשורת ה-script, ולכן עמוד מוגן חדש נחסם אוטומטית גם אם ישכחו לעדכן כאן.
+   בלי זה עוגן עונה לכל שואל אנונימי מתוך תוכן שמאחורי שער ההרשאות. */
+const isGated = (src) => /<script[^>]+\bsrc=["'](?:\.{0,2}\/)?auth\.js/i.test(src);
+
 /* מסיר אלמנט שלם מה-HTML כולל תגיות מקוננות מאותו סוג (למשל div בתוך div) */
 function removeBlocks(html, openerRe) {
   let result = html;
@@ -248,9 +254,18 @@ function buildPinned(files) {
 }
 
 /* ---------- איסוף העמודים ---------- */
+const gated = [];
 const files = readdirSync(ROOT)
   .filter((f) => f.endsWith(".html") && !SKIP.has(f))
+  .filter((f) => {
+    if (!isGated(readFileSync(join(ROOT, f), "utf8"))) return true;
+    gated.push(f);
+    return false;
+  })
   .sort();
+if (gated.length) {
+  console.log(`סוננו ${gated.length} עמודים מוגנים (טוענים /auth.js): ${gated.sort().join(", ")}`);
+}
 
 const pinned = buildPinned(files);
 
@@ -264,7 +279,8 @@ for (const f of files) {
 // עמוד הכלים (רשימת כל הכלים הדיגיטליים); עמודי הכלים עצמם הם אפליקציות — אין בהם טקסט
 const toolsIndex = join(ROOT, "tools", "index.html");
 if (existsSync(toolsIndex)) {
-  pages.push(extractPage(readFileSync(toolsIndex, "utf8"), `${SITE}/tools/`));
+  const toolsHtml = readFileSync(toolsIndex, "utf8");
+  if (!isGated(toolsHtml)) pages.push(extractPage(toolsHtml, `${SITE}/tools/`));
 }
 
 /* ---------- אכיפת תקציב הגודל הכולל ---------- */
