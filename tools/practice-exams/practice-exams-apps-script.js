@@ -15,38 +15,10 @@
  * 4) Deploy → Manage deployments → עפרון "Edit" → Version: "New version" → Deploy
  *    (חשוב! בלי "New version" השינויים לא יעלו)
  * 5) ה-URL נשאר אותו URL — אין צורך לעדכן בקבצי HTML
- * 6) פעם אחת בלבד — להגדיר את כתובת הדוא"ל לקבלת דיווחים,
- *    ראי את ההסבר אצל הפונקציה adminEmail_ שכמה שורות מכאן
  *
  * ═══════════════════════════════════════════════════════════════
  */
 
-/**
- * כתובת הדוא"ל שאליה נשלחים דיווחי משוב מהמערכת.
- *
- * הכתובת אינה כתובה בתוך הקוד (הקוד יושב בריפוזיטורי ציבורי) —
- * היא נשמרת כ"מאפיין סקריפט" בהגדרות הפרויקט.
- *
- * איך מגדירים (פעם אחת, בעורך Apps Script):
- *   1) בתפריט הצד — Project Settings  (גלגל שיניים · "הגדרות הפרויקט")
- *   2) לגלול למטה ל-Script Properties  ("מאפייני סקריפט")
- *   3) Add script property  ("הוספת מאפיין")
- *        Property (שם):  ADMIN_EMAIL
- *        Value   (ערך):  הכתובת שאליה יגיעו הדיווחים
- *   4) Save script properties  ("שמירה")
- *   שינוי הכתובת בעתיד — לערוך את הערך שם. אין צורך לגעת בקוד ולא לפרוס מחדש.
- *
- * אם המאפיין לא הוגדר — הדיווחים יישלחו לכתובת של החשבון שמריץ את הסקריפט,
- * כך שדבר לא הולך לאיבוד. בכל מקרה כל דיווח נשמר גם בטאב feedback בגיליון.
- */
-function adminEmail_() {
-  let v = '';
-  try { v = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL') || ''; } catch (e) {}
-  v = String(v).trim();
-  if (v) return v;
-  try { return String(Session.getEffectiveUser().getEmail() || '').trim(); } catch (e) {}
-  return '';
-}
 
 const SHEET_SUBMISSIONS = 'submissions';
 const SHEET_ANSWER_KEYS = 'answer_keys';
@@ -393,52 +365,12 @@ function registerOrLoginStudent_(name, cls, pin, teacherCode) {
 // feedback
 // ============================================================
 function submitFeedback_(body) {
-  const role = body.role || 'unknown';
-  const name = body.name || 'אנונימי';
-  const contact = body.contact || '';
-  const subject = body.subject || 'ללא נושא';
-  const message = body.message || '';
-  const url = body.url || '';
-
-  if (!message) return { ok: false, error: 'חובה להזין תוכן' };
-
-  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_FEEDBACK);
-  sh.appendRow([new Date(), role, name, contact, subject, message, url]);
-
-  try {
-    const admin = adminEmail_();
-    if (!admin) {
-      // אין כתובת יעד — הדיווח כבר נשמר בגיליון, רק המייל לא נשלח
-      log_('email-skip', 'ADMIN_EMAIL לא הוגדר במאפייני הסקריפט');
-      return { ok: true };
-    }
-    const roleHe = role === 'teacher' ? 'מורה' : (role === 'student' ? 'תלמיד/ה' : role);
-    const htmlBody =
-      '<div dir="rtl" style="font-family:Arial,sans-serif;max-width:600px;">' +
-        '<h2 style="color:#ec4899;">דיווח חדש ממערכת תרגול מבחני גמר</h2>' +
-        '<table style="border-collapse:collapse;width:100%;">' +
-          '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;">תפקיד</td><td style="padding:8px;">' + roleHe + '</td></tr>' +
-          '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;">שם</td><td style="padding:8px;">' + name + '</td></tr>' +
-          (contact ? '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;">צור קשר</td><td style="padding:8px;">' + contact + '</td></tr>' : '') +
-          '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;">נושא</td><td style="padding:8px;">' + subject + '</td></tr>' +
-          '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;vertical-align:top;">הודעה</td><td style="padding:8px;white-space:pre-wrap;">' + message + '</td></tr>' +
-          (url ? '<tr><td style="padding:8px;background:#f8fafc;font-weight:bold;">דף</td><td style="padding:8px;"><a href="' + url + '">' + url + '</a></td></tr>' : '') +
-        '</table>' +
-        '<p style="color:#64748b;font-size:12px;margin-top:20px;">נשלח אוטומטית ממערכת תרגול מבחני גמר</p>' +
-      '</div>';
-
-    MailApp.sendEmail({
-      to: admin,
-      replyTo: contact && contact.indexOf('@') > -1 ? contact : admin,
-      subject: '[תרגול מבחנים] ' + subject + ' — ' + roleHe,
-      htmlBody: htmlBody
-    });
-  } catch (e) {
-    // Email fails silently — sheet row is saved
-    log_('email-error', String(e));
-  }
-
-  return { ok: true };
+  /* מנגנון המשוב כבוי.
+     מאגר התרגולים פתוח לשימוש חופשי ואינו אוסף נתונים —
+     אין שליחת מייל ואין כתיבה לגיליון.
+     להחזרה בעתיד: לכתוב כאן appendRow לטאב feedback,
+     ואם רוצים גם התראה — MailApp.sendEmail עם כתובת ממאפייני הסקריפט. */
+  return { ok: true, disabled: true };
 }
 
 // ============================================================
