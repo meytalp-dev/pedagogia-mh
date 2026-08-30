@@ -6,7 +6,7 @@
 
 /* ----- שער הקטגוריות ----- */
 .cat-hub{background:#fff;border-bottom:1px solid var(--border);padding:26px var(--px) 30px}
-.cat-hub h2{font-size:.85rem;font-weight:800;letter-spacing:.22em;color:#0B7FA6;margin-bottom:8px}
+.cat-hub h2{font-size:.85rem;font-weight:800;letter-spacing:.22em;color:var(--accent);margin-bottom:8px}
 .cat-hub-lead{font-size:.9rem;color:var(--text2);margin-bottom:16px;max-width:62ch}
 .cat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 
@@ -25,7 +25,7 @@
 .catcard .ci{flex:0 0 auto;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
   background:var(--blue-bg);color:var(--navy-800);transition:transform .3s var(--ease),background .25s,color .25s}
 .catcard .ci svg{width:21px;height:21px}
-.catcard:hover .ci,.catcard.on .ci{transform:scale(1.06) rotate(-3deg);background:#fff;color:#0B7FA6}
+.catcard:hover .ci,.catcard.on .ci{transform:scale(1.06) rotate(-3deg);background:#fff;color:var(--accent)}
 .catcard .ct{display:flex;flex-direction:column;gap:2px;min-width:0}
 .catcard .cn{font-size:.72rem;font-weight:800;letter-spacing:.1em;color:var(--muted);font-variant-numeric:tabular-nums}
 .catcard .cttl{font-size:1.02rem;font-weight:800;color:var(--navy);line-height:1.25}
@@ -56,7 +56,7 @@
 .cgo:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 
 /* ----- אייקון קו קטן בתוך תא טבלה (במקום אמוג'י) ----- */
-.ik{display:inline-grid;place-items:center;width:22px;height:22px;color:#0B7FA6}
+.ik{display:inline-grid;place-items:center;width:22px;height:22px;color:var(--accent)}
 .ik svg{width:18px;height:18px}
 
 @media(max-width:980px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

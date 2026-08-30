@@ -19,8 +19,8 @@
 <style>
 .linklist{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px}
 .linklist li{font-size:.87rem;color:var(--text2);padding-inline-start:16px;position:relative}
-.linklist li::before{content:"\2039";position:absolute;inset-inline-start:0;color:#0B7FA6;font-weight:800}
-.linklist a{color:#0B7FA6;font-weight:700;text-decoration:none}
+.linklist li::before{content:"\2039";position:absolute;inset-inline-start:0;color:var(--accent);font-weight:800}
+.linklist a{color:var(--accent);font-weight:700;text-decoration:none}
 .linklist a:hover{text-decoration:underline}
 .sechead{padding:34px var(--px) 0}
 .sechead h2{font-size:1.5rem;margin-top:6px}
@@ -72,7 +72,7 @@
 .crs li{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px;padding:11px 0;border-bottom:1px solid var(--border)}
 .crs li:last-child{border-bottom:none}
 .crs a{color:var(--navy);font-weight:700;font-size:.95rem;text-decoration:none}
-.crs a:hover{color:#0B7FA6;text-decoration:underline}
+.crs a:hover{color:var(--accent);text-decoration:underline}
 .crs .meta{font-size:.79rem;color:var(--muted);font-weight:600}
 .crs .d{flex-basis:100%;font-size:.84rem;color:var(--text2);line-height:1.55}
 .ladder{counter-reset:st}
@@ -385,7 +385,7 @@
     <p style="font-size:.85rem;color:var(--text2)">מסלול לימוד מלא בוואטסאפ, בטלפון ובדף מודפס ‹</p>
   </a>
   <a class="card rv d2" href="#kesher" style="padding:20px 22px">
-    <div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></div>
+    <div class="ic" style="background:var(--cyan-100);color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></div>
     <h2 style="font-size:1.05rem;margin:11px 0 2px">תלמיד/ה שנעלמ/ה</h2>
     <p style="font-size:.85rem;color:var(--text2)">שיחת הקשר — מה אומרים, למה מקשיבים, מתי מעבירים הלאה ‹</p>
   </a>
@@ -424,8 +424,8 @@
       <p>חוזרים יחד, עונים על שאלה אחת, וכל תלמיד ממלא כרטיס יציאה קצר. כך יודעים מחר מאיפה ממשיכים.</p>
     </div>
   </div>
-  <div class="notice rv" style="margin-top:14px;border-inline-start:4px solid #0B7FA6">
-    <b style="color:#0B7FA6">כלל אצבע:</b> אם השיעור לא מסתיים בכרטיס יציאה — אין לכם מושג מי למד. בחירום זה הנתון החשוב ביותר שיש.
+  <div class="notice rv" style="margin-top:14px;border-inline-start:4px solid var(--accent)">
+    <b style="color:var(--accent)">כלל אצבע:</b> אם השיעור לא מסתיים בכרטיס יציאה — אין לכם מושג מי למד. בחירום זה הנתון החשוב ביותר שיש.
   </div>
 </div>
 
@@ -542,7 +542,7 @@
     <p style="font-size:.86rem;color:var(--text2);line-height:1.7">הודעה קולית של 4 דקות במקום שיעור · משימה אחת ברורה בטקסט · תמונת הפתרון בערב · תלמידים שולחים תשובה בתמונה. הודעה קולית עדיפה על טקסט ארוך — גם לתלמידים עם קשיי קריאה.</p>
   </div>
   <div class="card rv d1" style="padding:22px">
-    <div class="ic" style="background:var(--cyan-100);color:#0B7FA6"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></div>
+    <div class="ic" style="background:var(--cyan-100);color:var(--accent)"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></div>
     <h3 style="font-size:1.06rem;margin:12px 0 4px">טלפון בסבב</h3>
     <p style="font-size:.86rem;color:var(--text2);line-height:1.7">שלוש שיחות של 8 דקות ביום, בסבב קבוע — כל תלמיד מקבל שיחה פעם בשבוע. זה נשמע הרבה; זו ההשקעה עם ההחזר הגבוה ביותר בכל הרשימה הזאת.</p>
   </div>
@@ -584,7 +584,7 @@
 <div class="grid c3" style="padding:20px var(--px) 6px">
   <div class="card rv" style="padding:20px 22px"><h3 style="font-size:1rem;margin:0 0 4px">המבנה</h3><p style="font-size:.86rem;color:var(--text2)">3–4 תלמידים · 30 דקות · פעמיים בשבוע · אותה קבוצה קבועה, אותה שעה קבועה.</p></div>
   <div class="card rv d1" style="padding:20px 22px"><h3 style="font-size:1rem;margin:0 0 4px">התוכן</h3><p style="font-size:.86rem;color:var(--text2)">נושא אחד בלבד לכל מפגש. לא ״עוזרים בשיעורי בית״ — מלמדים מיומנות אחת עד הסוף.</p></div>
-  <div class="card rv d2" style="padding:20px 22px"><h3 style="font-size:1rem;margin:0 0 4px">מי מנחה</h3><p style="font-size:.86rem;color:var(--text2)">מורה, מורה חונך/ת או תלמיד מכיתה בוגרת. <a href="chanichut.html" style="color:#0B7FA6;font-weight:700">נתיבי החניכות</a> ומערך אס״א שלנו הם התשתית.</p></div>
+  <div class="card rv d2" style="padding:20px 22px"><h3 style="font-size:1rem;margin:0 0 4px">מי מנחה</h3><p style="font-size:.86rem;color:var(--text2)">מורה, מורה חונך/ת או תלמיד מכיתה בוגרת. <a href="chanichut.html" style="color:var(--accent);font-weight:700">נתיבי החניכות</a> ומערך אס״א שלנו הם התשתית.</p></div>
 </div>
 
 <div class="sechead rv" id="rigshi">
@@ -602,7 +602,7 @@
     <div class="tipcard" style="--tc:var(--m-green);--tc-ink:var(--m-green-ink)"><b class="tt">גוף</b> — תנועה, נשימה, לצאת מהכיסא. לפעמים זה כל מה שצריך.</div>
   </div>
   <div class="notice rv" style="margin-top:16px;border-inline-start:4px solid #5B5FCF">
-    <b style="color:#5B5FCF">במצוקה נפשית חריפה:</b> ער״ן — קו החירום הנפשי, חיוג <b>1201</b>, זמין 24/7 · או פנייה מיידית ליועצת המוסד · <a href="counseling.html" style="color:#0B7FA6;font-weight:700">המרחב הייעוצי שלנו</a>
+    <b style="color:#5B5FCF">במצוקה נפשית חריפה:</b> ער״ן — קו החירום הנפשי, חיוג <b>1201</b>, זמין 24/7 · או פנייה מיידית ליועצת המוסד · <a href="counseling.html" style="color:var(--accent);font-weight:700">המרחב הייעוצי שלנו</a>
   </div>
 </div>
 
@@ -657,7 +657,7 @@
       <li><a href="https://campus.gov.il/course/moe-edu-tch-learningfromdistanceiv-he/" target="_blank" rel="noopener">למידה מרחוק IV: תכנון למידה שבועית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span></li>
       <li><a href="https://campus.gov.il/course/moe-edu-shelf-aiedu-he/" target="_blank" rel="noopener">בינה מלאכותית כעוזר הוראה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a><span class="meta">6 שעות</span><span class="d">ניסוח פרומפטים, יצירת תוכן ותכנון שיעור בעזרת AI — משלים ישירות את המחולל שלמעלה.</span></li>
     </ul>
-    <div class="notice" style="margin-top:14px">הקורסים מקנים תעודה. לבדיקת הכרה לגמול השתלמות — <a href="hishtalmut-gmul.html" style="color:#0B7FA6;font-weight:700">עמוד הגמול</a>.</div>
+    <div class="notice" style="margin-top:14px">הקורסים מקנים תעודה. לבדיקת הכרה לגמול השתלמות — <a href="hishtalmut-gmul.html" style="color:var(--accent);font-weight:700">עמוד הגמול</a>.</div>
   </div>
 
   <div class="tabpanel" id="t3">
