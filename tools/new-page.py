@@ -19,10 +19,12 @@ def slice_shell(path):
     s = io.open(path, encoding='utf-8').read()
     head_end = s.index('<link rel="stylesheet" href="style.css">')
     head = s[:head_end]
-    nav_start = s.index('<div class="scrim"')
-    nav_end = s.index('</nav>', s.index('<nav class="nav">')) + len('</nav>')
+    # התפריט והפוטר מנוהלים מ-templates/ (ראו tools/build-nav.mjs) — לוקחים
+    # את הבלוק כולל סימוני nav:start/foot:start, כדי שהעמוד החדש יתחדש גם הוא
+    nav_start = s.index('<!-- nav:start')
+    nav_end = s.index('<!-- nav:end -->') + len('<!-- nav:end -->')
     nav = s[nav_start:nav_end]
-    tail_start = s.index('<div class="foot">')
+    tail_start = s.index('<!-- foot:start')
     tail = s[tail_start:]
     return head, nav, tail
 
@@ -40,9 +42,19 @@ def main():
     ap.add_argument('--links', default='')
     ap.add_argument('--desc', default='')
     ap.add_argument('--shell', default=SHELL)
+    ap.add_argument('--section', default='procedures',
+                    help='הפריט בתפריט שיסומן active (procedures / space / chanichut / tafkidim / chevrati / menahalim ...)')
+    ap.add_argument('--tagline', default='', help='טקסט צד ימין בפוטר (ברירת מחדל: שם האתר)')
     a = ap.parse_args()
 
     head, nav, tail = slice_shell(a.shell)
+    # הסימונים קובעים מה build-nav.mjs ירנדר — הבלוק עצמו יתחדש מהתבנית בבנייה
+    nav = re.sub(r'<!-- nav:start[^>]*-->',
+                 '<!-- nav:start section="%s" -->' % a.section if a.section else '<!-- nav:start -->',
+                 nav, count=1)
+    tail = re.sub(r'<!-- foot:start[^>]*-->',
+                  '<!-- foot:start tagline="%s" -->' % a.tagline if a.tagline else '<!-- foot:start -->',
+                  tail, count=1)
 
     head = re.sub(r'<title>.*?</title>',
                   '<title>%s · הבית של המנהיגות הפדגוגית היוצרת</title>' % a.title,
@@ -89,6 +101,14 @@ def main():
 
     io.open(a.out, 'w', encoding='utf-8').write(page)
     sys.stdout.write('wrote %s (%d bytes)\n' % (a.out, len(page)))
+
+    # מרנדר מיד את התפריט/הפוטר לפי section ו-tagline (אחרת זה קורה רק באקשן)
+    import subprocess
+    build = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build-nav.mjs')
+    try:
+        subprocess.call(['node', build])
+    except OSError:
+        sys.stdout.write('node לא נמצא — להריץ ידנית: node tools/build-nav.mjs\n')
 
 
 if __name__ == '__main__':

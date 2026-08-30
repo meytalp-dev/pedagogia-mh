@@ -32,6 +32,7 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
 <body>
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
+<!-- nav:start section="space" -->
 <div class="scrim" onclick="toggleMenu(false)"></div>
 <aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
   <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
@@ -42,8 +43,8 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
     <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
-    <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
-    <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+    <a href="bagrut.html">נתיב הבגרות</a>
+    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
@@ -164,6 +165,15 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
         <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
       </div>
     </span>
+    <span class="navitem"><a class="lnk" href="menahalim.html">מרחב מנהלים<span class="caret">▼</span></a>
+      <div class="sub">
+        <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+        <a href="https://lerani.co.il/training-supervision/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="drive-menahalim.html">דרייב מנהלים</a>
+        <a href="tashpaz.html">היערכות תשפ״ז</a>
+      </div>
+    </span>
   </div>
   <div class="left"><a href="negishut.html">נגישות</a><span class="dis">English</span><span class="dis">العربية</span></div>
 </div>
@@ -178,8 +188,8 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
       <a href="hodaot.html">הודעות ועדכונים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
       <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
-      <a class="nested" href="gmar.html">נתיב הגמר · תעודת גמר</a>
-      <a class="nested" href="bagrut.html">נתיב הבגרות</a>
+      <a href="bagrut.html">נתיב הבגרות</a>
+      <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
       <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <span class="dis">תוכניות לימודים</span>
@@ -187,7 +197,6 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
       <a href="ai.html">שילוב AI בחינוך</a>
       <a href="alternatives.html">הערכה</a>
       <a href="documents.html">כלים ניהוליים פדגוגיים</a>
-
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="chanichut.html">חניכות וקריירה<span class="caret">▼</span></a>
@@ -218,8 +227,8 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
       <a href="counseling.html#sel">SEL — למידה רגשית-חברתית</a>
       <a href="counseling.html#asa">אס״א וחונכות</a>
       <a href="counseling.html#sheelonim">שאלונים ומדידה</a>
-      <a href="drive-yeutz.html">דרייב ייעוצי</a>      <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
-
+      <a href="drive-yeutz.html">דרייב ייעוצי</a>
+      <a href="counseling.html#preda">פרידה מתלמידי י״ב</a>
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="procedures.html">נהלים<span class="caret">▼</span></a>
@@ -280,6 +289,7 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
     <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
 </nav>
+<!-- nav:end -->
 
 <main id="main">
 
@@ -383,7 +393,9 @@ h2 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
 
 </main>
 
+<!-- foot:start tagline="שילוב AI בחינוך · עודכן 25.8.2026" -->
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>שילוב AI בחינוך · עודכן 25.8.2026</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav></div>
+<!-- foot:end -->
 
 <script src="site.js"></script>
 <script src="search.js" defer></script>
