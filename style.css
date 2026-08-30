@@ -396,7 +396,16 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
 /* ===== responsive ===== */
 /* התפריט העליון — תשעה פריטים, מותג ושני כפתורים דורשים כ-1,400 פיקסלים.
    מתחת לכך הוא נשבר לשלוש שורות — עוברים למגירה, שמכילה את כל המדורים. */
-@media(max-width:1080px){
+/* בין 1201 ל-1420 הפס העליון צפוף — תשעה פריטים + מותג + חיפוש נשברו לשורה שנייה.
+   מצמצמים ריווח וגופן ומסתירים את מילת ה"חיפוש" (האייקון נשאר). */
+@media(min-width:1201px) and (max-width:1420px){
+  .nav{gap:8px 9px}
+  .nav a.lnk{font-size:var(--fs-sm)}
+  .nav .brand b{max-width:150px;font-size:.88rem}
+  .searchbtn{padding:7px 10px}
+  .searchbtn span{display:none}
+}
+@media(max-width:1200px){
   .nav a.lnk,.nav .navitem{display:none}
   .nav{gap:10px}
   .nav .brand b{max-width:none}
