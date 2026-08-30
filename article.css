@@ -335,3 +335,21 @@ label.ci input:checked ~ span{color:var(--text2)}
 .pagerow a.prev{text-align:end;grid-column:2}
 @media(max-width:640px){.pagerow{grid-template-columns:1fr}.pagerow a.prev{grid-column:1;text-align:start}}
 h2.sub-sec small,h3.sub-sec small{font-size:.6em;font-weight:600;color:var(--text2);letter-spacing:0;line-height:1.4}
+
+/* ── הנוהל בקצרה — כרטיס פתיחה אחיד לכל עמוד נוהל (T84) ──
+   בשורה אחת · למי · מה לעשות (צ׳קליסט) · עד מתי · מה השתנה השנה · המסמך המחייב.
+   הכותרת אינה sub-sec בכוונה — כדי שלא תיכנס לפס הניווט של pagenav. */
+.nohal-brief{margin:0 0 34px;padding:22px 26px 20px;background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--accent);border-radius:0 16px 16px 0;box-shadow:var(--sh-sm)}
+.nohal-brief .nb-title{font-size:var(--fs-2xs);font-weight:800;letter-spacing:.12em;color:var(--accent);margin:0 0 8px}
+.nohal-brief .nb-line{font-size:var(--fs-lg);font-weight:700;color:var(--navy);margin:0 0 18px;line-height:1.45;max-width:none}
+.nb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 28px;margin:0}
+.nb-grid>div{margin:0;min-width:0}
+.nb-grid .wide{grid-column:1/-1}
+.nb-grid dt{font-size:var(--fs-2xs);font-weight:800;letter-spacing:.08em;color:var(--text2);margin:0 0 5px}
+.nb-grid dd{margin:0;font-size:var(--fs-sm);line-height:1.6}
+.nb-grid dd a.lk{font-weight:700}
+.nb-check{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.nb-check li{position:relative;padding-inline-start:26px}
+.nb-check li::before{content:"";position:absolute;inset-inline-start:0;top:.22em;width:15px;height:15px;border:1.8px solid var(--accent);border-radius:4px;background:#fff}
+@media(max-width:640px){.nohal-brief{padding:18px 18px 16px}.nb-grid{grid-template-columns:1fr;gap:14px}}
+@media print{.nohal-brief{box-shadow:none;break-inside:avoid}}
