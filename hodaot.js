@@ -29,6 +29,17 @@
     });
   }
 
+  /* רק http/https ונתיב יחסי. כתובת עם סכימת javascript: או data: בעמודת
+     הקישור של הגיליון עברה עד היום — esc() מבריחה תווים אבל לא בודקת סכימה. */
+  function safeUrl(u) {
+    var v = String(u == null ? '' : u).trim();
+    if (!v) return '';
+    if (/^(https?:)?\/\//i.test(v)) return v;      /* מוחלט או ללא סכימה */
+    if (/^[\/#?]/.test(v)) return v;                /* יחסי לשורש או עוגן */
+    if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return '';   /* כל סכימה אחרת — נדחית */
+    return v;                                        /* נתיב יחסי רגיל */
+  }
+
   function fmt(iso) {
     if (!iso) return '';
     var d = new Date(iso);
@@ -57,9 +68,10 @@
     list.innerHTML = items.map(function (it) {
       var c = cls(it.type);
       var links = [];
-      if (it.link) links.push('<a href="' + esc(it.link) + '" target="_blank" rel="noopener">' +
+      var lk = safeUrl(it.link), fl = safeUrl(it.file);
+      if (lk) links.push('<a href="' + esc(lk) + '" target="_blank" rel="noopener">' +
         ICON_LINK + 'למעבר</a>');
-      if (it.file) links.push('<a href="' + esc(it.file) + '" target="_blank" rel="noopener">' +
+      if (fl) links.push('<a href="' + esc(fl) + '" target="_blank" rel="noopener">' +
         ICON_FILE + 'לקובץ המצורף</a>');
 
       return '<article class="hitem t-' + c + '">' +
@@ -151,24 +163,16 @@
     if (cards) cards.innerHTML = '';
   }
 
-  /* אם fetch נחסם (CORS/רשת) — נופלים ל-JSONP, ש-Apps Script תומך בו */
-  function viaJsonp() {
-    var cb = 'hodaotCB' + Date.now();
-    var t  = setTimeout(function () { cleanup(); fail(); }, 12000);
-    function cleanup() {
-      clearTimeout(t);
-      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
-      if (s.parentNode) s.parentNode.removeChild(s);
-    }
-    window[cb] = function (data) { cleanup(); show(data); };
-    var s = document.createElement('script');
-    s.src = FEED_URL + '?mode=feed&callback=' + cb;
-    s.onerror = function () { cleanup(); fail(); };
-    document.head.appendChild(s);
-  }
-
+  /* המשיכה והצגה — שני שלבים נפרדים במכוון.
+     קודם show() ישב בתוך שרשרת ההבטחה, ולכן כל חריגה ברינדור נתפסה
+     ב-catch והפעילה משיכה שנייה — הפיד נמשך פעמיים וההודעות רונדרו פעמיים. */
   fetch(FEED_URL + '?mode=feed', { cache: 'no-store' })
-    .then(function (r) { return r.json(); })
-    .then(show)
-    .catch(viaJsonp);
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(
+      function (data) { try { show(data); } catch (e) { fail(); } },
+      function ()     { fail(); }
+    );
 })();

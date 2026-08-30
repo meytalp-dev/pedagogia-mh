@@ -557,7 +557,7 @@
       });
     }
     sync();
-    document.addEventListener('click', function () { setTimeout(sync, 30); }, true);
+    document.addEventListener('click', function () { setTimeout(function () { sync(); spy(); }, 30); }, true);
 
     /* דעיכה בקצוות רק כשבאמת יש עוד כרטיסיות מעבר לקצה */
     var box = bar.__tabs;
@@ -571,9 +571,11 @@
     fades();
 
     var ticking = false, active = -1, activeSub = null;
+    /* sync() אינו נקרא כאן: נראות המדורים משתנה רק בלחיצה, ומאזין הלחיצה
+       למעלה כבר מפעיל אותו. קריאתו בכל פריים של גלילה גרמה 30–40 חישובי
+       פריסה כפויים בעמודים הכבדים. */
     function spy() {
       ticking = false;
-      sync();
       var line = offset + 26, cur = -1;
       for (var i = 0; i < items.length; i++) {
         if (items[i].hidden) continue;

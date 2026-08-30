@@ -48,10 +48,19 @@
     badge();
   }
 
-  /* ===== סשן מקומי ===== */
+  /* ===== סשן מקומי =====
+     sessionStorage ולא localStorage: על מחשב משותף בבית ספר, טוקןד
+     ששורד סגירת דפדפן מכניס את המשתמש הבא אוטומטית. */
+  function store() {
+    try { return window.sessionStorage; } catch (e) { return null; }
+  }
+  /* שאריות מהגרסה הקודמת — נמחקות פעם אחת ולא נקראות */
+  try { localStorage.removeItem(KEY); } catch (e) {}
+
   function session() {
     try {
-      var s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      var st = store(); if (!st) return null;
+      var s = JSON.parse(st.getItem(KEY) || 'null');
       if (!s || !s.token || !s.exp || s.exp < Date.now()) return null;
       return s;
     } catch (e) { return null; }
@@ -65,7 +74,7 @@
     return false;
   }
   function logout() {
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    try { var st = store(); if (st) st.removeItem(KEY); } catch (e) {}
     location.reload();
   }
 
@@ -169,9 +178,12 @@
                                  'הכניסה נכשלה. נסו שוב.');
       }
       try {
-        localStorage.setItem(KEY, JSON.stringify({
+        /* ארבע שעות לכל היותר — גם אם השרת מבקש יותר */
+        var hrs = Math.min(Number(res.hours) || 4, 4);
+        var st = store();
+        if (st) st.setItem(KEY, JSON.stringify({
           token: res.token, email: res.email, name: res.name || res.email,
-          spaces: res.spaces || [], exp: Date.now() + (res.hours || 10) * 3600e3
+          spaces: res.spaces || [], exp: Date.now() + hrs * 3600e3
         }));
       } catch (e2) {}
       if (!allowed(session())) return fail('החשבון שלך מאושר, אך לא ל' + label + '.');
@@ -278,7 +290,7 @@
       if (r && r.ok === false && r.error !== 'network' && r.error !== 'unconfigured') logout();
     });
   } else {
-    if (cur) { try { localStorage.removeItem(KEY); } catch (e) {} }
+    if (cur) { try { var st0 = store(); if (st0) st0.removeItem(KEY); } catch (e) {} }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', gate);
     } else { gate(); }

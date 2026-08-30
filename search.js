@@ -88,6 +88,10 @@
           return r.json();
         })
         .then(function (ix) {
+          /* קובץ חלקי מהאקשן — עדיף שגיאה ברורה מאשר TypeError סתום */
+          if (!ix || !Array.isArray(ix.pages) || !Array.isArray(ix.resources)) {
+            throw new Error('bad index shape');
+          }
           ix.catLabel = {};
           (ix.cats || []).forEach(function (c) { ix.catLabel[c.id] = c.label; });
           ix.pages.forEach(function (p) {
@@ -275,6 +279,16 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
+  /* אותה הגנה כמו בלוח ההודעות: כתובת מהאינדקס עם סכימה
+     javascript: או data: לא תיהפך לקישור שמריץ קוד. */
+  function safeUrl(u) {
+    var v = String(u == null ? '' : u).trim();
+    if (!v) return '#';
+    if (/^(https?:)?\/\//i.test(v)) return v;
+    if (/^[\/#?]/.test(v)) return v;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return '#';
+    return v;
+  }
   function mark(text, q) {
     var toks = norm(q).split(" ").filter(function (t) { return t.length >= 2; });
     if (!toks.length) return esc(text);
@@ -284,7 +298,16 @@
     var re = new RegExp("(" + all.map(function (t) {
       return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }).join("|") + ")", "gi");
-    return esc(text).replace(re, "<mark>$1</mark>");
+    /* מדגישים על הטקסט הגולמי ומבריחים כל קטע בנפרד — קודם ההברחה
+       רצה ראשונה וההדגשה יכלה לפגוע בישויות HTML שהיא יצרה */
+    var src = String(text == null ? "" : text), out = "", last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index)) + "<mark>" + esc(m[0]) + "</mark>";
+      last = m.index + m[0].length;
+      if (m.index === re.lastIndex) re.lastIndex++;
+    }
+    return out + esc(src.slice(last));
   }
 
   /* ---------- אייקונים ---------- */
@@ -394,9 +417,9 @@
 
   function rowHTML(r, i) {
     var subs = r.sections.map(function (s) {
-      return '<a class="ssec" href="' + esc(s.url) + '">↳ ' + esc(s.t) + "</a>";
+      return '<a class="ssec" href="' + esc(safeUrl(s.url)) + '">↳ ' + esc(s.t) + "</a>";
     }).join("");
-    return '<a class="sres" role="option" data-i="' + i + '" href="' + esc(r.url) + '"' +
+    return '<a class="sres" role="option" data-i="' + i + '" href="' + esc(safeUrl(r.url)) + '"' +
       (r.kind === "page" ? "" : ' target="_blank" rel="noopener"') + ">" +
       '<span class="sres-ic i-' + r.kind + '">' + (ICON[r.kind] || ICON.link) + "</span>" +
       '<span class="sres-tx">' +

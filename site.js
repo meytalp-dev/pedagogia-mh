@@ -217,7 +217,7 @@ document.addEventListener('animationend',e=>{
     if(cap) cap.style.transition='opacity .35s ease';
     const delay=+(box.dataset.interval||6000);
     let i=Math.max(0,imgs.findIndex(im=>im.classList.contains('on')));
-    let timer=null, capTimer=null, hovered=false, offscreen=false;
+    let timer=null, capTimer=null, hovered=false, offscreen=false, io=null;
     let playing=!reduce.matches;
 
     const btn=document.createElement('button');
@@ -226,6 +226,8 @@ document.addEventListener('animationend',e=>{
     box.appendChild(btn);
 
     function advance(){
+      /* אם הקרוסלה הוסרה מהמסמך — עוצרים ומשחררים את ההפניה אליה */
+      if(!box.isConnected){ clearInterval(timer); timer=null; clearTimeout(capTimer); if(io) io.disconnect(); return; }
       if(hovered) return;
       imgs[i].classList.remove('on');
       i=(i+1)%imgs.length;
@@ -255,7 +257,8 @@ document.addEventListener('animationend',e=>{
     box.addEventListener('pointerleave',()=>hovered=false);
 
     if('IntersectionObserver' in window){
-      new IntersectionObserver(es=>{offscreen=!es[0].isIntersecting;sync()},{threshold:0}).observe(box);
+      io=new IntersectionObserver(es=>{offscreen=!es[0].isIntersecting;sync()},{threshold:0});
+      io.observe(box);
     }
     document.addEventListener('visibilitychange',sync);
     addEventListener('pagehide',()=>{playing=false;clearTimeout(capTimer);sync()});

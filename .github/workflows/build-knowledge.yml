@@ -6,8 +6,14 @@ name: build-knowledge
 on:
   push:
     branches: [main]
-    paths: ["**.html", "ogdan-data.js", "tools/build-knowledge.mjs", "tools/build-search.mjs"]
+    paths: ["**.html", "ogdan-data.js", "role-defs.js", "tools/build-knowledge.mjs", "tools/build-search.mjs", "tools/build-sitemap.mjs"]
   workflow_dispatch:
+
+# שני push רצופים יצרו שתי ריצות מקבילות — השנייה נכשלה ב-push כי הראשונה
+# כבר דחפה, והאינדקס נשאר ישן בשקט. ריצה אחת בכל רגע, הבאה ממתינה.
+concurrency:
+  group: build-knowledge
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -24,12 +30,15 @@ jobs:
         run: node tools/build-knowledge.mjs
       - name: build search-index.json
         run: node tools/build-search.mjs
+      - name: build sitemap.xml
+        run: node tools/build-sitemap.mjs
       - name: commit if changed
         run: |
-          if ! git diff --quiet knowledge.json search-index.json; then
+          if ! git diff --quiet knowledge.json search-index.json sitemap.xml; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add knowledge.json search-index.json
+            git add knowledge.json search-index.json sitemap.xml
             git commit -m "עדכון אוטומטי של knowledge.json והאינדקס של החיפוש"
+            git pull --rebase origin main
             git push
           fi

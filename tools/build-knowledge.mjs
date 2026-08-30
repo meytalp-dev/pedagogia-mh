@@ -247,6 +247,32 @@ function buildPinned(files) {
   if (hoursFile) add(hoursFile, ogdanCoreHours(readFileSync(join(ROOT, hoursFile), "utf8")));
   else console.warn("אזהרה: מערך HOURS לא נמצא באף עמוד — טבלאות שעות הליבה לא ייכנסו לידע");
 
+  /* הגדרות התפקידים המלאות יושבות ב-role-defs.js ומוצגות במודאל בעמוד
+     התפקידים — בלי החילוץ הזה עוגן לא מכיר אותן בכלל. */
+  const rolesPath = join(ROOT, "role-defs.js");
+  if (existsSync(rolesPath) && files.includes("tafkidim.html")) {
+    const R = evalLiteral(readFileSync(rolesPath, "utf8"),
+      /const\s+ROLE_DEFS\s*=\s*(\{[\s\S]*\n\});/, "ROLE_DEFS בקובץ role-defs.js");
+    if (R) {
+      const strip = (h) => String(h || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      const parts = [];
+      for (const key of Object.keys(R)) {
+        const d = R[key];
+        const lines = ["## " + strip(d.title)];
+        if (d.lead) lines.push(strip(d.lead));
+        for (const sec of d.sections || []) {
+          const items = (sec.items || []).map(strip);
+          for (const act of sec.acts || []) {
+            items.push(strip(act.b) + ": " + (act.items || []).map(strip).join(" · "));
+          }
+          if (items.length) lines.push(strip(sec.h) + " — " + items.join(" · "));
+        }
+        parts.push(lines.join("\n"));
+      }
+      add("tafkidim.html", "הגדרות התפקידים המלאות:\n" + parts.join("\n\n"));
+    }
+  }
+
   const dataPath = join(ROOT, "ogdan-data.js");
   if (existsSync(dataPath) && files.includes("ogdan-shaot.html")) {
     add("ogdan-shaot.html", ogdanMegamot(readFileSync(dataPath, "utf8")));
