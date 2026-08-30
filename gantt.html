@@ -552,6 +552,8 @@ MONTHS.forEach(mo=>{
   ).join('') + `</div>`;
 });
 aEl.innerHTML = ahtml;
+/* ל-calendar.js — הוספה ליומן */
+window.PMH_GANTT = { EVENTS: EVENTS, TRACKS: TRACKS };
 
 /* מקרא + סינון */
 const legendEl = document.getElementById('legend');
@@ -572,6 +574,7 @@ legendEl.addEventListener('click', ev=>{
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
 <script src="/pagenav.js" defer></script>
+<script src="/calendar.js" defer></script>
 <script src="/toolbelt.js" defer></script>
 </body>
 </html>
