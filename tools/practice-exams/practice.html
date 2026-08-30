@@ -529,7 +529,7 @@
   <div id="screen-picker">
     <div class="picker-head">
       <h1>תרגול חופשי — בלי רישום</h1>
-      <p>בחר/י מבחן, ענה/י על השאלות — בסוף תקבל/י ציון אוטומטי ובדיקה.</p>
+      <p>בחר.י מבחן, ענה.י על השאלות — בסוף תקבל.י ציון אוטומטי ובדיקה.</p>
     </div>
 
     <div class="mode-banner">
@@ -585,7 +585,7 @@
       </div>
       <div class="result-actions">
         <button class="btn-primary" onclick="retryExam()">תרגל שוב את אותו מבחן</button>
-        <button class="btn-secondary" onclick="backToPicker()">בחר/י מבחן אחר</button>
+        <button class="btn-secondary" onclick="backToPicker()">בחר.י מבחן אחר</button>
       </div>
     </div>
 
@@ -855,7 +855,7 @@
             <div class="q-points">${q.points} נק'</div>
           </div>
           ${q.html ? `<div class="q-diagram">${q.html}</div>` : ''}
-          <textarea aria-labelledby="qt-${q.id}" placeholder="כתוב/י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
+          <textarea aria-labelledby="qt-${q.id}" placeholder="כתוב.י את תשובתך…" oninput="saveOpenAnswer('${q.id}', this.value)"></textarea>
         </div>
       `;
     }
@@ -950,7 +950,7 @@
 
     let subtitle;
     if (totalPointsWithKey === 0) {
-      subtitle = 'אין עדיין מחוון לשאלות במבחן הזה — רק תרגול חופשי. הריץ/י בדיקה עצמית מול החומר.';
+      subtitle = 'אין עדיין מחוון לשאלות במבחן הזה — רק תרגול חופשי. הריץ.י בדיקה עצמית מול החומר.';
       document.getElementById('result-title').textContent = 'סיימת את התרגול';
     } else {
       subtitle = `ענית נכון על ${correct} מתוך ${totalMC} שאלות אמריקאיות${openCount > 0 ? ' · ' + openCount + ' שאלות פתוחות נותרו לבדיקה עצמית' : ''}`;
@@ -1021,7 +1021,7 @@
 
       let note = '';
       if (q.correctAnswer == null) {
-        note = `<div class="review-note open">אין מחוון — בדוק/י מול המורה או החומר.</div>`;
+        note = `<div class="review-note open">אין מחוון — בדוק.י מול המורה או החומר.</div>`;
       } else if (!rec.ans) {
         note = `<div class="review-note bad">לא ענית — התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
       } else if (rec.isCorrect) {

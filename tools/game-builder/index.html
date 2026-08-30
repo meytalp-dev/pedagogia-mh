@@ -393,7 +393,7 @@ gtKeys.forEach(k => { gameTypeNames[k] = GT[k].name; gameTypeIcons[k] = GT[k].ic
 
 // ===== LOGIN =====
 function loginWithForm() {
-  const name = document.getElementById('loginName').value.trim() || 'משתמש/ת';
+  const name = document.getElementById('loginName').value.trim() || 'משתמש.ת';
   const email = document.getElementById('loginEmail').value.trim();
   user = { name, email, photo: '' };
   localStorage.setItem('ort-game-user', JSON.stringify(user));
@@ -427,7 +427,7 @@ function logout() {
     } catch(e) {}
   }
   // No saved user — enter directly as an anonymous user (no registration required)
-  user = { name: 'משתמש/ת', email: '', photo: '' };
+  user = { name: 'משתמש.ת', email: '', photo: '' };
   showApp();
 })();
 

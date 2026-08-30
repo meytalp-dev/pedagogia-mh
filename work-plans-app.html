@@ -331,17 +331,17 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 const MONTHS = ['ספטמבר','אוקטובר','נובמבר','דצמבר','ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט'];
 
 const ROLES = [
-  {id:'hevrati',  name:'רכז/ת חברתי',       short:'חברתי',  color:'#c8622f', ico:'◆',
+  {id:'hevrati',  name:'רכז.ת חברתי',       short:'חברתי',  color:'#c8622f', ico:'◆',
    focus:'חיי חברה, מועצת תלמידים, טקסים, ימי שיא, מנהיגות ומעורבות חברתית'},
   {id:'yoetzet',  name:'יועצת חינוכית',      short:'ייעוץ',  color:'#7a4f9c', ico:'●',
    focus:'רווחה נפשית, מניעה, כישורי חיים, ליווי פרטני, קשר עם הורים וגורמי חוץ'},
   {id:'matlit',   name:'מת״לית',             short:'מת״ל',   color:'#2e7d5b', ico:'▲',
    focus:'למידה משמעותית, פדגוגיה דיגיטלית, הכשרת צוות, חדשנות והטמעת כלים'},
-  {id:'hachala',  name:'רכז/ת הכלה ושילוב',  short:'הכלה',   color:'#2f6f9e', ico:'■',
+  {id:'hachala',  name:'רכז.ת הכלה ושילוב',  short:'הכלה',   color:'#2f6f9e', ico:'■',
    focus:'תלמידים עם צרכים מיוחדים, התאמות, תוכניות אישיות, עבודה עם צוותי חינוך מיוחד'},
-  {id:'pedagogi', name:'רכז/ת פדגוגי',       short:'פדגוגי', color:'#b0851f', ico:'★',
+  {id:'pedagogi', name:'רכז.ת פדגוגי',       short:'פדגוגי', color:'#b0851f', ico:'★',
    focus:'הישגים לימודיים, הערכה ומדידה, פיתוח מקצועי, מקצועות ליבה ובחינות'},
-  {id:'menahelet',name:'מנהל/ת בית הספר',    short:'ניהול',  color:'#2f4b7c', ico:'⬢',
+  {id:'menahelet',name:'מנהל.ת בית הספר',    short:'ניהול',  color:'#2f4b7c', ico:'⬢',
    focus:'חזון בית ספרי, אקלים, ניהול צוות, קשרי קהילה, תקציב ומשאבים'}
 ];
 const ROLE_OTHER = {id:'other', name:'תפקיד נוסף', short:'נוסף', color:'#64748b', ico:'◇',
@@ -520,9 +520,9 @@ function renderGate(){
     <div class="gate-card">
       ${multi? `
       <div class="gate-sec">
-        <h3><span class="n">1</span> באיזה בית ספר את/ה?</h3>
-        <div class="desc">הקובץ מכיל ${state.schools.length} בתי ספר. בחר/י את שלך.</div>
-        <select id="gateSchool" aria-label="באיזה בית ספר את/ה?" style="max-width:420px">
+        <h3><span class="n">1</span> באיזה בית ספר את.ה?</h3>
+        <div class="desc">הקובץ מכיל ${state.schools.length} בתי ספר. בחר.י את שלך.</div>
+        <select id="gateSchool" aria-label="באיזה בית ספר את.ה?" style="max-width:420px">
           ${state.schools.map(x=>`<option value="${x.id}" ${x.id===s.id?'selected':''}>${esc(x.name)} · ${esc(x.code)}</option>`).join('')}
         </select>
       </div>`:`
@@ -536,8 +536,8 @@ function renderGate(){
       </div>`}
 
       <div class="gate-sec">
-        <h3><span class="n">2</span> מי את/ה?</h3>
-        <div class="desc">בחר/י את השם שלך מהרשימה. תיכנס/י ישירות לתוכנית העבודה שלך.</div>
+        <h3><span class="n">2</span> מי את.ה?</h3>
+        <div class="desc">בחר.י את השם שלך מהרשימה. תיכנס.י ישירות לתוכנית העבודה שלך.</div>
         <div class="people">
           ${list.map(st=>{
             const r=roleOf(st), c=planCompleteness(s.plans[st.id], st);
@@ -555,7 +555,7 @@ function renderGate(){
       </div>
 
       <div class="gate-foot">
-        <button class="btn" id="gatePrincipal">⬢ כניסה כמנהל/ת בית הספר</button>
+        <button class="btn" id="gatePrincipal">⬢ כניסה כמנהל.ת בית הספר</button>
         ${s.selfRegister? `<button class="btn ghost" id="gateSelfReg">+ אני לא ברשימה — רישום עצמי</button>`:''}
         <div style="flex:1"></div>
         <button class="btn ghost sm" id="gateImport">⤒ ייבוא קובץ</button>
@@ -589,7 +589,7 @@ function renderGate(){
 
   $('#gatePrincipal').onclick = ()=>{
     if(state.network.pin){
-      form('כניסת מנהל/ת', [{key:'pin', label:'קוד גישה', type:'password',
+      form('כניסת מנהל.ת', [{key:'pin', label:'קוד גישה', type:'password',
         hint:'קוד פשוט שהוגדר בהגדרות. אינו אבטחת מידע — רק מונע כניסה בשוגג.'}],
         v=>{ if(v.pin!==state.network.pin) return toast('⚠ קוד שגוי');
              enterAs(principalStaffId(), true); });
@@ -625,7 +625,7 @@ function enterAs(staffId, principal){
   state.view = principal? 'dashboard' : 'form:'+staffId;
   save(); document.body.classList.remove('gated'); render();
   const st = staffById(staffId);
-  toast(principal? 'כניסה כמנהל/ת — יש לך גישה לכל התחומים' : `שלום ${st.name||''}`);
+  toast(principal? 'כניסה כמנהל.ת — יש לך גישה לכל התחומים' : `שלום ${st.name||''}`);
 }
 function logout(){ state.session=null; save(); renderGate(); }
 window.logout = logout;
@@ -677,8 +677,8 @@ function renderShell(){
       <div class="av" style="background:${isPrincipal()? 'var(--brand-2)' : r.color}">
         ${isPrincipal()? '⬢' : (me.name.trim()? esc(initials(me.name)) : r.ico)}</div>
       <div style="min-width:0">
-        <div class="nm">${esc(me.name.trim() || (isPrincipal()?'מנהל/ת':'לא שויך'))}</div>
-        <div class="rl">${isPrincipal()? 'הרשאת מנהל/ת · גישה מלאה' : esc(roleName(me))}</div>
+        <div class="nm">${esc(me.name.trim() || (isPrincipal()?'מנהל.ת':'לא שויך'))}</div>
+        <div class="rl">${isPrincipal()? 'הרשאת מנהל.ת · גישה מלאה' : esc(roleName(me))}</div>
       </div>
     </div>
     <div class="sc">🏫 ${esc(s.name)} <span style="opacity:.6">·</span> ${esc(s.code)}</div>
@@ -754,14 +754,14 @@ function viewForm(){
       <span style="font-size:16px;line-height:1;color:${r.color}">${r.ico}</span>
       <div><b>תחום האחריות:</b> ${esc(r.focus)}<br>
       הכול נשמר אוטומטית תוך כדי כתיבה. הצ׳ק־ליסט והדשבורד של המנהלת מתעדכנים לבד ממה שנכתב כאן.
-      ${mine? '' : '<br><b>שים/י לב:</b> את/ה צופה בתוכנית של אדם אחר בהרשאת מנהל/ת.'}</div>
+      ${mine? '' : '<br><b>שים.י לב:</b> את.ה צופה בתוכנית של אדם אחר בהרשאת מנהל.ת.'}</div>
     </div>
 
     <div class="stats" id="formStats"></div>
 
     <form id="planForm" autocomplete="off">
       <div class="card">
-        <div class="card-head"><h3><span class="step">0</span> בעל/ת התפקיד</h3></div>
+        <div class="card-head"><h3><span class="step">0</span> בעל.ת התפקיד</h3></div>
         <div class="card-body"><div class="grid-3">
           <div class="field" style="margin:0"><label for="staffName">שם מלא</label>
             <input type="text" id="staffName" data-sec="staff" data-field="name" value="${esc(st.name)}" placeholder="למשל: יעל כהן"></div>
@@ -980,7 +980,7 @@ function viewMyChecklist(){
   const pct = all.length? Math.round(done/all.length*100):0;
 
   setHead(`צ׳ק־ליסט — ${roleName(st)}`, `${school().name} · נוצר אוטומטית מהתוכנית`,
-    `${isPrincipal()? `<select id="staffSwitch" aria-label="בחירת בעל/ת תפקיד" style="width:auto;padding:7px 11px;font-weight:600">
+    `${isPrincipal()? `<select id="staffSwitch" aria-label="בחירת בעל.ת תפקיד" style="width:auto;padding:7px 11px;font-weight:600">
         ${staffList().map(x=>`<option value="${x.id}" ${x.id===st.id?'selected':''}>${esc(x.name.trim()||roleName(x))}</option>`).join('')}
       </select>`:''}
      <button class="btn ghost sm" onclick="go('form:${st.id}')">✎ עריכת התוכנית</button>
@@ -991,7 +991,7 @@ function viewMyChecklist(){
 
   $('#content').innerHTML = `
     ${p.vision.trim()? `<div class="note"><span style="font-size:16px;line-height:1;color:${r.color}">${r.ico}</span>
-      <div><b>מה אני מקדם/ת השנה:</b> ${esc(p.vision)}</div></div>`:''}
+      <div><b>מה אני מקדם.ת השנה:</b> ${esc(p.vision)}</div></div>`:''}
     <div class="stats">
       <div class="stat ok"><div class="k">התקדמות</div><div class="v">${pct}%</div>
         <div class="bar"><i class="ok" style="width:${pct}%"></i></div>
@@ -1058,7 +1058,7 @@ function viewMaster(){
 
     <div class="filters no-print">
       <span class="lbl">סינון:</span>
-      <select id="fWho" aria-label="סינון לפי בעל/ת תפקיד"><option value="">כל בעלי התפקידים</option>
+      <select id="fWho" aria-label="סינון לפי בעל.ת תפקיד"><option value="">כל בעלי התפקידים</option>
         ${list.map(st=>`<option value="${st.id}" ${f.who===st.id?'selected':''}>${esc(st.name.trim()||roleName(st))}</option>`).join('')}</select>
       <select id="fMonth" aria-label="סינון לפי חודש"><option value="">כל החודשים</option>${MONTHS.map(m=>`<option ${f.month===m?'selected':''}>${m}</option>`).join('')}</select>
       <select id="fStatus" aria-label="סינון לפי סטטוס"><option value="">הכול</option>
@@ -1362,7 +1362,7 @@ window.editStaff = editStaff;
 function removeStaff(id){
   const s=school(), st=staffById(id);
   const ps = planStats(s.plans[id], st);
-  const warn = ps.completeness>0? `\n\nשים/י לב: לתוכנית שלו יש ${ps.goals} מטרות, ${ps.objectives} יעדים ו־${ps.monthly} פעילויות — הכול יימחק.`:'';
+  const warn = ps.completeness>0? `\n\nשים.י לב: לתוכנית שלו יש ${ps.goals} מטרות, ${ps.objectives} יעדים ו־${ps.monthly} פעילויות — הכול יימחק.`:'';
   if(!confirm(`למחוק את "${st.name.trim()||roleName(st)}" מהמרשם?${warn}`)) return;
   s.staff = s.staff.filter(x=>x.id!==id); delete s.plans[id];
   if(state.activeStaff===id) state.activeStaff = s.staff[0]?.id;
@@ -1457,7 +1457,7 @@ function viewSettings(){
           <input type="text" id="netName" value="${esc(state.network.name)}" placeholder="למשל: מינהל הכשרה מקצועית"></div>
         <div class="field" style="margin:0"><label for="netYear">שנת עבודה</label>
           <input type="text" id="netYear" value="${esc(state.network.year)}" placeholder="למשל: תשפ״ז"></div>
-        <div class="field" style="margin:0"><label for="netPin">קוד גישה למנהל/ת</label>
+        <div class="field" style="margin:0"><label for="netPin">קוד גישה למנהל.ת</label>
           <input type="text" id="netPin" value="${esc(state.network.pin)}" placeholder="ריק = ללא קוד"></div>
       </div>
       <div class="note warn" style="margin:16px 0 0"><span>⚠</span>

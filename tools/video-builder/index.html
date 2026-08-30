@@ -393,7 +393,7 @@ const SUBJECT_ACCENTS = {
 
 // === AUTH ===
 function login() {
-  const name = document.getElementById('loginName').value.trim() || 'משתמש/ת';
+  const name = document.getElementById('loginName').value.trim() || 'משתמש.ת';
   const email = document.getElementById('loginEmail').value.trim();
   user = { name, email };
   localStorage.setItem('ort-video-user', JSON.stringify(user));
@@ -418,7 +418,7 @@ function showApp() {
 (function() {
   const saved = localStorage.getItem('ort-video-user');
   if (saved) { user = JSON.parse(saved); showApp(); }
-  else { user = { name: 'משתמש/ת', email: '' }; showApp(); }
+  else { user = { name: 'משתמש.ת', email: '' }; showApp(); }
   // Init video type UI
   setVideoType('summary');
 })();

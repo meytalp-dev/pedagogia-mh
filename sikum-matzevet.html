@@ -334,13 +334,13 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
   </section>
 
   <!-- ========== טבלה ========== -->
-  <!-- ========== לפי מפקח/ת ========== -->
+  <!-- ========== לפי מפקח.ת ========== -->
   <section class="reveal">
     <div class="sechd">
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <h2 class="sub-sec">לפי מפקח/ת</h2>
+      <h2 class="sub-sec">לפי מפקח.ת</h2>
     </div>
-    <p class="lead">אותה תמונה, חתוכה לפי פריסת הפיקוח תשפ״ז — כדי שכל מפקח/ת יראה מי מבתי הספר
+    <p class="lead">אותה תמונה, חתוכה לפי פריסת הפיקוח תשפ״ז — כדי שכל מפקח.ת יראה מי מבתי הספר
        שלו כבר דיווח ומי עוד חסר. הפס מציג את שיעור הדיווח מתוך המוסדות שבאחריותו.</p>
     <div class="supgrid" id="supcards"></div>
     <p class="legend" style="margin-top:14px">
@@ -354,10 +354,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
       <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/></svg>
       <h2 class="sub-sec">כל הדיווחים</h2>
     </div>
-    <p class="lead">64 דיווחים, לפי סדר יורד של מצבת התלמידים — עם המפקח/ת המלווה של כל בית ספר. סימון <span class="apx">&#8776;</span> ליד השם = שיוך משוער בין השם שהוקלד בטופס לשם הרשמי.</p>
+    <p class="lead">64 דיווחים, לפי סדר יורד של מצבת התלמידים — עם המפקח.ת המלווה של כל בית ספר. סימון <span class="apx">&#8776;</span> ליד השם = שיוך משוער בין השם שהוקלד בטופס לשם הרשמי.</p>
     <div class="tw">
       <table>
-        <thead><tr><th>בית ספר</th><th>מפקח/ת</th><th>רשת</th><th style="text-align:center">תלמידים</th></tr></thead>
+        <thead><tr><th>בית ספר</th><th>מפקח.ת</th><th>רשת</th><th style="text-align:center">תלמידים</th></tr></thead>
         <tbody id="tbl"></tbody>
       </table>
     </div>
@@ -372,7 +372,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
     <p class="lead">הצלבה מול רשימת 64 המוסדות שבפיקוח: כל מוסד דיווח. שני הדיווחים האחרונים
        שנכנסו — <b>ישיבת טל חרמון</b> (ליאואפר חזן, 198) אצל יששכר חפץ, ו<b>עתיד מסעדה</b>
        (איימן ספדי, 47) אצל יסמין אמון — נקלטו תחת שם חופשי שונה מהשם הרשמי בקובץ הפריסה,
-       ולכן שויכו ידנית למפקח/ת המלווה.</p>
+       ולכן שויכו ידנית למפקח.ת המלווה.</p>
     <div class="card pad">
       <div id="missing"></div>
     </div>
@@ -460,7 +460,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;
 var API = "https://script.google.com/macros/s/AKfycbyozBbEf78cLV61ODLyzhzLSyI2auAUMd8YVgp0qZLGs3O4MYAFhAQuVG7NIxjX0Mq7Lw/exec";
 var SNAP_ROWS = 65, SNAP_STUDENTS = 9698; /* כולל שורת הבדיקה — כמו בגיליון */
 
-/* ROWS: [בית ספר, רשת, מפקח/ת, תלמידים, שיוך: ok | approx] */
+/* ROWS: [בית ספר, רשת, מפקח.ת, תלמידים, שיוך: ok | approx] */
 var ROWS = [
  ["בית חנינה בנים","סכנין","ויסאם סואלחה",430,"ok"],
  ["אורט תל נוף","אורט","סיגלית דאי",365,"ok"],
@@ -537,7 +537,7 @@ var NETS = [
  ["מוסדות ורשתות יחידים",7,1135],
 ];
 
-/* מוסדות שטרם דיווחו: [שם, מפקח/ת, רשת] */
+/* מוסדות שטרם דיווחו: [שם, מפקח.ת, רשת] */
 var MISSING = [];
 
 var SUPCOL = {
@@ -589,7 +589,7 @@ function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
   document.getElementById("tbl").innerHTML = html;
 })();
 
-/* --- חסרים, מקובצים לפי מפקח/ת --- */
+/* --- חסרים, מקובצים לפי מפקח.ת --- */
 (function(){
   var groups = {}, order = [];
   MISSING.forEach(function(m){

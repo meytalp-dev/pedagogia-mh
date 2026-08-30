@@ -729,7 +729,7 @@
         <option>אחר</option>
       </select>
       <label for="fb-message">ההודעה</label>
-      <textarea id="fb-message" rows="5" placeholder="תאר/י את הבעיה או ההערה..."></textarea>
+      <textarea id="fb-message" rows="5" placeholder="תאר.י את הבעיה או ההערה..."></textarea>
       <label for="fb-contact">מייל או טלפון לחזרה (אופציונלי)</label>
       <input id="fb-contact" type="text" placeholder="כדי שנוכל לחזור אליך">
       <div id="fb-error" style="color:var(--red);font-size:13px;margin-top:4px;"></div>
@@ -875,7 +875,7 @@
 
     <div id="view-answer-keys" class="hidden">
       <div style="background:#fef9c3;border:1px solid #fde047;padding:14px;border-radius:10px;margin-bottom:20px;font-size:14px;">
-        <strong>מחוון אוטומטי:</strong> סמן/י את התשובות הנכונות לכל מבחן. אחרי שמירה, שאלות אמריקאיות יחושבו אוטומטית לתלמידים שהגישו.
+        <strong>מחוון אוטומטי:</strong> סמן.י את התשובות הנכונות לכל מבחן. אחרי שמירה, שאלות אמריקאיות יחושבו אוטומטית לתלמידים שהגישו.
       </div>
       <div id="ak-list"></div>
     </div>
@@ -945,7 +945,7 @@
       </div>
       <div class="p-result-actions">
         <button class="btn-small btn-save" onclick="pRetryExam()">תרגל שוב</button>
-        <button class="btn-small btn-secondary" onclick="pBackToPicker()">בחר/י מבחן אחר</button>
+        <button class="btn-small btn-secondary" onclick="pBackToPicker()">בחר.י מבחן אחר</button>
       </div>
     </div>
     <div id="p-review-content"></div>
@@ -1788,7 +1788,7 @@
             <div class="p-q-points">${q.points} נק'</div>
           </div>
           ${q.html ? `<div class="p-diagram">${q.html}</div>` : ''}
-          <textarea aria-labelledby="pqt-${q.id}" placeholder="כתוב/י את תשובתך…" oninput="pSaveOpen('${q.id}', this.value)" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;min-height:110px;resize:vertical;"></textarea>
+          <textarea aria-labelledby="pqt-${q.id}" placeholder="כתוב.י את תשובתך…" oninput="pSaveOpen('${q.id}', this.value)" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;min-height:110px;resize:vertical;"></textarea>
         </div>
       `;
     }
@@ -1929,7 +1929,7 @@
       }).join('');
 
       let note = '';
-      if (q.correctAnswer == null) note = `<div class="p-review-note open">אין מחוון — בדוק/י מול המורה או החומר.</div>`;
+      if (q.correctAnswer == null) note = `<div class="p-review-note open">אין מחוון — בדוק.י מול המורה או החומר.</div>`;
       else if (!rec.ans) note = `<div class="p-review-note bad">לא ענית — התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;
       else if (rec.isCorrect) note = `<div class="p-review-note ok">צדקת! (+${q.points} נק')</div>`;
       else note = `<div class="p-review-note bad">התשובה הנכונה: <strong>${q.correctAnswer}</strong></div>`;

@@ -144,7 +144,7 @@
         '<input id="pmh-pw" type="password" placeholder="סיסמת המרחב" autocomplete="current-password">' +
         '<button id="pmh-go" type="button">כניסה</button>' +
         '<div id="pmh-err" role="alert"></div>' +
-        '<div id="pmh-note">אין לך גישה ואת/ה סבור/ה שהיא מגיעה לך?<br>' +
+        '<div id="pmh-note">אין לך גישה ואת.ה סבור.ה שהיא מגיעה לך?<br>' +
           '<a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
           encodeURIComponent('בקשת הרשאה — ' + label) + '">פנייה לקבלת הרשאה</a></div>' +
       '</div>';
@@ -215,7 +215,7 @@
     }
   }
 
-  /* ===== שבב "מחובר/ת כ..." ===== */
+  /* ===== שבב "מחובר.ת כ..." ===== */
   function badge() {
     var s = session(); if (!s) return;
     injectStyle();
