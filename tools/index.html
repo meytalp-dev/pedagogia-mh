@@ -17,7 +17,8 @@
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:10px var(--px) 30px}
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--text);box-shadow:var(--sh-sm);transition:all .2s var(--ease)}
 .tool-card:hover{box-shadow:var(--sh-md);transform:translateY(-3px);border-color:var(--border-strong)}
-.tool-card .emoji{font-size:2rem;line-height:1}
+.tool-card .emoji{display:block;color:var(--accent,#0B7FA6)}
+.tool-card .emoji svg{width:32px;height:32px;display:block}
 .tool-card h3{font-size:1.08rem}
 .tool-card p{font-size:.86rem;color:var(--text2);flex:1}
 .tool-card .meta{display:flex;gap:6px;flex-wrap:wrap}
@@ -54,49 +55,49 @@
 
 <div class="tools-grid" data-pn-skip>
   <a class="tool-card rv" href="lesson-generator/index.html">
-    <span class="emoji">📚</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H9a2 2 0 0 1 2 2v13a1.6 1.6 0 0 0-1.6-1.5H5.5A1.5 1.5 0 0 1 4 16z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H15a2 2 0 0 0-2 2v13a1.6 1.6 0 0 1 1.6-1.5h3.9A1.5 1.5 0 0 0 20 16z"/></svg></span>
     <h2>מחולל מערכי שיעור</h2>
     <p>מזינים נושא, מקצוע וכיתה — ומקבלים מערך שיעור אינטראקטיבי מלא, מותאם לתלמידי הכשרה מקצועית, כולל קישור לשיתוף.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה</span></div>
   </a>
 
   <a class="tool-card rv d1" href="practice-exams/index.html">
-    <span class="emoji">🎓</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5 12 4.5l9.5 4-9.5 4z"/><path d="M6.5 10.7V15c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.3"/><path d="M21 9v5"/></svg></span>
     <h2>תרגול מבחני גמר</h2>
     <p>מאגר מבחני גמר במקצועות הליבה — מגזר כללי ומגזר ערבי. תרגול חופשי עם בדיקה אוטומטית, ומסלול מורה אופציונלי למעקב כיתתי.</p>
     <div class="meta"><span class="tag gmr">גמר</span><span class="tag tea">בלי רישום</span></div>
   </a>
 
   <a class="tool-card rv d1" href="quiz-builder/index.html">
-    <span class="emoji">📝</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h9l5 5V19a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19z"/><path d="M14 4.5v5h5"/><path d="M8.5 13h7M8.5 16.5h5"/></svg></span>
     <h2>מחולל שאלונים</h2>
     <p>שאלונים אינטראקטיביים בקלות — ידנית או עם AI. מתאים גם לבדיקת הבנה בשיעור וגם למשוב בהדרכות צוות והשתלמויות.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה והדרכה</span></div>
   </a>
 
   <a class="tool-card rv d2" href="game-builder/index.html">
-    <span class="emoji">🎮</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7.5" width="19" height="9" rx="4.5"/><path d="M7 10.5v3M5.5 12h3"/><circle cx="16" cy="11" r=".9"/><circle cx="18.3" cy="13.4" r=".9"/></svg></span>
     <h2>מחולל משחקים</h2>
     <p>הופכים כל נושא למשחק לימודי — זיכרון, טריוויה, התאמה ועוד. שפה פשוטה, מותאם גם לתלמידים עם קשיי קשב ולקויות למידה.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">ללמידה פעילה</span></div>
   </a>
 
   <a class="tool-card rv d2" href="opener-builder/index.html">
-    <span class="emoji">🚀</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.2 2.2 5 5.6 5 9.2l-2.4 3.1h-5.2L7 12.2C7 8.6 8.8 5.2 12 3"/><circle cx="12" cy="10" r="1.8"/><path d="M9.4 15.3 7 18.2l3-.5M14.6 15.3l2.4 2.9-3-.5"/></svg></span>
     <h2>מחולל פעילויות פתיחה</h2>
     <p>פתיחים קצרים שמכניסים את הכיתה לשיעור — או את הצוות לישיבה. שאלת מחשבה, חידה או הפעלה, מוכן תוך דקה.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">לשיעור ולישיבה</span></div>
   </a>
 
   <a class="tool-card rv d3" href="infographic-builder/index.html">
-    <span class="emoji">📊</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="5" width="3" height="12"/></svg></span>
     <h2>מחולל אינפוגרפיקה</h2>
     <p>מסכמים נושא לימודי, נוהל או תוכנית באינפוגרפיקה מעוצבת — שימושי גם לשיווק בית הספר ולתקשור החלטות הנהלה.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">להוראה ושיווק</span></div>
   </a>
 
   <a class="tool-card rv d3" href="video-builder/index.html">
-    <span class="emoji">🎬</span>
+    <span class="emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7.5 5v4M12 5v4M16.5 5v4"/><path d="M10.5 12.5v4l3.5-2z"/></svg></span>
     <h2>מחולל סרטונים לימודיים</h2>
     <p>סרטון הסבר קצר מכל נושא — לסיכום שיעור, ללמידה מרחוק או להצגת מגמה בפני הורים ותלמידים חדשים.</p>
     <div class="meta"><span class="tag cyn">AI</span><span class="tag tea">ללמידה ושיווק</span></div>

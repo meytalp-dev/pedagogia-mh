@@ -128,7 +128,7 @@ footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
 
 <main id="main" class="wrap">
   <div class="hero">
-    <span class="eyebrow">📋 מפגש מנהלים · פתיחת שנת תשפ"ז</span>
+    <span class="eyebrow"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V2.8h5V4"/><path d="M9.5 10h5M9.5 14h4"/></svg>מפגש מנהלים · פתיחת שנת תשפ"ז</span>
     <h1>שאלות ותשובות מהמפגש</h1>
     <p>כל השאלות שנשלחו — במקום אחד. תשובה שכותבים בגיליון (עמודת <b>"התשובה"</b>) מופיעה כאן אוטומטית.</p>
   </div>
@@ -153,8 +153,8 @@ footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
     <button class="btn btn-ghost active" data-filter="all">הכול</button>
     <button class="btn btn-ghost" data-filter="wait">ממתינות</button>
     <button class="btn btn-ghost" data-filter="done">נענו</button>
-    <button class="btn btn-ghost" id="refresh">🔄 רענון</button>
-    <button class="btn btn-primary" id="copyWA">העתקה לוואטסאפ 📱</button>
+    <button class="btn btn-ghost" id="refresh"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><path d="M4 9.5A5.5 5.5 0 0 1 9.5 4h5.6"/><path d="M12.8 1.8 15.5 4l-2.7 2.2"/><path d="M20 14.5A5.5 5.5 0 0 1 14.5 20H8.9"/><path d="M11.2 22.2 8.5 20l2.7-2.2"/></svg>רענון</button>
+    <button class="btn btn-primary" id="copyWA">העתקה לוואטסאפ<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></button>
   </div>
   <p class="note" id="note" hidden>ההעתקה לוואטסאפ כוללת שאלות ותשובות בלבד — <b>בלי שמות</b>. הדף מתרענן לבד כל דקה.</p>
 
@@ -173,7 +173,7 @@ footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
   <div class="state" id="error" hidden>
     <div class="big">😕</div>
     לא הצלחנו לטעון את השאלות. בדקו את החיבור לאינטרנט ולחצו רענון.<br><br>
-    <button class="btn btn-primary" onclick="load()">ניסיון נוסף 🔄</button>
+    <button class="btn btn-primary" onclick="load()">ניסיון נוסף<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><path d="M4 9.5A5.5 5.5 0 0 1 9.5 4h5.6"/><path d="M12.8 1.8 15.5 4l-2.7 2.2"/><path d="M20 14.5A5.5 5.5 0 0 1 14.5 20H8.9"/><path d="M11.2 22.2 8.5 20l2.7-2.2"/></svg></button>
   </div>
 </main>
 
@@ -303,7 +303,7 @@ $("copyWA").addEventListener("click", function(){
   }).filter(Boolean);
   var txt = "*שאלות ותשובות — מפגש מנהלים תשפ\"ז*\n\n" + groups.join("\n———\n\n");
   navigator.clipboard.writeText(txt).then(function(){
-    toast("הועתק! אפשר להדביק בוואטסאפ 📱");
+    toast("הועתק! אפשר להדביק בוואטסאפ<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>");
   }).catch(function(){
     toast("ההעתקה נחסמה — נסי שוב");
   });
