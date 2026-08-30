@@ -286,6 +286,11 @@ a.card:hover::before,.card.link:hover::before{width:4px}
 .foot img{height:34px;width:auto;filter:brightness(0) invert(1);opacity:.9}
 .foot .partners{display:flex;gap:22px;font-weight:700;color:#7E99B8;font-size:var(--fs-sm);align-items:center}
 .foot a{color:#DCE8F5;text-decoration:none}
+/* שורת הקישורים המשפטיים — תקנות הנגישות מצפות לקישור להצהרה מכל עמוד */
+.foot-links{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14);font-size:var(--fs-xs)}
+.foot-links a{color:#B9CBE0;padding:2px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.foot-links a:hover{color:#fff;border-bottom-color:#7E99B8}
+.foot-links a:focus-visible{outline:2px solid #27C6F3;outline-offset:3px;border-radius:4px}
 
 /* ===== drawer ===== */
 .scrim{position:fixed;inset:0;background:rgba(13,59,102,.35);backdrop-filter:blur(2px);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
