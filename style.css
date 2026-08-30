@@ -120,7 +120,25 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
   .scrim,.drawer,.sbox,.rmodal{display:none !important}
   #pmh-cookies{display:none !important}
   .ogenw-launcher,.ogenw-launcher-label,.ogenw-panel,.ogenw-scrim{display:none !important}
+
+  /* כללי ההדפסה ישבו עד כה רק בגיליון המאמר, ולכן 28 עמודים הדפיסו
+     את הפוטר הכחול המלא — בלוק כהה שאוכל דיו ללא שום תועלת. */
+  .govbar,.nav,.foot,.cta-row,.btn-reset,.pn,.pnd,.pagenav,.searchbtn,.burger{display:none !important}
+  body{background:#fff;color:#000}
+
+  /* טבלאות הנהלים נחתכו בגלילה אופקית — בהדפסה אין לאן לגלול */
+  .tbl-scroll{overflow:visible !important}
+  table{page-break-inside:auto}
+  tr,img,figure,.card,.callout,.row{page-break-inside:avoid}
+  h1,h2,h3,h4{page-break-after:avoid}
+
+  /* קישור חיצוני בדף מודפס הוא טקסט צבוע בלבד — הכתובת עצמה אבדה */
+  .article a[href^="http"]::after{content:" (" attr(href) ")";font-size:.8em;color:#444;word-break:break-all}
+  a{color:#000;text-decoration:underline}
 }
+
+/* הגדרת עמוד — לא היתה בשום מקום באתר */
+@page{size:A4;margin:16mm 14mm}
 
 /* ===== govbar + nav ===== */
 .govbar{background:#fff;border-bottom:1px solid var(--border);padding:7px var(--px);display:flex;align-items:center;gap:12px;font-size:.78rem;color:var(--muted)}

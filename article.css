@@ -294,10 +294,7 @@ label.ci input:checked ~ span{color:var(--text2)}
 
 /* ---------- הוויג'ט: מיקום ברירת מחדל של האתר גובר (style.css) ---------- */
 
-@media print{
-  .govbar,.nav,.drawer,.scrim,.btn-reset,.cta-row,.foot{display:none !important}
-  body{background:#fff}
-}
+/* כללי ההדפסה עברו ל-style.css כדי שיחולו על כל העמודים */
 
 /* ---------- תפריט מדור: ניווט בין עמודי אותו נושא ---------- */
 .secnav{margin:20px 0 2px}
