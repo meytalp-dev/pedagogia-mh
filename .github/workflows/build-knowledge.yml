@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # ההיסטוריה המלאה — לבדיקת ההתיישנות לפי תאריך העדכון האחרון
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -36,6 +38,11 @@ jobs:
         run: node tools/build-search.mjs
       - name: build sitemap.xml
         run: node tools/build-sitemap.mjs
+      # התרעה לעורכת (לא שער): עמודים ישנים, קישורים שבורים, תגי שנה.
+      # הדוח מופיע ב-Summary של הריצה באקשן.
+      - name: freshness report
+        run: node tools/check-freshness.mjs
+        continue-on-error: true
       - name: commit if changed
         run: |
           if ! git diff --quiet -- knowledge.json search-index.json sitemap.xml '*.html'; then

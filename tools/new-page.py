@@ -62,6 +62,16 @@ def main():
     head = re.sub(r'<meta name="description" content=".*?">',
                   '<meta name="description" content="%s">' % (a.desc or a.lead),
                   head, count=1, flags=re.S)
+    # כתובת קנונית ותגיות שיתוף — של העמוד החדש, לא של עמוד המעטפת
+    fname = os.path.basename(a.out)
+    head = re.sub(r'<link rel="canonical" href="[^"]*">',
+                  lambda m: '<link rel="canonical" href="https://pedagogiamh.co.il/%s">' % fname, head, count=1)
+    head = re.sub(r'<meta property="og:url" content="[^"]*">',
+                  lambda m: '<meta property="og:url" content="https://pedagogiamh.co.il/%s">' % fname, head, count=1)
+    head = re.sub(r'<meta property="og:title" content="[^"]*">',
+                  lambda m: '<meta property="og:title" content="%s">' % a.title.replace('"', '״'), head, count=1)
+    head = re.sub(r'<meta property="og:description" content="[^"]*">',
+                  lambda m: '<meta property="og:description" content="%s">' % (a.desc or a.lead).replace('"', '״'), head, count=1)
 
     body = io.open(a.body, encoding='utf-8').read()
 
