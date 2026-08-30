@@ -18,7 +18,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0D3B66;--navy-800:#124D7A;--cyan:#087B9C;--grad:linear-gradient(135deg,#124D7A,#087B9C);--border:#E3E9F2;--text2:#4A5A6E;--soft:#F4F8FB;--sh:0 10px 30px rgba(13,59,102,.10)}
+/* העמוד עומד בפני עצמו ואינו טוען את style.css, אבל הוא מקושר מהמגירה
+   של 155 עמודים — ולכן הטוקנים והרדיוסים שלו זהים למערכת העיצוב. */
+:root{--navy:#0D3B66;--navy-800:#124D7A;--accent:#0B7FA6;--grad:linear-gradient(135deg,#124D7A,#087B9C);--border:#D8E6F2;--text2:#52687A;--soft:#F2F7FC;--sh:0 12px 34px rgba(13,59,102,.09)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Assistant',sans-serif;background:#fff;color:var(--navy);line-height:1.55}
 .wrap{max-width:640px;margin:0 auto;padding:0 20px 60px}
@@ -28,19 +30,20 @@ body{font-family:'Assistant',sans-serif;background:#fff;color:var(--navy);line-h
 .hero h1{font-size:clamp(1.5rem,5vw,2rem);line-height:1.25}
 .hero p{opacity:.88;margin-top:8px;font-size:1.02rem}
 .cards{display:grid;gap:16px;margin-top:-58px}
-.card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--sh)}
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--sh)}
 .card .top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.card .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.card .ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--navy-800)}
+.card .ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .card h2{font-size:1.15rem}
 .card p{color:var(--text2);font-size:.95rem}
-.btn{display:block;text-align:center;margin-top:14px;padding:13px 18px;border-radius:13px;background:var(--grad);color:#fff;font-weight:700;font-size:1.02rem;text-decoration:none}
+.btn{display:block;text-align:center;margin-top:14px;padding:13px 18px;border-radius:999px;background:var(--grad);color:#fff;font-weight:700;font-size:1.02rem;text-decoration:none}
 .btn.line{background:#fff;color:var(--navy-800);border:1.5px solid var(--navy-800)}
 h3.sect{margin:38px 0 14px;font-size:1.25rem;display:flex;align-items:center;gap:10px}
 .steps{background:var(--soft);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin-bottom:14px}
 .steps b.os{display:flex;align-items:center;gap:8px;font-size:1.05rem;margin-bottom:10px}
 .steps ol{padding-inline-start:20px;color:var(--text2);font-size:.97rem;display:grid;gap:7px}
 .steps .key{background:#fff;border:1px solid var(--border);border-radius:7px;padding:1px 7px;font-weight:600;color:var(--navy);white-space:nowrap}
-.note{font-size:.9rem;color:var(--text2);background:#FFF8E8;border:1px solid #F2E3B3;border-radius:13px;padding:12px 16px;margin-top:6px}
+.note{font-size:.9rem;color:var(--text2);background:#FFF8E8;border:1px solid #F2E3B3;border-radius:14px;padding:12px 16px;margin-top:6px}
 .foot{text-align:center;margin-top:44px;font-size:.9rem;color:var(--text2)}
 .foot a{color:var(--navy-800);font-weight:700}
 </style>
@@ -61,14 +64,14 @@ h3.sect{margin:38px 0 14px;font-size:1.25rem;display:flex;align-items:center;gap
   <div class="cards">
     <div class="card">
       <div class="top">
-        <div class="ic" style="background:#E8F4F8">⚓</div>
+        <div class="ic" style="background:#E8F4F8"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></div>
         <div><h2>עוגן</h2><p>סוכנת הידע של בתי הספר המקצועיים — שאלה, תשובה, וממשיכים בעבודה</p></div>
       </div>
       <a class="btn" href="https://meytalp-dev.github.io/ogen/" target="_blank" rel="noopener">פתיחת עוגן בנייד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
     <div class="card">
       <div class="top">
-        <div class="ic" style="background:#EDF3FA">🏠</div>
+        <div class="ic" style="background:#EDF3FA"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.2V20h13V9.2"/><path d="M10 20v-5.5h4V20"/></svg></div>
         <div><h2>הבית של המנהיגות הפדגוגית היוצרת</h2><p>ידע, כלים, נהלים ותוכניות — במקום אחד פתוח</p></div>
       </div>
       <a class="btn line" href="https://pedagogiamh.co.il" target="_blank" rel="noopener">פתיחת האתר<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -88,7 +91,7 @@ h3.sect{margin:38px 0 14px;font-size:1.25rem;display:flex;align-items:center;gap
   </div>
 
   <div class="steps">
-    <b class="os">🤖 אנדרואיד (Chrome)</b>
+    <b class="os"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M5 10.5h14V17a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 17z"/><path d="M7.5 10.5a4.5 4.5 0 0 1 9 0"/><path d="m7 5.5 1.4 2M17 5.5l-1.4 2"/><circle cx="10" cy="8" r=".6" fill="currentColor" stroke="none"/><circle cx="14" cy="8" r=".6" fill="currentColor" stroke="none"/><path d="M2.5 12v3.5M21.5 12v3.5M9 18.5V21M15 18.5V21"/></svg>אנדרואיד (Chrome)</b>
     <ol>
       <li>פותחים את הקישור בדפדפן <span class="key">Chrome</span></li>
       <li>לוחצים על שלוש הנקודות <span class="key">⋮</span> בפינה העליונה</li>
