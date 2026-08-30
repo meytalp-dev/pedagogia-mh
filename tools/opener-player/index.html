@@ -368,7 +368,7 @@ function renderLocalWC(actIdx) {
   area.innerHTML = html || '<span class="wc-empty">🌤️ הוסיפו מילים!</span>';
   area.classList.toggle('has', entries.length > 0);
   const total = Object.values(wcData[actIdx]||{}).reduce((a,b)=>a+b,0);
-  if (countEl) countEl.textContent = entries.length > 0 ? entries.length + ' מילים | ' + total + ' סה"כ' : '';
+  if (countEl) countEl.textContent = entries.length > 0 ? entries.length + ' מילים | ' + total + ' סה״כ' : '';
 }
 
 function submitGuess(actIdx) {

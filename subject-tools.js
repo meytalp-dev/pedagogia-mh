@@ -163,7 +163,7 @@
         { title: 'יחידות הוראה לפי יוצר', tag: 'יחידות מוכנות', icon: 'doc',
           note: 'יחידות הוראה מלאות ליוצרים שבמיקוד, במרחב הפדגוגי:',
           links: [
-            { href: 'https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/shmuel-yosef-agnon/', label: 'ש"י עגנון' },
+            { href: 'https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/shmuel-yosef-agnon/', label: 'ש״י עגנון' },
             { href: 'https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/dalia-ravikovic/', label: 'דליה רביקוביץ' },
             { href: 'https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/haim-gouri/', label: 'חיים גורי' }
           ] }
@@ -171,19 +171,19 @@
     },
 
     tanakh: {
-      name: 'תנ"ך',
+      name: 'תנ״ך',
       page: 'tanakh.html',
       icon: 'scroll',
       official: {
         href: 'https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/',
-        title: 'מרחב פדגוגי · תנ"ך ממלכתי בחטיבה עליונה',
+        title: 'מרחב פדגוגי · תנ״ך ממלכתי בחטיבה עליונה',
         tag: 'המקור הרשמי',
         icon: 'portal',
-        note: 'הפורטל הרשמי לתנ"ך ממלכתי בחטיבה העליונה — תוכנית הלימודים, המיקוד וחומרי ההוראה.'
+        note: 'הפורטל הרשמי לתנ״ך ממלכתי בחטיבה העליונה — תוכנית הלימודים, המיקוד וחומרי ההוראה.'
       },
       tools: [
-        { href: 'https://edu.929.org.il/', title: 'תנ"ך ממלכתי · 929 חינוך', chip: '929 חינוך', tag: 'הממצא החזק בסקירה', icon: 'scroll', star: true,
-          note: 'האתר השלם ביותר שנמצא בסקירה: מערכי שיעור לי׳–י״ב, חומרי הוראה וצירי זמן, אזור מפמ"ר, ונתיב בגרות גמיש עם הערכה חלופית.' }
+        { href: 'https://edu.929.org.il/', title: 'תנ״ך ממלכתי · 929 חינוך', chip: '929 חינוך', tag: 'הממצא החזק בסקירה', icon: 'scroll', star: true,
+          note: 'האתר השלם ביותר שנמצא בסקירה: מערכי שיעור לי׳–י״ב, חומרי הוראה וצירי זמן, אזור מפמ״ר, ונתיב בגרות גמיש עם הערכה חלופית.' }
       ]
     }
   };

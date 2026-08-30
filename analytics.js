@@ -108,7 +108,7 @@
   function deny() {
     writeChoice('denied');
     gtag('consent', 'update', { analytics_storage: 'denied' });
-    // לא נטען דבר. אם GA כבר נטען בביקור הזה — האחסון נחסם ע"י Consent Mode.
+    // לא נטען דבר. אם GA כבר נטען בביקור הזה — האחסון נחסם ע״י Consent Mode.
   }
 
   // ---------- הבאנר ----------

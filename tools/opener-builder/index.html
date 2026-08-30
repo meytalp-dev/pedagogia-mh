@@ -1156,7 +1156,7 @@ function renderWC(actIdx) {
   area.innerHTML = html || '<span class="wc-empty">🌤️ הענן ריק... הוסיפו מילים!</span>';
   area.classList.toggle('has', entries.length > 0);
   var totalW = Object.values(wcData[actIdx] || {}).reduce(function(a,b){return a+b;}, 0);
-  if (countEl) countEl.textContent = entries.length > 0 ? entries.length + ' מילים שונות | ' + totalW + ' סה"כ' : '';
+  if (countEl) countEl.textContent = entries.length > 0 ? entries.length + ' מילים שונות | ' + totalW + ' סה״כ' : '';
 }`;
 }
 
