@@ -378,16 +378,18 @@
           if(rb) rb.addEventListener('click',function(){clearBtn.click()});
           return;
         }
+        var nearItems=SiteSearch.near(text,{});
         resEl.innerHTML='<div class="sp-hint"><b>לא נמצאו תוצאות ל“'+esc(text)+'”</b>'+
-          '<span>אפשר לנסות מילה בודדת, לבטל את הסינון, או לשאול את עוגן — הצ׳אטבוט של האתר.</span>'+
-          '<button type="button" class="sask" id="spAsk">⚓ שאלו את עוגן</button></div>';
+          '<span>אפשר לנסות מילה בודדת, לבטל את הסינון, לשאול את עוגן — הצ׳אטבוט של האתר — או לפנות אלינו.</span>'+
+          SiteSearch.nearHTML(nearItems)+
+          '<div class="sempty-act"><button type="button" class="sask" id="spAsk">'+SiteSearch.anchorIcon+'שאלו את עוגן</button>'+
+          '<a class="sask alt" href="kesher.html">לפנות אלינו</a></div></div>';
         var a=document.getElementById('spAsk');
-        if(a) a.addEventListener('click',function(){
-          var b=document.querySelector('.open-ogen')||document.getElementById('ogen-launcher');
-          if(b) b.click();
-        });
+        if(a) a.addEventListener('click',function(){ SiteSearch.askOgen(text); });
+        SiteSearch.trackSearch(text,0,'page');
         return;
       }
+      SiteSearch.trackSearch(text,shown.length,'page');
       resEl.innerHTML=shown.map(row).join('');
     });
   }

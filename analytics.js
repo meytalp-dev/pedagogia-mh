@@ -246,6 +246,63 @@
     window.pmhConsent.open();
   });
 
+  // ---------- אירועי מדידה (T88) — חמישה שאומרים איפה התוכן חסר ----------
+  /* search / search_no_results — נשלחים מ-search.js ומעמוד החיפוש.
+     resource_open — פתיחת מסמך (PDF, דרייב, קובץ להורדה).
+     ogen_ask / ogen_unanswered — שאלה לעוגן, ושאלה שעוגן לא מצא לה תשובה במקורות.
+     נשלח רק אחרי הסכמה. מספרים ארוכים (טלפון, ת״ז) מוסרים מהטקסט לפני השליחה. */
+  function scrub(t) {
+    return String(t || '').replace(/\d[\d\s-]{6,}\d/g, '#').slice(0, 120);
+  }
+  window.pmhTrack = function (name, params) {
+    if (readChoice() !== 'granted' || !measurableHost()) return;
+    var p = {};
+    for (var k in (params || {})) if (Object.prototype.hasOwnProperty.call(params, k)) {
+      p[k] = typeof params[k] === 'string' ? scrub(params[k]) : params[k];
+    }
+    p.page_path = location.pathname;
+    gtag('event', name, p);
+  };
+
+  document.addEventListener('click', function (ev) {
+    var a = ev.target && ev.target.closest && ev.target.closest('a[href]');
+    if (!a) return;
+    var h = a.getAttribute('href') || '';
+    var isDoc = /\.(pdf|docx?|xlsx?|pptx?|ics)(\?|#|$)/i.test(h) || /^docs\//i.test(h) ||
+      /drive\.google|docs\.google/i.test(h) || a.hasAttribute('download');
+    if (!isDoc) return;
+    window.pmhTrack('resource_open', { resource_url: h, resource_title: (a.textContent || '').trim().slice(0, 80) });
+  }, true);
+
+  /* הווידג׳ט של עוגן חי ברפו אחר ולא משדר אירועים — מאזינים להודעות שנוספות לחלון השיחה */
+  function watchOgen() {
+    if (!window.MutationObserver) return;
+    var lastQ = '';
+    function onMsg(node) {
+      if (!node || node.nodeType !== 1 || !node.classList) return;
+      var txt = (node.textContent || '').trim();
+      if (node.classList.contains('ogenw-msg-user')) {
+        lastQ = txt;
+        window.pmhTrack('ogen_ask', { question: txt });
+      } else if (node.classList.contains('ogenw-msg-bot') && !node.classList.contains('ogenw-typing') &&
+        (txt.indexOf('לא מצאתי לזה תשובה') === 0 || txt.indexOf('משהו השתבש') === 0)) {
+        window.pmhTrack('ogen_unanswered', { question: lastQ, reason: txt.indexOf('משהו השתבש') === 0 ? 'error' : 'no_source' });
+      }
+    }
+    var attached = null;
+    function attach() {
+      var body = document.querySelector('.ogenw-body');
+      if (!body || body === attached) return;
+      attached = body;
+      new MutationObserver(function (muts) {
+        muts.forEach(function (m) { [].forEach.call(m.addedNodes, onMsg); });
+      }).observe(body, { childList: true });
+    }
+    attach();
+    if (!attached) new MutationObserver(function () { attach(); }).observe(document.body, { childList: true, subtree: true });
+  }
+  whenReady(watchOgen);
+
   // ---------- הפעלה ----------
   var choice = readChoice();
   if (choice === 'granted') {

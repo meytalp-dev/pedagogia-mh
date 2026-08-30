@@ -488,6 +488,12 @@ body.sbox-open{overflow:hidden}
   border:0;border-radius:999px;padding:9px 22px;cursor:pointer;box-shadow:var(--sh-sm)}
 
 .squick{padding:12px 8px 16px}
+.sempty-act{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:6px}
+.sempty-act .sask{margin-top:0;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.sask.alt{color:var(--navy);background:#fff;border:1.5px solid var(--border)}
+.sask.alt:hover{background:var(--surface)}
+.snear{width:100%;max-width:520px;text-align:start;margin:10px 0 4px;padding:10px 6px 4px;border-top:1px solid var(--border)}
+.sp-hint .snear .sq{font-size:var(--fs-sm)}
 .sq-h{font-size:var(--fs-2xs);font-weight:800;letter-spacing:.16em;color:var(--muted);padding:0 8px 9px}
 .sq{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:11px;text-decoration:none;
   color:var(--text);font-size:var(--fs-md);font-weight:600;transition:background .15s}

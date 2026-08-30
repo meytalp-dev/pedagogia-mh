@@ -269,8 +269,9 @@
     return hits;
   }
 
+  var loadedIx = null; /* האינדקס הטעון — גם לעמוד החיפוש, שלא משתמש ב-state של הספוטלייט */
   function query(q, filters) {
-    return ready().then(function (ix) { return runQuery(ix, q, filters); });
+    return ready().then(function (ix) { loadedIx = ix; return runQuery(ix, q, filters); });
   }
 
   /* ---------- סימון מילות החיפוש בתוצאה ---------- */
@@ -380,6 +381,56 @@
     });
   }
 
+  /* ---------- מצב ריק: תוצאות קרובות, עוגן עם השאלה מוכנה, ומדידה ---------- */
+  var ANCHOR_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg>';
+
+  /* כשאין תוצאות לביטוי השלם — מנסים כל מילה לבדה ומציעים עמודים קרובים */
+  function near(ix, q, filters) {
+    var toks = norm(q).split(" ").filter(function (t) { return t.length >= 3; });
+    var seen = {}, out = [];
+    for (var i = 0; i < toks.length && out.length < 4; i++) {
+      var rs = runQuery(ix, toks[i], filters || {});
+      for (var j = 0; j < rs.length && out.length < 4; j++) {
+        if (rs[j].kind !== "page" || seen[rs[j].url]) continue;
+        seen[rs[j].url] = 1; out.push(rs[j]);
+      }
+    }
+    return out;
+  }
+  function nearHTML(items) {
+    if (!items.length) return "";
+    return '<div class="snear"><div class="sq-h">אולי התכוונתם ל…</div>' +
+      items.map(function (r) {
+        return '<a class="sq" href="' + esc(safeUrl(r.url)) + '">' + ICON.page + esc(r.title) + "</a>";
+      }).join("") + "</div>";
+  }
+  function emptyHTML(q, nearItems) {
+    return '<div class="sempty"><b>לא נמצאו תוצאות ל“' + esc(q) + '”</b>' +
+      "<span>אפשר לנסות מילה אחת, לבטל את הסינון, לשאול את עוגן — או לפנות אלינו.</span>" +
+      nearHTML(nearItems) +
+      '<div class="sempty-act"><button type="button" class="sask">' + ANCHOR_ICON + "שאלו את עוגן</button>" +
+      '<a class="sask alt" href="kesher.html">לפנות אלינו</a></div></div>';
+  }
+  /* פותח את עוגן ומכניס את השאלה לשדה — כדי שלא יצטרכו להקליד שוב */
+  function askOgen(q) {
+    var b = document.querySelector(".open-ogen") || document.querySelector("[data-ogen]") ||
+      document.querySelector(".ogenw-launcher") || document.getElementById("ogen-launcher");
+    if (b) b.click(); else if (window.openOgen) window.openOgen();
+    var tries = 0;
+    (function fill() {
+      var inp = document.querySelector(".ogenw-input");
+      if (inp) { inp.value = q; inp.dispatchEvent(new Event("input", { bubbles: true })); inp.focus(); return; }
+      if (++tries < 15) setTimeout(fill, 100);
+    })();
+  }
+  var trackTimer = null;
+  function trackSearch(q, n, source) {
+    clearTimeout(trackTimer);
+    trackTimer = setTimeout(function () {
+      if (window.pmhTrack) window.pmhTrack(n ? "search" : "search_no_results", { search_term: q, results: n, source: source });
+    }, 900);
+  }
+
   function render() {
     if (!state.ix) return;
     var q = state.q.trim();
@@ -393,21 +444,14 @@
     state.results = runQuery(state.ix, q, { cat: state.cat }).slice(0, 40);
     state.sel = 0;
     if (!state.results.length) {
-      list.innerHTML =
-        '<div class="sempty"><b>לא נמצאו תוצאות ל“' + esc(q) + '”</b>' +
-        "<span>אפשר לנסות מילה אחת, לבטל את הסינון, או לשאול את עוגן.</span>" +
-        '<button class="sask">⚓ שאלו את עוגן</button></div>';
-      var ask = list.querySelector(".sask");
-      if (ask) ask.addEventListener("click", function () {
-        close();
-        var b = document.querySelector(".open-ogen") ||
-          document.querySelector("[data-ogen]") ||
-          document.getElementById("ogen-launcher");
-        if (b) b.click();
-      });
+      list.innerHTML = emptyHTML(q, near(state.ix, q, { cat: state.cat }));
+      var ask = list.querySelector("button.sask");
+      if (ask) ask.addEventListener("click", function () { close(); askOgen(q); });
       hint.textContent = "0 תוצאות";
+      trackSearch(q, 0, "spotlight");
       return;
     }
+    trackSearch(q, state.results.length, "spotlight");
     hint.textContent = state.results.length + " תוצאות" +
       (state.results.length === 40 ? " (מוצגות הראשונות)" : "");
     list.innerHTML = state.results.map(rowHTML).join("");
@@ -539,7 +583,7 @@
       var a = document.createElement("a");
       a.className = "drawer-search";
       a.href = "/chipus.html";
-      a.innerHTML = "🔍 חיפוש באתר";
+      a.innerHTML = ICON.search + " חיפוש באתר";
       if (anchor) body.insertBefore(a, anchor.nextSibling);
       else body.appendChild(a);
     }
@@ -569,5 +613,10 @@
     mark: mark,
     icon: ICON,
     kinds: KINDS,
+    near: function (q, f) { var ix = state.ix || loadedIx; return ix ? near(ix, q, f) : []; },
+    nearHTML: nearHTML,
+    askOgen: askOgen,
+    trackSearch: trackSearch,
+    anchorIcon: ANCHOR_ICON,
   };
 })();
