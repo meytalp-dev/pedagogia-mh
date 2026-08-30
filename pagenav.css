@@ -29,7 +29,7 @@
   display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;
   padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);
   background:#fff;color:var(--text2);text-decoration:none;
-  font-size:.855rem;font-weight:700;line-height:1.35;white-space:nowrap;
+  font-size:var(--fs-sm);font-weight:700;line-height:1.35;white-space:nowrap;
   transition:color .2s,border-color .2s,background .2s,box-shadow .2s;
 }
 .pn-tab .t{display:block;max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -51,7 +51,7 @@
 .pn-up:hover{border-color:var(--cyan);background:var(--cyan-100)}
 .pn-up svg{width:15px;height:15px}
 @media(max-width:860px){.pn-lbl{display:none}}
-@media(max-width:640px){.pn-in{padding-inline:12px;gap:8px}.pn-tab{font-size:.8rem;padding:5px 12px}}
+@media(max-width:640px){.pn-in{padding-inline:12px;gap:8px}.pn-tab{font-size:var(--fs-xs);padding:5px 12px}}
 
 /* ---------- תפריט הצד (המבורגר) לעמודים עמוסים ----------
    נדלק אוטומטית ב-pagenav.js. הכפתור חי בתוך הפס הדביק, החלונית על ה-body.
@@ -62,7 +62,7 @@
   flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;
   height:34px;padding:0 12px;border-radius:11px;cursor:pointer;
   border:1.5px solid var(--border);background:#fff;color:var(--navy);
-  font:inherit;font-size:.8rem;font-weight:800;line-height:1;
+  font:inherit;font-size:var(--fs-xs);font-weight:800;line-height:1;
   transition:border-color .2s,background .2s,color .2s,box-shadow .2s;
 }
 .pnd-btn svg{width:16px;height:16px;flex:0 0 auto}
@@ -93,7 +93,7 @@ body.pnd-open .pnd{visibility:visible;transform:none;transition:transform .34s v
   padding:16px 20px 14px;border-bottom:1px solid var(--border);
   background:linear-gradient(180deg,var(--soft-bg),#fff);
 }
-.pnd-head strong{display:block;color:var(--navy);font-size:1.02rem;font-weight:800;line-height:1.3}
+.pnd-head strong{display:block;color:var(--navy);font-size:var(--fs-base);font-weight:800;line-height:1.3}
 .pnd-count{display:block;margin-top:3px;font-size:.76rem;font-weight:700;color:var(--muted)}
 .pnd-x{
   flex:0 0 auto;width:32px;height:32px;border-radius:10px;cursor:pointer;
@@ -110,7 +110,7 @@ body.pnd-open .pnd{visibility:visible;transform:none;transition:transform .34s v
 
 .pnd-sec{
   display:flex;align-items:baseline;gap:9px;padding:9px 10px;border-radius:11px;
-  color:var(--text);text-decoration:none;font-weight:700;font-size:.93rem;line-height:1.4;
+  color:var(--text);text-decoration:none;font-weight:700;font-size:var(--fs-md);line-height:1.4;
   transition:background .15s,color .15s;
 }
 .pnd-sec .n{
@@ -128,7 +128,7 @@ body.pnd-open .pnd{visibility:visible;transform:none;transition:transform .34s v
 }
 .pnd-sub{
   display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:9px;
-  color:var(--text2);text-decoration:none;font-size:.855rem;font-weight:600;line-height:1.4;
+  color:var(--text2);text-decoration:none;font-size:var(--fs-sm);font-weight:600;line-height:1.4;
   transition:background .15s,color .15s;
 }
 .pnd-sub svg{width:12px;height:12px;flex:0 0 auto;color:var(--muted)}
@@ -172,7 +172,7 @@ body.pnd-open .pnd-list{animation:pndIn .4s var(--ease) .06s both}
   display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;
   padding:7px 12px 7px 14px;border-radius:999px;
   border:1px solid var(--border,#DCE6EF);background:var(--blue-bg,#F2F7FB);
-  color:var(--navy,#0D3B66);font-size:.8rem;font-weight:700;
+  color:var(--navy,#0D3B66);font-size:var(--fs-xs);font-weight:700;
   text-decoration:none;white-space:nowrap;transition:.16s ease;
 }
 .pn-back svg{width:14px;height:14px;flex:0 0 auto}
