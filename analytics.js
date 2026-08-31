@@ -252,12 +252,16 @@
      ogen_ask / ogen_unanswered — שאלה לעוגן, ושאלה שעוגן לא מצא לה תשובה במקורות.
      נשלח רק אחרי הסכמה. מספרים ארוכים (טלפון, ת״ז) מוסרים מהטקסט לפני השליחה. */
   function scrub(t) {
-    return String(t || '').replace(/\d[\d\s-]{6,}\d/g, '#').slice(0, 120);
+    return String(t || '').replace(/\d[\d\s.\/\-]{5,}\d/g, '#').slice(0, 120);
   }
+  // עמוד מאחורי שער (auth.js data-space) — לא שולחים טקסט חופשי כלל, רק ספירות
+  var GATED = !!document.querySelector('script[src*="auth.js"][data-space]');
+  var FREETEXT = { search_term: 1, question: 1, resource_title: 1, resource_url: 1 };
   window.pmhTrack = function (name, params) {
     if (readChoice() !== 'granted' || !measurableHost()) return;
     var p = {};
     for (var k in (params || {})) if (Object.prototype.hasOwnProperty.call(params, k)) {
+      if (GATED && FREETEXT[k]) continue; // לא לחשוף תוכן חופשי מעמוד מוגן
       p[k] = typeof params[k] === 'string' ? scrub(params[k]) : params[k];
     }
     p.page_path = location.pathname;
