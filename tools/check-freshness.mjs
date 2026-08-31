@@ -26,10 +26,19 @@ const files = readdirSync(ROOT).filter(f => f.endsWith('.html')).sort();
 const stale = [], broken = [], yearOff = [], noYear = [], oldInHead = [];
 const now = Date.now();
 
+// קומיטים אוטומטיים של רענון תבנית/ידע לא נחשבים "עריכת תוכן" — אחרת כל עמוד
+// מתאפס בכל שינוי תפריט. מדלגים עליהם ומוצאים את מועד עריכת התוכן האמיתי.
+const AUTO_MSG = /(עדכון אוטומטי של knowledge|תבנית אחת לתפריט|רענון|build-nav|knowledge\.json)/;
 function lastCommitDate(f) {
   try {
-    const out = execSync(`git log -1 --format=%cs -- "${f}"`, { cwd: ROOT, encoding: 'utf8' }).trim();
-    return out || null;
+    const out = execSync(`git log -30 --format=%cs%x09%s -- "${f}"`, { cwd: ROOT, encoding: 'utf8' }).trim();
+    if (!out) return null;
+    for (const line of out.split('\n')) {
+      const tab = line.indexOf('\t');
+      const date = line.slice(0, tab), subj = line.slice(tab + 1);
+      if (!AUTO_MSG.test(subj)) return date; // הקומיט האנושי האחרון
+    }
+    return out.split('\t')[0]; // הכול אוטומטי — נופלים למועד האחרון
   } catch { return null; }
 }
 function text(html) { return html.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' '); }
