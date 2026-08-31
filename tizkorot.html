@@ -306,7 +306,7 @@ function buildMessage(sc) {
   if (!sc.survey) missing.push("סקר הצרכים הטכנולוגיים");
   if (!sc.teachers) missing.push("הזנת המורים העיוניים להדרכות");
   lines.push(`זו תזכורת נוספת: ${sc.name} טרם השלים את ${missing.join(" ואת ")}.`);
-  lines.push("בלי הנתונים האלה בית הספר לא נכלל בתכנון ההדרכות וההצטיידות לתשפ״ז.");
+  lines.push("בלי הנתונים האלה בית הספר לא נכלל בתכנון ההדרכות לתשפ״ז.");
   lines.push("נדרש להשלים עד יום חמישי, 3.9. המילוי קצר ונעשה ישירות מהנייד:");
   if (!sc.survey) lines.push(`📋 סקר צרכים טכנולוגיים:\n${SEKER_URL}`);
   if (!sc.teachers) lines.push(`🧑‍🏫 הזנת המורים להדרכות:\n${MORIM_URL}`);
