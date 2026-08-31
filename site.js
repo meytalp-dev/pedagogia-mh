@@ -372,3 +372,16 @@ function openOgen(){
   }
 }
 document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openOgen()}));
+
+/* סנכרון aria-expanded בתפריטי הפס העליון (נפתחים ב-hover/focus-within ב-CSS) */
+(function navAria(){
+  document.querySelectorAll(".navitem").forEach(function(it){
+    var lnk = it.querySelector(".lnk[aria-haspopup]"); if(!lnk) return;
+    lnk.setAttribute("aria-expanded","false");
+    function set(v){ lnk.setAttribute("aria-expanded", v?"true":"false"); }
+    it.addEventListener("mouseenter",function(){set(true)});
+    it.addEventListener("mouseleave",function(){set(false)});
+    it.addEventListener("focusin",function(){set(true)});
+    it.addEventListener("focusout",function(){ if(!it.contains(document.activeElement)) set(false); });
+  });
+})();

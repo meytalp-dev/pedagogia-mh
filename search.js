@@ -353,6 +353,17 @@
     hint = box.querySelector(".sbox-hint");
     pills = box.querySelector(".sbox-pills");
 
+    // מלכודת פוקוס + Escape ברמת הדיאלוג (כמו המגירה ב-site.js)
+    box.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" || e.key === "Esc") { e.preventDefault(); close(); return; }
+      if (e.key !== "Tab") return;
+      var f = box.querySelectorAll('input, button, a[href], [tabindex]:not([tabindex="-1"])');
+      f = [].filter.call(f, function (el) { return el.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
     box.querySelector(".sbox-scrim").addEventListener("click", close);
     box.querySelector(".sbox-x").addEventListener("click", close);
     input.addEventListener("input", function () { state.q = input.value; render(); });
@@ -423,13 +434,27 @@
       if (++tries < 15) setTimeout(fill, 100);
     })();
   }
-  var trackTimer = null;
-  function trackSearch(q, n, source) {
-    clearTimeout(trackTimer);
-    trackTimer = setTimeout(function () {
-      if (window.pmhTrack) window.pmhTrack(n ? "search" : "search_no_results", { search_term: q, results: n, source: source });
-    }, 900);
+  var trackTimer = null, trackPending = null;
+  function flushSearch() {
+    if (!trackPending) return;
+    var pnd = trackPending; trackPending = null; clearTimeout(trackTimer);
+    // דה-דופ בין הספוטלייט לעמוד החיפוש: אותה שאילתה תוך 4 שניות נספרת פעם אחת
+    try {
+      var key = pnd.params.search_term + '|' + pnd.params.results;
+      var prev = sessionStorage.getItem('pmh-last-search');
+      var nowT = Date.now();
+      if (prev) { var parts = prev.split('\u0001'); if (parts[0] === key && nowT - (+parts[1]) < 4000) return; }
+      sessionStorage.setItem('pmh-last-search', key + '\u0001' + nowT);
+    } catch (e) {}
+    if (window.pmhTrack) window.pmhTrack(pnd.name, pnd.params);
   }
+  function trackSearch(q, n, source) {
+    trackPending = { name: n ? "search" : "search_no_results", params: { search_term: q, results: n, source: source } };
+    clearTimeout(trackTimer);
+    trackTimer = setTimeout(flushSearch, 900);
+  }
+  // הניווט בלחיצה על תוצאה הורג את ה-debounce — שולחים לפני העזיבה
+  window.addEventListener('pagehide', flushSearch);
 
   function render() {
     if (!state.ix) return;
@@ -494,7 +519,7 @@
 
   function bindRows() {
     [].forEach.call(list.querySelectorAll(".sres"), function (a) {
-      a.addEventListener("click", function () { setTimeout(close, 30); });
+      a.addEventListener("click", function () { flushSearch(); setTimeout(close, 30); });
     });
   }
 
@@ -526,6 +551,7 @@
 
   /* מעבר לעמוד החיפוש המלא עם כל התוצאות */
   function goPage() {
+    flushSearch();
     location.href = "/chipus.html?q=" + encodeURIComponent(state.q.trim()) +
       (state.cat !== "all" ? "&cat=" + state.cat : "");
   }

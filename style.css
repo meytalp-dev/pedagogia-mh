@@ -736,7 +736,7 @@ html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
 
 /* ── הוספה ליומן (calendar.js, T89) ── */
 .cal-add{display:inline-flex;gap:4px;align-items:center;vertical-align:middle}
-.cal-btn{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--navy);font-size:var(--fs-2xs);font-weight:700;text-decoration:none;line-height:1.4;white-space:nowrap;transition:background .15s,border-color .15s}
+.cal-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;min-height:24px;box-sizing:border-box;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--navy);font-size:var(--fs-2xs);font-weight:700;text-decoration:none;line-height:1.4;white-space:nowrap;transition:background .15s,border-color .15s}
 .cal-btn:hover{background:var(--surface);border-color:var(--accent);color:var(--accent)}
 .cal-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .cal-btn.g{color:var(--text2)}
