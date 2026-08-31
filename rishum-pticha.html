@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>רישום נתוני יום הפתיחה · מנהלים תשפ"ז · משרד העבודה</title>
+<meta name="description" content="דיווח נתוני היום הראשון לפתיחת שנת הלימודים תשפ&quot;ז — משרד העבודה, מינהל הכשרה מקצועית">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127891;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:64px;width:auto;display:block}
+@media (max-width:480px){.logo{height:52px}}
+
+.hero{text-align:center;padding:22px 0 8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(28px,6vw,42px);line-height:1.16;margin:16px 0 12px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:18.5px;color:#3d4a70;max-width:52ch;margin:0 auto}
+.hero .lede b{color:var(--navy)}
+
+.bless{margin:22px auto 0;max-width:640px;background:#fff;border:1px solid var(--line);border-radius:20px;
+  box-shadow:var(--shadow-s);padding:22px 26px;text-align:center;position:relative;overflow:hidden}
+.bless::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(180deg,var(--blue),var(--sky))}
+.bless h2{font-family:'Rubik',sans-serif;font-size:21px;color:var(--navy);margin:0 0 8px}
+.bless p{margin:0;font-size:16.5px;color:#3d4a70}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:32px;margin-top:24px}
+@media (max-width:560px){.card{padding:22px 18px}}
+
+.sec{display:flex;align-items:center;gap:11px;margin:26px 0 16px;padding-top:22px;border-top:1px dashed var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec .sico{flex:0 0 auto;width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  display:grid;place-items:center;color:var(--navy)}
+.sec .sico svg{width:22px;height:22px}
+.sec h3{font-family:'Rubik',sans-serif;font-size:19px;color:var(--navy);margin:0}
+.sec small{display:block;font-size:14px;color:var(--muted);font-weight:400;margin-top:1px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+label.f{display:block;margin-bottom:7px;font-weight:700;font-size:16.5px;color:#25325a}
+label.f .req{color:var(--blue)}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px;line-height:1.45}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:14px;
+  background:#fbfcff;font-family:inherit;font-size:17px;color:var(--ink);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+input.bad,select.bad,textarea.bad{border-color:var(--danger);background:#fff7f8}
+input[type=number]{-moz-appearance:textfield;text-align:center;font-family:'Rubik',sans-serif;font-weight:600;font-size:20px}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:18px;cursor:pointer}
+textarea{min-height:104px;resize:vertical;line-height:1.55}
+.err{display:none;color:var(--danger);font-size:14.5px;font-weight:600;margin-top:6px}
+.err.on{display:block}
+
+/* attendance highlight */
+.attend{grid-column:1/-1;background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  border:2px solid #cfe3f7;border-radius:18px;padding:20px 22px}
+.attend .arow{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:560px){.attend .arow{grid-template-columns:1fr}}
+.attend input{border-color:#bcd8f2;background:#fff}
+.pct{margin-top:14px;padding-top:12px;border-top:1px dashed #bcd8f2;display:none;
+  align-items:center;gap:9px;font-size:15.5px;color:#25325a;font-weight:600}
+.pct.on{display:flex}
+.pct b{font-family:'Rubik',sans-serif;font-size:19px;color:var(--navy)}
+.pct .warn{color:var(--amber);font-weight:600;font-size:14.5px}
+
+/* pills (segmented choice) */
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{position:relative}
+.pill input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.pill span{display:inline-flex;align-items:center;gap:7px;border:2px solid var(--line);border-radius:999px;
+  padding:9px 20px;font-size:15.5px;font-weight:700;color:#4a5878;background:#fbfcff;cursor:pointer;
+  transition:all .16s var(--ease)}
+.pill svg{width:16px;height:16px}
+.pill input:checked + span{border-color:var(--blue);background:var(--blue-soft);color:var(--navy)}
+.pill input:checked + span.ok2{border-color:#7fd4c6;background:#e9f9f5;color:#0a5c51}
+.pill input:checked + span.no2{border-color:#eeb3ba;background:#fff5f6;color:#8c2b34}
+.pill input:focus-visible + span{box-shadow:0 0 0 4px rgba(24,92,255,.14)}
+
+/* role rows */
+.role{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:14px 16px;border:1.5px solid var(--line);border-radius:15px;background:#fbfcff;margin-bottom:12px}
+.role .rname{font-weight:700;font-size:16.5px;color:#25325a}
+.role .rname small{display:block;font-weight:400;font-size:13.5px;color:var(--muted)}
+.cond{display:none;margin-top:4px}
+.cond.on{display:block}
+
+.actions{margin-top:30px;display:flex;flex-direction:column;align-items:center;gap:12px}
+button.go{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;
+  color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:16px;
+  padding:16px 46px;box-shadow:0 8px 24px rgba(24,92,255,.28);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease),filter .16s var(--ease)}
+button.go:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(24,92,255,.34)}
+button.go:active{transform:translateY(0)}
+button.go[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
+.smallnote{font-size:14.5px;color:var(--muted);text-align:center;max-width:46ch}
+
+/* result states */
+.result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
+.result.on{display:block;animation:pop .45s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.result h3{font-family:'Rubik',sans-serif;font-size:20px;margin:0 0 6px}
+.result p{margin:0;font-size:16px}
+.result .hd{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.result svg{width:26px;height:26px;flex:0 0 auto}
+.ok{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60}
+.ok h3{color:#0a5c51}
+.bad2{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.bad2 h3{color:#8c2b34}
+.retry{appearance:none;border:1.5px solid #d18f97;background:#fff;color:#8c2b34;border-radius:11px;
+  padding:9px 20px;font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer;margin-top:12px}
+.retry:hover{background:#fff0f1}
+
+.livebar{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:18px;
+  font-size:15px;color:var(--muted);opacity:0;transition:opacity .5s var(--ease)}
+.livebar.on{opacity:1}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 0 rgba(18,179,159,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.livebar b{color:var(--navy);font-family:'Rubik',sans-serif}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+.setup{display:none;margin-top:18px;background:#fffaf0;border:1.5px dashed #e3bd7e;border-radius:14px;
+  padding:16px 18px;font-size:15px;color:#7a5312}
+.setup.on{display:block}
+.setup code{background:#fff;border:1px solid #ecd9b4;border-radius:6px;padding:1px 6px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 4 9 4.5-9 4.5-9-4.5z"/><path d="M6.5 11v5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-5"/>
+      </svg>
+      מנהיגות פדגוגית יוצרת · תשפ״ז
+    </span>
+    <h1>רישום נתוני יום הפתיחה</h1>
+
+    <div class="bless">
+      <h2>שנת לימודים טובה ומוצלחת! 🎉</h2>
+      <p>מנהלות ומנהלים יקרים, ברכות חמות לפתיחת שנת הלימודים תשפ״ז.
+        אנחנו מאחלים לכם ולצוותים שנה של עשייה, צמיחה והצלחה —
+        ומתחילים אותה יחד, על בסיס תמונת מצב מדויקת מכל בתי הספר.</p>
+    </div>
+
+    <p class="lede" style="margin-top:18px">דיווח קצר על <b>היום הראשון</b> בבית הספר —
+      נוכחות, מצבת מורים ובעלי תפקידים. לוקח כשתי דקות.</p>
+
+    <div class="livebar" id="livebar">
+      <span class="dot"></span>
+      <span>עד כה דיווחו <b id="liveCount">—</b> בתי ספר</span>
+    </div>
+  </div>
+
+  <div class="setup" id="setup">
+    <b>הטופס עדיין לא חובר לשרת.</b> אחרי פריסת ה-Apps Script, אפשר לבדוק מיד
+    בהוספת הכתובת ל-URL: <code>?api=https://script.google.com/.../exec</code>
+  </div>
+
+  <form class="card" id="form" novalidate>
+
+    <!-- ============ פרטים כלליים ============ -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>
+        </svg>
+      </div>
+      <div><h3>פרטים כלליים</h3><small>תאריך הדיווח ובית הספר</small></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label class="f" for="rdate">תאריך <span class="req">*</span></label>
+        <input type="date" id="rdate">
+        <div class="err" id="e_rdate">נא לבחור תאריך</div>
+      </div>
+
+      <div>
+        <label class="f" for="school">בית הספר <span class="req">*</span></label>
+        <select id="school">
+          <option value="" selected disabled>בחרו בית ספר…</option>
+        </select>
+        <div class="err" id="e_school">נא לבחור בית ספר מהרשימה</div>
+      </div>
+    </div>
+
+    <!-- ============ תלמידים ============ -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="7.5" r="3"/>
+          <path d="M15 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 3 17.5V19"/>
+          <path d="M21 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3 3 0 0 1 0 5.6"/>
+        </svg>
+      </div>
+      <div><h3>תלמידים</h3><small>רשומים מול נוכחים ביום הראשון</small></div>
+    </div>
+
+    <div class="grid">
+      <div class="attend">
+        <div class="arow">
+          <div>
+            <label class="f" for="registered">כמה תלמידים רשומים כרגע? <span class="req">*</span></label>
+            <input type="number" id="registered" min="1" max="20000" step="1" inputmode="numeric" placeholder="0">
+            <div class="err" id="e_registered">נא למלא מספר תקין</div>
+          </div>
+          <div>
+            <label class="f" for="arrived">כמה תלמידים הגיעו היום? <span class="req">*</span></label>
+            <input type="number" id="arrived" min="0" max="20000" step="1" inputmode="numeric" placeholder="0">
+            <div class="err" id="e_arrived">נא למלא מספר תקין</div>
+          </div>
+        </div>
+        <div class="pct" id="pctRow">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#224292" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19V5M4 19h16"/><path d="m7 14 4-4 3 3 5-6"/>
+          </svg>
+          <span>נוכחות ביום הראשון: <b id="pctVal">—</b></span>
+          <span class="warn" id="pctWarn" style="display:none">שימו לב — מספר הנוכחים גבוה ממספר הרשומים</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ מצבת מורים ============ -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="m8.5 10 2 2 4-4.5"/>
+        </svg>
+      </div>
+      <div><h3>מצבת מורים</h3><small>האם יש חוסר במצבת ההוראה?</small></div>
+    </div>
+
+    <div class="grid">
+      <div class="full">
+        <div class="pills" id="shortagePills">
+          <label class="pill">
+            <input type="radio" name="shortage" value="אין חוסר">
+            <span class="ok2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              אין חוסר — המצבת מלאה
+            </span>
+          </label>
+          <label class="pill">
+            <input type="radio" name="shortage" value="יש חוסר">
+            <span class="no2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9M12 17.5v.5"/></svg>
+              יש חוסר במצבת המורים
+            </span>
+          </label>
+        </div>
+        <div class="err" id="e_shortage">נא לסמן האם יש חוסר במצבת</div>
+        <div class="cond" id="shortageDetailWrap" style="margin-top:14px">
+          <label class="f" for="shortageDetail">פירוט החוסר
+            <span class="hint">אילו מקצועות / כמה משרות / מה נעשה בינתיים</span>
+          </label>
+          <textarea id="shortageDetail" placeholder="לדוגמה: חסרה מורה למתמטיקה בהיקף מלא, מגשרים עם מורה ממלא מקום…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ בעלי תפקידים ============ -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/><path d="M12 2v1.5M19.5 5.5l-1 1M4.5 5.5l1 1"/>
+        </svg>
+      </div>
+      <div><h3>בעלי תפקידים</h3><small>סמנו לכל תפקיד האם הוא מאויש בבית הספר</small></div>
+    </div>
+
+    <div class="grid"><div class="full">
+
+      <div class="role">
+        <div class="rname">מת״לית</div>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="matal" value="מאויש"><span class="ok2">מאויש</span></label>
+          <label class="pill"><input type="radio" name="matal" value="לא מאויש"><span class="no2">לא מאויש</span></label>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="rname">רכזת הכלה ושילוב</div>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="hachala" value="מאויש"><span class="ok2">מאויש</span></label>
+          <label class="pill"><input type="radio" name="hachala" value="לא מאויש"><span class="no2">לא מאויש</span></label>
+        </div>
+      </div>
+
+      <div class="role">
+        <div class="rname">רכז חניכות</div>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="chanichut" value="מאויש"><span class="ok2">מאויש</span></label>
+          <label class="pill"><input type="radio" name="chanichut" value="לא מאויש"><span class="no2">לא מאויש</span></label>
+        </div>
+      </div>
+
+      <div class="err" id="e_roles">נא לסמן מאויש / לא מאויש לכל אחד מהתפקידים</div>
+
+      <div style="margin-top:14px">
+        <label class="f" for="otherRoles">אחר
+          <span class="hint">בעלי תפקידים נוספים או הערות על האיוש — לא חובה</span>
+        </label>
+        <input type="text" id="otherRoles" placeholder="לדוגמה: רכזת בגרויות מאוישת, חסר רכז חברתי…">
+      </div>
+
+    </div></div>
+
+    <!-- ============ אתגרים וצרכים ============ -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6.5 6.5 0 0 0-4 11.6c.7.6 1.2 1.4 1.2 2.4h5.6c0-1 .5-1.8 1.2-2.4A6.5 6.5 0 0 0 12 3z"/>
+          <path d="M9.5 20h5M10.5 22h3"/>
+        </svg>
+      </div>
+      <div><h3>אתגרים, צרכים ובקשות</h3><small>מה חשוב שנדע — ובמה אפשר לעזור</small></div>
+    </div>
+
+    <div class="grid">
+      <div class="full">
+        <label class="f" for="challenges">אתגרים
+          <span class="hint">מלל חופשי — מה האתגרים המרכזיים איתם נפתחה השנה</span>
+        </label>
+        <textarea id="challenges" placeholder="לדוגמה: קליטת תלמידים חדשים, הסעות, תשתיות…"></textarea>
+      </div>
+
+      <div class="full">
+        <label class="f" for="needs">צרכים ובקשות
+          <span class="hint">במה הפיקוח והמינהל יכולים לסייע</span>
+        </label>
+        <textarea id="needs" placeholder="לדוגמה: ליווי בגיוס מורה למקצוע, השתלמות לצוות…"></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="go" type="submit" id="submitBtn">שליחת הדיווח</button>
+      <p class="smallnote">הנתונים נשמרים ומאומתים מול השרת — תקבלו אישור רק אחרי שהדיווח נקלט בפועל.</p>
+    </div>
+
+    <div class="result ok" id="okBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="m8.2 12.3 2.5 2.5 5.1-5.4"/>
+        </svg>
+        <h3 id="okTitle">הדיווח נקלט</h3>
+      </div>
+      <p id="okText"></p>
+    </div>
+
+    <div class="result bad2" id="badBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4.5 21 19H3z"/><path d="M12 10v4M12 16.6v.4"/>
+        </svg>
+        <h3>השליחה לא הושלמה</h3>
+      </div>
+      <p id="badText">לא הצלחנו לאמת שהדיווח נקלט. הנתונים שמורים בדפדפן — אפשר לנסות שוב.</p>
+      <button class="retry" type="button" id="retryBtn">שליחה חוזרת</button>
+    </div>
+  </form>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית
+  </footer>
+
+</div>
+
+<script>
+/* ==================================================================
+   כתובת ה-Apps Script.  אחרי הפריסה — להדביק כאן את כתובת ה-/exec.
+   עד אז אפשר לבדוק בלי לשנות קובץ:  rishum-pticha.html?api=<כתובת>
+   ================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+var PENDING_KEY = "pticha-pending";
+
+/* ---------- רשימת בתי הספר — פריסת פיקוח תשפ"ז (64 מוסדות) ---------- */
+var SCHOOLS = ["אבו סנאן","אום אל פחם בנות","אום אל פחם בנים","אור דניאל","אור העתיד תורני מקצועי","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשייה אווירית","אכסאל","אל אמאני סכנין","אלחכמה כסרא-סמיע","אנרג'י טק","בית אל","בית דוד","בית חנינה בנות","בית חנינה בנים","ג'וליס בנות","דן גורמה","דרור גליל","דרור נווה מדבר","הדר","הקמפוס התורני עתיד","התיכון החברתי חיפה","חוש\"ן","טורען","טל חרמון","ישיבת חנוך לנער","כפר זיתים","כפר יסיף","כפר עקב","לקייה","מצפה רמון","מרחביה/מעיינות","נחלים","נצרת","סור באהר","סכנין תל שבע","עמל אשדוד","עמל טייבה ב'","עמל טק אין","עמל רהט","ערערה","עתיד באר שבע","עתיד בת עמי","עתיד גליל מערבי ירכא בנים","עתיד טק ביר אל מכסור","עתיד כפר חב\"ד","עתיד כרמיאל","עתיד פלמחים","צור ברק","צור ים","קמ\"ג דימונה","רימונים","רמת דוד","שגב שלום","שפרעם","תיכון החממה","תיכון חברתי ת\"א","תיכון טכנולוגי אי טק סקול (מסעדה)","תיכון עוצמ\"ה עתיד זוקו","תיכון שיח","תפן ליזמות"];
+
+(function(){
+  var sel = $("school");
+  SCHOOLS.forEach(function(name){
+    var o = document.createElement("option");
+    o.value = name; o.textContent = name;
+    sel.appendChild(o);
+  });
+})();
+
+/* ---------- תאריך ברירת מחדל: היום ---------- */
+(function(){
+  var t = new Date();
+  var iso = t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") + "-" + String(t.getDate()).padStart(2,"0");
+  $("rdate").value = iso;
+})();
+
+/* ---------- מילוי מראש ממה שכבר הוקלד בדפים אחרים ---------- */
+(function(){
+  try{
+    var s = localStorage.getItem("melave-school");
+    if (s && SCHOOLS.indexOf(s) !== -1) $("school").value = s;
+  }catch(e){}
+})();
+
+/* ---------- מונה חי ---------- */
+function loadCount(target){
+  if (!API_URL) return Promise.resolve(null);
+  return fetch(API_URL + "?mode=count", {method:"GET"})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) return null;
+      if (target) { target.textContent = j.count; }
+      return j.count;
+    })
+    .catch(function(){ return null; });
+}
+
+(function(){
+  if (!API_URL){ $("setup").classList.add("on"); return; }
+  loadCount($("liveCount")).then(function(c){
+    if (c !== null) $("livebar").classList.add("on");
+  });
+})();
+
+/* ---------- אחוז נוכחות חי ---------- */
+function updatePct(){
+  var reg = parseInt($("registered").value, 10);
+  var arr = parseInt($("arrived").value, 10);
+  var row = $("pctRow");
+  if (reg > 0 && arr >= 0){
+    var pct = Math.round(arr / reg * 100);
+    $("pctVal").textContent = pct + "%";
+    $("pctWarn").style.display = (arr > reg) ? "inline" : "none";
+    row.classList.add("on");
+  } else {
+    row.classList.remove("on");
+  }
+}
+$("registered").addEventListener("input", updatePct);
+$("arrived").addEventListener("input", updatePct);
+
+/* ---------- פירוט חוסר — נפתח רק כשיש חוסר ---------- */
+document.querySelectorAll('input[name="shortage"]').forEach(function(r){
+  r.addEventListener("change", function(){
+    $("shortageDetailWrap").classList.toggle("on", r.value === "יש חוסר" && r.checked);
+    $("e_shortage").classList.remove("on");
+  });
+});
+
+/* ---------- ולידציה ---------- */
+function fail(id, on){
+  $(id).classList.toggle("bad", on);
+  $("e_" + id).classList.toggle("on", on);
+  return !on;
+}
+function radioVal(name){
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : "";
+}
+
+function collect(){
+  return {
+    date:           $("rdate").value,
+    school:         $("school").value,
+    registered:     $("registered").value.trim(),
+    arrived:        $("arrived").value.trim(),
+    shortage:       radioVal("shortage"),
+    shortageDetail: $("shortageDetail").value.trim(),
+    matal:          radioVal("matal"),
+    hachala:        radioVal("hachala"),
+    chanichut:      radioVal("chanichut"),
+    otherRoles:     $("otherRoles").value.trim(),
+    challenges:     $("challenges").value.trim(),
+    needs:          $("needs").value.trim()
+  };
+}
+
+function validate(d){
+  var reg = parseInt(d.registered, 10);
+  var arr = parseInt(d.arrived, 10);
+  var okAll = true;
+  okAll = fail("rdate",  !d.date)   && okAll;
+  okAll = fail("school", !d.school) && okAll;
+  okAll = fail("registered", !(reg > 0 && reg <= 20000)) && okAll;
+  okAll = fail("arrived",    !(arr >= 0 && arr <= 20000) || d.arrived === "") && okAll;
+
+  var noShortage = !d.shortage;
+  $("e_shortage").classList.toggle("on", noShortage);
+  okAll = okAll && !noShortage;
+
+  var rolesMissing = !d.matal || !d.hachala || !d.chanichut;
+  $("e_roles").classList.toggle("on", rolesMissing);
+  okAll = okAll && !rolesMissing;
+
+  return okAll;
+}
+
+/* ---------- שליחה + אימות ---------- */
+function send(d){
+  if (!API_URL) return Promise.resolve({ok:false, error:"no_api"});
+  return fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify(d)
+  }).then(function(r){ return r.json(); })
+    .catch(function(){ return {ok:false, error:"network"}; });
+}
+
+function show(which){
+  $("okBox").classList.toggle("on",  which === "ok");
+  $("badBox").classList.toggle("on", which === "bad");
+}
+
+function submit(){
+  var d = collect();
+  if (!validate(d)) {
+    var firstErr = document.querySelector(".err.on");
+    if (firstErr) firstErr.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  try{
+    localStorage.setItem("melave-school", d.school);
+    localStorage.setItem(PENDING_KEY, JSON.stringify(d));
+  }catch(e){}
+
+  var btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "שולח…";
+  show("");
+
+  send(d).then(function(r){
+    if (r && r.ok){
+      try{ localStorage.removeItem(PENDING_KEY); }catch(e){}
+      $("okTitle").textContent = r.updated ? "הדיווח עודכן" : "הדיווח נקלט";
+      var pct = Math.round(parseInt(d.arrived,10) / parseInt(d.registered,10) * 100);
+      $("okText").textContent = d.school + " — " +
+        parseInt(d.arrived,10).toLocaleString("he-IL") + " מתוך " +
+        parseInt(d.registered,10).toLocaleString("he-IL") + " תלמידים (" + pct + "% נוכחות). שנה טובה ומוצלחת!";
+      show("ok");
+      btn.textContent = "שליחת הדיווח";
+      btn.disabled = false;
+      loadCount($("liveCount")).then(function(c){
+        if (c !== null) $("livebar").classList.add("on");
+      });
+      $("okBox").scrollIntoView({behavior:"smooth", block:"center"});
+    } else {
+      $("badText").textContent = (r && r.error === "no_api")
+        ? "הטופס עדיין לא חובר לשרת. אנא פנו למנהלת המערכת."
+        : "לא הצלחנו לאמת שהדיווח נקלט. הנתונים שמורים בדפדפן — אפשר לנסות שוב.";
+      show("bad");
+      btn.textContent = "שליחת הדיווח";
+      btn.disabled = false;
+      $("badBox").scrollIntoView({behavior:"smooth", block:"center"});
+    }
+  });
+}
+
+$("form").addEventListener("submit", function(ev){ ev.preventDefault(); submit(); });
+$("retryBtn").addEventListener("click", submit);
+
+["rdate","school","registered","arrived"].forEach(function(id){
+  $(id).addEventListener("input", function(){
+    $(id).classList.remove("bad");
+    $("e_" + id).classList.remove("on");
+  });
+});
+["matal","hachala","chanichut"].forEach(function(name){
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(r){
+    r.addEventListener("change", function(){ $("e_roles").classList.remove("on"); });
+  });
+});
+</script>
+</body>
+</html>
