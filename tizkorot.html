@@ -1,0 +1,454 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<script src="/analytics.js"></script>
+<title>תזכורות ווטסאפ — סקר צרכים והזנת מורים</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📨</text></svg>">
+<style>
+  :root {
+    color-scheme: light dark;
+    --ground: #f4f6f4;
+    --surface: #fdfdfc;
+    --surface-2: #eef1ee;
+    --ink: #16201c;
+    --ink-2: #52514e;
+    --muted: #898781;
+    --line: #e1e0d9;
+    --ring: rgba(11,11,11,0.10);
+    --accent: #0e6b63;
+    --accent-soft: #e0efec;
+    --good: #0ca30c;
+    --good-text: #006300;
+    --good-soft: #e4f3e4;
+    --warn: #b97900;
+    --warn-soft: #fdf2dc;
+    --miss: #898781;
+    --miss-soft: #efeeea;
+    --wa: #1faa53;
+    --wa-press: #178a43;
+    --track: #e5e8e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0f1110;
+      --surface: #1a1c1b;
+      --surface-2: #232624;
+      --ink: #f0f1ee;
+      --ink-2: #c3c2b7;
+      --muted: #898781;
+      --line: #2c2e2c;
+      --ring: rgba(255,255,255,0.10);
+      --accent: #45b3a5;
+      --accent-soft: #12312d;
+      --good: #0ca30c;
+      --good-text: #4fc44f;
+      --good-soft: #12290f;
+      --warn: #e0a11c;
+      --warn-soft: #33270c;
+      --miss: #898781;
+      --miss-soft: #242522;
+      --wa: #23b558;
+      --wa-press: #1c9247;
+      --track: #2a2d2b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 72px; }
+
+  header.page { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 6px; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--accent); }
+  h1 { font-size: 24px; margin: 0; font-weight: 700; text-wrap: balance; }
+  .headmeta { margin-inline-start: auto; }
+  .lede { color: var(--ink-2); margin: 4px 0 16px; max-width: 62ch; font-size: 14.5px; }
+  .lede b { color: var(--ink); }
+
+  .live { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 4px 12px; border: 1px solid var(--ring); background: var(--surface); color: var(--ink-2); }
+  .live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--miss); flex: none; }
+  .live.on .dot { background: var(--good); }
+  .live.err .dot { background: var(--warn); }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 22px; }
+  .tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px 14px 11px; }
+  .tile .label { font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 2px; }
+  .tile .big { font-size: 26px; font-weight: 700; line-height: 1.15; }
+  .tile .big small { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .bar { height: 6px; border-radius: 3px; background: var(--track); margin-top: 8px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+  @media (max-width: 560px) {
+    .tiles { grid-template-columns: 1fr 1fr; }
+    .tiles .tile:first-child { grid-column: 1 / -1; }
+  }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; align-items: center; }
+  .fbtn { border: 1px solid var(--ring); background: var(--surface); color: var(--ink-2); font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  .fbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .fbtn:focus-visible, .search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .search { border: 1px solid var(--ring); background: var(--surface); color: var(--ink); font: inherit; font-size: 14px; border-radius: 8px; padding: 7px 12px; flex: 1 1 160px; min-width: 0; }
+  .count-note { font-size: 12.5px; color: var(--muted); margin: 2px 2px 14px; }
+
+  .cards { display: grid; gap: 10px; }
+  .card { background: var(--surface); border: 1px solid var(--ring); border-radius: 12px; padding: 14px 16px; }
+  .card .top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .card h3 { margin: 0; font-size: 16px; font-weight: 700; }
+  .net { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 9px; }
+  .who { font-size: 13px; color: var(--ink-2); margin: 2px 0 10px; }
+  .who .nameless { color: var(--warn); font-weight: 600; }
+
+  .marks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 11px; white-space: nowrap; }
+  .pill svg { width: 13px; height: 13px; flex: none; }
+  .pill.ok { background: var(--good-soft); color: var(--good-text); }
+  .pill.missing { background: var(--warn-soft); color: var(--warn); }
+
+  .actions { display: flex; gap: 8px; }
+  .wa-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--wa); color: #fff; text-decoration: none;
+    font-size: 14.5px; font-weight: 700; border-radius: 10px; padding: 10px 18px;
+    flex: 1 1 auto; border: 0; cursor: pointer; font-family: inherit;
+  }
+  .wa-btn:active { background: var(--wa-press); }
+  .wa-btn svg { width: 18px; height: 18px; flex: none; }
+  .copy-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--surface); color: var(--ink-2); border: 1px solid var(--ring);
+    font: inherit; font-size: 13px; font-weight: 600; border-radius: 10px; padding: 10px 14px; cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .copy-btn svg { width: 15px; height: 15px; }
+  .copy-btn.done { color: var(--good-text); border-color: var(--good); }
+
+  .done-sec { margin-top: 34px; }
+  .done-sec summary { cursor: pointer; font-size: 14.5px; font-weight: 700; color: var(--ink-2); padding: 6px 2px; }
+  .done-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 2px 0; }
+  .done-chip { font-size: 12.5px; background: var(--good-soft); color: var(--good-text); border-radius: 999px; padding: 3px 11px; }
+
+  .empty { color: var(--muted); font-size: 14px; padding: 26px 4px; text-align: center; }
+  .foot { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 40px; }
+  .foot a { color: var(--accent); }
+  @media (prefers-reduced-motion: no-preference) { .bar > i { transition: width .6s ease; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div>
+      <div class="eyebrow">מרכז פדגוגי · משרד העבודה</div>
+      <h1>תזכורות ווטסאפ למנהלים</h1>
+    </div>
+    <div class="headmeta">
+      <span class="live" id="liveBadge"><span class="dot"></span><span id="liveText">טוען נתונים…</span></span>
+    </div>
+  </header>
+  <p class="lede">כל בית ספר שעדיין חסר לו <b>סקר הצרכים הטכנולוגיים</b> או <b>הזנת המורים להדרכות</b> — עם הודעה מוכנה. לוחצים על הכפתור הירוק, בוחרים את איש הקשר בווטסאפ, ושולחים. ההודעה כוללת קישור ישיר למילוי מהנייד.</p>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="filters" role="group" aria-label="סינון">
+    <button class="fbtn" data-f="need" aria-pressed="true">כל החסרים</button>
+    <button class="fbtn" data-f="none" aria-pressed="false">לא מילאו כלום</button>
+    <button class="fbtn" data-f="noSurvey" aria-pressed="false">חסר סקר</button>
+    <button class="fbtn" data-f="noTeachers" aria-pressed="false">חסרה הזנת מורים</button>
+    <input class="search" id="q" type="search" placeholder="חיפוש בית ספר, מנהל/ת או רשת…" aria-label="חיפוש">
+  </div>
+  <div class="count-note" id="countNote"></div>
+
+  <div class="cards" id="cards"></div>
+  <div class="empty" id="empty" hidden>לא נמצאו בתי ספר בסינון הזה.</div>
+
+  <details class="done-sec" id="doneSec">
+    <summary id="doneSummary"></summary>
+    <div class="done-list" id="doneList"></div>
+  </details>
+
+  <div class="foot">
+    הנתונים נמשכים חיים מגיליונות הסקר וההדרכות ומתעדכנים בכל רענון של הדף.
+    קישורי המילוי בהודעה: <a href="seker.html" target="_blank" rel="noopener">סקר הצרכים</a> ·
+    <a href="https://lerani.co.il/training-supervision/admin-school/setup.html" target="_blank" rel="noopener">הזנת מורים</a>.
+    דף אחות: <a href="https://meytalp-dev.github.io/revital-tracking/" target="_blank" rel="noopener">מעקב המילוי המלא</a>.
+  </div>
+</div>
+
+<script>
+"use strict";
+const DATA_URL = "https://script.google.com/macros/s/AKfycbySOgh6OJG1uLR7BSF24u08aZTXiKFzn2p-6zXvy49yOElQYgaZ77TrGU1nv7GkLfda/exec";
+const SEKER_URL = "https://pedagogiamh.co.il/seker.html";
+const MORIM_URL = "https://lerani.co.il/training-supervision/admin-school/setup.html";
+
+// שיוך ידני לשמות חופשיים שהזיהוי האוטומטי לא תופס
+const ALIASES = {
+  "עמל טכנולוגי רהט": "עמל רהט בנים",
+  "תיכון יוצר עמל טכנולוגי": "עמל אשדוד",
+  "אורט תעשייה אווירית": "אורט תעשיה אווירית",
+  "טכנולוגי אכסאל": "אכסאל"
+};
+// בתי ספר שנרשמו פעמיים בגיליון (המנהל פתח רשומה חדשה) — מוצגים פעם אחת
+const MERGE = {
+  "עתיד ביר אל מכסור": "עתיד יוצר אבדאע ביר אל מכסור",
+  "ירכא אבו סנאן": "ח׳טוואת ירכא אבו סנאן",
+  "תיכון מסאראת": "ערערה"
+};
+// תיקוני שם מנהל/ת שחסרים או שגויים בגיליון
+const PRINCIPAL_FIX = { "אורט תעשיה אווירית": "בני זיזו" };
+
+// ---- snapshot 31.8.2026 — מוצג עד שהחיבור החי נטען ----
+const SNAPSHOT = [
+ {"name":"אום אל פחם בנות","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"אום אל פחם בנים","net":"סכנין","principal":"ג'אד מחאג'נה","survey":false,"teachers":true},
+ {"name":"אור העתיד תורני גן יבנה","net":"עתיד","principal":"מאיר ענתבי","survey":true,"teachers":false},
+ {"name":"אורט אורמת","net":"אורט","principal":"רמי מיכאלה","survey":false,"teachers":true},
+ {"name":"אורט בית הערבה","net":"אורט","principal":"רווית גל","survey":true,"teachers":true},
+ {"name":"אורט כרמל","net":"אורט","principal":"וליד דאו","survey":true,"teachers":false},
+ {"name":"אורט תל נוף","net":"אורט","principal":"אבי בז'ה","survey":true,"teachers":false},
+ {"name":"אורט תעשיה אווירית","net":"אורט","principal":"בני זיזו","survey":true,"teachers":false},
+ {"name":"אכסאל","net":"סכנין","principal":"רשאד חוסיין","survey":true,"teachers":false},
+ {"name":"בית אל","net":"בית אל","principal":"","survey":false,"teachers":false},
+ {"name":"בית חנינה בנות","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"בית חנינה בנים","net":"סכנין","principal":"חכם דעיס","survey":true,"teachers":false},
+ {"name":"בת עמי","net":"עתיד","principal":"הדס שרון","survey":true,"teachers":true},
+ {"name":"דן גורמה תל-אביב","net":"אורט","principal":"לימור יעקבי","survey":false,"teachers":false},
+ {"name":"דרור הגליל","net":"דרור","principal":"עינת ויינברן","survey":true,"teachers":false},
+ {"name":"דרור נווה מדבר","net":"דרור","principal":"עבד אבו אלקיעאן","survey":false,"teachers":false},
+ {"name":"הדר","net":"שלומית חרדי","principal":"אלישבע מונסונגו","survey":true,"teachers":true},
+ {"name":"התיכון החברתי חיפה","net":"דרור","principal":"תמר צרפתי","survey":true,"teachers":false},
+ {"name":"התיכון החברתי מצפה רמון","net":"דרור","principal":"ענבל לוי","survey":true,"teachers":false},
+ {"name":"התיכון החברתי תל אביב יפו","net":"דרור","principal":"אוהד להב","survey":false,"teachers":false},
+ {"name":"זוקו","net":"עתיד","principal":"","survey":false,"teachers":false},
+ {"name":"ח׳טוואת ירכא אבו סנאן","net":"סכנין","principal":"נסרין נבואני","survey":true,"teachers":false},
+ {"name":"חבד אור מנחם אשקלון","net":"עתיד","principal":"בנימין ועקנין","survey":true,"teachers":false},
+ {"name":"חושן","net":"דרור","principal":"שרי שמבורסקי","survey":true,"teachers":false},
+ {"name":"חנוך לנער צפת","net":"עצמאי חרדי","principal":"שלמה אזרף","survey":true,"teachers":false},
+ {"name":"טורען","net":"סכנין","principal":"עלי עדווי","survey":false,"teachers":false},
+ {"name":"טל חרמון","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"כסרא סמיע","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"כפר זיתים","net":"עצמאי חרדי","principal":"יצחק שבתאי","survey":true,"teachers":true},
+ {"name":"כפר יאסיף","net":"סכנין","principal":"סמואיל סעיד","survey":true,"teachers":true},
+ {"name":"לקייה","net":"סכנין","principal":"עלי אלחואגרה","survey":false,"teachers":false},
+ {"name":"מעיינות צפת","net":"עמל","principal":"אסתי שלקובסקי","survey":false,"teachers":false},
+ {"name":"נחלים","net":"עצמאי חרדי","principal":"אליהו טובול","survey":true,"teachers":false},
+ {"name":"עמל אנרגיטק","net":"עמל","principal":"","survey":false,"teachers":false},
+ {"name":"עמל אשדוד","net":"עמל","principal":"מגי רביבו","survey":true,"teachers":false},
+ {"name":"עמל טייבה","net":"עמל","principal":"זיאד חאג יחיא","survey":true,"teachers":false},
+ {"name":"עמל טק אין","net":"עמל","principal":"","survey":false,"teachers":false},
+ {"name":"עמל נצרת","net":"עמל","principal":"בוטו נאיף","survey":true,"teachers":true},
+ {"name":"עמל רהט בנות","net":"עמל","principal":"","survey":false,"teachers":false},
+ {"name":"עמל רהט בנים","net":"עמל","principal":"ראיד הוזייל","survey":true,"teachers":false},
+ {"name":"עמל רמת דוד","net":"עמל","principal":"שי סודרי","survey":true,"teachers":false},
+ {"name":"ערערה","net":"סכנין","principal":"מחמד עזב","survey":false,"teachers":false},
+ {"name":"עתיד באר שבע","net":"עתיד","principal":"מאיר אבן שימול","survey":true,"teachers":false},
+ {"name":"עתיד בית דוד","net":"עתיד","principal":"מנחם בן מעש","survey":false,"teachers":false},
+ {"name":"עתיד גוליס בנות - ירכא","net":"עתיד","principal":"שאדיה נבואני","survey":true,"teachers":false},
+ {"name":"עתיד יוצר אבדאע ביר אל מכסור","net":"עתיד","principal":"ופיק אגבאריה","survey":true,"teachers":true},
+ {"name":"עתיד ירכא בנים","net":"עתיד","principal":"","survey":false,"teachers":false},
+ {"name":"עתיד כפר חבד אוהלי תמימים","net":"עתיד","principal":"ארז בנדטוביץ","survey":true,"teachers":false},
+ {"name":"עתיד כרמיאל","net":"עתיד","principal":"שיראל פרץ","survey":true,"teachers":false},
+ {"name":"עתיד מסעדה","net":"עתיד","principal":"אימן ספדי","survey":false,"teachers":false},
+ {"name":"עתיד צור ים","net":"עתיד","principal":"מוקי זמברג","survey":true,"teachers":true},
+ {"name":"עתיד קמג","net":"עתיד","principal":"יהורם בן שטרית","survey":true,"teachers":false},
+ {"name":"עתיד תפן","net":"עתיד","principal":"תומר פרידמן","survey":true,"teachers":false},
+ {"name":"פלמחים","net":"עתיד","principal":"ד\"ר ורד אזולאי יהב","survey":true,"teachers":true},
+ {"name":"צור ברק","net":"אורט","principal":"סיגל כהן","survey":true,"teachers":false},
+ {"name":"רימונים טבריה","net":"קנדה ישראל","principal":"","survey":false,"teachers":false},
+ {"name":"שגב שלום","net":"סכנין","principal":"","survey":false,"teachers":false},
+ {"name":"תיכון אלאמאני סחנין","net":"סכנין","principal":"מוחמד גזאל","survey":true,"teachers":false},
+ {"name":"תיכון בקהילה מהאראת שפרעם","net":"סכנין","principal":"ח'תאם יאסין","survey":true,"teachers":true},
+ {"name":"תיכון החממה","net":"עמל","principal":"אמרי אביטן","survey":false,"teachers":false},
+ {"name":"תיכון שיח","net":"עמל","principal":"גל שמיר","survey":false,"teachers":false},
+ {"name":"תל שבע","net":"","principal":"","survey":false,"teachers":false}
+];
+
+// ---- שיוך שמות (זהה לדף המעקב) ----
+function normName(s) {
+  return (s || "").replace(/["'״׳]/g, "").replace(/[.,()\/\-]/g, " ").replace(/\s+/g, " ").trim();
+}
+function tokens(s) { return normName(s).split(" ").filter(w => w && w !== "תיכון" && w !== "בית" && w !== "ספר"); }
+function matchSchool(raw, principal, schools) {
+  raw = (raw || "").trim();
+  if (ALIASES[raw]) return ALIASES[raw];
+  const sTok = new Set(tokens(raw));
+  let best = null;
+  for (const sc of schools) {
+    const oTok = tokens(sc.name);
+    const hit = oTok.length >= 2 ? oTok.every(w => sTok.has(w))
+              : oTok.length === 1 && sTok.size === 1 && sTok.has(oTok[0]);
+    if (hit && (!best || oTok.length > tokens(best).length)) best = sc.name;
+  }
+  if (best) return best;
+  const p = normName(principal);
+  if (p) {
+    const byP = schools.find(sc => sc.principal && normName(sc.principal) === p);
+    if (byP) return byP.name;
+  }
+  return null;
+}
+
+// ---- הודעת הווטסאפ ----
+function firstName(principal) {
+  const parts = normName(principal).split(" ").filter(w => w && w !== "דר");
+  return parts[0] || "";
+}
+function buildMessage(sc) {
+  const name = firstName(sc.principal);
+  const lines = [];
+  lines.push(name ? `שלום ${name}, כאן רויטל אמיר — הפיקוח הפדגוגי, משרד העבודה.` : "שלום רב, כאן רויטל אמיר — הפיקוח הפדגוגי, משרד העבודה.");
+  const missing = [];
+  if (!sc.survey) missing.push("סקר הצרכים הטכנולוגיים");
+  if (!sc.teachers) missing.push("הזנת המורים העיוניים להדרכות");
+  lines.push(`זו תזכורת נוספת: ${sc.name} טרם השלים את ${missing.join(" ואת ")}.`);
+  lines.push("בלי הנתונים האלה בית הספר לא נכלל בתכנון ההדרכות וההצטיידות לתשפ״ז.");
+  lines.push("נדרש להשלים עד יום חמישי, 3.9. המילוי קצר ונעשה ישירות מהנייד:");
+  if (!sc.survey) lines.push(`📋 סקר צרכים טכנולוגיים:\n${SEKER_URL}`);
+  if (!sc.teachers) lines.push(`🧑‍🏫 הזנת המורים להדרכות:\n${MORIM_URL}`);
+  lines.push("אם יש קושי במילוי — אני זמינה. תודה, רויטל");
+  return lines.join("\n\n");
+}
+function waLink(msg) { return "https://wa.me/?text=" + encodeURIComponent(msg); }
+
+// ---- state ----
+const state = { schools: SNAPSHOT.map(s => ({ ...s })), live: false };
+let filter = "need", q = "";
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const ICONS = {
+  check: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7.5-8"/></svg>',
+  x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>',
+  wa: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.5A9.9 9.9 0 1 0 12.04 2Zm0 18.1a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.1.9.9-3.05-.2-.31a8.2 8.2 0 1 1 6.9 3.79Zm4.5-6.15c-.25-.12-1.47-.72-1.7-.8-.22-.09-.39-.13-.55.12-.17.25-.64.8-.79.97-.14.16-.29.19-.54.06a6.7 6.7 0 0 1-3.35-2.93c-.25-.43.25-.4.72-1.34.08-.16.04-.3-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.43.06-.65.3-.22.25-.86.84-.86 2.05 0 1.2.88 2.37 1 2.53.12.17 1.73 2.64 4.2 3.7.59.26 1.05.4 1.4.52.6.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>',
+  copy: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>'
+};
+
+function visibleSchools() {
+  const need = state.schools.filter(s => !s.survey || !s.teachers);
+  let list;
+  if (filter === "none") list = need.filter(s => !s.survey && !s.teachers);
+  else if (filter === "noSurvey") list = need.filter(s => !s.survey);
+  else if (filter === "noTeachers") list = need.filter(s => !s.teachers);
+  else list = need;
+  if (q) {
+    const nq = normName(q);
+    list = list.filter(s => normName(s.name + " " + s.principal + " " + s.net).includes(nq));
+  }
+  // קודם מי שלא מילא כלום, אחר כך לפי רשת ושם
+  return list.sort((a, b) => {
+    const am = (a.survey ? 0 : 1) + (a.teachers ? 0 : 1);
+    const bm = (b.survey ? 0 : 1) + (b.teachers ? 0 : 1);
+    if (am !== bm) return bm - am;
+    return (a.net || "ת").localeCompare(b.net || "ת", "he") || a.name.localeCompare(b.name, "he");
+  });
+}
+
+function renderAll() {
+  const all = state.schools, total = all.length || 1;
+  const nS = all.filter(s => s.survey).length;
+  const nT = all.filter(s => s.teachers).length;
+  const nNone = all.filter(s => !s.survey && !s.teachers).length;
+
+  document.getElementById("tiles").innerHTML = `
+    <div class="tile"><div class="label">לא מילאו כלום</div>
+      <div class="big">${nNone} <small>בתי ספר</small></div>
+      <div class="bar"><i style="width:${(nNone / total * 100).toFixed(1)}%;background:var(--warn)"></i></div></div>
+    <div class="tile"><div class="label">מילאו את הסקר</div>
+      <div class="big">${nS} <small>מתוך ${total}</small></div>
+      <div class="bar"><i style="width:${(nS / total * 100).toFixed(1)}%"></i></div></div>
+    <div class="tile"><div class="label">הזינו מורים</div>
+      <div class="big">${nT} <small>מתוך ${total}</small></div>
+      <div class="bar"><i style="width:${(nT / total * 100).toFixed(1)}%"></i></div></div>`;
+
+  const list = visibleSchools();
+  const cards = document.getElementById("cards");
+  cards.innerHTML = list.map((sc, i) => {
+    const msg = buildMessage(sc);
+    return `
+    <article class="card">
+      <div class="top"><h3>${esc(sc.name)}</h3>${sc.net ? `<span class="net">${esc(sc.net)}</span>` : ""}</div>
+      <div class="who">${sc.principal ? "מנהל/ת: " + esc(sc.principal) : '<span class="nameless">שם המנהל/ת חסר במערכת — ההודעה נפתחת בנוסח כללי</span>'}</div>
+      <div class="marks">
+        <span class="pill ${sc.survey ? "ok" : "missing"}">${sc.survey ? ICONS.check : ICONS.x}סקר צרכים</span>
+        <span class="pill ${sc.teachers ? "ok" : "missing"}">${sc.teachers ? ICONS.check : ICONS.x}הזנת מורים</span>
+      </div>
+      <div class="actions">
+        <a class="wa-btn" href="${waLink(msg)}" target="_blank" rel="noopener">${ICONS.wa}שליחה בווטסאפ</a>
+        <button class="copy-btn" type="button" data-i="${i}">${ICONS.copy}העתקה</button>
+      </div>
+    </article>`;
+  }).join("");
+  document.getElementById("empty").hidden = list.length > 0;
+  document.getElementById("countNote").textContent =
+    list.length ? `${list.length} בתי ספר ברשימה — לחיצה על הכפתור פותחת ווטסאפ עם ההודעה מוכנה, נשאר רק לבחור את איש הקשר.` : "";
+
+  cards.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const sc = list[Number(btn.dataset.i)];
+      try {
+        await navigator.clipboard.writeText(buildMessage(sc));
+        btn.classList.add("done");
+        btn.innerHTML = ICONS.check + "הועתק";
+        setTimeout(() => { btn.classList.remove("done"); btn.innerHTML = ICONS.copy + "העתקה"; }, 1800);
+      } catch { /* דפדפן ללא הרשאת לוח */ }
+    });
+  });
+
+  const done = all.filter(s => s.survey && s.teachers).sort((a, b) => a.name.localeCompare(b.name, "he"));
+  document.getElementById("doneSummary").textContent = `השלימו את שניהם — ${done.length} בתי ספר`;
+  document.getElementById("doneList").innerHTML = done.map(s => `<span class="done-chip">${esc(s.name)}</span>`).join("");
+}
+
+// ---- live data ----
+async function refresh() {
+  const badge = document.getElementById("liveBadge"), text = document.getElementById("liveText");
+  try {
+    const res = await fetch(DATA_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    const schools = (data.schools || []).filter(s => s.name && !MERGE[s.name]).map(s => ({
+      name: s.name, net: s.net || "",
+      principal: PRINCIPAL_FIX[s.name] || (s.principal === "ל" ? "" : (s.principal || "")),
+      survey: false, teachers: false
+    }));
+    const surveyNames = new Set();
+    for (const row of (data.survey || [])) {
+      const m = matchSchool(MERGE[row.school] ? MERGE[row.school] : row.school, row.principal, schools);
+      if (m) surveyNames.add(MERGE[m] || m);
+    }
+    const teacherNames = new Set();
+    for (const t of (data.teachers || [])) {
+      const m = matchSchool(t.school, "", schools) || t.school;
+      teacherNames.add(MERGE[m] || m);
+    }
+    for (const sc of schools) {
+      sc.survey = surveyNames.has(sc.name);
+      sc.teachers = teacherNames.has(sc.name);
+    }
+    if (schools.length) { state.schools = schools; state.live = true; }
+    badge.classList.remove("err"); badge.classList.add("on");
+    text.textContent = "נתונים חיים · עודכן " + new Date().toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+  } catch (e) {
+    badge.classList.remove("on"); badge.classList.add("err");
+    text.textContent = state.live ? "החיבור נפל — מוצגים נתונים אחרונים" : "מוצגים נתונים שמורים מ־31.8";
+  }
+  renderAll();
+}
+
+document.querySelectorAll(".fbtn").forEach(b => b.addEventListener("click", () => {
+  filter = b.dataset.f;
+  document.querySelectorAll(".fbtn").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  renderAll();
+}));
+document.getElementById("q").addEventListener("input", e => { q = e.target.value.trim(); renderAll(); });
+
+renderAll();
+refresh();
+setInterval(refresh, 5 * 60 * 1000);
+</script>
+</body>
+</html>
