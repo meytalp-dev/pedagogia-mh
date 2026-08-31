@@ -301,7 +301,7 @@ function firstName(principal) {
 function buildMessage(sc) {
   const name = firstName(sc.principal);
   const lines = [];
-  lines.push(name ? `שלום ${name}, כאן רויטל אמיר — הפיקוח הפדגוגי, משרד העבודה.` : "שלום רב, כאן רויטל אמיר — הפיקוח הפדגוגי, משרד העבודה.");
+  lines.push(name ? `שלום ${name},` : "שלום רב,");
   const missing = [];
   if (!sc.survey) missing.push("סקר הצרכים הטכנולוגיים");
   if (!sc.teachers) missing.push("הזנת המורים העיוניים להדרכות");
@@ -310,7 +310,8 @@ function buildMessage(sc) {
   lines.push("נדרש להשלים עד יום חמישי, 3.9. המילוי קצר ונעשה ישירות מהנייד:");
   if (!sc.survey) lines.push(`📋 סקר צרכים טכנולוגיים:\n${SEKER_URL}`);
   if (!sc.teachers) lines.push(`🧑‍🏫 הזנת המורים להדרכות:\n${MORIM_URL}`);
-  lines.push("אם יש קושי במילוי — אני זמינה. תודה, רויטל");
+  lines.push("אם יש קושי במילוי — אני זמינה. תודה!");
+  lines.push("רויטל אמיר\nמפקחת פדגוגית ארצית");
   return lines.join("\n\n");
 }
 function waLink(msg) { return "https://wa.me/?text=" + encodeURIComponent(msg); }
