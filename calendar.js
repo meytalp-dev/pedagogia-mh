@@ -27,16 +27,19 @@
     return String(s || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/[,;]/g, function (c) { return '\\' + c; });
   }
   function fold(line) { // שורה ב-ics לא עוברת 75 בתים — מקפלים
-    var out = '', bytes = 0, i = 0;
-    while (i < line.length) {
-      var ch = line[i], b = encodeURIComponent(ch).replace(/%[0-9A-F]{2}/g, 'x').length;
+    // עוברים לפי נקודות-קוד (לא יחידות UTF-16) כדי שאימוג׳י/תו על-בסיסי לא ישבור את encodeURIComponent
+    var out = '', bytes = 0, chars = Array.from(line);
+    for (var i = 0; i < chars.length; i++) {
+      var ch = chars[i], b;
+      try { b = encodeURIComponent(ch).replace(/%[0-9A-F]{2}/g, 'x').length; }
+      catch (e) { b = 1; }
       if (bytes + b > 72) { out += '\r\n '; bytes = 0; }
-      out += ch; bytes += b; i++;
+      out += ch; bytes += b;
     }
     return out;
   }
   function uid(ev) {
-    var s = ev.date + '|' + ev.title + '|' + (ev.start || ''), h = 0;
+    var s = ev.date + '|' + ev.title + '|' + (ev.start || '') + '|' + (ev.desc || ''), h = 0;
     for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
     return h.toString(16) + '@pedagogiamh.co.il';
   }
@@ -56,7 +59,7 @@
       lines.push('DTEND;TZID=' + TZ + ':' + ymd(ev.date) + 'T' + (e || s));
     } else {
       lines.push('DTSTART;VALUE=DATE:' + ymd(ev.date));
-      lines.push('DTEND;VALUE=DATE:' + ymd(nextDay(ev.date)));
+      lines.push('DTEND;VALUE=DATE:' + ymd(nextDay(ev.endDate || ev.date)));
     }
     lines.push('SUMMARY:' + icsText(ev.title));
     var desc = [ev.desc, ev.url ? ev.url : (location.origin + location.pathname)].filter(Boolean).join('\n');
@@ -70,7 +73,7 @@
     var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//pedagogiamh.co.il//calendar//HE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       'X-WR-CALNAME:' + icsText(calName || SITE), 'X-WR-TIMEZONE:' + TZ,
       'BEGIN:VTIMEZONE', 'TZID:' + TZ,
-      'BEGIN:DAYLIGHT', 'TZOFFSETFROM:+0200', 'TZOFFSETTO:+0300', 'TZNAME:IDT', 'DTSTART:19700327T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1FR', 'END:DAYLIGHT',
+      'BEGIN:DAYLIGHT', 'TZOFFSETFROM:+0200', 'TZOFFSETTO:+0300', 'TZNAME:IDT', 'DTSTART:19700327T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29', 'END:DAYLIGHT',
       'BEGIN:STANDARD', 'TZOFFSETFROM:+0300', 'TZOFFSETTO:+0200', 'TZNAME:IST', 'DTSTART:19701025T020000', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU', 'END:STANDARD',
       'END:VTIMEZONE'];
     events.forEach(function (ev) { lines = lines.concat(vevent(ev)); });
@@ -83,7 +86,7 @@
   function googleHref(ev) {
     var s = hm(ev.start), e = hm(ev.end);
     var dates = s ? ymd(ev.date) + 'T' + s + '/' + ymd(ev.date) + 'T' + (e || s)
-                  : ymd(ev.date) + '/' + ymd(nextDay(ev.date));
+                  : ymd(ev.date) + '/' + ymd(nextDay(ev.endDate || ev.date));
     var q = 'action=TEMPLATE&text=' + encodeURIComponent(ev.title) + '&dates=' + dates + '&ctz=' + TZ;
     var details = [ev.desc, ev.url || (location.origin + location.pathname)].filter(Boolean).join('\n');
     if (details) q += '&details=' + encodeURIComponent(details);
@@ -136,7 +139,7 @@
     if (!G || !G.EVENTS) return;
     var evOf = function (e) {
       var h = hoursFrom(e.s);
-      return { title: e.n, date: e.d, start: h.start, end: h.end,
+      return { title: e.n, date: e.d, endDate: e.d2 || null, start: h.start, end: h.end,
         desc: [(G.TRACKS[e.t] || {}).name, e.s].filter(Boolean).join(' · '), url: e.u ? new URL(e.u, location.href).href : '' };
     };
     // כפתור בכל שורה ב"מהלך השנה"
@@ -223,6 +226,8 @@
         var hoursTxt = tds[1] ? tds[1].textContent : lastHours;
         if (tds[1]) lastHours = tds[1].textContent;
         var h = hoursFrom(hoursTxt);
+        // אין עמודת שעות נפרדת (טבלה דו-עמודתית) — השעה יושבת בתא הכותרת עצמו
+        if (!h.start) { var ht = hoursFrom(title); if (ht.start) { h = ht; hoursTxt = title; title = title.replace(/\s*[·|]\s*\d{1,2}:\d{2}\s*[–-]\s*\d{1,2}:\d{2}.*$/, '').trim(); } }
         var ev = { title: title, date: y + '-' + pad(+m[2]) + '-' + pad(+m[1]), start: h.start, end: h.end,
           desc: [ctx, hoursTxt.replace(/\s+/g, ' ').trim()].filter(Boolean).join(' · ') };
         dt.appendChild(button(ev, { cls: 'sm col' }));
