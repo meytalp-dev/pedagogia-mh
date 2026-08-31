@@ -200,11 +200,26 @@ const MERGE = {
   "תיכון מסאראת": "ערערה"
 };
 // תיקוני שם מנהל/ת שחסרים או שגויים בגיליון
-const PRINCIPAL_FIX = { "אורט תעשיה אווירית": "בני זיזו", "שגב שלום": "מאהר אלפראונה" };
+const PRINCIPAL_FIX = {
+  "אורט תעשיה אווירית": "בני זיזו",
+  "שגב שלום": "מאהר אלפראונה",
+  "אום אל פחם בנות": "נורה מחאג'נה",
+  "בית אל": "שרית גולדרינג",
+  "בית חנינה בנות": "פרדאוס אלבאז",
+  "זוקו": "יוסי לוי",
+  "טל חרמון": "ליאואפר חזן",
+  "כסרא סמיע": "עלים עלואן",
+  "עמל אנרגיטק": "דרור לוי",
+  "עמל טק אין": "אודליה גלנוס איטח",
+  "עמל טייבה": "זיאד חאג יחיא",
+  "עתיד ירכא בנים": "אחמד חמזה",
+  "רימונים טבריה": "גילה כהנא",
+  "תל שבע": "שאקר בטיחאת"
+};
 
 // ---- snapshot 31.8.2026 — מוצג עד שהחיבור החי נטען ----
 const SNAPSHOT = [
- {"name":"אום אל פחם בנות","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"אום אל פחם בנות","net":"","principal":"נורה מחאג'נה","survey":false,"teachers":false},
  {"name":"אום אל פחם בנים","net":"סכנין","principal":"ג'אד מחאג'נה","survey":false,"teachers":true},
  {"name":"אור העתיד תורני גן יבנה","net":"עתיד","principal":"מאיר ענתבי","survey":true,"teachers":false},
  {"name":"אורט אורמת","net":"אורט","principal":"רמי מיכאלה","survey":false,"teachers":true},
@@ -213,8 +228,8 @@ const SNAPSHOT = [
  {"name":"אורט תל נוף","net":"אורט","principal":"אבי בז'ה","survey":true,"teachers":false},
  {"name":"אורט תעשיה אווירית","net":"אורט","principal":"בני זיזו","survey":true,"teachers":false},
  {"name":"אכסאל","net":"סכנין","principal":"רשאד חוסיין","survey":true,"teachers":false},
- {"name":"בית אל","net":"בית אל","principal":"","survey":false,"teachers":false},
- {"name":"בית חנינה בנות","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"בית אל","net":"בית אל","principal":"שרית גולדרינג","survey":false,"teachers":false},
+ {"name":"בית חנינה בנות","net":"","principal":"פרדאוס אלבאז","survey":false,"teachers":false},
  {"name":"בית חנינה בנים","net":"סכנין","principal":"חכם דעיס","survey":true,"teachers":false},
  {"name":"בת עמי","net":"עתיד","principal":"הדס שרון","survey":true,"teachers":true},
  {"name":"דן גורמה תל-אביב","net":"אורט","principal":"לימור יעקבי","survey":false,"teachers":false},
@@ -224,23 +239,23 @@ const SNAPSHOT = [
  {"name":"התיכון החברתי חיפה","net":"דרור","principal":"תמר צרפתי","survey":true,"teachers":false},
  {"name":"התיכון החברתי מצפה רמון","net":"דרור","principal":"ענבל לוי","survey":true,"teachers":false},
  {"name":"התיכון החברתי תל אביב יפו","net":"דרור","principal":"אוהד להב","survey":false,"teachers":false},
- {"name":"זוקו","net":"עתיד","principal":"","survey":false,"teachers":false},
+ {"name":"זוקו","net":"עתיד","principal":"יוסי לוי","survey":false,"teachers":false},
  {"name":"ח׳טוואת ירכא אבו סנאן","net":"סכנין","principal":"נסרין נבואני","survey":true,"teachers":false},
  {"name":"חבד אור מנחם אשקלון","net":"עתיד","principal":"בנימין ועקנין","survey":true,"teachers":false},
  {"name":"חושן","net":"דרור","principal":"שרי שמבורסקי","survey":true,"teachers":false},
  {"name":"חנוך לנער צפת","net":"עצמאי חרדי","principal":"שלמה אזרף","survey":true,"teachers":false},
  {"name":"טורען","net":"סכנין","principal":"עלי עדווי","survey":false,"teachers":false},
- {"name":"טל חרמון","net":"","principal":"","survey":false,"teachers":false},
- {"name":"כסרא סמיע","net":"","principal":"","survey":false,"teachers":false},
+ {"name":"טל חרמון","net":"","principal":"ליאואפר חזן","survey":false,"teachers":false},
+ {"name":"כסרא סמיע","net":"","principal":"עלים עלואן","survey":false,"teachers":false},
  {"name":"כפר זיתים","net":"עצמאי חרדי","principal":"יצחק שבתאי","survey":true,"teachers":true},
  {"name":"כפר יאסיף","net":"סכנין","principal":"סמואיל סעיד","survey":true,"teachers":true},
  {"name":"לקייה","net":"סכנין","principal":"עלי אלחואגרה","survey":false,"teachers":false},
  {"name":"מעיינות צפת","net":"עמל","principal":"אסתי שלקובסקי","survey":false,"teachers":false},
  {"name":"נחלים","net":"עצמאי חרדי","principal":"אליהו טובול","survey":true,"teachers":false},
- {"name":"עמל אנרגיטק","net":"עמל","principal":"","survey":false,"teachers":false},
+ {"name":"עמל אנרגיטק","net":"עמל","principal":"דרור לוי","survey":false,"teachers":false},
  {"name":"עמל אשדוד","net":"עמל","principal":"מגי רביבו","survey":true,"teachers":false},
  {"name":"עמל טייבה","net":"עמל","principal":"זיאד חאג יחיא","survey":true,"teachers":false},
- {"name":"עמל טק אין","net":"עמל","principal":"","survey":false,"teachers":false},
+ {"name":"עמל טק אין","net":"עמל","principal":"אודליה גלנוס איטח","survey":false,"teachers":false},
  {"name":"עמל נצרת","net":"עמל","principal":"בוטו נאיף","survey":true,"teachers":true},
  {"name":"עמל רהט בנות","net":"עמל","principal":"","survey":false,"teachers":false},
  {"name":"עמל רהט בנים","net":"עמל","principal":"ראיד הוזייל","survey":true,"teachers":false},
@@ -250,7 +265,7 @@ const SNAPSHOT = [
  {"name":"עתיד בית דוד","net":"עתיד","principal":"מנחם בן מעש","survey":false,"teachers":false},
  {"name":"עתיד גוליס בנות - ירכא","net":"עתיד","principal":"שאדיה נבואני","survey":true,"teachers":false},
  {"name":"עתיד יוצר אבדאע ביר אל מכסור","net":"עתיד","principal":"ופיק אגבאריה","survey":true,"teachers":true},
- {"name":"עתיד ירכא בנים","net":"עתיד","principal":"","survey":false,"teachers":false},
+ {"name":"עתיד ירכא בנים","net":"עתיד","principal":"אחמד חמזה","survey":false,"teachers":false},
  {"name":"עתיד כפר חבד אוהלי תמימים","net":"עתיד","principal":"ארז בנדטוביץ","survey":true,"teachers":false},
  {"name":"עתיד כרמיאל","net":"עתיד","principal":"שיראל פרץ","survey":true,"teachers":false},
  {"name":"עתיד מסעדה","net":"עתיד","principal":"אימן ספדי","survey":false,"teachers":false},
@@ -259,13 +274,13 @@ const SNAPSHOT = [
  {"name":"עתיד תפן","net":"עתיד","principal":"תומר פרידמן","survey":true,"teachers":false},
  {"name":"פלמחים","net":"עתיד","principal":"ד\"ר ורד אזולאי יהב","survey":true,"teachers":true},
  {"name":"צור ברק","net":"אורט","principal":"סיגל כהן","survey":true,"teachers":false},
- {"name":"רימונים טבריה","net":"קנדה ישראל","principal":"","survey":false,"teachers":false},
+ {"name":"רימונים טבריה","net":"קנדה ישראל","principal":"גילה כהנא","survey":false,"teachers":false},
  {"name":"שגב שלום","net":"סכנין","principal":"מאהר אלפראונה","survey":false,"teachers":false},
  {"name":"תיכון אלאמאני סחנין","net":"סכנין","principal":"מוחמד גזאל","survey":true,"teachers":false},
  {"name":"תיכון בקהילה מהאראת שפרעם","net":"סכנין","principal":"ח'תאם יאסין","survey":true,"teachers":true},
  {"name":"תיכון החממה","net":"עמל","principal":"אמרי אביטן","survey":false,"teachers":false},
  {"name":"תיכון שיח","net":"עמל","principal":"גל שמיר","survey":false,"teachers":false},
- {"name":"תל שבע","net":"","principal":"","survey":false,"teachers":false}
+ {"name":"תל שבע","net":"","principal":"שאקר בטיחאת","survey":false,"teachers":false}
 ];
 
 // ---- שיוך שמות (זהה לדף המעקב) ----
