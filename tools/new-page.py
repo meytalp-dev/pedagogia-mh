@@ -98,15 +98,17 @@ def main():
           '<link rel="stylesheet" href="article.css">\n'
           '<link rel="stylesheet" href="/pagenav.css">\n'
           '<link rel="stylesheet" href="/toolbelt.css">\n'
-          '</head>\n<body%s>\n\n' % body_attr
+          '</head>\n<body%s>\n' % body_attr
+        # קישור דילוג לתוכן + עטיפת <main id="main"> — נגישות WCAG 2.4.1
+        + '<a class="skip" href="#main">דילוג לתוכן הראשי</a>\n\n'
         + nav + links
-        + '\n\n<section class="hero">\n  <div class="article hero-stagger">\n'
+        + '\n\n<main id="main">\n\n<section class="hero">\n  <div class="article hero-stagger">\n'
           '    <span class="kicker">%s</span>\n    <h1>%s</h1>\n' % (a.kicker, a.title)
         + ('    <p class="lead">%s</p>\n' % a.lead if a.lead else '')
         + src_meta
         + '\n  </div>\n</section>\n\n<article class="body-sec">\n  <div class="article">\n\n'
         + body + '\n' + src_box
-        + '\n  </div>\n</article>\n\n'
+        + '\n  </div>\n</article>\n\n</main>\n\n'
         + tail)
 
     io.open(a.out, 'w', encoding='utf-8').write(page)
