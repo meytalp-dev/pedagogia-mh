@@ -353,3 +353,8 @@ h2.sub-sec small,h3.sub-sec small{font-size:.6em;font-weight:600;color:var(--tex
 .nb-check li::before{content:"";position:absolute;inset-inline-start:0;top:.22em;width:15px;height:15px;border:1.8px solid var(--accent);border-radius:4px;background:#fff}
 @media(max-width:640px){.nohal-brief{padding:18px 18px 16px}.nb-grid{grid-template-columns:1fr;gap:14px}}
 @media print{.nohal-brief{box-shadow:none;break-inside:avoid}}
+
+/* תווית שלושת המצבים ל"מה השתנה השנה" (הצעת GPT) */
+.nb-state{display:inline-block;font-size:var(--fs-2xs);font-weight:800;padding:2px 9px;border-radius:999px;margin-inline-end:6px;vertical-align:1px;white-space:nowrap}
+.nb-new{background:var(--cyan-100);color:#0A6E8A}
+.nb-unknown{background:var(--surface);color:var(--text2);border:1px solid var(--border)}
