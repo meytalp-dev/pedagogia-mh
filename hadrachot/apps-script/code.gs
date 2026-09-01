@@ -635,7 +635,7 @@ function handleRequest(params) {
 
       case 'admin.reset':         result = adminReset(params); break;
 
-      case 'teachers.list':       result = listTeachers(params); break;
+      case 'teachers.list':       result = listTeachers(params, user); break;
       case 'teacher.get':         result = getTeacher(params.id); break;
       case 'teachers.create':     result = createTeacher(params); break;
       case 'teachers.update':     result = updateTeacher(params); break;
@@ -693,7 +693,7 @@ function handleRequest(params) {
       case 'users.delete':        result = deleteUser(params); break;
 
       case 'seed.import':         result = seedImport(params); break;
-      case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'))); break;
+      case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'), user)); break;
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
       case 'ministry.dashboard':  result = withCache_('ministry.dashboard', scope, params, () => ministryDashboard(params)); break;
       case 'network.dashboard':   result = withCache_('network.dashboard',  scope, params, () => networkDashboard(applyScopeParams_(params, scope, 'network'))); break;
@@ -900,12 +900,25 @@ function adminReset(p) {
 // TEACHERS
 // ============================================================
 
-function listTeachers(p) {
+// מיסוך פרטי קשר למי שלא מחובר (הגנת ביניים עד הדלקת AUTH_ENFORCED):
+// זרימות ההזנה של בתי הספר נשארות פתוחות ושלמות, אבל רשימות רחבות
+// (לפי מקצוע / בלי סינון) מוסרות טלפון ומייל רק למשתמש עם token תקף.
+function maskContact_(t) {
+  const digits = (t.phone || '').toString().replace(/\D/g, '');
+  return Object.assign({}, t, {
+    phone: digits ? '•••' + digits.slice(-3) : '',
+    email: ''
+  });
+}
+
+function listTeachers(p, user) {
   let data = readAll('teachers').map(t => ({...t, moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive)}));
   if (p.school)   data = data.filter(t => t.school === p.school);
   if (p.network)  data = data.filter(t => t.network === p.network);
   if (p.subject)  data = data.filter(t => t.subject === p.subject);
   if (p.sector)   data = data.filter(t => t.sector === p.sector);
+  // בלי token ובלי סינון לבית ספר יחיד (זרימת ההזנה) — בלי פרטי קשר
+  if (!user && !p.school) data = data.map(maskContact_);
   return { ok: true, data };
 }
 
@@ -1818,7 +1831,7 @@ function seedImport(params) {
 // קלט: { guide: 'email' }
 // פלט: { guide, trainings, teachers (כולל היסטוריית נוכחות) }
 
-function guideDashboard(params) {
+function guideDashboard(params, user) {
   const guideEmail = (params.guide || '').toLowerCase();
   if (!guideEmail) return { ok: false, error: 'missing_guide_email' };
 
@@ -1849,11 +1862,12 @@ function guideDashboard(params) {
     const totalSessions = allTrainings.length;
     const sch = schools[t.school] || {};
     const netKey = (t.network || '').toString().replace(/^net_/, '');
+    const contact = user ? { phone: t.phone, email: t.email } : maskContact_(t);
     return {
       id: t.id,
       name: t.name,
-      phone: t.phone,
-      email: t.email,
+      phone: contact.phone,
+      email: contact.email,
       notes: t.notes || '',
       school: t.school,
       schoolName: t.schoolName || sch.name || '— ללא שיוך —',
