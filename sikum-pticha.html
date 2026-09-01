@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מעקב דיווחי יום הפתיחה · תשפ"ז · משרד העבודה</title>
+<meta name="description" content="תמונת מצב חיה של דיווחי היום הראשון לפתיחת שנת הלימודים תשפ&quot;ז — משרד העבודה, מינהל הכשרה מקצועית">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128202;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.6;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
+  width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.35),transparent 70%)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:22px 0 2px}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:60px;width:auto;display:block}
+@media (max-width:480px){.logo{height:48px}}
+
+.hero{text-align:center;padding:20px 0 6px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(27px,5.6vw,40px);line-height:1.16;margin:15px 0 8px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:17.5px;color:#3d4a70;max-width:56ch;margin:0 auto}
+
+.livebar{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;
+  font-size:14.5px;color:var(--muted);flex-wrap:wrap}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 0 rgba(18,179,159,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.livebar b{color:var(--navy);font-family:'Rubik',sans-serif}
+.refresh{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;
+  padding:6px 16px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;
+  align-items:center;gap:7px;transition:all .16s var(--ease)}
+.refresh:hover{border-color:var(--blue);background:var(--blue-soft)}
+.refresh svg{width:15px;height:15px}
+.refresh.spinning svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---- notices ---- */
+.notice{display:none;margin:18px auto 0;max-width:720px;border-radius:14px;padding:15px 18px;font-size:15px}
+.notice.on{display:block}
+.notice.warn{background:#fffaf0;border:1.5px dashed #e3bd7e;color:#7a5312}
+.notice.err{background:#fff5f6;border:1.5px solid #f3c2c7;color:#8c2b34}
+.notice code{background:#fff;border:1px solid #ecd9b4;border-radius:6px;padding:1px 6px;font-size:13.5px}
+
+/* ---- stat tiles ---- */
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:26px}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);
+  padding:18px 16px 15px;text-align:center;position:relative;overflow:hidden}
+.tile::before{content:"";position:absolute;top:0;inset-inline:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--sky))}
+.tile.t-warn::before{background:linear-gradient(90deg,var(--amber),#e9a94e)}
+.tile .num{font-family:'Rubik',sans-serif;font-size:clamp(24px,3.6vw,32px);font-weight:700;color:var(--navy);line-height:1.1}
+.tile .num small{font-size:.55em;font-weight:600;color:var(--muted)}
+.tile.t-warn .num{color:var(--amber)}
+.tile .lbl{font-size:13.8px;color:var(--muted);font-weight:600;margin-top:5px;line-height:1.35}
+
+/* ---- cards & sections ---- */
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-m);
+  padding:26px 28px;margin-top:22px}
+@media (max-width:560px){.card{padding:20px 16px}}
+.sec{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.sec .sico{flex:0 0 auto;width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  display:grid;place-items:center;color:var(--navy)}
+.sec .sico svg{width:21px;height:21px}
+.sec h2{font-family:'Rubik',sans-serif;font-size:19.5px;color:var(--navy);margin:0}
+.sec small{display:block;font-size:13.5px;color:var(--muted);font-weight:400;margin-top:1px}
+
+/* ---- coverage ---- */
+.covbar{height:14px;border-radius:999px;background:var(--blue-soft);overflow:hidden;margin:6px 0 10px}
+.covbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--blue));
+  width:0;transition:width .8s var(--ease)}
+.covtxt{font-size:15px;color:#3d4a70}
+.covtxt b{font-family:'Rubik',sans-serif;color:var(--navy)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{font-size:13.8px;font-weight:600;border-radius:999px;padding:4px 13px;
+  background:#fbfcff;border:1.5px solid var(--line);color:#4a5878}
+.chip.miss{background:#fff9f4;border-color:#eed3ae;color:#7a5312}
+
+/* ---- attendance bar list ---- */
+.blist{display:grid;gap:9px}
+.brow{display:grid;grid-template-columns:minmax(150px,220px) 1fr auto;align-items:center;gap:12px;
+  padding:4px 0;border-radius:10px}
+.brow:hover{background:#fbfcff}
+@media (max-width:560px){.brow{grid-template-columns:1fr auto}.brow .btrack{grid-column:1/-1;order:3}}
+.bname{font-size:15px;font-weight:700;color:#25325a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:flex;align-items:center;gap:7px}
+.bdate{font-size:12.5px;font-weight:400;color:var(--muted)}
+.btrack{height:12px;border-radius:999px;background:var(--blue-soft);overflow:hidden;position:relative}
+.btrack i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--blue));
+  width:0;transition:width .7s var(--ease)}
+.bval{font-family:'Rubik',sans-serif;font-weight:600;font-size:15.5px;color:var(--navy);min-width:110px;text-align:left;white-space:nowrap}
+.bval small{font-family:'Assistant';font-weight:600;color:var(--muted);font-size:12.8px}
+
+/* ---- badges (status: always icon + text, never color alone) ---- */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12.8px;font-weight:700;border-radius:999px;
+  padding:2px 10px;white-space:nowrap}
+.badge svg{width:12px;height:12px}
+.badge.warn{background:#fff5e9;color:#8a5306;border:1px solid #eed3ae}
+.badge.bad{background:#fff5f6;color:#8c2b34;border:1px solid #f3c2c7}
+.badge.good{background:#e9f9f5;color:#0a5c51;border:1px solid #9fe0d3}
+
+/* ---- roles ---- */
+.roles3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.roles3{grid-template-columns:1fr}}
+.rolecard{border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;background:#fbfcff}
+.rolecard h3{font-family:'Rubik',sans-serif;font-size:16.5px;color:var(--navy);margin:0 0 8px}
+.rolecard .cnt{font-size:14.5px;color:#3d4a70;display:flex;gap:14px;flex-wrap:wrap}
+.rolecard .cnt b{font-family:'Rubik',sans-serif}
+.rolecard .cnt .okc{color:#0a5c51}
+.rolecard .cnt .noc{color:#8c2b34}
+.rolecard .chips{margin-top:9px}
+.chip.no{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+
+/* ---- text reports (challenges / needs) ---- */
+.tcols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:760px){.tcols{grid-template-columns:1fr}}
+.tlist{display:grid;gap:10px;align-content:start}
+.titem{border:1.5px solid var(--line);border-radius:14px;padding:12px 15px;background:#fbfcff}
+.titem b{display:block;font-size:14.5px;color:var(--navy);margin-bottom:2px}
+.titem p{margin:0;font-size:15px;color:#3d4a70;white-space:pre-wrap}
+.tempty{font-size:14.5px;color:var(--muted);padding:6px 2px}
+
+/* ---- table ---- */
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table.rep{border-collapse:collapse;width:100%;min-width:980px;font-size:14.3px}
+table.rep th{background:var(--blue-soft);color:var(--navy);font-family:'Rubik',sans-serif;font-weight:600;
+  font-size:13.3px;padding:10px 12px;text-align:right;position:sticky;top:0;white-space:nowrap}
+table.rep td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;color:#2c3860}
+table.rep tr:nth-child(even) td{background:#fbfcff}
+table.rep td.n{font-family:'Rubik',sans-serif;font-weight:600;text-align:center;color:var(--navy)}
+table.rep td.txt{max-width:260px;min-width:170px;white-space:pre-wrap}
+table.rep td .badge{font-size:12px}
+
+.skel{display:grid;place-items:center;padding:50px 0;color:var(--muted);font-size:15.5px;gap:12px}
+.skel .sp{width:34px;height:34px;border-radius:50%;border:3.5px solid var(--blue-soft);
+  border-top-color:var(--blue);animation:spin 1s linear infinite}
+[hidden]{display:none!important}
+
+footer{margin-top:44px;padding:24px 0 32px;text-align:center;color:var(--muted);font-size:14px}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media print{
+  body::before{display:none}
+  .refresh,#autoNote{display:none!important}
+  .card,.tile{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19V5M4 19h16"/><path d="m7 14 4-4 3 3 5-6"/>
+      </svg>
+      מנהיגות פדגוגית יוצרת · תשפ״ז
+    </span>
+    <h1>מעקב דיווחי יום הפתיחה</h1>
+    <p class="lede">תמונת מצב חיה של דיווחי המנהלים מהיום הראשון לשנת הלימודים —
+      נוכחות תלמידים, מצבת מורים, בעלי תפקידים, אתגרים וצרכים.</p>
+
+    <div class="livebar">
+      <span class="dot"></span>
+      <span id="updNote">טוען נתונים…</span>
+      <button class="refresh" id="refreshBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/>
+        </svg>
+        רענון
+      </button>
+      <span id="autoNote" style="font-size:13px">מתעדכן אוטומטית כל דקה</span>
+    </div>
+  </div>
+
+  <div class="notice warn" id="oldApi">
+    <b>צד השרת עדיין לא תומך בשליפת נתונים.</b> יש להדביק את הגרסה המעודכנת של
+    <code>rishum-pticha-apps-script.gs</code> ב-Apps Script וללחוץ
+    Deploy → Manage deployments → ✏️ → New version. הכתובת לא משתנה.
+  </div>
+  <div class="notice err" id="netErr">
+    לא הצלחנו למשוך נתונים מהשרת. בדקו את החיבור לאינטרנט — הדף ינסה שוב אוטומטית.
+  </div>
+
+  <div class="skel" id="skel"><span class="sp"></span>טוען את הדיווחים…</div>
+
+  <div id="content" hidden>
+
+    <!-- ===== מספרי מפתח ===== -->
+    <div class="tiles">
+      <div class="tile"><div class="num"><span id="tSchools">—</span><small> / <span id="tTotal">64</span></small></div><div class="lbl">בתי ספר דיווחו</div></div>
+      <div class="tile"><div class="num" id="tPct">—</div><div class="lbl">נוכחות כוללת ביום הראשון</div></div>
+      <div class="tile"><div class="num" id="tReg">—</div><div class="lbl">תלמידים רשומים (בבתי הספר שדיווחו)</div></div>
+      <div class="tile"><div class="num" id="tArr">—</div><div class="lbl">תלמידים הגיעו</div></div>
+      <div class="tile t-warn"><div class="num" id="tShort">—</div><div class="lbl">בתי ספר עם חוסר במצבת מורים</div></div>
+    </div>
+
+    <!-- ===== כיסוי דיווחים ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="m8.2 12.3 2.5 2.5 5.1-5.4"/></svg></div>
+        <div><h2>כיסוי הדיווחים</h2><small>מי כבר דיווח — ומי עדיין לא</small></div>
+      </div>
+      <div class="covbar"><i id="covFill"></i></div>
+      <p class="covtxt">דיווחו <b id="covN">—</b> מתוך <b id="covT">64</b> בתי ספר בפריסת הפיקוח.</p>
+      <div id="missWrap">
+        <p class="covtxt" style="margin:12px 0 0"><b id="missN">—</b> בתי ספר טרם דיווחו:</p>
+        <div class="chips" id="missChips"></div>
+      </div>
+    </div>
+
+    <!-- ===== נוכחות לפי בית ספר ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="7.5" r="3"/><path d="M15 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 3 17.5V19"/>
+          <path d="M21 19v-1.5a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3 3 0 0 1 0 5.6"/></svg></div>
+        <div><h2>נוכחות תלמידים לפי בית ספר</h2><small>הגיעו מתוך רשומים — ממוין מהגבוה לנמוך · דיווח אחרון לכל בית ספר</small></div>
+      </div>
+      <div class="blist" id="attList"></div>
+    </div>
+
+    <!-- ===== מצבת מורים ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="m8.5 10 2 2 4-4.5"/></svg></div>
+        <div><h2>חוסר במצבת מורים</h2><small>בתי ספר שדיווחו על חוסר, עם הפירוט שנמסר</small></div>
+      </div>
+      <div class="tlist" id="shortList"></div>
+    </div>
+
+    <!-- ===== בעלי תפקידים ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.2"/><path d="M6 20v-1a6 6 0 0 1 12 0v1"/><path d="M12 2v1.5M19.5 5.5l-1 1M4.5 5.5l1 1"/></svg></div>
+        <div><h2>איוש בעלי תפקידים</h2><small>מתוך בתי הספר שדיווחו</small></div>
+      </div>
+      <div class="roles3" id="rolesWrap"></div>
+      <div id="otherRolesWrap" style="margin-top:16px"></div>
+    </div>
+
+    <!-- ===== אתגרים וצרכים ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6.5 6.5 0 0 0-4 11.6c.7.6 1.2 1.4 1.2 2.4h5.6c0-1 .5-1.8 1.2-2.4A6.5 6.5 0 0 0 12 3z"/><path d="M9.5 20h5M10.5 22h3"/></svg></div>
+        <div><h2>אתגרים, צרכים ובקשות</h2><small>כפי שנכתבו על ידי המנהלים</small></div>
+      </div>
+      <div class="tcols">
+        <div>
+          <h3 style="font-family:'Rubik';font-size:16px;color:var(--navy);margin:0 0 10px">אתגרים</h3>
+          <div class="tlist" id="chalList"></div>
+        </div>
+        <div>
+          <h3 style="font-family:'Rubik';font-size:16px;color:var(--navy);margin:0 0 10px">צרכים ובקשות</h3>
+          <div class="tlist" id="needList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== טבלה מלאה ===== -->
+    <div class="card">
+      <div class="sec">
+        <div class="sico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9.5h18M3 14.5h18M9 4v16M15 4v16"/></svg></div>
+        <div><h2>כל הדיווחים — טבלה מלאה</h2><small>גלילה לצדדים לצפייה בכל העמודות</small></div>
+      </div>
+      <div class="tscroll">
+        <table class="rep">
+          <thead><tr>
+            <th>בית ספר</th><th>תאריך</th><th>רשומים</th><th>הגיעו</th><th>% נוכחות</th>
+            <th>מצבת מורים</th><th>מת״לית</th><th>הכלה ושילוב</th><th>רכז חניכות</th>
+            <th>בעלי תפקידים — אחר</th><th>אתגרים</th><th>צרכים ובקשות</th>
+          </tr></thead>
+          <tbody id="repBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית<br>
+    הנתונים נמשכים ישירות מדיווחי המנהלים ומתעדכנים אוטומטית
+  </footer>
+
+</div>
+
+<script>
+var API_URL = "https://script.google.com/macros/s/AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec";
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* רשימת בתי הספר — פריסת פיקוח תשפ"ז (64 מוסדות) */
+var SCHOOLS = ["אבו סנאן","אום אל פחם בנות","אום אל פחם בנים","אור דניאל","אור העתיד תורני מקצועי","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשייה אווירית","אכסאל","אל אמאני סכנין","אלחכמה כסרא-סמיע","אנרג'י טק","בית אל","בית דוד","בית חנינה בנות","בית חנינה בנים","ג'וליס בנות","דן גורמה","דרור גליל","דרור נווה מדבר","הדר","הקמפוס התורני עתיד","התיכון החברתי חיפה","חוש\"ן","טורען","טל חרמון","ישיבת חנוך לנער","כפר זיתים","כפר יסיף","כפר עקב","לקייה","מצפה רמון","מרחביה/מעיינות","נחלים","נצרת","סור באהר","סכנין תל שבע","עמל אשדוד","עמל טייבה ב'","עמל טק אין","עמל רהט","ערערה","עתיד באר שבע","עתיד בת עמי","עתיד גליל מערבי ירכא בנים","עתיד טק ביר אל מכסור","עתיד כפר חב\"ד","עתיד כרמיאל","עתיד פלמחים","צור ברק","צור ים","קמ\"ג דימונה","רימונים","רמת דוד","שגב שלום","שפרעם","תיכון החממה","תיכון חברתי ת\"א","תיכון טכנולוגי אי טק סקול (מסעדה)","תיכון עוצמ\"ה עתיד זוקו","תיכון שיח","תפן ליזמות"];
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function heNum(n){ return Number(n).toLocaleString("he-IL"); }
+function heDate(iso){
+  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso));
+  return m ? (Number(m[3]) + "." + Number(m[2]) + "." + m[1].slice(2)) : String(iso);
+}
+
+var BADGE = {
+  good: function(t){ return '<span class="badge good"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' + esc(t) + '</span>'; },
+  bad:  function(t){ return '<span class="badge bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>' + esc(t) + '</span>'; },
+  warn: function(t){ return '<span class="badge warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v9M12 17.5v.5"/></svg>' + esc(t) + '</span>'; }
+};
+function roleBadge(v){
+  if (v === "מאויש")     return BADGE.good("מאויש");
+  if (v === "לא מאויש")  return BADGE.bad("לא מאויש");
+  return '<span style="color:var(--muted)">—</span>';
+}
+
+/* ---------- שליפה ---------- */
+var timer = null;
+function fetchData(manual){
+  var btn = $("refreshBtn");
+  if (manual) btn.classList.add("spinning");
+  fetch(API_URL + "?mode=data")
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      btn.classList.remove("spinning");
+      $("netErr").classList.remove("on");
+      if (!j || !j.ok){ throw new Error("bad"); }
+      if (!("rows" in j)){          // deployment ישן — אין mode=data
+        $("oldApi").classList.add("on");
+        $("skel").hidden = true;
+        return;
+      }
+      $("oldApi").classList.remove("on");
+      render(j.rows);
+      var now = new Date();
+      $("updNote").innerHTML = "עודכן ב-<b>" +
+        String(now.getHours()).padStart(2,"0") + ":" + String(now.getMinutes()).padStart(2,"0") + "</b>";
+    })
+    .catch(function(){
+      btn.classList.remove("spinning");
+      $("skel").hidden = true;
+      if ($("content").hidden) $("netErr").classList.add("on");
+    });
+}
+
+/* ---------- עיבוד: דיווח אחרון לכל בית ספר ---------- */
+function latestPerSchool(rows){
+  var map = {};
+  rows.forEach(function(r){
+    var k = r.school;
+    if (!map[k] || String(r.ts) > String(map[k].ts)) map[k] = r;
+  });
+  return Object.keys(map).map(function(k){ return map[k]; });
+}
+
+/* ---------- רינדור ---------- */
+function render(rows){
+  var latest = latestPerSchool(rows);
+  latest.sort(function(a,b){
+    return (b.arrived / (b.registered || 1)) - (a.arrived / (a.registered || 1));
+  });
+
+  var totReg = 0, totArr = 0, nShort = 0;
+  latest.forEach(function(r){
+    totReg += r.registered; totArr += r.arrived;
+    if (r.shortage === "יש חוסר") nShort++;
+  });
+  var totPct = totReg ? Math.round(totArr / totReg * 100) : 0;
+
+  $("tSchools").textContent = latest.length;
+  $("tTotal").textContent = SCHOOLS.length;
+  $("tPct").textContent = latest.length ? totPct + "%" : "—";
+  $("tReg").textContent = latest.length ? heNum(totReg) : "—";
+  $("tArr").textContent = latest.length ? heNum(totArr) : "—";
+  $("tShort").textContent = nShort;
+
+  /* כיסוי */
+  $("covN").textContent = latest.length;
+  $("covT").textContent = SCHOOLS.length;
+  $("covFill").style.width = Math.round(latest.length / SCHOOLS.length * 100) + "%";
+  var reported = {};
+  latest.forEach(function(r){ reported[r.school] = true; });
+  var missing = SCHOOLS.filter(function(s){ return !reported[s]; });
+  $("missN").textContent = missing.length;
+  $("missChips").innerHTML = missing.map(function(s){
+    return '<span class="chip miss">' + esc(s) + '</span>';
+  }).join("");
+  $("missWrap").style.display = missing.length ? "" : "none";
+
+  /* נוכחות לפי בית ספר */
+  $("attList").innerHTML = latest.length ? latest.map(function(r){
+    var pct = r.registered ? Math.round(r.arrived / r.registered * 100) : 0;
+    var w = Math.min(pct, 100);
+    var shortB = (r.shortage === "יש חוסר") ? BADGE.warn("חוסר מורים") : "";
+    return '<div class="brow">' +
+      '<span class="bname" title="' + esc(r.school) + '">' + esc(r.school) +
+        ' <span class="bdate">' + heDate(r.date) + '</span>' + shortB + '</span>' +
+      '<span class="btrack"><i style="width:' + w + '%"></i></span>' +
+      '<span class="bval">' + pct + '% <small>' + heNum(r.arrived) + ' / ' + heNum(r.registered) + '</small></span>' +
+      '</div>';
+  }).join("") : '<p class="tempty">עדיין אין דיווחים.</p>';
+
+  /* מצבת מורים */
+  var shorts = latest.filter(function(r){ return r.shortage === "יש חוסר"; });
+  $("shortList").innerHTML = shorts.length ? shorts.map(function(r){
+    return '<div class="titem"><b>' + esc(r.school) + '</b><p>' +
+      (r.shortageDetail ? esc(r.shortageDetail) : '<span style="color:var(--muted)">דווח חוסר ללא פירוט</span>') +
+      '</p></div>';
+  }).join("") : '<p class="tempty">' + (latest.length ? "אף בית ספר לא דיווח על חוסר במצבת — המצבות מלאות 🎉" : "עדיין אין דיווחים.") + '</p>';
+
+  /* בעלי תפקידים */
+  var ROLES = [
+    { key:"matal",     name:"מת״לית" },
+    { key:"hachala",   name:"רכזת הכלה ושילוב" },
+    { key:"chanichut", name:"רכז חניכות" }
+  ];
+  $("rolesWrap").innerHTML = ROLES.map(function(role){
+    var yes = [], no = [];
+    latest.forEach(function(r){
+      if (r[role.key] === "מאויש") yes.push(r.school);
+      else if (r[role.key] === "לא מאויש") no.push(r.school);
+    });
+    return '<div class="rolecard"><h3>' + role.name + '</h3>' +
+      '<div class="cnt"><span class="okc">מאויש: <b>' + yes.length + '</b></span>' +
+      '<span class="noc">לא מאויש: <b>' + no.length + '</b></span></div>' +
+      (no.length ? '<div class="chips">' + no.map(function(s){
+        return '<span class="chip no">' + esc(s) + '</span>';
+      }).join("") + '</div>' : '') +
+      '</div>';
+  }).join("");
+
+  var others = latest.filter(function(r){ return r.otherRoles; });
+  $("otherRolesWrap").innerHTML = others.length
+    ? '<h3 style="font-family:\'Rubik\';font-size:15.5px;color:var(--navy);margin:0 0 9px">הערות נוספות על איוש</h3>' +
+      '<div class="tlist">' + others.map(function(r){
+        return '<div class="titem"><b>' + esc(r.school) + '</b><p>' + esc(r.otherRoles) + '</p></div>';
+      }).join("") + '</div>'
+    : "";
+
+  /* אתגרים וצרכים */
+  var chal = latest.filter(function(r){ return r.challenges; });
+  var need = latest.filter(function(r){ return r.needs; });
+  $("chalList").innerHTML = chal.length ? chal.map(function(r){
+    return '<div class="titem"><b>' + esc(r.school) + '</b><p>' + esc(r.challenges) + '</p></div>';
+  }).join("") : '<p class="tempty">לא דווחו אתגרים.</p>';
+  $("needList").innerHTML = need.length ? need.map(function(r){
+    return '<div class="titem"><b>' + esc(r.school) + '</b><p>' + esc(r.needs) + '</p></div>';
+  }).join("") : '<p class="tempty">לא דווחו צרכים ובקשות.</p>';
+
+  /* טבלה מלאה — כל הדיווחים, כולל היסטוריה */
+  var all = rows.slice().sort(function(a,b){
+    return a.school === b.school
+      ? String(b.ts).localeCompare(String(a.ts))
+      : a.school.localeCompare(b.school, "he");
+  });
+  $("repBody").innerHTML = all.map(function(r){
+    var pct = r.registered ? Math.round(r.arrived / r.registered * 100) : 0;
+    return '<tr>' +
+      '<td style="font-weight:700;white-space:nowrap">' + esc(r.school) + '</td>' +
+      '<td style="white-space:nowrap">' + heDate(r.date) + '</td>' +
+      '<td class="n">' + heNum(r.registered) + '</td>' +
+      '<td class="n">' + heNum(r.arrived) + '</td>' +
+      '<td class="n">' + pct + '%</td>' +
+      '<td>' + (r.shortage === "יש חוסר" ? BADGE.warn("יש חוסר") : (r.shortage ? BADGE.good("אין חוסר") : "—")) + '</td>' +
+      '<td>' + roleBadge(r.matal) + '</td>' +
+      '<td>' + roleBadge(r.hachala) + '</td>' +
+      '<td>' + roleBadge(r.chanichut) + '</td>' +
+      '<td class="txt">' + (r.otherRoles ? esc(r.otherRoles) : "—") + '</td>' +
+      '<td class="txt">' + (r.challenges ? esc(r.challenges) : "—") + '</td>' +
+      '<td class="txt">' + (r.needs ? esc(r.needs) : "—") + '</td>' +
+      '</tr>';
+  }).join("");
+
+  $("skel").hidden = true;
+  $("content").hidden = false;
+}
+
+$("refreshBtn").addEventListener("click", function(){ fetchData(true); });
+document.addEventListener("visibilitychange", function(){
+  if (!document.hidden) fetchData(false);
+});
+
+fetchData(false);
+timer = setInterval(function(){ fetchData(false); }, 60000);
+</script>
+</body>
+</html>
