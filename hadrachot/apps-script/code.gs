@@ -24,7 +24,7 @@
 const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log'];
 
 const SCHEMA = {
-  networks:   ['id','name','color','contactEmail'],
+  networks:   ['id','name','color','contactEmail','inviteCode'],
   schools:    ['id','name','network','principalName','principalEmail','principalPhone','attendanceTarget'],
   teachers:   ['id','school','network','name','subject','subjectId','type','sector','seniority',
                'units','students','phone','email','moeApproval','moeFile',
@@ -37,8 +37,9 @@ const SCHEMA = {
   knowledge:  ['id','title','category','audience','link','description','addedAt'],
   feedback:   ['id','trainingId','teacherId','rating','comment','createdAt'],
   alerts:     ['id','type','severity','message','targetRole','targetId','createdAt','resolvedAt'],
-  // Phase 1 hardening
-  users:      ['id','email','name','role','networkId','schoolId','subjectId','guideId','active','createdAt'],
+  // Phase 1 hardening + Phase 2 auth (סיסמה שהמשתמש קובע)
+  users:      ['id','email','name','role','networkId','schoolId','subjectId','guideId','active','createdAt',
+               'passwordHash','salt','token','tokenExpires','passwordSetAt'],
   subjects:   ['id','name','code','order','active'],
   audit_log:  ['id','timestamp','userEmail','action','targetType','targetId','status','notes']
 };
@@ -155,9 +156,19 @@ function doPost(e) {
 // המשתמש מזוהה לפי Session.getActiveUser().getEmail() — דורש שב-Web App יוגדר
 // "Execute as: User accessing the web app" + "Who has access: Anyone in Google Workspace".
 
+// Phase 2 — אכיפת התחברות על כל הפעולות שאינן ציבוריות.
+// false = מצב מעבר: התחברות אפשרית (טוקנים עובדים) אבל לא חובה — המערכת ממשיכה לעבוד כרגיל.
+// true  = חובה: כל פעולה שאינה ציבורית דורשת authEmail+authToken תקפים.
+// מדליקים אחרי שכל בעלי התפקידים קבעו סיסמה.
+const AUTH_ENFORCED = false;
+
 const PUBLIC_ACTIONS = new Set([
   // צ'ק-אין QR חייב להישאר פתוח — מורות לא מחוברות
-  'qr.training', 'qr.checkin'
+  'qr.training', 'qr.checkin',
+  // התחברות וקביעת סיסמה — חייבים להיות פתוחים
+  'auth.status', 'auth.login', 'auth.setPassword', 'auth.changePassword', 'auth.verify',
+  // הרשמה עצמית של רשתות עם קוד הזמנה — הקוד עצמו הוא ההרשאה
+  'auth.registerInfo', 'auth.register'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -165,7 +176,11 @@ const ADMIN_ONLY_ACTIONS = new Set([
   'alerts.compute',
   'certificate.generate',
   'admin.reset',
-  'school.delete'
+  'school.delete',
+  'users.list',
+  'users.upsert',
+  'users.delete',
+  'invites.ensure'
 ]);
 
 function getActiveUserEmail_() {
@@ -186,29 +201,46 @@ function findUserByEmail_(email) {
 // requireAuthAndScope(params, action) → { user, scope } | throws
 // Backward compat: אם users tab ריק (mode הקמה), פותח את הכל כדי לא לשבור פיילוטים פעילים.
 // ברגע שמוסיפים משתמש ראשון לטאב users — Auth נכפה אוטומטית על כל הפעולות שאינן ציבוריות.
+// אימות לפי טוקן (Phase 2) — authEmail + authToken שנשלחים בכל קריאה מהדפדפן
+function findUserByToken_(email, token) {
+  if (!email || !token) return null;
+  const user = findUserByEmail_(email);
+  if (!user || !user.token || String(user.token) !== String(token)) return null;
+  if (user.tokenExpires && new Date(user.tokenExpires) < new Date()) return null;
+  return user;
+}
+
 function requireAuthAndScope(params, action) {
   if (PUBLIC_ACTIONS.has(action)) {
     return { user: null, scope: { public: true } };
   }
-  // Bootstrap mode: אם אין משתמשים מוגדרים — לאפשר כדי לא להפיל מערכת חיה
-  const usersAll = readAll('users');
-  if (!usersAll.length) {
-    return { user: null, scope: { role: 'bootstrap' } };
+
+  // 1. טוקן תקף — המשתמש מזוהה, ה-scope שלו נאכף
+  const tokenUser = findUserByToken_(params.authEmail, params.authToken);
+  if (tokenUser) {
+    if (ADMIN_ONLY_ACTIONS.has(action) && ADMIN_ROLES.indexOf(tokenUser.role) < 0) {
+      throw new Error('forbidden_admin_required');
+    }
+    return { user: tokenUser, scope: enforceScope_(tokenUser, params, action) };
   }
+
+  // 2. מצב מעבר — התחברות עדיין לא חובה: הכל פתוח כמו היום
+  if (!AUTH_ENFORCED) {
+    return { user: null, scope: { role: 'open' } };
+  }
+
+  // 3. אכיפה מלאה — בלי טוקן אין כניסה (חוץ מ-fallback של סשן Google, אם קיים)
   const email = getActiveUserEmail_();
-  if (!email) {
-    throw new Error('unauthenticated — נא להיכנס עם חשבון Google');
+  if (email) {
+    const user = findUserByEmail_(email);
+    if (user) {
+      if (ADMIN_ONLY_ACTIONS.has(action) && ADMIN_ROLES.indexOf(user.role) < 0) {
+        throw new Error('forbidden_admin_required');
+      }
+      return { user, scope: enforceScope_(user, params, action) };
+    }
   }
-  const user = findUserByEmail_(email);
-  if (!user) {
-    throw new Error('user_not_provisioned: ' + email);
-  }
-  if (ADMIN_ONLY_ACTIONS.has(action) && ADMIN_ROLES.indexOf(user.role) < 0) {
-    throw new Error('forbidden_admin_required');
-  }
-  // אכיפת scope לפי תפקיד
-  const scope = enforceScope_(user, params, action);
-  return { user, scope };
+  throw new Error('unauthenticated — יש להתחבר עם מייל וסיסמה');
 }
 
 // מחזיר את ה-scope של המשתמש + מאמת ש-params לא חורגים מ-scope
@@ -249,6 +281,243 @@ function enforceScope_(user, params, action) {
     return out;
   }
   throw new Error('unknown_role: ' + role);
+}
+
+// ============================================================
+// AUTH — מייל + סיסמה שהמשתמש קובע (Phase 2)
+// ============================================================
+// כל בעל תפקיד מופיע בטאב users (מיטל מוסיפה דרך admin-users.html).
+// בכניסה הראשונה המשתמש קובע סיסמה; מקבל טוקן שנשמר בדפדפן.
+
+const TOKEN_DAYS = 180;
+const MIN_PASSWORD_LEN = 6;
+
+function hashPassword_(password, salt) {
+  const raw = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    salt + '|' + password,
+    Utilities.Charset.UTF_8
+  );
+  return raw.map(b => ((b + 256) % 256).toString(16).padStart(2, '0')).join('');
+}
+
+function issueToken_(user) {
+  const token = Utilities.getUuid() + '-' + Utilities.getUuid().slice(0, 8);
+  const expires = new Date(Date.now() + TOKEN_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  updateRowById('users', user.id, { token, tokenExpires: expires });
+  return { token, expires };
+}
+
+function authPayload_(user, tokenInfo) {
+  return {
+    ok: true,
+    email: user.email,
+    name: user.name || '',
+    role: user.role,
+    networkId: user.networkId || '',
+    schoolId: user.schoolId || '',
+    subjectId: user.subjectId || '',
+    guideId: user.guideId || '',
+    token: tokenInfo ? tokenInfo.token : undefined,
+    tokenExpires: tokenInfo ? tokenInfo.expires : undefined
+  };
+}
+
+// מה מצב המייל הזה — קיים? כבר קבע סיסמה?
+function authStatus(p) {
+  const email = (p.email || '').trim().toLowerCase();
+  if (!email) return { ok: false, error: 'missing_email' };
+  const user = findUserByEmail_(email);
+  if (!user) return { ok: true, exists: false };
+  return { ok: true, exists: true, hasPassword: !!user.passwordHash, name: user.name || '', role: user.role };
+}
+
+// כניסה ראשונה — קביעת סיסמה (רק למייל שמופיע ברשימה ועדיין בלי סיסמה)
+function authSetPassword(p) {
+  const email = (p.email || '').trim().toLowerCase();
+  const password = p.password || '';
+  const user = findUserByEmail_(email);
+  if (!user) return { ok: false, error: 'not_provisioned' };
+  if (user.passwordHash) return { ok: false, error: 'password_already_set' };
+  if (password.length < MIN_PASSWORD_LEN) return { ok: false, error: 'password_too_short' };
+  const salt = Utilities.getUuid();
+  updateRowById('users', user.id, {
+    salt,
+    passwordHash: hashPassword_(password, salt),
+    passwordSetAt: new Date().toISOString()
+  });
+  const tokenInfo = issueToken_(user);
+  return authPayload_(user, tokenInfo);
+}
+
+// התחברות רגילה
+function authLogin(p) {
+  const email = (p.email || '').trim().toLowerCase();
+  const password = p.password || '';
+  const user = findUserByEmail_(email);
+  if (!user) return { ok: false, error: 'not_provisioned' };
+  if (!user.passwordHash) return { ok: false, error: 'password_not_set' };
+  if (hashPassword_(password, user.salt || '') !== user.passwordHash) {
+    return { ok: false, error: 'wrong_password' };
+  }
+  const tokenInfo = issueToken_(user);
+  return authPayload_(user, tokenInfo);
+}
+
+// בדיקת טוקן שמור בדפדפן
+function authVerify(p) {
+  const user = findUserByToken_(p.authEmail || p.email, p.authToken || p.token);
+  if (!user) return { ok: false, error: 'invalid_token' };
+  return authPayload_(user, null);
+}
+
+// החלפת סיסמה (עם הסיסמה הישנה)
+function authChangePassword(p) {
+  const email = (p.email || '').trim().toLowerCase();
+  const user = findUserByEmail_(email);
+  if (!user || !user.passwordHash) return { ok: false, error: 'not_provisioned' };
+  if (hashPassword_(p.oldPassword || '', user.salt || '') !== user.passwordHash) {
+    return { ok: false, error: 'wrong_password' };
+  }
+  if ((p.newPassword || '').length < MIN_PASSWORD_LEN) return { ok: false, error: 'password_too_short' };
+  const salt = Utilities.getUuid();
+  updateRowById('users', user.id, {
+    salt,
+    passwordHash: hashPassword_(p.newPassword, salt),
+    passwordSetAt: new Date().toISOString()
+  });
+  const tokenInfo = issueToken_(user);
+  return authPayload_(user, tokenInfo);
+}
+
+// ---------- הרשמה עצמית של רשתות (קוד הזמנה) ----------
+// לכל רשת קוד סודי בעמודת inviteCode בטאב networks. מיטל שולחת לרשת קישור
+// register.html?code=<קוד>; איש הקשר נרשם עם המייל והסיסמה שלו ומקבל
+// network_admin לרשת של הקוד בלבד. הקוד רב-פעמי (כמה אנשי קשר לרשת) —
+// יצירה מחדש (regenerate) מבטלת את הקוד הישן.
+
+function makeInviteCode_() {
+  // 10 תווים קריאים, בלי דו-משמעיים (0/o, 1/l/i)
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+  let code = '';
+  for (let i = 0; i < 10; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  return code;
+}
+
+// עמודת inviteCode עשויה לא להתקיים בגיליונות ותיקים — מוסיפים אותה בשקט
+function ensureInviteColumn_() {
+  const s = sheet('networks');
+  const headers = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0];
+  if (headers.indexOf('inviteCode') < 0) {
+    s.getRange(1, s.getLastColumn() + 1).setValue('inviteCode');
+  }
+}
+
+function findNetworkByInvite_(code) {
+  const c = String(code || '').trim().toLowerCase();
+  if (!c) return null;
+  return readAll('networks').find(n =>
+    n.inviteCode && String(n.inviteCode).trim().toLowerCase() === c) || null;
+}
+
+// admin בלבד — מוודא קוד לכל רשת ומחזיר את כולם. p.regenerate=<networkId> מחליף קוד.
+function ensureInvites(p) {
+  ensureInviteColumn_();
+  const nets = readAll('networks');
+  nets.forEach(n => {
+    if (!n.inviteCode || (p.regenerate && p.regenerate === n.id)) {
+      const code = makeInviteCode_();
+      updateRowById('networks', n.id, { inviteCode: code });
+      n.inviteCode = code;
+    }
+  });
+  return { ok: true, data: nets.map(n => ({ id: n.id, name: n.name, color: n.color, inviteCode: n.inviteCode })) };
+}
+
+// ציבורי — לדף ההרשמה: איזו רשת מאחורי הקוד (בלי לחשוף שום דבר נוסף)
+function authRegisterInfo(p) {
+  const net = findNetworkByInvite_(p.code);
+  if (!net) return { ok: false, error: 'invalid_invite' };
+  return { ok: true, networkId: net.id, networkName: net.name };
+}
+
+// ציבורי — הרשמה בפועל: יוצר network_admin לרשת של הקוד ומחבר מיד
+function authRegister(p) {
+  const net = findNetworkByInvite_(p.code);
+  if (!net) return { ok: false, error: 'invalid_invite' };
+  const email = (p.email || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') < 0) return { ok: false, error: 'invalid_email' };
+  const password = p.password || '';
+  if (password.length < MIN_PASSWORD_LEN) return { ok: false, error: 'password_too_short' };
+  // בדיקה מול כל המשתמשים, גם מושבתים — מייל אחד = חשבון אחד
+  const exists = readAll('users').some(u => (u.email || '').toLowerCase() === email);
+  if (exists) return { ok: false, error: 'already_registered' };
+  const salt = Utilities.getUuid();
+  const now = new Date().toISOString();
+  const user = {
+    id: newId('usr'), email, name: (p.name || '').trim(), role: ROLES.NETWORK_ADMIN,
+    networkId: net.id, schoolId: '', subjectId: '', guideId: '',
+    active: 'TRUE', createdAt: now,
+    passwordHash: hashPassword_(password, salt), salt,
+    token: '', tokenExpires: '', passwordSetAt: now
+  };
+  appendRow('users', user);
+  const tokenInfo = issueToken_(user);
+  return authPayload_(user, tokenInfo);
+}
+
+// ---------- ניהול משתמשים (admin בלבד — נאכף ב-requireAuthAndScope) ----------
+
+function listUsers() {
+  const data = readAll('users').map(u => ({
+    id: u.id, email: u.email, name: u.name, role: u.role,
+    networkId: u.networkId || '', schoolId: u.schoolId || '',
+    subjectId: u.subjectId || '', guideId: u.guideId || '',
+    active: String(u.active).toUpperCase() !== 'FALSE',
+    hasPassword: !!u.passwordHash,
+    createdAt: u.createdAt || ''
+  }));
+  return { ok: true, data };
+}
+
+// upsert לפי email. resetPassword=true מוחק סיסמה וטוקן — המשתמש יקבע חדשה בכניסה הבאה.
+function upsertUser(p) {
+  const email = (p.email || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') < 0) return { ok: false, error: 'invalid_email' };
+  const all = readAll('users');
+  const existing = all.find(u => (u.email || '').toLowerCase() === email);
+  const fields = {};
+  ['name', 'role', 'networkId', 'schoolId', 'subjectId', 'guideId'].forEach(k => {
+    if (p[k] !== undefined) fields[k] = p[k];
+  });
+  if (p.active !== undefined) fields.active = toBool(p.active) ? 'TRUE' : 'FALSE';
+  if (toBool(p.resetPassword)) {
+    fields.passwordHash = ''; fields.salt = ''; fields.token = ''; fields.tokenExpires = ''; fields.passwordSetAt = '';
+  }
+  if (existing) {
+    updateRowById('users', existing.id, fields);
+    return { ok: true, data: Object.assign({}, existing, fields, { id: existing.id }) };
+  }
+  if (!p.role) return { ok: false, error: 'missing_role' };
+  const obj = Object.assign({
+    id: newId('usr'), email, name: '', role: '',
+    networkId: '', schoolId: '', subjectId: '', guideId: '',
+    active: 'TRUE', createdAt: new Date().toISOString(),
+    passwordHash: '', salt: '', token: '', tokenExpires: '', passwordSetAt: ''
+  }, fields);
+  appendRow('users', obj);
+  return { ok: true, data: obj };
+}
+
+function deleteUser(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const s = sheet('users');
+  const range = s.getDataRange().getValues();
+  const idCol = range[0].indexOf('id');
+  for (let i = range.length - 1; i >= 1; i--) {
+    if (range[i][idCol] === p.id) { s.deleteRow(i + 1); return { ok: true }; }
+  }
+  return { ok: false, error: 'not_found' };
 }
 
 // ============================================================
@@ -410,6 +679,19 @@ function handleRequest(params) {
 
       case 'calendar.ics':        result = exportIcs(params); break;
 
+      case 'auth.status':         result = authStatus(params); break;
+      case 'auth.login':          result = authLogin(params); break;
+      case 'auth.setPassword':    result = authSetPassword(params); break;
+      case 'auth.changePassword': result = authChangePassword(params); break;
+      case 'auth.verify':         result = authVerify(params); break;
+      case 'auth.registerInfo':   result = authRegisterInfo(params); break;
+      case 'auth.register':       result = authRegister(params); break;
+      case 'invites.ensure':      result = ensureInvites(params); break;
+
+      case 'users.list':          result = listUsers(); break;
+      case 'users.upsert':        result = upsertUser(params); break;
+      case 'users.delete':        result = deleteUser(params); break;
+
       case 'seed.import':         result = seedImport(params); break;
       case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'))); break;
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
@@ -537,7 +819,11 @@ function monthKey(date) {
 // ============================================================
 
 function listNetworks() {
-  return { ok: true, data: readAll('networks') };
+  // inviteCode הוא סוד — נחשף רק דרך invites.ensure (אדמין בלבד)
+  return { ok: true, data: readAll('networks').map(n => {
+    const { inviteCode, ...pub } = n;
+    return pub;
+  }) };
 }
 
 // ============================================================

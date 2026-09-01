@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול משתמשים — אדמין</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .pilot-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .pilot-step h3 { margin: 0 0 6px; font-size: 18px; }
+  .pilot-step p { color: var(--text-2); margin: 0 0 16px; font-size: 14px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .status-pill.ok   { background: var(--ok-soft);   color: var(--ok); }
+  .status-pill.warn { background: var(--warn-soft); color: #92400e; }
+  .status-pill.err  { background: var(--err-soft);  color: var(--err); }
+  .status-pill.idle { background: var(--surface-2); color: var(--text-2); }
+  .users-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .users-table th, .users-table td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .users-table th { color: var(--text-2); font-weight: 600; }
+  .users-table input, .users-table select {
+    font-family: inherit; font-size: 13px; padding: 6px 8px;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    color: inherit; width: 100%; box-sizing: border-box;
+  }
+  .users-table input[type="email"] { direction: ltr; text-align: left; }
+  .btn-mini {
+    font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text-2); white-space: nowrap;
+  }
+  .btn-mini.primary { background: var(--primary, #256A8A); border-color: var(--primary, #256A8A); color: #fff; }
+  .btn-mini.danger  { color: var(--err); border-color: var(--err-soft); }
+  .btn-mini:disabled { opacity: .5; cursor: default; }
+  .table-scroll { overflow-x: auto; }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; align-items: end; }
+  .form-grid label { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; }
+  .form-grid input, .form-grid select {
+    font-family: inherit; font-size: 13px; padding: 8px 10px; width: 100%; box-sizing: border-box;
+    border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: inherit;
+  }
+  #msg { margin-top: 14px; font-size: 14px; border-radius: 10px; padding: 10px 14px; display: none; }
+  #msg.ok  { display: block; background: var(--ok-soft);  color: #14532d; }
+  #msg.err { display: block; background: var(--err-soft); color: #7f1d1d; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="./" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">ניהול משתמשים והרשאות כניסה</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1 style="margin: 24px 0 8px;">משתמשים והרשאות</h1>
+    <p style="color: var(--text-2); margin-bottom: 24px;">
+      כל מי שנכנס למערכת עם מייל וסיסמה מנוהל כאן. לכל רשת קישור הרשמה משלה —
+      איש הקשר נרשם לבד, ומנהל הרשת רואה <strong>רק את הרשת שלו</strong>,
+      גם אם ינסה לשנות את הכתובת.
+    </p>
+
+    <!-- קטע 1: קישורי הרשמה לרשתות -->
+    <div class="pilot-step">
+      <h3>1 · קישורי הרשמה לרשתות</h3>
+      <p>לכל רשת קישור הרשמה עם קוד סודי משלה. שולחים לרשת את הקישור (העתקה או וואטסאפ) —
+         איש הקשר נרשם בעצמו עם המייל והסיסמה שלו, ומקבל גישה <strong>לרשת שלו בלבד</strong>.
+         אין צורך להזין מיילים. "קוד חדש" מבטל את הקישור הישן (למקרה שדלף).</p>
+      <div class="table-scroll">
+        <table class="users-table">
+          <thead>
+            <tr><th style="width:110px;">רשת</th><th style="width:220px;">מי נרשם</th><th>קישור הרשמה</th><th style="width:230px;"></th></tr>
+          </thead>
+          <tbody id="networks-body">
+            <tr><td colspan="4" style="padding:20px; text-align:center; color:var(--text-muted);">טוען…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- קטע 2: כל המשתמשים -->
+    <div class="pilot-step">
+      <h3>2 · כל המשתמשים במערכת</h3>
+      <p>כולל אדמין ארצי, מנהלי בתי ספר, רכזים ומדריכים. "איפוס סיסמה" מוחק את הסיסמה הקיימת —
+         המשתמש יקבע חדשה בכניסה הבאה.</p>
+      <div class="table-scroll">
+        <table class="users-table">
+          <thead>
+            <tr><th>מייל</th><th>שם</th><th>תפקיד</th><th>שיוך</th><th>מצב</th><th style="width:220px;"></th></tr>
+          </thead>
+          <tbody id="users-body">
+            <tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-muted);">טוען…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="margin-top:24px; font-size:15px;">הוספת משתמש</h3>
+      <form class="form-grid" id="add-form" style="margin-top:10px;">
+        <div><label for="add-email">מייל</label><input type="email" id="add-email" required placeholder="name@gmail.com"></div>
+        <div><label for="add-name">שם</label><input type="text" id="add-name" placeholder="שם מלא"></div>
+        <div>
+          <label for="add-role">תפקיד</label>
+          <select id="add-role">
+            <option value="ministry_admin">אדמין ארצי (משרד)</option>
+            <option value="network_admin" selected>מנהל רשת</option>
+            <option value="school_admin">מנהל בית ספר</option>
+            <option value="school_subject_coordinator">רכז מקצוע בבי"ס</option>
+            <option value="guide">מדריך/ה</option>
+          </select>
+        </div>
+        <div id="add-network-wrap">
+          <label for="add-network">רשת</label>
+          <select id="add-network"></select>
+        </div>
+        <div id="add-school-wrap" style="display:none;">
+          <label for="add-school">מזהה בית ספר</label>
+          <input type="text" id="add-school" placeholder="sch_...">
+        </div>
+        <div><button type="submit" class="btn-mini primary" style="padding:9px 18px;">הוספה</button></div>
+      </form>
+    </div>
+
+    <div id="msg"></div>
+
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script>
+let users = [];
+
+const ROLE_NAMES = {
+  ministry_admin: 'אדמין ארצי',
+  network_admin: 'מנהל רשת',
+  school_admin: 'מנהל בי"ס',
+  school_subject_coordinator: 'רכז מקצוע',
+  guide: 'מדריך/ה'
+};
+
+function showMsg(kind, text) {
+  const el = document.getElementById('msg');
+  el.className = kind; el.textContent = text;
+  setTimeout(() => { el.className = ''; }, 6000);
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
+let invites = [];   // [{id:'net_ort', name, color, inviteCode}]
+
+async function load() {
+  const [usersRes, invRes] = await Promise.all([
+    TS.api('users.list', {}, { cache: 'no' }),
+    TS.api('invites.ensure', {}, { cache: 'no' })
+  ]);
+  if (!usersRes.ok) {
+    const t = (usersRes.error || '').indexOf('unknown_action') === 0
+      ? 'גרסת השרת עדיין לא כוללת ניהול משתמשים — יש לפרוס את ה-Apps Script המעודכן.'
+      : 'שגיאה בטעינת המשתמשים: ' + (usersRes.error || '');
+    document.getElementById('networks-body').innerHTML =
+      '<tr><td colspan="4" style="padding:20px; text-align:center; color:var(--err);">' + esc(t) + '</td></tr>';
+    document.getElementById('users-body').innerHTML =
+      '<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--err);">' + esc(t) + '</td></tr>';
+    return;
+  }
+  users = usersRes.data || [];
+  invites = invRes.ok ? (invRes.data || []) : [];
+  if (!invRes.ok) {
+    document.getElementById('networks-body').innerHTML =
+      '<tr><td colspan="4" style="padding:20px; text-align:center; color:var(--err);">' +
+      esc((invRes.error || '').indexOf('unknown_action') === 0
+        ? 'קישורי ההרשמה יופיעו אחרי פריסת ה-Apps Script המעודכן.'
+        : 'שגיאה בטעינת קישורי ההרשמה: ' + (invRes.error || '')) + '</td></tr>';
+  }
+  renderNetworks();
+  renderUsers();
+}
+
+function netAdminsOf(netId) {
+  return users.filter(u => u.role === 'network_admin' &&
+    (u.networkId || '').replace(/^net_/, '') === netId && u.active);
+}
+
+function inviteLink(code) {
+  return new URL('register.html?code=' + encodeURIComponent(code), location.href).href;
+}
+
+function statusPill(u) {
+  if (!u) return '<span class="status-pill idle">אין חשבון</span>';
+  if (!u.active) return '<span class="status-pill err">מושבת</span>';
+  return u.hasPassword
+    ? '<span class="status-pill ok">פעיל — נקבעה סיסמה</span>'
+    : '<span class="status-pill warn">ממתין לכניסה ראשונה</span>';
+}
+
+function renderNetworks() {
+  if (!invites.length) return;
+  document.getElementById('networks-body').innerHTML = TS.NETWORKS.map(n => {
+    const inv = invites.find(i => (i.id || '').replace(/^net_/, '') === n.id);
+    const admins = netAdminsOf(n.id);
+    const who = admins.length
+      ? admins.map(u => `<div style="line-height:1.5;">${esc(u.name || u.email)} ${u.hasPassword ? '<span class="status-pill ok" style="padding:1px 8px;">פעיל</span>' : ''}</div>`).join('')
+      : '<span class="status-pill idle">עוד לא נרשם אף אחד</span>';
+    if (!inv || !inv.inviteCode) {
+      return `<tr><td>${TS.netChip(n.id)}</td><td>${who}</td><td colspan="2" style="color:var(--text-muted);">אין קוד — יופיע אחרי פריסת השרת</td></tr>`;
+    }
+    const link = inviteLink(inv.inviteCode);
+    const waText = encodeURIComponent(
+      'שלום! מצורף קישור ההרשמה של רשת ' + n.name + ' למצפן ההדרכות של יחידת הפיקוח:\n' + link +
+      '\nנרשמים עם המייל שלכם וקובעים סיסמה — והדשבורד מציג את נתוני הרשת שלכם בלבד.');
+    return `
+      <tr>
+        <td>${TS.netChip(n.id)}</td>
+        <td>${who}</td>
+        <td><input type="text" readonly value="${esc(link)}" dir="ltr" style="text-align:left; font-size:12px;" onclick="this.select()"></td>
+        <td style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn-mini primary" onclick="copyLink('${esc(link)}', this)">העתקה</button>
+          <a class="btn-mini" style="text-decoration:none;" href="https://wa.me/?text=${waText}" target="_blank" rel="noopener">וואטסאפ</a>
+          <button class="btn-mini" onclick="regenInvite('net_${n.id}', '${esc(n.name)}', this)">קוד חדש</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function copyLink(link, btn) {
+  try { await navigator.clipboard.writeText(link); } catch (e) { showMsg('err', 'ההעתקה נחסמה — סמנו את הקישור והעתיקו ידנית.'); return; }
+  const t = btn.textContent; btn.textContent = 'הועתק ✓';
+  setTimeout(() => { btn.textContent = t; }, 1600);
+}
+
+async function regenInvite(netId, netName, btn) {
+  if (!confirm('להחליף את קוד ההרשמה של רשת ' + netName + '? הקישור הישן יפסיק לעבוד.')) return;
+  btn.disabled = true;
+  const res = await TS.apiPost('invites.ensure', { regenerate: netId });
+  btn.disabled = false;
+  if (!res.ok) { showMsg('err', 'ההחלפה נכשלה: ' + (res.error || '')); return; }
+  invites = res.data || [];
+  renderNetworks();
+  showMsg('ok', 'נוצר קוד חדש לרשת ' + netName + ' — הקישור הקודם בוטל.');
+}
+
+function scopeLabel(u) {
+  if (u.role === 'network_admin') return u.networkId ? TS.netChip((u.networkId || '').replace(/^net_/, '')) : '<span class="status-pill err">חסרה רשת!</span>';
+  if (u.role === 'school_admin' || u.role === 'school_subject_coordinator') return esc(u.schoolId || '—');
+  if (u.role === 'guide') return esc(u.guideId || '');
+  return 'כל המערכת';
+}
+
+function renderUsers() {
+  const body = document.getElementById('users-body');
+  if (!users.length) {
+    body.innerHTML = '<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--text-muted);">אין עדיין משתמשים — הוסיפו את הראשון למטה (מומלץ להתחיל בעצמך כאדמין ארצי).</td></tr>';
+    return;
+  }
+  body.innerHTML = users.map(u => `
+    <tr>
+      <td dir="ltr" style="text-align:left;">${esc(u.email)}</td>
+      <td>${esc(u.name || '—')}</td>
+      <td>${esc(ROLE_NAMES[u.role] || u.role)}</td>
+      <td>${scopeLabel(u)}</td>
+      <td>${statusPill(u)}</td>
+      <td style="display:flex; gap:6px; flex-wrap:wrap;">
+        ${u.hasPassword ? `<button class="btn-mini" onclick="resetPassword('${esc(u.email)}', this)">איפוס סיסמה</button>` : ''}
+        <button class="btn-mini" onclick="toggleActive('${esc(u.email)}', ${u.active}, this)">${u.active ? 'השבתה' : 'הפעלה'}</button>
+        <button class="btn-mini danger" onclick="removeUser('${esc(u.id)}', '${esc(u.email)}', this)">מחיקה</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function resetPassword(email, btn) {
+  if (!confirm('לאפס את הסיסמה של ' + email + '? בכניסה הבאה ייקבע/תיקבע סיסמה חדשה.')) return;
+  btn.disabled = true;
+  const res = await TS.apiPost('users.upsert', { email, resetPassword: true });
+  btn.disabled = false;
+  if (!res.ok) { showMsg('err', 'האיפוס נכשל: ' + (res.error || '')); return; }
+  showMsg('ok', 'הסיסמה של ' + email + ' אופסה.');
+  load();
+}
+
+async function toggleActive(email, isActive, btn) {
+  if (isActive && !confirm('להשבית את ' + email + '? לא יוכל/תוכל להיכנס עד הפעלה מחדש.')) return;
+  btn.disabled = true;
+  const res = await TS.apiPost('users.upsert', { email, active: !isActive });
+  btn.disabled = false;
+  if (!res.ok) { showMsg('err', 'הפעולה נכשלה: ' + (res.error || '')); return; }
+  load();
+}
+
+async function removeUser(id, email, btn) {
+  if (!confirm('למחוק לגמרי את ' + email + '? (לרוב עדיף השבתה)')) return;
+  btn.disabled = true;
+  const res = await TS.apiPost('users.delete', { id });
+  btn.disabled = false;
+  if (!res.ok) { showMsg('err', 'המחיקה נכשלה: ' + (res.error || '')); return; }
+  showMsg('ok', email + ' נמחק/ה.');
+  load();
+}
+
+document.getElementById('add-role').addEventListener('change', e => {
+  const r = e.target.value;
+  document.getElementById('add-network-wrap').style.display = r === 'network_admin' ? '' : 'none';
+  document.getElementById('add-school-wrap').style.display =
+    (r === 'school_admin' || r === 'school_subject_coordinator') ? '' : 'none';
+});
+
+document.getElementById('add-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const role = document.getElementById('add-role').value;
+  const payload = {
+    email: document.getElementById('add-email').value.trim().toLowerCase(),
+    name: document.getElementById('add-name').value.trim(),
+    role, active: true
+  };
+  if (role === 'network_admin') payload.networkId = 'net_' + document.getElementById('add-network').value;
+  if (role === 'school_admin' || role === 'school_subject_coordinator') {
+    payload.schoolId = document.getElementById('add-school').value.trim();
+    if (!payload.schoolId) { showMsg('err', 'לתפקיד בית-ספרי חייבים מזהה בית ספר.'); return; }
+  }
+  const res = await TS.apiPost('users.upsert', payload);
+  if (!res.ok) { showMsg('err', 'ההוספה נכשלה: ' + (res.error || '')); return; }
+  showMsg('ok', payload.email + ' נוסף/ה. הסיסמה תיקבע בכניסה הראשונה.');
+  e.target.reset();
+  document.getElementById('add-role').dispatchEvent(new Event('change'));
+  load();
+});
+
+document.getElementById('add-network').innerHTML =
+  TS.NETWORKS.map(n => `<option value="${n.id}">${esc(n.name)}</option>`).join('');
+
+load();
+</script>
+</body>
+</html>

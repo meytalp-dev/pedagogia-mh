@@ -58,6 +58,26 @@ const TS = (() => {
     });
   }
 
+  // ---------- Auth (מייל + סיסמה) ----------
+  // פרטי ההתחברות נשמרים ב-localStorage ומצורפים אוטומטית לכל קריאה לשרת.
+  function authGet() {
+    try { return JSON.parse(localStorage.getItem('ts.auth') || 'null'); } catch (e) { return null; }
+  }
+  function authSet(payload) {
+    localStorage.setItem('ts.auth', JSON.stringify({
+      email: payload.email, token: payload.token, role: payload.role,
+      name: payload.name || '', networkId: payload.networkId || '',
+      schoolId: payload.schoolId || '', subjectId: payload.subjectId || '',
+      guideId: payload.guideId || ''
+    }));
+  }
+  function authClear() { localStorage.removeItem('ts.auth'); }
+  function withAuth_(params) {
+    const a = authGet();
+    if (a && a.token) return Object.assign({ authEmail: a.email, authToken: a.token }, params);
+    return params;
+  }
+
   // opts.cache: 'fresh' (default) → cache-first, refresh background. 'no' → always fetch. 'only' → cache or null.
   async function api(action, params = {}, opts = {}) {
     if (!APPS_SCRIPT_URL) {
@@ -89,7 +109,7 @@ const TS = (() => {
     try {
       const url = new URL(APPS_SCRIPT_URL);
       url.searchParams.set('action', action);
-      Object.entries(params).forEach(([k,v]) => {
+      Object.entries(withAuth_(params)).forEach(([k,v]) => {
         if (v !== undefined && v !== null) url.searchParams.set(k, v);
       });
       const res = await fetch(url.toString());
@@ -105,7 +125,7 @@ const TS = (() => {
     try {
       const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action, ...body }),
+        body: JSON.stringify({ action, ...withAuth_(body) }),
         headers: { 'Content-Type': 'text/plain' }
       });
       const json = await res.json();
@@ -266,6 +286,7 @@ const TS = (() => {
 
   return {
     NETWORKS, SECTORS, SUBJECTS, TYPES,
+    authGet, authSet, authClear,
     api, apiPost,
     netById, secById, netChip, secChip, typeChip,
     attendanceBadge, toast, urlParam,

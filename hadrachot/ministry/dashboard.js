@@ -179,11 +179,20 @@ function renderCommandStrip() {
   document.getElementById('cmd-schools').textContent = s.schools || 0;
   document.getElementById('cmd-teachers').textContent = s.teachers || 0;
   document.getElementById('cmd-trainings').textContent = s.trainings || 0;
-  document.getElementById('cmd-rate').textContent = (s.avgRate || 0) + '%';
   const rateEl = document.getElementById('cmd-rate');
   rateEl.classList.remove('ok', 'warn', 'err', 'mint');
-  rateEl.classList.add(s.avgRate >= 80 ? 'mint' : s.avgRate >= 50 ? 'warn' : 'err');
+  if (noAttendanceYet()) {
+    rateEl.textContent = '—';
+  } else {
+    rateEl.textContent = (s.avgRate || 0) + '%';
+    rateEl.classList.add(s.avgRate >= 80 ? 'mint' : s.avgRate >= 50 ? 'warn' : 'err');
+  }
   document.getElementById('cmd-records').textContent = s.attendanceRecords || 0;
+}
+
+// עוד לא נרשמה אף נוכחות במערכת → 0% אצל כולם הוא "אין נתונים", לא "בסיכון"
+function noAttendanceYet() {
+  return !((state.summary || {}).attendanceRecords > 0);
 }
 
 function renderNetworkLenses() {
@@ -191,6 +200,19 @@ function renderNetworkLenses() {
   if (!nets.length) {
     document.getElementById('networks-featured').innerHTML = emptyMsg('אין נתונים עבור הסינון הנוכחי');
     document.getElementById('networks-grid').innerHTML = '';
+    return;
+  }
+
+  // אין עדיין נתוני נוכחות — בלי התראות ובלי "רשתות חלשות"; כולן בגריד הרגיל, במצב נייטרלי
+  document.querySelectorAll('.badge-attention').forEach(b => { b.hidden = noAttendanceYet(); });
+  if (noAttendanceYet()) {
+    nets.sort((a, b) => (b.teachers || 0) - (a.teachers || 0));
+    document.getElementById('networks-featured').innerHTML =
+      '<div style="grid-column:1/-1; padding:20px 24px; border:1px dashed var(--border); border-radius:14px; color:var(--text-muted); line-height:1.8;">' +
+      'מדידת הנוכחות טרם החלה — עדיין לא נקלטו רישומי נוכחות, ולכן אין רשתות שדורשות פעולה ואין התראות. ' +
+      'ברגע שייקלטו צ\'ק-אינים ראשונים, הרשתות החלשות יופיעו כאן.' +
+      '</div>';
+    document.getElementById('networks-grid').innerHTML = nets.map(n => networkLensCard(n, false)).join('');
     return;
   }
 
@@ -207,26 +229,30 @@ function renderNetworkLenses() {
 }
 
 function networkLensCard(n, isFeatured) {
+  const noData = noAttendanceYet();
   const rate = n.rate || 0;
   const rateClass = rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : 'err';
   const cssVar = `--lens-net: var(--net-${n.color || 'ort'});`;
   const action = recommendAction(n, rate);
   const circumference = 2 * Math.PI * 30;
   const dash = (rate / 100) * circumference;
+  const statusTag = noData
+    ? '<span class="net-lens-status-tag" style="background:var(--surface-soft); color:var(--text-muted);">טרם החלה מדידה</span>'
+    : `<span class="net-lens-status-tag ${rateClass}">${rateClass === 'ok' ? 'תקין' : rateClass === 'warn' ? 'מעקב' : 'דורש פעולה'}</span>`;
   return `
     <div class="net-lens" style="${cssVar}">
       <div class="net-lens-row-1">
         <div class="net-lens-name-block">
           <span class="net-lens-chip">${escapeHtml(n.name)}</span>
-          <span class="net-lens-status-tag ${rateClass}">${rateClass === 'ok' ? 'תקין' : rateClass === 'warn' ? 'מעקב' : 'דורש פעולה'}</span>
+          ${statusTag}
         </div>
-        <div class="net-lens-ring" aria-label="${rate}% נוכחות">
+        <div class="net-lens-ring" aria-label="${noData ? 'אין עדיין נתוני נוכחות' : rate + '% נוכחות'}">
           <svg viewBox="0 0 72 72">
             <circle cx="36" cy="36" r="30" fill="none" stroke="var(--surface-soft)" stroke-width="6"/>
             <circle cx="36" cy="36" r="30" fill="none" stroke="var(--lens-net)" stroke-width="6" stroke-linecap="round"
-                    stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="0"/>
+                    stroke-dasharray="${noData ? 0 : dash} ${circumference}" stroke-dashoffset="0"/>
           </svg>
-          <div class="net-lens-ring-text">${rate}%<small>נוכחות</small></div>
+          <div class="net-lens-ring-text">${noData ? '—' : rate + '%'}<small>נוכחות</small></div>
         </div>
       </div>
 
@@ -240,12 +266,12 @@ function networkLensCard(n, isFeatured) {
           <div class="net-lens-stat-label">בתי ספר</div>
         </div>
         <div class="net-lens-stat">
-          <div class="net-lens-stat-num ${n.missed > 0 ? 'coral' : 'mint'}">${n.missed || 0}</div>
+          <div class="net-lens-stat-num ${noData ? '' : n.missed > 0 ? 'coral' : 'mint'}">${noData ? '—' : n.missed || 0}</div>
           <div class="net-lens-stat-label">בסיכון</div>
         </div>
       </div>
 
-      ${isFeatured ? `
+      ${isFeatured && !noData ? `
         <div class="net-lens-action">
           <div class="net-lens-action-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
@@ -279,6 +305,10 @@ function recommendAction(n, rate) {
 function renderWeakSchools() {
   const tbody = document.getElementById('weak-schools-body');
   const schools = (state.schoolBreakdown || []).slice(0, 10);
+  if (noAttendanceYet()) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">מדידת הנוכחות טרם החלה — אין עדיין דירוג בתי ספר.</td></tr>';
+    return;
+  }
   if (!schools.length) {
     tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">אין נתוני בתי ספר</td></tr>';
     return;
@@ -326,9 +356,13 @@ function sendToNetwork(netId, netName, netEmail) {
     `סיכום:`,
     `• מורים ברשת: ${n.teachers}`,
     `• בתי ספר: ${n.schools}`,
-    `• אחוז נוכחות ממוצע: ${n.rate}%`,
-    `• עומדים ביעד (80%+): ${n.present}`,
-    `• בסיכון (מתחת ל-50%): ${n.missed}`,
+    ...(noAttendanceYet()
+      ? ['• מדידת הנוכחות טרם החלה — נתוני נוכחות יופיעו בדוחות הבאים']
+      : [
+          `• אחוז נוכחות ממוצע: ${n.rate}%`,
+          `• עומדים ביעד (80%+): ${n.present}`,
+          `• בסיכון (מתחת ל-50%): ${n.missed}`
+        ]),
     ``,
     `דשבורד מלא של הרשת:`,
     `${location.origin}${location.pathname.replace('/ministry/', '/admin-network/')}?network=${netId}${currentSubject ? '&subject=' + encodeURIComponent(currentSubject) : ''}`,

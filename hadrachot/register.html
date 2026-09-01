@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הרשמת רשת — מצפן ההדרכות</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .login-card {
+    width: 100%; max-width: 440px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 32px 30px;
+    box-shadow: var(--shadow-card);
+  }
+  .login-head { text-align: center; margin-bottom: 24px; }
+  .login-head .compass-icon { width: 44px; height: 44px; color: var(--primary, #256A8A); margin-bottom: 10px; }
+  .login-head h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 24px; margin: 0 0 4px; }
+  .login-head p { color: var(--text-2); font-size: 14px; margin: 0; }
+  .net-banner {
+    text-align: center; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px;
+    background: var(--surface-2); font-size: 15px; line-height: 1.7;
+  }
+  .net-banner b { color: var(--primary, #256A8A); font-size: 17px; }
+  .form-label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 6px; }
+  .input { width: 100%; box-sizing: border-box; }
+  .btn-full { width: 100%; justify-content: center; margin-top: 18px; }
+  .login-msg { margin-top: 14px; font-size: 14px; line-height: 1.7; border-radius: 10px; padding: 12px 14px; display: none; }
+  .login-msg.err  { display: block; background: var(--err-soft, #fdeaea); color: #7f1d1d; }
+  .login-msg.ok   { display: block; background: var(--ok-soft, #e7f6ef); color: #14532d; }
+  .login-msg.info { display: block; background: var(--surface-2); color: var(--text-2); }
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-head">
+    <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="2" fill="currentColor"/>
+      <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+      <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+    </svg>
+    <h1>מצפן ההדרכות</h1>
+    <p>הרשמת מנהל/ת רשת — יחידת הפיקוח על הדרכות מורים</p>
+  </div>
+
+  <div class="net-banner" id="net-banner">בודק את קישור ההזמנה…</div>
+
+  <form id="reg-form" style="display:none;">
+    <label class="form-label" for="reg-name">שם מלא</label>
+    <input type="text" class="input" id="reg-name" required autocomplete="name" placeholder="שם ותפקיד ברשת">
+    <label class="form-label" for="reg-email">כתובת מייל (איתה תיכנסו מעכשיו)</label>
+    <input type="email" class="input" id="reg-email" required autocomplete="email" placeholder="name@example.org" dir="ltr" style="text-align:left;">
+    <label class="form-label" for="reg-pw">סיסמה (לפחות 6 תווים)</label>
+    <input type="password" class="input" id="reg-pw" required minlength="6" autocomplete="new-password">
+    <label class="form-label" for="reg-pw2">שוב, לאימות</label>
+    <input type="password" class="input" id="reg-pw2" required minlength="6" autocomplete="new-password">
+    <button type="submit" class="btn btn-primary btn-full" id="btn-reg">הרשמה וכניסה לדשבורד</button>
+  </form>
+
+  <div class="login-msg" id="msg"></div>
+
+  <div style="text-align:center; margin-top:16px; font-size:13px;">
+    <a href="login.html" style="color:var(--text-3);">כבר נרשמת? כניסה עם מייל וסיסמה</a>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+const code = new URLSearchParams(location.search).get('code') || '';
+const msg = document.getElementById('msg');
+const banner = document.getElementById('net-banner');
+let netId = '';
+
+function showMsg(kind, text) { msg.className = 'login-msg ' + kind; msg.textContent = text; }
+
+const ERRORS = {
+  invalid_invite: 'קישור ההזמנה אינו תקף. ייתכן שהקוד הוחלף — נא לפנות למיטל פלג לקישור עדכני.',
+  already_registered: 'המייל הזה כבר רשום במערכת — יש להיכנס דרך דף הכניסה, או לפנות למיטל לאיפוס סיסמה.',
+  password_too_short: 'הסיסמה קצרה מדי — לפחות 6 תווים.',
+  invalid_email: 'כתובת המייל אינה תקינה.'
+};
+function errText(e) {
+  if ((e || '').indexOf('unknown_action') === 0) {
+    return 'ההרשמה עדיין לא הופעלה בשרת — יש לפרוס את גרסת ה-Apps Script העדכנית (הוראות אצל מיטל).';
+  }
+  return ERRORS[e] || ('שגיאה: ' + (e || 'לא ידועה'));
+}
+
+async function init() {
+  if (!code) {
+    banner.textContent = 'חסר קוד הזמנה בקישור. נא להשתמש בקישור המלא שקיבלתם ממיטל פלג.';
+    return;
+  }
+  const res = await TS.api('auth.registerInfo', { code }, { cache: 'no' });
+  if (!res.ok) { banner.textContent = errText(res.error); return; }
+  netId = (res.networkId || '').replace(/^net_/, '');
+  banner.innerHTML = 'הזמנה להרשמת רשת <b></b><br><span style="font-size:13px; color:var(--text-2);">החשבון שייפתח יראה את נתוני הרשת הזו בלבד.</span>';
+  banner.querySelector('b').textContent = res.networkName || '';
+  document.getElementById('reg-form').style.display = '';
+  document.getElementById('reg-name').focus();
+}
+
+document.getElementById('reg-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const p1 = document.getElementById('reg-pw').value;
+  const p2 = document.getElementById('reg-pw2').value;
+  if (p1 !== p2) { showMsg('err', 'הסיסמאות אינן זהות.'); return; }
+  const btn = document.getElementById('btn-reg');
+  btn.disabled = true; showMsg('info', 'נרשם…');
+  const res = await TS.apiPost('auth.register', {
+    code,
+    name: document.getElementById('reg-name').value.trim(),
+    email: document.getElementById('reg-email').value.trim().toLowerCase(),
+    password: p1
+  });
+  btn.disabled = false;
+  if (!res.ok) { showMsg('err', errText(res.error)); return; }
+  TS.authSet(res);
+  showMsg('ok', 'נרשמת! מעביר לדשבורד הרשת…');
+  location.href = 'admin-network/?network=' + encodeURIComponent(netId);
+});
+
+init();
+</script>
+</body>
+</html>
