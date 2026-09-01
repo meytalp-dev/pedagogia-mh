@@ -29,47 +29,28 @@ function bindTabs() {
 }
 
 async function loadData() {
-  if (!TS.getAppsScriptUrl() || !schoolId) {
-    loadDemoData();
-    renderAll();
+  if (!schoolId) {
+    renderLoadError('חסר מזהה בית ספר בקישור (school=...). יש להיכנס דרך הקישור שקיבלתם.');
     return;
   }
-  const res = await TS.api('school.dashboard', { school: schoolId, subject: subjectParam });
+  const res = TS.getAppsScriptUrl()
+    ? await TS.api('school.dashboard', { school: schoolId, subject: subjectParam })
+    : { ok: false, error: 'no_url' };
   if (res.ok && res.data) {
     state = res.data;
+    renderAll();
   } else {
-    loadDemoData();
+    renderLoadError('לא הצלחנו לטעון את נתוני בית הספר מהשרת — נסו לרענן את הדף.' +
+      (res.error ? ' (שגיאה: ' + res.error + ')' : ''));
   }
-  renderAll();
 }
 
-function loadDemoData() {
-  state.school = {
-    id: 'demo', name: 'אורט בית הערבה',
-    network: 'ort', networkName: 'אורט',
-    principalName: 'מיטל פלג',
-    attendanceTarget: 80
-  };
-  state.subjects = {
-    'מתמטיקה': [
-      { id:'tr1', date:'2026-01-15', subject:'מתמטיקה', guideName:'שירה סיבוני' },
-      { id:'tr2', date:'2026-02-15', subject:'מתמטיקה', guideName:'שירה סיבוני' },
-      { id:'tr3', date:'2026-03-15', subject:'מתמטיקה', guideName:'שירה סיבוני' },
-      { id:'tr4', date:'2026-04-15', subject:'מתמטיקה', guideName:'שירה סיבוני' },
-      { id:'tr5', date:'2026-05-15', subject:'מתמטיקה', guideName:'שירה סיבוני' }
-    ]
-  };
-  state.teachers = [
-    { id:'t1', name:'אושר אהרוני',  subject:'מתמטיקה', phone:'0508882402',
-      attendance:{tr5:{status:'present'}}, stats:{present:1, partial:0, total:5, rate:20} },
-    { id:'t2', name:'נעמה קוסטן',   subject:'מתמטיקה', phone:'0524295181',
-      attendance:{tr3:{status:'partial', notes:'חצי נוכחות'}},
-      stats:{present:0, partial:1, total:5, rate:10} },
-    { id:'t3', name:'רוית גל',       subject:'מתמטיקה', phone:'0503993021',
-      attendance:{tr2:{status:'present'}, tr3:{status:'present'}, tr4:{status:'partial'}, tr5:{status:'present'}},
-      stats:{present:3, partial:1, total:5, rate:70} }
-  ];
-  state.stats = { teachers: 3, avgRate: 33 };
+// שגיאת טעינה — מציגים אמת, לא נתוני דמו
+function renderLoadError(msg) {
+  const main = document.querySelector('main');
+  if (main) main.innerHTML =
+    '<div style="padding:48px 24px; text-align:center; color:var(--text-2); line-height:1.8;">' +
+    msg.replace(/</g, '&lt;') + '</div>';
 }
 
 function renderAll() {

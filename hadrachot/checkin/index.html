@@ -295,16 +295,6 @@ let pickedTeacher = null;
 document.addEventListener('DOMContentLoaded', async () => {
   if (!token) { show('invalid'); return; }
 
-  if (!TS.getAppsScriptUrl()) {
-    training = { id:'tr1', subject:'מתמטיקה', date:'2026-06-15', location:'זום', guideName:'שירה סיבוני' };
-    allNetworks = [{id:'net_ort', name:'אורט'}, {id:'net_amal', name:'עמל'}];
-    allSchools = [{id:'s1', name:'אורט בית הערבה', network:'net_ort'}];
-    allTeachers = [{id:'t1', name:'דמו', school:'s1', subject:'מתמטיקה', phone:'0501234567'}];
-    populateTraining();
-    show('confirm-training');
-    return;
-  }
-
   const [trainRes, netsRes, schoolsRes, teachersRes] = await Promise.all([
     TS.api('qr.training', { token }, { cache: 'no' }),
     TS.api('networks.list'),

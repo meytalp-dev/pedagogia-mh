@@ -492,11 +492,6 @@ async function submitTraining(e) {
   e.preventDefault();
   const fd = new FormData(e.target);
   const data = Object.fromEntries(fd);
-  if (!TS.getAppsScriptUrl()) {
-    TS.toast('דמו — לא נשמר');
-    closeNewTraining();
-    return;
-  }
   const res = await TS.apiPost('training.create', data);
   if (res.ok) {
     TS.toast('ההדרכה נוצרה');

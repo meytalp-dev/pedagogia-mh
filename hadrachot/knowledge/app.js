@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function load() {
-  if (!TS.getAppsScriptUrl()) {
-    items = demoItems();
-    render();
-    return;
-  }
   const res = await TS.api('knowledge.list', {});
   items = res.data || [];
   render();
@@ -76,14 +71,6 @@ function audienceBadge(a) {
 async function submitItem(e) {
   e.preventDefault();
   const fd = Object.fromEntries(new FormData(e.target));
-  if (!TS.getAppsScriptUrl()) {
-    items.push({ id:'demo', ...fd, addedAt: new Date().toISOString() });
-    TS.toast('נוסף (דמו)');
-    render();
-    closeAddItem();
-    e.target.reset();
-    return;
-  }
   const res = await TS.apiPost('knowledge.create', fd);
   if (res.ok) {
     TS.toast('נוסף בהצלחה');
@@ -99,15 +86,4 @@ function openAddItem() {
 }
 function closeAddItem() {
   document.getElementById('modal-add').classList.remove('open');
-}
-
-function demoItems() {
-  return [
-    { id:'k1', title:'מערך שיעור — טריגונומטריה לכיתה י"א', category:'מתמטיקה', audience:'teacher', link:'#', description:'מערך 4 שיעורים עם דוגמאות מדורגות ותרגול דיפרנציאלי.' },
-    { id:'k2', title:'מבחני בגרות אנגלית — בנק שאלות', category:'אנגלית', audience:'teacher', link:'#', description:'אוסף מבחני בגרות 3-5 יח"ל עם פתרונות.' },
-    { id:'k3', title:'מצגת — איך להעביר הדרכה אפקטיבית', category:'מתודיקה', audience:'guide', link:'#', description:'15 דקות, סקירת עקרונות עיקריים.' },
-    { id:'k4', title:'דוח חודשי — תבנית', category:'מנהלי', audience:'principal', link:'#', description:'תבנית Google Sheets לדוח חודשי למשרד העבודה.' },
-    { id:'k5', title:'תרגול חכם — עיצוב שיער (גמר)', category:'עיצוב שיער', audience:'teacher', link:'#', description:'אוסף תרגולים אינטראקטיביים לעיצוב שיער ברמת גמר.' },
-    { id:'k6', title:'תקנון שאלות בגרות — תשפ"ז', category:'מנהלי', audience:'all', link:'#', description:'התקנון המעודכן של משרד החינוך.' }
-  ];
 }

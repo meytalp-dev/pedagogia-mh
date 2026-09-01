@@ -10,24 +10,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadData() {
-  if (!TS.getAppsScriptUrl()) {
-    data = demoData();
-    document.getElementById('user-name').textContent = 'דמו';
-    setNetworkTitle();
-    render();
-    return;
-  }
-  const res = await TS.api('network.dashboard', { network: networkId });
+  const res = TS.getAppsScriptUrl()
+    ? await TS.api('network.dashboard', { network: networkId })
+    : { ok: false, error: 'no_url' };
   if (res.ok && res.data) {
     data = res.data;
     setNetworkTitle();
     render();
+    loadSectors();   // רץ ברקע — לא מעכב את שאר הדשבורד
   } else {
-    data = demoData();
-    setNetworkTitle();
-    render();
+    renderLoadError(res.error || '');
   }
-  loadSectors();   // רץ ברקע — לא מעכב את שאר הדשבורד
+}
+
+// שגיאת טעינה — מציגים אמת, לא נתוני דמו
+function renderLoadError(err) {
+  const msg = 'לא הצלחנו לטעון את נתוני הרשת מהשרת — נסו לרענן את הדף.' +
+    (err ? ' (שגיאה: ' + escapeHtml(err) + ')' : '');
+  const tbody = document.getElementById('schools-body');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="empty">' + msg + '</td></tr>';
+  const trendEl = document.getElementById('trend-chart');
+  if (trendEl) trendEl.innerHTML = '<div class="empty">' + msg + '</div>';
 }
 
 // שם הרשת — בכותרת הראשית, בפינת המשתמש ובכותרת הטאב
@@ -155,19 +158,4 @@ function sendReportToNetwork() {
   ];
   const body = lines.join('\n');
   window.open(TS.gmailCompose({ to: net.contactEmail || '', subject, body }), '_blank');
-}
-
-function demoData() {
-  return {
-    network: { id: 'net_ort', name: 'אורט', color: 'ort', contactEmail: '' },
-    filter: { subject: '', availableSubjects: ['מתמטיקה'] },
-    summary: { schools: 6, teachers: 22, trainings: 6, attendanceRecords: 90, avgRate: 47, atRisk: 5, onTarget: 4 },
-    schoolBreakdown: [
-      { id: 'sch_005', name: 'אורט בית הערבה',      teachers: 3, present: 1, rate: 35 },
-      { id: 'sch_006', name: 'אורט דן גורמה',       teachers: 2, present: 0, rate: 20 },
-      { id: 'sch_007', name: 'אורט תל נוף',         teachers: 6, present: 4, rate: 78 },
-      { id: 'sch_008', name: 'אורט תעשייה אווירית', teachers: 4, present: 2, rate: 55 },
-      { id: 'sch_009', name: 'אורט אורמת יבנה',     teachers: 5, present: 3, rate: 60 }
-    ]
-  };
 }

@@ -20,18 +20,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function load() {
-  if (!TS.getAppsScriptUrl()) {
-    state = demoState();
-    render();
-    return;
-  }
-  const res = await TS.api('ministry.dashboard', { subject: currentSubject });
+  const res = TS.getAppsScriptUrl()
+    ? await TS.api('ministry.dashboard', { subject: currentSubject })
+    : { ok: false, error: 'no_url' };
   if (res.ok && res.data) {
     state = res.data;
+    render();
   } else {
-    state = demoState();
+    renderLoadError(res.error || '');
   }
-  render();
+}
+
+// שגיאת טעינה — מציגים אמת, לא נתוני דמו
+function renderLoadError(err) {
+  const msg = 'לא הצלחנו לטעון את הנתונים מהשרת — נסו לרענן את הדף.' +
+    (err ? ' (שגיאה: ' + escapeHtml(err) + ')' : '');
+  document.getElementById('networks-featured').innerHTML = emptyMsg(msg);
+  document.getElementById('networks-grid').innerHTML = '';
+  const tbody = document.getElementById('weak-schools-body');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">' + msg + '</td></tr>';
 }
 
 async function loadSectorData() {
@@ -386,30 +393,4 @@ function escapeHtml(s) {
 }
 function escapeAttr(s) {
   return (s || '').toString().replace(/'/g, "\\'");
-}
-
-function demoState() {
-  return {
-    filter: { subject: '', availableSubjects: ['מתמטיקה', 'אנגלית', 'עברית'] },
-    summary: { networks: 8, schools: 34, teachers: 145, trainings: 36, attendanceRecords: 426, avgRate: 39 },
-    networkBreakdown: [
-      { id:'net_shulamit_haredi', name:'שלומית חרדי', color:'shulamit_haredi', teachers:5, schools:1, present:0, missed:5, rate:0 },
-      { id:'net_amal', name:'עמל', color:'amal', teachers:21, schools:5, present:4, missed:12, rate:35 },
-      { id:'net_dror', name:'דרור', color:'dror', teachers:29, schools:5, present:1, missed:16, rate:38 },
-      { id:'net_atid', name:'עתיד', color:'atid', teachers:40, schools:12, present:4, missed:15, rate:41 },
-      { id:'net_ort',  name:'אורט', color:'ort',  teachers:35, schools:7, present:8, missed:15, rate:45 },
-      { id:'net_kanada_israel', name:'קנדה ישראל', color:'kanada_israel', teachers:2, schools:1, present:0, missed:0, rate:67 },
-      { id:'net_ezraei_haredi', name:'עצמאי חרדי', color:'ezraei_haredi', teachers:14, schools:3, present:0, missed:8, rate:38 },
-      { id:'net_beit_el', name:'בית אל', color:'beit_el', teachers:1, schools:1, present:0, missed:1, rate:33 }
-    ],
-    schoolBreakdown: [
-      { school:{id:'s1', name:'עמל טק אין', network:'amal'}, teachers:4, rate:0, networkColor:'amal', networkName:'עמל' },
-      { school:{id:'s2', name:'עתיד בדרך תמים', network:'atid'}, teachers:1, rate:0, networkColor:'atid', networkName:'עתיד' },
-      { school:{id:'s3', name:'תיכון הדר', network:'shulamit_haredi'}, teachers:5, rate:0, networkColor:'shulamit_haredi', networkName:'שלומית חרדי' },
-      { school:{id:'s4', name:'תיכון עתיד תפן ליזמות ומדיה', network:'atid'}, teachers:2, rate:0, networkColor:'atid', networkName:'עתיד' },
-      { school:{id:'s5', name:'תיכון עמל שיח', network:'amal'}, teachers:2, rate:9, networkColor:'amal', networkName:'עמל' },
-      { school:{id:'s6', name:'עתיד אור מנחם- תורני אשקלון', network:'atid'}, teachers:5, rate:10, networkColor:'atid', networkName:'עתיד' },
-      { school:{id:'s7', name:'אורט אורמת יבנה', network:'ort'}, teachers:5, rate:17, networkColor:'ort', networkName:'אורט' }
-    ]
-  };
 }

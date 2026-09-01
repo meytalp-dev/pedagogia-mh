@@ -15,12 +15,6 @@ async function requestCertificate() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> מפיק...';
 
-  if (!TS.getAppsScriptUrl()) {
-    showCertResult({ eligible: true, rate: 92, present: 11, total: 12, target: 80, pdfUrl: '#', docUrl: '#' });
-    btn.disabled = false;
-    btn.textContent = 'הפק תעודה';
-    return;
-  }
   const res = await TS.apiPost('certificate.generate', { teacherId });
   btn.disabled = false;
   btn.textContent = 'הפק תעודה';
@@ -61,13 +55,6 @@ function showCertResult(data) {
 }
 
 async function load() {
-  if (!TS.getAppsScriptUrl()) {
-    teacher = { id:'t1', name:'שרה כהן', subject:'מתמטיקה', type:'bagrut', sector:'kelali', seniority:8, units:'5 יח"ל', students:28, pdActive:true, moeApproval:true };
-    attendance = demoAttendance();
-    questions = demoQuestions();
-    render();
-    return;
-  }
   const [teacherRes, attRes, qRes] = await Promise.all([
     TS.api('teacher.get', { id: teacherId }),
     TS.api('attendance.teacher', { teacherId }),
@@ -162,11 +149,6 @@ async function submitQuestion(e) {
   const text = document.getElementById('q-text').value.trim();
   if (!text) return;
 
-  if (!TS.getAppsScriptUrl()) {
-    TS.toast('דמו — לא נשלח');
-    document.getElementById('q-text').value = '';
-    return;
-  }
   const res = await TS.apiPost('questions.create', { teacherId, question: text });
   if (res.ok) {
     TS.toast('השאלה נשלחה למדריכה');
@@ -176,17 +158,4 @@ async function submitQuestion(e) {
   } else {
     TS.toast('שגיאה');
   }
-}
-
-function demoAttendance() {
-  return [
-    { id:'a1', status:'missed', timestamp:'2026-05-05', training:{ date:'2026-05-05', subject:'מתמטיקה' } },
-    { id:'a2', status:'present', timestamp:'2026-04-21', training:{ date:'2026-04-21', subject:'מתמטיקה' } },
-    { id:'a3', status:'present', timestamp:'2026-04-07', training:{ date:'2026-04-07', subject:'מתמטיקה' } }
-  ];
-}
-function demoQuestions() {
-  return [
-    { id:'q1', question:'איך מתמודדים עם תלמיד שלא מצליח בנושא טריגונומטריה?', answer:'יש ב"מאגר ידע" מערך שלם לטריגו עם דוגמאות מדורגות.', status:'answered', createdAt:'2026-05-02' }
-  ];
 }

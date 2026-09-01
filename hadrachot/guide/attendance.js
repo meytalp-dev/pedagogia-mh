@@ -46,12 +46,6 @@ function openCheckInUrl() {
 }
 
 async function load() {
-  if (!TS.getAppsScriptUrl()) {
-    training = { id:'tr1', date:'2026-05-19', subject:'מתמטיקה', sector:'', location:'זום', qrToken:'demoQR123' };
-    teachers = demoTeachers();
-    render();
-    return;
-  }
   const [trainRes, teachersRes, attRes] = await Promise.all([
     TS.api('trainings.list', {}),
     TS.api('teachers.list', {}),
@@ -194,10 +188,6 @@ async function saveAttendance() {
     TS.toast('לא סומנו מורים');
     return;
   }
-  if (!TS.getAppsScriptUrl()) {
-    TS.toast(`דמו — נשמרו ${records.length} רישומים`);
-    return;
-  }
   const res = await TS.apiPost('attendance.bulk', { trainingId, records });
   if (res.ok) {
     TS.toast(`נשמרו ${res.count} רישומים`);
@@ -205,18 +195,4 @@ async function saveAttendance() {
   } else {
     TS.toast('שגיאה — ' + (res.error || ''));
   }
-}
-
-function demoTeachers() {
-  // הדרכת מקצוע — מורים מכל הרשתות מגיעים יחד
-  return [
-    { id:'t1', name:'שרה כהן',     subject:'מתמטיקה', sector:'kelali', network:'ort'     },
-    { id:'t2', name:'אחמד עלי',     subject:'מתמטיקה', sector:'arab',   network:'amal'    },
-    { id:'t3', name:'יעל לוי',      subject:'מתמטיקה', sector:'kelali', network:'atid'    },
-    { id:'t4', name:'מרים פרידמן',  subject:'מתמטיקה', sector:'haredi', network:'dror'    },
-    { id:'t5', name:'דני אבן',      subject:'מתמטיקה', sector:'kelali', network:'amal'    },
-    { id:'t6', name:'מוחמד חאלד',   subject:'מתמטיקה', sector:'arab',   network:'sakhnin' },
-    { id:'t7', name:'רותם שפירא',   subject:'מתמטיקה', sector:'kelali', network:'ort'     },
-    { id:'t8', name:'נועה לביא',    subject:'מתמטיקה', sector:'kelali', network:'atid'    }
-  ];
 }
