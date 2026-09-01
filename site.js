@@ -385,3 +385,46 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
     it.addEventListener("focusout",function(){ if(!it.contains(document.activeElement)) set(false); });
   });
 })();
+
+/* ===== אזהרת תוכן מיושן (הצעת GPT · על תשתית תג השנה) =====
+   כל עמוד תוכן נושא <meta name="pmh-year" content="תשפ״ז">. כשעמוד מתויג
+   לשנה קודמת (כי הוחלף בגרסה חדשה), נזריק פס אזהרה בראש העמוד עם קישור
+   לגרסה העדכנית — כדי שמנהל.ת שנחת.ה ישירות מגוגל/וואטסאפ על עמוד ישן
+   ידע.ו מיד. אין מה לתחזק ידנית: הפס מופיע לבד ברגע ש-pmh-year משתנה.
+
+   כדי לסמן עמוד כמיושן: לשנות את pmh-year לשנה הישנה (למשל "תשפ״ו").
+   קישור לגרסה העדכנית (רשות): <meta name="pmh-current" content="URL">
+   טקסט הקישור (רשות):        <meta name="pmh-current-label" content="...">
+   בקיץ, כשמתחילה שנה חדשה — לעדכן את CURRENT_YEAR כאן (ובבדיקת ההתיישנות). */
+(function () {
+  var CURRENT_YEAR = 'תשפ״ז';
+  var meta = document.querySelector('meta[name="pmh-year"]');
+  if (!meta) return;
+  var year = (meta.getAttribute('content') || '').trim();
+  if (!year || year === CURRENT_YEAR) return;
+
+  var cur = document.querySelector('meta[name="pmh-current"]');
+  var curUrl = cur ? cur.getAttribute('content') : 'index.html';
+  var lbl = document.querySelector('meta[name="pmh-current-label"]');
+  var curLabel = (lbl && lbl.getAttribute('content')) || 'למידע העדכני לשנה הנוכחית';
+
+  function build() {
+    if (document.getElementById('pmh-stale')) return;
+    var bar = document.createElement('div');
+    bar.id = 'pmh-stale';
+    bar.setAttribute('role', 'alert');
+    bar.style.cssText = 'direction:rtl;text-align:center;background:#FDECEC;color:#8A1C13;' +
+      'border-bottom:2px solid #E4A6A0;padding:10px 16px;font:600 .92rem/1.5 "Assistant","Noto Sans Hebrew",sans-serif;' +
+      'display:flex;gap:8px 14px;align-items:center;justify-content:center;flex-wrap:wrap';
+    bar.innerHTML =
+      '<span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-inline-end:5px">' +
+      '<path d="M12 3 2.5 20h19z"/><path d="M12 9v5M12 17h.01"/></svg>' +
+      'תוכן זה מתייחס לשנת ' + year + ' ואינו בהכרח בתוקף לשנת ' + CURRENT_YEAR + '.</span>' +
+      '<a href="' + curUrl + '" style="color:#0D3B66;font-weight:800;text-decoration:underline;white-space:nowrap">' +
+      curLabel + ' ←</a>';
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();
