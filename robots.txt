@@ -1,30 +1,13 @@
 # robots.txt — pedagogiamh.co.il
 #
-# האתר פתוח לסריקה, למעט המרחבים המוגנים (טוענים /auth.js) וקובצי
-# האינדקס שנבנים אוטומטית. הערה חשובה: robots.txt הוא בקשה מנומסת
-# למנועי חיפוש בלבד — הוא איננו מנגנון אבטחה. ההגנה בפועל היא שער
-# ההרשאות ב-auth.js, והסינון בבוני האינדקס (tools/build-search.mjs,
-# tools/build-knowledge.mjs) שמונע מהתוכן המוגן להיכנס לקבצים הציבוריים.
+# האתר פתוח לסריקה. עמודים שאינם מיועדים לאינדוקס נושאים
+# <meta name="robots" content="noindex"> בעצמם — בכוונה אין כאן
+# רשימת Disallow שלהם: robots.txt הוא קובץ ציבורי, ורשימה כזו
+# הייתה מפרסמת בעצמה את הכתובות הרגישות. ההגנה בפועל היא שער
+# ההרשאות ב-auth.js והסינון בבוני האינדקס (tools/build-search.mjs,
+# tools/build-knowledge.mjs).
 
 User-agent: *
-
-# מרחב פיקוח — מוגן
-Disallow: /prisat-pikuah.html
-Disallow: /supervision.html
-Disallow: /vaada-melava.html
-Disallow: /kvutzot-hadracha.html
-
-# מרחב מנהלים — מוגן
-Disallow: /menahalim.html
-Disallow: /drive-menahalim.html
-Disallow: /work-plans-app.html
-
-# מרחב נתונים — מוגן
-Disallow: /matzevet-list.html
-Disallow: /sikum-matzevet.html
-
-# פאנל ניהול
-Disallow: /admin.html
 
 # קובצי אינדקס שנבנים אוטומטית — אין טעם שייסרקו כדפי תוכן
 Disallow: /search-index.json

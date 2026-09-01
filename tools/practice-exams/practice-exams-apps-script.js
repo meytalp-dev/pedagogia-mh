@@ -1,12 +1,17 @@
 /**
  * מערכת תרגול מבחני גמר — הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית
- * Apps Script Backend (v2 — multi-teacher)
+ * Apps Script Backend (v3 — secured)
  *
  * תפקיד: קבלת הגשות מבחן מתלמידים, שמירה ב-Google Sheet,
  * ניהול מחוונים, ועדכון ציונים ידניים ע"י מורה.
  *
+ * v3 — אבטחה: כל קריאת נתונים (הגשות, מחוונים) וכל פעולת מורה
+ * (עדכון/מחיקה/שמירת מחוון) דורשות token שמונפק רק בכניסת מורה
+ * עם שם + PIN. ה-PIN עצמו נשמר כ-hash (שדרוג אוטומטי לרשומות
+ * ישנות בכניסה הראשונה). בלי token — אין גישה לשום נתון תלמיד.
+ *
  * ═══════════════════════════════════════════════════════════════
- *  הוראות עדכון (לאחר שינוי מ-v1 ל-v2):
+ *  הוראות עדכון (מ-v2 ל-v3):
  * ═══════════════════════════════════════════════════════════════
  *
  * 1) הדביקי את כל הקובץ (Ctrl+A → Delete → Paste) במקום הקוד הקיים
@@ -38,7 +43,7 @@ const SUBMISSION_HEADERS = [
 ];
 
 const ANSWER_KEY_HEADERS = ['exam_id', 'question_id', 'correct_answer', 'updated_at'];
-const TEACHER_HEADERS    = ['teacher_code', 'name', 'email', 'pin', 'created_at', 'last_login'];
+const TEACHER_HEADERS    = ['teacher_code', 'name', 'email', 'pin', 'created_at', 'last_login', 'token'];
 const STUDENT_HEADERS    = ['student_key', 'name', 'class', 'pin', 'teacher_code', 'created_at', 'last_login'];
 const FEEDBACK_HEADERS   = ['timestamp', 'role', 'name', 'contact', 'subject', 'message', 'url'];
 const LOG_HEADERS        = ['timestamp', 'action', 'details'];
@@ -81,16 +86,19 @@ function doPost(e) {
       return json_({ ok: true });
     }
     if (action === 'update') {
+      if (!teacherByToken_(body.token)) return json_({ ok: false, error: 'unauthorized' });
       updateSubmission_(body.data);
       log_('update', body.data.submissionId);
       return json_({ ok: true });
     }
     if (action === 'delete') {
+      if (!teacherByToken_(body.token)) return json_({ ok: false, error: 'unauthorized' });
       deleteSubmission_(body.submissionId);
       log_('delete', body.submissionId);
       return json_({ ok: true });
     }
     if (action === 'save-answer-key') {
+      if (!teacherByToken_(body.token)) return json_({ ok: false, error: 'unauthorized' });
       saveAnswerKey_(body.examId, body.key);
       log_('save-answer-key', body.examId);
       return json_({ ok: true });
@@ -125,19 +133,27 @@ function doPost(e) {
 
 // ============================================================
 // doGet — read operations for teacher dashboard
+// כל קריאת נתונים דורשת token של מורה מחוברת. בלי token תקף —
+// לא מוחזר שום נתון תלמיד, ותמיד רק ההגשות של המורה עצמה.
 // ============================================================
 function doGet(e) {
   const action = (e.parameter && e.parameter.action) || 'submissions';
-  const teacherCode = (e.parameter && e.parameter.teacherCode) || '';
+  const token = (e.parameter && e.parameter.token) || '';
   try {
     if (action === 'submissions') {
-      return json_({ submissions: readSubmissions_(teacherCode) });
+      const teacher = teacherByToken_(token);
+      if (!teacher) return json_({ error: 'unauthorized' });
+      return json_({ submissions: readSubmissions_(teacher.teacherCode) });
     }
     if (action === 'answer-keys') {
+      if (!teacherByToken_(token)) return json_({ error: 'unauthorized' });
       return json_({ keys: readAnswerKeys_() });
     }
     if (action === 'teacher-info') {
-      return json_({ teacher: readTeacherByCode_(teacherCode) });
+      // אימות קוד מורה במסך כניסת תלמיד — מחזיר שם בלבד, בלי אימייל
+      const teacherCode = (e.parameter && e.parameter.teacherCode) || '';
+      const t = readTeacherByCode_(teacherCode);
+      return json_({ teacher: t ? { teacherCode: t.teacherCode, name: t.name } : null });
     }
     return json_({ error: 'unknown action' });
   } catch (err) {
@@ -206,14 +222,14 @@ function deleteSubmission_(submissionId) {
 }
 
 function readSubmissions_(teacherCode) {
+  if (!teacherCode) return []; // לעולם לא מחזירים את כל ההגשות
   const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_SUBMISSIONS);
   const values = sh.getDataRange().getValues();
   const out = [];
   for (let i = 1; i < values.length; i++) {
     const r = values[i];
     if (!r[0]) continue;
-    // Filter by teacher if provided
-    if (teacherCode && r[9] !== teacherCode) continue;
+    if (r[9] !== teacherCode) continue;
     let answers = [];
     try { answers = JSON.parse(r[24] || '[]'); } catch (e) {}
     out.push({
@@ -294,8 +310,9 @@ function registerTeacher_(name, email, pin) {
   const existing = new Set(values.slice(1).map(r => r[0]));
   do { teacherCode = generateTeacherCode_(); } while (existing.has(teacherCode));
 
-  sh.appendRow([teacherCode, name, email || '', String(pin), new Date(), new Date()]);
-  return { ok: true, teacherCode, name, email };
+  const token = newToken_();
+  sh.appendRow([teacherCode, name, email || '', hashPin_(pin, teacherCode), new Date(), new Date(), token]);
+  return { ok: true, teacherCode, name, email, token };
 }
 
 function loginTeacher_(name, pin) {
@@ -306,8 +323,18 @@ function loginTeacher_(name, pin) {
 
   for (let i = 1; i < values.length; i++) {
     if (String(values[i][1]).trim().toLowerCase() === nameLower) {
-      if (String(values[i][3]) !== String(pin)) {
+      if (!verifyPin_(pin, values[i][3], values[i][0])) {
         return { ok: false, error: 'PIN שגוי' };
+      }
+      // שדרוג רשומה ישנה: PIN גלוי → hash
+      if (String(values[i][3]).indexOf('h1:') !== 0) {
+        sh.getRange(i + 1, 4).setValue(hashPin_(pin, values[i][0]));
+      }
+      // token קבוע למורה — נוצר בכניסה הראשונה אחרי השדרוג
+      let token = String(values[i][6] || '');
+      if (!token) {
+        token = newToken_();
+        sh.getRange(i + 1, 7).setValue(token);
       }
       // Update last_login
       sh.getRange(i + 1, 6).setValue(new Date());
@@ -315,11 +342,48 @@ function loginTeacher_(name, pin) {
         ok: true,
         teacherCode: values[i][0],
         name: values[i][1],
-        email: values[i][2]
+        email: values[i][2],
+        token
       };
     }
   }
   return { ok: false, error: 'שם לא נמצא. אולי צריך להירשם?' };
+}
+
+// ---------- אבטחה: hash ל-PIN + token למורה ----------
+function hashPin_(pin, salt) {
+  const bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256,
+    String(salt) + '|' + String(pin),
+    Utilities.Charset.UTF_8
+  );
+  let hex = '';
+  for (let i = 0; i < bytes.length; i++) {
+    const b = (bytes[i] + 256) % 256;
+    hex += (b < 16 ? '0' : '') + b.toString(16);
+  }
+  return 'h1:' + hex;
+}
+
+function verifyPin_(pin, stored, salt) {
+  const s = String(stored);
+  if (s.indexOf('h1:') === 0) return hashPin_(pin, salt) === s;
+  return s === String(pin); // רשומה ישנה בטרם שדרוג
+}
+
+function newToken_() {
+  return Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+}
+
+function teacherByToken_(token) {
+  if (!token || String(token).length < 32) return null;
+  const values = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_TEACHERS).getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][6] && String(values[i][6]) === String(token)) {
+      return { teacherCode: values[i][0], name: values[i][1], email: values[i][2] };
+    }
+  }
+  return null;
 }
 
 function readTeacherByCode_(teacherCode) {
@@ -348,8 +412,12 @@ function registerOrLoginStudent_(name, cls, pin, teacherCode) {
   for (let i = 1; i < values.length; i++) {
     if (values[i][0] === studentKey) {
       // Existing student — verify PIN
-      if (String(values[i][3]) !== String(pin)) {
+      if (!verifyPin_(pin, values[i][3], studentKey)) {
         return { ok: false, error: 'PIN שגוי' };
+      }
+      // שדרוג רשומה ישנה: PIN גלוי → hash
+      if (String(values[i][3]).indexOf('h1:') !== 0) {
+        sh.getRange(i + 1, 4).setValue(hashPin_(pin, studentKey));
       }
       sh.getRange(i + 1, 7).setValue(new Date());
       return { ok: true, mode: 'login', name, class: cls, teacherCode };
@@ -357,7 +425,7 @@ function registerOrLoginStudent_(name, cls, pin, teacherCode) {
   }
 
   // New student — register
-  sh.appendRow([studentKey, name, cls, String(pin), teacherCode || '', new Date(), new Date()]);
+  sh.appendRow([studentKey, name, cls, hashPin_(pin, studentKey), teacherCode || '', new Date(), new Date()]);
   return { ok: true, mode: 'register', name, class: cls, teacherCode };
 }
 

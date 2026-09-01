@@ -1012,7 +1012,7 @@
       });
       const data = await res.json();
       if (!data.ok) { errEl.textContent = data.error || 'שגיאת כניסה'; return; }
-      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, loginAt: new Date().toISOString() };
+      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, token: data.token || '', loginAt: new Date().toISOString() };
       localStorage.setItem('pe_teacher', JSON.stringify(TEACHER));
       await loadAll();
       showScreen('dash');
@@ -1037,7 +1037,7 @@
       });
       const data = await res.json();
       if (!data.ok) { errEl.textContent = data.error || 'שגיאת רישום'; return; }
-      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, loginAt: new Date().toISOString() };
+      TEACHER = { name: data.name, teacherCode: data.teacherCode, email: data.email, token: data.token || '', loginAt: new Date().toISOString() };
       localStorage.setItem('pe_teacher', JSON.stringify(TEACHER));
       showWelcome();
     } catch (e) {
@@ -1152,14 +1152,25 @@
       return;
     }
     try {
-      const url = APPS_SCRIPT_URL + '?action=submissions&teacherCode=' + encodeURIComponent(TEACHER.teacherCode);
+      // token — לשרת המאובטח (v3); teacherCode — תאימות לאחור עד הפריסה מחדש
+      const url = APPS_SCRIPT_URL + '?action=submissions&token=' + encodeURIComponent(TEACHER.token || '') + '&teacherCode=' + encodeURIComponent(TEACHER.teacherCode);
       const res = await fetch(url);
       const data = await res.json();
+      if (data.error === 'unauthorized') { forceRelogin(); return; }
       SUBMISSIONS = data.submissions || [];
     } catch (e) {
       console.error(e);
       SUBMISSIONS = [];
     }
+  }
+
+  // סשן ישן (לפני שדרוג האבטחה) — בלי token. מחייבים כניסה מחדש.
+  function forceRelogin() {
+    localStorage.removeItem('pe_teacher');
+    TEACHER = null;
+    showScreen('login');
+    const errEl = document.getElementById('login-error');
+    if (errEl) errEl.textContent = 'המערכת שודרגה — יש להתחבר מחדש עם שם ו-PIN.';
   }
 
   async function loadAnswerKeys() {
@@ -1168,7 +1179,7 @@
       return;
     }
     try {
-      const res = await fetch(APPS_SCRIPT_URL + '?action=answer-keys');
+      const res = await fetch(APPS_SCRIPT_URL + '?action=answer-keys&token=' + encodeURIComponent(TEACHER.token || ''));
       const data = await res.json();
       ANSWER_KEYS = data.keys || {};
     } catch (e) {
@@ -1377,7 +1388,7 @@
       await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
-        body: JSON.stringify({ action: 'update', data: sub })
+        body: JSON.stringify({ action: 'update', token: TEACHER.token || '', data: sub })
       });
     } catch (e) { console.error(e); }
   }
@@ -1393,7 +1404,7 @@
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'delete', submissionId: CURRENT_SUB.submissionId })
+          body: JSON.stringify({ action: 'delete', token: TEACHER.token || '', submissionId: CURRENT_SUB.submissionId })
         });
       } catch (e) { console.error(e); }
     }
@@ -1478,7 +1489,7 @@
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
-          body: JSON.stringify({ action: 'save-answer-key', examId, key })
+          body: JSON.stringify({ action: 'save-answer-key', token: TEACHER.token || '', examId, key })
         });
       } catch (e) { console.error(e); }
     }

@@ -324,10 +324,10 @@ let millionaireMoneyReached = 0;
 
 const gameTypeNames = {
   trivia: 'טריוויה', matching: 'התאמה', ordering: 'סדר נכון',
-  escape: 'חדר בריחה', memory: 'זיכרון', wheel: 'גלגל המזל',
+  escape: 'חדר בריחה', memory: 'זיכרון', wheel: 'גלגל השאלות',
   truefalse: 'נכון / לא נכון', fillblank: 'השלמת חסר',
   sentence: 'סדר את המשפט', groups: 'קבוצות',
-  hangman: 'נחשו את המילה', millionaire: 'מיליונר'
+  hangman: 'נחשו את המילה', millionaire: 'סולם הפרסים'
 };
 const gameTypeIcons = {
   trivia: '🎯', matching: '🔗', ordering: '📋',
@@ -1571,7 +1571,7 @@ function showMillionaireScore() {
   setProgress(1);
   const p = Math.round(correctItems / totalItems * 100);
   let ic, msg, bg;
-  if (millionaireMoneyReached >= 1000000) { ic = '👑'; msg = 'מיליונר! ענקי!'; bg = 'var(--accent-l)'; }
+  if (millionaireMoneyReached >= 1000000) { ic = '👑'; msg = 'הגעתם לפסגה! ענקי!'; bg = 'var(--accent-l)'; }
   else if (p >= 70) { ic = '💰'; msg = 'כל הכבוד! הרווחתם יפה!'; bg = 'var(--green-l)'; }
   else if (p >= 50) { ic = '💵'; msg = 'לא רע! אפשר לשפר!'; bg = 'var(--primary-l)'; }
   else { ic = '📖'; msg = 'כדאי לחזור על החומר'; bg = 'var(--sec-l)'; }

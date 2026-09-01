@@ -34,7 +34,7 @@ window.TS_GUIDES = {
     sectors: ['kelali', 'haredi'],
     email: '',
     drive: 'https://drive.google.com/drive/folders/1uQKR8AmWZCv8-s6mD29SI0ngefxRjx-E?usp=sharing',
-    zoom: 'https://edu-il.zoom.us/j/9525827563?omn=82061716992'
+    zoom: '' /* קישור זום אישי קבוע הוסר מסיבות אבטחה (1.9.26) — לשתף קישור מפגש חד־פעמי בערוץ סגור */
   },
   nira: {
     name: 'נירה הראל',
