@@ -131,6 +131,12 @@ button.go:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(24,92,255
 button.go:active{transform:translateY(0)}
 button.go[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
 .smallnote{font-size:14.5px;color:var(--muted);text-align:center;max-width:46ch}
+.helpbtn{display:inline-flex;align-items:center;gap:7px;margin-top:2px;padding:8px 18px;
+  border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);
+  font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;
+  transition:color .16s var(--ease),border-color .16s var(--ease),box-shadow .16s var(--ease)}
+.helpbtn:hover{color:var(--navy);border-color:var(--sky);box-shadow:var(--shadow-s)}
+.helpbtn svg{width:15px;height:15px}
 
 /* result states */
 .result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
@@ -387,6 +393,12 @@ footer a:hover{text-decoration:underline}
     <div class="actions">
       <button class="go" type="submit" id="submitBtn">שליחת הדיווח</button>
       <p class="smallnote">הנתונים נשמרים ומאומתים מול השרת — תקבלו אישור רק אחרי שהדיווח נקלט בפועל.</p>
+      <a class="helpbtn" id="helpBtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.8-.9L3 20l1-4.9a8.4 8.4 0 1 1 17-3.6z"/>
+        </svg>
+        נתקלתם בבעיה? שלחו הודעה
+      </a>
     </div>
 
     <div class="result ok" id="okBox">
@@ -645,6 +657,19 @@ function submit(){
 
 $("form").addEventListener("submit", function(ev){ ev.preventDefault(); submit(); });
 $("retryBtn").addEventListener("click", submit);
+
+/* ---------- נתקלתם בבעיה? — פנייה ישירה למיטל ---------- */
+$("helpBtn").addEventListener("click", function(ev){
+  ev.preventDefault();
+  var school = $("school").value;
+  var subject = "נתקלתי בבעיה — טופס רישום יום הפתיחה";
+  var body = "שלום מיטל,\n\nנתקלתי בבעיה בטופס רישום נתוני יום הפתיחה.\n" +
+             (school ? "בית הספר: " + school + "\n" : "") +
+             "\nתיאור הבעיה:\n";
+  location.href = "mailto:meytalp@bethaarava.ort.org.il" +
+    "?subject=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+});
 
 ["rdate","school","registered","arrived"].forEach(function(id){
   $(id).addEventListener("input", function(){
