@@ -304,6 +304,40 @@
   </div>
 </div>
 
+<!-- ====== השבוע במינהל ======
+     בלוק לעריכה ידנית. 3-5 פריטים בלבד — מה שמנהל.ת צריכ.ה לדעת השבוע.
+     לכל פריט: מחלקת דחיפות ב-span.wk-tag (wk-now אדום / wk-new טורקיז / wk-soon כחול),
+     טקסט קצר, וקישור אחד. פריט שעבר זמנו — למחוק. הבלוק נגמר בשורת הסימון של סוף השבוע (סימון HTML אחרי סוגר ה-section).
+     כדי להסתיר את המדור זמנית — להוסיף hidden ל-section.week-strip. -->
+<style>
+.week-strip{margin:6px var(--px) 4px;padding:16px 18px;background:linear-gradient(180deg,#fff,var(--surface));border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm)}
+.week-strip .wk-head{display:flex;align-items:center;gap:9px;margin:0 0 10px}
+.week-strip .wk-head h2{font-size:1.15rem;margin:0;color:var(--navy)}
+.week-strip .wk-head .wk-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;box-shadow:0 0 0 4px var(--cyan-100)}
+.week-strip .wk-head small{color:var(--text2);font-size:var(--fs-sm);margin-inline-start:auto}
+.week-strip ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.week-strip li{display:flex;align-items:flex-start;gap:11px;padding:9px 4px;border-top:1px solid var(--border)}
+.week-strip li:first-child{border-top:none}
+.week-strip .wk-tag{flex:none;font-size:var(--fs-2xs);font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:999px;margin-top:1px;white-space:nowrap}
+.week-strip .wk-now{background:#FDECEC;color:#B42318}
+.week-strip .wk-new{background:var(--cyan-100);color:#0A6E8A}
+.week-strip .wk-soon{background:var(--blue-100);color:var(--navy-800)}
+.week-strip .wk-tx{flex:1;min-width:0;font-size:var(--fs-md);color:var(--text);line-height:1.5}
+.week-strip .wk-tx a{color:var(--navy);font-weight:700;text-decoration:none;border-bottom:1.5px solid var(--cyan)}
+.week-strip .wk-tx a:hover{color:var(--accent)}
+@media(max-width:560px){.week-strip li{flex-wrap:wrap}.week-strip .wk-tx{flex-basis:100%}}
+</style>
+<section class="week-strip rv" aria-labelledby="wk-h">
+  <div class="wk-head"><span class="wk-dot" aria-hidden="true"></span><h2 id="wk-h">השבוע במינהל</h2><small>עודכן 1.9.2026</small></div>
+  <ul>
+    <li><span class="wk-tag wk-now">עד 20.9</span><span class="wk-tx">דיווח לקב״ס, למפקח הפדגוגי ולמפקחת על הצוותים הטיפוליים על תלמידים שלא הגיעו עם פתיחת השנה — <a href="bikur-sadir.html">נוהל ביקור סדיר ומניעת נשירה</a>.</span></li>
+    <li><span class="wk-tag wk-new">חדש</span><span class="wk-tx">לוח המבחנים לתשפ״ז (טיוטה) פורסם — כל מועדי הבגרות והגמר, חורף וקיץ — <a href="luach-mivchanim.html">אל לוח המבחנים</a>.</span></li>
+    <li><span class="wk-tag wk-new">נפתח</span><span class="wk-tx">ההרשמה להשתלמויות ולקהילות הלומדות תשפ״ז — שלושת המסלולים לצוותי המינהל — <a href="hishtalmuyot.html">להשתלמויות תשפ״ז</a>.</span></li>
+    <li><span class="wk-tag wk-soon">לקראת</span><span class="wk-tx">ועדת התכנון: להכין את אוגדן השעות ומצבת התלמידים — <a href="ogdan-shaot.html">אוגדן שעות תשפ״ז</a> · <a href="tashpaz.html">היערכות תשפ״ז</a>.</span></li>
+  </ul>
+</section>
+<!-- /השבוע -->
+
 <!-- task shortcuts -->
 <div style="padding:8px var(--px) 26px">
   <div style="display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:6px">
