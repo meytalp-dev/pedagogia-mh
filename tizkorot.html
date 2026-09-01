@@ -134,6 +134,9 @@
   .done-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 2px 0; }
   .done-chip { font-size: 12.5px; background: var(--good-soft); color: var(--good-text); border-radius: 999px; padding: 3px 11px; }
 
+  .warnbox { display: none; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--ring); border-radius: 10px; padding: 11px 16px; font-size: 13.5px; margin: 0 0 14px; line-height: 1.6; }
+  .warnbox.show { display: block; }
+  .warnbox b { font-weight: 700; }
   .empty { color: var(--muted); font-size: 14px; padding: 26px 4px; text-align: center; }
   .foot { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 40px; }
   .foot a { color: var(--accent); }
@@ -163,6 +166,8 @@
     <input class="search" id="q" type="search" placeholder="חיפוש בית ספר, מנהל/ת או רשת…" aria-label="חיפוש">
   </div>
   <div class="count-note" id="countNote"></div>
+
+  <div class="warnbox" id="unmatchedBox"></div>
 
   <div class="cards" id="cards"></div>
   <div class="empty" id="empty" hidden>לא נמצאו בתי ספר בסינון הזה.</div>
@@ -326,14 +331,14 @@ function buildMessage(sc) {
   lines.push("נדרש להשלים עד יום חמישי, 3.9. המילוי קצר ונעשה ישירות מהנייד:");
   if (!sc.survey) lines.push(`📋 סקר צרכים טכנולוגיים:\n${SEKER_URL}`);
   if (!sc.teachers) lines.push(`🧑‍🏫 הזנת המורים להדרכות:\n${MORIM_URL}`);
-  lines.push("אם יש קושי במילוי — אני זמינה. תודה!");
+  lines.push("אם כבר השלמתם ממש לאחרונה — אפשר להתעלם מהתזכורת. אם יש קושי במילוי — אני זמינה. תודה!");
   lines.push("רויטל אמיר\nמפקחת פדגוגית ארצית");
   return lines.join("\n\n");
 }
 function waLink(msg) { return "https://wa.me/?text=" + encodeURIComponent(msg); }
 
 // ---- state ----
-const state = { schools: SNAPSHOT.map(s => ({ ...s })), live: false };
+const state = { schools: SNAPSHOT.map(s => ({ ...s })), live: false, unmatchedSurvey: [], unmatchedTeachers: [] };
 let filter = "need", q = "";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
@@ -415,6 +420,15 @@ function renderAll() {
     });
   });
 
+  const box = document.getElementById("unmatchedBox");
+  const warns = [];
+  if (state.unmatchedSurvey.length)
+    warns.push(`<b>שימו לב — ${state.unmatchedSurvey.length} תשובות סקר לא שויכו לבית ספר</b> וייתכן שבית הספר מוצג כאן כ"לא מילא" בטעות: ${esc(state.unmatchedSurvey.join(" · "))}. לפני נזיפה — לבדוק, ולעדכן את מיטל כדי שתוסיף שיוך.`);
+  if (state.unmatchedTeachers.length)
+    warns.push(`<b>הזנת מורים תחת שם לא מזוהה:</b> ${esc(state.unmatchedTeachers.join(" · "))} — ייתכן שבית הספר המתאים מוצג כ"לא הזין" בטעות.`);
+  box.innerHTML = warns.join("<br>");
+  box.classList.toggle("show", warns.length > 0);
+
   const done = all.filter(s => s.survey && s.teachers).sort((a, b) => a.name.localeCompare(b.name, "he"));
   document.getElementById("doneSummary").textContent = `השלימו את שניהם — ${done.length} בתי ספר`;
   document.getElementById("doneList").innerHTML = done.map(s => `<span class="done-chip">${esc(s.name)}</span>`).join("");
@@ -433,15 +447,18 @@ async function refresh() {
       survey: false, teachers: false
     }));
     const surveyNames = new Set();
+    state.unmatchedSurvey = [];
     for (const row of (data.survey || [])) {
       const m = matchSchool(MERGE[row.school] ? MERGE[row.school] : row.school, row.principal, schools);
       if (m) surveyNames.add(MERGE[m] || m);
+      else state.unmatchedSurvey.push(`"${row.school}" (${row.principal || "ללא שם מנהל"})`);
     }
     const teacherNames = new Set();
     for (const t of (data.teachers || [])) {
-      const m = matchSchool(t.school, "", schools) || t.school;
+      const m = matchSchool(t.school, "", schools) || (t.school || "").trim();
       teacherNames.add(MERGE[m] || m);
     }
+    state.unmatchedTeachers = [...teacherNames].filter(n => !schools.some(sc => sc.name === n));
     for (const sc of schools) {
       sc.survey = surveyNames.has(sc.name);
       sc.teachers = teacherNames.has(sc.name);

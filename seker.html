@@ -52,7 +52,7 @@
     display:block;font-weight:600;font-size:15.5px;color:var(--blue-900);margin-bottom:7px;
   }
   label .req{color:#d33;font-weight:700}
-  input[type=text],input[type=email],input[type=tel],textarea{
+  input[type=text],input[type=email],input[type=tel],select,textarea{
     width:100%;
     font-family:inherit;font-size:16px;color:var(--ink);
     padding:12px 14px;
@@ -60,7 +60,7 @@
     background:var(--blue-50);
     transition:border-color .15s, box-shadow .15s, background .15s;
   }
-  input:focus,textarea:focus{
+  input:focus,select:focus,textarea:focus{
     outline:none;border-color:var(--blue-500);background:var(--white);
     box-shadow:0 0 0 3px rgba(47,111,237,.15);
   }
@@ -122,7 +122,11 @@
 
     <div class="field">
       <label for="school">שם בית הספר <span class="req">*</span></label>
-      <input type="text" id="school" name="school" required autocomplete="organization">
+      <select id="school" name="school" required>
+        <option value="" selected disabled>בחרו את בית הספר מהרשימה…</option>
+      </select>
+      <input type="text" id="schoolOther" placeholder="כתבו את שם בית הספר" style="display:none;margin-top:8px" autocomplete="organization">
+      <div class="hint">בחירה מהרשימה מבטיחה שהתשובה תשויך נכון במעקב. אם בית הספר לא מופיע — בחרו "אחר".</div>
     </div>
 
     <div class="field">
@@ -171,13 +175,31 @@
   var TO_EMAIL = 'meytalp@bethaarava.ort.org.il';
 
   var form = document.getElementById('surveyForm');
+  var SCHOOLS = ["אום אל פחם בנות", "אום אל פחם בנים", "אור העתיד תורני גן יבנה", "אורט אורמת", "אורט בית הערבה", "אורט כרמל", "אורט תל נוף", "אורט תעשיה אווירית", "אכסאל", "בית אל", "בית חנינה בנות", "בית חנינה בנים", "בת עמי", "דן גורמה תל-אביב", "דרור הגליל", "דרור נווה מדבר", "הדר", "התיכון החברתי חיפה", "התיכון החברתי מצפה רמון", "התיכון החברתי תל אביב יפו", "זוקו", "ח׳טוואת ירכא אבו סנאן", "חבד אור מנחם אשקלון", "חושן", "חנוך לנער צפת", "טורען", "טל חרמון", "כסרא סמיע", "כפר זיתים", "כפר יאסיף", "לקייה", "מעיינות צפת", "נחלים", "עמל אנרגיטק", "עמל אשדוד", "עמל טייבה", "עמל טק אין", "עמל נצרת", "עמל רהט בנות", "עמל רהט בנים", "עמל רמת דוד", "ערערה", "עתיד באר שבע", "עתיד בית דוד", "עתיד גוליס בנות - ירכא", "עתיד יוצר אבדאע ביר אל מכסור", "עתיד ירכא בנים", "עתיד כפר חבד אוהלי תמימים", "עתיד כרמיאל", "עתיד מסעדה", "עתיד צור ים", "עתיד קמג", "עתיד תפן", "פלמחים", "צור ברק", "רימונים טבריה", "שגב שלום", "תיכון אלאמאני סחנין", "תיכון בקהילה מהאראת שפרעם", "תיכון החממה", "תיכון שיח", "תל שבע"];
+  var schoolSel = document.getElementById('school');
+  var schoolOther = document.getElementById('schoolOther');
+  SCHOOLS.forEach(function(n){
+    var o = document.createElement('option'); o.value = n; o.textContent = n; schoolSel.appendChild(o);
+  });
+  var other = document.createElement('option');
+  other.value = '__other__'; other.textContent = 'אחר — בית הספר לא ברשימה';
+  schoolSel.appendChild(other);
+  schoolSel.addEventListener('change', function(){
+    var isOther = schoolSel.value === '__other__';
+    schoolOther.style.display = isOther ? 'block' : 'none';
+    schoolOther.required = isOther;
+    if (isOther) schoolOther.focus();
+  });
+  function schoolValue(){
+    return schoolSel.value === '__other__' ? schoolOther.value.trim() : schoolSel.value;
+  }
   var afterBox = document.getElementById('afterBox');
   var submitBtn = document.getElementById('submitBtn');
   var lastSummary = '';
 
   function payload(){
     return {
-      school: form.school.value.trim(),
+      school: schoolValue(),
       principal: form.principal.value.trim(),
       coordName: form.coordName.value.trim(),
       coordEmail: form.coordEmail.value.trim(),
@@ -190,7 +212,7 @@
     return [
       'סקר צרכים — העשרה טכנולוגית בבית הספר',
       '======================================',
-      'שם בית הספר: ' + form.school.value.trim(),
+      'שם בית הספר: ' + schoolValue(),
       'שם המנהל/ת: ' + form.principal.value.trim(),
       'שם רכז/ת התקשוב: ' + form.coordName.value.trim(),
       'מייל רכז/ת התקשוב: ' + form.coordEmail.value.trim(),
@@ -213,7 +235,7 @@
 
   function mailtoFallback(){
     lastSummary = buildSummary();
-    var subject = 'סקר צרכים טכנולוגיים — ' + form.school.value.trim();
+    var subject = 'סקר צרכים טכנולוגיים — ' + schoolValue();
     showBox('<b>תודה רבה!</b> נפתחה עבורכם הודעת מייל עם התשובות — יש ללחוץ בה על "שלח".<br>' +
       'אם המייל לא נפתח, העתיקו את התשובות ושלחו לכתובת: <b dir="ltr">' + TO_EMAIL + '</b>' +
       '<button type="button" class="copybtn" id="copyBtn">📋 העתקת התשובות</button>');
@@ -238,9 +260,22 @@
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
       body: JSON.stringify(payload())
     }).then(function(){
+      var sent = schoolValue();
       form.reset();
-      submitBtn.textContent = '✅ נשלח';
-      showBox('<b>תודה רבה!</b> התשובות נקלטו בהצלחה.<br>נשמח לעמוד בקשר — צוות מינהל הכשרה מקצועית.');
+      schoolOther.style.display = 'none'; schoolOther.required = false;
+      submitBtn.textContent = '⏳ מאמת מול הגיליון...';
+      return fetch(SCRIPT_URL).then(function(r){ return r.json(); }).then(function(d){
+        var found = (d.survey || []).some(function(row){ return (row.school || '').trim() === sent; });
+        submitBtn.textContent = '✅ נשלח';
+        if (found) {
+          showBox('<b>תודה רבה!</b> התשובות נקלטו <b>ואומתו מול הגיליון</b> ✓<br>נשמח לעמוד בקשר — צוות מינהל הכשרה מקצועית.');
+        } else {
+          showBox('<b>תודה רבה!</b> התשובות נשלחו.<br>לא הצלחנו לאמת את הקליטה מול הגיליון — אם לא תגיע תזכורת נוספת, הכל נקלט תקין.');
+        }
+      }).catch(function(){
+        submitBtn.textContent = '✅ נשלח';
+        showBox('<b>תודה רבה!</b> התשובות נקלטו בהצלחה.<br>נשמח לעמוד בקשר — צוות מינהל הכשרה מקצועית.');
+      });
     }).catch(function(){
       submitBtn.disabled = false;
       submitBtn.textContent = '📩 שליחת הסקר';
