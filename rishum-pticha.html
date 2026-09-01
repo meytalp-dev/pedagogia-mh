@@ -459,6 +459,36 @@ var SCHOOLS = ["אבו סנאן","אום אל פחם בנות","אום אל פח
   }catch(e){}
 })();
 
+/* ---------- שחזור דיווח שנשמר ולא אומת שנשלח ----------
+   הדיווח נשמר ב-PENDING_KEY לפני השליחה ונמחק רק לאחר אישור קליטה.
+   אם נשאר — הרשת נכשלה או שהמנהל.ת רענן.ה; משחזרים כדי שלא יאבד. */
+(function(){
+  var raw; try{ raw = localStorage.getItem(PENDING_KEY); }catch(e){ return; }
+  if (!raw) return;
+  var d; try{ d = JSON.parse(raw); }catch(e){ return; }
+  if (!d || !d.school) return;
+  function setRadio(name, val){
+    if (!val) return;
+    var el = document.querySelector('input[name="' + name + '"][value="' + val.replace(/"/g,'\\"') + '"]');
+    if (el){ el.checked = true; el.dispatchEvent(new Event("change", {bubbles:true})); }
+  }
+  if (d.date)           $("rdate").value = d.date;
+  if (SCHOOLS.indexOf(d.school) !== -1) $("school").value = d.school;
+  if (d.registered)     $("registered").value = d.registered;
+  if (d.arrived)        $("arrived").value = d.arrived;
+  setRadio("shortage",  d.shortage);
+  if (d.shortageDetail) $("shortageDetail").value = d.shortageDetail;
+  setRadio("matal",     d.matal);
+  setRadio("hachala",   d.hachala);
+  setRadio("chanichut", d.chanichut);
+  if (d.otherRoles)     $("otherRoles").value = d.otherRoles;
+  if (d.challenges)     $("challenges").value = d.challenges;
+  if (d.needs)          $("needs").value = d.needs;
+  updatePct();
+  $("badText").textContent = "שחזרנו דיווח שמילאת קודם ולא אומת שנשלח. אפשר לבדוק ולשלוח שוב.";
+  show("bad");
+})();
+
 /* ---------- מונה חי ---------- */
 function loadCount(target){
   if (!API_URL) return Promise.resolve(null);

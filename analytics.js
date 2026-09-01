@@ -254,14 +254,17 @@
   function scrub(t) {
     return String(t || '').replace(/\d[\d\s.\/\-]{5,}\d/g, '#').slice(0, 120);
   }
-  // עמוד מאחורי שער (auth.js data-space) — לא שולחים טקסט חופשי כלל, רק ספירות
-  var GATED = !!document.querySelector('script[src*="auth.js"][data-space]');
+  // עמוד מאחורי שער (auth.js data-space) — לא שולחים טקסט חופשי כלל, רק ספירות.
+  // נבדק בזמן השליחה ולא בטעינת הסקריפט: pmhTrack רץ על פעולת משתמש, כש-DOM
+  // כבר מלא, ולכן זה עובד גם כש-analytics.js נטען לפני תגית auth.js בעמוד.
+  function isGated() { return !!document.querySelector('script[src*="auth.js"][data-space]'); }
   var FREETEXT = { search_term: 1, question: 1, resource_title: 1, resource_url: 1 };
   window.pmhTrack = function (name, params) {
     if (readChoice() !== 'granted' || !measurableHost()) return;
+    var gated = isGated();
     var p = {};
     for (var k in (params || {})) if (Object.prototype.hasOwnProperty.call(params, k)) {
-      if (GATED && FREETEXT[k]) continue; // לא לחשוף תוכן חופשי מעמוד מוגן
+      if (gated && FREETEXT[k]) continue; // לא לחשוף תוכן חופשי מעמוד מוגן
       p[k] = typeof params[k] === 'string' ? scrub(params[k]) : params[k];
     }
     p.page_path = location.pathname;

@@ -173,6 +173,7 @@
   // כשהיא ריקה — הסקר נופל חזרה לשליחה במייל.
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySOgh6OJG1uLR7BSF24u08aZTXiKFzn2p-6zXvy49yOElQYgaZ77TrGU1nv7GkLfda/exec';
   var TO_EMAIL = 'meytalp@bethaarava.ort.org.il';
+  var PENDING_KEY = 'pmh-seker-pending';
 
   var form = document.getElementById('surveyForm');
   var SCHOOLS = ["אום אל פחם בנות", "אום אל פחם בנים", "אור העתיד תורני גן יבנה", "אורט אורמת", "אורט בית הערבה", "אורט כרמל", "אורט תל נוף", "אורט תעשיה אווירית", "אכסאל", "בית אל", "בית חנינה בנות", "בית חנינה בנים", "בת עמי", "דן גורמה תל-אביב", "דרור הגליל", "דרור נווה מדבר", "הדר", "התיכון החברתי חיפה", "התיכון החברתי מצפה רמון", "התיכון החברתי תל אביב יפו", "זוקו", "ח׳טוואת ירכא אבו סנאן", "חבד אור מנחם אשקלון", "חושן", "חנוך לנער צפת", "טורען", "טל חרמון", "כסרא סמיע", "כפר זיתים", "כפר יאסיף", "לקייה", "מעיינות צפת", "נחלים", "עמל אנרגיטק", "עמל אשדוד", "עמל טייבה", "עמל טק אין", "עמל נצרת", "עמל רהט בנות", "עמל רהט בנים", "עמל רמת דוד", "ערערה", "עתיד באר שבע", "עתיד בית דוד", "עתיד גוליס בנות - ירכא", "עתיד יוצר אבדאע ביר אל מכסור", "עתיד ירכא בנים", "עתיד כפר חבד אוהלי תמימים", "עתיד כרמיאל", "עתיד מסעדה", "עתיד צור ים", "עתיד קמג", "עתיד תפן", "פלמחים", "צור ברק", "רימונים טבריה", "שגב שלום", "תיכון אלאמאני סחנין", "תיכון בקהילה מהאראת שפרעם", "תיכון החממה", "תיכון שיח", "תל שבע"];
@@ -233,6 +234,17 @@
     document.getElementById('copyBtn').addEventListener('click', copyHandler);
   }
 
+  // כשל לא-ודאי: התשובות אולי לא נקלטו. לא מנקים את הטופס ולא מוחקים את הטיוטה,
+  // ומציעים שליחה חוזרת או מייל — כך שהמידע שהוקלד לא הולך לאיבוד.
+  function notVerified(reason){
+    submitBtn.disabled = false;
+    submitBtn.textContent = '📩 שליחה חוזרת';
+    showBox('<b>כמעט סיימנו.</b> ' + reason + '<br>' +
+      'התשובות נשמרו בדפדפן — אפשר ללחוץ שוב על "שליחה חוזרת", או לשלוח אותן במייל:' +
+      '<button type="button" class="copybtn" id="copyBtn">📋 העתקת התשובות</button>');
+    attachCopy();
+  }
+
   function mailtoFallback(){
     lastSummary = buildSummary();
     var subject = 'סקר צרכים טכנולוגיים — ' + schoolValue();
@@ -254,27 +266,36 @@
     submitBtn.disabled = true;
     submitBtn.textContent = '⏳ שולח...';
 
+    // ה-POST הוא no-cors → התשובה אטומה ואי אפשר לדעת ממנה אם נקלט.
+    // לכן: שומרים טיוטה לפני שמנקים, ומאשרים "נקלט" רק אם GET-אימות מצא רשומה.
+    var draft = payload();
+    var sent = schoolValue();
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(draft)); } catch(e){}
+    lastSummary = buildSummary();
+
     fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify(payload())
+      body: JSON.stringify(draft)
     }).then(function(){
-      var sent = schoolValue();
-      form.reset();
-      schoolOther.style.display = 'none'; schoolOther.required = false;
       submitBtn.textContent = '⏳ מאמת מול הגיליון...';
       return fetch(SCRIPT_URL).then(function(r){ return r.json(); }).then(function(d){
         var found = (d.survey || []).some(function(row){ return (row.school || '').trim() === sent; });
-        submitBtn.textContent = '✅ נשלח';
         if (found) {
+          // אומת בגיליון — עכשיו בטוח לנקות
+          try { localStorage.removeItem(PENDING_KEY); } catch(e){}
+          form.reset();
+          schoolOther.style.display = 'none'; schoolOther.required = false;
+          submitBtn.textContent = '✅ נשלח';
           showBox('<b>תודה רבה!</b> התשובות נקלטו <b>ואומתו מול הגיליון</b> ✓<br>נשמח לעמוד בקשר — צוות מינהל הכשרה מקצועית.');
         } else {
-          showBox('<b>תודה רבה!</b> התשובות נשלחו.<br>לא הצלחנו לאמת את הקליטה מול הגיליון — אם לא תגיע תזכורת נוספת, הכל נקלט תקין.');
+          // לא נמצאה רשומה — לא מאשרים הצלחה, משאירים את המילוי ואת הטיוטה
+          notVerified('לא הצלחנו לאמת שהתשובות נקלטו בגיליון.');
         }
       }).catch(function(){
-        submitBtn.textContent = '✅ נשלח';
-        showBox('<b>תודה רבה!</b> התשובות נקלטו בהצלחה.<br>נשמח לעמוד בקשר — צוות מינהל הכשרה מקצועית.');
+        // אימות ה-GET עצמו נכשל — אין דרך לדעת אם ה-POST נקלט
+        notVerified('לא הצלחנו לאמת אוטומטית שהתשובות נקלטו.');
       });
     }).catch(function(){
       submitBtn.disabled = false;
@@ -282,6 +303,26 @@
       mailtoFallback();
     });
   });
+
+  // שחזור טיוטה שלא אומתה — כך "התשובות נשמרו בדפדפן" נכון גם אחרי רענון
+  (function(){
+    var raw; try { raw = localStorage.getItem(PENDING_KEY); } catch(e){ return; }
+    if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch(e){ return; }
+    if (!d || !d.school) return;
+    if (SCHOOLS.indexOf(d.school) > -1) {
+      schoolSel.value = d.school;
+    } else {
+      schoolSel.value = '__other__';
+      schoolOther.style.display = 'block'; schoolOther.required = true; schoolOther.value = d.school;
+    }
+    if (d.principal)  form.principal.value  = d.principal;
+    if (d.coordName)  form.coordName.value  = d.coordName;
+    if (d.coordEmail) form.coordEmail.value = d.coordEmail;
+    if (d.coordPhone) form.coordPhone.value = d.coordPhone;
+    if (d.needs)      form.needs.value      = d.needs;
+    showBox('שחזרנו סקר שמילאת קודם ולא אומת שנשלח. אפשר לבדוק ולשלוח שוב.');
+  })();
 
   function copyHandler(){
     if(!lastSummary) lastSummary = buildSummary();
