@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR לרישום — הדרכת מתמטיקה 15.6.2026</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<style>
+  :root {
+    --brand-primary:#0B2545; --brand-accent:#1d6a8f; --mint:#6FB7A6;
+    --gold:#C8A04D; --ink:#0B2545; --muted:#5b6b7a; --line:#e3e9ee; --bg:#f5f8fa;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:'Heebo',sans-serif; background:var(--bg); color:var(--ink);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .poster {
+    background:#fff; width:100%; max-width:520px; border-radius:20px;
+    box-shadow:0 24px 70px rgba(11,37,69,.14); border:1px solid var(--line);
+    padding:40px 36px; text-align:center; position:relative; overflow:hidden;
+  }
+  .poster::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg,var(--brand-primary),var(--brand-accent),var(--mint));
+  }
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:8px; margin-bottom:14px;
+    padding:6px 16px; border-radius:999px; background:rgba(200,160,77,.12);
+    color:var(--brand-primary); font-weight:700; font-size:13px; letter-spacing:.04em;
+  }
+  h1 { font-family:'Frank Ruhl Libre',serif; font-size:30px; line-height:1.2; margin-bottom:6px; }
+  .sub { color:var(--muted); font-size:16px; margin-bottom:4px; }
+  .meta { color:var(--brand-accent); font-weight:700; font-size:17px; margin-bottom:24px; }
+  .qr-wrap {
+    background:#fff; border:1px solid var(--line); border-radius:16px;
+    padding:18px; display:inline-block; box-shadow:0 8px 24px rgba(11,37,69,.06);
+  }
+  .qr-wrap img { width:300px; height:300px; display:block; }
+  .cta { margin-top:22px; font-size:19px; font-weight:700; color:var(--brand-primary); }
+  .cta span { color:var(--mint); }
+  .steps {
+    margin:22px auto 0; max-width:380px; text-align:right;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .step { display:flex; align-items:center; gap:12px; font-size:15px; color:#33414f; }
+  .step .n {
+    flex-shrink:0; width:28px; height:28px; border-radius:50%;
+    background:var(--brand-primary); color:#fff; font-weight:700; font-size:14px;
+    display:grid; place-items:center;
+  }
+  .link {
+    margin-top:24px; padding:12px; background:var(--bg); border-radius:10px;
+    font-size:12px; color:var(--muted); word-break:break-all; direction:ltr;
+  }
+  .foot {
+    margin-top:20px; padding-top:16px; border-top:1px dashed var(--line);
+    color:var(--muted); font-size:13px;
+  }
+  @media print {
+    body { background:#fff; padding:0; }
+    .poster { box-shadow:none; border:none; max-width:100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <div class="eyebrow">מבט מקצועי · רישום נוכחות</div>
+    <h1>סורקים ונרשמים להדרכה</h1>
+    <div class="sub">הדרכת מתמטיקה · מדריכה: שירה סיבוני</div>
+    <div class="meta">יום שני · 15.6.2026 · בזום</div>
+
+    <div class="qr-wrap">
+      <img src="../assets/qr-shira-math-20260615.png" alt="QR לרישום נוכחות">
+    </div>
+
+    <div class="cta">סרקו עם המצלמה <span>←</span> ונרשמתם</div>
+
+    <div class="steps">
+      <div class="step"><span class="n">1</span> פותחים את מצלמת הטלפון ומכוונים ל-QR</div>
+      <div class="step"><span class="n">2</span> בוחרים רשת ובית ספר (או מקלידים אם לא ברשימה)</div>
+      <div class="step"><span class="n">3</span> בוחרים את השם — או מקלידים אותו — ומאשרים</div>
+    </div>
+
+    <div class="link">meytalp-dev.github.io/ort-training/training-supervision/checkin/?t=shira-math-20260615</div>
+
+    <div class="foot">לא הצלחת לסרוק? פתחי את הקישור בדפדפן הטלפון.</div>
+  </div>
+</body>
+</html>

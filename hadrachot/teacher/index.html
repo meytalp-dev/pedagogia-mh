@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הסטטוס שלי — מצפן הפיקוח</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* command-strip עם 4 KPIs */
+  .command-strip { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 760px) { .command-strip { grid-template-columns: repeat(2, 1fr); } }
+  /* גשר: ה-JS דורס stat-rate ל-class "stat-value" — שיֵראה כמו cmd-metric-value בפס הכהה */
+  .command-strip .stat-value {
+    font-family: 'Heebo', sans-serif; font-size: 30px; font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1; color: #fff;
+  }
+  .command-strip .stat-value.ok   { color: var(--mint); }
+  .command-strip .stat-value.warn { color: var(--sand); }
+  .command-strip .stat-value.err  { color: var(--coral); }
+</style>
+</head>
+<body data-role="teacher">
+
+  <!-- System Command Bar -->
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">הסטטוס שלי · מורה</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>הסטטוס שלי</span>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט מורה · הסטטוס שלי</div>
+        <h1>הסטטוס שלי</h1>
+        <p class="page-header-sub">הנוכחות שלי בהדרכות, היסטוריה, תעודה אישית ושאלות למדריכ/ה.</p>
+      </div>
+      <div class="page-compass">
+        <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
+          <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
+          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+          <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
+          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
+          <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
+          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#256A8A">N</text>
+        </svg>
+        <div class="page-compass-info">
+          <strong id="user-name">—</strong>
+          <span id="user-meta">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compass Divider -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">הנוכחות שלי</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Command Strip — 4 KPIs -->
+    <section class="command-strip" aria-label="הנוכחות שלי">
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          סה"כ הדרכות
+        </div>
+        <div class="cmd-metric-value" id="stat-total">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          השתתפתי
+        </div>
+        <div class="cmd-metric-value mint" id="stat-present">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          חסרתי
+        </div>
+        <div class="cmd-metric-value warn" id="stat-missed">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          אחוז נוכחות
+        </div>
+        <div class="cmd-metric-value" id="stat-rate">—</div>
+      </div>
+    </section>
+
+    <!-- Compass Divider -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">הפרטים שלי</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 14.5-4 16 0"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Profile card -->
+    <div class="card" style="margin-bottom:20px;">
+      <h2 style="margin-bottom:12px;">הפרטים שלי</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px;">
+        <div><div style="font-size:13px; color:var(--text-2);">מקצוע</div><div style="font-weight:700; margin-top:4px;" id="p-subject">—</div></div>
+        <div><div style="font-size:13px; color:var(--text-2);">סוג</div><div style="margin-top:4px;" id="p-type">—</div></div>
+        <div><div style="font-size:13px; color:var(--text-2);">מגזר</div><div style="margin-top:4px;" id="p-sector">—</div></div>
+        <div><div style="font-size:13px; color:var(--text-2);">ותק</div><div style="font-weight:700; margin-top:4px;" id="p-seniority">—</div></div>
+        <div><div style="font-size:13px; color:var(--text-2);">יח"ל</div><div style="font-weight:700; margin-top:4px;" id="p-units">—</div></div>
+        <div><div style="font-size:13px; color:var(--text-2);">תלמידים</div><div style="font-weight:700; margin-top:4px;" id="p-students">—</div></div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
+        <span id="pd-status"></span>
+        <span id="moe-status"></span>
+      </div>
+    </div>
+
+    <!-- Compass Divider -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">היסטוריית הדרכות</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Attendance history -->
+    <div class="card" style="padding:0; margin-bottom: 24px;">
+      <div style="padding: 20px 24px 8px;">
+        <h3 style="margin:0;">היסטוריית הדרכות</h3>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>תאריך</th>
+              <th>מקצוע / נושא</th>
+              <th>סטטוס</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr><td colspan="3" class="empty">טוען...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Certificate -->
+    <div class="card" style="margin-bottom: 24px; border-right: 4px solid var(--brand-accent);">
+      <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+        <div style="width:56px; height:56px; border-radius:50%; background:var(--surface-2); display:flex; align-items:center; justify-content:center; color:var(--brand-accent); flex-shrink:0; border:1px solid var(--border);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <h3 style="margin-bottom:6px;">תעודת השתתפות שנתית</h3>
+          <p style="margin:0; color:var(--text-2);" id="cert-hint">מורה שעמדה ב-80% נוכחות לפחות מקבלת תעודה רשמית להדפסה ולתיק האישי.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-cert">הפק תעודה</button>
+      </div>
+      <div id="cert-result" hidden style="margin-top:16px; background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border);"></div>
+    </div>
+
+    <!-- Knowledge link -->
+    <div class="card" style="margin-bottom: 24px; border-right: 4px solid var(--brand-secondary);">
+      <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+        <div style="width:56px; height:56px; border-radius:50%; background:var(--surface-2); display:flex; align-items:center; justify-content:center; color:var(--brand-secondary); flex-shrink:0; border:1px solid var(--border);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <h3 style="margin-bottom:6px;">מאגר הידע למורות ומורים</h3>
+          <p style="margin:0; color:var(--text-2);">מערכי שיעור, חומרי תרגול וסרטונים בכל המקצועות.</p>
+        </div>
+        <a class="btn btn-primary" href="../knowledge/">פתיחת המאגר</a>
+      </div>
+    </div>
+
+    <!-- Compass Divider -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">שאלות למדריכ/ה</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Ask a question -->
+    <div id="questions-list"></div>
+    <div class="card" style="margin-top:16px;">
+      <form id="form-question">
+        <div class="form-row">
+          <label class="form-label">שאלה חדשה</label>
+          <textarea class="textarea" id="q-text" placeholder="כתבי כאן את השאלה. המדריכה תקבל מייל ותענה בהקדם." required></textarea>
+        </div>
+        <div class="btn-row" style="margin:0;">
+          <button type="submit" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            שליחה למדריכה
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+<script src="../assets/app.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מצפן הפיקוח · ניהול פדגוגי — הדרכות מורים</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body data-role="ministry">
+
+  <!-- System Command Bar -->
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="2" fill="currentColor"/>
+        <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+        <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+      </svg>
+      <div class="command-bar-text">
+        <span class="unit">משרד העבודה</span>
+        <span class="sub">יחידת הפיקוח על הדרכות מורים</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:18px;">
+      <div class="command-bar-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>מערכת פעילה</span>
+      </div>
+      <button class="command-bar-cta" onclick="openSettings()" aria-label="הגדרות">
+        הגדרות
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Compass Hero — מצפן הפיקוח (GPT, סטטי) -->
+    <section class="compass-hero-v2" dir="rtl" aria-labelledby="compassHeroTitle">
+      <div class="compass-hero__inner">
+
+        <div class="compass-hero__content">
+          <div class="compass-hero__eyebrow">
+            <span class="compass-hero__eyebrow-line"></span>
+            מערכת פיקוח · גרסה ייעודית
+          </div>
+
+          <h1 id="compassHeroTitle" class="compass-hero__title">
+            מצפן ההדרכות<br />
+            הפדגוגיות
+          </h1>
+
+          <p class="compass-hero__lead">
+            רואים נוכחות, מזהים פערים, ומפעילים ליווי בזמן.
+          </p>
+
+          <p class="compass-hero__text">
+            מערכת לפיקוח וליווי הדרכות מורים בבתי ספר טכנולוגיים —
+            מרמת המורה ועד לתמונה הארצית.
+          </p>
+
+          <div class="compass-hero__actions" aria-label="פעולות ראשיות">
+            <a href="#lenses" class="compass-btn compass-btn--primary">
+              בחרי רמת מבט
+              <span aria-hidden="true">←</span>
+            </a>
+
+            <a href="#flow" class="compass-btn compass-btn--secondary">
+              צפייה בדשבורדים
+            </a>
+          </div>
+        </div>
+
+        <div class="compass-hero__visual" aria-label="מצפן רמות המבט במערכת">
+          <div class="compass-map">
+
+            <div class="compass-map__orbit compass-map__orbit--outer"></div>
+            <div class="compass-map__orbit compass-map__orbit--middle"></div>
+            <div class="compass-map__orbit compass-map__orbit--inner"></div>
+
+            <div class="compass-map__guide compass-map__guide--vertical"></div>
+            <div class="compass-map__guide compass-map__guide--horizontal"></div>
+            <div class="compass-map__guide compass-map__guide--diag-a"></div>
+            <div class="compass-map__guide compass-map__guide--diag-b"></div>
+
+            <div class="compass-map__needle" aria-hidden="true">
+              <div class="compass-map__needle-top"></div>
+              <div class="compass-map__needle-bottom"></div>
+              <div class="compass-map__pin"></div>
+            </div>
+
+            <a class="compass-map__node compass-map__node--top" href="./ministry/">
+              <span class="compass-map__node-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 3v18M3 12h18" />
+                  <circle cx="12" cy="12" r="7" />
+                </svg>
+              </span>
+              <span class="compass-map__node-label">מבט ארצי</span>
+            </a>
+
+            <a class="compass-map__node compass-map__node--right" href="./admin-network/">
+              <span class="compass-map__node-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="6" cy="6" r="2.5" />
+                  <circle cx="18" cy="6" r="2.5" />
+                  <circle cx="12" cy="18" r="2.5" />
+                  <path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7" />
+                </svg>
+              </span>
+              <span class="compass-map__node-label">מבט רשת</span>
+            </a>
+
+            <a class="compass-map__node compass-map__node--bottom-right" href="./admin-school/">
+              <span class="compass-map__node-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 20h16M6 20V9l6-4 6 4v11" />
+                  <path d="M9 20v-6h6v6M8 10h2M14 10h2" />
+                </svg>
+              </span>
+              <span class="compass-map__node-label">מבט בית ספר</span>
+            </a>
+
+            <a class="compass-map__node compass-map__node--bottom-left" href="./guide/">
+              <span class="compass-map__node-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="7" y="4" width="10" height="16" rx="2" />
+                  <path d="M10 8h4M10 12h4M10 16h2" />
+                </svg>
+              </span>
+              <span class="compass-map__node-label">מבט מקצועי</span>
+            </a>
+
+            <a class="compass-map__node compass-map__node--left" href="./checkin/">
+              <span class="compass-map__node-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="3" />
+                  <path d="M5 20c1.2-4 12.8-4 14 0" />
+                </svg>
+              </span>
+              <span class="compass-map__node-label">נוכחות מורה</span>
+            </a>
+
+          </div>
+
+          <p class="compass-hero__hint">כל נקודה במצפן מובילה לדשבורד אחר</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- System Metrics Strip -->
+    <section class="system-metrics" aria-label="נתוני מערכת">
+      <div class="system-metrics-inner">
+        <div class="system-metric">
+          <div class="system-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+          </div>
+          <div class="system-metric-text">
+            <div class="label">יעד נוכחות</div>
+            <div class="value metric-number">80<span class="unit">%</span></div>
+          </div>
+        </div>
+        <div class="system-metric">
+          <div class="system-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="system-metric-text">
+            <div class="label">מורים במערכת</div>
+            <div class="value metric-number" id="ms-teachers">782</div>
+          </div>
+        </div>
+        <div class="system-metric">
+          <div class="system-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
+          </div>
+          <div class="system-metric-text">
+            <div class="label">בתי ספר</div>
+            <div class="value metric-number" id="ms-schools">156</div>
+          </div>
+        </div>
+        <div class="system-metric">
+          <div class="system-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
+          </div>
+          <div class="system-metric-text">
+            <div class="label">רשתות פיקוח</div>
+            <div class="value metric-number">9</div>
+          </div>
+        </div>
+        <div class="system-metric">
+          <div class="system-metric-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="system-metric-text">
+            <div class="label">מקצועות עיוניים</div>
+            <div class="value metric-number">7</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Role Lenses -->
+    <section class="lenses-section" id="lenses">
+      <div class="lenses-head">
+        <div>
+          <h2 class="compass-h2">בחרי את רמת המבט שלך</h2>
+          <p class="sub">כל משתמשת רואה את המידע ברזולוציה המתאימה לה — מהמורה הבודדת עד לכל הארץ.</p>
+        </div>
+      </div>
+
+      <div class="lenses-grid">
+        <!-- Large row: Ministry full width -->
+        <a class="lens lens-large" href="ministry/" style="display:grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center;">
+          <div class="lens-icon-box" aria-hidden="true" style="margin-bottom:0; width:56px; height:56px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px; height:26px;"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div>
+            <div class="lens-label" style="margin-bottom:6px;">מבט ארצי · המפקחת הארצית</div>
+            <div class="lens-title" style="margin-bottom:6px;">תמונה חוצת־רשתות של נוכחות, פערים ודוחות</div>
+            <div class="lens-desc" style="margin-bottom:0;">9 רשתות · סינון לפי מקצוע · שליחת דוחות לכל רשת · זיהוי בתי ספר חלשים</div>
+          </div>
+          <span class="lens-cta" style="margin-top:0; white-space:nowrap;">
+            כניסה
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </span>
+        </a>
+
+        <!-- Row of 4 -->
+        <div class="lenses-row">
+          <a class="lens lens-medium-1" href="admin-network/">
+            <div class="lens-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v3M10 14l-3 3M14 14l3 3"/></svg>
+            </div>
+            <div class="lens-label">מבט רשת</div>
+            <div class="lens-title">מנהל/ת רשת</div>
+            <div class="lens-desc">השוואת בתי ספר וזיהוי מוקדי ליווי.</div>
+            <ul class="lens-bullets">
+              <li>אחוז נוכחות לפי בית ספר</li>
+              <li>פערים מול יעד</li>
+              <li>דוח רשת</li>
+            </ul>
+            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+          </a>
+
+          <a class="lens lens-medium-2" href="admin-school/">
+            <div class="lens-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
+            </div>
+            <div class="lens-label">מבט בית ספר</div>
+            <div class="lens-title">מנהלת בית ספר</div>
+            <div class="lens-desc">מעקב אחר צוות המורות והיסטוריית ההדרכות.</div>
+            <ul class="lens-bullets">
+              <li>רשימת מורים</li>
+              <li>נוכחות לפי מקצוע</li>
+              <li>סטטוס אישי</li>
+            </ul>
+            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+          </a>
+
+          <a class="lens lens-small-1" href="admin-school/">
+            <div class="lens-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="lens-label">מבט מקצועי</div>
+            <div class="lens-title">רכזת פדגוגית</div>
+            <div class="lens-desc">מבט ממוקד מקצוע בבית הספר.</div>
+            <ul class="lens-bullets">
+              <li>פילטר מקצוע</li>
+              <li>מעקב מורות</li>
+              <li>תמונת מצב מהירה</li>
+            </ul>
+            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+          </a>
+
+          <a class="lens lens-small-2" href="guide/">
+            <div class="lens-icon-box" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="lens-label">מבט פעולה</div>
+            <div class="lens-title">מדריכה מקצועית</div>
+            <div class="lens-desc">ניהול הדרכות, QR ונוכחות בזמן אמת.</div>
+            <ul class="lens-bullets">
+              <li>הדרכות קרובות</li>
+              <li>רישום נוכחות</li>
+              <li>שליחת קישור</li>
+            </ul>
+            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Flow -->
+    <section class="flow-section" id="flow">
+      <div class="flow-inner">
+        <div class="flow-head">
+          <h2 class="compass-h2">זרימת המידע במערכת</h2>
+          <p class="sub">חמישה צמתים — מהמורה הבודדת לתעודת ההשתתפות. בלי גיליונות אקסל, בלי מיילים ידניים.</p>
+        </div>
+
+        <div class="flow-track">
+          <div class="flow-step">
+            <div class="flow-step-node">
+              <span class="flow-step-num">01</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="flow-step-title">המורה מגיעה</div>
+            <div class="flow-step-desc">להדרכה הקבועה.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-node">
+              <span class="flow-step-num">02</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 17h4M17 21h4M21 14v3"/></svg>
+            </div>
+            <div class="flow-step-title">רישום נוכחות</div>
+            <div class="flow-step-desc">QR או ידני.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-node">
+              <span class="flow-step-num">03</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>
+            </div>
+            <div class="flow-step-title">עדכון דשבורד</div>
+            <div class="flow-step-desc">בזמן אמת.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-node">
+              <span class="flow-step-num">04</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg>
+            </div>
+            <div class="flow-step-title">דוחות מותאמים</div>
+            <div class="flow-step-desc">לכל רמת מבט.</div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-node">
+              <span class="flow-step-num">05</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg>
+            </div>
+            <div class="flow-step-title">תעודה</div>
+            <div class="flow-step-desc">אוטומטית בסוף שנה.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="compass-footer">
+    <div class="compass-footer-mark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+        <path d="M12 4 L13.2 12 L12 11.7 L10.8 12 Z" fill="currentColor"/>
+      </svg>
+      מצפן הפיקוח · משרד העבודה
+    </div>
+    <div class="meta">מערכת לניהול פדגוגי · הדרכות קבוצתיות ופרטניות · © <span id="year"></span></div>
+  </footer>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>הגדרות מערכת</h3>
+      <button class="modal-close" onclick="closeSettings()" aria-label="סגירה">×</button>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Apps Script URL</label>
+      <input type="url" class="input" id="apps-url" placeholder="https://script.google.com/macros/s/.../exec">
+      <small class="form-hint">הדביקו את ה-URL שקיבלתם אחרי Deploy של Apps Script. נשמר בדפדפן בלבד.</small>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveSettings()">שמירה</button>
+      <button class="btn btn-secondary" onclick="closeSettings()">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function openSettings() {
+  const cur = TS.getAppsScriptUrl();
+  document.getElementById('apps-url').value = cur || '';
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+function saveSettings() {
+  const url = document.getElementById('apps-url').value.trim();
+  TS.setAppsScriptUrl(url);
+}
+
+// Load actual system metrics if available
+window.addEventListener('DOMContentLoaded', async () => {
+  // Bootstrap warning
+  if (!TS.getAppsScriptUrl()) {
+    const banner = document.createElement('div');
+    banner.className = 'compass-warn';
+    banner.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+      <div>
+        המערכת לא חוברה ל-Google Sheets.
+        <a href="apps-script/SETUP.md">מדריך התקנה</a>
+      </div>
+    `;
+    document.querySelector('main').prepend(banner);
+    return;
+  }
+
+  // Fetch system metrics (אופציונלי — אם זמין)
+  try {
+    const res = await TS.api('ministry.dashboard', {});
+    if (res && res.ok && res.data && res.data.summary) {
+      const s = res.data.summary;
+      document.getElementById('ms-teachers').textContent = s.teachers || '—';
+      document.getElementById('ms-schools').textContent = s.schools || '—';
+    }
+  } catch (e) { /* silent */ }
+});
+</script>
+</body>
+</html>

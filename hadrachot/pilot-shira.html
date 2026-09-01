@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פיילוט שירה סיבוני — מתמטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .pilot-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .pilot-step .step-num {
+    position: absolute;
+    top: -16px; right: 20px;
+    width: 32px; height: 32px;
+    background: var(--brand-accent);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px;
+  }
+  .pilot-step h3 { margin: 0 0 6px; font-size: 18px; }
+  .pilot-step p { color: var(--text-2); margin: 0 0 16px; font-size: 14px; }
+
+  .link-box {
+    background: var(--surface-2);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 12px; font-family: 'Heebo', monospace;
+    font-size: 13px; word-break: break-all;
+  }
+  .link-box .link-url { flex: 1; color: var(--text); }
+  .link-box .link-label { font-size: 12px; color: var(--text-3); font-weight: 600; margin-bottom: 4px; }
+  .link-box .copy-mini {
+    background: var(--brand-accent); color: white;
+    border: none; border-radius: 6px; padding: 6px 12px;
+    font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    flex-shrink: 0;
+  }
+  .link-box .copy-mini.copied { background: var(--ok); }
+
+  .msg-template {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    font-family: 'Heebo', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .actions-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .status-pill.ok    { background: var(--ok-soft);   color: var(--ok); }
+  .status-pill.warn  { background: var(--warn-soft); color: #92400e; }
+  .status-pill.err   { background: var(--err-soft);  color: var(--err); }
+  .status-pill.idle  { background: var(--surface-2); color: var(--text-2); }
+
+  .preflight {
+    background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 100%);
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .preflight h4 { margin: 0 0 8px; color: #78350f; }
+  .preflight ol { margin: 0; padding-right: 20px; color: #78350f; font-size: 14px; }
+  .preflight code { background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 4px; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="./" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">פיילוט שירה סיבוני · מתמטיקה</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="preflight">
+      <h4>⚠ לפני שמתחילים — עדכון Apps Script</h4>
+      <ol>
+        <li>פותחת את ה-Sheet של המערכת → <strong>Extensions → Apps Script</strong>.</li>
+        <li>מעתיקה את הקוד מהעתק העדכני של <code>docs/training-supervision/apps-script/code.gs</code> (נוספו 4 endpoints: <code>seed.import</code>, <code>guide.dashboard</code>, <code>school.dashboard</code>, <code>ministry.dashboard</code>).</li>
+        <li>שומרת (Ctrl+S) ו-<strong>Deploy → Manage Deployments → ערוך → גרסה חדשה → Deploy</strong>.</li>
+        <li>חוזרת לכאן ולוחצת על "טעון נתוני פיילוט".</li>
+      </ol>
+    </div>
+
+    <h1 style="margin: 24px 0 8px;">הפעלת פיילוט בשלושה צעדים</h1>
+    <p style="color: var(--text-2); margin-bottom: 24px;">
+      קובץ הנתונים מוכן: 34 בתי ספר, 95 מורים, 6 הדרכות (ינו'–יוני 2026), 176 רשומות נוכחות היסטוריות.
+    </p>
+
+    <!-- שלב 1 -->
+    <div class="pilot-step">
+      <div class="step-num">1</div>
+      <h3>טעון את נתוני הפיילוט ל-Sheet</h3>
+      <p>פעולה חד-פעמית. אם זה עובד שוב — הוא יעדכן את הקיים, לא יוסיף כפילות (upsert לפי id).</p>
+      <div class="actions-row">
+        <button class="btn btn-primary" id="btn-import" onclick="runImport()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          טעון נתוני פיילוט ל-Sheet
+        </button>
+        <span class="status-pill idle" id="import-status">לא הופעל</span>
+      </div>
+      <div id="import-result" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- שלב 1.5 — דמו שאר המקצועות -->
+    <div class="pilot-step" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-color: #86efac;">
+      <div class="step-num" style="background: #16a34a;">+</div>
+      <h3>אופציונלי — טעון דמו של 5 מקצועות נוספים</h3>
+      <p>10 מורים פר מקצוע (אנגלית, עברית, ספרות, אזרחות, תנ"ך) פרוסים על 10 בתי ספר קיימים. <strong>אלה לא נתונים אמיתיים</strong> — רק כדי לראות איך הדשבורדים של רויטל ושל המנהלים נראים כשיש כמה מקצועות במקביל. אפשר למחוק מ-Sheet בכל רגע.</p>
+      <div class="actions-row">
+        <button class="btn btn-soft" id="btn-import-demo" onclick="runImportDemo()" style="background: #dcfce7; color: #14532d; border: 1px solid #86efac;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          טעון דמו לאנגלית · עברית · ספרות · אזרחות · תנ"ך
+        </button>
+        <span class="status-pill idle" id="import-demo-status">לא הופעל</span>
+      </div>
+      <div id="import-demo-result" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- שלב 2 -->
+    <div class="pilot-step">
+      <div class="step-num">2</div>
+      <h3>שלחי לשירה את הדשבורד שלה</h3>
+      <p>הדשבורד מציג את 95 המורים, היסטוריית הנוכחות שלהם, ההדרכות הקרובות, וסטטיסטיקה חודשית.</p>
+
+      <div class="link-box">
+        <div>
+          <div class="link-label">קישור לדשבורד</div>
+          <div class="link-url" id="guide-url">—</div>
+        </div>
+        <button class="copy-mini" onclick="copyText('guide-url', this)">העתק</button>
+      </div>
+
+      <div style="font-weight:600; margin: 16px 0 8px;">הודעה מוכנה לשליחה לשירה:</div>
+      <div class="msg-template" id="msg-shira"></div>
+
+      <div class="actions-row">
+        <a class="btn btn-primary" id="email-shira" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          שליחה במייל לשירה
+        </a>
+        <button class="btn btn-secondary" onclick="copyText('msg-shira', this)">העתק הודעה</button>
+      </div>
+    </div>
+
+    <!-- שלב 3 -->
+    <div class="pilot-step">
+      <div class="step-num">3</div>
+      <h3>שלחי למורים את קישור הרישום ל-15.6</h3>
+      <p>מורה לוחצת על הקישור, בוחרת את שמה מהרשימה, ונרשמת אוטומטית. שירה רואה את זה בזמן אמת בדשבורד שלה.</p>
+
+      <div class="link-box">
+        <div>
+          <div class="link-label">קישור צ'ק-אין להדרכת 15.6.2026</div>
+          <div class="link-url" id="checkin-url">—</div>
+        </div>
+        <button class="copy-mini" onclick="copyText('checkin-url', this)">העתק</button>
+      </div>
+
+      <div style="font-weight:600; margin: 16px 0 8px;">הודעה מוכנה לשליחה לקבוצת המורים:</div>
+      <div class="msg-template" id="msg-teachers"></div>
+
+      <div class="actions-row">
+        <button class="btn btn-primary" onclick="copyText('msg-teachers', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          העתק הודעה לוואטסאפ
+        </button>
+      </div>
+    </div>
+
+    <!-- מצב נתונים -->
+    <div class="card" style="margin-top:32px;">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg>
+        מצב הנתונים בקובץ JSON
+      </div>
+      <div id="data-summary" style="font-size:14px; color:var(--text-2);">טוען...</div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+        קישורי מערכת לבדיקה אישית
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:8px;">
+        <a class="btn btn-secondary" href="ministry/">מפקחת ארצית — רויטל אמיר</a>
+        <a class="btn btn-secondary" href="admin-network/?network=ort">מנהל רשת אורט</a>
+        <a class="btn btn-secondary" href="admin-school/?school=sch_005&network=ort">מנהל ב"ס — אורט בית הערבה</a>
+        <a class="btn btn-secondary" href="admin-school/?school=sch_005&network=ort&subject=%D7%9E%D7%AA%D7%9E%D7%98%D7%99%D7%A7%D7%94">רכז מתמטיקה — אורט בית הערבה</a>
+        <a class="btn btn-secondary" href="guide/?guide=Shiras@gram.ort.org.il">דשבורד שירה</a>
+        <a class="btn btn-secondary" href="admin-sectors.html">שיוך מגזרים למורים — אדמין</a>
+        <a class="btn btn-secondary" href="admin-guides.html">קישורי המדריכות המקצועיות — אדמין</a>
+        <a class="btn btn-secondary" href="admin-cleanup.html">ניקוי כפילויות ושורות שגויות — אדמין</a>
+        <a class="btn btn-secondary" href="admin-verify.html">אימות רשימות מול בתי הספר — אדמין</a>
+        <a class="btn btn-secondary" href="./">דף בית מערכת</a>
+      </div>
+      <div style="margin-top:16px; padding:12px; background:var(--surface-2); border-radius:8px; font-size:13px; color:var(--text-2);">
+        <strong>הסבר:</strong>
+        <strong>מנהל ב"ס</strong> רואה את כל המורים בבית ספרו (כל המקצועות). <strong>רכז פדגוגי</strong> = אותו דשבורד עם פילטר לפי מקצוע (URL כולל <code>subject=...</code>). <strong>מפקחת ארצית</strong> רואה את כל הרשתות + סינון מקצוע + שליחת דוחות לכל רשת.
+      </div>
+    </div>
+
+  </main>
+
+  <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
+    דף אדמין · פיילוט · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+const BASE_URL = location.origin + location.pathname.replace(/\/pilot-shira\.html$/, '');
+const SHIRA_EMAIL = 'Shiras@gram.ort.org.il';
+const TRAINING_DATE = '15.6.2026';
+const QR_TOKEN = 'shira-math-20260615';
+
+const GUIDE_URL = BASE_URL + '/guide/?guide=' + encodeURIComponent(SHIRA_EMAIL);
+const CHECKIN_URL = BASE_URL + '/checkin/?t=' + encodeURIComponent(QR_TOKEN);
+
+document.getElementById('guide-url').textContent = GUIDE_URL;
+document.getElementById('checkin-url').textContent = CHECKIN_URL;
+
+const MSG_SHIRA = `שלום שירה,
+
+הקמנו עבורך דשבורד אישי במערכת לניהול פדגוגי של משרד העבודה.
+
+בדשבורד תוכלי לראות:
+• את כל 95 המורים שלך מ-34 בתי ספר
+• היסטוריית הנוכחות שלהם מתחילת השנה (ינואר–מאי)
+• ההדרכה הקרובה ב-15.6 — והקישור לרישום הנוכחות
+• אחוז נוכחות חודשי וממוצע שנתי
+
+הקישור לדשבורד:
+${GUIDE_URL}
+
+ההדרכה הקרובה ב-15.6 — את שולחת למורים קישור אחד, הם בוחרים את שמם, נרשמים אוטומטית, ואת רואה את זה בזמן אמת.
+
+נשמח לפידבק בסיום הפיילוט.
+מיטל`;
+
+const MSG_TEACHERS = `שלום!
+
+מצורף קישור לרישום נוכחות בהדרכת המתמטיקה של שירה ב-${TRAINING_DATE}.
+לוחצים על הקישור, בוחרים את השם שלכם מהרשימה, וזהו — נרשמתם.
+
+🔗 ${CHECKIN_URL}
+
+נתראה!`;
+
+document.getElementById('msg-shira').textContent = MSG_SHIRA;
+document.getElementById('msg-teachers').textContent = MSG_TEACHERS;
+
+document.getElementById('email-shira').href = TS.gmailCompose({
+  to: SHIRA_EMAIL,
+  subject: 'הדשבורד שלך במערכת לניהול פדגוגי',
+  body: MSG_SHIRA
+});
+
+function copyText(elId, btn) {
+  const text = document.getElementById(elId).textContent || document.getElementById(elId).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.classList.add('copied');
+    btn.textContent = '✓ הועתק';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = original;
+    }, 1800);
+  });
+}
+
+async function loadSummary() {
+  try {
+    const res = await fetch('_data/shira-math-2026.json');
+    const data = await res.json();
+    const trainings = data.trainings.length;
+    const presentTotal = data.attendance.filter(a => a.status === 'present').length;
+    document.getElementById('data-summary').innerHTML = `
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:8px;">
+        <div><strong style="font-size:24px; color:var(--text);">${data.schools.length}</strong><br><small>בתי ספר</small></div>
+        <div><strong style="font-size:24px; color:var(--text);">${data.teachers.length}</strong><br><small>מורים</small></div>
+        <div><strong style="font-size:24px; color:var(--text);">${trainings}</strong><br><small>הדרכות</small></div>
+        <div><strong style="font-size:24px; color:var(--text);">${data.attendance.length}</strong><br><small>רשומות נוכחות</small></div>
+        <div><strong style="font-size:24px; color:var(--ok);">${presentTotal}</strong><br><small>מהן: נוכחות מלאה</small></div>
+      </div>
+    `;
+  } catch (e) {
+    document.getElementById('data-summary').textContent = 'לא ניתן לטעון את מצב הנתונים';
+  }
+}
+loadSummary();
+
+async function runImportDemo() {
+  const btn = document.getElementById('btn-import-demo');
+  const status = document.getElementById('import-demo-status');
+  const result = document.getElementById('import-demo-result');
+
+  if (!TS.getAppsScriptUrl()) {
+    status.className = 'status-pill err';
+    status.textContent = 'אין Apps Script';
+    return;
+  }
+  btn.disabled = true;
+  status.className = 'status-pill warn';
+  status.textContent = 'טוען נתונים...';
+  result.innerHTML = '<div class="alert warn"><div class="alert-body">⏳ הטעינה רצה ב-3 שלבים — מורים → הדרכות → נוכחות. זמן משוער: 20-40 שניות. אל תרעננו את הדף.</div></div>';
+
+  try {
+    const dataRes = await fetch('_data/demo-other-subjects.json');
+    const data = await dataRes.json();
+    const totals = { added: {}, updated: {} };
+
+    // שלב 1 — מורים
+    status.textContent = 'שלב 1/3 — מורים (50)...';
+    const r1 = await TS.apiPost('seed.import', {
+      tabs: {
+        teachers: data.teachers.map(t => ({
+          id: t.id, school: t.school, network: 'net_' + t.network,
+          name: t.name, subject: t.subject, phone: t.phone, createdAt: t.createdAt
+        }))
+      }
+    });
+    if (!r1.ok) throw new Error(r1.error || 'שגיאה בטעינת מורים');
+    Object.assign(totals.added, { teachers: r1.data.teachers?.added || 0 });
+    Object.assign(totals.updated, { teachers: r1.data.teachers?.updated || 0 });
+
+    // שלב 2 — הדרכות
+    status.textContent = 'שלב 2/3 — הדרכות (30)...';
+    const r2 = await TS.apiPost('seed.import', {
+      tabs: { trainings: data.trainings.map(tr => ({ ...tr, network: 'net_cross' })) }
+    });
+    if (!r2.ok) throw new Error(r2.error || 'שגיאה בטעינת הדרכות');
+    Object.assign(totals.added, { trainings: r2.data.trainings?.added || 0 });
+    Object.assign(totals.updated, { trainings: r2.data.trainings?.updated || 0 });
+
+    // שלב 3 — נוכחות (הכי גדול, אבל עם setValues batch זה מהיר)
+    status.textContent = 'שלב 3/3 — נוכחות (250)...';
+    const r3 = await TS.apiPost('seed.import', { tabs: { attendance: data.attendance } });
+    if (!r3.ok) throw new Error(r3.error || 'שגיאה בטעינת נוכחות');
+    Object.assign(totals.added, { attendance: r3.data.attendance?.added || 0 });
+    Object.assign(totals.updated, { attendance: r3.data.attendance?.updated || 0 });
+
+    status.className = 'status-pill ok';
+    status.textContent = '✓ הצליח';
+    const lines = Object.keys(totals.added).map(k =>
+      `<strong>${k}:</strong> ${totals.added[k]} נוספו · ${totals.updated[k]} עודכנו`);
+    result.innerHTML = '<div class="alert ok"><div class="alert-body"><strong>הדמו נטען בהצלחה</strong><br>' + lines.join('<br>') + '<br><br>פתחי עכשיו את <a href="ministry/">הדשבורד של רויטל אמיר</a> או <a href="admin-school/?school=sch_005&network=ort">מנהל אורט בית הערבה</a>.</div></div>';
+  } catch (e) {
+    status.className = 'status-pill err';
+    status.textContent = 'שגיאה';
+    result.innerHTML = '<div class="alert err"><div class="alert-body"><strong>השגיאה:</strong> ' + e.message + '<br><small>וודאי שעדכנת את הקוד ב-Apps Script עם הגרסה החדשה (4 endpoints).</small></div></div>';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function runImport() {
+  const btn = document.getElementById('btn-import');
+  const status = document.getElementById('import-status');
+  const result = document.getElementById('import-result');
+
+  if (!TS.getAppsScriptUrl()) {
+    status.className = 'status-pill err';
+    status.textContent = 'אין Apps Script';
+    result.innerHTML = '<div class="alert err"><div class="alert-body">לא הוגדר Apps Script URL. גשי לדף הבית → הגדרות.</div></div>';
+    return;
+  }
+
+  btn.disabled = true;
+  status.className = 'status-pill warn';
+  status.textContent = 'טוען נתונים...';
+  result.innerHTML = '';
+
+  try {
+    const dataRes = await fetch('_data/shira-math-2026.json');
+    const data = await dataRes.json();
+
+    const payload = {
+      tabs: {
+        networks: data.networks || [],
+        schools: data.schools.map(s => ({
+          id: s.id, name: s.name, network: 'net_' + s.network,
+          principalName: '', principalEmail: '', principalPhone: '',
+          attendanceTarget: 80
+        })),
+        teachers: data.teachers.map(t => ({
+          id: t.id, school: t.school, network: 'net_' + t.network,
+          name: t.name, subject: t.subject, phone: t.phone,
+          createdAt: t.createdAt
+        })),
+        trainings: data.trainings.map(tr => ({
+          ...tr, network: 'net_cross'
+        })),
+        attendance: data.attendance
+      }
+    };
+
+    status.textContent = 'שולח ל-Apps Script...';
+    const res = await TS.apiPost('seed.import', payload);
+
+    if (res.ok) {
+      status.className = 'status-pill ok';
+      status.textContent = '✓ הצליח';
+      const lines = Object.entries(res.data).map(([k, v]) =>
+        `<strong>${k}:</strong> ${v.added || 0} נוספו, ${v.updated || 0} עודכנו (מתוך ${v.total || 0})`
+      );
+      result.innerHTML = '<div class="alert ok"><div class="alert-body"><strong>הנתונים נטענו ל-Sheet</strong><br>' + lines.join('<br>') + '</div></div>';
+    } else {
+      status.className = 'status-pill err';
+      status.textContent = 'שגיאה';
+      result.innerHTML = '<div class="alert err"><div class="alert-body"><strong>השגיאה:</strong> ' + (res.error || 'unknown') + '<br><small>וודאי שעדכנת את ה-Apps Script וביצעת Deploy חדש (ראי הוראות למעלה).</small></div></div>';
+    }
+  } catch (e) {
+    status.className = 'status-pill err';
+    status.textContent = 'שגיאה';
+    result.innerHTML = '<div class="alert err"><div class="alert-body">' + e.message + '</div></div>';
+  } finally {
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

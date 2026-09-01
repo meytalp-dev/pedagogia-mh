@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>המדריכות המקצועיות — אדמין</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .society-head {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 20px; font-weight: 700;
+    margin: 28px 0 12px; color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .guide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .guide-card .g-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .guide-card .g-name { font-weight: 700; font-size: 16px; }
+  .guide-card .g-subject { color: var(--text-2); font-size: 13px; font-weight: 600; }
+  .guide-card .g-counts { font-size: 13px; color: var(--text-2); }
+  .guide-card .g-counts b { color: var(--text); }
+  .guide-card .g-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+  .copy-mini {
+    background: var(--brand-accent); color: white;
+    border: none; border-radius: 8px; padding: 7px 14px;
+    font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .copy-mini.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .copy-mini.copied { background: var(--ok); color: white; }
+  .track-chip {
+    display: inline-flex; align-items: center;
+    padding: 1px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; line-height: 1.6;
+  }
+  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
+  .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="./" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">המדריכות המקצועיות · קישורים אישיים</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1 style="margin: 24px 0 8px;">דשבורד אישי לכל מדריכ/ה</h1>
+    <p style="color: var(--text-2); margin-bottom: 8px;">
+      כל מדריכ/ה רואה רק את המורים ששייכים לה — לפי המקצוע והמגזרים שבאחריותה —
+      עם פיצול בגרות/גמר, חיפוש, נוכחות והדרכות.
+      לוחצים "העתקת הודעה" ושולחים למדריכה בוואטסאפ.
+    </p>
+    <p style="color: var(--text-3); font-size: 13px; margin-bottom: 24px;">
+      המקור: "קבוצות הדרכה ופרטי המדריכים" תשפ"ז. עדכון פרטי מדריכה (מייל, דרייב, זום) — בקובץ
+      <code>assets/guides.js</code>.
+    </p>
+
+    <div id="content"><div class="empty" style="padding:32px;">טוען את מספרי המורים…</div></div>
+
+  </main>
+
+  <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
+    דף אדמין · מדריכות מקצועיות · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js?v=20260901"></script>
+<script src="assets/guides.js?v=20260901"></script>
+<script>
+const BASE_URL = location.origin + location.pathname.replace(/\/admin-guides\.html$/, '');
+
+async function init() {
+  let teachers = [];
+  const res = await TS.api('teachers.list', {}, { cache: 'no' });
+  if (res.ok) teachers = res.data || [];
+
+  const guides = window.TS_GUIDES || {};
+  const jewish = [], arab = [];
+  Object.keys(guides).forEach(slug => {
+    const g = Object.assign({ slug }, guides[slug]);
+    const mine = teachers.filter(t =>
+      t.subject === g.subject &&
+      (!g.sectors || g.sectors.indexOf(t.sector || 'kelali') >= 0)
+    );
+    g.counts = {
+      total: mine.length,
+      bagrut: mine.filter(t => t.type !== 'gemer').length,
+      gemer: mine.filter(t => t.type === 'gemer').length,
+      schools: new Set(mine.map(t => t.school || t.schoolName)).size
+    };
+    (g.sectors && g.sectors.indexOf('arab') >= 0 ? arab : jewish).push(g);
+  });
+
+  const card = g => {
+    const url = BASE_URL + '/guide/?g=' + g.slug;
+    return `
+    <div class="guide-card">
+      <div class="g-head">
+        <span class="g-name">${g.name}</span>
+        <span class="g-subject">${g.subject}</span>
+      </div>
+      <div class="g-counts">
+        <b>${g.counts.total}</b> מורים ·
+        <span class="track-chip bagrut">בגרות ${g.counts.bagrut}</span>
+        <span class="track-chip gemer">גמר ${g.counts.gemer}</span>
+        · ${g.counts.schools} בתי ספר
+      </div>
+      <div class="g-actions">
+        <a class="copy-mini secondary" href="${url}" target="_blank" rel="noopener">פתיחת הדשבורד</a>
+        <button type="button" class="copy-mini secondary" onclick="copyLink(this, '${url}')">העתקת קישור</button>
+        <button type="button" class="copy-mini" onclick="copyMessage(this, '${g.slug}')">העתקת הודעה לוואטסאפ</button>
+      </div>
+    </div>`;
+  };
+
+  document.getElementById('content').innerHTML = `
+    <div class="society-head">רשימת מדריכים לחברה היהודית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר כללי + חרדי)</small></div>
+    <div class="guide-grid">${jewish.map(card).join('')}</div>
+    <div class="society-head">רשימת מדריכים לחברה הערבית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר ערבי)</small></div>
+    <div class="guide-grid">${arab.map(card).join('')}</div>
+  `;
+}
+
+function flashBtn(btn, txt) {
+  const orig = btn.textContent;
+  btn.classList.add('copied');
+  btn.textContent = txt;
+  setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 2000);
+}
+
+function copyLink(btn, url) {
+  navigator.clipboard.writeText(url).then(() => flashBtn(btn, '✓ הועתק'));
+}
+
+function copyMessage(btn, slug) {
+  const g = window.TS_GUIDES[slug];
+  const url = BASE_URL + '/guide/?g=' + slug;
+  const msg = [
+    'שלום ' + g.name.split(' ')[0] + ',',
+    '',
+    'הקמנו עבורך דשבורד אישי במצפן ההדרכות של הפיקוח.',
+    'בדשבורד: כל מורי ה' + g.subject + ' שבאחריותך, בחלוקה לבגרות וגמר,',
+    'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
+    '',
+    'הקישור האישי שלך:',
+    url,
+    '',
+    'שומרים את הקישור — הוא קבוע.',
+    'בהצלחה!'
+  ].join('\n');
+  navigator.clipboard.writeText(msg).then(() => flashBtn(btn, '✓ ההודעה הועתקה'));
+}
+
+init();
+</script>
+</body>
+</html>

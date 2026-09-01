@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מבט ארצי — מצפן הפיקוח</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body data-role="ministry">
+
+  <!-- System Command Bar -->
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים</span>
+        </div>
+      </a>
+    </div>
+    <div style="display:flex; align-items:center; gap:18px;">
+      <div class="command-bar-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>מחוברת כמפקחת ארצית</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט ארצי · חדר בקרה</div>
+        <h1>מבט רשת ארצי</h1>
+        <p class="page-header-sub">תמונת מצב של נוכחות, פערים ופעולות לפי בתי ספר. סינון לפי מקצוע, ושליחת דוחות מותאמים לכל רשת.</p>
+      </div>
+      <div class="page-compass">
+        <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
+          <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
+          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+          <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
+          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
+          <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
+          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#256A8A">N</text>
+        </svg>
+        <div class="page-compass-info">
+          <strong>רויטל אמיר</strong>
+          <span id="month-label">—</span>
+          <div class="page-compass-status">
+            <span>מערכת מעודכנת</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Compass Divider -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">תמונת מצב</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Command Strip — 6 KPIs ארציים -->
+    <section class="command-strip" aria-label="נתונים ארציים">
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
+          רשתות פעילות
+        </div>
+        <div class="cmd-metric-value mint" id="cmd-networks">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
+          בתי ספר
+        </div>
+        <div class="cmd-metric-value" id="cmd-schools">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          סה"כ מורים
+        </div>
+        <div class="cmd-metric-value" id="cmd-teachers">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          הדרכות שעברו
+        </div>
+        <div class="cmd-metric-value" id="cmd-trainings">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          אחוז נוכחות ארצי
+        </div>
+        <div class="cmd-metric-value" id="cmd-rate">—</div>
+        <div class="cmd-metric-sub">יעד: 80%</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          רשומות נוכחות
+        </div>
+        <div class="cmd-metric-value mint" id="cmd-records">—</div>
+      </div>
+    </section>
+
+    <!-- Subject Filter -->
+    <div class="subject-filter-bar" id="subject-filter-bar">
+      <span class="filter-label">סינון מקצוע</span>
+      <button class="subject-pill active" data-subject="">כל המקצועות</button>
+    </div>
+
+    <!-- Compass Divider בין מדדים למגזרים -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">פילוח לפי מגזר</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Section: Sectors — הזנת המורים לפי מגזר ומקצוע -->
+    <div class="section-head-flex">
+      <div>
+        <h2>המורים שהוזנו — לפי מגזר</h2>
+        <p class="sub">כל המורים שבתי הספר הזינו למערכת, מפולחים לשלושת המגזרים. סינון המקצוע למעלה חל גם כאן.</p>
+      </div>
+    </div>
+    <div class="networks-grid" id="sector-lenses" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+      <div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-muted);">טוען...</div>
+    </div>
+
+    <!-- Sector × Subject Matrix -->
+    <section class="attention-card" style="margin-top: 20px;">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            מורים לפי מקצוע ומגזר
+          </h3>
+          <p class="sub">כמה מורים הוזנו בכל מקצוע, בכל מגזר. השורה התחתונה — סך הכול.</p>
+        </div>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table class="attention-table">
+          <thead>
+            <tr>
+              <th>מקצוע</th>
+              <th>כללי</th>
+              <th>חרדי</th>
+              <th>ערבי</th>
+              <th>סה"כ</th>
+            </tr>
+          </thead>
+          <tbody id="sector-matrix-body">
+            <tr><td colspan="5" style="padding:24px; text-align:center; color:var(--text-muted);">טוען...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Compass Divider בין מגזרים לרשתות -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">פילוח לפי רשת</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5Z"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Section: Networks Featured (החלשות ביותר — דורש תשומת לב) -->
+    <div class="section-head-flex">
+      <div>
+        <h2>רשתות שדורשות תשומת לב</h2>
+        <p class="sub">2-3 רשתות עם אחוז הנוכחות הנמוך ביותר. מציגות עדשת מבט מורחבת.</p>
+      </div>
+      <span class="badge-attention">דורש מעקב</span>
+    </div>
+    <div class="networks-featured" id="networks-featured">
+      <div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-muted);">טוען...</div>
+    </div>
+
+    <!-- Section: All Networks -->
+    <div class="section-head-flex" style="margin-top: 32px;">
+      <div>
+        <h2>כלל הרשתות</h2>
+        <p class="sub">לחיצה על "שליחה" פותחת מייל מוכן לרשת עם דוח חודשי מפורט.</p>
+      </div>
+    </div>
+    <div class="networks-grid" id="networks-grid">
+      <div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-muted);">טוען...</div>
+    </div>
+
+    <!-- Compass Divider לפני הטבלה -->
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">פירוט בתי ספר</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <!-- Attention Table -->
+    <section class="attention-card">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+            בתי ספר בנוכחות נמוכה — 10 ראשונים
+          </h3>
+          <p class="sub">בתי ספר ממוינים מהחלש לחזק. לחיצה על "פתח" תפתח את הדשבורד של מנהל בית הספר.</p>
+        </div>
+        <span class="badge-attention">דורש מעקב</span>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table class="attention-table">
+          <thead>
+            <tr>
+              <th>בית ספר</th>
+              <th>רשת</th>
+              <th>מגזר</th>
+              <th>מורים</th>
+              <th>אחוז נוכחות</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="weak-schools-body">
+            <tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">טוען...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+<script src="../assets/app.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>טעינת מגזרים — אדמין</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .pilot-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .pilot-step h3 { margin: 0 0 6px; font-size: 18px; }
+  .pilot-step p { color: var(--text-2); margin: 0 0 16px; font-size: 14px; }
+  .actions-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .status-pill.ok    { background: var(--ok-soft);   color: var(--ok); }
+  .status-pill.warn  { background: var(--warn-soft); color: #92400e; }
+  .status-pill.err   { background: var(--err-soft);  color: var(--err); }
+  .status-pill.idle  { background: var(--surface-2); color: var(--text-2); }
+  .sector-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 12px 0; }
+  .sector-summary .cell { background: var(--surface-2); border-radius: 10px; padding: 14px 16px; text-align: center; }
+  .sector-summary .cell b { display: block; font-size: 26px; }
+  .sector-summary .cell small { color: var(--text-2); }
+  .map-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  .map-table th, .map-table td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+  .map-table th { color: var(--text-2); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="./" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">שיוך מגזרים למורים · כללי / חרדי / ערבי</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1 style="margin: 24px 0 8px;">טעינת מגזרים לכל המורים במערכת</h1>
+    <p style="color: var(--text-2); margin-bottom: 24px;">
+      כל בית ספר משויך למגזר לפי <strong>פריסת הפיקוח תשפ"ז</strong> (64 מוסדות).
+      הכפתור מעדכן את שדה המגזר אצל כל המורים שהוזנו — לפי בית הספר שלהם.
+      פעולה בטוחה: לא נוגעת בשם, בטלפון או בכל שדה אחר, ואפשר להריץ שוב בכל רגע.
+    </p>
+
+    <div class="pilot-step">
+      <h3>1 · תמונת מצב נוכחית</h3>
+      <p>מה המערכת מכילה כרגע, ומה יקרה אחרי הטעינה.</p>
+      <div id="preview" style="font-size:14px; color:var(--text-2);">טוען נתונים מהמערכת…</div>
+    </div>
+
+    <div class="pilot-step">
+      <h3>2 · עדכון המגזרים</h3>
+      <p>העדכון רץ במנות של 70 מורים (כדי לא לחרוג ממגבלת הזמן של Apps Script). זמן משוער: עד דקה.</p>
+      <div class="actions-row">
+        <button class="btn btn-primary" id="btn-load" onclick="runSectorLoad()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          עדכון מגזרים לכל המורים
+        </button>
+        <span class="status-pill idle" id="load-status">ממתין לטעינת נתונים</span>
+      </div>
+      <div id="load-result" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="pilot-step">
+      <h3>3 · מיפוי בתי הספר</h3>
+      <p>השיוך המלא — בית ספר ← מגזר. שני מוסדות סווגו ידנית ומסומנים לבדיקה שלך.</p>
+      <div id="map-list" style="max-height: 420px; overflow-y: auto;">טוען…</div>
+    </div>
+
+  </main>
+
+  <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
+    דף אדמין · שיוך מגזרים · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+const SEC_HEB = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
+const REVIEW_IDS = ['sch_003', 'sch_021'];  // סווגו ידנית — לאישור
+let sectorMap = null;     // { schools: [{id, name, network, sector}] }
+let teachers = [];
+let pending = [];         // [{id, sector}] — מורים שהמגזר שלהם צריך להשתנות
+
+async function init() {
+  try {
+    const mapRes = await fetch('_data/sector-map-2027.json');
+    sectorMap = await mapRes.json();
+    renderMapList();
+
+    const res = await TS.api('teachers.list', {}, { cache: 'no' });
+    if (!res.ok) throw new Error(res.error || 'שגיאה בקריאת מורים');
+    teachers = res.data || [];
+    computePending();
+    renderPreview();
+    document.getElementById('btn-load').disabled = pending.length === 0;
+    const st = document.getElementById('load-status');
+    if (pending.length === 0) {
+      st.className = 'status-pill ok';
+      st.textContent = '✓ כל המורים כבר משויכים נכון';
+    } else {
+      st.className = 'status-pill idle';
+      st.textContent = pending.length + ' מורים ממתינים לעדכון';
+    }
+  } catch (e) {
+    document.getElementById('preview').innerHTML =
+      '<div class="alert err"><div class="alert-body">' + e.message + '</div></div>';
+  }
+}
+
+function sectorOf(t) {
+  const bySchool = sectorMap.schools.find(s => s.id === t.school);
+  if (bySchool && bySchool.sector) return bySchool.sector;
+  const net = (t.network || '').replace(/^net_/, '');
+  if (net === 'sakhnin') return 'arab';
+  if (net === 'ezraei_haredi' || net === 'shulamit_haredi') return 'haredi';
+  return 'kelali';
+}
+
+function computePending() {
+  pending = [];
+  teachers.forEach(t => {
+    const target = sectorOf(t);
+    if (t.sector !== target) pending.push({ id: t.id, sector: target });
+  });
+}
+
+function renderPreview() {
+  const now = {}, after = {};
+  teachers.forEach(t => {
+    now[t.sector || '—'] = (now[t.sector || '—'] || 0) + 1;
+    const target = sectorOf(t);
+    after[target] = (after[target] || 0) + 1;
+  });
+  const cells = obj => ['kelali', 'haredi', 'arab'].map(k =>
+    `<div class="cell"><b>${obj[k] || 0}</b><small>${SEC_HEB[k]}</small></div>`).join('');
+  document.getElementById('preview').innerHTML = `
+    <div><strong>${teachers.length} מורים</strong> במערכת כרגע · <strong>${pending.length}</strong> מהם דורשים עדכון מגזר.</div>
+    <div style="margin-top:10px; font-weight:600;">אחרי הטעינה:</div>
+    <div class="sector-summary">${cells(after)}</div>
+  `;
+}
+
+function renderMapList() {
+  const rows = sectorMap.schools
+    .slice()
+    .sort((a, b) => (a.sector || '').localeCompare(b.sector || '') || a.name.localeCompare(b.name, 'he'))
+    .map(s => `
+      <tr>
+        <td>${s.name}${REVIEW_IDS.includes(s.id) ? ' <span class="status-pill warn" style="font-size:11px;">לבדיקתך</span>' : ''}</td>
+        <td>${s.network ? TS.netChip(s.network) : '—'}</td>
+        <td>${TS.secChip(s.sector)}</td>
+      </tr>`).join('');
+  document.getElementById('map-list').innerHTML = `
+    <table class="map-table">
+      <thead><tr><th>בית ספר</th><th>רשת</th><th>מגזר</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+async function runSectorLoad() {
+  const btn = document.getElementById('btn-load');
+  const status = document.getElementById('load-status');
+  const result = document.getElementById('load-result');
+  btn.disabled = true;
+  status.className = 'status-pill warn';
+
+  const CHUNK = 70;
+  let done = 0;
+  try {
+    for (let i = 0; i < pending.length; i += CHUNK) {
+      const chunk = pending.slice(i, i + CHUNK);
+      status.textContent = 'מעדכן… ' + done + '/' + pending.length;
+      const res = await TS.apiPost('seed.import', { tabs: { teachers: chunk } });
+      if (!res.ok) throw new Error(res.error || 'שגיאה בעדכון');
+      done += (res.data.teachers && res.data.teachers.updated) || 0;
+    }
+    status.className = 'status-pill ok';
+    status.textContent = '✓ הושלם';
+    result.innerHTML = '<div class="alert ok"><div class="alert-body"><strong>' + done +
+      ' מורים עודכנו.</strong><br>אפשר לראות את הפילוח החדש ב<a href="ministry/">מצפן הפיקוח — מבט ארצי</a>.</div></div>';
+    // רענון תמונת המצב
+    const res2 = await TS.api('teachers.list', {}, { cache: 'no' });
+    if (res2.ok) { teachers = res2.data || []; computePending(); renderPreview(); }
+  } catch (e) {
+    status.className = 'status-pill err';
+    status.textContent = 'שגיאה';
+    result.innerHTML = '<div class="alert err"><div class="alert-body"><strong>השגיאה:</strong> ' + e.message +
+      '<br><small>אפשר ללחוץ שוב — העדכון ממשיך מאיפה שעצר (upsert לפי id).</small></div></div>';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

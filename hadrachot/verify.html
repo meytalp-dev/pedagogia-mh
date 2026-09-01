@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אימות רשימת המורים — מצפן ההדרכות</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body { background: var(--bg, #F4F7F8); }
+  .wrap { max-width: 660px; margin: 0 auto; padding: 20px 16px 60px; }
+  .head-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin-bottom: 16px; text-align: center;
+  }
+  .head-card .compass-icon { width: 40px; height: 40px; color: var(--primary, #256A8A); }
+  .head-card h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 22px; margin: 8px 0 4px; }
+  .head-card p { color: var(--text-2); font-size: 14px; margin: 0; line-height: 1.7; }
+  .roster-card, .form-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 22px; margin-bottom: 16px;
+  }
+  .subj-group { margin-bottom: 14px; }
+  .subj-group .sg-head {
+    font-weight: 700; font-size: 15px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .subj-group .sg-head .n { font-weight: 400; font-size: 12.5px; color: var(--text-3); }
+  .subj-group ul { margin: 0; padding-right: 18px; color: var(--text-2); font-size: 14px; line-height: 1.9; }
+  .track-tag { font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; margin-inline-start: 6px; }
+  .track-tag.gemer { background: #F8DDD0; color: #9a3f1d; }
+  .form-label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 6px; }
+  .input, .textarea { width: 100%; box-sizing: border-box; }
+  .choice {
+    display: flex; gap: 10px; align-items: flex-start;
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+  }
+  .choice input { margin-top: 3px; accent-color: var(--primary, #256A8A); width: 17px; height: 17px; }
+  .choice b { display: block; font-size: 14.5px; }
+  .choice small { color: var(--text-2); font-size: 13px; line-height: 1.6; display: block; }
+  .choice.sel { border-color: var(--primary, #256A8A); background: #F0F6F9; }
+  .btn-full { width: 100%; justify-content: center; margin-top: 14px; }
+  .fix-link {
+    display: block; text-align: center; margin: 4px 0 0; padding: 12px;
+    border: 1px dashed var(--border); border-radius: 12px;
+    color: var(--primary, #256A8A); font-weight: 600; font-size: 14px; text-decoration: none;
+  }
+  .done-card {
+    background: var(--ok-soft, #e7f6ef); border-radius: 16px;
+    padding: 32px 24px; text-align: center; color: #14532d;
+  }
+  .done-card b { font-size: 18px; display: block; margin-bottom: 6px; }
+  .msg-err { background: var(--err-soft, #fdeaea); color: #7f1d1d; border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-top: 10px; display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head-card">
+    <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="2" fill="currentColor"/>
+      <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+      <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+    </svg>
+    <h1 id="school-title">אימות רשימת המורים</h1>
+    <p>יחידת הפיקוח על הדרכות מורים · משרד העבודה<br>
+       נא לוודא שכל מורה מופיע/ה במקצוע הנכון ובמסלול הנכון (בגרות/גמר).</p>
+  </div>
+
+  <div class="roster-card" id="roster"><div class="empty" style="padding:24px; text-align:center;">טוען את הרשימה…</div></div>
+
+  <div class="form-card" id="form-card" hidden>
+    <a class="fix-link" id="fix-link" target="_blank" rel="noopener">
+      ✎ יש תיקונים? פותחים כאן את מסך העריכה, מתקנים, וחוזרים לאשר
+    </a>
+
+    <form id="verify-form">
+      <label class="form-label">מה מצב הרשימה?</label>
+      <label class="choice" data-v="approved">
+        <input type="radio" name="status" value="approved" required>
+        <span><b>הרשימה נכונה — מאושרת כפי שהיא</b>
+        <small>כל המורים מופיעים, כל אחד/ת במקצוע ובמסלול הנכונים.</small></span>
+      </label>
+      <label class="choice" data-v="fixed">
+        <input type="radio" name="status" value="fixed" required>
+        <span><b>ביצעתי תיקונים — ועכשיו הרשימה מאושרת</b>
+        <small>תיקנתי/הוספתי במסך העריכה, והרשימה מעודכנת ונכונה.</small></span>
+      </label>
+
+      <label class="form-label" for="by">שם המאשר/ת ותפקיד *</label>
+      <input class="input" id="by" required placeholder="למשל: רווית גל, מנהלת">
+
+      <label class="form-label" for="notes">הערות (לא חובה)</label>
+      <textarea class="textarea" id="notes" rows="3" placeholder="דברים שכדאי שנדע — מורה שעוזב/ת, מקצוע חסר..."></textarea>
+
+      <button type="submit" class="btn btn-primary btn-full" id="btn-send">שליחת האישור</button>
+      <div class="msg-err" id="err"></div>
+    </form>
+  </div>
+
+  <div class="done-card" id="done" hidden>
+    <b>✓ האישור נקלט — תודה רבה!</b>
+    הרשימה של בית הספר סומנה כמאומתת אצל יחידת הפיקוח.
+    אפשר לסגור את העמוד.
+  </div>
+
+</div>
+
+<script src="assets/app.js?v=20260901b"></script>
+<script>
+const schoolId = TS.urlParam('school', '');
+let school = null, teacherCount = 0;
+const SUBJECT_ORDER = ['מתמטיקה','אנגלית','עברית','ספרות','היסטוריה','אזרחות','תנ"ך','ערבית'];
+// ערכים משובשים היסטוריים מוצגים בשם הנכון
+const SUBJECT_DISPLAY = { 'תנ': 'תנ"ך' };
+
+async function init() {
+  if (!schoolId) {
+    document.getElementById('roster').innerHTML =
+      '<div style="padding:12px; text-align:center; color:var(--text-2);">הקישור חסר את זיהוי בית הספר — נא להשתמש בקישור האישי שקיבלתם ממיטל.</div>';
+    return;
+  }
+  document.getElementById('fix-link').href = 'admin-school/setup.html?school=' + encodeURIComponent(schoolId);
+
+  const [sRes, tRes] = await Promise.all([
+    TS.api('school.get', { id: schoolId }, { cache: 'no' }),
+    TS.api('teachers.list', { school: schoolId }, { cache: 'no' })
+  ]);
+  school = (sRes.ok && sRes.data) ? sRes.data : { id: schoolId, name: '' };
+  const teachers = (tRes.ok && tRes.data) ? tRes.data : [];
+  teacherCount = teachers.length;
+
+  document.getElementById('school-title').textContent = 'אימות רשימת המורים — ' + (school.name || '');
+
+  if (!teachers.length) {
+    document.getElementById('roster').innerHTML =
+      '<div style="padding:12px; text-align:center; color:var(--text-2);">עדיין לא הוזנו מורים לבית הספר. אפשר להזין במסך העריכה ואז לחזור לאשר.</div>';
+  } else {
+    const bySubj = {};
+    teachers.forEach(t => {
+      const disp = SUBJECT_DISPLAY[t.subject] || t.subject;
+      (bySubj[disp] = bySubj[disp] || []).push(t);
+    });
+    const order = [...SUBJECT_ORDER.filter(s => bySubj[s]),
+                   ...Object.keys(bySubj).filter(s => !SUBJECT_ORDER.includes(s)).sort()];
+    document.getElementById('roster').innerHTML =
+      '<div style="font-weight:700; margin-bottom:12px;">' + teachers.length + ' מורים · ' + order.length + ' מקצועות</div>' +
+      order.map(s => `
+        <div class="subj-group">
+          <div class="sg-head">${s} <span class="n">${bySubj[s].length} מורים</span></div>
+          <ul>${bySubj[s].map(t =>
+            '<li>' + t.name + (t.type === 'gemer' ? '<span class="track-tag gemer">גמר</span>' : '') + '</li>'
+          ).join('')}</ul>
+        </div>`).join('');
+  }
+  document.getElementById('form-card').hidden = false;
+}
+
+document.querySelectorAll('.choice').forEach(c =>
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.choice').forEach(x => x.classList.remove('sel'));
+    c.classList.add('sel');
+  }));
+
+document.getElementById('verify-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('btn-send');
+  const err = document.getElementById('err');
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'שולח…';
+
+  const payload = {
+    kind: 'school-verify',
+    school: schoolId,
+    schoolName: school.name || '',
+    status: (document.querySelector('input[name="status"]:checked') || {}).value || '',
+    by: document.getElementById('by').value.trim(),
+    notes: document.getElementById('notes').value.trim(),
+    teachers: teacherCount,
+    at: new Date().toISOString()
+  };
+  const res = await TS.apiPost('questions.create', {
+    teacherId: 'verify:' + schoolId,
+    question: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    document.getElementById('form-card').hidden = true;
+    document.getElementById('roster').hidden = true;
+    document.getElementById('done').hidden = false;
+    window.scrollTo(0, 0);
+  } else {
+    btn.disabled = false; btn.textContent = 'שליחת האישור';
+    err.textContent = 'השליחה נכשלה — נסו שוב בעוד רגע. (' + (res.error || 'שגיאה') + ')';
+    err.style.display = 'block';
+  }
+});
+
+init();
+</script>
+</body>
+</html>

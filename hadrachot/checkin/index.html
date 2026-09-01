@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>צ'ק-אין להדרכה</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+body { font-family: 'Heebo', sans-serif; }
+.checkin-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(200, 160, 77, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(11, 37, 69, 0.04) 0%, transparent 50%);
+  padding: 16px;
+}
+.checkin-card {
+  background: white;
+  border-radius: 8px;
+  padding: 36px 28px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(11, 37, 69, 0.12);
+  border: 1px solid var(--gold-line);
+}
+.step-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--brand-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.checkin-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--brand-primary);
+  color: var(--brand-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.checkin-icon svg { width: 32px; height: 32px; }
+h2 {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 26px;
+  color: var(--brand-primary);
+  text-align: center;
+  margin: 0 0 8px;
+}
+.training-summary {
+  background: var(--bg-2);
+  border: 1px solid var(--gold-line);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+}
+.training-summary .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+}
+.training-summary .label { color: var(--text-2); }
+.training-summary .value { font-weight: 600; color: var(--text); }
+
+.list-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+.list-item {
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item:hover { background: var(--bg-2); }
+.list-item .name { font-weight: 700; color: var(--brand-primary); }
+.list-item .meta { font-size: 12px; color: var(--text-2); }
+.list-item.selected { background: var(--gold-soft); }
+
+.confirm-card {
+  border: 2px solid var(--brand-accent);
+  border-radius: 8px;
+  padding: 20px;
+  background: var(--gold-soft);
+  margin: 16px 0;
+}
+.confirm-card h3 {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: var(--brand-primary);
+}
+.confirm-card .info { font-size: 14px; color: var(--text); }
+
+.btn-primary {
+  width: 100%;
+  background: var(--brand-primary);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 6px;
+  font-family: 'Heebo', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  letter-spacing: 0.05em;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--brand-secondary); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: var(--brand-primary);
+  font-family: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 600;
+  margin: 12px 0 4px;
+}
+.field-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  background: white;
+}
+</style>
+</head>
+<body>
+<div class="checkin-shell">
+  <div class="checkin-card">
+
+    <div id="state-loading" style="text-align:center; padding: 24px;">
+      <div class="spinner" style="width:32px; height:32px; margin: 0 auto 16px;"></div>
+      <p style="color:var(--text-2);">בודק את ההדרכה...</p>
+    </div>
+
+    <div id="state-invalid" hidden style="text-align:center;">
+      <div class="checkin-icon" style="background: var(--err); color: white;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <h2>קישור לא תקין</h2>
+      <p style="color:var(--text-2); margin-top:8px;">הקישור פג תוקף או שגוי. בקשי מהמדריך/ה את הקישור החדש.</p>
+    </div>
+
+    <!-- Step 1: אישור פרטי ההדרכה -->
+    <div id="state-confirm-training" hidden>
+      <div class="step-pill">שלב 1 מתוך 4</div>
+      <h2>אישור פרטי ההדרכה</h2>
+      <p style="text-align:center; color:var(--text-2); font-size:14px; margin-top:4px;">ודאי שאת רשומה להדרכה הנכונה.</p>
+      <div class="training-summary">
+        <div class="row"><span class="label">מקצוע</span><span class="value" id="ts-subject">—</span></div>
+        <div class="row"><span class="label">תאריך</span><span class="value" id="ts-date">—</span></div>
+        <div class="row"><span class="label">מדריכ/ה</span><span class="value" id="ts-guide">—</span></div>
+        <div class="row"><span class="label">מיקום</span><span class="value" id="ts-location">—</span></div>
+      </div>
+      <button class="btn-primary" onclick="goToStep('network')">זוהי ההדרכה — המשך</button>
+    </div>
+
+    <!-- Step 2: בחירת רשת -->
+    <div id="state-network" hidden>
+      <div class="step-pill">שלב 2 מתוך 4</div>
+      <h2>בחרי את הרשת שלך</h2>
+      <label class="field-label">רשת</label>
+      <select class="field-input" id="net-select" onchange="onNetworkPicked()">
+        <option value="">בחרי רשת</option>
+      </select>
+    </div>
+
+    <!-- Step 3: בחירת בית ספר -->
+    <div id="state-school" hidden>
+      <div class="step-pill">שלב 3 מתוך 4</div>
+      <h2>בחרי את בית הספר שלך</h2>
+      <div id="school-pick-wrap">
+        <label class="field-label">חיפוש בית ספר</label>
+        <input type="search" class="field-input" id="school-search" placeholder="התחילי להקליד שם בית ספר...">
+        <div class="list-card" id="school-list"></div>
+        <div style="text-align:center;">
+          <button class="btn-text" type="button" onclick="showFreeSchool()">בית הספר שלי לא מופיע ברשימה</button>
+        </div>
+      </div>
+      <div id="school-free-wrap" hidden>
+        <label class="field-label">שם בית הספר</label>
+        <input type="text" class="field-input" id="school-free" placeholder="הקלידי את שם בית הספר המלא">
+        <button class="btn-primary" type="button" onclick="useFreeSchool()">המשך</button>
+        <div style="text-align:center;">
+          <button class="btn-text" type="button" onclick="hideFreeSchool()">חזרה לרשימה</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: בחירת מורה + אישור -->
+    <div id="state-teacher" hidden>
+      <div class="step-pill">שלב 4 מתוך 4</div>
+      <h2>בחרי את שמך</h2>
+      <div id="teacher-pick-wrap">
+        <label class="field-label">חיפוש מורה</label>
+        <input type="search" class="field-input" id="teacher-search" placeholder="התחילי להקליד שם...">
+        <div class="list-card" id="teacher-list"></div>
+        <div style="text-align:center;">
+          <button class="btn-text" type="button" onclick="showFreeTeacher()">השם שלי לא מופיע ברשימה</button>
+        </div>
+      </div>
+      <div id="teacher-free-wrap" hidden>
+        <label class="field-label">שם מלא *</label>
+        <input type="text" class="field-input" id="teacher-free-name" placeholder="שם פרטי ושם משפחה">
+        <label class="field-label">טלפון (לא חובה)</label>
+        <input type="tel" inputmode="tel" class="field-input" id="teacher-free-phone" placeholder="05...">
+        <button class="btn-primary" type="button" onclick="useFreeTeacher()">המשך</button>
+        <div style="text-align:center;">
+          <button class="btn-text" type="button" onclick="hideFreeTeacher()">חזרה לרשימה</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: אישור סופי -->
+    <div id="state-final-confirm" hidden>
+      <div class="step-pill">אישור סופי</div>
+      <h2>אישור צ'ק-אין</h2>
+      <div class="confirm-card">
+        <h3 id="fc-name">—</h3>
+        <div class="info">
+          <div id="fc-school"></div>
+          <div id="fc-subject"></div>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-confirm-checkin" onclick="confirmCheckin()">אישור — רשום אותי</button>
+      <div style="text-align:center;">
+        <button class="btn-text" onclick="goToStep('teacher')">לא אני — חזור</button>
+      </div>
+    </div>
+
+    <!-- Step done -->
+    <div id="state-success" hidden style="text-align:center;">
+      <div class="checkin-icon" style="background: var(--ok); color: white;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>נרשמת בהצלחה</h2>
+      <p style="color:var(--text-2); margin-top:8px;" id="success-name">—</p>
+      <p style="color:var(--text-3); font-size:13px; margin-top:4px;" id="success-meta">—</p>
+      <div id="duplicate-note" hidden style="background:var(--warn-soft); color:#78350f; padding:12px; border-radius:6px; margin-top:16px; font-size:14px;">
+        כבר נרשמת קודם — לא יוצר רישום כפול.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../assets/app.js"></script>
+<script>
+const token = TS.urlParam('t', '');
+let training = null;
+let allNetworks = [];
+let allSchools = [];
+let allTeachers = [];
+let pickedNetwork = '';
+let pickedSchool = null;
+let pickedTeacher = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!token) { show('invalid'); return; }
+
+  if (!TS.getAppsScriptUrl()) {
+    training = { id:'tr1', subject:'מתמטיקה', date:'2026-06-15', location:'זום', guideName:'שירה סיבוני' };
+    allNetworks = [{id:'net_ort', name:'אורט'}, {id:'net_amal', name:'עמל'}];
+    allSchools = [{id:'s1', name:'אורט בית הערבה', network:'net_ort'}];
+    allTeachers = [{id:'t1', name:'דמו', school:'s1', subject:'מתמטיקה', phone:'0501234567'}];
+    populateTraining();
+    show('confirm-training');
+    return;
+  }
+
+  const [trainRes, netsRes, schoolsRes, teachersRes] = await Promise.all([
+    TS.api('qr.training', { token }, { cache: 'no' }),
+    TS.api('networks.list'),
+    TS.api('schools.list'),
+    TS.api('teachers.list', {})
+  ]);
+
+  if (!trainRes.ok) { show('invalid'); return; }
+  training = trainRes.data;
+  allNetworks = (netsRes.data || []).map(n => ({ id: n.id, name: n.name }));
+  allSchools = schoolsRes.data || [];
+  allTeachers = (teachersRes.data || []).filter(t =>
+    !training.subject || t.subject === training.subject
+  );
+
+  populateTraining();
+  show('confirm-training');
+});
+
+function show(name) {
+  ['loading','invalid','confirm-training','network','school','teacher','final-confirm','success'].forEach(s => {
+    const el = document.getElementById('state-' + s);
+    if (el) el.hidden = (s !== name);
+  });
+}
+
+function goToStep(step) {
+  if (step === 'network') {
+    populateNetworks();
+    show('network');
+  } else if (step === 'school') {
+    hideFreeSchool();
+    populateSchools();
+    show('school');
+  } else if (step === 'teacher') {
+    // בית ספר שהוקלד ידנית — אין מורות ברשימה, עוברים ישר להזנת שם
+    if (pickedSchool && pickedSchool.free) {
+      show('teacher');
+      showFreeTeacher();
+    } else {
+      hideFreeTeacher();
+      populateTeachers();
+      show('teacher');
+    }
+  } else if (step === 'confirm-training') {
+    show('confirm-training');
+  }
+}
+
+/* ===== רישום פתוח — בית ספר שאינו ברשימה ===== */
+function showFreeSchool() {
+  document.getElementById('school-pick-wrap').hidden = true;
+  document.getElementById('school-free-wrap').hidden = false;
+  document.getElementById('school-free').focus();
+}
+function hideFreeSchool() {
+  const free = document.getElementById('school-free-wrap');
+  const pick = document.getElementById('school-pick-wrap');
+  if (free) free.hidden = true;
+  if (pick) pick.hidden = false;
+}
+function useFreeSchool() {
+  const name = (document.getElementById('school-free').value || '').trim();
+  if (!name) { document.getElementById('school-free').focus(); return; }
+  pickedSchool = { id: '', name: name, free: true };
+  goToStep('teacher');
+}
+
+/* ===== רישום פתוח — מורה שאינה ברשימה ===== */
+function showFreeTeacher() {
+  document.getElementById('teacher-pick-wrap').hidden = true;
+  document.getElementById('teacher-free-wrap').hidden = false;
+  document.getElementById('teacher-free-name').focus();
+}
+function hideFreeTeacher() {
+  document.getElementById('teacher-free-wrap').hidden = true;
+  document.getElementById('teacher-pick-wrap').hidden = false;
+}
+function useFreeTeacher() {
+  const name = (document.getElementById('teacher-free-name').value || '').trim();
+  if (!name) { document.getElementById('teacher-free-name').focus(); return; }
+  const phone = (document.getElementById('teacher-free-phone').value || '').trim();
+  pickedTeacher = { id: '', name: name, phone: phone, free: true };
+  document.getElementById('fc-name').textContent = name;
+  document.getElementById('fc-school').textContent = 'בית ספר: ' + (pickedSchool.name || '');
+  document.getElementById('fc-subject').textContent = 'מקצוע: ' + (training.subject || '');
+  show('final-confirm');
+}
+
+function populateTraining() {
+  document.getElementById('ts-subject').textContent = training.subject || '—';
+  document.getElementById('ts-date').textContent = TS.formatDate(training.date);
+  document.getElementById('ts-guide').textContent = training.guideName || '—';
+  document.getElementById('ts-location').textContent = training.location || 'לא צוין';
+}
+
+function populateNetworks() {
+  const sel = document.getElementById('net-select');
+  sel.innerHTML = '<option value="">בחרי רשת</option>' +
+    allNetworks.map(n => `<option value="${n.id}">${n.name}</option>`).join('');
+}
+
+function onNetworkPicked() {
+  const v = document.getElementById('net-select').value;
+  if (!v) return;
+  pickedNetwork = v;
+  goToStep('school');
+}
+
+function populateSchools() {
+  document.getElementById('school-search').value = '';
+  renderSchoolList();
+  document.getElementById('school-search').addEventListener('input', renderSchoolList);
+}
+
+function renderSchoolList() {
+  const q = (document.getElementById('school-search').value || '').trim().toLowerCase();
+  const netKey = pickedNetwork.replace(/^net_/, '');
+  const list = allSchools.filter(s => {
+    const sNet = (s.network || '').replace(/^net_/, '');
+    if (sNet !== netKey && s.network !== pickedNetwork) return false;
+    if (q && !(s.name || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const cont = document.getElementById('school-list');
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty" style="padding:16px;">לא נמצא בית ספר ברשת הזאת. אם הוא לא ברשימה — לחצי על "בית הספר שלי לא מופיע ברשימה".</div>';
+    return;
+  }
+  cont.innerHTML = list.slice(0, 50).map(s => `
+    <div class="list-item" onclick="pickSchool('${s.id}')">
+      <div class="name">${escapeHtml(s.name)}</div>
+    </div>
+  `).join('');
+}
+
+function pickSchool(id) {
+  pickedSchool = allSchools.find(s => s.id === id);
+  goToStep('teacher');
+}
+
+function populateTeachers() {
+  document.getElementById('teacher-search').value = '';
+  renderTeacherList();
+  document.getElementById('teacher-search').addEventListener('input', renderTeacherList);
+}
+
+function renderTeacherList() {
+  const q = (document.getElementById('teacher-search').value || '').trim().toLowerCase();
+  const list = allTeachers.filter(t => {
+    if (t.school !== pickedSchool.id) return false;
+    if (q && !(t.name || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const cont = document.getElementById('teacher-list');
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty" style="padding:16px;">לא נמצאו מורות בבית ספר זה. אם שמך לא מופיע — לחצי על "השם שלי לא מופיע ברשימה".</div>';
+    return;
+  }
+  // זיהוי כפילויות בשם — נציג meta disambiguation
+  const nameCounts = {};
+  list.forEach(t => { nameCounts[t.name] = (nameCounts[t.name] || 0) + 1; });
+
+  cont.innerHTML = list.slice(0, 50).map(t => {
+    const showMeta = (nameCounts[t.name] || 0) > 1;
+    const phoneLast = t.phone ? String(t.phone).replace(/[^\d]/g, '').slice(-3) : '';
+    const metaParts = [];
+    if (showMeta && t.subject) metaParts.push(t.subject);
+    if (showMeta && phoneLast) metaParts.push('***' + phoneLast);
+    return `
+      <div class="list-item" onclick="pickTeacher('${t.id}')">
+        <div class="name">${escapeHtml(t.name)}</div>
+        ${metaParts.length ? `<div class="meta">${metaParts.join(' · ')}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function pickTeacher(id) {
+  pickedTeacher = allTeachers.find(t => t.id === id);
+  document.getElementById('fc-name').textContent = pickedTeacher.name;
+  document.getElementById('fc-school').textContent = 'בית ספר: ' + (pickedSchool.name || '');
+  document.getElementById('fc-subject').textContent = 'מקצוע: ' + (pickedTeacher.subject || training.subject);
+  show('final-confirm');
+}
+
+async function confirmCheckin() {
+  const btn = document.getElementById('btn-confirm-checkin');
+  btn.disabled = true;
+  btn.textContent = 'רושמת...';
+  if (!TS.getAppsScriptUrl()) {
+    showSuccess(pickedTeacher.name, false);
+    return;
+  }
+  const payload = { token };
+  if (pickedTeacher.id) {
+    payload.teacherId = pickedTeacher.id;
+  } else {
+    // רישום פתוח — שולחים שם + בית ספר + רשת כדי שהשרת יאתר/ייצור רשומת מורה
+    payload.teacherName = pickedTeacher.name;
+    payload.schoolName = (pickedSchool && pickedSchool.name) || '';
+    payload.network = (pickedNetwork || '').replace(/^net_/, '');
+    payload.phone = pickedTeacher.phone || '';
+  }
+  const res = await TS.apiPost('qr.checkin', payload);
+  if (res.ok) {
+    showSuccess(pickedTeacher.name, res.data && res.data.duplicate);
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'אישור — רשום אותי';
+    alert('שגיאה — ' + (res.error || ''));
+  }
+}
+
+function showSuccess(name, duplicate) {
+  show('success');
+  document.getElementById('success-name').textContent = name;
+  document.getElementById('success-meta').textContent =
+    `הדרכת ${training.subject} · ${TS.formatDate(training.date)}`;
+  document.getElementById('duplicate-note').hidden = !duplicate;
+}
+
+function escapeHtml(s) {
+  return (s || '').toString()
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+</script>
+</body>
+</html>

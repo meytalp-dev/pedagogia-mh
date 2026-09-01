@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הזנת מורים — מנהל בית ספר</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+/* ---------- hero ---------- */
+.setup-hero {
+  background: linear-gradient(135deg, #dcfce7 0%, #cffafe 100%);
+  border-radius: 18px;
+  padding: 26px 30px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.setup-hero h1 { margin: 0 0 6px; }
+.setup-hero .sub { color: var(--text-2); font-size: 14px; margin: 0 0 10px; max-width: 560px; }
+.hero-line { font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.setup-hero-stats { background: white; padding: 14px 24px; border-radius: 12px; text-align: center; }
+.setup-hero-stats .num {
+  font-family: 'Frank Ruhl Libre', serif; font-size: 34px; font-weight: 800;
+  color: var(--ok, #16a34a); line-height: 1;
+}
+.setup-hero-stats .lbl { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.save-status { font-size: 12px; margin-top: 8px; font-weight: 700; }
+.save-status.ok { color: #166534; }
+.save-status.busy { color: #92400E; }
+
+/* ---------- school picker ---------- */
+.school-picker-card { max-width: 560px; margin: 40px auto; }
+.school-picker-card .picker-sub { color: var(--text-2); font-size: 14px; margin: 4px 0 16px; }
+.school-list { max-height: 340px; overflow-y: auto; margin-top: 12px; border: 1px solid var(--border, #D8E1E5); border-radius: 12px; }
+.school-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; text-align: right; padding: 12px 16px; border: none; background: none;
+  cursor: pointer; font: inherit; border-bottom: 1px solid var(--border, #D8E1E5);
+}
+.school-item:last-child { border-bottom: none; }
+.school-item:hover, .school-item:focus-visible { background: #F4F7F8; }
+.school-item .s-name { font-weight: 600; }
+.s-net-none { font-size: 12px; color: #92400E; background: #FEF3C7; border-radius: 999px; padding: 3px 12px; }
+.school-list .empty-msg { padding: 20px; text-align: center; color: var(--text-3); font-size: 14px; }
+
+/* ---------- entry tabs ---------- */
+.entry-tabs { display: flex; gap: 8px; }
+.entry-tab {
+  flex: 1; padding: 12px 18px; border-radius: 14px 14px 0 0; border: 1px solid var(--border, #D8E1E5);
+  border-bottom: none; background: #EEF3F5; cursor: pointer; font: inherit; font-weight: 600;
+  color: var(--text-2); display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.entry-tab.active { background: #fff; color: var(--text); }
+.entry-panel {
+  background: #fff; border: 1px solid var(--border, #D8E1E5); border-radius: 0 0 16px 16px;
+  padding: 24px; margin-bottom: 24px;
+}
+
+/* ---------- subject chips + type ---------- */
+.subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.subject-chip {
+  padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--border, #D8E1E5);
+  background: #fff; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; color: var(--text-2);
+}
+.subject-chip:hover { border-color: #256A8A; color: #256A8A; }
+.subject-chip.active { background: #256A8A; border-color: #256A8A; color: #fff; }
+.subject-chip .cnt {
+  display: inline-block; min-width: 20px; padding: 0 5px; margin-right: 6px; border-radius: 999px;
+  background: rgba(0,0,0,.12); font-size: 12px; text-align: center;
+}
+.subject-chip.active .cnt { background: rgba(255,255,255,.25); }
+.seg-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+.seg-label { font-size: 14px; color: var(--text-2); font-weight: 600; }
+.seg { display: inline-flex; border: 1.5px solid var(--border, #D8E1E5); border-radius: 999px; overflow: hidden; }
+.seg button { padding: 8px 22px; border: none; background: #fff; cursor: pointer; font: inherit; font-weight: 600; color: var(--text-2); }
+.seg button.active { background: #17324D; color: #fff; }
+
+/* ---------- rapid entry ---------- */
+.rapid-wrap { position: relative; display: flex; gap: 10px; flex-wrap: wrap; }
+.rapid-input {
+  padding: 14px 18px; font-size: 17px; border: 2px solid #256A8A; border-radius: 14px;
+  font-family: inherit; box-sizing: border-box;
+}
+.rapid-input:focus { outline: none; box-shadow: 0 0 0 4px rgba(37,106,138,.15); }
+.rapid-input.field-missing { border-color: #D97757; background: #FEF2F2; }
+.rapid-hint { font-size: 13px; color: var(--text-3, #7b8b98); margin-top: 8px; }
+.rapid-hint kbd {
+  background: #EEF3F5; border: 1px solid var(--border); border-radius: 5px; padding: 1px 7px; font-family: inherit; font-size: 12px;
+}
+.flash-add {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  background: #dcfce7; color: #166534; font-size: 13px; font-weight: 700;
+  border-radius: 999px; padding: 4px 12px; opacity: 0; transition: opacity .2s; pointer-events: none;
+}
+.flash-add.show { opacity: 1; }
+
+/* ---------- paste ---------- */
+.paste-area {
+  width: 100%; min-height: 150px; padding: 14px 16px; font-size: 14px; font-family: inherit;
+  border: 2px dashed #256A8A; border-radius: 14px; box-sizing: border-box; resize: vertical; background: #F8FBFC;
+}
+.paste-area:focus { outline: none; background: #fff; }
+.paste-note { font-size: 13px; color: var(--text-3, #7b8b98); margin: 8px 0 0; }
+.preview-box { margin-top: 16px; }
+.preview-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+.detected { font-size: 13px; color: var(--text-2); }
+.detected b { color: #166534; }
+.missing-note { font-size: 12px; font-weight: 700; color: #B45309; }
+
+/* ---------- roster ---------- */
+.subject-group { border: 1px solid var(--border, #D8E1E5); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+.subject-group-head {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #F4F7F8; padding: 12px 18px; font-weight: 700;
+}
+.subject-group-head .n { font-size: 13px; color: var(--text-2); font-weight: 600; }
+.t-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--border, #D8E1E5);
+  flex-wrap: wrap;
+}
+.t-row.t-error { background: #FFF7ED; }
+.t-row .t-name { font-weight: 600; min-width: 140px; }
+.also {
+  display: inline-block; margin-right: 8px; font-size: 11px; font-weight: 700;
+  background: #EDE9FE; color: #6D28D9; border-radius: 999px; padding: 2px 10px; vertical-align: middle;
+}
+.t-type {
+  font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 12px; cursor: pointer; border: none; font-family: inherit;
+}
+.t-type.bagrut { background: #DBEAFE; color: #1D4ED8; }
+.t-type.gemer  { background: #FEF9C3; color: #A16207; }
+.t-phone {
+  width: 140px; padding: 6px 12px; font-size: 13px; font-family: inherit;
+  border: 1px solid var(--border, #D8E1E5); border-radius: 8px; direction: ltr; text-align: right;
+}
+.t-phone:focus { outline: none; border-color: #256A8A; }
+.t-phone:placeholder-shown { background: #FEF2F2; border-color: #D97757; }
+.t-more { font-size: 13px; color: var(--text-3, #7b8b98); flex: 1; }
+.t-actions { display: flex; gap: 6px; }
+.mini-btn {
+  border: 1px solid var(--border, #D8E1E5); background: #fff; border-radius: 8px; padding: 4px 12px;
+  font: inherit; font-size: 13px; cursor: pointer; color: var(--text-2);
+}
+.mini-btn:hover { border-color: #256A8A; color: #256A8A; }
+.t-details { width: 100%; display: none; gap: 10px; flex-wrap: wrap; padding-top: 8px; }
+.t-details.open { display: flex; }
+.t-details input { padding: 7px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; width: 150px; }
+.empty-roster { padding: 36px; text-align: center; color: var(--text-3, #7b8b98); }
+
+@media (max-width: 700px) {
+  /* פחות ריווח — יותר תוכן על המסך */
+  .school-picker-card { margin: 12px auto; }
+  .school-picker-card.card { padding: 16px; }
+  .setup-hero { padding: 16px 18px; gap: 12px; }
+  .setup-hero h1 { font-size: 22px; }
+  .setup-hero .sub { font-size: 13px; margin-bottom: 6px; }
+  .setup-hero-stats { padding: 10px 18px; }
+  .setup-hero-stats .num { font-size: 26px; }
+  .entry-panel { padding: 14px; }
+  .entry-tab { font-size: 14px; padding: 10px 8px; }
+  .subject-chips { gap: 6px; }
+  .subject-chip { padding: 8px 14px; font-size: 14px; }
+  .seg button { padding: 7px 16px; }
+  .seg-label { font-size: 13px; }
+
+  /* iOS מבצע זום אוטומטי על שדה עם פונט קטן מ-16px — מיישרים הכל ל-16 */
+  .rapid-input, .t-phone, .t-details input, .paste-area, .input, .select { font-size: 16px !important; }
+
+  .rapid-wrap { flex-direction: column; }
+  .rapid-input { min-width: 0 !important; width: 100%; }
+  .rapid-hint { font-size: 12px; }
+  .flash-add { top: auto; bottom: -26px; transform: none; }
+
+  /* שורת מורה: שם למעלה, שאר השדות בשורה מתחתיו */
+  .t-row { padding: 10px 12px; gap: 8px; }
+  .t-row .t-name { min-width: 100%; }
+  .t-phone { flex: 1; width: auto; min-width: 130px; }
+  .t-more { flex-basis: 100%; order: 5; }
+  .t-details input { width: 100%; }
+  #roster { padding: 0 10px 12px !important; }
+  .subject-group-head { padding: 10px 12px; }
+  .school-list { max-height: 55vh; }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה</span>
+        <span class="system-name">הזנת מורים — מנהל בית ספר</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- School picker — מוצג כשנכנסים בלינק כללי בלי ?school= -->
+    <section id="school-picker" hidden>
+      <div class="card school-picker-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+          באיזה בית ספר אתם?
+        </div>
+        <p class="picker-sub">התחילו להקליד את שם בית הספר ובחרו אותו מהרשימה — ההזנה תישמר אליו.</p>
+        <input class="input" id="school-search" placeholder="חיפוש בית ספר..." autocomplete="off">
+        <div class="school-list" id="school-list">
+          <div class="empty-msg">טוען את רשימת בתי הספר...</div>
+        </div>
+
+        <button class="btn btn-secondary" id="btn-show-create" style="width:100%; justify-content:center; margin-top:12px;">
+          בית הספר שלי לא ברשימה
+        </button>
+
+        <form id="form-new-school" hidden style="margin-top:16px; border-top:1px solid var(--border, #D8E1E5); padding-top:16px;">
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label">שם בית הספר *</label>
+              <input class="input" name="name" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label">רשת *</label>
+              <select class="select" name="network" id="ns-network" required></select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">שם המנהל/ת</label>
+              <input class="input" name="principalName">
+            </div>
+            <div class="form-row">
+              <label class="form-label">מייל המנהל/ת</label>
+              <input type="email" class="input" name="principalEmail">
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:12px;">
+            <button type="submit" class="btn btn-primary">הוסיפו את בית הספר והמשיכו</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <div id="main-content" hidden>
+
+    <!-- Hero -->
+    <div class="setup-hero">
+      <div>
+        <h1 id="hero-title">המורים שלי</h1>
+        <p class="sub">רק שם + טלפון + מקצוע + בגרות/גמר. את כל השאר אפשר להשלים אחר־כך.</p>
+        <div class="hero-line">
+          <strong style="color:var(--text)">בית ספר:</strong> <span id="school-name">—</span>
+          <span id="network-chip"></span>
+          <span>·</span>
+          <strong style="color:var(--text)">מנהל/ת:</strong> <span id="principal-name">—</span>
+        </div>
+      </div>
+      <div class="setup-hero-stats">
+        <div class="num" id="count">0</div>
+        <div class="lbl">מורים ברשימה</div>
+        <div class="save-status ok" id="save-status">✓ הכל נשמר</div>
+      </div>
+    </div>
+
+    <!-- Entry tabs -->
+    <div class="entry-tabs">
+      <button type="button" class="entry-tab active" id="tab-type">✏️ הקלדה מהירה לפי מקצוע</button>
+      <button type="button" class="entry-tab" id="tab-paste">📋 הדבקה מאקסל / רשימה</button>
+    </div>
+
+    <!-- Panel: rapid by-subject entry -->
+    <div class="entry-panel" id="panel-type">
+      <div class="subject-chips" id="subject-chips"></div>
+      <div class="seg-row">
+        <span class="seg-label">המורים שאני מקליד/ה עכשיו מלמדים:</span>
+        <div class="seg" id="type-seg">
+          <button type="button" class="active" data-type="bagrut">בגרות</button>
+          <button type="button" data-type="gemer">גמר</button>
+        </div>
+      </div>
+      <div class="rapid-wrap">
+        <input class="rapid-input" id="rapid" placeholder="שם המורה…" autocomplete="off" style="flex:2; min-width:200px;">
+        <input class="rapid-input" id="rapid-phone" placeholder="טלפון (חובה)" autocomplete="off" inputmode="tel" style="flex:1; min-width:140px;">
+        <span class="flash-add" id="flash">נוסף ✓</span>
+      </div>
+      <p class="rapid-hint">כל <kbd>Enter</kbd> מוסיף מורה למקצוע שנבחר · <kbd>Tab</kbd> קופץ לטלפון · מורה שמלמד עוד מקצוע? הקלידו את שמו שוב במקצוע השני — הטלפון יושלם לבד</p>
+    </div>
+
+    <!-- Panel: paste -->
+    <div class="entry-panel" id="panel-paste" style="display:none;">
+      <textarea class="paste-area" id="paste" placeholder="העתיקו את טבלת המורים מהאקסל (או רשימת שמות, שם בכל שורה) והדביקו כאן…&#10;&#10;לדוגמה:&#10;שרה כהן	מתמטיקה	בגרות	050-1234567&#10;אחמד עלי	אנגלית	גמר&#10;רותי לוי"></textarea>
+      <p class="paste-note">המערכת מזהה לבד את העמודות: שם, מקצוע, בגרות/גמר, טלפון, מייל, ותק. מה שלא זוהה — אפשר לתקן אחרי ההוספה.</p>
+      <div class="preview-box" id="preview-box" style="display:none;">
+        <div class="preview-head">
+          <span class="detected" id="detected"></span>
+          <button type="button" class="btn btn-primary" id="btn-add-pasted">הוסיפו את כולם לרשימה ↓</button>
+        </div>
+        <div class="table-wrap"><table class="table" id="preview-table"></table></div>
+      </div>
+    </div>
+
+    <!-- Roster grouped by subject -->
+    <div class="card" style="padding:0;">
+      <div style="padding:18px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <h2 style="margin:0;">הרשימה שלי — לפי מקצוע</h2>
+        <div class="btn-row" style="margin:0;">
+          <button type="button" class="btn btn-secondary" id="btn-export">ייצוא ל-CSV</button>
+        </div>
+      </div>
+      <div id="roster" style="padding: 0 18px 18px;"></div>
+    </div>
+
+    </div><!-- /main-content -->
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+<script src="setup.js"></script>
+</body>
+</html>

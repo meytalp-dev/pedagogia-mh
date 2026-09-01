@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניקוי נתונים — אדמין</title>
+<link rel="stylesheet" href="assets/fonts-local.css">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .clean-sec {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+  }
+  .clean-sec h3 { margin: 0 0 4px; font-size: 17px; }
+  .clean-sec p.d { color: var(--text-2); font-size: 13.5px; margin: 0 0 14px; line-height: 1.7; }
+  .row-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 4px; border-bottom: 1px solid var(--border); font-size: 14px;
+  }
+  .row-item:last-child { border-bottom: none; }
+  .row-item .who { flex: 1; }
+  .row-item .who b { font-weight: 700; }
+  .row-item .who small { color: var(--text-3); }
+  .row-item input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--primary, #256A8A); }
+  .row-item.gone { opacity: 0.45; text-decoration: line-through; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .status-pill.ok   { background: var(--ok-soft);   color: var(--ok); }
+  .status-pill.warn { background: var(--warn-soft); color: #92400e; }
+  .status-pill.err  { background: var(--err-soft);  color: var(--err); }
+  .status-pill.idle { background: var(--surface-2); color: var(--text-2); }
+  .actions-row { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="./" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">ניקוי נתוני מורים · כפילויות ושורות שגויות</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1 style="margin: 24px 0 8px;">ניקוי רשימת המורים</h1>
+    <p style="color: var(--text-2); margin-bottom: 24px;">
+      הדף סורק את הגיליון החי ומאתר: שורות שהשם בהן הוא בכלל שם מקצוע (כותרות שנבלעו בהדבקה),
+      כפילויות מדויקות, וזוגות שמות הפוכים. מסמנים ✓ ולוחצים מחיקה. כל מחיקה סופית.
+    </p>
+
+    <div class="clean-sec" id="subjfix-sec" hidden>
+      <h3>מקצועות משובשים <span id="subjfix-n"></span></h3>
+      <p class="d">רשומות שהמקצוע בהן נקטע (למשל «תנ» במקום «תנ"ך» — באג הגרשיים שתוקן).
+         הכפתור מתקן את כולן לערך הנכון — לא מוחק כלום.</p>
+      <div id="subjfix-list" style="font-size:14px; color:var(--text-2); margin-bottom:12px;"></div>
+      <div class="actions-row" style="margin-top:0;">
+        <button class="btn btn-primary" id="btn-subjfix" onclick="fixSubjects()">תיקון המקצועות</button>
+        <span class="status-pill idle" id="subjfix-status"></span>
+      </div>
+    </div>
+
+    <div id="content"><div class="empty" style="padding:32px;">סורק את הגיליון…</div></div>
+
+    <div class="actions-row">
+      <button class="btn btn-primary" id="btn-delete" onclick="deleteChecked()" disabled>מחיקת השורות המסומנות</button>
+      <span class="status-pill idle" id="del-status">ממתין לסריקה</span>
+    </div>
+    <div id="result" style="margin-top:14px;"></div>
+
+  </main>
+
+  <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
+    דף אדמין · ניקוי נתונים · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js?v=20260901"></script>
+<script>
+const SUBJECT_WORDS = ['מתמטיקה','אנגלית','עברית','ספרות','היסטוריה','הסטוריה','אזרחות','תנך','ערבית',
+                       'לשון','לשון והבעה','מקצוע','שם המורה','שם','בגרות','גמר','מורה','מורים','טלפון','מייל'];
+const norm = s => (s || '').replace(/["'׳״:.\-]/g, '').replace(/\s+/g, ' ').trim();
+let findings = [];   // {id, label, sub, kind, checked}
+let subjFixes = [];  // {id, subject} — רשומות עם מקצוע קטוע והערך הנכון
+
+// מקצוע שלא קיים ברשימה אבל הוא קידומת-עד-גרשיים של מקצוע אמיתי → הערך הנכון
+function truncatedSubjectFix(val) {
+  if (!val || TS.SUBJECTS.includes(val)) return null;
+  return TS.SUBJECTS.find(s => s.includes('"') && s.split('"')[0] === val) || null;
+}
+
+async function scan() {
+  const res = await TS.api('teachers.list', {}, { cache: 'no' });
+  if (!res.ok) {
+    document.getElementById('content').innerHTML =
+      '<div class="alert err"><div class="alert-body">שגיאה בקריאת הגיליון: ' + (res.error || '') + '</div></div>';
+    return;
+  }
+  const live = res.data || [];
+  findings = [];
+
+  // מקצועות קטועים (באג הגרשיים)
+  subjFixes = [];
+  const fixSummary = {};
+  live.forEach(t => {
+    const fix = truncatedSubjectFix(t.subject);
+    if (fix) {
+      subjFixes.push({ id: t.id, subject: fix });
+      const k = '«' + t.subject + '» ← «' + fix + '»';
+      fixSummary[k] = (fixSummary[k] || 0) + 1;
+    }
+  });
+  const sec = document.getElementById('subjfix-sec');
+  if (subjFixes.length) {
+    sec.hidden = false;
+    document.getElementById('subjfix-n').textContent = '(' + subjFixes.length + ' רשומות)';
+    document.getElementById('subjfix-list').innerHTML =
+      Object.entries(fixSummary).map(([k, n]) => '<div><b>' + k + '</b> — ' + n + ' מורים</div>').join('');
+  } else {
+    sec.hidden = true;
+  }
+
+  // 1. שמות שהם מקצועות / כותרות
+  live.forEach(t => {
+    if (SUBJECT_WORDS.map(norm).includes(norm(t.name))) {
+      findings.push({ id: t.id, kind: 'junk', checked: true,
+        label: '"' + t.name + '"', sub: t.subject + ' · ' + (t.schoolName || '—') + ' — שם שהוא כותרת, לא אדם' });
+    }
+  });
+
+  // 2. כפילויות מדויקות (בי"ס + מקצוע + שם) — נשארת הראשונה, המאוחרות מסומנות
+  const seen = {};
+  live.forEach(t => {
+    const k = t.school + '|' + t.subject + '|' + norm(t.name);
+    if (seen[k]) {
+      findings.push({ id: t.id, kind: 'dup', checked: true,
+        label: t.name, sub: t.subject + ' · ' + (t.schoolName || '—') + ' — כפילות מדויקת (הרשומה הראשונה נשארת)' });
+    } else seen[k] = t;
+  });
+
+  // 3. שמות הפוכים (אותו בי"ס + מקצוע) — לא מסומן אוטומטית, לשיקולך
+  const flagged = new Set(findings.map(f => f.id));
+  live.forEach(t => {
+    if (flagged.has(t.id)) return;
+    const parts = norm(t.name).split(' ');
+    if (parts.length !== 2) return;
+    const rev = parts[1] + ' ' + parts[0];
+    const match = live.find(x => x.id > t.id && !flagged.has(x.id) &&
+      x.school === t.school && x.subject === t.subject && norm(x.name) === rev);
+    if (match) {
+      flagged.add(match.id);
+      findings.push({ id: match.id, kind: 'rev', checked: false,
+        label: match.name, sub: match.subject + ' · ' + (match.schoolName || '—') +
+          ' — כנראה אותו אדם כמו "' + t.name + '" בסדר שם הפוך' });
+    }
+  });
+
+  render();
+}
+
+function render() {
+  const kinds = [
+    ['junk', 'כותרות שנבלעו כשמות', 'שורות שאינן בני אדם — מומלץ למחוק את כולן.'],
+    ['dup',  'כפילויות מדויקות',     'אותו שם, אותו מקצוע, אותו בית ספר — פעמיים. נמחקת רק הרשומה הכפולה.'],
+    ['rev',  'שמות הפוכים',          'ייתכן שזה אותו אדם שהוזן פעמיים בסדר שם שונה — סמני רק אם את בטוחה.']
+  ];
+  const c = document.getElementById('content');
+  if (!findings.length) {
+    c.innerHTML = '<div class="alert ok"><div class="alert-body">✓ לא נמצאו בעיות — הרשימה נקייה.</div></div>';
+    document.getElementById('del-status').textContent = 'אין מה למחוק';
+    return;
+  }
+  c.innerHTML = kinds.map(([kind, title, desc]) => {
+    const items = findings.filter(f => f.kind === kind);
+    if (!items.length) return '';
+    return `
+      <div class="clean-sec">
+        <h3>${title} (${items.length})</h3>
+        <p class="d">${desc}</p>
+        ${items.map(f => `
+          <label class="row-item" id="row-${f.id}">
+            <input type="checkbox" data-id="${f.id}" ${f.checked ? 'checked' : ''}>
+            <span class="who"><b>${f.label}</b><br><small>${f.sub}</small></span>
+          </label>`).join('')}
+      </div>`;
+  }).join('');
+  c.querySelectorAll('input[type="checkbox"]').forEach(cb =>
+    cb.addEventListener('change', () => {
+      const f = findings.find(x => x.id === cb.dataset.id);
+      if (f) f.checked = cb.checked;
+      updateBtn();
+    }));
+  updateBtn();
+}
+
+function updateBtn() {
+  const n = findings.filter(f => f.checked && !f.done).length;
+  document.getElementById('btn-delete').disabled = n === 0;
+  const st = document.getElementById('del-status');
+  st.className = 'status-pill idle';
+  st.textContent = n ? n + ' שורות מסומנות למחיקה' : 'לא מסומן דבר';
+}
+
+async function fixSubjects() {
+  if (!subjFixes.length) return;
+  const btn = document.getElementById('btn-subjfix');
+  const st = document.getElementById('subjfix-status');
+  btn.disabled = true;
+  const CHUNK = 70;
+  let done = 0;
+  try {
+    for (let i = 0; i < subjFixes.length; i += CHUNK) {
+      st.className = 'status-pill warn';
+      st.textContent = 'מתקן… ' + done + '/' + subjFixes.length;
+      const res = await TS.apiPost('seed.import', { tabs: { teachers: subjFixes.slice(i, i + CHUNK) } });
+      if (!res.ok) throw new Error(res.error || 'שגיאה');
+      done += (res.data.teachers && res.data.teachers.updated) || 0;
+    }
+    st.className = 'status-pill ok';
+    st.textContent = '✓ ' + done + ' רשומות תוקנו';
+    subjFixes = [];
+    setTimeout(scan, 800);
+  } catch (e) {
+    st.className = 'status-pill err';
+    st.textContent = 'שגיאה — אפשר ללחוץ שוב, התיקון ממשיך מאיפה שעצר';
+    btn.disabled = false;
+  }
+}
+
+async function deleteChecked() {
+  const todo = findings.filter(f => f.checked && !f.done);
+  if (!todo.length) return;
+  if (!confirm('למחוק ' + todo.length + ' שורות מהגיליון? הפעולה סופית.')) return;
+  const btn = document.getElementById('btn-delete');
+  const st = document.getElementById('del-status');
+  btn.disabled = true;
+  let done = 0, failed = 0;
+  for (const f of todo) {
+    st.className = 'status-pill warn';
+    st.textContent = 'מוחק… ' + done + '/' + todo.length;
+    const res = await TS.apiPost('teachers.delete', { id: f.id });
+    if (res.ok || res.error === 'not_found') {
+      f.done = true; done++;
+      const row = document.getElementById('row-' + f.id);
+      if (row) { row.classList.add('gone'); row.querySelector('input').disabled = true; }
+    } else failed++;
+  }
+  st.className = failed ? 'status-pill err' : 'status-pill ok';
+  st.textContent = failed ? done + ' נמחקו · ' + failed + ' נכשלו' : '✓ ' + done + ' שורות נמחקו';
+  document.getElementById('result').innerHTML = failed
+    ? '<div class="alert warn"><div class="alert-body">חלק מהמחיקות נכשלו — אפשר ללחוץ שוב כדי לנסות את הנותרות.</div></div>'
+    : '<div class="alert ok"><div class="alert-body">הניקוי הושלם. הדשבורדים יתעדכנו ברענון הבא (מטמון של עד 5 דקות).</div></div>';
+  updateBtn();
+}
+
+scan();
+</script>
+</body>
+</html>
