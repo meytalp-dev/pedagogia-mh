@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadData() {
+  if (!networkId) {
+    renderNetworkPicker();
+    return;
+  }
   const res = TS.getAppsScriptUrl()
     ? await TS.api('network.dashboard', { network: networkId })
     : { ok: false, error: 'no_url' };
@@ -21,6 +25,24 @@ async function loadData() {
   } else {
     renderLoadError(res.error || '');
   }
+}
+
+// אין רשת בקישור → בורר רשתות (מנהל רשת מנווט אוטומטית לרשת שלו ע"י auth-guard)
+function renderNetworkPicker() {
+  const main = document.querySelector('main');
+  if (!main) return;
+  main.innerHTML = `
+    <div dir="rtl" style="max-width:760px; margin:0 auto; padding:40px 20px; text-align:center;">
+      <h1 style="margin:0 0 6px;">באיזו רשת לצפות?</h1>
+      <p style="color:var(--text-2); margin:0 0 22px;">בחרו רשת לפתיחת הדשבורד שלה.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        ${TS.NETWORKS.map(n => `
+          <a href="?network=${encodeURIComponent(n.id)}"
+             style="display:inline-block; padding:12px 20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; text-decoration:none; font-size:15px; font-weight:600; color:inherit;">
+            <span class="net-chip ${n.color}">${escapeHtml(n.name)}</span>
+          </a>`).join('')}
+      </div>
+    </div>`;
 }
 
 // שגיאת טעינה — מציגים אמת, לא נתוני דמו

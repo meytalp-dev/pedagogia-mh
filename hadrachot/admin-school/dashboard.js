@@ -30,7 +30,7 @@ function bindTabs() {
 
 async function loadData() {
   if (!schoolId) {
-    renderLoadError('חסר מזהה בית ספר בקישור (school=...). יש להיכנס דרך הקישור שקיבלתם.');
+    renderSchoolPicker();
     return;
   }
   const res = TS.getAppsScriptUrl()
@@ -49,8 +49,57 @@ async function loadData() {
 function renderLoadError(msg) {
   const main = document.querySelector('main');
   if (main) main.innerHTML =
-    '<div style="padding:48px 24px; text-align:center; color:var(--text-2); line-height:1.8;">' +
+    '<div dir="rtl" style="padding:48px 24px; text-align:center; color:var(--text-2); line-height:1.8;">' +
     msg.replace(/</g, '&lt;') + '</div>';
+}
+
+// אין מזהה בקישור → בורר בתי ספר (לאדמין ולכל מי שמגיע מהתפריט)
+async function renderSchoolPicker() {
+  const main = document.querySelector('main');
+  if (!main) return;
+  main.innerHTML = '<div dir="rtl" style="padding:32px 24px; text-align:center; color:var(--text-2);">טוען את רשימת בתי הספר…</div>';
+  const res = await TS.api('schools.list', {});
+  if (!res.ok || !res.data || !res.data.length) {
+    renderLoadError('לא הצלחנו לטעון את רשימת בתי הספר — נסו לרענן את הדף.');
+    return;
+  }
+  const byNet = {};
+  res.data.forEach(s => {
+    const net = (s.network || '').replace(/^net_/, '') || 'other';
+    (byNet[net] = byNet[net] || []).push(s);
+  });
+  const netOrder = TS.NETWORKS.map(n => n.id).filter(id => byNet[id]).concat(
+    Object.keys(byNet).filter(id => !TS.NETWORKS.some(n => n.id === id)));
+  main.innerHTML = `
+    <div dir="rtl" style="max-width:860px; margin:0 auto; padding:32px 20px;">
+      <h1 style="margin:0 0 6px;">באיזה בית ספר לצפות?</h1>
+      <p style="color:var(--text-2); margin:0 0 10px;">בחרו בית ספר — או חפשו לפי שם.</p>
+      <input type="search" id="picker-search" placeholder="חיפוש בית ספר…" class="input"
+             style="width:100%; box-sizing:border-box; margin-bottom:18px; padding:10px 14px; border:1px solid var(--border); border-radius:10px; font-family:inherit;">
+      <div id="picker-list">${netOrder.map(net => `
+        <div style="margin-bottom:18px;" data-net-group>
+          <div style="margin-bottom:8px;">${TS.netChip(net)}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            ${byNet[net].sort((a,b) => (a.name||'').localeCompare(b.name,'he')).map(s => `
+              <a data-school-name="${escapeHtml((s.name||'').toLowerCase())}"
+                 href="?school=${encodeURIComponent(s.id)}&network=${encodeURIComponent(net)}"
+                 style="display:inline-block; padding:8px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; text-decoration:none; color:inherit; font-size:14px;">
+                ${escapeHtml(s.name || s.id)}
+              </a>`).join('')}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('picker-search').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('#picker-list a[data-school-name]').forEach(a => {
+      a.style.display = !q || a.dataset.schoolName.includes(q) ? '' : 'none';
+    });
+    document.querySelectorAll('#picker-list [data-net-group]').forEach(g => {
+      const any = [...g.querySelectorAll('a[data-school-name]')].some(a => a.style.display !== 'none');
+      g.style.display = any ? '' : 'none';
+    });
+  });
 }
 
 function renderAll() {
@@ -70,14 +119,23 @@ function renderAll() {
   const subjectsCount = Object.keys(state.subjects).length;
   document.getElementById('stat-teachers').textContent = state.teachers.length;
   document.getElementById('stat-subjects').textContent = subjectsCount;
-  document.getElementById('stat-rate').textContent = state.stats.avgRate + '%';
-  document.getElementById('stat-rate').className = 'stat-value ' +
-    (state.stats.avgRate >= 80 ? 'ok' : state.stats.avgRate >= 50 ? 'warn' : 'err');
-  document.getElementById('stat-rate-sub').textContent = 'יעד: ' + (s.attendanceTarget || 80) + '%';
-
-  const atRisk = state.teachers.filter(t => t.stats.rate < 50).length;
-  document.getElementById('stat-risk').textContent = atRisk;
-  document.getElementById('stat-risk').className = 'stat-value ' + (atRisk === 0 ? 'ok' : atRisk <= 2 ? 'warn' : 'err');
+  const rateEl = document.getElementById('stat-rate');
+  const riskEl = document.getElementById('stat-risk');
+  if (noAttendanceYet()) {
+    rateEl.textContent = '—';
+    rateEl.className = 'stat-value';
+    document.getElementById('stat-rate-sub').textContent = 'טרם החלה מדידה';
+    riskEl.textContent = '—';
+    riskEl.className = 'stat-value';
+  } else {
+    rateEl.textContent = state.stats.avgRate + '%';
+    rateEl.className = 'stat-value ' +
+      (state.stats.avgRate >= 80 ? 'ok' : state.stats.avgRate >= 50 ? 'warn' : 'err');
+    document.getElementById('stat-rate-sub').textContent = 'יעד: ' + (s.attendanceTarget || 80) + '%';
+    const atRisk = state.teachers.filter(t => t.stats.rate < 50).length;
+    riskEl.textContent = atRisk;
+    riskEl.className = 'stat-value ' + (atRisk === 0 ? 'ok' : atRisk <= 2 ? 'warn' : 'err');
+  }
 
   populateSubjectFilter();
   renderAlerts();
@@ -99,9 +157,14 @@ function populateSubjectFilter() {
   }
 }
 
+// עוד לא התקיימה אף הדרכה → 0% אצל כולם הוא "אין נתונים", לא "בסיכון"
+function noAttendanceYet() {
+  return !(state.teachers || []).some(t => t.stats && t.stats.total > 0);
+}
+
 function renderAlerts() {
   const container = document.getElementById('alerts-section');
-  const atRisk = state.teachers.filter(t => t.stats.rate < 50);
+  const atRisk = noAttendanceYet() ? [] : state.teachers.filter(t => t.stats.rate < 50);
   if (!atRisk.length) {
     container.innerHTML = '';
     return;
@@ -160,14 +223,16 @@ function renderTeachers() {
           </a>` : ''}
         </td>
         ${trainings.map(tr => attCell(t.attendance[tr.id], tr.date, today)).join('')}
-        <td class="rate-cell ${rateClass(t.stats.rate)}">${t.stats.rate}%</td>
+        <td class="rate-cell ${t.stats.total ? rateClass(t.stats.rate) : ''}">${t.stats.total ? t.stats.rate + '%' : '—'}</td>
       </tr>
     `).join('');
     return `
       <div class="subject-group">
         <div class="subject-header">
           <h3>${escapeHtml(subj)} — ${teachers.length} מורים</h3>
-          <span class="meta">ממוצע נוכחות: <strong class="${rateClass(avgRate)}">${avgRate}%</strong></span>
+          <span class="meta">${trainings.length
+            ? `ממוצע נוכחות: <strong class="${rateClass(avgRate)}">${avgRate}%</strong>`
+            : 'טרם התקיימו הדרכות'}</span>
         </div>
         <div class="table-wrap" style="border:none;">
           <table class="att-grid">
