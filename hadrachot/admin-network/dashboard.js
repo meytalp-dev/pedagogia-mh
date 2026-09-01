@@ -13,44 +13,85 @@ async function loadData() {
   if (!TS.getAppsScriptUrl()) {
     data = demoData();
     document.getElementById('user-name').textContent = 'דמו';
-    document.getElementById('user-network').textContent = 'רשת אורט';
+    setNetworkTitle();
     render();
     return;
   }
   const res = await TS.api('network.dashboard', { network: networkId });
   if (res.ok && res.data) {
     data = res.data;
-    if (data.network) {
-      document.getElementById('user-network').textContent = 'רשת ' + data.network.name;
-      const tag = document.querySelector('.network-tag');
-      if (tag) tag.innerHTML = `<span class="net-chip ${data.network.color}">${data.network.name}</span>`;
-    }
+    setNetworkTitle();
     render();
   } else {
     data = demoData();
+    setNetworkTitle();
     render();
   }
+  loadSectors();   // רץ ברקע — לא מעכב את שאר הדשבורד
+}
+
+// שם הרשת — בכותרת הראשית, בפינת המשתמש ובכותרת הטאב
+function setNetworkTitle() {
+  if (!data || !data.network) return;
+  const name = 'רשת ' + data.network.name;
+  const titleEl = document.getElementById('network-title');
+  if (titleEl) titleEl.textContent = name;
+  document.title = name + ' — מצפן ההדרכות';
+  document.getElementById('user-network').textContent = name;
+  const tag = document.querySelector('.network-tag');
+  if (tag) tag.innerHTML = `<span class="net-chip ${data.network.color}">${escapeHtml(data.network.name)}</span>`;
+}
+
+// עוד לא נרשמה אף נוכחות → 0% אצל כולם הוא "אין נתונים", לא "כולם פספסו"
+function noAttendanceYet() {
+  return !((data && data.summary || {}).attendanceRecords > 0);
+}
+
+// פילוח מגזרים אמיתי — מרשימת המורים של הרשת
+async function loadSectors() {
+  const res = await TS.api('teachers.list', { network: 'net_' + networkId });
+  if (!res.ok || !res.data) return;
+  const counts = { haredi: 0, arab: 0, kelali: 0 };
+  res.data.forEach(t => {
+    counts[counts[t.sector] !== undefined ? t.sector : 'kelali']++;
+  });
+  const total = res.data.length || 1;
+  [['haredi','sec-haredi'],['arab','sec-arab'],['kelali','sec-kelali']].forEach(([sec, id]) => {
+    const el = document.getElementById(id);
+    const pctEl = document.getElementById(id + '-pct');
+    if (el) el.textContent = counts[sec];
+    if (pctEl) pctEl.textContent = Math.round((counts[sec] / total) * 100) + '% מהמורים ברשת';
+  });
 }
 
 function render() {
   if (!data) return;
   const s = data.summary || {};
+  const noData = noAttendanceYet();
   document.getElementById('stat-schools').textContent = s.schools || 0;
   document.getElementById('stat-teachers').textContent = s.teachers || 0;
-  document.getElementById('stat-attendance').textContent = (s.avgRate || 0) + '%';
-  document.getElementById('stat-attendance').className = 'stat-value ' +
-    (s.avgRate >= 80 ? 'ok' : s.avgRate >= 50 ? 'warn' : 'err');
+
+  const attEl = document.getElementById('stat-attendance');
+  if (noData) {
+    attEl.textContent = '—';
+    attEl.className = 'stat-value info';
+  } else {
+    attEl.textContent = (s.avgRate || 0) + '%';
+    attEl.className = 'stat-value ' + (s.avgRate >= 80 ? 'ok' : s.avgRate >= 50 ? 'warn' : 'err');
+  }
 
   const pdEl = document.getElementById('stat-pd');
   if (pdEl) pdEl.textContent = s.onTarget || 0;
   const missedEl = document.getElementById('stat-missed');
-  if (missedEl) missedEl.textContent = s.atRisk || 0;
+  if (missedEl) missedEl.textContent = noData ? '—' : s.atRisk || 0;
 
-  // Sector breakdown — placeholder (אין לנו עדיין נתוני מגזר)
-  ['sec-haredi','sec-arab','sec-kelali','sec-haredi-pct','sec-arab-pct','sec-kelali-pct'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = '—';
-  });
+  // גרף המגמה — יופיע כשיהיו רישומי נוכחות
+  const trendEl = document.getElementById('trend-chart');
+  if (trendEl) {
+    trendEl.innerHTML = '<div class="empty">' + (noData
+      ? 'מדידת הנוכחות טרם החלה — הגרף ייבנה מהצ\'ק-אינים הראשונים.'
+      : 'נתוני המגמה מצטברים מחודש לחודש.') + '</div>';
+  }
 
   // Schools table
   const tbody = document.getElementById('schools-body');
@@ -63,8 +104,8 @@ function render() {
     <tr>
       <td><strong>${escapeHtml(s.name)}</strong></td>
       <td>${s.teachers}</td>
-      <td>${s.present}</td>
-      <td><span class="badge ${s.rate >= 80 ? 'ok' : s.rate >= 50 ? 'warn' : 'err'}">${s.rate}%</span></td>
+      <td>${noData ? '—' : s.present}</td>
+      <td>${noData ? '<span class="badge neutral">—</span>' : `<span class="badge ${s.rate >= 80 ? 'ok' : s.rate >= 50 ? 'warn' : 'err'}">${s.rate}%</span>`}</td>
       <td>
         <a class="btn btn-secondary" href="../admin-school/?school=${encodeURIComponent(s.id)}&network=${encodeURIComponent(networkId)}">פתח</a>
       </td>
@@ -91,13 +132,19 @@ function sendReportToNetwork() {
     `סיכום:`,
     `• בתי ספר עם מורים בהדרכה: ${s.schools}`,
     `• סה"כ מורים: ${s.teachers}`,
-    `• אחוז נוכחות ממוצע: ${s.avgRate}%`,
-    `• עומדים ביעד (80%+): ${s.onTarget}`,
-    `• מורים בסיכון (מתחת ל-50%): ${s.atRisk}`,
+    ...(noAttendanceYet()
+      ? [`• מדידת הנוכחות טרם החלה — נתוני נוכחות יופיעו בדוחות הבאים`]
+      : [
+          `• אחוז נוכחות ממוצע: ${s.avgRate}%`,
+          `• עומדים ביעד (80%+): ${s.onTarget}`,
+          `• מורים בסיכון (מתחת ל-50%): ${s.atRisk}`
+        ]),
     ``,
-    `פירוט לפי בית ספר (מהחלש לחזק):`,
+    `פירוט לפי בית ספר${noAttendanceYet() ? '' : ' (מהחלש לחזק)'}:`,
     ...(data.schoolBreakdown || []).slice(0, 15).map(sc =>
-      `• ${sc.name}: ${sc.rate}% (${sc.teachers} מורים)`
+      noAttendanceYet()
+        ? `• ${sc.name}: ${sc.teachers} מורים`
+        : `• ${sc.name}: ${sc.rate}% (${sc.teachers} מורים)`
     ),
     ``,
     `דשבורד מלא של הרשת:`,
