@@ -44,6 +44,7 @@ const SKIP = new Set([
   "sikum-pticha.html",   // מעקב דיווחי יום הפתיחה — לרויטל, לא מקושר מהאתר
   "nispach-baaley-tafkidim.html", // נספח בעלי התפקידים — טופס למנהלים, לא מקושר מהאתר
   "sikum-nispach-tafkidim.html",  // מעקב מילוי הנספח — לרויטל, לא מקושר מהאתר
+  "merkaz-tofsim.html",  // מרכז הטפסים והמעקב — עמוד פנימי לרויטל ולמיטל
   "admin.html",   // פאנל ניהול — לבעלי הרשאה בלבד
 ]);
 
