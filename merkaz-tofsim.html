@@ -253,45 +253,78 @@ var ICON = {
 };
 
 /* ---------- הכרטיסים ----------
-   count: איך שולפים את המונה מה-API. base: המכנה לפס ההתקדמות (או 0). */
+   stats: כמה מונים חיים מאותה קריאה. pick מחזיר מספר, base הוא המכנה (או 0).
+   links: כפתורי הכרטיס. copy:true מוסיף כפתור העתקת קישור לשליחה למנהלים. */
 var GAS = "https://script.google.com/macros/s/";
+
+/* כמה בתי ספר שונים מופיעים ברשימה — שורות כפולות של אותו מוסד נספרות פעם אחת */
+function uniqSchools(rows){
+  if (!rows || !rows.length) return null;
+  var seen = {};
+  rows.forEach(function(r){
+    var s = (r && r.school ? String(r.school) : "").trim();
+    if (s) seen[s] = true;
+  });
+  return Object.keys(seen).length;
+}
 
 var ACTIVE = [
   {
     icon:"roles", title:"נספח בעלי התפקידים",
     sub:"מנהל.ת ממלא.ת · פעם בשנה",
     desc:"כל בעלי התפקידים בבית הספר: שם, שעות, משרה, ותק ופרטי קשר — כולל ארבעת תפקידי ה-6% וסימון תפקידים שטרם אוישו.",
-    form:"nispach-baaley-tafkidim.html", track:"sikum-nispach-tafkidim.html",
     api:GAS+"AKfycbw_ix0Qi2SkQHB081xdNA15kIQXGsUxO15keTMafPAcWRSy8gyIMmFR6_PV2UZ4_rTiuQ/exec?mode=count",
-    pick:function(j){ return j && j.ok ? j.count : null; },
-    base:SCHOOLS_TOTAL, lbl:"בתי ספר מילאו את הנספח"
+    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
+            base:SCHOOLS_TOTAL, lbl:"בתי ספר מילאו את הנספח"}],
+    links:[
+      {href:"nispach-baaley-tafkidim.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"sikum-nispach-tafkidim.html",  label:"דף המעקב",      kind:"sec"}
+    ]
   },
   {
     icon:"door", title:"רישום נתוני יום הפתיחה",
     sub:"מנהל.ת ממלא.ת · תחילת שנה",
     desc:"נוכחות תלמידים ביום הראשון, חוסרים במצבת המורים ואיוש בעלי תפקידים מרכזיים, אתגרים וצרכים.",
-    form:"rishum-pticha.html", track:"sikum-pticha.html",
     api:GAS+"AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec?mode=count",
-    pick:function(j){ return j && j.ok ? j.count : null; },
-    base:SCHOOLS_TOTAL, lbl:"בתי ספר דיווחו"
+    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
+            base:SCHOOLS_TOTAL, lbl:"בתי ספר דיווחו"}],
+    links:[
+      {href:"rishum-pticha.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"sikum-pticha.html",  label:"דף המעקב",      kind:"sec"}
+    ]
   },
   {
     icon:"quest", title:"שאלות מנהלים למפגש",
     sub:"מנהל.ת שולח.ת · לפני מפגש",
     desc:"שאלות שמנהלים מעלים לקראת מפגש המנהלים. דף המעקב הוא גם דף השו״ת שבו מפרסמים את התשובות.",
-    form:"sheelot-menahalim.html", track:"shut-menahalim.html", trackLbl:"שאלות ותשובות",
     api:GAS+"AKfycbxYBiU0gLXp8YG3M11NZYWIyx55REpIDc7Df8DATAsBlNT6-RWWnSMjsld9QbeGngE/exec?mode=data",
-    pick:function(j){ return j && j.ok && j.items ? j.items.length : null; },
-    base:0, lbl:"שאלות התקבלו"
+    stats:[{pick:function(j){ return j && j.ok && j.items ? j.items.length : null; },
+            base:0, lbl:"שאלות התקבלו"}],
+    links:[
+      {href:"sheelot-menahalim.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"shut-menahalim.html",    label:"שאלות ותשובות", kind:"sec"}
+    ]
   },
   {
-    icon:"survey", title:"סקר צרכים טכנולוגיים",
-    sub:"מנהל.ת ורכז.ת ממלאים",
-    desc:"מיפוי צורכי הציוד, החומרה והתשתיות בבתי הספר. דף המעקב מייצר גם תזכורות ווטסאפ למי שטרם מילא.",
-    form:"seker.html", track:"tizkorot.html", trackLbl:"מעקב ותזכורות",
+    icon:"survey", title:"סקר צרכים טכנולוגיים והזנת מורים",
+    sub:"מנהל.ת ורכז.ת תקשוב ממלאים",
+    desc:"שני מילויים שנעים יחד: מיפוי צורכי הציוד, החומרה והתשתיות בבית הספר, ולצידו מיפוי המורים לקהילות המקצוע ולהדרכות.",
     api:GAS+"AKfycbySOgh6OJG1uLR7BSF24u08aZTXiKFzn2p-6zXvy49yOElQYgaZ77TrGU1nv7GkLfda/exec",
-    pick:function(j){ return j && j.survey ? j.survey.length : null; },
-    base:SCHOOLS_TOTAL, lbl:"בתי ספר השיבו לסקר"
+    stats:[
+      {pick:function(j){ return j ? uniqSchools(j.survey) : null; },
+       base:SCHOOLS_TOTAL, lbl:"בתי ספר השיבו לסקר הצרכים"},
+      {pick:function(j){ return j ? uniqSchools(j.teachers) : null; },
+       base:SCHOOLS_TOTAL, lbl:"בתי ספר הזינו מורים",
+       extra:function(j){ return j && j.teachers ? j.teachers.length.toLocaleString("he-IL") + " מורים מופו" : ""; }}
+    ],
+    links:[
+      {href:"seker.html", label:"סקר הצרכים", kind:"pri", copy:true},
+      {href:"/hadrachot/admin-school/setup.html", label:"הזנת מורים", kind:"pri", copy:true},
+      {href:"https://meytalp-dev.github.io/revital-tracking/",
+       label:"מעקב מלא — מה כל בית ספר ענה", kind:"sec", external:true},
+      {href:"tizkorot.html",
+       label:"תזכורת למנהלים בווטסאפ — הזנת מורים ורכזי תקשוב", kind:"sec"}
+    ]
   }
 ];
 
@@ -300,33 +333,36 @@ var CLOSED = [
     icon:"chart", title:"מצבת תלמידים תשפ״ז",
     sub:"האיסוף הסתיים", badge:"הטופס נסגר",
     desc:"מצבת התלמידים שדיווחו המנהלים. שני דפי מעקב: פירוט מלא לפי מוסד, וסיכום מרוכז לפי פיקוח.",
-    track:"sikum-matzevet.html", trackLbl:"סיכום המצבת",
-    extra:"matzevet-list.html", extraLbl:"פירוט לפי פיקוח",
     api:GAS+"AKfycbyozBbEf78cLV61ODLyzhzLSyI2auAUMd8YVgp0qZLGs3O4MYAFhAQuVG7NIxjX0Mq7Lw/exec?mode=count",
-    pick:function(j){ return j && j.ok ? j.count : null; },
-    extraStat:function(j){ return j && j.students ? j.students.toLocaleString("he-IL") + " תלמידים" : ""; },
-    base:0, lbl:"מוסדות דיווחו"
+    stats:[{pick:function(j){ return j && j.ok ? j.count : null; }, base:0, lbl:"מוסדות דיווחו",
+            extra:function(j){ return j && j.students ? j.students.toLocaleString("he-IL") + " תלמידים" : ""; }}],
+    links:[
+      {href:"sikum-matzevet.html",  label:"סיכום המצבת",   kind:"sec"},
+      {href:"matzevet-list.html",   label:"פירוט לפי פיקוח", kind:"sec"}
+    ]
   }
 ];
 
 var SYSTEMS = [
-  {icon:"panel",   title:"פאנל ניהול התוכן", sub:"עדכון הודעות ותכנים באתר",
-   desc:"ניהול ההודעות והעדכונים שמופיעים באתר, בלי לגעת בקוד.", track:"admin.html", trackLbl:"פתיחת הפאנל"},
+  {icon:"panel", title:"פאנל ניהול התוכן", sub:"עדכון הודעות ותכנים באתר",
+   desc:"ניהול ההודעות והעדכונים שמופיעים באתר, בלי לגעת בקוד.",
+   links:[{href:"admin.html", label:"פתיחת הפאנל", kind:"sec"}]},
   {icon:"compass", title:"מצפן ההדרכות", sub:"מערכת ההדרכות והשיוך למגזרים",
    desc:"רישום מדריכים, שיוך בתי ספר, אימות ודוחות — מערכת עצמאית עם פאנלי ניהול משלה.",
-   track:"hadrachot/", trackLbl:"כניסה למערכת"},
+   links:[{href:"hadrachot/", label:"כניסה למערכת", kind:"sec"}]},
   {icon:"compass", title:"מצפן החינוך היוצר", sub:"כלי אבחון עצמי לבית הספר",
-   desc:"שאלון המצפן שממלאים בבית הספר ומקבלים בסופו תמונת מצב.", track:"matzpen.html", trackLbl:"פתיחת המצפן"}
+   desc:"שאלון המצפן שממלאים בבית הספר ומקבלים בסופו תמונת מצב.",
+   links:[{href:"matzpen.html", label:"פתיחת המצפן", kind:"sec"}]}
 ];
 
 var PRINT = [
   {icon:"print", title:"טופס משוב מעסיק", sub:"חניכות · מילוי והדפסה",
    desc:"משוב המעסיק על החניך.ה בסיום תקופת החניכות. ממולא ומודפס — לא נשמר במערכת.",
-   form:"mishov-maasik.html", formLbl:"פתיחת הטופס"},
+   links:[{href:"mishov-maasik.html", label:"פתיחת הטופס", kind:"pri"}]},
   {icon:"guide", title:"שאלוני פדגוגיה", sub:"רכז.ת פדגוגי.ת · מורים ותלמידים",
    desc:"שני שאלונים להורדה כקובץ Word או PDF, למילוי בתוך בית הספר.",
-   form:"rakaz-sheelon-morim.html", formLbl:"שאלון מורים",
-   extra:"rakaz-sheelon-talmidim.html", extraLbl:"שאלון תלמידים"}
+   links:[{href:"rakaz-sheelon-morim.html",    label:"שאלון מורים",   kind:"pri"},
+          {href:"rakaz-sheelon-talmidim.html", label:"שאלון תלמידים", kind:"pri"}]}
 ];
 
 /* ---------- בניית כרטיס ---------- */
@@ -339,7 +375,13 @@ var IC_COPY = '<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15
 var IC_GO   = '<path d="M14 4h6v6M20 4l-8.5 8.5"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/>';
 var IC_EYE  = '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>';
 
-function card(d, kind){
+/* כתובת מלאה לשליחה — גם לנתיב שמתחיל ב-"/" */
+function fullUrl(href){
+  if (/^https?:\/\//.test(href)) return href;
+  return SITE + href.replace(/^\//, "");
+}
+
+function card(d){
   var el = document.createElement("div");
   el.className = "c";
 
@@ -347,35 +389,33 @@ function card(d, kind){
           '<h3>' + d.title + '<small>' + d.sub + '</small></h3></div>' +
           '<p class="desc">' + d.desc + '</p>';
 
-  if (d.api){
-    h += '<div class="stat" data-stat><div class="n">—</div><div class="lbl">' + d.lbl + '</div>' +
-         (d.base ? '<div class="track"><div class="fill"></div></div>' : '') + '</div>';
-  }
+  (d.stats || []).forEach(function(s, i){
+    h += '<div class="stat" data-stat="' + i + '"><div class="n">—</div>' +
+         '<div class="lbl">' + s.lbl + '</div>' +
+         (s.base ? '<div class="track"><div class="fill"></div></div>' : '') + '</div>';
+  });
+
   if (d.badge){
     h += '<div style="margin-bottom:14px"><span class="badge closed">' + d.badge + '</span></div>';
   }
 
   h += '<div class="acts">';
-  if (d.form){
-    h += '<a class="b pri" href="' + d.form + '" target="_blank" rel="noopener">' +
-         svg(IC_GO) + (d.formLbl || "הטופס למנהלים") + '</a>';
-  }
-  if (d.track){
-    h += '<a class="b sec" href="' + d.track + '" target="_blank" rel="noopener">' +
-         svg(IC_EYE) + (d.trackLbl || "דף המעקב") + '</a>';
-  }
-  if (d.extra){
-    h += '<a class="b sec" href="' + d.extra + '" target="_blank" rel="noopener">' +
-         svg(IC_EYE) + d.extraLbl + '</a>';
-  }
-  if (d.form && kind === "active"){
-    h += '<button class="b cp" type="button" data-copy="' + d.form + '" ' +
-         'title="העתקת הקישור לשליחה למנהלים">' + svg(IC_COPY) + 'העתקת קישור</button>';
-  }
+  (d.links || []).forEach(function(L){
+    h += '<a class="b ' + (L.kind === "pri" ? "pri" : "sec") + '" href="' + L.href + '" ' +
+         'target="_blank" rel="noopener">' + svg(L.kind === "pri" ? IC_GO : IC_EYE) + L.label + '</a>';
+    if (L.copy){
+      h += '<button class="b cp" type="button" data-copy="' + L.href + '" ' +
+           'title="העתקת הקישור של ' + L.label + ' לשליחה למנהלים">' + svg(IC_COPY) + 'העתקה</button>';
+    }
+  });
   h += '</div>';
 
-  if (d.form && kind === "active"){
-    h += '<div class="note">הקישור לשליחה: <span style="color:#4a5878">' + SITE + d.form + '</span></div>';
+  var copyable = (d.links || []).filter(function(L){ return L.copy; });
+  if (copyable.length){
+    h += '<div class="note">' + copyable.map(function(L){
+      return '<div style="margin-bottom:3px"><b style="color:#4a5878">' + L.label + ':</b> ' +
+             '<span style="color:#4a5878">' + fullUrl(L.href) + '</span></div>';
+    }).join("") + '</div>';
   }
 
   el.innerHTML = h;
@@ -384,11 +424,11 @@ function card(d, kind){
 }
 
 function build(){
-  [["active", ACTIVE, "active"], ["closed", CLOSED, "closed"],
-   ["systems", SYSTEMS, "sys"], ["print", PRINT, "print"]].forEach(function(g){
+  [["active", ACTIVE], ["closed", CLOSED],
+   ["systems", SYSTEMS], ["print", PRINT]].forEach(function(g){
     var host = $(g[0]);
     host.innerHTML = "";
-    g[1].forEach(function(d){ host.appendChild(card(d, g[2])); });
+    g[1].forEach(function(d){ host.appendChild(card(d)); });
   });
 }
 
@@ -405,28 +445,31 @@ function loadCounts(manual){
     return fetch(d.api, {cache:"no-store"})
       .then(function(r){ return r.json(); })
       .then(function(j){
-        var n = d.pick(j);
-        var box = el.querySelector("[data-stat]");
-        if (n === null || n === undefined) throw new Error("bad");
-        box.classList.remove("err");
-        var extra = d.extraStat ? d.extraStat(j) : "";
-        box.querySelector(".n").innerHTML = n.toLocaleString("he-IL") +
-          (d.base ? ' <span class="of">/ ' + d.base + '</span>' : "") +
-          (extra ? ' <span class="of">· ' + extra + '</span>' : "");
-        var fill = box.querySelector(".fill");
-        if (fill){
-          var p = Math.min(100, Math.round(n / d.base * 100));
-          fill.style.width = p + "%";
-          fill.classList.toggle("done", p >= 100);
-        }
+        d.stats.forEach(function(s, i){
+          var box = el.querySelector('[data-stat="' + i + '"]');
+          var n = s.pick(j);
+          if (n === null || n === undefined) throw new Error("bad");
+          box.classList.remove("err");
+          var extra = s.extra ? s.extra(j) : "";
+          box.querySelector(".n").innerHTML = n.toLocaleString("he-IL") +
+            (s.base ? ' <span class="of">/ ' + s.base + '</span>' : "") +
+            (extra ? ' <span class="of">· ' + extra + '</span>' : "");
+          var fill = box.querySelector(".fill");
+          if (fill){
+            var p = Math.min(100, Math.round(n / s.base * 100));
+            fill.style.width = p + "%";
+            fill.classList.toggle("done", p >= 100);
+          }
+        });
         return true;
       })
       .catch(function(){
-        var box = el.querySelector("[data-stat]");
-        box.classList.add("err");
-        box.querySelector(".n").textContent = "לא הצלחנו למשוך את הנתון";
-        var fill = box.querySelector(".fill");
-        if (fill) fill.style.width = "0%";
+        el.querySelectorAll("[data-stat]").forEach(function(box){
+          box.classList.add("err");
+          box.querySelector(".n").textContent = "לא הצלחנו למשוך את הנתון";
+          var fill = box.querySelector(".fill");
+          if (fill) fill.style.width = "0%";
+        });
         return false;
       });
   })).then(function(res){
@@ -449,7 +492,7 @@ function toast(msg){
 document.addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("[data-copy]") : null;
   if (!b) return;
-  var url = SITE + b.getAttribute("data-copy");
+  var url = fullUrl(b.getAttribute("data-copy"));
   var done = function(){
     b.classList.add("ok");
     setTimeout(function(){ b.classList.remove("ok"); }, 1600);
