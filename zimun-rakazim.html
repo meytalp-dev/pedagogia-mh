@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>זימונים · הכשרת רכזים פדגוגיים תשפ"ז · משרד העבודה</title>
+<meta name="description" content="הכנת זימוני יומן להכשרת הרכזים הפדגוגיים תשפ&quot;ז — משרד העבודה, מינהל הכשרה מקצועית">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128197;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --shadow:0 1px 2px rgba(34,66,146,.05),0 10px 28px -14px rgba(34,66,146,.28);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Assistant',-apple-system,'Segoe UI',Arial,sans-serif;font-size:15.5px;line-height:1.65}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 20px 56px}
+a{color:var(--blue)}
+svg{flex:none}
+h1,h2,h3,h4{font-family:'Rubik','Assistant',sans-serif}
+
+/* header */
+.top{display:flex;align-items:flex-start;gap:17px;flex-wrap:wrap;padding:25px 27px;
+  background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+.top::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(180deg,var(--navy),var(--blue) 55%,var(--sky))}
+.top h1{margin:0 0 5px;font-size:1.62rem;font-weight:700;color:var(--navy);letter-spacing:-.01em}
+.top p{margin:0;color:var(--muted);font-size:.95rem;max-width:66ch}
+.h-icon{width:46px;height:46px;border-radius:13px;background:var(--blue-soft);color:var(--navy);
+  display:grid;place-items:center;border:1px solid #d7e2ff}
+
+/* panels */
+.panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  padding:20px 22px;margin-top:18px}
+.panel>h2{margin:0 0 13px;font-size:1.05rem;font-weight:600;color:var(--navy);
+  display:flex;align-items:center;gap:9px}
+.panel>h2 .n{width:24px;height:24px;border-radius:8px;background:var(--navy);color:#fff;
+  font-size:.76rem;font-weight:600;display:grid;place-items:center;flex:none;font-family:'Assistant'}
+.hint{color:var(--muted);font-size:.86rem;margin:-7px 0 14px;padding-inline-start:33px}
+.gone{display:none!important}
+
+/* dropzone */
+.drop{border:2px dashed #c3d2f0;border-radius:15px;background:#fbfcff;padding:30px 22px;
+  text-align:center;transition:.18s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--blue);background:var(--blue-soft)}
+.drop .di{width:52px;height:52px;margin:0 auto 12px;border-radius:15px;background:#fff;
+  border:1px solid var(--line);display:grid;place-items:center;color:var(--navy)}
+.drop b{display:block;font-size:1.02rem;color:var(--navy);margin-bottom:4px}
+.drop span{font-size:.87rem;color:var(--muted)}
+.loaded{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#eefaf6;
+  border:1px solid #bfe9dd;border-radius:13px;padding:13px 17px}
+.loaded .ic{color:var(--mint)}
+.loaded b{color:#0d7d6e;font-size:.96rem}
+.loaded .sp{flex:1}
+
+/* fields */
+.field{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 250px}
+.field label{font-size:.79rem;font-weight:600;color:var(--muted)}
+input[type=text],input[type=url]{font:inherit;font-size:.93rem;color:var(--ink);background:#fbfcff;
+  border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%;transition:.15s}
+input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,92,255,.12);background:#fff}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+
+/* buttons */
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid transparent;
+  display:inline-flex;align-items:center;gap:7px;padding:8px 14px;font-size:.89rem;font-weight:600;
+  transition:transform .12s,background .15s,border-color .15s;background:none}
+button:active{transform:translateY(1px)}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#1a3576}
+.btn-ghost{background:#fff;border-color:var(--line);color:var(--navy)}
+.btn-ghost:hover{border-color:var(--blue);background:#f7faff}
+.btn-soft{background:var(--blue-soft);color:var(--navy);border-color:#d7e2ff}
+.btn-soft:hover{background:#dde8ff}
+.btn-sm{padding:5px 10px;font-size:.81rem;border-radius:8px}
+.btn-danger{background:#fff;border-color:#f0cdd0;color:var(--danger)}
+.btn-danger:hover{background:#fdf3f4}
+button.ok{background:var(--mint)!important;border-color:var(--mint)!important;color:#fff!important}
+
+/* chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;
+  font-size:.85rem;font-weight:600;color:var(--ink);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.chip:hover{border-color:var(--blue)}
+.chip[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip .c{font-size:.75rem;opacity:.7;font-variant-numeric:tabular-nums}
+
+.counter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--blue-soft);
+  border:1px solid #d7e2ff;border-radius:12px;padding:11px 16px;margin-top:14px}
+.counter b{color:var(--navy);font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;font-family:'Rubik'}
+.counter span{font-size:.87rem;color:var(--muted)}
+.counter .sp{flex:1}
+
+/* quick flow */
+.hero{border-color:#c9d8f7;box-shadow:0 1px 2px rgba(34,66,146,.05),0 14px 34px -18px rgba(34,66,146,.45)}
+.hero>h2 .n{background:var(--blue)}
+.flow{display:grid;gap:13px;grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.flow-step{display:flex;gap:12px;align-items:flex-start;background:#fbfcff;
+  border:1px solid var(--line);border-radius:13px;padding:15px 16px}
+.flow-step .sn{flex:none;width:27px;height:27px;border-radius:50%;background:var(--blue-soft);
+  color:var(--navy);border:1px solid #d7e2ff;display:grid;place-items:center;font-size:.83rem;font-weight:700}
+.flow-step b{display:block;font-size:.94rem;color:var(--navy);margin-bottom:3px}
+.flow-step p{margin:0 0 10px;font-size:.84rem;color:var(--muted);line-height:1.55}
+
+/* meetings */
+.meets{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(325px,1fr))}
+.meet{border:1px solid var(--line);border-radius:14px;background:#fbfcff;padding:16px 17px;
+  display:flex;flex-direction:column;gap:12px;transition:.15s}
+.meet:hover{border-color:#c3d2f0;box-shadow:0 6px 20px -14px rgba(34,66,146,.5)}
+.meet.zoom{background:linear-gradient(180deg,#f4f0ff,#fbfcff 62%)}
+.meet-hd{display:flex;gap:13px;align-items:flex-start}
+.date-box{flex:none;width:62px;text-align:center;background:#fff;border:1px solid var(--line);
+  border-radius:11px;padding:7px 4px;line-height:1.15}
+.date-box .d{font-size:1.4rem;font-weight:700;color:var(--navy);display:block;font-family:'Rubik'}
+.date-box .m{font-size:.72rem;font-weight:600;color:var(--muted);display:block}
+.date-box .y{font-size:.63rem;color:#96a2c0;display:block}
+.meet-hd h3{margin:0 0 3px;font-size:1rem;font-weight:600;color:var(--ink)}
+.meet-meta{font-size:.84rem;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.meet-meta span{display:flex;align-items:center;gap:6px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;
+  border-radius:999px;padding:2px 9px;margin-bottom:5px}
+.tag.z{background:#f0eaff;color:#5b3fa8;border:1px solid #dcceFA}
+.tag.p{background:#e4f6f1;color:#0d7d6e;border:1px solid #bfe9dd}
+.meet-acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:9px;border-top:1px dashed var(--line)}
+
+/* table */
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff;max-height:440px}
+table{border-collapse:collapse;width:100%;font-size:.86rem;white-space:nowrap}
+th{position:sticky;top:0;background:var(--sky-soft);color:var(--navy);font-weight:700;font-size:.79rem;
+  text-align:right;padding:9px 11px;border-bottom:1px solid var(--line);z-index:2}
+td{padding:7px 11px;border-bottom:1px solid #f0f3fa;color:var(--ink)}
+tr.off td{opacity:.36}
+tbody tr:hover td{background:#f9fbff}
+td.mail{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;direction:ltr;text-align:left}
+td.ph{font-variant-numeric:tabular-nums;direction:ltr;text-align:left}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--navy);cursor:pointer;margin:0}
+.flag{display:inline-block;font-size:.68rem;font-weight:700;color:var(--amber);background:#fdf4e6;
+  border:1px solid #f2ddba;border-radius:5px;padding:0 5px;margin-inline-start:5px}
+
+/* notices */
+.notice{display:flex;gap:11px;border-radius:12px;padding:13px 15px;margin-top:14px;font-size:.87rem}
+.notice.warn{background:#fdf7ec;border:1px solid #f2ddba;color:#7a5713}
+.notice.warn svg{color:var(--amber)}
+.notice.info{background:var(--blue-soft);border:1px solid #d7e2ff;color:#2b3f70}
+.notice.info svg{color:var(--blue)}
+.notice.priv{background:#eefaf6;border:1px solid #bfe9dd;color:#12604f}
+.notice.priv svg{color:var(--mint)}
+.notice ul{margin:6px 0 0;padding-inline-start:18px}
+.notice li{margin:2px 0}
+.notice svg{margin-top:2px}
+
+/* steps */
+.steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(288px,1fr))}
+.step{border:1px solid var(--line);border-radius:13px;padding:15px 17px;background:#fbfcff}
+.step h4{margin:0 0 10px;font-size:.95rem;color:var(--navy);display:flex;align-items:center;gap:8px;font-weight:600}
+.step ol{margin:0;padding-inline-start:19px;font-size:.87rem;color:#3a4666;line-height:1.85}
+.step ol b{color:var(--navy)}
+
+#toast{position:fixed;inset-block-end:24px;inset-inline-start:50%;transform:translateX(50%) translateY(20px);
+  background:var(--navy);color:#fff;padding:11px 22px;border-radius:11px;font-size:.9rem;font-weight:600;
+  box-shadow:0 12px 34px -10px rgba(34,66,146,.6);opacity:0;pointer-events:none;transition:.25s;z-index:99}
+#toast.show{opacity:1;transform:translateX(50%) translateY(0)}
+
+footer{text-align:center;margin-top:32px;font-size:.79rem;color:var(--muted);line-height:2}
+footer .credit{font-size:.72rem;color:#8A97A6}
+footer a{color:#8A97A6}
+
+@media(max-width:640px){
+  .wrap{padding:15px 12px 42px}
+  .top h1{font-size:1.3rem}
+  .meets{grid-template-columns:1fr}
+}
+@media print{body{background:#fff}.panel,.top{box-shadow:none;break-inside:avoid}button,.chips,.drop{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="h-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.5 15 1.8 1.8 3.4-3.6"/>
+    </svg>
+  </div>
+  <div style="flex:1;min-width:240px">
+    <h1>זימונים · הכשרת רכזים פדגוגיים תשפ"ז</h1>
+    <p>הדף מכין את כל מה שצריך כדי לשלוח למשתתפים זימון יומן — רשימת כתובות מוכנה להדבקה, נושא, גוף הודעה וקובץ יומן עם כל שבעת המפגשים. הזימון נשלח מהיומן שלך, ולכן מגיע אליהם בשמך.</p>
+  </div>
+</header>
+
+<!-- ============ 1. טעינת הרשימה ============ -->
+<section class="panel">
+  <h2><span class="n">1</span> טעינת רשימת המשתתפים</h2>
+  <p class="hint">גוררים לכאן את קובץ האקסל של המשתתפים. הדף קורא אותו ומזהה לבד את העמודות.</p>
+
+  <div id="drop" class="drop" tabindex="0" role="button" aria-label="בחירת קובץ משתתפים">
+    <div class="di">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/><path d="M9 13h6M9 17h4"/>
+      </svg>
+    </div>
+    <b>גררו לכאן את קובץ המשתתפים — או לחצו לבחירה</b>
+    <span>קבצי ‎.xlsx‏, ‎.xls‏, ‎.csv</span>
+    <input type="file" id="file" accept=".xlsx,.xls,.csv,.tsv" style="display:none">
+  </div>
+
+  <div id="loaded" class="loaded gone">
+    <span class="ic">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.4 2.4 4.6-5"/></svg>
+    </span>
+    <b id="loadedTxt">—</b>
+    <span class="sp"></span>
+    <button class="btn-ghost btn-sm" id="reload">טעינת קובץ אחר</button>
+    <button class="btn-danger btn-sm" id="clearData">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>
+      מחיקת הנתונים
+    </button>
+  </div>
+
+  <div class="notice priv">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6z"/><path d="m9.5 12 1.8 1.8 3.4-3.6"/></svg>
+    <div>
+      <b>הנתונים לא יוצאים מהמחשב שלך.</b> הקובץ נקרא בתוך הדפדפן בלבד — הוא לא נשלח לשרת ולא נשמר בשום מקום מקוון.
+      הרשימה נשמרת רק בדפדפן הזה כדי שלא תצטרכי לטעון אותה שוב, ואפשר למחוק אותה בכל רגע בכפתור "מחיקת הנתונים".
+    </div>
+  </div>
+</section>
+
+<div id="app" class="gone">
+
+<!-- ============ 2. הגדרות ============ -->
+<section class="panel">
+  <h2><span class="n">2</span> הגדרות הזימון</h2>
+  <p class="hint">ממלאים פעם אחת. נשמר בדפדפן שלך ויחכה לך גם בפעם הבאה.</p>
+  <div class="row">
+    <div class="field">
+      <label for="organizer">שם המזמינה (מופיע בחתימה)</label>
+      <input type="text" id="organizer" value="רויטל אמיר">
+    </div>
+    <div class="field">
+      <label for="orgmail">המייל שלך (המארגנת)</label>
+      <input type="text" id="orgmail" dir="ltr" placeholder="name@labor.gov.il">
+    </div>
+  </div>
+  <div class="row" style="margin-top:13px">
+    <div class="field" style="flex:1 1 100%">
+      <label for="zoomlink">קישור הזום למפגשים המקוונים — אפשר להשאיר ריק ולהוסיף אחר כך</label>
+      <input type="url" id="zoomlink" dir="ltr" placeholder="https://us02web.zoom.us/j/...">
+    </div>
+  </div>
+  <div class="row" style="margin-top:13px">
+    <div class="field" style="flex:1 1 100%">
+      <label for="venue">מיקום המפגשים הפיזיים</label>
+      <input type="text" id="venue" value="מיי קמפוס בני ברק (סמוך לתחנת הרכבת)">
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. מי מקבל ============ -->
+<section class="panel">
+  <h2><span class="n">3</span> מי מקבל את הזימון</h2>
+  <p class="hint">כברירת מחדל כולם. אפשר לסנן לפי מוקד או להוריד סימון ממי שלא צריך לקבל.</p>
+  <div class="chips" id="chips"></div>
+  <div class="counter">
+    <b id="cnt">0</b><span>נמענים נבחרו מתוך <span id="tot">0</span></span>
+    <span class="sp"></span>
+    <button class="btn-ghost btn-sm" id="selAll">סמן הכל</button>
+    <button class="btn-ghost btn-sm" id="selNone">נקה סימון</button>
+    <button class="btn-primary btn-sm" id="copyTop">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+      העתק את כל הכתובות
+    </button>
+  </div>
+
+  <div id="issues"></div>
+
+  <div class="field" style="margin-top:14px;flex:1 1 240px">
+    <input type="text" id="search" placeholder="חיפוש לפי שם, יישוב או מייל...">
+  </div>
+  <div class="tbl-wrap" style="margin-top:10px">
+    <table>
+      <thead><tr><th style="width:34px"></th><th>שם</th><th>מייל</th><th>נייד</th><th>יישוב</th><th>מוקד</th></tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 4. שליחה אחת ============ -->
+<section class="panel hero">
+  <h2><span class="n">4</span> הדרך המהירה — שליחה אחת, כל 7 המפגשים, כל המשתתפים</h2>
+  <p class="hint">מייל אחד עם קובץ יומן מצורף. כל מי שמקבל אותו מוסיף את כל שבעת המפגשים ליומן שלו בלחיצה אחת.</p>
+  <div class="flow">
+    <div class="flow-step">
+      <span class="sn">1</span>
+      <div>
+        <b>מורידים את קובץ היומן</b>
+        <p>קובץ אחד עם כל שבעת המפגשים — תאריכים, שעות ומיקומים.</p>
+        <button class="btn-primary" id="icsAll">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          הורדת הקובץ (7 מפגשים)
+        </button>
+      </div>
+    </div>
+    <div class="flow-step">
+      <span class="sn">2</span>
+      <div>
+        <b>פותחים מייל חדש ומדביקים</b>
+        <p>הכתובות בשדה "עותק מוסתר" (BCC), ואז הנושא וגוף ההודעה.</p>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn-soft btn-sm" id="oneMails">כתובות (<span id="oneCnt">0</span>)</button>
+          <button class="btn-soft btn-sm" id="oneSubj">נושא</button>
+          <button class="btn-soft btn-sm" id="oneBody">גוף ההודעה</button>
+        </div>
+      </div>
+    </div>
+    <div class="flow-step">
+      <span class="sn">3</span>
+      <div>
+        <b>מצרפים את הקובץ ושולחים</b>
+        <p>גוררים את הקובץ שירד לתוך המייל ושולחים. זהו — כולם קיבלו את כל השנה.</p>
+        <button class="btn-ghost btn-sm" id="openDl">איפה הקובץ שירד?</button>
+      </div>
+    </div>
+  </div>
+  <div class="notice info">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+    <div>
+      <b>מה ההבדל בין זה לבין זימון יומן רגיל?</b><br>
+      בשליחה הזו כל אחד <b>מוסיף</b> את המפגשים ליומן שלו — מהירה, אחת, וכולם מקבלים את כל השנה.
+      זימון יומן רגיל (בהמשך) גם <b>עוקב אחרי אישורי הגעה</b>, אבל דורש פעולה נפרדת לכל מפגש.
+      אפשר לשלב: שליחה מהירה עכשיו לכל השנה, וזימון רגיל לקראת כל מפגש.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. המפגשים ============ -->
+<section class="panel">
+  <h2><span class="n">5</span> זימון יומן עם אישורי הגעה — לפי מפגש</h2>
+  <p class="hint">כל מפגש בנפרד, למי שרוצה מעקב אישורי הגעה. הכפתור הראשון פותח את כל שבעת המפגשים ברצף.</p>
+  <div style="margin-bottom:14px;display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+    <button class="btn-primary" id="gcalAll">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m9.5 15 1.8 1.8 3.4-3.6"/></svg>
+      פתח את כל 7 המפגשים ביומן גוגל
+    </button>
+    <button class="btn-ghost" id="copyAllBodies">העתקת לוח המפגשים כטקסט</button>
+    <span style="font-size:.8rem;color:var(--muted)">נפתחות 7 לשוניות — צריך לאשר לדפדפן חלונות קופצים</span>
+  </div>
+  <div class="meets" id="meets"></div>
+</section>
+
+<!-- ============ 6. איך שולחים ============ -->
+<section class="panel">
+  <h2><span class="n">6</span> איך שולחים בפועל</h2>
+  <p class="hint">לפי היומן שאת עובדת איתו. בכל הדרכים הזימון יוצא ממך.</p>
+  <div class="steps">
+    <div class="step" style="background:#f4f8ff;border-color:#d7e2ff">
+      <h4>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+        מייל אחד לכל השנה (מומלץ)
+      </h4>
+      <ol>
+        <li>מורידים את <b>קובץ 7 המפגשים</b> מסעיף 4.</li>
+        <li>מייל חדש ← מדביקים את הכתובות ב<b>עותק מוסתר</b>, ואת הנושא וגוף ההודעה.</li>
+        <li>גוררים את הקובץ לתוך המייל ו<b>שולחים פעם אחת</b>.</li>
+        <li>כל נמען פותח את הקובץ ומקבל את כל שבעת המפגשים ביומן — עם תזכורת יום לפני.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <h4>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+        אאוטלוק
+      </h4>
+      <ol>
+        <li>אצל המפגש הרצוי — <b>העתק כתובות</b>.</li>
+        <li>באאוטלוק: יומן ← <b>פגישה חדשה</b>.</li>
+        <li>בשדה <b>נדרשים</b> — הדבקה (הכתובות מופרדות בנקודה־פסיק).</li>
+        <li>מדביקים נושא וגוף הודעה, מעדכנים תאריך ושעה, ו<b>שולחים</b>.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <h4>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        יומן גוגל
+      </h4>
+      <ol>
+        <li>אצל המפגש הרצוי — <b>פתח ביומן גוגל</b>.</li>
+        <li>נפתח אירוע חדש ביומן שלך, עם התאריך, השעה, המיקום, התיאור <b>וכל המוזמנים כבר בפנים</b>.</li>
+        <li>בודקים, לוחצים <b>שמירה</b> ← <b>שליחה</b>.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+</div><!-- /app -->
+
+<footer>
+  המנהיגות הפדגוגית היוצרת · משרד העבודה — מינהל הכשרה מקצועית<br>
+  <span class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></span>
+</footer>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+"use strict";
+
+/* ============================================================
+   הדף לא מכיל נתונים אישיים. הרשימה נטענת מקובץ שהמשתמשת בוחרת,
+   נקראת בדפדפן בלבד, ונשמרת רק ב-localStorage המקומי.
+   ============================================================ */
+
+var TITLE = 'הכשרת רכזים פדגוגיים תשפ"ז';
+var MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+var M = [
+  {i:1, d:'2026-09-07', dow:'יום שני',   s:'14:00', e:'15:30', zoom:true},
+  {i:2, d:'2026-10-26', dow:'יום שני',   s:'09:00', e:'15:00', zoom:false},
+  {i:3, d:'2026-12-17', dow:'יום חמישי', s:'09:00', e:'15:00', zoom:false},
+  {i:4, d:'2027-01-27', dow:'יום רביעי', s:'09:00', e:'15:00', zoom:false},
+  {i:5, d:'2027-02-16', dow:'יום שלישי', s:'09:00', e:'14:00', zoom:true},
+  {i:6, d:'2027-05-23', dow:'יום ראשון', s:'09:00', e:'15:00', zoom:false},
+  {i:7, d:'2027-06-27', dow:'יום ראשון', s:'09:00', e:'11:00', zoom:true}
+];
+
+var P = [];          // המשתתפים
+var sel = {};        // מייל -> נבחר
+var filter = 'all';
+var q = '';
+
+var $ = function(id){ return document.getElementById(id); };
+function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ---------- הודעה קופצת ---------- */
+var tmr;
+function toast(msg){
+  var t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(tmr); tmr = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+function flash(btn){
+  if(!btn) return;
+  var old = btn.innerHTML;
+  btn.classList.add('ok');
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> הועתק';
+  setTimeout(function(){ btn.classList.remove('ok'); btn.innerHTML = old; }, 1500);
+}
+function copy(text, btn, msg){
+  var done = function(){ flash(btn); toast(msg || 'הועתק ללוח'); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(text, done); });
+  } else fallback(text, done);
+}
+function fallback(text, done){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); done(); }
+  catch(e){ toast('ההעתקה נחסמה — סמני את הטקסט והעתיקי ידנית'); }
+  document.body.removeChild(ta);
+}
+
+/* ---------- שמירת העדפות ---------- */
+var KEYS = ['organizer','orgmail','zoomlink','venue'];
+function loadPrefs(){
+  KEYS.forEach(function(k){
+    try{ var v = localStorage.getItem('zim_'+k); if(v!==null) $(k).value = v; }catch(e){}
+  });
+}
+function savePrefs(){
+  KEYS.forEach(function(k){ try{ localStorage.setItem('zim_'+k, $(k).value); }catch(e){} });
+}
+
+/* ============================================================
+   קריאת קובץ המשתתפים
+   ============================================================ */
+var COLS = {
+  first: ['שם פרטי','first name','firstname'],
+  last:  ['שם משפחה','last name','lastname','surname'],
+  full:  ['שם מלא','שם','name'],
+  mail:  ['מייל','אימייל','דוא"ל','דואל','e-mail','email','mail'],
+  phone: ['טלפון טקסט','נייד','טלפון','נייד טקסט','mobile','phone'],
+  city:  ['ישוב מגורים','יישוב מגורים','ישוב','יישוב','עיר','city'],
+  group: ['single select','מוקד','מחוז','קבוצה','אשכול'],
+  semel: ['סמל מוסד','סמל','מוסד']
+};
+function norm(s){ return String(s==null?'':s).replace(/[\u200e\u200f]/g,'').trim().toLowerCase(); }
+
+function findHeader(rows){
+  for(var r = 0; r < Math.min(rows.length, 25); r++){
+    var cells = (rows[r]||[]).map(norm);
+    var hasMail = cells.some(function(c){ return COLS.mail.indexOf(c) > -1; });
+    var hasName = cells.some(function(c){
+      return COLS.first.indexOf(c) > -1 || COLS.full.indexOf(c) > -1 || COLS.last.indexOf(c) > -1;
+    });
+    if(hasMail && hasName) return r;
+  }
+  for(var r2 = 0; r2 < Math.min(rows.length, 25); r2++){
+    if((rows[r2]||[]).map(norm).some(function(c){ return COLS.mail.indexOf(c) > -1; })) return r2;
+  }
+  return -1;
+}
+function mapCols(header){
+  var map = {};
+  header.forEach(function(h, i){
+    var n = norm(h);
+    Object.keys(COLS).forEach(function(key){
+      if(map[key] === undefined && COLS[key].indexOf(n) > -1) map[key] = i;
+    });
+  });
+  return map;
+}
+function cell(row, idx){
+  if(idx === undefined || row[idx] === undefined || row[idx] === null) return '';
+  var v = row[idx];
+  if(typeof v === 'number') v = (v === Math.floor(v)) ? String(v) : String(v);
+  return String(v).trim();
+}
+function cleanPhone(v){
+  var d = String(v).replace(/\D/g, '');
+  if(!d) return '';
+  if(d.indexOf('972') === 0) d = '0' + d.slice(3);
+  if(d[0] !== '0') d = '0' + d;
+  return d;
+}
+var MAIL_RE = /^[^@\s,;]+@[^@\s,;]+\.[A-Za-z]{2,}$/;
+
+function parseRows(rows){
+  var hr = findHeader(rows);
+  if(hr < 0) throw new Error('לא נמצאה שורת כותרות עם עמודת מייל');
+  var map = mapCols(rows[hr]);
+  if(map.mail === undefined) throw new Error('לא נמצאה עמודת מייל בקובץ');
+
+  var out = [], seen = {};
+  for(var r = hr + 1; r < rows.length; r++){
+    var row = rows[r] || [];
+    var mail = cell(row, map.mail);
+    if(!mail) continue;
+    mail = mail.replace(/^mailto:/i, '').trim();
+    var f = cell(row, map.first), l = cell(row, map.last);
+    if(!f && map.full !== undefined) f = cell(row, map.full);
+    var name = (f + ' ' + l).trim();
+    if(!name && !mail) continue;
+    var key = mail.toLowerCase();
+    if(seen[key]) continue;
+    seen[key] = 1;
+    out.push({
+      f: f, l: l, mail: mail,
+      ph: cleanPhone(cell(row, map.phone)),
+      city: cell(row, map.city),
+      g: cell(row, map.group) || 'ללא שיוך',
+      semel: cell(row, map.semel)
+    });
+  }
+  if(!out.length) throw new Error('לא נמצאו שורות עם כתובת מייל');
+  return out;
+}
+
+function readFile(file){
+  var fr = new FileReader();
+  fr.onload = function(ev){
+    try{
+      var wb = XLSX.read(ev.target.result, {type:'array'});
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+      P = parseRows(rows);
+      sel = {};
+      var me = norm($('orgmail').value);
+      P.forEach(function(p){ sel[p.mail] = (norm(p.mail) !== me); });
+      persist(file.name);
+      showApp(file.name);
+      render();
+      toast('נטענו ' + P.length + ' משתתפים');
+    }catch(err){
+      toast('לא הצלחתי לקרוא את הקובץ: ' + err.message);
+    }
+  };
+  fr.onerror = function(){ toast('שגיאה בקריאת הקובץ'); };
+  fr.readAsArrayBuffer(file);
+}
+
+function persist(fname){
+  try{
+    localStorage.setItem('zim_data', JSON.stringify({name:fname, when:Date.now(), rows:P, sel:sel}));
+  }catch(e){}
+}
+function restore(){
+  try{
+    var raw = localStorage.getItem('zim_data');
+    if(!raw) return false;
+    var o = JSON.parse(raw);
+    if(!o || !o.rows || !o.rows.length) return false;
+    P = o.rows; sel = o.sel || {};
+    P.forEach(function(p){ if(sel[p.mail] === undefined) sel[p.mail] = true; });
+    showApp(o.name, o.when);
+    return true;
+  }catch(e){ return false; }
+}
+function showApp(fname, when){
+  var txt = P.length + ' משתתפים נטענו';
+  if(fname) txt += ' · ' + fname;
+  if(when){
+    var d = new Date(when);
+    txt += ' · ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+  }
+  $('loadedTxt').textContent = txt;
+  $('loaded').classList.remove('gone');
+  $('drop').classList.add('gone');
+  $('app').classList.remove('gone');
+}
+function hideApp(){
+  P = []; sel = {};
+  $('loaded').classList.add('gone');
+  $('drop').classList.remove('gone');
+  $('app').classList.add('gone');
+}
+
+/* ---------- אירועי טעינה ---------- */
+var drop = $('drop');
+drop.addEventListener('click', function(){ $('file').click(); });
+drop.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); $('file').click(); } });
+['dragenter','dragover'].forEach(function(t){
+  drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.add('over'); });
+});
+['dragleave','drop'].forEach(function(t){
+  drop.addEventListener(t, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+});
+drop.addEventListener('drop', function(e){
+  if(e.dataTransfer.files && e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+});
+$('file').addEventListener('change', function(e){
+  if(e.target.files && e.target.files[0]) readFile(e.target.files[0]);
+  e.target.value = '';
+});
+$('reload').addEventListener('click', function(){ $('file').click(); });
+$('clearData').addEventListener('click', function(){
+  if(!confirm('למחוק את רשימת המשתתפים מהדפדפן?')) return;
+  try{ localStorage.removeItem('zim_data'); }catch(e){}
+  hideApp();
+  toast('הרשימה נמחקה מהדפדפן');
+});
+
+/* ============================================================
+   נמענים, טקסטים, יומן
+   ============================================================ */
+function groups(){
+  var g = [], seen = {};
+  P.forEach(function(p){ if(p.g && !seen[p.g]){ seen[p.g] = 1; g.push(p.g); } });
+  return g;
+}
+function inFilter(p){ return filter === 'all' || p.g === filter; }
+function matches(p){
+  if(!q) return true;
+  return (p.f+' '+p.l+' '+p.mail+' '+p.city+' '+p.g).toLowerCase().indexOf(q) > -1;
+}
+function mails(){
+  var out = [], seen = {};
+  P.forEach(function(p){
+    if(!p.mail || !sel[p.mail] || !inFilter(p)) return;
+    var m = p.mail.trim(), k = m.toLowerCase();
+    if(m && !seen[k]){ seen[k] = 1; out.push(m); }
+  });
+  return out;
+}
+
+function fmtDate(iso){
+  var a = iso.split('-');
+  return (+a[2]) + ' ב' + MONTHS[(+a[1])-1] + ' ' + a[0];
+}
+function subject(m){ return TITLE + ' — מפגש ' + m.i + ' מתוך 7 · ' + fmtDate(m.d); }
+function place(m){
+  if(m.zoom){
+    var z = $('zoomlink').value.trim();
+    return z ? ('מפגש בזום — ' + z) : 'מפגש בזום (הקישור יישלח בהמשך)';
+  }
+  return $('venue').value.trim() || 'מפגש פיזי';
+}
+function body(m){
+  var L = [];
+  L.push('שלום רב,'); L.push('');
+  L.push('מוזמנים למפגש ' + m.i + ' מתוך 7 בהכשרת הרכזים הפדגוגיים לשנת תשפ"ז.'); L.push('');
+  L.push('תאריך: ' + m.dow + ', ' + fmtDate(m.d));
+  L.push('שעות: ' + m.s + '–' + m.e);
+  L.push('מתכונת: ' + (m.zoom ? 'מפגש מקוון בזום' : 'מפגש פיזי'));
+  L.push('מיקום: ' + place(m)); L.push('');
+  L.push('לוח כל המפגשים השנה:');
+  M.forEach(function(x){
+    L.push('  ' + x.i + '. ' + fmtDate(x.d) + ' · ' + x.s + '–' + x.e + ' · ' + (x.zoom ? 'זום' : 'פיזי'));
+  });
+  L.push(''); L.push('אנא אשרו הגעה בזימון.'); L.push('');
+  L.push('בברכה,');
+  L.push($('organizer').value.trim());
+  L.push('המנהיגות הפדגוגית היוצרת · משרד העבודה — מינהל הכשרה מקצועית');
+  return L.join('\n');
+}
+function oneSubject(){ return TITLE + ' — לוח כל 7 המפגשים והוספה ליומן'; }
+function oneBody(){
+  var L = [];
+  L.push('שלום רב,'); L.push('');
+  L.push('לקראת פתיחת השנה — מצורף לוח כל שבעת המפגשים בהכשרת הרכזים הפדגוגיים לתשפ"ז.'); L.push('');
+  M.forEach(function(x){
+    L.push(x.i + '. ' + x.dow + ', ' + fmtDate(x.d));
+    L.push('    ' + x.s + '–' + x.e + ' · ' + (x.zoom ? 'מפגש מקוון בזום' : 'מפגש פיזי'));
+    L.push('    ' + place(x));
+    L.push('');
+  });
+  L.push('לנוחותכם מצורף קובץ יומן. פתיחה שלו בלחיצה כפולה תוסיף את כל שבעת המפגשים');
+  L.push('ליומן שלכם בבת אחת — כולל תזכורת יום לפני כל מפגש.'); L.push('');
+  L.push('נשמח לראותכם,');
+  L.push($('organizer').value.trim());
+  L.push('המנהיגות הפדגוגית היוצרת · משרד העבודה — מינהל הכשרה מקצועית');
+  return L.join('\n');
+}
+function scheduleText(){
+  var L = [TITLE + ' — לוח המפגשים', ''];
+  M.forEach(function(x){
+    L.push(x.i + '. ' + x.dow + ', ' + fmtDate(x.d) + ' · ' + x.s + '–' + x.e +
+           ' · ' + (x.zoom ? 'זום' : 'פיזי') + ' · ' + place(x));
+  });
+  return L.join('\n');
+}
+
+function gcalBase(m){
+  var st = m.d.replace(/-/g,'') + 'T' + m.s.replace(':','') + '00';
+  var en = m.d.replace(/-/g,'') + 'T' + m.e.replace(':','') + '00';
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(subject(m))
+    + '&dates=' + st + '/' + en + '&ctz=Asia/Jerusalem'
+    + '&details=' + encodeURIComponent(body(m))
+    + '&location=' + encodeURIComponent(place(m));
+}
+function gcal(m){
+  var u = gcalBase(m);
+  mails().forEach(function(e){ u += '&add=' + encodeURIComponent(e); });
+  return u;
+}
+
+function icsEsc(t){
+  return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+}
+/* גלישת שורות לפי RFC 5545 — נספרת בבתים, כי עברית תופסת 2 בתים לתו */
+function fold(line){
+  var LIMIT = 73, parts = [], cur = '', b = 0;
+  var chars = Array.from(line);
+  for(var i = 0; i < chars.length; i++){
+    var cp = chars[i].codePointAt(0);
+    var n = cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4;
+    if(b + n > LIMIT){ parts.push(cur); cur = ''; b = 0; }
+    cur += chars[i]; b += n;
+  }
+  parts.push(cur);
+  return parts.join('\r\n ');
+}
+var VTZ = [
+  'BEGIN:VTIMEZONE','TZID:Asia/Jerusalem',
+  'BEGIN:DAYLIGHT','TZOFFSETFROM:+0200','TZOFFSETTO:+0300','TZNAME:IDT',
+  'DTSTART:19700327T020000','RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29','END:DAYLIGHT',
+  'BEGIN:STANDARD','TZOFFSETFROM:+0300','TZOFFSETTO:+0200','TZNAME:IST',
+  'DTSTART:19701025T020000','RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU','END:STANDARD',
+  'END:VTIMEZONE'
+];
+function vevent(m, withAttendees){
+  var st = m.d.replace(/-/g,'') + 'T' + m.s.replace(':','') + '00';
+  var en = m.d.replace(/-/g,'') + 'T' + m.e.replace(':','') + '00';
+  var stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+  var org = $('orgmail').value.trim(), orgName = $('organizer').value.trim();
+  var L = [
+    'BEGIN:VEVENT',
+    'UID:rakazim-' + m.i + '-' + m.d + '@pedagogiamh.co.il',
+    'DTSTAMP:' + stamp,
+    'DTSTART;TZID=Asia/Jerusalem:' + st,
+    'DTEND;TZID=Asia/Jerusalem:' + en,
+    'SUMMARY:' + icsEsc(subject(m)),
+    'LOCATION:' + icsEsc(place(m)),
+    'DESCRIPTION:' + icsEsc(body(m)),
+    'STATUS:CONFIRMED','SEQUENCE:0'
+  ];
+  if(org) L.push('ORGANIZER;CN=' + icsEsc(orgName) + ':mailto:' + org);
+  if(withAttendees){
+    mails().forEach(function(e){
+      L.push('ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:' + e);
+    });
+  }
+  L.push('BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY',
+         'DESCRIPTION:' + icsEsc('תזכורת: ' + subject(m)),'END:VALARM','END:VEVENT');
+  return L;
+}
+function ics(list, withAttendees){
+  var L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//impactos//zimun rakazim//HE',
+           'CALSCALE:GREGORIAN','METHOD:PUBLISH'].concat(VTZ);
+  list.forEach(function(m){ L = L.concat(vevent(m, withAttendees)); });
+  L.push('END:VCALENDAR');
+  return L.map(fold).join('\r\n') + '\r\n';
+}
+function download(name, text){
+  var blob = new Blob(['\ufeff' + text], {type:'text/calendar;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  toast('הקובץ ירד — צרפי אותו למייל');
+}
+
+/* ============================================================
+   ציור
+   ============================================================ */
+function renderChips(){
+  var html = '<button class="chip" data-g="all" aria-pressed="' + (filter==='all') + '">כל המשתתפים <span class="c">' + P.length + '</span></button>';
+  groups().forEach(function(g){
+    var n = P.filter(function(p){ return p.g === g; }).length;
+    html += '<button class="chip" data-g="' + esc(g) + '" aria-pressed="' + (filter===g) + '">' + esc(g) + ' <span class="c">' + n + '</span></button>';
+  });
+  $('chips').innerHTML = html;
+  Array.prototype.forEach.call($('chips').children, function(b){
+    b.addEventListener('click', function(){ filter = b.getAttribute('data-g'); render(); });
+  });
+}
+function renderIssues(){
+  var bad = P.filter(function(p){ return !MAIL_RE.test(p.mail); });
+  var noPh = P.filter(function(p){ return !p.ph; });
+  var shortPh = P.filter(function(p){ return p.ph && p.ph.length !== 10; });
+  if(!bad.length && !noPh.length && !shortPh.length){ $('issues').innerHTML = ''; return; }
+  var h = '<div class="notice warn">'
+    + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><div>'
+    + '<b>נקודות לבדיקה בקובץ</b> — הנתונים מוצגים כפי שהם בקובץ, בלי תיקון אוטומטי:<ul>';
+  if(bad.length) h += '<li>' + bad.length + ' כתובות מייל שנראות לא תקינות: ' +
+      bad.slice(0,4).map(function(p){ return esc(p.f + ' ' + p.l); }).join(', ') +
+      (bad.length > 4 ? ' ועוד' : '') + '</li>';
+  if(noPh.length) h += '<li>' + noPh.length + ' משתתפים ללא טלפון (הזימון עדיין יגיע אליהם במייל)</li>';
+  if(shortPh.length) h += '<li>' + shortPh.length + ' מספרי טלפון קצרים מ־10 ספרות</li>';
+  h += '</ul>הפריטים מסומנים בטבלה שלמטה.</div></div>';
+  $('issues').innerHTML = h;
+}
+function renderTable(){
+  var rows = P.filter(function(p){ return inFilter(p) && matches(p); });
+  var html = '';
+  rows.forEach(function(p){
+    var on = !!sel[p.mail];
+    var fPh = !p.ph ? '<span class="flag">אין טלפון</span>'
+            : (p.ph.length !== 10 ? '<span class="flag">קצר</span>' : '');
+    var fMail = MAIL_RE.test(p.mail) ? '' : '<span class="flag">בדקי כתובת</span>';
+    html += '<tr class="' + (on ? '' : 'off') + '">'
+      + '<td><input type="checkbox" data-m="' + esc(p.mail) + '"' + (on ? ' checked' : '') + '></td>'
+      + '<td>' + esc((p.f + ' ' + p.l).trim()) + '</td>'
+      + '<td class="mail">' + esc(p.mail) + fMail + '</td>'
+      + '<td class="ph">' + esc(p.ph || '—') + fPh + '</td>'
+      + '<td>' + esc(p.city) + '</td>'
+      + '<td>' + esc(p.g) + '</td></tr>';
+  });
+  if(!rows.length) html = '<tr><td colspan="6" style="text-align:center;color:#65739a;padding:22px">לא נמצאו משתתפים</td></tr>';
+  $('tb').innerHTML = html;
+  Array.prototype.forEach.call($('tb').querySelectorAll('input[type=checkbox]'), function(cb){
+    cb.addEventListener('change', function(){
+      sel[cb.getAttribute('data-m')] = cb.checked;
+      persist(); render();
+    });
+  });
+}
+function renderCount(){
+  var n = mails().length;
+  $('cnt').textContent = n;
+  $('oneCnt').textContent = n;
+  $('tot').textContent = P.filter(inFilter).length;
+}
+function renderMeets(){
+  var html = '';
+  M.forEach(function(m, k){
+    var a = m.d.split('-');
+    html += '<article class="meet' + (m.zoom ? ' zoom' : '') + '">'
+      + '<div class="meet-hd">'
+      +  '<div class="date-box"><span class="d">' + (+a[2]) + '</span>'
+      +   '<span class="m">' + MONTHS[(+a[1])-1].slice(0,4) + '</span>'
+      +   '<span class="y">' + a[0] + '</span></div>'
+      +  '<div style="min-width:0">'
+      +   '<span class="tag ' + (m.zoom ? 'z' : 'p') + '">'
+      +    (m.zoom
+          ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m22 8-7 4 7 4V8Z"/></svg> מקוון בזום'
+          : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg> מפגש פיזי')
+      +   '</span>'
+      +   '<h3>מפגש ' + m.i + ' מתוך 7</h3>'
+      +   '<div class="meet-meta">'
+      +    '<span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>' + m.dow + ' · ' + m.s + '–' + m.e + '</span>'
+      +    '<span style="white-space:normal"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg>' + esc(place(m)) + '</span>'
+      +   '</div></div></div>'
+      + '<div class="meet-acts">'
+      +  '<button class="btn-primary btn-sm" data-act="mails" data-k="' + k + '">כתובות</button>'
+      +  '<button class="btn-soft btn-sm" data-act="subj" data-k="' + k + '">נושא</button>'
+      +  '<button class="btn-soft btn-sm" data-act="body" data-k="' + k + '">גוף ההודעה</button>'
+      +  '<button class="btn-ghost btn-sm" data-act="gcal" data-k="' + k + '">יומן גוגל</button>'
+      +  '<button class="btn-ghost btn-sm" data-act="ics" data-k="' + k + '">‎.ics</button>'
+      + '</div></article>';
+  });
+  $('meets').innerHTML = html;
+  Array.prototype.forEach.call($('meets').querySelectorAll('button[data-act]'), function(b){
+    b.addEventListener('click', function(){
+      var m = M[+b.getAttribute('data-k')], act = b.getAttribute('data-act');
+      if(act === 'mails'){
+        var list = mails();
+        if(!list.length){ toast('לא נבחרו נמענים'); return; }
+        copy(list.join('; '), b, list.length + ' כתובות הועתקו');
+      }
+      else if(act === 'subj') copy(subject(m), b, 'הנושא הועתק');
+      else if(act === 'body') copy(body(m), b, 'גוף ההודעה הועתק');
+      else if(act === 'gcal'){
+        var u = gcal(m);
+        if(u.length > 7500){
+          window.open(gcalBase(m), '_blank', 'noopener');
+          toast('הרשימה ארוכה — האירוע נפתח בלי מוזמנים. הדביקי אותם בשדה "אורחים"');
+        } else window.open(u, '_blank', 'noopener');
+      }
+      else if(act === 'ics') download('מפגש-' + m.i + '-' + m.d + '.ics', ics([m], true));
+    });
+  });
+}
+function render(){
+  if(!P.length) return;
+  renderChips(); renderIssues(); renderTable(); renderCount(); renderMeets();
+}
+
+/* ---------- אירועים ---------- */
+loadPrefs();
+KEYS.forEach(function(k){ $(k).addEventListener('input', function(){ savePrefs(); render(); }); });
+
+$('search').addEventListener('input', function(e){ q = e.target.value.trim().toLowerCase(); renderTable(); });
+$('selAll').addEventListener('click', function(){
+  P.forEach(function(p){ if(p.mail && inFilter(p)) sel[p.mail] = true; }); persist(); render();
+});
+$('selNone').addEventListener('click', function(){
+  P.forEach(function(p){ if(p.mail && inFilter(p)) sel[p.mail] = false; }); persist(); render();
+});
+$('copyTop').addEventListener('click', function(){
+  var list = mails();
+  if(!list.length){ toast('לא נבחרו נמענים'); return; }
+  copy(list.join('; '), this, list.length + ' כתובות הועתקו');
+});
+$('icsAll').addEventListener('click', function(){ download('הכשרת-רכזים-פדגוגיים-תשפז.ics', ics(M, false)); });
+$('copyAllBodies').addEventListener('click', function(){ copy(scheduleText(), this, 'לוח המפגשים הועתק'); });
+$('oneMails').addEventListener('click', function(){
+  var list = mails();
+  if(!list.length){ toast('לא נבחרו נמענים'); return; }
+  copy(list.join('; '), this, list.length + ' כתובות הועתקו — הדביקי ב"עותק מוסתר"');
+});
+$('oneSubj').addEventListener('click', function(){ copy(oneSubject(), this, 'הנושא הועתק'); });
+$('oneBody').addEventListener('click', function(){ copy(oneBody(), this, 'גוף ההודעה הועתק'); });
+$('openDl').addEventListener('click', function(){ toast('הקובץ בתיקיית ההורדות — בדפדפן: Ctrl+J'); });
+
+$('gcalAll').addEventListener('click', function(){
+  if(!mails().length){ toast('לא נבחרו נמענים'); return; }
+  var blocked = 0;
+  M.forEach(function(m, k){
+    setTimeout(function(){
+      var u = gcal(m);
+      var w = window.open(u.length > 7500 ? gcalBase(m) : u, '_blank', 'noopener');
+      if(!w) blocked++;
+      if(k === M.length - 1){
+        setTimeout(function(){
+          toast(blocked ? 'הדפדפן חסם חלונות קופצים — אשרי אותם ונסי שוב'
+                        : 'נפתחו 7 לשוניות — בכל אחת: שמירה ← שליחה');
+        }, 400);
+      }
+    }, k * 600);
+  });
+});
+
+if(restore()) render();
+</script>
+</body>
+</html>
