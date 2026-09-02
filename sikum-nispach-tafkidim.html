@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מעקב נספח בעלי התפקידים · תשפ״ז · משרד העבודה</title>
+<meta name="description" content="תמונת מצב חיה של מילוי נספח בעלי התפקידים בבתי הספר — מי מילא, מי טרם, ואילו תפקידים טרם אוישו.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:60px;width:auto;display:block}
+
+.hero{text-align:center;padding:22px 0 6px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(27px,5.4vw,40px);line-height:1.16;margin:16px 0 12px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:18px;color:#3d4a70;max-width:60ch;margin:0 auto}
+
+.bar{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px;flex-wrap:wrap}
+.live{display:inline-flex;align-items:center;gap:9px;font-size:15px;color:var(--muted)}
+.live .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 0 rgba(18,179,159,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.refresh{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;
+  padding:8px 20px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;transition:border-color .16s var(--ease),box-shadow .16s var(--ease)}
+.refresh:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+.refresh svg{width:15px;height:15px}
+.refresh.spin svg{animation:rot .9s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:28px;margin-top:22px}
+@media (max-width:560px){.card{padding:20px 16px}}
+.card h2{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:0 0 4px}
+.card h2 + .sub{font-size:15px;color:var(--muted);margin:0 0 18px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:22px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);
+  padding:20px 18px;text-align:center}
+.kpi .v{font-family:'Rubik',sans-serif;font-size:33px;font-weight:700;color:var(--navy);line-height:1.1}
+.kpi .l{font-size:14.5px;color:var(--muted);margin-top:4px}
+.kpi.good .v{color:#0c8f7d}
+.kpi.warn .v{color:var(--amber)}
+
+.cov{margin-top:6px}
+.covbar{height:16px;border-radius:999px;background:#eef2f9;overflow:hidden;border:1px solid var(--line)}
+.covfill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--sky));
+  transition:width .8s var(--ease)}
+.covtxt{margin-top:10px;font-size:15.5px;color:#33405f}
+.covtxt b{font-family:'Rubik',sans-serif;color:var(--navy)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 14px;
+  font-size:14.3px;font-weight:600;border:1.5px solid}
+.tag.miss{border-color:#f0cdd2;background:#fff6f7;color:#8c2b34}
+.tag.done{border-color:#a9e3d6;background:#effaf7;color:#0a5c51}
+.tag.vac{border-color:#e6d6b8;background:#fffaef;color:#8a5c14}
+
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.tools input,.tools select{padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:#fbfcff;
+  font-family:inherit;font-size:15.5px;color:var(--ink);min-width:170px;flex:1 1 170px}
+.tools input:focus,.tools select:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+.tools select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 12px center;background-size:17px;cursor:pointer;padding-inline-start:34px}
+
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:15.3px;min-width:640px}
+thead th{background:var(--blue-soft);color:var(--navy);font-weight:700;text-align:start;
+  padding:12px 14px;position:sticky;top:0;white-space:nowrap;font-size:14.5px}
+tbody td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:hover{background:#fbfcff}
+tbody td.c{text-align:center;font-family:'Rubik',sans-serif;font-weight:600;color:var(--navy)}
+td.school{font-weight:700;color:#25325a}
+.empty{padding:26px;text-align:center;color:var(--muted);font-size:16px}
+
+.rolebars{display:grid;gap:11px}
+.rb{display:grid;grid-template-columns:minmax(150px,1.3fr) 1fr auto;gap:12px;align-items:center;font-size:15.3px}
+@media (max-width:620px){.rb{grid-template-columns:1fr;gap:5px}}
+.rb .nm{font-weight:700;color:#25325a}
+.rb .track{height:11px;border-radius:999px;background:#eef2f9;overflow:hidden;border:1px solid var(--line)}
+.rb .fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--mint),#7fd4c6);
+  transition:width .8s var(--ease)}
+.rb .fill.low{background:linear-gradient(90deg,#e0a14a,#f0c98a)}
+.rb .fill.bad{background:linear-gradient(90deg,#d3606b,#eaa0a7)}
+.rb .n{font-family:'Rubik',sans-serif;font-weight:600;color:var(--navy);font-size:14.5px;white-space:nowrap}
+
+.state{display:none;margin-top:20px;border-radius:16px;padding:18px 20px;border:1.5px solid;font-size:15.5px}
+.state.on{display:block}
+.state.load{background:#fff;border-color:var(--line);color:var(--muted)}
+.state.err{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.state.setup{background:#fffaf0;border-color:#e3bd7e;color:#7a5312}
+.state code{background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:14px}
+
+.privacy{margin-top:22px;background:#fbfcff;border:1.5px dashed var(--line);border-radius:16px;
+  padding:16px 20px;font-size:15px;color:var(--muted);display:flex;gap:12px;align-items:flex-start}
+.privacy svg{width:20px;height:20px;flex:0 0 auto;margin-top:3px;color:var(--navy)}
+.privacy b{color:var(--navy)}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .credit{margin-top:10px;font-size:13px;opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19V5M4 19h16"/><path d="m7.5 14.5 3.5-4 3 3 5-6.5"/>
+      </svg>
+      מנהיגות פדגוגית יוצרת · תשפ״ז
+    </span>
+    <h1>מעקב נספח בעלי התפקידים</h1>
+    <p class="lede">תמונת מצב חיה של מילוי הנספח בבתי הספר — מי כבר מילא, מי טרם,
+      ואילו תפקידים עדיין לא אוישו. הנתונים מתעדכנים ישירות מהטופס.</p>
+
+    <div class="bar">
+      <span class="live"><span class="dot"></span><span id="liveTxt">טוען נתונים…</span></span>
+      <button class="refresh" id="refreshBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 11.5A8 8 0 1 0 18 17"/><path d="M20 5v5h-5"/>
+        </svg>
+        רענון
+      </button>
+    </div>
+  </div>
+
+  <div class="state load on" id="stLoad">טוען את הנספחים…</div>
+  <div class="state err"     id="stErr">לא הצלחנו למשוך נתונים מהשרת. בדקו את החיבור לאינטרנט — הדף ינסה שוב אוטומטית.</div>
+  <div class="state setup"   id="stSetup">
+    <b>דף המעקב עדיין לא חובר לשרת.</b> אחרי פריסת ה-Apps Script יש להדביק את כתובת ה-/exec
+    בשורה <code>var API_URL = ""</code> — או לבדוק מיד עם <code>?api=https://script.google.com/.../exec</code>
+  </div>
+
+  <div id="content" style="display:none">
+
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kFilled">—</div><div class="l">בתי ספר מילאו את הנספח</div></div>
+      <div class="kpi warn"><div class="v" id="kMissing">—</div><div class="l">בתי ספר טרם מילאו</div></div>
+      <div class="kpi good"><div class="v" id="kHolders">—</div><div class="l">בעלי תפקידים מאוישים סה״כ</div></div>
+      <div class="kpi"><div class="v" id="kAvg">—</div><div class="l">ממוצע בעלי תפקידים לבית ספר</div></div>
+      <div class="kpi warn"><div class="v" id="kVacant">—</div><div class="l">תפקידים שדווחו כטרם אוישו</div></div>
+    </div>
+
+    <div class="card">
+      <h2>כיסוי המילוי</h2>
+      <p class="sub">מי כבר מילא — ומי עדיין לא, מתוך 64 בתי הספר בפריסת הפיקוח</p>
+      <div class="cov">
+        <div class="covbar"><div class="covfill" id="covFill"></div></div>
+        <p class="covtxt"><b id="covN">—</b> מתוך <b>64</b> בתי ספר מילאו את הנספח (<b id="covP">—</b>).</p>
+      </div>
+      <p class="covtxt" style="margin-top:18px"><b id="missN">—</b> בתי ספר טרם מילאו:</p>
+      <div class="chips" id="missChips"></div>
+    </div>
+
+    <div class="card">
+      <h2>איוש התפקידים ברשת</h2>
+      <p class="sub">לכל תפקיד — בכמה מבתי הספר שמילאו הוא מאויש בפועל. ארבעת התפקידים האחרונים
+        (מחשוב, בגרות, משמעת ומערכת) מדווחים רק בבתי ספר שבחרו בהם מבין תפקידי ה-6%.</p>
+      <div class="rolebars" id="roleBars"></div>
+    </div>
+
+    <div class="card">
+      <h2>הנספחים לפי בית ספר</h2>
+      <p class="sub">אפשר לחפש בית ספר או מנהל.ת, ולסנן לפי מפקח.ת או סטטוס</p>
+      <div class="tools">
+        <input type="search" id="q" placeholder="חיפוש בית ספר או מנהל.ת…" aria-label="חיפוש">
+        <select id="fInsp" aria-label="סינון לפי מפקח.ת"><option value="">כל המפקחים.ות</option></select>
+        <select id="fStat" aria-label="סינון לפי סטטוס">
+          <option value="">כל הסטטוסים</option>
+          <option value="done">מילאו</option>
+          <option value="miss">טרם מילאו</option>
+          <option value="vac">מילאו — עם תפקידים שטרם אוישו</option>
+        </select>
+      </div>
+      <div class="tscroll">
+        <table>
+          <thead><tr>
+            <th>בית הספר</th><th>מפקח.ת</th><th>מנהל.ת</th><th>כיתות</th>
+            <th>בעלי תפקידים</th><th>טרם אוישו</th><th>4 תפקידי 6%</th><th>מולא בתאריך</th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="noRows" style="display:none">אין שורות שתואמות לסינון</div>
+    </div>
+
+    <div class="privacy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4.5" y="10" width="15" height="10" rx="2.2"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+      </svg>
+      <div><b>הגנה על פרטיות בעלי התפקידים.</b> הדף הזה מציג מעקב מילוי בלבד — כמה תפקידים אוישו ואילו טרם.
+        שמות בעלי התפקידים, כתובות המייל והטלפונים שלהם נשמרים בגיליון בלבד ואינם נשלחים לדף,
+        גם לא למי שפותח את קוד המקור. לצפייה בפרטים המלאים — נכנסים לגיליון עצמו.</div>
+    </div>
+
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+
+</div>
+
+<script>
+/* כתובת ה-Apps Script — אותה כתובת של טופס הנספח */
+var API_URL = "https://script.google.com/macros/s/AKfycbw_ix0Qi2SkQHB081xdNA15kIQXGsUxO15keTMafPAcWRSy8gyIMmFR6_PV2UZ4_rTiuQ/exec";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* בתי הספר — פריסת הפיקוח תשפ"ז (64 מוסדות): שם, מפקח.ת, רשת */
+var SCHOOLS = [["אבו סנאן","ליאת צבר","סכנין"],["אום אל פחם בנות","ליאת צבר","סכנין"],["אום אל פחם בנים","רביב שורץ","סכנין"],["אור דניאל","יששכר חפץ","עתיד"],["אור העתיד תורני מקצועי","יששכר חפץ","עתיד"],["אורט אורמת","סיגלית דאי","אורט"],["אורט בית הערבה","רויטל אמיר","אורט"],["אורט כרמל","יסמין אמון","אורט"],["אורט תל נוף","סיגלית דאי","אורט"],["אורט תעשייה אווירית","סיגלית דאי","אורט"],["אכסאל","יסמין אמון","סכנין"],["אל אמאני סכנין","יסמין אמון","סכנין"],["אלחכמה כסרא-סמיע","יסמין אמון","סכנין"],["אנרג'י טק","ליאת צבר","עמל"],["בית אל","ליאת צבר","בית אל"],["בית דוד","יששכר חפץ","עתיד"],["בית חנינה בנות","ויסאם סואלחה","סכנין"],["בית חנינה בנים","ויסאם סואלחה","סכנין"],["ג'וליס בנות","יסמין אמון","עתיד"],["דן גורמה","סיגלית דאי","אורט"],["דרור גליל","ליאת צבר","דרור"],["דרור נווה מדבר","שרונה בלוך","דרור"],["הדר","יששכר חפץ","בית שולמית"],["הקמפוס התורני עתיד","יששכר חפץ","עתיד"],["התיכון החברתי חיפה","ליאת צבר","דרור"],["חוש\"ן","רויטל אמיר","דרור"],["טורען","יסמין אמון","סכנין"],["טל חרמון","יששכר חפץ","טל חרמון"],["ישיבת חנוך לנער","יששכר חפץ","ישיבת חנוך לנער"],["כפר זיתים","יששכר חפץ","כפר זיתים"],["כפר יסיף","יסמין אמון","סכנין"],["כפר עקב","ויסאם סואלחה","סכנין"],["לקייה","שרונה בלוך","סכנין"],["מצפה רמון","רביב שורץ","דרור"],["מרחביה/מעיינות","יששכר חפץ","עמל"],["נחלים","יששכר חפץ","נחלים"],["נצרת","יסמין אמון","עמל"],["סור באהר","ויסאם סואלחה","סכנין"],["סכנין תל שבע","שרונה בלוך","סכנין"],["עמל אשדוד","סיגלית דאי","עמל"],["עמל טייבה ב'","ויסאם סואלחה","עמל"],["עמל טק אין","סיגלית דאי","עמל"],["עמל רהט","יסמין אמון · סיגלית דאי","עמל"],["ערערה","ויסאם סואלחה","סכנין"],["עתיד באר שבע","סיגלית דאי","עתיד"],["עתיד בת עמי","יששכר חפץ","עתיד"],["עתיד גליל מערבי ירכא בנים","יסמין אמון","עתיד"],["עתיד טק ביר אל מכסור","יסמין אמון","עתיד"],["עתיד כפר חב\"ד","יששכר חפץ","עתיד"],["עתיד כרמיאל","רביב שורץ","עתיד"],["עתיד פלמחים","סיגלית דאי","עתיד"],["צור ברק","סיגלית דאי","אורט"],["צור ים","ליאת צבר","עתיד"],["קמ\"ג דימונה","סיגלית דאי","עמל"],["רימונים","ליאת צבר","רימונים"],["רמת דוד","ליאת צבר","עמל"],["שגב שלום","שרונה בלוך","סכנין"],["שפרעם","רביב שורץ","סכנין"],["תיכון החממה","סיגלית דאי · רויטל אמיר","עמל"],["תיכון חברתי ת\"א","ליאת צבר","דרור"],["תיכון טכנולוגי אי טק סקול (מסעדה)","יסמין אמון","עתיד"],["תיכון עוצמ\"ה עתיד זוקו","ליאת צבר","עתיד"],["תיכון שיח","ליאת צבר","עמל"],["תפן ליזמות","יסמין אמון","עתיד"]];
+
+/* התפקידים הקבועים — לגרף האיוש (באותו סדר של הטופס) */
+var CORE_ROLES = [
+  "רכז.ת פדגוגי.ת · סגן.ית מנהל.ת",
+  "רכז.ת חינוך חברתי יוצר",
+  "רכז.ת צוות צעיר",
+  "רכז.ת חניכות",
+  "מת״ל/ית — מעריך.ה ומקדם.ת תפקודי למידה",
+  "רכז.ת הכלה ושילוב",
+  "יועץ.ת חינוכי.ת",
+  "רכז.ת אס״א — מניעת אלימות, סמים והתנהגויות סיכוניות",
+  "רכז.ת ביטחון, בטיחות והיערכות לחירום",
+  "רכז.ת טיולים",
+  "רכז.ת מגמה",
+  "רכז.ת מקצוע",
+  "רכז.ת שכבה",
+  "מורה חונך.ת"
+];
+
+/* תפקידי ה-6% שנפתחים רק למי שבחר בהם מבין הארבעה */
+var SIX_ROLES = [
+  "רכז.ת מחשוב והוראה טכנולוגית",
+  "רכז.ת בגרות",
+  "רכז.ת משמעת",
+  "רכז.ת מערכת"
+];
+
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function heDate(v){
+  var m = /^(\d{4})-(\d{2})-(\d{2})[ T]?(\d{2}:\d{2})?/.exec(String(v || ""));
+  if (!m) return String(v || "—");
+  return Number(m[3]) + "." + Number(m[2]) + "." + m[1].slice(2) + (m[4] ? " · " + m[4] : "");
+}
+
+var ROWS = [];      /* שורת מעקב לכל אחד מ-64 בתי הספר */
+var TIMER = null;
+
+function state(which){
+  ["stLoad","stErr","stSetup"].forEach(function(id){ $(id).classList.remove("on"); });
+  if (which) $(which).classList.add("on");
+}
+
+function load(manual){
+  if (!API_URL){ state("stSetup"); return; }
+  var btn = $("refreshBtn");
+  if (manual) btn.classList.add("spin");
+
+  fetch(API_URL + "?mode=data")
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      btn.classList.remove("spin");
+      if (!j || !j.ok) throw new Error("bad");
+      build(j.rows || []);
+      state("");
+      $("content").style.display = "";
+      $("liveTxt").textContent = "עודכן ב-" +
+        new Date().toLocaleTimeString("he-IL", {hour:"2-digit", minute:"2-digit"}) +
+        " · מתעדכן אוטומטית כל דקה";
+    })
+    .catch(function(){
+      btn.classList.remove("spin");
+      if ($("content").style.display === "") return;   /* כבר יש נתונים על המסך */
+      state("stErr");
+    });
+}
+
+function build(rows){
+  var by = {};
+  rows.forEach(function(r){ by[r.school] = r; });
+
+  ROWS = SCHOOLS.map(function(s){
+    var r = by[s[0]];
+    if (!r) return {school:s[0], inspector:s[1], done:false};
+    var vacant = (r.roles || []).filter(function(x){ return x.status === "טרם אויש"; });
+    return {
+      school:    s[0],
+      inspector: r.inspector || s[1],
+      principal: r.principal || "",
+      classes:   r.classes || 0,
+      filled:    r.filled || 0,
+      vacantN:   vacant.length,
+      vacantTxt: r.vacant || "",
+      six:       r.six || "",
+      ts:        r.ts || "",
+      roles:     r.roles || [],
+      done:      true
+    };
+  });
+
+  var done    = ROWS.filter(function(r){ return r.done; });
+  var missing = ROWS.filter(function(r){ return !r.done; });
+  var holders = done.reduce(function(a, r){ return a + r.filled; }, 0);
+  var vacants = done.reduce(function(a, r){ return a + r.vacantN; }, 0);
+
+  $("kFilled").textContent  = done.length;
+  $("kMissing").textContent = missing.length;
+  $("kHolders").textContent = holders.toLocaleString("he-IL");
+  $("kAvg").textContent     = done.length ? (holders / done.length).toFixed(1) : "—";
+  $("kVacant").textContent  = vacants;
+
+  var pct = Math.round(done.length / SCHOOLS.length * 100);
+  $("covFill").style.width = pct + "%";
+  $("covN").textContent = done.length;
+  $("covP").textContent = pct + "%";
+  $("missN").textContent = missing.length;
+  $("missChips").innerHTML = missing.length
+    ? missing.map(function(r){ return '<span class="tag miss">' + esc(r.school) + '</span>'; }).join("")
+    : '<span class="tag done">כל בתי הספר מילאו — אין חוסרים</span>';
+
+  /* איוש התפקידים */
+  var bars = CORE_ROLES.concat(SIX_ROLES).map(function(role){
+    var n = done.filter(function(r){
+      return (r.roles || []).some(function(x){
+        return x.role && x.role.indexOf(role) === 0 && x.status === "מאויש";
+      });
+    }).length;
+    return [role, n];
+  });
+  var base = done.length || 1;
+  $("roleBars").innerHTML = bars.map(function(b){
+    var p = Math.round(b[1] / base * 100);
+    var cls = p >= 80 ? "" : (p >= 50 ? " low" : " bad");
+    return '<div class="rb"><div class="nm">' + esc(b[0]) + '</div>' +
+           '<div class="track"><div class="fill' + cls + '" style="width:' + p + '%"></div></div>' +
+           '<div class="n">' + b[1] + ' / ' + done.length + ' · ' + p + '%</div></div>';
+  }).join("");
+
+  /* מסנן מפקחים */
+  var sel = $("fInsp");
+  if (sel.options.length <= 1){
+    var seen = {};
+    SCHOOLS.forEach(function(s){ seen[s[1]] = true; });
+    Object.keys(seen).sort().forEach(function(n){
+      var o = document.createElement("option");
+      o.value = n; o.textContent = n + " (" + SCHOOLS.filter(function(s){ return s[1] === n; }).length + ")";
+      sel.appendChild(o);
+    });
+  }
+
+  render();
+}
+
+function render(){
+  var q    = ($("q").value || "").trim();
+  var insp = $("fInsp").value;
+  var stat = $("fStat").value;
+
+  var list = ROWS.filter(function(r){
+    if (insp && r.inspector !== insp) return false;
+    if (stat === "done" && !r.done) return false;
+    if (stat === "miss" && r.done)  return false;
+    if (stat === "vac"  && !(r.done && r.vacantN > 0)) return false;
+    if (q && (r.school + " " + (r.principal || "")).indexOf(q) === -1) return false;
+    return true;
+  });
+
+  $("tbody").innerHTML = list.map(function(r){
+    if (!r.done){
+      return '<tr><td class="school">' + esc(r.school) + '</td><td>' + esc(r.inspector) + '</td>' +
+             '<td colspan="6"><span class="tag miss">טרם מילא.ה את הנספח</span></td></tr>';
+    }
+    var vac = r.vacantN
+      ? '<span class="tag vac">' + r.vacantN + ' תפקידים</span><div style="font-size:13.6px;color:var(--muted);margin-top:5px">' + esc(r.vacantTxt) + '</div>'
+      : '<span class="tag done">הכול מאויש</span>';
+    return '<tr>' +
+      '<td class="school">' + esc(r.school) + '</td>' +
+      '<td>' + esc(r.inspector) + '</td>' +
+      '<td>' + esc(r.principal) + '</td>' +
+      '<td class="c">' + (r.classes || "—") + '</td>' +
+      '<td class="c">' + r.filled + '</td>' +
+      '<td>' + vac + '</td>' +
+      '<td style="font-size:14px;color:#4a5878">' + esc(r.six || "—") + '</td>' +
+      '<td style="white-space:nowrap;font-size:14px;color:var(--muted)">' + esc(heDate(r.ts)) + '</td>' +
+      '</tr>';
+  }).join("");
+
+  $("noRows").style.display = list.length ? "none" : "";
+}
+
+["q","fInsp","fStat"].forEach(function(id){
+  $(id).addEventListener("input", render);
+  $(id).addEventListener("change", render);
+});
+$("refreshBtn").addEventListener("click", function(){ load(true); });
+
+load(false);
+TIMER = setInterval(function(){ load(false); }, 60000);
+document.addEventListener("visibilitychange", function(){
+  if (!document.hidden) load(false);
+});
+</script>
+</body>
+</html>

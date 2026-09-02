@@ -34,7 +34,8 @@ const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמו�
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
   "admin.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
-  "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html"]);
+  "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html",
+  "nispach-baaley-tafkidim.html", "sikum-nispach-tafkidim.html"]);
 
 /* עמוד מוגן = עמוד שטוען את /auth.js.
    הסינון נגזר מהקוד עצמו ולא מרשימה ידנית: העמודים המוגנים הצהירו על עצמם
