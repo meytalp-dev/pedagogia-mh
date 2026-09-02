@@ -171,7 +171,9 @@ async function loadTeachers() {
     seniority: t.seniority ? String(t.seniority) : '',
     needsCreate: false, needsUpdate: false, deleteAfterCreate: false, error: false
   }));
+  const restored = restoreDraft();
   renderAll();
+  if (restored) TS.toast('שוחזרו ' + restored + ' מורים שלא הספיקו להישמר — הם נשמרים עכשיו');
 }
 
 // ============================================================
@@ -274,7 +276,15 @@ function initEntryUI() {
   renderChips();
 }
 
+// מקבע שם שנשאר בתיבת ההקלדה. בלי זה, מעבר מקצוע/לשונית מוחק אותו בשקט
+// או משייך אותו למקצוע הלא נכון.
+function commitPending() {
+  const el = document.getElementById('rapid');
+  if (el && el.value.trim()) rapidAdd();
+}
+
 function switchTab(t) {
+  if (t !== 'type') commitPending();
   document.getElementById('tab-type').classList.toggle('active', t === 'type');
   document.getElementById('tab-paste').classList.toggle('active', t === 'paste');
   document.getElementById('panel-type').style.display = t === 'type' ? '' : 'none';
@@ -303,7 +313,14 @@ function renderChips() {
       ${s}${counts[s] ? `<span class="cnt">${counts[s]}</span>` : ''}
     </button>`).join('');
   document.querySelectorAll('.subject-chip').forEach(b =>
-    b.addEventListener('click', () => { curSubject = b.dataset.subject; renderChips(); focusRapid(); }));
+    b.addEventListener('click', () => {
+      const next = b.dataset.subject;
+      commitPending();          // מה שמוקלד שייך למקצוע הנוכחי — מקבעים לפני ההחלפה
+      curSubject = next;
+      renderChips();
+      focusRapid();
+    }));
+
 }
 
 function flash(msg) {
@@ -331,6 +348,7 @@ function addTeacherLocal(name, extra) {
     seniority: extra.seniority || (existing ? existing.seniority : '') || '',
     needsCreate: true, needsUpdate: false, deleteAfterCreate: false, error: false
   });
+  saveDraft();   // מיידי — לא מחכים לסבב הבא של התור
   return true;
 }
 
@@ -348,15 +366,13 @@ function rapidAdd() {
   }
   let phone = phoneEl.value.trim();
   if (!phone && existing && existing.phone) phone = existing.phone;
-  if (!phone) {
-    phoneEl.classList.add('field-missing');
-    phoneEl.focus();
-    return;
-  }
+  // מורה בלי טלפון נקלט ומסומן להשלמה — בדיוק כמו במסלול ההדבקה.
+  // חסימה כאן איבדה מורים בשקט: השם נשאר בתיבה והמעבר למקצוע הבא מחק אותו.
   phoneEl.classList.remove('field-missing');
   if (addTeacherLocal(name, { phone })) {
     nameEl.value = ''; phoneEl.value = '';
-    flash(existing ? 'נוסף גם ל' + curSubject + ' ✓' : 'נוסף ✓');
+    flash(!phone ? 'נוסף — חסר טלפון ⚠️'
+        : existing ? 'נוסף גם ל' + curSubject + ' ✓' : 'נוסף ✓');
     renderAll();
     nameEl.focus();
   }
@@ -536,6 +552,51 @@ function renderAll() {
 let saving = false;
 let ghostRows = [];   // שורות שנמחקו בזמן שהיצירה שלהן באוויר
 
+// ============================================================
+// רשת ביטחון — טיוטה מקומית
+// ============================================================
+// השמירה לגיליון היא מורה־מורה, כ-4–12 שניות לכל אחת. עד עכשיו התור חי רק
+// בזיכרון הדף: סגירת טאב / נעילת מסך / נפילת רשת מחקו את כל מה שטרם נשמר.
+// כאן כל שורה שממתינה נכתבת מיידית ל-localStorage ומשוחזרת בפתיחה הבאה.
+
+function draftKey() { return 'ts.draft.' + schoolId; }
+
+function saveDraft() {
+  if (!schoolId) return;
+  try {
+    const pending = teachers
+      .filter(t => t.needsCreate || t.needsUpdate || !t.serverId)
+      .map(t => ({
+        name: t.name, subject: t.subject, type: t.type,
+        phone: t.phone, email: t.email, seniority: t.seniority
+      }));
+    if (!pending.length && !deleteQueue.length) localStorage.removeItem(draftKey());
+    else localStorage.setItem(draftKey(), JSON.stringify({ ts: Date.now(), pending, deleteQueue }));
+  } catch (e) { /* מצב פרטי / אחסון מלא — לא מפילים את הדף */ }
+}
+
+// מוחזרת אחרי טעינת המורים מהשרת: מחזירה רק שורות שלא הספיקו להישמר.
+function restoreDraft() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(draftKey()) || 'null'); } catch (e) { return 0; }
+  if (!d || !Array.isArray(d.pending)) return 0;
+  let n = 0;
+  d.pending.forEach(x => {
+    if (!x || !x.name) return;
+    if (teachers.some(t => t.name === x.name && t.subject === x.subject)) return;  // כבר בשרת
+    teachers.push({
+      uid: 'u' + (++uidSeq), serverId: null,
+      name: x.name, subject: x.subject || 'מתמטיקה',
+      type: x.type === 'gemer' ? 'gemer' : 'bagrut',
+      phone: (x.phone || '').toString(), email: x.email || '', seniority: x.seniority || '',
+      needsCreate: true, needsUpdate: false, deleteAfterCreate: false, error: false
+    });
+    n++;
+  });
+  (d.deleteQueue || []).forEach(id => { if (deleteQueue.indexOf(id) < 0) deleteQueue.push(id); });
+  return n;
+}
+
 function unsavedCount() {
   return teachers.filter(t => t.needsCreate || t.needsUpdate).length + deleteQueue.length + ghostRows.length;
 }
@@ -543,13 +604,25 @@ function unsavedCount() {
 function updateSaveStatus() {
   const el = document.getElementById('save-status');
   if (!el) return;
+  const pending = teachers.filter(t => t.needsCreate || t.needsUpdate).length;
   const n = unsavedCount();
-  if (n === 0) { el.textContent = '✓ הכל נשמר'; el.className = 'save-status ok'; }
-  else { el.textContent = 'שומר… (' + n + ')'; el.className = 'save-status busy'; }
+  if (n === 0) {
+    el.textContent = teachers.length
+      ? '✓ כל ' + teachers.length + ' המורים נשמרו בגיליון'
+      : '✓ הכל נשמר';
+    el.className = 'save-status ok';
+  } else {
+    const saved = Math.max(0, teachers.length - pending);
+    el.textContent = '⏳ נשמרו ' + saved + ' מתוך ' + teachers.length +
+      ' — אל תסגרו את הדף עד ש-"✓ כל המורים נשמרו"';
+    el.className = 'save-status busy';
+  }
+  const warn = document.getElementById('save-warn');
+  if (warn) warn.hidden = (n === 0);
 }
 
 function startSaveLoop() {
-  setInterval(processQueue, 1200);
+  setInterval(() => { processQueue(); saveDraft(); }, 1200);
 }
 
 async function processQueue() {
