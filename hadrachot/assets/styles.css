@@ -2656,3 +2656,50 @@ body { background: var(--bg); color: var(--text); }
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   PAGE NAV — סרגל ניווט דביק לעמודים עמוסים
+   --pn-h = הגובה שלו, כדי שכותרות טבלה דביקות ייעצרו מתחתיו ולא יתחבאו
+   ============================================================ */
+:root { --pn-h: 56px; }
+.pn {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.pn-inner {
+  max-width: 1240px; margin: 0 auto; padding: 10px 20px;
+  display: flex; gap: 8px; align-items: center;
+  overflow-x: auto; scrollbar-width: none;
+}
+.pn-inner::-webkit-scrollbar { display: none; }
+.pn-label {
+  font-size: 0.75rem; font-weight: 700; color: var(--text-soft);
+  letter-spacing: 0.04em; white-space: nowrap; padding-inline-end: 4px;
+}
+.pn a {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  text-decoration: none; font-size: 0.84rem; font-weight: 600; white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.pn a:hover { background: var(--primary-soft); border-color: var(--primary); }
+.pn a.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.pn a svg { width: 15px; height: 15px; flex: none; }
+.pn a .n {
+  font-size: 0.74rem; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-soft); color: var(--text-muted);
+}
+.pn a.on .n { background: rgba(255, 255, 255, 0.22); color: #fff; }
+/* קפיצה לעוגן לא מסתתרת מתחת לסרגל */
+.pn ~ * [id], .compass-divider[id], section[id], [id^="s-"] {
+  scroll-margin-top: calc(var(--pn-h, 56px) + 14px);
+}
+@media (max-width: 640px) {
+  :root { --pn-h: 50px; }
+  .pn-inner { padding: 8px 14px; }
+  .pn-label { display: none; }
+}

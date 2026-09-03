@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פערים ומעקב — מבט ארצי · מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* ===== כרטיסי פער מקצוע ===== */
+  .gap-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .gap-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+    border-inline-start: 4px solid var(--mint);
+  }
+  .gap-card.warn { border-inline-start-color: var(--coral); }
+  .gap-card h4 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; color: var(--text); }
+  .gap-card .big { font-size: 2rem; font-weight: 800; color: var(--primary-dark); line-height: 1.1; }
+  .gap-card.warn .big { color: var(--coral); }
+  .gap-card .cap { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+  .gap-card .who {
+    margin-top: 10px; font-size: .8rem; color: var(--text-muted);
+    line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height .25s ease;
+  }
+  .gap-card.open .who { max-height: 900px; }
+  .gap-card button.toggle {
+    margin-top: 10px; background: none; border: none; padding: 0; cursor: pointer;
+    font: inherit; font-size: .78rem; font-weight: 700; color: var(--primary);
+  }
+
+  /* ===== מטריצה ===== */
+  .mx-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+  table.mx { border-collapse: collapse; width: 100%; font-size: .82rem; }
+  table.mx th, table.mx td { padding: 7px 9px; text-align: center; border-bottom: 1px solid var(--border-soft); }
+  /* שורת המקצועות נשארת על המסך בגלילה — נעצרת בדיוק מתחת לסרגל הניווט */
+  table.mx thead th {
+    position: sticky; top: var(--pn-h, 56px); background: var(--surface-soft); z-index: 2;
+    font-size: .76rem; font-weight: 700; color: var(--text-muted); white-space: nowrap;
+    box-shadow: 0 1px 0 var(--border), 0 6px 12px -8px rgba(23, 50, 77, .35);
+  }
+  table.mx td.name, table.mx th.name {
+    text-align: right; white-space: nowrap; position: sticky; inset-inline-start: 0;
+    background: var(--surface); z-index: 1; font-weight: 600;
+    max-width: 230px; overflow: hidden; text-overflow: ellipsis;
+  }
+  table.mx thead th.name { background: var(--surface-soft); z-index: 3; }
+  table.mx tr:hover td { background: #FAFCFD; }
+  table.mx tr:hover td.name { background: #FAFCFD; }
+  .cell-n { display: inline-block; min-width: 24px; padding: 2px 7px; border-radius: 7px; font-weight: 700; background: var(--mint-soft); color: #14614f; }
+  .cell-0 { display: inline-block; min-width: 24px; padding: 2px 7px; border-radius: 7px; font-weight: 700; background: var(--coral-soft); color: #9a3d1e; }
+  .cell-na { color: var(--text-soft); }
+  .mx-meta { font-size: .74rem; color: var(--text-soft); }
+
+  /* ===== סרגל סינון ===== */
+  .flt { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .flt select, .flt input[type="search"] {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface); font: inherit; font-size: .84rem; color: var(--text);
+  }
+  .flt label.chk { display: inline-flex; align-items: center; gap: 6px; font-size: .84rem; color: var(--text-muted); cursor: pointer; }
+
+  /* ===== כרטיסי מפקח ===== */
+  .insp-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .insp-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 16px 18px; box-shadow: var(--shadow-card); border-top: 4px solid var(--c, var(--primary));
+  }
+  .insp-card h4 { margin: 0 0 10px; font-size: 1.02rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .insp-card h4 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c, var(--primary)); flex: none; }
+  .insp-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+  .insp-stats div { min-width: 62px; }
+  .insp-stats b { display: block; font-size: 1.35rem; font-weight: 800; color: var(--primary-dark); line-height: 1.15; }
+  .insp-stats span { font-size: .74rem; color: var(--text-muted); }
+  .bar { height: 6px; border-radius: 99px; background: var(--surface-soft); margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--c, var(--primary)); border-radius: 99px; }
+  .insp-missing { margin-top: 10px; font-size: .78rem; color: var(--coral); line-height: 1.6; }
+
+  .lead-note {
+    background: var(--sand-soft); border: 1px solid var(--sand);
+    border-radius: var(--radius-md); padding: 12px 16px;
+    font-size: .82rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px;
+  }
+  /* גם בטבלאות הארוכות — הכותרת נשארת גלויה */
+  table.attention-table.sticky-head thead th {
+    position: sticky; top: var(--pn-h, 56px); z-index: 2;
+    background: var(--surface-soft);
+    box-shadow: 0 1px 0 var(--border), 0 6px 12px -8px rgba(23, 50, 77, .35);
+  }
+  .empty-row { padding: 24px; text-align: center; color: var(--text-muted); }
+  .mini-link { font-size: .78rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+  .mini-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body data-role="ministry">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים</span>
+        </div>
+      </a>
+    </div>
+    <div style="display:flex; align-items:center; gap:18px;">
+      <div class="command-bar-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>מחוברת כמפקחת ארצית</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- סרגל ניווט -->
+  <nav class="pn" aria-label="ניווט בעמוד">
+    <div class="pn-inner">
+      <span class="pn-label">קפיצה אל</span>
+      <a href="../ministry/" title="חזרה למבט הרשת הארצי">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        מבט רשת ארצי
+      </a>
+      <a href="#s-gaps" class="on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        פערי מקצוע <span class="n" id="n-gaps">—</span>
+      </a>
+      <a href="#s-matrix">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        מטריצת בתי ספר × מקצוע
+      </a>
+      <a href="#s-missing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        טרם הזינו <span class="n" id="n-missing">—</span>
+      </a>
+      <a href="#s-inspectors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11h4M19 9v4"/></svg>
+        לפי מפקח.ת <span class="n" id="n-insp">8</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="dashboard-shell">
+
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט ארצי · פערים ומעקב</div>
+        <h1>איפה חסר — ומי עוד לא הזין</h1>
+        <p class="page-header-sub">המשך של מבט הרשת הארצי: אילו בתי ספר אין להם מורה במקצוע מסוים, מי טרם הזין את המורים בכלל, והתמונה לפי מפקח.ת.</p>
+      </div>
+      <div class="page-compass">
+        <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
+          <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
+          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+          <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
+          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
+          <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
+        </svg>
+        <div class="page-compass-info">
+          <strong>רויטל אמיר</strong>
+          <span id="updated-label">—</span>
+          <div class="page-compass-status"><span>נתונים חיים מהמערכת</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI -->
+    <section class="command-strip" aria-label="נתוני מעקב">
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">בתי ספר שהזינו</div>
+        <div class="cmd-metric-value" id="kpi-filled">—</div>
+        <div class="cmd-metric-sub" id="kpi-filled-sub">מתוך —</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">טרם הזינו</div>
+        <div class="cmd-metric-value" id="kpi-missing">—</div>
+        <div class="cmd-metric-sub">בתי ספר בלי אף מורה</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">מורים שהוזנו</div>
+        <div class="cmd-metric-value" id="kpi-teachers">—</div>
+        <div class="cmd-metric-sub" id="kpi-teachers-sub">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">פערי מקצוע</div>
+        <div class="cmd-metric-value" id="kpi-gaps">—</div>
+        <div class="cmd-metric-sub">משבצות ריקות בבתי ספר שכן הזינו</div>
+      </div>
+    </section>
+
+    <!-- ===== פערי מקצוע ===== -->
+    <div class="compass-divider" id="s-gaps" aria-hidden="true">
+      <span class="label">פערי מקצוע</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <div class="section-head-flex">
+      <div>
+        <h2>בתי ספר שאין להם מורה במקצוע</h2>
+        <p class="sub">מתוך בתי הספר שכבר הזינו מורים. לחיצה על "מי חסר" פותחת את רשימת בתי הספר.</p>
+      </div>
+    </div>
+    <div class="lead-note">
+      הספירה כוללת רק בתי ספר שכבר הזינו מורים — מי שטרם הזין כלל מופיע בסעיף <a class="mini-link" href="#s-missing">טרם הזינו</a>.
+      תנ״ך נספר רק במגזר הכללי והחרדי, וערבית רק במגזר הערבי — במגזרים האחרים המקצוע אינו נלמד ומסומן «—».
+    </div>
+    <div class="gap-grid" id="gap-grid">
+      <div class="empty-row" style="grid-column:1/-1">טוען...</div>
+    </div>
+
+    <!-- ===== מטריצה ===== -->
+    <div class="compass-divider" id="s-matrix" aria-hidden="true">
+      <span class="label">בתי ספר × מקצוע</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <div class="section-head-flex">
+      <div>
+        <h2>מטריצה מלאה — בית ספר מול מקצוע</h2>
+        <p class="sub">כמה מורים הוזנו בכל מקצוע בכל בית ספר. משבצת כתומה = אין אף מורה במקצוע הזה.</p>
+      </div>
+    </div>
+    <div class="flt">
+      <input type="search" id="f-q" placeholder="חיפוש בית ספר…" aria-label="חיפוש בית ספר">
+      <select id="f-sector" aria-label="מגזר"><option value="">כל המגזרים</option></select>
+      <select id="f-network" aria-label="רשת"><option value="">כל הרשתות</option></select>
+      <select id="f-insp" aria-label="מפקח"><option value="">כל המפקחים</option></select>
+      <label class="chk"><input type="checkbox" id="f-gapsonly"> רק בתי ספר עם פער</label>
+      <span class="mx-meta" id="mx-count"></span>
+    </div>
+    <div class="mx-wrap">
+      <table class="mx">
+        <thead><tr id="mx-head"></tr></thead>
+        <tbody id="mx-body"><tr><td class="empty-row" colspan="12">טוען...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- ===== טרם הזינו ===== -->
+    <div class="compass-divider" id="s-missing" aria-hidden="true">
+      <span class="label">טרם הזינו</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <section class="attention-card">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            בתי ספר שטרם הזינו מורים
+          </h3>
+          <p class="sub">אין להם אף מורה במערכת. הכפתור מעתיק את קישור ההזנה האישי של בית הספר — אפשר לשלוח אותו למנהל/ת.</p>
+        </div>
+        <span class="badge-attention">דורש פנייה</span>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table class="attention-table">
+          <thead>
+            <tr><th>בית ספר</th><th>רשת</th><th>מגזר</th><th>מפקח.ת</th><th>מחוז</th><th></th></tr>
+          </thead>
+          <tbody id="missing-body"><tr><td colspan="6" class="empty-row">טוען...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== לפי מפקח ===== -->
+    <div class="compass-divider" id="s-inspectors" aria-hidden="true">
+      <span class="label">לפי מפקח.ת</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <div class="section-head-flex">
+      <div>
+        <h2>התמונה לפי מפקח.ת</h2>
+        <p class="sub">חלוקת המוסדות לפי פריסת הפיקוח תשפ״ז. הפס מראה איזה חלק מהמוסדות של כל מפקח.ת כבר הזינו מורים.</p>
+      </div>
+    </div>
+    <div class="insp-grid" id="insp-grid">
+      <div class="empty-row" style="grid-column:1/-1">טוען...</div>
+    </div>
+
+    <section class="attention-card" style="margin-top:20px">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            פירוט מלא לפי מפקח.ת
+          </h3>
+          <p class="sub">כל המוסדות, ממוינים לפי מפקח.ת — כולל מספר המורים ומספר המקצועות החסרים.</p>
+        </div>
+      </div>
+      <div class="table-wrap" style="border:none;">
+        <table class="attention-table sticky-head">
+          <thead>
+            <tr><th>מפקח.ת</th><th>בית ספר</th><th>רשת</th><th>מגזר</th><th>מורים</th><th>מקצועות חסרים</th></tr>
+          </thead>
+          <tbody id="insp-body"><tr><td colspan="6" class="empty-row">טוען...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="mx-meta" style="margin-top:26px; text-align:center">
+      שיוך המפקחים נלקח מ<a class="mini-link" href="https://pedagogiamh.co.il/prisat-pikuah.html" target="_blank" rel="noopener">פריסת הפיקוח תשפ״ז</a>.
+      <span id="unmapped-note"></span>
+    </p>
+
+  </main>
+
+<script src="../assets/app.js"></script>
+<script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script src="pearim.js"></script>
+</body>
+</html>

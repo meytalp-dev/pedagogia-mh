@@ -394,3 +394,22 @@ function escapeHtml(s) {
 function escapeAttr(s) {
   return (s || '').toString().replace(/'/g, "\\'");
 }
+
+// ============================================================
+// סרגל הניווט העליון — הדגשת הסעיף שנמצא על המסך
+// ============================================================
+(function initPageNav() {
+  const links = [...document.querySelectorAll('.pn a[href^="#"]')];
+  if (!links.length) return;
+  const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if (!targets.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  targets.forEach(t => obs.observe(t));
+})();

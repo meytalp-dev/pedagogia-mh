@@ -33,6 +33,33 @@
     </div>
   </header>
 
+  <!-- סרגל ניווט -->
+  <nav class="pn" aria-label="ניווט בעמוד">
+    <div class="pn-inner">
+      <span class="pn-label">קפיצה אל</span>
+      <a href="#s-top" class="on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+        נתונים ארציים
+      </a>
+      <a href="#s-networks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
+        לפי רשת
+      </a>
+      <a href="#s-sectors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+        לפי מגזר
+      </a>
+      <a href="#s-schools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        פירוט בתי ספר
+      </a>
+      <a href="pearim.html" style="background:var(--sand-soft); border-color:var(--sand); font-weight:700">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        פערים ומעקב · מי טרם הזין · לפי מפקח.ת ›
+      </a>
+    </div>
+  </nav>
+
   <main class="dashboard-shell">
 
     <!-- Page Header -->
@@ -72,7 +99,7 @@
     </div>
 
     <!-- Command Strip — 6 KPIs ארציים -->
-    <section class="command-strip" aria-label="נתונים ארציים">
+    <section class="command-strip" id="s-top" aria-label="נתונים ארציים">
       <div class="cmd-metric">
         <div class="cmd-metric-label">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
@@ -125,7 +152,7 @@
     </div>
 
     <!-- Compass Divider בין מדדים לרשתות -->
-    <div class="compass-divider" aria-hidden="true">
+    <div class="compass-divider" id="s-networks" aria-hidden="true">
       <span class="label">פילוח לפי רשת</span>
       <div class="line"></div>
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5Z"/></svg></div>
@@ -156,7 +183,7 @@
     </div>
 
     <!-- Compass Divider בין רשתות למגזרים -->
-    <div class="compass-divider" aria-hidden="true">
+    <div class="compass-divider" id="s-sectors" aria-hidden="true">
       <span class="label">פילוח לפי מגזר</span>
       <div class="line"></div>
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
@@ -204,7 +231,7 @@
     </section>
 
     <!-- Compass Divider לפני הטבלה -->
-    <div class="compass-divider" aria-hidden="true">
+    <div class="compass-divider" id="s-schools" aria-hidden="true">
       <span class="label">פירוט בתי ספר</span>
       <div class="line"></div>
       <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg></div>
@@ -241,6 +268,20 @@
         </table>
       </div>
     </section>
+
+    <!-- מעבר לעמוד הפערים -->
+    <a href="pearim.html" class="attention-card" style="display:block; margin-top:22px; text-decoration:none; color:inherit; border-color:var(--sand); background:linear-gradient(180deg,var(--sand-soft),var(--surface));">
+      <div class="attention-head" style="margin-bottom:0">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            פערים ומעקב — עמוד נפרד
+          </h3>
+          <p class="sub">אילו בתי ספר אין להם מורה במקצוע מסוים (אזרחות, מתמטיקה וכו'), מי טרם הזין מורים בכלל, והחלוקה לפי מפקח.ת — בעמוד נפרד כדי לא להעמיס כאן.</p>
+        </div>
+        <span class="badge info">מעבר לעמוד ›</span>
+      </div>
+    </a>
 
   </main>
 

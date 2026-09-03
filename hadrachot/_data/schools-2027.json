@@ -2,14 +2,16 @@
  "meta": {
   "source": "schools-dashboard/schools-data.json",
   "created": "2026-08-03",
-  "count": 60
+  "updated": "2026-09-03",
+  "updatedFrom": "schools.list (Apps Script) — סנכרון אחרי הזנות בתי הספר החדשים",
+  "count": 64
  },
  "schools": [
   {
    "id": "sch_001",
    "name": "אום אל פחם בנות",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "נורה",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -17,8 +19,8 @@
   {
    "id": "sch_002",
    "name": "אום אל פחם בנים",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "ג'אד מחאג'נה",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -26,8 +28,8 @@
   {
    "id": "sch_003",
    "name": "אור העתיד תורני גן יבנה",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "מאיר ענתבי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -35,8 +37,8 @@
   {
    "id": "sch_004",
    "name": "אורט אורמת",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "רמי מיכאלה",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -44,8 +46,8 @@
   {
    "id": "sch_005",
    "name": "אורט בית הערבה",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "רווית גל",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -53,8 +55,8 @@
   {
    "id": "sch_006",
    "name": "אורט כרמל",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "וליד דאו",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -62,8 +64,8 @@
   {
    "id": "sch_007",
    "name": "אורט תל נוף",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "אבי בז'ה",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -71,8 +73,8 @@
   {
    "id": "sch_008",
    "name": "אורט תעשיה אווירית",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "ל",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -80,8 +82,8 @@
   {
    "id": "sch_009",
    "name": "אכסאל",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "רשאד חוסיין",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -89,8 +91,8 @@
   {
    "id": "sch_010",
    "name": "בית אל",
-   "network": "net_beit_el",
-   "principalName": "",
+   "network": "beit_el",
+   "principalName": "שרית גולדרינג",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -107,8 +109,8 @@
   {
    "id": "sch_012",
    "name": "בית חנינה בנים",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "חכם דעיס",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -116,8 +118,8 @@
   {
    "id": "sch_013",
    "name": "בת עמי",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "הדס שרון",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -125,8 +127,8 @@
   {
    "id": "sch_014",
    "name": "דן גורמה תל-אביב",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "לימור יעקבי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -134,8 +136,8 @@
   {
    "id": "sch_015",
    "name": "דרור הגליל",
-   "network": "net_dror",
-   "principalName": "",
+   "network": "dror",
+   "principalName": "עינת ויינברן",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -143,8 +145,8 @@
   {
    "id": "sch_016",
    "name": "דרור נווה מדבר",
-   "network": "net_dror",
-   "principalName": "",
+   "network": "dror",
+   "principalName": "עבד אבו אלקיעאן",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -152,8 +154,8 @@
   {
    "id": "sch_017",
    "name": "הדר",
-   "network": "net_shulamit_haredi",
-   "principalName": "",
+   "network": "shulamit_haredi",
+   "principalName": "אלישבע מונסונגו",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -161,17 +163,26 @@
   {
    "id": "sch_018",
    "name": "התיכון החברתי חיפה",
-   "network": "net_dror",
-   "principalName": "",
+   "network": "dror",
+   "principalName": "תמר צרפתי",
    "principalEmail": "",
+   "principalPhone": "",
+   "attendanceTarget": 80
+  },
+  {
+   "id": "sch_1787691687965_840",
+   "name": "התיכון החברתי מצפה רמון",
+   "network": "dror",
+   "principalName": "ענבל לוי",
+   "principalEmail": "levy.inbi@gmail.com",
    "principalPhone": "",
    "attendanceTarget": 80
   },
   {
    "id": "sch_019",
    "name": "התיכון החברתי תל אביב יפו",
-   "network": "net_dror",
-   "principalName": "",
+   "network": "dror",
+   "principalName": "אוהד להב",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -179,8 +190,8 @@
   {
    "id": "sch_020",
    "name": "זוקו",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "יוסי לוי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -188,8 +199,8 @@
   {
    "id": "sch_021",
    "name": "חבד אור מנחם אשקלון",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "בנימין ועקנין",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -197,8 +208,8 @@
   {
    "id": "sch_022",
    "name": "חושן",
-   "network": "net_dror",
-   "principalName": "",
+   "network": "dror",
+   "principalName": "שרי שמבורסקי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -206,17 +217,26 @@
   {
    "id": "sch_023",
    "name": "חנוך לנער צפת",
-   "network": "",
-   "principalName": "",
+   "network": "ezraei_haredi",
+   "principalName": "שלמה אזרף",
    "principalEmail": "",
+   "principalPhone": "",
+   "attendanceTarget": 80
+  },
+  {
+   "id": "sch_1786287795053_979",
+   "name": "ח׳טוואת ירכא אבו סנאן",
+   "network": "sakhnin",
+   "principalName": "נסרין נבואני",
+   "principalEmail": "khatwathighschool@gmail.com",
    "principalPhone": "",
    "attendanceTarget": 80
   },
   {
    "id": "sch_024",
    "name": "טורען",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "עלי עדווי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -242,8 +262,8 @@
   {
    "id": "sch_027",
    "name": "כסרא סמיע",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "עלים עלואן",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -251,8 +271,8 @@
   {
    "id": "sch_028",
    "name": "כפר זיתים",
-   "network": "net_ezraei_haredi",
-   "principalName": "",
+   "network": "ezraei_haredi",
+   "principalName": "יצחק שבתאי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -260,8 +280,8 @@
   {
    "id": "sch_029",
    "name": "כפר יאסיף",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "סמואיל סעיד",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -269,8 +289,8 @@
   {
    "id": "sch_030",
    "name": "לקייה",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "עלי אלחואגרה",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -278,8 +298,8 @@
   {
    "id": "sch_031",
    "name": "מעיינות צפת",
-   "network": "",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "אסתי שלקובסקי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -287,8 +307,8 @@
   {
    "id": "sch_032",
    "name": "נחלים",
-   "network": "net_ezraei_haredi",
-   "principalName": "",
+   "network": "ezraei_haredi",
+   "principalName": "אליהו טובול",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -296,8 +316,8 @@
   {
    "id": "sch_033",
    "name": "עמל אנרגיטק",
-   "network": "net_amal",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "דרור לוי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -305,8 +325,8 @@
   {
    "id": "sch_034",
    "name": "עמל אשדוד",
-   "network": "net_amal",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "מגי רביבו",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -314,7 +334,7 @@
   {
    "id": "sch_035",
    "name": "עמל טייבה",
-   "network": "net_amal",
+   "network": "amal",
    "principalName": "",
    "principalEmail": "",
    "principalPhone": "",
@@ -323,7 +343,7 @@
   {
    "id": "sch_036",
    "name": "עמל טק אין",
-   "network": "net_amal",
+   "network": "amal",
    "principalName": "",
    "principalEmail": "",
    "principalPhone": "",
@@ -332,26 +352,17 @@
   {
    "id": "sch_037",
    "name": "עמל נצרת",
-   "network": "net_amal",
-   "principalName": "",
-   "principalEmail": "",
-   "principalPhone": "",
-   "attendanceTarget": 80
-  },
-  {
-   "id": "sch_038",
-   "name": "עמל רהט בנות",
-   "network": "net_amal",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "בוטו נאיף",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
   },
   {
    "id": "sch_039",
-   "name": "עמל רהט בנים",
-   "network": "net_amal",
-   "principalName": "",
+   "name": "עמל רהט",
+   "network": "amal",
+   "principalName": "ראיד הוזייל",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -359,8 +370,8 @@
   {
    "id": "sch_040",
    "name": "עמל רמת דוד",
-   "network": "net_amal",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "שי סודרי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -368,8 +379,8 @@
   {
    "id": "sch_041",
    "name": "ערערה",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "מחמד עזב",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -377,8 +388,8 @@
   {
    "id": "sch_042",
    "name": "עתיד באר שבע",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "מאיר אבן שימול",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -386,7 +397,7 @@
   {
    "id": "sch_043",
    "name": "עתיד ביר אל מכסור",
-   "network": "net_atid",
+   "network": "atid",
    "principalName": "",
    "principalEmail": "",
    "principalPhone": "",
@@ -395,8 +406,8 @@
   {
    "id": "sch_044",
    "name": "עתיד בית דוד",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "מנחם בן מעש",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -404,16 +415,25 @@
   {
    "id": "sch_045",
    "name": "עתיד גוליס בנות - ירכא",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "שאדיה נבואני",
    "principalEmail": "",
+   "principalPhone": "",
+   "attendanceTarget": 80
+  },
+  {
+   "id": "sch_1786303306868_747",
+   "name": "עתיד יוצר אבדאע ביר אל מכסור",
+   "network": "atid",
+   "principalName": "ופיק אגבאריה",
+   "principalEmail": "wafik.a@atid.org.il",
    "principalPhone": "",
    "attendanceTarget": 80
   },
   {
    "id": "sch_046",
    "name": "עתיד ירכא בנים",
-   "network": "net_atid",
+   "network": "atid",
    "principalName": "",
    "principalEmail": "",
    "principalPhone": "",
@@ -422,8 +442,8 @@
   {
    "id": "sch_047",
    "name": "עתיד כפר חבד אוהלי תמימים",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "ארז בנדטוביץ",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -431,8 +451,8 @@
   {
    "id": "sch_048",
    "name": "עתיד כרמיאל",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "שיראל פרץ",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -440,8 +460,8 @@
   {
    "id": "sch_049",
    "name": "עתיד מסעדה",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "אימן ספדי",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -449,8 +469,8 @@
   {
    "id": "sch_050",
    "name": "עתיד צור ים",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "מוקי זמברג",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -458,8 +478,8 @@
   {
    "id": "sch_051",
    "name": "עתיד קמג",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "יהורם בן שטרית",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -467,8 +487,8 @@
   {
    "id": "sch_052",
    "name": "עתיד תפן",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "תומר פרידמן",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -476,8 +496,8 @@
   {
    "id": "sch_053",
    "name": "פלמחים",
-   "network": "net_atid",
-   "principalName": "",
+   "network": "atid",
+   "principalName": "ד\"ר ורד אזולאי יהב",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -485,8 +505,8 @@
   {
    "id": "sch_054",
    "name": "צור ברק",
-   "network": "net_ort",
-   "principalName": "",
+   "network": "ort",
+   "principalName": "סיגל כהן",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -494,7 +514,7 @@
   {
    "id": "sch_055",
    "name": "רימונים טבריה",
-   "network": "net_kanada_israel",
+   "network": "kanada_israel",
    "principalName": "",
    "principalEmail": "",
    "principalPhone": "",
@@ -503,17 +523,26 @@
   {
    "id": "sch_056",
    "name": "שגב שלום",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "מאהר אלפראונה",
    "principalEmail": "",
+   "principalPhone": "",
+   "attendanceTarget": 80
+  },
+  {
+   "id": "sch_1787661672618_954",
+   "name": "תיכון אלאמאני סחנין",
+   "network": "sakhnin",
+   "principalName": "מוחמד גזאל",
+   "principalEmail": "anas2914@bezeqint.net",
    "principalPhone": "",
    "attendanceTarget": 80
   },
   {
    "id": "sch_057",
    "name": "תיכון בקהילה מהאראת שפרעם",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "ח'תאם יאסין",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -521,8 +550,17 @@
   {
    "id": "sch_058",
    "name": "תיכון החממה",
-   "network": "",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "אמרי אביטן",
+   "principalEmail": "",
+   "principalPhone": "",
+   "attendanceTarget": 80
+  },
+  {
+   "id": "sch_1787669473048_130",
+   "name": "תיכון מסאראת",
+   "network": "sakhnin",
+   "principalName": "מוחמד עזב",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -530,8 +568,8 @@
   {
    "id": "sch_059",
    "name": "תיכון שיח",
-   "network": "net_amal",
-   "principalName": "",
+   "network": "amal",
+   "principalName": "גל שמיר",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
@@ -539,8 +577,8 @@
   {
    "id": "sch_060",
    "name": "תל שבע",
-   "network": "",
-   "principalName": "",
+   "network": "sakhnin",
+   "principalName": "שאקר בטיחאת",
    "principalEmail": "",
    "principalPhone": "",
    "attendanceTarget": 80
