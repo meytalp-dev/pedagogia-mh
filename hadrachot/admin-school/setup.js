@@ -611,8 +611,21 @@ function saveDraft() {
       return;
     }
 
-    if (!pending.length && !deleteQueue.length) localStorage.removeItem(draftKey());
-    else localStorage.setItem(draftKey(), JSON.stringify({ ts: Date.now(), pending, deleteQueue }));
+    // הטיוטה משותפת לכל הלשוניות של אותו בית ספר. אם הקישור נפתח פעמיים
+    // (קורה — לוחצים עליו שוב בוואטסאפ), אסור ללשונית ששמרה הכל למחוק שורות
+    // שלשונית אחרת עוד מקלידה. לכן מוחקים רק שורות שהלשונית הזו מכירה ושמרה.
+    const prev = readDraft();
+    const keep = pending.slice();
+    if (prev) {
+      prev.pending.forEach(x => {
+        if (!x || !x.name) return;
+        const knownHere = teachers.some(t => t.name === x.name && t.subject === x.subject);
+        const listed = keep.some(y => y.name === x.name && y.subject === x.subject);
+        if (!knownHere && !listed) keep.push(x);
+      });
+    }
+    if (!keep.length && !deleteQueue.length) localStorage.removeItem(draftKey());
+    else localStorage.setItem(draftKey(), JSON.stringify({ ts: Date.now(), pending: keep, deleteQueue }));
   } catch (e) { /* מצב פרטי / אחסון מלא — לא מפילים את הדף */ }
 }
 
