@@ -19,6 +19,10 @@ let uidSeq = 0;
 // ומוחקת את הטיוטה — בדיוק לפני שהיא אמורה להישלף. זה מחק הזנות שלמות.
 let draftReady = false;
 
+// יצירה מקובצת (teachers.createMany). אם השרת עוד לא נפרס עם הפעולה הזו,
+// הדגל נכבה בתשובה הראשונה והדף חוזר לצינור הבודד — בלי שהמשתמש ירגיש.
+let batchSupported = true;
+
 // בנייד: בלי autofocus בטעינה — הוא גורר גלילה למטה ופתיחת מקלדת
 const IS_TOUCH = window.matchMedia('(hover: none)').matches;
 
@@ -692,8 +696,61 @@ async function processQueue() {
       else { break; }
       updateSaveStatus();
     }
-    // 2. יצירות — מורה שנכשל שוב ושוב יורד לסוף התור. אחרת שורה בעייתית אחת
-    //    בראש הרשימה חוסמת את כל המורים שאחריה, והם לא מגיעים לשרת בכלל.
+    // 2א. יצירה מקובצת — כל מה שממתין נשלח בבקשה אחת. זה מה שמוציא את הדף
+    //     ממצב שבו הוא חייב להישאר פתוח שתי דקות כדי לשמור רשימה אחת.
+    const batch = teachers.filter(t => t.needsCreate && !t.error).slice(0, 60);
+    if (batchSupported && batch.length >= 2) {
+      batch.forEach(t => { t.needsCreate = false; });   // עריכה בזמן השליחה תסמן needsUpdate
+      const res = await TS.apiPost('teachers.createMany', {
+        school: schoolId,
+        schoolName: school ? (school.name || '') : '',
+        network: school ? (school.network || '') : '',
+        sector: sectorBySchool[schoolId] || '',
+        teachers: batch.map(t => ({
+          name: t.name, subject: t.subject, type: t.type,
+          phone: t.phone, email: t.email, seniority: t.seniority
+        }))
+      });
+
+      if (res.ok && Array.isArray(res.data)) {
+        res.data.forEach(row => {
+          const hit = batch.find(t => !t.serverId && t.name === row.name && t.subject === row.subject);
+          if (!hit) return;
+          hit.serverId = row.id;
+          hit.error = false;
+          hit.fails = 0;
+          if (hit.deleteAfterCreate) {
+            deleteQueue.push(hit.serverId);
+            ghostRows = ghostRows.filter(g => g !== hit);
+          }
+        });
+        // שורה שלא חזרה מהשרת — חוזרת לתור ותטופל בצינור הבודד, שיודע לבדוק כפילות
+        batch.forEach(t => {
+          if (!t.serverId) { t.needsCreate = true; t.error = true; t.fails = (t.fails || 0) + 1; }
+        });
+      } else if (/unknown_action/i.test(res.error || '')) {
+        // השרת עוד לא נפרס עם הפעולה הזו. שום דבר לא נכתב — מחזירים את השורות
+        // לתור ועוברים לצינור הבודד. המשתמש לא מרגיש כלום מלבד קצב איטי יותר.
+        batchSupported = false;
+        batch.forEach(t => { t.needsCreate = true; });
+      } else {
+        // הבקשה נכשלה — אבל ייתכן שהשרת בכל זאת כתב (timeout אחרי כתיבה).
+        // קריאה אחת מיישבת את כל המנה, במקום בדיקת כפילות לכל שורה בנפרד.
+        const chk = await TS.api('teachers.list', { school: schoolId }, { cache: 'no' });
+        const rows = chk.data || [];
+        batch.forEach(t => {
+          const hit = rows.find(x => x.name === t.name && x.subject === t.subject);
+          if (hit) { t.serverId = hit.id; t.error = false; t.needsUpdate = true; t.fails = 0; }
+          else { t.needsCreate = true; t.error = true; t.fails = (t.fails || 0) + 1; }
+        });
+      }
+      renderAll();
+      updateSaveStatus();
+      return;   // הסבב הבא ימשיך במה שנשאר
+    }
+
+    // 2ב. יצירה בודדת — מורה שנכשל שוב ושוב יורד לסוף התור. אחרת שורה בעייתית
+    //     אחת בראש הרשימה חוסמת את כל המורים שאחריה, והם לא מגיעים לשרת בכלל.
     const toCreate = teachers.find(t => t.needsCreate && (t.fails || 0) < 3)
                   || teachers.find(t => t.needsCreate);
     if (toCreate) {

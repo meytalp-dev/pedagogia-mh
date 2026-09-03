@@ -638,6 +638,7 @@ function handleRequest(params) {
       case 'teachers.list':       result = listTeachers(params, user); break;
       case 'teacher.get':         result = getTeacher(params.id); break;
       case 'teachers.create':     result = createTeacher(params); break;
+      case 'teachers.createMany': result = createTeachersBatch(params); break;
       case 'teachers.update':     result = updateTeacher(params); break;
       case 'teachers.delete':     result = deleteTeacher(params); break;
 
@@ -956,6 +957,79 @@ function createTeacher(p) {
   };
   appendRow('teachers', obj);
   return { ok: true, data: obj };
+}
+
+// יצירת רשימת מורים שלמה בבקשה אחת.
+// הזנה מורה־מורה עלתה 3–4.5 שניות לכל אחד: 25 מורים = כשתי דקות שבהן הדף
+// חייב להישאר פתוח, ער ומחובר — וכל הפרעה בהן איבדה עבודה. כאן הכל נכתב
+// בקריאת setValues אחת, כך שאותם 25 מורים לוקחים בקשה אחת של שניות בודדות.
+function createTeachersBatch(p) {
+  let list = p.teachers;
+  if (typeof list === 'string') {
+    try { list = JSON.parse(list); } catch (err) { return { ok: false, error: 'bad_teachers_json' }; }
+  }
+  if (!Array.isArray(list) || !list.length) return { ok: false, error: 'no_teachers' };
+  if (list.length > 200) return { ok: false, error: 'too_many_rows' };
+
+  const s = sheet('teachers');
+  if (!s) return { ok: false, error: 'no_sheet' };
+
+  const stamp = new Date().toISOString();
+  const base = Date.now();
+  const created = [];
+  list.forEach((t, i) => {
+    if (!t) return;
+    const name = String(t.name === undefined ? '' : t.name).trim();
+    const subject = String(t.subject === undefined ? '' : t.subject).trim();
+    if (!name || !subject) return;   // שורה בלי שם או בלי מקצוע — לא נכתבת
+    created.push({
+      // המזהה כולל את האינדקס: Date.now() זהה לכל השורות באותה בקשה,
+      // ורנדום של 0–999 לבדו התנגש בהסתברות ממשית בתוך מנה של 25.
+      id: 'tch_' + base + '_' + i + '_' + Math.floor(Math.random() * 1000),
+      school: t.school || p.school || '',
+      schoolName: t.schoolName || p.schoolName || '',
+      network: (t.network || p.network || '').toString().replace(/^net_/, ''),
+      name: name,
+      subject: subject,
+      type: t.type === 'gemer' ? 'gemer' : 'bagrut',
+      sector: t.sector || p.sector || 'kelali',
+      seniority: parseInt(t.seniority || 0, 10) || 0,
+      units: t.units || '',
+      students: parseInt(t.students || 0, 10) || 0,
+      phone: t.phone === undefined ? '' : String(t.phone),
+      email: t.email || '',
+      notes: t.notes || '',
+      moeApproval: toBool(t.moeApproval),
+      moeFile: t.moeFile || '',
+      pdActive: toBool(t.pdActive),
+      pdFile: t.pdFile || '',
+      pdYear: t.pdYear || '',
+      createdAt: stamp
+    });
+  });
+  if (!created.length) return { ok: false, error: 'no_valid_rows' };
+
+  // סדר העמודות הפיזי בגיליון הוא מקור האמת, לא SCHEMA — בדיוק כמו ב-appendRow.
+  const headers = (s.getLastColumn() >= 1)
+    ? s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0].filter(String)
+    : SCHEMA.teachers;
+  const rows = created.map(obj => headers.map(h => {
+    if (obj[h] === undefined) return '';
+    if (typeof obj[h] === 'boolean') return obj[h] ? 'TRUE' : 'FALSE';
+    return obj[h];
+  }));
+
+  // מנעול: 62 בתי ספר עשויים להזין במקביל, וכתיבה ל-getLastRow() בלי מנעול
+  // מסוכנת — שתי מנות היו דורסות אותן שורות.
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return { ok: false, error: 'busy_try_again' };
+  try {
+    s.getRange(s.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+  return { ok: true, data: created, count: created.length, skipped: list.length - created.length };
 }
 
 function updateTeacher(p) {
