@@ -38,6 +38,7 @@
   --g-sherut-bg:#FBDDDD; --g-sherut-bd:#F0B5B5; --g-sherut-tx:#9A3535;
   --g-tikshuvA-bg:#D7EEF7; --g-tikshuvA-bd:#9FD3E8; --g-tikshuvA-tx:#12617F;
   --g-tikshuvB-bg:#DFE3F7; --g-tikshuvB-bd:#B2BAE6; --g-tikshuvB-tx:#3A4694;
+  --g-honchim-bg:#F5E4F3; --g-honchim-bd:#E0B6DB; --g-honchim-tx:#7C3B72;
 }
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
 .legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
@@ -67,6 +68,7 @@
 .t-sherut{background:var(--g-sherut-bg);border-color:var(--g-sherut-bd);color:var(--g-sherut-tx)}
 .t-tikshuvA{background:var(--g-tikshuvA-bg);border-color:var(--g-tikshuvA-bd);color:var(--g-tikshuvA-tx)}
 .t-tikshuvB{background:var(--g-tikshuvB-bg);border-color:var(--g-tikshuvB-bd);color:var(--g-tikshuvB-tx)}
+.t-honchim{background:var(--g-honchim-bg);border-color:var(--g-honchim-bd);color:var(--g-honchim-tx)}
 /* למי המפגש מיועד — שורה שנייה בכל צ׳יפ ובכל שורת אג׳נדה */
 .chip .aud{display:block;font-style:normal;font-size:.68rem;font-weight:600;opacity:.72;margin-top:2px}
 .ev .aud{font-weight:700;opacity:.85}
@@ -384,6 +386,7 @@ const TRACKS = {
   matalB:  {name:'מת״לים · ימי ב\'', sub:'עדי ספיבק · 14:00–15:30', aud:'מת״לים · קבוצת ימי ב׳'},
   tikshuvA:{name:'תקשוב · מסלול כלים', sub:'ימי שני · 13:45–16:00', aud:'רכזי תקשוב · מסלול כלים'},
   tikshuvB:{name:'תקשוב · מסלול הובלה', sub:'ימי רביעי · 13:45–16:00', aud:'רכזי תקשוב · מסלול הובלה'},
+  honchim: {name:'מורים חונכים', sub:'קורס מקוון · מכללת הרצוג', aud:'מורים חונכים של מתמחים'},
   yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי', aud:'יועצים ויועצות'},
   menahal: {name:'מנהלים ופיקוח', sub:'מפקח ומנהליו · מנהלי האזור', aud:'מנהלים ומפקחים'},
   sherut:  {name:'בני ובנות שירות', sub:'הכשרה שנתית', aud:'בני ובנות שירות לאומי'},
@@ -489,6 +492,19 @@ const EVENTS = [
  {t:'menahal', d:'2027-07-15', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
 
  /* --- בני ובנות שירות לאומי --- */
+ /* --- מורים חונכים · קורס החונכים המקוון (הרצוג) --- */
+ {t:'honchim', d:'2026-10-22', n:'מפגש פתיחה בזום', s:'זום · 18:00–19:30', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2026-10-22', n:'יחידות 0–1 · היכרות עם שנת החונכות', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2026-11-08', n:'יחידה 2 · ממורה לחונך', s:'שיח מברר ושאילת שאלות · מקוון', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2026-11-22', n:'יחידה 3 · אתגרים מרכזיים וארגוניים', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2026-12-13', n:'יחידה 4 · היבטים רגשיים בכניסה להוראה', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2026-12-27', n:'יחידה 5 · היבטים מקצועיים של ההוראה', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2027-01-04', n:'מפגש סיום בזום', s:'זום · 18:00–19:30 · המועד כפי שמופיע בלוח הזמנים', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2027-01-10', n:'יחידה 6 · צפייה ושיח מקדם למידה', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2027-01-24', n:'יחידה 7 · תקשורת בין-אישית + פתיחת מטלת הסיום', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2027-02-01', d2:'2027-02-03', n:'ימי החונכות הארציים', s:'זום · 16:00–21:00 · חובה להשתתף בלפחות יחידה אחת', u:'hishtalmuyot.html#honchim'},
+ {t:'honchim', d:'2027-02-04', n:'מועד אחרון להגשת עבודת הסיום והמטלות', s:'הגשה', u:'hishtalmuyot.html#honchim'},
+
  {t:'sherut', d:'2026-10-28', n:'מפגש הכשרה', s:'פנים אל פנים'},
  {t:'sherut', d:'2026-12-16', n:'מפגש משותף', s:'רכזות העמותה ובית הספר'},
  {t:'sherut', d:'2027-05-19', n:'מפגש סיום שנה', s:''},
