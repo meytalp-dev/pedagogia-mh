@@ -14,6 +14,11 @@ let teachers = [];
 let deleteQueue = [];   // serverIds למחיקה
 let uidSeq = 0;
 
+// הטיוטה נכתבת רק אחרי ש-restoreDraft רץ לבית הספר הנוכחי. בלי הדגל הזה,
+// לולאת השמירה (שרצה כבר בזמן בחירת בית הספר) מוצאת רשימת מורים ריקה
+// ומוחקת את הטיוטה — בדיוק לפני שהיא אמורה להישלף. זה מחק הזנות שלמות.
+let draftReady = false;
+
 // בנייד: בלי autofocus בטעינה — הוא גורר גלילה למטה ופתיחת מקלדת
 const IS_TOUCH = window.matchMedia('(hover: none)').matches;
 
@@ -134,6 +139,7 @@ async function createNewSchool(e) {
 
 async function enterSchool(chosen) {
   school = chosen;
+  draftReady = false;     // נועל את הטיוטה עד שהיא תישלף — ראו saveDraft
   schoolId = chosen.id;
   const url = new URL(location.href);
   url.searchParams.set('school', schoolId);
@@ -159,6 +165,9 @@ async function loadDirect() {
 }
 
 async function loadTeachers() {
+  // הדף פתוח להקלדה כבר בזמן הטעינה (2–4 שניות מול Apps Script). מה שהוקלד
+  // בינתיים חי רק במערך המקומי — שומרים אותו בצד כדי שהרשימה מהשרת לא תדרוס אותו.
+  const localPending = teachers.filter(t => !t.serverId);
   const res = await TS.api('teachers.list', { school: schoolId }, { cache: 'no' });
   teachers = (res.data || []).map(t => ({
     uid: 'u' + (++uidSeq),
@@ -171,7 +180,12 @@ async function loadTeachers() {
     seniority: t.seniority ? String(t.seniority) : '',
     needsCreate: false, needsUpdate: false, deleteAfterCreate: false, error: false
   }));
+  localPending.forEach(t => {
+    if (teachers.some(x => x.name === t.name && x.subject === t.subject)) return;
+    teachers.push(t);
+  });
   const restored = restoreDraft();
+  draftReady = true;      // מכאן הטיוטה משקפת את המצב האמיתי ומותר לכתוב אליה
   renderAll();
   if (restored) TS.toast('שוחזרו ' + restored + ' מורים שלא הספיקו להישמר — הם נשמרים עכשיו');
 }
@@ -562,7 +576,7 @@ let ghostRows = [];   // שורות שנמחקו בזמן שהיצירה שלה�
 function draftKey() { return 'ts.draft.' + schoolId; }
 
 function saveDraft() {
-  if (!schoolId) return;
+  if (!schoolId || !draftReady) return;
   try {
     const pending = teachers
       .filter(t => t.needsCreate || t.needsUpdate || !t.serverId)
@@ -598,13 +612,15 @@ function restoreDraft() {
 }
 
 function unsavedCount() {
-  return teachers.filter(t => t.needsCreate || t.needsUpdate).length + deleteQueue.length + ghostRows.length;
+  return teachers.filter(t => !t.serverId || t.needsUpdate).length + deleteQueue.length + ghostRows.length;
 }
 
 function updateSaveStatus() {
   const el = document.getElementById('save-status');
   if (!el) return;
-  const pending = teachers.filter(t => t.needsCreate || t.needsUpdate).length;
+  // "נשמר" = יש לו serverId מהשרת. הדגל needsCreate מכובה כבר עם שליחת הבקשה,
+  // ולכן ספירה לפיו הציגה מורה כ"נשמר" בזמן שהוא עדיין באוויר.
+  const pending = teachers.filter(t => !t.serverId || t.needsUpdate).length;
   const n = unsavedCount();
   if (n === 0) {
     el.textContent = teachers.length
@@ -637,8 +653,10 @@ async function processQueue() {
       else { break; }
       updateSaveStatus();
     }
-    // 2. יצירות
-    const toCreate = teachers.find(t => t.needsCreate);
+    // 2. יצירות — מורה שנכשל שוב ושוב יורד לסוף התור. אחרת שורה בעייתית אחת
+    //    בראש הרשימה חוסמת את כל המורים שאחריה, והם לא מגיעים לשרת בכלל.
+    const toCreate = teachers.find(t => t.needsCreate && (t.fails || 0) < 3)
+                  || teachers.find(t => t.needsCreate);
     if (toCreate) {
       // אחרי כשל תגובה — ייתכן שהיצירה כן בוצעה בשרת. בודקים לפני ניסיון חוזר,
       // אחרת המורה ייווצר פעמיים.
@@ -674,9 +692,11 @@ async function processQueue() {
           deleteQueue.push(toCreate.serverId);
           ghostRows = ghostRows.filter(g => g !== toCreate);
         }
+        toCreate.fails = 0;
       } else {
         toCreate.needsCreate = true;
         toCreate.error = true;
+        toCreate.fails = (toCreate.fails || 0) + 1;
         renderAll();
       }
       updateSaveStatus();

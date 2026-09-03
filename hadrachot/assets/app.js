@@ -105,6 +105,19 @@ const TS = (() => {
     return res;
   }
 
+  // fetch עם תקרת זמן. בלי זה בקשה שנתקעת ברשת סלולרית חלשה לא נכשלת לעולם,
+  // ותור השמירה של הזנת המורים נשאר תקוע עליה בשקט עד שהדף נסגר.
+  const REQUEST_TIMEOUT_MS = 30000;
+  async function fetchWithTimeout(url, opts) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      return await fetch(url, Object.assign({}, opts, { signal: ctl.signal }));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function fetchFromApi(action, params) {
     try {
       const url = new URL(APPS_SCRIPT_URL);
@@ -112,18 +125,18 @@ const TS = (() => {
       Object.entries(withAuth_(params)).forEach(([k,v]) => {
         if (v !== undefined && v !== null) url.searchParams.set(k, v);
       });
-      const res = await fetch(url.toString());
+      const res = await fetchWithTimeout(url.toString());
       return await res.json();
     } catch (e) {
       console.error('API error', e);
-      return { ok: false, error: e.message };
+      return { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
     }
   }
 
   async function apiPost(action, body) {
     if (!APPS_SCRIPT_URL) return { ok: false, error: 'no_url' };
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
+      const res = await fetchWithTimeout(APPS_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ action, ...withAuth_(body) }),
         headers: { 'Content-Type': 'text/plain' }
@@ -134,7 +147,7 @@ const TS = (() => {
       return json;
     } catch (e) {
       console.error('API error', e);
-      return { ok: false, error: e.message };
+      return { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
     }
   }
 
