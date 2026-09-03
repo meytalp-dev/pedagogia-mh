@@ -162,7 +162,9 @@ async function loadDirect() {
   const [schoolRes] = await Promise.all([
     TS.api('school.get', { id: schoolId }, { cache: 'no' })
   ]);
-  school = schoolRes.data || { id: schoolId, name: '—', network: '' };
+  // חשוב: לא '—'. הערך הזה נשמר בעמודת schoolName של כל מורה, וכשל רגעי של
+  // school.get הכניס "—" לשורות אמיתיות. ריק — והשרת ישלים את השם לפי המזהה.
+  school = schoolRes.data || { id: schoolId, name: '', network: '' };
   renderHeader();
   await loadTeachers();
   focusRapid();
@@ -202,7 +204,7 @@ async function loadTeachers() {
 function renderHeader() {
   if (!school) return;
   document.getElementById('school-name').textContent = school.name || '—';
-  document.getElementById('hero-title').textContent = 'המורים של ' + (school.name || '—');
+  document.getElementById('hero-title').textContent = school.name ? ('המורים של ' + school.name) : 'המורים של בית הספר';
 
   const prEl = document.getElementById('principal-name');
   if (school.principalName) {
@@ -737,7 +739,13 @@ async function processQueue() {
         // הבקשה נכשלה — אבל ייתכן שהשרת בכל זאת כתב (timeout אחרי כתיבה).
         // קריאה אחת מיישבת את כל המנה, במקום בדיקת כפילות לכל שורה בנפרד.
         const chk = await TS.api('teachers.list', { school: schoolId }, { cache: 'no' });
-        const rows = chk.data || [];
+        if (!chk || !chk.ok || !Array.isArray(chk.data)) {
+          // לא יודעים מה נכתב — מחזירים לתור בלי ליצור שוב, והצינור הבודד יישב בסבב הבא
+          batch.forEach(t => { t.needsCreate = true; t.error = true; });
+          renderAll();
+          return;
+        }
+        const rows = chk.data;
         batch.forEach(t => {
           const hit = rows.find(x => x.name === t.name && x.subject === t.subject);
           if (hit) { t.serverId = hit.id; t.error = false; t.needsUpdate = true; t.fails = 0; }
@@ -758,7 +766,10 @@ async function processQueue() {
       // אחרת המורה ייווצר פעמיים.
       if (toCreate.error) {
         const chk = await TS.api('teachers.list', { school: schoolId }, { cache: 'no' });
-        const hit = (chk.data || []).find(x => x.name === toCreate.name && x.subject === toCreate.subject);
+        // אם *הבדיקה* נכשלה (Apps Script מחזיר מדי פעם דף HTML במקום JSON) אין לנו
+        // ידיעה אם המורה נכתב — ויצירה כאן היא בדיוק מה שייצר כפילות. ממתינים לסבב הבא.
+        if (!chk || !chk.ok || !Array.isArray(chk.data)) return;
+        const hit = chk.data.find(x => x.name === toCreate.name && x.subject === toCreate.subject);
         if (hit) {
           toCreate.serverId = hit.id;
           toCreate.needsCreate = false;

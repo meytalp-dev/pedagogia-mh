@@ -932,11 +932,22 @@ function getTeacher(id) {
   return { ok: true, data: found || null };
 }
 
+// schoolName הוא שדה משוכפל שכל הדשבורדים נשענים עליו. הלקוח שלח לפעמים "—"
+// (מציין תצוגה שנכנס לשורות אמיתיות כשכשל רגעי מנע ממנו לטעון את שם בית הספר),
+// ולכן השרת הוא הפוסק: אם השם חסר או הוא מציין — שולפים אותו לפי המזהה.
+function resolveSchoolName_(schoolId, given) {
+  const g = String(given === undefined || given === null ? '' : given).trim();
+  if (g && g !== '—' && g !== '-') return g;
+  if (!schoolId) return '';
+  const hit = readAll('schools').filter(function (s) { return s.id === schoolId; })[0];
+  return hit ? String(hit.name || '') : '';
+}
+
 function createTeacher(p) {
   const obj = {
     id: newId('tch'),
     school: p.school || '',
-    schoolName: p.schoolName || '',
+    schoolName: resolveSchoolName_(p.school || '', p.schoolName),
     network: (p.network || '').toString().replace(/^net_/, ''),
     name: p.name,
     subject: p.subject,
@@ -976,6 +987,8 @@ function createTeachersBatch(p) {
 
   const stamp = new Date().toISOString();
   const base = Date.now();
+  const batchSchool = p.school || '';
+  const batchSchoolName = resolveSchoolName_(batchSchool, p.schoolName);   // קריאה אחת למנה
   const created = [];
   list.forEach((t, i) => {
     if (!t) return;
@@ -986,8 +999,10 @@ function createTeachersBatch(p) {
       // המזהה כולל את האינדקס: Date.now() זהה לכל השורות באותה בקשה,
       // ורנדום של 0–999 לבדו התנגש בהסתברות ממשית בתוך מנה של 25.
       id: 'tch_' + base + '_' + i + '_' + Math.floor(Math.random() * 1000),
-      school: t.school || p.school || '',
-      schoolName: t.schoolName || p.schoolName || '',
+      school: t.school || batchSchool,
+      schoolName: (t.school && t.school !== batchSchool)
+        ? resolveSchoolName_(t.school, t.schoolName)
+        : batchSchoolName,
       network: (t.network || p.network || '').toString().replace(/^net_/, ''),
       name: name,
       subject: subject,
