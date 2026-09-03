@@ -165,10 +165,11 @@ async function loadDirect() {
 }
 
 async function loadTeachers() {
-  // הדף פתוח להקלדה כבר בזמן הטעינה (2–4 שניות מול Apps Script). מה שהוקלד
-  // בינתיים חי רק במערך המקומי — שומרים אותו בצד כדי שהרשימה מהשרת לא תדרוס אותו.
-  const localPending = teachers.filter(t => !t.serverId);
   const res = await TS.api('teachers.list', { school: schoolId }, { cache: 'no' });
+  // הדף פתוח להקלדה כבר בזמן הטעינה (2–4 שניות מול Apps Script), והשורות שהוקלדו
+  // בינתיים חיות רק במערך המקומי. הצילום חייב להיות כאן — *אחרי* ההמתנה, רגע לפני
+  // הדריסה. צילום לפני ה-await תופס מערך ריק, והכל מה שהוקלד בזמן הטעינה נמחק.
+  const localRows = teachers.slice();
   teachers = (res.data || []).map(t => ({
     uid: 'u' + (++uidSeq),
     serverId: t.id,
@@ -180,7 +181,7 @@ async function loadTeachers() {
     seniority: t.seniority ? String(t.seniority) : '',
     needsCreate: false, needsUpdate: false, deleteAfterCreate: false, error: false
   }));
-  localPending.forEach(t => {
+  localRows.forEach(t => {
     if (teachers.some(x => x.name === t.name && x.subject === t.subject)) return;
     teachers.push(t);
   });
