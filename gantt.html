@@ -5,7 +5,7 @@
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>לוח גאנט צוותים · תשפ״ז — הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="לוח גאנט שנתי לצוותי מינהל הכשרה מקצועית לשנה״ל תשפ״ז — השתלמויות רכזים חברתיים, מת״לים והתחום הייעוצי, לצד אירועים לאומיים, חגים וחופשות.">
+<meta name="description" content="לוח גאנט שנתי לצוותי מינהל הכשרה מקצועית לשנה״ל תשפ״ז — השתלמויות רכזים חברתיים ופדגוגיים, מת״לים והתחום הייעוצי, מפגשי מנהלים ופיקוח והכשרת בני ובנות שירות, לצד אירועים לאומיים, חגים וחופשות.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
 <meta property="og:title" content="לוח גאנט צוותים · תשפ&quot;ז — הבית של המנהיגות הפדגוגית היוצרת">
@@ -33,6 +33,11 @@
   --g-national-bg:#FCEFD2; --g-national-bd:#EDD49A; --g-national-tx:#7A5A10;
   --g-holiday-bg:#EAF0F5; --g-holiday-bd:#CBD9E4; --g-holiday-tx:#46606F;
   --g-exam-bg:#D8F0EC; --g-exam-bd:#A2DBD2; --g-exam-tx:#0A6A60;
+  --g-rakazPed-bg:#FFE3CC; --g-rakazPed-bd:#F5BE93; --g-rakazPed-tx:#8A4A16;
+  --g-menahal-bg:#EAF2C8; --g-menahal-bd:#CDDE8B; --g-menahal-tx:#55650F;
+  --g-sherut-bg:#FBDDDD; --g-sherut-bd:#F0B5B5; --g-sherut-tx:#9A3535;
+  --g-tikshuvA-bg:#D7EEF7; --g-tikshuvA-bd:#9FD3E8; --g-tikshuvA-tx:#12617F;
+  --g-tikshuvB-bg:#DFE3F7; --g-tikshuvB-bd:#B2BAE6; --g-tikshuvB-tx:#3A4694;
 }
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
 .legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
@@ -57,6 +62,14 @@
 .t-national{background:var(--g-national-bg);border-color:var(--g-national-bd);color:var(--g-national-tx)}
 .t-holiday{background:var(--g-holiday-bg);border-color:var(--g-holiday-bd);color:var(--g-holiday-tx)}
 .t-exam{background:var(--g-exam-bg);border-color:var(--g-exam-bd);color:var(--g-exam-tx)}
+.t-rakazPed{background:var(--g-rakazPed-bg);border-color:var(--g-rakazPed-bd);color:var(--g-rakazPed-tx)}
+.t-menahal{background:var(--g-menahal-bg);border-color:var(--g-menahal-bd);color:var(--g-menahal-tx)}
+.t-sherut{background:var(--g-sherut-bg);border-color:var(--g-sherut-bd);color:var(--g-sherut-tx)}
+.t-tikshuvA{background:var(--g-tikshuvA-bg);border-color:var(--g-tikshuvA-bd);color:var(--g-tikshuvA-tx)}
+.t-tikshuvB{background:var(--g-tikshuvB-bg);border-color:var(--g-tikshuvB-bd);color:var(--g-tikshuvB-tx)}
+/* למי המפגש מיועד — שורה שנייה בכל צ׳יפ ובכל שורת אג׳נדה */
+.chip .aud{display:block;font-style:normal;font-size:.68rem;font-weight:600;opacity:.72;margin-top:2px}
+.ev .aud{font-weight:700;opacity:.85}
 /* שורת הבחינות צפופה (עד 15 ביום בחודש) — צ׳יפ קומפקטי עם תאריך בשורה */
 .chip.t-exam{padding:3px 7px 4px;font-size:.73rem;line-height:1.25}
 .chip.t-exam b{display:inline;margin-inline-end:5px;opacity:.72}
@@ -183,6 +196,7 @@
     <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
     <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -308,7 +322,7 @@
     <h1>לוח גאנט · צוותי תשפ״ז</h1>
     <span class="tag" style="background:var(--navy);color:#fff;font-size:var(--fs-xs)">ספטמבר 2026 – יוני 2027</span>
   </div>
-  <p class="rv d2 lead" style="max-width:700px">כל מועדי ההשתלמויות וימי העיון של צוותי המינהל — רכזים חברתיים, מת״לים — מעריכים ומקדמים תפקודי למידה — והתחום הייעוצי — לצד ימי הזיכרון, האירועים הלאומיים, החגים והחופשות. לחיצה על מסלול במקרא מסננת את הלוח.</p>
+  <p class="rv d2 lead" style="max-width:700px">כל מועדי ההשתלמויות, ימי העיון והמפגשים של צוותי המינהל — רכזים חברתיים, פדגוגיים ורכזי תקשוב, מת״לים — מעריכים ומקדמים תפקודי למידה — התחום הייעוצי, מפגשי המנהלים עם הפיקוח והכשרת בני ובנות השירות — לצד ימי הזיכרון, האירועים הלאומיים, החגים והחופשות. בכל מפגש רשום למי הוא מיועד, ולחיצה על מסלול במקרא מסננת את הלוח.</p>
 </div>
 
 <div style="padding:6px var(--px) 44px">
@@ -359,21 +373,28 @@
 /* ===== נתוני הלוח =====
    להוספת אירוע: מוסיפים שורה למערך EVENTS —
    {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
-   מסלולים: rakaz / matalA / matalB / yeutzi / exam / national / holiday
+   מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / yeutzi / menahal / sherut / exam / national / holiday
+   שדה aud במסלול = למי המפגשים מיועדים (מוצג בכל צ׳יפ ובכל שורה ב״מהלך השנה״).
+   שדה a באירוע דורס את aud של המסלול — למפגש שמיועד לקהל אחר.
    שדה u (לא חובה) הופך את הצ'יפ לקישור.                                     */
 const TRACKS = {
-  rakaz:   {name:'רכזים חברתיים', sub:'חינוך חברתי יוצר'},
-  matalA:  {name:'מת״לים · ימי א\'', sub:'עדי ספיבק · 14:00–15:30'},
-  matalB:  {name:'מת״לים · ימי ב\'', sub:'עדי ספיבק · 14:00–15:30'},
-  yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי'},
-  exam:    {name:'מועדי בחינות · בגרות', sub:'משרד החינוך · טיוטה 12.7.26'},
-  national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון'},
-  holiday: {name:'חגים וחופשות', sub:''}
+  rakaz:   {name:'רכזים חברתיים', sub:'חינוך חברתי יוצר', aud:'רכזי החינוך החברתי היוצר'},
+  rakazPed:{name:'רכזים פדגוגיים', sub:'זום + קמפוס בני ברק', aud:'רכזים פדגוגיים'},
+  matalA:  {name:'מת״לים · ימי א\'', sub:'עדי ספיבק · 14:00–15:30', aud:'מת״לים · קבוצת ימי א׳'},
+  matalB:  {name:'מת״לים · ימי ב\'', sub:'עדי ספיבק · 14:00–15:30', aud:'מת״לים · קבוצת ימי ב׳'},
+  tikshuvA:{name:'תקשוב · מסלול כלים', sub:'ימי שני · 13:45–16:00', aud:'רכזי תקשוב · מסלול כלים'},
+  tikshuvB:{name:'תקשוב · מסלול הובלה', sub:'ימי רביעי · 13:45–16:00', aud:'רכזי תקשוב · מסלול הובלה'},
+  yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי', aud:'יועצים ויועצות'},
+  menahal: {name:'מנהלים ופיקוח', sub:'מפקח ומנהליו · מנהלי האזור', aud:'מנהלים ומפקחים'},
+  sherut:  {name:'בני ובנות שירות', sub:'הכשרה שנתית', aud:'בני ובנות שירות לאומי'},
+  exam:    {name:'מועדי בחינות · בגרות', sub:'משרד החינוך · טיוטה 12.7.26', aud:''},
+  national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון', aud:''},
+  holiday: {name:'חגים וחופשות', sub:'', aud:''}
 };
 const EVENTS = [
  /* --- רכזים חברתיים --- */
  {t:'rakaz', d:'2026-10-14', n:'ליווי בוגרים', s:'זום · 8:30–10:30'},
- {t:'rakaz', d:'2026-10-21', n:'כנס פיזי פתיחת שנה', s:'רכזים ומפקחים פדגוגיים · 9:00–15:00'},
+ {t:'rakaz', d:'2026-10-21', n:'כנס פיזי פתיחת שנה', s:'9:00–15:00', a:'רכזים חברתיים ומפקחים פדגוגיים'},
  {t:'rakaz', d:'2026-11-04', n:'ליווי בוגרים', s:'זום · 8:30–10:30'},
  {t:'rakaz', d:'2026-11-18', n:'מפגש תמונת עתיד', s:'זום · 8:30–10:30'},
  {t:'rakaz', d:'2026-12-23', n:'תמונת עתיד לפי אוכלוסייה', s:'כללי, חרדי וערבי · זום · 8:30–10:30'},
@@ -412,11 +433,66 @@ const EVENTS = [
  {t:'matalB', d:'2027-04-12', n:'קשב ותפקודים ניהוליים', s:'מיפוי תלמיד · מטלה · סינכרוני'},
  {t:'matalB', d:'2027-05-31', n:'קשב · "תפירת החליפה"', s:'התאמת מענים · סינכרוני'},
  /* --- התחום הייעוצי-טיפולי --- */
- {t:'yeutzi', d:'2026-10-14', n:'יום עיון לפתיחת שנה', s:'מחוזות דרום, ירושלים ומרכז'},
- {t:'yeutzi', d:'2026-10-21', n:'יום עיון לפתיחת שנה', s:'מחוז חיפה והצפון'},
+ {t:'yeutzi', d:'2026-10-14', n:'יום עיון לפתיחת שנה', s:'', a:'יועצים · מחוזות דרום, ירושלים ומרכז'},
+ {t:'yeutzi', d:'2026-10-21', n:'יום עיון לפתיחת שנה', s:'', a:'יועצים · מחוז חיפה והצפון'},
  {t:'yeutzi', d:'2026-11-04', n:'תחילת השתלמויות ימי רביעי', s:'מועד מדויק לכל השתלמות — בסילבוס'},
  {t:'yeutzi', d:'2027-01-13', n:'יום עיון פיזי של ההדרכות', s:''},
  /* --- אירועים לאומיים --- */
+ /* --- רכזים פדגוגיים --- */
+ {t:'rakazPed', d:'2026-09-07', n:'מפגש פתיחה', s:'זום · 14:00–15:30'},
+ {t:'rakazPed', d:'2026-10-26', n:'מפגש פיזי', s:'קמפוס בני ברק · 9:00–15:00'},
+ {t:'rakazPed', d:'2026-12-17', n:'מפגש פיזי', s:'קמפוס בני ברק · 9:00–15:00'},
+ {t:'rakazPed', d:'2027-01-27', n:'מפגש פיזי', s:'קמפוס בני ברק · 9:00–15:00'},
+ {t:'rakazPed', d:'2027-02-16', n:'מפגש בזום', s:'9:00–14:00'},
+ {t:'rakazPed', d:'2027-05-23', n:'מפגש פיזי', s:'קמפוס בני ברק · 9:00–15:00'},
+ {t:'rakazPed', d:'2027-06-27', n:'סיום שנה', s:'זום · 9:00–11:00'},
+
+ /* --- רכזי תקשוב · שגרירי חדשנות · מסלול כלים (ימי שני) ---
+    היחידות הא-סינכרוניות מוצגות כטווח: מיום הפתיחה ועד מועד ההגשה                */
+ {t:'tikshuvA', d:'2026-10-05', n:'נקודת הפתיחה שלי', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-10-19', n:'AI למורה · סדנת יסוד', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-11-02', d2:'2026-11-16', n:'ארגז הכלים הדיגיטלי', s:'א-סינכרוני · הגשה עד 16.11', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-11-16', n:'הערכה ומדידה דיגיטלית', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-11-30', d2:'2026-12-14', n:'יצירת תוכן דיגיטלי', s:'א-סינכרוני · הגשה עד 14.12', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-12-14', n:'שימוש בטוח ומושכל', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2026-12-28', d2:'2027-01-11', n:'סדר בענן ועזרה ראשונה', s:'א-סינכרוני · הגשה עד 11.1', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2027-01-11', n:'AI ככלי עבודה יומי', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2027-01-25', n:'מיקרו-הדרכה לצוות', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2027-02-08', n:'הצגת ארגז הכלים · סיום', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-klim'},
+ {t:'tikshuvA', d:'2027-02-22', n:'הגשת ארגז הכלים האישי', s:'מטלה מסכמת · מועד אחרון', u:'hishtalmut-tikshuv.html#maslul-klim'},
+
+ /* --- רכזי תקשוב · מסלול הובלה (ימי רביעי) --- */
+ {t:'tikshuvB', d:'2026-10-07', n:'מהרכז הטכני לשגריר חדשנות', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-10-21', n:'להדריך מבוגרים · סדנה', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-11-04', d2:'2026-11-18', n:'מיפוי צרכי הצוות', s:'א-סינכרוני · הגשה עד 18.11', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-11-18', n:'מדיניות AI ואבטחת מידע', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-12-02', d2:'2026-12-16', n:'נתונים, מעקב ובקרה', s:'א-סינכרוני · הגשה עד 16.12', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-12-16', n:'ניהול שינוי ושיווק פנים-ארגוני', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2026-12-30', d2:'2027-01-13', n:'התנהלות דיגיטלית וניהול ידע', s:'א-סינכרוני · הגשה עד 13.1', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2027-01-13', n:'משאבים ובקשת הצטיידות', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2027-01-27', n:'מעבדת עמיתים · הדרכות מהשטח', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2027-02-10', n:'הצגת תיק החדשנות · סיום', s:'סינכרוני · 13:45–16:00', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+ {t:'tikshuvB', d:'2027-02-24', n:'הגשת תיק החדשנות הבית-ספרי', s:'מטלה מסכמת · מועד אחרון', u:'hishtalmut-tikshuv.html#maslul-hovala'},
+
+ /* --- מנהלים ופיקוח --- */
+ {t:'menahal', d:'2026-09-17', n:'מפקח ומנהליו · פתיחת שנה', s:'זום · 13:00–15:00'},
+ {t:'menahal', d:'2026-10-29', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
+ {t:'menahal', d:'2026-11-23', n:'כנס מנהלים', s:'המועד טרם סופי'},
+ {t:'menahal', d:'2026-12-14', n:'מפקח ומנהליו', s:'פיזי · 9:00–15:00'},
+ {t:'menahal', d:'2026-12-31', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
+ {t:'menahal', d:'2027-01-14', n:'מפקח ומנהליו', s:'פיזי · 9:00–15:00'},
+ {t:'menahal', d:'2027-02-25', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
+ {t:'menahal', d:'2027-03-17', n:'מפקח ומנהליו', s:'פיזי · 9:00–15:00'},
+ {t:'menahal', d:'2027-04-12', n:'הרמת כוסית ארצית', s:'', a:'כלל המנהלים והמפקחים'},
+ {t:'menahal', d:'2027-05-06', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
+ {t:'menahal', d:'2027-07-01', n:'סיכום שנה והערכות', s:'זום ארצי'},
+ {t:'menahal', d:'2027-07-15', n:'מפגש מנהלי האזור', s:'8:30–10:30', a:'מנהלי האזור ובעלי התפקידים הרלוונטיים'},
+
+ /* --- בני ובנות שירות לאומי --- */
+ {t:'sherut', d:'2026-10-28', n:'מפגש הכשרה', s:'פנים אל פנים'},
+ {t:'sherut', d:'2026-12-16', n:'מפגש משותף', s:'רכזות העמותה ובית הספר'},
+ {t:'sherut', d:'2027-05-19', n:'מפגש סיום שנה', s:''},
+
  {t:'national', d:'2026-09-01', n:'פתיחת שנה״ל תשפ״ז', s:''},
  {t:'national', d:'2026-10-22', n:'יום הזיכרון ליצחק רבין', s:'י״ב בחשוון חל בשישי 23.10 — הטקסים בבתיה״ס ביום חמישי'},
  {t:'national', d:'2026-11-09', n:'חג הסיגד', s:'כ״ט בחשוון · מורשת יהדות אתיופיה'},
@@ -500,6 +576,8 @@ const fmtDay = e => {
   if (e.d2){ const [,m2,d2] = e.d2.split('-').map(Number); return d+'.'+m+'–'+d2+'.'+m2; }
   return d+'.'+m;
 };
+/* למי המפגש מיועד — מהאירוע (a) או מהמסלול (aud) */
+const aud = e => e.a || (TRACKS[e.t]||{}).aud || '';
 const gEl = document.getElementById('gantt');
 let html = '<div class="th">מסלול \\ חודש</div>';
 const now = new Date();
@@ -516,8 +594,9 @@ Object.keys(TRACKS).forEach(tk=>{
       return e.t===tk && y===mo.y && m===mo.m;
     });
     html += `<div class="cell">` + evs.map(e=>{
-      const tt = (e.n+' — '+(e.s||'')).replace(/"/g,'&quot;');
-      const inner = `<b>${fmtDay(e)}</b>${e.n}`;
+      const au = aud(e);
+      const tt = [e.n, au && ('למי: '+au), e.s].filter(Boolean).join(' — ').replace(/"/g,'&quot;');
+      const inner = `<b>${fmtDay(e)}</b>${e.n}${au?`<i class="aud">${au}</i>`:''}`;
       return e.u
         ? `<a class="chip t-${e.t} lnkchip" data-track="${e.t}" href="${e.u}" title="${tt}">${inner}</a>`
         : `<div class="chip t-${e.t}" data-track="${e.t}" title="${tt}">${inner}</div>`;
@@ -536,7 +615,7 @@ MONTHS.forEach(mo=>{
   }).sort((a,b)=>a.d.localeCompare(b.d));
   if (!evs.length) return;
   ahtml += `<div class="mon"><h3>${HEB_MON[mo.m]} ${mo.y}</h3>` + evs.map(e=>
-    `<div class="ev" data-track="${e.t}"><span class="dot t-${e.t}"></span><span class="dt">${fmtDay(e)}</span><span class="tt">${e.u?`<a href="${e.u}" style="color:inherit;text-decoration:none"><b>${e.n}</b></a>`:`<b>${e.n}</b>`}${e.s?`<small>${e.s}</small>`:''}</span></div>`
+    `<div class="ev" data-track="${e.t}"><span class="dot t-${e.t}"></span><span class="dt">${fmtDay(e)}</span><span class="tt">${e.u?`<a href="${e.u}" style="color:inherit;text-decoration:none"><b>${e.n}</b></a>`:`<b>${e.n}</b>`}${aud(e)?`<small class="aud">למי: ${aud(e)}</small>`:''}${e.s?`<small>${e.s}</small>`:''}</span></div>`
   ).join('') + `</div>`;
 });
 aEl.innerHTML = ahtml;

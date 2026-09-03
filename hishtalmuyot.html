@@ -5,7 +5,7 @@
 <script src="/analytics.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>השתלמויות ופיתוח מקצועי · תשפ״ז</title>
-<meta name="description" content="כל ההשתלמויות של מינהל הכשרה מקצועית לשנה״ל תשפ״ז — רכזים חברתיים, הכשרת מת״לים והתחום הייעוצי-טיפולי: מועדים, סילבוסים, מנחים והרשמה.">
+<meta name="description" content="כל ההשתלמויות והמפגשים של מינהל הכשרה מקצועית לשנה״ל תשפ״ז — רכזים חברתיים, מת״לים, התחום הייעוצי-טיפולי, רכזים פדגוגיים, רכזי תקשוב, מפגשי מנהלים ובני ובנות שירות: מועדים, סילבוסים והרשמה.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
 <meta property="og:title" content="השתלמויות ופיתוח מקצועי · תשפ״ז — הבית של המנהיגות הפדגוגית היוצרת">
@@ -28,6 +28,9 @@
 .prog .ph{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
 .prog .ph .stripe{flex:none;width:12px;align-self:stretch;border-radius:8px}
 .prog .ph h2{font-size:1.35rem;margin-bottom:2px}
+/* ההמשך ב-<small> — נראה כחלק מהכותרת, אבל pagenav משמיט אותו
+   מתווית פס הניווט ומתפריט הצד, כך שכל המסלולים נכנסים לפס */
+.prog .ph h2 small{font-size:.92rem;font-weight:600;color:var(--text2);letter-spacing:0}
 .prog .ph p{color:var(--text2);font-size:.92rem;max-width:760px}
 .prog .pb{padding:20px 26px 24px}
 .prog .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -43,6 +46,10 @@
 .p-green .stripe{background:#A9DDBB}.p-green .meta span{background:#DCF3E3;border-color:#A9DDBB;color:#17603A}
 .p-blue .stripe{background:#A9CDF3}.p-blue .meta span{background:#DBEBFF;border-color:#A9CDF3;color:#164E85}
 .p-pink .stripe{background:#F0B7CD}.p-pink .meta span{background:#FBE2EC;border-color:#F0B7CD;color:#97365C}
+.p-peach .stripe{background:#F5BE93}.p-peach .meta span{background:#FFE3CC;border-color:#F5BE93;color:#8A4A16}
+.p-lime .stripe{background:#CDDE8B}.p-lime .meta span{background:#EAF2C8;border-color:#CDDE8B;color:#55650F}
+.p-coral .stripe{background:#F0B5B5}.p-coral .meta span{background:#FBDDDD;border-color:#F0B5B5;color:#9A3535}
+.p-teal .stripe{background:#9FD3E8}.p-teal .meta span{background:#D7EEF7;border-color:#9FD3E8;color:#12617F}
 .course{border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
 .course b{color:var(--navy);font-size:.95rem}
 .course small{color:var(--text2);font-size:.82rem}
@@ -53,7 +60,7 @@
 .dl-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
-<body>
+<body data-pn-drawer="on">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <!-- nav:start section="hishtalmuyot" -->
@@ -158,6 +165,7 @@
     <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
     <a href="gantt.html">לוח גאנט צוותים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
     <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -282,7 +290,7 @@
   <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <h1>השתלמויות ופיתוח מקצועי · תשפ״ז</h1>
   </div>
-  <p class="rv d2 lead" style="max-width:720px">שלושת מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים והתחום הייעוצי-טיפולי. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט.</p>
+  <p class="rv d2 lead" style="max-width:720px">מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים, התחום הייעוצי-טיפולי, הכשרת הרכזים הפדגוגיים, שגרירי החדשנות לרכזי התקשוב, מפגשי המנהלים והפיקוח והכשרת בני ובנות השירות. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט.</p>
   <div class="rv d2" style="margin-top:16px">
     <a class="btn primary" href="gantt.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg>ללוח הגאנט השנתי</a>
   </div>
@@ -295,7 +303,7 @@
     <div class="ph">
       <span class="stripe"></span>
       <div>
-        <h2>השתלמות רכזים חברתיים יוצרים</h2>
+        <h2>רכזים חברתיים <small>יוצרים · ההשתלמות השנתית</small></h2>
         <p>הרכזים והרכזות הם ממובילי התרבות הבית-ספרית. בשנת תשפ״ז נעמיק בארבעה צירים מרכזיים: <b>עתיד והכוון, תרומה לקהילה, מנהיגות תלמידים ופיתוח מיומנויות וכישורים</b> — לצד מרחבי בחירה וחלקים ייעודיים לחברה היהודית, הערבית והחרדית.</p>
         <div class="meta">
           <span>11 מפגשים</span><span>זום · ימי רביעי בבוקר</span><span>כנס פתיחה וסיורים פיזיים</span>
@@ -329,12 +337,43 @@
     </div>
   </section>
 
+  <!-- ===== רכזים פדגוגיים ===== -->
+  <section class="prog p-peach rv" id="rakaz-ped">
+    <div class="ph">
+      <span class="stripe"></span>
+      <div>
+        <h2>רכזים פדגוגיים <small>· ההכשרה השנתית</small></h2>
+        <p>הכשרה שנתית לרכזות ולרכזי הפדגוגיה — שבעה מפגשים אורך השנה, בשילוב מפגשי זום ומפגשים פיזיים. <b>המפגשים הפיזיים יתקיימו במיי קמפוס בני ברק</b>, סמוך לתחנת הרכבת.</p>
+        <div class="meta">
+          <span>7 מפגשים</span><span>4 פיזיים · 3 בזום</span><span>קמפוס בני ברק</span>
+        </div>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="sched-wrap">
+      <table class="sched">
+        <tr><th>#</th><th>תאריך</th><th>מסגרת</th><th>שעות</th></tr>
+        <tr><td>1</td><td class="dt">7.9.26</td><td>זום</td><td>14:00–15:30</td></tr>
+        <tr><td>2</td><td class="dt">26.10.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr><td>3</td><td class="dt">17.12.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr><td>4</td><td class="dt">27.1.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr><td>5</td><td class="dt">16.2.27</td><td>זום</td><td>9:00–14:00</td></tr>
+        <tr><td>6</td><td class="dt">23.5.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr><td>7</td><td class="dt">27.6.27</td><td>זום · סיום שנה</td><td>9:00–11:00</td></tr>
+      </table>
+      </div>
+      <div class="dl-row">
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== מת״לים ===== -->
   <section class="prog p-blue rv" id="matalim">
     <div class="ph">
       <span class="stripe"></span>
       <div>
-        <h2>הכשרת מת״לים — "מתיאוריה למעשה"</h2>
+        <h2>מת״לים <small>· הכשרת “מתיאוריה למעשה”</small></h2>
         <p>פיתוח מקצועי למעריכים ומקדמים תפקודי למידה (מת״לים) במשרד העבודה, בהנחיית <b>עדי ספיבק</b>. ההכשרה מקנה כלים יישומיים להוראה מותאמת לתלמידים עם לקויות למידה והפרעת קשב, עקרונות נוירופדגוגיים ואסטרטגיות בתחומי הדעת (תוכנית משיקים). מפגשים היברידיים בשתי קבוצות מקבילות — ימי א׳ וימי ב׳, 14:00–15:30.</p>
         <div class="meta">
           <span>12 מפגשים לקבוצה</span><span>היברידי · סינכרוני + מפגש פא״פ</span><span>מנחה: עדי ספיבק</span><span>מטלת סיכום עד סוף השנה</span>
@@ -392,7 +431,7 @@
     <div class="ph">
       <span class="stripe"></span>
       <div>
-        <h2>התחום הייעוצי-טיפולי — השתלמויות מקצועיות</h2>
+        <h2>התחום הייעוצי-טיפולי <small>· השתלמויות מקצועיות</small></h2>
         <p>יועצים ויועצות נדרשים להשתלם לאורך כל שנת העבודה, לשמור על כשירות מקצועית ולהתמקצע. <b>ההשתלמויות, הכנסים וימי העיון מתקיימים בימי רביעי</b> — ולכן מנהלים מתבקשים לא לשבץ יועצים במערכת ולא לקבוע ישיבות קבועות ביום זה. כל יועץ.ת מחויב.ת להירשם למינימום השתלמות אחת של 30 שעות.</p>
         <div class="meta">
           <span>ימי רביעי</span><span>זום + יום פרונטלי אחד לכל השתלמות</span><span>יועצים חדשים (שנים א–ג): 60 ש״ש בשנה</span>
@@ -423,6 +462,134 @@
       <div class="note-box"><b>יועצים חדשים (שנים א׳–ג׳ בייעוץ):</b> עד לקבלת רישיון ייעוץ — יעברו הדרכה לאורך שלוש שנים בהיקף של 60 ש״ש לכל שנה, לפי דרישות משרד החינוך. זוהי גרסה ראשונית — התאריכים המדויקים יעברו דיוק בתחילת השנה.</div>
       <div class="dl-row">
         <a class="btn primary" href="https://docs.google.com/forms/d/e/1FAIpQLSdQ3EP-qCzfZXl0XTGskdVJzhQPIGk-Hrh7O5rm63DMW9DbHA/viewform" target="_blank" rel="noopener">שאלון הרשמה להשתלמויות תשפ״ז ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== רכזי תקשוב ===== -->
+  <section class="prog p-teal rv" id="tikshuv">
+    <div class="ph">
+      <span class="stripe"></span>
+      <div>
+        <h2>רכזי תקשוב <small>· שגרירי חדשנות טכנולוגית</small></h2>
+        <p>שני מסלולים מקבילים בני <b>30 שעות</b> כל אחד, שבנויים מממצאי סקר צרכים בקרב המנהלים: <b>מסלול כלים</b> (ימי שני) — שליטה מעשית ב-AI ובכלים דיגיטליים לכיתה, ו<b>מסלול הובלה</b> (ימי רביעי) — הטמעת חדשנות בצוות המורים. השיבוץ לפי שאלון מיון קצר לפני פתיחת ההשתלמות.</p>
+        <div class="meta">
+          <span>10 מפגשים למסלול</span><span>7 סינכרוניים + 3 א-סינכרוניים</span><span>13:45–16:00</span><span>30 שעות · גמול</span>
+        </div>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="two-col">
+        <div class="sched-wrap">
+        <table class="sched">
+          <tr><th colspan="2">מסלול כלים · ימי שני</th></tr>
+          <tr><td class="dt">5.10.26</td><td>נקודת הפתיחה שלי · סינכרוני</td></tr>
+          <tr><td class="dt">19.10.26</td><td>AI למורה — סדנת יסוד · סינכרוני</td></tr>
+          <tr><td class="dt">2.11–16.11.26</td><td>ארגז הכלים הדיגיטלי · א-סינכרוני</td></tr>
+          <tr><td class="dt">16.11.26</td><td>הערכה ומדידה דיגיטלית · סינכרוני</td></tr>
+          <tr><td class="dt">30.11–14.12.26</td><td>יצירת תוכן דיגיטלי · א-סינכרוני</td></tr>
+          <tr><td class="dt">14.12.26</td><td>שימוש בטוח ומושכל · סינכרוני</td></tr>
+          <tr><td class="dt">28.12–11.1</td><td>סדר בענן ועזרה ראשונה · א-סינכרוני</td></tr>
+          <tr><td class="dt">11.1.27</td><td>AI ככלי עבודה יומי · סינכרוני</td></tr>
+          <tr><td class="dt">25.1.27</td><td>מיקרו-הדרכה לצוות · סינכרוני</td></tr>
+          <tr><td class="dt">8.2.27</td><td><b>הצגת ארגז הכלים · סיום</b></td></tr>
+          <tr><td class="dt">22.2.27</td><td>הגשת ארגז הכלים האישי — מטלה מסכמת</td></tr>
+        </table>
+        </div>
+        <div class="sched-wrap">
+        <table class="sched">
+          <tr><th colspan="2">מסלול הובלה · ימי רביעי</th></tr>
+          <tr><td class="dt">7.10.26</td><td>מהרכז הטכני לשגריר חדשנות · סינכרוני</td></tr>
+          <tr><td class="dt">21.10.26</td><td>להדריך מבוגרים — סדנת העברת הדרכה · סינכרוני</td></tr>
+          <tr><td class="dt">4.11–18.11.26</td><td>מיפוי צרכי הצוות · א-סינכרוני</td></tr>
+          <tr><td class="dt">18.11.26</td><td>מדיניות AI, אתיקה ואבטחת מידע · סינכרוני</td></tr>
+          <tr><td class="dt">2.12–16.12.26</td><td>נתונים, מעקב ובקרה · א-סינכרוני</td></tr>
+          <tr><td class="dt">16.12.26</td><td>ניהול שינוי ושיווק פנים-ארגוני · סינכרוני</td></tr>
+          <tr><td class="dt">30.12–13.1</td><td>התנהלות דיגיטלית וניהול ידע · א-סינכרוני</td></tr>
+          <tr><td class="dt">13.1.27</td><td>משאבים ובקשת הצטיידות · סינכרוני</td></tr>
+          <tr><td class="dt">27.1.27</td><td>מעבדת עמיתים — הדרכות מהשטח · סינכרוני</td></tr>
+          <tr><td class="dt">10.2.27</td><td><b>הצגת תיק החדשנות · סיום</b></td></tr>
+          <tr><td class="dt">24.2.27</td><td>הגשת תיק החדשנות הבית-ספרי — מטלה מסכמת</td></tr>
+        </table>
+        </div>
+      </div>
+      <div class="note-box"><b>היחידות הא-סינכרוניות</b> משובצות לסירוגין בין המפגשים — כל אחת נפתחת במועדה בסביבת הלמידה, שווה ל-3 שעות אקדמיות בקצב אישי, והתוצר שלה מוגש עד המפגש הסינכרוני העוקב. בלוח הגאנט הן מופיעות כפס לאורך תקופה.</div>
+      <div class="dl-row">
+        <a class="btn primary" href="hishtalmut-tikshuv.html">הסילבוס המלא של שני המסלולים</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== מפגשי מנהלים ===== -->
+  <section class="prog p-lime rv" id="menahalim-mifgashim">
+    <div class="ph">
+      <span class="stripe"></span>
+      <div>
+        <h2>מנהלים ופיקוח <small>· מפגשי השנה</small></h2>
+        <p>מעטפת המפגשים של המנהלים עם הפיקוח בתשפ״ז — מפגשי מפקח ומנהליו בזום ופנים אל פנים, לצד מפגשי מנהלי האזור. המפגשים נועדו לתיאום ציפיות ושיפור ממשקי העבודה, העמקה במדיניות המינהל וביעדיו, העלאת סוגיות מהשטח ומעקב אחר יישום התוכניות.</p>
+        <div class="meta">
+          <span>7 מפגשי מפקח ומנהליו</span><span>5 מפגשי מנהלי האזור</span><span>זום + פיזי</span>
+        </div>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="two-col">
+        <div class="sched-wrap">
+        <table class="sched">
+          <tr><th colspan="3">מפגשי מפקח ומנהליו</th></tr>
+          <tr><td class="dt">17.9.26</td><td>מפגש פתיחת שנה</td><td>זום · 13:00–15:00</td></tr>
+          <tr><td class="dt">23.11.26</td><td><b>כנס מנהלים</b> · המועד טרם סופי</td><td>יפורסם</td></tr>
+          <tr><td class="dt">14.12.26</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr><td class="dt">14.1.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr><td class="dt">17.3.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr><td class="dt">12.4.27</td><td><b>הרמת כוסית ארצית</b></td><td>יפורסם</td></tr>
+          <tr><td class="dt">1.7.27</td><td><b>סיכום שנה והערכות</b></td><td>זום ארצי</td></tr>
+        </table>
+        </div>
+        <div class="sched-wrap">
+        <table class="sched">
+          <tr><th colspan="2">מפגשי מנהלי האזור</th></tr>
+          <tr><td class="dt">29.10.26</td><td>8:30–10:30</td></tr>
+          <tr><td class="dt">31.12.26</td><td>8:30–10:30</td></tr>
+          <tr><td class="dt">25.2.27</td><td>8:30–10:30</td></tr>
+          <tr><td class="dt">6.5.27</td><td>8:30–10:30</td></tr>
+          <tr><td class="dt">15.7.27</td><td>8:30–10:30</td></tr>
+        </table>
+        </div>
+      </div>
+      <div class="note-box"><b>לתשומת לבכם:</b> נא לעדכן את המועדים ביומנים ולהעבירם לכל בעלי התפקידים הרלוונטיים. ייתכנו שינויים והוספת מפגשים במידה וייפתח תהליך ליווי מנהלים על ידי גורם חיצוני.</div>
+      <div class="dl-row">
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== בני ובנות שירות לאומי ===== -->
+  <section class="prog p-coral rv" id="sherut-leumi">
+    <div class="ph">
+      <span class="stripe"></span>
+      <div>
+        <h2>שירות לאומי <small>· הכשרת בני ובנות השירות</small></h2>
+        <p>מפגשי ההכשרה השנתיים למתנדבות ולמתנדבי השירות הלאומי בבתי הספר של המינהל, פנים אל פנים. לצד ההכשרה — הנחיות הקליטה והליווי הרגשי מופיעות בעמודי הנהלים.</p>
+        <div class="meta">
+          <span>3 מפגשים</span><span>פנים אל פנים</span>
+        </div>
+      </div>
+    </div>
+    <div class="pb">
+      <div class="sched-wrap">
+      <table class="sched">
+        <tr><th>#</th><th>תאריך</th><th>המפגש</th></tr>
+        <tr><td>1</td><td class="dt">28.10.26</td><td>מפגש הכשרה</td></tr>
+        <tr><td>2</td><td class="dt">16.12.26</td><td>מפגש בשיתוף רכזות העמותה ובית הספר</td></tr>
+        <tr><td>3</td><td class="dt">19.5.27</td><td><b>מפגש סיום שנה</b></td></tr>
+      </table>
+      </div>
+      <div class="dl-row">
+        <a class="btn primary" href="sherut-leumi.html">הנחיות הקליטה</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="livuy-rigshi.html">ליווי רגשי</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
       </div>
     </div>

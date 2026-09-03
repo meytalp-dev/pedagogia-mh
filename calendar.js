@@ -140,7 +140,7 @@
     var evOf = function (e) {
       var h = hoursFrom(e.s);
       return { title: e.n, date: e.d, endDate: e.d2 || null, start: h.start, end: h.end,
-        desc: [(G.TRACKS[e.t] || {}).name, e.s].filter(Boolean).join(' · '), url: e.u ? new URL(e.u, location.href).href : '' };
+        desc: [e.a || (G.TRACKS[e.t] || {}).aud || (G.TRACKS[e.t] || {}).name, e.s].filter(Boolean).join(' · '), url: e.u ? new URL(e.u, location.href).href : '' };
     };
     // כפתור בכל שורה ב"מהלך השנה"
     var agenda = document.getElementById('agenda');
