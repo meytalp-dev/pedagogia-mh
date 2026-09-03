@@ -935,6 +935,26 @@ function getTeacher(id) {
 // schoolName הוא שדה משוכפל שכל הדשבורדים נשענים עליו. הלקוח שלח לפעמים "—"
 // (מציין תצוגה שנכנס לשורות אמיתיות כשכשל רגעי מנע ממנו לטעון את שם בית הספר),
 // ולכן השרת הוא הפוסק: אם השם חסר או הוא מציין — שולפים אותו לפי המזהה.
+// מפתח הזהות של מורה בתוך בית ספר: שם + מקצוע. זה בדיוק הכלל שהלקוח אוכף
+// כשהוא חוסם הוספה כפולה, ולכן אפשר להישען עליו גם בשרת.
+function teacherKey_(schoolId, name, subject) {
+  return String(schoolId || '').trim() + ' ' +
+         String(name || '').trim() + ' ' +
+         String(subject || '').trim();
+}
+
+// מחזיר מפה של המורים הקיימים בבית ספר לפי מפתח הזהות.
+function existingTeachersMap_(schoolId) {
+  const map = {};
+  if (!schoolId) return map;
+  readAll('teachers').forEach(function (t) {
+    if (String(t.school || '').trim() !== String(schoolId).trim()) return;
+    const k = teacherKey_(t.school, t.name, t.subject);
+    if (!map[k]) map[k] = t;
+  });
+  return map;
+}
+
 function resolveSchoolName_(schoolId, given) {
   const g = String(given === undefined || given === null ? '' : given).trim();
   if (g && g !== '—' && g !== '-') return g;
@@ -966,7 +986,18 @@ function createTeacher(p) {
     pdYear: p.pdYear || '',
     createdAt: new Date().toISOString()
   };
-  appendRow('teachers', obj);
+  // אידמפוטנטיות. תשובה שנעלמת בדרך (Apps Script מחזיר מדי פעם דף HTML) גורמת
+  // ללקוח לנסות שוב, והניסיון החוזר יצר מורה שני. הכתיבה מתבצעת רק אם המורה
+  // הזה לא קיים; אחרת מוחזרת השורה הקיימת והלקוח מקשר אליה.
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
+  try {
+    const dup = existingTeachersMap_(obj.school)[teacherKey_(obj.school, obj.name, obj.subject)];
+    if (dup) return { ok: true, data: dup, existed: true };
+    appendRow('teachers', obj);
+  } finally {
+    lock.releaseLock();
+  }
   return { ok: true, data: obj };
 }
 
@@ -1024,27 +1055,52 @@ function createTeachersBatch(p) {
   });
   if (!created.length) return { ok: false, error: 'no_valid_rows' };
 
-  // סדר העמודות הפיזי בגיליון הוא מקור האמת, לא SCHEMA — בדיוק כמו ב-appendRow.
-  const headers = (s.getLastColumn() >= 1)
-    ? s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0].filter(String)
-    : SCHEMA.teachers;
-  const rows = created.map(obj => headers.map(h => {
-    if (obj[h] === undefined) return '';
-    if (typeof obj[h] === 'boolean') return obj[h] ? 'TRUE' : 'FALSE';
-    return obj[h];
-  }));
-
-  // מנעול: 62 בתי ספר עשויים להזין במקביל, וכתיבה ל-getLastRow() בלי מנעול
-  // מסוכנת — שתי מנות היו דורסות אותן שורות.
+  // המנעול עוטף גם את בדיקת הקיום וגם את הכתיבה. בדיקה מחוץ למנעול לא שווה
+  // כלום: שתי מנות זהות שמגיעות במקביל היו שתיהן עוברות אותה וכותבות פעמיים.
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(30000)) return { ok: false, error: 'busy_try_again' };
+  if (!lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
+
+  let toWrite = [], reused = [];
   try {
-    s.getRange(s.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
-    SpreadsheetApp.flush();
+    // אידמפוטנטיות: מורה שכבר קיים לא נכתב שוב — לא מול הגיליון ולא מול המנה
+    // עצמה. שליחה חוזרת של אותה מנה (תשובה שנעלמה בדרך, לחיצה כפולה) לא תיצור
+    // כפילות, והלקוח מקבל בכל מקרה שורה עם id לכל שם ששלח.
+    const existing = existingTeachersMap_(batchSchool);
+    const seenInBatch = {};
+    created.forEach(function (obj) {
+      const k = teacherKey_(obj.school, obj.name, obj.subject);
+      if (existing[k]) { reused.push(existing[k]); return; }
+      if (seenInBatch[k]) return;
+      seenInBatch[k] = true;
+      toWrite.push(obj);
+    });
+
+    if (toWrite.length) {
+      // סדר העמודות הפיזי בגיליון הוא מקור האמת, לא SCHEMA — כמו ב-appendRow.
+      const headers = (s.getLastColumn() >= 1)
+        ? s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0].filter(String)
+        : SCHEMA.teachers;
+      const rows = toWrite.map(function (obj) {
+        return headers.map(function (h) {
+          if (obj[h] === undefined) return '';
+          if (typeof obj[h] === 'boolean') return obj[h] ? 'TRUE' : 'FALSE';
+          return obj[h];
+        });
+      });
+      s.getRange(s.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
+      SpreadsheetApp.flush();
+    }
   } finally {
     lock.releaseLock();
   }
-  return { ok: true, data: created, count: created.length, skipped: list.length - created.length };
+
+  return {
+    ok: true,
+    data: toWrite.concat(reused),   // שורה עם id לכל שם ששלח הלקוח
+    count: toWrite.length,
+    reused: reused.length,
+    skipped: list.length - created.length - reused.length
+  };
 }
 
 function updateTeacher(p) {
