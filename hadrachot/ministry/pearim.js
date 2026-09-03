@@ -70,7 +70,9 @@ async function load() {
   buildFilters();
   renderMatrix();
   renderMissing();
+  buildInspSubjectBar();
   renderInspectors();
+  renderInspectorMatrix();
   renderUnmappedNote();
   initNavHighlight();
 }
@@ -85,7 +87,7 @@ function renderError() {
   ['gap-grid', 'insp-grid'].forEach(id => {
     document.getElementById(id).innerHTML = '<div class="empty-row" style="grid-column:1/-1">' + msg + '</div>';
   });
-  ['mx-body', 'missing-body', 'insp-body'].forEach(id => {
+  ['mx-body', 'missing-body', 'insp-body', 'insp-mx-body'].forEach(id => {
     document.getElementById(id).innerHTML = '<tr><td colspan="12" class="empty-row">' + msg + '</td></tr>';
   });
 }
@@ -301,63 +303,184 @@ function renderMissing() {
 // ============================================================
 // לפי מפקח.ת
 // ============================================================
-function renderInspectors() {
-  const grid = document.getElementById('insp-grid');
+// המקצוע שנבחר בסרגל של חתך המפקחים ('' = כל המקצועות)
+let inspSubject = '';
+
+function inspectorGroups() {
   const byInsp = {};
   schools.forEach(s => {
     const k = s.inspector || 'טרם שויך';
     (byInsp[k] = byInsp[k] || []).push(s);
   });
-
   const order = inspectors.map(i => i.name).filter(n => byInsp[n]);
   if (byInsp['טרם שויך']) order.push('טרם שויך');
+  return { byInsp, order };
+}
 
-  const colorOf = name => {
-    const i = inspectors.find(x => x.name === name);
-    return i ? i.color : '#95A3AE';
-  };
+function inspectorColor(name) {
+  const i = inspectors.find(x => x.name === name);
+  return i ? i.color : '#95A3AE';
+}
+
+function buildInspSubjectBar() {
+  const bar = document.getElementById('insp-subject-bar');
+  if (!bar) return;
+  const pills = ['<button type="button" class="subject-pill active" data-i="-1">כל המקצועות</button>']
+    .concat(SUBJECTS.map((sub, i) =>
+      '<button type="button" class="subject-pill" data-i="' + i + '">' + escapeHtml(sub) + '</button>'));
+  bar.insertAdjacentHTML('beforeend', pills.join(''));
+  bar.querySelectorAll('.subject-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      bar.querySelectorAll('.subject-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const i = Number(btn.dataset.i);
+      inspSubject = i < 0 ? '' : SUBJECTS[i];
+      renderInspectors();
+    });
+  });
+}
+
+function renderInspectors() {
+  const groups = inspectorGroups();
+  const byInsp = groups.byInsp, order = groups.order;
+  const grid = document.getElementById('insp-grid');
+  const sub = inspSubject;
 
   grid.innerHTML = order.map(name => {
     const list = byInsp[name];
-    const filled = list.filter(entered);
-    const missing = list.filter(s => !entered(s));
-    const teachers = list.reduce((a, s) => a + s.teachers, 0);
-    const gaps = filled.reduce((a, s) => a + missingSubjects(s).length, 0);
-    const pct = list.length ? Math.round(filled.length / list.length * 100) : 0;
-    return '<div class="insp-card" style="--c:' + escapeHtml(colorOf(name)) + '">' +
+    const color = escapeHtml(inspectorColor(name));
+
+    if (!sub) {
+      const filled = list.filter(entered);
+      const missing = list.filter(s => !entered(s));
+      const teachers = list.reduce((a, s) => a + s.teachers, 0);
+      const gaps = filled.reduce((a, s) => a + missingSubjects(s).length, 0);
+      const pct = list.length ? Math.round(filled.length / list.length * 100) : 0;
+      return '<div class="insp-card" style="--c:' + color + '">' +
+        '<h4><span class="dot"></span>' + escapeHtml(name) + '</h4>' +
+        '<div class="insp-stats">' +
+          '<div><b>' + list.length + '</b><span>מוסדות</span></div>' +
+          '<div><b>' + filled.length + '</b><span>הזינו</span></div>' +
+          '<div><b>' + teachers + '</b><span>מורים</span></div>' +
+          '<div><b>' + gaps + '</b><span>פערי מקצוע</span></div>' +
+        '</div>' +
+        '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+        (missing.length
+          ? '<div class="insp-missing">טרם הזינו: ' + missing.map(s => escapeHtml(s.name)).join(' · ') + '</div>'
+          : '<div class="insp-missing" style="color:#14614f">כל המוסדות הזינו ✓</div>') +
+      '</div>';
+    }
+
+    // חתך מקצוע — רק מוסדות שהמקצוע נלמד בהם
+    const pool = list.filter(s => relevant(s, sub));
+    if (!pool.length) {
+      return '<div class="insp-card" style="--c:' + color + '">' +
+        '<h4><span class="dot"></span>' + escapeHtml(name) + '</h4>' +
+        '<div class="insp-missing" style="color:var(--text-soft)">' + escapeHtml(sub) +
+        ' לא נלמד במוסדות של המפקח.ת</div>' +
+      '</div>';
+    }
+    const filled = pool.filter(entered);
+    const withSub = filled.filter(s => s.bySubject[sub]);
+    const without = filled.filter(s => !s.bySubject[sub]);
+    const teachers = pool.reduce((a, s) => a + (s.bySubject[sub] || 0), 0);
+    const pct = filled.length ? Math.round(withSub.length / filled.length * 100) : 0;
+
+    return '<div class="insp-card" style="--c:' + color + '">' +
       '<h4><span class="dot"></span>' + escapeHtml(name) + '</h4>' +
       '<div class="insp-stats">' +
-        '<div><b>' + list.length + '</b><span>מוסדות</span></div>' +
-        '<div><b>' + filled.length + '</b><span>הזינו</span></div>' +
-        '<div><b>' + teachers + '</b><span>מורים</span></div>' +
-        '<div><b>' + gaps + '</b><span>פערי מקצוע</span></div>' +
+        '<div><b>' + teachers + '</b><span>מורי ' + escapeHtml(sub) + '</span></div>' +
+        '<div><b>' + withSub.length + '</b><span>מוסדות עם מורה</span></div>' +
+        '<div><b>' + without.length + '</b><span>מוסדות בלי</span></div>' +
+        '<div><b>' + pool.length + '</b><span>מוסדות רלוונטיים</span></div>' +
       '</div>' +
       '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
-      (missing.length
-        ? '<div class="insp-missing">טרם הזינו: ' + missing.map(s => escapeHtml(s.name)).join(' · ') + '</div>'
-        : '<div class="insp-missing" style="color:#14614f">כל המוסדות הזינו ✓</div>') +
+      (!filled.length
+        ? '<div class="insp-missing">אף מוסד לא הזין עדיין מורים</div>'
+        : without.length
+          ? '<div class="insp-missing">בלי מורה ב' + escapeHtml(sub) + ': ' +
+            without.map(s => escapeHtml(s.name)).join(' · ') + '</div>'
+          : '<div class="insp-missing" style="color:#14614f">בכל המוסדות שהזינו יש מורה ✓</div>') +
     '</div>';
   }).join('');
 
-  // טבלת פירוט
-  const body = document.getElementById('insp-body');
+  renderInspectorTable(byInsp, order);
+}
+
+// טבלת הפירוט — משנה עמודות לפי המקצוע שנבחר
+function renderInspectorTable(byInsp, order) {
+  const sub = inspSubject;
+  const head = document.getElementById('insp-table-head');
+  if (head) {
+    head.innerHTML = '<th>מפקח.ת</th><th>בית ספר</th><th>רשת</th><th>מגזר</th>' +
+      (sub ? '<th>מורי ' + escapeHtml(sub) + '</th><th>סטטוס</th>'
+           : '<th>מורים</th><th>מקצועות חסרים</th>');
+  }
+
   const rows = [];
   order.forEach(name => {
-    byInsp[name].slice().sort((a, b) => b.teachers - a.teachers).forEach(s => {
-      const miss = entered(s) ? missingSubjects(s) : null;
+    let list = byInsp[name].slice();
+    if (sub) list = list.filter(s => relevant(s, sub));
+    list.sort((a, b) => (sub ? (b.bySubject[sub] || 0) - (a.bySubject[sub] || 0) : b.teachers - a.teachers));
+
+    list.forEach(s => {
+      let last;
+      if (sub) {
+        const n = s.bySubject[sub] || 0;
+        last = '<td>' + (n ? '<span class="cell-n">' + n + '</span>' : '<span class="cell-0">0</span>') + '</td>' +
+          '<td>' + (!entered(s)
+            ? '<span class="badge warn">טרם הזין</span>'
+            : (n ? '<span class="badge ok">יש מורה</span>'
+                 : '<span class="badge err">חסר ' + escapeHtml(sub) + '</span>')) + '</td>';
+      } else {
+        const miss = entered(s) ? missingSubjects(s) : null;
+        last = '<td>' + (s.teachers || '<span class="badge warn">0</span>') + '</td>' +
+          '<td>' + (miss === null
+            ? '<span class="badge warn">טרם הזין</span>'
+            : (miss.length ? escapeHtml(miss.join(' · ')) : '<span class="badge ok">מלא</span>')) + '</td>';
+      }
       rows.push('<tr>' +
-        '<td><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:' + escapeHtml(colorOf(name)) + '"></span>' + escapeHtml(name) + '</span></td>' +
+        '<td><span style="display:inline-flex;align-items:center;gap:6px">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:' + escapeHtml(inspectorColor(name)) + '"></span>' +
+          escapeHtml(name) + '</span></td>' +
         '<td><b>' + escapeHtml(s.name) + '</b></td>' +
         '<td>' + escapeHtml(networkName(s.network)) + '</td>' +
         '<td>' + escapeHtml(SECTOR_NAMES[s.sector] || '—') + '</td>' +
-        '<td>' + (s.teachers || '<span class="badge warn">0</span>') + '</td>' +
-        '<td>' + (miss === null
-          ? '<span class="badge warn">טרם הזין</span>'
-          : (miss.length ? escapeHtml(miss.join(' · ')) : '<span class="badge ok">מלא</span>')) + '</td>' +
+        last +
       '</tr>');
     });
   });
-  body.innerHTML = rows.join('') || '<tr><td colspan="6" class="empty-row">אין נתונים</td></tr>';
+  document.getElementById('insp-body').innerHTML =
+    rows.join('') || '<tr><td colspan="6" class="empty-row">אין נתונים</td></tr>';
+}
+
+// מטריצה: מפקח.ת × מקצוע — מורים בכל משבצת, ובאדום כמה מוסדות שהזינו בלי מורה
+function renderInspectorMatrix() {
+  const groups = inspectorGroups();
+  const byInsp = groups.byInsp, order = groups.order;
+
+  document.getElementById('insp-mx-head').innerHTML =
+    '<th class="name">מפקח.ת</th>' +
+    SUBJECTS.map(s => '<th>' + escapeHtml(s) + '</th>').join('') +
+    '<th>סה"כ</th>';
+
+  document.getElementById('insp-mx-body').innerHTML = order.map(name => {
+    const list = byInsp[name];
+    const cells = SUBJECTS.map(sub => {
+      const pool = list.filter(s => relevant(s, sub));
+      if (!pool.length) return '<td class="cell-na">—</td>';
+      const n = pool.reduce((a, s) => a + (s.bySubject[sub] || 0), 0);
+      const without = pool.filter(s => entered(s) && !s.bySubject[sub]).length;
+      return '<td>' +
+        (n ? '<span class="cell-n">' + n + '</span>' : '<span class="cell-0">0</span>') +
+        (without ? '<div class="cell-sub">חסר ב-' + without + '</div>' : '') +
+      '</td>';
+    }).join('');
+    const total = list.reduce((a, s) => a + s.teachers, 0);
+    return '<tr><td class="name"><span style="display:inline-flex;align-items:center;gap:6px">' +
+      '<span style="width:8px;height:8px;border-radius:50%;background:' + escapeHtml(inspectorColor(name)) + '"></span>' +
+      escapeHtml(name) + '</span></td>' + cells + '<td><b>' + total + '</b></td></tr>';
+  }).join('');
 }
 
 function renderUnmappedNote() {

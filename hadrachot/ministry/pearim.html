@@ -51,6 +51,7 @@
   .cell-n { display: inline-block; min-width: 24px; padding: 2px 7px; border-radius: 7px; font-weight: 700; background: var(--mint-soft); color: #14614f; }
   .cell-0 { display: inline-block; min-width: 24px; padding: 2px 7px; border-radius: 7px; font-weight: 700; background: var(--coral-soft); color: #9a3d1e; }
   .cell-na { color: var(--text-soft); }
+  .cell-sub { font-size: .66rem; font-weight: 700; color: var(--coral); margin-top: 2px; }
   .mx-meta { font-size: .74rem; color: var(--text-soft); }
 
   /* ===== סרגל סינון ===== */
@@ -289,9 +290,32 @@
         <p class="sub">חלוקת המוסדות לפי פריסת הפיקוח תשפ״ז. הפס מראה איזה חלק מהמוסדות של כל מפקח.ת כבר הזינו מורים.</p>
       </div>
     </div>
+    <div class="subject-filter-bar" id="insp-subject-bar">
+      <span class="filter-label">סינון מקצוע</span>
+    </div>
+
     <div class="insp-grid" id="insp-grid">
       <div class="empty-row" style="grid-column:1/-1">טוען...</div>
     </div>
+
+    <!-- מטריצת מפקח.ת × מקצוע -->
+    <section class="attention-card" style="margin-top:20px">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            מפקח.ת × מקצוע
+          </h3>
+          <p class="sub">כמה מורים יש לכל מפקח.ת בכל מקצוע, ובאדום — בכמה מבתי הספר שלו/ה שכבר הזינו אין אף מורה במקצוע.</p>
+        </div>
+      </div>
+      <div class="mx-wrap" style="margin-top:4px">
+        <table class="mx">
+          <thead><tr id="insp-mx-head"></tr></thead>
+          <tbody id="insp-mx-body"><tr><td class="empty-row" colspan="10">טוען...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
 
     <section class="attention-card" style="margin-top:20px">
       <div class="attention-head">
@@ -306,7 +330,7 @@
       <div class="table-wrap" style="border:none;">
         <table class="attention-table sticky-head">
           <thead>
-            <tr><th>מפקח.ת</th><th>בית ספר</th><th>רשת</th><th>מגזר</th><th>מורים</th><th>מקצועות חסרים</th></tr>
+            <tr id="insp-table-head"><th>מפקח.ת</th><th>בית ספר</th><th>רשת</th><th>מגזר</th><th>מורים</th><th>מקצועות חסרים</th></tr>
           </thead>
           <tbody id="insp-body"><tr><td colspan="6" class="empty-row">טוען...</td></tr></tbody>
         </table>
