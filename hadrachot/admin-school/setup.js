@@ -576,8 +576,16 @@ let ghostRows = [];   // שורות שנמחקו בזמן שהיצירה שלה�
 
 function draftKey() { return 'ts.draft.' + schoolId; }
 
+function readDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(draftKey()) || 'null');
+    if (d && Array.isArray(d.pending)) return d;
+  } catch (e) { /* טיוטה פגומה — מתייחסים אליה כאילו אין */ }
+  return null;
+}
+
 function saveDraft() {
-  if (!schoolId || !draftReady) return;
+  if (!schoolId) return;
   try {
     const pending = teachers
       .filter(t => t.needsCreate || t.needsUpdate || !t.serverId)
@@ -585,6 +593,24 @@ function saveDraft() {
         name: t.name, subject: t.subject, type: t.type,
         phone: t.phone, email: t.email, seniority: t.seniority
       }));
+
+    // לפני ש-restoreDraft רץ אסור לדרוס או למחוק את הטיוטה הקיימת — היא עדיין
+    // מחזיקה את ההזנה של הפעם הקודמת. אבל גם אסור פשוט לא לכתוב: המנהל.ת
+    // מקלידים כבר בשניות הראשונות, בזמן שהרשימה נטענת מהשרת. לכן — מיזוג.
+    if (!draftReady) {
+      const prev = readDraft();
+      const merged = prev ? prev.pending.slice() : [];
+      pending.forEach(x => {
+        if (!merged.some(y => y.name === x.name && y.subject === x.subject)) merged.push(x);
+      });
+      const dq = (prev && Array.isArray(prev.deleteQueue) ? prev.deleteQueue : []).slice();
+      deleteQueue.forEach(id => { if (dq.indexOf(id) < 0) dq.push(id); });
+      if (merged.length || dq.length) {
+        localStorage.setItem(draftKey(), JSON.stringify({ ts: Date.now(), pending: merged, deleteQueue: dq }));
+      }
+      return;
+    }
+
     if (!pending.length && !deleteQueue.length) localStorage.removeItem(draftKey());
     else localStorage.setItem(draftKey(), JSON.stringify({ ts: Date.now(), pending, deleteQueue }));
   } catch (e) { /* מצב פרטי / אחסון מלא — לא מפילים את הדף */ }
@@ -592,9 +618,8 @@ function saveDraft() {
 
 // מוחזרת אחרי טעינת המורים מהשרת: מחזירה רק שורות שלא הספיקו להישמר.
 function restoreDraft() {
-  let d = null;
-  try { d = JSON.parse(localStorage.getItem(draftKey()) || 'null'); } catch (e) { return 0; }
-  if (!d || !Array.isArray(d.pending)) return 0;
+  const d = readDraft();
+  if (!d) return 0;
   let n = 0;
   d.pending.forEach(x => {
     if (!x || !x.name) return;
