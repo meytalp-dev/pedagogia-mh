@@ -702,3 +702,45 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
   else build();
 })();
+
+
+/* ===== מועד שחלף, ומה הבא בתור =====
+   בטבלת תאריכי היעד של התכנון 12 מועדים, ובספטמבר תשעה מהם כבר עברו.
+   העמוד אמר את זה עד כה בקופסה אחת בתחתית, שנקבה בשני תאריכים לדוגמה —
+   כך שמנהל שפותח את הטבלה עדיין צריך להצליב כל שורה מול היום.
+   כאן זה נעשה לבד: כל שורה שהתאריך בה חלף מתעמעמת ומסומנת, והמועד
+   הקרוב ביותר שעוד לפנינו מסומן כ"הבא בתור". שום תאריך לא משתנה ושום
+   שורה לא נעלמת — רק נוסף מצב.
+
+   הטבלה מסומנת ב-data-deadlines, והתאריך הוא התא הראשון בשורה
+   בפורמט d.m.yyyy. שורה שלא נקרא ממנה תאריך נשארת כפי שהיא. */
+(function deadlineState(){
+  function parse(txt){
+    var m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(txt || '');
+    if (!m) return null;
+    var d = new Date(+m[3], +m[2] - 1, +m[1]);
+    return isNaN(d) ? null : d;
+  }
+
+  function build(){
+    var tables = document.querySelectorAll('table[data-deadlines]');
+    if (!tables.length) return;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+
+    [].forEach.call(tables, function (t) {
+      var next = null, nextDate = null;
+      [].forEach.call(t.rows, function (r) {
+        var c = r.cells[0];
+        if (!c || c.tagName === 'TH') return;
+        var d = parse(c.textContent);
+        if (!d) return;
+        if (d < today) { r.classList.add('dl-past'); return; }
+        if (!nextDate || d < nextDate) { nextDate = d; next = r; }
+      });
+      if (next) next.classList.add('dl-next');
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();

@@ -836,3 +836,20 @@ h3 .lockmark svg,h2 .lockmark svg{width:15px;height:15px}
 /* בהדפסה אין לאן לגלול — הכלל למעלה כבר פותח את המכל, והמסכה רק
    הייתה מוחקת את קצה הטבלה על הנייר */
 @media print{[data-hscroll]{-webkit-mask-image:none !important;mask-image:none !important}}
+
+/* ===== מצב המועד בטבלת תאריכי היעד — נקבע ב-site.js לפי היום ===== */
+tr.dl-past td{opacity:.5}
+tr.dl-past td:first-child::after{
+  content:"חלף";display:inline-block;margin-inline-start:8px;
+  font-size:.66rem;font-weight:800;letter-spacing:.04em;
+  padding:1px 8px;border-radius:999px;background:var(--border);color:var(--text2);
+  vertical-align:1px
+}
+tr.dl-next td{background:var(--cyan-100) !important}
+tr.dl-next td:first-child::after{
+  content:"הבא בתור";display:inline-block;margin-inline-start:8px;
+  font-size:.66rem;font-weight:800;letter-spacing:.04em;
+  padding:1px 8px;border-radius:999px;background:var(--accent);color:#fff;
+  vertical-align:1px
+}
+@media print{tr.dl-past td{opacity:1}}
