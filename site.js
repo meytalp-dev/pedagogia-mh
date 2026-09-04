@@ -458,6 +458,24 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
       clone.querySelectorAll('script,style,nav,.toc,.pn,.pnd,.secnav,.pagerow,.readmeta,details:not([open])>.inner'),
       function (el) { el.parentNode && el.parentNode.removeChild(el); }
     );
+    /* רשימת קישורים אינה קריאה. במאגר התרגולים, למשל, אלפי ה"מילים"
+       הן תוויות של שאלוני בגרות — אף אחד לא קורא אותן, קופצים לשלו.
+       מכל שיש בו חמישה קישורים ומעלה, ושמונים אחוז מהטקסט שבו הוא
+       טקסט של קישורים, יורד מהספירה. פסקה עם קישור בתוכה לא מגיעה
+       לסף הזה ונשארת. */
+    [].forEach.call(clone.querySelectorAll('ul,ol,div,section,nav'), function (el) {
+      if (!clone.contains(el)) return;                 /* ההורה כבר הוסר */
+      var links = el.querySelectorAll('a');
+      if (links.length < 5) return;
+      var all = (el.textContent || '').replace(/\s+/g, ' ').trim().length;
+      if (!all) return;
+      var lt = 0;
+      [].forEach.call(links, function (a) {
+        lt += (a.textContent || '').replace(/\s+/g, ' ').trim().length;
+      });
+      if (lt / all >= 0.8) el.parentNode.removeChild(el);
+    });
+
     var words = (clone.textContent || '').trim().split(/\s+/).filter(Boolean).length;
     var minutes = Math.ceil(words / WPM);
     if (minutes < MIN_MINUTES) return;
