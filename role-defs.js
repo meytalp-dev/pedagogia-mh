@@ -825,8 +825,164 @@ const ROLE_DEFS = {
   const elBody  = wrap.querySelector('.bodyx');
   const sheet   = wrap.querySelector('.sheet');
   let lastFocus = null;
+  let current = null;
 
   const li  = a => '<ul>' + a.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+
+  /* ---------- שיתוף הגדרת התפקיד ---------- */
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const strip = s => String(s).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+
+  /* אייקוני קו ב-currentColor, בלי אימוג'ים */
+  const ICON = {
+    share: '<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/>',
+    wa:    '<path d="M20 12a8 8 0 0 1-11.9 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/>',
+    mail:  '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/>',
+    link:  '<path d="M10 13a3.5 3.5 0 0 0 5 0l2.5-2.5a3.5 3.5 0 0 0-5-5L11 7"/><path d="M14 11a3.5 3.5 0 0 0-5 0L6.5 13.5a3.5 3.5 0 0 0 5 5L13 17"/>',
+    print: '<path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M7 14h10v6H7z"/>',
+    check: '<path d="M4 12.5 9 17.5 20 6.5"/>'
+  };
+  const svg = k => '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[k] + '</svg>';
+
+  /* הקישור העמוק להגדרה. תמיד אל tafkidim.html, גם אם המודל ייטען מעמוד אחר */
+  function roleUrl(id){
+    const base = location.href.split('#')[0];
+    return (/tafkidim\.html$/.test(base) ? base : base.replace(/[^/]*$/,'tafkidim.html')) + '#' + id;
+  }
+
+  /* גרסת טקסט מלאה של ההגדרה, לשליחה במייל ולהעתקה */
+  function roleText(id, d){
+    const L = [];
+    L.push('הגדרת תפקיד: ' + strip(d.title));
+    L.push('המרחב הפדגוגי · מינהל הכשרה מקצועית, משרד העבודה');
+    if (d.chips && d.chips.length) L.push(d.chips.map(strip).join(' · '));
+    L.push('');
+    L.push(strip(d.lead));
+    if (d.note) { L.push(''); L.push(strip(d.note)); }
+    (d.sections || []).forEach(s => {
+      L.push(''); L.push('■ ' + strip(s.h));
+      (s.items || []).forEach(t => L.push('• ' + strip(t)));
+      (s.acts  || []).forEach(a => {
+        L.push('');
+        L.push('  ' + strip(a.b));
+        (a.items || []).forEach(t => L.push('  • ' + strip(t)));
+      });
+    });
+    L.push(''); L.push('להגדרה המלאה באתר: ' + roleUrl(id));
+    return L.join('\n');
+  }
+
+  /* גוף מייל קצר. mailto ארוך מ-2000 תווים נחתך ברוב תוכנות הדואר,
+     ולכן נשלחת התמצית והקישור. הטקסט המלא זמין בכפתור "העתקת ההגדרה". */
+  function roleMailBody(id, d, max){
+    const L = [];
+    L.push('הגדרת תפקיד: ' + strip(d.title));
+    L.push('המרחב הפדגוגי · מינהל הכשרה מקצועית, משרד העבודה');
+    L.push('');
+    let lead = strip(d.lead);
+    const stop = lead.indexOf('. ');
+    if (stop > 40 && stop <= max) lead = lead.slice(0, stop + 1);
+    else if (lead.length > max) lead = lead.slice(0, max).replace(/\s+\S*$/, '') + '…';
+    L.push(lead);
+    L.push('');
+    L.push('להגדרה המלאה, לתחומי האחריות ולדרישות התפקיד:');
+    L.push(roleUrl(id));
+    return L.join('\n');
+  }
+
+  /* mailto ארוך נחתך ברוב תוכנות הדואר (Outlook נעצר סביב 2048 תווים),
+     ולכן התמצית מתקצרת עד שהקישור כולו יורד מתחת ל-1900. */
+  function mailHref(id, d){
+    const subj = encodeURIComponent('הגדרת תפקיד: ' + strip(d.title));
+    for (let max = 200; max >= 60; max -= 30){
+      const href = 'mailto:?subject=' + subj + '&body=' + encodeURIComponent(roleMailBody(id, d, max));
+      if (href.length <= 1900 || max === 60) return href;
+    }
+  }
+
+  /* חלון הדפסה נקי — משם גם "שמירה כ-PDF" ביעד ההדפסה של הדפדפן */
+  function printRole(id, d){
+    const secs = (d.sections || []).map(s => {
+      let x = '<h3>' + s.h + '</h3>';
+      if (s.items) x += li(s.items);
+      if (s.acts)  x += s.acts.map(a => '<div class="act"><b>' + a.b + '</b>' + li(a.items) + '</div>').join('');
+      return x;
+    }).join('');
+    const today = new Date().toLocaleDateString('he-IL');
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(
+      '<!doctype html><html dir="rtl" lang="he"><head><meta charset="utf-8">' +
+      '<title>' + esc(strip(d.title)) + ' · הגדרת תפקיד</title>' +
+      '<style>' +
+      '@page{margin:16mm}' +
+      'body{font:15px/1.75 "Assistant","Arial",sans-serif;color:#22303F;direction:rtl;text-align:right;margin:0}' +
+      'h1{font-size:1.5rem;color:#0D3B66;margin:0 0 6px}' +
+      '.sub{font-size:.82rem;color:#6B7A8C;margin:0 0 4px}' +
+      '.chips{margin:10px 0 0;font-size:.78rem;color:#0B7FA6;font-weight:700}' +
+      'hr{border:0;border-top:1px solid #DCE3EA;margin:16px 0}' +
+      '.lead{color:#43525F}' +
+      '.note{background:#F4F8FB;border-inline-start:3px solid #0B7FA6;padding:10px 14px;border-radius:0 8px 8px 0;font-size:.88rem;color:#43525F}' +
+      'h3{font-size:.8rem;letter-spacing:.06em;color:#0B7FA6;margin:20px 0 6px}' +
+      'ul{margin:0;padding-inline-start:20px}li{margin-bottom:5px;color:#43525F}' +
+      '.act{border:1px solid #DCE3EA;border-radius:10px;padding:11px 14px;margin-bottom:9px;break-inside:avoid}' +
+      '.act>b{display:block;color:#0D3B66;margin-bottom:5px}' +
+      '.src{margin-top:22px;border-top:1px solid #DCE3EA;padding-top:12px;font-size:.76rem;color:#6B7A8C}' +
+      '.cred{margin-top:8px;font-size:.7rem;color:#8A97A6}' +
+      '</style></head><body>' +
+      '<h1>' + d.title + '</h1>' +
+      '<p class="sub">הגדרת תפקיד · המרחב הפדגוגי · מינהל הכשרה מקצועית, משרד העבודה</p>' +
+      ((d.chips && d.chips.length) ? '<p class="chips">' + d.chips.join(' · ') + '</p>' : '') +
+      '<hr>' +
+      '<p class="lead">' + d.lead + '</p>' +
+      (d.note ? '<p class="note">' + d.note + '</p>' : '') +
+      secs +
+      '<div class="src">' + (d.srcMeta || 'מסמך רשמי · מינהל הכשרה מקצועית, משרד העבודה · תוקף ההנחיות: החל משנת תשפ״ו') +
+      '<br>הודפס מ-' + esc(roleUrl(id)) + ' · ' + today + '</div>' +
+      '<div class="cred">האתר נבנה על ידי impactos · impact-os.app</div>' +
+      '</body></html>'
+    );
+    w.document.close();
+    w.focus();
+    setTimeout(function(){ w.print(); }, 350);
+  }
+
+  function shareRow(id, d){
+    const url = roleUrl(id);
+    const waTxt = encodeURIComponent('הגדרת התפקיד: ' + strip(d.title) + ' · המרחב הפדגוגי\n' + url);
+    const mail  = mailHref(id, d);
+    return '<div class="rshare" data-role="' + id + '">' +
+      '<span class="lbl">שליחת ההגדרה</span>' +
+      (navigator.share ? '<button type="button" class="sbtn" data-act="native">' + svg('share') + 'שיתוף</button>' : '') +
+      '<a class="sbtn" href="https://wa.me/?text=' + waTxt + '" target="_blank" rel="noopener">' + svg('wa') + 'וואטסאפ</a>' +
+      '<a class="sbtn" href="' + mail + '">' + svg('mail') + 'מייל</a>' +
+      '<button type="button" class="sbtn" data-act="copy">' + svg('link') + 'העתקת קישור</button>' +
+      '<button type="button" class="sbtn" data-act="text">' + svg('link') + 'העתקת ההגדרה</button>' +
+      '<button type="button" class="sbtn" data-act="print">' + svg('print') + 'הדפסה · PDF</button>' +
+      '</div>';
+  }
+
+  function flash(btn, txt){
+    const orig = btn.innerHTML;
+    btn.innerHTML = svg('check') + txt;
+    btn.classList.add('ok');
+    setTimeout(function(){ btn.innerHTML = orig; btn.classList.remove('ok'); }, 2000);
+  }
+
+  function copy(txt, btn, label){
+    const done = function(){ flash(btn, label); };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
+    } else fallback();
+    function fallback(){
+      const ta = document.createElement('textarea');
+      ta.value = txt; ta.setAttribute('readonly','');
+      ta.style.cssText = 'position:fixed;top:-1000px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch(e){ btn.textContent = 'ההעתקה נכשלה'; }
+      document.body.removeChild(ta);
+    }
+  }
 
   function render(d){
     elTitle.innerHTML = d.title;
@@ -835,6 +991,7 @@ const ROLE_DEFS = {
 
     let h = '<p class="lead">' + d.lead + '</p>';
     if (d.note) h += '<p class="note">' + d.note + '</p>';
+    h += shareRow(current, d);
 
     (d.sections || []).forEach(s => {
       h += '<h3>' + s.h + '</h3>';
@@ -864,6 +1021,7 @@ const ROLE_DEFS = {
   function open(id){
     const d = ROLE_DEFS[id];
     if (!d) return;
+    current = id;
     lastFocus = document.activeElement;
     render(d);
     wrap.classList.add('on');
@@ -879,7 +1037,24 @@ const ROLE_DEFS = {
     if (history.replaceState) history.replaceState(null,'',location.pathname + location.search);
   }
 
-  wrap.addEventListener('click', e => { if (e.target.closest('[data-close]')) close(); });
+  wrap.addEventListener('click', e => {
+    const sb = e.target.closest('.sbtn[data-act]');
+    if (sb){
+      const d = ROLE_DEFS[current];
+      if (!d) return;
+      const act = sb.getAttribute('data-act');
+      if (act === 'copy')  copy(roleUrl(current), sb, 'הקישור הועתק');
+      if (act === 'text')  copy(roleText(current, d), sb, 'ההגדרה הועתקה');
+      if (act === 'print') printRole(current, d);
+      if (act === 'native') navigator.share({
+        title: strip(d.title) + ' · הגדרת תפקיד',
+        text: strip(d.title) + ' · המרחב הפדגוגי',
+        url: roleUrl(current)
+      }).catch(function(){});
+      return;
+    }
+    if (e.target.closest('[data-close]')) close();
+  });
   document.addEventListener('keydown', e => {
     if (!wrap.classList.contains('on')) return;
     if (e.key === 'Escape') { close(); return; }

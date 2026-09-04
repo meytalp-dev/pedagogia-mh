@@ -405,7 +405,19 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
   .searchbtn{padding:7px 10px}
   .searchbtn span{display:none}
 }
-@media(max-width:1200px){
+/* בין 1001 ל-1200 הפס נעלם עד כה לגמרי, והדרך היחידה לנווט הייתה המגירה —
+   כלומר בכל טאבלט, בכל לפטופ עם זום 125% ובכל חצי מסך לא היה תפריט.
+   נמדד: שמונה הכניסות תופסות 704px, והמותג לבדו 249px. כאן יורד כיתוב
+   המותג בלבד (הסימן נשאר, ומעליו ה-govbar עם משרד העבודה) — וזה לבדו
+   מספיק כדי להחזיק את הפס עד 1000px, בלי לוותר על אף כניסה. */
+@media(min-width:1001px) and (max-width:1200px){
+  .nav{gap:8px 9px}
+  .nav a.lnk{font-size:var(--fs-sm)}
+  .nav .brand>span:not(.mark){display:none}
+  .searchbtn{padding:7px 10px}
+  .searchbtn span{display:none}
+}
+@media(max-width:1000px){
   .nav a.lnk,.nav .navitem{display:none}
   .nav{gap:10px}
   .nav .brand b{max-width:none}
@@ -620,6 +632,15 @@ kbd.kb{font:inherit;font-size:.78rem;font-weight:700;background:#fff;border:1px 
 .rmodal .act ul{padding-inline-start:18px}
 .rmodal .src{border-top:1px solid var(--border);margin-top:22px;padding-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .rmodal .src .meta{font-size:var(--fs-xs);color:var(--muted);flex:1;min-width:200px}
+/* שורת שיתוף בהגדרת התפקיד */
+.rmodal .rshare{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.rmodal .rshare .lbl{font-size:var(--fs-xs);color:var(--muted);font-weight:700;margin-inline-end:2px}
+.rmodal .sbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border-strong);background:#fff;color:var(--navy);border-radius:999px;padding:6px 13px;font:700 var(--fs-xs)/1 "Assistant",sans-serif;cursor:pointer;transition:border-color .15s,background .15s,color .15s}
+.rmodal .sbtn:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.rmodal .sbtn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.rmodal .sbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.rmodal .sbtn.ok{border-color:var(--cyan);background:var(--cyan-100);color:var(--accent)}
+@media print{.rmodal{display:none !important}}
 @media(max-width:640px){
   .rmodal .sheet{margin:0;width:100%;max-height:100vh;height:100dvh;border-radius:0}
   .rmodal .top{padding:18px 18px 14px}.rmodal .bodyx{padding:6px 18px 26px}
@@ -794,3 +815,24 @@ body:has(.rmodal.on) .fb-btn{
 a:hover .lockmark,.card:hover .lockmark{color:var(--accent)}
 h3 .lockmark svg,h2 .lockmark svg{width:15px;height:15px}
 @media print{.lockmark{display:none}}
+
+/* ===== טבלה שנגללת לצדדים — קצה מעומעם, מקלדת, קורא מסך =====
+   באתר 304 טבלאות, ורובן רחבות מהמסך בנייד. עד כה המכל רק גלל:
+   בלי שום סימן שיש עוד עמודות מעבר לקצה, ובלי דרך להגיע אליהן
+   בלי עכבר. שלושת השינויים כאן — כולם מופעלים מ-site.js ורק
+   כשהטבלה באמת נחתכת, כדי שלא ייווצרו עשרות עצירות Tab מיותרות:
+   1. מסכה שמעמעמת את הקצה החתוך (הצד שממנו נשאר תוכן).
+   2. tabindex — הופך את המכל לנגלל בחצים מהמקלדת.
+   3. role+aria-label — קורא מסך מכריז על האזור לפני שנכנסים אליו.
+   המסכה יושבת על תיבת המכל ולא על התוכן, ולכן לא זזה עם הגלילה. */
+[data-hscroll]{
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--hs-l,0px),#000 calc(100% - var(--hs-r,0px)),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 var(--hs-l,0px),#000 calc(100% - var(--hs-r,0px)),transparent 100%);
+  transition:-webkit-mask-image .2s linear,mask-image .2s linear;
+  scrollbar-width:thin;
+}
+[data-hscroll]:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:14px}
+@media (prefers-reduced-motion:reduce){[data-hscroll]{transition:none}}
+/* בהדפסה אין לאן לגלול — הכלל למעלה כבר פותח את המכל, והמסכה רק
+   הייתה מוחקת את קצה הטבלה על הנייר */
+@media print{[data-hscroll]{-webkit-mask-image:none !important;mask-image:none !important}}
