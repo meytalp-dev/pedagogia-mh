@@ -600,3 +600,105 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
   else build();
 })();
+
+
+/* ===== טבלאות שנגללות לצדדים =====
+   כל טבלה באתר יושבת בתוך מכל שגולל אופקית (.tbl-scroll, .sched-wrap
+   ואחרים). המכל עשה את העבודה בשקט מוחלט: בנייד הטבלה נחתכה באמצע
+   עמודה בלי שום רמז שיש המשך, ומי שלא מחזיק עכבר לא יכול היה להגיע
+   לעמודות שמעבר לקצה בכלל.
+
+   כאן לא נוגעים במבנה — לא עוטפים ולא מזיזים כלום ב-DOM. רק מאתרים
+   בזמן ריצה איזה מכל באמת נחתך, ורק לו מוסיפים: מסכת עמעום בצד שבו
+   נשאר תוכן, tabindex שמאפשר גלילה בחצים, ו-aria שמכריז על האזור.
+   כשהמכל לא נחתך — הכל יורד, כדי שלא יצטברו עצירות Tab על טבלאות
+   שממילא נכנסות למסך.
+
+   RTL: scrollLeft בעברית הוא 0 בקצה הימני ויורד לשלילי ככל שגוללים
+   שמאלה. Math.abs מכסה גם את זה וגם את המקרה הלטיני. */
+(function tableScroll(){
+  var PAD = 40;   /* רוחב העמעום בקצה */
+  var EPS = 3;    /* פחות מזה — עיגול תת-פיקסלי, לא גלילה אמיתית */
+
+  function scrollerOf(table){
+    var el = table.parentElement;
+    for (var i=0; i<5 && el && el !== document.body; i++){
+      var ox = getComputedStyle(el).overflowX;
+      if (ox === 'auto' || ox === 'scroll') return el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  /* שם לאזור — מהתוכן שכבר קיים בעמוד, לא ממציאים כותרת */
+  function nameFor(el){
+    var cap = el.querySelector('caption');
+    if (cap && cap.textContent.trim()) return cap.textContent.trim();
+    var n = el;
+    while (n && n !== document.body){
+      var p = n.previousElementSibling;
+      while (p){
+        if (/^H[1-6]$/.test(p.tagName) && p.textContent.trim()) return p.textContent.trim();
+        p = p.previousElementSibling;
+      }
+      n = n.parentElement;
+    }
+    return '';
+  }
+
+  function update(el){
+    var max = el.scrollWidth - el.clientWidth;
+    if (max <= EPS){
+      if (el.hasAttribute('data-hscroll')){
+        el.removeAttribute('data-hscroll');
+        el.removeAttribute('tabindex');
+        el.removeAttribute('role');
+        el.removeAttribute('aria-label');
+        el.style.removeProperty('--hs-l');
+        el.style.removeProperty('--hs-r');
+      }
+      return;
+    }
+    if (!el.hasAttribute('data-hscroll')){
+      el.setAttribute('data-hscroll','');
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      var nm = nameFor(el);
+      el.setAttribute('role','region');
+      el.setAttribute('aria-label', nm ? nm + ' — טבלה נגללת לצדדים' : 'טבלה נגללת לצדדים');
+    }
+    var from = Math.min(Math.abs(el.scrollLeft), max);   /* כמה נגלל מקצה ההתחלה */
+    var rtl  = getComputedStyle(el).direction === 'rtl';
+    var l = rtl ? (max - from) : from;
+    var r = rtl ? from : (max - from);
+    el.style.setProperty('--hs-l', (l > EPS ? PAD : 0) + 'px');
+    el.style.setProperty('--hs-r', (r > EPS ? PAD : 0) + 'px');
+  }
+
+  function build(){
+    var seen = [];
+    [].forEach.call(document.querySelectorAll('table'), function(t){
+      var s = scrollerOf(t);
+      if (s && seen.indexOf(s) < 0) seen.push(s);
+    });
+    if (!seen.length) return;
+
+    var RO = window.ResizeObserver ? new ResizeObserver(function(ents){
+      ents.forEach(function(e){ update(e.target) });
+    }) : null;
+
+    seen.forEach(function(el){
+      update(el);
+      el.addEventListener('scroll', function(){ update(el) }, {passive:true});
+      if (RO) RO.observe(el);
+    });
+
+    if (!RO) window.addEventListener('resize', function(){ seen.forEach(update) });
+    /* פתיחת <details> משנה רוחב בלי אירוע resize על החלון */
+    document.addEventListener('toggle', function(){
+      requestAnimationFrame(function(){ seen.forEach(update) });
+    }, true);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();

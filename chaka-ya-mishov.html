@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משוב ורפלקציה · כיתה י״א · נתיבים לחניכות וקריירה</title>
+<meta name="description" content="יחידה ב׳ של שכבה י״א בנתיבים לחניכות וקריירה — ששת המפגשים ומדריך המורה, מתומללים במלואם: הקופסה השחורה, העדשה והפילטר, אפוד המגן, הד חיובי, תיקון תוך כדי תנועה והחתימה שלי.">
+<meta name="pmh-year" content="תשפ״ז">
+<meta property="og:type" content="website">
+<meta property="og:title" content="יחידה ב׳ · משוב ורפלקציה — 6 מפגשים + מדריך למורה">
+<meta property="og:description" content="היחידה המפותחת ביותר בשכבה, והיחידה היחידה שמגיעה עם מדריך למורה נפרד. היא נכתבה מתוך הבנה שעבור בני נוער שכבר עובדים בשטח, ״רפלקציה״ ו״משוב״ אינם מושגים…">
+<meta property="og:url" content="https://pedagogiamh.co.il/chaka-ya-mishov.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="canonical" href="https://pedagogiamh.co.il/chaka-ya-mishov.html">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
+<link rel="stylesheet" href="cats.css">
+<link rel="stylesheet" href="/pagenav.css">
+<link rel="stylesheet" href="/toolbelt.css">
+<style>
+/* בלוקים נפתחים — זהה לתבנית שבארגז הכלים של רכז.ת החניכות */
+details.dom{border:1px solid var(--border);border-radius:16px;margin:14px 0;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden}
+details.dom summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:14px;padding:15px 20px;font-weight:800;color:var(--navy);font-size:1.02rem;transition:background .2s}
+details.dom summary::-webkit-details-marker{display:none}
+details.dom summary:hover{background:var(--cyan-100)}
+details.dom summary .dn{font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent);min-width:1.6em}
+details.dom summary .hint{margin-inline-start:auto;font-weight:600;font-size:.79rem;color:var(--text2);white-space:nowrap}
+details.dom[open] summary{border-bottom:1px solid var(--border)}
+details.dom .inner{padding:6px 20px 18px}
+details.dom h4{font-weight:800;color:var(--navy-800);font-size:.92rem;margin:14px 0 4px}
+details.dom p,details.dom li{font-size:.9rem}
+details.dom ul{list-style:none;margin:4px 0}
+details.dom ul>li{position:relative;padding:4px 20px 4px 0}
+details.dom ul>li::before{content:"";position:absolute;right:2px;top:14px;width:10px;height:2.5px;border-radius:2px;background:var(--cyan)}
+details.dom ol{margin:4px 22px 4px 0}
+details.dom ol>li{padding:3px 0}
+@media(max-width:560px){details.dom summary .hint{display:none}}
+</style>
+</head>
+<body data-back="chaka-ya.html|כיתה י״א">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
+
+<!-- nav:start section="chanichut" -->
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut.html">נתיב הבגרות</a>
+    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a href="alternatives.html"><span class="n">08</span> הערכה</a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="chaka-ya.html">כיתה י״א</a>
+    <a class="nested" href="chaka-yb.html">כיתה י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <a href="tafkid-mefakeach.html">ערכת המפקח.ת · תפקיד וכלים</a>
+    <a class="nested" href="pikuah-shnati.html">תוכנית העבודה השנתית</a>
+    <a class="nested" href="bikur-mefakeach.html">הביקור בבית הספר · צ׳ק ליסט</a>
+    <a class="nested" href="doch-pedagogi.html">הדוח הפדגוגי</a>
+    <a class="nested" href="vaada-mefakeach.html">ועדה מלווה · צד המפקח.ת</a>
+    <a class="nested" href="madrich-pedagogi.html">המדריך.ה הפדגוגי.ת למקצוע</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="matal.html">מחברת המת״ל · תפקודי למידה</a>
+    <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה · תשפ״ז</a>
+    <div class="sect">רכז פדגוגי</div>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+    <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+    <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+    <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+    <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+    <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+    <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+    <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+    <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל.ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">חינוך חברתי יוצר</div>
+    <a href="chevrati.html">שער המרחב החברתי</a>
+    <a href="chevrati-tfisa.html"><span class="n">01</span> התפיסה וארבעת העקרונות</a>
+    <a href="chevrati-tafkid.html"><span class="n">02</span> תפקיד הרכז.ת</a>
+    <a href="chevrati-tochnit.html"><span class="n">03</span> בניית תוכנית העבודה</a>
+    <a href="chevrati-hachshara.html"><span class="n">04</span> ההכשרה השנתית</a>
+    <a href="chevrati-meoravut.html"><span class="n">05</span> מעורבות ומנהיגות תלמידים</a>
+    <a href="chevrati-kehila.html"><span class="n">06</span> קהילה של משמעות</a>
+    <a href="chevrati-eretz.html"><span class="n">07</span> ״ארץ״ — הסביבה הפיזית</a>
+    <a href="chevrati-arachim.html"><span class="n">08</span> ערכים וטקסים</a>
+    <a href="chevrati-chosen.html"><span class="n">09</span> חוסן בתקופת משבר</a>
+    <a href="chevrati-tzevet.html"><span class="n">10</span> עבודה עם הצוות</a>
+    <a href="chevrati-merchavim.html"><span class="n">11</span> מרחבים בניהול עצמי</a>
+    <a href="chevrati-klim.html"><span class="n">12</span> ארגז הכלים · מעגל השנה</a>
+    <a href="chevrati-prida.html"><span class="n">13</span> פרידה וסיום</a>
+    <a href="chevrati-shitufim.html"><span class="n">14</span> שיתופים מהשטח</a>
+    <a href="chevrati-arabic.html"><span class="n">15</span> التربية الاجتماعية · بالعربية</a>
+    <a href="chevrati-matala.html"><span class="n">16</span> מטלת הסיכום</a>
+    <div class="sect">נהלים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a class="nested" href="nehalim-minhal.html">נהלי מינהל</a>
+    <a class="nested" href="takzivim.html">תקציבים</a>
+    <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
+    <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    <div class="sect">שירותים</div>
+    <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
+    <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
+    <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="/hadrachot/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <div class="sect">אודות</div>
+    <a href="archive.html">ארכיון · שנים קודמות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה" width="1200" height="420">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="gov-mid">
+    <span class="navitem"><a class="lnk" href="supervision.html" aria-haspopup="true">מרחב פיקוח<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <a href="supervision.html#vaadot">ועדות מלוות</a>
+        <a href="vaada-melava.html">ועדה מלווה · ההנחיות המלאות</a>
+        <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+        <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+        <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+      <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+        <a href="tafkid-mefakeach.html">ערכת המפקח.ת · תפקיד וכלים</a>
+        <a href="tashpaz.html">תכנון תשפ״ז</a>
+        <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+      </div>
+    </span>
+    <span class="navitem"><a class="lnk" href="menahalim.html" aria-haspopup="true">מרחב מנהלים<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+        <a href="/hadrachot/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="drive-menahalim.html">דרייב מנהלים</a>
+        <a href="tashpaz.html">היערכות תשפ״ז</a>
+        <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה</a>
+      </div>
+    </span>
+  </div>
+  <div class="left"><a href="negishut.html">נגישות</a><span class="dis">English</span><span class="dis">العربية</span></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html" aria-haspopup="true">מרחב פדגוגי<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="alternatives.html">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="chanichut.html" aria-haspopup="true">חניכות וקריירה<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית בכיתה</a>
+      <a href="career.html#lessons">מערכי שיעור · ט׳–י״ב</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="procedures.html">שער הנהלים · ארבע הקטגוריות</a>
+      <a href="nehalim-minhal.html">נהלי מינהל</a>
+      <a href="takzivim.html">תקציבים</a>
+      <a href="cherum-nehalim.html">אירוע חריג</a>
+      <a href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html" aria-haspopup="true">מנהלים חדשים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ׳ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html" aria-haspopup="true">בעלי תפקידים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="tafkidim.html">שער בעלי התפקידים · כל ההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ״ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז.ת הפדגוגי.ת</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+      <a href="matal.html">מחברת המת״ל</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chevrati.html" aria-haspopup="true">חינוך חברתי יוצר<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chevrati.html">שער המרחב החברתי · כל החומרים</a>
+      <a href="chevrati-tfisa.html">התפיסה וארבעת העקרונות</a>
+      <a href="chevrati-tochnit.html">בניית תוכנית העבודה</a>
+      <a href="chevrati-hachshara.html">ההכשרה השנתית ומפגשיה</a>
+      <a href="chevrati-klim.html">ארגז הכלים · מעגל השנה</a>
+      <a href="chevrati-arabic.html">التربية الاجتماعية · بالعربية</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ״ז</a></span>
+  <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+<!-- nav:end -->
+
+<main id="main">
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">נתיבים לחניכות וקריירה · שכבה י״א · יחידה ב׳</span>
+    <h1>יחידה ב׳ — <span class="accent">משוב ורפלקציה</span></h1>
+    <p class="lead">היחידה המפותחת ביותר בשכבה, והיחידה היחידה שמגיעה עם <strong>מדריך למורה נפרד</strong>. היא נכתבה מתוך הבנה שעבור בני נוער שכבר עובדים בשטח, "רפלקציה" ו"משוב" אינם מושגים אקדמיים — אלא <strong>כלי עבודה קריטיים להישרדות, להצטיינות ולהתקדמות מקצועית</strong>.</p>
+    <div class="meta-row">
+      <span class="src-note">המקור: <a class="lk" href="https://kbasma2026.my.canva.site/daht3pah1om" target="_blank" rel="noopener">פאנל השליטה של מערכי נתיבים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
+      <span>6 מפגשים + מדריך למורה · פיתוח: ק.מ.ה אורנים · החינוך היוצר</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn ghost" href="chaka-ya.html">&#9666; חזרה לכיתה י״א</a>
+      <a class="btn" href="https://kbasma2026.my.canva.site/daht3pah1om" target="_blank" rel="noopener">פאנל השליטה בקנבה &#8599;<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="chaka-ya.html#mivne">המבנה הקבוע של כל מערך</a> &middot; <a class="lk" href="chaka-ya.html#homarim">כל 13 המערכים בקנבה</a></p>
+
+    <div class="callout rv">
+      <span class="ttl">איך היחידה עוקפת את ההתנגדות</span>
+      המדריך אומר זאת במפורש: היחידה <strong>עוקפת את מנגנוני ההתנגדות הטבעיים של תלמידים אלו ל"חשיפה רגשית" או לכתיבה ממושכת</strong>, ומנגישה את התהליכים הרפלקטיביים דרך השפה שהם מכירים — שפת העבודה, היצירה והתחקיר המקצועי. כל מטאפורה ביחידה לקוחה מעולם הייצור: קופסה שחורה, עדשה ופילטר, אפוד מגן, הד, תיקון תוך כדי תנועה, חתימה.
+    </div>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>רצף המפגשים — למה דווקא בסדר הזה</caption>
+        <thead><tr><th>#</th><th>המפגש</th><th>מה הוא מוסיף לרצף</th></tr></thead>
+        <tbody>
+          <tr><td class="k">1</td><td>הקופסה השחורה</td><td>פתיחת התהליך דרך מטאפורה מעולם התעופה. מבהיר <em>מדוע</em> מומחים עוצרים להביט לאחור, ומניח את תשתית היסוד לחשיבה מהרהרת.</td></tr>
+          <tr><td class="k">2</td><td>העדשה והפילטר</td><td>הכלי הרפלקטיבי החשוב ביותר: ההפרדה בין <strong>תיאור</strong> (עובדות בשטח) לבין <strong>פרשנות</strong> (הסרט שרץ לנו בראש). מפתח להורדת אימפולסיביות מול מעסיקים ולקוחות.</td></tr>
+          <tr><td class="k">3</td><td>אפוד המגן המקצועי</td><td>חוסן רגשי (SEL): איך לסנן מילים תוקפניות של מעסיק ולחלץ מתוכן רק את המידע המקצועי.</td></tr>
+          <tr><td class="k">4</td><td>הד חיובי</td><td>מעבר לעבודת צוות ותקשורת קולגיאלית — מודל היוועצות עמיתים למתן משוב מקדם ולא שיפוטי.</td></tr>
+          <tr><td class="k">5</td><td>תיקון תוך כדי תנועה</td><td>המיומנות הגבוהה ביותר של בעל המקצוע. בהשראת Reflection-in-action של דונלד שון — עצירות חשיבה קצרות בזמן אמת.</td></tr>
+          <tr><td class="k">6</td><td>החתימה שלי</td><td>מפגש שיא: תכלול, המשגה פורמלית וגיבוש זהות מקצועית לכדי תוצר ויזואלי.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ארבעת הדגשים הכלליים להנחיית היחידה<span class="hint">מתוך המדריך למורה</span></summary>
+      <div class="inner">
+        <h4>רציונל פדגוגי כמפתח להנחיה</h4>
+        <p>כל מהלך נפתח ברקע ורציונל ייעודי. מטרתו להבהיר <em>לך, כמורה וכמנחה</em>, את ההקשר הפדגוגי הרחב, את המטרות הסמויות ואת חשיבות המהלך על פני הרצף.</p>
+        <h4>המלצות אופרטיביות בסוף כל מפגש</h4>
+        <p>בסוף כל מהלך מופיעות המלצות מעשיות — דגשי יישום, טיפים להתמודדות עם שתיקות או התנגדויות, ודרכים להורדת סף חשיפה. <strong>מומלץ מאוד לקרוא אותן בעיון לפני תחילת ההנחיה בשטח.</strong></p>
+        <h4>גמישות ומודולריות בזמן</h4>
+        <p>המהלכים מציעים אפשרויות פעילות מגוונות <strong>העולות על מסגרת של 45 דקות</strong>. המבנה מעניק חופש פדגוגי לבחור מתוך הפעילויות, לקצר, או לשלב בין מהלכים — בהתאם למשאבי הזמן ולרמת הבשלות של הכיתה.</p>
+        <h4>ניסוח מגדרי</h4>
+        <p>המהלכים מנוסחים ביחידה בלשון זכר מטעמי נוחות בלבד, אך מיועדים וניתנים להתאמה מלאה לתלמידים ותלמידות כאחד.</p>
+        <p style="margin-top:14px"><em>"תהליך בניית 'השריר הרפלקטיבי' הוא מתנה אמיתית שתלווה את תלמידייך לכל אורך דרכם המקצועית והאישית."</em></p>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMQux4Pqw/RRaF1dPMVHWCmMVM9832pA/view" target="_blank" rel="noopener">למדריך למורה המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m1">משוב 01 · "הקופסה השחורה" — למה מומחים עוצרים להסתכל אחורה</h2>
+    <p class="lead-p rv">המפגש שהופך את התלמידים מ<strong>נאשמים</strong> ל<strong>חוקרים</strong>. ההנחיה המרכזית למורה: <strong>לא להשתמש במילה "רפלקציה" בדקות הראשונות — אלא במילה "תחקיר"</strong>.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>כרטיס המפגש</caption>
+        <tbody>
+          <tr><td class="k">מטרה</td><td>הבנת הרפלקציה ככלי הישרדותי ומקצועי, לא כ"משימה לימודית". הפיכת "כישלון" ל"נתון" (Data).</td></tr>
+          <tr><td class="k">מרחב למידה</td><td>הכיתה</td></tr>
+          <tr><td class="k">מקור השראה</td><td>מודל הרפלקציה של ד"ר עמליה רן · גישת "חשיבת קופסה שחורה" של מתיו סייד</td></tr>
+          <tr><td class="k">חלוקת זמנים</td><td>פתיחה 10 דק׳ · תחקיר הקופסה 20 דק׳ · סיכום 15 דק׳</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המפגש</h3>
+    <ol class="ed rv">
+      <li><strong>פתיחה (10 דק׳)</strong> — צפייה בסרטון "Fail" מקצועי קצר (צבע שיער שיצא ירוק, מנוע שמתפוצץ בגלל בורג קטן). ואז שאלת הפתיחה: <strong>"מי ירוויח יותר כסף בעוד שנה — זה שמתעצבן וזורק את הכלים, או זה שמבין בדיוק באיזה שלב זה השתבש?"</strong></li>
+      <li><strong>הצגת המושג</strong> — קופסה שחורה היא מכשיר תיעוד חסין בכלי טיס. אנחנו יודעים מה נכנס (Input) ומה יצא (Output), אך התהליכים הפנימיים אינם גלויים. חשיבת קופסה שחורה = "נתיחה" של התקלה בצורה אובייקטיבית, ללא האשמה אישית, תוך התמקדות בשיפור המערכת.</li>
+      <li><strong>ארבע תחנות הניתוח על ציר הזמן</strong> — <em>קלט</em> (ציפיות, הגדרות ומידע שהתקבל) · <em>תהליך</em> (ביצוע, תקשורת, עבודה מקצועית) · <em>בקרה וסינון</em> (הנקודות שבהן המערכת הייתה אמורה "לתפוס" את הטעות) · <em>פלט</em> (התוצאה שחווה הלקוח).</li>
+      <li><strong>"תחקיר הקופסה" (20 דק׳)</strong> — כל קבוצה מקבלת מקרה תקלה, ממקמת 5–6 נקודות על ציר זמן, ובכל נקודה שואלת: "האם כאן זה יכול היה להימנע? ואם כן, איך?" — ומסמנת <strong>בעיגול אדום</strong> את שורש הבעיה (Root Cause).</li>
+      <li><strong>דיון כיתתי (8 דק׳)</strong> — האם כולם סימנו את אותה נקודת כשל? כאן מגלים שכל אחד רואה תקלה מזווית אחרת. השאלה המסכמת: <strong>"איזה 'חיישן' חדש אנחנו צריכים להתקין בקופסה השחורה שלנו כדי שזה לא יקרה שוב?"</strong></li>
+      <li><strong>רגע ההמשגה (15 דק׳)</strong> — "מה שעשינו עכשיו נקרא רפלקציה: היכולת של בעל מקצוע לעצור, להריץ את הסרט לאחור ב־Slow Motion, ולבדוק מה קרה כדי להשתפר לפעם הבאה."</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ארבעה מקרי בוחן מוכנים — לפי מגמה<span class="hint">שיער · רכב · קולינריה · נגרות</span></summary>
+      <div class="inner">
+        <h4>א׳ · עיצוב שיער — "הגוון שהפך לכתום"</h4>
+        <p><strong>המקרה:</strong> לקוחה ביקשה בלונד פלטינה, אך אחרי שטיפת הצבע השיער נראה כתום־צהוב עז. הלקוחה מסרבת לשלם ויוצאת בסערה.</p>
+        <ul>
+          <li><strong>קלט:</strong> האם בוצע אבחון לשיער (האם נצבע בעבר בצבע כהה)? האם התיאום עם הלקוחה היה ריאלי?</li>
+          <li><strong>תהליך:</strong> האם ריכוז החמצן היה נכון? האם זמן ההשארה היה מדויק?</li>
+          <li><strong>בקרה:</strong> האם המעצב בדק קבוצת שיער אחת במהלך ההמתנה ("בדיקת קפיץ")?</li>
+          <li><strong>שורש הכשל:</strong> חוסר תשאול מקדים על היסטוריית הצבע של הלקוחה — <em>כשל בקלט</em>.</li>
+        </ul>
+        <h4>ב׳ · מכונאות רכב — "הרעש שלא נעלם"</h4>
+        <p><strong>המקרה:</strong> לקוח נכנס בגלל רעש בבלימה. הוחלפו רפידות, אך יומיים אחר כך הוא חוזר עם אותו רעש ותלונה שהבלמים חורקים יותר מקודם.</p>
+        <ul>
+          <li><strong>קלט:</strong> האם המכונאי הקשיב לרעש יחד עם הלקוח בנסיעת מבחן, או רק הסתמך על התיאור?</li>
+          <li><strong>תהליך:</strong> האם הדיסקים נחרטו או רק הרפידות הוחלפו? האם בוצע גירוז בנקודות המגע?</li>
+          <li><strong>בקרה:</strong> האם מנהל העבודה ביצע נסיעת מבחן אחרי התיקון?</li>
+          <li><strong>שורש הכשל:</strong> אבחון שגוי של מקור הרעש — הבעיה הייתה בצלחות ולא ברפידות.</li>
+        </ul>
+        <h4>ג׳ · קולינריה — "הסופלה שצנח בערב חג"</h4>
+        <p><strong>המקרה:</strong> הזמנה גדולה של קינוחי סופלה לאירוע VIP יצאה מהתנור במרקם של חביתה, והקינוחים קרסו לפני שהגיעו לשולחן.</p>
+        <ul>
+          <li><strong>קלט:</strong> האם המתכון נבדק בכמויות גדולות (Scaling) או רק במנה אישית? האם הביצים היו בטמפרטורת החדר?</li>
+          <li><strong>תהליך:</strong> האם קיפול הקצף היה עדין מספיק? האם התנור נפתח באמצע האפייה?</li>
+          <li><strong>בקרה:</strong> האם הוצא "טסטר" אחד חמש דקות לפני שאר המנות?</li>
+          <li><strong>שורש הכשל:</strong> פתיחת דלת התנור על ידי עובד אחר במטבח, שגרמה לצניחת הטמפרטורה — <em>כשל סביבתי/תקשורתי</em>.</li>
+        </ul>
+        <h4>ד׳ · נגרות — "הספסל המתנדנד" (ציר הזמן המלא, כדוגמה למודלינג)</h4>
+        <p><strong>המקרה:</strong> תלמידים בנו ספסל "זולה" מעץ אורן לחצר בית הספר. ביום הסיום הוא נראה יציב ויפה, אך אחרי יומיים המשענת החלה "לרקוד" והספסל הפך רופף ומסוכן.</p>
+        <ul>
+          <li><strong>תחנה 1 · תכנון (קלט):</strong> הצוות בחר תוכנית מהאינטרנט וקנה ברגי סיבית באורך 50 מ"מ. <em>ניתן היה להימנע? כן — אם היינו שואלים מראש "מי הולך לשבת על זה?" והוספנו קורות חיזוק אלכסוניות.</em></li>
+          <li><strong>תחנה 2 · חיתוך (תהליך):</strong> חלק מהקצוות נחתכו ב־88 מעלות במקום 90. <em>כן — שימוש בזוויתן ובדיקת כל קורה לפני המעבר לשלב הבא.</em></li>
+          <li><strong>תחנה 3 · הרכבה (תהליך):</strong> הברגה ישירה ללא קידוח מקדים וללא דבק נגרים, "כדי לחסוך זמן". <em>ברור שכן — קידוח מקדים היה מונע סדקים פנימיים, ודבק היה יוצר חיבור חזק פי כמה מהבורג עצמו.</em></li>
+          <li><strong>תחנה 4 · גימור (בקרה):</strong> המורה ניער את הספסל, הוא הרגיש גמיש, והצוות אמר "לא נורא, הלכה תחזיק". <em>כן — זו הייתה נקודת העצירה האחרונה (Gatekeeper).</em></li>
+          <li><strong>תחנה 5 · שימוש (פלט):</strong> חמישה תלמידים התיישבו יחד ונשענו לאחור. <em>לא — אי אפשר לשלוט בהתנהגות המשתמשים; הרהיט חייב להיות מתוכנן לעמוד בעומס הזה.</em></li>
+          <li><strong>תחנה 6 · הכשל:</strong> קול "קנאק", המשענת קרסה, הברגים נשלפו.</li>
+          <li><strong>שורש הכשל:</strong> חוסר בחיזוקים אלכסוניים (Bracing). המערכת קרסה כי תוכננה ללחץ אנכי (ישיבה) ולא ללחץ אופקי (הישענות לאחור).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ההמלצות האופרטיביות למורה<span class="hint">שש הנחיות שמחליטות אם המפגש עובד</span></summary>
+      <div class="inner">
+        <ul>
+          <li><strong>לא להשתמש במילה "רפלקציה" בדקות הראשונות</strong> — אלא במילה "תחקיר".</li>
+          <li><strong>הימנעות מ"אשמת האדם":</strong> הנחו לא לכתוב "המלצר אשם" אלא <strong>"כשל בתקשורת בין המלצר למטבח"</strong>. המטרה לתקן מערכות, לא להעניש אנשים.</li>
+          <li><strong>שלב ה"מודלינג":</strong> לפני שהתלמידים פותחים מחשבים, הקרינו את ששת השלבים על המסך. הראו היכן ממוקם העיגול האדום ואיך הניתוח מתעלם מהאשמת המשתמשים ומחפש כשל הנדסי.</li>
+          <li><strong>חלוקה לצוותי התמחות:</strong> אם הכיתה מעורבת — קבוצה לכל מקצוע, כל אחת עם מקרה מעולמה. אם הכיתה הומוגנית — שלושה מקרים שונים באותו תחום.</li>
+          <li><strong>שימוש בטרמינולוגיה מקצועית:</strong> בקשו מהם להשתמש במושגים מהסדנה ("מומנט", "פריימר", "צמיגות"). זה נותן תחושת מומחיות בזמן ניתוח תיאורטי.</li>
+          <li><strong>משימת "התיקון המערכתי":</strong> אחרי סימון הכשל, בקשו להוסיף אלמנט ויזואלי של "מנעול" או "חיישן". <em>ממכונאות:</em> נוהל חובה של נסיעת מבחן עם לקוח לפני כניסה לעבודה. <em>מעיצוב שיער:</em> טופס הצהרת לקוחה על צביעה ביתית קודמת.</li>
+        </ul>
+        <p><strong>השורה התחתונה:</strong> המעבר לדוגמה מקצועית הופך את "הקופסה השחורה" מכלי של טייסים לכלי של אנשי מקצוע. המבנה הזה הופך את התלמידים מ"מתלוננים" ("אוי, המנה חריפה") ל"חוקרים" ("היכן בשרשרת הערך נוצר הפער") — וזו המהות של חשיבה ניהולית ויזמית.</p>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)">במצגת יש פורמט ריק של ציר זמן לעבודת הקבוצות, וגלריית סרטוני "Fail" מוכנה (עוגה, ריצוף פרקט, משקאות, התקנת זכוכית). <a class="lk" href="https://www.canva.com/design/DAHMQql4P8U/mGsjS_63PoVw-nsmr__n-g/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m2">משוב 02 · "העדשה והפילטר" — עובדות מול פרשנויות</h2>
+    <p class="lead-p rv">המפגש שמפרק את המנגנון האוטומטי המסוכן ביותר של המוח: ערבוב בין עובדות לפרשנויות. מבוסס על עקרונות CBT ומודל אפר"ת. <strong>המשפט המסכם: "אל תנהלו את הסיפור בראש — תנהלו את העובדות בשטח."</strong></p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>שלושת המושגים של המפגש</caption>
+        <tbody>
+          <tr><td class="k">העדשה</td><td><strong>עובדה.</strong> מה המצלמה רואה? נתונים יבשים, מספרים, פעולות שבוצעו. אין רגש, אין כוונה — רק מציאות.</td></tr>
+          <tr><td class="k">הפילטר</td><td><strong>פרשנות.</strong> מה אני חושב על זה? הסיפור שהמוח ממציא כדי להסביר את העובדות. מושפע מפחדים, עייפות וניסיון עבר.</td></tr>
+          <tr><td class="k">התגובה</td><td>הפעולה שלי בשטח. <strong>כשאני מגיב לפילטר — אני מסתכן. כשאני מגיב לעדשה — אני מקצוען.</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המפגש (45 דקות)</h3>
+    <ol class="ed rv">
+      <li><strong>"בלשים בסדנה" (10 דק׳)</strong> — מציגים תמונה מורכבת של סדנה מקצועית (מספרה עם שיער על הרצפה ומעצב שעומד בצד). ההנחיה: <em>"אנחנו לא מחפשים פושעים, אנחנו מחפשים את האמת. המשימה שלכם אחת ויחידה: להגיד לי רק מה המצלמה רואה. בלי לנחש, בלי להניח, ובלי להמציא סיפורים."</em> — שתי דקות.</li>
+      <li><strong>"טבלת ההפרדה" (15 דק׳)</strong> — מחלקים את הלוח לשניים: <em>תיאור</em> (מה קרה) מול <em>פרשנות</em> (מה אני חושב על זה), וממיינים את מה שעלה.</li>
+      <li><strong>משחק בזק (5 דק׳)</strong> — משפטים מופיעים על המסך אחד־אחד, סופרים "3…2…1" ומרימים שלט: אדום לעובדה, ירוק לפרשנות.</li>
+      <li><strong>אפקט הדומינו (5 דק׳)</strong> — איך פרשנות משפיעה על התגובה, בשני מסלולים מקבילים.</li>
+      <li><strong>סיכום (10 דק׳)</strong> — כשבעל מקצוע מגיב ל"פרשנות" ("הבוס שונא אותי"), הוא עלול לאבד את העבודה. כשמגיבים ל"תיאור" ("הבוס אמר שהאיחור שלי הפריע") — אפשר לתקן.</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>הדגמת "אפקט הדומינו" ומשחק הבזק<span class="hint">שני המסלולים והתשובות</span></summary>
+      <div class="inner">
+        <h4>הסיטואציה — סוף משמרת</h4>
+        <p>אתם בסוף משמרת, עייפים. הבוס נכנס, רואה את עמדת העבודה ואומר: <strong>"למה הכלים עדיין לא במקום?"</strong></p>
+        <h4>מסלול א׳ · הפילטר</h4>
+        <p>הלב מתחיל לדפוק. בראש: <em>"הוא תמיד מחפש אותי, הוא שונא אותי, לא מעריך את כל מה שעשיתי היום."</em> ← התגובה: <em>"מה אתה רוצה? קרעתי את עצמי, תגיד תודה שאני פה בכלל!"</em> ← <strong>התוצאה האפשרית: פיצוץ ופיטורין.</strong></p>
+        <h4>מסלול ב׳ · העדשה</h4>
+        <p>מה העובדה? יש כלים בכיור, והבוס רוצה שיהיו במקום. זהו. בלי "שונא אותי" ובלי דרמות. ← התגובה: <em>"צודק, היו הרבה לקוחות בדקות האחרונות, אני מתקתק את זה עכשיו ויוצא."</em> ← <strong>התוצאה: פתרון מקצועי.</strong> מה הבוס רואה מולו? מקצוען. בן אדם שמגיב למציאות, לא לסרטים שיש לו בראש.</p>
+        <h4>משחק הבזק — ארבעת המשפטים והתשובות</h4>
+        <ul>
+          <li><strong>"הבוס כועס עליי"</strong> ← פרשנות! המצלמה לא רואה כעס — היא רואה פנים אדומות או קול רם.</li>
+          <li><strong>"המספריים מונחים על השולחן"</strong> ← עובדה!</li>
+          <li><strong>"הלקוח הזה קמצן"</strong> ← פרשנות! העובדה תהיה: "הלקוח ביקש הנחה של 10%".</li>
+          <li><strong>"הגעתי ב־08:15 במקום ב־08:00"</strong> ← עובדה! חותכת וברורה.</li>
+        </ul>
+        <h4>דוגמה לטבלת ההפרדה מהמצגת</h4>
+        <ul>
+          <li><em>עובדה:</em> יש שיער על הרצפה ומספריים פתוחים. ← <em>פילטרים אפשריים:</em> "העובד הזה עצלן ומלכלך" · "הסדנה מוזנחת".</li>
+          <li><em>עובדה:</em> מעצב השיער מביט בטלפון שלו. ← <em>פילטרים:</em> "לא אכפת לו מהעבודה" · "הוא מחכה להודעה דחופה מהילד שלו".</li>
+          <li><em>עובדה:</em> הלקוחה מביטה בשעון ומכווצת גבות. ← <em>פילטרים:</em> "היא עצבנית על הספר" · "היא מאחרת" · "כואבת לה היד מהשעון".</li>
+        </ul>
+        <p><strong>התובנה:</strong> לכל עובדה יש לפחות שלוש פרשנויות שונות — חלקן שליליות מאוד וחלקן ניטרליות או חיוביות. <strong>הבעיה מתחילה כשאנחנו בטוחים שהסרט בראש שלנו הוא העובדה.</strong></p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ההמלצות האופרטיביות למורה<span class="hint">שפת קוד, התנגדות אופיינית ומשימת המשך</span></summary>
+      <div class="inner">
+        <h4>יצירת "שפת קוד" כיתתית</h4>
+        <p>הפכו את המילים "עדשה" ו"פילטר" לביטויים שגורים במרחב. כשתלמיד מגיב בדרמה או מתלונן ("הוא עושה לי דווקא"), המורה לא מתווכח — רק אומר את משפט הקוד: <strong>"עצור, תן לי את זה בפיקסלים של מצלמה"</strong> או <strong>"זה הפילטר או העדשה מדברים עכשיו?"</strong>. זה מוריד את הטונים מיידית ומאלץ חשיבה רציונלית.</p>
+        <h4>ההתנגדות האופיינית — "אבל אני מרגיש שזה נכון!"</h4>
+        <p>בני נוער יטענו: "אבל אני מכיר אותו, הוא באמת שונא אותי, זו לא פרשנות זו עובדה!". <strong>אל תבטלו את התחושה שלהם.</strong> תגובה מומלצת: <em>"יכול להיות שאתה צודק והפילטר שלך ניחש נכון את המציאות. אבל כל עוד המצלמה לא יכולה להוכיח את זה, להגיב לפרשנות זה הימור מסוכן מדי בשבילך כבעל מקצוע. בעבודה — אנחנו מתמקדים בעובדות."</em></p>
+        <h4>משימת המשך — "צילום מסך בזמן אמת"</h4>
+        <p>במהלך השבוע לזהות סיטואציה אחת שבה התעצבנו, נעלבו או נכנסו לוויכוח (עם הורה, חבר או מעסיק), ולכתוב בטלפון שני משפטים בלבד: <em>א׳ מה העובדה היבשה שקרתה (מה המצלמה ראתה)</em> · <em>ב׳ מה היה הפילטר שהלבשתי עליה באותו רגע</em>. <strong>בפתח המפגש הבא — לפתוח בשלוש דוגמאות מהשטח.</strong></p>
+        <h4>התאמה לפי מגמה</h4>
+        <ul>
+          <li><strong>אוטוטרוניקה:</strong> לקוח שטוען "רעש מוזר במנוע" (פרשנות/תחושה) מול מדדי המחשב של הרכב (עובדות).</li>
+          <li><strong>קולינריה:</strong> שף שזורק מנה לפח ואומר "זה לא אכיל" — איך לא לקחת את זה כ"אני טבח גרוע", אלא כ"המנה הספציפית הזו לא עמדה בסטנדרט, צריך לתקן את המלח".</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMQnTXvoA/P9JCpH9qGqN1wypFPvMz6A/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m3">משוב 03 · "אפוד המגן המקצועי" — איך לקבל משוב בלי להיפגע</h2>
+    <p class="lead-p rv">המפגש שנותן כלי קוגניטיבי לסינון בזמן אמת: <strong>להדוף החוצה</strong> את הטון הפוגעני והניסוח הלא־מיומן של הבוס, ובמקביל <strong>להכניס פנימה</strong> את המידע המקצועי המקדם.</p>
+
+    <div class="callout rv">
+      <span class="ttl">שתי הפעולות של אפוד המגן</span>
+      <strong>הודף החוצה:</strong> את הטון, הצעקות וההעלבות האישיות ("אתה עצלן", "אין לך ידיים לזה"). · <strong>מכניס פנימה:</strong> רק את העובדות המקצועיות — מה לא בסדר במוצר? מה צריך לתקן ברמה הטכנית?
+    </div>
+
+    <h3 class="mini rv">מהלך המפגש (45 דקות)</h3>
+    <ol class="ed rv">
+      <li><strong>"מילים שמקפיצות את הפיוז" (5 דק׳)</strong> — שאלה ישירה: "מה המילה או המשפט הכי מעצבנים שבוס, לקוח או מנהל עבודה יכולים להגיד לכם על העבודה שלכם?" 3–4 תלמידים משתפים, והמשפטים נכתבים בבולט על הלוח ("מי לימד אותך לעבוד?", "זה נראה נורא", "הזמן שלי מתבזבז עליך"). <strong>הקישור:</strong> בשוק העבודה לא כל הבוסים למדו פסיכולוגיה. לפעמים הם אומרים דברים בצורה מעליבה — אבל בתוך העלבון מסתתר מידע שאנחנו צריכים כדי להצליח ולהרוויח כסף.</li>
+      <li><strong>סימולציה בזוגות (25 דק׳)</strong> — א׳ הוא המנהל הקשוח / הלקוח העצבני, ב׳ הוא איש המקצוע. כל זוג מקבל תרחיש לפי המגמה. סבב א׳ (5 דק׳): א׳ מטיח את המשוב, ב׳ מקשיב, נושם, ומגיב <strong>אך ורק לעובדות המקצועיות</strong>. סבב ב׳ (5 דק׳): מחליפים תפקידים. אם מספר התלמידים מאפשר — שלשות עם <strong>תצפיתן</strong>.</li>
+      <li><strong>הדגמה במליאה (10 דק׳)</strong> — זוג אחד או שניים מבצעים מול הכיתה, והמורה עוצר.ת בזמן אמת ("עצור משחק") כדי לנתח מה נכנס לאפוד ומה נהדף.</li>
+      <li><strong>"דף אפוד המגן" האישי (15 דק׳)</strong> — כל תלמיד.ה מקבל.ת דף עם דמות במרכז וקו מתאר של מגן. <em>מחוץ למגן:</em> "החצים" — מילים מעליבות, טון קשוח, האשמות אישיות שהוא מחליט להשאיר מחוץ ללב. <em>בתוך המגן:</em> "הצידה לדרך" — מה העובדות? מה צריך לתקן? מה אלמד לפעם הבאה?</li>
+      <li><strong>שיתוף וסיכום (8 דק׳)</strong> — <strong>"אפוד המגן לא הופך אתכם לאדישים, הוא הופך אתכם למקצוענים. מי שיודע להדוף את העלבון ולשמור על העובדות — הוא המנצח האמיתי של שוק העבודה."</strong></li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלושת התרחישים המוכנים — טקסט הבוס, העובדות והתגובה<span class="hint">נגרות · עיצוב שיער · מכונאות</span></summary>
+      <div class="inner">
+        <h4>נגרות וחרשות עץ — השידה עם המגירה התקועה</h4>
+        <p><strong>טקסט הלקוח (מחוץ לאפוד):</strong> "מה זה הזלזול הזה? שילמתי לכם אלפי שקלים בשביל לקבל עבודה של חובבנים? הילד שלי בגן בונה יותר ישר מזה! הרסת לי את העץ, הכל פה עקום ומגעיל. תפרק את זה עכשיו, אין לי סבלנות לחוסר מקצועיות שלכם."</p>
+        <p><strong>העובדות לחילוץ (בתוך האפוד):</strong> יש בעיה במסילה או במידות של המגירה שמונעת סגירה חלקה · החיבור האחורי לא מודבק או מוברג נכון ויש בו סדק שדורש תיקון או החלפת לוח.</p>
+        <p><strong>תגובת אפוד המגן:</strong> "אני שומע שהשידה לא לשביעות רצונך. אני רואה שהמגירה אכן תופסת בפינה והחיבור האחורי סדוק. אני לוקח את זה חזרה לשולחן העבודה, אפרק את הלוח האחורי ואכוון מחדש את המסילות כדי שהכל ייסגר בצורה חלקה ומדויקת."</p>
+        <h4>עיצוב שיער וטיפוח החן — הצבע הכהה מדי</h4>
+        <p><strong>טקסט הלקוחה (מחוץ לאפוד):</strong> "אלוהים ישמור, מה עשית לי לראש? נראיתי יותר טוב לפני שנכנסתי לכאן. הרסת לי את השיער, אני נראית כמו מכשפה! איך אני אצא ככה לרחוב? את בכלל מקשיבה כשמדברים אלייך או שאת רק בטלפון שלך? המנהל! בוא תראה מה העובדת הגרועה שלך עשתה לי!"</p>
+        <p><strong>העובדות לחילוץ:</strong> הצבע כהה מדי בטון אחד או שניים · הפוני קצר מדי לטעמה — לא ניתן להאריך כרגע, אבל אפשר לעצב אותו כך שיחמיא לה למרות האורך.</p>
+        <p><strong>תגובת אפוד המגן:</strong> "אני מבינה שהצבע יצא כהה יותר ממה שרצית והפוני מרגיש לך קצר מדי. בואי נעבור לעמדת החפיפה, אני אעשה שטיפה מבהירה שמורידה חצי טון מהצבע מיד, ולאחר מכן אעצב את הפוני הצידה כדי שהוא ישתלב בצורה רכה ונעימה יותר בפנים שלך."</p>
+        <h4>מכונאות רכב — הבורג שלא חוזק במומנט</h4>
+        <p><strong>טקסט הבוס (מחוץ לאפוד):</strong> "תגיד לי, אתה נורמלי? אתה רוצה להרוג לי את הלקוחות? מה זה הברדק הזה? אתה עושה עבודה מרושלת, הראש שלך בעננים! אם השמן ייזל פה בדרך, הלך המנוע והלך המוניטין של המוסך שלי. יאללה, תעוף מהעיניים שלי ותנקה את הבלגאן הזה, נמאס לי לרדוף אחריך."</p>
+        <p><strong>העובדות לחילוץ:</strong> בורג ריקון השמן לא סגור בהתאם להוראות היצרן — סכנת נזילה ופגיעה במנוע · לא בוצע ניקוי סופי של סביבת העבודה.</p>
+        <p><strong>תגובת אפוד המגן:</strong> "הבנתי. לא סגרתי את הבורג עם ידית מומנט ויש סימני שמן על המכסה. אני לוקח עכשיו את ידית המומנט, מהדק את הבורג לפי המידה הנכונה, ומנקה את מכסה המנוע עם מסיר שומנים עד שיהיה נקי לחלוטין."</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלוש הנחיות שחייבות להיאמר בכיתה<span class="hint">לגיטימציה, גבולות בסימולציה, וחיבור למציאות</span></summary>
+      <div class="inner">
+        <ul>
+          <li><strong>לגיטימציה לקושי הרגשי.</strong> אל תציגו את השימוש באפוד כדבר קל. חשוב להגיד: <em>"זה מעליב כשצועקים עליכם, וזה טבעי לרצות להתגונן או לעזוב. החוכמה היא לתת לרגש שנייה לעבור, ורק אז להפעיל את אפוד המגן."</em></li>
+          <li><strong>שמירה על גבולות בסימולציה.</strong> תלמידים עלולים לקחת את תפקיד "הבוס הקשוח" רחוק מדי. הגדירו מראש חוק ברור: <em>"הבוס קשוח ומעצבן, אבל הוא לא מקלל. אנחנו מדמים מרחב עבודה וחשוב לשמור על מרחב מכבד."</em></li>
+          <li><strong>קישור למציאות המיידית.</strong> אם התלמידים כבר בהתנסות מעשית או עובדים אחר הצהריים — בקשו מהם להביא <strong>מקרה אמיתי שקרה להם השבוע</strong> ולנתח אותו בדף אפוד המגן במקום התרחישים המוכנים. <em>"זה מעלה את האפקטיביות של הלמידה בעשרות מונים."</em></li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMQmOaonw/OvLN4osUvM4Vt7iPvJEQZA/view" target="_blank" rel="noopener">למערך המלא בקנבה — כולל דף אפוד המגן להדפסה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m4">משוב 04 · "הד חיובי" — איך לתת משוב שיקשיבו לו</h2>
+    <p class="lead-p rv">המפגש שעובר ממתן משוב לקבלתו — לתרבות צוות. החידוש הפדגוגי שלו הוא <strong>שלב השאלה</strong>: במקום "מודל הסנדוויץ׳" הקלאסי, מכניסים שאלת הבהרה <em>לפני</em> העצה.</p>
+
+    <div class="callout amber rv">
+      <span class="ttl">היערכות מוקדמת — חובה</span>
+      המפגש מצריך שהתלמידים <strong>יגיעו עם תוצר מהמגמה</strong>: חלק מכני שפורק והורכב, פריט נגרות, קוד שנכתב, שרטוט, צילום של עמדת עבודה מנוהלת, צילום של תספורת או של מנה שיצאה מהמטבח.
+    </div>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>נוסחת שלושת השלבים</caption>
+        <thead><tr><th>שלב</th><th>מה עושים</th><th>למה</th></tr></thead>
+        <tbody>
+          <tr><td class="k">1 · הד חיובי</td><td>מה עבד טוב?</td><td>חיזוק הקיים</td></tr>
+          <tr><td class="k">2 · שאלת הבהרה</td><td>מה לא הבנתי?</td><td>העמקה וסקרנות</td></tr>
+          <tr><td class="k">3 · הצעה מעשית</td><td>איך אפשר לשפר?</td><td>שדרוג לעתיד</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout rv">
+      <span class="ttl">למה דווקא שאלה באמצע</span>
+      במודל הסנדוויץ׳ המעבר מחיובי לשלילי ישיר, ולעיתים מרגיש מלאכותי או מניפולטיבי. שלב השאלה מייצר שלושה אפקטים: <strong>הורדת מגננות</strong> — השואל מציב את עצמו כ"לומד" ולא כ"שופט"; <strong>דיוק העצה</strong> — הבנת כוונת המשורר מונעת עצות לא רלוונטיות; <strong>תרבות של דיאלוג</strong> — המיקוד עובר מ"לתת ציון" ל"לפתור בעיות יחד".
+    </div>
+
+    <h3 class="mini rv">מהלך המפגש (45 דקות)</h3>
+    <ol class="ed rv">
+      <li><strong>ניפוץ קונספט המשוב (10 דק׳)</strong> — "תחשבו על רגע שבו מישהו — מורה, בוס, חבר או בן משפחה — נתן לכם עצה על משהו שעשיתם. מתי זה הרגיש כאילו הוא באמת מרים לכם ועוזר לכם להשתפר, ומתי זה הרגיש כאילו הוא פשוט מתנשא עליכם או מחפש אתכם?" אוספים 3–4 תגובות ומחדדים על הלוח: <em>עצה מעצבנת</em> — מגיעה מלמעלה, לא מבינה את ההקשר, מתמקדת ב"מה לא בסדר" בלי פתרון. <em>עצה מקדמת</em> — מגיעה בגובה עיניים, מזהה את המאמץ, מציעה כיוון פרקטי.</li>
+      <li><strong>הדגמה חיה (מודלינג)</strong> — לפני חלוקה לשלשות, המנחה לוקח.ת תלמיד מתנדב, מבקש.ת ממנו להציג תוצר, ומדגים.ה עליו את שלושת השלבים בקול רם מול כל הכיתה.</li>
+      <li><strong>תרגול בשלשות (22 דק׳)</strong> — כל תלמיד.ה מציג.ה בתורו תוצר מהעבודה שלו בשבוע האחרון. חברי הקבוצה מחויבים לפורמט הדוק, <strong>מבלי לדלג על אף שלב</strong>.</li>
+      <li><strong>סיכום ורפלקציה (10 דק׳)</strong> — המסר המרכזי, ואז <strong>סבב יציאה מהיר (Ticket to leave)</strong>: כל משתתף אומר מילה אחת או משפט אחד על איך הרגיש לקבל או לתת משוב בצורה הזו ("מכבד", "לא מאיים", "מלמד").</li>
+    </ol>
+
+    <div class="callout rv">
+      <span class="ttl">המסר המרכזי, כלשונו</span>
+      "משוב הוא לא ציון של מורה, והוא לא כלי שמטרתו להגיד מה טוב ומה רע. <strong>משוב הוא כלי עבודה — כמו מפתח ברגים או מברגה — שחבר לצוות נותן לי במתנה כדי שהתוצר הבא שלי יהיה חזק יותר, מדויק יותר ומהיר יותר.</strong> כשאתם שואלים שאלה לפני שאתם נותנים עצה, אתם מראים לחבר שלכם שאתם מכבדים את העבודה שלו."
+    </div>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ארבע כרטיסיות ניווט — הדגמה מלאה של המודל<span class="hint">נגרות · שיער · קולינריה · חשמל</span></summary>
+      <div class="inner">
+        <h4>נגרות — שולחן עץ פגום שעבר שיוף וצביעה (סדק נותר במרכז)</h4>
+        <ol>
+          <li><strong>הד חיובי:</strong> "אני רואה שבחרת בגוון צבע שמדגיש את הטקסטורה הטבעית של העץ, והמריחה נראית חלקה ואחידה מאוד בלי נזילות."</li>
+          <li><strong>שאלת הבהרה:</strong> "שמתי לב שבמרכז השולחן נשאר סדק עמוק יחסית שצבוע מעליו. רציתי לשאול אם ניסית ליישם שם שפכטל עץ לפני הצביעה והוא שקע, או שהחלטת להשאיר אותו ככה בכוונה כדי לשמור על המראה המיושן?"</li>
+          <li><strong>הצעה מעשית:</strong> "אם המטרה הייתה שולחן חלק לגמרי, אני מציע שבפעם הבאה נשתמש בדבק אפוקסי מעורבב עם נסורת דקה לפני השיוף המרכזי. זה אוטם את הסדק בצורה שלא רואים אותו אחרי הצביעה."</li>
+        </ol>
+        <h4>עיצוב שיער — תספורת גברים עם Fade מאפס (קו מעבר בולט מאחורי האוזן)</h4>
+        <ol>
+          <li><strong>הד חיובי:</strong> "המסגרת של התספורת באזור הפאות והעורף יצאה סופר חדה ומדויקת, והפרופורציות של האורך בחלק העליון יושבות בול על מבנה הפנים של הלקוח."</li>
+          <li><strong>שאלת הבהרה:</strong> "שמתי לב שבאזור מאחורי האוזן יש קו מעבר קטן שלא נעלם לגמרי. רציתי לשאול אם זה בגלל שהסכין של מכונת הפיניש הייתה מכוונת קרוב מדי לעור, או שפשוט נגמר לך הזמן לעבור שם עם המינוף של החצי (0.5)?"</li>
+          <li><strong>הצעה מעשית:</strong> "בפעם הבאה, כדי למחוק קווים עקשניים כאלה, אני מציע להשתמש בטכניקת 'הקצה של הסכין' — לעבוד רק עם הפינה של המכונה (2–3 שיניים מהמסרק) בתנועות חטיפה קלות כלפי חוץ (C-stroke). זה מטשטש את הקו בלי ליצור מדרגה חדשה למעלה."</li>
+        </ol>
+        <h4>קולינריה — חזה עוף צרוב על קרם פירה (הרוטב הציף את הצלחת)</h4>
+        <ol>
+          <li><strong>הד חיובי:</strong> "הצריבה של חזה העוף נראית פצצה — הוא קיבל צבע זהוב עמוק (קרמליזציה) ושמר על עובי שנראה עסיסי ולא יבש. גם הקרם למטה נראה חלק וללא גושים."</li>
+          <li><strong>שאלת הבהרה:</strong> "שמתי לב שהציר הציף את פנים הצלחת וקצת 'שבר' את היציבות של הפירה. רצית שהרוטב והפירה יתערבבו לגמרי כבר בהגשה, או שהרוטב פשוט יצא לך קצת יותר דליל ממה שתכננת?"</li>
+          <li><strong>הצעה מעשית:</strong> "כדי שההגשה תישאר נקייה, אני מציע בפעם הבאה לצמצם את הרוטב עוד 2 דקות על מחבת נפרדת כדי להסמיך אותו (מרקם סירופי), או פשוט ליצוק אותו בקו עדין (שרוך) ישירות על הבשר ולא על הצלחת עצמה."</li>
+        </ol>
+        <h4>חשמל ומערכות אנרגיה — לוח חיווט תקין אך מבולגן</h4>
+        <ol>
+          <li><strong>הד חיובי:</strong> "החיבורים למהדקים יושבים חזק מאוד ואין חוטים רופפים שיכולים ליצור ניצוץ. בנוסף, חשיפת המוליכים מדויקת — אין נחושת גלויה מחוץ למהדק, שזה מעולה מבחינת בטיחות."</li>
+          <li><strong>שאלת הבהרה:</strong> "שמתי לב שיש הרבה בליטות וסיבובים של חוטי החשמל בתוך הקופסה וקצת קשה לעקוב אחרי הנתיב. השארת מרווח ארוך במכוון למקרה שתצטרך לחווט מחדש בבחינה, או שהיה חסר לך כלי לחיתוך סופי?"</li>
+          <li><strong>הצעה מעשית:</strong> "כדי שהלוח יהיה אסתטי, מקצועי וקל לאיתור תקלות, אני מציע לחתוך את החוטים באורך קבוע של כ־10 ס"מ מפתח המוביל, ואז לקפל אותם בצורה של אקורדיון (זיג־זג עדין) לתחתית הקופסה לפני שסוגרים את המכסה."</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ההמלצות האופרטיביות למורה<span class="hint">מה לאכוף ואיך לטפל בציניות</span></summary>
+      <div class="inner">
+        <ul>
+          <li><strong>אכיפה נוקשה של שלב השאלה.</strong> המורה חייב.ת להסתובב בין הקבוצות ולוודא שלא מדלגים ישירות מחיזוק להצעה ("זה יפה מאוד, אבל להבא תעשה X"). עוצרים בעדינות ומתעקשים: <em>"רגע, לפני העצה — איזו שאלת הבנה אתה יכול לשאול אותו על התוצר?"</em></li>
+          <li><strong>ניהול ציניות.</strong> אם תלמיד נותן משוב ציני בשלב 1 ("שום דבר לא עבד טוב") — לתווך מיד: <em>"גם בתוצר פחות מוצלח יש מאמץ או כוונה נכונה. תמצא אלמנט אחד — אולי חומרי הגלם, אולי עצם ההעזה לנסות משהו מורכב. תתחיל משם."</em></li>
+          <li><strong>התאמה ויזואלית.</strong> להקרין את שלושת השלבים על המסך או לכתוב אותם בגדול על הלוח לאורך כל הסדנה, כדי שהשלשות יוכלו להביט בלוח כ"קביים" תומכים בזמן הדיבור.</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)">המפגש מבוסס על מודל "היוועצות תלמידים" של מינהל חברה ונוער, בהתאמה לשפת התוצרים של החינוך המקצועי. <a class="lk" href="https://www.canva.com/design/DAHMQozcMf8/lwZfYBIon3GV-tSIQBQJNA/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m5">משוב 05 · "תיקון תוך כדי תנועה" — רפלקציה בזמן אמת</h2>
+    <p class="lead-p rv">המפגש הכי אינטנסיבי ביחידה. הוא מבוסס על ההבחנה של דונלד שון בין רפלקציה <em>על</em> הפעולה (לאחר מעשה) לבין רפלקציה <em>בתוך</em> הפעולה — ומייצר אותה בכיתה באמצעות <strong>תקלות מבוקרות</strong>.</p>
+
+    <div class="callout rv">
+      <span class="ttl">המטרה — "ארגז כלים של שניות"</span>
+      לא רק לתרגל התמודדות עם שינוי פתאומי, אלא לפתח <strong>מודעות קוגניטיבית ורגשית למה שקורה בגוף ובתודעה ברגע שהתוכנית משתבשת</strong>, ולבנות מעבר מהיר מתגובה הישרדותית (Fight / Flight / Freeze) לתגובה מקצועית מותאמת.
+    </div>
+
+    <h3 class="mini rv">מהלך המפגש (45 דקות)</h3>
+    <ol class="ed rv">
+      <li><strong>פתיחה קצרה (5 דק׳)</strong> — בלי לעשות ספוילר לחוויה: "היום אנחנו הולכים לגעת במאפיין הכי מובהק של מומחיות: היכולת לעבוד עם הבלתי צפוי. המטרה שלנו היא לא רק להצליח במשימה, אלא להתבונן בדרך שבה המוח והצוות שלנו מגיבים כשהמציאות משתנה לנו מול העיניים."</li>
+      <li><strong>"הזירה המשתנה" (25 דק׳)</strong> — בוחרים <strong>אחת</strong> משלוש הפעילויות (ראו למטה), עם תפקיד תצפיתן בכל קבוצה.</li>
+      <li><strong>"פירוק מנגנון התיקון" (10 דק׳)</strong> — לב הלמידה. הדגש עובר <em>ממה</em> שהם בנו ל<em>איך</em> הם חשבו והרגישו ברגעי המפנה.</li>
+      <li><strong>תובנה מסכמת (5 דק׳)</strong> — <strong>"מומחים גדולים אינם אלו שהכל מצליח להם לפי התוכנית, אלא אלו שמפתחים חושים חדים לזהות מתי המציאות משתנה, ומסוגלים לנהל דיאלוג עם המצב החדש בזמן אמת."</strong></li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>"הזירה המשתנה" — הפעילויות ולוח התקלות המבוקרות<span class="hint">מה קורה בדקה 10 ובדקה 20</span></summary>
+      <div class="inner">
+        <h4>שלוש אפשרויות פעילות — בוחרים אחת</h4>
+        <ul>
+          <li><strong>א׳ · "גשר הנייר המוגבל"</strong> — בניית גשר מ־20 דפי נייר ונייר דבק, שיחזיק משקל (בקבוק מים חצי מלא) בגובה 20 ס"מ מהשולחן.</li>
+          <li><strong>ב׳ · "אתגר המרשמלו"</strong> — קונסטרוקציה כמה שיותר גבוהה אך יציבה שתחזיק מרשמלו אחד בקצה. לכל קבוצה: 20 מקלות ספגטי, מטר נייר דבק, מטר חוט ומרשמלו אחד.</li>
+          <li><strong>ג׳ · "לוח החזון הלחוץ"</strong> — עיצוב קולאז׳ או פוסטר (דיגיטלי או פיזי) המייצג תפיסת תפקיד או חזון צוותי, תחת לוח זמנים הדוק.</li>
+        </ul>
+        <h4>לוח הזמנים והתקלות</h4>
+        <ul>
+          <li><strong>דקות 1–10 · תכנון והתחלה.</strong> הקבוצות מתארגנות, מחלקות תפקידים, מגבשות אסטרטגיה. המורה מסתובב.ת ודואג.ת שייכנסו ל"שוונג" ויעבדו לפי תוכנית ברורה.</li>
+          <li><strong>דקה 10 · ההפרעה הראשונה — "שינוי חוקי המשחק".</strong> עוצרים לגמרי ומכריזים על מגבלה חריפה. <em>מגבלה פיזית:</em> "מהרגע הזה, היד הדומיננטית של כל משתתף קשורה מאחורי הגב" או "העבודה מתנהלת בשתיקה מוחלטת". <em>מגבלה קונספטואלית:</em> "חצי מהחומרים שלכם עוברים כרגע לצוות המתחרה" או "קהל היעד שלכם השתנה — הפוסטר צריך לפנות לילדים בגיל הרך במקום למבוגרים".</li>
+          <li><strong>דקות 11–20 · עבודה תחת המגבלה.</strong> הצוותים נאלצים לחשב מסלול מחדש תוך כדי תנועה.</li>
+          <li><strong>דקה 20 · ההפרעה השנייה.</strong> דד־ליין מקוצר ואינטנסיבי: "נשארו לכם בדיוק 3 דקות, ואחד מחברי הצוות חייב לעצום עיניים והאחרים מפעילים אותו."</li>
+          <li><strong>דקות 21–25 · פיניש.</strong> סיום והצגת התוצרים — <strong>גם אם הם חלקיים או "עקומים". זהו חלק חיוני מהלמידה.</strong></li>
+        </ul>
+        <p><strong>שמירה על גורם ההפתעה:</strong> אל תחשפו את פרטי התקלה לפני הזמן. ככל שההפתעה בדקה ה־10 אותנטית יותר, כך הרפלקציה עמוקה יותר ומבוססת על רגשות ומחשבות אמת.</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלוש שאלות העיבוד — "פירוק מנגנון התיקון"<span class="hint">רגש · דפוסים · אסטרטגיה</span></summary>
+      <div class="inner">
+        <p>ההנחיה: לתת מקום גם לחוויה הצוותית וגם לתחושות האישיות ("אני רציתי לעצור אבל לא ספרו אותי אז זרמתי / התעקשתי"). <strong>אפשר וכדאי לחבר לשיעורים הקודמים — "הקופסה השחורה", "עובדות" ו"פרשנות".</strong></p>
+        <ol>
+          <li><strong>שלב החוויה והרגש (הצפה):</strong> מה הרגשתי בגוף או בראש בשנייה שבה הכריזו על שינוי הכללים — תסכול, לחץ, צחוק, שיתוק? האם נתתי מקום למה שהרגשתי, או שזרמתי עם הצוות?</li>
+          <li><strong>שלב זיהוי הדפוסים:</strong> מי מהצוותים עצר מיד הכל כדי לדבר, ומי המשיך לעבוד "בכוח" עם אותה אסטרטגיה למרות שהתנאים השתנו? האם מישהו בצוות חשב שצריך לפעול אחרת — והאם הקשיבו לו? איך תקשרתם את השינוי ביניכם ללא מילים או תחת לחץ?</li>
+          <li><strong>שלב האסטרטגיה:</strong> מה היה הרגע שבו הבנתם שהתוכנית המקורית לא רלוונטית, ואיך נולדה התוכנית החדשה? מה עזר לכם לשחרר את מה שתכננתם קודם?</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ארבעה מקרי בוחן להרחבה — התגובה הלא־רפלקטיבית מול הרפלקטיבית<span class="hint">מטבח · נגרות · שיער · מוסך</span></summary>
+      <div class="inner">
+        <h4>מטבח — "השף בלחץ הסרוויס"</h4>
+        <p><strong>השיבוש:</strong> יום שישי בערב. שלושה דברים במקביל — המקרר המרכזי של הדגים מפסיק לעבוד, מגיעה קבוצה של 12 סועדים ללא הזמנה, ואחד הטבחים הראשיים נחתך באצבע ויוצא מהפס.</p>
+        <p><strong>לא־רפלקטיבי:</strong> השף נכנס ללחץ, צועק על הצוות, מנסה להמשיך להוציא את המנות בדיוק אותו דבר ומקווה לטוב. ← קריסה של המטבח, אוכל באיחור ומנות באיכות ירודה.</p>
+        <p><strong>רפלקטיבי:</strong> השף עוצר ל־15 שניות, מתבונן על הזירה ומקבל החלטות מיידיות — משנה את התפריט ומוריד את מנות הדגים הרגישות, מעביר טבח מפס הקינוחים לפס החם, ומנחה את המלצרים להציע לסועדים החדשים מנות עם מלאי גבוה וקלות להכנה. <strong>הוא לא חיכה לסוף המשמרת כדי להבין מה השתבש — הוא ניהל שיחה עם השיבוש תוך כדי תנועה.</strong></p>
+        <h4>נגרות — "העין הרקובה בעץ האלון"</h4>
+        <p><strong>השיבוש:</strong> אחרי שלושה שבועות עבודה על שולחן אוכל יוקרתי, בחיתוך האחרון של הרגל המרכזית מתגלה "עין" רקובה ועמוקה. חלק מהעץ נשבר, הרגל קצרה ב־5 ס"מ מהמתוכנן, ואין במלאי לוח אלון נוסף באותו גוון.</p>
+        <p><strong>לא־רפלקטיבי:</strong> מנסה להדביק עם שפכטל, מקווה שחומרי הגימור יסתירו, וממשיך לפי השרטוט המקורי. ← שולחן לא יציב עם פגם בולט.</p>
+        <p><strong>רפלקטיבי:</strong> מניח את הכלים ומבין שהתוכנית נכשלה. <strong>הופך את החיסרון ליתרון עיצובי</strong> — מנסר את החלק הרקוב לגמרי ויוצר "שתל" מחומר אחר (יציקת אפוקסי כחולה או פיסת עץ אגוז כהה), מקצר את כל ארבע הרגליים ב־5 ס"מ, הופך את השולחן לשולחן קפה נמוך ואוונגרדי — ויוצר קשר עם הלקוח כדי להציג את "האלמנט הייחודי" שנולד מהחומר עצמו.</p>
+        <h4>עיצוב שיער — "השיער שמאותת לעצור"</h4>
+        <p><strong>השיבוש:</strong> ערב חג, סלון עמוס. הבהרה לבלונד פלטינה, וכעבור 10 דקות השיער מתחמם במהירות, משנה גוון לכתום־זרחני ומראה סימני היחלשות מבנית ("קסטיני" או גומי). שתי לקוחות ממתינות והעוזר לא הגיע.</p>
+        <p><strong>לא־רפלקטיבי:</strong> אומר ללקוחה שהכל בסדר, משאיר את החומר ומקווה שהתהליך יתייצב לפי הזמן על האריזה, בזמן שהוא רץ ללקוחות אחרות. ← שריפה בלתי הפיכה של סיב השערה ותביעה מקצועית.</p>
+        <p><strong>רפלקטיבי:</strong> עוצר ומבצע הערכת מצב של שניות. מבין שספר החוקים הרגיל לא רלוונטי בגלל היסטוריה כימית נסתרת. <strong>מפסיק מיד</strong>, שוטף במים קרים כדי לעצור את התגובה האקסותרמית, מורח חומר משקם (Plex), ועובר לטכניקת "תיקון גוון" — תוך שהוא מסביר ללקוחה בביטחון: <em>"השיער שלך מאותת לנו לעצור, אנחנו הולכים על כיוון עמוק ומחמיא יותר שלא יפגע בבריאות שלו."</em></p>
+        <h4>מוסך — "המחשב שהצביע על הסימפטום"</h4>
+        <p><strong>השיבוש:</strong> רכב עם "רעש מוזר בהאצה". המחשב מצביע על חיישן, המכונאי מחליף — והמנוע מתחיל לזייף קשות, נורת אזהרה אדומה נדלקת ועשן קל עולה מאזור רצועת התזמון. בעל הרכב צופה מחדר ההמתנה.</p>
+        <p><strong>לא־רפלקטיבי:</strong> מתעקש שהמחשב צודק, נותן "מכות גז", מחליף עוד חלקים באקראי ומאשים את מחשב הרכב. ← נזק מכני כבד (עיקום שסתומים) ואובדן אמון מוחלט.</p>
+        <p><strong>רפלקטיבי:</strong> מכבה את המנוע מיד. מבין שהמחשב נתן אינדיקציה <strong>לסימפטום ולא לסיבה</strong>. מתנתק מהמסך ועובר להקשבה פיזית — משחרר את רצועת האביזרים ידנית, מסובב את הפולי עם היד ומרגיש חופש תנועה חריג. <strong>התובנה:</strong> המותחן של הרצועה קרס, ובגללו החיישן זייף. הוא עוצר את תוכנית העבודה, מזמין את החלק הנכון, וניגש ללקוח עם אבחנה מדויקת ושונה לחלוטין.</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ההמלצות האופרטיביות למורה<span class="hint">התסכול הוא חומר הגלם</span></summary>
+      <div class="inner">
+        <ul>
+          <li><strong>אל תפחדו מהתסכול.</strong> ברגע שינוי הכללים תעלה בקבוצה אנרגיה של התנגדות, תסכול או הרמת ידיים. תפקידכם <em>לא</em> לפתור להם את הבעיה ולא לרכך אותה, אלא לעודד: <em>"זה בדיוק האתגר, המשיכו עם מה שיש."</em> <strong>התסכול הזה הוא חומר הגלם הטוב ביותר לרפלקציה שתבוא אחר כך.</strong></li>
+          <li><strong>שמרו על קצב מהיר.</strong> כל הרעיון הוא אינטנסיביות. אל תתנו לזמנים להימרח — העצירה והשינוי צריכים להרגיש כמו "מכה קלה בכנף" שמחייבת תגובה מהירה.</li>
+          <li><strong>תיעוד חזותי.</strong> צלמו את הקבוצות (וידאו קצר או סטילס) ברגע ההפתעה ובזמן העבודה המאומצת. הצגת התמונות בשלב העיבוד תסייע להם לשחזר במדויק מה עבר עליהם, ותשמש מראה רפלקטיבית עוצמתית.</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMQmYpxWc/foyxTgJ6bIPyTTdWEUzpjg/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="m6">משוב 06 · "החתימה שלי" — כרטיס ביקור רפלקטיבי</h2>
+    <p class="lead-p rv">מפגש השיא של היחידה. הוא אינו תרגיל סיכומי אלא <strong>אקט של פרופסיונליזציה</strong>: זיקוק החוזקות שנאספו לאורך היחידה לכדי תוצר ויזואלי שמגדיר את תו התקן המקצועי של התלמיד.</p>
+
+    <h3 class="mini rv">מהלך המפגש (45 דקות)</h3>
+    <ol class="ed rv">
+      <li><strong>פתיחה והורדת עוגנים (5 דק׳)</strong> — "תחשבו על הרגע שבו אתם מסיימים את ההכשרה ופותחים עסק, או מגיעים ליום העבודה הראשון שלכם. לקוח נכנס, או מנהל פוגש אתכם. <strong>מהו הדבר האחד, התכונה המרכזית, שהייתם רוצים שהם יגידו עליכם אחרי חמש דקות של עבודה משותפת?</strong>" — סבב מהיר במילה אחת. המטרה: להעביר את התלמידים מ"מוד של תלמיד" ל"מוד של בעל מקצוע".</li>
+      <li><strong>שלב א׳ · אוספים את החומרים (10 דק׳)</strong> — במקום חשיבה מופשטת, נזכרים ברגעים אמיתיים מהעבודה המעשית: "מתי הצלחתם לפתור תקלה קשה? מה המורה אמר לכם שעשיתם מעולה? איזה פידבק קיבלתם מחברים?"</li>
+      <li><strong>שלב ב׳ · עיצוב הכרטיס (20 דק׳)</strong> — דיגיטלי (תבניות Business Cards בקנבה) או ידני (כרטיסי קרטון, טושים, חותמות, ואלמנטים פיזיים מחומרי הגלם של המגמה — פיסת נייר זכוכית, חוט, פיגמנט). <strong>הכרטיס חייב לכלול את שלוש החוזקות ואת הסלוגן — לא רק פרטי קשר יבשים.</strong></li>
+      <li><strong>שלב ג׳ · "מבחן המציאות" (10 דק׳)</strong> — תערוכת כרטיסים עם תיקוף עמיתים.</li>
+    </ol>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>שלושת הסעיפים של דף המחוון</caption>
+        <thead><tr><th>הסעיף</th><th>השאלה</th><th>דוגמאות מהמערך</th></tr></thead>
+        <tbody>
+          <tr><td class="k">1 · הטייטל המקצועי</td><td>במה אני תותח/ית? לא שם המגמה — הייחוד שלי בתוכה.</td><td>"מומחה באיתור תקלות מחשב ברכב" · "נגר של רהיטים בעיצוב אישי" · "ספרית מומחית בצבע ותסרוקות ערב"</td></tr>
+          <tr><td class="k">2 · שלושת "כוחות העל"</td><td>מה התכונות שמצילות אותי כשיש לחץ או בעיה בסדנה?</td><td>"ראש שקט" — לא נלחץ כשהתוכנית משתנה · "עין של נשר" — שם לב לפרטים שאחרים מפספסים · "לומד מפאשלות" · "ידיים של זהב"</td></tr>
+          <tr><td class="k">3 · המשפט שלי (סלוגן)</td><td>משפט אחד שמסביר ללקוח מה הכי חשוב לי בעבודה.</td><td>"לא עוזב את הרכב עד שהבעיה נפתרה" · "הרהיט שלך, הלב שלי" · "החיוך והביטחון שלך הם ההצלחה שלי"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout rv">
+      <span class="ttl">"מדד המקצוען" — בגב הכרטיס</span>
+      כדי שהתוצר לא יישאר ב"מילים שלהם" בלבד, בגב המחוון מודפס <strong>מדד המקצוען</strong> עם המושגים שנלמדו לאורך היחידה: <strong>חשיבה רפלקטיבית · הבחנה בין עובדה לפרשנות · חוסן וקבלת משוב</strong>. התלמיד מדרג את עצמו בהם מ־1 (נמוך) עד 4 (גבוה).
+    </div>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>"תערוכת כרטיסי הביקור" ו"פנקס הממליצים" — איך מריצים<span class="hint">שלושה שלבים ומנגנון שמונע דחייה חברתית</span></summary>
+      <div class="inner">
+        <h4>שלב 1 · הכנת המרחב (דקה)</h4>
+        <p>הכרטיסים הפיזיים מונחים על השולחנות במרווחים, או הדיגיטליים פתוחים על לוח פדלט. ליד כל כרטיס מונח דף טיוטה קטן — <strong>"פנקס הממליצים"</strong>.</p>
+        <h4>שלב 2 · התערוכה (5 דק׳)</h4>
+        <p>המנחה מחלק לכל תלמיד פתקיות ממו <strong>עם שמות של תלמידים ספציפיים</strong>. כדאי שכל תלמיד יקבל פידבק משלושה חברים לפחות — כלומר שלוש פתקיות עם שמו — כדי לוודא שלכולם מספר משבים זהה. <strong>שימו לב לא לחבר רק בין חברים טובים, אבל שתהיה היכרות מספקת להתייחסות משמעותית.</strong></p>
+        <p><strong>המשימה, כלשונה:</strong> "אתם מכירים אחד את השני מצוין מהעבודה המעשית פה בשנה האחרונה. ראיתם אחד את השני בטעויות, בהצלחות, ברגעים מעצבנים וברגעים של יצירה. הסתכלו על 'כוחות העל' שהחבר בחר לעצמו — האם זה באמת מה שאתם חוויתם ממנו בסדנה? כתבו לו התייחסות קצרה בפנקס הממליצים." לדוגמה: <em>"יוסי, בחרת קור רוח וזה בול אתה — זוכר איך הצלת אותי כשהרסתי את החיתוך בשבוע שעבר?"</em> או <em>"הייתי מוסיף את זה שאתה לא מוותר על מה שאתה מאמין בו."</em></p>
+        <h4>שלב 3 · רפלקציה אישית (3 דק׳)</h4>
+        <p>התלמידים חוזרים לכרטיסים שלהם וקוראים את הפידבקים. שאלות למליאה: <em>"מישהו הופתע ממה שכתבו לו? מישהו הרגיש שמה שהוא בחר לעצמו זה בדיוק מה שהחברים שלו רואים בו בסדנה? האם גיליתם משהו חדש על עצמכם או על מישהו מהחברים?"</em></p>
+        <p><strong>הסיום:</strong> "בעולם האמיתי בחוץ, כרטיס ביקור הוא רק נייר או קובץ. מה שנותן לו תוקף זה המעשים שלכם. כשאתם רואים שהחברים שלכם לסדנה חותמים על החוזקות שלכם — אתם יכולים לצאת לשוק העבודה בביטחון מלא."</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלוש דוגמאות מלאות לכרטיס — כולל השפה הוויזואלית<span class="hint">אוטוטרוניקה · נגרות · עיצוב שיער</span></summary>
+      <div class="inner">
+        <h4>אוטוטרוניקה / מכונאות רכב</h4>
+        <p><strong>שפה ויזואלית:</strong> צבעים כהים (שחור, אפור מטאלי, כחול כהה), קווים חדים, אייקונים של גלגלי שיניים או קווים דיגיטליים.</p>
+        <p><strong>שם ותפקיד:</strong> אלון לוי — מומחה דיאגנוסטיקה ומערכות מתקדמות. <strong>כוחות על:</strong> "ראיית רנטגן" — לא מוותר עד שאני מוצא את מקור התקלה האמיתי · חוסן תחת מכסה המנוע — שומר על קור רוח גם כשהסורק מציג שגיאה לא מוכרת · מתקן ולומד — הופך כל טעות בהרכבה להבנה עמוקה של המערכת. <strong>סלוגן:</strong> "האוטו שלך מדבר בשפה שונה. אני פה כדי לתרגם."</p>
+        <h4>נגרות ותעשיית עץ</h4>
+        <p><strong>שפה ויזואלית:</strong> צבעי אדמה (חום, קרם, ירוק זית), טקסטורות של סיבי עץ. בערוץ הידני — מומלץ להדביק פיסת פורניר דקה או לשייף את קצוות הקרטון.</p>
+        <p><strong>שם ותפקיד:</strong> מאיה כהן — אמנות העץ וריהוט בהתאמה אישית. <strong>כוחות על:</strong> עין חדה לחומר · סבלנות של אומן — היכולת לתקן פגמים בעץ ולהפוך אותם לחלק מהעיצוב · דיוק על המילימטר. <strong>סלוגן:</strong> "מקשיבה לחומר, מעצבת לטובת האדם."</p>
+        <h4>עיצוב שיער וטיפוח חן</h4>
+        <p><strong>שפה ויזואלית:</strong> מונוכרומטי, זהב, נגיעות פסטל, פונט אלגנטי וזורם, קווים מעוגלים.</p>
+        <p><strong>שם ותפקיד:</strong> דניאל מזרחי — מעצב שיער ואמן כימיה. <strong>כוחות על:</strong> הקשבה אקטיבית — מבין מה הלקוח רוצה עוד לפני שהמספריים נוגעים בשיער · גמישות יצירתית — יודע לתקן ולשנות כיוון בבטחה אם הגוון לא יצא כמתוכנן · ניהול אנרגיה — מייצר סביבה רגועה ונעימה בכיסא גם בימים עמוסים. <strong>סלוגן:</strong> "השיער שלך הוא הקנבס שלי, הביטחון שלך הוא המטרה שלי."</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>ההמלצות האופרטיביות למורה<span class="hint">ארבע — כולל מה לעשות עם "אין לי מושג מה לכתוב"</span></summary>
+      <div class="inner">
+        <ul>
+          <li><strong>"אין לי מושג מה לכתוב" / "אני לא טוב בכלום".</strong> הפתרון: במקום שיחשבו לבד, שבו איתם בקבוצות קטנות ושאלו שאלות חוקרות — <em>"שבוע שעבר כשהמנוע לא הניע וכולם התייאשו, מה עשית? נכון, נשארת רגוע ובדקת חוט־חוט? הנה, כוח העל שלך הוא 'סבלנות וקור רוח בתקלות קשות'. תכתוב את זה!"</em> <strong>הבאת הדוגמה הספציפית מהסדנה היא המפתח.</strong></li>
+          <li><strong>מניעת שחיקת מילים.</strong> תלמידים נוטים למילים גנריות כמו "אני מקצועי" או "אני חרוץ". אתגרו אותם: אם תלמיד כותב "אני דייקן" — שאלו <em>"איך הדיוק הזה בא לידי ביטוי בסדנה בשבוע שעבר כשהרכבת את המדף?"</em> המטרה להפוך את המילה לחוויה חיה.</li>
+          <li><strong>שימוש במשובים קודמים כחומר גלם.</strong> בקשו מהם לפתוח טלפונים או מחברות ולהסתכל על הודעות והערות שקיבלו מכם או מבעלי מלאכה במהלך השנה. פעמים רבות כוח העל האמיתי שלהם נמצא במילים שאחרים אמרו עליהם.</li>
+          <li><strong>הערך הפיזי של התוצר.</strong> אם עובדים בקנבה — מומלץ מאוד להדפיס את הכרטיסים (אפילו במדפסת בית ספרית על נייר עבה) לקראת טקס הסיום. <em>המעבר ממסך למגע יד פועל בצורה חזקה מאוד על תלמידי המגמות היצירתיות והמעשיות.</em></li>
+          <li><strong>מינוף הטעות כנכס שיווקי.</strong> הדגישו שכרטיס ביקור רפלקטיבי אינו מציג דמות מושלמת אלא <strong>איש מקצוע חושב</strong>. היכולת לכתוב חוזקה כמו "יודע לתקן טעויות בזמן אמת" היא זו שמבדלת בעל מקצוע מעולה מבינוני.</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMElChi38/vWrTibAhz3-2aCRx1TLO8Q/view" target="_blank" rel="noopener">למערך המלא בקנבה — כולל מחוון החשיבה ופנקס הממליצים ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="hemshech">שתי היחידות האחרות של השכבה</h2>
+    <div class="lvl-grid rv">
+      <a class="lvl" href="chaka-ya-sikunim.html" style="--lc:#27A6C9">
+        <span class="g">יחידה א׳</span>
+        <span class="th">ניהול סיכונים</span>
+        <span class="ds">היחידה הראשונה של השנה. היא לא עוסקת בבטיחות במובן הצר, אלא בניהול עצמי ברגע שמשהו משתבש: זיהוי האתגר, התמודדות עם הכישלון, לקיחת אחריות אוטונומית, והמצפן…</span>
+        <span class="st live">4 שיעורים &#8592;</span>
+      </a>
+      <a class="lvl" href="chaka-ya-tikshoret.html" style="--lc:#124D7A">
+        <span class="g">יחידה ג׳</span>
+        <span class="th">תקשורת בינאישית</span>
+        <span class="ds">היחידה השלישית, בשני מערכים. הראשון עוסק בתקשורת יומיומית מול מנהל — איך מוודאים שהבנו הנחיה ואיך אומרים "לא" בלי לצאת ראש קטן. השני, שיעור כפול, עוסק…</span>
+        <span class="st live">3 שיעורים &#8592;</span>
+      </a>
+    </div>
+
+</article>
+
+</main>
+
+<!-- foot:start -->
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impact-os.app</a></div></div>
+<!-- foot:end -->
+
+<script src="site.js" defer></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
+<script src="/toolbelt.js" defer></script>
+</body>
+</html>

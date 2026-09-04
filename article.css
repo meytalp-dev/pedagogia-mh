@@ -10,6 +10,13 @@ html{scroll-behavior:smooth} /* מרווח העוגן מוגדר ב-style.css ב
 .article>p:not(.wide){max-width:68ch}
 .article>ul:not(.wide),.article>ol:not(.wide){max-width:68ch}
 .callout:not(.wide){max-width:68ch}
+/* הכלל למעלה חל רק על פסקה שהיא בן ישיר של .article — ובפועל רוב
+   הפסקאות באתר יושבות בתוך מדור או בתוך גוף מתקפל, ולכן נשארו
+   ברוחב מלא: נמדדו באתר שורות של 165 תווים. כאן מורחב אותו כלל
+   למכלי הפרוזה בלבד — לא לכרטיסים, לא לתאי טבלה ולא לרשתות,
+   שם ההגבלה הייתה שוברת יישור. */
+.article :is(.inner,.sec,.wrap,.fold-body,.cat-panel)>p:not(.wide):not(.sub):not(.closing):not([class*="meta"]):not([style*="center"]),
+.article :is(.inner,.sec,.wrap,.fold-body,.cat-panel)>:is(ul,ol):not(.wide){max-width:68ch}
 @media(max-width:960px){.article{padding:0 var(--px)}}
 p+p{margin-top:.85em}
 strong{font-weight:700}
@@ -434,7 +441,7 @@ details.fold>summary:focus-visible{outline:3px solid var(--blue);outline-offset:
 .figbox{margin:18px 0;padding:18px;background:var(--surface);border:1px solid var(--border);
   border-radius:16px;box-shadow:var(--sh-sm);color:var(--navy)}
 .figbox svg{max-width:100%;height:auto;display:block;margin:0 auto}
-.figbox .figcap{font-size:var(--fs-sm);color:var(--text2);margin-top:12px;text-align:start}
+.figbox .figcap{font-size:var(--fs-sm);color:var(--text2);margin-top:12px;text-align:start;max-width:68ch}
 
 /* ===== עמודות מוערמות · 100% =====
    וריאציה אנכית של .basket הקיים, לצורך השוואת אותם מרכיבים בין
@@ -481,3 +488,22 @@ details.fold>summary:focus-visible{outline:3px solid var(--blue);outline-offset:
   .pyr-step.s4{width:70%}.pyr-step.s3{width:80%}
   .pyr-step.s2{width:90%}.pyr-step.s1{width:100%}
 }
+
+/* ---------- כרטיסי שכבה / יחידה ----------
+   היו מוגדרים inline ב-chaka.html בלבד. עם פיצול כיתה י״א לשלושה עמודי
+   יחידה הם נדרשים בארבעה עמודים נוספים — ולכן עלו לגיליון המשותף.
+   .lvl-grid מתאים את עצמו למספר הכרטיסים: 3 בשורה כברירת מחדל, 4 כשיש 4. */
+.lvl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin:18px 0 6px}
+@media(max-width:520px){.lvl-grid{grid-template-columns:1fr}}
+.lvl{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:18px 18px 16px;box-shadow:var(--sh-sm);position:relative;overflow:hidden;
+  text-decoration:none;color:inherit;transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease)}
+.lvl::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--lc,var(--cyan))}
+a.lvl:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:var(--border-strong)}
+.lvl .g{font-size:1.5rem;font-weight:800;color:var(--navy);line-height:1}
+.lvl .th{font-size:.86rem;font-weight:700;color:var(--navy-800);line-height:1.35}
+.lvl .ds{font-size:.79rem;color:var(--text2);line-height:1.45;flex:1}
+.lvl .st{font-size:.74rem;font-weight:700;padding:3px 11px;border-radius:999px;align-self:flex-start}
+.lvl .st.live{background:var(--cyan-100);color:var(--accent)}
+.lvl .st.plus{background:var(--teal-100);color:#087565}
+@media (prefers-reduced-motion:reduce){a.lvl:hover{transform:none}}

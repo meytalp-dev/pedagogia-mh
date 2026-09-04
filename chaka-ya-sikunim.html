@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול סיכונים · כיתה י״א · נתיבים לחניכות וקריירה</title>
+<meta name="description" content="יחידה א׳ של שכבה י״א בנתיבים לחניכות וקריירה — ארבעה מערכי שיעור מתומללים: זיהוי אתגרים בעולם העבודה, התמודדות עם כישלון, אחריות ובטיחות, וגבולות ואתיקה.">
+<meta name="pmh-year" content="תשפ״ז">
+<meta property="og:type" content="website">
+<meta property="og:title" content="יחידה א׳ · ניהול סיכונים — 4 שיעורים">
+<meta property="og:description" content="היחידה הראשונה של השנה. היא לא עוסקת בבטיחות במובן הצר, אלא בניהול עצמי ברגע שמשהו משתבש: זיהוי האתגר, התמודדות עם הכישלון, לקיחת אחריות אוטונומית, והמצפן…">
+<meta property="og:url" content="https://pedagogiamh.co.il/chaka-ya-sikunim.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="canonical" href="https://pedagogiamh.co.il/chaka-ya-sikunim.html">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="article.css">
+<link rel="stylesheet" href="cats.css">
+<link rel="stylesheet" href="/pagenav.css">
+<link rel="stylesheet" href="/toolbelt.css">
+<style>
+/* בלוקים נפתחים — זהה לתבנית שבארגז הכלים של רכז.ת החניכות */
+details.dom{border:1px solid var(--border);border-radius:16px;margin:14px 0;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden}
+details.dom summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:14px;padding:15px 20px;font-weight:800;color:var(--navy);font-size:1.02rem;transition:background .2s}
+details.dom summary::-webkit-details-marker{display:none}
+details.dom summary:hover{background:var(--cyan-100)}
+details.dom summary .dn{font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent);min-width:1.6em}
+details.dom summary .hint{margin-inline-start:auto;font-weight:600;font-size:.79rem;color:var(--text2);white-space:nowrap}
+details.dom[open] summary{border-bottom:1px solid var(--border)}
+details.dom .inner{padding:6px 20px 18px}
+details.dom h4{font-weight:800;color:var(--navy-800);font-size:.92rem;margin:14px 0 4px}
+details.dom p,details.dom li{font-size:.9rem}
+details.dom ul{list-style:none;margin:4px 0}
+details.dom ul>li{position:relative;padding:4px 20px 4px 0}
+details.dom ul>li::before{content:"";position:absolute;right:2px;top:14px;width:10px;height:2.5px;border-radius:2px;background:var(--cyan)}
+details.dom ol{margin:4px 22px 4px 0}
+details.dom ol>li{padding:3px 0}
+@media(max-width:560px){details.dom summary .hint{display:none}}
+</style>
+</head>
+<body data-back="chaka-ya.html|כיתה י״א">
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
+
+<!-- nav:start section="chanichut" -->
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
+    <a href="bagrut.html">נתיב הבגרות</a>
+    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a href="alternatives.html"><span class="n">08</span> הערכה</a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="chaka-ya.html">כיתה י״א</a>
+    <a class="nested" href="chaka-yb.html">כיתה י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="supervision.html">שער מרחב הפיקוח</a>
+    <a href="supervision.html#vaadot">ועדות מלוות</a>
+    <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+    <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+    <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+    <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+    <a href="tafkid-mefakeach.html">ערכת המפקח.ת · תפקיד וכלים</a>
+    <a class="nested" href="pikuah-shnati.html">תוכנית העבודה השנתית</a>
+    <a class="nested" href="bikur-mefakeach.html">הביקור בבית הספר · צ׳ק ליסט</a>
+    <a class="nested" href="doch-pedagogi.html">הדוח הפדגוגי</a>
+    <a class="nested" href="vaada-mefakeach.html">ועדה מלווה · צד המפקח.ת</a>
+    <a class="nested" href="madrich-pedagogi.html">המדריך.ה הפדגוגי.ת למקצוע</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="matal.html">מחברת המת״ל · תפקודי למידה</a>
+    <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה · תשפ״ז</a>
+    <div class="sect">רכז פדגוגי</div>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+    <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+    <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+    <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+    <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+    <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+    <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+    <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+    <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    <div class="sect">מנהלים חדשים</div>
+    <a href="menahalim-hadashim.html">שער · ערכת הכניסה למנהל.ת</a>
+    <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+    <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">חינוך חברתי יוצר</div>
+    <a href="chevrati.html">שער המרחב החברתי</a>
+    <a href="chevrati-tfisa.html"><span class="n">01</span> התפיסה וארבעת העקרונות</a>
+    <a href="chevrati-tafkid.html"><span class="n">02</span> תפקיד הרכז.ת</a>
+    <a href="chevrati-tochnit.html"><span class="n">03</span> בניית תוכנית העבודה</a>
+    <a href="chevrati-hachshara.html"><span class="n">04</span> ההכשרה השנתית</a>
+    <a href="chevrati-meoravut.html"><span class="n">05</span> מעורבות ומנהיגות תלמידים</a>
+    <a href="chevrati-kehila.html"><span class="n">06</span> קהילה של משמעות</a>
+    <a href="chevrati-eretz.html"><span class="n">07</span> ״ארץ״ — הסביבה הפיזית</a>
+    <a href="chevrati-arachim.html"><span class="n">08</span> ערכים וטקסים</a>
+    <a href="chevrati-chosen.html"><span class="n">09</span> חוסן בתקופת משבר</a>
+    <a href="chevrati-tzevet.html"><span class="n">10</span> עבודה עם הצוות</a>
+    <a href="chevrati-merchavim.html"><span class="n">11</span> מרחבים בניהול עצמי</a>
+    <a href="chevrati-klim.html"><span class="n">12</span> ארגז הכלים · מעגל השנה</a>
+    <a href="chevrati-prida.html"><span class="n">13</span> פרידה וסיום</a>
+    <a href="chevrati-shitufim.html"><span class="n">14</span> שיתופים מהשטח</a>
+    <a href="chevrati-arabic.html"><span class="n">15</span> التربية الاجتماعية · بالعربية</a>
+    <a href="chevrati-matala.html"><span class="n">16</span> מטלת הסיכום</a>
+    <div class="sect">נהלים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a class="nested" href="nehalim-minhal.html">נהלי מינהל</a>
+    <a class="nested" href="takzivim.html">תקציבים</a>
+    <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
+    <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    <div class="sect">שירותים</div>
+    <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
+    <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
+    <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
+    <a href="gantt.html">לוח גאנט צוותים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="/hadrachot/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <div class="sect">אודות</div>
+    <a href="archive.html">ארכיון · שנים קודמות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה" width="1200" height="420">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="gov-mid">
+    <span class="navitem"><a class="lnk" href="supervision.html" aria-haspopup="true">מרחב פיקוח<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <a href="supervision.html#vaadot">ועדות מלוות</a>
+        <a href="vaada-melava.html">ועדה מלווה · ההנחיות המלאות</a>
+        <a href="supervision.html#ivchun">כלי אבחון מוסדי</a>
+        <a href="supervision.html#netunim">נתוני גמר ובגרות</a>
+        <a href="supervision.html#tafkidim">ליווי בעלי תפקידים</a>
+      <a href="prisat-pikuah.html">פריסת הפיקוח · תשפ״ז</a>
+        <a href="tafkid-mefakeach.html">ערכת המפקח.ת · תפקיד וכלים</a>
+        <a href="tashpaz.html">תכנון תשפ״ז</a>
+        <a href="supervision.html#drive-pikuah">דרייב הפיקוח</a>
+      </div>
+    </span>
+    <span class="navitem"><a class="lnk" href="menahalim.html" aria-haspopup="true">מרחב מנהלים<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+        <a href="/hadrachot/" target="_blank" rel="noopener">מצפן ההדרכות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="drive-menahalim.html">דרייב מנהלים</a>
+        <a href="tashpaz.html">היערכות תשפ״ז</a>
+        <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה</a>
+      </div>
+    </span>
+  </div>
+  <div class="left"><a href="negishut.html">נגישות</a><span class="dis">English</span><span class="dis">العربية</span></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <span class="navitem"><a class="lnk" href="space.html" aria-haspopup="true">מרחב פדגוגי<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="alternatives.html">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk active" href="chanichut.html" aria-haspopup="true">חניכות וקריירה<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית בכיתה</a>
+      <a href="career.html#lessons">מערכי שיעור · ט׳–י״ב</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="procedures.html">שער הנהלים · ארבע הקטגוריות</a>
+      <a href="nehalim-minhal.html">נהלי מינהל</a>
+      <a href="takzivim.html">תקציבים</a>
+      <a href="cherum-nehalim.html">אירוע חריג</a>
+      <a href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="menahalim-hadashim.html" aria-haspopup="true">מנהלים חדשים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="menahalim-hadashim.html">שער · ערכת הכניסה</a>
+      <a href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+      <a href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+      <a href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+      <a href="shana-rishona.html">השנה הראשונה · מפת דרכים וצ׳ק ליסט</a>
+      <a href="docs/erkat-knisa-menahel-hadash.pdf" target="_blank" rel="noopener">ערכת הכניסה המלאה (PDF)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html" aria-haspopup="true">בעלי תפקידים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="tafkidim.html">שער בעלי התפקידים · כל ההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ״ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז.ת הפדגוגי.ת</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+      <a href="matal.html">מחברת המת״ל</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chevrati.html" aria-haspopup="true">חינוך חברתי יוצר<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chevrati.html">שער המרחב החברתי · כל החומרים</a>
+      <a href="chevrati-tfisa.html">התפיסה וארבעת העקרונות</a>
+      <a href="chevrati-tochnit.html">בניית תוכנית העבודה</a>
+      <a href="chevrati-hachshara.html">ההכשרה השנתית ומפגשיה</a>
+      <a href="chevrati-klim.html">ארגז הכלים · מעגל השנה</a>
+      <a href="chevrati-arabic.html">التربية الاجتماعية · بالعربية</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות תשפ״ז</a></span>
+  <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+<!-- nav:end -->
+
+<main id="main">
+
+<section class="hero">
+  <div class="article hero-stagger">
+    <span class="kicker">נתיבים לחניכות וקריירה · שכבה י״א · יחידה א׳</span>
+    <h1>יחידה א׳ — <span class="accent">ניהול סיכונים</span></h1>
+    <p class="lead">היחידה הראשונה של השנה. היא לא עוסקת בבטיחות במובן הצר, אלא ב<strong>ניהול עצמי ברגע שמשהו משתבש</strong>: זיהוי האתגר, התמודדות עם הכישלון, לקיחת אחריות אוטונומית, והמצפן האתי שמנחה החלטות כשאף אחד לא מסתכל.</p>
+    <div class="meta-row">
+      <span class="src-note">המקור: <a class="lk" href="https://kbasma2026.my.canva.site/daht3pah1om" target="_blank" rel="noopener">פאנל השליטה של מערכי נתיבים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
+      <span>4 שיעורים · פיתוח: ק.מ.ה אורנים · החינוך היוצר</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn ghost" href="chaka-ya.html">&#9666; חזרה לכיתה י״א</a>
+      <a class="btn" href="https://kbasma2026.my.canva.site/daht3pah1om" target="_blank" rel="noopener">פאנל השליטה בקנבה &#8599;<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    </div>
+  </div>
+</section>
+
+<article class="body-sec">
+  <div class="article">
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="chaka-ya.html#mivne">המבנה הקבוע של כל מערך</a> &middot; <a class="lk" href="chaka-ya.html#homarim">כל 13 המערכים בקנבה</a></p>
+
+    <h2 class="sub-sec first rv" id="s1">01 · זיהוי אתגרים בעולם העבודה</h2>
+    <p class="lead-p rv">השיעור הפותח. המסר המרכזי שלו: תקלות טכניות קורות כל יום — <strong>האתגר האמיתי של י״א הוא המעבר ממצב של "ילד אובד עצות" למצב של "מתמחה שמנהל את האירוע"</strong>.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>כרטיס המערך</caption>
+        <tbody>
+          <tr><td class="k">מטרת העל</td><td>שינוי התפיסה של "כישלון" מאירוע מגדיר ("אני לא טוב") לאירוע מלמד (Data שצריך לנתח).</td></tr>
+          <tr><td class="k">ציוד נדרש</td><td>פתקים (דפי ממו) · מחברת אישית לרפלקציה</td></tr>
+          <tr><td class="k">ייחוד המערך</td><td>המערך היחיד ביחידה שכולל סימולציה מלאה עם כרטיסיות תפקיד, כולל תדריך מפורט לניהול משחק תפקידים בכיתה.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המערך</h3>
+    <ol class="ed rv">
+      <li><strong>"הקיר התעסוקתי"</strong> — כל תלמיד.ה מקבל.ת שני פתקים: על אחד "הפתעה לטובה" מהחניכות, על השני "הלם/אתגר" (למשל: "משעמם לי לפעמים", "הבוס מדבר מהר מדי", "הנסיעות מתישות"). מדביקים על הלוח וממפים יחד לשתי קטגוריות: <strong>אתגרים מול אנשים (I MIX)</strong> מול <strong>אתגרים מול משימות וזמן (I TASK)</strong>.</li>
+      <li><strong>ניתוח מקרה — עידו במוסך.</strong> מתמחה שנתקע עם בורג שחוק ברגע לחץ. מטרת השיח היא לפתוח כמה שיותר אפשרויות לתגובה ולפעולה, לא למצוא תשובה אחת נכונה.</li>
+      <li><strong>סימולציה</strong> — עידו מול יוסי המנהל הלחוץ, עם כרטיסיות תפקיד וכיתה בתפקיד "צופים מנתחים".</li>
+      <li><strong>דיון בקבוצות</strong> לפי ארבעת צירי ה־I PRO.</li>
+      <li><strong>רפלקציה אישית</strong> — "מתי קרה לי מקרה בחניכות שבו הרגשתי צורך בקבלת החלטות מהירות? האם הייתי צריך להחליט אם לבקש עזרה או להסתדר לבד? מה עשיתי, ומה למדתי מזה על עצמי כעובד?"</li>
+      <li><strong>לסיכום</strong> — כל תלמיד.ה מגדיר.ה בכתב את "אתגר העל" שלו כרגע בחניכות, ורושם.ת <strong>פעולה אקטיבית אחת</strong> שיעשה השבוע כדי להתמודד איתו.</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>הפירוט המלא מהמערך למורה<span class="hint">הסיפור, כרטיסיות התפקיד ושאלות הדיון</span></summary>
+      <div class="inner">
+        <h4>סיפור המקרה — עידו במוסך "הציר המרכזי"</h4>
+        <ul>
+          <li>עידו לומד בי״א ומתמחה במוסך מורשה, גדול ועמוס. אוהב רכבים, "ידיים טובות", מאוד רוצה להוכיח את עצמו.</li>
+          <li>בשבועיים הראשונים קיבל בעיקר משימות רקע — לסדר כלים, לנקות עמדות, למלא שמן ומים. הרגיש שהוא "מתבזבז", אבל חיכה בסבלנות.</li>
+          <li>ביום שלישי המוסך בטירוף: שלושה מכונאים קבועים לא הגיעו. יוסי המנהל ניגש בלחץ: <em>"עידו, תעזוב הכל. כנס למסלול 3, יש שם מאזדה שצריך להחליף לה רפידות בלם ודיסקים. הלקוח חייב לצאת מפה עוד 40 דקות. תתקע על זה, אני סומך עליך."</em></li>
+          <li>כשעידו מנסה לפרק את הגלגל הוא מגלה שבורג אחד שחוק לחלוטין, ואפילו עם מפתח האימפקט הוא לא נפתח. הוא יודע שיש טכניקה לחילוץ ברגים שחוקים אבל לא בטוח שהוא זוכר אותה, ומפחד לעשות נזק להברגה.</li>
+          <li>יוסי צועק בטלפון על ספק, שאר המכונאים מתחת למנועים. עברו 20 דקות מתוך ה־40.</li>
+        </ul>
+        <h4>שלב 1 — הכנת הקרקע והפחתת התנגדויות</h4>
+        <ul>
+          <li>מתבגרים נרתעים ממשחק תפקידים מחשש שיצאו "מגוחכים". <strong>הגדירו את המרחב כמעבדה:</strong> "אנחנו לא בשיעור תיאטרון ואף אחד לא מקבל ציון על משחק. המטרה שלנו היא לבדוק מודל של תקשורת. מותר ואפילו רצוי לטעות כאן, כי פה הטעויות לא עולות לנו בכסף או בפיטורים."</li>
+          <li><strong>בחירת שחקנים נכונה:</strong> לא להכריח תלמיד ביישן. להתחיל עם שני תלמידים דומיננטיים ומשתפי פעולה — או שהמורה עצמו ישחק את התפקיד המורכב (יוסי המנהל) כדי "להרים להנחתה" לתלמיד.</li>
+        </ul>
+        <h4>שלב 2 — כרטיסיות התפקיד</h4>
+        <ul>
+          <li><strong>לתלמיד (עידו המכונאי):</strong> "אתה לחוץ בזמן, נשארו לך 20 דקות. אתה מפחד להרוס את הרכב, אבל אתה יודע שיוסי עצבני. המטרה שלך: לגשת ליוסי ולהשיג את העזרה או האישור שאתה צריך כדי להתקדם, מבלי לגרום לו לצרוח עליך ומבלי לעכב את הלקוח."</li>
+          <li><strong>למורה/תלמיד ב׳ (יוסי המנהל):</strong> "אתה ביום הכי לחוץ בשנה. חסרים לך עובדים, לקוחות יושבים לך על הווריד, ואתה בדיוק מנתק שיחה קשה. אתה לא רע, אתה פשוט מוצף. אם עידו בא ומגמגם או אומר 'יש בעיה ואין לי מושג מה לעשות' — תגיב בעצבנות ובחוסר סבלנות. אם הוא בא קצר, ממוקד ומציע פתרון — תירגע ותקשיב לו."</li>
+          <li><strong>לצופים (הכיתה):</strong> "אתם לא סתם קהל. אתם בוחנים את ציר I MIX (התאמה לסיטואציה) וציר I NET (ניהול רושם). תרשמו: מה עבד טוב במילים שעידו בחר? מתי הטון של יוסי השתנה ולמה?"</li>
+        </ul>
+        <h4>שלב 3 — כלל הזהב: זכות ה־Freeze</h4>
+        <ul>
+          <li>אם הסימולציה נתקעת, עידו הולך לאיבוד, או שהטונים הופכים אישיים מדי — המורה מוחא כף ואומר <strong>"פאסט פוורד / פריז!"</strong>. עוצרים את הזמן, שואלים את הכיתה או את השחקן מה קורה עכשיו, וממשיכים.</li>
+        </ul>
+        <h4>שאלות הדיון בקבוצות (3–4 תלמידים)</h4>
+        <ol>
+          <li><strong>זיהוי האתגר (I TASK):</strong> מהם שני סוגי הלחצים שעידו חווה בבת אחת? (לחץ זמן מול לחץ מקצועי/פחד לעשות נזק).</li>
+          <li><strong>ניתוח הסיטואציה והאחר (I MIX):</strong> מה המצב של יוסי ברגע זה? למה חשוב שעידו יבין את המצב שלו לפני שהוא פועל?</li>
+          <li><strong>דרכי פעולה — מתווה ה"מקצוען":</strong> הציעו 3 דרכים לפעול. מה המחיר והרווח של כל דרך? <em>א׳ להמשיך לנסות בכוח לבד</em> (סכנה: שבירת הבורג ועיכוב גדול יותר) · <em>ב׳ לעזוב ולשבת בצד עד שיוסי יתפנה</em> (סכנה: ייראה כמי שלא אכפת לו או נכנע בקלות) · <em>ג׳ לפנות ליוסי או למכונאי אחר בצורה ממוקדת</em>.</li>
+          <li><strong>תקשורת אפקטיבית (I NET):</strong> אם עידו ניגש ליוסי הלחוץ — איך הוא מציג את הבעיה ב־30 שניות כדי לא לעצבן אותו עוד יותר אלא להראות מקצועיות? <strong>תרגלו משפט מדויק.</strong></li>
+        </ol>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)">המצגת לכיתה כוללת גם שקפי "הקיר התעסוקתי" ורפלקציה אישית — <a class="lk" href="https://www.canva.com/design/DAHMEtQtN2k/JHCx7aSzYm2oZmywqtZMmw/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="s2">02 · התמודדות עם כישלון</h2>
+    <p class="lead-p rv">המערך שמחליף את המילה "כישלון" במילה "פאשלה" — ואת שתיהן ב"נתונים". הוא נפתח בכך שהמורה מספר.ת ראשון.ה על פאשלה אמיתית משלו.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>כרטיס המערך</caption>
+        <tbody>
+          <tr><td class="k">מטרות</td><td>התלמיד יזהה שהאתגרים בעבודה הם חלק בלתי נפרד מהלמידה (Mindset מתפתח), וילמד למפות אותם במקום להיבהל מהם.</td></tr>
+          <tr><td class="k">ציוד נדרש</td><td>פתקים (דפי ממו) · מחברת אישית לרפלקציה</td></tr>
+          <tr><td class="k">ייחוד המערך</td><td>המערך היחיד שדורש מהמורה חשיפה אישית מוקדמת — "חוק המורה המפשל" — כתנאי להצלחת השיעור.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המערך</h3>
+    <ol class="ed rv">
+      <li><strong>פתיחה</strong> — צפייה בסרטון כישלונות של מפורסמים.</li>
+      <li><strong>"מוזיאון הפאשלות"</strong> — כל תלמיד.ה מוזמן.ת לספר על פאשלה שעשה. מעודדים לפחות חמישה תלמידים לספר בקלילות וללא שיפוטיות.</li>
+      <li><strong>הצבעה</strong> — בוחרים שלוש פאשלות הכי מצחיקות ומלמדות, מחלקים לשלוש קבוצות, כל קבוצה מעבדת פאשלה אחת בשלוש שאלות: <em>מה קרה?</em> (עובדות בלבד, בלי האשמות) · <em>מה הוביל לפאשלה?</em> (בידוד הגורם — חוסר הבנה, עייפות, לחץ זמן) · <em>מה אפשר ללמוד לפעם הבאה?</em> (מניעה).</li>
+      <li><strong>רפלקציה — "החוזקה שנולדה מהטעות".</strong> כל תלמיד.ה כותב.ת חוזקה שגילה בעצמו אחרי טעות, על <strong>שלושה פתקים זהים</strong>. שומרים אחד, מסתובבים בחדר ומחפשים חוזקות שהיו רוצים לקבל מאחרים — כך שבסוף לכל אחד יש שלושה פתקים שונים ביד. יושבים בזוגות ומספרים איזו חוזקה בחרו לאמץ.</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>הפירוט המלא מהמערך למורה<span class="hint">שני העקרונות שבלעדיהם השיעור לא עובד</span></summary>
+      <div class="inner">
+        <h4>1. המודל האישי — "חוק המורה המפשל"</h4>
+        <ul>
+          <li>תלמידים לא יפתחו את הלב אם המורה יציג את עצמו כדמות מושלמת. <strong>הדרך הטובה ביותר להתחיל היא שהמורה יפיל את המחיצה ראשון.</strong></li>
+          <li>פתחו את השיעור בסיפור אישי על פאשלה מקצועית או אישית שלכם — עדיף מהגיל שלהם, או מתחילת דרככם בהוראה או בעבודה קודמת.</li>
+          <li><strong>דגש קריטי:</strong> אל תספרו סיפור "לייט" או מתחכם (כמו "הפאשלה שלי היא שעבדתי קשה מדי"). ספרו על פאשלה אמיתית, מביכה, כזו שהיו לה השלכות. לדוגמה: <em>"בשנה הראשונה שלי כמורה שכחתי להדפיס את טפסי הבגרות, והיו 40 תלמידים בחדר ללא מבחן. הלב שלי דפק, הזעתי, פחדתי שיפטרו אותי…"</em></li>
+          <li>המסר שעובר: "אם המורה שלי חי ונושם ומכובד פה מולנו אחרי פאשלה כזו — כנראה שגם אני אשרוד את הטעות שלי."</li>
+        </ul>
+        <h4>2. שינוי הטרמינולוגיה — מ"כישלון" ל"פאשלה" ול"נתונים"</h4>
+        <ul>
+          <li>למילה "כישלון" יש מטען כבד, שיפוטי וסופי — היא מתקשרת לציון נכשל ולאובדן דרך. המילה "פאשלה" חצי־הומוריסטית, יומיומית, ומניחה מראש שמדובר באירוע נקודתי שאפשר לתקן.</li>
+          <li><strong>המשגה מחדש (Reframing):</strong> פאשלה היא פשוט <strong>Data</strong> — נתונים בשטח. היא לא אומרת שום דבר על <em>מי שאתה</em> (זהות), רק על <em>מה שעשית</em> (פעולה) ואיך אפשר לשפר אותה.</li>
+          <li><strong>חוקי המעגל:</strong> ללא שיפוטיות, באווירה טובה ובהבנה שכולנו מפשלים וזה נורמלי לחלוטין. כל אחד מספר על עצמו בלבד, וכל תלמיד רשאי לבחור אם לשתף ובמה.</li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMEXmbfoc/NV5MdHgiJJx_MLSd_tK4AA/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="s3">03 · אחריות ובטיחות</h2>
+    <p class="lead-p rv">המערך הארוך ביותר ביחידה, ובמידה רבה גם המעשי ביותר. הוא לא מלמד נהלי בטיחות — הוא בונה <strong>"תרבות בטיחות"</strong>: ההבנה שהמעסיק לא יכול לשים שלט על כל בורג, ושהאחריות המקצועית היא לעצור ולשאול.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>כרטיס המערך</caption>
+        <tbody>
+          <tr><td class="k">מטרת העל</td><td>הבנת המושג "תרבות בטיחות" ולקיחת אחריות אוטונומית על המשימות והסביבה.</td></tr>
+          <tr><td class="k">ציוד נדרש</td><td>שלטי "נכון / לא נכון" לכל תלמיד · מחברת אישית לרפלקציה</td></tr>
+          <tr><td class="k">ייחוד המערך</td><td>מגיע עם בנק מוכן של היגדים ושרשראות "אפקט פרפר" מפורטות — כולל תשובות והסברים למורה. אין צורך להמציא דוגמאות.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המערך</h3>
+    <ol class="ed rv">
+      <li><strong>פתיחה — "אפקט הפרפר" בעבודה.</strong> מציגים פעולה קטנה ומזלזלת (לא לדווח על חוט חשמל חשוף, לא לנקות כתם שמן, לא להודיע על איחור של רבע שעה). התלמידים "מציירים" איך היא מתגלגלת לנזק גדול לחברה, לצוות או לחיי אדם.</li>
+      <li><strong>גוף השיעור — "נכון או לא נכון".</strong> הצבעה על היגדים מעולם הבטיחות והאחריות. כל תלמיד.ה מצביע.ה לפי דעתו, בודקים מה רוב הכיתה הכריעה, ומעוררים דיון. <strong>בסוף הדיון אפשר להצביע שוב</strong> ולבדוק אם דעת הכיתה השתנתה.</li>
+      <li><strong>רפלקציה</strong> — "איך האמינות שלי נבנית מתוך האחריות שלי?" התלמיד.ה מגדיר.ה מה המשמעות של "להיות ראש גדול" בתוך גבולות הבטיחות בחניכות שלו. במחברת: אילו מקרים של אחריות ובטיחות נתקלתי בהם או צפוי להיתקל בהם, ואיך הייתי רוצה להגיב.</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלוש שרשראות "אפקט הפרפר" — כלשונן במערך<span class="hint">מוסך · גן ילדים · מטבח</span></summary>
+      <div class="inner">
+        <h4>מוסך — שאריות שמן על הרצפה</h4>
+        <p><strong>הפעולה הקטנה:</strong> החלפת שמן מנוע לרכב, ובגלל שמיהרת לסיום המשמרת לא ניגבת עד הסוף את שאריות השמן שנטפו ליד הליפט.</p>
+        <p><strong>שרשרת האירועים:</strong> השמן נשאר על הרצפה ⬅ המנטור הוותיק עובר שם ומחליק ⬅ שובר את היד ויוצא לחופשת מחלה של חודשיים ⬅ המוסך נשאר בשיא העונה בלי המכונאי הראשי ⬅ לקוחות מתעצבנים על עיכובים ועוזבים למתחרה ⬅ המוסך מפסיד עשרות אלפי שקלים ⬅ המנהל מקצץ בשעות של המתמחים ומפטר חלק מהם.</p>
+        <h4>גן ילדים — פיסת מלפפון על הרצפה</h4>
+        <p><strong>הפעולה הקטנה:</strong> שטפת את רצפת הגן אחרי ארוחת הצהריים ולא שמת לב שחתיכת מלפפון קטנה ומחליקה נשארה במסדרון.</p>
+        <p><strong>שרשרת האירועים:</strong> הילדים חוזרים מהחצר בריצה ⬅ ילד מחליק ונופל על הראש ⬅ ניידת מד"א מפנה אותו למיון ⬅ הגן נסגר וההורים מוזעקים ⬅ הסיפור מגיע לקבוצות הוואטסאפ של היישוב ולאתר חדשות מקומי ⬅ המוניטין של הגן נהרס, הגננת קורסת רגשית, ומשרד החינוך פותח בחקירה נגד כל הצוות.</p>
+        <h4>מטבח — קרש חיתוך שלא נשטף</h4>
+        <p><strong>הפעולה הקטנה:</strong> חתכת עוף נא על קרש חיתוך, ואז — בלי לשטוף אותו בסבון ומים רותחים — חתכת עליו עגבניות וחסה לסלט הירוק של המנה הבאה.</p>
+        <p><strong>שרשרת האירועים:</strong> חיידקי סלמונלה עוברים לחסה ⬅ הסלט מוגש ללא בישול שהיה הורג את החיידקים ⬅ בלילה 15 לקוחות מגיעים לבית חולים עם הרעלת קיבה חמורה ⬅ משרד הבריאות סוגר את המסעדה בצו מנהלי ⬅ השף מועמד לדין פלילי על רשלנות ⬅ כל העובדים, כולל המתמחים, נשארים בלי עבודה מהיום למחר.</p>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>בנק ההיגדים "נכון / לא נכון" — עם התשובות וההסברים<span class="hint">שבעה היגדים מוכנים</span></summary>
+      <div class="inner">
+        <h4>✔ נכון — חומרי ניקוי חזקים ללא כפפות</h4>
+        <p><strong>ההיגד:</strong> "שימוש בחומרי ניקוי חזקים, ממיסי שומנים (כמו ספריי קרבורטור או חומרי חיטוי של תנורים) ללא כפפות פוגע בגוף ובבריאות באופן מיידי, גם אם לא מרגישים כווייה או כאב באותו הרגע."</p>
+        <p><strong>ההסבר לדיון:</strong> חומרים כימיים תעשייתיים נספגים דרך עור הידיים ישירות אל מחזור הדם. הם לא חייבים לעשות "חור" בעור כדי להזיק — הם מצטברים בגוף לאורך זמן ויכולים לפגוע בכבד, בכליות, או לגרום לדרמטיטיס כרונית קשה שתהרוס לחניך את היכולת לעבוד במקצוע בעתיד. <strong>מקצוען לא משחק אותה "גיבור" — הוא שם כפפות מתאימות.</strong></p>
+        <h4>✘ לא נכון — "רק 10 שניות בלי משקפי מגן"</h4>
+        <p>רוב פגיעות העיניים החמורות קורות דווקא במשימות ה"קצרות", כשעובדים מורידים הגנות "רק לשנייה". גיץ או שבב מתכת עפים במהירות של קליע, ולא אכפת להם אם עבדת שעה או שנייה.</p>
+        <h4>✘ לא נכון — "עדיף לסיים עם כלי פגום מאשר לעצור את כל העבודה"</h4>
+        <p>כלי פגום הוא פצצה מתקתקת. מפתח שחוק יחליק בדיוק כשמפעילים כוח ויגרום לשבר ביד; כבל פגום בסביבה רטובה (מטבח או מוסך) יכול לגרום להתחשמלות. <strong>מקצוען עוצר ומדווח (I TASK).</strong></p>
+        <h4>✔ נכון — שרוכים, שיער פזור וטבעות ליד מכונות מסתובבות</h4>
+        <p>מכונות מסתובבות מייצרות מומנט אדיר. מספיק שקצה שרוך או קווצת שיער נתפסים בציר, והמכונה תמשוך את העובד פנימה בשבריר שנייה. בעולם המוסכים והמסגרות יש פגיעות קשות מאוד, כולל קטיעת אצבעות בגלל טבעות שנתפסו בחלקים נעים. <strong>מקצוען אוסף שיער, מוריד תכשיטים ולובש בגדי עבודה הדוקים.</strong></p>
+        <h4>✘ לא נכון — "נעלי בטיחות הן רק נגד נפילת חפץ כבד"</h4>
+        <p>לנעלי בטיחות יש שני תפקידים קריטיים נוספים: סוליה מחוזקת נגד מסמרים וברגים שעלולים לחדור מלמטה, וסוליה מונעת החלקה — מצילת חיים בסביבת שמן, מים או נוזל בלמים.</p>
+        <h4>✘ לא נכון — "רעש מקסימום עושה כאב ראש"</h4>
+        <p>פגיעת שמיעה מרעש תעשייתי (טנטון או ירידה בשמיעה) היא <strong>בלתי הפיכה</strong>. תאי העצב באוזן שמתים מרעש לא גדלים מחדש. מקצוען שם אטמי אוזניים או אוזניות מגן בלי לדפוק חשבון ל"מה יגידו".</p>
+        <h4>✘ לא נכון — "אם אני ערני מותר לי לעבוד 14 שעות ברצף"</h4>
+        <p>לא נכון <strong>ואסור</strong>. החוק מגביל באופן קשיח את שעות העבודה של בני נוער — לא רק כדי למנוע ניצול, אלא מסיבות בטיחותיות. מחקרים מראים שאחרי 8–9 שעות עבודה פיזית רמת הריכוז צונחת ב־50%, וזמן התגובה משתווה לאדם שיכור. שם קורות התאונות הקשות.</p>
+        <h4>✘ לא נכון — "אם לא היה שלט, זו אשמת המנהל בלבד"</h4>
+        <p>המעבר מ"תלמיד" ל"מקצוען" פירושו המושג <strong>ראש גדול</strong>. המעסיק לא יכול לשים שלט על כל בורג ועל כל פינה. כעובד מתמחה יש לך אחריות אישית להפעיל שיקול דעת. <strong>אם זיהית משהו שנראה מסוכן — החובה המקצועית שלך היא לעצור ולשאול.</strong></p>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)">במערך מופיעה הערת פיתוח: "להוסיף עוד היגדים יותר מורכבים" — כלומר בנק ההיגדים פתוח להרחבה בית־ספרית. <a class="lk" href="https://www.canva.com/design/DAHMQoK0E40/T_UYmogHQFJ0vsaJ_pu0KA/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="s4">04 · גבולות ואתיקה</h2>
+    <p class="lead-p rv">השיעור שסוגר את היחידה. הוא מפריד בין <strong>חוק</strong> — מה שחובה או אסור, ויש עליו עונש — לבין <strong>אתיקה</strong>: מה שראוי ונכון לעשות, גם כשאף אחד לא רואה ואין חוק שמעניש על זה.</p>
+
+    <div class="tbl-scroll rv">
+      <table class="doc">
+        <caption>כרטיס המערך</caption>
+        <tbody>
+          <tr><td class="k">מטרת העל</td><td>פיתוח מצפן אתי, ניהול רושם ומיתוג אישי מקצועי ומכבד, והיכרות עם המושגים "גבולות" ו"אתיקה".</td></tr>
+          <tr><td class="k">ציוד נדרש</td><td>מסקינג טייפ / נייר · כרטיסיות הדילמות · מחברת אישית לרפלקציה</td></tr>
+          <tr><td class="k">שתי ההגדרות המרכזיות</td><td><strong>אתיקה</strong> — מצפן פנימי, לא חיצוני. <strong>גבול</strong> — אמת מידה שנועדה לשמור עליי.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mini rv">מהלך המערך</h3>
+    <ol class="ed rv">
+      <li><strong>"קו אדום, קו אפור".</strong> מסמנים קו על הרצפה. המורה מקריא.ה היגדים, והתלמידים זזים במרחב: מימין לקו — ההיגד לגיטימי, משמאל — לא לגיטימי, <strong>ועל הקו עצמו — המתלבטים</strong>. אחרי כמה היגדים מעוררים דיון: מה גרם להם לזוז או להישאר?</li>
+      <li><strong>כרטיסיות דילמה בקבוצות</strong> (3–4 תלמידים). אפשר לתת את אותה דילמה לשתי קבוצות במקביל כדי לראות פתרונות שונים.</li>
+      <li><strong>חזרה למליאה</strong> — אילו תובנות עלו? האם יש למידה שחוזרת על עצמה בקבוצות השונות, או שכל דילמה אפשרה למידה אחרת?</li>
+      <li><strong>סיכום ורפלקציה</strong> — המורה מקרין.ה רשימת ערכים, וכל תלמיד.ה בוחר.ת את <strong>שלושת הערכים</strong> החשובים לו בעולם העבודה: מה מייצג אותי כעובד, על מה עליי לשים לב, ומה מכוון את ההתנהגות שלי.</li>
+    </ol>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>12 היגדי "קו אדום, קו אפור"<span class="hint">כלשונם במערך</span></summary>
+      <div class="inner">
+        <ul>
+          <li>"להעלות סטורי מהעבודה שבו רואים ברקע לקוח או עובד אחר, בלי לבקש מהם רשות."</li>
+          <li>"לכתוב פוסט ביקורתי בחשבון הטיקטוק האישי שלי על כמה שהיה לי יום גרוע ומשעמם בחניכות (בלי לציין את שם המקום)."</li>
+          <li>"לשלוח בקשת חברות באינסטגרם או בפייסבוק למנהל/ת שלי בעבודה."</li>
+          <li>"המעסיק שולח לי הודעת וואטסאפ בענייני עבודה בשעה 21:30 בלילה, ואני בוחר לסנן אותו ולענות רק בבוקר."</li>
+          <li>"לספר לחברים מהכיתה סיפור מצחיק על אחד העובדים הקבועים במוסך/במשרד."</li>
+          <li>"המנהל לחוץ ומבקש ממני לעשות משימה אישית שלו (להביא לו ארוחת צהריים או לאסוף חבילה מהדואר)."</li>
+          <li>"עובד אחר במקום העבודה מדבר אליי בצורה שמקטינה אותי או לא נעימה לי."</li>
+          <li>"לקחת הביתה ציוד קטן מהעבודה (עטים, מחברות, חבילת ברגים, שאריות חומרי גלם) כי 'יש להם בשפע וזה לא חסר לאף אחד'."</li>
+          <li>"לעגל פינות במשימה שקיבלתי (לא לנקות עד הסוף, לא לבדוק שוב את הברגים) כי המנהל לא נמצא באותו רגע כדי לבדוק אותי."</li>
+          <li>"איחרתי ב־20 דקות בגלל שהאוטובוס התעכב, אז אני לא מעדכן את המנהל מראש ומקווה שהוא פשוט לא ישים לב."</li>
+          <li>"לשמוע במקרה שיחה פנימית של המנהלים על לקוח מסוים או על עובד שהולכים לפטר, ולשתף את זה עם מתמחה אחר."</li>
+          <li>"לקוח מציע לי טיפ כספי מכובד מהצד על עבודה טובה שעשיתי עבורו, למרות שזה מוסך/משרד מסודר."</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="dom rv">
+      <summary><span class="dn">▾</span>שלוש כרטיסיות הדילמה + ההנחיה לעבודה בקבוצות<span class="hint">רועי ומתן · איתי ויניב · שירה בגן</span></summary>
+      <div class="inner">
+        <h4>💡 טיפ למורה — לפני שמחלקים את הדילמות</h4>
+        <p>אל תיתנו להם רק לקרוא את הדילמה. הגדירו משימה ברורה: <strong>"אתם לא שופטים מהצד. אתם היועצים של הדמות בסיפור. הקבוצה שלכם צריכה להגיע להחלטה פה אחד (קונצנזוס) על דרך הפעולה המדויקת שהיא צריכה לנקוט."</strong></p>
+        <h4>שלוש שאלות מנחות שכל קבוצה עונה עליהן <em>בכתב</em> לפני שהיא מחליטה</h4>
+        <ol>
+          <li><strong>מי נפגע ומי מרוויח?</strong> מי האנשים שמושפעים מההחלטה — המעסיק? הלקוח? התלמיד עצמו? המותג של בית הספר?</li>
+          <li><strong>אילו ערכים מתנגשים פה?</strong> למשל: נאמנות לחבר מול יושרה מקצועית.</li>
+          <li><strong>מבחן ה"כותרת בעיתון":</strong> אם הפעולה תתפרסם מחר בבוקר בקבוצת הוואטסאפ של כל עובדי המקום או בפני המנהל — איך הדמות תרגיש?</li>
+        </ol>
+        <h4>דילמה 1 · רועי ומתן</h4>
+        <p>רועי ומתן חברים טובים מהכיתה שמתמחים יחד באותו מקום עבודה. יום אחד מתן מגיע באיחור של שעה וחצי, מריח מאלכוהול, נראה עייף ומבולבל, ואומר לרועי: <em>"אחי, אל תשאל, חזרתי ממסיבה לפנות בוקר. אל תגיד כלום לבוס, אני פשוט אשב פה בפינה ואעמיד פנים שאני עובד. תעביר עליי כרטיס נוכחות אם ישאלו."</em></p>
+        <p><strong>הדילמה:</strong> אם רועי מגלה למנהל — הוא יוצא "מלשן" ופוגע בחבר הכי טוב שלו. אם הוא מחפה — הוא מסתכן בבטיחות (אם מתן יעשה טעות) ובאמינות של עצמו מול המעסיק.</p>
+        <p><strong>מה הקבוצה מחליטה:</strong> מה רועי עושה ברגע זה? <strong>ניסוח משפט מדויק שרועי אומר למתן.</strong></p>
+        <h4>דילמה 2 · איתי ויניב</h4>
+        <p>איתי מתמחה במוסך רכב. המנטור שלו, עובד ותיק בשם יניב, אומר לו: <em>"שמע איתי, הלקוח של המאזדה לחוץ כסף. תרכיב לו את רפידות הבלם המשומשות שפירקנו אתמול מרכב אחר, הן עוד במצב סביר. אל תרשום את זה בניירת, פשוט תגיד לבוס שהרכבת חדשות. הלקוח ישלם לנו במזומן מתחת לשולחן ונתחלק בזה."</em></p>
+        <p><strong>הדילמה:</strong> איתי מפחד להגיד לא ליניב, הבוס הישיר שלו בשטח שיכול למרר לו את החיים. מצד שני — עבירה על החוק, סכנה בטיחותית חמורה ללקוח, ופגיעה באמון של בעל המוסך.</p>
+        <p><strong>מה הקבוצה מחליטה:</strong> איך איתי מסרב למנטור שלו בלי לשרוף את היחסים איתו לגמרי? למי הוא מדווח, אם בכלל?</p>
+        <h4>דילמה 3 · שירה בגן הילדים</h4>
+        <p>שירה מתמחה כסייעת ב"גן השבלול" ומאוד אוהבת את העבודה. היא פעילה ברשתות ורוצה לפתח עמוד תחת המיתוג "יוצרת תוכן ומחנכת צעירה". במפגש יצירה, איתי בן ה־4 חטף קריז, הפך את השולחן ושפך גואש על הרצפה. שירה צילמה ריל של הרצפה המלוכלכת, כשפניו הבוכות של איתי מטושטשות קצת ברקע, עם כיתוב משעשע: <em>"כשאת מנסה לעשות איתם אמנות אבל הם מחליטים לעשות מלחמה 💀 #חייםשלסייעת #הצילו"</em>.</p>
+        <p>הסרטון הפך ויראלי. למחרת אמא של איתי — שזיהתה מיד את הבן שלה ואת הגן — מגיעה פגועה וכועסת, צועקת על מנהלת הגן ומאיימת להוציא את הילד ולתבוע על פגיעה בפרטיות של קטין.</p>
+      </div>
+    </details>
+
+    <p class="rv" style="font-size:var(--fs-sm);color:var(--text2)"><a class="lk" href="https://www.canva.com/design/DAHMQkC3NzM/wkrLKtQO9RNwfNoQ2uKK0g/view" target="_blank" rel="noopener">למערך המלא בקנבה ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></p>
+
+    <h2 class="sub-sec rv" id="hemshech">שתי היחידות האחרות של השכבה</h2>
+    <div class="lvl-grid rv">
+      <a class="lvl" href="chaka-ya-mishov.html" style="--lc:#0E8C7A">
+        <span class="g">יחידה ב׳</span>
+        <span class="th">משוב ורפלקציה</span>
+        <span class="ds">היחידה המפותחת ביותר בשכבה, והיחידה היחידה שמגיעה עם מדריך למורה נפרד. היא נכתבה מתוך הבנה שעבור בני נוער שכבר עובדים בשטח, "רפלקציה" ו"משוב" אינם מושגים…</span>
+        <span class="st live">6 מפגשים + מדריך למורה &#8592;</span>
+      </a>
+      <a class="lvl" href="chaka-ya-tikshoret.html" style="--lc:#124D7A">
+        <span class="g">יחידה ג׳</span>
+        <span class="th">תקשורת בינאישית</span>
+        <span class="ds">היחידה השלישית, בשני מערכים. הראשון עוסק בתקשורת יומיומית מול מנהל — איך מוודאים שהבנו הנחיה ואיך אומרים "לא" בלי לצאת ראש קטן. השני, שיעור כפול, עוסק…</span>
+        <span class="st live">3 שיעורים &#8592;</span>
+      </a>
+    </div>
+
+</article>
+
+</main>
+
+<!-- foot:start -->
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>הבית של המנהיגות הפדגוגית היוצרת</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impact-os.app</a></div></div>
+<!-- foot:end -->
+
+<script src="site.js" defer></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+<script src="/pagenav.js" defer></script>
+<script src="/toolbelt.js" defer></script>
+</body>
+</html>
