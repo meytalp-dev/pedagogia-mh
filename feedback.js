@@ -74,7 +74,7 @@
     '.fb-note{font-size:.78rem;color:#60778A;margin-top:10px;line-height:1.5}',
     '.fb-page{display:flex;align-items:center;gap:7px;margin-top:14px;padding:9px 12px;background:#F2F7FC;',
       'border-radius:10px;font-size:.78rem;color:#52687A}',
-    '.fb-page svg{width:14px;height:14px;flex:none;color:#0B7FA6}',
+    '.fb-page svg{width:14px;height:14px;flex:none;color:#0A7799}',
     '.fb-page b{color:#0D3B66;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
 
     '.fb-foot{padding:16px 24px 20px;border-top:1px solid #D8E6F2;display:flex;gap:10px;align-items:center;background:#fff}',
@@ -93,7 +93,7 @@
     '.fb-ring svg{width:30px;height:30px}',
     '.fb-done h3{margin:0 0 8px;font-size:1.2rem;font-weight:800;color:#0D3B66}',
     '.fb-done p{margin:0;font-size:.92rem;color:#52687A;line-height:1.6}',
-    '.fb-done a{color:#0B7FA6;font-weight:700}',
+    '.fb-done a{color:#0A7799;font-weight:700}',
     '.fb-modal.sent .fb-body,.fb-modal.sent .fb-foot,.fb-modal.sent .fb-head p{display:none}',
 
     '.fb-btn:focus-visible,.fb-chip:focus-visible,.fb-send:focus-visible,.fb-cancel:focus-visible,',
@@ -126,6 +126,9 @@
 
     var ov = document.createElement("div");
     ov.className = "fb-ov";
+    /* מחוץ למפת העמוד: pagenav סורק h2 בכל המסמך, וכותרת המודל
+       הזה הופיעה ככרטיסייה "מה חסר לך באתר?" בפס הניווט. */
+    ov.setAttribute("data-pn-skip", "");
     ov.innerHTML =
       '<div class="fb-modal" role="dialog" aria-modal="true" aria-labelledby="fbTitle">' +
         '<div class="fb-head">' +

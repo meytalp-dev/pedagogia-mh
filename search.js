@@ -598,20 +598,18 @@
       if (brand && brand.nextSibling) nav.insertBefore(b, brand.nextSibling);
       else nav.appendChild(b);
     }
-    /* קישור במגירת "כל האתר" — מעל מדור השירותים */
+    /* קישור בראש מגירת "כל האתר".
+       היה מוצב מעל מדור השירותים, אבל site.js רץ לפני search.js ומחליף כל
+       .sect ב-button.dsect — כך שהחיפוש אחר ".sect" החזיר אפס והקישור נחת
+       בסוף המגירה, מתחת ל-98 השורות. בנייד זו הפעולה השימושית ביותר
+       במגירה, ומקומה בראשה. */
     var body = document.querySelector(".drawer .body");
     if (body && !body.querySelector(".drawer-search")) {
-      var sects = body.querySelectorAll(".sect");
-      var anchor = null;
-      [].forEach.call(sects, function (s) {
-        if (!anchor && s.textContent.indexOf("שירותים") >= 0) anchor = s;
-      });
       var a = document.createElement("a");
       a.className = "drawer-search";
       a.href = "/chipus.html";
       a.innerHTML = ICON.search + " חיפוש באתר";
-      if (anchor) body.insertBefore(a, anchor.nextSibling);
-      else body.appendChild(a);
+      body.insertBefore(a, body.firstChild);
     }
   }
 

@@ -18,7 +18,7 @@
   if (window.__pagenavLoaded) return;
   window.__pagenavLoaded = true;
 
-  var SKIP = '.nav,.drawer,.govbar,.foot,.hero,.toc,.pn,.pn-cards,.pnd,.sub,dialog,template,[data-pn-skip]';
+  var SKIP = '.nav,.drawer,.govbar,.foot,.hero,.toc,.pn,.pn-cards,.pnd,.sub,.nohal-brief,dialog,template,[data-pn-skip]';
   var NS = 'http://www.w3.org/2000/svg';
 
   function ready(fn) {
@@ -40,7 +40,9 @@
     menu: ['M2.5 4h11', 'M2.5 8h11', 'M2.5 12h11'],
     x:    ['M4 4l8 8', 'M12 4l-8 8'],
     out:  ['M5.5 10.5 10.5 5.5', 'M6 5.5h4.5V10'],
-    back: ['M6 3.5 10.5 8 6 12.5']
+    back: ['M6 3.5 10.5 8 6 12.5'],
+    right:['M10 3.5 5.5 8l4.5 4.5'],
+    left: ['M6 3.5 10.5 8 6 12.5']
   };
 
   function icon(kind) {
@@ -218,6 +220,23 @@
   }
 
   /* ---------- בניית הפס הדביק ---------- */
+
+  /* תווית קצרה לכרטיסייה בפס.
+     כותרות באתר בנויות "נושא — הסבר" או "נושא · הסבר"; ההסבר מיותר בכרטיסייה
+     של 140px, והוא זה שגרם לכך שרק שלוש כרטיסיות נכנסו לרוחב המסך. הכותרת
+     המלאה נשמרת ב-title ובתפריט הצד. */
+  function shortLabel(t) {
+    t = (t || '').trim();
+    var head = t.split(/\s[—–·:|]\s/)[0].trim();
+    if (head.length >= 6 && head.length < t.length) t = head;
+    if (t.length > 30) {
+      var cut = t.slice(0, 30);
+      var sp = cut.lastIndexOf(' ');
+      t = (sp > 14 ? cut.slice(0, sp) : cut).trim() + '…';
+    }
+    return t;
+  }
+
   function buildBar(items) {
     var bar = document.createElement('nav');
     bar.className = 'pn';
@@ -243,7 +262,7 @@
       n.textContent = pad(i);
       var t = document.createElement('span');
       t.className = 't';
-      t.textContent = it.title;
+      t.textContent = shortLabel(it.title);
       a.title = it.title;
       a.appendChild(n);
       a.appendChild(t);
@@ -261,9 +280,37 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
+    /* חצי גלילה — מופיעים רק כשיש כרטיסיות מעבר לקצה.
+       בלעדיהם הפס גולל אופקית עם פס גלילה מוסתר, ובעכבר פשוט אין
+       שום דרך להגיע לכרטיסיות שמעבר לקצה. */
+    function arrow(dir) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pn-arw pn-arw-' + dir;
+      b.hidden = true;
+      b.setAttribute('aria-label', dir === 'start' ? 'הקודמים' : 'הבאים');
+      b.appendChild(icon(dir === 'start' ? 'right' : 'left'));
+      b.addEventListener('click', function () {
+        var step = Math.max(160, tabs.clientWidth * 0.7);
+        tabs.scrollBy({ left: (dir === 'start' ? 1 : -1) * step, behavior: 'smooth' });
+      });
+      return b;
+    }
+    var aStart = arrow('start'), aEnd = arrow('end');
+
+    /* גלגלת אנכית → גלילה אופקית בפס */
+    tabs.addEventListener('wheel', function (e) {
+      if (e.deltaY === 0 || tabs.scrollWidth <= tabs.clientWidth) return;
+      e.preventDefault();
+      tabs.scrollLeft -= e.deltaY;
+    }, { passive: false });
+
     inner.appendChild(lbl);
+    inner.appendChild(aStart);
     inner.appendChild(tabs);
+    inner.appendChild(aEnd);
     inner.appendChild(up);
+    bar.__arrows = [aStart, aEnd];
     bar.appendChild(inner);
     bar.__tabs = tabs;
     bar.__in = inner;
@@ -565,10 +612,36 @@
       var sl = Math.abs(box.scrollLeft), max = box.scrollWidth - box.clientWidth;
       box.style.setProperty('--f-s', sl > 4 ? '22px' : '0px');
       box.style.setProperty('--f-e', sl < max - 4 ? '22px' : '0px');
+      var arw = bar.__arrows;
+      if (arw) {
+        var over = max > 4;
+        arw[0].hidden = !over || sl <= 4;
+        arw[1].hidden = !over || sl >= max - 4;
+      }
     }
     box.addEventListener('scroll', fades, { passive: true });
     addEventListener('resize', fades, { passive: true });
     fades();
+
+    /* התאמה אוטומטית: מכווצים בשלבים עד שכל הכרטיסיות נכנסות לרוחב.
+       שלב 1 — מוותרים על מספרי הסידור. שלב 2 — מקצרים את התוויות.
+       אם גם זה לא מספיק, החצים והגלגלת נשארים כרשת ביטחון. */
+    function fit() {
+      box.classList.remove('pn-compact', 'pn-tight');
+      if (box.scrollWidth <= box.clientWidth + 1) return fades();
+      box.classList.add('pn-compact');
+      if (box.scrollWidth <= box.clientWidth + 1) return fades();
+      box.classList.add('pn-tight');
+      /* אם גם הקיצוץ החריף לא מכניס את הכול — הוא לא קונה כלום, והוא
+         הופך תוויות שונות ל"פעולות ל…" זהות. חוזרים לשלב הקריא
+         ומסתמכים על החצים, הגלגלת ותפריט המדורים. */
+      if (box.scrollWidth > box.clientWidth + 1) box.classList.remove('pn-tight');
+      fades();
+    }
+    fit();
+    var fitT;
+    addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fit, 120); }, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
 
     var ticking = false, active = -1, activeSub = null;
     /* sync() אינו נקרא כאן: נראות המדורים משתנה רק בלחיצה, ומאזין הלחיצה

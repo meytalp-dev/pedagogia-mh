@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<script src="/analytics.js"></script>
+<script src="/analytics.js" defer></script>
 <script src="/gate.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>נתיב הבגרות · הבית של המנהיגות הפדגוגית היוצרת</title>
@@ -64,6 +64,28 @@ table.doc tr:last-child td{border-bottom:none}
 table.doc td.k{font-weight:700;background:var(--blue-100);border-inline-start:1px solid var(--border);color:var(--navy);font-size:.92rem}
 table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 .cd{font-variant-numeric:tabular-nums;font-weight:700;color:var(--navy-800);white-space:nowrap;direction:ltr;unicode-bidi:embed;display:inline-block}
+/* ===== כרטיסיות תחומי דעת — מדור "חומרי למידה מהרשת" ===== */
+.sbjtabs-wrap{margin:18px 0 6px}
+.sbjtabs{display:flex;flex-wrap:wrap;gap:8px}
+.sbjtab{display:inline-flex;align-items:center;gap:2px;flex:0 0 auto;
+  border:1.5px solid var(--border);background:var(--surface);border-radius:999px;
+  padding:8px 16px;font-family:'Assistant',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s var(--ease)}
+.sbjtab .hic{width:17px;height:17px;margin-inline-end:6px;color:var(--cyan);transition:color .2s}
+.sbjtab .sbjn{margin-inline-start:8px;min-width:20px;padding:1px 6px;border-radius:999px;
+  background:var(--blue-100);color:var(--navy);font-size:.74rem;font-weight:800;
+  font-variant-numeric:tabular-nums;transition:all .2s}
+.sbjtab:hover{border-color:var(--cyan);color:var(--navy)}
+.sbjtab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sbjtab[aria-selected="true"]{background:var(--navy-800);color:#fff;border-color:transparent;box-shadow:var(--sh-sm)}
+.sbjtab[aria-selected="true"] .hic{color:#fff}
+.sbjtab[aria-selected="true"] .sbjn{background:rgba(255,255,255,.22);color:#fff}
+.sbjpanel[hidden]{display:none}
+.sbjpanel{animation:sbjin .28s var(--ease) both}
+.sbjpanel>h3.mini:first-child{margin-top:14px}
+@keyframes sbjin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sbjpanel{animation:none}}
+@media(max-width:560px){.sbjtab{padding:7px 12px;font-size:.82rem}}
 </style>
 </head>
 <body data-pn-min="3">
@@ -125,6 +147,7 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
     <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
     <a href="matal.html">מחברת המת״ל · תפקודי למידה</a>
+    <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה · תשפ״ז</a>
     <div class="sect">רכז פדגוגי</div>
     <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
     <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
@@ -210,6 +233,7 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
         <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a href="drive-menahalim.html">דרייב מנהלים</a>
         <a href="tashpaz.html">היערכות תשפ״ז</a>
+        <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה</a>
       </div>
     </span>
   </div>
@@ -295,7 +319,6 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
   <div>
     <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="subjects.html">תחומי דעת</a> ‹ נתיב הבגרות</div>
     <h1 class="rv d1">נתיב הבגרות</h1>
-    <p class="rv d2 lead" style="max-width:660px">קישורים אצורים ממשרד החינוך — שאלונים ומחוונים, מיקודים, אתרי המפמ״ר וקורסי קמפוס IL — וכל חלופות ההערכה למתקשים, במקום אחד.</p>
   </div>
   <div class="rv d2 headshot">
     <img src="img/yotzer/microscope.jpg" alt="תלמידה מתבוננת במיקרוסקופ במעבדה" width="1024" height="768">
@@ -402,10 +425,202 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     </div>
   </div>
 
-  <h2 class="sub-sec rv" id="sec-teudot">
+  <h2 class="sub-sec rv" id="sec-reshet">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v6M12 14.5v6M4.8 7.6l5.2 3M14 13.4l5.2 3M19.2 7.6l-5.2 3M10 13.4l-5.2 3"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="3.6" r="1.6"/><circle cx="12" cy="20.4" r="1.6"/><circle cx="4.3" cy="7.4" r="1.6"/><circle cx="19.7" cy="7.4" r="1.6"/><circle cx="4.3" cy="16.6" r="1.6"/><circle cx="19.7" cy="16.6" r="1.6"/></svg>חומרי למידה מהרשת
+    <small class="sub-sec-note">מערכי שיעור ותרגול נוספים, לפי תחום דעת</small>
+  </h2>
+  <p class="rv lead-p" style="font-size:var(--fs-sm);margin:0 0 4px">סקירת רשת שנעשתה לכל אחד משבעת תחומי הדעת, בחיפוש אחר מערכי שיעור, מאגרי תרגול וחומרי העשרה <strong>מעבר</strong> למה שכבר מרוכז באתר. כל קישור כאן נפתח ונבדק בפועל — הוא מוביל לחומר עצמו ולא לדף בית, והחומר פתוח בחינם וללא הרשמה. מקורות שדרשו תשלום, הרשמה או שהובילו לדף שגיאה — לא נכללו.</p>
+
+  <div class="callout amber rv">
+    <span class="ttl"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.2 3.6 19h16.8z"/><path d="M12 9.6v4.2M12 16.4v.1"/></svg>אלה מקורות חיצוניים</span>
+    הקישורים שבמדור זה מפנים לאתרים שאינם באחריות מינהל הכשרה מקצועית ואינם מתוחזקים על ידו — פורטלי משרד החינוך, מרכזי מורים ארציים ומאגרים ציבוריים. התוכן שבהם עשוי להשתנות או לרדת מהרשת בלי הודעה, והוא אינו מחליף את המיקוד וההנחיות הרשמיות של אגף בכיר בחינות. לפני שימוש בכיתה — ודאו התאמה לשאלון ולמיקוד של תשפ״ז.
+  </div>
+
+  <div class="sbjtabs-wrap rv">
+    <div class="sbjtabs" role="tablist" aria-label="חומרי למידה מהרשת לפי תחום דעת">
+    <button class="sbjtab on" role="tab" id="sbjt-ezrachut" aria-selected="true" aria-controls="sbjp-ezrachut" tabindex="0" data-sp="sbjp-ezrachut"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 20V9.5L12 4l7.5 5.5V20z"/><path d="M9.5 20v-6h5v6"/></svg><span>אזרחות</span><b class="sbjn">3</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-ivrit" aria-selected="false" aria-controls="sbjp-ivrit" tabindex="-1" data-sp="sbjp-ivrit"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h9.5L19 9v10.5H5z"/><path d="M14.5 4.5V9H19"/><path d="M8 12.5h7M8 16h4.5"/></svg><span>עברית</span><b class="sbjn">4</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-matematika" aria-selected="false" aria-controls="sbjp-matematika" tabindex="-1" data-sp="sbjp-matematika"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 8h8M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg><span>מתמטיקה</span><b class="sbjn">3</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-anglit" aria-selected="false" aria-controls="sbjp-anglit" tabindex="-1" data-sp="sbjp-anglit"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg><span>אנגלית</span><b class="sbjn">4</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-historia" aria-selected="false" aria-controls="sbjp-historia" tabindex="-1" data-sp="sbjp-historia"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.4 2.1"/></svg><span>היסטוריה</span><b class="sbjn">4</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-safrut" aria-selected="false" aria-controls="sbjp-safrut" tabindex="-1" data-sp="sbjp-safrut"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><span>ספרות</span><b class="sbjn">4</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-tanach" aria-selected="false" aria-controls="sbjp-tanach" tabindex="-1" data-sp="sbjp-tanach"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H18a1 1 0 0 1 1 1v13.5H6.5A1.5 1.5 0 0 0 5 20z"/><path d="M9 8.5h6M9 11.8h4"/></svg><span>תנ״ך</span><b class="sbjn">4</b></button>
+    <button class="sbjtab" role="tab" id="sbjt-rochav" aria-selected="false" aria-controls="sbjp-rochav" tabindex="-1" data-sp="sbjp-rochav"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12.5" rx="2"/><path d="M3.5 10h17M8 6V3.8M16 6V3.8"/></svg><span>חוצה תחומים</span><b class="sbjn">1</b></button>
+    </div>
+  </div>
+
+  <div class="sbjpanel on" id="sbjp-ezrachut" role="tabpanel" aria-labelledby="sbjt-ezrachut">
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 20V9.5L12 4l7.5 5.5V20z"/><path d="M9.5 20v-6h5v6"/></svg>אזרחות</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/" target="_blank" rel="noopener">חומרי הוראה ולמידה · אזרחות חטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה מתוקשבות, סרטונים ומערכי שיעור מסודרים לפי פרקי תוכנית הלימודים. למורה שמחפש חומר מוכן לשיעור בודד בלי לבנות מאפס.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/citizenship-enrichment/" target="_blank" rel="noopener">העשרה באזרחות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרים, חומרי אקטואליה וחומרי דיון להעמקה מעבר לספר הלימוד. מתאים לקבוצות מוגברות ולשיעורי דיון בכיתות שמתקשות להתחבר לחומר היבש.</li>
+    <li><a class="lk" href="https://lo.cet.ac.il/player/?document=4c335c6d-1117-4cfa-b02a-379aacbb3e17&amp;language=he&amp;sitekey=citizenship" target="_blank" rel="noopener">ממשל פתוח · מקבץ מערכי שיעור (מט״ח)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מקבץ מערכי שיעור מוכנים בנושא שקיפות שלטונית וממשל פתוח, פתוח וחינמי. חומר טוב לאשכול "המשטר בישראל".</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-ivrit" role="tabpanel" aria-labelledby="sbjt-ivrit" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h9.5L19 9v10.5H5z"/><path d="M14.5 4.5V9H19"/><path d="M8 12.5h7M8 16h4.5"/></svg>עברית · הבנה, הבעה ולשון</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/bhinot-bagrut-umesimot/" target="_blank" rel="noopener">בחינות בגרות ומשימות · עברית לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — שאלוני בגרות לדוגמה ומשימות הערכה בהבנה, בהבעה ובלשון. זה הבסיס לתרגול מבחן, לצד מאגר התרגולים שנבנה כאן באתר.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/lashon/" target="_blank" rel="noopener">נושאים ומיומנויות · לשון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — פירוק פרקי הלשון לנושאים, עם חומרי הוראה לכל נושא בנפרד. שימושי לבניית תוכנית עבודה שנתית ולחלוקת החומר בין מורים.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/havana-vehabaa/" target="_blank" rel="noopener">הבנה והבעה · נושאים ומיומנויות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי הוראה לכתיבת טיעון, לסיכום ולמיזוג טקסטים — בדיוק המיומנויות שנופלות בבחינה.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/kehila-morim-ivrit/" target="_blank" rel="noopener">קהילת המורים לעברית ברשת<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרחב שיתוף של מורי העברית בחטיבה העליונה, עם חומרים שמורים מעלים ופורום מקצועי. למורה בודד.ת בבית ספר קטן, זו הדרך להיות בקבוצה.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-matematika" role="tabpanel" aria-labelledby="sbjt-matematika" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 8h8M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg>מתמטיקה</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2015-05-31-10-59-23/2015-05-31-11-12-42" target="_blank" rel="noopener">המרכז הארצי למורים למתמטיקה · לומדים בחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרכז המורים הארצי שבאוניברסיטת חיפה: חומרי למידה, יישומונים דינמיים ופעילויות לכל רמות ההיבחנות, 3–5 יח״ל. מרכז מורים ארצי — לא אתר מסחרי.</li>
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/component/content/category/315-2015-12-30-13-37-15" target="_blank" rel="noopener">אתרים להכנה לבגרות · מרכז המורים הארצי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של אתרי תרגול והכנה לבגרות במתמטיקה, שנבחרו על ידי מרכז המורים. חוסך את הסינון העצמאי בגוגל.</li>
+    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2-uncategorised/3095-035482-4" target="_blank" rel="noopener">שאלות לקראת בגרות · שאלון 035482<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר שאלות תרגול ממוקד לשאלון 4 יח״ל, מוכן להעברה בכיתה או לתרגול עצמי.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-anglit" role="tabpanel" aria-labelledby="sbjt-anglit" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg>אנגלית</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/bagrut-archives/" target="_blank" rel="noopener">Bagrut Exams · ארכיון שאלוני הבגרות באנגלית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — ארכיון השאלונים מכל המודולים ומכל המועדים, במקור הרשמי של הפיקוח על הוראת האנגלית.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/dig-into-digital/" target="_blank" rel="noopener">Dig into Digital<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות תוכן דיגיטליות באנגלית להוראה ולתרגול מיומנויות. מתאים במיוחד לכיתות שעובדות עם מחשב או טאבלט.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/teachers-resource-materials/" target="_blank" rel="noopener">Module E Vocabulary · חומרי עזר למורה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימות אוצר המילים הנדרש למודול E וחומרי עזר נלווים. כלי עבודה יומיומי למורה שמלמד.ת 5 יח״ל.</li>
+    <li><a class="lk" href="https://sites.google.com/view/englishfromhome/home" target="_blank" rel="noopener">English from Home<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — אתר משאבים חינמי מבית הפיקוח על הוראת האנגלית: פעילויות ותרגול לכל הרמות, מסודרים לפי מיומנות. שימושי גם ללמידה מרחוק ולהשלמות.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-historia" role="tabpanel" aria-labelledby="sbjt-historia" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.4 2.1"/></svg>היסטוריה</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · היסטוריה ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה ומערכי שיעור לפי פרקי תוכנית הלימודים, במקור הרשמי.</li>
+    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials.html" target="_blank" rel="noopener">יד ושם · חומרים חינוכיים בנושא השואה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר מערכי שיעור, עדויות, סביבות למידה וחומרי מולטימדיה. פתוח בחינם וללא הרשמה, ומהמקורות האיכותיים ביותר להוראת הפרק הזה.</li>
+    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials/learning-environment/lesson-class.html" target="_blank" rel="noopener">יד ושם · מערכי שיעור לפי שכבות גיל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מערכים מוכנים ליום הזיכרון, מסודרים לפי שכבה — כולל הצעות ייעודיות לחטיבה העליונה עם דיון במליאה ועבודה בקבוצות.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya-hemed/chativa-elyona/pedagogia-historia-hemed/tools-sites-databases/" target="_blank" rel="noopener">ספרים, אתרים ומאגרי מידע · היסטוריה חמ״ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי מקורות היסטוריים ואתרי מחקר. נבנתה לחמ״ד, אך רוב המאגרים שבה רלוונטיים לכל מורה להיסטוריה.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-safrut" role="tabpanel" aria-labelledby="sbjt-safrut" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>ספרות</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · ספרות ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרי ניתוח והצעות למערכי שיעור על יצירות המיקוד, מסודרים לפי יצירה ולפי יוצר.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/skills/" target="_blank" rel="noopener">מיומנויות · ספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרים לפיתוח מיומנויות הפרשנות והכתיבה הנדרשות בבחינה, ולא רק ידע על היצירות עצמן.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/flexible-program-literture/" target="_blank" rel="noopener">תוכנית הבגרויות הגמישה בספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — המסמך המלא של התוכנית הגמישה, שמשנה את מבנה ההיבחנות. חובה לקרוא לפני בניית תוכנית עבודה בכיתה י׳.</li>
+    <li><a class="lk" href="https://benyehuda.org/authors" target="_blank" rel="noopener">פרויקט בן־יהודה · רשימת היוצרים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסטים המלאים של קלאסיקות הספרות העברית לפי יוצר, בחינם, ללא הרשמה וללא מגבלת זכויות יוצרים. מאפשר לחלק לתלמידים את היצירה עצמה בלי לצלם מספר.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-tanach" role="tabpanel" aria-labelledby="sbjt-tanach" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H18a1 1 0 0 1 1 1v13.5H6.5A1.5 1.5 0 0 0 5 20z"/><path d="M9 8.5h6M9 11.8h4"/></svg>תנ״ך</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/noseem_nilmadim/hitmazut_tanach/" target="_blank" rel="noopener">העשרה · ההתמצאות בתנ״ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי העשרה לפיתוח מיומנות ההתמצאות במקרא, שהיא תנאי מקדים לכל שאר הלמידה בתחום.</li>
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/bible-hemed/high-school/pedagogy/teacher-enrichment-materials-databases/" target="_blank" rel="noopener">חומרי העשרה ומאגרי מידע למורה · תנ״ך חמ״ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי פרשנות, מקורות וכלי עזר. נבנתה לחמ״ד, ורוב הכלים שבה משמשים גם בהוראה הממלכתית.</li>
+    <li><a class="lk" href="https://www.mikranet.org.il/teachers/" target="_blank" rel="noopener">מקראנט · אזור המורים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — סרטוני מיומנויות, הצעות הוראה וקהילת מורים בתנ״ך. חינמי, ומיועד ישירות למורה ולא לתלמיד.</li>
+    <li><a class="lk" href="https://www.sefaria.org.il/texts/Tanakh" target="_blank" rel="noopener">ספריא · ספריית התנ״ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסט המלא עם פרשנים מקושרים ברמת הפסוק, בעברית. חינם, בלי פרסומות ובלי הרשמה — ואפשר לבנות ממנו דף מקורות לכיתה.</li>
+  </ul>
+  </div>
+
+  <div class="sbjpanel" id="sbjp-rochav" role="tabpanel" aria-labelledby="sbjt-rochav" hidden>
+    <h3 class="mini"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12.5" rx="2"/><path d="M3.5 10h17M8 6V3.8M16 6V3.8"/></svg>חוצה תחומים</h3>
+  <ul class="ed tight rv">
+    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/teaching-units-stock/" target="_blank" rel="noopener">מאגר יחידות הוראה מתוקשבות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר רוחבי של יחידות הוראה מוכנות בכל תחומי הדעת, שאפשר לסנן לפי מקצוע ולפי שכבה. נקודת פתיחה טובה כשלא יודעים מאיפה להתחיל.</li>
+  </ul>
+  </div>
+
+  <div class="callout rv">
+    <span class="ttl"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>מה נבדק ולא נכלל — בשקיפות</span>
+    <ul class="ed tight" style="margin:8px 0 0">
+      <li><strong>מרכזי מורים ארציים.</strong> חיפשנו מרכז מורים ארצי פעיל לכל אחד משבעת התחומים. נמצא ואומת מרכז אחד בלבד עם חומרים פתוחים ברשת — <strong>מרכז המורים הארצי למתמטיקה</strong> שבאוניברסיטת חיפה. ליתר התחומים, מה שמתפקד בפועל כמרכז המורים הוא שולחן המפמ״ר ופורטל המרחב הפדגוגי.</li>
+      <li><strong>שולחנות המפמ״ר.</strong> קיימים אתרי מפמ״ר נפרדים למתמטיקה, לאנגלית ולספרות ממלכתי, וכולם חיים ופעילים. הם לא קושרו כאן משום שהם דפי נחיתה שכל תפקידם להפנות הלאה — וכלל העבודה במדור הזה הוא לקשר לחומר עצמו ולא לדף בית. לספרות קושרה במקומם תוכנית הבגרויות הגמישה, שהיא המסמך המהותי שמתפרסם שם.</li>
+      <li><strong>ETNI · רשת מורי האנגלית בישראל.</strong> נבדק ונפסל — האתר אינו מגיב ואינו עולה. לא קושר.</li>
+      <li><strong>האקדמיה ללשון העברית.</strong> נבדק ונפסל לצורך הקישור כאן — האתר חוסם גישה אוטומטית ולא ניתן היה לאמת את דפי החומרים. הוא עשוי לעבוד בדפדפן רגיל, אך לא קישרנו למה שלא הצלחנו לאמת.</li>
+      <li><strong>מאגרי תרגול מסחריים.</strong> אתרי ההכנה לבגרות המוכרים דורשים תשלום או הרשמה, ולכן אינם מופיעים כאן. הקישור היחיד אליהם הוא דרך הרשימה המוערת של מרכז המורים הארצי למתמטיקה, שם הם מסומנים ככאלה.</li>
+      <li><strong>כפילויות.</strong> מקורות שכבר מקושרים במדור ״פורטלים חיצוניים״ שלמעלה, או בעמודי <a class="lk" href="klim-maagarim.html">מאגרים וכלים</a> ו<a class="lk" href="klim-tchumey-daat.html">כלים לפי תחום דעת</a> — לא שוכפלו לכאן.</li>
+    </ul>
+  </div>
+
+  <section class="sktbx flush rv" data-subject="all" data-strack="bgr" data-official="off" data-sec-id="sec-argaz-klim"></section>
+
+  <h2 class="sub-sec rv" id="sec-portalim">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg>פורטלים חיצוניים · משרד החינוך
+    <small class="sub-sec-note">המקור הרשמי והמחייב</small>
+  </h2>
+  <p class="rv" style="font-size:var(--fs-sm);color:var(--text2);margin:0 0 16px;max-width:760px">הפורטל הרשמי של כל תחום דעת במרחב הפדגוגי של משרד החינוך — שם מתפרסמים המיקודים, ההנחיות ועדכוני מבנה ההיבחנות. כל הקישורים כאן נבדקו ופעילים, ונפתחים בלשונית חדשה.</p>
+
+  <div class="grid c3" style="gap:14px;padding-bottom:8px">
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל עברית · הבנה, הבעה ולשון</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל המתמטיקה</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל האנגלית</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל ההיסטוריה</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל האזרחות</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל הספרות</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">ספרות ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל התנ״ך</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">תנ״ך ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d1" href="https://pop-charedi.education.gov.il/topics/literature/high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל הספרות · המגזר החרדי</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">נוסח החינוך החרדי · pop-charedi <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv d2" href="https://campus.gov.il/course_subjects/education-matriculation/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">קמפוס IL · קטגוריית ״בגרות״</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">כל קורסי ההכנה לבגרות בקמפוס, בעמוד אחד <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a class="card rv" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener" style="padding:18px 20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:3px">חוזרי מנכ״ל · משרד החינוך</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2)">הנוסח הרשמי והמחייב <span class="tag tea">פעיל</span></p>
+    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+  </div>
+
+  <h2 class="sub-sec rv" id="sec-moadim">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3.5v3M16 3.5v3"/></svg>מועדים ומעברים
+    <small class="sub-sec-note">מתי נבחנים, ולאן ממשיכים</small>
+  </h2>
+
+  <div class="grid c3" style="gap:14px;padding-bottom:8px">
+    <a class="card rv" href="luach-mivchanim.html" style="padding:20px">
+      <h3 style="font-size:var(--fs-base)">לוח מבחנים · בגרויות וגמר</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">מועדי הבגרויות תשפ״ז — כל תחומי הדעת</p>
+    </a>
+    <a class="card rv d1" href="subjects.html" style="padding:20px">
+      <h3 style="font-size:var(--fs-base)">כל תחומי הדעת ←</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">שבעת מקצועות הליבה, בלי סינון לנתיב</p>
+    </a>
+    <a class="card rv d2" href="gmar.html?track=gmr" style="padding:20px">
+      <h3 style="font-size:var(--fs-base)">נתיב הגמר ←</h3>
+      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">תוכניות הלימודים, מטלות הגמר ומסעות הלמידה</p>
+    </a>
+  </div>
+
+</div>
+
+
+  <h2 class="sub-sec rv" id="sec-zakaut">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v3h3M9 12h6M9 16h4"/></svg>תעודות, זכאות ומבנה ההיבחנות
+    <small class="sub-sec-note">הרקע המחייב — לתכנון השנתי ולוועדת הזכאות</small>
+  </h2>
+  <div class="article">
+    <details class="fold sec">
+      <summary><span class="w-open">להצגת הפירוט המלא</span><span class="w-close">לסגירת הפירוט</span><span class="hint">תעודות · זכאות · מקצועות הליבה</span></summary>
+      <div class="inner"><h3 class="fold-h" id="sec-teudot">
     <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.6 13.6 7 21l5-2.4L17 21l-1.6-7.4"/></svg>שלוש התעודות בנתיב הבגרות
     <small class="sub-sec-note">מה בדיוק מקבלים בסוף</small>
-  </h2>
+  </h3>
   <p class="lead-p rv">תלמיד.ה במסלולי הזכאות של המינהל — <strong>45</strong> (דוברי עברית), <strong>46</strong> (דוברי ערבית) ו־<strong>47</strong> (חרדי) — יוצא.ת עם יותר ממסמך אחד, וזו נקודת הבלבול הנפוצה ביותר בשטח. תעודת בגרות, הכרה ב־12 שנות לימוד ותעודת מקצוע אינן שלושה שמות לאותו דבר. <strong>ההבדל המהותי מנתיב הגמר:</strong> כאן המגמה המקצועית נבחנת <em>בתוך</em> תעודת הבגרות — כמקצוע מוביל טכנולוגי וכהתמחות עם שאלוני משרד החינוך — ולא בבחינות גמר נפרדות של משרד העבודה.</p>
 
   <div class="tbl-scroll rv">
@@ -443,10 +658,10 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     תעודת הבגרות היא <strong>הישגית ואקדמית</strong> — היא נמדדת ביחידות לימוד ופותחת שערים ללימודים גבוהים. ״12 שנות לימוד״ היא <strong>היקפית</strong> — היא אומרת רק כמה שנים למד.ה, והיא נשארת גם אם אין זכאות לבגרות. תעודת המקצוע היא <strong>תעסוקתית</strong> — היא מה שמכשיר לעיסוק במקצוע. במסלולי 45/46/47 שלושתן יכולות להצטבר, אבל כל אחת נשענת על מנגנון אחר.
   </div>
 
-  <h2 class="sub-sec rv" id="sec-shanot-limud">
+  <h3 class="fold-h" id="sec-shanot-limud">
     <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h10M7 20.5h10"/><path d="M8 3.5v3.2c0 2 4 3.6 4 5.3 0 1.7-4 3.3-4 5.3v3.2M16 3.5v3.2c0 2-4 3.6-4 5.3 0 1.7 4 3.3 4 5.3v3.2"/></svg>תעודת 12 שנות לימוד
     <small class="sub-sec-note">תנאי הזכאות וההבדל מבגרות ומגמר</small>
-  </h2>
+  </h3>
   <p class="txt rv">״12 שנות לימוד״ אינה תעודת הישגים אלא הכרה בהיקף ההשכלה. זו הסיבה שהיא נדרשת כמעט בכל טופס קבלה לעבודה ובכל מכרז — ובו בזמן אינה פותחת לבדה שערים ללימודים אקדמיים. בנתיב הבגרות היא <strong>אינה תלויה בזכאות לבגרות</strong>: תלמיד.ה שסיים.ה י״ב ולא צבר.ה את היחידות הנדרשות לתעודת בגרות — עדיין השלים.ה שתים־עשרה שנות לימוד.</p>
 
   <h3 class="mini rv">מה מקנה את ההיקף במסלולי הזכאות</h3>
@@ -466,10 +681,10 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     </table>
   </div>
 
-  <h2 class="sub-sec rv" id="sec-teudat-miktzoa">
+  <h3 class="fold-h" id="sec-teudat-miktzoa">
     <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 4.8 6v6c0 4.2 3 7.4 7.2 8.8 4.2-1.4 7.2-4.6 7.2-8.8V6z"/><path d="m9 12 2.2 2.2L15.2 10"/></svg>תעודת מקצוע והיחס לבגרות
     <small class="sub-sec-note">כאן זה עובד אחרת מנתיב הגמר</small>
-  </h2>
+  </h3>
   <p class="lead-p rv">בנתיב הגמר שתי התעודות — גמר ומקצוע — נצברות יחד ונובעות מאותה מערכת בחינות של משרד העבודה. <strong>בנתיב הבגרות המנגנון שונה:</strong> הרכיב המקצועי נבחן בתוך הבגרות, בשאלונים של משרד החינוך, ולא בבחינות הגמר של משרד העבודה.</p>
 
   <h3 class="mini rv">איך המגמה נבחנת בתוך הבגרות</h3>
@@ -496,10 +711,10 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <li><strong>מה שלא ניתן להסיק:</strong> האם בוגר.ת מסלול זכאות מקבל.ת גם תעודת מקצוע של משרד העבודה, ואם כן — מכוח מה. אין לכך תשובה בחוברת השאלונים ולא באוגדן. <strong>אל תמסרו זאת להורה כמידע ודאי</strong> לפני בדיקה בתוכנית הלימודים של המגמה הספציפית ומול הפיקוח המקצועי. סימנו זאת במדור האימות.</li>
   </ul>
 
-  <h2 class="sub-sec rv" id="sec-liba-bagrut">
+  <h3 class="fold-h" id="sec-liba-bagrut">
     <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/></svg>מקצועות הליבה ההכרחיים
     <small class="sub-sec-note">הטבלה — יחידות, סמלים ומבנה ההיבחנות</small>
-  </h2>
+  </h3>
   <p class="lead-p rv">בניגוד לנתיב הגמר, כאן היחידה הנמדדת היא <strong>יחידת לימוד (יח״ל)</strong> וכל מקצוע מדווח דרך <strong>הרכב שאלונים בעל סמל</strong>. הטבלה נבנתה מהצלבה של שני מקורות: חוברת סמלי השאלונים של אגף בכיר בחינות (יחידות, סמלים, סוג בחינה, משך ומשקל יחסי), ואוגדן השעות תשפ״ז של המינהל (שעות שבועיות במסלול 45).</p>
 
   <div class="tbl-scroll rv">
@@ -602,10 +817,10 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     חוברת סמלי השאלונים מגדירה <strong>איך נבחנים בכל מקצוע</strong> — יחידות, סמלים, סוג בחינה, משך ומשקל יחסי. היא <strong>אינה</strong> מסמך הזכאות: לא מופיעים בה סף היחידות המצטבר לתעודת בגרות, לא הכלל בדבר מספר המקצועות המוגברים ולא ציון עובר. את הסף המצרפי יש לקחת מ<a class="lk" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזר המנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ומהודעות אגף בכיר בחינות בלבד. כל מספר שנשמע בשטח ואינו מגובה שם — אל תמסרו אותו כמחייב.
   </div>
 
-  <h2 class="sub-sec rv" id="sec-megama-bagrut">
+  <h3 class="fold-h" id="sec-megama-bagrut">
     <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 3.5v2.3M12 18.2v2.3M20.5 12h-2.3M5.8 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6"/></svg>מבחני המגמה והרכיב התעסוקתי
     <small class="sub-sec-note">מה הם, מתי, מי נבחן ואיך משתקלל</small>
-  </h2>
+  </h3>
   <p class="lead-p rv">בנתיב הבגרות אין ״בחינת מגמה״ נפרדת של משרד העבודה. המגמה נבחנת דרך שני שאלוני בגרות — המוביל וההתמחות — ולכן היא נספרת בתוך היחידות של התעודה.</p>
 
   <h3 class="mini rv">שני רכיבי המגמה</h3>
@@ -632,181 +847,9 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
     <li><strong>כמכסת חניכות</strong> — מכסת שעות ההתנסות בעולם העבודה היא דרישה של המינהל ואינה חלק ממערך הבגרות. הפירוט: <a class="lk" href="chanichut.html">חניכות · התפיסה ושמונת המודלים</a> · <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>.</li>
   </ul>
 
-  <h2 class="sub-sec rv" id="sec-leimut">
-    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/><path d="M11 8v3.4M11 13.8v.1"/></svg>מה טעון אימות מול חוזר המנכ״ל
-    <small class="sub-sec-note">מה לא נכתב כאן כמספר מחייב</small>
-  </h2>
-  <p class="lead-p rv">המדורים שלמעלה נשענים על שני מקורות שנבדקו שורה־שורה: <strong>חוברת סמלי שאלוני הרפורמה</strong> של אגף בכיר בחינות (2,043 שורות, מהדורה 26.10.2020) ו<strong>אוגדן השעות תשפ״ז</strong> של המינהל. הנקודות הבאות <strong>לא אומתו</strong> — יש לאמת אותן מול חוזר המנכ״ל, מול אגף בכיר בחינות ומול הפיקוח, לפני מסירה להורים או לתלמידים.</p>
-
-  <div class="callout amber rv">
-    <span class="ttl">רשימת האימות</span>
-    <ul class="ed tight" style="margin-bottom:0">
-      <li><strong>סף הזכאות המצרפי.</strong> מספר היחידות המצטבר הנדרש לתעודת בגרות, מספר המקצועות המוגברים וציון העובר — אינם מופיעים בחוברת השאלונים. מהו הסף המחייב בתשפ״ז, ובאיזה מסמך הוא מעוגן?</li>
-      <li><strong>תעודת מקצוע לבוגרי מסלולי הזכאות.</strong> האם בוגר.ת מסלול 45/46/47 מקבל.ת גם תעודת מקצוע וסיווג מקצועי של משרד העבודה — ומכוח מה, אם ההיבחנות המקצועית נעשית בשאלוני משרד החינוך?</li>
-      <li><strong>מעמד ״דרישת המינימום לחינוך הטכנולוגי״ (90 שעות).</strong> מה מקבל תלמיד שדווח ברובד הזה? האם זו יחידת בגרות, רכיב פנימי בלבד, או תנאי סף למגמה? ומדוע הרובד קיים רק בעברית, באנגלית ובמתמטיקה?</li>
-      <li><strong>עדכניות החוברת.</strong> המהדורה שברשותנו היא מ־26.10.2020. ייתכנו סמלים חדשים, סמלים שבוטלו ומשקלים שעודכנו מאז — למשל, בחוברת עצמה כבר מסומנים שאלונים כ״מבוטל, הוחלף״ (<span class="cd">022-281</span> ← <span class="cd">022-261</span>). כל סמל שאינו מופיע בה — אין להסיק ממנו דבר.</li>
-      <li><strong>פער שאותר בחוברת · ספרות.</strong> ההרכב <span class="cd">008-550</span> (״ספרות הגבר 5 יח״ל מתווה חדש״) רשום בחוברת בהיקף <strong>2</strong>, בעוד כל שאר ההרכבים בסמל <span class="cd">xxx-550</span> — תנ״ך, היסטוריה, אזרחות, מחשבת ישראל ואחרים — רשומים בהיקף 5, וגם שורות המשנה של אותו הרכב עצמו נושאות ״/5״. נראה כשגיאת הקלדה במקור. <strong>יש לאמת מול אגף בכיר בחינות לפני שימוש.</strong></li>
-      <li><strong>העמודה האחרונה בקובץ הנתונים.</strong> בקובץ <span class="cd">data/sheelonim.json</span> העמודה האחרונה תוארה כ״יח״ל״, אך היא מכילה אך ורק את הערכים 10, 11 ו־12 — כלומר <strong>שכבת דיווח</strong>, לא יחידות לימוד. בעמוד זה היא פורשה כשכבה. יש לאשש את הפירוש מול מקור החוברת.</li>
-      <li><strong>מסלול 47 · מקצועות היהדות.</strong> באוגדן מופיעים ״תושב״ע יהדות״ ו״לימודי קודש״ בהיקפי שעות; בחוברת השאלונים ״לימודי קודש״ אינו מקצוע נבחן. מה מדווח בפועל, ובאילו סמלים?</li>
-      <li><strong>מעורבות חברתית וחינוך גופני.</strong> שניהם מדווחים כציון פנימי בהיקף שעות (180 ו־90) ואינם מופיעים כשורה בטבלת השעות של האוגדן למסלולי 45/46/47. כיצד הם מתוקצבים ומדווחים בבתי הספר של המינהל?</li>
-    </ul>
   </div>
-
-  <h2 class="sub-sec rv" id="sec-portalim">
-    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg>פורטלים חיצוניים · משרד החינוך
-    <small class="sub-sec-note">המקור הרשמי והמחייב</small>
-  </h2>
-  <p class="rv" style="font-size:var(--fs-sm);color:var(--text2);margin:0 0 16px;max-width:760px">הפורטל הרשמי של כל תחום דעת במרחב הפדגוגי של משרד החינוך — שם מתפרסמים המיקודים, ההנחיות ועדכוני מבנה ההיבחנות. כל הקישורים כאן נבדקו ופעילים, ונפתחים בלשונית חדשה.</p>
-
-  <div class="grid c3" style="gap:14px;padding-bottom:8px">
-    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל עברית · הבנה, הבעה ולשון</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/matmatika/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל המתמטיקה</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל האנגלית</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל ההיסטוריה</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d1" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל האזרחות</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">חטיבה עליונה · pop.education.gov.il <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d2" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל הספרות</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">ספרות ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל התנ״ך</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">תנ״ך ממלכתי · חטיבה עליונה <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d1" href="https://pop-charedi.education.gov.il/topics/literature/high-school/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">פורטל הספרות · המגזר החרדי</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">נוסח החינוך החרדי · pop-charedi <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv d2" href="https://campus.gov.il/course_subjects/education-matriculation/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">קמפוס IL · קטגוריית ״בגרות״</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">כל קורסי ההכנה לבגרות בקמפוס, בעמוד אחד <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    <a class="card rv" href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener" style="padding:18px 20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:3px">חוזרי מנכ״ל · משרד החינוך</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2)">הנוסח הרשמי והמחייב <span class="tag tea">פעיל</span></p>
-    <span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    </details>
   </div>
-
-  <h2 class="sub-sec rv" id="sec-reshet">
-    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v6M12 14.5v6M4.8 7.6l5.2 3M14 13.4l5.2 3M19.2 7.6l-5.2 3M10 13.4l-5.2 3"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="3.6" r="1.6"/><circle cx="12" cy="20.4" r="1.6"/><circle cx="4.3" cy="7.4" r="1.6"/><circle cx="19.7" cy="7.4" r="1.6"/><circle cx="4.3" cy="16.6" r="1.6"/><circle cx="19.7" cy="16.6" r="1.6"/></svg>חומרי למידה מהרשת
-    <small class="sub-sec-note">מערכי שיעור ותרגול נוספים, לפי תחום דעת</small>
-  </h2>
-  <p class="rv lead-p" style="font-size:var(--fs-sm);margin:0 0 4px">סקירת רשת שנעשתה לכל אחד משבעת תחומי הדעת, בחיפוש אחר מערכי שיעור, מאגרי תרגול וחומרי העשרה <strong>מעבר</strong> למה שכבר מרוכז באתר. כל קישור כאן נפתח ונבדק בפועל — הוא מוביל לחומר עצמו ולא לדף בית, והחומר פתוח בחינם וללא הרשמה. מקורות שדרשו תשלום, הרשמה או שהובילו לדף שגיאה — לא נכללו.</p>
-
-  <div class="callout amber rv">
-    <span class="ttl"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.2 3.6 19h16.8z"/><path d="M12 9.6v4.2M12 16.4v.1"/></svg>אלה מקורות חיצוניים</span>
-    הקישורים שבמדור זה מפנים לאתרים שאינם באחריות מינהל הכשרה מקצועית ואינם מתוחזקים על ידו — פורטלי משרד החינוך, מרכזי מורים ארציים ומאגרים ציבוריים. התוכן שבהם עשוי להשתנות או לרדת מהרשת בלי הודעה, והוא אינו מחליף את המיקוד וההנחיות הרשמיות של אגף בכיר בחינות. לפני שימוש בכיתה — ודאו התאמה לשאלון ולמיקוד של תשפ״ז.
-  </div>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 20V9.5L12 4l7.5 5.5V20z"/><path d="M9.5 20v-6h5v6"/></svg>אזרחות</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/" target="_blank" rel="noopener">חומרי הוראה ולמידה · אזרחות חטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה מתוקשבות, סרטונים ומערכי שיעור מסודרים לפי פרקי תוכנית הלימודים. למורה שמחפש חומר מוכן לשיעור בודד בלי לבנות מאפס.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/citizenship/citizenship-high-school/teaching-materials/citizenship-enrichment/" target="_blank" rel="noopener">העשרה באזרחות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרים, חומרי אקטואליה וחומרי דיון להעמקה מעבר לספר הלימוד. מתאים לקבוצות מוגברות ולשיעורי דיון בכיתות שמתקשות להתחבר לחומר היבש.</li>
-    <li><a class="lk" href="https://lo.cet.ac.il/player/?document=4c335c6d-1117-4cfa-b02a-379aacbb3e17&amp;language=he&amp;sitekey=citizenship" target="_blank" rel="noopener">ממשל פתוח · מקבץ מערכי שיעור (מט״ח)<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מקבץ מערכי שיעור מוכנים בנושא שקיפות שלטונית וממשל פתוח, פתוח וחינמי. חומר טוב לאשכול "המשטר בישראל".</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h9.5L19 9v10.5H5z"/><path d="M14.5 4.5V9H19"/><path d="M8 12.5h7M8 16h4.5"/></svg>עברית · הבנה, הבעה ולשון</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/bhinot-bagrut-umesimot/" target="_blank" rel="noopener">בחינות בגרות ומשימות · עברית לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — שאלוני בגרות לדוגמה ומשימות הערכה בהבנה, בהבעה ובלשון. זה הבסיס לתרגול מבחן, לצד מאגר התרגולים שנבנה כאן באתר.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/lashon/" target="_blank" rel="noopener">נושאים ומיומנויות · לשון<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — פירוק פרקי הלשון לנושאים, עם חומרי הוראה לכל נושא בנפרד. שימושי לבניית תוכנית עבודה שנתית ולחלוקת החומר בין מורים.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/noseem_nilmadim/havana-vehabaa/" target="_blank" rel="noopener">הבנה והבעה · נושאים ומיומנויות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי הוראה לכתיבת טיעון, לסיכום ולמיזוג טקסטים — בדיוק המיומנויות שנופלות בבחינה.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/ivrit_havana_habaa_lashon/chativa-elyona/pedagogya-ivrit-hata/kehila-morim-ivrit/" target="_blank" rel="noopener">קהילת המורים לעברית ברשת<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרחב שיתוף של מורי העברית בחטיבה העליונה, עם חומרים שמורים מעלים ופורום מקצועי. למורה בודד.ת בבית ספר קטן, זו הדרך להיות בקבוצה.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3.5" width="15" height="17" rx="2.5"/><path d="M8 8h8M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/></svg>מתמטיקה</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2015-05-31-10-59-23/2015-05-31-11-12-42" target="_blank" rel="noopener">המרכז הארצי למורים למתמטיקה · לומדים בחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מרכז המורים הארצי שבאוניברסיטת חיפה: חומרי למידה, יישומונים דינמיים ופעילויות לכל רמות ההיבחנות, 3–5 יח״ל. מרכז מורים ארצי — לא אתר מסחרי.</li>
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/component/content/category/315-2015-12-30-13-37-15" target="_blank" rel="noopener">אתרים להכנה לבגרות · מרכז המורים הארצי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של אתרי תרגול והכנה לבגרות במתמטיקה, שנבחרו על ידי מרכז המורים. חוסך את הסינון העצמאי בגוגל.</li>
-    <li><a class="lk" href="https://newhighmath.haifa.ac.il/index.php/2-uncategorised/3095-035482-4" target="_blank" rel="noopener">שאלות לקראת בגרות · שאלון 035482<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר שאלות תרגול ממוקד לשאלון 4 יח״ל, מוכן להעברה בכיתה או לתרגול עצמי.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/></svg>אנגלית</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/bagrut-archives/" target="_blank" rel="noopener">Bagrut Exams · ארכיון שאלוני הבגרות באנגלית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — ארכיון השאלונים מכל המודולים ומכל המועדים, במקור הרשמי של הפיקוח על הוראת האנגלית.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/dig-into-digital/" target="_blank" rel="noopener">Dig into Digital<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות תוכן דיגיטליות באנגלית להוראה ולתרגול מיומנויות. מתאים במיוחד לכיתות שעובדות עם מחשב או טאבלט.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/english/chativa-elyona/bagrut-exam/teachers-resource-materials/" target="_blank" rel="noopener">Module E Vocabulary · חומרי עזר למורה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימות אוצר המילים הנדרש למודול E וחומרי עזר נלווים. כלי עבודה יומיומי למורה שמלמד.ת 5 יח״ל.</li>
-    <li><a class="lk" href="https://sites.google.com/view/englishfromhome/home" target="_blank" rel="noopener">English from Home<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — אתר משאבים חינמי מבית הפיקוח על הוראת האנגלית: פעילויות ותרגול לכל הרמות, מסודרים לפי מיומנות. שימושי גם ללמידה מרחוק ולהשלמות.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.3l3.4 2.1"/></svg>היסטוריה</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · היסטוריה ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — יחידות הוראה ומערכי שיעור לפי פרקי תוכנית הלימודים, במקור הרשמי.</li>
-    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials.html" target="_blank" rel="noopener">יד ושם · חומרים חינוכיים בנושא השואה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר מערכי שיעור, עדויות, סביבות למידה וחומרי מולטימדיה. פתוח בחינם וללא הרשמה, ומהמקורות האיכותיים ביותר להוראת הפרק הזה.</li>
-    <li><a class="lk" href="https://www.yadvashem.org/he/education/educational-materials/learning-environment/lesson-class.html" target="_blank" rel="noopener">יד ושם · מערכי שיעור לפי שכבות גיל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מערכים מוכנים ליום הזיכרון, מסודרים לפי שכבה — כולל הצעות ייעודיות לחטיבה העליונה עם דיון במליאה ועבודה בקבוצות.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/historya-hemed/chativa-elyona/pedagogia-historia-hemed/tools-sites-databases/" target="_blank" rel="noopener">ספרים, אתרים ומאגרי מידע · היסטוריה חמ״ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי מקורות היסטוריים ואתרי מחקר. נבנתה לחמ״ד, אך רוב המאגרים שבה רלוונטיים לכל מורה להיסטוריה.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>ספרות</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/noseem_nilmadim/" target="_blank" rel="noopener">חומרי הוראה ולמידה · ספרות ממלכתי לחטיבה עליונה<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאמרי ניתוח והצעות למערכי שיעור על יצירות המיקוד, מסודרים לפי יצירה ולפי יוצר.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/skills/" target="_blank" rel="noopener">מיומנויות · ספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרים לפיתוח מיומנויות הפרשנות והכתיבה הנדרשות בבחינה, ולא רק ידע על היצירות עצמן.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/safrut/chativa-elyona/pedagogia-safrut2/flexible-program-literture/" target="_blank" rel="noopener">תוכנית הבגרויות הגמישה בספרות ממלכתי<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — המסמך המלא של התוכנית הגמישה, שמשנה את מבנה ההיבחנות. חובה לקרוא לפני בניית תוכנית עבודה בכיתה י׳.</li>
-    <li><a class="lk" href="https://benyehuda.org/authors" target="_blank" rel="noopener">פרויקט בן־יהודה · רשימת היוצרים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסטים המלאים של קלאסיקות הספרות העברית לפי יוצר, בחינם, ללא הרשמה וללא מגבלת זכויות יוצרים. מאפשר לחלק לתלמידים את היצירה עצמה בלי לצלם מספר.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H18a1 1 0 0 1 1 1v13.5H6.5A1.5 1.5 0 0 0 5 20z"/><path d="M9 8.5h6M9 11.8h4"/></svg>תנ״ך</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/tanach_mamlachti/chativa-elyona/noseem_nilmadim/hitmazut_tanach/" target="_blank" rel="noopener">העשרה · ההתמצאות בתנ״ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — חומרי העשרה לפיתוח מיומנות ההתמצאות במקרא, שהיא תנאי מקדים לכל שאר הלמידה בתחום.</li>
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/bible-hemed/high-school/pedagogy/teacher-enrichment-materials-databases/" target="_blank" rel="noopener">חומרי העשרה ומאגרי מידע למורה · תנ״ך חמ״ד<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — רשימה מוערת של מאגרי פרשנות, מקורות וכלי עזר. נבנתה לחמ״ד, ורוב הכלים שבה משמשים גם בהוראה הממלכתית.</li>
-    <li><a class="lk" href="https://www.mikranet.org.il/teachers/" target="_blank" rel="noopener">מקראנט · אזור המורים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — סרטוני מיומנויות, הצעות הוראה וקהילת מורים בתנ״ך. חינמי, ומיועד ישירות למורה ולא לתלמיד.</li>
-    <li><a class="lk" href="https://www.sefaria.org.il/texts/Tanakh" target="_blank" rel="noopener">ספריא · ספריית התנ״ך<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — הטקסט המלא עם פרשנים מקושרים ברמת הפסוק, בעברית. חינם, בלי פרסומות ובלי הרשמה — ואפשר לבנות ממנו דף מקורות לכיתה.</li>
-  </ul>
-
-  <h3 class="mini rv"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12.5" rx="2"/><path d="M3.5 10h17M8 6V3.8M16 6V3.8"/></svg>חוצה תחומים</h3>
-  <ul class="ed tight rv">
-    <li><a class="lk" href="https://pop.education.gov.il/tchumey_daat/teaching-units-stock/" target="_blank" rel="noopener">מאגר יחידות הוראה מתוקשבות<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> — מאגר רוחבי של יחידות הוראה מוכנות בכל תחומי הדעת, שאפשר לסנן לפי מקצוע ולפי שכבה. נקודת פתיחה טובה כשלא יודעים מאיפה להתחיל.</li>
-  </ul>
-
-  <div class="callout rv">
-    <span class="ttl"><svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>מה נבדק ולא נכלל — בשקיפות</span>
-    <ul class="ed tight" style="margin:8px 0 0">
-      <li><strong>מרכזי מורים ארציים.</strong> חיפשנו מרכז מורים ארצי פעיל לכל אחד משבעת התחומים. נמצא ואומת מרכז אחד בלבד עם חומרים פתוחים ברשת — <strong>מרכז המורים הארצי למתמטיקה</strong> שבאוניברסיטת חיפה. ליתר התחומים, מה שמתפקד בפועל כמרכז המורים הוא שולחן המפמ״ר ופורטל המרחב הפדגוגי.</li>
-      <li><strong>שולחנות המפמ״ר.</strong> קיימים אתרי מפמ״ר נפרדים למתמטיקה, לאנגלית ולספרות ממלכתי, וכולם חיים ופעילים. הם לא קושרו כאן משום שהם דפי נחיתה שכל תפקידם להפנות הלאה — וכלל העבודה במדור הזה הוא לקשר לחומר עצמו ולא לדף בית. לספרות קושרה במקומם תוכנית הבגרויות הגמישה, שהיא המסמך המהותי שמתפרסם שם.</li>
-      <li><strong>ETNI · רשת מורי האנגלית בישראל.</strong> נבדק ונפסל — האתר אינו מגיב ואינו עולה. לא קושר.</li>
-      <li><strong>האקדמיה ללשון העברית.</strong> נבדק ונפסל לצורך הקישור כאן — האתר חוסם גישה אוטומטית ולא ניתן היה לאמת את דפי החומרים. הוא עשוי לעבוד בדפדפן רגיל, אך לא קישרנו למה שלא הצלחנו לאמת.</li>
-      <li><strong>מאגרי תרגול מסחריים.</strong> אתרי ההכנה לבגרות המוכרים דורשים תשלום או הרשמה, ולכן אינם מופיעים כאן. הקישור היחיד אליהם הוא דרך הרשימה המוערת של מרכז המורים הארצי למתמטיקה, שם הם מסומנים ככאלה.</li>
-      <li><strong>כפילויות.</strong> מקורות שכבר מקושרים במדור ״פורטלים חיצוניים״ שלמעלה, או בעמודי <a class="lk" href="klim-maagarim.html">מאגרים וכלים</a> ו<a class="lk" href="klim-tchumey-daat.html">כלים לפי תחום דעת</a> — לא שוכפלו לכאן.</li>
-    </ul>
-  </div>
-
-  <section class="sktbx flush rv" data-subject="all" data-strack="bgr" data-official="off" data-sec-id="sec-argaz-klim"></section>
-
-  <h2 class="sub-sec rv" id="sec-moadim">
-    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3.5v3M16 3.5v3"/></svg>מועדים ומעברים
-    <small class="sub-sec-note">מתי נבחנים, ולאן ממשיכים</small>
-  </h2>
-
-  <div class="grid c3" style="gap:14px;padding-bottom:8px">
-    <a class="card rv" href="luach-mivchanim.html" style="padding:20px">
-      <h3 style="font-size:var(--fs-base)">לוח מבחנים · בגרויות וגמר</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">מועדי הבגרויות תשפ״ז — כל תחומי הדעת</p>
-    </a>
-    <a class="card rv d1" href="subjects.html" style="padding:20px">
-      <h3 style="font-size:var(--fs-base)">כל תחומי הדעת ←</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">שבעת מקצועות הליבה, בלי סינון לנתיב</p>
-    </a>
-    <a class="card rv d2" href="gmar.html?track=gmr" style="padding:20px">
-      <h3 style="font-size:var(--fs-base)">נתיב הגמר ←</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">תוכניות הלימודים, מטלות הגמר ומסעות הלמידה</p>
-    </a>
-  </div>
-
-</div>
-
 </main>
 
 <!-- foot:start tagline="עודכן 25.8.2026" -->
@@ -814,12 +857,72 @@ table.doc tr:nth-child(even) td:not(.k){background:var(--soft-bg)}
 <!-- foot:end -->
 
 <script src="subject-tools.js"></script>
-<script src="site.js"></script>
+<script src="site.js" defer></script>
 <script src="search.js" defer></script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>
 <script src="/pagenav.js" defer></script>
 <script src="/toolbelt.js" defer></script>
+<script>
+/* ===== כרטיסיות תחומי הדעת במדור "חומרי למידה מהרשת" ===== */
+(function subjectTabs(){
+  var bar=document.querySelector('.sbjtabs'); if(!bar) return;
+  var tabs=[].slice.call(bar.querySelectorAll('.sbjtab'));
+
+  function show(id,scroll){
+    tabs.forEach(function(t){
+      var on=(t.dataset.sp===id);
+      t.setAttribute('aria-selected',on?'true':'false');
+      t.tabIndex=on?0:-1;
+      t.classList.toggle('on',on);
+    });
+    document.querySelectorAll('.sbjpanel').forEach(function(pn){
+      var on=(pn.id===id);
+      pn.hidden=!on;
+      pn.classList.toggle('on',on);
+      /* אלמנטים מוסתרים לא נחשפים בגלילה — משחררים אותם */
+      if(on) pn.querySelectorAll('.sr').forEach(function(el){ el.classList.add('in'); });
+    });
+    if(scroll){
+      var navh=(document.querySelector('.nav')||{}).offsetHeight||64;
+      var top=bar.getBoundingClientRect().top+window.scrollY-navh-14;
+      if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
+    }
+  }
+
+  bar.addEventListener('click',function(e){
+    var b=e.target.closest('.sbjtab'); if(!b) return;
+    show(b.dataset.sp,true);
+  });
+
+  /* ניווט מקלדת בין הכרטיסיות — חיצים, Home ו-End (RTL: ימין = הקודם) */
+  bar.addEventListener('keydown',function(e){
+    var i=tabs.indexOf(document.activeElement); if(i<0) return;
+    var n=null;
+    if(e.key==='ArrowLeft')      n=(i+1)%tabs.length;
+    else if(e.key==='ArrowRight')n=(i-1+tabs.length)%tabs.length;
+    else if(e.key==='Home')      n=0;
+    else if(e.key==='End')       n=tabs.length-1;
+    if(n===null) return;
+    e.preventDefault(); tabs[n].focus(); show(tabs[n].dataset.sp,false);
+  });
+
+  /* קישור ישיר לתחום דעת: bagrut.html#sbjp-matematika */
+  function fromHash(){
+    var id=location.hash.slice(1);
+    if(id && document.getElementById(id) && /^sbjp-/.test(id)) show(id,true);
+  }
+  fromHash(); window.addEventListener('hashchange',fromHash);
+
+  /* החיפוש הפנימי מגיע ללינק שמוסתר בכרטיסייה סגורה — פותחים אותה */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href^="#"]'); if(!a) return;
+    var t=document.getElementById(a.getAttribute('href').slice(1));
+    var pn=t&&t.closest?t.closest('.sbjpanel'):null;
+    if(pn&&pn.hidden) show(pn.id,false);
+  });
+})();
+</script>
 </body>
 </html>

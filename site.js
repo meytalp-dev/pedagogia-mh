@@ -309,7 +309,10 @@ document.addEventListener('animationend',e=>{
   const holder=document.querySelector('.govbar .left');
   if(holder){
     const sw=document.createElement('span');
-    sw.className='langsw';
+    /* notranslate: בלי זה גוגל מתרגם גם את המתג עצמו, ו"עברית" הופך ל"العبرية"
+       — כלומר שני הכפתורים נראים ערבית ואי אפשר למצוא את הדרך חזרה. */
+    sw.className='langsw notranslate';
+    sw.setAttribute('translate','no');
     sw.setAttribute('role','group');
     sw.setAttribute('aria-label','שפת התצוגה');
     /* aria-pressed מספר לקורא המסך איזו שפה פעילה עכשיו — הצבע/המשקל לבדם לא נגישים */
@@ -425,6 +428,175 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
       curLabel + ' ←</a>';
     document.body.insertBefore(bar, document.body.firstChild);
   }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();
+
+/* ===== שורת נתוני העמוד — זמן קריאה ומספר מדורים =====
+   עמוד ארוך באתר הזה נפתח בלי שום רמז לאורכו: קורא שנוחת על מערכי
+   כיתה י״א נכנס למסמך של שעה בלי לדעת. השורה הזו נותנת לו להחליט
+   מראש אם להיכנס עכשיו או לשמור למועד אחר.
+
+   מוצגת רק מעל ארבע דקות קריאה — מתחת לזה היא רעש.
+   אין תאריך עדכון: לעמודים אין מטא־דאטה כזה, ולא ממציאים אחד. */
+(function () {
+  var WPM = 200;              /* קצב קריאה בעברית */
+  var MIN_MINUTES = 4;        /* מתחת לזה לא מציגים */
+
+  function build() {
+    var main = document.querySelector('main');
+    if (!main || main.querySelector('.readmeta')) return;
+
+    var h1 = main.querySelector('h1');
+    if (!h1) return;
+
+    /* ספירת מילים על עותק מנוקה — בלי ניווט, תוכן עניינים וסקריפטים */
+    var clone = main.cloneNode(true);
+    [].forEach.call(
+      /* גם תוכן מקופל: הוא לא חלק מההתחייבות שהקורא לוקח על עצמו
+         בכניסה לעמוד — הוא נפתח לפי בחירה. */
+      clone.querySelectorAll('script,style,nav,.toc,.pn,.pnd,.secnav,.pagerow,.readmeta,details:not([open])>.inner'),
+      function (el) { el.parentNode && el.parentNode.removeChild(el); }
+    );
+    var words = (clone.textContent || '').trim().split(/\s+/).filter(Boolean).length;
+    var minutes = Math.ceil(words / WPM);
+    if (minutes < MIN_MINUTES) return;
+
+    /* מדורים: h2.sub-sec הוא הדפוס באתר; אם אין — כל h2 שאינו בתוך תוכן עניינים */
+    var secs = main.querySelectorAll('h2.sub-sec').length;
+    if (!secs) {
+      secs = [].filter.call(main.querySelectorAll('h2'), function (h) {
+        return !h.closest('.toc,.pn,.pnd');
+      }).length;
+    }
+
+    var ic = 'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" ' +
+             'stroke-linejoin="round" aria-hidden="true"';
+    var html =
+      '<span class="rm-i"><svg viewBox="0 0 24 24" ' + ic + '>' +
+      '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></svg>' +
+      minutes + ' דקות קריאה</span>';
+    if (secs > 1) {
+      html +=
+        '<span class="rm-i"><svg viewBox="0 0 24 24" ' + ic + '>' +
+        '<path d="M4 6h16M4 12h16M4 18h10"/></svg>' +
+        secs + ' מדורים</span>';
+    }
+
+    var box = document.createElement('div');
+    box.className = 'readmeta';
+    box.innerHTML = html;
+
+    /* אחרי פסקת הפתיח אם יש אחת צמודה, אחרת מיד אחרי הכותרת */
+    var after = h1;
+    var sib = h1.nextElementSibling;
+    while (sib && /^(P|DIV)$/.test(sib.tagName) &&
+           /\b(lead|subtitle)\b/.test(sib.className || '')) {
+      after = sib;
+      sib = sib.nextElementSibling;
+    }
+    after.parentNode.insertBefore(box, after.nextSibling);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+  else build();
+})();
+
+/* ===== ניווט אל תוך מדור מקופל =====
+   כשעוטפים תוכן ב-<details>, כל קישור עוגן שמצביע פנימה — מפס הניווט,
+   מתוכן עניינים או מכתובת עם #hash — מוביל ליעד שאינו מוצג, והדפדפן
+   פשוט לא זז. כאן פותחים כל <details> שעוטף את היעד לפני הגלילה. */
+(function () {
+  function reveal(el) {
+    if (!el) return false;
+    var opened = false, d = el.closest ? el.closest('details') : null;
+    while (d) {
+      if (!d.open) { d.open = true; opened = true; }
+      d = d.parentNode && d.parentNode.closest ? d.parentNode.closest('details') : null;
+    }
+    return opened;
+  }
+
+  function byHash(hash) {
+    if (!hash || hash.length < 2) return null;
+    var id = decodeURIComponent(hash.slice(1));
+    try { return document.getElementById(id); } catch (e) { return null; }
+  }
+
+  /* לחיצה על קישור עוגן פנימי */
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href*="#"]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var hash = href.charAt(0) === '#' ? href : (href.split('#')[1] ? '#' + href.split('#')[1] : '');
+    if (!hash) return;
+    /* קישור לעמוד אחר — לא נוגעים */
+    if (href.charAt(0) !== '#' && href.split('#')[0] &&
+        href.split('#')[0] !== location.pathname.split('/').pop()) return;
+    var t = byHash(hash);
+    if (t && reveal(t)) {
+      /* נפתח משהו — גוללים בעצמנו, כי הדפדפן כבר חישב מיקום שגוי */
+      e.preventDefault();
+      history.replaceState(null, '', hash);
+      requestAnimationFrame(function () { t.scrollIntoView({ block: 'start' }); });
+    }
+  }, true);
+
+  /* נחיתה ישירה עם #hash, ושינוי hash אחר כך */
+  function onHash() {
+    var t = byHash(location.hash);
+    if (t && reveal(t)) requestAnimationFrame(function () { t.scrollIntoView({ block: 'start' }); });
+  }
+  window.addEventListener('hashchange', onHash);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onHash);
+  else onHash();
+})();
+
+
+/* ===== סימון קישורים לעמודים נעולים =====
+   באתר 22 קישורים מתוך עמודים ציבוריים שמובילים ישר למסך התחברות —
+   בלי שום סימון מוקדם. מנהל שלוחץ בדף הבית על "להיערך לוועדה מלווה"
+   מקבל קיר, בלי הסבר ובלי לדעת למי לפנות. כאן מוסיפים מנעול קטן
+   וכיתוב, כדי שההחלטה תתקבל לפני הלחיצה ולא אחריה.
+
+   הרשימה נגזרת מהעמודים שטוענים auth.js. אם נוסף עמוד נעול —
+   להוסיף את שמו כאן. */
+(function () {
+  var LOCKED = ['bikur-mefakeach','doch-pedagogi','drive-menahalim','kvutzot-hadracha','madrich-pedagogi','matzevet-list','menahalim','pikuah-shnati','prisat-pikuah','sikum-matzevet','supervision','tafkid-mefakeach','tizkorot','vaada-mefakeach','vaada-melava','work-plans-app'];
+
+  function build() {
+    /* בתוך עמוד נעול המשתמש כבר מזוהה — אין מה לסמן */
+    if (document.querySelector('script[src*="auth.js"]')) return;
+    var main = document.querySelector('main');
+    if (!main) return;
+
+    [].forEach.call(main.querySelectorAll('a[href]'), function (a) {
+      if (a.querySelector('.lockmark')) return;
+      var href = a.getAttribute('href') || '';
+      if (/^(https?:|mailto:|tel:|#)/.test(href)) return;
+      var page = href.split('#')[0].split('?')[0].split('/').pop().replace(/\.html$/, '');
+      if (LOCKED.indexOf(page) < 0) return;
+
+      var s = document.createElement('span');
+      s.className = 'lockmark';
+      s.setAttribute('aria-hidden', 'true');
+      s.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+        'stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/>' +
+        '<path d="M8 10.5V7.2a4 4 0 0 1 8 0v3.3"/></svg>';
+      a.appendChild(s);
+
+      var sr = document.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = ' (דורש כניסה אישית)';
+      a.appendChild(sr);
+
+      var t = a.getAttribute('title');
+      a.setAttribute('title', (t ? t + ' · ' : '') + 'דורש כניסה אישית');
+    });
+  }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
   else build();
 })();

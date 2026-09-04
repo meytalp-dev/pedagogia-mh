@@ -2,7 +2,7 @@
 :root{
   --navy:#0D3B66; --navy-800:#124D7A;
   /* צבע ההדגשה בפועל — היה מפוזר ב-207 מקומות כקבוע */
-  --accent:#0B7FA6;
+  --accent:#0A7799;
   /* סולם טיפוגרפי — באתר היו 55 גדלי גופן שונים, ובהם שבעה
      כמעט זהים לאותו תפקיד (.82 / .84 / .85 / .86 / .87 / .88 / .9). */
   --fs-2xs:.74rem;
@@ -170,7 +170,7 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .govbar .gov-mid .lnk.active{border-bottom-color:var(--navy)}
 .govbar .gov-mid .caret{font-size:.6rem;color:var(--muted);margin-inline-start:4px}
 .govbar .gov-mid .sub{top:calc(100% + 7px);font-size:var(--fs-base)}
-@media(max-width:1180px){.govbar .gov-mid{gap:12px}.govbar span:nth-of-type(2),.govbar .sep{display:none}}
+@media(max-width:1180px){.govbar .gov-mid{gap:12px}.govbar span:nth-of-type(2):not(.langsw),.govbar .sep{display:none}}
 .langsw{display:inline-flex;align-items:center;gap:8px}
 .langsw .lsep{color:var(--border-strong)}
 .langsw button{background:none;border:0;padding:0;font:inherit;color:var(--text2);cursor:pointer;opacity:.75}
@@ -749,3 +749,48 @@ html[data-tk="bgr"] .trackpair{grid-template-columns:1fr}
 .agenda .ev .cal-add{margin-inline-start:auto}
 .exb .cal-add{margin-top:6px}
 @media print{.cal-add,.cal-bar{display:none!important}}
+
+/* ===== שכבות: הכפתורים הצפים יורדים כשנפתח חלון מלא =====
+   ווידג'ט עוגן יושב על z-index 99990 וכפתור המשוב על 9000, מול תיבת
+   החיפוש והמודלים שעל 400. בנייד החיפוש הוא מסך מלא — והעיגול של עוגן
+   ישב מעל רשימת התוצאות. המחלקות על ה-body כבר קיימות; רק תולים בהן
+   הסתרה. הסלקטורים ספציפיים יותר משל הווידג'ט (0,2,1 מול 0,1,0) ולכן
+   גוברים עליו גם כשה-style שלו מוזרק אחרי הגיליון הזה. */
+body.sbox-open .ogenw-launcher,
+body.sbox-open .ogenw-launcher-label,
+body.sbox-open .fb-btn,
+body.menu-open .ogenw-launcher,
+body.menu-open .ogenw-launcher-label,
+body.menu-open .fb-btn,
+body.pnd-open .ogenw-launcher,
+body.pnd-open .ogenw-launcher-label,
+body.pnd-open .fb-btn{
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .16s var(--ease),visibility 0s linear .16s
+}
+/* מודל הגדרת התפקיד — בכלל נפרד, כי סלקטור :has() לא נתמך בכל דפדפן
+   ואילו היה ברשימה למעלה הוא היה מבטל את כל הכלל. */
+body:has(.rmodal.on) .ogenw-launcher,
+body:has(.rmodal.on) .ogenw-launcher-label,
+body:has(.rmodal.on) .fb-btn{
+  opacity:0;visibility:hidden;pointer-events:none
+}
+
+/* ===== שורת נתוני העמוד — זמן קריאה ומספר מדורים =====
+   נבנית ב-site.js רק לעמודים מעל 4 דקות קריאה. */
+.readmeta{display:flex;flex-wrap:wrap;gap:8px 16px;margin:14px 0 4px;
+  font-size:var(--fs-sm);font-weight:600;color:var(--text2)}
+.readmeta .rm-i{display:inline-flex;align-items:center;gap:6px}
+.readmeta svg{width:15px;height:15px;flex:none;color:var(--accent)}
+@media print{.readmeta{display:none}}
+
+/* הצהרת מעמד מסמך — שורה דקה, לא כרטיס */
+.draft-note{font-size:var(--fs-xs);color:var(--muted);border-inline-start:3px solid var(--border-strong);padding-inline-start:10px}
+
+/* מנעול על קישור לעמוד שדורש כניסה אישית — נוסף אוטומטית ב-site.js */
+.lockmark{display:inline-flex;align-items:center;vertical-align:-2px;
+  margin-inline-start:6px;color:var(--muted);flex:none}
+.lockmark svg{width:13px;height:13px}
+a:hover .lockmark,.card:hover .lockmark{color:var(--accent)}
+h3 .lockmark svg,h2 .lockmark svg{width:15px;height:15px}
+@media print{.lockmark{display:none}}
