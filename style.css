@@ -170,7 +170,11 @@ a.mokad:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .govbar .gov-mid .lnk.active{border-bottom-color:var(--navy)}
 .govbar .gov-mid .caret{font-size:.6rem;color:var(--muted);margin-inline-start:4px}
 .govbar .gov-mid .sub{top:calc(100% + 7px);font-size:var(--fs-base)}
-@media(max-width:1180px){.govbar .gov-mid{gap:12px}.govbar span:nth-of-type(2):not(.langsw),.govbar .sep{display:none}}
+/* מתחת ל-1180 יורד הכיתוב "מינהל הכשרה מקצועית" והמפריד שלפניו.
+   הבורר היה `.govbar span:nth-of-type(2)` — צאצא, ולא בן ישיר — ולכן
+   הפיל גם את הפריט השני בתוך .gov-mid, כלומר את כל תפריט "מרחב מנהלים".
+   מאז שמנהלים חדשים יושב שם זה כבר לא ניואנס. `>` מחזיר את הכוונה. */
+@media(max-width:1180px){.govbar .gov-mid{gap:12px}.govbar>span:nth-of-type(2):not(.langsw),.govbar .sep{display:none}}
 .langsw{display:inline-flex;align-items:center;gap:8px}
 .langsw .lsep{color:var(--border-strong)}
 .langsw button{background:none;border:0;padding:0;font:inherit;color:var(--text2);cursor:pointer;opacity:.75}
@@ -405,19 +409,21 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offse
   .searchbtn{padding:7px 10px}
   .searchbtn span{display:none}
 }
-/* בין 1001 ל-1200 הפס נעלם עד כה לגמרי, והדרך היחידה לנווט הייתה המגירה —
+/* מתחת ל-1200 הפס נעלם עד כה לגמרי, והדרך היחידה לנווט הייתה המגירה —
    כלומר בכל טאבלט, בכל לפטופ עם זום 125% ובכל חצי מסך לא היה תפריט.
-   נמדד: שמונה הכניסות תופסות 704px, והמותג לבדו 249px. כאן יורד כיתוב
-   המותג בלבד (הסימן נשאר, ומעליו ה-govbar עם משרד העבודה) — וזה לבדו
-   מספיק כדי להחזיק את הפס עד 1000px, בלי לוותר על אף כניסה. */
-@media(min-width:1001px) and (max-width:1200px){
+   שני שינויים החזירו אותו: כיתוב המותג יורד ונשאר רק הסימן (מעליו
+   ה-govbar עם משרד העבודה), ומיטל הכריעה על צמצום מ-8 כניסות ל-5 —
+   מנהלים חדשים עבר לפס הממשלתי תחת מרחב מנהלים, והשתלמויות והגאנט
+   נכנסו לתפריט הנהלים. נמדד: חמש הכניסות מחזיקות שורה אחת עד 720px,
+   כלומר כל האייפדים לאורך, כולל המיני. */
+@media(min-width:721px) and (max-width:1200px){
   .nav{gap:8px 9px}
   .nav a.lnk{font-size:var(--fs-sm)}
   .nav .brand>span:not(.mark){display:none}
   .searchbtn{padding:7px 10px}
   .searchbtn span{display:none}
 }
-@media(max-width:1000px){
+@media(max-width:720px){
   .nav a.lnk,.nav .navitem{display:none}
   .nav{gap:10px}
   .nav .brand b{max-width:none}
