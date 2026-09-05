@@ -5,6 +5,10 @@
 //   2. קישורים פנימיים שבורים — href/src לקובץ שלא קיים ברפו.
 //   3. תג השנה: <meta name="pmh-year"> שאינו השנה הנוכחית, או עמוד תוכן בלי תג.
 //   4. שנה קודמת בכותרת/פתיח של עמוד שמתויג כשנה הנוכחית.
+//      חריג מוצהר: עמוד שנושא <meta name="pmh-year-source"> אומר שהשנה
+//      הישנה בפתיח היא שנת התוקף של המסמך שהוא מתאר, ולא שנת התוכן
+//      (למשל הנחיות "החל משנת תשפ״ו" שעדיין בתוקף). הוא אינו נספר
+//      כממצא אך מדווח בנפרד, כדי שההצהרה תישאר גלויה.
 //
 // הפלט: טבלת Markdown ל-$GITHUB_STEP_SUMMARY (מופיעה בעמוד הריצה באקשן)
 // וגם ל-stdout. לא מכשיל את הבנייה — זו התרעה לעורכת, לא שער.
@@ -24,6 +28,7 @@ const STALE_DAYS = 180;
 
 const files = readdirSync(ROOT).filter(f => f.endsWith('.html')).sort();
 const stale = [], broken = [], yearOff = [], noYear = [], oldInHead = [];
+const yearSource = [];   // שנת מקור מוצהרת — לא ממצא
 const now = Date.now();
 
 // קומיטים אוטומטיים של רענון תבנית/ידע לא נחשבים "עריכת תוכן" — אחרת כל עמוד
@@ -83,7 +88,11 @@ for (const f of files) {
     const head = [/<title>([\s\S]*?)<\/title>/, /<h1[^>]*>([\s\S]*?)<\/h1>/, /class="kicker"[^>]*>([\s\S]*?)<\//, /<p class="lead">([\s\S]*?)<\/p>/]
       .map(re => (src.match(re) || [, ''])[1]).join(' ');
     const hit = OLDER_YEARS.filter(y => text(head).includes(y));
-    if (hit.length && !text(head).includes(CURRENT_YEAR)) oldInHead.push({ f, y: hit.join(', ') });
+    if (hit.length && !text(head).includes(CURRENT_YEAR)) {
+      const declared = src.match(/<meta name="pmh-year-source" content="([^"]*)">/);
+      if (declared) yearSource.push({ f, y: hit.join(', '), why: text(declared[1]) });
+      else oldInHead.push({ f, y: hit.join(', ') });
+    }
   }
 }
 
@@ -106,6 +115,7 @@ if (broken.length) {
 }
 if (yearOff.length) md += `### מתויגים לשנה אחרת (ארכיון?)\n` + yearOff.map(y => `- ${y.f} — ${y.y}`).join('\n') + '\n\n';
 if (noYear.length) md += `### בלי תג שנה\n` + noYear.map(f => `- ${f}`).join('\n') + '\n\n';
+if (yearSource.length) md += `### שנת מקור מוצהרת (לא ממצא)\n` + yearSource.map(o => `- ${o.f} — ${o.y}: ${o.why}`).join('\n') + '\n\n';
 if (oldInHead.length) md += `### שנה קודמת בכותרת/פתיח\n` + oldInHead.map(o => `- ${o.f} — ${o.y}`).join('\n') + '\n\n';
 if (!stale.length && !broken.length && !yearOff.length && !noYear.length && !oldInHead.length) md += 'הכול עדכני.\n';
 
