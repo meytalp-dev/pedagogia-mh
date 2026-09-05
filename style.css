@@ -859,3 +859,13 @@ tr.dl-next td:first-child::after{
   vertical-align:1px
 }
 @media print{tr.dl-past td{opacity:1}}
+
+/* ===== פירור לחם =====
+   הרכיב היה מעוצב רק בתוך .pagehead — 24 עמודים. ב-5.9.26 קיבלו 120
+   עמודי מאמר פירור משלהם, בתוך ה-hero, במקום שבו ישבה תווית המדור:
+   אותו מידע בדיוק, רק שלם ולחיץ. שני המכלים נראים אותו דבר. */
+.crumb{font-size:var(--fs-sm);color:var(--muted);line-height:1.6}
+.crumb a{color:var(--accent);font-weight:600;text-decoration:none}
+.crumb a:hover{text-decoration:underline}
+.hero .crumb{display:block;margin-bottom:2px}
+@media print{.crumb a{color:#000}}
