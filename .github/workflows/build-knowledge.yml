@@ -6,7 +6,7 @@ name: build-knowledge
 on:
   push:
     branches: [main]
-    paths: ["**.html", "templates/**", "ogdan-data.js", "role-defs.js", "tools/build-nav.mjs", "tools/build-knowledge.mjs", "tools/build-search.mjs", "tools/build-sitemap.mjs"]
+    paths: ["**.html", "templates/**", "ogdan-data.js", "role-defs.js", "tools/build-nav.mjs", "tools/check-rules.mjs", "tools/build-knowledge.mjs", "tools/build-search.mjs", "tools/build-sitemap.mjs"]
   workflow_dispatch:
 
 # שני push רצופים יצרו שתי ריצות מקבילות — השנייה נכשלה ב-push כי הראשונה
@@ -43,6 +43,11 @@ jobs:
       - name: freshness report
         run: node tools/check-freshness.mjs
         continue-on-error: true
+      # שער איכות — חמישה כללים שכל אחד מהם מתאר מצב שכבר קרה באתר
+      # ותוקן. בניגוד לדוח ההתיישנות — זה כן מכשיל את הבנייה.
+      # רץ אחרי build-nav, כדי שכלל 1 ייבדק מול התפריט המעודכן.
+      - name: quality gate
+        run: node tools/check-rules.mjs
       - name: commit if changed
         run: |
           if ! git diff --quiet -- knowledge.json search-index.json sitemap.xml '*.html'; then
