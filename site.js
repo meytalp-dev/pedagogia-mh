@@ -450,12 +450,23 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
     var h1 = main.querySelector('h1');
     if (!h1) return;
 
+    /* מה שלא מוצג על המסך אינו זמן קריאה. בעמוד "למידה בחירום", למשל,
+       חמישה פאנלים יושבים זה על גב זה ורק אחד גלוי — והמונה ספר את
+       חמשתם. אותו דבר בכל מערכת כרטיסיות באתר. במקום לרדוף אחרי שמות
+       מחלקות, נשאלת כאן הפריסה עצמה: אלמנט בלי שום מלבן על המסך
+       מסומן לפני השכפול ויורד מהספירה. */
+    var unseen = [].filter.call(main.querySelectorAll('*'), function (el) {
+      return !el.getClientRects().length;
+    });
+    unseen.forEach(function (el) { el.setAttribute('data-rm-unseen', ''); });
+
     /* ספירת מילים על עותק מנוקה — בלי ניווט, תוכן עניינים וסקריפטים */
     var clone = main.cloneNode(true);
+    unseen.forEach(function (el) { el.removeAttribute('data-rm-unseen'); });
     [].forEach.call(
       /* גם תוכן מקופל: הוא לא חלק מההתחייבות שהקורא לוקח על עצמו
          בכניסה לעמוד — הוא נפתח לפי בחירה. */
-      clone.querySelectorAll('script,style,nav,.toc,.pn,.pnd,.secnav,.pagerow,.readmeta,details:not([open])>.inner'),
+      clone.querySelectorAll('script,style,nav,.toc,.pn,.pnd,.secnav,.pagerow,.readmeta,[data-rm-unseen],details:not([open])>.inner'),
       function (el) { el.parentNode && el.parentNode.removeChild(el); }
     );
     /* רשימת קישורים אינה קריאה. במאגר התרגולים, למשל, אלפי ה"מילים"
