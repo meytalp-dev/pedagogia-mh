@@ -91,6 +91,8 @@
   .skip button{background:0;border:0;color:var(--blue);font:inherit;font-weight:600;cursor:pointer;
     text-decoration:underline;padding:0}
 
+  input.txt.other{margin-top:9px;animation:in .25s}
+
   /* ---- הצצה חיה אחרי כל שאלה ---- */
   .peek{margin-top:14px;background:var(--blue-soft);border-radius:11px;padding:12px 14px;
     font-size:13.5px;color:var(--ink);display:none;animation:in .3s}
@@ -170,6 +172,7 @@
     <h2 class="q">מה הכלי הדיגיטלי שאת/ה הכי משתמש/ת בו בפועל?</h2>
     <p class="qh">לא מה שהיינו רוצים להשתמש — מה שבאמת פתוח אצלכם ביום־יום.</p>
     <div class="opts" id="o1"></div>
+    <input class="txt other" id="oth1" hidden placeholder="איזה כלי? כתבו כאן">
     <div class="peek" id="p1"></div>
     <div class="nav"><button class="btn ghost" data-back>הקודם</button>
       <button class="btn" data-next disabled>הבא</button></div>
@@ -180,6 +183,7 @@
     <h2 class="q">על מה הכי היית רוצה ללמוד השנה?</h2>
     <p class="qh">התשובה הזאת נכנסת ישירות לתוכנית ההשתלמות.</p>
     <div class="opts" id="o2"></div>
+    <input class="txt other" id="oth2" hidden placeholder="על מה הייתם רוצים ללמוד? כתבו כאן">
     <div class="peek" id="p2"></div>
     <div class="nav"><button class="btn ghost" data-back>הקודם</button>
       <button class="btn" data-next disabled>הבא</button></div>
@@ -225,12 +229,13 @@
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZnmzoFk4Q_Wbqw2EAD9noUVaPbCam7m7dpMd3XAbhxbQ_8i88a0-ywdnPIuC-7ch31A/exec';
 var SCHOOLS = ["אוהלי תמימים עתיד כפר חב\"ד", "אום אל פחם בנות", "אור העתיד", "אורט בית הערבה", "אורט כרמל חיפה", "אורט צור ברק", "אורט תל נוף", "אורט תעשייה אווירית", "אורמת", "אלאופוק א.א.פחם", "אלמנארה", "בית אל", "בת עמי", "דן גורמה תל-אביב", "דרור גליל", "דרור נווה מדבר", "המכון החסידי טכנולוגי", "התיכון החברתי מצפה רמון", "התיכון החברתי ת״א-יפו", "ח'טוואת ירכא אבו סנאן", "חושן", "טורען", "טכנולוגי אכסאל", "טכנולוגי לבנים /בית חנינה", "טל חרמון", "ימינו כקדם כפר זיתים", "כסרא סמיע", "לקייה", "מסאראת ואדי עארה", "מרכז תורני טכנולוגי נחלים", "עמל אנרגיטק", "עמל טכנולוגי טייבה", "עמל טכנולוגי רהט", "עמל נצרת", "עמל רמת דוד", "עתיד אור מנחם", "עתיד בית דוד", "עתיד גליל מערבי ירכא", "עתיד יוצר אבדאע ביר אל מכסור", "עתיד מגשימים כרמיאל", "עתיד מסעדה", "עתיד צור ים", "עתיד תפן", "רימונים טבריה", "שגב שלום", "תיכון אלאמאני סחנין 54100", "תיכון בקהילה מהאראת שפרעם 54106", "תיכון הדר", "תיכון חברתי חיפה", "תיכון יוצר עמל טכנולוגי", "תיכון יוצר עתיד באר-שבע", "תיכון יוצר עתיד בנות ג׳וליס", "תיכון יוצר עתיד פלמחים", "תיכון מעיינות", "תיכון עתיד יוצר עוצמ\"ה זוקו קריית ביאליק", "תיכון עתיד יוצר קמ\"ג", "תיכון שיח"];
 
+var OTHER = 'אחר';
 var Q1 = ['ChatGPT','Gemini (ג׳מיני)','Claude','Canva','Google Classroom','Padlet',
-          'Wordwall','NotebookLM','Microsoft 365 / Office','עוד לא נכנסתי לזה'];
+          'Wordwall','NotebookLM','Microsoft 365 / Office','עוד לא נכנסתי לזה', OTHER];
 var Q2 = ['בינה מלאכותית לבניית שיעורים','יצירת וידאו ותוכן דיגיטלי',
           'הערכה ומדידה דיגיטלית','אוטומציות לעבודה השוטפת',
           'איך מדריכים את צוות המורים','כלים לתלמידים עם פערים',
-          'סייבר ושימוש בטוח','בניית תוכנית עבודה לחדשנות'];
+          'סייבר ושימוש בטוח','בניית תוכנית עבודה לחדשנות', OTHER];
 var Q3 = ['תשובות מהירות כשאני נתקע/ת','רעיונות ותוצרים מוכנים לשימוש',
           'לראות מה קורה בבתי ספר אחרים','עדכונים מהמינהל',
           'שותפים לפרויקטים משותפים'];
@@ -260,7 +265,16 @@ fill($('o1'), Q1, false);
 fill($('o2'), Q2, false);
 fill($('o3'), Q3, true);
 
-function wire(elId, key, multi, maxSel){
+function wire(elId, key, multi, maxSel, othId){
+  var oth = othId ? $(othId) : null;
+
+  function settle(){
+    var done = multi ? A[key].length > 0 : !!A[key];
+    var nxt = document.querySelector('[data-s="' + step + '"] [data-next]');
+    if (nxt) nxt.disabled = !done;
+    if (done) showPeek(key); else $({ q1:'p1', q2:'p2', q3:'p3' }[key]).classList.remove('on');
+  }
+
   $(elId).addEventListener('click', function(e){
     var b = e.target.closest('.opt'); if (!b) return;
     var v = b.dataset.v;
@@ -272,17 +286,27 @@ function wire(elId, key, multi, maxSel){
         o.setAttribute('aria-pressed', A[key].indexOf(o.dataset.v) > -1 ? 'true' : 'false');
       });
     } else {
-      A[key] = v;
       [].forEach.call(this.querySelectorAll('.opt'), function(o){
         o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
       });
+      if (oth && v === OTHER){
+        // התשובה היא מה שיכתבו, לא המילה "אחר" — כך היא מצטברת עם השאר
+        oth.hidden = false;
+        A[key] = oth.value.trim();
+        oth.focus();
+      } else {
+        if (oth){ oth.hidden = true; oth.value = ''; }
+        A[key] = v;
+      }
     }
-    var done = multi ? A[key].length > 0 : !!A[key];
-    document.querySelector('[data-s="' + step + '"] [data-next]').disabled = !done;
-    if (done) showPeek(key);
+    settle();
   });
+
+  if (oth) oth.addEventListener('input', function(){ A[key] = oth.value.trim(); settle(); });
 }
-wire('o1', 'q1', false); wire('o2', 'q2', false); wire('o3', 'q3', true, 2);
+wire('o1', 'q1', false, 0, 'oth1');
+wire('o2', 'q2', false, 0, 'oth2');
+wire('o3', 'q3', true, 2);
 
 // ---- הצצה חיה: מה אחרים ענו ----
 function showPeek(key){
