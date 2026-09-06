@@ -124,10 +124,24 @@
   .brow.me .bl::after{content:"· אתם";font-size:11px;font-weight:700;margin-inline-start:5px;
     color:var(--blue)}
 
-  .quotes{display:grid;gap:10px}
-  .qc{background:var(--surface-2);border-radius:12px;padding:14px 16px;font-size:14.5px;
-    line-height:1.6;border-inline-start:3px solid var(--amber)}
-  .qc .who{font-size:12.5px;font-weight:700;color:var(--ink-2);margin-top:8px}
+  /* קיר האתגרים — עמודות טבעיות, כרטיס לא נשבר באמצע */
+  .wall{columns:2;column-gap:12px}
+  @media(max-width:620px){.wall{columns:1}}
+  .qc{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;
+    display:block;margin:0 0 12px;position:relative;
+    background:var(--surface-2);border-radius:14px;padding:30px 18px 16px;
+    font-size:14.5px;line-height:1.65;color:var(--ink)}
+  .qc::before{content:"”";position:absolute;inset-block-start:2px;inset-inline-start:14px;
+    font-size:52px;line-height:1;font-family:Georgia,"Times New Roman",serif;
+    color:var(--amber);opacity:.34}
+  /* שלושה גוונים מתחלפים — קיר, לא רשימה */
+  .qc:nth-child(3n+1){background:var(--amber-soft)}
+  .qc:nth-child(3n+2){background:var(--blue-soft)}
+  .qc:nth-child(3n+2)::before{color:var(--blue)}
+  .qc:nth-child(3n+3)::before{color:var(--ink-2);opacity:.28}
+  /* ציטוט קצר מקבל נפח — כך הקיר לא נראה אחיד ומשעמם */
+  .qc.short{font-size:18px;font-weight:600;line-height:1.5;padding-block:34px 20px}
+  .anon{font-size:12px;color:var(--muted);margin-top:10px;font-weight:600}
 
   .peers{font-size:13.5px;color:var(--ink-2);line-height:1.95;margin-top:4px}
   .peers span{background:var(--surface-2);border-radius:6px;padding:2px 9px;display:inline-block}
@@ -400,11 +414,12 @@ function loadResults(justSent){
     }
     if (d.challenges && d.challenges.length){
       h += '<div class="panel"><h3>האתגרים שלנו</h3>' +
-        '<p class="ph">במילים של הרכזים עצמם</p><div class="quotes">' +
+        '<p class="ph">במילים של הרכזים עצמם · ללא שמות</p><div class="wall">' +
         d.challenges.map(function(c){
-          return '<div class="qc">' + esc(c.text) +
-            '<div class="who">' + esc(c.name) + ' · ' + esc(c.school) + '</div></div>';
-        }).join('') + '</div></div>';
+          var t = String(c.text || '');
+          return '<div class="qc' + (t.length < 60 ? ' short' : '') + '">' + esc(t) + '</div>';
+        }).join('') + '</div>' +
+        '<p class="anon">מוצג בלי שם ובלי בית ספר — כדי שאפשר יהיה לכתוב בכנות.</p></div>';
     }
     box.innerHTML = h || '<div class="state">עוד אין מספיק תשובות. תחזרו עוד קצת.</div>';
     requestAnimationFrame(function(){
