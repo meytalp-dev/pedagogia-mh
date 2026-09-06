@@ -31,6 +31,8 @@ const SKIP = new Set([
   "bagmgr.html",
   "chipus.html",
   "work-plans-app.html",
+  "tikshuv-map.html",    // מפת הצרכים — עמוד לא-מקושר לקהילת רכזי התקשוב
+  "tikshuv-shealon.html",// השאלון של הקהילה — כלי, לא תוכן לחיפוש
   "matzpen.html",        // המצפן — כלי עבודה עצמאי, לא תוכן לחיפוש
   "matzpen-demo.html",   // הדגמה עם נתונים מומצאים — אסור שתופיע בחיפוש
   "mishov-menahalim.html",
