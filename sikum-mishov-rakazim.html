@@ -97,6 +97,18 @@ button.copy.done{border-color:#9fe0d3;background:#e9f9f5;color:#0c6d60}
 button.copy svg{width:17px;height:17px}
 .chip.out{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
 
+.sup{border-top:1px solid var(--line);padding:16px 0}
+.sup:first-child{border-top:0;padding-top:2px}
+.sup .sh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sup .sh b{font-family:'Rubik',sans-serif;font-size:17px;color:var(--navy);font-weight:600}
+.sup .sh .n{font-size:14.5px;color:var(--muted)}
+.sup .sh button{margin-inline-start:auto;font-family:inherit;font-size:14px;font-weight:600;
+  border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:10px;
+  padding:5px 13px;cursor:pointer}
+.sup .sh button:hover{border-color:#bcd8f2;background:#fbfcff}
+.sup .sh button.done{border-color:#9fe0d3;background:#e9f9f5;color:#0c6d60}
+.sup.clear .sh b{color:#0c6d60}
+
 .tbl{width:100%;border-collapse:collapse;font-size:15.5px}
 .tbl th,.tbl td{text-align:right;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 .tbl th{font-size:14px;color:var(--muted);font-weight:700;background:#fafbff;position:sticky;top:0;z-index:1}
@@ -218,6 +230,13 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     <div class="chips" id="missing"></div>
   </div>
 
+  <div class="card" id="bySupCard">
+    <h2>טרם השיבו — לפי מפקח.ת <span class="c" id="supCount"></span></h2>
+    <p class="sub">אותם בתי ספר, מסודרים לפי הפיקוח הפדגוגי בפריסת תשפ״ז —
+      כדי שאפשר יהיה לפנות לכל מפקח.ת עם הרשימה שלה בלבד.</p>
+    <div id="bySup"></div>
+  </div>
+
   <div class="card">
     <h2>מי כבר השיב <span class="c" id="covCount"></span></h2>
     <p class="sub">הצלבה מול 64 בתי הספר בפיקוח. ירוק = התקבל משוב מבית הספר.</p>
@@ -250,6 +269,8 @@ var PARTS = [
   {k:"site",    t:"האתר הפדגוגי",       s:"pedagogiamh.co.il"},
   {k:"matal",   t:"מערך תפקודי הלמידה", s:"המת״ליות ומודל העבודה"}
 ];
+var SUP = {"בית חנינה בנות":"ויסאם סואלחה","בית חנינה בנים":"ויסאם סואלחה","כפר עקב":"ויסאם סואלחה","סור באהר":"ויסאם סואלחה","עמל טייבה ב'":"ויסאם סואלחה","ערערה":"ויסאם סואלחה","אורט כרמל":"יסמין אמון","אכסאל":"יסמין אמון","אל אמאני סכנין":"יסמין אמון","אלחכמה כסרא-סמיע":"יסמין אמון","ג'וליס בנות":"יסמין אמון","טורען":"יסמין אמון","כפר יסיף":"יסמין אמון","נצרת":"יסמין אמון","עתיד גליל מערבי ירכא בנים":"יסמין אמון","עתיד טק ביר אל מכסור":"יסמין אמון","תיכון טכנולוגי אי טק סקול (מסעדה)":"יסמין אמון","תפן ליזמות":"יסמין אמון","עמל רהט":"יסמין אמון סיגלית דאי","אור דניאל":"יששכר חפץ","אור העתיד תורני מקצועי":"יששכר חפץ","בית דוד":"יששכר חפץ","הדר":"יששכר חפץ","הקמפוס התורני עתיד":"יששכר חפץ","טל חרמון":"יששכר חפץ","ישיבת חנוך לנער":"יששכר חפץ","כפר זיתים":"יששכר חפץ","מרחביה/מעיינות":"יששכר חפץ","נחלים":"יששכר חפץ","עתיד בת עמי":"יששכר חפץ","עתיד כפר חב\"ד":"יששכר חפץ","אבו סנאן":"ליאת צבר","אום אל פחם בנות":"ליאת צבר","אנרג'י טק":"ליאת צבר","בית אל":"ליאת צבר","דרור גליל":"ליאת צבר","התיכון החברתי חיפה":"ליאת צבר","צור ים":"ליאת צבר","רימונים":"ליאת צבר","רמת דוד":"ליאת צבר","תיכון חברתי ת\"א":"ליאת צבר","תיכון עוצמ\"ה עתיד זוקו":"ליאת צבר","תיכון שיח":"ליאת צבר","אורט אורמת":"סיגלית דאי","אורט תל נוף":"סיגלית דאי","אורט תעשייה אווירית":"סיגלית דאי","דן גורמה":"סיגלית דאי","עמל אשדוד":"סיגלית דאי","עמל טק אין":"סיגלית דאי","עתיד באר שבע":"סיגלית דאי","עתיד פלמחים":"סיגלית דאי","צור ברק":"סיגלית דאי","קמ\"ג דימונה":"סיגלית דאי","תיכון החממה":"סיגלית דאי רויטל אמיר","אום אל פחם בנים":"רביב שורץ","מצפה רמון":"רביב שורץ","עתיד כרמיאל":"רביב שורץ","שפרעם":"רביב שורץ","אורט בית הערבה":"רויטל אמיר","חוש\"ן":"רויטל אמיר","דרור נווה מדבר":"שרונה בלוך","לקייה":"שרונה בלוך","סכנין תל שבע":"שרונה בלוך","שגב שלום":"שרונה בלוך"};
+
 var SCHOOLS = ["אבו סנאן","אום אל פחם בנות","אום אל פחם בנים","אור דניאל","אור העתיד תורני מקצועי","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשייה אווירית","אכסאל","אל אמאני סכנין","אלחכמה כסרא-סמיע","אנרג'י טק","בית אל","בית דוד","בית חנינה בנות","בית חנינה בנים","ג'וליס בנות","דן גורמה","דרור גליל","דרור נווה מדבר","הדר","הקמפוס התורני עתיד","התיכון החברתי חיפה","חוש\"ן","טורען","טל חרמון","ישיבת חנוך לנער","כפר זיתים","כפר יסיף","כפר עקב","לקייה","מצפה רמון","מרחביה/מעיינות","נחלים","נצרת","סור באהר","סכנין תל שבע","עמל אשדוד","עמל טייבה ב'","עמל טק אין","עמל רהט","ערערה","עתיד באר שבע","עתיד בת עמי","עתיד גליל מערבי ירכא בנים","עתיד טק ביר אל מכסור","עתיד כפר חב\"ד","עתיד כרמיאל","עתיד פלמחים","צור ברק","צור ים","קמ\"ג דימונה","רימונים","רמת דוד","שגב שלום","שפרעם","תיכון החממה","תיכון חברתי ת\"א","תיכון טכנולוגי אי טק סקול (מסעדה)","תיכון עוצמ\"ה עתיד זוקו","תיכון שיח","תפן ליזמות"];
 
 /* כתיב חופשי בטופס מול השם הרשמי ברשימה. רק התאמות ודאיות —
@@ -462,6 +483,30 @@ function render(){
   $("missCount").textContent = "· " + missing.length + " מתוך " + SCHOOLS.length;
   MISSING = missing;
 
+  /* ---------- טרם השיבו, לפי מפקח.ת ---------- */
+  var groups = {}, order = [];
+  missing.forEach(function(s){
+    var k = SUP[s] || "ללא שיוך";
+    if (!groups[k]) { groups[k] = []; order.push(k); }
+    groups[k].push(s);
+  });
+  order.sort(function(a, b){ return groups[b].length - groups[a].length; });
+
+  var sh = "";
+  order.forEach(function(k){
+    var tot = 0;
+    for (var nm in SUP) if (SUP[nm] === k) tot++;
+    sh += '<div class="sup"><div class="sh"><b>' + esc(k) + '</b>' +
+          '<span class="n">טרם השיבו ' + groups[k].length + ' מתוך ' + tot + '</span>' +
+          '<button type="button" data-sup="' + esc(k) + '">העתקה</button></div>' +
+          '<div class="chips">' +
+          groups[k].map(function(s){ return '<span class="chip out">' + esc(s) + "</span>"; }).join("") +
+          "</div></div>";
+  });
+  $("bySup").innerHTML = sh || '<div class="empty" style="padding:14px">כל בתי הספר השיבו 🎉</div>';
+  $("supCount").textContent = order.length ? "· " + order.length + " מפקחים.ות" : "";
+  BY_SUP = groups;
+
   /* שמות שהוקלדו ולא נמצאו ברשימה — כדי ששום דיווח לא ייעלם בשקט */
   var seen = {}, uh = "", any = false;
   rows.forEach(function(r){
@@ -519,6 +564,25 @@ function fallback(txt, cb){
   try { document.execCommand("copy"); cb(); } catch(e){}
   document.body.removeChild(ta);
 }
+
+/* העתקת רשימת החסרים של מפקח.ת יחיד.ה */
+var BY_SUP = {};
+$("bySup").addEventListener("click", function(ev){
+  var b = ev.target.closest("button[data-sup]");
+  if (!b) return;
+  var k = b.getAttribute("data-sup"), list = BY_SUP[k] || [];
+  var sel = $("mfilter");
+  var txt = k + " — טרם התקבל משוב (" + list.length + ") · " +
+            sel.options[sel.selectedIndex].text + ":\n" +
+            list.map(function(s, i){ return (i + 1) + ". " + s; }).join("\n");
+  var done = function(){
+    b.classList.add("done"); b.textContent = "הועתק ✓";
+    setTimeout(function(){ b.classList.remove("done"); b.textContent = "העתקה"; }, 2200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt, done); });
+  } else { fallback(txt, done); }
+});
 
 $("refresh").addEventListener("click", load);
 load();
