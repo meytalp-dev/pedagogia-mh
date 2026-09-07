@@ -25,6 +25,7 @@
 <script src="/track.js"></script>
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
+<link rel="stylesheet" href="lesson-kit.css">
 <style>
 /* כותרות מדור — אותו כלל בדיוק כמו ב-article.css, שאינו נטען בעמוד נחיתה זה.
    pagenav.js בונה מהן את פס ההתמצאות האוטומטי. */
@@ -54,10 +55,12 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
     <a href="space.html">שער המרחב הפדגוגי</a>
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
-    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
-    <a href="bagrut.html">נתיב הבגרות</a>
-    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a href="subjects.html"><span class="n">03</span> נתיב הבגרות והגמר</a>
+    <a href="bagrut.html">נתיב הבגרות · תחומי הדעת</a>
+    <a href="gmar.html">נתיב הגמר · תחומי הדעת</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
+    <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
     <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
@@ -201,7 +204,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
-      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="subjects.html">נתיב הבגרות והגמר</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="alternatives.html">הערכה</a>
@@ -260,14 +263,58 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 
 <div class="pagehead split">
   <div>
-    <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ תחומי דעת</div>
-    <h1 class="rv d1">תחומי דעת · בגרות / גמר</h1>
-    <p class="rv d2 lead" style="max-width:620px">כל מקצוע — שני נתיבים לתעודה. כאן שניהם זה לצד זה; לתצוגה ממוקדת היכנסו לשער הנתיב.</p>
+    <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ נתיב הבגרות והגמר</div>
+    <h1 class="rv d1">נתיב הבגרות והגמר</h1>
+    <p class="rv d2 lead" style="max-width:620px">שני נתיבים לתעודה, ובכל נתיב שבעת תחומי הדעת. בחרו נתיב — ומשם כל מקצוע מרכז את כל החומרים שלו במקום אחד.</p>
   </div>
   <div class="rv d2 headshot">
     <img src="img/yotzer/microscope.jpg" alt="תלמידה מתבוננת במיקרוסקופ במעבדה" width="1024" height="768">
     <span class="chip">מהשטח · החינוך היוצר</span>
   </div>
+</div>
+
+<style>
+.gatepick{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:22px var(--px) 6px}
+.gatepick a{position:relative;display:block;padding:28px 30px 26px;border-radius:20px;
+  text-decoration:none;color:inherit;border:1.5px solid var(--border);background:var(--surface);
+  box-shadow:var(--sh-sm);transition:transform .25s var(--ease),border-color .25s,box-shadow .25s}
+.gatepick a:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.gatepick a::before{content:"";position:absolute;inset-inline-start:0;top:22px;bottom:22px;
+  width:5px;border-radius:0 4px 4px 0;background:var(--tc)}
+.gatepick a:hover{border-color:var(--tc)}
+.gatepick .kicker{font-size:var(--fs-2xs);font-weight:800;letter-spacing:.12em;color:var(--tc)}
+.gatepick h2{font-size:1.6rem;margin:8px 0 7px;color:var(--navy);line-height:1.2}
+.gatepick p{font-size:var(--fs-sm);color:var(--text2);line-height:1.65;max-width:44ch}
+.gatepick .more{display:inline-flex;align-items:center;gap:7px;margin-top:16px;
+  font-weight:800;font-size:var(--fs-sm);color:var(--tc)}
+.gatepick .more svg{width:15px;height:15px}
+@media(max-width:760px){.gatepick{grid-template-columns:1fr}}
+</style>
+
+<div class="gatepick rv d2">
+  <a href="bagrut.html" style="--tc:var(--accent)">
+    <span class="kicker">משרד החינוך</span>
+    <h2>נתיב הבגרות</h2>
+    <p>שבעת תחומי הדעת בנתיב הבגרות — מערכי שיעור, מסעות למידה, תרגולים וחומרים מהרשת. לצידם מאגר של 251 שאלוני בגרות ומחוונים, ולוח המבחנים של תשפ״ז.</p>
+    <span class="more">לשבעת תחומי הדעת
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>
+    </span>
+  </a>
+  <a href="gmar.html" style="--tc:var(--navy)">
+    <span class="kicker">משרד העבודה</span>
+    <h2>נתיב הגמר</h2>
+    <p>שבעת תחומי הדעת בנתיב הגמר — תוכניות הלימודים של החינוך היוצר, מטלות הגמר ומסעות הלמידה. לצידם מערכת התרגול למבחני הגמר ובחינות לדוגמה. הריכוז היחיד ברשת.</p>
+    <span class="more">לשבעת תחומי הדעת
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>
+    </span>
+  </a>
+</div>
+
+<div class="rv d3" style="padding:8px var(--px) 0">
+  <a class="card" href="zakaut.html" style="padding:16px 20px;display:block;text-decoration:none;color:inherit;background:var(--blue-bg);border-color:var(--blue-bg)">
+    <b style="color:var(--navy)">לא בטוחים באיזה נתיב אתם? ←</b>
+    <span style="font-size:var(--fs-sm);color:var(--text2);display:block;margin-top:2px">תעודות, זכאות ומבנה ההיבחנות — שלוש התעודות, 12 שנות לימוד, תעודת מקצוע וטבלת מקצועות הליבה, בשני הנתיבים זה לצד זה.</span>
+  </a>
 </div>
 
 <style>
@@ -460,6 +507,16 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
       <p>פתיחה, גוף וסיכום עם זמנים מדויקים, שאלות מנחות, חומרי עזר וכרטיס יציאה.</p>
     </div>
 
+    <div class="pick" data-kind="opener">
+      <input type="checkbox" id="g-d-opener">
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        פעילות פתיחה
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>חמש עד עשר דקות שפותחות את השיעור — משימה קצרה שמעלה את הנושא ומייצרת סקרנות, עם הערות למורה.</p>
+    </div>
+
     <div class="pick" data-kind="deck">
       <input type="checkbox" id="g-d-deck">
       <span class="pk-h">
@@ -468,6 +525,16 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
         <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
       </span>
       <p>סדרת שקפים עם כותרת ותוכן לכל שקף. אפשר להוריד מצגת HTML שנפתחת בדפדפן, או להעתיק לכלי המצגות שלכם.</p>
+    </div>
+
+    <div class="pick" data-kind="game">
+      <input type="checkbox" id="g-d-game">
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 15h.01"/></svg>
+        משחק
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>שאלות מהירות, משחק התאמה ומשפטי נכון/לא נכון — משוחקים על המסך בכיתה, עם הסבר אחרי כל תשובה.</p>
     </div>
 
     <div class="pick" data-kind="sheet">
@@ -486,6 +553,16 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
         </select>
       </label>
     </div>
+
+    <div class="pick" data-kind="quiz">
+      <input type="checkbox" id="g-d-quiz">
+      <span class="pk-h">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4"/><path d="m9 13 2 2 4-4"/></svg>
+        בוחן
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      </span>
+      <p>בוחן דיפרנציאלי בשלוש רמות — קל, בינוני ומאתגר. אפשר להריץ על המסך או להדפיס עם התשובות למורה.</p>
+    </div>
   </div>
 
   <div class="acts">
@@ -503,6 +580,12 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 
   <p class="hint">התוצר נבנה על הפדגוגיה של המינהל: תמיד מותאם לנתיב שנבחר, תמיד מסתיים בכרטיס יציאה, ותמיד כתוב לתלמידי הכשרה מקצועית. עברו עליו והתאימו — הוא טיוטה טובה, לא תחליף לשיקול דעת שלכם.</p>
 
+  <!-- תוצרים מוכנים מבנק השיעורים — מרונדרים בעמוד, בלי מעבר לכלי חיצוני -->
+  <div id="g-bank" hidden>
+    <div class="lk-empty" id="g-bank-note" style="margin-bottom:4px"></div>
+    <div id="g-kit"></div>
+  </div>
+
   <div class="res" id="g-res"></div>
 
   <div class="fb" id="g-fb">
@@ -514,120 +597,21 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
       <button class="btn line sm" type="button" data-ai="https://claude.ai/new">העתיקו ופתחו ב-Claude</button>
       <button class="btn line sm" type="button" data-ai="https://gemini.google.com/app">העתיקו ופתחו ב-Gemini</button>
     </div>
+
+    <!-- החזרה מהכלי החיצוני. בלי השדה הזה המורה נשארת עם טקסט בלוח ובלי שום מקום לשים אותו. -->
+    <div style="margin-top:20px;border-top:1.5px solid var(--border);padding-top:18px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:4px">קיבלתם תשובה? הדביקו אותה כאן</h3>
+      <p class="why" style="margin-bottom:10px">הדביקו את מה שהכלי החזיר, והתוצר יוצג כאן מסודר — מוכן להדפסה, להורדה ולהעברה בכיתה. הטקסט נשאר בדפדפן שלכם בלבד ואינו נשלח לשום מקום.</p>
+      <textarea id="g-back" placeholder="הדביקו כאן את מערך השיעור שקיבלתם…" style="font-family:'Assistant',sans-serif;font-size:.92rem;padding:11px 14px;border:1.5px solid var(--border);border-radius:11px;width:100%;min-height:130px;line-height:1.65;resize:vertical"></textarea>
+      <div class="ailinks" style="margin-top:10px">
+        <button class="btn primary sm" id="g-back-show" type="button">הציגו את התוצר</button>
+        <button class="btn line sm" id="g-back-print" type="button">הדפסה</button>
+        <button class="btn line sm" id="g-back-down" type="button">הורדה כקובץ</button>
+      </div>
+      <div id="g-back-out" class="lk" style="margin-top:16px"></div>
+    </div>
   </div>
 </div>
-</div>
-
-<div class="rv" style="padding:0 var(--px)">
-  <h2 class="sub-sec" id="sec-netivim">שני נתיבים לתעודה · גמר ובגרות</h2>
-</div>
-
-<div class="trackbar rv d2">
-  <span class="tb-lbl">בחרו נתיב</span>
-  <div class="trackpills" role="group" aria-label="בחירת נתיב לימוד">
-    <a class="pill on" href="subjects.html">הכול</a>
-    <a class="pill" href="gmar.html?track=gmr">תעודת גמר</a>
-    <a class="pill" href="bagrut.html?track=bgr">בגרות</a>
-  </div>
-  <span class="tb-hint">שער הנתיב פותח כל תחום דעת כשהוא כבר מסונן — והבחירה נשמרת ביניהם.</span>
-</div>
-
-<div class="grid c2 rv d3" style="padding:22px var(--px) 4px;gap:14px">
-  <a href="gmar.html?track=gmr" style="background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--navy);border-radius:14px;padding:16px 20px;display:block;text-decoration:none;color:inherit">
-    <b style="color:var(--navy)">נתיב הגמר ←</b>
-    <p style="font-size:var(--fs-sm);color:var(--text2);margin-top:2px">התעודה המקצועית של משרד העבודה — מסלולי 55/56, תוכניות רשמיות ומפרטי בחינה. הריכוז היחיד ברשת.</p>
-  </a>
-  <a href="bagrut.html?track=bgr" style="background:var(--surface);border:1px solid var(--border);border-inline-start:4px solid var(--cyan);border-radius:14px;padding:16px 20px;display:block;text-decoration:none;color:inherit">
-    <b style="color:var(--accent)">נתיב הבגרות ←</b>
-    <p style="font-size:var(--fs-sm);color:var(--text2);margin-top:2px">שאלונים, מיקודי חומר, קורסי קמפוס IL — וכל חלופות ההערכה למתקשים.</p>
-  </a>
-</div>
-
-<div class="rv" style="padding:0 var(--px)">
-  <h2 class="sub-sec" id="sec-tirgulim">תרגולים לבגרות</h2>
-</div>
-
-<div class="rv d3" style="padding:6px var(--px) 0">
-  <div style="background:var(--blue-bg);border-radius:14px;padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:var(--fs-sm)">
-    <b style="color:#145FA8">לפי תחום דעת</b>
-    <a href="hebrew.html?track=bgr#tirgulim" style="color:inherit">לשון · מאגר תרגולים מלא</a>
-    <a href="math.html?track=bgr#tirgulim-shelanu" style="color:inherit">מתמטיקה</a>
-    <a href="history.html?track=bgr#tirgulim-shelanu" style="color:inherit">היסטוריה</a>
-    <a href="literature.html?track=bgr#tirgulim-shelanu" style="color:inherit">ספרות</a>
-    <a href="english.html?track=bgr#tirgulim-shelanu" style="color:inherit">אנגלית</a>
-  </div>
-</div>
-
-<div class="rv" style="padding:0 var(--px)">
-  <h2 class="sub-sec" id="sec-tchumim">תחומי הדעת · שבעת מקצועות הליבה</h2>
-</div>
-
-<div class="grid c4" style="padding:10px var(--px) 8px;gap:13px">
-  <a class="card rv" href="civics.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">אזרחות</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">מגמה 2010 · מיזם אזרחי ונייר עמדה</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv" href="hebrew.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">עברית והבעה</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">שאלון 22024 · שקלול 40/60 · 10 מודולות</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d1" href="math.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">מתמטיקה</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">אוריינות מתמטית · מביטחון מספרי ל-AI</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d1" href="english.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">אנגלית</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">Start Ahead · אוריינות מובנית</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d2" href="history.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">היסטוריה</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">היסטוריה מוחשית · "סוכן הזיכרון"</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d2" href="literature.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">ספרות</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">פרשן פעיל · מיזם תרבותי מבוסס-יצירה</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d3" href="tanakh.html" style="padding:20px">
-    <h3 style="font-size:var(--fs-lg)">תנ״ך</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">"דרך הרגליים והלב" · סיורים וחקר</p>
-    <span class="tag gmr">גמר</span> <span class="tag bgr">בגרות</span>
-  </a>
-  <a class="card rv d3" href="bagrut-bank.html" style="padding:20px;background:var(--navy);border-color:var(--navy)">
-    <h3 style="font-size:var(--fs-lg);color:#fff">מאגר שאלוני הבגרות</h3>
-    <p style="font-size:var(--fs-xs);color:rgba(255,255,255,.72);margin:3px 0 12px">קישור ישיר לכל שאלון ומחוון · לפי תחום דעת · כולל נוסחי המגזר החרדי והחברה הערבית</p>
-    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">251 שאלונים</span>
-  </a>
-  <a class="card rv d3" href="alternatives.html" style="padding:20px;background:var(--blue-bg)">
-    <h3 style="font-size:var(--fs-lg);color:var(--navy-800)">מסלולים מותאמים וחלופות הערכה</h3>
-    <p style="font-size:var(--fs-xs);color:var(--text2);margin:3px 0 12px">יהלו״ם · שחל״ב · "תן למילים" · 241 · רשתות ביטחון · Ladders</p>
-    <span class="tag cyn">הריכוז היחיד ברשת</span>
-  </a>
-</div>
-
-<div class="rv d3" style="padding:10px var(--px) 0">
-  <div class="notice" style="border-inline-start:4px solid var(--navy)">
-    <b style="color:var(--navy)">תוכניות הלימודים במלואן:</b>
-    <span style="font-size:var(--fs-sm)"><a href="tochnit-sifrut.html" style="color:var(--accent);font-weight:600">ספרות</a> — כל התוכנית כעמוד באתר: כשירויות, NQF, מצפן OECD, שש המודולות, פרופיל המורה ותקן מרחב הלמידה. שאר תחומי הדעת בהמשך.</span>
-  </div>
-</div>
-
-<div class="rv d3" style="padding:10px var(--px) 54px">
-  <div class="notice" style="border-inline-start:4px solid var(--cyan)">
-    <b style="color:var(--navy)">תוכניות נוספות בלימודי הליבה (חינוך יוצר, יולי 2026):</b>
-    <span style="font-size:var(--fs-sm)">
-      <a href="https://docs.google.com/document/d/1_a2mzU55dCP7X_zFdKcEp8TmzYZ1f42CtjAcTOZw_GU/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">ערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1Qa8feajA0LXpLF8bsMzl6gMcOV1fXgH1sKVOLsmuH08/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">אזרחות לחברה הערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1ls0keqKVX2tdIxiwLouRF9Lm80ldSOK44n0Qo7v2Eco/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">היסטוריה לדוברי ערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1jd22F8weCkNYmQ3I2aNwgI5Fp5dlcnQcAa39QMVFDWM/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">אנגלית בלימודי הבסיס<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    </span>
-    · כל התוכניות הן טיוטות לאישור הפיקוח.
-  </div>
 </div>
 
 </main>
@@ -806,14 +790,97 @@ function pSheet(){
     "· התאמה מפורשת לנתיב שנבחר.",
     "· פורמט: Markdown."].join("\n");
 }
+function pOpener(){
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה פעילות פתיחה אחת לשיעור.","",ctx(),
+    "פעילות פתיחה טובה נמשכת 5 עד 10 דקות, מעלה את הנושא בלי ללמד אותו, ומייצרת סקרנות אצל תלמיד שנכנס לכיתה בלי מוטיבציה.","",
+    "בנה אחת מהסוגים האלה — בחר את המתאים לנושא: הצבעה בין ניסוחים · חידה קצרה · תמונה או מקרה לדיון · שאלה אישית שכל אחד עונה עליה במשפט · מיון כרטיסים · ניחוש מספר ואז חשיפת הנתון האמיתי.","",
+    "חובה לכלול:",
+    "א. הוראות הפעלה למורה, צעד אחר צעד, עם זמן בדקות לכל שלב.",
+    "ב. את החומר עצמו — המשפטים, השאלות או הכרטיסים — מוכן להקרנה או להדפסה.",
+    "ג. לכל פריט: מה התשובה ומה ההסבר, כדי שהמורה תדע לאן להוביל.",
+    "ד. הערת מרצה: מה התלמידים צפויים לענות, ואיפה נמצאת הנקודה שכדאי לעצור בה.",
+    "ה. משפט הגשר — איך עוברים מהפעילות אל גוף השיעור.","",
+    "כללים:",
+    "· בלי הכנה מורכבת. מה שנדרש הוא לוח, מקרן או דף מודפס — לא יותר.",
+    "· לקשור לעולם התוכן והחיים של תלמידי הכשרה מקצועית.",
+    "· עברית פשוטה, פנייה למורה בגוף שני."].join("\n");
+}
+function pGame(){
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה שלושה משחקי תרגול קצרים לשיעור, לשימוש על מסך הכיתה.","",ctx(),
+    "בנה בדיוק שלושה חלקים:","",
+    "1. שאלות מהירות — שש שאלות אמריקאיות, ארבע אפשרויות לכל אחת. ציין את התשובה הנכונה, וכתוב הסבר קצר שמופיע אחרי המענה.",
+    "2. משחק התאמה — שישה זוגות של מושג מול ההגדרה שלו. המושגים קצרים, ההגדרות באורך שורה.",
+    "3. נכון או לא נכון — חמישה משפטים. לכל אחד: התשובה, והסבר במשפט אחד.","",
+    "חובה:",
+    "· לפחות שני מסיחים בכל שאלה אמריקאית שנשענים על טעות אמיתית שתלמידים עושים — לא מסיחים אקראיים.",
+    "· ההסבר חייב ללמד משהו, לא רק לומר ״נכון״ או ״לא נכון״.",
+    "· לפחות משפט אחד ב״נכון או לא נכון״ שנשמע נכון והוא שגוי.","",
+    "כללים:",
+    "· עברית פשוטה, פנייה לתלמיד.",
+    "· התאמה מפורשת לנתיב שנבחר.",
+    "· בלי שאלות שאפשר לענות עליהן בלי ללמוד את הנושא."].join("\n");
+}
+function pQuiz(){
+  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה בוחן דיפרנציאלי על הנושא.","",ctx(),
+    "הבוחן בנוי משלוש רמות, ומסומן במפורש איזו שאלה שייכת לאיזו רמה:",
+    "· קל — שלוש שאלות. ידע בסיסי שכל תלמיד שהיה בשיעור אמור לענות עליו.",
+    "· בינוני — שלוש שאלות. דורשות הבנה והסקה, לא רק שליפה.",
+    "· מאתגר — שתי שאלות ברמת בחינה: מקרה גבולי, זיהוי כשל, או יישום בהקשר חדש.","",
+    "לכל שאלה: ארבע אפשרויות, סימון התשובה הנכונה, והסבר שמלמד למה היא נכונה ולמה הנפוצה שבשגויות מפתה.","",
+    "חובה:",
+    "· לא לכלול את כל השאלות באותה רמה — התפלגות שלוש/שלוש/שתיים היא חובה.",
+    "· המסיחים חייבים לשקף טעויות אמיתיות של תלמידים.",
+    "· בסוף: טבלת מפתח תשובות למורה.","",
+    "כללים:",
+    "· עברית פשוטה, פנייה לתלמיד.",
+    "· התאמה מפורשת לנתיב שנבחר."].join("\n");
+}
+
 var KINDS = {
   lesson: { title:"מערך שיעור", file:"מערך-שיעור", prompt:pLesson,
             icon:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/>' },
   deck:   { title:"מצגת", file:"מצגת", prompt:pDeck,
             icon:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/>' },
   sheet:  { title:"דף עבודה", file:"דף-עבודה", prompt:pSheet,
-            icon:'<path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/>' }
+            icon:'<path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/>' },
+  opener: { title:"פעילות פתיחה", file:"פעילות-פתיחה", prompt:pOpener,
+            icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
+  game:   { title:"משחק", file:"משחק", prompt:pGame,
+            icon:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 15h.01"/>' },
+  quiz:   { title:"בוחן", file:"בוחן", prompt:pQuiz,
+            icon:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4"/><path d="m9 13 2 2 4-4"/>' }
 };
+
+/* ===== בנק השיעורים המוכנים =====
+   שיעור בבנק הוא קובץ תוכן אחד ב-lessons/, וממנו נגזרים כל ששת התוצרים.
+   התאמה נעשית לפי תחום דעת + מילות מפתח בנושא שהמורה הקלידה.
+   אין התאמה? נופלים חזרה למסלול ההנחיות — בדיוק כמו קודם. */
+var BANK = [
+  { id:"hebrew-tiun", subject:"עברית והבעה", topic:"לבנות טיעון משכנע",
+    match:["טיעון","טיעונית","לטעון","שכנוע","לשכנע","נימוק","ביסוס","טענה","רטוריקה","הבעה"] },
+  { id:"civics-kavod-adam", subject:"אזרחות", topic:"כבוד האדם וחירותו",
+    match:["כבוד האדם","חירות","זכויות","זכות","חוק יסוד","חוק־יסוד","פסקת ההגבלה","הגבלה","שלטון החוק","פרטיות"] },
+  { id:"literature-hadmut", subject:"ספרות", topic:"איך נבנית דמות",
+    match:["דמות","דמויות","אפיון","גיבור","מספר","זהות","התבגרות","אמצעים אמנותיים"] },
+  { id:"tanakh-sachar-sachir", subject:"תנ״ך", topic:"ביומו תתן שכרו",
+    match:["שכר","שכיר","הלנת שכר","מוסר","מצפן","עובד","צדק חברתי","ויקרא","דברים","נבואה"] },
+  { id:"math-achuzim-kesef", subject:"מתמטיקה", topic:"אחוזים של כסף",
+    match:["אחוז","אחוזים","הנחה","מבצע","מע״מ","מעמ","כסף","תקציב","כדאיות","תשלומים","ריבית","שכר"] },
+  { id:"english-wh-questions", subject:"אנגלית", topic:"שאלות Wh",
+    match:["wh","Wh","WH","שאל","שאלות","question","משפט","דקדוק","תבנית","סדר מילים"] },
+  { id:"history-tahkir-makor", subject:"היסטוריה", topic:"תחקיר היסטורי",
+    match:["מקור","מקורות","תחקיר","ראשוני","משני","עדות","חקר","ארגז הכלים","אמינות","ביקורת"] }
+];
+
+function bankMatch(){
+  var subj = val("g-subj"), topic = (val("g-topic") || "").trim();
+  var pool = BANK.filter(function(b){ return b.subject === subj; });
+  if (!pool.length || !topic) return null;
+  var hit = pool.filter(function(b){
+    return b.match.some(function(w){ return topic.indexOf(w) !== -1; });
+  })[0];
+  return hit || null;
+}
 
 /* ---------- עזרים ---------- */
 function copyText(t){
@@ -957,8 +1024,19 @@ function deckFile(slides){
     "<button onclick=\"window.print()\">הדפסה</button></div>\n<script>" + js + "<\/script></body></html>";
 }
 
-/* ---------- הדפסה ---------- */
+/* ---------- הדפסה ----------
+   עוברת דרך ערכת השיעור: iframe מוסתר במקום window.open.
+   חוסם החלונות הקופצים חסם את החלון הקודם, ולמורה זה נראה כאילו
+   התוצר פשוט "לא נפתח". window.open נשמר רק כגיבוי אם הערכה לא נטענה. */
 function printDoc(title, innerHTML){
+  if (window.LessonKit) {
+    var box = document.createElement("div");
+    box.innerHTML = "<h1>" + esc(title) + '</h1><div class="meta">' +
+      esc([val("g-subj"), val("g-grade"), val("g-topic"), val("g-len"), val("g-track")].filter(Boolean).join(" · ")) +
+      "</div>" + innerHTML;
+    LessonKit.print(box, title);
+    return;
+  }
   var w = window.open("", "_blank");
   if (!w) { alert("החלון נחסם — אפשרו חלונות קופצים כדי להדפיס."); return; }
   w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(title) +
@@ -1023,6 +1101,74 @@ function renderFallback(items){
   el("g-fb").classList.add("on");
   el("g-fb").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+/* ---------- החזרה מהכלי החיצוני ----------
+   השלב שחסר עד היום: המורה קיבלה טקסט ולא היה לה איפה לשים אותו.
+   ההצגה היא Markdown קליל -> HTML, ומשם הדפסה והורדה דרך אותו מנגנון של ערכת השיעור. */
+function mdToHtml(src){
+  var out = [], lines = String(src || "").split(/\r?\n/), inList = false, inTable = false;
+  function closeList(){ if (inList) { out.push("</ul>"); inList = false; } }
+  function closeTable(){ if (inTable) { out.push("</tbody></table>"); inTable = false; } }
+  function inline(t){
+    return LessonKit.esc(t)
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/(^|[\s(])\*([^*\n]+)\*/g, "$1<i>$2</i>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+  lines.forEach(function(raw){
+    var l = raw.trim();
+    if (!l) { closeList(); closeTable(); return; }
+
+    var head = l.match(/^(#{1,6})\s+(.*)$/);
+    if (head) {
+      closeList(); closeTable();
+      var lvl = Math.min(head[1].length + 2, 6);
+      out.push("<h" + lvl + ">" + inline(head[2]) + "</h" + lvl + ">");
+      return;
+    }
+    if (/^\|(.+)\|$/.test(l)) {
+      var cells = l.slice(1, -1).split("|").map(function(c){ return c.trim(); });
+      if (/^[\s|:-]+$/.test(l)) return;               /* שורת המפריד של הטבלה */
+      closeList();
+      if (!inTable) { out.push("<table><tbody>"); inTable = true; }
+      out.push("<tr>" + cells.map(function(c){ return "<td>" + inline(c) + "</td>"; }).join("") + "</tr>");
+      return;
+    }
+    closeTable();
+    if (/^[-*·•]\s+/.test(l) || /^\d+[.)]\s+/.test(l)) {
+      if (!inList) { out.push("<ul>"); inList = true; }
+      out.push("<li>" + inline(l.replace(/^([-*·•]|\d+[.)])\s+/, "")) + "</li>");
+      return;
+    }
+    closeList();
+    out.push("<p>" + inline(l) + "</p>");
+  });
+  closeList(); closeTable();
+  return out.join("\n");
+}
+
+(function backFlow(){
+  var ta = el("g-back"), out = el("g-back-out");
+  if (!ta || !out) return;
+  function title(){
+    var t = val("g-topic"); return t ? "מערך שיעור · " + t : "מערך שיעור";
+  }
+  function build(){
+    var txt = (ta.value || "").trim();
+    if (!txt) { alert("הדביקו קודם את התשובה שקיבלתם"); ta.focus(); return null; }
+    out.innerHTML = '<div class="lk-card">' + mdToHtml(txt) + "</div>";
+    return out;
+  }
+  el("g-back-show").addEventListener("click", function(){
+    if (build()) out.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  });
+  el("g-back-print").addEventListener("click", function(){
+    if (build()) LessonKit.print(out, title());
+  });
+  el("g-back-down").addEventListener("click", function(){
+    if (build()) LessonKit.download(out, title(), title());
+  });
+})();
+
 document.querySelectorAll("#g-fb [data-ai]").forEach(function(b){
   b.addEventListener("click", function(){
     if (!LAST.length) { alert("קודם מלאו את הפרטים ולחצו ״בנו לי את החומרים״"); return; }
@@ -1036,7 +1182,7 @@ document.querySelectorAll("#g-fb [data-ai]").forEach(function(b){
 function checkFields(){
   if (!val("g-subj")) { alert("נא לבחור תחום דעת"); el("g-subj").focus(); return false; }
   if (!val("g-topic")) { alert("נא למלא את נושא השיעור"); el("g-topic").focus(); return false; }
-  if (!picks().length) { alert("נא לסמן לפחות תוצר אחד: מערך, מצגת או דף עבודה"); return false; }
+  if (!picks().length) { alert("נא לסמן לפחות תוצר אחד"); return false; }
   return true;
 }
 function payload(prompt){
@@ -1061,6 +1207,29 @@ el("g-run").addEventListener("click", function(){
 
   el("g-res").innerHTML = ""; el("g-res").classList.remove("on");
   el("g-fb").classList.remove("on");
+  el("g-bank").hidden = true;
+
+  /* הבנק קודם — שיעור מוכן נבנה בעמוד מיד, בלי המתנה, בלי עלות ובלי כלי חיצוני. */
+  var hit = bankMatch();
+  if (hit && window.LessonKit) {
+    status("פותח את השיעור המוכן…");
+    btn.disabled = true;
+    LessonKit.load(hit.id).then(function(data){
+      el("g-bank-note").innerHTML =
+        "יש לנו שיעור מוכן על <b>" + LessonKit.esc(data.topic) + "</b> ב" + LessonKit.esc(data.subject) +
+        " — נבנה בידי צוות המינהל ולא בידי מודל. כל התוצרים שסימנתם למטה, מוכנים להדפסה, להורדה ולהעברה בכיתה.";
+      LessonKit.mount(el("g-kit"), data, kinds);
+      el("g-bank").hidden = false;
+      status("");
+      el("g-bank").scrollIntoView({ behavior:"smooth", block:"nearest" });
+    }).catch(function(){
+      /* קובץ התוכן לא נטען — ממשיכים למסלול ההנחיות במקום להשאיר את המורה בלי כלום */
+      status("");
+      copyText(LAST[0].prompt);
+      renderFallback(LAST);
+    }).then(function(){ btn.disabled = false; });
+    return;
+  }
 
   /* מצב ביניים — כל עוד LESSON_BACKEND ריק. מילוי הכתובת למעלה מפעיל את הייצור בעמוד. */
   if (!LESSON_BACKEND) {
@@ -1112,6 +1281,7 @@ el("g-reset").addEventListener("click", function(){
 
 <script src="site.js" defer></script>
 <script src="search.js" defer></script>
+<script src="lesson-kit.js"></script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
 <script src="feedback.js" defer></script>

@@ -1,0 +1,195 @@
+/* ===== ערכת השיעור — תצוגת התוצרים =====
+   מרנדרת מערך, מצגת, דף עבודה, פעילות פתיחה, משחק ובוחן
+   מתוך קובץ תוכן אחד (lessons/<id>.json).
+   ההדפסה עוברת דרך iframe מוסתר ולא דרך window.open — חלון קופץ נחסם בדפדפן. */
+
+.lk{margin-top:18px}
+
+/* --- לשוניות התוצרים --- */
+.lk-tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1.5px solid var(--border);padding-bottom:12px;margin-bottom:18px}
+.lk-tab{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:var(--fs-sm);font-weight:700;color:var(--muted);background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:8px 13px;cursor:pointer;transition:border-color .18s,color .18s,background .18s}
+.lk-tab svg{width:16px;height:16px;flex:none}
+.lk-tab:hover{border-color:var(--cyan);color:var(--navy)}
+.lk-tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.lk-panel{display:none}
+.lk-panel.on{display:block;animation:lk-in .28s var(--ease)}
+@keyframes lk-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* --- כותרת תוצר + פעולות --- */
+.lk-head{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.lk-head h3{font-size:var(--fs-xl);font-weight:800;color:var(--navy);margin:0 0 3px}
+.lk-head .lk-sub{font-size:var(--fs-xs);color:var(--muted);font-weight:500}
+.lk-acts{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+.lk-btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:var(--fs-2xs);font-weight:700;padding:8px 13px;border-radius:10px;border:1.5px solid var(--border-strong);background:#fff;color:var(--navy);cursor:pointer;transition:border-color .18s,background .18s}
+.lk-btn svg{width:14px;height:14px}
+.lk-btn:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.lk-btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.lk-btn.primary:hover{background:var(--navy-800)}
+
+/* --- כרטיס תוכן כללי --- */
+.lk-card{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+.lk-card>h4{font-size:var(--fs-base);font-weight:800;color:var(--navy);margin:0 0 10px;display:flex;align-items:center;gap:9px}
+.lk-card>h4 .lk-min{margin-inline-start:auto;font-size:var(--fs-2xs);font-weight:700;color:var(--accent);background:var(--cyan-100);border-radius:20px;padding:3px 10px}
+
+/* --- טבלת הפתיח של המערך --- */
+.lk-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.lk-meta div{background:var(--soft-bg);border-radius:13px;padding:13px 15px}
+.lk-meta b{display:block;font-size:var(--fs-2xs);color:var(--muted);font-weight:700;margin-bottom:4px}
+.lk-meta span{font-size:var(--fs-sm);color:var(--text);font-weight:600;line-height:1.5}
+
+/* --- שלבים ורשימות --- */
+.lk-step{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--border)}
+.lk-step:first-of-type{border-top:0;padding-top:0}
+.lk-step .lk-t{flex:none;width:52px;font-size:var(--fs-2xs);font-weight:800;color:var(--accent);padding-top:2px}
+.lk-step b{display:block;font-size:var(--fs-sm);color:var(--navy);margin-bottom:3px}
+.lk-step p{margin:0;font-size:var(--fs-sm);color:var(--text2);line-height:1.65}
+.lk-list{margin:0;padding-inline-start:20px}
+.lk-list li{font-size:var(--fs-sm);color:var(--text2);line-height:1.7;margin-bottom:5px}
+
+/* --- מצגת --- */
+.lk-slide{background:linear-gradient(135deg,#124D7A,#087B9C);color:#fff;border-radius:18px;padding:34px 34px 30px;min-height:290px;display:flex;flex-direction:column}
+.lk-slide h5{font-size:var(--fs-3xl);font-weight:800;margin:0 0 18px;line-height:1.25}
+.lk-slide ul{margin:0;padding-inline-start:22px;flex:1}
+.lk-slide li{font-size:var(--fs-lg);line-height:1.85;margin-bottom:9px;opacity:.96}
+.lk-slide .lk-num{font-size:var(--fs-2xs);opacity:.7;font-weight:700;margin-bottom:10px;letter-spacing:.04em}
+.lk-note{background:#FFF8E6;border:1.5px solid #F5D98B;border-radius:13px;padding:12px 16px;margin-top:12px;font-size:var(--fs-sm);color:#6B4E00;line-height:1.6}
+.lk-note b{color:#3F2E00}
+.lk-nav{display:flex;align-items:center;gap:12px;margin-top:14px}
+.lk-nav .lk-pos{font-size:var(--fs-xs);color:var(--muted);font-weight:700}
+.lk-dots{display:flex;gap:5px;margin-inline-start:auto;flex-wrap:wrap}
+.lk-dot{width:8px;height:8px;border-radius:50%;background:var(--border-strong);border:0;padding:0;cursor:pointer}
+.lk-dot.on{background:var(--navy);transform:scale(1.35)}
+
+/* --- דף עבודה --- */
+.lk-sheet{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:26px 28px}
+.lk-sheet .lk-name{display:flex;gap:26px;font-size:var(--fs-sm);color:var(--muted);border-bottom:1.5px solid var(--border);padding-bottom:14px;margin-bottom:16px}
+.lk-sheet .lk-name span{flex:1}
+.lk-task{margin-bottom:20px}
+.lk-task .lk-q{font-size:var(--fs-sm);color:var(--text);line-height:1.7;white-space:pre-wrap;margin-bottom:8px}
+.lk-task .lk-q b{color:var(--navy)}
+.lk-eg{background:var(--blue-bg);border-radius:11px;padding:10px 14px;font-size:var(--fs-xs);color:var(--text2);line-height:1.6;margin-bottom:9px}
+.lk-lines div{border-bottom:1px solid var(--border-strong);height:26px}
+.lk-check{background:var(--soft-bg);border-radius:13px;padding:15px 18px;margin-top:18px}
+.lk-check b{display:block;font-size:var(--fs-sm);color:var(--navy);margin-bottom:9px}
+.lk-check label{display:flex;align-items:flex-start;gap:9px;font-size:var(--fs-sm);color:var(--text2);line-height:1.6;margin-bottom:7px}
+.lk-check input{margin-top:3px;flex:none;width:15px;height:15px}
+
+/* --- מחוון --- */
+.lk-rubric{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+.lk-rubric th{background:var(--soft-bg);color:var(--navy);font-weight:800;font-size:var(--fs-xs);text-align:start;padding:10px 13px;border-bottom:1.5px solid var(--border)}
+.lk-rubric td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--text2);line-height:1.65;vertical-align:top}
+.lk-rubric td:first-child{font-weight:800;color:var(--navy);white-space:nowrap}
+.lk-rubric td:last-child{font-weight:800;color:var(--accent);text-align:center;white-space:nowrap}
+
+/* --- פעילות פתיחה --- */
+.lk-opt{border:1.5px solid var(--border);border-radius:14px;padding:15px 18px;margin-bottom:11px;cursor:pointer;transition:border-color .18s,background .18s}
+.lk-opt:hover{border-color:var(--cyan)}
+.lk-opt .lk-txt{font-size:var(--fs-sm);color:var(--text);line-height:1.7}
+.lk-opt .lk-rev{display:none;margin-top:11px;padding-top:11px;border-top:1px dashed var(--border-strong)}
+.lk-opt.open .lk-rev{display:block}
+.lk-opt .lk-verdict{display:inline-block;font-size:var(--fs-2xs);font-weight:800;border-radius:20px;padding:3px 11px;background:var(--cyan-100);color:var(--accent);margin-bottom:6px}
+.lk-opt .lk-why{font-size:var(--fs-xs);color:var(--text2);line-height:1.65;margin:0}
+
+/* --- משחק ובוחן --- */
+.lk-g{margin-bottom:22px}
+.lk-g>b{display:block;font-size:var(--fs-base);font-weight:800;color:var(--navy);margin-bottom:12px}
+.lk-qcard{background:#fff;border:1.5px solid var(--border);border-radius:15px;padding:16px 19px;margin-bottom:12px}
+.lk-qcard .lk-qt{font-size:var(--fs-sm);font-weight:700;color:var(--text);line-height:1.65;margin-bottom:11px}
+.lk-qcard .lk-lvl{display:inline-block;font-size:.68rem;font-weight:800;border-radius:20px;padding:2px 9px;margin-inline-start:7px;vertical-align:middle}
+.lk-lvl.easy{background:#E4FAF7;color:#00796B}
+.lk-lvl.medium{background:#E8F2FF;color:#1257A8}
+.lk-lvl.high{background:#FDECEF;color:#B3243B}
+.lk-opts{display:grid;gap:7px}
+.lk-a{text-align:start;font:inherit;font-size:var(--fs-sm);color:var(--text);background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 14px;cursor:pointer;transition:border-color .15s,background .15s;line-height:1.5}
+.lk-a:hover:not(:disabled){border-color:var(--cyan);background:var(--cyan-100)}
+.lk-a:disabled{cursor:default}
+.lk-a.ok{border-color:#2F9F55;background:#E9F8EE;color:#1D6B39;font-weight:700}
+.lk-a.no{border-color:#D9536A;background:#FDECEF;color:#982034}
+.lk-exp{display:none;margin-top:10px;font-size:var(--fs-xs);color:var(--text2);line-height:1.65;background:var(--soft-bg);border-radius:11px;padding:10px 14px}
+.lk-exp.on{display:block}
+.lk-score{display:flex;align-items:center;gap:12px;background:var(--soft-bg);border-radius:13px;padding:13px 17px;margin-bottom:16px;font-size:var(--fs-sm);font-weight:700;color:var(--navy)}
+.lk-score .lk-bar{flex:1;height:8px;border-radius:6px;background:var(--border);overflow:hidden}
+.lk-score .lk-fill{height:100%;background:var(--teal);width:0;transition:width .45s var(--ease)}
+
+/* --- התאמה (גרירה בלחיצה) --- */
+.lk-match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lk-match .lk-col b{display:block;font-size:var(--fs-2xs);color:var(--muted);font-weight:800;margin-bottom:8px}
+.lk-m{width:100%;text-align:start;font:inherit;font-size:var(--fs-sm);background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 14px;margin-bottom:7px;cursor:pointer;transition:border-color .15s,background .15s;line-height:1.5}
+.lk-m:hover:not(:disabled){border-color:var(--cyan)}
+.lk-m.sel{border-color:var(--navy);background:var(--blue-bg);font-weight:700}
+.lk-m.done{border-color:#2F9F55;background:#E9F8EE;color:#1D6B39;cursor:default}
+.lk-m.miss{border-color:#D9536A;background:#FDECEF}
+
+/* --- שליחה לכיתה --- */
+.lk-share{background:var(--blue-bg);border:1.5px solid var(--border-strong);border-radius:16px;padding:17px 20px;margin-bottom:16px}
+.lk-share>b{display:block;font-size:var(--fs-base);font-weight:800;color:var(--navy);margin-bottom:4px}
+.lk-shx{font-size:var(--fs-xs);color:var(--text2);line-height:1.6;margin:0 0 11px}
+.lk-url{background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:10px 13px;font-size:var(--fs-xs);color:var(--text2);word-break:break-all;margin-bottom:11px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.lk-shb{display:flex;gap:8px;flex-wrap:wrap}
+.lk-shb .lk-btn{text-decoration:none}
+.lk-qr{margin-top:15px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.lk-qr img,.lk-qr canvas{background:#fff;padding:11px;border-radius:13px;border:1.5px solid var(--border)}
+.lk-qr .lk-shx{margin:0;text-align:center}
+
+/* --- מצב ריק / שגיאה --- */
+.lk-empty{background:var(--soft-bg);border-radius:14px;padding:18px 20px;font-size:var(--fs-sm);color:var(--text2);line-height:1.7}
+
+@media(max-width:820px){
+  .lk-meta{grid-template-columns:1fr}
+  .lk-match{grid-template-columns:1fr}
+  .lk-slide{padding:24px 22px}
+  .lk-slide h5{font-size:var(--fs-2xl)}
+  .lk-slide li{font-size:var(--fs-base)}
+}
+
+/* ===== מצב הצגה לכיתה =====
+   טיפוגרפיה גדולה למקרן, וכל מה שמסומן lk-teacher נעלם:
+   הערות מרצה ומחוון לא אמורים להיות מוקרנים על הקיר מול התלמידים. */
+.lk-stage{position:fixed;inset:0;z-index:9999;background:var(--canvas);overflow:auto;padding:34px 40px 90px;display:none}
+.lk-stage.on{display:block}
+.lk-stage .lk-teacher{display:none !important}
+.lk-stage.lk-shownotes .lk-teacher{display:block !important}
+
+/* עמוד התלמיד — חומרי מורה חסומים תמיד, בלי מתג ובלי יוצא מן הכלל */
+.lk-student .lk-teacher{display:none !important}
+.lk-stage .lk-acts,.lk-stage .lk-tabs{display:none}
+.lk-stage .lk-inner{max-width:1180px;margin:0 auto;font-size:1.32rem}
+.lk-stage h3{font-size:2.1rem}
+.lk-stage .lk-card>h4{font-size:1.5rem}
+.lk-stage .lk-step b,.lk-stage .lk-qcard .lk-qt{font-size:1.28rem}
+.lk-stage .lk-step p,.lk-stage .lk-list li,.lk-stage .lk-a,.lk-stage .lk-m,.lk-stage .lk-q{font-size:1.2rem;line-height:1.75}
+.lk-stage .lk-exp{font-size:1.06rem}
+.lk-stage .lk-opt .lk-txt{font-size:1.35rem;line-height:1.7}
+.lk-stage .lk-slide{min-height:62vh;padding:52px 56px;justify-content:center}
+.lk-stage .lk-slide h5{font-size:3rem;margin-bottom:26px}
+.lk-stage .lk-slide li{font-size:1.75rem;line-height:1.75;margin-bottom:16px}
+.lk-stage .lk-meta span{font-size:1.15rem}
+.lk-stage .lk-rubric{font-size:1.05rem}
+
+/* סרגל השליטה של מצב ההצגה */
+.lk-ctl{position:fixed;inset-inline:0;bottom:0;background:var(--navy);color:#fff;display:flex;align-items:center;gap:12px;padding:11px 22px;z-index:10000;flex-wrap:wrap}
+.lk-ctl .lk-title{font-weight:800;font-size:.95rem}
+.lk-ctl .lk-sp{margin-inline-start:auto;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.lk-ctl button{font:inherit;font-size:.86rem;font-weight:700;background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:9px;padding:7px 14px;cursor:pointer}
+.lk-ctl button:hover{background:rgba(255,255,255,.26)}
+.lk-ctl .lk-hintk{font-size:.78rem;opacity:.75}
+.lk-ctl .lk-tsw{background:rgba(255,255,255,.06)}
+.lk-ctl .lk-tsw.on{background:#F2B233;color:#3F2E00;border-color:#F2B233}
+
+@media(max-width:820px){
+  .lk-stage{padding:20px 16px 96px}
+  .lk-stage .lk-inner{font-size:1.1rem}
+  .lk-stage .lk-slide{padding:26px 22px;min-height:auto}
+  .lk-stage .lk-slide h5{font-size:1.8rem}
+  .lk-stage .lk-slide li{font-size:1.2rem}
+}
+
+/* --- הדפסה: רק התוצר הפעיל --- */
+@media print{
+  .lk-tabs,.lk-acts,.lk-nav,.lk-dots{display:none !important}
+  .lk-panel{display:none !important}
+  .lk-panel.on{display:block !important}
+  .lk-card,.lk-sheet{border:1px solid #ccc;break-inside:avoid}
+  .lk-slide{background:#fff !important;color:#000 !important;border:1px solid #ccc;break-inside:avoid;page-break-after:always}
+  .lk-slide h5{color:#0D3B66 !important}
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>שיעור · המרחב הפדגוגי</title>
+<meta name="description" content="חומרי שיעור לתלמידים — מינהל הכשרה מקצועית.">
+<!-- אין gate.js ואין auth.js: זה העמוד היחיד שנועד לתלמידים,
+     והוא נשלח אליהם בקישור. מערך השיעור והמחוון חסומים בקוד. -->
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="lesson-kit.css">
+<style>
+body{background:var(--canvas);margin:0}
+.sh-wrap{max-width:960px;margin:0 auto;padding:18px 18px 50px}
+.sh-top{background:var(--grad);color:#fff;border-radius:18px;padding:22px 26px;margin-bottom:6px}
+.sh-top .kick{font-size:.76rem;font-weight:700;opacity:.85;margin-bottom:5px}
+.sh-top h1{font-size:1.45rem;font-weight:800;margin:0 0 5px;line-height:1.3}
+.sh-top .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.sh-top .chip{background:rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;font-size:.78rem;font-weight:600}
+.sh-msg{background:var(--soft-bg);border-radius:14px;padding:20px 22px;font-size:.95rem;color:var(--text2);line-height:1.7}
+.sh-msg b{color:var(--navy)}
+.sh-foot{text-align:center;font-size:.74rem;color:var(--muted);padding:26px 0 0;line-height:1.7}
+.sh-foot a{color:inherit;font-weight:600}
+@media(max-width:640px){
+  .sh-wrap{padding:12px 12px 40px}
+  .sh-top{padding:18px 18px;border-radius:14px}
+  .sh-top h1{font-size:1.22rem}
+}
+</style>
+</head>
+<body>
+<div class="sh-wrap">
+  <div id="head"></div>
+  <div id="host" class="lk-student"></div>
+  <div class="sh-foot">
+    המרחב הפדגוגי · מינהל הכשרה מקצועית · משרד העבודה<br>
+    האתר נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a>
+  </div>
+</div>
+
+<script src="lesson-kit.js"></script>
+<script>
+(function () {
+  /* רק חומרי תלמיד. מערך השיעור (תוכנית המורה) והמחוון אינם ברשימה
+     ולכן אינם ניתנים לבקשה דרך הכתובת — גם לא בהקלדה ידנית. */
+  var STUDENT_KINDS = ["opener", "deck", "game", "sheet", "quiz"];
+
+  var q = new URLSearchParams(location.search);
+  var id = (q.get("id") || "").trim();
+  var want = (q.get("r") || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+  var kinds = want.filter(function (k) { return STUDENT_KINDS.indexOf(k) !== -1; });
+  if (!kinds.length) kinds = STUDENT_KINDS;
+
+  var head = document.getElementById("head");
+  var host = document.getElementById("host");
+
+  function fail(msg) {
+    head.innerHTML = '<div class="sh-top"><div class="kick">המרחב הפדגוגי</div><h1>לא הצלחנו לפתוח את השיעור</h1></div>';
+    host.innerHTML = '<div class="sh-msg">' + msg + "</div>";
+  }
+
+  if (!id || !/^[a-z0-9-]{2,60}$/i.test(id)) {
+    fail("הקישור חסר את מזהה השיעור, או שהוא לא תקין.<br>בקשו מהמורה קישור חדש.");
+    return;
+  }
+
+  LessonKit.load(id).then(function (d) {
+    document.title = d.topic + " · שיעור";
+    head.innerHTML = '<div class="sh-top">' +
+      '<div class="kick">חומרי שיעור</div>' +
+      "<h1>" + LessonKit.esc(d.topic) + "</h1>" +
+      '<div class="chips">' +
+        '<span class="chip">' + LessonKit.esc(d.subject) + "</span>" +
+        '<span class="chip">' + LessonKit.esc(d.grade) + "</span>" +
+      "</div></div>";
+    LessonKit.mount(host, d, kinds, { student: true });
+  }).catch(function () {
+    fail("השיעור המבוקש לא נמצא.<br>ייתכן שהקישור הועתק חלקית — בקשו מהמורה לשלוח אותו שוב.");
+  });
+})();
+</script>
+</body>
+</html>

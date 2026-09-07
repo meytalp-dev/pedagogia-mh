@@ -23,7 +23,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="article.css">
-<script src="/track.js"></script>
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
 </head>
@@ -40,10 +39,12 @@
     <a href="space.html">שער המרחב הפדגוגי</a>
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
-    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
-    <a href="bagrut.html">נתיב הבגרות</a>
-    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a href="subjects.html"><span class="n">03</span> נתיב הבגרות והגמר</a>
+    <a href="bagrut.html">נתיב הבגרות · תחומי הדעת</a>
+    <a href="gmar.html">נתיב הגמר · תחומי הדעת</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
+    <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
     <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
@@ -187,7 +188,7 @@
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
-      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="subjects.html">נתיב הבגרות והגמר</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="alternatives.html">הערכה</a>
@@ -246,7 +247,7 @@
 
 <div class="pagehead split">
   <div>
-    <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="subjects.html">תחומי דעת</a> ‹ נתיב הגמר</div>
+    <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="subjects.html">נתיב הבגרות והגמר</a> ‹ נתיב הגמר</div>
     <h1 class="rv d1">נתיב הגמר · תעודת גמר</h1>
     <p class="rv d2 lead" style="max-width:660px">התעודה המקצועית של משרד העבודה. כאן מרוכזות תוכניות הלימודים של החינוך היוצר, מטלות הגמר, מבחני הגמר לדוגמה ומסעות הלמידה — הריכוז היחיד ברשת.</p>
   </div>
@@ -255,259 +256,112 @@
     <span class="chip">מהשטח · החינוך היוצר</span>
   </div>
 </div>
+<div style="padding:6px var(--px) 10px">
 
-<div class="trackbar rv d2" id="trackbar">
-  <span class="tb-lbl">אתם בנתיב</span>
-  <div class="trackpills" role="group" aria-label="בחירת נתיב לימוד">
-    <a class="pill" href="subjects.html">הכול</a>
-    <a class="pill on" href="gmar.html?track=gmr">תעודת גמר</a>
-    <a class="pill" href="bagrut.html?track=bgr">בגרות</a>
-  </div>
-  <span class="tb-hint">הבחירה נשמרת — כל תחום דעת שתיכנסו אליו ייפתח כבר מסונן לנתיב הזה.</span>
+  <h2 class="sub-sec first rv" id="sec-tchumim">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>תחומי הדעת · נתיב הגמר
+    <small class="sub-sec-note">כל החומרים של המקצוע — בעמוד אחד</small>
+  </h2>
+  <p class="rv" style="font-size:var(--fs-sm);color:var(--text2);margin:0 0 6px;max-width:760px">כל מקצוע נפתח כבר מסונן לנתיב הגמר — תוכנית הלימודים, מטלת הגמר, מסע המודולות ומערך שיעור לדוגמה.</p>
+  <p class="draft-note rv" style="margin:0 0 18px">תוכניות הלימודים הן טיוטות החינוך היוצר (יולי 2026). הנוסח המחייב הוא זה שיאושר על ידי הפיקוח.</p>
+
 </div>
 
-<h2 class="sub-sec" id="tchumey-daat" style="font-size:1.4rem;margin:28px var(--px) 4px">תחומי הדעת · נתיב הגמר</h2>
-<p style="font-size:var(--fs-sm);color:var(--text2);margin:0 var(--px) 16px">כל מקצוע נפתח כבר מסונן לנתיב הגמר — תוכנית הלימודים, מטלת הגמר, מסע המודולות ומערך שיעור לדוגמה.</p>
-<p class="draft-note" style="margin:0 var(--px) 18px">תוכניות הלימודים הן טיוטות החינוך היוצר (יולי 2026). הנוסח המחייב הוא זה שיאושר על ידי הפיקוח.</p>
 <div class="grid c3" style="padding:0 var(--px) 8px;gap:14px">
-  <a class="trkcard rv" href="hebrew.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv" href="hebrew-gmar.html" style="--tc:var(--navy)">
     <h3>עברית והבעה</h3>
     <p class="meta">בחינת גמר 22024 · 3 שעות, 100 נק׳ · שקלול 40/60 · מטלת הגמר "להשפיע"</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv d1" href="math.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv d1" href="math-gmar.html" style="--tc:var(--navy)">
     <h3>מתמטיקה</h3>
     <p class="meta">הערכה מבוססת ביצוע — תיק עבודות, מטלת הגמר "מספרים יוצרים שינוי" והצגה בעל-פה</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv d2" href="english.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv d2" href="english-gmar.html" style="--tc:var(--navy)">
     <h3>אנגלית</h3>
     <p class="meta">אוריינות מובנית · מטלת גמר: תיק אישי, הצגה עצמית, טקסט לא-מוכר ומבדק מסכם</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv" href="history.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv" href="history-gmar.html" style="--tc:var(--navy)">
     <h3>היסטוריה</h3>
     <p class="meta">מטלת הגמר "סוכן הזיכרון" · חניכות בשדה המורשת · גרסה מותאמת לדוברי ערבית</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv d1" href="civics.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv d1" href="civics-gmar.html" style="--tc:var(--navy)">
     <h3>אזרחות</h3>
     <p class="meta">מקצוע חובה · מגמה 2010 · נייר עמדה ומיזם אזרחי בקהילה · חניכות אזרחית</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv d2" href="literature.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv d2" href="literature-gmar.html" style="--tc:var(--navy)">
     <h3>ספרות</h3>
     <p class="meta">מיזם תרבותי מבוסס-יצירה · מחוון משוקלל, ללא מבחן שינון · מבחן גמר ערבית תשפ״ה</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
-  <a class="trkcard rv" href="tanakh.html?track=gmr" style="--tc:var(--navy)">
+  <a class="trkcard rv" href="tanakh-gmar.html" style="--tc:var(--navy)">
     <h3>תנ״ך</h3>
     <p class="meta">מטלת הגמר "חוקרים ויוצרים" · בחינת הגמר של משרד העבודה · 2 סיורי שדה</p>
     <span class="go">לתחום הדעת ←</span>
   </a>
 </div>
 
-
-
-
 <section class="sktbx rv" data-subject="all" data-strack="gmr" data-sec-id="argaz-klim"></section>
 
-<div class="rv" style="padding:22px var(--px) 8px">
-  <div class="grid c3" style="gap:14px">
-    <a class="card rv" href="luach-mivchanim.html" style="padding:20px">
-      <h3 style="font-size:var(--fs-base)">לוח מבחנים · בגרויות וגמר</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">מועדי בחינות הגמר של משרד העבודה, תשפ״ז</p>
+<div style="padding:8px var(--px) 10px">
+
+  <h2 class="sub-sec rv" id="sec-tirgul">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg>תרגול ומבחני גמר
+    <small class="sub-sec-note">מערכת התרגול שנבנתה כאן — ובחינות הגמר האמיתיות</small>
+  </h2>
+  <p class="rv" style="font-size:var(--fs-sm);color:var(--text2);margin:0 0 14px;max-width:760px">מאגר מבחני הגמר במקצועות הליבה: בחינות הגמר עצמן ובחינות תרגול שנבנו בהשראתן. התלמיד.ה מתרגל.ת ישירות במסך, והמורה יכול.ה לפתוח כיתה ולראות תוצאות.</p>
+
+  <a class="card rv" href="gmar-bank.html" style="display:block;padding:20px 22px;margin-bottom:14px;background:var(--blue-bg);border-color:var(--cyan)">
+    <span class="tag cyn">כל המגמות · 625 מבחנים</span>
+    <h3 style="font-size:1.1rem;margin:10px 0 4px;color:var(--navy-800)">מאגר מבחני הגמר לדוגמה — כל התחומים המקצועיים</h3>
+    <p style="font-size:var(--fs-sm);color:var(--text2)">כל מבחני הדוגמה של המינהל בעמוד אחד: חשמל, רכב, מתכת, עץ, קירור ומיזוג, משרד וחשבונאות, טיפוח, מזון, בריאות, מעונות יום ומדיה — בעברית ובערבית, עם חיפוש לפי מקצוע או סמל שאלון וקישור ישיר ל-PDF.</p>
+  </a>
+
+  <div class="grid c2" style="gap:14px;padding-bottom:8px">
+    <a class="card rv" href="tools/practice-exams/index.html" style="padding:20px 22px;background:var(--navy);border-color:var(--navy)">
+      <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">תרגול חופשי</span>
+      <h3 style="font-size:1.1rem;margin:10px 0 4px;color:#fff">מאגר מבחני הגמר במקצועות הליבה</h3>
+      <p style="font-size:var(--fs-sm);color:rgba(255,255,255,.75)">אזרחות · מתמטיקה · עברית — במגזר הכללי ובמגזר הערבי, וכן ערבית. בחינת גמר אמיתית לצד בחינות תרגול, עם מחוון ובדיקה מיידית.</p>
     </a>
-    <a class="card rv d1" href="alternatives.html" style="padding:20px;background:var(--blue-bg)">
-      <h3 style="font-size:var(--fs-base);color:var(--navy-800)">מסלולים מותאמים וחלופות הערכה</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">יהלו״ם · שחל״ב · "תן למילים" · 241 · Ladders</p>
-    </a>
-    <a class="card rv d2" href="bagrut.html?track=bgr" style="padding:20px">
-      <h3 style="font-size:var(--fs-base)">נתיב הבגרות ←</h3>
-      <p style="font-size:var(--fs-xs);color:var(--text2);margin-top:4px">שאלונים, מיקודים וחלופות הערכה של משרד החינוך</p>
+    <a class="card rv d1" href="tools/practice-exams/teacher.html" style="padding:20px 22px">
+      <span class="tag cyn">למורה</span>
+      <h3 style="font-size:1.1rem;margin:10px 0 4px">כניסת מורה · פתיחת תרגול לכיתה</h3>
+      <p style="font-size:var(--fs-sm);color:var(--text2)">פותחים תרגול לקבוצה, שולחים קישור לתלמידים ורואים מי ענה מה — בלי התקנה ובלי הרשמה של התלמידים.</p>
     </a>
   </div>
+
+  <div class="rv d2" style="padding-bottom:4px">
+    <div style="background:var(--blue-bg);border-radius:14px;padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font-size:var(--fs-sm)">
+      <b style="color:#145FA8">מבחני גמר לדוגמה · תשפ״ה</b>
+      <a href="hebrew-gmar.html#mivchanei-gmar" style="color:inherit">עברית</a>
+      <a href="math-gmar.html#mivchanei-gmar" style="color:inherit">מתמטיקה</a>
+      <a href="civics-gmar.html#mivchanei-gmar" style="color:inherit">אזרחות</a>
+      <span style="color:var(--text2);font-size:var(--fs-xs)">הנוסח המלא, הפתרון והמחוון הרשמי — בעמוד תחום הדעת</span>
+    </div>
+  </div>
+
+  <h2 class="sub-sec rv" id="sec-zakaut-link">
+    <svg class="hic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M9 3.5h6v3H9z"/><path d="m8.7 13 2 2 4-4.4"/></svg>תעודות וזכאות
+    <small class="sub-sec-note">הרקע המחייב — לתכנון השנתי ולוועדת הזכאות</small>
+  </h2>
+
+  <div class="grid c2" style="gap:14px;padding-bottom:8px">
+    <a class="card rv" href="zakaut.html?track=gmr" style="padding:20px 22px;background:var(--blue-bg)">
+      <h3 style="font-size:1.1rem;margin-bottom:4px;color:var(--navy-800)">תעודות, זכאות ומבנה ההיבחנות</h3>
+      <p style="font-size:var(--fs-sm);color:var(--text2)">שלוש התעודות · 12 שנות לימוד · תעודת מקצוע · טבלת הליבה · מבחני המגמה והרכיב התעסוקתי.</p>
+    </a>
+    <a class="card rv d1" href="bagrut.html" style="padding:20px 22px">
+      <h3 style="font-size:1.1rem;margin-bottom:4px">נתיב הבגרות ←</h3>
+      <p style="font-size:var(--fs-sm);color:var(--text2)">שבעת תחומי הדעת בנתיב הבגרות, מאגר השאלונים ולוח המבחנים.</p>
+    </a>
+  </div>
+
 </div>
 
-<div class="rv" style="padding:10px var(--px) 54px">
-  <div class="notice" style="border-inline-start:4px solid var(--navy)">
-    <b style="color:var(--navy)">תוכניות נוספות בלימודי הליבה (חינוך יוצר, יולי 2026):</b>
-    <span style="font-size:var(--fs-sm)">
-      <a href="https://docs.google.com/document/d/1_a2mzU55dCP7X_zFdKcEp8TmzYZ1f42CtjAcTOZw_GU/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">ערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1Qa8feajA0LXpLF8bsMzl6gMcOV1fXgH1sKVOLsmuH08/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">אזרחות לחברה הערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1ls0keqKVX2tdIxiwLouRF9Lm80ldSOK44n0Qo7v2Eco/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">היסטוריה לדוברי ערבית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a> ·
-      <a href="https://docs.google.com/document/d/1jd22F8weCkNYmQ3I2aNwgI5Fp5dlcnQcAa39QMVFDWM/edit" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">אנגלית בלימודי הבסיס<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-    </span>
-    · כל התוכניות הן טיוטות לאישור הפיקוח.
-  </div>
-</div>
-
-
-<h2 class="sub-sec rv" id="zakaut" style="font-size:1.4rem;margin:26px var(--px) 4px">תעודות, זכאות ומבנה ההיבחנות</h2>
-<p style="font-size:var(--fs-sm);color:var(--text2);margin:0 var(--px) 12px">הרקע המחייב — נדרש בתכנון השנתי ובוועדת הזכאות, לא בעבודה היומיומית בכיתה.</p>
-<article class="body-sec">
-  <div class="article">
-    <details class="fold sec">
-      <summary><span class="w-open">להצגת הפירוט המלא</span><span class="w-close">לסגירת הפירוט</span><span class="hint">תעודות · זכאות · מקצועות הליבה</span></summary>
-      <div class="inner">
-
-    <h3 class="fold-h" id="teudot">שלוש התעודות — מה בדיוק מקבלים בסוף</h3>
-    <p class="lead-p rv">תלמיד.ה שמסיים.ת מגמה במסלול נוער־מקצוע יוצא.ת עם יותר ממסמך אחד — וזו נקודת הבלבול הנפוצה ביותר בשטח. <strong>תעודת גמר</strong>, <strong>תעודת מקצוע</strong> ו<strong>הכרה ב־12 שנות לימוד</strong> אינן שלושה שמות לאותו דבר, ואינן חלופות זו לזו: הן נצברות יחד, כל אחת מעידה על משהו אחר, ולכל אחת תנאי זכאות משלה.</p>
-
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <tr><th style="width:132px">התעודה</th><th style="width:150px">מי מנפיק</th><th>על מה היא מעידה</th><th style="width:250px">מה נדרש כדי לקבל אותה</th></tr>
-        <tr>
-          <td class="k">תעודת גמר</td>
-          <td>משרד העבודה — מינהל הכשרות מקצועיות ופיתוח כוח אדם</td>
-          <td>סיום מגמת לימוד מקצועית ברמה מוגדרת. נושאת את שם המגמה ואת רמתה — למשל ״עיצוב שיער — רמה א׳״.</td>
-          <td>עמידה בבחינות הגמר החיצוניות של המגמה (עיונית ומעשית), בבחינות הגמר החיצוניות במקצועות הליבה, ובבחינות הפנימיות ובפרויקט הגמר שמאשר הפיקוח המקצועי.</td>
-        </tr>
-        <tr>
-          <td class="k">תעודת מקצוע</td>
-          <td>משרד העבודה — מינהל הכשרות מקצועיות ופיתוח כוח אדם</td>
-          <td>סיווג מקצועי ממשלתי, בשם המקצוע ובסוגו — למשל ״ספרות נשים — סוג 1״. זו התעודה שמציגים למעסיק.</td>
-          <td>נגזרת מאותה מגמה ומאותן בחינות גמר. בתוכניות הלימודים של המינהל שתי התעודות מופיעות זו לצד זו בסיום המגמה — לא במקום זו את זו.</td>
-        </tr>
-        <tr>
-          <td class="k">12 שנות לימוד</td>
-          <td>בית הספר מאשר את סיום י״ב; ההכרה הפורמלית בהיקף שנות הלימוד נשענת על מסלול הלימוד ועל תעודת הגמר של משרד העבודה</td>
-          <td>היקף השכלה בלבד — שהלומד.ת השלים.ה שתים־עשרה שנות לימוד. אינה מעידה על מקצועות, על יחידות ולא על הישגים.</td>
-          <td>סיום מלוא שנות הלימוד במסלול. במסלולי נוער־מקצוע הלימודים נפרשים על ט׳–י״ב, כך שההיקף מושלם עם סיום י״ב.</td>
-        </tr>
-        <tr>
-          <td class="k">תעודת בגרות<br><span style="font-size:var(--fs-xs);font-weight:400;color:var(--text2)">(לשם השוואה)</span></td>
-          <td>משרד החינוך</td>
-          <td>הישגים לפי יחידות לימוד (יח״ל) במקצועות משרד החינוך. התעודה היחידה מבין הארבע שמקנה זכאות להמשך לימודים אקדמיים.</td>
-          <td>מתווה נפרד — ראו <a class="lk" href="bagrut.html?track=bgr">נתיב הבגרות</a> ואת <a class="lk" href="alternatives.html">המסלולים המותאמים וחלופות ההערכה</a>.</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="callout rv">
-      <span class="ttl">המשפט שכדאי לומר להורה בשיחה</span>
-      תעודת הגמר ותעודת המקצוע הן <strong>הישגיות</strong> — הן אומרות מה למד.ה התלמיד.ה ובאיזו רמה. ״12 שנות לימוד״ היא <strong>היקפית</strong> — היא אומרת רק כמה שנים למד.ה. תעודת בגרות היא מסלול אחר לגמרי, של משרד החינוך. אפשר לצאת עם שלוש הראשונות בלי בגרות — ואפשר גם לשלב, בהתאם למסלול שבו משובצת הכיתה.
-    </div>
-
-    <h3 class="fold-h" id="shanot-limud">תעודת 12 שנות לימוד — תנאי הזכאות וההבדל</h3>
-    <p class="rv">״12 שנות לימוד״ אינה תעודת הישגים אלא הכרה בהיקף ההשכלה. זו הסיבה שהיא נדרשת כמעט בכל טופס קבלה לעבודה ובכל מכרז — ובו בזמן אינה פותחת לבדה שערים ללימודים אקדמיים. בבתי הספר של המינהל היא נצברת בתוך המסלול עצמו, ולא כתעודה נפרדת שנרשמים אליה.</p>
-
-    <h3 class="mini rv">מה מקנה את ההיקף</h3>
-    <ul class="ed rv">
-      <li><strong>מסלול תלת/ארבע־שנתי מכיתה ט׳ ועד י״ב.</strong> במסלולי נוער־מקצוע — 55 (דוברי עברית), 56 (דוברי ערבית) ו־57 (חרדי) — הלימודים נפרשים על ארבע שכבות, ט׳–י״ב. פירוט שעות הליבה בכל כיתה ובכל מסלול מופיע ב<a class="lk" href="ogdan-shaot.html">אוגדן השעות תשפ״ז</a>.</li>
-      <li><strong>תנאי הכניסה למגמה.</strong> בתוכניות הלימודים של המינהל תנאי הכניסה הוא בוגרי 9 שנות לימוד, בכפוף לוועדת קבלה. נהלי הקליטה והמיון המלאים — ב<a class="lk" href="klita-miyun.html">עמוד הקליטה והמיון</a>.</li>
-      <li><strong>עמידה בבחינות הגמר.</strong> ההכרה בהיקף שנות הלימוד לבוגרי מערכת משרד העבודה נגזרת ממסלול הלימוד ומתעודת הגמר — ולא מעצם הישיבה בכיתה. הפירוט בהמשך.</li>
-    </ul>
-
-    <div class="callout amber rv">
-      <span class="ttl">כללי ההכרה — כפי שהם מנוסחים לצורכי תעסוקה ושכר</span>
-      פורטל הזכויות ״כל־זכות״ מסכם את כללי ההכרה בלימודים כשווי־ערך להשכלה תיכונית כך: תעודת גמר של משרד העבודה במסלול ״חניכות״ רגילה או מורחבת מקנה הכרה ב־11 שנות לימוד; תעודת גמר של 12 שנות לימוד במסלול ״תעשייתי״ מקנה 12 שנות לימוד, ואילו <strong>אי־עמידה בבחינות הגמר מקנה הכרה ב־11 שנות לימוד בלבד</strong>. לצד זאת מצוין שם כי החל משנת 2015 אין נדרשת עמידה בבחינות הגמר של משרד העבודה, ותינתן הכרה ב־12 שנות לימוד גם ללא תעודת גמר.
-      <br><br>
-      <a class="lk" href="https://www.kolzchut.org.il/he/%D7%94%D7%9B%D7%A8%D7%94_%D7%91%D7%9C%D7%99%D7%9E%D7%95%D7%93%D7%99%D7%9D_%D7%9B%D7%A9%D7%95%D7%95%D7%99_%D7%A2%D7%A8%D7%9A_%D7%9C%D7%94%D7%A9%D7%9B%D7%9C%D7%94_%D7%AA%D7%99%D7%9B%D7%95%D7%A0%D7%99%D7%AA_(10,_11_%D7%90%D7%95_12_%D7%A9%D7%A0%D7%95%D7%AA_%D7%9C%D7%99%D7%9E%D7%95%D7%93)" target="_blank" rel="noopener">כל־זכות — הכרה בלימודים כשווי ערך להשכלה תיכונית<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-      <br><span style="font-size:var(--fs-sm);color:var(--text2)">שני הכללים הללו נוגעים למינוח מסלולים היסטורי (״חניכות״ / ״תעשייתי״) ולא למספור המסלולים הנוכחי של האוגדן. <strong>טעון אימות</strong> מול הפיקוח ומול חוזר המנכ״ל לפני שמוסרים אותו להורה כמידע מחייב.</span>
-    </div>
-
-    <h3 class="mini rv">במה היא נבדלת משתי האחרות</h3>
-    <div class="tbl-scroll rv">
-      <table class="doc" style="min-width:520px">
-        <tr><th style="width:190px">ההשוואה</th><th>מה נכון לומר</th></tr>
-        <tr><td class="k">12 שנות לימוד מול תעודת בגרות</td><td>הבגרות נמדדת ביחידות לימוד ומקנה זכאות אקדמית. ״12 שנות לימוד״ אינה מדווחת ביחידות, אינה כוללת ציונים ואינה מקנה זכאות אקדמית. תלמיד.ה יכול.ה להיות בעל.ת 12 שנות לימוד בלי אף יחידת בגרות.</td></tr>
-        <tr><td class="k">12 שנות לימוד מול תעודת גמר</td><td>תעודת הגמר מעידה על <strong>מה</strong> נלמד — מגמה, רמה ובחינות שנעמדו. ״12 שנות לימוד״ מעידה על <strong>כמה</strong> נלמד. תעודת הגמר היא שמבססת בפועל את ההכרה בהיקף שנות הלימוד.</td></tr>
-        <tr><td class="k">מה שווה למעסיק</td><td>המעסיק מבקש כמעט תמיד ״12 שנות לימוד״ כתנאי סף, אבל מה שמכשיר לעיסוק במקצוע עצמו הוא <strong>תעודת המקצוע</strong> והסיווג המקצועי שבה.</td></tr>
-      </table>
-    </div>
-
-    <h3 class="fold-h" id="teudat-miktzoa">תעודת מקצוע — תנאי הזכאות והיחס לתעודת הגמר</h3>
-    <p class="rv">תעודת המקצוע היא התעודה הממשלתית שמעניקה <strong>סיווג מקצועי</strong> — מעמד מוכר בענף. היא מונפקת על ידי מינהל הכשרות מקצועיות ופיתוח כוח אדם במשרד העבודה, מתוקף <strong>חוק החניכות תשי״ג–1953</strong> וחוק עבודת הנוער תשי״ג–1953, שמכוחם פועלת מערכת החניכות והנוער של המינהל לצד מערכת החינוך של משרד החינוך.</p>
-
-    <h3 class="mini rv">נצברות יחד — לא חלופיות</h3>
-    <p class="rv">בתוכניות הלימודים של המגמות, סעיף ״תעודות גמר״ מונה את שתי התעודות זו לצד זו: תעודת גמר בשם המגמה והרמה, ותעודת מקצוע בשם המקצוע וסוגו. שתיהן נובעות מאותו מסלול לימודים ומאותה מערכת בחינות — <strong>אין לבחור ביניהן ואין מסלול שמעניק רק אחת מהן</strong>.</p>
-    <div class="tbl-scroll rv">
-      <table class="doc" style="min-width:520px">
-        <tr><th style="width:180px">דוגמה — מגמה 603</th><th>מה כתוב בתעודה</th></tr>
-        <tr><td class="k">תעודת גמר</td><td>עיצוב שיער — רמה א׳ <span style="color:var(--text2)">(שם המגמה והרמה)</span></td></tr>
-        <tr><td class="k">תעודת מקצוע</td><td>ספרות נשים — סוג 1 <span style="color:var(--text2)">(שם המקצוע והסיווג)</span></td></tr>
-      </table>
-    </div>
-    <p style="font-size:var(--fs-sm);color:var(--text2)" class="rv">המקור: תוכנית הלימודים ״עיצוב שיער — רמה א׳, נוער, מגמה 603״, מהדורת 2020 — מינהל הכשרה מקצועית. הפירוט המקביל לכל מגמה מופיע בתוכנית הלימודים שלה ובאוגדן.</p>
-
-    <h3 class="mini rv">מה תעודת המקצוע מקנה בפועל</h3>
-    <ul class="ed rv">
-      <li><strong>דירוג בסיווג המקצועי ללא בחינה נוספת.</strong> בנספחי הסיווג המקצועי שבתוכניות המגמות נקבע כי מי שמלאו לו 18 שנה ובידו תעודה ממלכתית על סיום מוצלח של בית ספר לחניכים באותה מגמה — ידורג בסיווג המקצועי ללא בחינה.</li>
-      <li><strong>לעומת מי שלא למד במסלול.</strong> מי שלא סיים מגמה כזו נדרש לוותק תעסוקתי (בענף הספרות, למשל: שנה וחצי רצופות לפחות) ולגשת לבחינת סיווג. זהו ההפרש המעשי שהתעודה חוסכת לבוגר.ת.</li>
-      <li><strong>המגמה קובעת את שם התעודה.</strong> מקצועות הבחינה הנדרשים לתעודת גמר ו/או לתעודת מקצוע מפורטים לכל מגמה ב<a class="lk" href="ogdan-shaot.html">אוגדן השעות</a> ובאוגדנים המורחבים.</li>
-    </ul>
-
-    <h3 class="fold-h" id="liba-hovah">מקצועות הליבה ההכרחיים — הטבלה</h3>
-    <p class="lead-p rv">בנתיב הגמר אין ״יחידות לימוד״. מה שנמדד הוא <strong>שעות שבועיות (ש״ש)</strong> לפי האוגדן, ו<strong>בחינת גמר — חיצונית או פנימית</strong> בכל מקצוע ליבה. היחידות (יח״ל) מופיעות רק כאפשרות המרה במתמטיקה ובעברית, כמפורט בהערות.</p>
-
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <tr>
-          <th style="width:190px">מקצוע הליבה</th>
-          <th style="width:120px">סוג בחינת הגמר</th>
-          <th style="width:120px">מסלול 55<br><span style="font-weight:400;font-size:var(--fs-xs)">ט׳ · י׳ · י״א · י״ב</span></th>
-          <th style="width:120px">מסלול 56<br><span style="font-weight:400;font-size:var(--fs-xs)">ט׳ · י׳ · י״א · י״ב</span></th>
-          <th>מה נדרש בפועל</th>
-        </tr>
-        <tr><td class="k">מתמטיקה</td><td><strong>חיצונית</strong></td><td>3 · 3 · 3 · 3</td><td>3 · 3 · 3 · 3</td><td>מבחן גמר, או המרה ל־1 יח״ל. ההמרה חיצונית החל מתשפ״ז לתלמידי י״א.</td></tr>
-        <tr><td class="k">הבעה, הבנה ולשון עברית</td><td><strong>חיצונית</strong></td><td>3 · 3 · 3 · 3</td><td>—</td><td>תוכנית תלת־שנתית הנלמדת בי׳–י״ב. <strong>ההגשה לבחינת הגמר אפשרית אך ורק בכיתה י״ב.</strong> לחלופין המרה לתלקיט עבודות 1 יח״ל. פירוט השאלון והשקלול ב<a class="lk" href="hebrew.html?track=gmr">עברית והבעה</a>.</td></tr>
-        <tr><td class="k">לשון עברית לדוברי ערבית</td><td><strong>חיצונית</strong></td><td>—</td><td>3 · 3 · 3 · 3</td><td>מקבילה למקצוע העברית במסלול 55.</td></tr>
-        <tr><td class="k">ערבית</td><td><strong>חיצונית</strong></td><td>—</td><td>2 · 2 · 2 · 2</td><td>לבתי ספר מהחברה הערבית.</td></tr>
-        <tr><td class="k">אזרחות</td><td><strong>חיצונית</strong></td><td>2 · 1 · 1 · 2</td><td>1 · 1 · 1 · 1</td><td>מבחן גמר <strong>70%</strong> + תלקיט אזרחות <strong>30%</strong>. סה״כ 128 שעות הוראה: 90 לקראת המבחן ו־38 לפרויקט. ציון המגן משוקלל עם ציון מבחן הגמר. חלופה: הערכה חלופית באזרחות. פירוט ב<a class="lk" href="civics.html?track=gmr">אזרחות</a>.</td></tr>
-        <tr><td class="k">אנגלית</td><td>פנימית</td><td>2 · 4 · 4 · 4</td><td>2 · 4 · 4 · 4</td><td>תוכנית הלימודים בנתיב הגמר בבנייה נכון לתשפ״ז.</td></tr>
-        <tr><td class="k">היסטוריה <span style="color:var(--text2)">/ היסטוריה ערבית</span></td><td>פנימית</td><td>0 · 1 · 1 · 0</td><td>1 · 1 · 1 · 1</td><td>ראו <a class="lk" href="history.html?track=gmr">היסטוריה</a> — כולל הגרסה לדוברי ערבית.</td></tr>
-        <tr><td class="k">תנ״ך</td><td>פנימית</td><td>2 · 2 · 2 · 2</td><td>—</td><td>ראו <a class="lk" href="tanakh.html?track=gmr">תנ״ך</a>.</td></tr>
-        <tr><td class="k">פרט, קבוצה וחברה</td><td>פנימית</td><td>1 · 1 · 1 · 1</td><td>1 · 1 · 1 · 1</td><td>בתוכניות המגמה מופיע בשם ״חינוך וחברה״.</td></tr>
-        <tr><td class="k">ספורט</td><td>פנימית</td><td>1 · 1 · 1 · 1</td><td>1 · 1 · 1 · 1</td><td>—</td></tr>
-        <tr><td class="k">הכנה לעולם התעסוקה</td><td>ללא בחינת גמר</td><td>2 · 2 · 0 · 0</td><td>2 · 2 · 0 · 0</td><td>נלמד בט׳–י׳ בלבד. מתחבר לרכיב החניכות — ראו המדור הבא.</td></tr>
-      </table>
-    </div>
-
-    <ul class="ed tight rv">
-      <li><strong>מסלול 57 (נוער־מקצוע חרדי)</strong> — פריסת השעות זהה למסלול 55, עם תוספת לימודי קודש (18 ש״ש בי׳–י״ב) ותנ״ך בכיתה ט׳ בלבד. הפירוט המלא ב<a class="lk" href="ogdan-shaot.html">אוגדן השעות</a>.</li>
-      <li><strong>מקור נתוני השעות</strong> — האוגדן המקוצר לנוער תשפ״ז, מהדורה מאושרת 30.03.2026, ומכתב מנהלת היחידה לתכניות לימודים.</li>
-      <li><strong>מקור חלוקת חיצוני/פנימי</strong> — סעיף ״בחינות גמר״ בתוכניות הלימודים של המגמות. החלוקה נבדקה מול תוכנית מגמה 603 (2020) ומול תוכניות הליבה במסלול 55 (מהדורת 2018).</li>
-    </ul>
-
-    <div class="callout rv">
-      <span class="ttl">מה נחשב ״מינימום היבחנות״</span>
-      לתעודת גמר נדרשת עמידה ב<strong>כל</strong> בחינות הגמר החיצוניות — מקצועות הליבה החיצוניים שבטבלה, וכן הבחינה העיונית והבחינה המעשית של המגמה. אין ״מכסת מינימום״ שמאפשרת לוותר על מקצוע חיצוני. הבחינות הפנימיות ופרויקט הגמר נדרשים אף הם, ומאושרים על ידי הפיקוח המקצועי.
-    </div>
-
-    <h3 class="fold-h" id="mivchanei-megama">מבחני המגמה והרכיב התעסוקתי</h3>
-    <p class="lead-p rv">לצד מקצועות הליבה יש למגמה עצמה מערכת בחינות משלה. זהו הרכיב שקובע אם התלמיד.ה יוצא.ת עם תעודת גמר ותעודת מקצוע — או בלעדיהן.</p>
-
-    <h3 class="mini rv">שלושת רכיבי בחינות המגמה</h3>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <tr><th style="width:170px">הרכיב</th><th style="width:110px">חיצוני / פנימי</th><th>מה נבדק</th><th style="width:180px">דוגמה — מגמה 603</th></tr>
-        <tr><td class="k">בחינה עיונית</td><td><strong>חיצונית</strong> — משרד העבודה</td><td>תורת המקצוע: הידע התיאורטי של פרקי המגמה.</td><td>סעיפים 1–3 בתוכנית, ציון עובר 55</td></tr>
-        <tr><td class="k">בחינה מעשית</td><td><strong>חיצונית</strong> — משרד העבודה</td><td>ביצוע בפועל של מטלות המקצוע, מול בוחן מטעם המשרד.</td><td>סעיף 5 בתוכנית, ציון עובר 60</td></tr>
-        <tr><td class="k">פרויקט גמר</td><td>פנימי — באישור הפיקוח המקצועי</td><td>תוצר מסכם של המגמה, מוערך בבית הספר ומאושר על ידי הפיקוח.</td><td>סעיף 4 בתוכנית, ציון עובר 70</td></tr>
-      </table>
-    </div>
-    <p style="font-size:var(--fs-sm);color:var(--text2)" class="rv"><strong>שימו לב:</strong> מספרי הסעיפים וציוני העובר שבעמודה האחרונה הם של מגמה 603 בלבד, והם מובאים כדוגמה למבנה. <strong>בכל מגמה</strong> הסעיפים וציוני העובר נקבעים בתוכנית הלימודים של אותה מגמה — יש לבדוק שם, ולא להסיק ממגמה אחת לאחרת.</p>
-
-    <h3 class="mini rv">מי נבחן ומתי</h3>
-    <ul class="ed rv">
-      <li><strong>מי</strong> — כלל תלמידי המגמה במסלולי נוער־מקצוע (55, 56, 57). אין תנאי סף חוסם לכניסה לנתיב, אבל אין פטור מבחינות הגמר.</li>
-      <li><strong>מתי</strong> — ההגשה לבחינות הגמר היא ככלל בכיתה י״ב; בעברית זה מנוסח מפורשות בתוכנית הלימודים — הגשה אך ורק בי״ב. במתמטיקה ובעברית, ההמרה ל־1 יח״ל היא חיצונית כבר בכיתה י״א החל מתשפ״ז. המועדים המדויקים — ב<a class="lk" href="luach-mivchanim.html">לוח המבחנים · בגרויות וגמר תשפ״ז</a>.</li>
-      <li><strong>איך זה משתקלל</strong> — הציון השנתי (מגן) משוקלל עם ציון בחינת הגמר. באזרחות: מבחן 70% ופרויקט 30%. המחוון המומלץ לקביעת הציון השנתי מפורט ב<a class="lk" href="tashpaz.html#annual-grade">היערכות תשפ״ז — הנחיות למתן ציון שנתי</a>.</li>
-    </ul>
-
-    <h3 class="mini rv">הרכיב התעסוקתי — חניכות, לא בחינה</h3>
-    <p class="rv">בשטח נשמע לעיתים המונח ״מבחני תעסוקה״. במסמכי המינהל שנבדקו לצורך העמוד הזה — תוכניות הלימודים, האוגדן והנחיות ההיערכות — <strong>אין רכיב בשם זה</strong>. הרכיב התעסוקתי אינו בחינה אלא מכסת חניכות והתנסות בעולם העבודה, והוא נבדק אחרת:</p>
-    <ul class="ed rv">
-      <li><strong>מכסת שעות</strong> — כל תלמיד.ה עומד.ת במכסה של מינימום <strong>200 שעות חניכות בשנה</strong>. הסדירות גמישה: יום שבועי קבוע, תקופה מרוכזת, פרויקטים או עבודת קיץ. הפירוט ב<a class="lk" href="chanichut.html">חניכות — התפיסה ושמונת המודלים</a>.</li>
-      <li><strong>אישור מעסיק</strong> — בפועל בתי ספר מתנים את התעודה בחתימת המעסיק על סיום שעות ההכשרה בהצלחה, לצד סף נוכחות בבית הספר. <strong>אלה נוהלי מוסד, ולא ראינו אותם מעוגנים כתנאי זכאות ארצי</strong> — ראו מדור האימות שלהלן.</li>
-      <li><strong>מי מלווה</strong> — רכז.ת החניכות והתעסוקה. ארגז הכלים המלא: <a class="lk" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a> · <a class="lk" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות והתעסוקה</a>.</li>
-    </ul>
-
-    </div>
-    </details>
-  </div>
-</article>
 </main>
 
 <!-- foot:start tagline="עודכן 25.8.2026" -->

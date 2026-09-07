@@ -869,3 +869,34 @@ tr.dl-next td:first-child::after{
 .crumb a:hover{text-decoration:underline}
 .hero .crumb{display:block;margin-bottom:2px}
 @media print{.crumb a{color:#000}}
+
+/* ===== .hic — אייקוני קו בתוך כותרות וטקסט =====
+   היה מוגדר רק ב-<style> הפנימי של bagrut.html, וכל בלוק שהועבר ממנו
+   לעמוד אחר איבד את הגודל והאייקון נמתח לרוחב העמוד. מקור אחד, לכל האתר. */
+.hic{display:inline-block;vertical-align:-3px;width:19px;height:19px;margin-inline-end:7px;color:var(--accent);flex:0 0 auto}
+h2 .hic,h3 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
+
+/* ===== .sbjtabs — כרטיסיות (טאבים) לכל עמוד באתר =====
+   היה קוד פנימי ב-bagrut.html בלבד. הועבר לכאן כדי שאפשר יהיה להשתמש
+   בטאבים גם בעמודי תחומי הדעת. ה-JS: sbjtabs.js */
+.sbjtabs-wrap{margin:18px 0 6px}
+.sbjtabs{display:flex;flex-wrap:wrap;gap:8px}
+.sbjtab{display:inline-flex;align-items:center;gap:2px;flex:0 0 auto;
+  border:1.5px solid var(--border);background:var(--surface);border-radius:999px;
+  padding:8px 16px;font-family:'Assistant',sans-serif;font-weight:700;font-size:.88rem;
+  color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s var(--ease)}
+.sbjtab .hic{width:17px;height:17px;margin-inline-end:6px;color:var(--cyan);transition:color .2s}
+.sbjtab .sbjn{margin-inline-start:8px;min-width:20px;padding:1px 6px;border-radius:999px;
+  background:var(--blue-100);color:var(--navy);font-size:.74rem;font-weight:800;
+  font-variant-numeric:tabular-nums;transition:all .2s}
+.sbjtab:hover{border-color:var(--cyan);color:var(--navy)}
+.sbjtab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sbjtab[aria-selected="true"]{background:var(--navy-800);color:#fff;border-color:transparent;box-shadow:var(--sh-sm)}
+.sbjtab[aria-selected="true"] .hic{color:#fff}
+.sbjtab[aria-selected="true"] .sbjn{background:rgba(255,255,255,.22);color:#fff}
+.sbjpanel[hidden]{display:none}
+.sbjpanel{animation:sbjin .28s var(--ease) both}
+.sbjpanel>h3.mini:first-child{margin-top:14px}
+@keyframes sbjin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sbjpanel{animation:none}}
+@media(max-width:560px){.sbjtab{padding:7px 12px;font-size:.82rem}}

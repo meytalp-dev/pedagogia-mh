@@ -24,6 +24,8 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
+<link rel="stylesheet" href="lesson-kit.css">
+<script src="lesson-kit.js"></script>
 <style>
 .linklist{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px}
 .linklist li{font-size:.87rem;color:var(--text2);padding-inline-start:16px;position:relative}
@@ -118,10 +120,12 @@
     <a href="space.html">שער המרחב הפדגוגי</a>
     <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
     <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
-    <a href="subjects.html"><span class="n">03</span> תחומי דעת · בגרות / גמר</a>
-    <a href="bagrut.html">נתיב הבגרות</a>
-    <a href="gmar.html">נתיב הגמר · תעודת גמר</a>
+    <a href="subjects.html"><span class="n">03</span> נתיב הבגרות והגמר</a>
+    <a href="bagrut.html">נתיב הבגרות · תחומי הדעת</a>
+    <a href="gmar.html">נתיב הגמר · תחומי הדעת</a>
     <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
+    <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
     <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
@@ -265,7 +269,7 @@
     <div class="sub">
       <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
       <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
-      <a href="subjects.html">תחומי דעת · בגרות / גמר</a>
+      <a href="subjects.html">נתיב הבגרות והגמר</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="alternatives.html">הערכה</a>
@@ -445,6 +449,24 @@
       <button class="btn line sm" id="g-print">הדפס / שמור כ-PDF</button>
     </div>
   </div>
+
+  <!-- החזרה מהכלי החיצוני. עד כה הפרומפט הועתק ולא היה שום מקום להחזיר אליו את התשובה. -->
+  <div style="margin-top:22px;border-top:1.5px solid var(--border);padding-top:18px">
+    <h3 style="font-size:var(--fs-base);color:var(--navy);margin-bottom:4px">קיבלתם מערך? הדביקו אותו כאן</h3>
+    <p class="hint" style="margin:0 0 10px">הדביקו את מה ש-ChatGPT, Claude או Gemini החזירו — והמערך יוצג כאן מסודר, מוכן להדפסה ולהורדה. הטקסט נשאר בדפדפן שלכם ואינו נשלח לשום מקום.</p>
+    <textarea id="g-back" rows="5" placeholder="הדביקו כאן את מערך השיעור שקיבלתם…"></textarea>
+    <div class="acts" style="margin-top:10px">
+      <button class="btn primary sm" id="g-back-show" type="button">הצג את המערך</button>
+      <button class="btn line sm" id="g-back-print" type="button">הדפסה</button>
+      <button class="btn line sm" id="g-back-down" type="button">הורדה כקובץ</button>
+    </div>
+    <div id="g-back-out" class="lk" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- שיעורים מוכנים: לא כל מורה רוצה לעבור דרך כלי AI בשעת חירום. -->
+<div class="notice rv" style="margin-top:16px">
+  <b>מעדיפים שיעור מוכן, בלי AI?</b> ב<a href="subjects.html#sec-mecholel">מחולל שבתחומי הדעת</a> יש בנק שיעורים בנויים מראש — מערך, מצגת, דף עבודה, פעילות פתיחה, משחק ובוחן — שנפתחים מיד בעמוד, בלי המתנה ובלי מעבר לכלי חיצוני.
 </div>
 </div>
 
@@ -788,14 +810,78 @@ document.getElementById('g-run').addEventListener('click', function () {
 document.getElementById('g-copyout').addEventListener('click', function () {
   copyText(document.getElementById('g-out-body').textContent); flash(this, 'הועתק ✓');
 });
+/* ההדפסה עוברת דרך ערכת השיעור — iframe מוסתר במקום window.open.
+   חוסם החלונות הקופצים של הדפדפן בלע את החלון הקודם בשקט, וזו הסיבה
+   שהמערך "לא נפתח" אצל המורות. */
 document.getElementById('g-print').addEventListener('click', function () {
-  var txt = document.getElementById('g-out-body').textContent.replace(/[&<>]/g, function (c) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
-  });
-  var w = window.open('', '_blank');
-  w.document.write('<html dir="rtl" lang="he"><head><meta charset="utf-8"><title>מערך שיעור</title><style>body{font-family:Arial,sans-serif;line-height:1.8;padding:40px;white-space:pre-wrap;font-size:14px}</style></head><body>' + txt + '</body></html>');
-  w.document.close(); w.focus(); w.print();
+  var box = document.createElement('div');
+  box.innerHTML = '<div class="lk-card" style="white-space:pre-wrap">' +
+    LessonKit.esc(document.getElementById('g-out-body').textContent) + '</div>';
+  LessonKit.print(box, 'מערך שיעור');
 });
+
+/* ---------- החזרה מהכלי החיצוני ---------- */
+function mdToHtml(src) {
+  var out = [], inList = false, inTable = false;
+  function closeList(){ if (inList) { out.push('</ul>'); inList = false; } }
+  function closeTable(){ if (inTable) { out.push('</tbody></table>'); inTable = false; } }
+  function inline(t){
+    return LessonKit.esc(t)
+      .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+      .replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<i>$2</i>');
+  }
+  String(src || '').split(/\r?\n/).forEach(function (raw) {
+    var l = raw.trim();
+    if (!l) { closeList(); closeTable(); return; }
+    var head = l.match(/^(#{1,6})\s+(.*)$/);
+    if (head) {
+      closeList(); closeTable();
+      var lvl = Math.min(head[1].length + 2, 6);
+      out.push('<h' + lvl + '>' + inline(head[2]) + '</h' + lvl + '>');
+      return;
+    }
+    if (/^\|(.+)\|$/.test(l)) {
+      if (/^[\s|:-]+$/.test(l)) return;
+      closeList();
+      if (!inTable) { out.push('<table><tbody>'); inTable = true; }
+      out.push('<tr>' + l.slice(1, -1).split('|').map(function (c) {
+        return '<td>' + inline(c.trim()) + '</td>';
+      }).join('') + '</tr>');
+      return;
+    }
+    closeTable();
+    if (/^[-*·•]\s+/.test(l) || /^\d+[.)]\s+/.test(l)) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push('<li>' + inline(l.replace(/^([-*·•]|\d+[.)])\s+/, '')) + '</li>');
+      return;
+    }
+    closeList();
+    out.push('<p>' + inline(l) + '</p>');
+  });
+  closeList(); closeTable();
+  return out.join('\n');
+}
+
+(function backFlow() {
+  var ta = document.getElementById('g-back'), out = document.getElementById('g-back-out');
+  if (!ta || !out) return;
+  function name() { var t = val('g-topic'); return t ? 'מערך שיעור · ' + t : 'מערך שיעור'; }
+  function build() {
+    var txt = (ta.value || '').trim();
+    if (!txt) { alert('הדביקו קודם את המערך שקיבלתם'); ta.focus(); return null; }
+    out.innerHTML = '<div class="lk-card">' + mdToHtml(txt) + '</div>';
+    return out;
+  }
+  document.getElementById('g-back-show').addEventListener('click', function () {
+    if (build()) out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  document.getElementById('g-back-print').addEventListener('click', function () {
+    if (build()) LessonKit.print(out, name());
+  });
+  document.getElementById('g-back-down').addEventListener('click', function () {
+    if (build()) LessonKit.download(out, name(), name());
+  });
+})();
 </script>
 <script>
 /* ===== כרטיסיות הניווט של העמוד ===== */

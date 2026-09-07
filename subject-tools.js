@@ -286,7 +286,8 @@
   }
 
   function renderAll(secId, strack, withOfficial) {
-    var q = strack ? '?track=' + strack : '';
+    var sfx = strack === 'bgr' ? '-bagrut' : strack === 'gmr' ? '-gmar' : '';
+    var q = '';
     var cards = ORDER.map(function (key) {
       var d = SUBJECT_TOOLS[key];
       var chips = (withOfficial ? [{ href: d.official.href, label: 'המרחב הפדגוגי' }] : [])
@@ -300,7 +301,7 @@
         '<span class="sk-chips">' + chips.map(function (c) {
           return '<a class="sk-chip" href="' + esc(c.href) + '" target="_blank" rel="noopener">' + esc(c.label) + '</a>';
         }).join('') + '</span>' +
-        '<a class="sk-go" href="' + d.page + q + '">ארגז הכלים של ' + esc(d.short || d.name) + ' ←</a>' +
+        '<a class="sk-go" href="' + d.page.replace('.html', sfx + '.html') + q + '">ארגז הכלים של ' + esc(d.short || d.name) + ' ←</a>' +
         '</div>';
     }).join('');
 
