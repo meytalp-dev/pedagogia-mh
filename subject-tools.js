@@ -272,10 +272,11 @@
       (note ? '<small class="sk-note">' + esc(note) + '</small>' : '') + '</h2>';
   }
 
-  function renderOne(key, secId) {
+  function renderOne(key, secId, withOfficial) {
     var d = SUBJECT_TOOLS[key];
     if (!d) return '';
-    var cards = card(d.official, 'main') + d.tools.map(function (t) { return card(t); }).join('');
+    /* data-official="off" — הפורטל כבר מופיע במקום אחר בעמוד, לא לשכפל */
+    var cards = (withOfficial ? card(d.official, 'main') : '') + d.tools.map(function (t) { return card(t); }).join('');
     return heading(secId, d.name) +
       '<p class="sk-lead">הכלים והמקורות שנבחרו בסקירת האתר דווקא עבור ' + esc(d.short || d.name) +
       ' — המקור הרשמי במרחב הפדגוגי של משרד החינוך, ולצידו כלים ייעודיים לתחום. ' +
@@ -323,7 +324,7 @@
       var secId = host.getAttribute('data-sec-id') || 'argaz-klim';
       var html = (key === 'all')
         ? renderAll(secId, host.getAttribute('data-strack'), host.getAttribute('data-official') !== 'off')
-        : renderOne(key, secId);
+        : renderOne(key, secId, host.getAttribute('data-official') !== 'off');
       if (!html) return;
       host.innerHTML = html;
       host.setAttribute('aria-labelledby', secId);
