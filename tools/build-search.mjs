@@ -36,6 +36,8 @@ const SKIP = new Set([
   "matzpen.html",        // המצפן — כלי עבודה עצמאי, לא תוכן לחיפוש
   "matzpen-demo.html",   // הדגמה עם נתונים מומצאים — אסור שתופיע בחיפוש
   "mishov-menahalim.html",
+  "mishov-rakazim.html",       // משוב מפגשי הרכזים — טופס לשיתוף בקישור, לא תוכן לחיפוש
+  "sikum-mishov-rakazim.html", // סיכום המשוב — דף מעקב פנימי
   "sheelot-menahalim.html",
   "shut-menahalim.html",
   "sikum-mishov.html",

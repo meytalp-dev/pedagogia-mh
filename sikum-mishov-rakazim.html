@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script src="/analytics.js" defer></script>
+<title>סיכום משוב · הכשרת רכזים פדגוגיים תשפ"ז</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128200;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:16.5px;line-height:1.6;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy))}
+
+header.top{padding:26px 0 6px}
+header.top .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:54px;width:auto}
+.brand .t{font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;color:var(--navy);line-height:1.25}
+.brand .t small{display:block;font-family:'Assistant';font-weight:400;font-size:14.5px;color:var(--muted)}
+.note{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);
+  color:var(--muted);border-radius:999px;padding:7px 16px;font-size:14px}
+.note svg{width:16px;height:16px;color:var(--navy)}
+
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 6px}
+.bar select,.bar button{font-family:inherit;font-size:16px;border-radius:12px;border:2px solid var(--line);
+  background:#fff;padding:11px 16px;color:var(--ink);cursor:pointer}
+.bar select{padding-left:40px;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2365739a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:18px}
+.bar button.pri{border-color:transparent;background:linear-gradient(100deg,var(--navy),var(--blue));color:#fff;
+  font-weight:600;font-family:'Rubik',sans-serif;box-shadow:0 6px 18px rgba(24,92,255,.24)}
+.bar button:hover{border-color:#bcd8f2}
+.bar button.pri:hover{filter:brightness(1.06)}
+.live{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--muted);margin-inline-start:auto}
+.live .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.live.err .dot{background:var(--danger);animation:none}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);padding:20px 22px}
+.kpi .n{font-family:'Rubik',sans-serif;font-weight:700;font-size:38px;line-height:1;color:var(--navy)}
+.kpi .n small{font-size:19px;color:var(--muted);font-weight:500}
+.kpi .l{color:var(--muted);font-size:15px;margin-top:6px}
+.kpi.hi{background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));border-color:#cfe3f7}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-m);
+  padding:26px;margin-top:22px}
+.card h2{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:0 0 4px;font-weight:600}
+.card h2 .c{color:var(--muted);font-weight:500;font-size:16px}
+.card p.sub{color:var(--muted);font-size:15px;margin:0 0 18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:820px){.two{grid-template-columns:1fr}}
+
+.pbar{display:flex;align-items:center;gap:14px;padding:13px 0;border-top:1px dashed var(--line)}
+.pbar:first-child{border-top:0}
+.pbar .nm{flex:0 0 190px;font-weight:700;font-size:16px;color:#25325a}
+.pbar .nm small{display:block;font-weight:400;color:var(--muted);font-size:13.5px}
+.pbar .track{flex:1 1 auto;height:12px;border-radius:99px;background:#eef2fa;overflow:hidden}
+.pbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--navy),var(--blue) 60%,var(--sky));
+  width:0;transition:width .7s var(--ease)}
+.pbar .v{flex:0 0 62px;text-align:left;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;color:var(--navy)}
+.pbar .v small{font-size:13px;color:var(--muted);font-weight:400}
+
+.dist{display:flex;align-items:flex-end;gap:12px;height:150px;margin-top:8px}
+.dist .col{flex:1 1 0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;height:100%}
+.dist .b{width:100%;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,var(--blue),var(--navy));
+  min-height:4px;transition:height .7s var(--ease);position:relative}
+.dist .b span{position:absolute;top:-24px;inset-inline-start:0;width:100%;text-align:center;
+  font-family:'Rubik',sans-serif;font-weight:600;font-size:15px;color:var(--navy)}
+.dist .k{font-size:15px;color:var(--muted);font-weight:600}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14.5px;color:#4d6180}
+.chip.in{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60;font-weight:600}
+
+.empty{text-align:center;color:var(--muted);padding:36px 10px;font-size:16px}
+.err-box{display:none;background:#fff5f6;border:2px solid #f3c2c7;color:#8c2b34;border-radius:16px;
+  padding:18px 20px;margin-top:20px}
+.err-box.on{display:block}
+.err-box b{display:block;font-family:'Rubik',sans-serif;font-size:17px;margin-bottom:4px}
+
+footer{margin-top:40px;padding:24px 0 34px;text-align:center;color:var(--muted);font-size:14px}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<header class="top"><div class="wrap">
+  <div class="brand">
+    <img src="logo.png" alt="" onerror="this.style.display='none'">
+    <div class="t">סיכום משוב · הכשרת רכזים פדגוגיים
+      <small>המנהיגות הפדגוגית היוצרת · משרד העבודה · תשפ״ז</small>
+    </div>
+  </div>
+  <span class="note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.4"/>
+    </svg>
+    נתונים מצטברים בלבד — בלי שמות ובלי דוא״ל
+  </span>
+</div></header>
+
+<div class="wrap">
+
+  <div class="bar">
+    <select id="mfilter"></select>
+    <button class="pri" id="refresh" type="button">רענון</button>
+    <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
+  </div>
+
+  <div class="err-box" id="errBox">
+    <b>לא הצלחנו למשוך נתונים</b>
+    <span>ייתכן שיש תקלה רגעית בשירות של גוגל. אפשר ללחוץ רענון בעוד רגע.</span>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi hi"><div class="n" id="kResp">—</div><div class="l">משובים שהתקבלו</div></div>
+    <div class="kpi"><div class="n" id="kSchools">—</div><div class="l">בתי ספר מיוצגים</div></div>
+    <div class="kpi"><div class="n" id="kAvg">—<small> / 5</small></div><div class="l">תרומת המפגש — ממוצע</div></div>
+    <div class="kpi"><div class="n" id="kTop">—<small>%</small></div><div class="l">דירגו 4 או 5</div></div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <h2>שלושת חלקי המפגש</h2>
+      <p class="sub">ממוצע הדירוגים לכל חלק, ולצידו מספר המדרגים.</p>
+      <div id="parts"></div>
+    </div>
+
+    <div class="card">
+      <h2>התפלגות התרומה הכללית</h2>
+      <p class="sub">כמה בחרו בכל ציון, מ-1 עד 5.</p>
+      <div class="dist" id="dist"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>מי כבר השיב <span class="c" id="covCount"></span></h2>
+    <p class="sub">הצלבה מול 63 בתי הספר בפיקוח. ירוק = התקבל משוב מבית הספר.</p>
+    <div class="chips" id="coverage"></div>
+  </div>
+
+  <div class="card">
+    <h2>הטקסטים הפתוחים</h2>
+    <p class="sub">מה היה משמעותי, מה כדאי לשפר ונושאים למפגש הבא — נקראים בדף המעקב
+      המלא שבמחשב של מיטל, שאינו מתפרסם כאן כי הוא מציג שמות ודוא״ל.</p>
+    <p style="margin:0"><a href="mishov-rakazim.html" style="color:var(--navy);font-weight:600">הטופס עצמו ←</a></p>
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית ·
+    <a href="https://pedagogiamh.co.il">pedagogiamh.co.il</a>
+  </footer>
+
+</div>
+
+<script>
+var API_URL = "https://script.google.com/macros/s/AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec";
+var $ = function(id){ return document.getElementById(id); };
+
+var MEETINGS = [
+  {i:1, d:"2026-09-07"},{i:2, d:"2026-10-26"},{i:3, d:"2026-12-17"},
+  {i:4, d:"2027-01-27"},{i:5, d:"2027-02-16"},{i:6, d:"2027-05-23"},{i:7, d:"2027-06-27"}
+];
+var PARTS = [
+  {k:"revital", t:"הפתיחה של רויטל",   s:"תמונה כוללת וכיוון פדגוגי"},
+  {k:"site",    t:"האתר הפדגוגי",       s:"pedagogiamh.co.il"},
+  {k:"matal",   t:"מערך תפקודי הלמידה", s:"המת״ליות ומודל העבודה"}
+];
+var SCHOOLS = ["אום אל פחם בנות","אום אל פחם בנים","אור דניאל נתניה","אור העתיד תורני גן יבנה","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשיה אווירית","אכסאל","בית אל","בית חנינה בנות","בית חנינה בנים","בת עמי","דן גורמה תל-אביב","דרור הגליל","דרור נווה מדבר","הדר","התיכון החברתי חיפה","התיכון החברתי תל אביב יפו","זוקו","חבד אור מנחם אשקלון","חושן","חנוך לנער צפת","טורען","טל חרמון","ירכא אבו סנאן","כסרא סמיע","כפר זיתים","כפר יאסיף","כפר עקב","לקייה","מעיינות צפת","נחלים","עמל אנרגיטק","עמל אשדוד","עמל טייבה","עמל טק אין","עמל נצרת","עמל רהט בנות","עמל רהט בנים","עמל רמת דוד","ערערה","עתיד באר שבע","עתיד ביר אל מכסור","עתיד בית דוד","עתיד גוליס בנות - ירכא","עתיד ירכא בנים","עתיד כפר חבד אוהלי תמימים","עתיד כרמיאל","עתיד מסעדה","עתיד צור ים","עתיד קמג","עתיד תפן","פלמחים","צור בהאר","צור ברק","רימונים טבריה","שגב שלום","תיכון בקהילה מהאראת שפרעם","תיכון החממה","תיכון שיח","תל שבע"];
+
+var DATA = null;
+
+function fmt(iso){
+  var p = iso.split("-");
+  return p[2].replace(/^0/,"") + "." + p[1].replace(/^0/,"") + "." + p[0].slice(2);
+}
+function norm(s){
+  return String(s||"").replace(/["'׳״]/g,"").replace(/[\-־]/g," ").replace(/\s+/g," ").trim();
+}
+function esc(s){
+  return String(s||"").replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+
+(function(){
+  var sel = $("mfilter");
+  var o = document.createElement("option");
+  o.value = "all"; o.textContent = "כל המפגשים";
+  sel.appendChild(o);
+  MEETINGS.forEach(function(m){
+    var x = document.createElement("option");
+    x.value = m.i; x.textContent = "מפגש " + m.i + " · " + fmt(m.d);
+    sel.appendChild(x);
+  });
+  sel.value = "1";
+  sel.addEventListener("change", render);
+})();
+
+function load(){
+  $("liveTxt").textContent = "טוען…";
+  $("live").classList.remove("err");
+  return fetch(API_URL + "?mode=summary")
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) throw new Error("bad_response");
+      DATA = j;
+      $("errBox").classList.remove("on");
+      var t = new Date();
+      $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0"+t.getMinutes()).slice(-2);
+      render();
+    })
+    .catch(function(){
+      $("live").classList.add("err");
+      $("liveTxt").textContent = "אין חיבור";
+      $("errBox").classList.add("on");
+    });
+}
+
+/* מאחדים כמה מפגשים לצבר אחד */
+function bucket(){
+  var f = $("mfilter").value;
+  var out = {n:0, dist:[0,0,0,0,0], schools:{}, partSum:{}, partN:{}};
+  PARTS.forEach(function(p){ out.partSum[p.k] = 0; out.partN[p.k] = 0; });
+  if (!DATA || !DATA.meetings) return out;
+
+  Object.keys(DATA.meetings).forEach(function(k){
+    if (f !== "all" && k !== f) return;
+    var g = DATA.meetings[k];
+    out.n += g.n || 0;
+    (g.dist || []).forEach(function(v,i){ out.dist[i] += v; });
+    (g.schools || []).forEach(function(s){ out.schools[norm(s)] = 1; });
+    PARTS.forEach(function(p){
+      var cnt = (g.parts && g.parts[p.k]) || 0;
+      var a   = (g.partAvg && g.partAvg[p.k]) || 0;
+      out.partSum[p.k] += a * cnt;
+      out.partN[p.k]   += cnt;
+    });
+  });
+  return out;
+}
+
+function render(){
+  var b = bucket();
+  var rated = b.dist.reduce(function(x,y){return x+y;}, 0);
+  var sum = 0;
+  b.dist.forEach(function(v,i){ sum += v * (i+1); });
+  var top = b.dist[3] + b.dist[4];
+
+  $("kResp").textContent    = b.n;
+  $("kSchools").textContent = Object.keys(b.schools).length;
+  $("kAvg").innerHTML       = (rated ? (sum/rated).toFixed(2) : "—") + '<small> / 5</small>';
+  $("kTop").innerHTML       = (rated ? Math.round(top/rated*100) : "—") + '<small>%</small>';
+
+  var ph = "";
+  PARTS.forEach(function(p){
+    var n = b.partN[p.k], a = n ? b.partSum[p.k]/n : 0;
+    ph += '<div class="pbar">' +
+      '<div class="nm">' + esc(p.t) + '<small>' + esc(p.s) + '</small></div>' +
+      '<div class="track"><div class="fill" style="width:' + (a/5*100) + '%"></div></div>' +
+      '<div class="v">' + (n ? a.toFixed(2) : "—") + '<small> · ' + n + '</small></div></div>';
+  });
+  $("parts").innerHTML = ph;
+
+  var max = Math.max.apply(null, b.dist.concat([1]));
+  var dh = "";
+  for (var i = 5; i >= 1; i--){
+    var n2 = b.dist[i-1];
+    dh += '<div class="col"><div class="b" style="height:' + (n2/max*100) + '%">' +
+          '<span>' + (n2 || "") + '</span></div><div class="k">' + i + '</div></div>';
+  }
+  $("dist").innerHTML = dh;
+
+  var inCount = 0, ch = "";
+  SCHOOLS.forEach(function(s){
+    var on = !!b.schools[norm(s)];
+    if (on) inCount++;
+    ch += '<span class="chip' + (on ? " in" : "") + '">' + esc(s) + "</span>";
+  });
+  $("coverage").innerHTML = ch;
+  $("covCount").textContent = "· " + inCount + " מתוך " + SCHOOLS.length;
+}
+
+$("refresh").addEventListener("click", load);
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
