@@ -93,6 +93,9 @@ header.top .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify
 .tbl th,.tbl td{text-align:right;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 .tbl th{font-size:14px;color:var(--muted);font-weight:700;background:#fafbff;position:sticky;top:0;z-index:1}
 .tbl tr:hover td{background:#fafcff}
+.tbl .em{direction:ltr;text-align:left;font-size:14px;white-space:nowrap}
+.tbl .em a{color:var(--muted);text-decoration:none}
+.tbl .em a:hover{color:var(--blue);text-decoration:underline}
 .tbl .g{font-family:'Rubik',sans-serif;font-weight:600;color:var(--navy);text-align:center}
 .tbl .g.dim{color:#c3cbe0;font-weight:400}
 .scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:14px}
@@ -129,7 +132,7 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.4"/>
     </svg>
-    דף פנימי · כתובות הדוא״ל אינן מוצגות כאן
+    דף פנימי · אינו מקושר מהאתר ואינו מופיע בחיפוש
   </span>
 </div></header>
 
@@ -138,6 +141,7 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
   <div class="bar">
     <select id="mfilter"></select>
     <button class="pri" id="refresh" type="button">רענון</button>
+    <button id="csv" type="button">ייצוא CSV</button>
     <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
   </div>
 
@@ -173,7 +177,7 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     <div class="scroll">
       <table class="tbl">
         <thead><tr>
-          <th>תאריך</th><th>שם</th><th>בית ספר</th>
+          <th>תאריך</th><th>שם</th><th>דוא״ל</th><th>בית ספר</th>
           <th style="text-align:center">מפגש</th>
           <th style="text-align:center">כללי</th>
           <th style="text-align:center">רויטל</th>
@@ -210,7 +214,8 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
 </div>
 
 <script>
-var API_URL = "https://script.google.com/macros/s/AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec";
+var API_URL  = "https://script.google.com/macros/s/AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec";
+var ROWS_KEY = "d9912ec27351c6ce04b02a66";
 var $ = function(id){ return document.getElementById(id); };
 
 var MEETINGS = [
@@ -272,8 +277,8 @@ function esc(s){
 function load(){
   $("liveTxt").textContent = "טוען…";
   $("live").classList.remove("err");
-  /* mode=board = כל השורות פרט לעמודת הדוא״ל */
-  return fetch(API_URL + "?mode=board")
+  /* mode=rows = כל השורות, כולל הדוא״ל */
+  return fetch(API_URL + "?mode=rows&key=" + encodeURIComponent(ROWS_KEY))
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (!j || !j.ok) throw new Error("bad_response");
@@ -343,12 +348,13 @@ function render(){
       th += "<tr>" +
         "<td>" + esc(r.date) + "</td>" +
         "<td><b>" + esc(r.name) + "</b></td>" +
+        '<td class="em"><a href="mailto:' + esc(r.email) + '">' + esc(r.email) + "</a></td>" +
         "<td>" + esc(r.school) + "</td>" +
         '<td class="g">' + r.meeting + "</td>" +
         g(r.overall) + g(r.parts && r.parts.revital) + g(r.parts && r.parts.site) + g(r.parts && r.parts.matal) +
         "</tr>";
     });
-  $("tbody").innerHTML = th || '<tr><td colspan="8" class="empty">עדיין לא התקבלו משובים</td></tr>';
+  $("tbody").innerHTML = th || '<tr><td colspan="9" class="empty">עדיין לא התקבלו משובים</td></tr>';
   $("tblCount").textContent = rows.length ? "· " + rows.length : "";
 
   /* ---------- הטקסטים הפתוחים ---------- */
@@ -394,6 +400,26 @@ function render(){
   $("unmatched").innerHTML = uh;
   $("unmatchedBox").style.display = any ? "block" : "none";
 }
+
+$("csv").addEventListener("click", function(){
+  var f = $("mfilter").value;
+  var rows = (f === "all") ? ALL : ALL.filter(function(r){ return String(r.meeting) === f; });
+  var head = ["תאריך","שם","דואל","בית ספר","מפגש","כללי","רויטל","האתר","מתל","משמעותי","לשפר","למפגש הבא"];
+  var lines = [head.join(",")];
+  rows.forEach(function(r){
+    var c = [r.date, r.name, r.email, r.school, r.meeting, r.overall,
+             r.parts&&r.parts.revital, r.parts&&r.parts.site, r.parts&&r.parts.matal,
+             r.good, r.improve, r.next];
+    lines.push(c.map(function(v){
+      return '"' + String(v === undefined || v === null || v === 0 ? "" : v).replace(/"/g,'""') + '"';
+    }).join(","));
+  });
+  var blob = new Blob(["﻿" + lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "משוב-רכזים-פדגוגיים.csv";
+  a.click();
+});
 
 $("refresh").addEventListener("click", load);
 load();
