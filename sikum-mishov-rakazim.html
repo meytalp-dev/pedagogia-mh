@@ -87,6 +87,22 @@ header.top .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14.5px;color:#4d6180}
 .chip.in{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60;font-weight:600}
+.chip.un{background:#fff7ed;border-color:#f0cf9f;color:#8a5a12}
+
+.tbl{width:100%;border-collapse:collapse;font-size:15.5px}
+.tbl th,.tbl td{text-align:right;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font-size:14px;color:var(--muted);font-weight:700;background:#fafbff;position:sticky;top:0;z-index:1}
+.tbl tr:hover td{background:#fafcff}
+.tbl .g{font-family:'Rubik',sans-serif;font-weight:600;color:var(--navy);text-align:center}
+.tbl .g.dim{color:#c3cbe0;font-weight:400}
+.scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:14px}
+
+.q{background:#fbfcff;border:1px solid var(--line);border-inline-start:4px solid var(--sky);
+  border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.q p{margin:0 0 6px;font-size:16px}
+.q .who{font-size:13.5px;color:var(--muted)}
+.qgroup h3{font-family:'Rubik',sans-serif;font-size:17px;color:var(--navy);margin:20px 0 12px;font-weight:600}
+.qgroup h3:first-child{margin-top:0}
 
 .empty{text-align:center;color:var(--muted);padding:36px 10px;font-size:16px}
 .err-box{display:none;background:#fff5f6;border:2px solid #f3c2c7;color:#8c2b34;border-radius:16px;
@@ -113,7 +129,7 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.4"/>
     </svg>
-    נתונים מצטברים בלבד — בלי שמות ובלי דוא״ל
+    דף פנימי · כתובות הדוא״ל אינן מוצגות כאן
   </span>
 </div></header>
 
@@ -152,16 +168,38 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
   </div>
 
   <div class="card">
-    <h2>מי כבר השיב <span class="c" id="covCount"></span></h2>
-    <p class="sub">הצלבה מול 63 בתי הספר בפיקוח. ירוק = התקבל משוב מבית הספר.</p>
-    <div class="chips" id="coverage"></div>
+    <h2>המשיבים <span class="c" id="tblCount"></span></h2>
+    <p class="sub">כל שורה = משוב אחד. מילוי חוזר של אותו אדם לאותו מפגש מעדכן את השורה ולא מכפיל.</p>
+    <div class="scroll">
+      <table class="tbl">
+        <thead><tr>
+          <th>תאריך</th><th>שם</th><th>בית ספר</th>
+          <th style="text-align:center">מפגש</th>
+          <th style="text-align:center">כללי</th>
+          <th style="text-align:center">רויטל</th>
+          <th style="text-align:center">האתר</th>
+          <th style="text-align:center">מת״ל</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card">
-    <h2>הטקסטים הפתוחים</h2>
-    <p class="sub">מה היה משמעותי, מה כדאי לשפר ונושאים למפגש הבא — נקראים בדף המעקב
-      המלא שבמחשב של מיטל, שאינו מתפרסם כאן כי הוא מציג שמות ודוא״ל.</p>
-    <p style="margin:0"><a href="mishov-rakazim.html" style="color:var(--navy);font-weight:600">הטופס עצמו ←</a></p>
+    <h2>במילים שלהם</h2>
+    <p class="sub">כל הטקסטים הפתוחים, מקובצים לפי שאלה.</p>
+    <div class="qgroup" id="quotes"></div>
+  </div>
+
+  <div class="card">
+    <h2>מי כבר השיב <span class="c" id="covCount"></span></h2>
+    <p class="sub">הצלבה מול 63 בתי הספר בפיקוח. ירוק = התקבל משוב מבית הספר.</p>
+    <div class="chips" id="coverage"></div>
+    <div id="unmatchedBox" style="display:none;margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
+      <p class="sub" style="margin:0 0 10px"><b style="color:#8a5a12">שמות שלא זוהו ברשימה</b> —
+        נכתבו בטופס בכתיב אחר. הם נספרים במונים למעלה, אבל לא נצבעים בירוק כאן.</p>
+      <div class="chips" id="unmatched"></div>
+    </div>
   </div>
 
   <footer>
@@ -186,7 +224,18 @@ var PARTS = [
 ];
 var SCHOOLS = ["אום אל פחם בנות","אום אל פחם בנים","אור דניאל נתניה","אור העתיד תורני גן יבנה","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשיה אווירית","אכסאל","בית אל","בית חנינה בנות","בית חנינה בנים","בת עמי","דן גורמה תל-אביב","דרור הגליל","דרור נווה מדבר","הדר","התיכון החברתי חיפה","התיכון החברתי תל אביב יפו","זוקו","חבד אור מנחם אשקלון","חושן","חנוך לנער צפת","טורען","טל חרמון","ירכא אבו סנאן","כסרא סמיע","כפר זיתים","כפר יאסיף","כפר עקב","לקייה","מעיינות צפת","נחלים","עמל אנרגיטק","עמל אשדוד","עמל טייבה","עמל טק אין","עמל נצרת","עמל רהט בנות","עמל רהט בנים","עמל רמת דוד","ערערה","עתיד באר שבע","עתיד ביר אל מכסור","עתיד בית דוד","עתיד גוליס בנות - ירכא","עתיד ירכא בנים","עתיד כפר חבד אוהלי תמימים","עתיד כרמיאל","עתיד מסעדה","עתיד צור ים","עתיד קמג","עתיד תפן","פלמחים","צור בהאר","צור ברק","רימונים טבריה","שגב שלום","תיכון בקהילה מהאראת שפרעם","תיכון החממה","תיכון שיח","תל שבע"];
 
-var DATA = null;
+/* כתיב חופשי בטופס מול השם הרשמי ברשימה. רק התאמות ודאיות —
+   שם שאינו מופיע כאן וגם אינו ברשימה מוצג בנפרד כ"לא זוהה". */
+var ALIAS = {
+  "עמל אנרגי טק": "עמל אנרגיטק",
+  "טכנולוגי בית אל": "בית אל",
+  "עמל טכנולוגי אשדוד": "עמל אשדוד",
+  "טכנולוגי לקייה": "לקייה",
+  "טכנולוגי לבנים בית חנינה": "בית חנינה בנים",
+  "טכנולוגי לבנות בית חנינה": "בית חנינה בנות"
+};
+
+var ALL = [];
 
 function fmt(iso){
   var p = iso.split("-");
@@ -194,6 +243,11 @@ function fmt(iso){
 }
 function norm(s){
   return String(s||"").replace(/["'׳״]/g,"").replace(/[\-־]/g," ").replace(/\s+/g," ").trim();
+}
+/* השם הרשמי של מה שהוקלד, אם ידוע לנו */
+function official(s){
+  var n = norm(s);
+  return ALIAS[n] ? norm(ALIAS[n]) : n;
 }
 function esc(s){
   return String(s||"").replace(/[&<>"]/g, function(c){
@@ -218,14 +272,16 @@ function esc(s){
 function load(){
   $("liveTxt").textContent = "טוען…";
   $("live").classList.remove("err");
-  return fetch(API_URL + "?mode=summary")
+  /* mode=board = כל השורות פרט לעמודת הדוא״ל */
+  return fetch(API_URL + "?mode=board")
     .then(function(r){ return r.json(); })
     .then(function(j){
       if (!j || !j.ok) throw new Error("bad_response");
-      DATA = j;
+      ALL = j.rows || [];
       $("errBox").classList.remove("on");
       var t = new Date();
-      $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0"+t.getMinutes()).slice(-2);
+      $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0"+t.getMinutes()).slice(-2) +
+        " · " + ALL.length + " משובים";
       render();
     })
     .catch(function(){
@@ -235,68 +291,108 @@ function load(){
     });
 }
 
-/* מאחדים כמה מפגשים לצבר אחד */
-function bucket(){
-  var f = $("mfilter").value;
-  var out = {n:0, dist:[0,0,0,0,0], schools:{}, partSum:{}, partN:{}};
-  PARTS.forEach(function(p){ out.partSum[p.k] = 0; out.partN[p.k] = 0; });
-  if (!DATA || !DATA.meetings) return out;
-
-  Object.keys(DATA.meetings).forEach(function(k){
-    if (f !== "all" && k !== f) return;
-    var g = DATA.meetings[k];
-    out.n += g.n || 0;
-    (g.dist || []).forEach(function(v,i){ out.dist[i] += v; });
-    (g.schools || []).forEach(function(s){ out.schools[norm(s)] = 1; });
-    PARTS.forEach(function(p){
-      var cnt = (g.parts && g.parts[p.k]) || 0;
-      var a   = (g.partAvg && g.partAvg[p.k]) || 0;
-      out.partSum[p.k] += a * cnt;
-      out.partN[p.k]   += cnt;
-    });
-  });
-  return out;
+function avg(a){
+  if (!a.length) return 0;
+  return a.reduce(function(x,y){return x+y;}, 0) / a.length;
 }
 
 function render(){
-  var b = bucket();
-  var rated = b.dist.reduce(function(x,y){return x+y;}, 0);
-  var sum = 0;
-  b.dist.forEach(function(v,i){ sum += v * (i+1); });
-  var top = b.dist[3] + b.dist[4];
+  var f = $("mfilter").value;
+  var rows = (f === "all") ? ALL : ALL.filter(function(r){ return String(r.meeting) === f; });
 
-  $("kResp").textContent    = b.n;
-  $("kSchools").textContent = Object.keys(b.schools).length;
-  $("kAvg").innerHTML       = (rated ? (sum/rated).toFixed(2) : "—") + '<small> / 5</small>';
-  $("kTop").innerHTML       = (rated ? Math.round(top/rated*100) : "—") + '<small>%</small>';
+  /* ---------- KPI ---------- */
+  var overalls = rows.map(function(r){ return r.overall; }).filter(Boolean);
+  var schools  = {};
+  rows.forEach(function(r){ if (r.school) schools[official(r.school)] = 1; });
+  var top = overalls.filter(function(v){ return v >= 4; }).length;
 
+  $("kResp").textContent    = rows.length;
+  $("kSchools").textContent = Object.keys(schools).length;
+  $("kAvg").innerHTML       = (overalls.length ? avg(overalls).toFixed(2) : "—") + '<small> / 5</small>';
+  $("kTop").innerHTML       = (overalls.length ? Math.round(top/overalls.length*100) : "—") + '<small>%</small>';
+
+  /* ---------- שלושת החלקים ---------- */
   var ph = "";
   PARTS.forEach(function(p){
-    var n = b.partN[p.k], a = n ? b.partSum[p.k]/n : 0;
+    var vals = rows.map(function(r){ return r.parts ? r.parts[p.k] : 0; }).filter(Boolean);
+    var a = avg(vals);
     ph += '<div class="pbar">' +
       '<div class="nm">' + esc(p.t) + '<small>' + esc(p.s) + '</small></div>' +
       '<div class="track"><div class="fill" style="width:' + (a/5*100) + '%"></div></div>' +
-      '<div class="v">' + (n ? a.toFixed(2) : "—") + '<small> · ' + n + '</small></div></div>';
+      '<div class="v">' + (vals.length ? a.toFixed(2) : "—") + '<small> · ' + vals.length + '</small></div></div>';
   });
   $("parts").innerHTML = ph;
 
-  var max = Math.max.apply(null, b.dist.concat([1]));
+  /* ---------- התפלגות ---------- */
+  var dist = [0,0,0,0,0];
+  overalls.forEach(function(v){ dist[v-1]++; });
+  var max = Math.max.apply(null, dist.concat([1]));
   var dh = "";
   for (var i = 5; i >= 1; i--){
-    var n2 = b.dist[i-1];
+    var n2 = dist[i-1];
     dh += '<div class="col"><div class="b" style="height:' + (n2/max*100) + '%">' +
           '<span>' + (n2 || "") + '</span></div><div class="k">' + i + '</div></div>';
   }
   $("dist").innerHTML = dh;
 
+  /* ---------- טבלת המשיבים ---------- */
+  var th = "";
+  rows.slice().sort(function(a,b){ return (b.date||"").localeCompare(a.date||""); })
+    .forEach(function(r){
+      function g(v){ return v ? '<td class="g">' + v + '</td>' : '<td class="g dim">—</td>'; }
+      th += "<tr>" +
+        "<td>" + esc(r.date) + "</td>" +
+        "<td><b>" + esc(r.name) + "</b></td>" +
+        "<td>" + esc(r.school) + "</td>" +
+        '<td class="g">' + r.meeting + "</td>" +
+        g(r.overall) + g(r.parts && r.parts.revital) + g(r.parts && r.parts.site) + g(r.parts && r.parts.matal) +
+        "</tr>";
+    });
+  $("tbody").innerHTML = th || '<tr><td colspan="8" class="empty">עדיין לא התקבלו משובים</td></tr>';
+  $("tblCount").textContent = rows.length ? "· " + rows.length : "";
+
+  /* ---------- הטקסטים הפתוחים ---------- */
+  var groups = [
+    {k:"good",    t:"מה היה משמעותי"},
+    {k:"improve", t:"מה כדאי לשפר"},
+    {k:"next",    t:"נושאים למפגש הבא"}
+  ];
+  var qh = "";
+  groups.forEach(function(g){
+    var items = rows.filter(function(r){ return (r[g.k]||"").trim(); });
+    qh += "<h3>" + g.t + " <span style='color:#65739a;font-weight:400'>· " + items.length + "</span></h3>";
+    if (!items.length){ qh += '<div class="empty" style="padding:14px">אין עדיין תשובות</div>'; return; }
+    items.forEach(function(r){
+      qh += '<div class="q"><p>' + esc(r[g.k]) + '</p>' +
+            '<div class="who">' + esc(r.name) + ' · ' + esc(r.school) + '</div></div>';
+    });
+  });
+  $("quotes").innerHTML = qh;
+
+  /* ---------- כיסוי בתי הספר ---------- */
+  var official_set = {};
+  SCHOOLS.forEach(function(s){ official_set[norm(s)] = 1; });
+
   var inCount = 0, ch = "";
   SCHOOLS.forEach(function(s){
-    var on = !!b.schools[norm(s)];
+    var on = !!schools[norm(s)];
     if (on) inCount++;
     ch += '<span class="chip' + (on ? " in" : "") + '">' + esc(s) + "</span>";
   });
   $("coverage").innerHTML = ch;
   $("covCount").textContent = "· " + inCount + " מתוך " + SCHOOLS.length;
+
+  /* שמות שהוקלדו ולא נמצאו ברשימה — כדי ששום דיווח לא ייעלם בשקט */
+  var seen = {}, uh = "", any = false;
+  rows.forEach(function(r){
+    if (!r.school) return;
+    if (official_set[official(r.school)]) return;
+    if (seen[r.school]) return;
+    seen[r.school] = 1; any = true;
+    uh += '<span class="chip un">' + esc(r.school) + "</span>";
+  });
+  $("unmatched").innerHTML = uh;
+  $("unmatchedBox").style.display = any ? "block" : "none";
 }
 
 $("refresh").addEventListener("click", load);
