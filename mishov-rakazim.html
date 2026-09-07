@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/analytics.js" defer></script>
+<title>משוב · הכשרת רכזים פדגוגיים תשפ"ז · משרד העבודה</title>
+<meta name="description" content="משוב על מפגשי הכשרת הרכזים הפדגוגיים — משרד העבודה, מינהל הכשרה מקצועית">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128172;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:64px;width:auto;display:block}
+@media (max-width:480px){.logo{height:52px}}
+
+.hero{text-align:center;padding:22px 0 8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(30px,6.4vw,44px);line-height:1.16;margin:16px 0 12px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:18.5px;color:#3d4a70;max-width:48ch;margin:0 auto}
+.hero .lede b{color:var(--navy)}
+
+.livebar{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:18px;
+  font-size:15px;color:var(--muted);opacity:0;transition:opacity .5s var(--ease)}
+.livebar.on{opacity:1}
+.livebar .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 0 rgba(18,179,159,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.livebar b{color:var(--navy);font-family:'Rubik',sans-serif}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:32px;margin-top:24px}
+@media (max-width:560px){.card{padding:22px 18px}}
+
+.sec{margin-top:30px;padding-top:26px;border-top:1px solid var(--line)}
+.sec:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.sec h2{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:0 0 4px;font-weight:600}
+.sec .sub{color:var(--muted);font-size:15.5px;margin:0 0 20px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+label.f{display:block;margin-bottom:7px;font-weight:700;font-size:16.5px;color:#25325a}
+label.f .req{color:var(--blue)}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px;line-height:1.45}
+input[type=text],input[type=email],select,textarea{width:100%;padding:14px 16px;border:2px solid var(--line);
+  border-radius:14px;background:#fbfcff;font-family:inherit;font-size:17px;color:var(--ink);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+textarea{min-height:96px;resize:vertical;line-height:1.55}
+select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2365739a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:left 15px center;background-size:19px;padding-left:44px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff;
+  box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+input.bad,select.bad{border-color:var(--danger);background:#fff7f8}
+.err{display:none;color:var(--danger);font-size:14.5px;font-weight:600;margin-top:6px}
+.err.on{display:block}
+
+/* ---------- 1–5 scale ---------- */
+.rate{margin-bottom:4px}
+.rate .rlabel{display:block;font-weight:700;font-size:16.5px;color:#25325a;margin-bottom:9px}
+.rate .rlabel .req{color:var(--blue)}
+.rate .rlabel small{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px}
+.scale{display:flex;gap:8px}
+.scale label{flex:1 1 0;position:relative;cursor:pointer}
+.scale input{position:absolute;opacity:0;width:0;height:0}
+.scale span{display:block;text-align:center;padding:12px 4px;border:2px solid var(--line);border-radius:13px;
+  background:#fbfcff;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;color:var(--muted);
+  transition:all .16s var(--ease)}
+.scale label:hover span{border-color:#bcd8f2;background:#fff;color:var(--navy)}
+.scale input:checked+span{border-color:var(--blue);background:linear-gradient(140deg,var(--navy),var(--blue));
+  color:#fff;box-shadow:0 6px 16px rgba(24,92,255,.26);transform:translateY(-1px)}
+.scale input:focus-visible+span{box-shadow:0 0 0 4px rgba(24,92,255,.18)}
+.ends{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin-top:6px}
+
+/* highlighted block: the three parts of the meeting */
+.parts{background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  border:2px solid #cfe3f7;border-radius:18px;padding:24px 22px 20px;margin-top:6px}
+.parts .prow{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-top:1px dashed #bcd8f2}
+.parts .prow:first-of-type{border-top:0;padding-top:4px}
+.parts .pico{flex:0 0 auto;width:44px;height:44px;border-radius:13px;background:#fff;
+  display:grid;place-items:center;box-shadow:var(--shadow-s);color:var(--navy);margin-top:2px}
+.parts .pico svg{width:23px;height:23px}
+.parts .pbody{flex:1 1 auto;min-width:0}
+.parts .pbody .pt{display:block;font-weight:700;font-size:17px;color:var(--navy)}
+.parts .pbody .ps{display:block;color:#4d6180;font-size:14.5px;margin:1px 0 10px}
+.parts .scale span{background:#fff;border-color:#cfe3f7}
+
+.actions{margin-top:30px;display:flex;flex-direction:column;align-items:center;gap:12px}
+button.go{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;
+  color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:16px;
+  padding:16px 46px;box-shadow:0 8px 24px rgba(24,92,255,.28);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease),filter .16s var(--ease)}
+button.go:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(24,92,255,.34)}
+button.go:active{transform:translateY(0)}
+button.go[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
+.smallnote{font-size:14.5px;color:var(--muted);text-align:center;max-width:46ch}
+
+.result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
+.result.on{display:block;animation:pop .45s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.result h3{font-family:'Rubik',sans-serif;font-size:20px;margin:0 0 6px}
+.result p{margin:0;font-size:16px}
+.result .hd{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.result svg{width:26px;height:26px;flex:0 0 auto}
+.ok{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60}
+.ok h3{color:#0a5c51}
+.bad2{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.bad2 h3{color:#8c2b34}
+.retry{appearance:none;border:1.5px solid #d18f97;background:#fff;color:#8c2b34;border-radius:11px;
+  padding:9px 20px;font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer;margin-top:12px}
+.retry:hover{background:#fff0f1}
+.verify{margin-top:12px;padding-top:12px;border-top:1px dashed #9fe0d3;font-size:15px;display:flex;
+  align-items:center;gap:8px;color:#0c6d60}
+.verify svg{width:19px;height:19px}
+.verify b{font-family:'Rubik',sans-serif}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+.setup{display:none;margin-top:18px;background:#fffaf0;border:1.5px dashed #e3bd7e;border-radius:14px;
+  padding:16px 18px;font-size:15px;color:#7a5312}
+.setup.on{display:block}
+.setup code{background:#fff;border:1px solid #ecd9b4;border-radius:6px;padding:1px 6px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 4 9 4.5-9 4.5-9-4.5z"/><path d="M6.5 11v5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-5"/>
+      </svg>
+      הכשרת רכזים פדגוגיים · תשפ״ז
+    </span>
+    <h1>משוב על המפגש</h1>
+    <p class="lede">כמה דקות, ואנחנו בונים איתן ואיתם את המפגש הבא.
+      המשוב <b>נקרא במלואו</b> ומשפיע ישירות על התכנים והפורמט.</p>
+
+    <div class="livebar" id="livebar">
+      <span class="dot"></span>
+      <span>עד כה השיבו <b id="liveCount">—</b> רכזים ורכזות</span>
+    </div>
+  </div>
+
+  <div class="setup" id="setup">
+    <b>הטופס עדיין לא חובר לשרת.</b> אפשר לבדוק בלי לשנות קובץ, בהוספת הכתובת ל-URL:
+    <code>?api=https://script.google.com/.../exec</code>
+  </div>
+
+  <form class="card" id="form" novalidate>
+
+    <!-- ============ מי ממלא ============ -->
+    <div class="sec">
+      <h2>מי ממלא</h2>
+      <p class="sub">כדי שנוכל לחזור אליכם בנושאים שתעלו — ולוודא שכל בית ספר מיוצג.</p>
+
+      <div class="grid">
+        <div>
+          <label class="f" for="name">שם הרכז/ת הפדגוגי/ת <span class="req">*</span></label>
+          <input type="text" id="name" autocomplete="name" placeholder="שם פרטי ומשפחה">
+          <div class="err" id="e_name">נא למלא שם מלא</div>
+        </div>
+
+        <div>
+          <label class="f" for="email">דוא״ל <span class="req">*</span></label>
+          <input type="email" id="email" autocomplete="email" dir="ltr" placeholder="name@example.org.il">
+          <div class="err" id="e_email">נא למלא כתובת דוא״ל תקינה</div>
+        </div>
+
+        <div class="full">
+          <label class="f" for="school">בית הספר <span class="req">*</span>
+            <span class="hint">אפשר להתחיל להקליד ולבחור מהרשימה</span>
+          </label>
+          <input type="text" id="school" list="schools" autocomplete="organization"
+                 placeholder="לדוגמה: אורט בית הערבה">
+          <datalist id="schools"></datalist>
+          <div class="err" id="e_school">נא למלא את שם בית הספר</div>
+        </div>
+
+        <div class="full">
+          <label class="f" for="meeting">המפגש</label>
+          <select id="meeting"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ תרומה כללית ============ -->
+    <div class="sec">
+      <h2>המפגש בכללותו</h2>
+      <p class="sub">1 = כמעט ולא תרם · 5 = תרם מאוד</p>
+
+      <div class="rate">
+        <label class="rlabel" id="lbl_overall">עד כמה המפגש תרם לי כרכז/ת פדגוגי/ת <span class="req">*</span></label>
+        <div class="scale" id="sc_overall" role="radiogroup" aria-labelledby="lbl_overall"></div>
+        <div class="ends"><span>לא תרם</span><span>תרם מאוד</span></div>
+        <div class="err" id="e_overall">נא לבחור דירוג</div>
+      </div>
+    </div>
+
+    <!-- ============ שלושת החלקים ============ -->
+    <div class="sec">
+      <h2>שלושת חלקי המפגש</h2>
+      <p class="sub">דירוג לכל חלק בנפרד — רשות, אבל זה בדיוק מה שעוזר לנו לכייל.</p>
+
+      <div class="parts">
+
+        <div class="prow">
+          <div class="pico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18 12h3M16.3 7.7l2.1-2.1"/>
+              <path d="M9 17.5a5 5 0 1 1 6 0V19a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 19z"/>
+            </svg>
+          </div>
+          <div class="pbody">
+            <span class="pt">הפתיחה של רויטל</span>
+            <span class="ps">התמונה הכוללת, הכיוון הפדגוגי והיעדים לשנה</span>
+            <div class="scale" id="sc_revital" role="radiogroup" aria-label="הפתיחה של רויטל"></div>
+          </div>
+        </div>
+
+        <div class="prow">
+          <div class="pico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/><path d="M3 12h18"/>
+              <path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/>
+            </svg>
+          </div>
+          <div class="pbody">
+            <span class="pt">האתר הפדגוגי</span>
+            <span class="ps">היכרות עם pedagogiamh.co.il — מה יש בו ואיך עובדים איתו</span>
+            <div class="scale" id="sc_site" role="radiogroup" aria-label="האתר הפדגוגי"></div>
+          </div>
+        </div>
+
+        <div class="prow">
+          <div class="pico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a1.8 1.8 0 0 0-1.6-1H5.5A1.5 1.5 0 0 1 4 16.5z"/>
+              <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a1.8 1.8 0 0 1 1.6-1h4.9a1.5 1.5 0 0 0 1.5-1.5z"/>
+            </svg>
+          </div>
+          <div class="pbody">
+            <span class="pt">מערך תפקודי הלמידה — המת״ליות</span>
+            <span class="ps">מודל העבודה הבית־ספרי, מיפוי ומענה דיפרנציאלי</span>
+            <div class="scale" id="sc_matal" role="radiogroup" aria-label="מערך תפקודי הלמידה"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ במילים שלכם ============ -->
+    <div class="sec">
+      <h2>במילים שלכם</h2>
+      <p class="sub">כל שדה כאן הוא רשות — גם משפט אחד עוזר.</p>
+
+      <div class="grid">
+        <div class="full">
+          <label class="f" for="good">מה היה משמעותי עבורי</label>
+          <textarea id="good" placeholder="רעיון, כלי או רגע מהמפגש שאקח איתי לבית הספר"></textarea>
+        </div>
+        <div class="full">
+          <label class="f" for="improve">מה כדאי לשפר</label>
+          <textarea id="improve" placeholder="קצב, פורמט, עומק, זמן לדיון — כל דבר"></textarea>
+        </div>
+        <div class="full">
+          <label class="f" for="next">נושאים שהייתי רוצה במפגש הבא</label>
+          <textarea id="next" placeholder="מה יעזור לי בעבודה השוטפת כרכז/ת פדגוגי/ת"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="go" type="submit" id="submitBtn">שליחת המשוב</button>
+      <p class="smallnote">המשוב נשמר ומאומת מול השרת — תקבלו אישור רק אחרי שהשורה נקלטה בפועל.</p>
+    </div>
+
+    <div class="result ok" id="okBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="m8.2 12.3 2.5 2.5 5.1-5.4"/>
+        </svg>
+        <h3 id="okTitle">המשוב נשמר</h3>
+      </div>
+      <p id="okText"></p>
+      <div class="verify" id="verifyRow" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        <span>אומת מול הגיליון · <b id="verifyCount">—</b> משובים התקבלו עד כה</span>
+      </div>
+    </div>
+
+    <div class="result bad2" id="badBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4.5 21 19H3z"/><path d="M12 10v4M12 16.6v.4"/>
+        </svg>
+        <h3>השליחה לא הושלמה</h3>
+      </div>
+      <p id="badText">לא הצלחנו לאמת שהמשוב נקלט. התשובות שמורות בדפדפן — אפשר לנסות שוב.</p>
+      <button class="retry" type="button" id="retryBtn">שליחה חוזרת</button>
+    </div>
+  </form>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית<br>
+    <a href="https://pedagogiamh.co.il">pedagogiamh.co.il</a>
+  </footer>
+
+</div>
+
+<script>
+/* ==================================================================
+   כתובת ה-Apps Script של איסוף המשוב.
+   לבדיקה בלי לשנות קובץ:  ?api=<כתובת exec>
+   ================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+var PENDING_KEY = "rakazim-mishov-pending";
+
+/* ---------- שבעת המפגשים ---------- */
+var MEETINGS = [
+  {i:1, d:"2026-09-07", zoom:true},
+  {i:2, d:"2026-10-26", zoom:false},
+  {i:3, d:"2026-12-17", zoom:false},
+  {i:4, d:"2027-01-27", zoom:false},
+  {i:5, d:"2027-02-16", zoom:true},
+  {i:6, d:"2027-05-23", zoom:false},
+  {i:7, d:"2027-06-27", zoom:true}
+];
+
+function fmt(iso){
+  var p = iso.split("-");
+  return p[2].replace(/^0/,"") + "." + p[1].replace(/^0/,"") + "." + p[0].slice(2);
+}
+
+/* ברירת המחדל: המפגש האחרון שכבר התקיים (או הראשון, לפני שהתחלנו) */
+function currentMeeting(){
+  var today = new Date(); today.setHours(23,59,59,999);
+  var pick = MEETINGS[0];
+  for (var i=0;i<MEETINGS.length;i++){
+    if (new Date(MEETINGS[i].d + "T00:00:00") <= today) pick = MEETINGS[i];
+  }
+  return pick.i;
+}
+
+(function(){
+  var sel = $("meeting"), cur = currentMeeting();
+  MEETINGS.forEach(function(m){
+    var o = document.createElement("option");
+    o.value = m.i;
+    o.textContent = "מפגש " + m.i + " מתוך 7 · " + fmt(m.d) + (m.zoom ? " · זום" : "");
+    if (m.i === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  var q = new URLSearchParams(location.search).get("m");
+  if (q && sel.querySelector('option[value="' + parseInt(q,10) + '"]')) sel.value = parseInt(q,10);
+})();
+
+/* ---------- רשימת בתי הספר ---------- */
+var SCHOOLS = ["אום אל פחם בנות","אום אל פחם בנים","אור דניאל נתניה","אור העתיד תורני גן יבנה","אורט אורמת","אורט בית הערבה","אורט כרמל","אורט תל נוף","אורט תעשיה אווירית","אכסאל","בית אל","בית חנינה בנות","בית חנינה בנים","בת עמי","דן גורמה תל-אביב","דרור הגליל","דרור נווה מדבר","הדר","התיכון החברתי חיפה","התיכון החברתי תל אביב יפו","זוקו","חבד אור מנחם אשקלון","חושן","חנוך לנער צפת","טורען","טל חרמון","ירכא אבו סנאן","כסרא סמיע","כפר זיתים","כפר יאסיף","כפר עקב","לקייה","מעיינות צפת","נחלים","עמל אנרגיטק","עמל אשדוד","עמל טייבה","עמל טק אין","עמל נצרת","עמל רהט בנות","עמל רהט בנים","עמל רמת דוד","ערערה","עתיד באר שבע","עתיד ביר אל מכסור","עתיד בית דוד","עתיד גוליס בנות - ירכא","עתיד ירכא בנים","עתיד כפר חבד אוהלי תמימים","עתיד כרמיאל","עתיד מסעדה","עתיד צור ים","עתיד קמג","עתיד תפן","פלמחים","צור בהאר","צור ברק","רימונים טבריה","שגב שלום","תיכון בקהילה מהאראת שפרעם","תיכון החממה","תיכון שיח","תל שבע"];
+
+(function(){
+  var dl = $("schools");
+  SCHOOLS.forEach(function(s){
+    var o = document.createElement("option"); o.value = s; dl.appendChild(o);
+  });
+})();
+
+/* ---------- סולמות 1–5 ---------- */
+function buildScale(boxId, groupName){
+  var box = $(boxId);
+  for (var n = 1; n <= 5; n++){
+    var lab = document.createElement("label");
+    var inp = document.createElement("input");
+    inp.type = "radio"; inp.name = groupName; inp.value = n;
+    var sp = document.createElement("span"); sp.textContent = n;
+    lab.appendChild(inp); lab.appendChild(sp);
+    box.appendChild(lab);
+  }
+}
+buildScale("sc_overall", "overall");
+buildScale("sc_revital", "revital");
+buildScale("sc_site",    "site");
+buildScale("sc_matal",   "matal");
+
+function scaleValue(groupName){
+  var el = document.querySelector('input[name="' + groupName + '"]:checked');
+  return el ? parseInt(el.value, 10) : 0;
+}
+
+/* ---------- מילוי מראש ---------- */
+(function(){
+  try{
+    var n = localStorage.getItem("rakaz-name");   if (n) $("name").value   = n;
+    var e = localStorage.getItem("rakaz-email");  if (e) $("email").value  = e;
+    var s = localStorage.getItem("rakaz-school"); if (s) $("school").value = s;
+  }catch(err){}
+})();
+
+/* ---------- מונה חי ---------- */
+function loadCount(target){
+  if (!API_URL) return Promise.resolve(null);
+  return fetch(API_URL + "?mode=count", {method:"GET"})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) return null;
+      if (target) target.textContent = j.count;
+      return j.count;
+    })
+    .catch(function(){ return null; });
+}
+
+(function(){
+  if (!API_URL){ $("setup").classList.add("on"); return; }
+  loadCount($("liveCount")).then(function(c){
+    if (c !== null && c > 0) $("livebar").classList.add("on");
+  });
+})();
+
+/* ---------- ולידציה ---------- */
+function fail(id, on){
+  var el = $(id);
+  if (el) el.classList.toggle("bad", on);
+  var e = $("e_" + id);
+  if (e) e.classList.toggle("on", on);
+  return !on;
+}
+
+function collect(){
+  return {
+    type:    "rakazim-feedback",
+    name:    $("name").value.trim(),
+    email:   $("email").value.trim(),
+    school:  $("school").value.trim(),
+    meeting: parseInt($("meeting").value, 10),
+    overall: scaleValue("overall"),
+    parts: {
+      revital: scaleValue("revital"),
+      site:    scaleValue("site"),
+      matal:   scaleValue("matal")
+    },
+    good:    $("good").value.trim(),
+    improve: $("improve").value.trim(),
+    next:    $("next").value.trim()
+  };
+}
+
+function validate(d){
+  var okAll = true;
+  okAll = fail("name",   !d.name)   && okAll;
+  okAll = fail("email",  !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) && okAll;
+  okAll = fail("school", !d.school) && okAll;
+  okAll = fail("overall", !d.overall) && okAll;
+  if (!okAll){
+    var first = document.querySelector(".bad, .err.on");
+    if (first) first.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+  return okAll;
+}
+
+/* ---------- שליחה ---------- */
+function send(d){
+  if (typeof google !== "undefined" && google.script && google.script.run){
+    return new Promise(function(res){
+      google.script.run
+        .withSuccessHandler(function(r){ res(r || {ok:false}); })
+        .withFailureHandler(function(){ res({ok:false}); })
+        .saveEntry(d);
+    });
+  }
+  if (!API_URL) return Promise.resolve({ok:false, error:"no_api"});
+  return fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify(d)
+  }).then(function(r){ return r.json(); })
+    .catch(function(){ return {ok:false, error:"network"}; });
+}
+
+function show(which){
+  $("okBox").classList.toggle("on",  which === "ok");
+  $("badBox").classList.toggle("on", which === "bad");
+}
+
+function submit(){
+  var d = collect();
+  if (!validate(d)) return;
+
+  try{
+    localStorage.setItem("rakaz-name",   d.name);
+    localStorage.setItem("rakaz-email",  d.email);
+    localStorage.setItem("rakaz-school", d.school);
+    localStorage.setItem(PENDING_KEY, JSON.stringify(d));
+  }catch(e){}
+
+  var btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "שולח…";
+  show("");
+
+  send(d).then(function(r){
+    btn.textContent = "שליחת המשוב";
+    btn.disabled = false;
+
+    if (r && r.ok){
+      try{ localStorage.removeItem(PENDING_KEY); }catch(e){}
+      $("okTitle").textContent = r.updated ? "המשוב עודכן" : "המשוב נשמר";
+      $("okText").textContent  = "תודה, " + d.name.split(" ")[0] + " — נקרא כל מילה.";
+      show("ok");
+      $("okBox").scrollIntoView({behavior:"smooth", block:"center"});
+
+      loadCount(null).then(function(c){
+        if (c !== null){
+          $("verifyCount").textContent = c;
+          $("verifyRow").style.display = "flex";
+          $("liveCount").textContent = c;
+          $("livebar").classList.add("on");
+        }
+      });
+    } else {
+      $("badText").textContent = (r && r.error === "no_api")
+        ? "הטופס עדיין לא חובר לשרת. אנא פנו למנהל המערכת."
+        : "לא הצלחנו לאמת שהמשוב נקלט. התשובות שמורות בדפדפן — אפשר לנסות שוב.";
+      show("bad");
+      $("badBox").scrollIntoView({behavior:"smooth", block:"center"});
+    }
+  });
+}
+
+$("form").addEventListener("submit", function(ev){ ev.preventDefault(); submit(); });
+$("retryBtn").addEventListener("click", submit);
+
+["name","email","school"].forEach(function(id){
+  $(id).addEventListener("input", function(){
+    $(id).classList.remove("bad");
+    $("e_" + id).classList.remove("on");
+  });
+});
+$("sc_overall").addEventListener("change", function(){
+  $("e_overall").classList.remove("on");
+});
+</script>
+</body>
+</html>
