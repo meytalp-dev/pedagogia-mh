@@ -275,6 +275,31 @@ function buildPinned(files) {
     }
   }
 
+  /* קישורי ההצטרפות לקהילות הווטסאפ. בלי הנעיצה הזו עוגן מקבלת רק 10 מהם
+     (MAX_LINKS), וטקסט העמוד נחתך לפני שכל 26 הקהילות נכנסות — ואז היא יודעת
+     שיש קהילה אבל לא איך מצטרפים אליה. כאן כל קהילה יוצאת כשורה אחת:
+     שם — כתובת מלאה, כדי שתוכל להחזיר את הקישור המדויק בתשובה. */
+  if (files.includes("kehilot.html")) {
+    const src = readFileSync(join(ROOT, "kehilot.html"), "utf8");
+    const strip = (h) => decodeEntities(String(h || "").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+    const rows = [];
+    for (const m of src.matchAll(/<a class="wa[^"]*" href="([^"]+)"[\s\S]*?<b>([\s\S]*?)<\/b>(?:<small>([\s\S]*?)<\/small>)?/g)) {
+      const url = decodeEntities(m[1]);
+      if (!/^https?:/.test(url)) continue;              // קישורים פנימיים כבר בטקסט העמוד
+      const who = strip(m[3]);
+      rows.push(`${strip(m[2])} — ${url}${who ? " (" + who + ")" : ""}`);
+    }
+    if (rows.length) {
+      add("kehilot.html", [
+        "קישורי ההצטרפות המלאים לכל הקהילות המקצועיות (קבוצות ווטסאפ) — אלה הכתובות המדויקות שיש למסור למי ששואל איך מצטרפים לקהילה.",
+        "אופן ההצטרפות: פותחים את הקישור, הווטסאפ נפתח עם הזמנה, מאשרים \"הצטרפות לקבוצה\". אין צורך באישור מוקדם של מנהל.ת הקהילה. אפשר להיות בכמה קהילות במקביל.",
+        ...rows,
+      ].join("\n"));
+    } else {
+      console.warn("אזהרה: לא נמצאו קישורי קהילות ב-kehilot.html — עוגן לא תדע איך מצטרפים");
+    }
+  }
+
   const dataPath = join(ROOT, "ogdan-data.js");
   if (existsSync(dataPath) && files.includes("ogdan-shaot.html")) {
     add("ogdan-shaot.html", ogdanMegamot(readFileSync(dataPath, "utf8")));
