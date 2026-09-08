@@ -405,11 +405,34 @@ function fallbackCopy(text, done){
   document.body.removeChild(ta);
 }
 
+/* Apps Script נופל מדי פעם ב-302→404 רגעי, ולפעמים פשוט לא עונה.
+   בלי זה הדף נתקע על "טוען…" בלי לומר כלום. */
+function fetchJson(url, tries){
+  tries = tries || 3;
+  var attempt = function(n){
+    var ctl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 15000);
+    return fetch(url, ctl ? {signal: ctl.signal} : undefined)
+      .then(function(r){
+        clearTimeout(timer);
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      })
+      .catch(function(e){
+        clearTimeout(timer);
+        if (n >= tries) throw e;
+        return new Promise(function(res){ setTimeout(res, 900 * n); }).then(function(){
+          return attempt(n + 1);
+        });
+      });
+  };
+  return attempt(1);
+}
+
 function load(){
   $("liveTxt").textContent = "טוען…";
   $("live").classList.remove("err");
-  return fetch(API_URL + "?mode=public")
-    .then(function(r){ return r.json(); })
+  return fetchJson(API_URL + "?mode=public")
     .then(function(j){
       if (!j || !j.ok) throw new Error("bad_response");
       ALL = j.rows || [];
