@@ -1,0 +1,17 @@
+תיעוד מתקן — הקומיט הזה רחב מהודעתו.
+
+מתוך 196 הקבצים, 10 שייכים לכיתה ט' כללית: ogdan-tet.html,
+docs/ogdan-tet-5204-26.pdf, ogdan-data.js, ogdan-hitpalgut.html,
+ogdan-shaot.html, ogdan-magamot.html, ogdan-mekorot.html,
+ogdan-shinuyim.html, ogdan-akreditatzia.html, chaka-tet.html.
+
+186 הקבצים הנותרים הם עבודת הפיקוח המקצועי — pikuah-miktzoi.html,
+tools/build-pikuah-miktzoi.py ופריסת התפריט הנלווית — שהוכנסה ל-index
+בסשן מקביל באותן שניות. `git commit` בלי pathspec סחף אותה פנימה.
+העבודה עצמה הייתה מוכנה ומוכנסת ל-index לקראת קומיט משלה; מה שנפגע
+הוא הייחוס, לא התוכן. ההיסטוריה לא שוכתבה בכוונה — הענף משותף ופעיל.
+
+מאז: 9b5bf6f הוסיף לאותו עמוד ולגנרטור שלו הצהרת pmh-allow: no-nav.
+
+לקח תפעולי: ברפו הזה ה-index משותף בין סשנים. תמיד
+`git commit -o <קבצים>`, לעולם לא `git commit` חשוף.
