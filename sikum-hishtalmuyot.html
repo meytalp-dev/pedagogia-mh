@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מעקב ההשתלמויות הבית ספריות · תשפ״ז</title>
+<meta name="description" content="מצב בחירת ההשתלמויות הבית ספריות תשפ״ז — מי בחר, מי ממתין לאישור מפקח.ת, ומה עבר לאלנט.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;
+  width:52vw;height:52vw;top:-20vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.34),transparent 70%)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 50px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:22px 0 2px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center;padding-bottom:0}
+.logo{height:58px;width:auto;display:block}
+
+.hero{text-align:center;padding:18px 0 4px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+h1{font-family:'Rubik',sans-serif;font-size:clamp(26px,5vw,38px);line-height:1.16;margin:14px 0 10px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:17.5px;color:#3d4a70;max-width:60ch;margin:0 auto}
+
+.live{display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-size:14.5px;color:var(--muted)}
+.live .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);animation:pulse 2.4s infinite}
+.live.err .dot{background:var(--danger);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.reload{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;
+  padding:5px 15px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin-inline-start:8px}
+.reload:hover{border-color:var(--sky)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:26px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-s);padding:17px 18px;text-align:center}
+.kpi .v{font-family:'Rubik',sans-serif;font-size:29px;font-weight:600;color:var(--navy);line-height:1.1}
+.kpi .k{font-size:14px;color:var(--muted);font-weight:600;margin-top:3px}
+.kpi.pending .v{color:#9a5b00}
+.kpi.approved .v{color:#0c6d60}
+.kpi.returned .v{color:#8c2b34}
+.kpi.missing .v{color:var(--muted)}
+
+/* ===== מי טרם הגיש ===== */
+.miss{background:#fffaf2;border:1.5px solid #f0c98a;border-radius:18px;box-shadow:var(--shadow-s);
+  padding:22px 24px;margin:24px 0}
+.miss.done{background:#f2fbf8;border-color:#9fe0d3}
+.mhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.mhead h3{font-family:'Rubik',sans-serif;font-size:18.5px;color:#8a5c14;margin:0;font-weight:600}
+.miss.done .mhead h3{color:#0a5c51}
+.mhead .n{background:#fff;border:1px solid #f0c98a;border-radius:999px;padding:4px 14px;
+  font-size:14px;font-weight:700;color:#8a5c14}
+.miss.done .mhead .n{border-color:#9fe0d3;color:#0c6d60}
+.copy{appearance:none;margin-inline-start:auto;border:1.5px solid #e0bd82;background:#fff;color:#8a5c14;
+  border-radius:999px;padding:7px 16px;font-family:inherit;font-size:13.8px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;transition:background .16s var(--ease)}
+.copy:hover{background:#fff4e3}
+.copy.ok{border-color:#9fe0d3;color:#0c6d60;background:#f2fbf8}
+.copy svg{width:15px;height:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{background:#fff;border:1px solid #f0c98a;border-radius:999px;padding:6px 14px;
+  font-size:14.2px;color:#7a4a00;font-weight:600}
+.bysup{margin-top:8px}
+.supgrp{background:#fff;border:1px solid #f3d9ae;border-radius:14px;padding:14px 17px;margin-top:11px}
+.supgrp .gh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.supgrp .gh b{font-family:'Rubik',sans-serif;font-size:16px;color:var(--navy);font-weight:600}
+.supgrp .gh .c{font-size:13.8px;color:#8a5c14;font-weight:700;background:#fffaf2;border-radius:999px;padding:3px 12px}
+.allin{color:#0c6d60;font-size:16px;font-weight:600;margin:0}
+
+.bar{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0 16px}
+.bar input,.bar select{padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;
+  font-family:inherit;font-size:16px;color:var(--ink)}
+.bar input{flex:1 1 260px}
+.bar select{flex:0 1 190px;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 12px center;background-size:17px;padding-inline-start:36px}
+.bar input:focus,.bar select:focus{outline:none;border-color:var(--blue)}
+
+.tw{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-m);overflow:hidden}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15.3px;min-width:880px}
+thead th{background:var(--blue-soft);color:var(--navy);font-weight:700;text-align:start;padding:13px 14px;
+  white-space:nowrap;position:sticky;top:0;z-index:1;font-size:14.5px}
+tbody td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:hover{background:#fbfcff}
+.school{font-weight:700;color:var(--navy)}
+.small{display:block;font-size:13.4px;color:var(--muted);font-weight:400;margin-top:1px}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-size:13.2px;font-weight:700;white-space:nowrap}
+.pill.pending{background:#fff6e8;color:#8a5c14}
+.pill.approved{background:#e9f9f5;color:#0c6d60}
+.pill.returned{background:#fff5f6;color:#8c2b34}
+.pill.cat{background:var(--sky-soft);color:#16558a}
+.pill.ext{background:#f2f0fb;color:#5a4a9a}
+.flagtxt{display:block;margin-top:5px;font-size:13.2px;color:#9a5b00;background:#fff6e8;border-radius:8px;padding:5px 10px}
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:16px}
+
+.privacy{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);
+  border-radius:15px;box-shadow:var(--shadow-s);padding:16px 20px;margin-top:20px;
+  font-size:14.8px;color:var(--muted);line-height:1.55}
+.privacy svg{width:19px;height:19px;color:var(--navy);flex:0 0 auto;margin-top:2px}
+.privacy b{color:var(--navy)}
+
+footer{margin-top:40px;padding:24px 0 30px;text-align:center;color:var(--muted);font-size:14.5px}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .credit{margin-top:10px;font-size:13px;opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19V5M4 19h16"/><path d="M8 16v-5M12 16V7M16 16v-6"/>
+      </svg>
+      מעקב חי · תשפ״ז
+    </span>
+    <h1>ההשתלמויות הבית ספריות</h1>
+    <p class="lede">מי כבר בחר השתלמות, מי ממתין לאישור המפקח.ת, ומה עבר לאלנט — מתעדכן מעצמו.</p>
+
+    <div>
+      <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
+      <button class="reload" id="reload">רענון</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v" id="kTotal">—</div><div class="k">בתי ספר בחרו</div></div>
+    <div class="kpi pending"><div class="v" id="kPending">—</div><div class="k">ממתינות למפקח.ת</div></div>
+    <div class="kpi approved"><div class="v" id="kApproved">—</div><div class="k">אושרו ועברו לאלנט</div></div>
+    <div class="kpi returned"><div class="v" id="kReturned">—</div><div class="k">הוחזרו לתיקון</div></div>
+    <div class="kpi missing"><div class="v" id="kMissing">—</div><div class="k">טרם בחרו</div></div>
+  </div>
+
+  <div class="miss" id="missCard">
+    <div class="mhead">
+      <h3>טרם בחרו השתלמות</h3>
+      <span class="n" id="missN">—</span>
+      <button class="copy" id="copyAll">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>
+        </svg>
+        העתקת הרשימה
+      </button>
+    </div>
+    <div class="chips" id="missList"></div>
+    <p class="allin" id="allIn" hidden>כל 64 המוסדות בחרו השתלמות.</p>
+  </div>
+
+  <div class="miss" id="bysupCard">
+    <div class="mhead">
+      <h3>טרם בחרו — לפי מפקח.ת</h3>
+      <span class="n" id="bysupN">—</span>
+    </div>
+    <div class="bysup" id="bysupList"></div>
+  </div>
+
+  <div class="bar">
+    <input type="text" id="q" placeholder="חיפוש בית ספר, מנחה או השתלמות…" autocomplete="off">
+    <select id="fStatus">
+      <option value="">כל הסטטוסים</option>
+      <option value="ממתין לאישור מפקח.ת">ממתין למפקח.ת</option>
+      <option value="מאושר — נשלח לאלנט">מאושר</option>
+      <option value="הוחזר לתיקון">הוחזר לתיקון</option>
+    </select>
+    <select id="fSup"><option value="">כל המפקחים</option></select>
+    <select id="fTrack">
+      <option value="">שני המסלולים</option>
+      <option value="מהקטלוג">מהקטלוג</option>
+      <option value="מנחה חיצוני">מנחה חיצוני</option>
+    </select>
+  </div>
+
+  <div class="tw">
+    <div class="tscroll">
+      <table>
+        <thead><tr>
+          <th>בית הספר</th><th>מפקח.ת</th><th>ההשתלמות</th>
+          <th>מסלול</th><th>היקף</th><th>סטטוס</th>
+        </tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>אין בקשות שמתאימות לסינון</div>
+  </div>
+
+  <div class="privacy">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/><path d="m9 12 2 2 4-4"/>
+    </svg>
+    <div><b>הדף הזה לא מכיל נתונים אישיים.</b> שמות המנהלים, כתובות הדוא״ל, הטלפונים
+      וקובצי הסילבוס נשמרים בגיליון בלבד ואינם נשלחים לדף — גם לא ברקע. הם זמינים
+      למיטל בדף המעקב הפנימי, ולמפקח.ת בקישור האישי שנשלח אליה במייל.</div>
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+</div>
+
+<script>
+var API_URL = "https://script.google.com/macros/s/AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+var ALL = [];
+var MISSING = [];
+var MISS_BY_SUP = [];
+
+/* 64 המוסדות — הבסיס להשוואה, כדי לדעת מי טרם בחר */
+var SCHOOLS = [{n:"אבו סנאן",sup:"ליאת צבר"},{n:"אום אל פחם בנות",sup:"ליאת צבר"},{n:"אום אל פחם בנים",sup:"רביב שורץ"},{n:"אור דניאל",sup:"יששכר חפץ"},{n:"אור העתיד תורני מקצועי",sup:"יששכר חפץ"},{n:"אורט אורמת",sup:"סיגלית דאי"},{n:"אורט בית הערבה",sup:"רויטל אמיר"},{n:"אורט כרמל",sup:"יסמין אמון"},{n:"אורט תל נוף",sup:"סיגלית דאי"},{n:"אורט תעשייה אווירית",sup:"סיגלית דאי"},{n:"אכסאל",sup:"יסמין אמון"},{n:"אל אמאני סכנין",sup:"יסמין אמון"},{n:"אלחכמה כסרא-סמיע",sup:"יסמין אמון"},{n:"אנרג'י טק",sup:"ליאת צבר"},{n:"בית אל",sup:"ליאת צבר"},{n:"בית דוד",sup:"יששכר חפץ"},{n:"בית חנינה בנות",sup:"ויסאם סואלחה"},{n:"בית חנינה בנים",sup:"ויסאם סואלחה"},{n:"ג'וליס בנות",sup:"יסמין אמון"},{n:"דן גורמה",sup:"סיגלית דאי"},{n:"דרור גליל",sup:"ליאת צבר"},{n:"דרור נווה מדבר",sup:"שרונה בלוך"},{n:"הדר",sup:"יששכר חפץ"},{n:"הקמפוס התורני עתיד",sup:"יששכר חפץ"},{n:"התיכון החברתי חיפה",sup:"ליאת צבר"},{n:"חוש\"ן",sup:"רויטל אמיר"},{n:"טורען",sup:"יסמין אמון"},{n:"טל חרמון",sup:"יששכר חפץ"},{n:"ישיבת חנוך לנער",sup:"יששכר חפץ"},{n:"כפר זיתים",sup:"יששכר חפץ"},{n:"כפר יסיף",sup:"יסמין אמון"},{n:"כפר עקב",sup:"ויסאם סואלחה"},{n:"לקייה",sup:"שרונה בלוך"},{n:"מצפה רמון",sup:"רביב שורץ"},{n:"מרחביה/מעיינות",sup:"יששכר חפץ"},{n:"נחלים",sup:"יששכר חפץ"},{n:"נצרת",sup:"יסמין אמון"},{n:"סור באהר",sup:"ויסאם סואלחה"},{n:"סכנין תל שבע",sup:"שרונה בלוך"},{n:"עמל אשדוד",sup:"סיגלית דאי"},{n:"עמל טייבה ב'",sup:"ויסאם סואלחה"},{n:"עמל טק אין",sup:"סיגלית דאי"},{n:"עמל רהט",sup:"יסמין אמון|סיגלית דאי"},{n:"ערערה",sup:"ויסאם סואלחה"},{n:"עתיד באר שבע",sup:"סיגלית דאי"},{n:"עתיד בת עמי",sup:"יששכר חפץ"},{n:"עתיד גליל מערבי ירכא בנים",sup:"יסמין אמון"},{n:"עתיד טק ביר אל מכסור",sup:"יסמין אמון"},{n:"עתיד כפר חב\"ד",sup:"יששכר חפץ"},{n:"עתיד כרמיאל",sup:"רביב שורץ"},{n:"עתיד פלמחים",sup:"סיגלית דאי"},{n:"צור ברק",sup:"סיגלית דאי"},{n:"צור ים",sup:"ליאת צבר"},{n:"קמ\"ג דימונה",sup:"סיגלית דאי"},{n:"רימונים",sup:"ליאת צבר"},{n:"רמת דוד",sup:"ליאת צבר"},{n:"שגב שלום",sup:"שרונה בלוך"},{n:"שפרעם",sup:"רביב שורץ"},{n:"תיכון החממה",sup:"סיגלית דאי|רויטל אמיר"},{n:"תיכון חברתי ת\"א",sup:"ליאת צבר"},{n:"תיכון טכנולוגי אי טק סקול (מסעדה)",sup:"יסמין אמון"},{n:"תיכון עוצמ\"ה עתיד זוקו",sup:"ליאת צבר"},{n:"תיכון שיח",sup:"ליאת צבר"},{n:"תפן ליזמות",sup:"יסמין אמון"}];
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function g(r, k){ return r && r[k] ? String(r[k]).trim() : ""; }
+
+function pill(st){
+  if (st === "מאושר — נשלח לאלנט") return '<span class="pill approved">מאושר</span>';
+  if (st === "הוחזר לתיקון") return '<span class="pill returned">הוחזר לתיקון</span>';
+  return '<span class="pill pending">ממתין למפקח.ת</span>';
+}
+
+function fillSups(){
+  var seen = {}, sel = $("fSup");
+  SCHOOLS.forEach(function(s){
+    s.sup.split("|").forEach(function(x){
+      x = x.trim();
+      if (!x || seen[x]) return;
+      seen[x] = true;
+      var o = document.createElement("option");
+      o.value = x; o.textContent = x;
+      sel.appendChild(o);
+    });
+  });
+}
+
+function render(){
+  var q = $("q").value.trim();
+  var st = $("fStatus").value, sup = $("fSup").value, tr = $("fTrack").value;
+
+  var rows = ALL.filter(function(r){
+    if (st && g(r,"סטטוס") !== st) return false;
+    if (tr && g(r,"מסלול") !== tr) return false;
+    if (sup && g(r,"מפקח.ת").indexOf(sup) < 0) return false;
+    if (!q) return true;
+    var hay = [g(r,"בית הספר"), g(r,"שם המנחה"), g(r,"שם ההשתלמות"), g(r,"מפקח.ת")].join(" ");
+    return hay.indexOf(q) >= 0;
+  });
+
+  $("tb").innerHTML = rows.map(function(r){
+    var ext = g(r,"מסלול") === "מנחה חיצוני";
+    var scope = ext
+      ? esc(g(r,"סה\"כ שעות")) + " ש׳ · " + esc(g(r,"מפגשים פיזיים")) + " פא״פ + " +
+        esc(g(r,"מפגשי זום")) + " זום<span class=\"small\">" +
+        esc(g(r,"מספר משתתפים")) + " משתתפים · " +
+        (Number(g(r,"עלות (₪)") || 0)).toLocaleString("he-IL") + " ₪</span>"
+      : '<span class="small">לפי הקטלוג</span>';
+
+    return '<tr>' +
+      '<td><span class="school">' + esc(g(r,"בית הספר")) + '</span>' +
+        '<span class="small">' + esc(g(r,"מחוז")) + ' · ' + esc(g(r,"רשת")) + '</span></td>' +
+      '<td>' + esc(g(r,"מפקח.ת").split("|").join(" · ")) + '</td>' +
+      '<td>' + esc(g(r,"שם ההשתלמות")) +
+        '<span class="small">' + esc(g(r,"שם המנחה")) + '</span>' +
+        (g(r,"חריגים") ? '<span class="flagtxt">' + esc(g(r,"חריגים")) + '</span>' : "") + '</td>' +
+      '<td><span class="pill ' + (ext ? "ext" : "cat") + '">' + esc(g(r,"מסלול")) + '</span></td>' +
+      '<td>' + scope + '</td>' +
+      '<td>' + pill(g(r,"סטטוס")) +
+        '<span class="small">' + esc(g(r,"תאריך החלטה") || g(r,"חותמת זמן")) + '</span>' +
+        (g(r,"הערת המפקח.ת") ? '<span class="small">' + esc(g(r,"הערת המפקח.ת")) + '</span>' : "") + '</td>' +
+      '</tr>';
+  }).join("");
+
+  $("empty").hidden = rows.length > 0;
+}
+
+function kpis(){
+  var p = 0, a = 0, rt = 0, seen = {};
+  ALL.forEach(function(r){
+    seen[g(r,"בית הספר")] = true;
+    var s = g(r,"סטטוס");
+    if (s === "מאושר — נשלח לאלנט") a++;
+    else if (s === "הוחזר לתיקון") rt++;
+    else p++;
+  });
+  $("kTotal").textContent = ALL.length;
+  $("kPending").textContent = p;
+  $("kApproved").textContent = a;
+  $("kReturned").textContent = rt;
+
+  MISSING = SCHOOLS.filter(function(s){ return !seen[s.n]; });
+  $("kMissing").textContent = MISSING.length;
+
+  renderMissing();
+  renderBySup();
+}
+
+function renderMissing(){
+  var card = $("missCard");
+  $("missN").textContent = MISSING.length + " מתוך " + SCHOOLS.length;
+  card.classList.toggle("done", MISSING.length === 0);
+  $("allIn").hidden = MISSING.length > 0;
+  $("copyAll").hidden = MISSING.length === 0;
+  $("missList").innerHTML = MISSING.map(function(s){
+    return "<span>" + esc(s.n) + " · " + esc(s.sup.split("|").join(" · ")) + "</span>";
+  }).join("");
+}
+
+function renderBySup(){
+  var tot = {}, miss = {};
+  SCHOOLS.forEach(function(s){
+    s.sup.split("|").forEach(function(x){
+      x = x.trim();
+      if (x) tot[x] = (tot[x] || 0) + 1;
+    });
+  });
+  MISSING.forEach(function(s){
+    s.sup.split("|").forEach(function(x){
+      x = x.trim();
+      if (x) (miss[x] = miss[x] || []).push(s.n);
+    });
+  });
+
+  MISS_BY_SUP = Object.keys(miss)
+    .map(function(k){ return { sup: k, total: tot[k] || 0, missing: miss[k] }; })
+    .sort(function(a, b){ return b.missing.length - a.missing.length; });
+
+  $("bysupCard").hidden = MISS_BY_SUP.length === 0;
+  $("bysupN").textContent = MISS_BY_SUP.length + " מפקחים עם חסרים";
+
+  $("bysupList").innerHTML = MISS_BY_SUP.map(function(gp, i){
+    return '<div class="supgrp">' +
+      '<div class="gh"><b>' + esc(gp.sup) + '</b>' +
+      '<span class="c">טרם בחרו ' + gp.missing.length + " מתוך " + gp.total + '</span>' +
+      '<button class="copy" data-sup="' + i + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>' +
+      '</svg>העתקה</button></div>' +
+      '<div class="chips">' +
+      gp.missing.map(function(n){ return "<span>" + esc(n) + "</span>"; }).join("") +
+      '</div></div>';
+  }).join("");
+}
+
+function copyText(btn, text){
+  var old = btn.innerHTML;
+  var done = function(){
+    btn.classList.add("ok");
+    btn.textContent = "הועתק";
+    setTimeout(function(){ btn.classList.remove("ok"); btn.innerHTML = old; }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text, done); });
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done){
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand("copy"); done(); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+function load(){
+  $("liveTxt").textContent = "טוען…";
+  $("live").classList.remove("err");
+  return fetch(API_URL + "?mode=public")
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) throw new Error("bad_response");
+      ALL = j.rows || [];
+      var t = new Date();
+      $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0" + t.getMinutes()).slice(-2);
+      kpis();
+      render();
+    })
+    .catch(function(){
+      $("live").classList.add("err");
+      $("liveTxt").textContent = "לא הצלחנו למשוך נתונים — אפשר לרענן";
+    });
+}
+
+(function init(){
+  fillSups();
+  load();
+
+  ["q","fStatus","fSup","fTrack"].forEach(function(id){
+    $(id).addEventListener(id === "q" ? "input" : "change", render);
+  });
+  $("reload").addEventListener("click", load);
+
+  $("copyAll").addEventListener("click", function(){
+    copyText(this, MISSING.map(function(s){
+      return s.n + " · " + s.sup.split("|").join(" · ");
+    }).join("\n"));
+  });
+
+  $("bysupList").addEventListener("click", function(e){
+    var btn = e.target.closest ? e.target.closest("button.copy") : null;
+    if (!btn) return;
+    var gp = MISS_BY_SUP[Number(btn.dataset.sup)];
+    if (!gp) return;
+    copyText(btn, "טרם בחרו השתלמות בית ספרית (" + gp.sup + ") — " +
+      gp.missing.length + " מתוך " + gp.total + ":\n" + gp.missing.join("\n"));
+  });
+})();
+</script>
+</body>
+</html>

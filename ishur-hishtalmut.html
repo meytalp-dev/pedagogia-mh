@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>אישור השתלמות בית ספרית · תשפ״ז</title>
+<meta name="description" content="אישור המפקח.ת לבקשת השתלמות בית ספרית תשפ״ז.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:800px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:60px;width:auto;display:block}
+
+.hero{text-align:center;padding:20px 0 4px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(26px,5.4vw,38px);line-height:1.16;margin:15px 0 10px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:17.5px;color:#3d4a70;max-width:54ch;margin:0 auto}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:30px 32px;margin-top:24px}
+@media (max-width:560px){.card{padding:22px 18px}}
+
+.state{text-align:center;padding:52px 20px;color:var(--muted);font-size:16.5px}
+.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;
+  margin:0 auto 14px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 18px;
+  font-size:14.5px;font-weight:700;margin-bottom:18px}
+.badge svg{width:16px;height:16px}
+.badge.pending{background:#fff6e8;color:#8a5c14}
+.badge.approved{background:#e9f9f5;color:#0c6d60}
+.badge.returned{background:#fff5f6;color:#8c2b34}
+
+.schead{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.schead h2{font-family:'Rubik',sans-serif;font-size:25px;color:var(--navy);margin:0;font-weight:600;line-height:1.2}
+.schead .sub{width:100%;font-size:15px;color:var(--muted);font-weight:600}
+
+.purpose{background:var(--bg);border-inline-start:4px solid var(--blue);border-radius:12px;
+  padding:16px 20px;margin:20px 0;font-size:16.5px;line-height:1.65;white-space:pre-wrap}
+.purpose .lbl{display:block;font-size:14px;color:var(--muted);font-weight:700;margin-bottom:5px;white-space:normal}
+
+.sec{display:flex;align-items:center;gap:11px;margin:26px 0 14px;padding-top:22px;border-top:1px dashed var(--line)}
+.sec .sico{flex:0 0 auto;width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));display:grid;place-items:center;color:var(--navy)}
+.sec .sico svg{width:21px;height:21px}
+.sec h3{font-family:'Rubik',sans-serif;font-size:18px;color:var(--navy);margin:0;font-weight:600}
+
+.dl{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;font-size:16.5px;align-items:baseline}
+.dl dt{color:var(--muted);font-size:15px;font-weight:600;white-space:nowrap}
+.dl dd{margin:0;color:var(--ink);font-weight:600}
+@media (max-width:520px){.dl{grid-template-columns:1fr;gap:2px 0}.dl dd{margin-bottom:12px}}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-align:center}
+.stat .v{font-family:'Rubik',sans-serif;font-size:23px;color:var(--navy);font-weight:600;line-height:1.15}
+.stat .k{font-size:13.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.stat.warn{background:#fff6e8;border-color:#f0c98a}
+.stat.warn .v{color:#9a5b00}
+.stat.warn .k{color:#7a4a00}
+
+.syl{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:13px 24px;
+  border:2px solid var(--sky);border-radius:14px;background:var(--sky-soft);color:var(--navy);
+  font-size:16.5px;font-weight:700;text-decoration:none;
+  transition:background .16s var(--ease),box-shadow .16s var(--ease)}
+.syl:hover{background:#dcedf8;box-shadow:var(--shadow-s)}
+.syl svg{width:19px;height:19px}
+
+.flag{background:#fff6e8;border:1.5px solid #f0c98a;border-radius:15px;padding:16px 19px;margin-top:20px}
+.flag b{display:block;color:#9a5b00;font-size:16.5px;margin-bottom:5px}
+.flag ul{margin:0;padding-inline-start:20px;font-size:15.5px;color:#7a4a00;line-height:1.7}
+
+label.f{display:block;margin-bottom:7px;font-weight:700;font-size:16.5px;color:#25325a}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px}
+select,textarea{width:100%;padding:13px 15px;border:2px solid var(--line);border-radius:13px;background:#fbfcff;
+  font-family:inherit;font-size:16.5px;color:var(--ink);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+textarea{min-height:92px;resize:vertical;line-height:1.55}
+textarea.bad{border-color:var(--danger);background:#fff7f8}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:18px;cursor:pointer}
+.err{display:none;color:var(--danger);font-size:14.5px;font-weight:600;margin-top:6px}
+.err.on{display:block}
+
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+button{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:17.5px;
+  border-radius:15px;padding:15px 34px;transition:transform .16s var(--ease),box-shadow .16s var(--ease),filter .16s var(--ease)}
+button[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
+.approve{flex:1 1 250px;color:#fff;background:linear-gradient(100deg,#0f7a6c,var(--mint));
+  box-shadow:0 8px 24px rgba(18,179,159,.28)}
+.approve:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(18,179,159,.34)}
+.reject{flex:1 1 200px;background:#fff;color:#8c2b34;border:2px solid #f0c2c7}
+.reject:hover{background:#fff5f6}
+
+.result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
+.result.on{display:block;animation:pop .45s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.result h3{font-family:'Rubik',sans-serif;font-size:20px;margin:0 0 6px}
+.result p{margin:0;font-size:16px}
+.result .hd{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.result svg{width:26px;height:26px;flex:0 0 auto}
+.ok{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60}
+.ok h3{color:#0a5c51}
+.bad2{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.bad2 h3{color:#8c2b34}
+
+.done{text-align:center;padding:20px 0 6px}
+.done .ico{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px}
+.done .ico svg{width:34px;height:34px;color:#fff}
+.done.approved .ico{background:linear-gradient(135deg,#0f7a6c,var(--mint))}
+.done.returned .ico{background:linear-gradient(135deg,#b03030,#e0705c)}
+.done h2{font-family:'Rubik',sans-serif;font-size:24px;color:var(--navy);margin:0 0 8px;font-weight:600}
+.done p{margin:0 auto;max-width:46ch;font-size:16.5px;color:#3d4a70}
+
+footer{margin-top:44px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .credit{margin-top:10px;font-size:13px;opacity:.9}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/><path d="m9 12 2 2 4-4"/>
+      </svg>
+      אישור המפקח.ת · תשפ״ז
+    </span>
+    <h1>בקשת השתלמות בית ספרית</h1>
+    <p class="lede">לאחר האישור, הפרטים והסילבוס נשלחים לאלנט להמשך טיפול, והמנהל.ת מקבל.ת הודעה.</p>
+  </div>
+
+  <div class="card" id="card">
+    <div class="state" id="loading">
+      <div class="spin"></div>
+      טוען את הבקשה…
+    </div>
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+</div>
+
+<script>
+/* ==================================================================
+   דף אישור המפקח.ת — נפתח מהקישור האישי שבמייל
+   ishur-hishtalmut.html?t=<טוקן הבקשה>
+   ================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+var TOKEN = new URLSearchParams(location.search).get("t") || "";
+var REQ = null;
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function f(key){ return REQ && REQ[key] ? String(REQ[key]).trim() : ""; }
+
+function fail(title, text){
+  $("card").innerHTML =
+    '<div class="state"><h2 style="font-family:Rubik,sans-serif;color:var(--navy);margin:0 0 8px">' +
+    esc(title) + '</h2><p style="margin:0;font-size:16.5px">' + esc(text) + '</p></div>';
+}
+
+/* ============================ תצוגה ============================ */
+
+function statusBadge(st){
+  if (st === "מאושר — נשלח לאלנט"){
+    return '<span class="badge approved">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg>' +
+      'מאושר · נשלח לאלנט</span>';
+  }
+  if (st === "הוחזר לתיקון"){
+    return '<span class="badge returned">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-2"/></svg>' +
+      'הוחזר לתיקון</span>';
+  }
+  return '<span class="badge pending">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>' +
+    'ממתין לאישורך</span>';
+}
+
+function secIcon(path, title){
+  return '<div class="sec"><div class="sico">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+    path + '</svg></div><h3>' + esc(title) + '</h3></div>';
+}
+
+function dl(pairs){
+  var body = pairs.filter(function(p){ return p[1]; })
+    .map(function(p){ return '<dt>' + esc(p[0]) + '</dt><dd>' + p[1] + '</dd>'; }).join("");
+  return '<dl class="dl">' + body + '</dl>';
+}
+
+function statBox(v, k, warn){
+  return '<div class="stat' + (warn ? " warn" : "") + '"><div class="v">' + esc(v) + '</div>' +
+    '<div class="k">' + esc(k) + '</div></div>';
+}
+
+function render(){
+  var st = f("סטטוס");
+  var isExternal = f("מסלול") === "מנחה חיצוני";
+  var flags = f("חריגים");
+  var decided = st === "מאושר — נשלח לאלנט" || st === "הוחזר לתיקון";
+
+  var html = statusBadge(st) +
+    '<div class="schead"><h2>' + esc(f("בית הספר")) + '</h2>' +
+    '<div class="sub">' +
+      (f("סמל מוסד") && f("סמל מוסד") !== "—" ? "סמל " + esc(f("סמל מוסד")) + " · " : "") +
+      esc(f("מחוז")) + " · " + esc(f("רשת")) + " · הוגש " + esc(f("חותמת זמן")) +
+    '</div></div>' +
+
+    '<div class="purpose"><span class="lbl">מטרת בית הספר בבחירת ההשתלמות</span>' +
+    esc(f("מטרת ההשתלמות")) + '</div>' +
+
+    secIcon('<circle cx="10" cy="8" r="3.4"/><path d="M16 19v-1.4a3.6 3.6 0 0 0-3.6-3.6H7.6A3.6 3.6 0 0 0 4 17.6V19"/>', 'המנהל.ת') +
+    dl([
+      ["שם", esc(f("שם המנהל.ת"))],
+      ["דוא״ל", f("דוא\"ל המנהל.ת") ? '<a href="mailto:' + esc(f("דוא\"ל המנהל.ת")) + '" style="color:var(--blue);text-decoration:none">' + esc(f("דוא\"ל המנהל.ת")) + '</a>' : ""],
+      ["טלפון", f("טלפון המנהל.ת") ? '<a href="tel:' + esc(f("טלפון המנהל.ת")) + '" style="color:var(--blue);text-decoration:none">' + esc(f("טלפון המנהל.ת")) + '</a>' : ""]
+    ]) +
+
+    secIcon('<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2.5 2.5 0 0 1 2 1 2.5 2.5 0 0 1 2-1h4.5A1.5 1.5 0 0 1 20 5.5v12a1.5 1.5 0 0 1-1.5 1.5H14a2.5 2.5 0 0 0-2 1 2.5 2.5 0 0 0-2-1H5.5A1.5 1.5 0 0 1 4 17.5z"/><path d="M12 5v14"/>', 'ההשתלמות') +
+    dl([
+      ["מסלול", esc(f("מסלול"))],
+      ["שם ההשתלמות", esc(f("שם ההשתלמות"))],
+      ["מנחה", esc(f("שם המנחה"))],
+      ["טלפון המנחה", f("טלפון המנחה") ? '<a href="tel:' + esc(f("טלפון המנחה")) + '" style="color:var(--blue);text-decoration:none">' + esc(f("טלפון המנחה")) + '</a>' : ""],
+      ["ארגון / מכון", esc(f("ארגון / מכון"))]
+    ]);
+
+  if (isExternal){
+    html += '<div class="stats">' +
+      statBox(Number(f("עלות (₪)") || 0).toLocaleString("he-IL") + " ₪", "עלות", Number(f("עלות (₪)") || 0) > 9000) +
+      statBox(f("סה\"כ שעות"), "שעות אקדמיות", Number(f("סה\"כ שעות") || 0) !== 30) +
+      statBox(f("מפגשים פיזיים"), "מפגשים פיזיים", Number(f("מפגשים פיזיים") || 0) < 6) +
+      statBox(f("מפגשי זום"), "מפגשי זום", false) +
+      statBox(f("מספר משתתפים"), "משתתפים", Number(f("מספר משתתפים") || 0) < 20) +
+      statBox(f("מטלת סיום"), "מטלת סיום", f("מטלת סיום") !== "כן") +
+      '</div>';
+  }
+
+  if (f("סילבוס")){
+    html += '<div style="text-align:center"><a class="syl" href="' + esc(f("סילבוס")) + '" target="_blank" rel="noopener">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M6 3.5A1.5 1.5 0 0 1 7.5 2H14l4 4v14a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20z"/>' +
+      '<path d="M13.5 2v4.5H18M9.5 12h5M9.5 15.5h3"/></svg>פתיחת הסילבוס</a></div>';
+  }
+
+  if (flags){
+    html += '<div class="flag"><b>חריגה מתנאי הסף</b><ul>' +
+      flags.split(" · ").map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") +
+      '</ul></div>';
+  }
+
+  /* ---------- כבר הוכרע ---------- */
+  if (decided){
+    var approved = st === "מאושר — נשלח לאלנט";
+    html += '<div class="sec"><div class="sico">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+      '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></div><h3>ההחלטה</h3></div>' +
+      dl([
+        ["החלטה", esc(st)],
+        ["מי החליט.ה", esc(f("מי אישר.ה"))],
+        ["מתי", esc(f("תאריך החלטה"))],
+        ["הערה", esc(f("הערת המפקח.ת")).replace(/\n/g, "<br>")],
+        ["נשלח לאלנט", esc(f("נשלח לאלנט"))]
+      ]) +
+      '<p style="color:var(--muted);font-size:15.5px;margin-top:18px">' +
+      (approved
+        ? 'הבקשה כבר אושרה ונשלחה לאלנט. אין צורך בפעולה נוספת.'
+        : 'הבקשה הוחזרה למנהל.ת לתיקון. כשתישלח מחדש יגיע אליך מייל חדש עם קישור מעודכן.') +
+      '</p>';
+    $("card").innerHTML = html;
+    return;
+  }
+
+  /* ---------- ממתין להחלטה ---------- */
+  var sups = f("מפקח.ת").split("|").map(function(s){ return s.trim(); }).filter(Boolean);
+
+  html += secIcon('<path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/><path d="m9 12 2 2 4-4"/>', 'ההחלטה שלך');
+
+  if (sups.length > 1){
+    html += '<div style="margin-bottom:18px"><label class="f" for="who">מי מאשר.ת?' +
+      '<span class="hint">לבית הספר הזה שני מפקחים</span></label><select id="who">' +
+      sups.map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join("") +
+      '</select></div>';
+  } else {
+    html += '<input type="hidden" id="who" value="' + esc(sups[0] || "") + '">';
+  }
+
+  html += '<div><label class="f" for="note">הערה' +
+    '<span class="hint">באישור — ההערה נשלחת לאלנט ולמנהל.ת. בהחזרה לתיקון — זו הסיבה, והיא חובה.</span></label>' +
+    '<textarea id="note" placeholder="לא חובה באישור"></textarea>' +
+    '<div class="err" id="e_note">נא לפרט מה צריך לתקן</div></div>' +
+
+    '<div class="acts">' +
+    '<button class="approve" id="btnApprove">אישור והעברה לאלנט</button>' +
+    '<button class="reject" id="btnReject">החזרה לתיקון</button>' +
+    '</div>' +
+
+    '<div class="result bad2" id="badBox"><div class="hd">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2h.01"/></svg>' +
+    '<h3>הפעולה נכשלה</h3></div><p id="badText"></p></div>';
+
+  $("card").innerHTML = html;
+
+  $("btnApprove").addEventListener("click", function(){ decide("approve"); });
+  $("btnReject").addEventListener("click", function(){ decide("return"); });
+  $("note").addEventListener("input", function(){ $("e_note").classList.remove("on"); $("note").classList.remove("bad"); });
+}
+
+/* ============================ החלטה ============================ */
+
+function decide(decision){
+  var note = $("note").value.trim();
+  if (decision === "return" && !note){
+    $("e_note").classList.add("on");
+    $("note").classList.add("bad");
+    $("note").focus();
+    return;
+  }
+
+  var a = $("btnApprove"), r = $("btnReject");
+  a.disabled = true; r.disabled = true;
+  (decision === "approve" ? a : r).textContent = "שולח…";
+  $("badBox").classList.remove("on");
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify({ action:"decide", t:TOKEN, decision:decision, who:$("who").value, note:note })
+  })
+  .then(function(x){ return x.json(); })
+  .catch(function(){ return {ok:false, error:"network"}; })
+  .then(function(j){
+    if (j && j.ok){ done(decision, note); return; }
+    a.disabled = false; r.disabled = false;
+    a.textContent = "אישור והעברה לאלנט";
+    r.textContent = "החזרה לתיקון";
+    $("badText").textContent = (!j || j.error === "network")
+      ? "לא הצלחנו לשמור את ההחלטה. בדקו את החיבור לאינטרנט ונסו שוב."
+      : j.error;
+    $("badBox").classList.add("on");
+  });
+}
+
+function done(decision, note){
+  var approved = decision === "approve";
+  $("card").innerHTML =
+    '<div class="done ' + (approved ? "approved" : "returned") + '">' +
+      '<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+      (approved ? '<path d="m5 12 5 5 9-9"/>' : '<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-2"/>') +
+      '</svg></div>' +
+      '<h2>' + (approved ? "ההשתלמות אושרה" : "הבקשה הוחזרה לתיקון") + '</h2>' +
+      '<p>' + (approved
+        ? "הפרטים והסילבוס של " + esc(f("בית הספר")) + " נשלחו לאלנט, והמנהל.ת קיבל.ה הודעה על האישור."
+        : "ההערה נשלחה למנהל.ת של " + esc(f("בית הספר")) + " יחד עם קישור לתיקון הבקשה.") +
+      '</p>' +
+      (note ? '<div class="purpose" style="text-align:start;margin-top:22px"><span class="lbl">ההערה שנשלחה</span>' + esc(note) + '</div>' : "") +
+    '</div>';
+}
+
+/* ============================ טעינה ============================ */
+
+(function init(){
+  if (!TOKEN){
+    fail("חסר קישור לבקשה", "הדף נפתח מהקישור האישי שנשלח אליך במייל. אפשר לחזור למייל וללחוץ על הכפתור.");
+    return;
+  }
+  fetch(API_URL + "?mode=req&t=" + encodeURIComponent(TOKEN))
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return {ok:false, error:"network"}; })
+    .then(function(j){
+      if (j && j.ok && j.req){ REQ = j.req; render(); return; }
+      if (j && j.error === "notfound"){
+        fail("הבקשה לא נמצאה", "ייתכן שהמנהל.ת שלח.ה בקשה מעודכנת — במקרה כזה נשלח אליך מייל חדש עם קישור עדכני.");
+      } else {
+        fail("לא הצלחנו לטעון את הבקשה", "אפשר לרענן את הדף. אם זה חוזר, כדאי לפנות למיטל.");
+      }
+    });
+})();
+</script>
+</body>
+</html>

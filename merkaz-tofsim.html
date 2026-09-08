@@ -296,6 +296,26 @@ var ACTIVE = [
     ]
   },
   {
+    icon:"guide", title:"ההשתלמות הבית ספרית",
+    sub:"מנהל.ת בוחר.ת · המפקח.ת מאשר.ת · אלנט מפעילה",
+    desc:"בחירת ההשתלמות הבית ספרית לשנה — מתוך הקטלוג או עם מנחה מבחוץ בכפוף לתנאי הסף ולהגשת סילבוס. הבקשה נשלחת אוטומטית למפקח.ת של בית הספר, ואחרי האישור עוברת לאלנט עם כל הפרטים והסילבוס.",
+    api:GAS+"AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec?mode=count",
+    stats:[{pick:function(j){ return j && j.ok && j.count ? j.count.total : null; },
+            base:SCHOOLS_TOTAL, lbl:"בתי ספר בחרו השתלמות",
+            extra:function(j){
+              if (!j || !j.ok || !j.count) return "";
+              var c = j.count, p = [];
+              if (c.pending)  p.push(c.pending + " ממתינות למפקח.ת");
+              if (c.approved) p.push(c.approved + " עברו לאלנט");
+              if (c.returned) p.push(c.returned + " הוחזרו לתיקון");
+              return p.join(" · ");
+            }}],
+    links:[
+      {href:"hishtalmut-beit-sifrit.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"sikum-hishtalmuyot.html",     label:"דף המעקב",      kind:"sec"}
+    ]
+  },
+  {
     icon:"door", title:"רישום נתוני יום הפתיחה",
     sub:"מנהל.ת ממלא.ת · תחילת שנה",
     desc:"נוכחות תלמידים ביום הראשון, חוסרים במצבת המורים ואיוש בעלי תפקידים מרכזיים, אתגרים וצרכים.",

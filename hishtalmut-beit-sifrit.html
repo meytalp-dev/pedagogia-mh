@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>השתלמות בית ספרית · תשפ״ז · משרד העבודה</title>
+<meta name="description" content="בחירת ההשתלמות הבית ספרית לשנת תשפ״ז — מהקטלוג או עם מנחה חיצוני. הבקשה עוברת לאישור המפקח.ת ומשם לאלנט.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.62;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none}
+body::before{width:52vw;height:52vw;top:-18vw;inset-inline-start:-14vw;
+  background:radial-gradient(circle,rgba(116,195,237,.40),transparent 70%)}
+body::after{width:46vw;height:46vw;bottom:-16vw;inset-inline-end:-12vw;
+  background:radial-gradient(circle,rgba(24,92,255,.18),transparent 70%)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy));
+  position:relative;z-index:2}
+.site{padding:24px 0 4px;position:relative;z-index:1}
+.site .wrap{display:flex;align-items:center;justify-content:center}
+.logo{height:64px;width:auto;display:block}
+@media (max-width:480px){.logo{height:52px}}
+
+.hero{text-align:center;padding:22px 0 8px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:17px;height:17px}
+.hero h1{font-family:'Rubik',sans-serif;font-size:clamp(28px,6vw,42px);line-height:1.16;margin:16px 0 12px;
+  font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--navy) 10%,var(--blue) 55%,var(--sky) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:18.5px;color:#3d4a70;max-width:56ch;margin:0 auto}
+.hero .lede b{color:var(--navy)}
+
+/* ===== מסלול הבקשה ===== */
+.flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px auto 0;max-width:640px}
+.flow .st{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:8px 16px;font-size:14.5px;font-weight:700;color:#3d4a70}
+.flow .st b{color:var(--navy)}
+.flow .st .n{width:21px;height:21px;border-radius:50%;background:var(--blue-soft);color:var(--navy);
+  display:grid;place-items:center;font-family:'Rubik',sans-serif;font-size:12.5px}
+.flow .ar{color:var(--sky);font-size:19px;line-height:1}
+@media (max-width:560px){.flow .ar{display:none}.flow{gap:8px}}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-m);
+  padding:32px;margin-top:24px}
+@media (max-width:560px){.card{padding:22px 18px}}
+
+.sec{display:flex;align-items:center;gap:11px;margin:30px 0 16px;padding-top:24px;border-top:1px dashed var(--line)}
+.sec:first-child{margin-top:0;padding-top:0;border-top:0}
+.sec .sico{flex:0 0 auto;width:42px;height:42px;border-radius:13px;
+  background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  display:grid;place-items:center;color:var(--navy)}
+.sec .sico svg{width:22px;height:22px}
+.sec h3{font-family:'Rubik',sans-serif;font-size:19px;color:var(--navy);margin:0}
+.sec small{display:block;font-size:14px;color:var(--muted);font-weight:400;margin-top:1px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+label.f{display:block;margin-bottom:7px;font-weight:700;font-size:16.5px;color:#25325a}
+label.f .req{color:var(--blue)}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:1px;line-height:1.45}
+input[type=text],input[type=number],input[type=email],input[type=tel],select,textarea{width:100%;padding:13px 15px;
+  border:2px solid var(--line);border-radius:13px;background:#fbfcff;font-family:inherit;font-size:16.5px;color:var(--ink);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+input.bad,select.bad,textarea.bad{border-color:var(--danger);background:#fff7f8}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[readonly]{background:#f3f6fc;color:#4a5878;border-style:dashed}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 14px center;background-size:18px;cursor:pointer}
+textarea{min-height:110px;resize:vertical;line-height:1.55}
+.err{display:none;color:var(--danger);font-size:14.5px;font-weight:600;margin-top:6px}
+.err.on{display:block}
+
+/* ===== שיוך המפקח.ת ===== */
+.supbox{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));
+  border:1.5px solid #cfe3f7;border-radius:15px;padding:14px 18px;margin-top:4px;
+  opacity:0;transform:translateY(6px);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.supbox.on{opacity:1;transform:none}
+.supbox svg{width:26px;height:26px;color:var(--navy);flex:0 0 auto}
+.supbox .t{font-size:14px;color:var(--muted);font-weight:600}
+.supbox .v{font-family:'Rubik',sans-serif;font-size:17.5px;color:var(--navy);font-weight:600;line-height:1.3}
+
+/* ===== בחירת מסלול ===== */
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.tracks{grid-template-columns:1fr}}
+.track{position:relative}
+.track input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.track .box{height:100%;border:2px solid var(--line);border-radius:18px;background:#fbfcff;padding:20px 22px;cursor:pointer;
+  transition:border-color .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease)}
+.track .box:hover{border-color:var(--sky);transform:translateY(-2px)}
+.track input:checked + .box{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 8px 22px rgba(24,92,255,.14)}
+.track input:focus-visible + .box{box-shadow:0 0 0 4px rgba(24,92,255,.16)}
+.track .box .ti{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.track .box .ti svg{width:24px;height:24px;color:var(--navy);flex:0 0 auto}
+.track .box b{font-family:'Rubik',sans-serif;font-size:17.5px;color:var(--navy);font-weight:600}
+.track .box p{margin:0;font-size:15px;color:#4a5878;line-height:1.5}
+.track .mark{position:absolute;inset-inline-end:16px;top:16px;width:22px;height:22px;border-radius:50%;
+  border:2px solid #cfe3f7;background:#fff;display:grid;place-items:center;pointer-events:none}
+.track .mark svg{width:13px;height:13px;color:#fff;opacity:0;transition:opacity .16s var(--ease)}
+.track input:checked ~ .mark{background:var(--blue);border-color:var(--blue)}
+.track input:checked ~ .mark svg{opacity:1}
+
+.panel{display:none;margin-top:22px}
+.panel.on{display:block;animation:pop .35s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ===== קטלוג ===== */
+.catbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.catbar input{flex:1 1 240px}
+.catbar select{flex:0 1 210px}
+.catlist{display:grid;gap:12px;max-height:560px;overflow-y:auto;padding:3px;
+  scrollbar-width:thin;scrollbar-color:#cfe0f5 transparent}
+.catlist::-webkit-scrollbar{width:9px}
+.catlist::-webkit-scrollbar-thumb{background:#cfe0f5;border-radius:9px}
+.course{position:relative}
+.course input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.course .box{border:2px solid var(--line);border-radius:16px;background:#fff;padding:16px 18px;padding-inline-start:46px;cursor:pointer;
+  transition:border-color .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease)}
+.course .box:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+.course input:checked + .box{border-color:var(--blue);background:#f7faff;box-shadow:0 6px 18px rgba(24,92,255,.13)}
+.course .mark{position:absolute;inset-inline-start:15px;top:19px;width:21px;height:21px;border-radius:50%;
+  border:2px solid #cfe3f7;background:#fff;display:grid;place-items:center;pointer-events:none}
+.course .mark svg{width:12px;height:12px;color:#fff;opacity:0;transition:opacity .16s var(--ease)}
+.course input:checked ~ .mark{background:var(--blue);border-color:var(--blue)}
+.course input:checked ~ .mark svg{opacity:1}
+.course h4{margin:0 0 4px;font-family:'Rubik',sans-serif;font-size:17px;color:var(--navy);font-weight:600;line-height:1.35}
+.course .guide{font-size:14.5px;color:var(--muted);font-weight:700;margin-bottom:7px}
+.course .about{font-size:15px;color:#4a5878;line-height:1.55;margin:0 0 10px}
+.course .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-size:13.2px;font-weight:700}
+.tag.area{background:var(--sky-soft);color:#16558a}
+.tag.mix{background:#f2f0fb;color:#5a4a9a}
+.tag.note{background:#fff6e8;color:#8a5c14}
+.tag.national{background:#e9f9f5;color:#0c6d60}
+.course a.syl{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--blue);
+  text-decoration:none;margin-top:9px;position:relative;z-index:2}
+.course a.syl:hover{text-decoration:underline}
+.course a.syl svg{width:14px;height:14px}
+.catempty{text-align:center;color:var(--muted);padding:26px;font-size:15.5px}
+
+/* ===== תנאי הסף ===== */
+.terms{background:linear-gradient(135deg,var(--sky-soft),var(--blue-soft));border:2px solid #cfe3f7;
+  border-radius:18px;padding:20px 22px;margin-bottom:20px}
+.terms h4{margin:0 0 12px;font-family:'Rubik',sans-serif;font-size:17px;color:var(--navy);font-weight:600}
+.terms ul{margin:0;padding-inline-start:20px;font-size:15.4px;color:#33405f;line-height:1.75}
+.terms ul b{color:var(--navy)}
+.terms .exc{margin:12px 0 0;font-size:14.5px;color:#5a4a9a;background:#fff;border-radius:11px;padding:10px 14px}
+
+.flag{display:none;background:#fff6e8;border:1.5px solid #f0c98a;border-radius:14px;padding:15px 18px;margin-top:18px}
+.flag.on{display:block;animation:pop .3s var(--ease)}
+.flag b{display:block;color:#9a5b00;font-size:16px;margin-bottom:5px}
+.flag ul{margin:0;padding-inline-start:20px;font-size:15px;color:#7a4a00;line-height:1.65}
+
+/* ===== העלאת קובץ ===== */
+.drop{display:block;border:2px dashed var(--sky);background:var(--sky-soft);border-radius:16px;padding:24px;text-align:center;
+  cursor:pointer;transition:background .18s var(--ease),border-color .18s var(--ease)}
+.drop:hover,.drop.over{background:#dcedf8;border-color:var(--blue)}
+.drop.bad{border-color:var(--danger);background:#fff7f8}
+.drop input{display:none}
+.drop svg{width:34px;height:34px;color:var(--navy);margin-bottom:6px}
+.drop .t{font-size:16.5px;font-weight:700;color:var(--navy)}
+.drop .s{font-size:14px;color:var(--muted);margin-top:3px}
+.drop.has{border-style:solid;border-color:#9fe0d3;background:#f4fdfa}
+.drop.has svg{color:#0c6d60}
+.drop.has .t{color:#0a5c51}
+.fmt{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:9px 18px;border:1.5px solid var(--line);
+  border-radius:999px;background:#fff;color:var(--navy);font-size:14.5px;font-weight:700;text-decoration:none}
+.fmt:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+.fmt svg{width:16px;height:16px}
+
+.declare{display:flex;align-items:flex-start;gap:12px;background:#fbfcff;border:1.5px solid var(--line);
+  border-radius:15px;padding:16px 18px;cursor:pointer;margin-top:18px}
+.declare.bad{border-color:var(--danger);background:#fff7f8}
+.declare input{width:21px;height:21px;flex:0 0 auto;margin-top:2px;accent-color:var(--blue);cursor:pointer}
+.declare span{font-size:16px;color:#33405f}
+
+.actions{margin-top:30px;display:flex;flex-direction:column;align-items:center;gap:12px}
+button.go{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:19px;
+  color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:16px;
+  padding:16px 46px;box-shadow:0 8px 24px rgba(24,92,255,.28);
+  transition:transform .16s var(--ease),box-shadow .16s var(--ease),filter .16s var(--ease)}
+button.go:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(24,92,255,.34)}
+button.go:active{transform:translateY(0)}
+button.go[disabled]{filter:grayscale(.45) opacity(.7);cursor:default;transform:none;box-shadow:none}
+.smallnote{font-size:14.5px;color:var(--muted);text-align:center;max-width:52ch}
+.helpbtn{display:inline-flex;align-items:center;gap:7px;margin-top:2px;padding:8px 18px;
+  border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);
+  font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;
+  transition:color .16s var(--ease),border-color .16s var(--ease),box-shadow .16s var(--ease)}
+.helpbtn:hover{color:var(--navy);border-color:var(--sky);box-shadow:var(--shadow-s)}
+.helpbtn svg{width:16px;height:16px}
+
+.result{display:none;margin-top:22px;border-radius:18px;padding:22px 24px;border:2px solid}
+.result.on{display:block;animation:pop .45s var(--ease)}
+.result h3{font-family:'Rubik',sans-serif;font-size:20px;margin:0 0 6px}
+.result p{margin:0;font-size:16px}
+.result .hd{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+.result svg{width:26px;height:26px;flex:0 0 auto}
+.ok{background:#e9f9f5;border-color:#9fe0d3;color:#0c6d60}
+.ok h3{color:#0a5c51}
+.bad2{background:#fff5f6;border-color:#f3c2c7;color:#8c2b34}
+.bad2 h3{color:#8c2b34}
+.retry{appearance:none;border:1.5px solid #d18f97;background:#fff;color:#8c2b34;border-radius:11px;
+  padding:9px 20px;font-family:inherit;font-weight:700;font-size:15.5px;cursor:pointer;margin-top:12px}
+.retry:hover{background:#fff0f1}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  position:relative;z-index:1}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .credit{margin-top:10px;font-size:13px;opacity:.9}
+
+.setup{display:none;margin-top:18px;background:#fffaf0;border:1.5px dashed #e3bd7e;border-radius:14px;
+  padding:16px 18px;font-size:15px;color:#7a5312}
+.setup.on{display:block}
+.setup code{background:#fff;border:1px solid #ecd9b4;border-radius:6px;padding:1px 6px;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<div class="site"><div class="wrap">
+  <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+       onerror="this.style.display='none'">
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 4 9 4.5-9 4.5-9-4.5z"/><path d="M6.5 11v5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-5"/>
+      </svg>
+      מנהיגות פדגוגית יוצרת · תשפ״ז
+    </span>
+    <h1>ההשתלמות הבית ספרית</h1>
+    <p class="lede">כל בית ספר בוחר השתלמות בית ספרית אחת לשנת תשפ״ז — <b>מהקטלוג</b> או <b>עם מנחה מבחוץ</b>.
+      הבקשה עוברת לאישור המפקח.ת שלכם, ומשם לאלנט.</p>
+
+    <div class="flow">
+      <span class="st"><span class="n">1</span><b>המנהל.ת</b> בוחר.ת</span>
+      <span class="ar">←</span>
+      <span class="st"><span class="n">2</span><b>המפקח.ת</b> מאשר.ת</span>
+      <span class="ar">←</span>
+      <span class="st"><span class="n">3</span><b>אלנט</b> מפעילה</span>
+    </div>
+  </div>
+
+  <div class="setup" id="setup">
+    <b>הטופס עדיין לא חובר לשרת.</b> אחרי הרצת <code>setup</code> בעורך הסקריפט אפשר לבדוק
+    בהוספת הכתובת ל-URL: <code>?api=https://script.google.com/.../exec</code>
+  </div>
+
+  <form class="card" id="form" novalidate>
+
+    <!-- ===================== פרטי בית הספר ===================== -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18M5 20V10l7-5 7 5v10"/><path d="M10 20v-5h4v5"/>
+        </svg>
+      </div>
+      <div><h3>פרטי בית הספר</h3><small>המפקח.ת נקבע.ת לבד לפי פריסת הפיקוח תשפ״ז</small></div>
+    </div>
+
+    <div class="grid">
+      <div class="full">
+        <label class="f" for="school">שם ביה״ס <span class="req">*</span></label>
+        <select id="school">
+          <option value="" selected disabled>בחרו בית ספר…</option>
+        </select>
+        <div class="err" id="e_school">נא לבחור בית ספר מהרשימה</div>
+      </div>
+
+      <div class="full">
+        <div class="supbox" id="supbox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/><path d="m9 12 2 2 4-4"/>
+          </svg>
+          <div>
+            <div class="t">הבקשה תעבור לאישור</div>
+            <div class="v" id="supName">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="f" for="principal">שם המנהל.ת <span class="req">*</span></label>
+        <input type="text" id="principal" autocomplete="name" placeholder="שם פרטי ומשפחה">
+        <div class="err" id="e_principal">נא למלא את שם המנהל.ת</div>
+      </div>
+
+      <div>
+        <label class="f" for="email">דוא״ל המנהל.ת <span class="req">*</span>
+          <span class="hint">לשם יישלחו אישור הקליטה והחלטת המפקח.ת</span>
+        </label>
+        <input type="email" id="email" autocomplete="email" placeholder="name@example.co.il">
+        <div class="err" id="e_email">נא למלא כתובת דוא״ל תקינה</div>
+      </div>
+
+      <div class="full">
+        <label class="f" for="principalPhone">טלפון המנהל.ת <span class="req">*</span></label>
+        <input type="tel" id="principalPhone" autocomplete="tel" placeholder="05X-XXXXXXX">
+        <div class="err" id="e_principalPhone">נא למלא מספר טלפון</div>
+      </div>
+    </div>
+
+    <!-- ===================== מטרת ההשתלמות ===================== -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>
+        </svg>
+      </div>
+      <div><h3>מטרת בית הספר בבחירת ההשתלמות</h3><small>זה מה שהמפקח.ת קורא.ת ראשון — כדאי להיות קונקרטיים</small></div>
+    </div>
+
+    <div>
+      <label class="f" for="purpose">מה בית הספר רוצה להשיג בהשתלמות הזו? <span class="req">*</span>
+        <span class="hint">איזה צורך בית ספרי היא עונה, לאיזה יעד בתוכנית העבודה היא מחוברת, ומה ישתנה בעקבותיה</span>
+      </label>
+      <textarea id="purpose" placeholder="לדוגמה: השנה שמנו יעד לחיזוק ההוראה הדיפרנציאלית בכיתות י׳…"></textarea>
+      <div class="err" id="e_purpose">נא לפרט את מטרת ההשתלמות</div>
+    </div>
+
+    <!-- ===================== בחירת מסלול ===================== -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3v12M6 21v-2M18 21V9M18 3v2"/><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="6" r="2.6"/>
+        </svg>
+      </div>
+      <div><h3>בחירת ההשתלמות</h3><small>בחירה אחת בלבד — מהקטלוג או מנחה חיצוני</small></div>
+    </div>
+
+    <div class="tracks">
+      <label class="track">
+        <input type="radio" name="track" value="catalog" id="trackCatalog">
+        <div class="box">
+          <div class="ti">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2.5 2.5 0 0 1 2 1 2.5 2.5 0 0 1 2-1h4.5A1.5 1.5 0 0 1 20 5.5v12a1.5 1.5 0 0 1-1.5 1.5H14a2.5 2.5 0 0 0-2 1 2.5 2.5 0 0 0-2-1H5.5A1.5 1.5 0 0 1 4 17.5z"/>
+              <path d="M12 5v14"/>
+            </svg>
+            <b>מהקטלוג</b>
+          </div>
+          <p>השתלמויות מוכנות שכבר אושרו — עם מנחה, סילבוס ותמהיל מפגשים. הדרך המהירה.</p>
+        </div>
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+      </label>
+
+      <label class="track">
+        <input type="radio" name="track" value="external" id="trackExternal">
+        <div class="box">
+          <div class="ti">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="8" r="3.4"/><path d="M16 19v-1.4a3.6 3.6 0 0 0-3.6-3.6H7.6A3.6 3.6 0 0 0 4 17.6V19"/>
+              <path d="M18 5v6M21 8h-6"/>
+            </svg>
+            <b>מנחה מבחוץ</b>
+          </div>
+          <p>מנחה שבית הספר מביא בעצמו — בכפוף לתנאי הסף ולהגשת סילבוס לפי הפורמט.</p>
+        </div>
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>
+      </label>
+    </div>
+    <div class="err" id="e_track" style="margin-top:10px">נא לבחור אחד משני המסלולים</div>
+
+    <!-- ===================== מסלול א׳ — הקטלוג ===================== -->
+    <div class="panel" id="panelCatalog">
+      <div class="catbar">
+        <input type="text" id="catSearch" placeholder="חיפוש לפי נושא, מנחה או תוכן…" autocomplete="off">
+        <select id="catArea">
+          <option value="">כל האזורים</option>
+        </select>
+      </div>
+      <div class="catlist" id="catList"></div>
+      <div class="err" id="e_course">נא לבחור השתלמות מהקטלוג</div>
+    </div>
+
+    <!-- ===================== מסלול ב׳ — מנחה חיצוני ===================== -->
+    <div class="panel" id="panelExternal">
+
+      <div class="terms">
+        <h4>תנאי הסף להשתלמות עם מנחה חיצוני</h4>
+        <ul>
+          <li><b>9,000 ₪</b> — עלות ההשתלמות</li>
+          <li><b>30 שעות</b> אקדמיות בסך הכול</li>
+          <li><b>6 מפגשים פיזיים</b>, והיתר בזום</li>
+          <li><b>מטלת סיום</b> בחובת הגשה של כל המשתתפים</li>
+          <li><b>מינימום 20 משתתפים</b></li>
+          <li><b>סילבוס</b> לפי הפורמט המצורף, ו<b>טלפון של המנחה</b></li>
+        </ul>
+        <p class="exc">חריגה מאחד התנאים אינה חוסמת את ההגשה — היא מסומנת בבקשה ועוברת לשיחה עם המפקח.ת.</p>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label class="f" for="exTitle">שם ההשתלמות <span class="req">*</span></label>
+          <input type="text" id="exTitle" placeholder="לדוגמה: הוראה דיפרנציאלית בכיתה ההטרוגנית">
+          <div class="err" id="e_exTitle">נא למלא את שם ההשתלמות</div>
+        </div>
+
+        <div>
+          <label class="f" for="exOrg">ארגון / מכון
+            <span class="hint">אם המנחה עצמאי.ת — אפשר להשאיר ריק</span>
+          </label>
+          <input type="text" id="exOrg" placeholder="שם הגוף המנחה">
+        </div>
+
+        <div>
+          <label class="f" for="exGuide">שם המנחה <span class="req">*</span></label>
+          <input type="text" id="exGuide" autocomplete="off" placeholder="שם פרטי ומשפחה">
+          <div class="err" id="e_exGuide">נא למלא את שם המנחה</div>
+        </div>
+
+        <div>
+          <label class="f" for="exPhone">טלפון המנחה <span class="req">*</span></label>
+          <input type="tel" id="exPhone" autocomplete="off" placeholder="05X-XXXXXXX">
+          <div class="err" id="e_exPhone">נא למלא את טלפון המנחה</div>
+        </div>
+
+        <div>
+          <label class="f" for="exCost">עלות ההשתלמות (₪) <span class="req">*</span>
+            <span class="hint">התקן: 9,000 ₪</span>
+          </label>
+          <input type="number" id="exCost" min="0" step="100" inputmode="numeric" value="9000">
+          <div class="err" id="e_exCost">נא למלא עלות</div>
+        </div>
+
+        <div>
+          <label class="f" for="exHours">סה״כ שעות אקדמיות <span class="req">*</span>
+            <span class="hint">התקן: 30 שעות</span>
+          </label>
+          <input type="number" id="exHours" min="1" step="1" inputmode="numeric" value="30">
+          <div class="err" id="e_exHours">נא למלא מספר שעות</div>
+        </div>
+
+        <div>
+          <label class="f" for="exPhys">מפגשים פיזיים <span class="req">*</span>
+            <span class="hint">התקן: 6 מפגשים</span>
+          </label>
+          <input type="number" id="exPhys" min="0" step="1" inputmode="numeric" value="6">
+          <div class="err" id="e_exPhys">נא למלא מספר מפגשים</div>
+        </div>
+
+        <div>
+          <label class="f" for="exZoom">מפגשי זום <span class="req">*</span>
+            <span class="hint">יתר המפגשים</span>
+          </label>
+          <input type="number" id="exZoom" min="0" step="1" inputmode="numeric" value="4">
+          <div class="err" id="e_exZoom">נא למלא מספר מפגשים</div>
+        </div>
+
+        <div>
+          <label class="f" for="exParts">מספר משתתפים צפוי <span class="req">*</span>
+            <span class="hint">מינימום 20</span>
+          </label>
+          <input type="number" id="exParts" min="1" step="1" inputmode="numeric" placeholder="0">
+          <div class="err" id="e_exParts">נא למלא מספר משתתפים</div>
+        </div>
+
+        <div>
+          <label class="f" for="exTask">מטלת סיום בחובת הגשה של כולם <span class="req">*</span></label>
+          <select id="exTask">
+            <option value="כן" selected>כן</option>
+            <option value="לא">לא</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flag" id="flagBox">
+        <b>הבקשה חורגת מתנאי הסף</b>
+        <ul id="flagList"></ul>
+      </div>
+
+      <div style="margin-top:22px">
+        <label class="f">סילבוס ההשתלמות <span class="req">*</span>
+          <span class="hint">לפי הפורמט המצורף — כולל טבלת המפגשים, המטרות ודרישות הגמול</span>
+        </label>
+
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept=".pdf,.doc,.docx,.odt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" id="dropIcon">
+            <path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/>
+          </svg>
+          <div class="t" id="dropTitle">בחרו קובץ סילבוס או גררו לכאן</div>
+          <div class="s" id="dropSub">Word או PDF · עד 10MB</div>
+        </label>
+        <div class="err" id="e_file">נא לצרף את קובץ הסילבוס</div>
+
+        <div style="text-align:center">
+          <a class="fmt" href="docs/mivne-silabus.docx" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"/>
+            </svg>
+            הורדת פורמט הסילבוס למילוי
+          </a>
+        </div>
+      </div>
+
+      <label class="declare" id="declareBox">
+        <input type="checkbox" id="declare">
+        <span>אני מאשר.ת שהפרטים נכונים, שהמנחה עודכן.ה בתנאים, ושמטלת הסיום תוגש על ידי כל המשתתפים.</span>
+      </label>
+      <div class="err" id="e_declare">נא לאשר את ההצהרה</div>
+    </div>
+
+    <!-- ===================== שליחה ===================== -->
+    <div class="actions">
+      <button type="button" class="go" id="submitBtn">שליחת הבקשה למפקח.ת</button>
+      <p class="smallnote">הבקשה תישלח למפקח.ת שלכם לאישור. מילוי חוזר של הטופס מחליף את הבקשה הקודמת של בית הספר — אין צורך לבטל.</p>
+      <a class="helpbtn" id="helpBtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.7-.9 1.3v.4"/><path d="M12 17h.01"/>
+        </svg>
+        נתקלתם בבעיה? שלחו הודעה
+      </a>
+    </div>
+
+    <div class="result ok" id="okBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5L16 9.5"/>
+        </svg>
+        <h3>הבקשה נשלחה</h3>
+      </div>
+      <p id="okText">הבקשה עברה לאישור המפקח.ת. אישור קליטה נשלח אליכם בדוא״ל.</p>
+    </div>
+
+    <div class="result bad2" id="badBox">
+      <div class="hd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2h.01"/>
+        </svg>
+        <h3>השליחה נכשלה</h3>
+      </div>
+      <p id="badText">לא הצלחנו לשלוח את הבקשה. אפשר לנסות שוב.</p>
+      <button type="button" class="retry" id="retryBtn">ניסיון נוסף</button>
+    </div>
+
+  </form>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+</div>
+
+<script>
+/* ==================================================================
+   ההשתלמות הבית ספרית תשפ"ז — צד לקוח
+
+   הכתובת נקבעת כאן. לבדיקה מול פריסה אחרת אפשר להוסיף ל-URL:
+   hishtalmut-beit-sifrit.html?api=<כתובת>
+   ================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec";
+
+/* הוואטסאפ של מיטל לכפתור "נתקלתם בבעיה" — בפורמט בינלאומי בלי + */
+var WA_PHONE = "972536256653";
+
+(function(){
+  var q = new URLSearchParams(location.search).get("api");
+  if (q && /^https:\/\/script\.google\.com\//.test(q)) API_URL = q;
+})();
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* תנאי הסף */
+var STD = { cost:9000, hours:30, phys:6, parts:20 };
+
+/* ---------- בתי הספר — פריסת הפיקוח תשפ"ז (64 מוסדות) ---------- */
+var SCHOOLS = [{n:"אבו סנאן",sup:"ליאת צבר"},{n:"אום אל פחם בנות",sup:"ליאת צבר"},{n:"אום אל פחם בנים",sup:"רביב שורץ"},{n:"אור דניאל",sup:"יששכר חפץ"},{n:"אור העתיד תורני מקצועי",sup:"יששכר חפץ"},{n:"אורט אורמת",sup:"סיגלית דאי"},{n:"אורט בית הערבה",sup:"רויטל אמיר"},{n:"אורט כרמל",sup:"יסמין אמון"},{n:"אורט תל נוף",sup:"סיגלית דאי"},{n:"אורט תעשייה אווירית",sup:"סיגלית דאי"},{n:"אכסאל",sup:"יסמין אמון"},{n:"אל אמאני סכנין",sup:"יסמין אמון"},{n:"אלחכמה כסרא-סמיע",sup:"יסמין אמון"},{n:"אנרג'י טק",sup:"ליאת צבר"},{n:"בית אל",sup:"ליאת צבר"},{n:"בית דוד",sup:"יששכר חפץ"},{n:"בית חנינה בנות",sup:"ויסאם סואלחה"},{n:"בית חנינה בנים",sup:"ויסאם סואלחה"},{n:"ג'וליס בנות",sup:"יסמין אמון"},{n:"דן גורמה",sup:"סיגלית דאי"},{n:"דרור גליל",sup:"ליאת צבר"},{n:"דרור נווה מדבר",sup:"שרונה בלוך"},{n:"הדר",sup:"יששכר חפץ"},{n:"הקמפוס התורני עתיד",sup:"יששכר חפץ"},{n:"התיכון החברתי חיפה",sup:"ליאת צבר"},{n:"חוש\"ן",sup:"רויטל אמיר"},{n:"טורען",sup:"יסמין אמון"},{n:"טל חרמון",sup:"יששכר חפץ"},{n:"ישיבת חנוך לנער",sup:"יששכר חפץ"},{n:"כפר זיתים",sup:"יששכר חפץ"},{n:"כפר יסיף",sup:"יסמין אמון"},{n:"כפר עקב",sup:"ויסאם סואלחה"},{n:"לקייה",sup:"שרונה בלוך"},{n:"מצפה רמון",sup:"רביב שורץ"},{n:"מרחביה/מעיינות",sup:"יששכר חפץ"},{n:"נחלים",sup:"יששכר חפץ"},{n:"נצרת",sup:"יסמין אמון"},{n:"סור באהר",sup:"ויסאם סואלחה"},{n:"סכנין תל שבע",sup:"שרונה בלוך"},{n:"עמל אשדוד",sup:"סיגלית דאי"},{n:"עמל טייבה ב'",sup:"ויסאם סואלחה"},{n:"עמל טק אין",sup:"סיגלית דאי"},{n:"עמל רהט",sup:"יסמין אמון|סיגלית דאי"},{n:"ערערה",sup:"ויסאם סואלחה"},{n:"עתיד באר שבע",sup:"סיגלית דאי"},{n:"עתיד בת עמי",sup:"יששכר חפץ"},{n:"עתיד גליל מערבי ירכא בנים",sup:"יסמין אמון"},{n:"עתיד טק ביר אל מכסור",sup:"יסמין אמון"},{n:"עתיד כפר חב\"ד",sup:"יששכר חפץ"},{n:"עתיד כרמיאל",sup:"רביב שורץ"},{n:"עתיד פלמחים",sup:"סיגלית דאי"},{n:"צור ברק",sup:"סיגלית דאי"},{n:"צור ים",sup:"ליאת צבר"},{n:"קמ\"ג דימונה",sup:"סיגלית דאי"},{n:"רימונים",sup:"ליאת צבר"},{n:"רמת דוד",sup:"ליאת צבר"},{n:"שגב שלום",sup:"שרונה בלוך"},{n:"שפרעם",sup:"רביב שורץ"},{n:"תיכון החממה",sup:"סיגלית דאי|רויטל אמיר"},{n:"תיכון חברתי ת\"א",sup:"ליאת צבר"},{n:"תיכון טכנולוגי אי טק סקול (מסעדה)",sup:"יסמין אמון"},{n:"תיכון עוצמ\"ה עתיד זוקו",sup:"ליאת צבר"},{n:"תיכון שיח",sup:"ליאת צבר"},{n:"תפן ליזמות",sup:"יסמין אמון"}];
+
+/* ---------- קטלוג ההשתלמויות — עותק מקומי, מתעדכן מהשרת ---------- */
+var CATALOG = [{"id": "1", "guide": "מכון דרייב", "title": "מנהיגות מובלה ומטעינה\n מטפחים חוסן, דרייב והשפעה בבית הספר", "about": "השתלמות יישומית וחווייתית לפיתוח חוסן אישי ומקצועי, מוטיבציה, מנהיגות והשפעה במרחב הבית־ספרי. המשתתפים ירכשו כלים לזיהוי חוזקות ומשאבים, מניעת שחיקה, תקשורת מיטיבה ורתימת תלמידים וצוותים, תוך חיבור בין חזון אישי לעשייה והובלת שינוי בשגרה החינוכית.", "syllabus": "https://docs.google.com/document/d/1L0Bk7el7GLaGvwKLhB-1fSYKtcKKTa19/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "2", "guide": "מכון דרייב", "title": "המורה כמאמן אימון- תרגול ויישום בשטח", "about": "השתלמות יישומית המעמיקה בתפיסת המורה כמאמן וכסוכן שינוי, ומעניקה כלים להובלת שיעור דינמי, הנחיית קבוצות, רתימת תלמידים והתמודדות עם התנגדויות וקונפליקטים. המשתתפים יתרגלו מיומנויות אימוניות ותקשורת מיטיבה, יפתחו יכולות הנהגה והובלה מול תלמידים וצוותים, ויישמו את הכלים בפועל במרחב החינוכי, תוך חיזוק החוסן והמנהיגות האישית.", "syllabus": "https://docs.google.com/document/d/18SJ2xBoHh5Je094iEQe6zH7YbaEL4Jh1/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "3", "guide": "מכון דרייב", "title": "מיומנויות עתיד והנחייה, המורה כפרזנטור", "about": "השתלמות יישומית לפיתוח מיומנויות פרזנטציה, נוכחות, הנחיה והשפעה בעמידה מול קהל ובמרחב הכיתתי. המשתתפים ירכשו כלים לזיקוק מסרים, יצירת עניין וחיבור לקהלים מגוונים, להובלת שיח וקבוצה ולהתמודדות עם התנגדויות, תוך חיזוק הביטחון, הנוכחות והיכולת להשפיע על תהליכי למידה. לאורך ההשתלמות יתנסו המשתתפים ביישום מודל ה־Strike ובבניית פרזנטציות ומפגשים המקדמים מעורבות, הנעה ולמידה.", "syllabus": "https://docs.google.com/document/d/1Gz4wNEC6G0AP5BwIqr-ajia_MVTBX7yk/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "4", "guide": "דרור בתי חינוך", "title": "אוטונומיה ואחריות על בני הנוער", "about": "התכנית תעמיק בהבנת כוחם של בני הנוער להשפיע על המציאות ולעצב את חייהם, תוך בחינת תפקיד בית הספר ביצירת מרחב המעודד אוטונומיה, אחריות ומעורבות. המשתתפים יכירו כלים ופרקטיקות לחיזוק השותפות בין מורים לתלמידים, לקידום קבלת החלטות משותפת וליצירת יוזמות חברתיות המחברות בין בית הספר, הקהילה והסביבה.", "syllabus": "https://docs.google.com/document/d/1FkMrllS7XCXtlia5WQJp8cmpj1q9eqCq/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "5", "guide": "דרור בתי חינוך", "title": "הוראה חדשנית, יצירתית ומחוברת לחיי הילדים", "about": "התכנית תזמן העמקה משותפת בשאלות העומדות בבסיס העשייה החינוכית: מהן מטרות ההוראה, כיצד חווים התלמידים את הלמידה ומהם המסרים הגלויים והסמויים העוברים בדרכי ההוראה שלנו. המשתתפים ייחשפו לפרקטיקות הוראה חדשניות, יצירתיות ומחוברות לעולמם של התלמידים, המפתחות מיומנויות חשיבה, חקר ולמידה. לאורך התכנית יודגש הקשר בין מטרות הלמידה למטרות החברתיות, בין חוויית הלומד לעולמו האישי והחברתי ובין בית הספר לחברה שבה הוא פועל.", "syllabus": "https://docs.google.com/document/d/1M1QE8gQFdv7KHrthWVNvdZtwCKvFF8L2/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "6", "guide": "דרור בתי חינוך", "title": "למידה מבוססת פרויקטים", "about": "בהשתלמות ילמדו המורים כיצד ליצור תהליך למידה מבוסס פרויקטים ויקבלו כלים מעשיים לבניית פרויקט לימודי והעברתו לתלמידים. למידה מבוססת פרויקטים מאפשרת שילוב של תחומי דעת שונים סביב נושא מרכזי. דרך העבודה על הפרויקט התלמידים והתלמידות מתנסים במיומנויות חקר מגוונות, עובדים בצוותים ונדרשים לשיתוף פעולה. התלמידות והתלמידים נחשפים לנושאים חברתיים שונים ומגבירים את הזיקה למעגלי הזהות שלהם.", "syllabus": "https://docs.google.com/document/d/1tjqo7MKw4-hk3uGrEAVUHzKyTLuyJof8/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "7", "guide": "דרור בתי חינוך", "title": "קבוצה שעושה ההפך מחרם", "about": "התכנית מבקשת ליצור שפה חינוכית משותפת לצוות בית הספר ולחזק את תפקידם של אנשי החינוך בפיתוח הכישורים החברתיים של בני הנוער ובהדרכת מערכות היחסים ביניהם. המשתתפים ירכשו כלים ופרקטיקות להובלת קבוצות מיטיבות, לומדות ומפתחות, תוך מיפוי הצרכים החברתיים של הכיתה, בניית סדירויות מקדמות שייכות ושיתוף ויצירת מרחב חברתי המאפשר לכל תלמיד ותלמידה להיות חלק משמעותי מהקבוצה.", "syllabus": "https://docs.google.com/document/d/1HRyQYg5CqZq-IdCnDkjXIhin-5AEvP21/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "פריסה ארצית", "note": ""}, {"id": "8", "guide": "יעל נזר", "title": "בינת הלב - Life Coding", "about": "בינת הלב - Life Coding היא השתלמות בית-ספרית לצוותי חינוך, שפותחה והועברה בפועל, ומשלבת עבודה תודעתית מבוססת מחקר עם כלי בינה מלאכותית ככלי מראה ואימון אישי. בעבודת ההוראה אנחנו מחזיקים רגשות של אחרים ומתפקדים תחת עומס, לעיתים קרובות מתוך טייס אוטומטי שמוביל לשחיקה. ההשתלמות מלווה את המורים במעבר מעמדת השחקן המגיב לעמדת הבמאי הבוחר, דרך זיהוי הדפוסים שמפעילים אותנו וכתיבה מחדש של דרכי הפעולה. לאורך המפגשים המורים מתנסים בכלים פרקטיים: שיטת העבודה של ביירון קייטי לחקירת מחשבות מלחיצות, מודל ACT לפעולה מתוך ערכים, ותקשורת מקרבת לשיח מיטיב. במקביל הם רוכשים מיומנויות מעשיות בבינה מלאכותית לארגון מידע, ללמידה עצמית וליצירה. התוצר המרכזי הוא כלי אישי שכל מורה בונה בעצמו, בוט או אפליקציה שמלווים אותו בשגרה החינוכית.", "syllabus": "https://drive.google.com/file/d/1vXwCPeoJB22wQ2tLLbhgNabjrcPTaBbE/view", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "איזור השרון", "note": ""}, {"id": "9", "guide": "לירון סגל", "title": "עולמות למידה\nבינה מלאכותית ופדגוגיה", "about": "תכנית יישומית לפיתוח יכולתם של צוותי הוראה לשלב בינה מלאכותית באופן מושכל ופדגוגי בעבודתם. התכנית משלבת למידה מבוססת מקורות, הוראה מותאמת, למידה פעילה, יצירה חזותית, הערכה ופיתוח פעילויות אינטראקטיביות. בכל מפגש מוקדש זמן משמעותי להתנסות וליצירת חומרים ותוצרים שימושיים המותאמים לצורכי המורים ולעבודתם בכיתה. לאורך התכנית המשתתפים בונים תלקיט אישי מתפתח של תוצרים, שאותו הם משפרים ומציגים בסיום התהליך.", "syllabus": "https://drive.google.com/open?id=1tTf2yas1jXZKu5UWKbFw9ljcCIoYEZfN", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "איזור השפלה \nאשדוד, רחובות, גדרה, יבנה,\nישובי גדרות, גבעת ברנר, מזכרת בתיה, באר טוביה, \nנס ציונה, ראשון לציון, חולון, בת ים, לוד", "note": ""}, {"id": "10", "guide": "פזית ראובני", "title": "צוות מו״פ בתוך ביה״ס", "about": "פיתוח צוות חינוכי יוצר המסוגל להוביל שינוי פנימי בבית הספר, להגדיר את זהותו החינוכית והמקצועית, ולבצע תהליכ פיתוח עומק של תוכנית הלימודים הבית ספרית.", "syllabus": "https://docs.google.com/document/d/18mJZXA4ohqJ8ZOT6LPCUc6IcXmM8qINv/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "איזור השרון", "note": ""}, {"id": "11", "guide": "מיטל פלג\nמבית אלנט", "title": "כלים שלובים AI", "about": "מבחר נושאים המתמקדים בתכנון ועיצוב סביבת הלמידה, פיתוח מערכי שיעור וניהול השיעור תוך שימוש בכלי AI ובינה מלאכותית.", "syllabus": "https://drive.google.com/file/d/1C8bWcLrSzjTHNvBzWnpjQWxjr_BrrMVs/view?usp=sharing", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "ירושלים ו/או\nנתניה עד אשדוד", "note": ""}, {"id": "12", "guide": "דני שיש", "title": "חינוך יוצר דואלי- עבודה עם נוער בסיכון", "about": "מטרת העל של התוכנית היא להקנות למורים כלים מעשיים המשלבים בין עקרונות של ויסות רגשי פרקטיות הוראה מתקדמות. דרך שילוב חומרים (כמו חימר וקולאז') ומתודולוגיות מבוססות מחקר, המשתתפים לומדים כיצד ליצור קשר משמעותי, לנהל מצבי קושי והתמודדות בכיתה, להפחית שחיקה ולטפח חוסן אישי ומקצועי.", "syllabus": "https://docs.google.com/document/d/1elKH9qlKP5gvi7FdixN27Fy4F33PppH3/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "אלון שבות, בית שמש, ירושלים\nודרום", "note": ""}, {"id": "13", "guide": "ד\"ר איריס יניב", "title": "PBL", "about": "ההשתלמות תלווה את המורות בלמידה ויישום של הוראה מבוססת פרויקטים", "syllabus": "https://drive.google.com/file/d/11TCSfDWVvbPWq767u9QQLqCZIvqhaLSF/view?usp=sharing", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "נשר, טבעון, קריות וחיפה", "note": ""}, {"id": "14", "guide": "ד\"ר איריס יניב", "title": "גיוון דרכי הערכה", "about": "בהשתלמות נעסוק במגוון דרכי הערכה – מבחנים, תלקיט, הערכה מבוססת פרויקטים, ועוד.", "syllabus": "https://drive.google.com/file/d/1WtyD6gh3lbrEyqBcZNSQ4Eewit3MBZPn/view?usp=sharing", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "נשר, טבעון, קריות וחיפה", "note": ""}, {"id": "15", "guide": "ד\"ר איריס יניב", "title": "הוראה דיפרנציאלית", "about": "בהשתלמות נעסוק במושג הוראה דיפרנציאלית וניישם את דרך ההוראה הזו בכיתות. בהקשר זה נלמד את תיאוריית ריבוי האינטליגנציות ואופן יישומה בכיתה.", "syllabus": "https://drive.google.com/file/d/1-b48n_r4kn12RlMNUQbpRwy3uSxFStvb/view?usp=sharing", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "נשר, טבעון, קריות וחיפה", "note": ""}, {"id": "16", "guide": "קאותק", "title": "חינוך כיתה", "about": "ההשתלמות עוסקת בהיכרות עם עקרונות החינוך היוצר ובפיתוח זהות של מחנך/ת מוביל/ה, תוך התמקדות בשייכות, ביטחון וגבולות כבסיס ליצירת אמון ושפה כיתתית. במהלך ההשתלמות יכירו המשתתפים את מערכת היחסים כמנוע להובלת כיתה, ילמדו למפות צרכים רגשיים וחברתיים של תלמידים, וירכשו כלים מעשיים לניהול קונפליקטים, יצירת דיאלוג, הובלת כיתה מיטבית ויצירת אקלים רגשי חיובי. לצד זאת, ההשתלמות מבקשת לקדם למידה פעילה, אחריות ובחירה של תלמידים כחלק מהשגרה הכיתתית.", "syllabus": "https://docs.google.com/document/d/1vB_gp7XbcOpIxfI-S5qdmAigx_psj2gI/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "נגב", "note": "לדוברי השפה הערבית בלבד"}, {"id": "17", "guide": "רפי סרי", "title": "מקדמים שינוי ברוח \"החינוך היוצר\"  התנסות בזיהוי צורך, בניית תכנית פעולה והתנסות מעשית", "about": "ההשתלמות תעסוק בהיכרות עם רפורמת החינוך היוצר, עקרונותיה ודרכי פעולתה, ותכשיר את הצוות ליישום משמעותי שלה בשטח. במהלך ההשתלמות נעמיק בארגזי כלים מעולמות החשיבה העיצובית (Design Thinking) ו־החשיבה ההמצאתית השיטתית (SIT), נבנה תכנית עבודה אישית וקבוצתית, וניישם את הנלמד תוך למידה, רפלקציה והפקת לקחים.", "syllabus": "https://docs.google.com/document/d/1dFvsbmoBdpcOqncAZYzmx-p8UVpQovPs/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "שפלה וצפון הנגב", "note": ""}, {"id": "18", "guide": "רפי סרי", "title": "חינוך, למידה ויצירה בעידן של מסכים", "about": "ההשתלמות עוסקת בהבנת ההשלכות של שימוש יתר במסכים ובהשפעתו על תהליכי הוראה ולמידה. במהלכה נבחן את הקשר בין טכנולוגיה לפדגוגיה, נלמד לגבש אמנה מוסדית לשימוש מושכל במסכים ונפתח מערך לימודי מעשי לתלמידים בנושא שימוש יעיל ומאוזן.", "syllabus": "https://docs.google.com/document/d/1xR6abQ3LOUqo8SxyxDiAaA6YNsF3Bl0j/edit?usp=sharing&ouid=117922033521029315772&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "שפלה וצפון הנגב", "note": ""}, {"id": "19", "guide": "אילנה דרור", "title": "לומד בעל מכוונות עצמית", "about": "ההשתלמות מציגה את הגישה היוטגוגית, המדגישה למידה מוכוונת־עצמית, פיתוח יכולות רפלקטיביות וניהול עצמי של תהליך הלמידה. המשתתפים יתנסו בחשיבה יצירתית וביקורתית, פתרון בעיות, התמודדות עם עמימות וקונפליקטים והערכה עצמית.\nבמקביל, ההשתלמות תבחן את שינוי תפקיד המורה – ממקור ידע בלעדי למנחה, מעודד ומאפשר למידה עצמאית ומשמעותית.", "syllabus": "https://docs.google.com/document/d/1nWosf5OMw-IbgdS1s-CzGN42aNilUJZZ/edit?usp=sharing&ouid=115380126148513410066&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "שפלה ושרון", "note": ""}, {"id": "20", "guide": "אילנה דרור", "title": "ניהול כיתה", "about": "ההשתלמות תכיר למורים את תפיסת העולם של החינוך היוצר, את דמות הבוגר 2030 ואת עקרונות הלמידה במאה ה־21, תוך שימת דגש על יחסים, חיבורים, למידה פעילה והוראה בין־תחומית. המשתתפים יתנסו במגוון גישות ומתודות הוראה, בתכנון למידה ברוח החינוך היוצר ובשילוב דרכי הערכה חלופיות ומעצבות.", "syllabus": "https://docs.google.com/document/d/1MW2q039pQZwQxX2OJMn8_ftW8AaypBT1/edit?usp=sharing&ouid=115380126148513410066&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "שפלה ושרון", "note": ""}, {"id": "21", "guide": "אילנה דרור", "title": "עקרונות החינוך היוצר", "about": "ההשתלמות משלבת למידה פעילה וסדנאית עם ידע תיאורטי, ומאפשרת למורים לבחון את הנלמד ולתרגם אותו באופן מעשי לעבודה בכיתה. המשתתפים יכירו עקרונות של למידה משמעותית, מוטיבציה והוראה מותאמת, ויתנסו בבניית שיעורים דיפרנציאליים ובהערכה ברוח החינוך היוצר.", "syllabus": "https://docs.google.com/document/d/1gCBoQtU-TyjksUONhltgogjsYVkT3Ynx/edit?usp=sharing&ouid=115380126148513410066&rtpof=true&sd=true", "mix": "היברידי: פא\"פ, סנכרוני ואסנכרוני", "area": "שפלה ושרון", "note": ""}];
+
+var MAX_FILE = 10 * 1024 * 1024;
+var fileData = null;   /* {name, mime, b64} */
+
+/* ============================ בתי ספר ============================ */
+
+function fillSchools(){
+  var sel = $("school");
+  SCHOOLS.slice().sort(function(a,b){ return a.n.localeCompare(b.n,"he"); })
+    .forEach(function(s){
+      var o = document.createElement("option");
+      o.value = s.n;
+      o.textContent = s.n;
+      o.dataset.sup = s.sup;
+      sel.appendChild(o);
+    });
+}
+
+function onSchool(){
+  var sel = $("school");
+  var opt = sel.options[sel.selectedIndex];
+  var sup = opt && opt.dataset ? opt.dataset.sup : "";
+  if (sup){
+    $("supName").textContent = sup.split("|").join(" · ");
+    $("supbox").classList.add("on");
+  } else {
+    $("supbox").classList.remove("on");
+  }
+  clearErr("school");
+}
+
+/* ============================ קטלוג ============================ */
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function isNational(area){
+  return /פריסה ארצית/.test(String(area || ""));
+}
+
+function fillAreas(){
+  var sel = $("catArea");
+  while (sel.options.length > 1) sel.remove(1);
+  var seen = {};
+  CATALOG.forEach(function(c){
+    var a = String(c.area || "").trim();
+    if (!a || seen[a]) return;
+    seen[a] = true;
+    var o = document.createElement("option");
+    o.value = a;
+    o.textContent = isNational(a) ? "פריסה ארצית" : a.replace(/\s+/g," ");
+    sel.appendChild(o);
+  });
+}
+
+function renderCatalog(){
+  var q = $("catSearch").value.trim();
+  var area = $("catArea").value;
+  var list = $("catList");
+  var chosen = selectedCourseId();
+
+  var items = CATALOG.filter(function(c){
+    if (area && String(c.area || "").trim() !== area) return false;
+    if (!q) return true;
+    var hay = [c.title, c.guide, c.about, c.area, c.note].join(" ");
+    return hay.indexOf(q) >= 0;
+  });
+
+  if (!items.length){
+    list.innerHTML = '<div class="catempty">לא נמצאה השתלמות שמתאימה לחיפוש</div>';
+    return;
+  }
+
+  list.innerHTML = items.map(function(c){
+    var areaTag = isNational(c.area)
+      ? '<span class="tag national">פריסה ארצית</span>'
+      : (c.area ? '<span class="tag area">' + esc(String(c.area).replace(/\s+/g," ")) + '</span>' : "");
+    return '<label class="course">' +
+      '<input type="radio" name="course" value="' + esc(c.id) + '"' + (chosen === c.id ? " checked" : "") + '>' +
+      '<div class="box">' +
+        '<h4>' + esc(String(c.title).replace(/\s+/g," ")) + '</h4>' +
+        '<div class="guide">' + esc(String(c.guide).replace(/\s+/g," ")) + '</div>' +
+        (c.about ? '<p class="about">' + esc(c.about) + '</p>' : "") +
+        '<div class="meta">' + areaTag +
+          (c.mix ? '<span class="tag mix">' + esc(c.mix) + '</span>' : "") +
+          (c.note ? '<span class="tag note">' + esc(c.note) + '</span>' : "") +
+        '</div>' +
+        (c.syllabus ? '<a class="syl" href="' + esc(c.syllabus) + '" target="_blank" rel="noopener">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M14 4h6v6M20 4l-8 8"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/></svg>' +
+          'הצצה בסילבוס</a>' : "") +
+      '</div>' +
+      '<span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-9"/></svg></span>' +
+      '</label>';
+  }).join("");
+}
+
+function selectedCourseId(){
+  var el = document.querySelector('input[name="course"]:checked');
+  return el ? el.value : "";
+}
+
+function selectedCourse(){
+  var id = selectedCourseId();
+  if (!id) return null;
+  for (var i = 0; i < CATALOG.length; i++) if (CATALOG[i].id === id) return CATALOG[i];
+  return null;
+}
+
+function loadCatalog(){
+  if (!API_URL) return;
+  fetch(API_URL + "?mode=catalog")
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (j && j.ok && j.items && j.items.length){
+        CATALOG = j.items;
+        fillAreas();
+        renderCatalog();
+      }
+    })
+    .catch(function(){ /* נשארים עם העותק המקומי */ });
+}
+
+/* ============================ מסלול ============================ */
+
+function currentTrack(){
+  var el = document.querySelector('input[name="track"]:checked');
+  return el ? el.value : "";
+}
+
+function onTrack(){
+  var t = currentTrack();
+  $("panelCatalog").classList.toggle("on", t === "catalog");
+  $("panelExternal").classList.toggle("on", t === "external");
+  clearErr("track");
+}
+
+/* ============================ חריגות ============================ */
+
+function flags(){
+  var out = [];
+  var cost = num($("exCost").value), hours = num($("exHours").value),
+      phys = num($("exPhys").value), parts = num($("exParts").value),
+      task = $("exTask").value;
+  if (cost > STD.cost) out.push("עלות " + cost.toLocaleString("he-IL") + " ₪ — מעל התקן של " + STD.cost.toLocaleString("he-IL") + " ₪");
+  if (hours && hours !== STD.hours) out.push("סה״כ " + hours + " שעות — התקן " + STD.hours);
+  if (phys < STD.phys) out.push("רק " + phys + " מפגשים פיזיים — התקן " + STD.phys);
+  if (parts && parts < STD.parts) out.push(parts + " משתתפים — מתחת למינימום של " + STD.parts);
+  if (task !== "כן") out.push("אין מטלת סיום בחובת הגשה");
+  return out;
+}
+
+function refreshFlags(){
+  var f = flags();
+  $("flagList").innerHTML = f.map(function(t){ return "<li>" + esc(t) + "</li>"; }).join("");
+  $("flagBox").classList.toggle("on", f.length > 0);
+}
+
+/* ============================ קובץ ============================ */
+
+function human(n){
+  if (n < 1024) return n + " בייט";
+  if (n < 1024 * 1024) return Math.round(n / 1024) + " KB";
+  return (n / 1024 / 1024).toFixed(1) + " MB";
+}
+
+function takeFile(f){
+  if (!f) return;
+  if (!/\.(pdf|docx?|odt)$/i.test(f.name)){
+    setDropError("הקובץ חייב להיות Word או PDF");
+    return;
+  }
+  if (f.size > MAX_FILE){
+    setDropError("הקובץ גדול מ-10MB (" + human(f.size) + ")");
+    return;
+  }
+  var rd = new FileReader();
+  rd.onload = function(){
+    var s = String(rd.result);
+    fileData = { name: f.name, mime: f.type || "application/octet-stream", b64: s.slice(s.indexOf(",") + 1) };
+    var d = $("drop");
+    d.classList.remove("bad");
+    d.classList.add("has");
+    $("dropTitle").textContent = f.name;
+    $("dropSub").textContent = human(f.size) + " · לחצו להחלפה";
+    $("dropIcon").innerHTML = '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5L16 9.5"/>';
+    clearErr("file");
+  };
+  rd.onerror = function(){ setDropError("לא הצלחנו לקרוא את הקובץ"); };
+  rd.readAsDataURL(f);
+}
+
+function setDropError(msg){
+  fileData = null;
+  $("file").value = "";
+  var d = $("drop");
+  d.classList.remove("has");
+  d.classList.add("bad");
+  $("dropTitle").textContent = "בחרו קובץ סילבוס או גררו לכאן";
+  $("dropSub").textContent = "Word או PDF · עד 10MB";
+  $("dropIcon").innerHTML = '<path d="M12 16V4m0 0L8 8m4-4 4 4"/><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/>';
+  var e = $("e_file");
+  e.textContent = msg;
+  e.classList.add("on");
+}
+
+/* ============================ ולידציה ============================ */
+
+function num(v){ var n = parseFloat(String(v).replace(/[^\d.\-]/g,"")); return isNaN(n) ? 0 : n; }
+function val(id){ return $(id).value.trim(); }
+
+function setErr(id, on, msg){
+  var e = $("e_" + id);
+  if (e){
+    if (msg) e.textContent = msg;
+    e.classList.toggle("on", !!on);
+  }
+  var f = $(id);
+  if (f && f.classList) f.classList.toggle("bad", !!on);
+}
+function clearErr(id){ setErr(id, false); }
+
+function validate(){
+  var ok = true;
+  function need(id, cond){
+    var bad = !cond;
+    setErr(id, bad);
+    if (bad) ok = false;
+  }
+
+  need("school", !!val("school"));
+  need("principal", val("principal").length >= 2);
+  need("email", /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val("email")));
+  need("principalPhone", val("principalPhone").replace(/\D/g,"").length >= 9);
+  need("purpose", val("purpose").length >= 10);
+
+  var t = currentTrack();
+  need("track", !!t);
+  if (!t) return false;
+
+  if (t === "catalog"){
+    need("course", !!selectedCourseId());
+  } else {
+    need("exTitle", val("exTitle").length >= 2);
+    need("exGuide", val("exGuide").length >= 2);
+    need("exPhone", val("exPhone").replace(/\D/g,"").length >= 9);
+    need("exCost", num(val("exCost")) > 0);
+    need("exHours", num(val("exHours")) > 0);
+    need("exPhys", val("exPhys") !== "");
+    need("exZoom", val("exZoom") !== "");
+    need("exParts", num(val("exParts")) > 0);
+
+    if (!fileData){
+      setErr("file", true, "נא לצרף את קובץ הסילבוס");
+      $("drop").classList.add("bad");
+      ok = false;
+    }
+    var dec = $("declare").checked;
+    setErr("declare", !dec);
+    $("declareBox").classList.toggle("bad", !dec);
+    if (!dec) ok = false;
+  }
+  return ok;
+}
+
+/* ============================ שליחה ============================ */
+
+function payload(){
+  var t = currentTrack();
+  var b = {
+    action: "submit",
+    school: val("school"),
+    principal: val("principal"),
+    email: val("email"),
+    principalPhone: val("principalPhone"),
+    purpose: val("purpose"),
+    track: t
+  };
+
+  if (t === "catalog"){
+    var c = selectedCourse();
+    b.title = c ? String(c.title).replace(/\s+/g," ").trim() : "";
+    b.guide = c ? String(c.guide).replace(/\s+/g," ").trim() : "";
+    b.syllabusUrl = c ? c.syllabus : "";
+    b.org = c ? String(c.guide).replace(/\s+/g," ").trim() : "";
+  } else {
+    b.title = val("exTitle");
+    b.guide = val("exGuide");
+    b.phone = val("exPhone");
+    b.org = val("exOrg");
+    b.cost = num(val("exCost"));
+    b.hours = num(val("exHours"));
+    b.phys = num(val("exPhys"));
+    b.zoom = num(val("exZoom"));
+    b.parts = num(val("exParts"));
+    b.task = $("exTask").value;
+    if (fileData){
+      b.fileName = fileData.name;
+      b.fileMime = fileData.mime;
+      b.fileData = fileData.b64;
+    }
+  }
+  return b;
+}
+
+function show(which){
+  $("okBox").classList.toggle("on",  which === "ok");
+  $("badBox").classList.toggle("on", which === "bad");
+}
+
+function submit(){
+  if (!validate()){
+    var first = document.querySelector(".err.on");
+    if (first) first.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  var btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "שולח…";
+  show("");
+
+  fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"text/plain;charset=utf-8"},
+    body: JSON.stringify(payload())
+  })
+  .then(function(r){ return r.json(); })
+  .catch(function(){ return {ok:false, error:"network"}; })
+  .then(function(r){
+    btn.textContent = "שליחת הבקשה למפקח.ת";
+    btn.disabled = false;
+
+    if (r && r.ok){
+      var sup = String(r.sup || "").split("|").join(" · ");
+      var extra = r.replaced ? " הבקשה הקודמת של בית הספר הוחלפה." : "";
+      var warn = (r.flags && r.flags.length)
+        ? " הבקשה סומנה כחריגה מתנאי הסף ותידון מול המפקח.ת."
+        : "";
+      $("okText").textContent = "הבקשה עברה לאישור " + sup + "." + warn +
+        " אישור קליטה נשלח לדוא״ל שלך." + extra;
+      show("ok");
+      $("okBox").scrollIntoView({behavior:"smooth", block:"center"});
+    } else {
+      var msg = r && r.error ? r.error : "";
+      $("badText").textContent = (msg === "network" || !msg)
+        ? "לא הצלחנו לשלוח את הבקשה. בדקו את החיבור לאינטרנט ונסו שוב."
+        : msg;
+      show("bad");
+      $("badBox").scrollIntoView({behavior:"smooth", block:"center"});
+    }
+  });
+}
+
+/* ============================ חיווט ============================ */
+
+(function init(){
+  fillSchools();
+  fillAreas();
+  renderCatalog();
+  loadCatalog();
+
+  $("school").addEventListener("change", onSchool);
+  ["trackCatalog","trackExternal"].forEach(function(id){
+    $(id).addEventListener("change", onTrack);
+  });
+
+  $("catSearch").addEventListener("input", renderCatalog);
+  $("catArea").addEventListener("change", renderCatalog);
+  $("catList").addEventListener("change", function(){ clearErr("course"); });
+
+  ["exCost","exHours","exPhys","exParts"].forEach(function(id){
+    $(id).addEventListener("input", refreshFlags);
+  });
+  $("exTask").addEventListener("change", refreshFlags);
+
+  ["principal","email","principalPhone","purpose","exTitle","exGuide","exPhone"].forEach(function(id){
+    $(id).addEventListener("input", function(){ clearErr(id); });
+  });
+  $("declare").addEventListener("change", function(){
+    clearErr("declare");
+    $("declareBox").classList.remove("bad");
+  });
+
+  $("file").addEventListener("change", function(e){ takeFile(e.target.files[0]); });
+  var drop = $("drop");
+  ["dragenter","dragover"].forEach(function(ev){
+    drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave","drop"].forEach(function(ev){
+    drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop", function(e){
+    if (e.dataTransfer && e.dataTransfer.files) takeFile(e.dataTransfer.files[0]);
+  });
+
+  $("submitBtn").addEventListener("click", submit);
+  $("retryBtn").addEventListener("click", function(){ show(""); submit(); });
+
+  $("helpBtn").addEventListener("click", function(e){
+    e.preventDefault();
+    var txt = "שלום, נתקלתי בבעיה בטופס ההשתלמות הבית ספרית";
+    var s = val("school");
+    if (s) txt += " (" + s + ")";
+    window.open("https://wa.me/" + WA_PHONE + "?text=" + encodeURIComponent(txt), "_blank", "noopener");
+  });
+
+  if (!API_URL) $("setup").classList.add("on");
+})();
+</script>
+</body>
+</html>
