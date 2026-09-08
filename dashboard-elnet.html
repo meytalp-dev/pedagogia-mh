@@ -133,7 +133,15 @@ h1{font-family:'Rubik',sans-serif;font-size:clamp(24px,4vw,33px);color:var(--nav
 .gate{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-m);
   padding:34px;margin-top:30px;max-width:560px}
 .gate h2{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:0 0 8px;font-weight:600}
-.gate p{margin:0;color:#4a5878;font-size:16px}
+.gate p{margin:0 0 16px;color:#4a5878;font-size:16px;line-height:1.6}
+.gate code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:14.5px}
+.gate input{width:100%;padding:13px 15px;border:2px solid var(--line);border-radius:13px;background:#fbfcff;
+  font-family:inherit;font-size:16.5px;margin-bottom:14px;direction:ltr;text-align:left}
+.gate input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(24,92,255,.12)}
+.gate input.bad{border-color:var(--danger);background:#fff7f8}
+.gate button{appearance:none;border:0;cursor:pointer;font-family:'Rubik',sans-serif;font-weight:600;font-size:17px;
+  color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:14px;padding:13px 34px}
+.gate .gerr{color:var(--danger);font-size:15px;font-weight:600;margin:14px 0 0}
 
 footer{margin-top:44px;text-align:center;color:var(--muted);font-size:14px}
 footer a{color:var(--navy);font-weight:600;text-decoration:none}
@@ -166,9 +174,13 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
   </header>
 
   <div class="gate" id="gate" hidden>
-    <h2>הקישור חסר או אינו תקף</h2>
-    <p>הדף נפתח מהקישור האישי שנשלח אליכם. כדאי לפתוח אותו שוב מההודעה המקורית,
-      או לפנות למיטל פלג לקבלת קישור מעודכן.</p>
+    <h2 id="gateTitle">הקישור לא הגיע במלואו</h2>
+    <p id="gateText">קורה שקישור נחתך בדרך בוואטסאפ או במייל, והחלק שאחרי
+      <code>.html</code> נשמט. אפשר להדביק כאן את הקישור המלא מההודעה — או רק את
+      הקוד שבסופו — וזהו, לא תצטרכו את זה שוב.</p>
+    <input type="text" id="keyIn" placeholder="הדביקו כאן את הקישור או את הקוד" autocomplete="off" spellcheck="false">
+    <button id="keyGo">כניסה</button>
+    <p class="gerr" id="gerr" hidden>לא זיהינו קוד תקין בטקסט שהודבק. כדאי להעתיק שוב את הקישור המלא מההודעה.</p>
   </div>
 
   <div id="app" hidden>
@@ -439,7 +451,10 @@ function load(){
       $("live").classList.add("err");
       if (String(e.message) === "denied"){
         try{ localStorage.removeItem(KEY_STORE); }catch(x){}
-        $("liveTxt").textContent = "הקישור אינו תקף";
+        $("liveTxt").textContent = "הקוד אינו תקף";
+        $("gateTitle").textContent = "הקוד אינו תקף";
+        $("gateText").textContent = "ייתכן שהוחלף. אפשר להדביק כאן את הקישור העדכני, " +
+          "או לפנות למיטל פלג לקבלת קישור חדש.";
         $("app").hidden = true;
         $("gate").hidden = false;
       } else {
@@ -448,8 +463,16 @@ function load(){
     });
 }
 
+/* מחלצים מפתח מכל צורה שבה הוא עשוי להגיע: קישור מלא, קישור עם #,
+   או הקוד לבדו. קישורים נחתכים בדרך, ואין טעם להיתקע בגלל זה. */
+function keyFrom(text){
+  var t = String(text || "").trim();
+  var m = t.match(/[?&#]k=([0-9a-f]{16,64})/i) || t.match(/^([0-9a-f]{16,64})$/i);
+  return m ? m[1].toLowerCase() : "";
+}
+
 (function init(){
-  var q = new URLSearchParams(location.search).get("k");
+  var q = keyFrom(location.search) || keyFrom(location.hash);
   if (q){
     KEY = q;
     try{ localStorage.setItem(KEY_STORE, KEY); }catch(e){}
@@ -459,7 +482,27 @@ function load(){
     try{ KEY = localStorage.getItem(KEY_STORE) || ""; }catch(e){}
   }
 
-  if (!KEY){ $("gate").hidden = false; $("liveTxt").textContent = "אין קישור"; return; }
+  $("keyGo").addEventListener("click", function(){
+    var k = keyFrom($("keyIn").value);
+    if (!k){
+      $("keyIn").classList.add("bad");
+      $("gerr").hidden = false;
+      return;
+    }
+    KEY = k;
+    try{ localStorage.setItem(KEY_STORE, KEY); }catch(e){}
+    $("keyIn").classList.remove("bad");
+    $("gerr").hidden = true;
+    $("gate").hidden = true;
+    load();
+  });
+  $("keyIn").addEventListener("keydown", function(e){ if (e.key === "Enter") $("keyGo").click(); });
+  $("keyIn").addEventListener("input", function(){
+    $("keyIn").classList.remove("bad");
+    $("gerr").hidden = true;
+  });
+
+  if (!KEY){ $("gate").hidden = false; $("liveTxt").textContent = "ממתין לקישור"; return; }
   load();
 
   ["q","fTrack","fMahoz"].forEach(function(id){
