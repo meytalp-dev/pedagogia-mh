@@ -12,9 +12,12 @@
 //   4. עמוד שמשתמש ב-.article טוען את article.css.
 //   5. עמוד ארוך (1,200 מילים גלויות ומעלה) מציע דרך לנווט בתוכו.
 //
-// חריג מוצהר: <!-- pmh-allow: no-article-css --> או <!-- pmh-allow: no-nav -->
-// בעמוד עצמו, עם נימוק אחרי הסימון. חריג הוא תיעוד, לא השתקה — הוא מודפס
-// בסוף הריצה כדי שיישאר גלוי.
+// חריג מוצהר: <!-- pmh-allow: no-article-css -->, <!-- pmh-allow: no-nav -->
+// או <!-- pmh-allow: canonical-elsewhere --> בעמוד עצמו, עם נימוק אחרי הסימון.
+// חריג הוא תיעוד, לא השתקה — הוא מודפס בסוף הריצה כדי שיישאר גלוי.
+//
+// canonical-elsewhere נועד לעמוד שהוחלף ונשמר בכתובתו הישנה: ה-canonical
+// מפנה ליורש בכוונה, כדי שקישורים ישנים ימשיכו לעבוד בלי להתחרות בו בחיפוש.
 //
 // הרצה:  node tools/check-rules.mjs        יוצא ב-1 אם יש הפרה
 //        node tools/check-rules.mjs --list  מדפיס גם את החריגים המוצהרים
@@ -78,7 +81,8 @@ for (const f of files) {
     const og = src.match(/<meta property="og:url" content="[^"]*\/([^"\/]+)"/);
     if (og && og[1] !== f) add(2, f, `og:url מצביע ל-${og[1]}`);
     const canon = src.match(/<link rel="canonical" href="[^"]*\/([^"\/]+)"/);
-    if (canon && canon[1] !== f) add(2, f, `canonical מצביע ל-${canon[1]}`);
+    if (canon && canon[1] !== f && !allow.has('canonical-elsewhere'))
+      add(2, f, `canonical מצביע ל-${canon[1]}`);
   }
 
   /* 3. section שאינו קיים בתבנית */
