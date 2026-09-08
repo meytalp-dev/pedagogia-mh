@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>השתלמויות בית ספריות תשפ״ז · אלנט</title>
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+/* display:grid/flex גובר על תכונת hidden — בלי זה מקטעים מוסתרים נפתחים לבד */
+[hidden]{display:none!important}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:16.5px;line-height:1.6;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 54px}
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy))}
+
+header{padding:26px 0 4px}
+.site{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.logo{height:52px;width:auto;display:block}
+.for{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:7px 18px;font-size:14.5px;font-weight:700;color:var(--navy)}
+.for svg{width:16px;height:16px}
+h1{font-family:'Rubik',sans-serif;font-size:clamp(24px,4vw,33px);color:var(--navy);margin:18px 0 6px;font-weight:600}
+.sub{color:var(--muted);font-size:16px;margin:0;max-width:70ch}
+
+.live{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-size:14.5px;color:var(--muted)}
+.live .dot{width:8px;height:8px;border-radius:50%;background:var(--mint);animation:pulse 2.4s infinite}
+.live.err .dot{background:var(--danger);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,179,159,.45)}70%{box-shadow:0 0 0 9px rgba(18,179,159,0)}100%{box-shadow:0 0 0 0 rgba(18,179,159,0)}}
+.reload{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;
+  padding:5px 15px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin-inline-start:8px}
+.reload:hover{border-color:var(--sky)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:24px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-s);padding:17px 18px;text-align:center}
+.kpi .v{font-family:'Rubik',sans-serif;font-size:30px;font-weight:600;color:var(--navy);line-height:1.1}
+.kpi .k{font-size:14px;color:var(--muted);font-weight:600;margin-top:3px}
+.kpi.ok .v{color:#0c6d60}
+.kpi.wait .v{color:#9a5b00}
+.kpi.ext .v{color:#5a4a9a}
+
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:26px 0 4px}
+.bar input,.bar select{padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:#fff;
+  font-family:inherit;font-size:16px;color:var(--ink)}
+.bar input{flex:1 1 250px}
+.bar select{flex:0 1 190px;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23224292' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 12px center;background-size:17px;padding-inline-start:36px}
+.bar input:focus,.bar select:focus{outline:none;border-color:var(--blue)}
+.xls{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;
+  padding:11px 18px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px}
+.xls:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+.xls svg{width:16px;height:16px}
+
+.secttl{display:flex;align-items:center;gap:11px;margin:30px 0 12px}
+.secttl h2{font-family:'Rubik',sans-serif;font-size:20px;margin:0;font-weight:600}
+.secttl .n{border-radius:999px;padding:4px 14px;font-size:14px;font-weight:700}
+.secttl.done h2{color:#0a5c51}
+.secttl.done .n{background:#e9f9f5;color:#0c6d60}
+.secttl.wait h2{color:#8a5c14}
+.secttl.wait .n{background:#fff6e8;color:#8a5c14}
+.secttl .hint{font-size:14.2px;color:var(--muted);font-weight:400}
+
+.cards{display:grid;gap:14px}
+.c{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);
+  padding:20px 22px;border-inline-start:5px solid #9fe0d3}
+.c.pend{border-inline-start-color:#f0c98a;background:#fffdf9}
+.c.ret{border-inline-start-color:#f0b6b6;background:#fffafa}
+.chead{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.chead h3{font-family:'Rubik',sans-serif;font-size:19.5px;color:var(--navy);margin:0;font-weight:600;line-height:1.25}
+.chead .where{width:100%;font-size:14.2px;color:var(--muted);font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 13px;
+  font-size:13.2px;font-weight:700;white-space:nowrap;margin-inline-start:auto}
+.pill.approved{background:#e9f9f5;color:#0c6d60}
+.pill.pending{background:#fff6e8;color:#8a5c14}
+.pill.returned{background:#fff5f6;color:#8c2b34}
+.pill.cat{background:var(--sky-soft);color:#16558a;margin:0}
+.pill.ext{background:#f2f0fb;color:#5a4a9a;margin:0}
+
+.course{font-size:18px;font-weight:700;color:var(--ink);margin:12px 0 3px}
+.guide{font-size:15.5px;color:var(--muted);font-weight:600;margin-bottom:12px}
+.purpose{background:var(--bg);border-radius:11px;padding:12px 15px;margin:0 0 14px;
+  font-size:15.4px;line-height:1.6;white-space:pre-wrap;color:#33405f}
+.purpose b{display:block;font-size:13.4px;color:var(--muted);margin-bottom:3px;white-space:normal}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:4px}
+.box{background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 16px}
+.box .t{font-size:13.2px;color:var(--muted);font-weight:700;margin-bottom:6px;
+  display:flex;align-items:center;gap:7px}
+.box .t svg{width:14px;height:14px}
+.box .r{font-size:15.5px;line-height:1.75}
+.box .r span{color:var(--muted);font-size:14px}
+.box a{color:var(--blue);text-decoration:none;font-weight:600}
+.box a:hover{text-decoration:underline}
+
+.scope{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.scope b{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 13px;
+  font-size:13.8px;font-weight:700;color:#33405f}
+.scope b.warn{background:#fff6e8;border-color:#f0c98a;color:#8a5c14}
+.flag{background:#fff6e8;border:1px solid #f0c98a;border-radius:12px;padding:11px 15px;margin-top:12px;
+  font-size:14.6px;color:#7a4a00}
+.flag b{color:#9a5b00}
+.note{background:#eef7f5;border:1px solid #b6ddd6;border-radius:12px;padding:11px 15px;margin-top:12px;
+  font-size:14.8px;color:#0f5f55}
+.note b{color:#0f7a6c}
+.syl{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 20px;
+  border:2px solid var(--sky);border-radius:12px;background:var(--sky-soft);color:var(--navy);
+  font-size:15.5px;font-weight:700;text-decoration:none}
+.syl:hover{background:#dcedf8}
+.syl svg{width:17px;height:17px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:16px;
+  background:#fff;border:1px dashed var(--line);border-radius:16px}
+.more{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;
+  padding:10px 24px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px}
+.more:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+
+.gate{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-m);
+  padding:34px;margin-top:30px;max-width:560px}
+.gate h2{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:0 0 8px;font-weight:600}
+.gate p{margin:0;color:#4a5878;font-size:16px}
+
+footer{margin-top:44px;text-align:center;color:var(--muted);font-size:14px}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+@media print{.bar,.reload,.live,.more,.xls{display:none!important}.c{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+<div class="wrap">
+
+  <header>
+    <div class="site">
+      <img class="logo" src="logo.png" alt="משרד העבודה — המנהיגות הפדגוגית היוצרת"
+           onerror="this.style.display='none'">
+      <span class="for">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M10 20v-5h4v5"/>
+        </svg>
+        לשימוש אלנט
+      </span>
+    </div>
+    <h1>ההשתלמויות הבית ספריות · תשפ״ז</h1>
+    <p class="sub">כל בית ספר שאישר את ההשתלמות שלו, עם איש הקשר, פרטי המנחה, ההיקף והסילבוס.
+      הדף מתעדכן מעצמו — אין צורך לבקש עדכון.</p>
+    <div>
+      <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
+      <button class="reload" id="reload">רענון</button>
+    </div>
+  </header>
+
+  <div class="gate" id="gate" hidden>
+    <h2>הקישור חסר או אינו תקף</h2>
+    <p>הדף נפתח מהקישור האישי שנשלח אליכם. כדאי לפתוח אותו שוב מההודעה המקורית,
+      או לפנות למיטל פלג לקבלת קישור מעודכן.</p>
+  </div>
+
+  <div id="app" hidden>
+    <div class="kpis">
+      <div class="kpi ok"><div class="v" id="kApproved">—</div><div class="k">מאושרות · לביצוע</div></div>
+      <div class="kpi ext"><div class="v" id="kExternal">—</div><div class="k">עם מנחה חיצוני</div></div>
+      <div class="kpi"><div class="v" id="kCatalog">—</div><div class="k">מהקטלוג</div></div>
+      <div class="kpi wait"><div class="v" id="kPending">—</div><div class="k">בדרך · טרם אושרו</div></div>
+    </div>
+
+    <div class="bar">
+      <input type="text" id="q" placeholder="חיפוש בית ספר, מנהל.ת, מנחה או השתלמות…" autocomplete="off">
+      <select id="fTrack">
+        <option value="">שני המסלולים</option>
+        <option value="מהקטלוג">מהקטלוג</option>
+        <option value="מנחה חיצוני">מנחה חיצוני</option>
+      </select>
+      <select id="fMahoz"><option value="">כל המחוזות</option></select>
+      <button class="xls" id="csv">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"/>
+        </svg>
+        ייצוא לאקסל
+      </button>
+    </div>
+
+    <div class="secttl done">
+      <h2>מאושרות</h2><span class="n" id="nApproved">—</span>
+      <span class="hint">אושרו על ידי המפקח.ת ואפשר להתחיל לתאם</span>
+    </div>
+    <div class="cards" id="approved"></div>
+    <div class="empty" id="emptyApproved" hidden>אין עדיין השתלמויות מאושרות</div>
+
+    <div id="pendingWrap" hidden>
+      <div class="secttl wait">
+        <h2>בדרך</h2><span class="n" id="nPending">—</span>
+        <span class="hint">ממתינות לאישור המפקח.ת — לידיעה בלבד, עדיין אין מה לתאם</span>
+      </div>
+      <button class="more" id="togglePending">הצגת מה שבדרך</button>
+      <div class="cards" id="pending" hidden style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית<br>
+    <span style="font-size:13px">שאלות: <a href="mailto:meytalp@bethaarava.ort.org.il">מיטל פלג</a></span>
+  </footer>
+</div>
+
+<script>
+/* ==================================================================
+   הדשבורד של אלנט — נפתח מהקישור האישי:
+   dashboard-elnet.html?k=<מפתח>
+   המפתח נשמר בדפדפן, כך שפתיחה חוזרת לא דורשת אותו שוב.
+   ================================================================== */
+var API_URL = "https://script.google.com/macros/s/AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec";
+var KEY_STORE = "hishtalmuyot-elnet-key";
+
+var $ = function(id){ return document.getElementById(id); };
+var ALL = [], KEY = "";
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function g(r,k){ return r && r[k] ? String(r[k]).trim() : ""; }
+
+var ST_APPROVED = "מאושר — נשלח לאלנט";
+var ST_RETURNED = "הוחזר לתיקון";
+
+function pill(st){
+  if (st === ST_APPROVED) return '<span class="pill approved">מאושר</span>';
+  if (st === ST_RETURNED) return '<span class="pill returned">הוחזר לתיקון</span>';
+  return '<span class="pill pending">ממתין למפקח.ת</span>';
+}
+
+function tel(v){
+  var t = String(v || "").replace(/[^\d+]/g,"");
+  return v ? '<a href="tel:' + esc(t) + '">' + esc(v) + '</a>' : '<span>—</span>';
+}
+function mail(v){
+  return v ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' : '<span>—</span>';
+}
+
+function ico(p){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+         'stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+}
+
+function card(r){
+  var ext = g(r,"מסלול") === "מנחה חיצוני";
+  var st = g(r,"סטטוס");
+  var cls = st === ST_APPROVED ? "" : (st === ST_RETURNED ? " ret" : " pend");
+
+  var scope = "";
+  if (ext){
+    function chip(v, lbl, warn){
+      return '<b' + (warn ? ' class="warn"' : '') + '>' + esc(v) + ' ' + esc(lbl) + '</b>';
+    }
+    var cost = Number(g(r,"עלות (₪)") || 0);
+    scope = '<div class="scope">' +
+      chip(cost.toLocaleString("he-IL") + " ₪", "", cost > 9000) +
+      chip(g(r,"סה\"כ שעות"), "שעות", Number(g(r,"סה\"כ שעות")||0) !== 30) +
+      chip(g(r,"מפגשים פיזיים"), "פא״פ", Number(g(r,"מפגשים פיזיים")||0) < 6) +
+      chip(g(r,"מפגשי זום"), "זום", false) +
+      chip(g(r,"מספר משתתפים"), "משתתפים", Number(g(r,"מספר משתתפים")||0) < 20) +
+      '<b' + (g(r,"מטלת סיום") !== "כן" ? ' class="warn"' : '') + '>מטלת סיום: ' +
+      esc(g(r,"מטלת סיום") || "—") + '</b></div>';
+  }
+
+  return '<div class="c' + cls + '">' +
+    '<div class="chead"><h3>' + esc(g(r,"בית הספר")) + '</h3>' + pill(st) +
+      '<div class="where">' +
+        (g(r,"סמל מוסד") && g(r,"סמל מוסד") !== "—" ? "סמל " + esc(g(r,"סמל מוסד")) + " · " : "") +
+        esc(g(r,"מחוז")) + " · " + esc(g(r,"רשת")) + " · " + esc(g(r,"מגזר")) +
+      '</div></div>' +
+
+    '<div class="course">' + esc(g(r,"שם ההשתלמות")) + '</div>' +
+    '<div class="guide"><span class="pill ' + (ext ? "ext" : "cat") + '">' + esc(g(r,"מסלול")) + '</span> ' +
+      esc(g(r,"שם המנחה")) + (g(r,"ארגון / מכון") ? " · " + esc(g(r,"ארגון / מכון")) : "") + '</div>' +
+
+    (g(r,"מטרת ההשתלמות")
+      ? '<div class="purpose"><b>מטרת בית הספר בבחירת ההשתלמות</b>' + esc(g(r,"מטרת ההשתלמות")) + '</div>'
+      : "") +
+
+    '<div class="grid2">' +
+      '<div class="box"><div class="t">' +
+        ico('<circle cx="10" cy="8" r="3.4"/><path d="M16 19v-1.4a3.6 3.6 0 0 0-3.6-3.6H7.6A3.6 3.6 0 0 0 4 17.6V19"/>') +
+        'איש קשר בבית הספר</div><div class="r">' +
+        '<b>' + esc(g(r,"שם המנהל.ת") || "—") + '</b><br>' +
+        tel(g(r,"טלפון המנהל.ת")) + '<br>' + mail(g(r,'דוא"ל המנהל.ת')) +
+      '</div></div>' +
+
+      '<div class="box"><div class="t">' +
+        ico('<path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/>') +
+        'מפקח.ת פדגוגי.ת</div><div class="r">' +
+        '<b>' + esc(g(r,"מפקח.ת").split("|").join(" · ")) + '</b><br>' +
+        (g(r,"מי אישר.ה") ? '<span>אישר.ה: ' + esc(g(r,"מי אישר.ה")) + '</span><br>' : "") +
+        '<span>' + esc(g(r,"תאריך החלטה") || g(r,"חותמת זמן")) + '</span>' +
+      '</div></div>' +
+
+      (ext ? '<div class="box"><div class="t">' +
+        ico('<path d="M6.6 4h3l1.5 3.7-1.9 1.1a12 12 0 0 0 5 5l1.1-1.9L19 13.4v3a1.6 1.6 0 0 1-1.8 1.6A14 14 0 0 1 5 5.8 1.6 1.6 0 0 1 6.6 4z"/>') +
+        'המנחה</div><div class="r">' +
+        '<b>' + esc(g(r,"שם המנחה")) + '</b><br>' + tel(g(r,"טלפון המנחה")) +
+      '</div></div>' : "") +
+    '</div>' +
+
+    scope +
+    (g(r,"חריגים") ? '<div class="flag"><b>חריגה מתנאי הסף:</b> ' + esc(g(r,"חריגים")) + '</div>' : "") +
+    (g(r,"הערת המפקח.ת") ? '<div class="note"><b>הערת המפקח.ת:</b> ' + esc(g(r,"הערת המפקח.ת")) + '</div>' : "") +
+    (g(r,"סילבוס")
+      ? '<a class="syl" href="' + esc(g(r,"סילבוס")) + '" target="_blank" rel="noopener">' +
+        ico('<path d="M6 3.5A1.5 1.5 0 0 1 7.5 2H14l4 4v14a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20z"/><path d="M13.5 2v4.5H18M9.5 12h5M9.5 15.5h3"/>') +
+        'פתיחת הסילבוס</a>'
+      : "") +
+  '</div>';
+}
+
+function match(r){
+  var q = $("q").value.trim();
+  var tr = $("fTrack").value, mz = $("fMahoz").value;
+  if (tr && g(r,"מסלול") !== tr) return false;
+  if (mz && g(r,"מחוז") !== mz) return false;
+  if (!q) return true;
+  return [g(r,"בית הספר"), g(r,"שם המנהל.ת"), g(r,"שם המנחה"),
+          g(r,"שם ההשתלמות"), g(r,"מפקח.ת"), g(r,"ארגון / מכון")].join(" ").indexOf(q) >= 0;
+}
+
+function render(){
+  var rows = ALL.filter(match);
+  var app = rows.filter(function(r){ return g(r,"סטטוס") === ST_APPROVED; });
+  var pen = rows.filter(function(r){ return g(r,"סטטוס") !== ST_APPROVED; });
+
+  $("approved").innerHTML = app.map(card).join("");
+  $("emptyApproved").hidden = app.length > 0;
+  $("nApproved").textContent = app.length;
+
+  $("pendingWrap").hidden = pen.length === 0;
+  $("nPending").textContent = pen.length;
+  $("pending").innerHTML = pen.map(card).join("");
+}
+
+function kpis(){
+  var app = ALL.filter(function(r){ return g(r,"סטטוס") === ST_APPROVED; });
+  $("kApproved").textContent = app.length;
+  $("kExternal").textContent = app.filter(function(r){ return g(r,"מסלול") === "מנחה חיצוני"; }).length;
+  $("kCatalog").textContent  = app.filter(function(r){ return g(r,"מסלול") === "מהקטלוג"; }).length;
+  $("kPending").textContent  = ALL.length - app.length;
+
+  var sel = $("fMahoz"), seen = {};
+  while (sel.options.length > 1) sel.remove(1);
+  ALL.forEach(function(r){
+    var m = g(r,"מחוז");
+    if (!m || seen[m]) return;
+    seen[m] = true;
+    var o = document.createElement("option");
+    o.value = m; o.textContent = m;
+    sel.appendChild(o);
+  });
+}
+
+/* ---------- ייצוא ---------- */
+var COLS = ["בית הספר","סמל מוסד","מחוז","רשת","מגזר","מפקח.ת","שם המנהל.ת",
+            'דוא"ל המנהל.ת',"טלפון המנהל.ת","מטרת ההשתלמות","מסלול","שם ההשתלמות",
+            "שם המנחה","טלפון המנחה","ארגון / מכון","עלות (₪)","סה\"כ שעות",
+            "מפגשים פיזיים","מפגשי זום","מספר משתתפים","מטלת סיום","חריגים",
+            "סילבוס","סטטוס","מי אישר.ה","תאריך החלטה","הערת המפקח.ת"];
+
+function csv(){
+  var rows = ALL.filter(match);
+  var q = function(v){ return '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"'; };
+  var lines = [COLS.map(q).join(",")];
+  rows.forEach(function(r){ lines.push(COLS.map(function(c){ return q(g(r,c)); }).join(",")); });
+
+  /* BOM כדי שאקסל יזהה עברית */
+  var blob = new Blob(["﻿" + lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "השתלמויות-בית-ספריות-תשפז.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+}
+
+/* ---------- טעינה ---------- */
+function load(){
+  $("liveTxt").textContent = "טוען…";
+  $("live").classList.remove("err");
+  return fetch(API_URL + "?mode=elnet&key=" + encodeURIComponent(KEY))
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.ok) throw new Error(j && j.error ? j.error : "bad");
+      ALL = j.rows || [];
+      var t = new Date();
+      $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0"+t.getMinutes()).slice(-2) +
+        " · " + ALL.length + " בקשות";
+      $("gate").hidden = true;
+      $("app").hidden = false;
+      kpis();
+      render();
+    })
+    .catch(function(e){
+      $("live").classList.add("err");
+      if (String(e.message) === "denied"){
+        try{ localStorage.removeItem(KEY_STORE); }catch(x){}
+        $("liveTxt").textContent = "הקישור אינו תקף";
+        $("app").hidden = true;
+        $("gate").hidden = false;
+      } else {
+        $("liveTxt").textContent = "לא הצלחנו למשוך נתונים — אפשר לרענן";
+      }
+    });
+}
+
+(function init(){
+  var q = new URLSearchParams(location.search).get("k");
+  if (q){
+    KEY = q;
+    try{ localStorage.setItem(KEY_STORE, KEY); }catch(e){}
+    /* מנקים את המפתח מהכתובת שבסרגל, שלא יישאר בהיסטוריה או בצילום מסך */
+    history.replaceState(null, "", location.pathname);
+  } else {
+    try{ KEY = localStorage.getItem(KEY_STORE) || ""; }catch(e){}
+  }
+
+  if (!KEY){ $("gate").hidden = false; $("liveTxt").textContent = "אין קישור"; return; }
+  load();
+
+  ["q","fTrack","fMahoz"].forEach(function(id){
+    $(id).addEventListener(id === "q" ? "input" : "change", render);
+  });
+  $("reload").addEventListener("click", load);
+  $("csv").addEventListener("click", csv);
+  $("togglePending").addEventListener("click", function(){
+    var p = $("pending");
+    p.hidden = !p.hidden;
+    this.textContent = p.hidden ? "הצגת מה שבדרך" : "הסתרת מה שבדרך";
+  });
+
+  /* רענון אוטומטי כל שלוש דקות, רק כשהלשונית פתוחה */
+  setInterval(function(){ if (!document.hidden) load(); }, 180000);
+  document.addEventListener("visibilitychange", function(){ if (!document.hidden) load(); });
+})();
+</script>
+</body>
+</html>
