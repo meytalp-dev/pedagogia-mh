@@ -349,9 +349,15 @@ async function loadRoster(){
   for (var i = 0; i < 40; i++){
     if (PMH_AUTH.user()){
       var r = await PMH_AUTH.load('tikshuv-roster');
-      if (r && r.ok && r.data){ ROSTER = r.data; render(); }
-      else $('list').innerHTML =
-        '<div class="state">אין לחשבון הזה הרשאה לרשימת הרכזים.</div>';
+      if (r && r.ok && r.data){ ROSTER = r.data; render(); return; }
+      // הודעה מדויקת לפי מה שהשרת החזיר — כדי לא לנחש מה נשבר
+      var e = (r && r.error) || 'noreply';
+      $('list').innerHTML = '<div class="state">' + (
+        e === 'nokey'      ? 'שער ההרשאות עדיין לא מכיר את הרשימה — צריך לעדכן את הפריסה שלו (deploy.cmd).' :
+        e === 'nospace'    ? 'לחשבון הזה אין הרשאה למרחב הזה.' :
+        e === 'badsession' ? 'הסשן פג. רעננו את העמוד והיכנסו שוב.' :
+                             'לא הצלחנו לשלוף את הרשימה (' + esc(e) + ').'
+      ) + '</div>';
       return;
     }
     await new Promise(function(res){ setTimeout(res, 3000); });
