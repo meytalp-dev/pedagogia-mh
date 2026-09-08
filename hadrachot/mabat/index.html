@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מבט מקצועי למפקח.ת — מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  .command-strip { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 760px) { .command-strip { grid-template-columns: repeat(2, 1fr); } }
+
+  /* כרטיסי המדריכות שתחת המפקח.ת */
+  .guides-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg, 16px); padding: 20px 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+  .guides-head { display:flex; align-items:center; gap:10px; font-family:'Frank Ruhl Libre', serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:14px; }
+  .guides-head svg { width:20px; height:20px; color:var(--primary); }
+  .guides-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:12px; }
+  .guide-mini { border:1px solid var(--border); background:var(--surface-soft); border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; gap:5px; }
+  .guide-mini .gm-name { font-weight:700; font-size:14px; }
+  .guide-mini .gm-sub { font-size:12px; color:var(--text-muted); }
+  .guide-mini .gm-count { font-size:12px; color:var(--text-2); }
+
+  .search-bar { margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .search-bar input { flex: 1; min-width: 220px; }
+
+  .track-chip {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
+  .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
+
+  /* טבלת מורים */
+  .t-grid { width:100%; border-collapse:collapse; font-size:14px; }
+  .t-grid th, .t-grid td { padding:9px 10px; border-bottom:1px solid var(--border); text-align:right; }
+  .t-grid th { font-size:12px; color:var(--text-muted); font-weight:600; }
+  .t-grid tbody tr:hover { background: var(--surface-soft); }
+  .subj-group { margin-bottom:26px; }
+  .subj-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--border); }
+  .subj-header h3 { font-family:'Frank Ruhl Libre', serif; font-size:19px; margin:0; }
+  .subj-header .meta { font-size:13px; color:var(--text-muted); }
+  .school-row-name { font-weight:600; }
+
+  @media (max-width: 720px) {
+    .t-grid { font-size:12px; }
+    .t-grid th, .t-grid td { padding:6px 5px; }
+  }
+</style>
+</head>
+<body data-role="inspector">
+
+  <!-- System Command Bar -->
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">מבט מקצועי · מפקח.ת</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>מבט מקצועי</span>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט מקצועי · המקצועות שבאחריותי</div>
+        <h1 id="page-title">מבט מפקח.ת</h1>
+        <p class="page-header-sub" id="page-subtitle">—</p>
+      </div>
+      <div class="page-compass">
+        <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+          <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
+          <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
+          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+          <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
+          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
+          <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
+          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#256A8A">N</text>
+        </svg>
+        <div class="page-compass-info">
+          <strong id="user-name">—</strong>
+          <div class="page-compass-status"><span>מבט לקריאה בלבד</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="compass-divider" aria-hidden="true">
+      <span class="label">תמונת מצב</span>
+      <div class="line"></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
+      <div class="line"></div>
+    </div>
+
+    <section class="command-strip" aria-label="נתוני המפקח.ת">
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          מורים במקצועות שלי
+        </div>
+        <div class="cmd-metric-value" id="stat-teachers">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
+          בתי ספר
+        </div>
+        <div class="cmd-metric-value" id="stat-schools">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          מקצועות באחריותי
+        </div>
+        <div class="cmd-metric-value" id="stat-subjects">—</div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          מדריכות שבאחריותי
+        </div>
+        <div class="cmd-metric-value mint" id="stat-guides">—</div>
+      </div>
+    </section>
+
+    <!-- המדריכות שתחת המפקח.ת -->
+    <section class="guides-card" id="guides-card" hidden>
+      <div class="guides-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <span>המדריכות שבאחריותי</span>
+      </div>
+      <div class="guides-grid" id="guides-grid"></div>
+    </section>
+
+    <div class="subject-filter-bar" id="subject-filter" style="margin-bottom:10px;"></div>
+    <div class="subject-filter-bar" id="track-filter" style="margin-bottom:12px;"></div>
+    <div class="search-bar">
+      <input type="search" class="input" id="teacher-search" placeholder="חיפוש מורה / בית ספר...">
+    </div>
+
+    <div id="teachers-container">
+      <div class="empty" style="padding:32px;">טוען...</div>
+    </div>
+
+  </main>
+
+  <footer style="text-align:center; padding:32px 16px; color:var(--text-3); font-size:13px;">
+    מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+  </footer>
+
+<script src="../assets/app.js?v=20260908"></script>
+<script src="../assets/guides.js?v=20260908"></script>
+<script src="mabat.js?v=20260908"></script>
+</body>
+</html>

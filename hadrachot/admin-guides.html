@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>המדריכות המקצועיות — אדמין</title>
+<title>שליחת קישורים אישיים — מדריכות ומפקחים</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
 <link rel="stylesheet" href="assets/styles.css">
 <style>
@@ -13,25 +13,38 @@
     margin: 28px 0 12px; color: var(--text);
     display: flex; align-items: center; gap: 10px;
   }
-  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
   .guide-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 14px; padding: 18px 20px;
     display: flex; flex-direction: column; gap: 10px;
   }
+  .guide-card.inspector { border-right: 4px solid var(--brand-accent); }
   .guide-card .g-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .guide-card .g-name { font-weight: 700; font-size: 16px; }
-  .guide-card .g-subject { color: var(--text-2); font-size: 13px; font-weight: 600; }
+  .guide-card .g-subject { color: var(--text-2); font-size: 13px; font-weight: 600; text-align: left; }
   .guide-card .g-counts { font-size: 13px; color: var(--text-2); }
   .guide-card .g-counts b { color: var(--text); }
   .guide-card .g-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+
+  .g-contact { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .g-contact span { direction: ltr; unicode-bidi: embed; }
+  .g-contact .missing { color: var(--coral); direction: rtl; }
+  .g-inspector { font-size: 12px; color: var(--text-2); }
+  .g-inspector b { color: var(--text); }
+
   .copy-mini {
     background: var(--brand-accent); color: white;
     border: none; border-radius: 8px; padding: 7px 14px;
     font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
   .copy-mini.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .copy-mini.wa { background: #1FA855; color: #fff; }
   .copy-mini.copied { background: var(--ok); color: white; }
+  .copy-mini[disabled], .copy-mini.off { opacity: .45; pointer-events: none; }
+  .copy-mini svg { width: 14px; height: 14px; }
+
   .track-chip {
     display: inline-flex; align-items: center;
     padding: 1px 8px; border-radius: 999px;
@@ -39,6 +52,54 @@
   }
   .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
   .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
+
+  /* ---- מצב שליחה מהנייד ---- */
+  .sendmode { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; }
+  .sm-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .sm-head h2 { font-family: 'Frank Ruhl Libre', serif; font-size: 19px; margin: 0; }
+  .sm-progress { font-size: 13px; color: var(--text-2); font-weight: 600; }
+  .sm-progress b { color: var(--ok, #2E7D5B); font-size: 15px; }
+  .sm-sub { font-size: 13px; color: var(--text-3); margin: 0 0 14px; line-height: 1.7; }
+  .sm-bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-bottom: 14px; }
+  .sm-bar i { display: block; height: 100%; background: #1FA855; border-radius: 999px; transition: width .3s; }
+  .sm-group { font-size: 12px; font-weight: 700; color: var(--text-3); margin: 16px 0 6px; }
+  .sm-row {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .sm-row:last-child { border-bottom: none; }
+  .sm-row.done { opacity: .55; }
+  .sm-who { flex: 1 1 150px; min-width: 0; }
+  .sm-who .n { font-weight: 700; font-size: 14px; }
+  .sm-who .m { font-size: 12px; color: var(--text-muted); }
+  .sm-row .sm-actions { display: flex; gap: 6px; align-items: center; }
+  .sm-send {
+    background: #1FA855; color: #fff; border: none; border-radius: 9px;
+    padding: 9px 16px; font-family: inherit; font-size: 14px; font-weight: 700;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px;
+  }
+  .sm-send.mail { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .sm-send.off { opacity: .4; pointer-events: none; }
+  .sm-send svg { width: 15px; height: 15px; }
+  .sm-check {
+    width: 40px; height: 40px; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-3); cursor: pointer;
+    display: grid; place-items: center; font-size: 16px; font-weight: 700; flex-shrink: 0;
+  }
+  .sm-check.on { background: #1FA855; border-color: #1FA855; color: #fff; }
+  .sm-reset { background: none; border: none; color: var(--text-3); font-family: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
+
+  @media (max-width: 560px) {
+    .sm-row { gap: 8px; }
+    .sm-send { flex: 1; justify-content: center; }
+  }
+
+  .notice {
+    background: #FDF4EC; border: 1px solid #F0D5BE; border-radius: 12px;
+    padding: 14px 18px; margin-bottom: 22px; font-size: 13px; line-height: 1.9; color: #7a4a1d;
+  }
+  .notice b { color: #5c3512; }
+  .notice ul { margin: 6px 0 0; padding-inline-start: 18px; }
 </style>
 </head>
 <body>
@@ -51,49 +112,197 @@
       </a>
       <div class="brand-stack">
         <span class="ministry">משרד העבודה — אדמין</span>
-        <span class="system-name">המדריכות המקצועיות · קישורים אישיים</span>
+        <span class="system-name">שליחת קישורים אישיים · מדריכות ומפקחים</span>
       </div>
     </div>
   </header>
 
   <main class="container">
 
-    <h1 style="margin: 24px 0 8px;">דשבורד אישי לכל מדריכ/ה</h1>
+    <h1 style="margin: 24px 0 8px;">מי מקבל.ת מה — ושליחה בלחיצה</h1>
     <p style="color: var(--text-2); margin-bottom: 8px;">
-      כל מדריכ/ה רואה רק את המורים ששייכים לה — לפי המקצוע והמגזרים שבאחריותה —
-      עם פיצול בגרות/גמר, חיפוש, נוכחות והדרכות.
-      לוחצים "העתקת הודעה" ושולחים למדריכה בוואטסאפ.
+      לכל מדריכ/ה ולכל מפקח.ת יש כאן קישור אישי אחד, קבוע, שמראה לה.ו
+      <b>רק את המקצוע והמגזר שבאחריותה.ו</b> — לא את שאר המערכת.
+      לוחצים "וואטסאפ" ונפתחת שיחה עם ההודעה מוכנה, או "העתקת הודעה" לשליחה ידנית.
     </p>
-    <p style="color: var(--text-3); font-size: 13px; margin-bottom: 24px;">
-      המקור: "קבוצות הדרכה ופרטי המדריכים" תשפ"ז. עדכון פרטי מדריכה (מייל, דרייב, זום) — בקובץ
-      <code>assets/guides.js</code>.
+    <p style="color: var(--text-3); font-size: 13px; margin-bottom: 20px;">
+      המקור: קובץ "רשימת מדריכים" תשפ"ז (8.9.26). עדכון מקצוע/מגזר/מפקח — בקובץ
+      <code>assets/guides.js</code>. עדכון טלפון ומייל — בקובץ <code>assets/guides-contact.js</code>
+      (נטען רק מדף זה, ולא מהדפים הפתוחים).
     </p>
+
+    <div id="gaps" class="notice" hidden></div>
+
+    <section class="sendmode" id="sendmode" hidden>
+      <div class="sm-head">
+        <h2>שליחה מהנייד</h2>
+        <span class="sm-progress" id="sm-progress">—</span>
+      </div>
+      <p class="sm-sub">
+        פותחים את הדף בנייד ולוחצים "וואטסאפ" — ההודעה נפתחת מוכנה בשיחה, רק ללחוץ שלח.
+        כל מי שנשלח לו מסומן אוטומטית, כדי שלא תאבדי את המקום באמצע.
+      </p>
+      <div class="sm-bar"><i id="sm-bar" style="width:0"></i></div>
+      <div id="sm-list"></div>
+      <div style="margin-top:12px; text-align:left;">
+        <button type="button" class="sm-reset" onclick="resetSent()">איפוס הסימונים</button>
+      </div>
+    </section>
 
     <div id="content"><div class="empty" style="padding:32px;">טוען את מספרי המורים…</div></div>
 
   </main>
 
   <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
-    דף אדמין · מדריכות מקצועיות · משרד העבודה
+    דף אדמין · מדריכות ומפקחים מקצועיים · משרד העבודה
   </footer>
 </div>
 
-<script src="assets/app.js?v=20260901"></script>
+<script src="assets/app.js?v=20260908"></script>
 <script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
-<script src="assets/guides.js?v=20260901"></script>
+<script src="assets/guides.js?v=20260908"></script>
+<script src="assets/guides-contact.js?v=20260908"></script>
 <script>
 const BASE_URL = location.origin + location.pathname.replace(/\/admin-guides\.html$/, '');
 
+/* מספר ישראלי לפורמט בינלאומי לוואטסאפ */
+function waPhone(phone) {
+  const d = String(phone || '').replace(/\D/g, '');
+  if (!d) return '';
+  if (d.startsWith('972')) return d;
+  return '972' + d.replace(/^0/, '');
+}
+
+/* wa.me — הקישור שנפתח נכון גם באפליקציית וואטסאפ בנייד וגם בדפדפן */
+function waLink(phone, text) {
+  return 'https://wa.me/' + phone + (text ? '?text=' + encodeURIComponent(text) : '');
+}
+
+/* ---- מי כבר נשלח (נשמר בדפדפן, כדי שאפשר יהיה לעצור באמצע ולחזור) ---- */
+const SENT_KEY = 'ts.guidelinks.sent.v1';
+function sentGet() {
+  try { return JSON.parse(localStorage.getItem(SENT_KEY) || '{}'); } catch (e) { return {}; }
+}
+function sentSet(map) {
+  try { localStorage.setItem(SENT_KEY, JSON.stringify(map)); } catch (e) {}
+}
+function markSent(kind, slug) {
+  const m = sentGet();
+  m[kind + ':' + slug] = new Date().toISOString();
+  sentSet(m);
+  renderSendList();
+}
+function toggleSent(kind, slug) {
+  const m = sentGet();
+  const k = kind + ':' + slug;
+  if (m[k]) delete m[k]; else m[k] = new Date().toISOString();
+  sentSet(m);
+  renderSendList();
+}
+function resetSent() {
+  if (!confirm('לאפס את כל הסימונים? הקישורים וההודעות לא ישתנו.')) return;
+  sentSet({});
+  renderSendList();
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ---- ההודעות שנשלחות ---- */
+function guideMessage(g, url) {
+  return [
+    'שלום ' + g.name.split(' ')[0] + ',',
+    '',
+    'הקמנו עבורך מבט אישי במצפן ההדרכות של הפיקוח.',
+    'במבט: כל מורי ה' + g.subject + ' שבאחריותך ב' + g.societyLabel + ', בחלוקה לבגרות וגמר,',
+    'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
+    'המבט מציג רק את המקצוע והמגזר שלך.',
+    '',
+    'הקישור האישי שלך:',
+    url,
+    '',
+    'שומרים את הקישור — הוא קבוע.',
+    'בהצלחה!'
+  ].join('\n');
+}
+
+function inspectorMessage(ins, url) {
+  return [
+    'שלום ' + ins.name.split(' ')[0] + ',',
+    '',
+    'הקמנו עבורך מבט מקצועי במצפן ההדרכות של הפיקוח.',
+    'במבט: כל המורים ב' + ins.subjects.join(', ') + ' ב' + ins.society + ' —',
+    'לפי מקצוע ובית ספר, בחלוקה לבגרות וגמר, עם המדריכות שבאחריותך.',
+    'המבט מציג רק את המקצועות והמגזר שבאחריותך, והוא לקריאה בלבד.',
+    '',
+    'הקישור האישי שלך:',
+    url,
+    '',
+    'שומרים את הקישור — הוא קבוע.',
+    'בהצלחה!'
+  ].join('\n');
+}
+
+/* ---- כרטיס ---- */
+function actionsHtml(kind, slug, url, contact) {
+  const wa = waPhone(contact.phone);
+  return `
+    <div class="g-actions">
+      <a class="copy-mini secondary" href="${esc(url)}" target="_blank" rel="noopener">פתיחת המבט</a>
+      <button type="button" class="copy-mini secondary" onclick="copyLink(this, '${esc(url)}')">העתקת קישור</button>
+      <button type="button" class="copy-mini" onclick="copyMessage(this, '${kind}', '${slug}')">העתקת הודעה</button>
+      ${wa
+        ? `<a class="copy-mini wa" href="${esc(waLink(wa, msgFor(kind, slug)))}" target="_blank" rel="noopener" onclick="markSent('${kind}', '${slug}')">
+             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20z"/></svg>
+             וואטסאפ
+           </a>`
+        : `<span class="copy-mini wa off" title="אין טלפון בקובץ guides-contact.js">אין טלפון</span>`}
+      ${contact.email
+        ? `<a class="copy-mini secondary" href="${esc(TS.gmailCompose({ to: contact.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msgFor(kind, slug) }))}" target="_blank" rel="noopener">מייל</a>`
+        : ''}
+    </div>`;
+}
+
+/* ---- נתונים ---- */
+let TEACHERS = [];
+const LINKS = {};   // kind:slug → { url, msg }
+
+function msgFor(kind, slug) {
+  const k = kind + ':' + slug;
+  return (LINKS[k] && LINKS[k].msg) || '';
+}
+
 async function init() {
-  let teachers = [];
   const res = await TS.api('teachers.list', {}, { cache: 'no' });
-  if (res.ok) teachers = res.data || [];
+  if (res.ok) {
+    TEACHERS = res.data || [];
+  } else {
+    /* בלי האזהרה הזו הדף היה מציג "0 מורים" לכל אחד ואחת כאילו זו האמת,
+       ואפשר היה לשלוח קישורים על סמך מספרים שגויים. */
+    const box = document.getElementById('gaps');
+    box.hidden = false;
+    box.style.background = '#FBECEC';
+    box.style.borderColor = '#E7C0C0';
+    box.style.color = '#7a2020';
+    box.innerHTML = '<b>רשימת המורים לא נטענה מהשרת.</b> הקישורים וההודעות למטה תקינים ואפשר לשלוח אותם, ' +
+      'אבל מספרי המורים מוצגים כ-0 ואינם נכונים. רעננו את העמוד בעוד רגע.';
+  }
 
   const guides = window.TS_GUIDES || {};
+  const inspectors = window.TS_INSPECTORS || {};
+  const gapsList = [];
+
+  /* ----- מדריכות ----- */
   const jewish = [], arab = [];
   Object.keys(guides).forEach(slug => {
     const g = Object.assign({ slug }, guides[slug]);
-    const mine = teachers.filter(t =>
+    g.societyLabel = (g.sectors && g.sectors.indexOf('arab') >= 0) ? 'חברה הערבית' : 'חברה היהודית';
+    const contact = window.TS_contactOf('guides', slug);
+    g.contact = contact;
+    const mine = TEACHERS.filter(t =>
       t.subject === g.subject &&
       (!g.sectors || g.sectors.indexOf(t.sector || 'kelali') >= 0)
     );
@@ -103,16 +312,66 @@ async function init() {
       gemer: mine.filter(t => t.type === 'gemer').length,
       schools: new Set(mine.map(t => t.school || t.schoolName)).size
     };
+    /* המייל נוסע בקישור האישי בלבד — כך הוא לא יושב בקובץ ציבורי,
+       והמדריכה עדיין רואה את הנוכחות וההדרכות שלה. */
+    const url = BASE_URL + '/guide/?g=' + slug +
+      (contact.email ? '&guide=' + encodeURIComponent(contact.email) : '');
+    LINKS['guide:' + slug] = { url, msg: guideMessage(g, url) };
+    g.url = url;
+    if (!contact.phone) gapsList.push('אין טלפון ל<b>' + esc(g.name) + '</b> (' + esc(g.subject) + ') — אי אפשר לשלוח בוואטסאפ');
+    if (!g.inspector) gapsList.push('לא הוגדר.ה מפקח.ת ל<b>' + esc(g.subject) + '</b> ב' + g.societyLabel);
     (g.sectors && g.sectors.indexOf('arab') >= 0 ? arab : jewish).push(g);
   });
 
-  const card = g => {
-    const url = BASE_URL + '/guide/?g=' + g.slug;
-    return `
+  /* ----- מפקחים ----- */
+  const inspRows = Object.keys(inspectors).map(slug => {
+    const ins = Object.assign({ slug }, inspectors[slug]);
+    const contact = window.TS_contactOf('inspectors', slug);
+    ins.contact = contact;
+    const mine = TEACHERS.filter(t =>
+      ins.subjects.indexOf(t.subject) >= 0 &&
+      (!ins.sectors || ins.sectors.indexOf(t.sector || 'kelali') >= 0)
+    );
+    ins.counts = {
+      total: mine.length,
+      bagrut: mine.filter(t => t.type !== 'gemer').length,
+      gemer: mine.filter(t => t.type === 'gemer').length,
+      schools: new Set(mine.map(t => t.school || t.schoolName)).size,
+      guides: window.TS_guidesOfInspector(slug).length
+    };
+    const url = BASE_URL + '/mabat/?i=' + slug;
+    LINKS['inspector:' + slug] = { url, msg: inspectorMessage(ins, url) };
+    ins.url = url;
+    if (!contact.phone) gapsList.push('אין טלפון ל<b>' + esc(ins.name) + '</b> (מפקח.ת) — אי אפשר לשלוח בוואטסאפ');
+    return ins;
+  });
+
+  /* רשימת השליחה — נבנית מהקונפיג בלבד, ולכן עובדת גם אם רשימת המורים לא נטענה */
+  SEND_ROWS = jewish.concat(arab).map(g => ({
+    kind: 'guide', slug: g.slug, name: g.name,
+    meta: g.subject + ' · ה' + g.societyLabel,
+    phone: g.contact.phone, email: g.contact.email
+  })).concat(inspRows.map(ins => ({
+    kind: 'inspector', slug: ins.slug, name: ins.name,
+    meta: ins.subjects.join(' · ') + ' · ' + ins.society,
+    phone: ins.contact.phone, email: ins.contact.email
+  })));
+  renderSendList();
+
+  const guideCard = g => `
     <div class="guide-card">
       <div class="g-head">
-        <span class="g-name">${g.name}</span>
-        <span class="g-subject">${g.subject}</span>
+        <span class="g-name">${esc(g.name)}</span>
+        <span class="g-subject">${esc(g.subject)}</span>
+      </div>
+      <div class="g-contact">
+        ${g.contact.phone ? `<span>${esc(g.contact.phone)}</span>` : '<span class="missing">חסר טלפון</span>'}
+        ${g.contact.email ? `<span>${esc(g.contact.email)}</span>` : '<span class="missing">חסר מייל</span>'}
+      </div>
+      <div class="g-inspector">
+        מפקח.ת: ${g.inspector && window.TS_INSPECTORS[g.inspector]
+          ? '<b>' + esc(window.TS_INSPECTORS[g.inspector].name) + '</b>'
+          : '<span style="color:var(--coral);">טרם הוגדר.ה</span>'}
       </div>
       <div class="g-counts">
         <b>${g.counts.total}</b> מורים ·
@@ -120,20 +379,106 @@ async function init() {
         <span class="track-chip gemer">גמר ${g.counts.gemer}</span>
         · ${g.counts.schools} בתי ספר
       </div>
-      <div class="g-actions">
-        <a class="copy-mini secondary" href="${url}" target="_blank" rel="noopener">פתיחת הדשבורד</a>
-        <button type="button" class="copy-mini secondary" onclick="copyLink(this, '${url}')">העתקת קישור</button>
-        <button type="button" class="copy-mini" onclick="copyMessage(this, '${g.slug}')">העתקת הודעה לוואטסאפ</button>
-      </div>
+      ${actionsHtml('guide', g.slug, g.url, g.contact)}
     </div>`;
-  };
+
+  const inspCard = ins => `
+    <div class="guide-card inspector">
+      <div class="g-head">
+        <span class="g-name">${esc(ins.name)}</span>
+        <span class="g-subject">${esc(ins.society)}</span>
+      </div>
+      <div class="g-contact">
+        ${ins.contact.phone ? `<span>${esc(ins.contact.phone)}</span>` : '<span class="missing">חסר טלפון</span>'}
+        ${ins.contact.email ? `<span>${esc(ins.contact.email)}</span>` : '<span class="missing">חסר מייל</span>'}
+      </div>
+      <div class="g-inspector">מקצועות: <b>${esc(ins.subjects.join(' · '))}</b></div>
+      <div class="g-counts">
+        <b>${ins.counts.total}</b> מורים ·
+        <span class="track-chip bagrut">בגרות ${ins.counts.bagrut}</span>
+        <span class="track-chip gemer">גמר ${ins.counts.gemer}</span>
+        · ${ins.counts.schools} בתי ספר · ${ins.counts.guides === 1 ? "מדריכה אחת" : ins.counts.guides + " מדריכות"}
+      </div>
+      ${actionsHtml('inspector', ins.slug, ins.url, ins.contact)}
+    </div>`;
 
   document.getElementById('content').innerHTML = `
-    <div class="society-head">רשימת מדריכים לחברה היהודית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר כללי + חרדי)</small></div>
-    <div class="guide-grid">${jewish.map(card).join('')}</div>
-    <div class="society-head">רשימת מדריכים לחברה הערבית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר ערבי)</small></div>
-    <div class="guide-grid">${arab.map(card).join('')}</div>
+    <div class="society-head">המפקחים המקצועיים <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מבט לקריאה בלבד על המקצועות שבאחריותם)</small></div>
+    <div class="guide-grid">${inspRows.map(inspCard).join('')}</div>
+
+    <div class="society-head">מדריכות — החברה היהודית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר כללי + חרדי)</small></div>
+    <div class="guide-grid">${jewish.map(guideCard).join('')}</div>
+
+    <div class="society-head">מדריכות — החברה הערבית <small style="font-weight:400; color:var(--text-3); font-size:13px;">(מגזר ערבי)</small></div>
+    <div class="guide-grid">${arab.map(guideCard).join('')}</div>
   `;
+
+  if (gapsList.length && res.ok) {
+    const box = document.getElementById('gaps');
+    box.hidden = false;
+    box.innerHTML = '<b>מה עוד חסר כדי לשלוח לכולם:</b><ul>' +
+      gapsList.map(x => '<li>' + x + '</li>').join('') +
+      '</ul><div style="margin-top:6px;">משלימים ב-<code>assets/guides-contact.js</code> (טלפון/מייל) או ב-<code>assets/guides.js</code> (שיוך מפקח.ת).</div>';
+  }
+}
+
+/* ---- מצב שליחה מהנייד ---- */
+let SEND_ROWS = [];   // { kind, slug, name, meta, phone, email }
+
+function renderSendList() {
+  if (!SEND_ROWS.length) return;
+  document.getElementById('sendmode').hidden = false;
+
+  const sent = sentGet();
+  /* המכנה סופר רק את מי שאפשר בכלל לשלוח אליו — אחרת המונה
+     נתקע לנצח על "20 מתוך 22" בגלל מי שאין לו טלפון ולא מייל. */
+  const reachable = SEND_ROWS.filter(r => r.phone || r.email);
+  const stuck = SEND_ROWS.length - reachable.length;
+  const done = reachable.filter(r => sent[r.kind + ':' + r.slug]).length;
+  document.getElementById('sm-progress').innerHTML =
+    'נשלחו <b>' + done + '</b> מתוך ' + reachable.length +
+    (stuck ? ' <span style="color:var(--coral);font-weight:600;">(' + stuck + ' בלי פרטי קשר)</span>' : '');
+  document.getElementById('sm-bar').style.width =
+    (reachable.length ? Math.round(done / reachable.length * 100) : 0) + '%';
+
+  const waIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20z"/></svg>';
+
+  const row = r => {
+    const isDone = !!sent[r.kind + ':' + r.slug];
+    const msg = msgFor(r.kind, r.slug);
+    let action;
+    if (r.phone) {
+      action = `<a class="sm-send" href="${esc(waLink(waPhone(r.phone), msg))}" target="_blank" rel="noopener"
+                   onclick="markSent('${r.kind}', '${r.slug}')">${waIcon} וואטסאפ</a>`;
+    } else if (r.email) {
+      /* אין טלפון — נשלח במייל מאותו מקום, כדי שלא ייפול בין הכיסאות */
+      action = `<a class="sm-send mail" href="${esc(TS.gmailCompose({ to: r.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msg }))}"
+                   target="_blank" rel="noopener" onclick="markSent('${r.kind}', '${r.slug}')">מייל</a>`;
+    } else {
+      action = `<span class="sm-send off">אין פרטי קשר</span>`;
+    }
+    return `
+      <div class="sm-row ${isDone ? 'done' : ''}">
+        <div class="sm-who">
+          <div class="n">${esc(r.name)}</div>
+          <div class="m">${esc(r.meta)}</div>
+        </div>
+        <div class="sm-actions">
+          ${action}
+          <button type="button" class="sm-check ${isDone ? 'on' : ''}"
+                  title="${isDone ? 'סימון כלא נשלח' : 'סימון כנשלח'}"
+                  onclick="toggleSent('${r.kind}', '${r.slug}')">✓</button>
+        </div>
+      </div>`;
+  };
+
+  const group = (title, rows) => rows.length
+    ? '<div class="sm-group">' + title + '</div>' + rows.map(row).join('') : '';
+
+  document.getElementById('sm-list').innerHTML =
+    group('מדריכות — יש טלפון', SEND_ROWS.filter(r => r.kind === 'guide' && r.phone)) +
+    group('מדריכות — בלי טלפון', SEND_ROWS.filter(r => r.kind === 'guide' && !r.phone)) +
+    group('מפקחים מקצועיים', SEND_ROWS.filter(r => r.kind === 'inspector'));
 }
 
 function flashBtn(btn, txt) {
@@ -147,23 +492,8 @@ function copyLink(btn, url) {
   navigator.clipboard.writeText(url).then(() => flashBtn(btn, '✓ הועתק'));
 }
 
-function copyMessage(btn, slug) {
-  const g = window.TS_GUIDES[slug];
-  const url = BASE_URL + '/guide/?g=' + slug;
-  const msg = [
-    'שלום ' + g.name.split(' ')[0] + ',',
-    '',
-    'הקמנו עבורך דשבורד אישי במצפן ההדרכות של הפיקוח.',
-    'בדשבורד: כל מורי ה' + g.subject + ' שבאחריותך, בחלוקה לבגרות וגמר,',
-    'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
-    '',
-    'הקישור האישי שלך:',
-    url,
-    '',
-    'שומרים את הקישור — הוא קבוע.',
-    'בהצלחה!'
-  ].join('\n');
-  navigator.clipboard.writeText(msg).then(() => flashBtn(btn, '✓ ההודעה הועתקה'));
+function copyMessage(btn, kind, slug) {
+  navigator.clipboard.writeText(msgFor(kind, slug)).then(() => flashBtn(btn, '✓ ההודעה הועתקה'));
 }
 
 init();
