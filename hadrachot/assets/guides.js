@@ -38,7 +38,7 @@ window.TS_GUIDES = {
     name: 'מוריה פלינט',
     subject: 'עברית',
     sectors: ['kelali', 'haredi'],
-    inspector: '', /* בקובץ המקור לא צוין מפקח.ת לעברית בחברה היהודית */
+    inspector: 'liat',
     drive: 'https://drive.google.com/drive/folders/1uQKR8AmWZCv8-s6mD29SI0ngefxRjx-E?usp=sharing',
     zoom: '' /* קישור זום אישי קבוע הוסר מסיבות אבטחה (1.9.26) — לשתף קישור מפגש חד־פעמי בערוץ סגור */
   },
@@ -54,7 +54,7 @@ window.TS_GUIDES = {
     name: 'דנה ברצורי',
     subject: 'היסטוריה',
     sectors: ['kelali', 'haredi'],
-    inspector: 'yisachar',
+    inspector: 'sigalit',
     drive: '',
     zoom: ''
   },
@@ -64,7 +64,18 @@ window.TS_GUIDES = {
     name: 'אלישבע',
     subject: 'אזרחות',
     sectors: ['kelali', 'haredi'],
-    inspector: '', /* בקובץ המקור לא צוין מפקח.ת לאזרחות בחברה היהודית */
+    inspector: 'sigalit',
+    drive: '',
+    zoom: ''
+  },
+  gal: {
+    /* קבוצה חדשה 9.9.26 — מתמטיקה 4-5 יח"ל. שם משפחה טרם התקבל.
+       הפילוח לפי יחידות עדיין לא קיים בנתוני המורים, ולכן גל ושירה
+       רואים כרגע את אותם 110 מורי המתמטיקה בחברה היהודית. */
+    name: 'גל',
+    subject: 'מתמטיקה',
+    sectors: ['kelali', 'haredi'],
+    inspector: 'revital',
     drive: '',
     zoom: ''
   },
@@ -82,7 +93,7 @@ window.TS_GUIDES = {
     name: 'סוהא ערדה',
     subject: 'עברית',
     sectors: ['arab'],
-    inspector: 'yasmin',
+    inspector: 'wesam',
     drive: '',
     zoom: ''
   },
@@ -90,7 +101,7 @@ window.TS_GUIDES = {
     name: 'רוזין מטר דאו',
     subject: 'אנגלית',
     sectors: ['arab'],
-    inspector: 'yasmin',
+    inspector: 'liat',
     drive: '',
     zoom: ''
   },
@@ -98,7 +109,7 @@ window.TS_GUIDES = {
     name: 'ואאל טאהא',
     subject: 'ערבית',
     sectors: ['arab'],
-    inspector: 'yasmin',
+    inspector: 'wesam',
     drive: '',
     zoom: ''
   },
@@ -108,7 +119,7 @@ window.TS_GUIDES = {
     name: 'רימה',
     subject: 'ספרות',
     sectors: ['arab'],
-    inspector: 'yasmin',
+    inspector: 'liat',
     drive: '',
     zoom: ''
   },
@@ -116,7 +127,7 @@ window.TS_GUIDES = {
     name: 'עבד אלוהאב חבאיב',
     subject: 'היסטוריה',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   },
@@ -124,7 +135,7 @@ window.TS_GUIDES = {
     name: 'חאלד גבארין',
     subject: 'אזרחות',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   },
@@ -132,7 +143,7 @@ window.TS_GUIDES = {
     name: 'משה עשור',
     subject: 'מתמטיקה',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   },
@@ -140,7 +151,7 @@ window.TS_GUIDES = {
     name: 'סולימאן ברייה',
     subject: 'מתמטיקה',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   },
@@ -148,7 +159,7 @@ window.TS_GUIDES = {
     name: 'מנסור עתאמנה',
     subject: 'מורשת אסלאמית',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   },
@@ -156,7 +167,7 @@ window.TS_GUIDES = {
     name: 'מזנה סלאלחה',
     subject: 'מורשת דרוזית',
     sectors: ['arab'],
-    inspector: 'ahmad',
+    inspector: 'yasmin',
     drive: '',
     zoom: ''
   }
@@ -169,36 +180,93 @@ window.TS_GUIDES = {
    המקור: עמודת "מפקח" בקובץ "רשימת מדריכים" תשפ"ז.
    ============================================================ */
 window.TS_INSPECTORS = {
-  yisachar: {
-    name: 'יששכר חפץ',
-    society: 'החברה היהודית',
-    sectors: ['kelali', 'haredi'],
-    subjects: ['תנ"ך', 'היסטוריה']
-  },
+  /* פריסת הפיקוח לפי מקצועות — עדכון מיטל 9.9.26.
+     המבנה: coverage = זוגות מקצוע×מגזרים, כי מפקח.ת יכול.ה להיות ארצי.ת
+     במקצוע אחד ומגזרי.ת באחר (ליאת: אנגלית וספרות בכל המגזרים, אבל עברית
+     רק בחברה היהודית — לדוברי ערבית זה ויסאם). allSubjectsSectors = מגזר שלם
+     בכל המקצועות, וזה המקרה של יששכר במגזר החרדי.
+     חפיפה היא לגיטימית: מורה אנגלית חרדי נראה גם לליאת (מפקחת המקצוע)
+     וגם ליששכר (מפקח המגזר). */
+
   liat: {
     name: 'ליאת צבר',
-    society: 'החברה היהודית',
-    sectors: ['kelali', 'haredi'],
-    subjects: ['אנגלית', 'ספרות']
+    society: 'ארצי',
+    coverage: [
+      { subject: 'אנגלית', sectors: ['kelali', 'haredi', 'arab'] },
+      { subject: 'ספרות',  sectors: ['kelali', 'haredi', 'arab'] },
+      /* עברית בחברה היהודית בלבד — עברית לדוברי ערבית היא של ויסאם */
+      { subject: 'עברית',  sectors: ['kelali', 'haredi'] }
+    ]
+  },
+  sigalit: {
+    name: 'סיגלית דאי',
+    society: 'החברה הכללית',
+    coverage: [
+      { subject: 'אזרחות',   sectors: ['kelali'] },
+      { subject: 'היסטוריה', sectors: ['kelali'] }
+    ]
+  },
+  yisachar: {
+    name: 'יששכר חפץ',
+    society: 'תנ"ך ארצי + המגזר החרדי',
+    coverage: [
+      { subject: 'תנ"ך', sectors: ['kelali', 'haredi', 'arab'] }
+    ],
+    allSubjectsSectors: ['haredi']
   },
   revital: {
     name: 'רויטל אמיר',
     society: 'החברה היהודית',
-    sectors: ['kelali', 'haredi'],
-    subjects: ['מתמטיקה']
+    coverage: [
+      { subject: 'מתמטיקה', sectors: ['kelali', 'haredi'] }
+    ]
+  },
+  wesam: {
+    name: 'ויסאם סואלחה',
+    society: 'החברה הערבית',
+    coverage: [
+      { subject: 'עברית', sectors: ['arab'] },
+      { subject: 'ערבית', sectors: ['arab'] }
+    ]
   },
   yasmin: {
     name: 'יסמין אמון',
     society: 'החברה הערבית',
-    sectors: ['arab'],
-    subjects: ['עברית', 'ערבית', 'אנגלית', 'ספרות']
-  },
-  ahmad: {
-    name: 'אחמד מחאמיד',
-    society: 'החברה הערבית',
-    sectors: ['arab'],
-    subjects: ['היסטוריה', 'אזרחות', 'מתמטיקה', 'מורשת אסלאמית', 'מורשת דרוזית']
+    coverage: [
+      { subject: 'מתמטיקה',        sectors: ['arab'] },
+      { subject: 'אזרחות',         sectors: ['arab'] },
+      { subject: 'היסטוריה',       sectors: ['arab'] },
+      { subject: 'מורשת אסלאמית',  sectors: ['arab'] },
+      { subject: 'מורשת דרוזית',   sectors: ['arab'] }
+    ]
   }
+};
+
+/* subjects/sectors נגזרים מ-coverage — דפים ותיקים ממשיכים לקרוא אותם כרשימות
+   שטוחות (כותרות, מונים, סרגלי סינון), בלי לדעת על המבנה החדש. */
+(function deriveInspectorFields() {
+  const list = window.TS_INSPECTORS || {};
+  Object.keys(list).forEach(slug => {
+    const ins = list[slug];
+    const subjects = [], sectors = [];
+    (ins.coverage || []).forEach(c => {
+      if (subjects.indexOf(c.subject) < 0) subjects.push(c.subject);
+      (c.sectors || []).forEach(sc => { if (sectors.indexOf(sc) < 0) sectors.push(sc); });
+    });
+    (ins.allSubjectsSectors || []).forEach(sc => { if (sectors.indexOf(sc) < 0) sectors.push(sc); });
+    ins.subjects = subjects;
+    ins.sectors = sectors;
+  });
+})();
+
+/* האם המורה הזה באחריות המפקח.ת — הבדיקה היחידה שכל הדפים צריכים לקרוא לה.
+   בלי זה כל דף היה מצליב subjects×sectors לבד ומחזיר מתמטיקה כללי ליששכר. */
+window.TS_inspectorCovers = function (ins, subject, sector) {
+  if (!ins) return false;
+  const sec = sector || 'kelali';
+  if ((ins.allSubjectsSectors || []).indexOf(sec) >= 0) return true;
+  return (ins.coverage || []).some(c =>
+    c.subject === subject && (!c.sectors || c.sectors.indexOf(sec) >= 0));
 };
 
 /* מחזיר את קונפיג המדריכה לפי slug (?g=) או לפי email (?guide=) */

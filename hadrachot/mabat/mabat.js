@@ -27,13 +27,13 @@ async function loadData() {
   const res = await TS.api('teachers.list', {});
   if (!res || !res.ok) { renderApiError(); return; }
 
-  const sectors = INSP.sectors || null;
-  const subjects = INSP.subjects || [];
   const teachers = [];
   (res.data || []).forEach(t => {
-    if (subjects.indexOf(t.subject) < 0) return;            // רק המקצועות שבאחריותי
     const sector = t.sector || 'kelali';
-    if (sectors && sectors.indexOf(sector) < 0) return;     // רק המגזרים שבאחריותי
+    /* הצלבה של subjects×sectors לא מספיקה מאז 9.9.26: יששכר הוא תנ"ך ארצי
+       ובנוסף כל המקצועות במגזר החרדי, וליאת ארצית באנגלית ובספרות אבל לא
+       בעברית לדוברי ערבית. TS_inspectorCovers היא הבדיקה היחידה הנכונה. */
+    if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
     const netKey = (t.network || '').toString().replace(/^net_/, '');
     teachers.push({
       id: t.id,

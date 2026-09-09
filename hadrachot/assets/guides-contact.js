@@ -19,6 +19,7 @@ window.TS_CONTACTS = {
     dana:     { phone: '050-3149106', email: '' },
     elisheva: { phone: '',            email: 'e7co@hotmail.com' },
     tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },
+    gal:      { phone: '054-5542889', email: '' },
 
     /* ---------- החברה הערבית ---------- */
     suha:     { phone: '052-8616162', email: 'soha38815@gmail.com' },
@@ -43,7 +44,11 @@ window.TS_CONTACTS = {
     liat:     { phone: '050-7597144', email: 'liat.tzabar@labor.gov.il' },
     revital:  { phone: '050-8944480', email: 'revital.amir@labor.gov.il' },
     yasmin:   { phone: '050-9117613', email: 'yasmin.amon@labor.gov.il' },
-    ahmad:    { phone: '054-7891709', email: 'ahmed.mahamid@labor.gov.il' }
+    /* נכנסו לפריסה 9.9.26. אינם ברשימת המשתתפים של זימוני הרכזים, ולכן
+       יש להם מייל בלבד — הטלפון יתווסף מהדף בכפתור "+ הוספת טלפון". */
+    sigalit:  { phone: '', email: 'sigalit.day@labor.gov.il' },
+    wesam:    { phone: '', email: 'wesam.swalha@labor.gov.il' }
+    /* אחמד מחאמיד הוסר מהפריסה 9.9.26 (החלטת מיטל) — המקצועות שלו עברו ליסמין אמון. */
   }
 };
 

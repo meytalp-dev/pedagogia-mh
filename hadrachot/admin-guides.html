@@ -512,10 +512,9 @@ function build() {
     const ins = Object.assign({ slug }, inspectors[slug]);
     const contact = contactOf('inspectors', slug);
     ins.contact = contact;
+    /* לא הצלבת subjects×sectors — ראו TS_inspectorCovers ב-guides.js */
     const mine = TEACHERS.filter(t =>
-      ins.subjects.indexOf(t.subject) >= 0 &&
-      (!ins.sectors || ins.sectors.indexOf(t.sector || 'kelali') >= 0)
-    );
+      window.TS_inspectorCovers(ins, t.subject, t.sector || 'kelali'));
     ins.counts = {
       total: mine.length,
       bagrut: mine.filter(t => t.type !== 'gemer').length,
