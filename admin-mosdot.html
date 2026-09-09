@@ -419,6 +419,14 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       .replace(/\s+/g, " ").trim().toLowerCase();
   }
 
+  /* גיליון גוגל הופך מספר בלי מקפים למספר ומוריד את האפס המוביל
+     ("0505444106" -> 505444106). מחזירים אותו לתצוגה ולחיוג. */
+  function phoneOf(c) {
+    var p = String((c && c["טלפון"]) || "").trim();
+    if (/^5[0-9]{8}$/.test(p)) p = "0" + p;
+    return p;
+  }
+
   /* ===== פרטי קשר ===== */
   /* המפתח לחיפוש איש קשר של בית ספר הוא הסמל; לאנשי משרד — השם. */
   function contactsBySemel(semel) {
@@ -439,13 +447,14 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     var wa    = c.e164 ? '<a class="ico" href="https://wa.me/' + esc(c.e164) + '" target="_blank" rel="noopener" title="וואטסאפ">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 01-13.4 7.8L3 21l1.3-4.4A9 9 0 1121 12z"/></svg></a>'
               : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 01-13.4 7.8L3 21l1.3-4.4A9 9 0 1121 12z"/></svg></span>';
-    var tel   = c["טלפון"] ? '<a class="ico" href="tel:' + esc(c["טלפון"]) + '" title="' + esc(c["טלפון"]) + '">' +
+    var ph    = phoneOf(c);
+    var tel   = ph ? '<a class="ico" href="tel:' + esc(ph) + '" title="' + esc(ph) + '">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a1 1 0 01-1.1 1A16 16 0 014 5.1 1 1 0 015 4z"/></svg></a>'
               : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a1 1 0 01-1.1 1A16 16 0 014 5.1 1 1 0 015 4z"/></svg></span>';
     var mail  = c["מייל"] ? '<a class="ico" href="mailto:' + esc(c["מייל"]) + '" title="' + esc(c["מייל"]) + '">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>'
               : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>';
-    var copy  = '<button class="ico" data-copy="' + esc([c["שם"], c["טלפון"], c["מייל"]].filter(Boolean).join(" · ")) + '" title="העתקת הפרטים">' +
+    var copy  = '<button class="ico" data-copy="' + esc([c["שם"], ph, c["מייל"]].filter(Boolean).join(" · ")) + '" title="העתקת הפרטים">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg></button>';
     return '<div class="acts">' + wa + tel + mail + copy + '</div>';
   }
@@ -828,7 +837,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       return '<div class="card">' +
         '<h3 style="--c:' + colorOf(s.name) + '"><i></i>' + esc(s.name) + '</h3>' +
         '<div class="sub">' + s.count + ' מוסדות' +
-          (c && c["טלפון"] ? ' · <span dir="ltr">' + esc(c["טלפון"]) + '</span>' : "") +
+          (c && phoneOf(c) ? ' · <span dir="ltr">' + esc(phoneOf(c)) + '</span>' : "") +
           (c && c["מייל"] ? ' · <span dir="ltr">' + esc(c["מייל"]) + '</span>' : "") + '</div>' +
         (c ? actionsHtml(c) : "") +
         '<div class="chips" style="margin-top:12px">' + chips + '</div>' +
@@ -895,7 +904,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
           '<td>' + esc(c["תפקיד"]) + '</td>' +
           '<td style="font-size:14px;color:var(--muted)">' + esc(c["שיוך"]) + '</td>';
       return '<tr data-semel="' + esc(c["סמל מוסד"] || "") + '">' + cells +
-        '<td class="semel" dir="ltr">' + (c["טלפון"] ? esc(c["טלפון"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+        '<td class="semel" dir="ltr">' + (phoneOf(c) ? esc(phoneOf(c)) : '<span class="pill warn">חסר</span>') + '</td>' +
         '<td dir="ltr" style="font-size:14px">' + (c["מייל"] ? esc(c["מייל"]) : '<span class="pill warn">חסר</span>') + '</td>' +
         '<td>' + actionsHtml(c) + '</td>' +
       '</tr>';
@@ -950,7 +959,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
           ? principal.map(function (c) {
               return '<div class="person"><div><div class="nm">' + esc(c["שם"] || "—") + '</div>' +
                 '<div class="rl">' + esc(c["תפקיד"]) +
-                (c["טלפון"] ? ' · <span dir="ltr">' + esc(c["טלפון"]) + '</span>' : "") +
+                (phoneOf(c) ? ' · <span dir="ltr">' + esc(phoneOf(c)) + '</span>' : "") +
                 (c["מייל"] ? ' · <span dir="ltr">' + esc(c["מייל"]) + '</span>' : "") +
                 (c["טלפון מוסד"] ? ' · טלפון המוסד <span dir="ltr">' + esc(c["טלפון מוסד"]) + '</span>' : "") +
                 '</div></div>' +
