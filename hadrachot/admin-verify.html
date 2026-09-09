@@ -16,6 +16,41 @@
     border-radius: 14px; padding: 18px 20px; margin-bottom: 14px;
   }
   .school-card.ok-border { border-inline-start: 4px solid var(--mint, #6FB7A6); }
+
+  /* ---- פאנל שליחה מהנייד ---- */
+  .send-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+  }
+  .sp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sp-head b { font-size: 16px; }
+  .sp-progress { font-size: 13px; color: var(--text-2); }
+  .sp-note {
+    background: #FFF9EC; border: 1px solid #F0DCAE; border-radius: 10px;
+    padding: 10px 12px; margin-top: 10px; font-size: 13px; line-height: 1.65; color: #6b4b06;
+  }
+  .sp-loader { margin-top: 10px; }
+  .sp-loader textarea {
+    width: 100%; box-sizing: border-box; font-family: monospace; font-size: 12px;
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px; min-height: 84px;
+  }
+  .sp-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 9px 0; border-top: 1px solid var(--border);
+  }
+  .sp-row:first-of-type { border-top: none; }
+  .sp-row .sp-name { flex: 1 1 150px; min-width: 0; font-size: 14px; font-weight: 600; }
+  .sp-row.sent .sp-name { color: var(--text-3); font-weight: 400; text-decoration: line-through; }
+  .sp-btn {
+    font: inherit; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: #fff; color: var(--text-1); cursor: pointer;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .sp-btn.wa { background: #25D366; border-color: #1da851; color: #fff; }
+  .sp-btn.tick { min-width: 40px; justify-content: center; }
+  .sp-btn.tick.on { background: var(--ok-soft, #e7f6ef); border-color: #6FB7A6; color: #14532d; }
+  .sp-miss { font-size: 12.5px; color: #8a5a00; }
+  .sp-phone-in { font: inherit; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 1px dashed #D9A441; background: #FFF9EC; width: 130px; }
   .sc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .sc-head .nm { font-weight: 700; font-size: 16px; }
   .sc-head .meta { font-size: 13px; color: var(--text-2); }
@@ -70,6 +105,23 @@
     </p>
 
     <div class="sum-strip" id="summary"></div>
+
+    <div class="send-panel" id="send-panel">
+      <div class="sp-head">
+        <b>שליחה מהנייד</b>
+        <span class="sp-progress" id="sp-progress"></span>
+      </div>
+      <div class="sp-note" id="sp-note" hidden></div>
+      <div class="sp-loader" id="sp-loader" hidden>
+        <textarea id="sp-blob" placeholder="מדביקים כאן את המחרוזת מהקובץ 'ניידי-מנהלים-להדבקה.txt'"></textarea>
+        <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <button type="button" class="sp-btn" id="sp-save">שמירה במכשיר הזה</button>
+          <button type="button" class="sp-btn" id="sp-clear">מחיקת המספרים מהמכשיר</button>
+          <span class="sp-progress" id="sp-load-msg"></span>
+        </div>
+      </div>
+      <div id="sp-list"></div>
+    </div>
 
     <div class="toolbar">
       <input type="search" class="input" id="q" placeholder="חיפוש בית ספר…">
@@ -175,6 +227,130 @@ function msgFor(s) {
   ].join('\n');
 }
 
+// ---- ניידי המנהלים: נשמרים במכשיר הזה בלבד, לא בקוד ולא בשרת ----
+// המספרים מגיעים מהדבקה חד-פעמית של מחרוזת שמיטל מקבלת בקובץ מקומי.
+// זו הסיבה שהם לא יושבים בקובץ באתר: הדף הזה מוגן רק בצד הלקוח.
+const PHONES_KEY = 'ts.verify.phones.v1';
+const SENT_KEY   = 'ts.verify.sent.v1';
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+function normPhone(p) {
+  const d = (p || '').toString().replace(/\D/g, '');
+  if (!d) return '';
+  if (d.startsWith('972')) return d;
+  if (d.startsWith('0')) return '972' + d.slice(1);
+  return d.length >= 9 ? '972' + d : '';
+}
+// wa.me ולא api.whatsapp.com — רק הראשון נפתח באפליקציה בנייד
+function waLink(phone, text) {
+  return 'https://wa.me/' + normPhone(phone) + '?text=' + encodeURIComponent(text);
+}
+function phoneFor(s) {
+  return normPhone(lsGet(PHONES_KEY)[s.id] || s.principalPhone || '');
+}
+
+// המחרוזת היא base64 של {"v":1,"m":{"<schoolId>":"972..."}} — או JSON גולמי
+function parseBlob(raw) {
+  let txt = (raw || '').trim().replace(/^PHV1:/, '').replace(/\s+/g, '');
+  if (!txt) return null;
+  let obj = null;
+  try { obj = JSON.parse(raw); } catch (e) {}
+  if (!obj) { try { obj = JSON.parse(decodeURIComponent(escape(atob(txt)))); } catch (e) {} }
+  if (!obj || !obj.m || typeof obj.m !== 'object') return null;
+  const out = {};
+  Object.entries(obj.m).forEach(([k, v]) => { const p = normPhone(v); if (p) out[k] = p; });
+  return Object.keys(out).length ? out : null;
+}
+
+function saveBlob() {
+  const msg = document.getElementById('sp-load-msg');
+  const parsed = parseBlob(document.getElementById('sp-blob').value);
+  if (!parsed) { msg.textContent = 'לא זוהתה רשימה תקינה — לוודא שהועתקה כל המחרוזת.'; return; }
+  const merged = Object.assign(lsGet(PHONES_KEY), parsed);   // מיזוג, כדי לא למחוק מספרים שהוזנו ידנית
+  lsSet(PHONES_KEY, merged);
+  const known = schools.filter(s => merged[s.id]).length;
+  msg.textContent = 'נשמרו ' + Object.keys(parsed).length + ' מספרים · מזוהים ' + known + ' מבתי הספר ברשימה.';
+  document.getElementById('sp-blob').value = '';
+  render();
+}
+
+function clearPhones() {
+  if (!confirm('למחוק מהמכשיר הזה את כל ניידי המנהלים?')) return;
+  try { localStorage.removeItem(PHONES_KEY); } catch (e) {}
+  document.getElementById('sp-load-msg').textContent = 'המספרים נמחקו מהמכשיר.';
+  render();
+}
+
+function toggleSent(sid) {
+  const sent = lsGet(SENT_KEY);
+  if (sent[sid]) delete sent[sid]; else sent[sid] = true;
+  lsSet(SENT_KEY, sent);
+  render();
+}
+
+function addPhone(sid, val) {
+  const p = normPhone(val);
+  if (!p) return;
+  const map = lsGet(PHONES_KEY);
+  map[sid] = p;
+  lsSet(PHONES_KEY, map);
+  render();
+}
+
+function renderSendPanel() {
+  const pending = schools.filter(s => s.id && !s.verify);
+  const sent = lsGet(SENT_KEY);
+  const withPhone = pending.filter(s => phoneFor(s));
+  const doneN = pending.filter(s => sent[s.id]).length;
+
+  document.getElementById('sp-progress').textContent =
+    pending.length ? 'נשלחו ' + doneN + ' מתוך ' + pending.length + ' שטרם אישרו' : 'כולם אישרו — אין למי לשלוח';
+
+  const note = document.getElementById('sp-note');
+  const loader = document.getElementById('sp-loader');
+  if (!withPhone.length) {
+    note.hidden = false;
+    note.innerHTML = '<b>הניידים לא נטענו במכשיר הזה.</b> המספרים לא נשמרים באתר — ' +
+      'מדביקים אותם פעם אחת וכל כפתורי הוואטסאפ נדלקים. ' +
+      '<button type="button" class="sp-btn" style="margin-top:6px;" id="sp-toggle">הדבקת רשימת הניידים</button>';
+    loader.hidden = false;
+  } else {
+    note.hidden = false;
+    note.innerHTML = 'המספרים שמורים <b>במכשיר הזה בלבד</b> — ' + withPhone.length + ' מתוך ' +
+      pending.length + ' בתי הספר שטרם אישרו. ' +
+      '<button type="button" class="sp-btn" style="margin-top:6px;" id="sp-toggle">עדכון הרשימה</button>';
+    loader.hidden = true;
+  }
+
+  document.getElementById('sp-list').innerHTML = pending.map(s => {
+    const ph = phoneFor(s);
+    const isSent = !!sent[s.id];
+    const right = ph
+      ? `<a class="sp-btn wa" target="_blank" rel="noopener" href="${waLink(ph, msgFor(s))}"
+            onclick="markSent('${s.id}')">וואטסאפ</a>`
+      : `<span class="sp-miss">אין מספר</span>
+         <input class="sp-phone-in" placeholder="נייד" inputmode="tel"
+                onchange="addPhone('${s.id}', this.value)">`;
+    return `<div class="sp-row ${isSent ? 'sent' : ''}">
+      <span class="sp-name">${escapeHtml(s.name)}</span>
+      ${right}
+      <button type="button" class="sp-btn tick ${isSent ? 'on' : ''}" title="סימון כנשלח"
+              onclick="toggleSent('${s.id}')">${isSent ? '✓' : '○'}</button>
+    </div>`;
+  }).join('') || '<div class="sp-progress" style="padding:10px 0;">אין בתי ספר שממתינים לאישור.</div>';
+
+  const tgl = document.getElementById('sp-toggle');
+  if (tgl) tgl.addEventListener('click', () => { loader.hidden = !loader.hidden; });
+}
+
+function markSent(sid) {
+  const sent = lsGet(SENT_KEY);
+  sent[sid] = true;
+  lsSet(SENT_KEY, sent);
+  setTimeout(render, 400);   // אחרי שהקישור נפתח, כדי לא לבטל את המעבר לוואטסאפ
+}
+
 function fmtDate(iso) {
   const d = new Date(iso);
   return isNaN(d) ? '' : d.toLocaleDateString('he-IL') + ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
@@ -220,12 +396,14 @@ function render() {
       ${s.missing.length ? '<span class="warn-note">⚠ אין אף מורה ב: ' + s.missing.join(', ') + '</span><br>' : ''}
       <div class="sc-actions" style="margin-top:10px;">
         <button type="button" class="copy-mini" onclick="copyMsg(this, '${s.id}')">העתקת הודעה עם קישור הטופס</button>
-        ${s.principalPhone ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${TS.whatsappLink(s.principalPhone.replace(/^0/, '972'), msgFor(s))}">שליחה ישירה</a>` : ''}
+        ${phoneFor(s) ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${waLink(phoneFor(s), msgFor(s))}" onclick="markSent('${s.id}')">שליחה ישירה בוואטסאפ</a>` : ''}
         ${s.id ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${BASE}/verify.html?school=${encodeURIComponent(s.id)}">צפייה בטופס</a>` : ''}
         ${s.id ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${BASE}/admin-school/setup.html?school=${encodeURIComponent(s.id)}">פתיחת רשימת ההזנה</a>` : ''}
       </div>
     </div>`;
   }).join('') || '<div class="empty" style="padding:32px;">אין בתי ספר בסינון הזה</div>';
+
+  renderSendPanel();
 }
 
 function copyMsg(btn, sid) {
@@ -243,6 +421,8 @@ function escapeHtml(s) {
   return (s || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+document.getElementById('sp-save').addEventListener('click', saveBlob);
+document.getElementById('sp-clear').addEventListener('click', clearPhones);
 document.getElementById('q').addEventListener('input', render);
 document.getElementById('fStatus').addEventListener('change', render);
 init();
