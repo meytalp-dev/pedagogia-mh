@@ -381,6 +381,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   var DATA = null;       /* data/mosdot.json */
   var CONTACTS = null;   /* מהגיליון המוגן — null עד שנטען */
   var CONTACT_ERR = "";
+  var AWAITING_AUTH = false;
   var state = { tab: "p-schools", kind: "מנהל", q: "" };
 
   /* ===== הודעות קצרות ===== */
@@ -742,12 +743,12 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         });
     });
 
-    if (window.PMH_AUTH && window.PMH_AUTH.load) {
+    whenAuthed(function () {
       window.PMH_AUTH.load("tikshuv-roster").then(function (r) {
         ICT_ROSTER = (r && r.ok && Array.isArray(r.data)) ? r.data : [];
         renderRoles();
       });
-    } else { ICT_ROSTER = []; }
+    });
   }
 
   function countsBadge() {
@@ -867,6 +868,10 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     if (CONTACT_ERR) {
       box.innerHTML = '<div class="notice"><b>פרטי הקשר לא נטענו.</b> ' + esc(CONTACT_ERR) +
         '<br>שאר העמוד עובד — הטאבים "בתי ספר" ו"פריסה לפי פיקוח" אינם תלויים בגיליון.</div>';
+      return;
+    }
+    if (AWAITING_AUTH) {
+      box.innerHTML = '<div class="loading">ממתין להשלמת ההתחברות — פרטי הקשר ייטענו מיד אחריה.</div>';
       return;
     }
     if (!CONTACTS) {
@@ -1114,12 +1119,37 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     fill("f-sup",      uniq(function (x) { return x.sups; }));
   }
 
-  function loadContacts() {
-    if (!window.PMH_AUTH || !window.PMH_AUTH.load) {
+  /* שער ההרשאות מציג מסך התחברות מעל העמוד, אבל הקוד שלנו ממשיך לרוץ.
+     לכן ממתינים לסשן לפני שמבקשים תוכן מוגן — בלי זה הבקשה יוצאת בלי
+     טוקן וחוזרת ריקה, וזה נראה כמו שגיאת שרת. */
+  function whenAuthed(cb, tries) {
+    tries = tries || 0;
+    if (!window.PMH_AUTH || !window.PMH_AUTH.user) {
       CONTACT_ERR = "שער ההרשאות לא נטען.";
-      renderAll();
+      renderContacts();
       return;
     }
+    if (window.PMH_AUTH.user()) { cb(); return; }
+    if (tries === 0) {
+      CONTACT_ERR = "";
+      AWAITING_AUTH = true;
+      renderContacts();
+    }
+    if (tries > 300) {          /* ~4 דקות */
+      AWAITING_AUTH = false;
+      CONTACT_ERR = "לא זוהתה התחברות. אחרי הכניסה — לרענן את העמוד.";
+      renderContacts();
+      return;
+    }
+    setTimeout(function () { whenAuthed(cb, tries + 1); }, 800);
+  }
+
+  function loadContacts() {
+    whenAuthed(fetchContacts);
+  }
+
+  function fetchContacts() {
+    AWAITING_AUTH = false;
     window.PMH_AUTH.load("admin-contacts").then(function (r) {
       if (r && r.ok && Array.isArray(r.data) && r.data.length) {
         CONTACTS = r.data;
@@ -1136,7 +1166,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
             ? 'החשבון הזה לא מורשה לראות את פרטי הקשר.'
           : code === "badsession"
             ? 'הסשן פג — צריך להיכנס מחדש.'
-            : 'שגיאה מהשרת: ' + code;
+            : 'שגיאה מהשרת: ' + code + (r && r.detail ? ' — ' + r.detail : "");
       }
       renderAll();
     });
