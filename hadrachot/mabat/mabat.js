@@ -59,9 +59,20 @@ async function loadData() {
 }
 
 function renderNoInspector() {
-  document.getElementById('page-title').textContent = 'לא זוהה מפקח.ת';
+  /* שני מקרים שונים, ואסור לבלבל ביניהם: קישור בלי ?i= (מישהו הגיע לכתובת
+     החשופה), לעומת קישור עם slug שכבר אינו בפריסה — למשל מפקח.ת שיצא.ה
+     מהפריסה. להגיד לו "הקישור חסר זיהוי" זה פשוט לא נכון, והוא ינסה שוב. */
+  const stale = !!inspectorSlug;
+  document.getElementById('page-title').textContent = stale ? 'המבט אינו פעיל' : 'לא זוהה מפקח.ת';
   document.getElementById('page-subtitle').textContent = 'המבט נפתח רק דרך הקישור האישי';
-  document.getElementById('teachers-container').innerHTML = `
+  document.getElementById('teachers-container').innerHTML = stale ? `
+    <div class="empty" style="padding:40px; text-align:center;">
+      <div style="font-size:17px; font-weight:700; margin-bottom:8px;">הקישור הזה אינו פעיל יותר</div>
+      <div style="color:var(--text-muted); line-height:1.8;">
+        פריסת הפיקוח עודכנה, והמבט שהקישור הזה הוביל אליו אינו קיים עוד.<br>
+        לבירור — מיטל פלג.
+      </div>
+    </div>` : `
     <div class="empty" style="padding:40px; text-align:center;">
       <div style="font-size:17px; font-weight:700; margin-bottom:8px;">הקישור חסר את זיהוי המפקח.ת</div>
       <div style="color:var(--text-muted); line-height:1.8;">
