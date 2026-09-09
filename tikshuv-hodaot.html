@@ -55,6 +55,10 @@ p.lead{margin:0 0 10px;color:var(--muted);font-size:.88rem}
 .tg.tools{background:var(--blue-bg);color:var(--blue);border-color:#C6DEEE}
 .tg.lead{background:var(--orange-bg);color:var(--orange);border-color:#EBD5BC}
 .tg.wait{background:#F1F4F6;color:var(--muted)}
+.gbtn{font:inherit;font-size:.73rem;border:1px solid var(--line);background:#fff;color:var(--muted);
+  border-radius:999px;padding:1px 9px;margin-top:6px;margin-inline-start:5px;cursor:pointer}
+.gbtn:hover{background:#F2F6F9;border-color:#C6DEEE;color:var(--navy)}
+.gbtn.unsure{background:var(--orange-bg);border-color:#EBD5BC;color:var(--orange);font-weight:600}
 .tg.done{background:var(--green-bg);color:var(--green);border-color:#8FBF9E}
 .acts{display:flex;gap:8px;margin-top:11px;align-items:stretch}
 .wa{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -124,7 +128,7 @@ footer .c{font-size:.78rem;color:var(--muted)}
     <code>{מסלול}</code> · <code>{נושא}</code> · <code>{יום}</code> ·
     <code>{תאריכים}</code> רשימת עשרת המפגשים · <code>{מפגש ראשון}</code> ·
     <code>{סילבוס}</code> · <code>{זום}</code> · <code>{מטלה}</code> ·
-    <code>{שם מטלה}</code> · <code>{הגשה}</code> · <code>{אישור}</code> קישור אישי לאישור · <code>{שאלון}</code>
+    <code>{שם מטלה}</code> · <code>{הגשה}</code> · <code>{אישור}</code> קישור אישי לאישור · <code>{שאלון}</code><br>מגדר: <code>{אתה}</code> אתה/את · <code>{המנהל}</code> המנהל/המנהלת · <code>{מילאתם}</code> מילאתם/מילאתן
   </div>
   <div class="row2">
     <button class="btn" id="resetTmpl">חזרה לנוסח המקורי</button>
@@ -148,12 +152,15 @@ var ASSIGN  = {"אלאופוק א.א.פחם": {"track": "lead", "why": "היחי
 var SHEALON = 'https://pedagogiamh.co.il/tikshuv-shealon.html';
 var ISHUR   = 'https://pedagogiamh.co.il/tikshuv-ishur.html';
 var TOKENS  = {"עתיד מגשימים כרמיאל": "wk9thqqy", "עמל טכנולוגי רהט": "ym4y6wjy", "עתיד צור ים": "gbhs4qem", "תיכון יוצר עמל טכנולוגי": "ng37t865", "עמל נצרת": "gcqhfmnz", "תיכון יוצר עתיד באר-שבע": "6e8ptq9d", "אלמנארה": "wvpdrhrw", "תיכון בקהילה מהאראת שפרעם 54106": "ab4gxj7a", "תיכון יוצר עתיד פלמחים": "vg9x8sfb", "אור העתיד": "twx64szv", "בת עמי": "mrsza9nq", "אורט תל נוף": "xzmeh87d", "המכון החסידי טכנולוגי": "y4sq9e3g", "חושן": "yk9d57e5", "תיכון יוצר עתיד בנות גוליס": "swxhe694", "עתיד אור מנחם": "r67dfqnd", "עתיד תפן": "96nyr58z", "דרור גליל": "fukppmah", "אורט כרמל חיפה": "3trc7tw9", "אורט תעשייה אווירית": "5cuspu6h", "תיכון עתיד יוצר קמג": "nnmv3a33", "תיכון הדר": "tnnvpy54", "עמל טכנולוגי טייבה": "htrs6apc", "תיכון אלאמאני סחנין 54100": "yv493nw4", "טכנולוגי לבנים /בית חנינה": "wz385dmy", "עתיד יוצר אבדאע ביר אל מכסור": "ctat8y89", "חטוואת ירכא אבו סנאן": "gtua2qdk", "תיכון חברתי חיפה": "wsk6u5a3", "עמל רמת דוד": "z3ezqpgk", "אוהלי תמימים עתיד כפר חבד": "45c5wtb8", "מרכז תורני טכנולוגי נחלים": "99nrysvu", "אורט בית הערבה": "n9hbj4qj", "ימינו כקדם כפר זיתים": "vvqnx5nh", "טכנולוגי אכסאל": "6y93u8e5", "אורט צור ברק": "mav82erb", "אורמת": "udx4surb", "התיכון החברתי תא-יפו": "2aybk4c6", "אלאופוק א.א.פחם": "5v5evvax", "עתיד גליל מערבי ירכא": "q3z8re63", "תיכון מעיינות": "sp9fxpf9", "דרור נווה מדבר": "8cw33zk5", "עמל אנרגיטק": "7gz26zn4", "טורען": "qzu3nxr2", "אום אל פחם בנות": "7b8vurkm", "בית אל": "vnd9qhhn", "לקייה": "yr6qz29f", "כסרא סמיע": "uzcqqyjv", "תיכון שיח": "qwfygqsg", "תיכון עתיד יוצר עוצמה זוקו קריית ביאליק": "kqp97xqx", "שגב שלום": "jpf559yu", "דן גורמה תל-אביב": "jzbddtk3", "עתיד מסעדה": "cauat4hb", "טל חרמון": "7dty8fm5", "רימונים טבריה": "xev7qvz5"};
+var GENDER  = {"עתיד מגשימים כרמיאל": {"c": "f", "p": "m", "sure": false}, "עמל טכנולוגי רהט": {"c": "m", "p": "m", "sure": true}, "עתיד צור ים": {"c": "m", "p": "m", "sure": false}, "תיכון יוצר עמל טכנולוגי": {"c": "m", "p": "f", "sure": true}, "עמל נצרת": {"c": "m", "p": "m", "sure": true}, "תיכון יוצר עתיד באר-שבע": {"c": "f", "p": "m", "sure": true}, "אלמנארה": {"c": "m", "p": "m", "sure": true}, "תיכון בקהילה מהאראת שפרעם 54106": {"c": "m", "p": "f", "sure": true}, "תיכון יוצר עתיד פלמחים": {"c": "f", "p": "f", "sure": true}, "אור העתיד": {"c": "m", "p": "m", "sure": true}, "בת עמי": {"c": "f", "p": "f", "sure": true}, "אורט תל נוף": {"c": "m", "p": "m", "sure": false}, "המכון החסידי טכנולוגי": {"c": "m", "p": "m", "sure": true}, "חושן": {"c": "m", "p": "f", "sure": false}, "תיכון יוצר עתיד בנות גוליס": {"c": "f", "p": "f", "sure": true}, "עתיד אור מנחם": {"c": "m", "p": "m", "sure": false}, "עתיד תפן": {"c": "m", "p": "m", "sure": true}, "דרור גליל": {"c": "f", "p": "f", "sure": true}, "אורט כרמל חיפה": {"c": "m", "p": "m", "sure": true}, "אורט תעשייה אווירית": {"c": "f", "p": "m", "sure": true}, "תיכון עתיד יוצר קמג": {"c": "m", "p": "m", "sure": false}, "תיכון הדר": {"c": "f", "p": "f", "sure": true}, "עמל טכנולוגי טייבה": {"c": "m", "p": "m", "sure": true}, "תיכון אלאמאני סחנין 54100": {"c": "m", "p": "m", "sure": true}, "טכנולוגי לבנים /בית חנינה": {"c": "m", "p": "m", "sure": true}, "עתיד יוצר אבדאע ביר אל מכסור": {"c": "f", "p": "m", "sure": true}, "חטוואת ירכא אבו סנאן": {"c": "f", "p": "f", "sure": true}, "תיכון חברתי חיפה": {"c": "m", "p": "f", "sure": true}, "עמל רמת דוד": {"c": "m", "p": "m", "sure": false}, "אוהלי תמימים עתיד כפר חבד": {"c": "m", "p": "m", "sure": true}, "מרכז תורני טכנולוגי נחלים": {"c": "m", "p": "m", "sure": true}, "אורט בית הערבה": {"c": "m", "p": "f", "sure": true}, "ימינו כקדם כפר זיתים": {"c": "m", "p": "m", "sure": true}, "טכנולוגי אכסאל": {"c": "f", "p": "m", "sure": true}, "אורט צור ברק": {"c": "f", "p": "f", "sure": true}, "אורמת": {"c": "f", "p": "m", "sure": true}, "התיכון החברתי תא-יפו": {"c": "m", "p": "m", "sure": false}, "אלאופוק א.א.פחם": {"c": "m", "p": "m", "sure": true}, "עתיד גליל מערבי ירכא": {"c": "m", "p": "m", "sure": true}, "תיכון מעיינות": {"c": "f", "p": "f", "sure": true}, "דרור נווה מדבר": {"c": "f", "p": "m", "sure": false}, "עמל אנרגיטק": {"c": "f", "p": "m", "sure": true}, "טורען": {"c": "m", "p": "m", "sure": true}, "אום אל פחם בנות": {"c": "m", "p": "f", "sure": true}, "בית אל": {"c": "f", "p": "f", "sure": false}, "לקייה": {"c": "m", "p": "m", "sure": true}, "כסרא סמיע": {"c": "m", "p": "m", "sure": true}, "תיכון שיח": {"c": "f", "p": "m", "sure": false}, "תיכון עתיד יוצר עוצמה זוקו קריית ביאליק": {"c": "m", "p": "m", "sure": true}, "שגב שלום": {"c": "m", "p": "m", "sure": true}, "דן גורמה תל-אביב": {"c": "f", "p": "f", "sure": true}, "עתיד מסעדה": {"c": "m", "p": "m", "sure": true}, "טל חרמון": {"c": "m", "p": "m", "sure": false}, "רימונים טבריה": {"c": "f", "p": "f", "sure": true}};
+var GKEY = 'tikshuv-wa-gender-v1';
 var SENT_KEY = 'tikshuv-wa-shibutz-sent-v1';
 var TMPL_KEY = 'tikshuv-wa-shibutz-tmpl-v1';
 
 var DEFAULT_TMPL =
 'שלום {שם}, כאן מיטל פלג ממינהל הכשרה מקצועית.\n\n' +
-'שובצת ל{מסלול} בהכשרת "שגרירי חדשנות טכנולוגית" — {נושא}.\n' +
+'שובצת ל{מסלול} בהכשרת "שגרירי חדשנות טכנולוגית" — {נושא}, ' +
+'על פי התשובות לסקרים ש{אתה} ו{המנהל} {מילאתם}.\n' +
 'המפגשים ב{יום}, בין 13:45 ל-16:00, אחת לשבועיים, החל מ-{מפגש ראשון}.\n\n' +
 'בקישור הזה יש את הסילבוס המלא, כל מועדי המפגשים והמטלה המסכמת — ' +
 'ושם גם אפשר לאשר את השיבוץ או לבקש להחליף מסלול:\n{אישור}\n\n' +
@@ -218,10 +225,25 @@ function msgFor(p){
     .split('{שם מטלה}').join(tr.taskName)
     .split('{הגשה}').join(tr.taskDue)
     .split('{שאלון}').join(SHEALON)
+    .split('{אתה}').join(p.g === 'f' ? 'את' : 'אתה')
+    .split('{המנהל}').join(p.gp === 'f' ? 'המנהלת' : 'המנהל')
+    .split('{מילאתם}').join(p.g === 'f' && p.gp === 'f' ? 'מילאתן' : 'מילאתם')
     .split('{אישור}').join(ISHUR + '?t=' + (p.token || ''));
 }
 
 /* ---------- data join ---------- */
+function gOver(){ return read(GKEY, {}); }
+function gFor(school){
+  var k = norm(school), o = gOver();
+  if (o[k]) return o[k];
+  return (GENDER[k] || {}).c || 'm';
+}
+function flipG(school){
+  var k = norm(school), o = gOver();
+  o[k] = gFor(school) === 'f' ? 'm' : 'f';
+  store(GKEY, o); render();
+}
+
 function people(){
   if (!ROSTER) return [];
   var sent = sentMap();
@@ -232,6 +254,8 @@ function people(){
     return { coord: r.coord, school: r.school, e164: r.e164, track: track,
              why: a ? a.why : '', noreply: !!(a && a.noreply),
              token: TOKENS[norm(r.school)] || '',
+             g:  gFor(r.school), gp: (GENDER[norm(r.school)] || {}).p || 'm',
+             gsure: (GENDER[norm(r.school)] || {}).sure !== false,
              sentAt: sent[r.e164] || '' };
   });
 }
@@ -269,9 +293,12 @@ function render(){
       : '<span class="tg ' + p.track + '">' + esc(TRACKS[p.track].name) + ' · ' +
         esc(TRACKS[p.track].day) + '</span>' +
         (p.noreply ? '<span class="tg wait">שובץ/ה בלי שאלון</span>' : '');
+    var gtag = '<button class="gbtn' + (p.gsure ? '' : ' unsure') + '" data-g="' + esc(p.school) + '">' +
+      (p.g === 'f' ? 'לשון נקבה' : 'לשון זכר') +
+      (p.gsure ? '' : ' · לאמת') + '</button>';
     return '<div class="p ' + (p.sentAt ? 'sent' : '') + '" data-tel="' + esc(p.e164) + '">' +
       '<div class="nm">' + esc(p.coord) + '</div>' +
-      '<div class="sc">' + esc(p.school) + '</div>' + tg +
+      '<div class="sc">' + esc(p.school) + '</div>' + tg + gtag +
       (p.sentAt ? '<div class="stamp">נשלח ' +
         esc(new Date(p.sentAt).toLocaleString('he-IL', {day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})) +
         '</div>' : '') +
@@ -288,6 +315,8 @@ function render(){
 
 /* ---------- interactions ---------- */
 document.addEventListener('click', function(e){
+  var g = e.target.closest('[data-g]');
+  if (g) { flipG(g.getAttribute('data-g')); return; }
   var t = e.target.closest('[data-tab]');
   if (t) { TAB = t.getAttribute('data-tab'); render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
 
@@ -321,6 +350,9 @@ $('clearSent').addEventListener('click', function(){
 });
 
 /* ---------- notice ---------- */
+function unsureN(){
+  return people().filter(function(p){ return !p.gsure; }).length;
+}
 function noreplyN(){
   return people().filter(function(p){ return p.noreply; }).length;
 }
@@ -331,7 +363,9 @@ function notice(){
     ? '<div class="warn"><b>' + wait + ' רכזים ללא שיבוץ.</b> מחכה להם בלשונית הנפרדת ' +
       'בקשה למלא את השאלון.</div>'
     : '<div class="warn">כל 54 הרכזים משובצים. <b>' + noreplyN() + ' מהם לא ענו על השאלון</b> ' +
-      'ושובצו לפי סקר המנהל/ת בלבד — הם מסומנים ברשימה.</div>';
+      'ושובצו לפי סקר המנהל/ת בלבד — הם מסומנים ברשימה.<br>' +
+      'לשון ההודעה נגזרת מהשם, ושם אינו ראיה למגדר. <b>' + unsureN() + ' שמות דו-מגדריים</b> ' +
+      'מסומנים בכתום — הקישו על התווית כדי להפוך לשון.</div>';
 }
 
 /* ---------- roster comes from the server only after the gate opens ---------- */
