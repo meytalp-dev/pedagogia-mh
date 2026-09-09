@@ -46,7 +46,8 @@
     border: 1px solid var(--border); background: #fff; color: var(--text-1); cursor: pointer;
     text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
-  .sp-btn.wa { background: #25D366; border-color: #1da851; color: #fff; }
+  .sp-btn.wa { background: #fff; border-color: #b7d9c4; color: #1a7f4b; }
+  .sp-btn.mail { background: var(--brand-accent, #256A8A); border-color: var(--brand-accent, #256A8A); color: #fff; }
   .sp-btn.tick { min-width: 40px; justify-content: center; }
   .sp-btn.tick.on { background: var(--ok-soft, #e7f6ef); border-color: #6FB7A6; color: #14532d; }
   .sp-miss { font-size: 12.5px; color: #8a5a00; }
@@ -113,10 +114,10 @@
       </div>
       <div class="sp-note" id="sp-note" hidden></div>
       <div class="sp-loader" id="sp-loader" hidden>
-        <textarea id="sp-blob" placeholder="מדביקים כאן את המחרוזת מהקובץ 'ניידי-מנהלים-להדבקה.txt'"></textarea>
+        <textarea id="sp-blob" placeholder="מדביקים כאן את המחרוזת מהקובץ 'פרטי-קשר-מנהלים-להדבקה.txt'"></textarea>
         <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <button type="button" class="sp-btn" id="sp-save">שמירה במכשיר הזה</button>
-          <button type="button" class="sp-btn" id="sp-clear">מחיקת המספרים מהמכשיר</button>
+          <button type="button" class="sp-btn" id="sp-clear">מחיקת פרטי הקשר מהמכשיר</button>
           <span class="sp-progress" id="sp-load-msg"></span>
         </div>
       </div>
@@ -230,7 +231,7 @@ function msgFor(s) {
 // ---- ניידי המנהלים: נשמרים במכשיר הזה בלבד, לא בקוד ולא בשרת ----
 // המספרים מגיעים מהדבקה חד-פעמית של מחרוזת שמיטל מקבלת בקובץ מקומי.
 // זו הסיבה שהם לא יושבים בקובץ באתר: הדף הזה מוגן רק בצד הלקוח.
-const PHONES_KEY = 'ts.verify.phones.v1';
+const PHONES_KEY = 'ts.verify.contacts.v2';
 const SENT_KEY   = 'ts.verify.sent.v1';
 const lsGet = k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (e) { return {}; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -246,20 +247,33 @@ function normPhone(p) {
 function waLink(phone, text) {
   return 'https://wa.me/' + normPhone(phone) + '?text=' + encodeURIComponent(text);
 }
-function phoneFor(s) {
-  return normPhone(lsGet(PHONES_KEY)[s.id] || s.principalPhone || '');
+function contactFor(s) {
+  const rec = lsGet(PHONES_KEY)[s.id];
+  const c = (typeof rec === 'string') ? { p: rec } : (rec || {});
+  return { e: c.e || s.principalEmail || '', p: normPhone(c.p || s.principalPhone || '') };
+}
+function phoneFor(s) { return contactFor(s).p; }
+function mailFor(s)  { return contactFor(s).e; }
+function mailLink(s) {
+  return TS.gmailCompose({ to: mailFor(s), subject: 'אימות רשימת המורים — ' + s.name, body: msgFor(s) });
 }
 
 // המחרוזת היא base64 של {"v":1,"m":{"<schoolId>":"972..."}} — או JSON גולמי
 function parseBlob(raw) {
-  let txt = (raw || '').trim().replace(/^PHV1:/, '').replace(/\s+/g, '');
+  let txt = (raw || '').trim().replace(/^PHV\d*:/, '').replace(/\s+/g, '');
   if (!txt) return null;
   let obj = null;
   try { obj = JSON.parse(raw); } catch (e) {}
   if (!obj) { try { obj = JSON.parse(decodeURIComponent(escape(atob(txt)))); } catch (e) {} }
   if (!obj || !obj.m || typeof obj.m !== 'object') return null;
   const out = {};
-  Object.entries(obj.m).forEach(([k, v]) => { const p = normPhone(v); if (p) out[k] = p; });
+  Object.entries(obj.m).forEach(([k, v]) => {
+    // v1: המחרוזת היא מספר בלבד. v2: אובייקט עם e (מייל) ו-p (נייד).
+    const rec = (typeof v === 'string') ? { p: v } : (v || {});
+    const e = (rec.e || '').trim();
+    const p = normPhone(rec.p);
+    if (e || p) out[k] = { e: e, p: p };
+  });
   return Object.keys(out).length ? out : null;
 }
 
@@ -270,15 +284,15 @@ function saveBlob() {
   const merged = Object.assign(lsGet(PHONES_KEY), parsed);   // מיזוג, כדי לא למחוק מספרים שהוזנו ידנית
   lsSet(PHONES_KEY, merged);
   const known = schools.filter(s => merged[s.id]).length;
-  msg.textContent = 'נשמרו ' + Object.keys(parsed).length + ' מספרים · מזוהים ' + known + ' מבתי הספר ברשימה.';
+  msg.textContent = 'נשמרו ' + Object.keys(parsed).length + ' רשומות · מזוהים ' + known + ' מבתי הספר ברשימה.';
   document.getElementById('sp-blob').value = '';
   render();
 }
 
 function clearPhones() {
-  if (!confirm('למחוק מהמכשיר הזה את כל ניידי המנהלים?')) return;
+  if (!confirm('למחוק מהמכשיר הזה את כל פרטי הקשר של המנהלים?')) return;
   try { localStorage.removeItem(PHONES_KEY); } catch (e) {}
-  document.getElementById('sp-load-msg').textContent = 'המספרים נמחקו מהמכשיר.';
+  document.getElementById('sp-load-msg').textContent = 'פרטי הקשר נמחקו מהמכשיר.';
   render();
 }
 
@@ -289,11 +303,14 @@ function toggleSent(sid) {
   render();
 }
 
-function addPhone(sid, val) {
-  const p = normPhone(val);
-  if (!p) return;
+// הזנה ידנית: מזהה לבד אם הוקלד מייל או נייד
+function addContact(sid, val) {
+  const v = (val || '').trim();
+  if (!v) return;
   const map = lsGet(PHONES_KEY);
-  map[sid] = p;
+  const cur = (typeof map[sid] === 'string') ? { p: map[sid] } : (map[sid] || {});
+  if (v.includes('@')) cur.e = v; else { const p = normPhone(v); if (!p) return; cur.p = p; }
+  map[sid] = cur;
   lsSet(PHONES_KEY, map);
   render();
 }
@@ -302,6 +319,7 @@ function renderSendPanel() {
   const pending = schools.filter(s => s.id && !s.verify);
   const sent = lsGet(SENT_KEY);
   const withPhone = pending.filter(s => phoneFor(s));
+  const withMail = pending.filter(s => mailFor(s));
   const doneN = pending.filter(s => sent[s.id]).length;
 
   document.getElementById('sp-progress').textContent =
@@ -309,29 +327,34 @@ function renderSendPanel() {
 
   const note = document.getElementById('sp-note');
   const loader = document.getElementById('sp-loader');
-  if (!withPhone.length) {
+  if (!withMail.length && !withPhone.length) {
     note.hidden = false;
-    note.innerHTML = '<b>הניידים לא נטענו במכשיר הזה.</b> המספרים לא נשמרים באתר — ' +
-      'מדביקים אותם פעם אחת וכל כפתורי הוואטסאפ נדלקים. ' +
-      '<button type="button" class="sp-btn" style="margin-top:6px;" id="sp-toggle">הדבקת רשימת הניידים</button>';
+    note.innerHTML = '<b>פרטי הקשר לא נטענו במכשיר הזה.</b> הם לא נשמרים באתר — ' +
+      'מדביקים אותם פעם אחת וכל כפתורי המייל נדלקים. ' +
+      '<button type="button" class="sp-btn" style="margin-top:6px;" id="sp-toggle">הדבקת פרטי הקשר</button>';
     loader.hidden = false;
   } else {
     note.hidden = false;
-    note.innerHTML = 'המספרים שמורים <b>במכשיר הזה בלבד</b> — ' + withPhone.length + ' מתוך ' +
-      pending.length + ' בתי הספר שטרם אישרו. ' +
+    note.innerHTML = 'פרטי הקשר שמורים <b>במכשיר הזה בלבד</b> — ' + withMail.length + ' עם מייל ו-' +
+      withPhone.length + ' עם נייד, מתוך ' + pending.length + ' בתי ספר שטרם אישרו.<br>' +
+      '<b>מייל הוא הערוץ המומלץ.</b> שליחת וואטסאפ לעשרות מספרים חדשים ברצף גורמת לחסימת החשבון — ' +
+      'קרה ב-9.9.26. ' +
       '<button type="button" class="sp-btn" style="margin-top:6px;" id="sp-toggle">עדכון הרשימה</button>';
     loader.hidden = true;
   }
 
   document.getElementById('sp-list').innerHTML = pending.map(s => {
-    const ph = phoneFor(s);
+    const ph = phoneFor(s), em = mailFor(s);
     const isSent = !!sent[s.id];
-    const right = ph
-      ? `<a class="sp-btn wa" target="_blank" rel="noopener" href="${waLink(ph, msgFor(s))}"
-            onclick="markSent('${s.id}')">וואטסאפ</a>`
-      : `<span class="sp-miss">אין מספר</span>
-         <input class="sp-phone-in" placeholder="נייד" inputmode="tel"
-                onchange="addPhone('${s.id}', this.value)">`;
+    const btns = [];
+    if (em) btns.push(`<a class="sp-btn mail" target="_blank" rel="noopener" href="${mailLink(s)}"
+            onclick="markSent('${s.id}')">מייל</a>`);
+    if (ph) btns.push(`<a class="sp-btn wa" target="_blank" rel="noopener" href="${waLink(ph, msgFor(s))}"
+            onclick="markSent('${s.id}')" title="שליחה בוואטסאפ — בזהירות, שליחה מרובה חוסמת חשבון">וואטסאפ</a>`);
+    if (!btns.length) btns.push(`<span class="sp-miss">אין פרטי קשר</span>
+         <input class="sp-phone-in" placeholder="מייל או נייד"
+                onchange="addContact('${s.id}', this.value)">`);
+    const right = btns.join(' ');
     return `<div class="sp-row ${isSent ? 'sent' : ''}">
       <span class="sp-name">${escapeHtml(s.name)}</span>
       ${right}
@@ -396,7 +419,8 @@ function render() {
       ${s.missing.length ? '<span class="warn-note">⚠ אין אף מורה ב: ' + s.missing.join(', ') + '</span><br>' : ''}
       <div class="sc-actions" style="margin-top:10px;">
         <button type="button" class="copy-mini" onclick="copyMsg(this, '${s.id}')">העתקת הודעה עם קישור הטופס</button>
-        ${phoneFor(s) ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${waLink(phoneFor(s), msgFor(s))}" onclick="markSent('${s.id}')">שליחה ישירה בוואטסאפ</a>` : ''}
+        ${mailFor(s) ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${mailLink(s)}" onclick="markSent('${s.id}')">שליחה במייל</a>` : ''}
+        ${phoneFor(s) ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${waLink(phoneFor(s), msgFor(s))}" onclick="markSent('${s.id}')">וואטסאפ</a>` : ''}
         ${s.id ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${BASE}/verify.html?school=${encodeURIComponent(s.id)}">צפייה בטופס</a>` : ''}
         ${s.id ? `<a class="copy-mini secondary" target="_blank" rel="noopener" href="${BASE}/admin-school/setup.html?school=${encodeURIComponent(s.id)}">פתיחת רשימת ההזנה</a>` : ''}
       </div>
