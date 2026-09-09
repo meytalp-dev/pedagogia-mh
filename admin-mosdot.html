@@ -106,6 +106,14 @@ tbody tr:last-child td{border-bottom:none}
 .sup-dot{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .sup-dot i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--blue));flex:none}
 .empty{padding:44px 20px;text-align:center;color:var(--muted)}
+.yes{display:inline-block;background:#e6f7f4;color:#0b7d6e;border-radius:8px;padding:3px 10px;
+  font-size:13.5px;font-weight:600;white-space:nowrap}
+.dash{color:#c3cbdb;font-size:18px}
+/* טבלת תמונת המצב רחבה — שמונה עמודות. מצמצמים כדי שתיכנס בלי גלילה אופקית */
+#status-body table{font-size:14px}
+#status-body th,#status-body td{padding:9px 9px}
+#status-body .yes{font-size:12.5px;padding:2px 8px}
+#status-body .pill.chg{font-size:11px;padding:2px 7px}
 
 /* ===== כרטיסי פריסה ===== */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
@@ -247,6 +255,14 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/></svg>
       פריסה לפי פיקוח <span class="n" id="n-pikuah">—</span>
     </button>
+    <button class="tab" role="tab" id="t-status" aria-selected="false" data-panel="p-status">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9 9.5V19"/></svg>
+      תמונת מצב <span class="n" id="n-status">—</span>
+    </button>
+    <button class="tab" role="tab" id="t-roles" aria-selected="false" data-panel="p-roles">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5a3 3 0 100-6 3 3 0 000 6z"/><path d="M15.5 19v-1.6a3.5 3.5 0 00-3.5-3.4H6a3.5 3.5 0 00-3.5 3.4V19"/><path d="M21.5 19v-1.6a3.5 3.5 0 00-2.6-3.3M15.5 5.9a3 3 0 010 5.7"/></svg>
+      בעלי תפקידים <span class="n" id="n-roles">—</span>
+    </button>
     <button class="tab" role="tab" id="t-contacts" aria-selected="false" data-panel="p-contacts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><circle cx="9" cy="11" r="2.2"/><path d="M5.5 16.5c.6-1.6 2-2.4 3.5-2.4s2.9.8 3.5 2.4"/><path d="M15 9.5h3M15 13h3"/></svg>
       אנשי קשר <span class="n" id="n-contacts">—</span>
@@ -294,6 +310,16 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       פיקוח מקצועי <span class="hint">לפי מגמות</span>
     </h3>
     <div class="grid" id="grid-prof"></div>
+  </section>
+
+  <!-- ============ טאב 3 — תמונת מצב ============ -->
+  <section class="panel" id="p-status" role="tabpanel" hidden>
+    <div id="status-body"><div class="loading">מושך את הדיווחים מכל המערכות…</div></div>
+  </section>
+
+  <!-- ============ טאב 4 — בעלי תפקידים ============ -->
+  <section class="panel" id="p-roles" role="tabpanel" hidden>
+    <div id="roles-body"><div class="loading">טוען…</div></div>
   </section>
 
   <!-- ============ טאב 3 — אנשי קשר ============ -->
@@ -421,6 +447,317 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     var copy  = '<button class="ico" data-copy="' + esc([c["שם"], c["טלפון"], c["מייל"]].filter(Boolean).join(" · ")) + '" title="העתקת הפרטים">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg></button>';
     return '<div class="acts">' + wa + tel + mail + copy + '</div>';
+  }
+
+  /* ===== המערכות המדווחות =====
+     חמישה מקורות Apps Script שכבר משרתים את דפי המעקב הקיימים. כל אחד
+     מחזיר את שם בית הספר כפי שהמנהל.ת הקלידו — ההתאמה לשם שבפריסה
+     נעשית ב-matchSchool() לפי טבלת השמות החלופיים שב-mosdot.json. */
+  var GAS = "https://script.google.com/macros/s/";
+  var SOURCES = [
+    { key: "matzevet",   label: "מצבת תלמידים",
+      url: GAS + "AKfycbyozBbEf78cLV61ODLyzhzLSyI2auAUMd8YVgp0qZLGs3O4MYAFhAQuVG7NIxjX0Mq7Lw/exec?mode=list" },
+    { key: "nispach",    label: "נספח בעלי תפקידים",
+      url: GAS + "AKfycbw_ix0Qi2SkQHB081xdNA15kIQXGsUxO15keTMafPAcWRSy8gyIMmFR6_PV2UZ4_rTiuQ/exec?mode=data" },
+    { key: "pticha",     label: "יום הפתיחה",
+      url: GAS + "AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec?mode=data" },
+    { key: "hishtalmut", label: "השתלמות בית ספרית",
+      url: GAS + "AKfycbybTYpXL_XPluv-r1wUZaWwDsZjAtXX4BeaO7quSQOvqWf0u8EUNJUbAxleScvchzcX/exec?mode=public" },
+    { key: "survey",     label: "סקר התקשוב והזנת מורים",
+      url: GAS + "AKfycbySOgh6OJG1uLR7BSF24u08aZTXiKFzn2p-6zXvy49yOElQYgaZ77TrGU1nv7GkLfda/exec" }
+  ];
+
+  /* העמודות בטבלת תמונת המצב */
+  var COLUMNS = [
+    { key: "matzevet",   label: "מצבת" },
+    { key: "nispach",    label: "נספח" },
+    { key: "pticha",     label: "יום פתיחה" },
+    { key: "hishtalmut", label: "השתלמות" },
+    { key: "survey",     label: "סקר תקשוב" },
+    { key: "teachers",   label: "הזנת מורים" }
+  ];
+
+  var LIVE = {};      /* key -> { ok, data, err } */
+  var STATUS = {};    /* שם בפריסה -> { matzevet: {...}, ... } */
+  var UNMATCHED = []; /* שמות שדווחו ולא שויכו — מוצג בטאב המקורות */
+  var ICT_ROSTER = null;
+
+  /* ===== התאמת שם מדווח לשם שבפריסה ===== */
+  var NORM_INDEX = null, ALIAS_INDEX = null;
+
+  function buildIndex() {
+    NORM_INDEX = {};
+    DATA.schools.forEach(function (x) { NORM_INDEX[norm(x.name)] = x.name; });
+    ALIAS_INDEX = {};
+    var a = DATA.aliases || {};
+    Object.keys(a.exact || {}).forEach(function (k) {
+      ALIAS_INDEX[norm(k)] = { name: a.exact[k], approx: false };
+    });
+    Object.keys(a.approx || {}).forEach(function (k) {
+      ALIAS_INDEX[norm(k)] = { name: a.approx[k], approx: true };
+    });
+  }
+
+  function matchSchool(reported) {
+    if (!reported) return null;
+    var n = norm(reported);
+    if (NORM_INDEX[n]) return { name: NORM_INDEX[n], approx: false };
+    if (ALIAS_INDEX[n]) {
+      var hit = ALIAS_INDEX[n];
+      /* גם היעד של הכינוי חייב להיות ברשימה — אחרת הכינוי התיישן */
+      var target = NORM_INDEX[norm(hit.name)];
+      return target ? { name: target, approx: hit.approx } : null;
+    }
+    /* הכלה: "עתיד כרמיאל (עבודה)" מול "עתיד כרמיאל" */
+    var keys = Object.keys(NORM_INDEX);
+    for (var i = 0; i < keys.length; i++) {
+      if (keys[i].length > 5 && (n.indexOf(keys[i]) >= 0 || keys[i].indexOf(n) >= 0)) {
+        return { name: NORM_INDEX[keys[i]], approx: true };
+      }
+    }
+    return null;
+  }
+
+  /* ===== בניית תמונת המצב מהנתונים החיים ===== */
+  function buildStatus() {
+    STATUS = {};
+    UNMATCHED = [];
+    DATA.schools.forEach(function (x) { STATUS[x.name] = {}; });
+
+    function put(schoolName, col, value, source) {
+      var hit = matchSchool(schoolName);
+      if (!hit) {
+        if (!UNMATCHED.some(function (u) { return u.name === schoolName && u.source === source; })) {
+          UNMATCHED.push({ name: schoolName, source: source });
+        }
+        return;
+      }
+      var cur = STATUS[hit.name][col];
+      STATUS[hit.name][col] = { value: value, approx: hit.approx, dup: !!cur };
+    }
+
+    var m = LIVE.matzevet;
+    if (m && m.ok) {
+      (m.data.rows || []).forEach(function (r) {
+        /* שורה = [שם המנהל.ת, שם בית הספר, מספר תלמידים] */
+        put(r[1], "matzevet", r[2] ? r[2] + " תלמידים" : "דווח", "מצבת תלמידים");
+      });
+    }
+
+    var n = LIVE.nispach;
+    if (n && n.ok) {
+      (n.data.rows || []).forEach(function (r) {
+        var roles = r.roles || [];
+        var staffed = roles.filter(function (x) { return x.status === "מאויש"; }).length;
+        put(r.school, "nispach", staffed + "/" + roles.length + " מאוישים", "נספח בעלי תפקידים");
+      });
+    }
+
+    var p = LIVE.pticha;
+    if (p && p.ok) {
+      (p.data.rows || []).forEach(function (r) {
+        var v = (r.arrived || r.registered) ? (r.arrived + "/" + r.registered) : "דווח";
+        put(r.school, "pticha", v, "יום הפתיחה");
+      });
+    }
+
+    var h = LIVE.hishtalmut;
+    if (h && h.ok) {
+      (h.data.rows || []).forEach(function (r) {
+        put(r["בית הספר"], "hishtalmut", r["שם ההשתלמות"] || "דווח", "השתלמות בית ספרית");
+      });
+    }
+
+    var sv = LIVE.survey;
+    if (sv && sv.ok) {
+      (sv.data.survey || []).forEach(function (r) { put(r.school, "survey", "מולא", "סקר התקשוב"); });
+      var bySchool = {};
+      (sv.data.teachers || []).forEach(function (t) {
+        bySchool[t.school] = (bySchool[t.school] || 0) + 1;
+      });
+      Object.keys(bySchool).forEach(function (k) {
+        put(k, "teachers", bySchool[k] + " מורים", "הזנת מורים");
+      });
+    }
+  }
+
+  /* ===== טאב תמונת מצב ===== */
+  function renderStatus() {
+    var box = $("status-body");
+    if (!DATA || !box) return;
+
+    var pending = SOURCES.filter(function (s) { return !LIVE[s.key]; });
+    var failed  = SOURCES.filter(function (s) { return LIVE[s.key] && !LIVE[s.key].ok; });
+
+    var q = norm(state.q);
+    var list = DATA.schools.filter(function (x) {
+      return !q || norm(x.name + " " + x.semel + " " + x.sups.join(" ")).indexOf(q) >= 0;
+    });
+
+    var head = '<th>בית הספר</th><th>מפקח.ת</th>' +
+      COLUMNS.map(function (c) { return '<th>' + esc(c.label) + '</th>'; }).join("") +
+      '<th>הושלם</th>';
+
+    var rows = list.map(function (x) {
+      var st = STATUS[x.name] || {};
+      var done = 0;
+      var cells = COLUMNS.map(function (c) {
+        var v = st[c.key];
+        if (!v) return '<td><span class="dash">—</span></td>';
+        done++;
+        return '<td><span class="yes">' + esc(v.value) +
+               (v.approx ? ' <span class="pill chg">שם מותאם</span>' : "") + '</span></td>';
+      }).join("");
+      return '<tr data-semel="' + esc(x.semel) + '" data-name="' + esc(x.name) + '">' +
+        '<td><span class="sname">' + esc(x.name) + '</span></td>' +
+        '<td style="font-size:14px">' + esc(x.sups.join(" · ")) + '</td>' + cells +
+        '<td><b>' + done + '/' + COLUMNS.length + '</b></td></tr>';
+    }).join("");
+
+    /* מי טרם — לכל מערכת בנפרד, עם כפתור העתקה */
+    var missing = COLUMNS.map(function (c) {
+      var who = DATA.schools.filter(function (x) { return !(STATUS[x.name] || {})[c.key]; });
+      if (!who.length) return "";
+      return '<div class="card" style="margin-bottom:12px">' +
+        '<h3>' + esc(c.label) + ' — טרם דיווחו <span class="pill warn">' + who.length + '</span></h3>' +
+        '<div class="sub">' + (DATA.schools.length - who.length) + ' מתוך ' + DATA.schools.length + ' דיווחו</div>' +
+        '<button class="btn" data-copy="' + esc(who.map(function (x) { return x.name; }).join("\n")) + '">העתקת הרשימה</button>' +
+        '<div class="chips" style="margin-top:12px">' +
+          who.map(function (x) {
+            return '<button class="chip" data-open="' + esc(x.semel || x.name) + '">' + esc(x.name) + '</button>';
+          }).join("") +
+        '</div></div>';
+    }).join("");
+
+    box.innerHTML =
+      (pending.length ? '<div class="notice">טוען עדיין: ' +
+        pending.map(function (s) { return esc(s.label); }).join(" · ") + '</div>' : "") +
+      (failed.length ? '<div class="notice"><b>מערכות שלא נענו:</b> ' +
+        failed.map(function (s) { return esc(s.label) + " (" + esc(LIVE[s.key].err) + ")"; }).join(" · ") +
+        '<br>שאר העמודות תקפות. אפשר לנסות שוב בכפתור הרענון שלמעלה.</div>' : "") +
+      '<div class="filters"><span class="count"><b>' + list.length + '</b> מוסדות</span></div>' +
+      '<div class="tablewrap"><table><thead><tr>' + head + '</tr></thead><tbody>' +
+      (rows || '<tr><td colspan="9"><div class="empty">אין תוצאה</div></td></tr>') +
+      '</tbody></table></div>' +
+      '<h3 class="sect-h" style="margin-top:32px">מי טרם דיווח</h3>' +
+      (missing || '<div class="empty">כל המוסדות דיווחו בכל המערכות</div>');
+  }
+
+  /* ===== טאב בעלי תפקידים ===== */
+  function renderRoles() {
+    var box = $("roles-body");
+    if (!DATA || !box) return;
+    var n = LIVE.nispach;
+
+    if (!n) { box.innerHTML = '<div class="loading">טוען את נתוני הנספח…</div>'; return; }
+    if (!n.ok) {
+      box.innerHTML = '<div class="notice"><b>נתוני הנספח לא נטענו.</b> ' + esc(n.err) + '</div>';
+      return;
+    }
+
+    var roleMap = {}, reported = {};
+    (n.data.rows || []).forEach(function (r) {
+      var hit = matchSchool(r.school);
+      var name = hit ? hit.name : r.school;
+      reported[name] = true;
+      (r.roles || []).forEach(function (x) {
+        if (!roleMap[x.role]) roleMap[x.role] = { staffed: [], vacant: [] };
+        (x.status === "מאויש" ? roleMap[x.role].staffed : roleMap[x.role].vacant).push(name);
+      });
+    });
+
+    var reportedCount = Object.keys(reported).length;
+    var noReport = DATA.schools.filter(function (x) { return !reported[x.name]; });
+
+    var q = norm(state.q);
+    var roles = Object.keys(roleMap)
+      .filter(function (r) { return !q || norm(r).indexOf(q) >= 0; })
+      .sort(function (a, b) { return roleMap[b].staffed.length - roleMap[a].staffed.length; });
+
+    var cards = roles.map(function (r) {
+      var v = roleMap[r];
+      return '<div class="card">' +
+        '<h3>' + esc(r) + '</h3>' +
+        '<div class="sub"><span class="pill ok">' + v.staffed.length + ' מאויש</span> ' +
+          (v.vacant.length ? '<span class="pill warn">' + v.vacant.length + ' טרם אויש</span>' : "") + '</div>' +
+        (v.vacant.length
+          ? '<div class="chips">' + v.vacant.map(function (s) {
+              return '<button class="chip" data-open="' + esc(s) + '">' + esc(s) + '</button>';
+            }).join("") + '</div>' +
+            '<button class="btn" style="margin-top:10px" data-copy="' + esc(v.vacant.join("\n")) + '">העתקת מי שטרם אייש</button>'
+          : '<div class="sub" style="color:#0b7d6e">מאויש בכל המוסדות שדיווחו</div>') +
+      '</div>';
+    }).join("");
+
+    /* רכזי התקשוב — המקום היחיד שבו יש גם שם וגם נייד */
+    var ict;
+    if (ICT_ROSTER === null) {
+      ict = '<div class="loading">טוען את רכזי התקשוב…</div>';
+    } else if (!ICT_ROSTER.length) {
+      ict = '<div class="notice">רשימת רכזי התקשוב לא נטענה.</div>';
+    } else {
+      var ictList = ICT_ROSTER.filter(function (c) {
+        return !q || norm(c.school + " " + c.coord).indexOf(q) >= 0;
+      });
+      ict = '<div class="tablewrap"><table><thead><tr>' +
+        '<th>בית הספר</th><th>רכז.ת התקשוב</th><th>נייד</th><th></th></tr></thead><tbody>' +
+        ictList.map(function (c) {
+          var contact = { "שם": c.coord, "טלפון": c.e164, "e164": c.e164, "מייל": "" };
+          return '<tr><td>' + esc(c.school) + '</td>' +
+            '<td><span class="sname">' + esc(c.coord) + '</span></td>' +
+            '<td class="semel" dir="ltr">' + esc(c.e164) + '</td>' +
+            '<td>' + actionsHtml(contact) + '</td></tr>';
+        }).join("") + '</tbody></table></div>';
+    }
+
+    box.innerHTML =
+      '<div class="notice"><b>' + reportedCount + ' מתוך ' + DATA.schools.length +
+        ' מוסדות מילאו את נספח בעלי התפקידים.</b> ' +
+        'הנספח מדווח <b>איוש בלבד</b> — אין בו שם ואין טלפון. ' +
+        (noReport.length ? noReport.length + ' מוסדות טרם דיווחו כלל.' : "") + '</div>' +
+      '<h3 class="sect-h">איוש לפי תפקיד <span class="hint">מתוך המוסדות שדיווחו</span></h3>' +
+      '<div class="grid">' + (cards || '<div class="empty">אין תוצאה</div>') + '</div>' +
+      '<h3 class="sect-h" style="margin-top:32px">רכזי ורכזות התקשוב ' +
+        '<span class="hint">שם ונייד — מסקר הקהילה</span></h3>' + ict;
+  }
+
+  /* ===== משיכת המקורות החיים =====
+     כל מקור נמשך בנפרד ומצייר מחדש ברגע שהוא חוזר, כדי שמערכת אחת
+     שנתקעת לא תעכב את השאר. */
+  function loadLive() {
+    SOURCES.forEach(function (src) {
+      fetch(src.url, { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          LIVE[src.key] = { ok: true, data: j };
+          buildStatus();
+          renderStatus();
+          renderRoles();
+          countsBadge();
+        })
+        .catch(function (e) {
+          LIVE[src.key] = { ok: false, err: (e && e.message) || "לא נענה" };
+          renderStatus();
+          renderRoles();
+        });
+    });
+
+    if (window.PMH_AUTH && window.PMH_AUTH.load) {
+      window.PMH_AUTH.load("tikshuv-roster").then(function (r) {
+        ICT_ROSTER = (r && r.ok && Array.isArray(r.data)) ? r.data : [];
+        renderRoles();
+      });
+    } else { ICT_ROSTER = []; }
+  }
+
+  function countsBadge() {
+    var full = DATA.schools.filter(function (x) {
+      var st = STATUS[x.name] || {};
+      return COLUMNS.every(function (c) { return st[c.key]; });
+    }).length;
+    $("n-status").textContent = full + "/" + DATA.schools.length;
+    var n = LIVE.nispach;
+    $("n-roles").textContent = (n && n.ok) ? (n.data.rows || []).length : "—";
   }
 
   /* ===== סינון בתי ספר ===== */
@@ -619,6 +956,16 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       '</div>' +
 
       '<div class="dsec">' +
+        '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M9 9.5V19"/></svg>דיווחים למערכות</h4>' +
+        '<dl class="kv">' + COLUMNS.map(function (c) {
+          var v = (STATUS[x.name] || {})[c.key];
+          return '<dt>' + esc(c.label) + '</dt><dd>' +
+            (v ? '<span class="yes">' + esc(v.value) + '</span>'
+               : '<span class="pill warn">טרם</span>') + '</dd>';
+        }).join("") + '</dl>' +
+      '</div>' +
+
+      '<div class="dsec">' +
         '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>מגמות ופיקוח מקצועי</h4>' +
         megs +
       '</div>';
@@ -652,6 +999,14 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         '(<code>admin-contacts</code>). ' + contactLine +
         '<br>עריכה נעשית בגיליון בלבד — אין טלפון או מייל בקוד של העמוד הזה.</p></div>' +
 
+      (UNMATCHED.length
+        ? '<div class="src"><h4>שמות שדווחו ולא שויכו לאף מוסד</h4><p>' +
+          UNMATCHED.map(function (u) { return esc(u.name) + ' <span class="pill warn">' + esc(u.source) + '</span>'; }).join("<br>") +
+          '<br>אלה שמות שהמנהל.ת הקלידו ואינם מופיעים בטבלת השמות החלופיים. ' +
+          'המיפוי מתוחזק ב-<code>matzevet-list.html</code> ונשלף משם בבנייה — ' +
+          'להוסיף שם חדש שם, ואז <code>node tools/build-mosdot.mjs</code>.</p></div>'
+        : '<div class="src"><h4>שיוך השמות</h4><p>כל שם שדווח שויך למוסד בפריסה.</p></div>') +
+
       (m.unmatched && m.unmatched.length
         ? '<div class="src"><h4>מוסדות שמופיעים בפיקוח המקצועי ואינם בפריסה</h4><p>' +
           m.unmatched.map(function (u) { return esc((u.semel || "—") + " · " + u.school); }).join("<br>") +
@@ -669,6 +1024,8 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     if (!DATA) return;
     renderSchools();
     renderPikuah();
+    renderStatus();
+    renderRoles();
     renderContacts();
     renderSources();
     $("n-schools").textContent = DATA.schools.length;
@@ -679,7 +1036,17 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   /* ===== ייצוא ===== */
   function exportCsv() {
     var rows, name;
-    if (state.tab === "p-contacts") {
+    if (state.tab === "p-status") {
+      rows = [["בית הספר", "מפקח.ת"].concat(COLUMNS.map(function (c) { return c.label; })).concat(["הושלם"])]
+        .concat(DATA.schools.map(function (x) {
+          var st = STATUS[x.name] || {};
+          var done = COLUMNS.filter(function (c) { return st[c.key]; }).length;
+          return [x.name, x.sups.join(" · ")]
+            .concat(COLUMNS.map(function (c) { return st[c.key] ? st[c.key].value : ""; }))
+            .concat([done + "/" + COLUMNS.length]);
+        }));
+      name = "תמונת-מצב";
+    } else if (state.tab === "p-contacts") {
       var list = currentContacts();
       rows = [["שם", "תפקיד", "שיוך", "סמל מוסד", "טלפון", "מייל"]].concat(
         list.map(function (c) {
@@ -783,9 +1150,12 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       .then(function (r) { return r.json(); })
       .then(function (json) {
         DATA = json;
+        buildIndex();
+        buildStatus();
         fillFilters();
         renderAll();
         loadContacts();
+        loadLive();
       })
       .catch(function () {
         document.querySelector("#tbl-schools tbody").innerHTML =
@@ -821,7 +1191,10 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   $("q").addEventListener("input", function (e) {
     state.q = e.target.value;
     clearTimeout(qT);
-    qT = setTimeout(function () { if (DATA) { renderSchools(); renderPikuah(); renderContacts(); } }, 140);
+    qT = setTimeout(function () {
+      if (!DATA) return;
+      renderSchools(); renderPikuah(); renderStatus(); renderRoles(); renderContacts();
+    }, 140);
   });
 
   ["f-district", "f-sector", "f-network", "f-sup", "f-changed"].forEach(function (id) {

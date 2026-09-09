@@ -134,11 +134,35 @@ function readGuides() {
   return { guides: guideList, inspectors: inspectorList };
 }
 
+/* ---------- 4. שמות חלופיים של בתי ספר ---------- */
+
+/* כל מערכת דיווח מקבלת את שם בית הספר כפי שהמנהל.ת הקלידו אותו, וזה כמעט
+   אף פעם לא השם שבפריסה. המיפוי כבר קיים ומתוחזק ב-matzevet-list.html —
+   שולפים אותו משם במקום להחזיק עותק שני שיתיישן. */
+function readAliases() {
+  const html = read('matzevet-list.html');
+  /* חיתוך לפי מיקום ולא ב-regex — האובייקטים שם הם JSON חד-שורתי,
+     ובריחות בתוך regex בנוי ממחרוזת רק מזמינות תקלות שקטות. */
+  const grab = (name) => {
+    const at = html.indexOf('var ' + name + ' = {');
+    if (at < 0) return {};
+    const start = html.indexOf('{', at);
+    const end = html.indexOf('};', start);
+    if (end < 0) return {};
+    return JSON.parse(html.slice(start, end + 1));
+  };
+  const alias = grab('ALIAS');
+  /* ASSUMED = התאמות שנעשו בהשערה ולא אומתו — נשמרות בנפרד ומסומנות בעמוד */
+  const assumed = grab('ASSUMED');
+  return { alias, assumed };
+}
+
 /* ---------- הרכבה ---------- */
 
 const schools = readPrisat();
 const megamot = readMiktzoi();
 const { guides, inspectors } = readGuides();
+const { alias, assumed } = readAliases();
 
 /* שיוך המגמות למוסדות: קודם לפי סמל, ואם אין סמל — לפי שם.
    שלושה מוסדות בפריסה ללא סמל (סור באהר, כפר עקב, אור דניאל). */
@@ -209,6 +233,8 @@ const out = {
   },
   schools,
   supervisors,
+  /* שם שדווח → שם בפריסה. approx = הותאם בהשערה, לאימות */
+  aliases: { exact: alias, approx: assumed },
   professional,
   guides,
   inspectors
@@ -219,7 +245,8 @@ writeFileSync(join(ROOT, 'data/mosdot.json'), JSON.stringify(out, null, 2) + '\n
 const withMeg = schools.filter((s) => s.megamot.length).length;
 console.log(`data/mosdot.json נכתב — ${schools.length} מוסדות, ${withMeg} מהם עם מגמות, ` +
             `${supervisors.length} מפקחים פדגוגיים, ${professional.length} מפקחים מקצועיים, ` +
-            `${guides.length} מדריכות.`);
+            `${guides.length} מדריכות, ` +
+            `${Object.keys(alias).length + Object.keys(assumed).length} שמות חלופיים.`);
 if (unmatched.length) {
   console.log('מוסדות מהפיקוח המקצועי שלא נמצאו בפריסה:');
   for (const u of unmatched) console.log(`  ${u.semel || '—'}  ${u.school}`);
