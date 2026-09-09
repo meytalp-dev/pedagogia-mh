@@ -13,6 +13,8 @@
  *   pd          — id, teacherId, subject, year, status, fileUrl, addedAt
  *   questions   — id, teacherId, question, answer, status (open/answered), createdAt, answeredAt
  *   knowledge   — id, title, category, audience, link, description, addedAt
+ *   guide_files / guide_messages / guide_hours — מרחב המדריכה (9.9.26),
+ *                 נפתח מתוך "מבט מקצועי". ראו את המקטע בסוף הקובץ.
  *
  * Deploy: Web App → Anyone → Execute as Me
  */
@@ -21,7 +23,8 @@
 // SETUP
 // ============================================================
 
-const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts'];
+const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts',
+              'guide_files','guide_messages','guide_hours'];
 
 const SCHEMA = {
   networks:   ['id','name','color','contactEmail','inviteCode'],
@@ -44,7 +47,12 @@ const SCHEMA = {
   audit_log:  ['id','timestamp','userEmail','action','targetType','targetId','status','notes'],
   // פרטי קשר אישיים של מדריכות ומפקחים — יושבים כאן ולא בקוד, כי הרפו ציבורי.
   // נקראים אך ורק דרך contacts.list, שדורש טוקן של אדמין ארצי (STRICT_AUTH_ACTIONS).
-  contacts:   ['id','kind','slug','name','phone','email','updatedAt','updatedBy']
+  contacts:   ['id','kind','slug','name','phone','email','updatedAt','updatedBy'],
+  // מרחב המדריכה (9.9.26) — נפתח מתוך "מבט מקצועי", כרטיס לכל מדריכה.
+  // guideSlug הוא המפתח מתוך assets/guides.js ולא מזהה פנימי חדש.
+  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt'],
+  guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
+  guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -796,6 +804,18 @@ function handleRequest(params) {
       case 'contacts.list':       result = listContacts(); break;
       case 'contacts.upsert':     result = upsertContacts(params, user); break;
       case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'), user)); break;
+
+      // מרחב המדריכה — קבצים, הודעות ושעות פרטניות (9.9.26).
+      // בלי withCache_: הודעה שנשלחת חייבת להופיע מיד, לא אחרי TTL.
+      case 'guide.workspace':     result = guideWorkspace(params); break;
+      case 'guide.file.add':      result = guideFileAdd(params); break;
+      case 'guide.file.delete':   result = guideFileDelete(params); break;
+      case 'guide.message.add':   result = guideMessageAdd(params); break;
+      case 'guide.message.delete':result = guideMessageDelete(params); break;
+      case 'guide.hours.add':     result = guideHoursAdd(params); break;
+      case 'guide.hours.update':  result = guideHoursUpdate(params); break;
+      case 'guide.hours.delete':  result = guideHoursDelete(params); break;
+
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
       case 'ministry.dashboard':  result = withCache_('ministry.dashboard', scope, params, () => ministryDashboard(params)); break;
       case 'network.dashboard':   result = withCache_('network.dashboard',  scope, params, () => networkDashboard(applyScopeParams_(params, scope, 'network'))); break;
@@ -2553,4 +2573,244 @@ function ministryDashboard(params) {
       schoolBreakdown: Object.values(schoolStats).sort((a, b) => a.rate - b.rate)  // הכי נמוכים למעלה
     }
   };
+}
+
+// ============================================================
+// מרחב המדריכה — קבצים, הודעות ושעות פרטניות (9.9.26)
+// ------------------------------------------------------------
+// נפתח מתוך "מבט מקצועי" (mabat/?i=<slug>), כרטיס לכל מדריכה.
+// שלושה מאגרים נפרדים, כולם ממופתחים ב-guideSlug מתוך assets/guides.js:
+//   guide_files    — קבצים שהועלו (הקובץ עצמו יושב בדרייב, כאן רק המצביע)
+//   guide_messages — לוח הודעות בין המפקח.ת למדריכה
+//   guide_hours    — שעות פרטניות שהמדריכה עושה מול מורה בודד/ת
+// הטאבים נוצרים לבד בכתיבה הראשונה (ensureTab_), כדי שלא יידרש
+// setupSchema ידני אחרי הפריסה.
+// ============================================================
+
+const GUIDE_FILES_ROOT_NAME = 'מצפן ההדרכות — קבצי מדריכות';
+// 8MB. מגבלת ה-POST של Apps Script גבוהה יותר, אבל base64 מנפח ב-33%
+// ובקשה כבדה נתקעת בתקרת 30 השניות ברשת סלולרית. עדיף שגיאה ברורה.
+const MAX_GUIDE_FILE_BYTES = 8 * 1024 * 1024;
+
+function ensureTab_(name) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let s = ss.getSheetByName(name);
+  if (!s) {
+    s = ss.insertSheet(name);
+    s.appendRow(SCHEMA[name]);
+    s.getRange(1, 1, 1, SCHEMA[name].length).setFontWeight('bold').setBackground('#f5f7fa');
+    s.setFrozenRows(1);
+  }
+  return s;
+}
+
+function deleteRowById_(name, id) {
+  const s = sheet(name);
+  if (!s) return false;
+  const range = s.getDataRange().getValues();
+  if (range.length < 2) return false;
+  const idCol = range[0].indexOf('id');
+  if (idCol < 0) return false;
+  for (let i = range.length - 1; i >= 1; i--) {
+    if (String(range[i][idCol]) === String(id)) { s.deleteRow(i + 1); return true; }
+  }
+  return false;
+}
+
+// תיקיית הדרייב של המדריכה. נוצרת פעם אחת ונשמרת ב-ScriptProperties,
+// כדי שלא ייווצרו תיקיות כפולות בכל העלאה.
+function guideDriveFolder_(guideSlug, guideName) {
+  const props = PropertiesService.getScriptProperties();
+  let root = null;
+  const rootId = props.getProperty('guideFilesRootId');
+  if (rootId) { try { root = DriveApp.getFolderById(rootId); } catch (e) { root = null; } }
+  if (!root) {
+    const it = DriveApp.getFoldersByName(GUIDE_FILES_ROOT_NAME);
+    root = it.hasNext() ? it.next() : DriveApp.createFolder(GUIDE_FILES_ROOT_NAME);
+    props.setProperty('guideFilesRootId', root.getId());
+  }
+  const subName = String(guideName || guideSlug || 'כללי').trim() || guideSlug;
+  const subIt = root.getFoldersByName(subName);
+  return subIt.hasNext() ? subIt.next() : root.createFolder(subName);
+}
+
+function safeFileName_(name) {
+  const clean = String(name || '').replace(/[\\\/\x00-\x1f]/g, '_').trim();
+  return clean.slice(0, 120) || 'קובץ';
+}
+
+function guideSlugList_(p) {
+  return String(p.guides || p.guide || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+}
+
+// Google Sheets מחזיר תאריכים כאובייקט Date. JSON.stringify היה הופך אותו
+// ל-UTC ומזיז יום אחורה בשעון ישראל — לכן ממירים כאן לזמן מקומי.
+function toIso_(v) {
+  if (!v) return '';
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, 'Asia/Jerusalem', "yyyy-MM-dd'T'HH:mm:ss");
+  }
+  return String(v);
+}
+
+// ---------- קריאה אחת לכל המדריכות של המפקח.ת ----------
+// mabat טוען את כל המדריכות בבת אחת. קריאה נפרדת לכל מדריכה חורגת
+// מתקרת 30 השניות של Apps Script בדיוק כמו ב-teachers.list.
+function guideWorkspace(p) {
+  const slugs = guideSlugList_(p);
+  if (!slugs.length) return { ok: false, error: 'missing_guides' };
+  const inSlugs = r => slugs.indexOf(String(r.guideSlug || '')) >= 0;
+
+  const files = readAll('guide_files').filter(inSlugs);
+  const messages = readAll('guide_messages').filter(inSlugs);
+  const hours = readAll('guide_hours').filter(inSlugs);
+
+  const bucket = () => slugs.reduce((acc, s) => { acc[s] = []; return acc; }, {});
+  const out = { files: bucket(), messages: bucket(), hours: bucket() };
+
+  files.forEach(f => out.files[f.guideSlug].push({
+    id: f.id, fileName: f.fileName, fileUrl: f.fileUrl, mimeType: f.mimeType,
+    size: Number(f.size) || 0, note: f.note || '',
+    uploadedBy: f.uploadedBy || '', createdAt: toIso_(f.createdAt)
+  }));
+  messages.forEach(m => out.messages[m.guideSlug].push({
+    id: m.id, authorName: m.authorName || '', authorRole: m.authorRole || '',
+    text: m.text || '', createdAt: toIso_(m.createdAt)
+  }));
+  hours.forEach(h => out.hours[h.guideSlug].push({
+    id: h.id, firstName: h.firstName || '', lastName: h.lastName || '',
+    subject: h.subject || '', schoolName: h.schoolName || '',
+    topic: h.topic || '', date: toIso_(h.date), hours: Number(h.hours) || 0,
+    notes: h.notes || '', createdBy: h.createdBy || '', createdAt: toIso_(h.createdAt)
+  }));
+
+  // חדש למעלה בקבצים ובשעות; הודעות בסדר כרונולוגי, כמו שיחה
+  slugs.forEach(s => {
+    out.files[s].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+    out.hours[s].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    out.messages[s].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+  });
+
+  return { ok: true, data: out };
+}
+
+// ---------- קבצים ----------
+function guideFileAdd(p) {
+  const slug = String(p.guide || '').trim();
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  if (!p.data) return { ok: false, error: 'missing_file' };
+
+  // הקליינט עשוי לשלוח data:URL מלא — חותכים את הקידומת
+  const b64 = String(p.data).replace(/^data:[^;]*;base64,/, '');
+  let bytes;
+  try { bytes = Utilities.base64Decode(b64); }
+  catch (e) { return { ok: false, error: 'bad_encoding' }; }
+  if (bytes.length > MAX_GUIDE_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+
+  const fileName = safeFileName_(p.fileName);
+  const blob = Utilities.newBlob(bytes, p.mimeType || 'application/octet-stream', fileName);
+  const file = guideDriveFolder_(slug, p.guideName).createFile(blob);
+  // בלי זה הקובץ פתוח רק לבעלת הסקריפט, והמדריכה מקבלת "אין לך גישה".
+  // הקישור עצמו אינו ניתן לניחוש, אבל מי שמקבל אותו רואה את הקובץ.
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  ensureTab_('guide_files');
+  const obj = {
+    id: newId('gf'),
+    guideSlug: slug,
+    guideName: p.guideName || '',
+    fileName: fileName,
+    fileUrl: file.getUrl(),
+    fileId: file.getId(),
+    mimeType: file.getMimeType(),
+    size: bytes.length,
+    note: p.note || '',
+    uploadedBy: p.byName || '',
+    createdAt: new Date().toISOString()
+  };
+  appendRow('guide_files', obj);
+  return { ok: true, data: obj };
+}
+
+function guideFileDelete(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const row = readAll('guide_files').find(f => String(f.id) === String(p.id));
+  if (!row) return { ok: false, error: 'not_found' };
+  // הקובץ לפח ולא מחיקה קשה — טעות של קליק אחד חייבת להיות הפיכה
+  if (row.fileId) { try { DriveApp.getFileById(row.fileId).setTrashed(true); } catch (e) {} }
+  deleteRowById_('guide_files', p.id);
+  return { ok: true, data: { id: p.id } };
+}
+
+// ---------- הודעות ----------
+function guideMessageAdd(p) {
+  const slug = String(p.guide || '').trim();
+  const text = String(p.text || '').trim();
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  if (!text) return { ok: false, error: 'missing_text' };
+  ensureTab_('guide_messages');
+  const obj = {
+    id: newId('gm'),
+    guideSlug: slug,
+    guideName: p.guideName || '',
+    authorName: p.byName || '',
+    authorRole: p.byRole || '',
+    text: text.slice(0, 4000),
+    createdAt: new Date().toISOString()
+  };
+  appendRow('guide_messages', obj);
+  return { ok: true, data: obj };
+}
+
+function guideMessageDelete(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const ok = deleteRowById_('guide_messages', p.id);
+  return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
+}
+
+// ---------- שעות פרטניות ----------
+function guideHoursAdd(p) {
+  const slug = String(p.guide || '').trim();
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const first = String(p.firstName || '').trim();
+  const last = String(p.lastName || '').trim();
+  if (!first && !last) return { ok: false, error: 'missing_teacher_name' };
+  ensureTab_('guide_hours');
+  const obj = {
+    id: newId('gh'),
+    guideSlug: slug,
+    guideName: p.guideName || '',
+    firstName: first,
+    lastName: last,
+    subject: p.subject || '',
+    schoolName: p.schoolName || '',
+    topic: p.topic || '',
+    // גרש מוביל — אחרת Sheets הופך "2026-09-09" לתא תאריך והקריאה חוזרת כ-Date
+    date: p.date ? "'" + String(p.date).trim() : '',
+    hours: Number(p.hours) || 0,
+    notes: p.notes || '',
+    createdBy: p.byName || '',
+    createdAt: new Date().toISOString()
+  };
+  appendRow('guide_hours', obj);
+  return { ok: true, data: obj };
+}
+
+function guideHoursUpdate(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const updates = {};
+  ['firstName','lastName','subject','schoolName','topic','notes'].forEach(k => {
+    if (p[k] !== undefined) updates[k] = p[k];
+  });
+  if (p.date !== undefined) updates.date = p.date ? "'" + String(p.date).trim() : '';
+  if (p.hours !== undefined) updates.hours = Number(p.hours) || 0;
+  const ok = updateRowById('guide_hours', p.id, updates);
+  return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
+}
+
+function guideHoursDelete(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const ok = deleteRowById_('guide_hours', p.id);
+  return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
 }

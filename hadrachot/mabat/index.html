@@ -20,6 +20,81 @@
   .guide-mini .gm-sub { font-size:12px; color:var(--text-muted); }
   .guide-mini .gm-count { font-size:12px; color:var(--text-2); }
 
+  /* שלושת הכפתורים בראש כרטיס המדריכה: קבצים · הודעות · שעות פרטניות */
+  .gm-actions { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .gm-btn {
+    flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:5px;
+    padding:7px 9px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer;
+    border:1px solid var(--border); border-radius:9px; background:var(--surface); color:var(--text-2);
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .gm-btn:hover { background:#E6F0F4; border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); }
+  .gm-btn svg { width:14px; height:14px; }
+  .gm-btn .n {
+    min-width:17px; padding:0 4px; border-radius:999px; font-size:11px; line-height:17px;
+    background:var(--primary,#256A8A); color:#fff;
+  }
+  .gm-btn .n.zero { background:var(--surface-2,#E8EDEF); color:var(--text-3,#8b9aa3); }
+
+  /* חלון המדריכה */
+  #guide-modal .modal { max-width: 720px; }
+  .ws-tabs { display:flex; gap:6px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+  .ws-tab {
+    padding:9px 14px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+    background:none; border:none; border-bottom:2px solid transparent; color:var(--text-muted);
+  }
+  .ws-tab.active { color:var(--primary,#256A8A); border-bottom-color:var(--primary,#256A8A); }
+  .ws-pane { display:none; }
+  .ws-pane.active { display:block; }
+  .ws-hint { font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.7; }
+
+  /* קבצים */
+  .drop-zone {
+    border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center;
+    cursor:pointer; background:var(--surface-soft); transition:border-color .15s, background .15s;
+  }
+  .drop-zone:hover, .drop-zone.over { border-color:var(--primary,#256A8A); background:#EDF4F7; }
+  .drop-zone svg { width:26px; height:26px; color:var(--primary,#256A8A); margin-bottom:6px; }
+  .drop-zone .dz-main { font-weight:700; font-size:14px; }
+  .drop-zone .dz-sub { font-size:12px; color:var(--text-muted); margin-top:3px; }
+  .file-row {
+    display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);
+  }
+  .file-row .fr-icon { width:32px; height:32px; flex:none; border-radius:8px; background:#E6F0F4;
+    display:flex; align-items:center; justify-content:center; color:var(--primary,#256A8A); }
+  .file-row .fr-icon svg { width:16px; height:16px; }
+  .file-row .fr-body { flex:1; min-width:0; }
+  .file-row .fr-name { font-weight:600; font-size:13px; word-break:break-word; }
+  .file-row .fr-meta { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .row-del {
+    background:none; border:none; cursor:pointer; color:var(--text-3,#8b9aa3); font-size:12px;
+    padding:4px 6px; border-radius:6px;
+  }
+  .row-del:hover { background:var(--err-soft,#fee2e2); color:#991b1b; }
+
+  /* הודעות */
+  .msg-list { max-height:300px; overflow-y:auto; padding-left:4px; margin-bottom:12px; }
+  .msg {
+    background:var(--surface-soft); border:1px solid var(--border); border-radius:12px;
+    padding:10px 13px; margin-bottom:9px;
+  }
+  .msg.mine { background:#E9F2F6; border-color:#CBE0E9; }
+  .msg-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
+  .msg-author { font-size:12px; font-weight:700; color:var(--primary,#256A8A); }
+  .msg-time { font-size:11px; color:var(--text-muted); }
+  .msg-text { font-size:13.5px; line-height:1.75; white-space:pre-wrap; word-break:break-word; }
+
+  /* שעות פרטניות */
+  .hours-form { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; margin-bottom:12px; }
+  .hours-form .full { grid-column:1/-1; }
+  .hours-form label { display:block; font-size:11.5px; font-weight:600; color:var(--text-muted); margin-bottom:4px; }
+  .hours-form .input, .hours-form .select { padding:8px 10px; font-size:13.5px; }
+  .hours-total {
+    display:inline-block; background:#E6F0F4; color:var(--primary,#256A8A);
+    padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; margin-bottom:10px;
+  }
+  .ws-status { font-size:12.5px; color:var(--text-muted); margin-top:8px; min-height:18px; }
+
   .search-bar { margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
   .search-bar input { flex: 1; min-width: 220px; }
 
@@ -159,12 +234,97 @@
 
   </main>
 
+  <!-- מרחב המדריכה: קבצים · הודעות · שעות פרטניות -->
+  <div class="modal-overlay" id="guide-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h3 id="gw-title" style="margin:0;">—</h3>
+          <div id="gw-sub" style="font-size:12.5px; color:var(--text-muted); margin-top:3px;">—</div>
+        </div>
+        <button class="modal-close" type="button" id="gw-close" aria-label="סגירה">×</button>
+      </div>
+
+      <div class="ws-tabs" role="tablist">
+        <button type="button" class="ws-tab active" data-tab="files">קבצים</button>
+        <button type="button" class="ws-tab" data-tab="messages">הודעות</button>
+        <button type="button" class="ws-tab" data-tab="hours">שעות פרטניות</button>
+      </div>
+
+      <!-- קבצים -->
+      <div class="ws-pane active" id="pane-files">
+        <div class="ws-hint">הקבצים נשמרים בתיקיית הדרייב של המדריכה. כל מי שמקבל את הקישור יכול לפתוח — לא להעלות כאן קבצים עם נתונים אישיים של תלמידים.</div>
+        <div class="drop-zone" id="drop-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+          <div class="dz-main">גררו קבצים לכאן או לחצו לבחירה</div>
+          <div class="dz-sub">עד 8MB לקובץ</div>
+          <input type="file" id="file-input" multiple hidden>
+        </div>
+        <div class="ws-status" id="files-status"></div>
+        <div id="files-list" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- הודעות -->
+      <div class="ws-pane" id="pane-messages">
+        <div class="ws-hint">לוח הודעות בין המפקח.ת למדריכה. ההודעות נשמרות במערכת ואינן נשלחות במייל או בוואטסאפ.</div>
+        <div class="msg-list" id="msg-list"></div>
+        <textarea class="textarea" id="msg-text" placeholder="כתבו הודעה למדריכה..." style="min-height:84px;"></textarea>
+        <div class="btn-row" style="margin-top:8px;">
+          <button type="button" class="btn btn-primary" id="msg-send">שליחה</button>
+        </div>
+        <div class="ws-status" id="msg-status"></div>
+      </div>
+
+      <!-- שעות פרטניות -->
+      <div class="ws-pane" id="pane-hours">
+        <div class="ws-hint">שעות פרטניות שהמדריכה מקיימת מול מורה בודד/ת — מילוי שם המורה, המקצוע, בית הספר ונושא ההדרכה.</div>
+        <form id="hours-form" class="hours-form">
+          <div>
+            <label for="h-first">שם פרטי *</label>
+            <input class="input" id="h-first" required>
+          </div>
+          <div>
+            <label for="h-last">שם משפחה *</label>
+            <input class="input" id="h-last" required>
+          </div>
+          <div>
+            <label for="h-subject">מקצוע</label>
+            <select class="select" id="h-subject"></select>
+          </div>
+          <div>
+            <label for="h-school">בית ספר</label>
+            <input class="input" id="h-school" list="schools-datalist" autocomplete="off">
+            <datalist id="schools-datalist"></datalist>
+          </div>
+          <div class="full">
+            <label for="h-topic">נושא ההדרכה</label>
+            <input class="input" id="h-topic" placeholder="למשל: בניית מבחן מותאם, ניתוח שאלון בגרות...">
+          </div>
+          <div>
+            <label for="h-date">תאריך</label>
+            <input class="input" id="h-date" type="date">
+          </div>
+          <div>
+            <label for="h-hours">מספר שעות</label>
+            <input class="input" id="h-hours" type="number" min="0" step="0.5" value="1">
+          </div>
+          <div class="full btn-row">
+            <button type="submit" class="btn btn-primary">הוספה</button>
+          </div>
+        </form>
+        <div class="ws-status" id="hours-status"></div>
+        <div id="hours-total" class="hours-total" hidden></div>
+        <div id="hours-list"></div>
+      </div>
+    </div>
+  </div>
+
   <footer style="text-align:center; padding:32px 16px; color:var(--text-3); font-size:13px;">
     מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
   </footer>
 
 <script src="../assets/app.js?v=20260909d"></script>
 <script src="../assets/guides.js?v=20260908"></script>
-<script src="mabat.js?v=20260908"></script>
+<script src="mabat.js?v=20260909e"></script>
 </body>
 </html>
