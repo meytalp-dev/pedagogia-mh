@@ -34,6 +34,7 @@ const SKIP = new Set([
   "tikshuv-map.html",    // מפת הצרכים — עמוד לא-מקושר לקהילת רכזי התקשוב
   "tikshuv-shealon.html",// השאלון של הקהילה — כלי, לא תוכן לחיפוש
   "tikshuv-shibutz.html", // אישור שיבוץ המסלולים — דף למפקחים בקישור אישי
+  "tikshuv-ishur.html",   // אישור אישי לרכז/ת — נפתח רק עם מפתח בקישור
   "matzpen.html",        // המצפן — כלי עבודה עצמאי, לא תוכן לחיפוש
   "matzpen-demo.html",   // הדגמה עם נתונים מומצאים — אסור שתופיע בחיפוש
   "mishov-menahalim.html",
