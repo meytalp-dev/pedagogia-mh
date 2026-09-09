@@ -55,6 +55,15 @@ p.lead{margin:0 0 10px;color:var(--muted);font-size:.88rem}
 .tg.tools{background:var(--blue-bg);color:var(--blue);border-color:#C6DEEE}
 .tg.lead{background:var(--orange-bg);color:var(--orange);border-color:#EBD5BC}
 .tg.wait{background:#F1F4F6;color:var(--muted)}
+.mb{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:#fff;color:var(--blue);border:1px solid var(--blue);border-radius:11px;
+  padding:0 15px;font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;min-height:50px}
+.mb:hover{background:var(--blue-bg)}
+.mb:disabled{color:var(--muted);border-color:var(--line);background:#F6F7F8;cursor:not-allowed}
+.mb.done{background:var(--green-bg);border-color:#8FBF9E;color:var(--green)}
+.noml{font-size:.76rem;color:var(--orange);background:var(--orange-bg);border:1px solid #EBD5BC;
+  border-radius:8px;padding:5px 9px;margin-top:8px}
+.bulk{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:11px}
 .gbtn{font:inherit;font-size:.73rem;border:1px solid var(--line);background:#fff;color:var(--muted);
   border-radius:999px;padding:1px 9px;margin-top:6px;margin-inline-start:5px;cursor:pointer}
 .gbtn:hover{background:#F2F6F9;border-color:#C6DEEE;color:var(--navy)}
@@ -115,6 +124,13 @@ footer .c{font-size:.78rem;color:var(--muted)}
 
 <div class="card" id="notice"></div>
 
+<div class="bulk">
+  <button class="btn primary" id="sendAll">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+    שליחה במייל לכל מי שטרם קיבל</button>
+  <span class="small muted" id="mailState"></span>
+</div>
+
 <div class="tabs" id="tabs"></div>
 <input class="search" id="q" type="search" placeholder="חיפוש לפי שם או בית ספר" aria-label="חיפוש">
 <div id="list"><div class="state">נכנסים לחשבון כדי לטעון את הרשימה…</div></div>
@@ -154,6 +170,11 @@ var ISHUR   = 'https://pedagogiamh.co.il/tikshuv-ishur.html';
 var TOKENS  = {"עתיד מגשימים כרמיאל": "wk9thqqy", "עמל טכנולוגי רהט": "ym4y6wjy", "עתיד צור ים": "gbhs4qem", "תיכון יוצר עמל טכנולוגי": "ng37t865", "עמל נצרת": "gcqhfmnz", "תיכון יוצר עתיד באר-שבע": "6e8ptq9d", "אלמנארה": "wvpdrhrw", "תיכון בקהילה מהאראת שפרעם 54106": "ab4gxj7a", "תיכון יוצר עתיד פלמחים": "vg9x8sfb", "אור העתיד": "twx64szv", "בת עמי": "mrsza9nq", "אורט תל נוף": "xzmeh87d", "המכון החסידי טכנולוגי": "y4sq9e3g", "חושן": "yk9d57e5", "תיכון יוצר עתיד בנות גוליס": "swxhe694", "עתיד אור מנחם": "r67dfqnd", "עתיד תפן": "96nyr58z", "דרור גליל": "fukppmah", "אורט כרמל חיפה": "3trc7tw9", "אורט תעשייה אווירית": "5cuspu6h", "תיכון עתיד יוצר קמג": "nnmv3a33", "תיכון הדר": "tnnvpy54", "עמל טכנולוגי טייבה": "htrs6apc", "תיכון אלאמאני סחנין 54100": "yv493nw4", "טכנולוגי לבנים /בית חנינה": "wz385dmy", "עתיד יוצר אבדאע ביר אל מכסור": "ctat8y89", "חטוואת ירכא אבו סנאן": "gtua2qdk", "תיכון חברתי חיפה": "wsk6u5a3", "עמל רמת דוד": "z3ezqpgk", "אוהלי תמימים עתיד כפר חבד": "45c5wtb8", "מרכז תורני טכנולוגי נחלים": "99nrysvu", "אורט בית הערבה": "n9hbj4qj", "ימינו כקדם כפר זיתים": "vvqnx5nh", "טכנולוגי אכסאל": "6y93u8e5", "אורט צור ברק": "mav82erb", "אורמת": "udx4surb", "התיכון החברתי תא-יפו": "2aybk4c6", "אלאופוק א.א.פחם": "5v5evvax", "עתיד גליל מערבי ירכא": "q3z8re63", "תיכון מעיינות": "sp9fxpf9", "דרור נווה מדבר": "8cw33zk5", "עמל אנרגיטק": "7gz26zn4", "טורען": "qzu3nxr2", "אום אל פחם בנות": "7b8vurkm", "בית אל": "vnd9qhhn", "לקייה": "yr6qz29f", "כסרא סמיע": "uzcqqyjv", "תיכון שיח": "qwfygqsg", "תיכון עתיד יוצר עוצמה זוקו קריית ביאליק": "kqp97xqx", "שגב שלום": "jpf559yu", "דן גורמה תל-אביב": "jzbddtk3", "עתיד מסעדה": "cauat4hb", "טל חרמון": "7dty8fm5", "רימונים טבריה": "xev7qvz5"};
 var GENDER  = {"עתיד מגשימים כרמיאל": {"c": "f", "p": "m", "sure": false}, "עמל טכנולוגי רהט": {"c": "m", "p": "m", "sure": true}, "עתיד צור ים": {"c": "m", "p": "m", "sure": false}, "תיכון יוצר עמל טכנולוגי": {"c": "m", "p": "f", "sure": true}, "עמל נצרת": {"c": "m", "p": "m", "sure": true}, "תיכון יוצר עתיד באר-שבע": {"c": "f", "p": "m", "sure": true}, "אלמנארה": {"c": "m", "p": "m", "sure": true}, "תיכון בקהילה מהאראת שפרעם 54106": {"c": "m", "p": "f", "sure": true}, "תיכון יוצר עתיד פלמחים": {"c": "f", "p": "f", "sure": true}, "אור העתיד": {"c": "m", "p": "m", "sure": true}, "בת עמי": {"c": "f", "p": "f", "sure": true}, "אורט תל נוף": {"c": "m", "p": "m", "sure": false}, "המכון החסידי טכנולוגי": {"c": "m", "p": "m", "sure": true}, "חושן": {"c": "m", "p": "f", "sure": false}, "תיכון יוצר עתיד בנות גוליס": {"c": "f", "p": "f", "sure": true}, "עתיד אור מנחם": {"c": "m", "p": "m", "sure": false}, "עתיד תפן": {"c": "m", "p": "m", "sure": true}, "דרור גליל": {"c": "f", "p": "f", "sure": true}, "אורט כרמל חיפה": {"c": "m", "p": "m", "sure": true}, "אורט תעשייה אווירית": {"c": "f", "p": "m", "sure": true}, "תיכון עתיד יוצר קמג": {"c": "m", "p": "m", "sure": false}, "תיכון הדר": {"c": "f", "p": "f", "sure": true}, "עמל טכנולוגי טייבה": {"c": "m", "p": "m", "sure": true}, "תיכון אלאמאני סחנין 54100": {"c": "m", "p": "m", "sure": true}, "טכנולוגי לבנים /בית חנינה": {"c": "m", "p": "m", "sure": true}, "עתיד יוצר אבדאע ביר אל מכסור": {"c": "f", "p": "m", "sure": true}, "חטוואת ירכא אבו סנאן": {"c": "f", "p": "f", "sure": true}, "תיכון חברתי חיפה": {"c": "m", "p": "f", "sure": true}, "עמל רמת דוד": {"c": "m", "p": "m", "sure": false}, "אוהלי תמימים עתיד כפר חבד": {"c": "m", "p": "m", "sure": true}, "מרכז תורני טכנולוגי נחלים": {"c": "m", "p": "m", "sure": true}, "אורט בית הערבה": {"c": "m", "p": "f", "sure": true}, "ימינו כקדם כפר זיתים": {"c": "m", "p": "m", "sure": true}, "טכנולוגי אכסאל": {"c": "f", "p": "m", "sure": true}, "אורט צור ברק": {"c": "f", "p": "f", "sure": true}, "אורמת": {"c": "f", "p": "m", "sure": true}, "התיכון החברתי תא-יפו": {"c": "m", "p": "m", "sure": false}, "אלאופוק א.א.פחם": {"c": "m", "p": "m", "sure": true}, "עתיד גליל מערבי ירכא": {"c": "m", "p": "m", "sure": true}, "תיכון מעיינות": {"c": "f", "p": "f", "sure": true}, "דרור נווה מדבר": {"c": "f", "p": "m", "sure": false}, "עמל אנרגיטק": {"c": "f", "p": "m", "sure": true}, "טורען": {"c": "m", "p": "m", "sure": true}, "אום אל פחם בנות": {"c": "m", "p": "f", "sure": true}, "בית אל": {"c": "f", "p": "f", "sure": false}, "לקייה": {"c": "m", "p": "m", "sure": true}, "כסרא סמיע": {"c": "m", "p": "m", "sure": true}, "תיכון שיח": {"c": "f", "p": "m", "sure": false}, "תיכון עתיד יוצר עוצמה זוקו קריית ביאליק": {"c": "m", "p": "m", "sure": true}, "שגב שלום": {"c": "m", "p": "m", "sure": true}, "דן גורמה תל-אביב": {"c": "f", "p": "f", "sure": true}, "עתיד מסעדה": {"c": "m", "p": "m", "sure": true}, "טל חרמון": {"c": "m", "p": "m", "sure": false}, "רימונים טבריה": {"c": "f", "p": "f", "sure": true}};
 var GKEY = 'tikshuv-wa-gender-v1';
+var ISHUR_API = 'https://script.google.com/macros/s/AKfycbxBvqi9wQKKKDOB4VrjrRkDg2j0v6ghKTl-1bPOq92F35iwdXPVFtlq5lxIU4H7bv6elg/exec';
+var ADMIN_KEY = 'mh-ishur-2027';
+var MAILS  = {"עתיד מגשימים כרמיאל": "olkap68@gmail.com", "עמל טכנולוגי רהט": "yousefab6@gmail.com", "עתיד צור ים": "mongaby.bar@gmail.com", "תיכון יוצר עמל טכנולוגי": "adirm8701@icloud.com", "עמל נצרת": "fayad@nz.amalnet.k12.il", "תיכון יוצר עתיד באר-שבע": "shanibuda@gmail.com", "אלמנארה": "kh_judy@hotmail.com", "תיכון בקהילה מהאראת שפרעם 54106": "abdalhadia960@gmail.com", "תיכון יוצר עתיד פלמחים": "tahel2007@gmail.com", "אור העתיד": "adirel.b@Atid.org.il", "בת עמי": "mchoen55m@gmail.com", "אורט תל נוף": "ariels@tel-nof.ort.org.il", "המכון החסידי טכנולוגי": "ortchabad@gmail.com", "חושן": "michael.yahav@gmail.com", "תיכון יוצר עתיד בנות גוליס": "wfaasa@atid.org.il", "עתיד אור מנחם": "maorshelly91@gmail.com", "עתיד תפן": "", "דרור גליל": "maya.mishol@dror-galil.org.il", "אורט כרמל חיפה": "heshamkaltom@gmail.com", "אורט תעשייה אווירית": "anna@iai.ort.org.il", "תיכון עתיד יוצר קמג": "talc248@gmail.com", "תיכון הדר": "eli79960@gmail.com", "עמל טכנולוגי טייבה": "hagy@amalnet.k12.il", "תיכון אלאמאני סחנין 54100": "ihyosif@gmail.com", "טכנולוגי לבנים /בית חנינה": "", "עתיד יוצר אבדאע ביר אל מכסור": "", "חטוואת ירכא אבו סנאן": "ashwak1sad@gmail.com", "תיכון חברתי חיפה": "natinoal@gmail.com", "עמל רמת דוד": "motie@rd.amalnet.k12.il", "אוהלי תמימים עתיד כפר חבד": "kfirmeidav@gmail.com", "מרכז תורני טכנולוגי נחלים": "nehorai@nechalogy.co.il", "אורט בית הערבה": "shayb@bethaarava.ort.org.il", "ימינו כקדם כפר זיתים": "hananyas@ykfarzeitim.org.il", "טכנולוגי אכסאל": "randosh.abo.alo@gmail.com", "אורט צור ברק": "avital2626@gmail.com", "אורמת": "da12gu06@gmail.com", "התיכון החברתי תא-יפו": "shai1234000@gmail.com", "אלאופוק א.א.פחם": "Afekhdarom@gmail.com", "עתיד גליל מערבי ירכא": "r_waleeeed@hotmail.com", "תיכון מעיינות": "kilrivka@gmail.com", "דרור נווה מדבר": "ofir-e@drornet.org.il", "עמל אנרגיטק": "mk6875@et.amalnet.k12.il", "טורען": "leen30102008@gmail.com", "אום אל פחם בנות": "mohaammed.h.zoabi@gmail.com", "בית אל": "s.keren@beschool.co.il", "לקייה": "alex2dall@gmail.com", "כסרא סמיע": "nawafmehshov@gmail.com", "תיכון שיח": "ap8713@sh.amalnet.k12.il", "תיכון עתיד יוצר עוצמה זוקו קריית ביאליק": "karadijackob@gmail.com", "שגב שלום": "", "דן גורמה תל-אביב": "sapir.atary@gmail.com", "עתיד מסעדה": "waleedfarhat99@gmail.com", "טל חרמון": "computrs@snir-hermon.co.il", "רימונים טבריה": "tamyfl@rimonimcollege.co.il"};   // בית ספר → כתובת (ריק = לא לשלוח)
+var MFLAGS = {"עתיד תפן": "המייל הוא של המנהל תומר פרידמן, לא של תמיר חבקה", "אורט תעשייה אווירית": "הרכזת ציינה בסקר: \"המייל שצוין יוחלף תוך 3-4 חודשים\"", "עתיד יוצר אבדאע ביר אל מכסור": "המייל שבקובץ הוא של עלאא מדאדחה, שאינה הרכזת. עולא גדיר — צריך מייל", "אורט בית הערבה": "אורט בית הערבה — בית הספר של מיטל", "שגב שלום": "המייל נראה של המנהל מאהר אלפראונה, לא של מאגד דנפירי"};  // בית ספר → למה אי אפשר לשלוח
+var mailed = {};          // בית ספר → מתי נשלח, מהשרת
 var SENT_KEY = 'tikshuv-wa-shibutz-sent-v1';
 var TMPL_KEY = 'tikshuv-wa-shibutz-tmpl-v1';
 
@@ -256,6 +277,8 @@ function people(){
              token: TOKENS[norm(r.school)] || '',
              g:  gFor(r.school), gp: (GENDER[norm(r.school)] || {}).p || 'm',
              gsure: (GENDER[norm(r.school)] || {}).sure !== false,
+             mail: MAILS[norm(r.school)] || '', mflag: MFLAGS[norm(r.school)] || '',
+             mailedAt: mailed[String(r.school).trim()] || '',
              sentAt: sent[r.e164] || '' };
   });
 }
@@ -309,6 +332,13 @@ function render(){
           'שליחה בוואטסאפ</a>' +
         '<button class="ghost" data-prev="1" aria-label="תצוגה מקדימה">תצוגה</button>' +
       '</div>' +
+      (p.mail
+        ? '<div class="acts"><button class="mb' + (p.mailedAt ? ' done' : '') + '" data-mail="1">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>' +
+            (p.mailedAt ? 'נשלח במייל · ' + esc(p.mailedAt) + ' · לשלוח שוב' : 'שליחה במייל') +
+          '</button></div>' +
+          '<div class="sc" style="margin-top:6px">' + esc(p.mail) + '</div>'
+        : '<div class="noml">אין מייל לשליחה' + (p.mflag ? ' — ' + esc(p.mflag) : '') + '</div>') +
       '<div class="prev" hidden></div></div>';
   }).join('');
 }
@@ -324,6 +354,12 @@ document.addEventListener('click', function(e){
   if (!host) return;
   var tel = host.getAttribute('data-tel');
 
+  if (e.target.closest('[data-mail]')) {
+    var pm = people().filter(function(x){ return x.e164 === tel; })[0];
+    if (pm) sendOne(pm.school);
+    return;
+  }
+
   if (e.target.closest('[data-send]')) {
     var m = sentMap(); m[tel] = new Date().toISOString(); store(SENT_KEY, m);
     setTimeout(render, 600);   // אחרי שוואטסאפ נפתח, לא לפני
@@ -338,6 +374,43 @@ document.addEventListener('click', function(e){
   }
 });
 
+function api(payload){
+  return fetch(ISHUR_API, { method:'POST', mode:'no-cors',
+    headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload) });
+}
+function refreshMailed(){
+  return fetch(ISHUR_API + '?key=' + encodeURIComponent(ADMIN_KEY) + '&_=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(d){ mailed = (d && d.mailed) || {}; render(); })
+    .catch(function(){});
+}
+function sendOne(school){
+  var p = people().filter(function(x){ return x.school === school; })[0];
+  if (!p || !p.mail) return;
+  if (p.mailedAt && !confirm('כבר נשלח ל' + p.coord + ' ב-' + p.mailedAt + '. לשלוח שוב?')) return;
+  toast('שולח ל' + p.coord + '…');
+  api({ action:'mail', key: ADMIN_KEY, t: p.token })
+    .then(function(){ setTimeout(refreshMailed, 2200); },
+          function(){ setTimeout(refreshMailed, 2200); });
+}
+function sendAll(){
+  var all = people().filter(function(p){ return p.mail && !p.mailedAt; });
+  if (!all.length) { toast('אין למי לשלוח — כולם כבר קיבלו'); return; }
+  if (!confirm('לשלוח עכשיו מייל ל-' + all.length + ' רכזים שטרם קיבלו?\n' +
+               'המייל יוצא מהחשבון שלך, ואי אפשר לבטל.')) return;
+  toast('שולח ל-' + all.length + ' רכזים…');
+  var i = 0;
+  (function next(){
+    if (i >= all.length) { setTimeout(refreshMailed, 2500); toast('השליחה הסתיימה'); return; }
+    var p = all[i++];
+    api({ action:'mail', key: ADMIN_KEY, t: p.token }).then(function(){
+      setTimeout(next, 900);
+    }, function(){ setTimeout(next, 900); });
+  })();
+}
+
+$('sendAll').addEventListener('click', sendAll);
 $('q').addEventListener('input', render);
 $('tmpl').value = read(TMPL_KEY, null) || DEFAULT_TMPL;
 $('tmpl').addEventListener('input', function(){ store(TMPL_KEY, this.value); render(); });
@@ -391,8 +464,20 @@ async function loadRoster(){
   }
 }
 
+function mailStats(){
+  var all = people();
+  var can = all.filter(function(p){ return p.mail; }).length;
+  var did = all.filter(function(p){ return p.mailedAt; }).length;
+  $('mailState').textContent = ROSTER
+    ? (did + ' מתוך ' + can + ' נשלחו · ' + (all.length - can) + ' בלי כתובת מייל')
+    : '';
+}
+var _render = render;
+render = function(){ _render(); mailStats(); };
+
 render();
 loadRoster();
+refreshMailed();
 </script>
 </body>
 </html>
