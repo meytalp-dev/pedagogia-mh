@@ -54,6 +54,13 @@ const TS = (() => {
     const hit = UNITS.find(u => u.id === (v || '').toString().trim());
     return hit ? hit.name : '';
   }
+  // ⚠ Google Sheets ממיר "4-5" ל**תאריך** (2026-05-03) ו-"3" למספר. גרשן מוביל
+  // מכריח את התא להישאר טקסט, והקריאה חוזרת נקייה ("4-5"). כל כתיבה של units
+  // לשרת חייבת לעבור כאן. נמצא בבדיקת דפדפן 9.9.26 — לא בקריאת קוד.
+  function unitsForWrite(v) {
+    const s = (v || '').toString().trim();
+    return s ? "'" + s : '';
+  }
 
   // Client-side cache (5 דקות) — מאיץ פתיחת דשבורדים אחרי הקריאה הראשונה
   const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -321,7 +328,7 @@ const TS = (() => {
 
   return {
     NETWORKS, SECTORS, SUBJECTS, TYPES, UNITS,
-    unitsSet, unitsLabel,
+    unitsSet, unitsLabel, unitsForWrite,
     authGet, authSet, authClear,
     api, apiPost,
     netById, secById, netChip, secChip, typeChip,

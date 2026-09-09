@@ -29,6 +29,33 @@
   .subj-group ul { margin: 0; padding-right: 18px; color: var(--text-2); font-size: 14px; line-height: 1.9; }
   .track-tag { font-size: 11px; font-weight: 700; padding: 0 7px; border-radius: 999px; margin-inline-start: 6px; }
   .track-tag.gemer { background: #F8DDD0; color: #9a3f1d; }
+
+  /* ---- שורת מורה + בורר יחידות לימוד (מתמטיקה, מסלול בגרות) ---- */
+  .t-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .t-row .t-name { flex: 1 1 auto; min-width: 0; }
+  .units-sel {
+    font: inherit; font-size: 13px; padding: 3px 8px; border-radius: 8px;
+    border: 1px solid var(--border); background: #fff; color: var(--text-1, #1b2a33);
+    min-width: 104px; cursor: pointer;
+  }
+  .units-sel:focus { outline: none; border-color: var(--primary, #256A8A); }
+  .units-sel.unset { border-style: dashed; border-color: #D9A441; background: #FFF9EC; color: #8a5a00; font-weight: 600; }
+  .units-sel:disabled { opacity: .55; cursor: progress; }
+  .units-na { font-size: 12px; color: var(--text-3, #7b8b98); }
+  .units-tick { font-size: 12px; font-weight: 700; color: #1a7f4b; }
+  .units-tick.err { color: #a12626; }
+  .math-note {
+    background: #FFF9EC; border: 1px solid #F0DCAE; border-radius: 10px;
+    padding: 10px 12px; margin: 2px 0 10px; font-size: 13px; line-height: 1.65; color: #6b4b06;
+  }
+  .math-note b { color: #4a3404; }
+  .add-cta {
+    display: block; text-align: center; margin-top: 16px; padding: 14px;
+    border: 1px solid var(--primary, #256A8A); border-radius: 12px;
+    background: #F0F6F9; color: var(--primary, #256A8A);
+    font-weight: 700; font-size: 14.5px; text-decoration: none;
+  }
+  .add-cta small { display: block; font-weight: 400; font-size: 12.5px; color: var(--text-2); margin-top: 3px; }
   .form-label { display: block; font-weight: 600; font-size: 14px; margin: 14px 0 6px; }
   .input, .textarea { width: 100%; box-sizing: border-box; }
   .choice {
@@ -66,7 +93,8 @@
     </svg>
     <h1 id="school-title">אימות רשימת המורים</h1>
     <p>יחידת הפיקוח על הדרכות מורים · משרד העבודה<br>
-       נא לוודא שכל מורה מופיע/ה במקצוע הנכון ובמסלול הנכון (בגרות/גמר).</p>
+       נא לוודא שכל מורה מופיע/ה במקצוע הנכון ובמסלול הנכון (בגרות/גמר),
+       להוסיף מורים שנשכחו, ולסמן במתמטיקה את היחידות שכל מורה מלמד/ת.</p>
   </div>
 
   <div class="roster-card" id="roster"><div class="empty" style="padding:24px; text-align:center;">טוען את הרשימה…</div></div>
@@ -108,13 +136,19 @@
 
 </div>
 
-<script src="assets/app.js?v=20260901b"></script>
+<script src="assets/app.js?v=20260909c"></script>
 <script>
 const schoolId = TS.urlParam('school', '');
 let school = null, teacherCount = 0;
 const SUBJECT_ORDER = ['מתמטיקה','אנגלית','עברית','ספרות','היסטוריה','אזרחות','תנ"ך','ערבית'];
 // ערכים משובשים היסטוריים מוצגים בשם הנכון
 const SUBJECT_DISPLAY = { 'תנ': 'תנ"ך' };
+
+// יחידות הלימוד נשאלות במתמטיקה בלבד (החלטת מיטל 9.9.26) ובמסלול בגרות בלבד
+const MATH = 'מתמטיקה';
+let mathBagrut = [], byId = {};
+const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ESC_MAP[c]);
 
 async function init() {
   if (!schoolId) {
@@ -131,6 +165,8 @@ async function init() {
   school = (sRes.ok && sRes.data) ? sRes.data : { id: schoolId, name: '' };
   const teachers = (tRes.ok && tRes.data) ? tRes.data : [];
   teacherCount = teachers.length;
+  byId = {};
+  teachers.forEach(t => { byId[t.id] = t; });
 
   document.getElementById('school-title').textContent = 'אימות רשימת המורים — ' + (school.name || '');
 
@@ -145,17 +181,87 @@ async function init() {
     });
     const order = [...SUBJECT_ORDER.filter(s => bySubj[s]),
                    ...Object.keys(bySubj).filter(s => !SUBJECT_ORDER.includes(s)).sort()];
+    mathBagrut = (bySubj[MATH] || []).filter(t => t.type !== 'gemer');
+
     document.getElementById('roster').innerHTML =
       '<div style="font-weight:700; margin-bottom:12px;">' + teachers.length + ' מורים · ' + order.length + ' מקצועות</div>' +
       order.map(s => `
         <div class="subj-group">
-          <div class="sg-head">${s} <span class="n">${bySubj[s].length} מורים</span></div>
-          <ul>${bySubj[s].map(t =>
-            '<li>' + t.name + (t.type === 'gemer' ? '<span class="track-tag gemer">גמר</span>' : '') + '</li>'
-          ).join('')}</ul>
-        </div>`).join('');
+          <div class="sg-head">${esc(s)} <span class="n">${bySubj[s].length} מורים</span></div>
+          ${s === MATH && mathBagrut.length ? '<div class="math-note" id="math-note"></div>' : ''}
+          <ul>${bySubj[s].map(t => rowHtml(t, s)).join('')}</ul>
+        </div>`).join('') +
+      `<a class="add-cta" id="add-cta" target="_blank" rel="noopener">
+         + חסר מורה ברשימה? להוספה במסך העריכה
+         <small>נפתח בלשונית חדשה — מוסיפים שם, וחוזרים לכאן לאשר</small>
+       </a>`;
+
+    document.getElementById('add-cta').href = 'admin-school/setup.html?school=' + encodeURIComponent(schoolId);
+    wireUnits();
+    refreshMathNote();
   }
   document.getElementById('form-card').hidden = false;
+}
+
+// ---- שורת מורה ----
+function rowHtml(t, subjDisplay) {
+  const tag = t.type === 'gemer' ? '<span class="track-tag gemer">גמר</span>' : '';
+  const cell = subjDisplay === MATH ? unitsCell(t) : '';
+  return `<li class="t-row"><span class="t-name">${esc(t.name)}${tag}</span>${cell}</li>`;
+}
+
+// ---- בורר יחידות לימוד — מתמטיקה במסלול בגרות בלבד ----
+function unitsCell(t) {
+  if (t.type === 'gemer') return '<span class="units-na">בגמר אין יח"ל</span>';
+  const cur = (t.units || '').trim();
+  const opts = [`<option value=""${cur ? ' disabled' : ' selected'}>טרם סומן</option>`]
+    .concat((TS.UNITS || []).map(u =>
+      `<option value="${esc(u.id)}"${cur === u.id ? ' selected' : ''}>${esc(u.name)}</option>`));
+  return `<select class="units-sel${cur ? '' : ' unset'}" data-id="${esc(t.id)}"
+            aria-label="יחידות לימוד של ${esc(t.name)}">${opts.join('')}</select>` +
+         `<span class="units-tick" data-tick="${esc(t.id)}"></span>`;
+}
+
+function refreshMathNote() {
+  const box = document.getElementById('math-note');
+  if (!box) return;
+  const marked = mathBagrut.filter(t => (t.units || '').trim()).length;
+  const left = mathBagrut.length - marked;
+  box.innerHTML = left
+    ? `<b>נא לסמן כמה יחידות מלמד/ת כל מורה במתמטיקה.</b> סומנו ${marked} מתוך ${mathBagrut.length}
+       — נשארו ${left}. הסימון נשמר מיד, ואפשר לאשר את הרשימה גם בלי להשלים אותו.`
+    : `<b>✓ כל ${mathBagrut.length} מורי המתמטיקה סומנו.</b> תודה — זה בדיוק מה שהיה חסר לנו.`;
+}
+
+function wireUnits() {
+  document.querySelectorAll('.units-sel').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      const id = sel.dataset.id;
+      const t = byId[id];
+      const prev = (t && t.units) || '';
+      const val = sel.value;
+      if (!val || val === prev) return;
+      const tick = document.querySelector(`[data-tick="${id}"]`);
+      sel.disabled = true;
+      if (tick) { tick.className = 'units-tick'; tick.textContent = 'שומר…'; }
+
+      const res = await TS.apiPost('teachers.update', { id, units: TS.unitsForWrite(val) });
+      sel.disabled = false;
+
+      if (res && res.ok) {
+        if (t) t.units = val;
+        sel.classList.remove('unset');
+        const ph = sel.querySelector('option[value=""]');
+        if (ph) ph.disabled = true;              // אין דרך לנקות יח"ל בשרת — לא מציעים חזרה ל"טרם סומן"
+        if (tick) { tick.textContent = 'נשמר ✓'; setTimeout(() => { tick.textContent = ''; }, 2200); }
+        refreshMathNote();
+      } else {
+        sel.value = prev;                        // החזרה למצב הקודם כדי שלא ייראה כאילו נשמר
+        if (!prev) sel.classList.add('unset');
+        if (tick) { tick.className = 'units-tick err'; tick.textContent = 'לא נשמר — לנסות שוב'; }
+      }
+    });
+  });
 }
 
 document.querySelectorAll('.choice').forEach(c =>
@@ -179,6 +285,8 @@ document.getElementById('verify-form').addEventListener('submit', async e => {
     by: document.getElementById('by').value.trim(),
     notes: document.getElementById('notes').value.trim(),
     teachers: teacherCount,
+    mathBagrut: mathBagrut.length,
+    mathUnitsMarked: mathBagrut.filter(t => (t.units || '').trim()).length,
     at: new Date().toISOString()
   };
   const res = await TS.apiPost('questions.create', {

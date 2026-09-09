@@ -759,7 +759,7 @@ async function processQueue() {
         teachers: batch.map(t => ({
           name: t.name, subject: t.subject, type: t.type,
           phone: t.phone, email: t.email, seniority: t.seniority,
-          units: t.type === 'gemer' ? '' : (t.units || '')
+          units: t.type === 'gemer' ? '' : TS.unitsForWrite(t.units)
         }))
       });
 
@@ -840,7 +840,7 @@ async function processQueue() {
         phone: toCreate.phone,
         email: toCreate.email,
         seniority: toCreate.seniority,
-        units: toCreate.type === 'gemer' ? '' : (toCreate.units || '')
+        units: toCreate.type === 'gemer' ? '' : TS.unitsForWrite(toCreate.units)
       });
       if (res.ok && res.data) {
         toCreate.serverId = res.data.id;
@@ -870,7 +870,7 @@ async function processQueue() {
         phone: toUpdate.phone,
         email: toUpdate.email,
         seniority: toUpdate.seniority,
-        units: toUpdate.type === 'gemer' ? '' : (toUpdate.units || '')
+        units: toUpdate.type === 'gemer' ? '' : TS.unitsForWrite(toUpdate.units)
       });
       if (!res.ok) { toUpdate.needsUpdate = true; toUpdate.error = true; renderAll(); }
       else if (toUpdate.error) { toUpdate.error = false; renderAll(); }
