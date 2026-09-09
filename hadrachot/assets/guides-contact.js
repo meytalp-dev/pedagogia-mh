@@ -35,13 +35,15 @@ window.TS_CONTACTS = {
 
   /* המיילים מגיעים מגיליון ההרשאות של מרחב הפיקוח (harshaot.csv) —
      אותם חשבונות שאיתם הם נכנסים לאתר, ולכן זו הכתובת הנכונה לפנייה.
-     טלפונים עדיין חסרים; ברגע שיתמלאו כאן, כפתור הוואטסאפ שלהם נדלק לבד. */
+     הטלפונים אינם בקובץ "רשימת מדריכים" (יש בו עמודת טלפון למדריכות בלבד);
+     המקור שלהם הוא רשימת המשתתפים של זימוני הכשרת הרכזים —
+     Downloads\רויטל\_מקור-זימונים\_participants.json (9.9.26). */
   inspectors: {
-    yisachar: { phone: '', email: 'ysaschar.hefez@labor.gov.il' },
-    liat:     { phone: '', email: 'liat.tzabar@labor.gov.il' },
-    revital:  { phone: '', email: 'revital.amir@labor.gov.il' },
-    yasmin:   { phone: '', email: 'yasmin.amon@labor.gov.il' },
-    ahmad:    { phone: '', email: 'ahmed.mahamid@labor.gov.il' }
+    yisachar: { phone: '052-8182834', email: 'ysaschar.hefez@labor.gov.il' },
+    liat:     { phone: '050-7597144', email: 'liat.tzabar@labor.gov.il' },
+    revital:  { phone: '050-8944480', email: 'revital.amir@labor.gov.il' },
+    yasmin:   { phone: '050-9117613', email: 'yasmin.amon@labor.gov.il' },
+    ahmad:    { phone: '054-7891709', email: 'ahmed.mahamid@labor.gov.il' }
   }
 };
 
