@@ -29,6 +29,22 @@
     "https://script.google.com/macros/s/AKfycbzggpSrv4lHq6RF4784hJKEp1cTktjUmZDZ8TliicXYjfM_cJ4xoRYsIVa-8y7EgvYl/exec"
   ).trim();
 
+  /* מזהה מבקר אקראי שנשמר בדפדפן בלבד — משמש את ה-backend להגבלת קצב,
+     כדי ששואל בודד לא ישרוף את מכסת השאלות של כולם. אין בו שום פרט מזהה,
+     והוא לא נשלח לשום מקום מלבד ה-backend של עוגן. */
+  function ogenVisitorId() {
+    try {
+      var id = localStorage.getItem("ogen_vid");
+      if (!id) {
+        id = "v" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        localStorage.setItem("ogen_vid", id);
+      }
+      return id;
+    } catch (e) {
+      return "";
+    }
+  }
+
   var POSITION = window.OGEN_WIDGET_POSITION === "right" ? "right" : "left";
 
   /* מצב עצמאי (chat.html): צ'אט במסך מלא, בלי כפתור צף — משמש כאפליקציה לנייד */
@@ -303,7 +319,7 @@
     var typingNode = addTyping();
     var historyBefore = history.slice(0, -1);
 
-    var payload = JSON.stringify({ question: text, history: historyBefore.slice(-6) });
+    var payload = JSON.stringify({ question: text, history: historyBefore.slice(-6), visitorId: ogenVisitorId() });
 
     askBackendWithRetry(payload)
       .then(function (data) {
