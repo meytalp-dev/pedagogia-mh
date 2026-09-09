@@ -121,6 +121,12 @@ p.secsub{font-size:15px;color:var(--muted);margin:0 0 18px;padding-inline-start:
 .b.cp.ok{color:#0a7d6c;border-color:#9fe0d3;background:#effaf7}
 
 .note{margin-top:14px;font-size:13.6px;color:var(--muted);border-top:1px dashed var(--line);padding-top:11px}
+.live-box{margin:-4px 0 16px;border:1.5px solid #f0dcae;background:#fffaef;border-radius:14px;padding:12px 15px}
+.live-box .lb-h{font-size:13.6px;font-weight:700;color:#8a5c14;margin-bottom:7px}
+.live-box .lb-row{font-size:14.2px;color:#3d4a70;padding:7px 0;border-top:1px dashed #eddfc0;white-space:pre-wrap}
+.live-box .lb-row:first-of-type{border-top:none;padding-top:0}
+.live-box .lb-row b{color:var(--navy)}
+.live-box .lb-none{font-size:13.6px;color:var(--muted)}
 .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 11px;
   font-size:12.8px;font-weight:700;border:1.5px solid}
 .badge.closed{border-color:#e6d6b8;background:#fffaef;color:#8a5c14}
@@ -281,6 +287,9 @@ var HADRACHOT = GAS + "AKfycbwDOLGv0Hr7KNjFJBIslJkDt9cDa2g4-Gfho3dTfI0AP3uwjlM3N
 
 /* אישורי המנהלים לרשימת המורים — הרשומה האחרונה לכל בית ספר.
    מגיעות מ-questions.list של מצפן ההדרכות, עם teacherId שמתחיל ב-"verify:". */
+var ESC_MAP = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
+function esc(t){ return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){ return ESC_MAP[c]; }); }
+
 function verifyBySchool(j){
   var out = {};
   ((j && j.ok && j.data) || []).forEach(function(q){
@@ -289,7 +298,9 @@ function verifyBySchool(j){
     try { p = JSON.parse(q.question); } catch(e){ return; }
     if (!p || p.kind !== "school-verify" || !p.school) return;
     var at = p.at || q.createdAt || "";
-    if (!out[p.school] || at > out[p.school].at) out[p.school] = {status:p.status, at:at};
+    if (!out[p.school] || at > out[p.school].at){
+      out[p.school] = {status:p.status, at:at, notes:p.notes || "", schoolName:p.schoolName || ""};
+    }
   });
   return out;
 }
@@ -438,6 +449,28 @@ var ACTIVE = [
         return p.join(" · ");
       }
     }],
+    live:function(js){
+      var v = verifyBySchool(js[0]), keys = Object.keys(v);
+      if (!keys.length) return "";
+      var notes = keys.filter(function(k){ return (v[k].notes || "").trim(); });
+      var fixed = keys.filter(function(k){ return v[k].status === "fixed"; });
+      var h = '<div class="live-box">';
+      h += '<div class="lb-h">מה כתבו המנהלים</div>';
+      if (notes.length){
+        h += notes.map(function(k){
+          return '<div class="lb-row"><b>' + esc(v[k].schoolName || k) + ':</b> ' +
+                 esc(v[k].notes.trim()) + '</div>';
+        }).join("");
+      } else {
+        h += '<div class="lb-none">אף אחד מהמאשרים לא כתב הערה.</div>';
+      }
+      if (fixed.length){
+        h += '<div class="lb-row"><b>אושר אחרי תיקונים:</b> ' +
+             fixed.map(function(k){ return esc(v[k].schoolName || k); }).join(" · ") +
+             ' — התיקון בוצע על ידם במסך ההזנה וכבר יושב בנתונים.</div>';
+      }
+      return h + '</div>';
+    },
     links:[
       {href:"/hadrachot/admin-verify.html", label:"לוח האישורים · שליחה במייל", kind:"pri"},
       {href:"/hadrachot/admin-school/setup.html", label:"רשימת ההזנה של המורים", kind:"sec"}
@@ -526,6 +559,8 @@ function card(d){
          ((s.base || s.baseOf) ? '<div class="track"><div class="fill"></div></div>' : '') + '</div>';
   });
 
+  if (d.live) h += '<div data-live></div>';
+
   if (d.badge){
     h += '<div style="margin-bottom:14px"><span class="badge closed">' + d.badge + '</span></div>';
   }
@@ -612,6 +647,8 @@ function loadCounts(manual){
           }
           if (i === 0) setChip(el, n.toLocaleString("he-IL") + (base ? " / " + base : ""), false);
         });
+        var liveBox = el.querySelector("[data-live]");
+        if (liveBox && d.live) liveBox.innerHTML = d.live(j) || "";
         return true;
       })
       .catch(function(){
