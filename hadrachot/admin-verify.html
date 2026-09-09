@@ -51,6 +51,15 @@
   .sp-btn.tick { min-width: 40px; justify-content: center; }
   .sp-btn.tick.on { background: var(--ok-soft, #e7f6ef); border-color: #6FB7A6; color: #14532d; }
   .sp-miss { font-size: 12.5px; color: #8a5a00; }
+  .sp-report {
+    margin-top: 10px; padding: 12px 14px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 13px; line-height: 1.7; max-height: 320px; overflow: auto;
+  }
+  .sp-report b { display: block; margin-bottom: 4px; }
+  .sp-report .row { color: var(--text-2); }
+  .sp-report .bad { color: #a12626; }
+  .sp-btn.bulk { background: #1a7f4b; border-color: #16693f; color: #fff; font-size: 14px; padding: 9px 16px; }
   .sp-phone-in { font: inherit; font-size: 13px; padding: 5px 8px; border-radius: 8px; border: 1px dashed #D9A441; background: #FFF9EC; width: 130px; }
   .sc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .sc-head .nm { font-weight: 700; font-size: 16px; }
@@ -113,6 +122,8 @@
         <span class="sp-progress" id="sp-progress"></span>
       </div>
       <div class="sp-note" id="sp-note" hidden></div>
+      <div id="sp-bulk" style="margin-top:10px;"></div>
+      <div id="sp-bulk-report" class="sp-report" hidden></div>
       <div class="sp-loader" id="sp-loader" hidden>
         <textarea id="sp-blob" placeholder="מדביקים כאן את המחרוזת מהקובץ 'פרטי-קשר-מנהלים-להדבקה.txt'"></textarea>
         <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
@@ -367,6 +378,95 @@ function renderSendPanel() {
   if (tgl) tgl.addEventListener('click', () => { loader.hidden = !loader.hidden; });
 }
 
+
+// ---- שליחה מרוכזת מהשרת ----
+// המיילים נשלחים מחשבון בעלת הסקריפט דרך verify.mailSend. הפעולה דורשת טוקן
+// אדמין תמיד (STRICT_AUTH_ACTIONS), ולכן צריך להיות מחוברים. תמיד רצה קודם
+// הרצה יבשה, ורק אחרי אישור מפורש נשלח באמת.
+let bulkPreview = null;
+
+function bulkRecipients() {
+  return schools
+    .filter(s => s.id && !s.verify && mailFor(s))
+    .map(s => ({ school: s.id, email: mailFor(s) }));
+}
+
+function renderBulk() {
+  const box = document.getElementById('sp-bulk');
+  const list = bulkRecipients();
+  const auth = TS.authGet();
+  if (!list.length) { box.innerHTML = ''; return; }
+
+  if (!auth || !auth.token) {
+    box.innerHTML = '<div class="sp-progress">שליחה מרוכזת של ' + list.length +
+      ' מיילים דורשת התחברות — <a href="login.html?next=' +
+      encodeURIComponent(location.pathname) + '">כניסה</a>, וחוזרים לכאן.</div>';
+    return;
+  }
+  box.innerHTML = '<button type="button" class="sp-btn bulk" id="sp-bulk-btn">' +
+    'שליחה מרוכזת ל-' + list.length + ' מנהלים במייל</button>' +
+    '<span class="sp-progress" id="sp-bulk-msg" style="margin-inline-start:8px;"></span>';
+  document.getElementById('sp-bulk-btn').addEventListener('click', runBulk);
+}
+
+function reportHtml(d, isPreview) {
+  const line = a => a.map(x => '<div class="row">· ' + escapeHtml(x.school) +
+    (x.email ? ' — ' + escapeHtml(x.email) : '') + (x.why ? ' (' + escapeHtml(x.why) + ')' : '') + '</div>').join('');
+  return '<b>' + (isPreview ? 'תצוגה מקדימה — עדיין לא נשלח דבר' : 'הדוח הסופי') + '</b>' +
+    '<div><b style="display:inline">' + d.sent.length + '</b> ' + (isPreview ? 'ייצאו' : 'נשלחו') + '</div>' +
+    line(d.sent) +
+    (d.skipped.length ? '<div style="margin-top:6px;"><b style="display:inline">' + d.skipped.length + '</b> לא ייכללו:</div>' + line(d.skipped) : '') +
+    (d.failed && d.failed.length ? '<div class="bad" style="margin-top:6px;"><b style="display:inline">' + d.failed.length + '</b> נכשלו:</div>' + line(d.failed) : '') +
+    '<div class="row" style="margin-top:6px;">מכסת המיילים שנותרה להיום: ' + d.quotaAfter + '</div>';
+}
+
+async function runBulk() {
+  const btn = document.getElementById('sp-bulk-btn');
+  const msg = document.getElementById('sp-bulk-msg');
+  const rep = document.getElementById('sp-bulk-report');
+  const list = bulkRecipients();
+  btn.disabled = true;
+
+  if (!bulkPreview) {
+    msg.textContent = 'בודק…';
+    const res = await TS.apiPost('verify.mailSend', { recipients: JSON.stringify(list), dryRun: 'true' });
+    btn.disabled = false;
+    if (!res || !res.ok) {
+      msg.textContent = 'שגיאה: ' + ((res && res.error) || 'לא ידוע');
+      return;
+    }
+    bulkPreview = res;
+    rep.hidden = false;
+    rep.innerHTML = reportHtml(res, true);
+    btn.textContent = 'אישור ושליחה בפועל ל-' + res.sent.length + ' מנהלים';
+    msg.textContent = 'עוברים על הרשימה, ואז לוחצים שוב לשליחה.';
+    return;
+  }
+
+  if (!confirm('לשלוח עכשיו ' + bulkPreview.sent.length + ' מיילים? הפעולה אינה הפיכה.')) {
+    btn.disabled = false;
+    return;
+  }
+  msg.textContent = 'שולח…';
+  const res = await TS.apiPost('verify.mailSend', { recipients: JSON.stringify(list), dryRun: 'false' });
+  btn.disabled = false;
+  if (!res || !res.ok) {
+    msg.textContent = 'השליחה נכשלה: ' + ((res && res.error) || 'לא ידוע');
+    return;
+  }
+  // סימון כל מי שנשלח לו, כדי שהרשימה למטה תשקף את המצב
+  const sent = lsGet(SENT_KEY);
+  const byName = {};
+  schools.forEach(s => { byName[s.name] = s.id; });
+  res.sent.forEach(x => { const id = byName[x.school]; if (id) sent[id] = true; });
+  lsSet(SENT_KEY, sent);
+  bulkPreview = null;
+  rep.hidden = false;
+  rep.innerHTML = reportHtml(res, false);
+  msg.textContent = 'הושלם.';
+  render();
+}
+
 function markSent(sid) {
   const sent = lsGet(SENT_KEY);
   sent[sid] = true;
@@ -428,6 +528,7 @@ function render() {
   }).join('') || '<div class="empty" style="padding:32px;">אין בתי ספר בסינון הזה</div>';
 
   renderSendPanel();
+  renderBulk();
 }
 
 function copyMsg(btn, sid) {
