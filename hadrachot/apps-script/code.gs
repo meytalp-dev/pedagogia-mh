@@ -496,6 +496,19 @@ function contactId_(kind, slug) {
   return String(kind || '').trim() + ':' + String(slug || '').trim();
 }
 
+// הטאב נוצר בהרצת setupSchema, אבל ההעלאה הראשונה מגיעה מהדפדפן — לפניה.
+// בלי היצירה כאן appendRow היה נופל על getLastColumn של גיליון שאינו קיים.
+function ensureContactsSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let s = ss.getSheetByName('contacts');
+  if (s) return s;
+  s = ss.insertSheet('contacts');
+  s.appendRow(SCHEMA.contacts);
+  s.getRange(1, 1, 1, SCHEMA.contacts.length).setFontWeight('bold').setBackground('#f5f7fa');
+  s.setFrozenRows(1);
+  return s;
+}
+
 function listContacts() {
   const rows = readAll('contacts');
   return {
@@ -514,6 +527,7 @@ function listContacts() {
 // מקבל רשומה בודדת (kind/slug/phone/email) או params.items = מערך רשומות.
 // שדה שלא נשלח לא נדרס — כדי שעדכון טלפון לא ימחק מייל קיים.
 function upsertContacts(p, user) {
+  ensureContactsSheet_();
   let items = p.items;
   if (typeof items === 'string') { try { items = JSON.parse(items); } catch (e) { items = null; } }
   if (!Array.isArray(items)) items = [{ kind: p.kind, slug: p.slug, name: p.name, phone: p.phone, email: p.email }];
