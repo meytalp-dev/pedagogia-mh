@@ -189,7 +189,7 @@ async function loadTeachers() {
     needsCreate: false, needsUpdate: false, deleteAfterCreate: false, error: false
   }));
   localRows.forEach(t => {
-    if (teachers.some(x => x.name === t.name && x.subject === t.subject)) return;
+    if (teachers.some(x => x.name === t.name && x.subject === t.subject && x.type === t.type)) return;
     teachers.push(t);
   });
   const restored = restoreDraft();
@@ -357,14 +357,16 @@ function addTeacherLocal(name, extra) {
   name = (name || '').trim();
   if (!name) return false;
   const subject = extra.subject || curSubject;
-  if (teachers.some(t => t.name === name && t.subject === subject)) return false;
+  const type = extra.type || curType;
+  // אותו מורה יכול ללמד את אותו מקצוע גם לבגרות וגם לגמר — אלה שתי שורות.
+  if (teachers.some(t => t.name === name && t.subject === subject && t.type === type)) return false;
   const existing = teachers.find(t => t.name === name);
   teachers.push({
     uid: 'u' + (++uidSeq),
     serverId: null,
     name,
     subject,
-    type: extra.type || curType,
+    type: type,
     phone: (extra.phone || (existing ? existing.phone : '') || '').trim(),
     email: extra.email || (existing ? existing.email : '') || '',
     seniority: extra.seniority || (existing ? existing.seniority : '') || '',
@@ -382,8 +384,8 @@ function rapidAdd() {
   if (!name) return;
 
   const existing = teachers.find(t => t.name === name);
-  if (teachers.some(t => t.name === name && t.subject === curSubject)) {
-    flash('כבר ברשימה של ' + curSubject);
+  if (teachers.some(t => t.name === name && t.subject === curSubject && t.type === curType)) {
+    flash('כבר ברשימה של ' + curSubject + ' ב' + (curType === 'gemer' ? 'גמר' : 'בגרות'));
     nameEl.value = ''; phoneEl.value = ''; nameEl.focus();
     return;
   }
@@ -658,7 +660,7 @@ function saveDraft() {
       const prev = readDraft();
       const merged = prev ? prev.pending.slice() : [];
       pending.forEach(x => {
-        if (!merged.some(y => y.name === x.name && y.subject === x.subject)) merged.push(x);
+        if (!merged.some(y => y.name === x.name && y.subject === x.subject && y.type === x.type)) merged.push(x);
       });
       const dq = (prev && Array.isArray(prev.deleteQueue) ? prev.deleteQueue : []).slice();
       deleteQueue.forEach(id => { if (dq.indexOf(id) < 0) dq.push(id); });
@@ -676,8 +678,8 @@ function saveDraft() {
     if (prev) {
       prev.pending.forEach(x => {
         if (!x || !x.name) return;
-        const knownHere = teachers.some(t => t.name === x.name && t.subject === x.subject);
-        const listed = keep.some(y => y.name === x.name && y.subject === x.subject);
+        const knownHere = teachers.some(t => t.name === x.name && t.subject === x.subject && t.type === x.type);
+        const listed = keep.some(y => y.name === x.name && y.subject === x.subject && y.type === x.type);
         if (!knownHere && !listed) keep.push(x);
       });
     }
@@ -693,7 +695,7 @@ function restoreDraft() {
   let n = 0;
   d.pending.forEach(x => {
     if (!x || !x.name) return;
-    if (teachers.some(t => t.name === x.name && t.subject === x.subject)) return;  // כבר בשרת
+    if (teachers.some(t => t.name === x.name && t.subject === x.subject && t.type === (x.type === 'gemer' ? 'gemer' : 'bagrut'))) return;  // כבר בשרת
     teachers.push({
       uid: 'u' + (++uidSeq), serverId: null,
       name: x.name, subject: x.subject || 'מתמטיקה',
@@ -769,7 +771,7 @@ async function processQueue() {
 
       if (res.ok && Array.isArray(res.data)) {
         res.data.forEach(row => {
-          const hit = batch.find(t => !t.serverId && t.name === row.name && t.subject === row.subject);
+          const hit = batch.find(t => !t.serverId && t.name === row.name && t.subject === row.subject && t.type === row.type);
           if (!hit) return;
           hit.serverId = row.id;
           hit.error = false;
@@ -800,7 +802,7 @@ async function processQueue() {
         }
         const rows = chk.data;
         batch.forEach(t => {
-          const hit = rows.find(x => x.name === t.name && x.subject === t.subject);
+          const hit = rows.find(x => x.name === t.name && x.subject === t.subject && x.type === t.type);
           if (hit) { t.serverId = hit.id; t.error = false; t.needsUpdate = true; t.fails = 0; }
           else { t.needsCreate = true; t.error = true; t.fails = (t.fails || 0) + 1; }
         });
@@ -822,7 +824,7 @@ async function processQueue() {
         // אם *הבדיקה* נכשלה (Apps Script מחזיר מדי פעם דף HTML במקום JSON) אין לנו
         // ידיעה אם המורה נכתב — ויצירה כאן היא בדיוק מה שייצר כפילות. ממתינים לסבב הבא.
         if (!chk || !chk.ok || !Array.isArray(chk.data)) return;
-        const hit = chk.data.find(x => x.name === toCreate.name && x.subject === toCreate.subject);
+        const hit = chk.data.find(x => x.name === toCreate.name && x.subject === toCreate.subject && x.type === toCreate.type);
         if (hit) {
           toCreate.serverId = hit.id;
           toCreate.needsCreate = false;

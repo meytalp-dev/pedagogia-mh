@@ -192,7 +192,10 @@ const ADMIN_ONLY_ACTIONS = new Set([
 // את הטלפונים מהקובץ הסטטי.
 const STRICT_AUTH_ACTIONS = new Set([
   'contacts.list',
-  'contacts.upsert'
+  'contacts.upsert',
+  // שליחת מייל בשם בעלת הסקריפט — בלי טוקן אדמין זו תיבת ריליי פתוחה לכל מי
+  // שיודע את כתובת ה-/exec. חייב להישאר כאן גם אחרי הדלקת AUTH_ENFORCED.
+  'verify.mailSend'
 ]);
 
 function getActiveUserEmail_() {
@@ -789,6 +792,7 @@ function handleRequest(params) {
 
       case 'seed.import':         result = seedImport(params); break;
 
+      case 'verify.mailSend':     result = verifyMailSend(params, user); break;
       case 'contacts.list':       result = listContacts(); break;
       case 'contacts.upsert':     result = upsertContacts(params, user); break;
       case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'), user)); break;
@@ -1032,12 +1036,16 @@ function getTeacher(id) {
 // schoolName הוא שדה משוכפל שכל הדשבורדים נשענים עליו. הלקוח שלח לפעמים "—"
 // (מציין תצוגה שנכנס לשורות אמיתיות כשכשל רגעי מנע ממנו לטעון את שם בית הספר),
 // ולכן השרת הוא הפוסק: אם השם חסר או הוא מציין — שולפים אותו לפי המזהה.
-// מפתח הזהות של מורה בתוך בית ספר: שם + מקצוע. זה בדיוק הכלל שהלקוח אוכף
-// כשהוא חוסם הוספה כפולה, ולכן אפשר להישען עליו גם בשרת.
-function teacherKey_(schoolId, name, subject) {
+// מפתח הזהות של מורה בתוך בית ספר: שם + מקצוע + מסלול. זה בדיוק הכלל שהלקוח
+// אוכף כשהוא חוסם הוספה כפולה, ולכן אפשר להישען עליו גם בשרת.
+// המסלול הוא חלק מהזהות: אותו מורה יכול ללמד את אותו מקצוע גם לבגרות וגם
+// לגמר, ואלה שתי שורות נפרדות (סחנין ואכסאל, 9.9.26). בלי ה-type כאן שורת
+// הגמר נחסמה כ"כפילות" של הבגרות והוחזרה השורה הקיימת.
+function teacherKey_(schoolId, name, subject, type) {
   return String(schoolId || '').trim() + ' ' +
          String(name || '').trim() + ' ' +
-         String(subject || '').trim();
+         String(subject || '').trim() + ' ' +
+         (String(type || '').trim() === 'gemer' ? 'gemer' : 'bagrut');
 }
 
 // מחזיר מפה של המורים הקיימים בבית ספר לפי מפתח הזהות.
@@ -1046,7 +1054,7 @@ function existingTeachersMap_(schoolId) {
   if (!schoolId) return map;
   readAll('teachers').forEach(function (t) {
     if (String(t.school || '').trim() !== String(schoolId).trim()) return;
-    const k = teacherKey_(t.school, t.name, t.subject);
+    const k = teacherKey_(t.school, t.name, t.subject, t.type);
     if (!map[k]) map[k] = t;
   });
   return map;
@@ -1089,7 +1097,7 @@ function createTeacher(p) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
   try {
-    const dup = existingTeachersMap_(obj.school)[teacherKey_(obj.school, obj.name, obj.subject)];
+    const dup = existingTeachersMap_(obj.school)[teacherKey_(obj.school, obj.name, obj.subject, obj.type)];
     if (dup) return { ok: true, data: dup, existed: true };
     appendRow('teachers', obj);
   } finally {
@@ -1165,7 +1173,7 @@ function createTeachersBatch(p) {
     const existing = existingTeachersMap_(batchSchool);
     const seenInBatch = {};
     created.forEach(function (obj) {
-      const k = teacherKey_(obj.school, obj.name, obj.subject);
+      const k = teacherKey_(obj.school, obj.name, obj.subject, obj.type);
       if (existing[k]) { reused.push(existing[k]); return; }
       if (seenInBatch[k]) return;
       seenInBatch[k] = true;
@@ -1531,6 +1539,117 @@ function ministryReport(p) {
 // ============================================================
 // MONTHLY EMAIL TRIGGER (run on the 1st of each month)
 // ============================================================
+
+// ============================================================
+// שליחת קישורי האימות למנהלים במייל
+// נבנה 9.9.26 אחרי שוואטסאפ חסם את החשבון בשליחה לעשרות מספרים ברצף.
+// הכתובות מגיעות מהדפדפן של מיטל (שמורות אצלה במכשיר בלבד, לא בגיליון),
+// וההודעה נבנית כאן מהנתונים החיים כדי שלא ניתן יהיה להזריק תוכן חופשי.
+// הפעולה ב-STRICT_AUTH_ACTIONS — דורשת טוקן אדמין ארצי תמיד.
+// ============================================================
+const MAIL_MAX_BATCH = 120;
+
+// בתי ספר שכבר שלחו אישור — לא מטרידים אותם שוב
+function verifiedSchools_() {
+  const out = {};
+  readAll('questions').forEach(function (q) {
+    const tid = String(q.teacherId || '');
+    if (tid.indexOf('verify:') !== 0) return;
+    out[tid.slice(7)] = true;
+  });
+  return out;
+}
+
+function verifyMailSend(p, user) {
+  let list;
+  try { list = JSON.parse(p.recipients || '[]'); } catch (e) { return { ok: false, error: 'bad_recipients' }; }
+  if (!Array.isArray(list) || !list.length) return { ok: false, error: 'no_recipients' };
+  if (list.length > MAIL_MAX_BATCH) return { ok: false, error: 'too_many_recipients: ' + list.length };
+
+  const dryRun = String(p.dryRun) === 'true';
+  const base = 'https://pedagogiamh.co.il/hadrachot';
+  const signer = (user && user.name) ? user.name : 'יחידת הפיקוח על הדרכות מורים';
+  const replyTo = (user && user.email) ? user.email : '';
+
+  const schools = {};
+  readAll('schools').forEach(function (s) { schools[s.id] = s; });
+  const bySchool = {};
+  readAll('teachers').forEach(function (t) {
+    if (!t.school) return;
+    if (!bySchool[t.school]) bySchool[t.school] = [];
+    bySchool[t.school].push(t);
+  });
+  const verified = verifiedSchools_();
+
+  const quotaBefore = MailApp.getRemainingDailyQuota();
+  if (!dryRun && quotaBefore < list.length) {
+    return { ok: false, error: 'quota_too_low', quota: quotaBefore, needed: list.length };
+  }
+
+  const sent = [], skipped = [], failed = [], seen = {};
+  const MAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+  list.forEach(function (r) {
+    const id = String((r && r.school) || '').trim();
+    const email = String((r && r.email) || '').trim();
+    const s = schools[id];
+    if (!s) { skipped.push({ school: id || '(ריק)', why: 'בית ספר לא נמצא' }); return; }
+    if (seen[id]) { skipped.push({ school: s.name, why: 'כפילות ברשימה' }); return; }
+    seen[id] = true;
+    if (!MAIL_RE.test(email)) { skipped.push({ school: s.name, why: 'כתובת לא תקינה' }); return; }
+    const rows = bySchool[id] || [];
+    if (!rows.length) { skipped.push({ school: s.name, why: 'עדיין לא הוזנו מורים' }); return; }
+    if (verified[id]) { skipped.push({ school: s.name, why: 'כבר שלחו אישור' }); return; }
+
+    const counts = {};
+    rows.forEach(function (t) {
+      let k = String(t.subject || '').trim();
+      if (k === 'תנ') k = 'תנ"ך';
+      if (!k) return;
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    const summary = Object.keys(counts).map(function (k) { return k + ' ' + counts[k]; }).join(' · ');
+    const link = base + '/verify.html?school=' + encodeURIComponent(id);
+
+    const body = [
+      'שלום' + (s.principalName ? ' ' + s.principalName : '') + ',',
+      '',
+      'לקראת פתיחת שנת ההדרכות הוזנו למצפן ההדרכות ' + rows.length + ' מורים עבור ' + s.name + ':',
+      summary + '.',
+      '',
+      'נא להיכנס לטופס האימות ולוודא שכל מורה משויך/ת למקצוע ולמסלול הנכונים (בגרות/גמר),',
+      'להוסיף מורים שנשכחו, ובמתמטיקה גם לסמן כמה יחידות מלמד/ת כל מורה:',
+      link,
+      '',
+      'לוקח שתי דקות. תודה רבה!',
+      signer,
+      'יחידת הפיקוח על הדרכות מורים · משרד העבודה'
+    ].join(String.fromCharCode(10));
+
+    if (dryRun) { sent.push({ school: s.name, email: email, teachers: rows.length }); return; }
+
+    try {
+      const opts = {
+        to: email,
+        subject: 'אימות רשימת המורים — ' + s.name,
+        body: body,
+        name: 'מצפן ההדרכות · משרד העבודה'
+      };
+      if (replyTo) opts.replyTo = replyTo;
+      MailApp.sendEmail(opts);
+      sent.push({ school: s.name, email: email, teachers: rows.length });
+    } catch (e) {
+      failed.push({ school: s.name, email: email, why: e.message });
+    }
+  });
+
+  return {
+    ok: true, dryRun: dryRun,
+    sent: sent, skipped: skipped, failed: failed,
+    quotaBefore: quotaBefore,
+    quotaAfter: dryRun ? quotaBefore : MailApp.getRemainingDailyQuota()
+  };
+}
 
 function monthlyEmailReports() {
   const lastMonth = new Date();
