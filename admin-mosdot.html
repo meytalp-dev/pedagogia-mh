@@ -754,9 +754,13 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       return;
     }
     window.PMH_AUTH.load("admin-contacts").then(function (r) {
-      if (r && r.ok && Array.isArray(r.data)) {
+      if (r && r.ok && Array.isArray(r.data) && r.data.length) {
         CONTACTS = r.data;
         CONTACT_ERR = "";
+      } else if (r && r.ok && Array.isArray(r.data)) {
+        /* השרת ענה, אבל הלשונית ריקה או שעדיין לא נוצרה */
+        CONTACT_ERR = 'הלשונית "אנשי קשר" בגיליון ההרשאות ריקה או טרם נוצרה. ' +
+                      'הטבלה המוכנה להדבקה: Downloads\רויטל\אנשי-קשר-אדמין.tsv';
       } else {
         var code = r && r.error ? r.error : "unknown";
         CONTACT_ERR = code === "nokey"
