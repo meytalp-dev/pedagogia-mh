@@ -70,6 +70,28 @@
   .v-chip.pending  { background: var(--surface-2); color: var(--text-3); }
   .v-detail { font-size: 12.5px; color: var(--text-2); margin-top: 6px; }
   .v-detail .note { color: #92400e; }
+
+  /* ---- מה כתבו המנהלים: כל שליחה, מילה במילה ---- */
+  .log-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+  }
+  .log-card > h2 { font-size: 16px; margin: 0 0 2px; }
+  .log-sub { font-size: 13px; color: var(--text-2); margin: 0 0 10px; line-height: 1.6; }
+  .lg-row { border-top: 1px solid var(--border); padding: 11px 0; }
+  .lg-row:first-of-type { border-top: none; }
+  .lg-top { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+  .lg-top .nm { font-weight: 700; font-size: 14.5px; }
+  .lg-when { font-size: 12.5px; color: var(--text-3); margin-inline-start: auto; }
+  .lg-by { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+  .lg-note {
+    margin-top: 7px; padding: 9px 12px; border-radius: 10px;
+    background: #FFF9EC; border: 1px solid #F0DCAE; color: #6b4b06;
+    font-size: 13.5px; line-height: 1.7; white-space: pre-wrap;
+  }
+  .lg-note.none { background: var(--surface-2); border-color: var(--border); color: var(--text-3); font-style: italic; }
+  .lg-row.old { opacity: .62; }
+  .lg-row.old .lg-when::after { content: " · שליחה קודמת"; }
   .sc-roster {
     font-size: 13px; color: var(--text-2); line-height: 1.8;
     margin: 10px 0 12px; padding: 10px 14px;
@@ -116,6 +138,8 @@
 
     <div class="sum-strip" id="summary"></div>
 
+    <section class="log-card" id="log"></section>
+
     <div class="send-panel" id="send-panel">
       <div class="sp-head">
         <b>שליחה מהנייד</b>
@@ -161,6 +185,7 @@ const BASE = location.origin + location.pathname.replace(/\/admin-verify\.html$/
 const SUBJECT_ORDER = ['מתמטיקה','אנגלית','עברית','ספרות','היסטוריה','אזרחות','תנ"ך','ערבית','מורשת אסלאמית','מורשת דרוזית'];
 const SUBJECT_DISPLAY = { 'תנ': 'תנ"ך' };
 let schools = [];
+let verifyLog = [];
 
 async function init() {
   const [tRes, sRes, qRes] = await Promise.all([
@@ -177,17 +202,23 @@ async function init() {
   const byId = {};
   (sRes.data || []).forEach(s => byId[s.id] = s);
 
-  // אישורים: הרשומה האחרונה לכל בית ספר
+  // אישורים: הרשומה האחרונה לכל בית ספר — וגם יומן מלא של כל השליחות
   const verifyBySchool = {};
+  verifyLog = [];
   ((qRes.ok && qRes.data) || []).forEach(q => {
     if (!(q.teacherId || '').startsWith('verify:')) return;
     let p = null;
     try { p = JSON.parse(q.question); } catch (e) { return; }
     if (!p || p.kind !== 'school-verify') return;
     const sid = (q.teacherId || '').slice(7);
+    const rec = Object.assign({ createdAt: q.createdAt, _sid: sid }, p);
+    verifyLog.push(rec);
     const prev = verifyBySchool[sid];
-    if (!prev || (p.at || q.createdAt) > (prev.at || '')) verifyBySchool[sid] = Object.assign({ createdAt: q.createdAt }, p);
+    if (!prev || (p.at || q.createdAt) > (prev.at || '')) verifyBySchool[sid] = rec;
   });
+  // החדשה למעלה; שליחה שאינה האחרונה של אותו בית ספר מסומנת כישנה
+  verifyLog.sort((a, b) => String(b.at || b.createdAt).localeCompare(String(a.at || a.createdAt)));
+  verifyLog.forEach(r => { r._old = verifyBySchool[r._sid] !== r; });
 
   const grouped = {};
   teachers.forEach(t => {
@@ -534,8 +565,45 @@ function render() {
     </div>`;
   }).join('') || '<div class="empty" style="padding:32px;">אין בתי ספר בסינון הזה</div>';
 
+  renderLog();
   renderSendPanel();
   renderBulk();
+}
+
+/* מה כתב כל מנהל/ת — כל שליחה, מילה במילה, החדשה למעלה */
+function renderLog() {
+  const box = document.getElementById('log');
+  const withNote = verifyLog.filter(r => (r.notes || '').trim()).length;
+
+  if (!verifyLog.length) {
+    box.innerHTML = '<h2>מה כתבו המנהלים</h2>' +
+      '<p class="log-sub">עדיין לא התקבל אף אישור.</p>';
+    return;
+  }
+
+  box.innerHTML = '<h2>מה כתבו המנהלים</h2>' +
+    '<p class="log-sub">כל שליחה שהתקבלה, מילה במילה — ' + verifyLog.length + ' שליחות, ' +
+    (withNote ? withNote + ' מהן עם הערה' : 'אף אחת מהן ללא הערה') + '. ' +
+    '<b>”אושר אחרי תיקונים“ אומר שהמנהל/ת תיקנו בעצמם במסך ההזנה</b> — התיקון כבר בנתונים, ' +
+    'ואין כאן בקשה שממתינה לטיפול. מה שדורש טיפול מצידנו ייכתב בהערה.</p>' +
+    verifyLog.map(r => {
+      const st = r.status === 'fixed'
+        ? '<span class="v-chip fixed">🔵 אושר אחרי תיקונים</span>'
+        : '<span class="v-chip approved">🟢 אושר כפי שהוא</span>';
+      const note = (r.notes || '').trim();
+      const math = r.mathBagrut
+        ? ' · יח"ל במתמטיקה: ' + (r.mathUnitsMarked || 0) + ' מתוך ' + r.mathBagrut
+        : '';
+      return '<div class="lg-row' + (r._old ? ' old' : '') + '">' +
+        '<div class="lg-top"><span class="nm">' + escapeHtml(r.schoolName || r._sid) + '</span>' + st +
+        '<span class="lg-when">' + fmtDate(r.at || r.createdAt) + '</span></div>' +
+        '<div class="lg-by">חתם/ה: <b>' + escapeHtml(r.by || '—') + '</b> · ' +
+        (r.teachers || 0) + ' מורים ברשימה' + math + '</div>' +
+        (note
+          ? '<div class="lg-note">' + escapeHtml(note) + '</div>'
+          : '<div class="lg-note none">לא נכתבה הערה</div>') +
+        '</div>';
+    }).join('');
 }
 
 function copyMsg(btn, sid) {
