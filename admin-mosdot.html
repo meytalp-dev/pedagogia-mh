@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>אדמין מוסדות · בתי ספר, פיקוח ואנשי קשר · משרד העבודה</title>
+<meta name="description" content="עמוד פנימי: 64 המוסדות, פריסת הפיקוח ואנשי הקשר של המנהלים, המפקחים והמדריכות.">
+<link rel="icon" href="logo.png">
+
+<!-- נעילה: מרחב 'mosdot' לא ניתן לאיש בגיליון ההרשאות, ולכן רק בעל הרשאת
+     'all' (מיטל ורויטל) נכנס. לפתיחה למפקחים — שורה בגיליון, בלי שינוי קוד. -->
+<script src="/auth.js" data-space="mosdot"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5;
+  --bg:#f6f8fd; --mint:#12b39f; --danger:#d64550; --amber:#c87415;
+  --ease:cubic-bezier(.22,.9,.3,1);
+  --shadow-s:0 1px 2px rgba(34,66,146,.05), 0 4px 14px rgba(34,66,146,.06);
+  --shadow-m:0 2px 6px rgba(34,66,146,.06), 0 18px 44px rgba(34,66,146,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:16.5px;line-height:1.6;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy))}
+.site{padding:20px 0 0}
+.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{height:52px;width:auto;display:block}
+.who{font-size:13.5px;color:var(--muted);text-align:end}
+.who b{color:var(--navy);display:block;font-size:14.5px}
+
+.hero{padding:18px 0 6px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--navy)}
+.eyebrow svg{width:16px;height:16px}
+h1{font-family:'Rubik',sans-serif;font-size:clamp(26px,4.4vw,36px);line-height:1.15;margin:14px 0 8px;
+  font-weight:700;letter-spacing:-.02em;color:var(--navy)}
+.lede{font-size:17px;color:#3d4a70;max-width:70ch;margin:0}
+.lede b{color:var(--navy)}
+
+/* ===== סרגל עליון: חיפוש חוצה־טאבים ===== */
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:20px 0 6px}
+.searchbox{position:relative;flex:1 1 320px;min-width:260px}
+.searchbox svg{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;color:var(--muted);pointer-events:none}
+.searchbox input{width:100%;padding:13px 44px 13px 16px;border:1.5px solid var(--line);border-radius:14px;
+  font-family:inherit;font-size:16px;color:var(--ink);background:#fff;box-shadow:var(--shadow-s);
+  transition:border-color .16s var(--ease)}
+.searchbox input:focus{outline:none;border-color:var(--blue)}
+.btn{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;
+  padding:11px 18px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:border-color .16s var(--ease),box-shadow .16s var(--ease)}
+.btn:hover{border-color:var(--sky);box-shadow:var(--shadow-s)}
+.btn svg{width:16px;height:16px}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--blue);border-color:var(--blue)}
+
+/* ===== טאבים ===== */
+.tabs{display:flex;gap:6px;margin:18px 0 0;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.tab{appearance:none;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;
+  padding:12px 18px;font-family:'Rubik',sans-serif;font-size:16px;font-weight:600;color:var(--muted);
+  cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:color .16s var(--ease)}
+.tab svg{width:17px;height:17px}
+.tab:hover{color:var(--navy)}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--blue)}
+.tab .n{background:var(--blue-soft);color:var(--navy);border-radius:999px;padding:1px 9px;font-size:13px}
+.panel{padding:22px 0 10px}
+.panel[hidden]{display:none}
+
+/* ===== סינונים ===== */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.filters select{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--ink);
+  border-radius:12px;padding:10px 16px;font-family:inherit;font-size:14.5px;cursor:pointer;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2365739a' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 14px center;padding-inline-start:16px;padding-inline-end:38px}
+.filters select:focus{outline:none;border-color:var(--blue)}
+.count{font-size:14.5px;color:var(--muted);margin-inline-start:auto}
+.count b{color:var(--navy);font-size:16px}
+
+/* ===== טבלה ===== */
+.tablewrap{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-s);overflow:auto;max-height:70vh}
+table{width:100%;border-collapse:collapse;font-size:15px}
+thead th{position:sticky;top:0;background:#fff;z-index:2;text-align:start;padding:13px 14px;
+  font-family:'Rubik',sans-serif;font-weight:600;font-size:14px;color:var(--muted);
+  border-bottom:2px solid var(--line);white-space:nowrap}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .12s var(--ease)}
+tbody tr:hover{background:var(--sky-soft)}
+tbody tr:last-child td{border-bottom:none}
+.semel{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;white-space:nowrap}
+.sname{font-weight:700;color:var(--navy)}
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.sec{background:var(--sky-soft);color:#0f5d85}
+.pill.chg{background:#fdf0e3;color:var(--amber);margin-inline-start:7px;font-size:12px}
+.pill.warn{background:#fdecee;color:var(--danger)}
+.pill.ok{background:#e6f7f4;color:#0b7d6e}
+.sup-dot{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.sup-dot i{width:9px;height:9px;border-radius:50%;background:var(--c,var(--blue));flex:none}
+.empty{padding:44px 20px;text-align:center;color:var(--muted)}
+
+/* ===== כרטיסי פריסה ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-s);padding:18px 20px}
+.card h3{font-family:'Rubik',sans-serif;font-size:18px;margin:0 0 4px;color:var(--navy);
+  display:flex;align-items:center;gap:9px}
+.card h3 i{width:11px;height:11px;border-radius:50%;background:var(--c,var(--blue));flex:none}
+.card .sub{font-size:13.5px;color:var(--muted);margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:5px 11px;font-size:13.5px;
+  cursor:pointer;transition:border-color .14s var(--ease)}
+.chip:hover{border-color:var(--sky);background:var(--sky-soft)}
+.sect-h{font-family:'Rubik',sans-serif;font-size:20px;color:var(--navy);margin:30px 0 14px;
+  display:flex;align-items:center;gap:9px}
+.sect-h svg{width:19px;height:19px}
+.sect-h .hint{font-family:'Assistant',sans-serif;font-size:14px;font-weight:400;color:var(--muted)}
+
+/* ===== אנשי קשר ===== */
+.subtabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.subtab{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 18px;
+  font-family:inherit;font-size:14.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.subtab[aria-selected="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.acts{display:flex;gap:6px;justify-content:flex-end}
+.ico{appearance:none;border:1.5px solid var(--line);background:#fff;border-radius:10px;width:34px;height:34px;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--navy);
+  transition:border-color .14s var(--ease),background .14s var(--ease);text-decoration:none}
+.ico:hover{border-color:var(--sky);background:var(--sky-soft)}
+.ico svg{width:16px;height:16px}
+.ico.off{opacity:.32;pointer-events:none}
+.notice{background:#fff;border:1px solid var(--line);border-inline-start:4px solid var(--amber);
+  border-radius:12px;padding:14px 18px;font-size:15px;color:#3d4a70;margin-bottom:16px}
+.notice b{color:var(--navy)}
+.loading{padding:40px;text-align:center;color:var(--muted);font-size:15px}
+
+/* ===== מגירת כרטיס מוסד ===== */
+.scrim{position:fixed;inset:0;background:rgba(22,32,60,.42);opacity:0;pointer-events:none;
+  transition:opacity .2s var(--ease);z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+/* המגירה נפתחת מצד ההתחלה (בעברית — מימין). translateX חושב בפיקסלים
+   פיזיים ולא לפי כיוון הכתיבה, ולכן ההסתרה היא ימינה (+). בנוסף
+   pointer-events ו-visibility מכובים כשהיא סגורה, אחרת היא חוסמת
+   קליקים על הטבלה שמתחתיה גם כשלא רואים אותה. */
+.drawer{position:fixed;inset-block:0;inset-inline-start:0;width:min(520px,94vw);background:#fff;z-index:41;
+  box-shadow:0 0 60px rgba(34,66,146,.22);transform:translateX(102%);transition:transform .26s var(--ease);
+  overflow-y:auto;padding:26px 28px 40px;visibility:hidden;pointer-events:none}
+.drawer.on{transform:none;visibility:visible;pointer-events:auto}
+.drawer .x{position:absolute;inset-inline-end:18px;top:18px;appearance:none;border:none;background:var(--bg);
+  border-radius:10px;width:34px;height:34px;cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
+.drawer h2{font-family:'Rubik',sans-serif;font-size:23px;color:var(--navy);margin:6px 0 4px;padding-inline-end:44px}
+.drawer .meta{font-size:14px;color:var(--muted);margin-bottom:18px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:9px 14px;font-size:15px;margin-bottom:20px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600}
+.dsec{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+.dsec h4{font-family:'Rubik',sans-serif;font-size:15.5px;color:var(--navy);margin:0 0 10px;
+  display:flex;align-items:center;gap:8px}
+.dsec h4 svg{width:16px;height:16px}
+.person{display:flex;align-items:center;gap:10px;justify-content:space-between;
+  background:var(--bg);border-radius:12px;padding:11px 14px;margin-bottom:8px}
+.person .nm{font-weight:700;color:var(--navy);font-size:15px}
+.person .rl{font-size:13px;color:var(--muted)}
+.meglist{font-size:14.5px}
+.meglist li{margin-bottom:7px}
+.meglist .code{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.meglist .who{display:inline;font-size:13.5px;color:#3d4a70;text-align:start}
+
+/* ===== מקורות ===== */
+.src{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:12px}
+.src h4{margin:0 0 4px;font-family:'Rubik',sans-serif;font-size:16px;color:var(--navy)}
+.src p{margin:0;font-size:14.5px;color:var(--muted)}
+.src code{background:var(--bg);border-radius:6px;padding:1px 6px;font-size:13.5px;direction:ltr;display:inline-block}
+
+footer{margin-top:46px;padding:26px 0 34px;text-align:center;color:var(--muted);font-size:14.5px;
+  border-top:1px solid var(--line)}
+footer a{color:var(--navy);font-weight:600;text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer .credit{margin-top:10px;font-size:13px;opacity:.9}
+
+.toast{position:fixed;inset-block-end:26px;inset-inline-start:50%;transform:translateX(50%) translateY(20px);
+  background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-size:15px;font-weight:600;
+  opacity:0;pointer-events:none;transition:opacity .2s var(--ease),transform .2s var(--ease);z-index:60}
+.toast.on{opacity:1;transform:translateX(50%) translateY(0)}
+
+@media(max-width:720px){
+  .kv{grid-template-columns:96px 1fr}
+  thead th:nth-child(3),tbody td:nth-child(3),
+  thead th:nth-child(5),tbody td:nth-child(5){display:none}
+}
+@media print{
+  .toolbar,.tabs,.filters,.acts,.drawer,.scrim,footer .credit{display:none}
+  .tablewrap{max-height:none;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<div class="strip"></div>
+
+<header class="site">
+  <div class="wrap">
+    <img class="logo" src="logo.png" alt="המרחב הפדגוגי">
+    <div class="who" id="who"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      עמוד פנימי · תשפ״ז
+    </span>
+    <h1>אדמין המוסדות</h1>
+    <p class="lede">כל <b>64 המוסדות</b> של האגף להכשרה מקצועית, פריסת הפיקוח, ואנשי הקשר של
+      המנהלים, המפקחים והמדריכות — במקום אחד. פרטי הקשר האישיים נשלפים מהגיליון המאובטח ואינם יושבים בעמוד.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+      <input id="q" type="search" placeholder="חיפוש חוצה טאבים — שם מוסד, סמל, מפקח.ת, מנהל.ת, מגמה…" autocomplete="off">
+    </div>
+    <button class="btn" id="exportBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 17v3h16v-3"/></svg>
+      ייצוא CSV
+    </button>
+    <button class="btn" id="reloadBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 5v6h-6"/></svg>
+      רענון
+    </button>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-schools" aria-selected="true" data-panel="p-schools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M10 21v-5h4v5"/></svg>
+      בתי ספר <span class="n" id="n-schools">—</span>
+    </button>
+    <button class="tab" role="tab" id="t-pikuah" aria-selected="false" data-panel="p-pikuah">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/></svg>
+      פריסה לפי פיקוח <span class="n" id="n-pikuah">—</span>
+    </button>
+    <button class="tab" role="tab" id="t-contacts" aria-selected="false" data-panel="p-contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><circle cx="9" cy="11" r="2.2"/><path d="M5.5 16.5c.6-1.6 2-2.4 3.5-2.4s2.9.8 3.5 2.4"/><path d="M15 9.5h3M15 13h3"/></svg>
+      אנשי קשר <span class="n" id="n-contacts">—</span>
+    </button>
+    <button class="tab" role="tab" id="t-sources" aria-selected="false" data-panel="p-sources">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+      מקורות ועדכון
+    </button>
+  </nav>
+
+  <!-- ============ טאב 1 — בתי ספר ============ -->
+  <section class="panel" id="p-schools" role="tabpanel">
+    <div class="filters">
+      <select id="f-district"><option value="">כל המחוזות</option></select>
+      <select id="f-sector"><option value="">כל המגזרים</option></select>
+      <select id="f-network"><option value="">כל הרשתות</option></select>
+      <select id="f-sup"><option value="">כל המפקחים</option></select>
+      <select id="f-changed">
+        <option value="">הכל</option>
+        <option value="1">רק מי שהחליף מפקח.ת</option>
+      </select>
+      <span class="count"><b id="c-schools">0</b> מוסדות</span>
+    </div>
+    <div class="tablewrap">
+      <table id="tbl-schools">
+        <thead><tr>
+          <th>סמל</th><th>בית הספר</th><th>רשת</th><th>מחוז</th><th>מגזר</th>
+          <th>מפקח.ת פדגוגי.ת</th><th>מנהל.ת</th><th>מגמות</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ טאב 2 — פריסת פיקוח ============ -->
+  <section class="panel" id="p-pikuah" role="tabpanel" hidden>
+    <h3 class="sect-h">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/></svg>
+      פיקוח פדגוגי <span class="hint">לחיצה על שם מוסד פותחת את הכרטיס שלו</span>
+    </h3>
+    <div class="grid" id="grid-sup"></div>
+
+    <h3 class="sect-h">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      פיקוח מקצועי <span class="hint">לפי מגמות</span>
+    </h3>
+    <div class="grid" id="grid-prof"></div>
+  </section>
+
+  <!-- ============ טאב 3 — אנשי קשר ============ -->
+  <section class="panel" id="p-contacts" role="tabpanel" hidden>
+    <div class="subtabs">
+      <button class="subtab" aria-selected="true" data-kind="מנהל">מנהלים</button>
+      <button class="subtab" aria-selected="false" data-kind="מפקח">מפקחים</button>
+      <button class="subtab" aria-selected="false" data-kind="מדריך">מדריכים</button>
+      <button class="btn" id="copyMails" style="margin-inline-start:auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg>
+        העתקת המיילים שמוצגים
+      </button>
+    </div>
+    <div id="contacts-body"><div class="loading">טוען את פרטי הקשר מהגיליון…</div></div>
+  </section>
+
+  <!-- ============ טאב 4 — מקורות ============ -->
+  <section class="panel" id="p-sources" role="tabpanel" hidden>
+    <div id="sources-body"></div>
+  </section>
+
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="wrap">
+    עמוד פנימי · לא מקושר מהאתר ואינו מופיע בחיפוש · נעול למרחב האדמין
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var $  = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  };
+
+  /* צבע יציב לכל מפקח.ת — נגזר מהשם, כדי שהנקודה תישאר זהה בכל המסכים */
+  var PALETTE = ["#1F7A4D", "#14548C", "#7A3E12", "#9A5B00", "#4A5D23",
+                 "#8C2F39", "#3B3B8C", "#0F6D7A", "#6B2D6B", "#2F6B2F"];
+  var colorCache = {};
+  function colorOf(name) {
+    if (!colorCache[name]) {
+      var h = 0;
+      for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+      colorCache[name] = PALETTE[h % PALETTE.length];
+    }
+    return colorCache[name];
+  }
+
+  var DATA = null;       /* data/mosdot.json */
+  var CONTACTS = null;   /* מהגיליון המוגן — null עד שנטען */
+  var CONTACT_ERR = "";
+  var state = { tab: "p-schools", kind: "מנהל", q: "" };
+
+  /* ===== הודעות קצרות ===== */
+  var toastT;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("on");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { t.classList.remove("on"); }, 2600);
+  }
+
+  function copyText(text, msg) {
+    function done() { toast(msg || "הועתק"); }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch (e) { toast("לא הצלחנו להעתיק"); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ===== נרמול לחיפוש ===== */
+  function norm(s) {
+    return String(s == null ? "" : s)
+      .replace(/["'״׳`]/g, "").replace(/[-–—,.()]/g, " ")
+      .replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  /* ===== פרטי קשר ===== */
+  /* המפתח לחיפוש איש קשר של בית ספר הוא הסמל; לאנשי משרד — השם. */
+  function contactsBySemel(semel) {
+    if (!CONTACTS || !semel) return [];
+    return CONTACTS.filter(function (c) { return String(c["סמל מוסד"] || "") === String(semel); });
+  }
+  function contactByName(name) {
+    if (!CONTACTS) return null;
+    var n = norm(name);
+    for (var i = 0; i < CONTACTS.length; i++) {
+      if (norm(CONTACTS[i]["שם"]) === n) return CONTACTS[i];
+    }
+    return null;
+  }
+
+  function actionsHtml(c) {
+    if (!c) return '<span class="rl">—</span>';
+    var wa    = c.e164 ? '<a class="ico" href="https://wa.me/' + esc(c.e164) + '" target="_blank" rel="noopener" title="וואטסאפ">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 01-13.4 7.8L3 21l1.3-4.4A9 9 0 1121 12z"/></svg></a>'
+              : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 01-13.4 7.8L3 21l1.3-4.4A9 9 0 1121 12z"/></svg></span>';
+    var tel   = c["טלפון"] ? '<a class="ico" href="tel:' + esc(c["טלפון"]) + '" title="' + esc(c["טלפון"]) + '">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a1 1 0 01-1.1 1A16 16 0 014 5.1 1 1 0 015 4z"/></svg></a>'
+              : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 005 5L15 13l5 2v4a1 1 0 01-1.1 1A16 16 0 014 5.1 1 1 0 015 4z"/></svg></span>';
+    var mail  = c["מייל"] ? '<a class="ico" href="mailto:' + esc(c["מייל"]) + '" title="' + esc(c["מייל"]) + '">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a>'
+              : '<span class="ico off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>';
+    var copy  = '<button class="ico" data-copy="' + esc([c["שם"], c["טלפון"], c["מייל"]].filter(Boolean).join(" · ")) + '" title="העתקת הפרטים">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg></button>';
+    return '<div class="acts">' + wa + tel + mail + copy + '</div>';
+  }
+
+  /* ===== סינון בתי ספר ===== */
+  function filteredSchools() {
+    var d = $("f-district").value, s = $("f-sector").value,
+        n = $("f-network").value, sup = $("f-sup").value, chg = $("f-changed").value;
+    var q = norm(state.q);
+    return DATA.schools.filter(function (x) {
+      if (d && x.district !== d) return false;
+      if (s && x.sector !== s) return false;
+      if (n && x.network !== n) return false;
+      if (sup && x.sups.indexOf(sup) < 0) return false;
+      if (chg && !x.changed) return false;
+      if (!q) return true;
+      var hay = [x.semel, x.name, x.network, x.district, x.sector,
+                 x.sups.join(" "), x.supPrev,
+                 x.megamot.map(function (m) { return m.name + " " + m.code + " " + m.sups.join(" "); }).join(" ")];
+      var principal = contactsBySemel(x.semel).filter(function (c) { return c["סוג"] === "מנהל"; })[0];
+      if (principal) hay.push(principal["שם"]);
+      return norm(hay.join(" ")).indexOf(q) >= 0;
+    });
+  }
+
+  function renderSchools() {
+    var list = filteredSchools();
+    var tb = document.querySelector("#tbl-schools tbody");
+    $("c-schools").textContent = list.length;
+    if (!list.length) {
+      tb.innerHTML = '<tr><td colspan="8"><div class="empty">אין מוסד שמתאים לסינון</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = list.map(function (x) {
+      var principal = contactsBySemel(x.semel).filter(function (c) { return c["סוג"] === "מנהל"; })[0];
+      var sups = x.sups.map(function (nm) {
+        return '<span class="sup-dot" style="--c:' + colorOf(nm) + '"><i></i>' + esc(nm) + '</span>';
+      }).join(" ");
+      return '<tr data-semel="' + esc(x.semel) + '" data-name="' + esc(x.name) + '">' +
+        '<td class="semel">' + esc(x.semel || "—") + '</td>' +
+        '<td><span class="sname">' + esc(x.name) + '</span>' +
+          (x.changed ? '<span class="pill chg">שינוי פיקוח</span>' : "") + '</td>' +
+        '<td>' + esc(x.network) + '</td>' +
+        '<td>' + esc(x.district) + '</td>' +
+        '<td><span class="pill sec">' + esc(x.sector) + '</span></td>' +
+        '<td>' + sups + '</td>' +
+        '<td>' + (principal ? esc(principal["שם"]) : '<span class="rl" style="color:var(--muted)">—</span>') + '</td>' +
+        '<td class="semel">' + (x.megamot.length || "—") + '</td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  /* ===== פריסת פיקוח ===== */
+  function renderPikuah() {
+    var q = norm(state.q);
+    var bySemel = {};
+    DATA.schools.forEach(function (x) { bySemel[x.semel || x.name] = x; });
+
+    $("grid-sup").innerHTML = DATA.supervisors.filter(function (s) {
+      return !q || norm(s.name + " " + s.schools.map(function (k) {
+        return bySemel[k] ? bySemel[k].name : k;
+      }).join(" ")).indexOf(q) >= 0;
+    }).map(function (s) {
+      var c = contactByName(s.name);
+      var chips = s.schools.map(function (k) {
+        var sc = bySemel[k];
+        return '<button class="chip" data-open="' + esc(k) + '">' + esc(sc ? sc.name : k) + '</button>';
+      }).join("");
+      return '<div class="card">' +
+        '<h3 style="--c:' + colorOf(s.name) + '"><i></i>' + esc(s.name) + '</h3>' +
+        '<div class="sub">' + s.count + ' מוסדות' +
+          (c && c["טלפון"] ? ' · <span dir="ltr">' + esc(c["טלפון"]) + '</span>' : "") +
+          (c && c["מייל"] ? ' · <span dir="ltr">' + esc(c["מייל"]) + '</span>' : "") + '</div>' +
+        (c ? actionsHtml(c) : "") +
+        '<div class="chips" style="margin-top:12px">' + chips + '</div>' +
+      '</div>';
+    }).join("") || '<div class="empty">אין תוצאה לחיפוש</div>';
+
+    $("grid-prof").innerHTML = DATA.professional.filter(function (p) {
+      return !q || norm(p.name + " " + p.megamot.join(" ")).indexOf(q) >= 0;
+    }).map(function (p) {
+      var c = contactByName(p.name);
+      return '<div class="card">' +
+        '<h3 style="--c:' + colorOf(p.name) + '"><i></i>' + esc(p.name) + '</h3>' +
+        '<div class="sub">' + p.schoolCount + ' מוסדות · ' + p.megamot.length + ' מגמות</div>' +
+        (c ? actionsHtml(c) : '<div class="sub" style="color:var(--danger)">אין פרטי קשר בגיליון</div>') +
+        '<div class="chips" style="margin-top:12px">' +
+          p.megamot.slice(0, 8).map(function (m) { return '<span class="chip" style="cursor:default">' + esc(m) + '</span>'; }).join("") +
+          (p.megamot.length > 8 ? '<span class="chip" style="cursor:default">ועוד ' + (p.megamot.length - 8) + '</span>' : "") +
+        '</div>' +
+      '</div>';
+    }).join("") || '<div class="empty">אין תוצאה לחיפוש</div>';
+  }
+
+  /* ===== אנשי קשר ===== */
+  function currentContacts() {
+    if (!CONTACTS) return [];
+    var q = norm(state.q);
+    return CONTACTS.filter(function (c) {
+      if (c["סוג"] !== state.kind) return false;
+      if (!q) return true;
+      return norm([c["שם"], c["תפקיד"], c["שיוך"], c["סמל מוסד"], c["מייל"]].join(" ")).indexOf(q) >= 0;
+    });
+  }
+
+  function renderContacts() {
+    var box = $("contacts-body");
+
+    if (CONTACT_ERR) {
+      box.innerHTML = '<div class="notice"><b>פרטי הקשר לא נטענו.</b> ' + esc(CONTACT_ERR) +
+        '<br>שאר העמוד עובד — הטאבים "בתי ספר" ו"פריסה לפי פיקוח" אינם תלויים בגיליון.</div>';
+      return;
+    }
+    if (!CONTACTS) {
+      box.innerHTML = '<div class="loading">טוען את פרטי הקשר מהגיליון…</div>';
+      return;
+    }
+
+    var list = currentContacts();
+    var missing = list.filter(function (c) { return !c["טלפון"] && !c["מייל"]; }).length;
+
+    var head = state.kind === "מנהל"
+      ? '<th>מנהל.ת</th><th>בית הספר</th><th>סמל</th><th>נייד</th><th>מייל</th><th></th>'
+      : '<th>שם</th><th>תפקיד</th><th>שיוך</th><th>נייד</th><th>מייל</th><th></th>';
+
+    var rows = list.map(function (c) {
+      var cells = state.kind === "מנהל"
+        ? '<td><span class="sname">' + esc(c["שם"] || "—") + '</span></td>' +
+          '<td>' + esc(c["שיוך"]) + '</td>' +
+          '<td class="semel">' + esc(c["סמל מוסד"] || "—") + '</td>'
+        : '<td><span class="sname">' + esc(c["שם"]) + '</span></td>' +
+          '<td>' + esc(c["תפקיד"]) + '</td>' +
+          '<td style="font-size:14px;color:var(--muted)">' + esc(c["שיוך"]) + '</td>';
+      return '<tr data-semel="' + esc(c["סמל מוסד"] || "") + '">' + cells +
+        '<td class="semel" dir="ltr">' + (c["טלפון"] ? esc(c["טלפון"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+        '<td dir="ltr" style="font-size:14px">' + (c["מייל"] ? esc(c["מייל"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+        '<td>' + actionsHtml(c) + '</td>' +
+      '</tr>';
+    }).join("");
+
+    box.innerHTML =
+      (missing ? '<div class="notice"><b>' + missing + ' רשומות בלי טלפון ובלי מייל.</b> ' +
+        'ההשלמה היא בלשונית "אנשי קשר" בגיליון — העמוד מציג תמיד את מה שכתוב שם.</div>' : "") +
+      '<div class="filters"><span class="count"><b>' + list.length + '</b> רשומות</span></div>' +
+      '<div class="tablewrap"><table><thead><tr>' + head + '</tr></thead><tbody>' +
+      (rows || '<tr><td colspan="6"><div class="empty">אין תוצאה</div></td></tr>') +
+      '</tbody></table></div>';
+  }
+
+  /* ===== כרטיס מוסד ===== */
+  function openSchool(key) {
+    var x = null;
+    DATA.schools.forEach(function (s) {
+      if (String(s.semel) === String(key) || s.name === key) x = s;
+    });
+    if (!x) return;
+
+    var people = contactsBySemel(x.semel);
+    var principal = people.filter(function (c) { return c["סוג"] === "מנהל"; });
+
+    var megs = x.megamot.length
+      ? '<ul class="meglist">' + x.megamot.map(function (m) {
+          var who = m.open ? '<span class="pill warn">טרם שויך</span>'
+                  : m.sups.map(function (n) { return esc(n); }).join(" · ");
+          return '<li><b>' + esc(m.name) + '</b> <span class="code">' + esc(m.code) + '</span>' +
+                 (m.grades ? ' <span class="code">· ' + esc(m.grades) + '</span>' : "") +
+                 '<br><span class="who">' + who + (m.note ? ' <span class="code">(' + esc(m.note) + ')</span>' : "") + '</span></li>';
+        }).join("") + '</ul>'
+      : '<div class="sub" style="color:var(--muted)">אין מגמות רשומות בקובץ הפיקוח המקצועי</div>';
+
+    $("drawer").innerHTML =
+      '<button class="x" id="drawerX" aria-label="סגירה">×</button>' +
+      '<h2>' + esc(x.name) + '</h2>' +
+      '<div class="meta">' + esc(x.semel || "בלי סמל מוסד") + ' · ' + esc(x.network) + ' · ' + esc(x.district) + '</div>' +
+      '<dl class="kv">' +
+        '<dt>מגזר</dt><dd>' + esc(x.sector) + '</dd>' +
+        '<dt>מפקח.ת תשפ״ז</dt><dd>' + x.sups.map(function (n) {
+            return '<span class="sup-dot" style="--c:' + colorOf(n) + '"><i></i>' + esc(n) + '</span>';
+          }).join(" ") + '</dd>' +
+        '<dt>מפקח.ת תשפ״ו</dt><dd>' + esc(x.supPrev || "—") +
+          (x.changed ? ' <span class="pill chg">שינוי</span>' : "") + '</dd>' +
+      '</dl>' +
+
+      '<div class="dsec">' +
+        '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 21v-1.5A5.5 5.5 0 0110.5 14h3A5.5 5.5 0 0119 19.5V21"/></svg>הנהלה</h4>' +
+        (principal.length
+          ? principal.map(function (c) {
+              return '<div class="person"><div><div class="nm">' + esc(c["שם"] || "—") + '</div>' +
+                '<div class="rl">' + esc(c["תפקיד"]) +
+                (c["טלפון"] ? ' · <span dir="ltr">' + esc(c["טלפון"]) + '</span>' : "") +
+                (c["מייל"] ? ' · <span dir="ltr">' + esc(c["מייל"]) + '</span>' : "") +
+                (c["טלפון מוסד"] ? ' · טלפון המוסד <span dir="ltr">' + esc(c["טלפון מוסד"]) + '</span>' : "") +
+                '</div></div>' +
+                actionsHtml(c) + '</div>';
+            }).join("")
+          : '<div class="sub" style="color:var(--muted)">' +
+            (CONTACTS ? "אין רשומת מנהל.ת בגיליון עבור המוסד הזה" : "פרטי הקשר עדיין נטענים") + '</div>') +
+      '</div>' +
+
+      '<div class="dsec">' +
+        '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>מגמות ופיקוח מקצועי</h4>' +
+        megs +
+      '</div>';
+
+    $("drawer").classList.add("on");
+    $("drawer").setAttribute("aria-hidden", "false");
+    $("scrim").classList.add("on");
+    $("drawerX").addEventListener("click", closeDrawer);
+  }
+
+  function closeDrawer() {
+    $("drawer").classList.remove("on");
+    $("drawer").setAttribute("aria-hidden", "true");
+    $("scrim").classList.remove("on");
+  }
+
+  /* ===== מקורות ===== */
+  function renderSources() {
+    var m = DATA.meta;
+    var contactLine = CONTACT_ERR ? '<span class="pill warn">לא נטען</span> ' + esc(CONTACT_ERR)
+                    : CONTACTS ? '<span class="pill ok">נטען</span> ' + CONTACTS.length + ' רשומות מהגיליון'
+                    : "בטעינה…";
+    $("sources-body").innerHTML =
+      '<div class="src"><h4>הנתונים הציבוריים</h4><p>' +
+        m.sources.map(esc).join("<br>") +
+        '<br>נבנה לאחרונה: <b>' + esc(m.generated) + '</b> · ' + m.count + ' מוסדות.' +
+        '<br>לרענון אחרי שינוי בפריסה: <code>node tools/build-mosdot.mjs</code></p></div>' +
+
+      '<div class="src"><h4>פרטי הקשר האישיים</h4><p>' +
+        'לשונית <b>"אנשי קשר"</b> בגיליון ההרשאות בדרייב, נשלפת דרך שער ההרשאות ' +
+        '(<code>admin-contacts</code>). ' + contactLine +
+        '<br>עריכה נעשית בגיליון בלבד — אין טלפון או מייל בקוד של העמוד הזה.</p></div>' +
+
+      (m.unmatched && m.unmatched.length
+        ? '<div class="src"><h4>מוסדות שמופיעים בפיקוח המקצועי ואינם בפריסה</h4><p>' +
+          m.unmatched.map(function (u) { return esc((u.semel || "—") + " · " + u.school); }).join("<br>") +
+          '<br>אלה מוסדות של משרד החינוך — הם מחוץ ל-64 של האגף, וזו לא שגיאה.</p></div>'
+        : "") +
+
+      '<div class="src"><h4>מי רואה את העמוד</h4><p>' +
+        'העמוד נעול למרחב <code>mosdot</code>, שלא ניתן לאיש בגיליון ההרשאות — ' +
+        'כלומר רק בעלי הרשאת <code>all</code> נכנסים. ' +
+        'לפתיחה למפקחים: להוסיף <code>mosdot</code> בעמודת המרחבים בגיליון.</p></div>';
+  }
+
+  /* ===== ציור מחדש ===== */
+  function renderAll() {
+    if (!DATA) return;
+    renderSchools();
+    renderPikuah();
+    renderContacts();
+    renderSources();
+    $("n-schools").textContent = DATA.schools.length;
+    $("n-pikuah").textContent = DATA.supervisors.length;
+    $("n-contacts").textContent = CONTACTS ? CONTACTS.length : "—";
+  }
+
+  /* ===== ייצוא ===== */
+  function exportCsv() {
+    var rows, name;
+    if (state.tab === "p-contacts") {
+      var list = currentContacts();
+      rows = [["שם", "תפקיד", "שיוך", "סמל מוסד", "טלפון", "מייל"]].concat(
+        list.map(function (c) {
+          return [c["שם"], c["תפקיד"], c["שיוך"], c["סמל מוסד"], c["טלפון"], c["מייל"]];
+        }));
+      name = "אנשי-קשר-" + state.kind;
+    } else if (state.tab === "p-pikuah") {
+      rows = [["מפקח.ת", "מספר מוסדות", "מוסדות"]].concat(
+        DATA.supervisors.map(function (s) {
+          var names = s.schools.map(function (k) {
+            var f = DATA.schools.filter(function (x) { return (x.semel || x.name) === k; })[0];
+            return f ? f.name : k;
+          });
+          return [s.name, s.count, names.join(" · ")];
+        }));
+      name = "פריסת-פיקוח";
+    } else {
+      rows = [["סמל", "בית הספר", "רשת", "מחוז", "מגזר", "מפקח.ת תשפז", "מפקח.ת תשפו", "מנהל.ת", "מגמות"]].concat(
+        filteredSchools().map(function (x) {
+          var p = contactsBySemel(x.semel).filter(function (c) { return c["סוג"] === "מנהל"; })[0];
+          return [x.semel, x.name, x.network, x.district, x.sector,
+                  x.sups.join(" · "), x.supPrev, p ? p["שם"] : "", x.megamot.length];
+        }));
+      name = "בתי-ספר";
+    }
+
+    var csv = rows.map(function (r) {
+      return r.map(function (c) { return '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"'; }).join(",");
+    }).join("\r\n");
+
+    /* BOM — בלעדיו אקסל פותח עברית כג'יבריש */
+    var blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 400);
+    toast("הקובץ ירד");
+  }
+
+  /* ===== טעינה ===== */
+  function fillFilters() {
+    function fill(id, values) {
+      var sel = $(id);
+      values.sort(function (a, b) { return a.localeCompare(b, "he"); }).forEach(function (v) {
+        var o = document.createElement("option");
+        o.value = v; o.textContent = v;
+        sel.appendChild(o);
+      });
+    }
+    function uniq(fn) {
+      var out = [];
+      DATA.schools.forEach(function (x) {
+        var v = fn(x);
+        (Array.isArray(v) ? v : [v]).forEach(function (one) {
+          if (one && out.indexOf(one) < 0) out.push(one);
+        });
+      });
+      return out;
+    }
+    fill("f-district", uniq(function (x) { return x.district; }));
+    fill("f-sector",   uniq(function (x) { return x.sector; }));
+    fill("f-network",  uniq(function (x) { return x.network; }));
+    fill("f-sup",      uniq(function (x) { return x.sups; }));
+  }
+
+  function loadContacts() {
+    if (!window.PMH_AUTH || !window.PMH_AUTH.load) {
+      CONTACT_ERR = "שער ההרשאות לא נטען.";
+      renderAll();
+      return;
+    }
+    window.PMH_AUTH.load("admin-contacts").then(function (r) {
+      if (r && r.ok && Array.isArray(r.data)) {
+        CONTACTS = r.data;
+        CONTACT_ERR = "";
+      } else {
+        var code = r && r.error ? r.error : "unknown";
+        CONTACT_ERR = code === "nokey"
+            ? 'המפתח admin-contacts עדיין לא הוגדר בסקריפט ההרשאות.'
+          : code === "nospace"
+            ? 'החשבון הזה לא מורשה לראות את פרטי הקשר.'
+          : code === "badsession"
+            ? 'הסשן פג — צריך להיכנס מחדש.'
+            : 'שגיאה מהשרת: ' + code;
+      }
+      renderAll();
+    });
+  }
+
+  function boot() {
+    var u = window.PMH_AUTH && window.PMH_AUTH.user ? window.PMH_AUTH.user() : null;
+    if (u) $("who").innerHTML = '<b>' + esc(u.name || u.email) + '</b>' + esc(u.email);
+
+    fetch("data/mosdot.json", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        DATA = json;
+        fillFilters();
+        renderAll();
+        loadContacts();
+      })
+      .catch(function () {
+        document.querySelector("#tbl-schools tbody").innerHTML =
+          '<tr><td colspan="8"><div class="empty">קובץ הנתונים data/mosdot.json לא נטען. ' +
+          'להרצה מחדש: node tools/build-mosdot.mjs</div></td></tr>';
+      });
+  }
+
+  /* ===== אירועים ===== */
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () {
+      document.querySelectorAll(".tab").forEach(function (o) {
+        o.setAttribute("aria-selected", String(o === t));
+      });
+      document.querySelectorAll(".panel").forEach(function (p) {
+        p.hidden = p.id !== t.dataset.panel;
+      });
+      state.tab = t.dataset.panel;
+    });
+  });
+
+  document.querySelectorAll(".subtab").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll(".subtab").forEach(function (o) {
+        o.setAttribute("aria-selected", String(o === b));
+      });
+      state.kind = b.dataset.kind;
+      renderContacts();
+    });
+  });
+
+  var qT;
+  $("q").addEventListener("input", function (e) {
+    state.q = e.target.value;
+    clearTimeout(qT);
+    qT = setTimeout(function () { if (DATA) { renderSchools(); renderPikuah(); renderContacts(); } }, 140);
+  });
+
+  ["f-district", "f-sector", "f-network", "f-sup", "f-changed"].forEach(function (id) {
+    $(id).addEventListener("change", renderSchools);
+  });
+
+  $("exportBtn").addEventListener("click", exportCsv);
+  $("reloadBtn").addEventListener("click", function () { location.reload(); });
+
+  $("copyMails").addEventListener("click", function () {
+    var mails = currentContacts().map(function (c) { return c["מייל"]; }).filter(Boolean);
+    if (!mails.length) { toast("אין מיילים ברשימה המוצגת"); return; }
+    copyText(mails.join(", "), mails.length + " מיילים הועתקו");
+  });
+
+  document.addEventListener("click", function (e) {
+    var copyBtn = e.target.closest("[data-copy]");
+    if (copyBtn) { copyText(copyBtn.getAttribute("data-copy")); return; }
+
+    var chip = e.target.closest("[data-open]");
+    if (chip) { openSchool(chip.getAttribute("data-open")); return; }
+
+    /* לחיצה על שורה בטבלת בתי הספר — אבל לא על כפתור פעולה שבתוכה */
+    var row = e.target.closest("#tbl-schools tbody tr");
+    if (row && !e.target.closest("a,button")) {
+      openSchool(row.dataset.semel || row.dataset.name);
+    }
+  });
+
+  $("scrim").addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeDrawer();
+    /* Ctrl+F על העמוד הזה = החיפוש שלנו, לא של הדפדפן */
+    if ((e.ctrlKey || e.metaKey) && e.key === "f") { e.preventDefault(); $("q").focus(); }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else { boot(); }
+})();
+</script>
+</body>
+</html>

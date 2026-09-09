@@ -43,6 +43,7 @@ const SKIP = new Set([
   "sheelot-menahalim.html",
   "shut-menahalim.html",
   "sikum-mishov.html",
+  "admin-mosdot.html",  // אדמין המוסדות — עמוד פנימי נעול, לא תוכן לחיפוש
   "matzevet-list.html",
   "talmidim.html",
   "sikum-matzevet.html",

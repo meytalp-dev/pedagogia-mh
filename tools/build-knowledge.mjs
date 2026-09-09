@@ -33,7 +33,7 @@ const MAX_TOTAL_CHARS = 290000; // תקרה כוללת לכל הידע — טק�
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
-  "admin.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
+  "admin.html", "admin-mosdot.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
   "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html",
   "nispach-baaley-tafkidim.html", "sikum-nispach-tafkidim.html", "merkaz-tofsim.html",
   "tikshuv-map.html", "tikshuv-shealon.html", "tikshuv-shibutz.html", "tikshuv-ishur.html",
