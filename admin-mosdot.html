@@ -491,6 +491,8 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   var STATUS = {};    /* שם בפריסה -> { matzevet: {...}, ... } */
   var UNMATCHED = []; /* שמות שדווחו ולא שויכו — מוצג בטאב המקורות */
   var ICT_ROSTER = null;
+  var ROLE_ROWS = null;   /* בעלי התפקידים מהנספח — שם, נייד, מייל */
+  var roleFilter = "";    /* סינון הטבלה לפי תפקיד */
 
   /* ===== התאמת שם מדווח לשם שבפריסה ===== */
   var NORM_INDEX = null, ALIAS_INDEX = null;
@@ -653,6 +655,33 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       (missing || '<div class="empty">כל המוסדות דיווחו בכל המערכות</div>');
   }
 
+  /* שליחה חוזרת של נספח מוסיפה שורות חדשות ומשאירה את הישנות.
+     שומרים רק את המשלוח האחרון של כל בית ספר. */
+  function dedupeRoles(rows) {
+    /* לא משווים תאריכים כמחרוזות — הפורמט עלול להשתנות. השורות נוספות
+       לגיליון בסדר כרונולוגי, ולכן ההופעה האחרונה של בית ספר היא המשלוח
+       העדכני שלו, וכל שורותיו נושאות את אותה חותמת זמן. */
+    var lastTs = {};
+    rows.forEach(function (r) {
+      if (r["בית הספר"]) lastTs[r["בית הספר"]] = r["חותמת זמן"] || "";
+    });
+    return rows.filter(function (r) {
+      return r["בית הספר"] && (r["חותמת זמן"] || "") === lastTs[r["בית הספר"]];
+    });
+  }
+
+  /* שורת נספח -> אובייקט איש קשר בפורמט שהכפתורים מכירים */
+  function roleContact(r) {
+    var phone = String(r["מספר פלאפון"] || "").trim();
+    return {
+      "שם": r["שם בעל.ת התפקיד"],
+      "תפקיד": r["התפקיד"],
+      "טלפון": phone,
+      "e164": phone ? ("972" + phone.replace(/\D/g, "").replace(/^0/, "")) : "",
+      "מייל": r["כתובת מייל"]
+    };
+  }
+
   /* ===== טאב בעלי תפקידים ===== */
   function renderRoles() {
     var box = $("roles-body");
@@ -720,6 +749,53 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         }).join("") + '</tbody></table></div>';
     }
 
+    /* טבלת בעלי התפקידים עצמם — שם, בית ספר, נייד ומייל */
+    var people = "";
+    if (ROLE_ROWS === null) {
+      people = '<div class="loading">טוען את בעלי התפקידים…</div>';
+    } else if (!ROLE_ROWS.length) {
+      people = '<div class="notice">רשימת בעלי התפקידים לא נטענה מהגיליון.</div>';
+    } else {
+      var named = ROLE_ROWS.filter(function (r) {
+        if (!String(r["שם בעל.ת התפקיד"] || "").trim()) return false;
+        if (roleFilter && r["התפקיד"] !== roleFilter) return false;
+        if (!q) return true;
+        return norm([r["שם בעל.ת התפקיד"], r["בית הספר"], r["התפקיד"],
+                     r["פירוט (מגמה / מקצוע / שכבה)"], r["כתובת מייל"]].join(" ")).indexOf(q) >= 0;
+      });
+      var roleNames = [];
+      ROLE_ROWS.forEach(function (r) {
+        if (r["התפקיד"] && roleNames.indexOf(r["התפקיד"]) < 0) roleNames.push(r["התפקיד"]);
+      });
+      people =
+        '<div class="filters">' +
+          '<select id="f-role"><option value="">כל התפקידים</option>' +
+            roleNames.sort(function (a, b) { return a.localeCompare(b, "he"); })
+              .map(function (n) {
+                return '<option value="' + esc(n) + '"' +
+                       (n === roleFilter ? ' selected' : '') + '>' + esc(n) + '</option>';
+              }).join("") +
+          '</select>' +
+          '<button class="btn" id="copyRoleMails">העתקת המיילים שמוצגים</button>' +
+          '<span class="count"><b>' + named.length + '</b> בעלי תפקידים</span>' +
+        '</div>' +
+        '<div class="tablewrap"><table><thead><tr>' +
+          '<th>שם</th><th>תפקיד</th><th>בית הספר</th><th>נייד</th><th>מייל</th><th></th>' +
+        '</tr></thead><tbody>' +
+        (named.map(function (r) {
+          var c = roleContact(r);
+          var detail = r["פירוט (מגמה / מקצוע / שכבה)"];
+          return '<tr><td><span class="sname">' + esc(c["שם"]) + '</span></td>' +
+            '<td style="font-size:14px">' + esc(r["התפקיד"]) +
+              (detail ? ' <span class="code" style="color:var(--muted)">· ' + esc(detail) + '</span>' : "") + '</td>' +
+            '<td>' + esc(r["בית הספר"]) + '</td>' +
+            '<td class="semel" dir="ltr">' + (c["טלפון"] ? esc(c["טלפון"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+            '<td dir="ltr" style="font-size:14px">' + (c["מייל"] ? esc(c["מייל"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+            '<td>' + actionsHtml(c) + '</td></tr>';
+        }).join("") || '<tr><td colspan="6"><div class="empty">אין תוצאה</div></td></tr>') +
+        '</tbody></table></div>';
+    }
+
     box.innerHTML =
       '<div class="notice"><b>' + reportedCount + ' מתוך ' + DATA.schools.length +
         ' מוסדות מילאו את נספח בעלי התפקידים.</b> ' +
@@ -727,8 +803,28 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         (noReport.length ? noReport.length + ' מוסדות טרם דיווחו כלל.' : "") + '</div>' +
       '<h3 class="sect-h">איוש לפי תפקיד <span class="hint">מתוך המוסדות שדיווחו</span></h3>' +
       '<div class="grid">' + (cards || '<div class="empty">אין תוצאה</div>') + '</div>' +
+      '<h3 class="sect-h" style="margin-top:32px">בעלי התפקידים עצמם ' +
+        '<span class="hint">שם, נייד ומייל — מתוך הנספח</span></h3>' + people +
       '<h3 class="sect-h" style="margin-top:32px">רכזי ורכזות התקשוב ' +
         '<span class="hint">שם ונייד — מסקר הקהילה</span></h3>' + ict;
+
+    var sel = $("f-role");
+    if (sel) {
+      sel.addEventListener("change", function () { roleFilter = sel.value; renderRoles(); });
+    }
+    var cm = $("copyRoleMails");
+    if (cm) {
+      cm.addEventListener("click", function () {
+        var mails = [];
+        (ROLE_ROWS || []).forEach(function (r) {
+          if (roleFilter && r["התפקיד"] !== roleFilter) return;
+          var m = String(r["כתובת מייל"] || "").trim();
+          if (m && mails.indexOf(m) < 0) mails.push(m);
+        });
+        if (!mails.length) { toast("אין מיילים ברשימה המוצגת"); return; }
+        copyText(mails.join(", "), mails.length + " מיילים הועתקו");
+      });
+    }
   }
 
   /* ===== משיכת המקורות החיים =====
@@ -755,6 +851,10 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     whenAuthed(function () {
       window.PMH_AUTH.load("tikshuv-roster").then(function (r) {
         ICT_ROSTER = (r && r.ok && Array.isArray(r.data)) ? r.data : [];
+        renderRoles();
+      });
+      window.PMH_AUTH.load("admin-roles").then(function (r) {
+        ROLE_ROWS = (r && r.ok && Array.isArray(r.data)) ? dedupeRoles(r.data) : [];
         renderRoles();
       });
     });
@@ -930,6 +1030,12 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     var people = contactsBySemel(x.semel);
     var principal = people.filter(function (c) { return c["סוג"] === "מנהל"; });
 
+    /* בעלי התפקידים של המוסד — השם שהמנהל.ת הקלידו אינו בהכרח שם הפריסה */
+    var schoolRoles = (ROLE_ROWS || []).filter(function (r) {
+      var hit = matchSchool(r["בית הספר"]);
+      return hit && hit.name === x.name && String(r["שם בעל.ת התפקיד"] || "").trim();
+    });
+
     var megs = x.megamot.length
       ? '<ul class="meglist">' + x.megamot.map(function (m) {
           var who = m.open ? '<span class="pill warn">טרם שויך</span>'
@@ -978,6 +1084,20 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
                : '<span class="pill warn">טרם</span>') + '</dd>';
         }).join("") + '</dl>' +
       '</div>' +
+
+      (schoolRoles.length
+        ? '<div class="dsec">' +
+            '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5a3 3 0 100-6 3 3 0 000 6z"/><path d="M15.5 19v-1.6a3.5 3.5 0 00-3.5-3.4H6a3.5 3.5 0 00-3.5 3.4V19"/></svg>' +
+            'בעלי תפקידים <span class="rl">' + schoolRoles.length + '</span></h4>' +
+            schoolRoles.map(function (r) {
+              var c = roleContact(r);
+              return '<div class="person"><div><div class="nm">' + esc(c["שם"]) + '</div>' +
+                '<div class="rl">' + esc(r["התפקיד"]) +
+                (c["טלפון"] ? ' · <span dir="ltr">' + esc(c["טלפון"]) + '</span>' : "") + '</div></div>' +
+                actionsHtml(c) + '</div>';
+            }).join("") +
+          '</div>'
+        : "") +
 
       '<div class="dsec">' +
         '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>מגמות ופיקוח מקצועי</h4>' +
