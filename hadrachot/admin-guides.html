@@ -87,6 +87,11 @@
     display: grid; place-items: center; font-size: 16px; font-weight: 700; flex-shrink: 0;
   }
   .sm-check.on { background: #1FA855; border-color: #1FA855; color: #fff; }
+  .sm-addphone {
+    background: var(--surface-2); color: var(--text-2); border: 1px dashed var(--border);
+    border-radius: 9px; padding: 9px 12px; font-family: inherit; font-size: 13px;
+    font-weight: 600; cursor: pointer; min-height: 40px; white-space: nowrap;
+  }
   .sm-reset { background: none; border: none; color: var(--text-3); font-family: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
 
   @media (max-width: 560px) {
@@ -129,6 +134,8 @@
       המקור: קובץ "רשימת מדריכים" תשפ"ז (8.9.26). עדכון מקצוע/מגזר/מפקח — בקובץ
       <code>assets/guides.js</code>. עדכון טלפון ומייל — בקובץ <code>assets/guides-contact.js</code>
       (נטען רק מדף זה, ולא מהדפים הפתוחים).
+      <b>לחמשת המפקחים המקצועיים אין טלפון בקובץ המקור</b> — אפשר להזין נייד בלחיצה
+      על "+ הוספת טלפון לוואטסאפ", והוא נשמר במכשיר הזה בלבד.
     </p>
 
     <div id="gaps" class="notice" hidden></div>
@@ -145,7 +152,8 @@
       <div class="sm-bar"><i id="sm-bar" style="width:0"></i></div>
       <div id="sm-list"></div>
       <div style="margin-top:12px; text-align:left;">
-        <button type="button" class="sm-reset" onclick="resetSent()">איפוס הסימונים</button>
+        <button type="button" class="sm-reset" onclick="copyPhonesForFile(this)">העתקת הטלפונים שהזנתי (לקיבוע בקובץ)</button>
+        <button type="button" class="sm-reset" style="margin-inline-start:14px;" onclick="resetSent()">איפוס הסימונים</button>
       </div>
     </section>
 
@@ -176,6 +184,75 @@ function waPhone(phone) {
 /* wa.me — הקישור שנפתח נכון גם באפליקציית וואטסאפ בנייד וגם בדפדפן */
 function waLink(phone, text) {
   return 'https://wa.me/' + phone + (text ? '?text=' + encodeURIComponent(text) : '');
+}
+
+/* ---- טלפונים שמוזנים כאן (נשמרים במכשיר בלבד) ----
+   בקובץ המקור "רשימת מדריכים" יש טלפונים למדריכות בלבד — לחמשת המפקחים
+   המקצועיים יש רק מייל, ולכן כפתור הוואטסאפ שלהם היה כבוי. מזינים כאן את
+   המספר פעם אחת, הוא נשמר בדפדפן הזה (לא בקוד, לא בשרת) והכפתור נדלק מיד.
+   "העתקת הטלפונים" מייצר את השורות ל-assets/guides-contact.js לקיבוע קבוע. */
+const PHONES_KEY = 'ts.guidelinks.phones.v1';
+function phonesGet() {
+  try { return JSON.parse(localStorage.getItem(PHONES_KEY) || '{}'); } catch (e) { return {}; }
+}
+function phonesSet(map) {
+  try { localStorage.setItem(PHONES_KEY, JSON.stringify(map)); } catch (e) {}
+}
+
+/* בדף מתקיימים שני כתיבים לאותו סוג: 'guide'/'inspector' במפתחות הכרטיסים
+   ו-'guides'/'inspectors' בדליי הקשר. שתי הפונקציות האלה מיישרות ביניהם,
+   כדי שטלפון שהוזן בכרטיס יימצא גם בשורת השליחה. */
+function kindKey(kind) { return kind === 'inspectors' ? 'inspector' : (kind === 'guides' ? 'guide' : kind); }
+function contactsBucket(kind) { return kindKey(kind) === 'inspector' ? 'inspectors' : 'guides'; }
+
+/* פרטי הקשר בפועל = מה שבקובץ + מה שהוזן כאן */
+function contactOf(kind, slug) {
+  const base = window.TS_contactOf(contactsBucket(kind), slug);
+  const local = phonesGet()[kindKey(kind) + ':' + slug];
+  return local ? Object.assign({}, base, { phone: local, localPhone: true }) : base;
+}
+
+/* מחזיר מספר מנורמל, או '' אם אינו נראה כמספר ישראלי */
+function normalizePhone(raw) {
+  let d = String(raw || '').replace(/\D/g, '');
+  if (d.startsWith('972')) d = '0' + d.slice(3);
+  if (/^5\d{8}$/.test(d)) d = '0' + d;
+  if (!/^0\d{8,9}$/.test(d)) return '';
+  return /^05\d{8}$/.test(d) ? d.slice(0, 3) + '-' + d.slice(3) : d;
+}
+
+function nameOf(kind, slug) {
+  const src = kindKey(kind) === 'inspector' ? (window.TS_INSPECTORS || {}) : (window.TS_GUIDES || {});
+  return (src[slug] && src[slug].name) || slug;
+}
+
+function askPhone(kind, slug) {
+  const key = kindKey(kind) + ':' + slug;
+  const map = phonesGet();
+  const raw = prompt('מספר הנייד של ' + nameOf(kind, slug) + ' — לשליחת הקישור בוואטסאפ:', map[key] || '');
+  if (raw === null) return;
+  if (!String(raw).trim()) { delete map[key]; phonesSet(map); build(); return; }
+  const p = normalizePhone(raw);
+  if (!p) { alert('המספר לא נראה תקין. דוגמה: 050-1234567'); return; }
+  /* וואטסאפ עובד רק מול נייד — מספר נייח יפתח שיחה שלא קיימת */
+  if (!/^05/.test(p) && !confirm('זה לא נראה כמו מספר נייד, ווואטסאפ עובד רק עם נייד. לשמור בכל זאת?')) return;
+  map[key] = p;
+  phonesSet(map);
+  build();
+}
+
+/* השורות שאני מעתיקה למיטל כדי לקבע את המספרים בקובץ */
+function copyPhonesForFile(btn) {
+  const map = phonesGet();
+  const keys = Object.keys(map);
+  if (!keys.length) { alert('עדיין לא הוזנו כאן טלפונים.'); return; }
+  const txt = keys.map(k => {
+    const kind = k.split(':')[0], slug = k.split(':')[1];
+    const base = window.TS_contactOf(contactsBucket(kind), slug);
+    return contactsBucket(kind) + ' · ' + slug + ": { phone: '" + map[k] + "', email: '" + (base.email || '') + "' },";
+  }).join('\n');
+  navigator.clipboard.writeText('לקיבוע ב-assets/guides-contact.js:\n' + txt)
+    .then(() => flashBtn(btn, '✓ הועתק'));
 }
 
 /* ---- מי כבר נשלח (נשמר בדפדפן, כדי שאפשר יהיה לעצור באמצע ולחזור) ---- */
@@ -259,7 +336,7 @@ function actionsHtml(kind, slug, url, contact) {
              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20z"/></svg>
              וואטסאפ
            </a>`
-        : `<span class="copy-mini wa off" title="אין טלפון בקובץ guides-contact.js">אין טלפון</span>`}
+        : `<button type="button" class="copy-mini secondary" onclick="askPhone('${kind}', '${slug}')">+ הוספת טלפון לוואטסאפ</button>`}
       ${contact.email
         ? `<a class="copy-mini secondary" href="${esc(TS.gmailCompose({ to: contact.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msgFor(kind, slug) }))}" target="_blank" rel="noopener">מייל</a>`
         : ''}
@@ -291,6 +368,14 @@ async function init() {
       'אבל מספרי המורים מוצגים כ-0 ואינם נכונים. רעננו את העמוד בעוד רגע.';
   }
 
+  API_OK = res.ok;
+  build();
+}
+
+/* בנייה מחדש מהנתונים שכבר בזיכרון — נקראת גם אחרי הזנת טלפון */
+let API_OK = true;
+
+function build() {
   const guides = window.TS_GUIDES || {};
   const inspectors = window.TS_INSPECTORS || {};
   const gapsList = [];
@@ -300,7 +385,7 @@ async function init() {
   Object.keys(guides).forEach(slug => {
     const g = Object.assign({ slug }, guides[slug]);
     g.societyLabel = (g.sectors && g.sectors.indexOf('arab') >= 0) ? 'חברה הערבית' : 'חברה היהודית';
-    const contact = window.TS_contactOf('guides', slug);
+    const contact = contactOf('guides', slug);
     g.contact = contact;
     const mine = TEACHERS.filter(t =>
       t.subject === g.subject &&
@@ -326,7 +411,7 @@ async function init() {
   /* ----- מפקחים ----- */
   const inspRows = Object.keys(inspectors).map(slug => {
     const ins = Object.assign({ slug }, inspectors[slug]);
-    const contact = window.TS_contactOf('inspectors', slug);
+    const contact = contactOf('inspectors', slug);
     ins.contact = contact;
     const mine = TEACHERS.filter(t =>
       ins.subjects.indexOf(t.subject) >= 0 &&
@@ -342,7 +427,7 @@ async function init() {
     const url = BASE_URL + '/mabat/?i=' + slug;
     LINKS['inspector:' + slug] = { url, msg: inspectorMessage(ins, url) };
     ins.url = url;
-    if (!contact.phone) gapsList.push('אין טלפון ל<b>' + esc(ins.name) + '</b> (מפקח.ת) — אי אפשר לשלוח בוואטסאפ');
+    if (!contact.phone) gapsList.push('אין טלפון ל<b>' + esc(ins.name) + '</b> (מפקח.ת) — נשלח במייל, או להזין נייד בכרטיס ("+ הוספת טלפון לוואטסאפ")');
     return ins;
   });
 
@@ -413,7 +498,7 @@ async function init() {
     <div class="guide-grid">${arab.map(guideCard).join('')}</div>
   `;
 
-  if (gapsList.length && res.ok) {
+  if (gapsList.length && API_OK) {
     const box = document.getElementById('gaps');
     box.hidden = false;
     box.innerHTML = '<b>מה עוד חסר כדי לשלוח לכולם:</b><ul>' +
@@ -451,11 +536,14 @@ function renderSendList() {
       action = `<a class="sm-send" href="${esc(waLink(waPhone(r.phone), msg))}" target="_blank" rel="noopener"
                    onclick="markSent('${r.kind}', '${r.slug}')">${waIcon} וואטסאפ</a>`;
     } else if (r.email) {
-      /* אין טלפון — נשלח במייל מאותו מקום, כדי שלא ייפול בין הכיסאות */
+      /* אין טלפון — נשלח במייל מאותו מקום, כדי שלא ייפול בין הכיסאות,
+         ולצדו כפתור להזנת נייד שמדליק את הוואטסאפ בו במקום */
       action = `<a class="sm-send mail" href="${esc(TS.gmailCompose({ to: r.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msg }))}"
-                   target="_blank" rel="noopener" onclick="markSent('${r.kind}', '${r.slug}')">מייל</a>`;
+                   target="_blank" rel="noopener" onclick="markSent('${r.kind}', '${r.slug}')">מייל</a>
+                <button type="button" class="sm-addphone" title="הזנת נייד — הוואטסאפ יידלק"
+                   onclick="askPhone('${r.kind}', '${r.slug}')">+ נייד</button>`;
     } else {
-      action = `<span class="sm-send off">אין פרטי קשר</span>`;
+      action = `<button type="button" class="sm-addphone" onclick="askPhone('${r.kind}', '${r.slug}')">+ הוספת נייד</button>`;
     }
     return `
       <div class="sm-row ${isDone ? 'done' : ''}">
@@ -478,7 +566,8 @@ function renderSendList() {
   document.getElementById('sm-list').innerHTML =
     group('מדריכות — יש טלפון', SEND_ROWS.filter(r => r.kind === 'guide' && r.phone)) +
     group('מדריכות — בלי טלפון', SEND_ROWS.filter(r => r.kind === 'guide' && !r.phone)) +
-    group('מפקחים מקצועיים', SEND_ROWS.filter(r => r.kind === 'inspector'));
+    group('מפקחים מקצועיים — יש טלפון', SEND_ROWS.filter(r => r.kind === 'inspector' && r.phone)) +
+    group('מפקחים מקצועיים — בלי טלפון', SEND_ROWS.filter(r => r.kind === 'inspector' && !r.phone));
 }
 
 function flashBtn(btn, txt) {
