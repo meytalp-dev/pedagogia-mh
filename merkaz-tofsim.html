@@ -82,7 +82,8 @@ p.secsub{font-size:15px;color:var(--muted);margin:0 0 18px;padding-inline-start:
 .c[open]>summary{border-bottom:1px solid var(--line)}
 .c .body{padding:16px 20px 20px;display:flex;flex-direction:column}
 .c .chip{flex:0 0 auto;align-self:center;font-family:'Rubik',sans-serif;font-size:14px;font-weight:700;
-  color:var(--navy);background:var(--blue-soft);border-radius:999px;padding:4px 12px;white-space:nowrap}
+  color:var(--navy);background:var(--blue-soft);border-radius:999px;padding:4px 12px;white-space:nowrap;
+  direction:ltr;unicode-bidi:isolate}
 .c .chip.err{background:#fff1f3;color:#8c2b34}
 .c .chev{flex:0 0 auto;align-self:center;width:20px;height:20px;color:var(--muted);
   transition:transform .2s var(--ease)}
@@ -276,6 +277,22 @@ var ICON = {
    stats: כמה מונים חיים מאותה קריאה. pick מחזיר מספר, base הוא המכנה (או 0).
    links: כפתורי הכרטיס. copy:true מוסיף כפתור העתקת קישור לשליחה למנהלים. */
 var GAS = "https://script.google.com/macros/s/";
+var HADRACHOT = GAS + "AKfycbwDOLGv0Hr7KNjFJBIslJkDt9cDa2g4-Gfho3dTfI0AP3uwjlM3NGCwSnQkXZd4DUlyHg/exec";
+
+/* אישורי המנהלים לרשימת המורים — הרשומה האחרונה לכל בית ספר.
+   מגיעות מ-questions.list של מצפן ההדרכות, עם teacherId שמתחיל ב-"verify:". */
+function verifyBySchool(j){
+  var out = {};
+  ((j && j.ok && j.data) || []).forEach(function(q){
+    if (String(q.teacherId || "").indexOf("verify:") !== 0) return;
+    var p = null;
+    try { p = JSON.parse(q.question); } catch(e){ return; }
+    if (!p || p.kind !== "school-verify" || !p.school) return;
+    var at = p.at || q.createdAt || "";
+    if (!out[p.school] || at > out[p.school].at) out[p.school] = {status:p.status, at:at};
+  });
+  return out;
+}
 
 /* כמה בתי ספר שונים מופיעים ברשימה — שורות כפולות של אותו מוסד נספרות פעם אחת */
 function uniqSchools(rows){
@@ -399,6 +416,33 @@ var ACTIVE = [
       {href:"tizkorot.html",
        label:"תזכורת למנהלים בווטסאפ — הזנת מורים ורכזי תקשוב", kind:"sec"}
     ]
+  },
+  {
+    icon:"verify", title:"אישור מיפוי המורים",
+    sub:"מנהל.ת מאשר.ת · קישור אישי לכל בית ספר",
+    desc:"הרשימה שהוזנה למצפן ההדרכות חוזרת למנהל.ת לאימות: כל מורה מול המקצוע והמסלול (בגרות/גמר), תיקון אם צריך — ואישור בחתימת שם. האישורים נאספים ללוח האישורים, ומשם גם נשלחות התזכורות במייל.",
+    apis:[HADRACHOT + "?action=questions.list", HADRACHOT + "?action=ministry.dashboard"],
+    stats:[{
+      pick:function(js){ return Object.keys(verifyBySchool(js[0])).length; },
+      baseOf:function(js){
+        var rows = (js[1] && js[1].ok && js[1].data && js[1].data.schoolBreakdown) || [];
+        return rows.filter(function(r){ return (r.teachers || 0) > 0; }).length;
+      },
+      lbl:"בתי ספר אישרו את רשימת המורים",
+      extra:function(js){
+        var v = verifyBySchool(js[0]), a = 0, f = 0;
+        Object.keys(v).forEach(function(k){ if (v[k].status === "fixed") f++; else a++; });
+        var p = [];
+        if (a) p.push(a + " כפי שהיא");
+        if (f) p.push(f + " אחרי תיקון");
+        return p.join(" · ");
+      }
+    }],
+    links:[
+      {href:"/hadrachot/admin-verify.html", label:"לוח האישורים · שליחה במייל", kind:"pri"},
+      {href:"/hadrachot/admin-school/setup.html", label:"רשימת ההזנה של המורים", kind:"sec"}
+    ],
+    tip:"<b style=\"color:#4a5878\">אין כאן כפתור העתקה</b> — קישור הטופס אישי לכל בית ספר. שולחים אותו מלוח האישורים, בכפתור ”מייל“ שליד כל בית ספר."
   }
 ];
 
@@ -453,6 +497,7 @@ function svg(d, cls){
 var IC_COPY = '<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 5.5v-.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h.5"/>';
 var IC_GO   = '<path d="M14 4h6v6M20 4l-8.5 8.5"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V8a1.5 1.5 0 0 1 1.5-1.5H10"/>';
 var IC_EYE  = '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>';
+var IC_CHEV = '<path d="m6 9.5 6 6 6-6"/>';
 
 /* כתובת מלאה לשליחה — גם לנתיב שמתחיל ב-"/" */
 function fullUrl(href){
@@ -461,17 +506,24 @@ function fullUrl(href){
 }
 
 function card(d){
-  var el = document.createElement("div");
+  var el = document.createElement("details");
   el.className = "c";
+  if (d.open) el.open = true;
 
-  var h = '<div class="top"><span class="ic">' + svg(ICON[d.icon]) + '</span>' +
-          '<h3>' + d.title + '<small>' + d.sub + '</small></h3></div>' +
+  /* מקופל כברירת מחדל: בשורה העליונה רק האייקון, השם והמונה */
+  var h = '<summary>' +
+            '<span class="ic">' + svg(ICON[d.icon]) + '</span>' +
+            '<h3>' + d.title + '<small>' + d.sub + '</small></h3>' +
+            ((d.stats && d.stats.length) ? '<span class="chip" data-chip>…</span>' : '') +
+            '<span class="chev">' + svg(IC_CHEV) + '</span>' +
+          '</summary>' +
+          '<div class="body">' +
           '<p class="desc">' + d.desc + '</p>';
 
   (d.stats || []).forEach(function(s, i){
     h += '<div class="stat" data-stat="' + i + '"><div class="n">—</div>' +
          '<div class="lbl">' + s.lbl + '</div>' +
-         (s.base ? '<div class="track"><div class="fill"></div></div>' : '') + '</div>';
+         ((s.base || s.baseOf) ? '<div class="track"><div class="fill"></div></div>' : '') + '</div>';
   });
 
   if (d.badge){
@@ -497,8 +549,14 @@ function card(d){
     }).join("") + '</div>';
   }
 
+  if (d.tip){
+    h += '<div class="note">' + d.tip + '</div>';
+  }
+
+  h += '</div>';
+
   el.innerHTML = h;
-  if (d.api) el._src = d;
+  if (d.api || d.apis) el._src = d;
   return el;
 }
 
@@ -511,6 +569,14 @@ function build(){
   });
 }
 
+/* השבב שבשורה המקופלת — כדי שהמספר החשוב ייראה בלי לפתוח את הכרטיס */
+function setChip(el, txt, isErr){
+  var chip = el.querySelector("[data-chip]");
+  if (!chip) return;
+  chip.textContent = txt;
+  chip.classList.toggle("err", !!isErr);
+}
+
 /* ---------- מונים חיים ---------- */
 function loadCounts(manual){
   var btn = $("refreshBtn");
@@ -521,28 +587,35 @@ function loadCounts(manual){
 
   return Promise.all(cards.map(function(el){
     var d = el._src;
-    return fetch(d.api, {cache:"no-store"})
-      .then(function(r){ return r.json(); })
-      .then(function(j){
+    /* apis: כמה מקורות לאותו כרטיס — pick מקבל מערך תשובות לפי הסדר */
+    var urls = d.apis || [d.api];
+    return Promise.all(urls.map(function(u){
+        return fetch(u, {cache:"no-store"}).then(function(r){ return r.json(); });
+      }))
+      .then(function(js){
+        var j = d.apis ? js : js[0];
         d.stats.forEach(function(s, i){
           var box = el.querySelector('[data-stat="' + i + '"]');
           var n = s.pick(j);
           if (n === null || n === undefined) throw new Error("bad");
+          var base = s.baseOf ? s.baseOf(j) : s.base;
           box.classList.remove("err");
           var extra = s.extra ? s.extra(j) : "";
           box.querySelector(".n").innerHTML = n.toLocaleString("he-IL") +
-            (s.base ? ' <span class="of">/ ' + s.base + '</span>' : "") +
+            (base ? ' <span class="of">/ ' + base + '</span>' : "") +
             (extra ? ' <span class="of">· ' + extra + '</span>' : "");
           var fill = box.querySelector(".fill");
           if (fill){
-            var p = Math.min(100, Math.round(n / s.base * 100));
+            var p = base ? Math.min(100, Math.round(n / base * 100)) : 0;
             fill.style.width = p + "%";
             fill.classList.toggle("done", p >= 100);
           }
+          if (i === 0) setChip(el, n.toLocaleString("he-IL") + (base ? " / " + base : ""), false);
         });
         return true;
       })
       .catch(function(){
+        setChip(el, "—", true);
         el.querySelectorAll("[data-stat]").forEach(function(box){
           box.classList.add("err");
           box.querySelector(".n").textContent = "לא הצלחנו למשוך את הנתון";
@@ -597,6 +670,13 @@ function fallback(url, done){
 }
 
 $("refreshBtn").addEventListener("click", function(){ loadCounts(true); });
+
+$("toggleAll").addEventListener("click", function(){
+  var open = this.getAttribute("aria-expanded") !== "true";
+  Array.prototype.forEach.call(document.querySelectorAll("details.c"), function(el){ el.open = open; });
+  this.setAttribute("aria-expanded", String(open));
+  $("toggleAllTxt").textContent = open ? "סגירת כל הכרטיסים" : "פתיחת כל הכרטיסים";
+});
 
 build();
 loadCounts(false);
