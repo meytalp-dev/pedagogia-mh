@@ -395,12 +395,19 @@ function renderBulk() {
   const box = document.getElementById('sp-bulk');
   const list = bulkRecipients();
   const auth = TS.authGet();
-  if (!list.length) { box.innerHTML = ''; return; }
+  const pending = schools.filter(s => s.id && !s.verify).length;
+  if (!pending) { box.innerHTML = ''; return; }
 
+  // הסדר חשוב: קודם מסבירים מה חסר, ורק אחר כך מציגים כפתור.
+  // בגרסה הראשונה הכפתור פשוט נעלם כשלא היו נמענים, בלי שום הסבר.
   if (!auth || !auth.token) {
-    box.innerHTML = '<div class="sp-progress">שליחה מרוכזת של ' + list.length +
-      ' מיילים דורשת התחברות — <a href="login.html?next=' +
-      encodeURIComponent(location.pathname) + '">כניסה</a>, וחוזרים לכאן.</div>';
+    box.innerHTML = '<div class="sp-progress">כדי לשלוח את כל המיילים בלחיצה אחת צריך להתחבר — ' +
+      '<a href="login.html?next=' + encodeURIComponent(location.pathname) + '"><b>כניסה</b></a>, וחוזרים לכאן.</div>';
+    return;
+  }
+  if (!list.length) {
+    box.innerHTML = '<div class="sp-progress">שליחה מרוכזת תידלק אחרי הדבקת פרטי הקשר למעלה — ' +
+      'הכתובות נשלחות מהמכשיר הזה, ולכן בלעדיהן אין למי לשלוח.</div>';
     return;
   }
   box.innerHTML = '<button type="button" class="sp-btn bulk" id="sp-bulk-btn">' +
