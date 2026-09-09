@@ -102,6 +102,17 @@
   .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
   .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
 
+  /* בורר יחידות לימוד בשורת המורה — הכלי לחלוקה בין קבוצות ההדרכה */
+  .units-select {
+    font-family: inherit; font-size: 11px; font-weight: 700; line-height: 1.6;
+    padding: 1px 6px; border-radius: 999px; cursor: pointer;
+    border: 1px solid #cfe0e8; background: #F1F7FA; color: #1f5a75;
+  }
+  .units-select.unset {
+    border-style: dashed; border-color: #d8b48a; background: #FDF6EC; color: #8a5a1d;
+  }
+  .units-select:focus { outline: 2px solid var(--brand-accent, #256A8A); outline-offset: 1px; }
+
   .copy-link-btn {
     display:inline-flex; align-items:center; gap:6px;
     padding: 6px 12px; border-radius: 8px;
@@ -246,6 +257,7 @@
     </div>
 
     <div class="tab-pane active" id="tab-teachers">
+      <div class="subject-filter-bar" id="units-filter" style="margin-bottom:8px;" hidden></div>
       <div class="subject-filter-bar" id="track-filter" style="margin-bottom:12px;"></div>
       <div class="search-bar">
         <input type="search" class="input" id="teacher-search" placeholder="חיפוש מורה / בית ספר...">
@@ -355,6 +367,15 @@
             <option value="gemer">גמר</option>
           </select>
         </div>
+        <div class="form-row" id="te-units-row">
+          <label class="form-label">יחידות לימוד</label>
+          <select class="select" name="units" id="te-units">
+            <option value="">טרם סומן</option>
+            <option value="3">3 יח"ל</option>
+            <option value="4-5">4-5 יח"ל</option>
+            <option value="3+4-5">3 + 4-5 (מלמד/ת בשתי הרמות)</option>
+          </select>
+        </div>
         <div class="form-row">
           <label class="form-label">טלפון (לוואטסאפ)</label>
           <input class="input" name="phone" id="te-phone" placeholder="05...">
@@ -376,8 +397,8 @@
   </div>
 </div>
 
-<script src="../assets/app.js?v=20260901"></script>
-<script src="../assets/guides.js?v=20260901"></script>
-<script src="dashboard.js?v=20260901"></script>
+<script src="../assets/app.js?v=20260909"></script>
+<script src="../assets/guides.js?v=20260909"></script>
+<script src="dashboard.js?v=20260909"></script>
 </body>
 </html>

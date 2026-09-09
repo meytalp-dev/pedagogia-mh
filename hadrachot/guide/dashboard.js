@@ -15,6 +15,38 @@ let state = {
 // סינון מסלול: '' = הכל · 'bagrut' · 'gemer'
 let currentTrack = '';
 
+// ============================================================
+// פיצול לפי יח"ל (9.9.26) — מתמטיקה בחברה היהודית: שירה 3 · גל 4-5
+// ============================================================
+// GUIDE_CFG.units מגדיר אילו רמות שייכות למדריכה. מורה שטרם סומן לו יח"ל
+// מופיע אצל שתי המדריכות עם תווית "טרם סומן" — כך אף מורה לא נעלם בזמן
+// שהחלוקה נעשית. הסינון כולו בצד הלקוח: מהשרת מגיעה רשימת המקצוע המלאה,
+// ולכן שום מורה אינו בלתי־נגיש גם אם סומן בטעות (טאב "כל מורי המקצוע").
+// unitsScope: 'mine' = הקבוצה שלי + טרם סומן · 'unmarked' · 'all'
+let unitsScope = 'mine';
+
+function guideUnits() {
+  const u = GUIDE_CFG.units;
+  return (Array.isArray(u) && u.length) ? u : null;
+}
+// "טרם סומן" = מורה בגרות בלי רמה. גמר לא נספר — בגמר אין יחידות לימוד,
+// והוא שייך לשירה בכל מקרה; ספירתו כאן הציגה 12 "חסרים" שאין מה לעשות איתם.
+function isUnmarked(t) {
+  return t.type !== 'gemer' && TS.unitsSet(t.units).length === 0;
+}
+// שייך לקבוצה של המדריכה לפי הרמה שסומנה (גמר תמיד שייך למי שהמסלול פתוח אצלה)
+function isMine(t) {
+  const mine = guideUnits();
+  if (!mine) return true;
+  if (t.type === 'gemer') return true;   // כבר סונן קודם לפי GUIDE_CFG.tracks
+  const u = TS.unitsSet(t.units);
+  return u.length ? u.some(x => mine.indexOf(x) >= 0) : true;   // טרם סומן = אצל שתיהן
+}
+// הסט שנחשב "הקבוצה שלי" לצורך ה-KPI בראש הדף
+function myTeachers() {
+  return state.teachers.filter(isMine);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   bindTabs();
   document.getElementById('btn-new-training').addEventListener('click', openNewTraining);
@@ -24,6 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (addBtn) addBtn.addEventListener('click', () => openTeacherModal());
   const teacherForm = document.getElementById('form-teacher');
   if (teacherForm) teacherForm.addEventListener('submit', submitTeacher);
+  const typeSel = document.getElementById('te-type');
+  if (typeSel) typeSel.addEventListener('change', toggleUnitsRow);
   renderResources();
   await loadData();
 });
@@ -62,9 +96,12 @@ async function loadData() {
   }
 
   // סינון לפי המגזרים שבאחריות המדריכה (kelali+haredi = חברה יהודית · arab = חברה ערבית)
+  // ולפי המסלולים שלה (גל — בגרות בלבד; בגמר אין יח"ל והוא נשאר אצל שירה).
   const sectors = GUIDE_CFG.sectors || null;
+  const tracks = (Array.isArray(GUIDE_CFG.tracks) && GUIDE_CFG.tracks.length) ? GUIDE_CFG.tracks : null;
   const roster = (rosterRes.data || []).filter(t =>
-    !sectors || sectors.indexOf(t.sector || 'kelali') >= 0
+    (!sectors || sectors.indexOf(t.sector || 'kelali') >= 0) &&
+    (!tracks || tracks.indexOf(t.type === 'gemer' ? 'gemer' : 'bagrut') >= 0)
   );
 
   // הצמדת נוכחות מ-guide.dashboard לפי id
@@ -91,6 +128,7 @@ async function loadData() {
         network: netKey,
         networkName: TS.netById(netKey).name || netKey,
         type: t.type === 'gemer' ? 'gemer' : 'bagrut',
+        units: (t.units || '').toString().trim(),
         sector: t.sector || 'kelali',
         attendance: d ? d.attendance : {},
         stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 }
@@ -123,23 +161,29 @@ function renderNoGuide() {
 function renderAll() {
   const gName = GUIDE_CFG.name || state.guideName || state.guide || 'מדריכה';
   const gSubject = GUIDE_CFG.subject || state.subject || '';
-  const bagrutN = state.teachers.filter(t => t.type !== 'gemer').length;
-  const gemerN = state.teachers.length - bagrutN;
+  // ה-KPI מתייחס לקבוצה של המדריכה (הרמות שלה + מי שטרם סומן), לא לכל המקצוע
+  const mine = myTeachers();
+  const bagrutN = mine.filter(t => t.type !== 'gemer').length;
+  const gemerN = mine.length - bagrutN;
+  const unmarkedN = mine.filter(isUnmarked).length;
+  const unitsLabel = guideUnits() ? guideUnits().join(' · ') + ' יח"ל' : '';
   const societyLabel = GUIDE_CFG.sectors
     ? (GUIDE_CFG.sectors.indexOf('arab') >= 0 ? 'החברה הערבית' : 'החברה היהודית')
     : '';
   document.getElementById('user-name').textContent = gName;
-  document.getElementById('page-title').textContent = gName + (gSubject ? ' · ' + gSubject : '');
+  document.getElementById('page-title').textContent =
+    gName + (gSubject ? ' · ' + gSubject : '') + (unitsLabel ? ' · ' + unitsLabel : '');
   document.getElementById('page-subtitle').textContent =
-    state.teachers.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר) · ' +
-    new Set(state.teachers.map(t => t.schoolName)).size + ' בתי ספר' +
-    (societyLabel ? ' · ' + societyLabel : '');
+    mine.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר) · ' +
+    new Set(mine.map(t => t.schoolName)).size + ' בתי ספר' +
+    (societyLabel ? ' · ' + societyLabel : '') +
+    (unmarkedN ? ' · ' + unmarkedN + ' טרם סומנה להם רמה' : '');
 
-  const totalRate = state.teachers.length
-    ? Math.round(state.teachers.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / state.teachers.length)
+  const totalRate = mine.length
+    ? Math.round(mine.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / mine.length)
     : 0;
-  document.getElementById('stat-teachers').textContent = state.teachers.length;
-  document.getElementById('stat-schools').textContent = new Set(state.teachers.map(t => t.schoolName)).size;
+  document.getElementById('stat-teachers').textContent = mine.length;
+  document.getElementById('stat-schools').textContent = new Set(mine.map(t => t.schoolName)).size;
   document.getElementById('stat-trainings').textContent = state.trainings.length;
   document.getElementById('stat-rate').textContent = totalRate + '%';
 
@@ -151,22 +195,88 @@ function renderAll() {
 function renderTrackPills() {
   const bar = document.getElementById('track-filter');
   if (!bar) return;
-  const bagrutN = state.teachers.filter(t => t.type !== 'gemer').length;
-  const gemerN = state.teachers.length - bagrutN;
+  const scoped = state.teachers.filter(inScope);
+  const bagrutN = scoped.filter(t => t.type !== 'gemer').length;
+  const gemerN = scoped.length - bagrutN;
   const pill = (val, label, n) => `
     <button type="button" class="subject-pill ${currentTrack === val ? 'active' : ''}" data-track="${val}">
       ${label}${n !== null ? ` (${n})` : ''}
     </button>`;
+  // למדריכה שהוגבלה לבגרות בלבד אין מה לסנן — כל הרשימה בגרות
+  const tracks = GUIDE_CFG.tracks;
+  bar.hidden = !!(Array.isArray(tracks) && tracks.length === 1);
   bar.innerHTML = '<span class="filter-label">מסלול</span>' +
     pill('', 'הכל', null) + pill('bagrut', 'בגרות', bagrutN) + pill('gemer', 'גמר', gemerN);
   bar.querySelectorAll('[data-track]').forEach(b =>
     b.addEventListener('click', () => { currentTrack = b.dataset.track; renderTeachers(); }));
 }
 
+// בורר היח"ל בשורת המורה — הכלי שבו המדריכות עושות סדר בחלוקה.
+// מוצג רק כשהקבוצה מפוצלת ורק במסלול בגרות (בגמר אין יח"ל).
+function unitsControl(t) {
+  if (!guideUnits() || t.type === 'gemer') return '';
+  const cur = TS.unitsSet(t.units).length ? t.units : '';
+  const opts = [`<option value=""${cur ? '' : ' selected'} disabled>טרם סומן</option>`]
+    .concat(TS.UNITS.map(u =>
+      `<option value="${u.id}"${cur === u.id ? ' selected' : ''}>${u.name}</option>`));
+  return `<select class="units-select${cur ? '' : ' unset'}" title="יחידות לימוד"
+            onchange='setUnitsById(${JSON.stringify(String(t.id))}, this.value, this)'>${opts.join('')}</select>`;
+}
+
+// שמירת הרמה. עדכון אופטימי — הבורר לא ננעל, ובכישלון חוזרים לערך הקודם.
+async function setUnitsById(id, units, el) {
+  const t = state.teachers.find(x => String(x.id) === String(id));
+  if (!t || !units || units === t.units) return;
+  const prev = t.units;
+  t.units = units;
+  if (el) el.classList.remove('unset');
+  if (!TS.getAppsScriptUrl()) { t.units = prev; TS.toast('אין חיבור לשרת'); renderTeachers(); return; }
+  const res = await TS.apiPost('teachers.update', { id, units });
+  if (res.ok) {
+    TS.toast(t.name + ' → ' + TS.unitsLabel(units));
+    renderAll();   // הרשימה והמונים מתעדכנים; מורה שעבר לקבוצה השנייה יוצא מ"שלי"
+  } else {
+    t.units = prev;
+    TS.toast('לא נשמר — ' + (res.error || ''));
+    renderTeachers();
+  }
+}
+
+// האם המורה בתחום התצוגה הנוכחי (הקבוצה שלי / טרם סומן / כל המקצוע)
+function inScope(t) {
+  if (!guideUnits()) return true;
+  if (unitsScope === 'all') return true;
+  if (unitsScope === 'unmarked') return isUnmarked(t);
+  return isMine(t);
+}
+
+// סרגל היח"ל — מוצג רק למדריכה שהקבוצה שלה מפוצלת לפי רמה.
+// "כל מורי המקצוע" הוא שסתום הביטחון: מורה שסומן בטעות תמיד נשאר נגיש לתיקון.
+function renderUnitsPills() {
+  const bar = document.getElementById('units-filter');
+  if (!bar) return;
+  if (!guideUnits()) { bar.hidden = true; return; }
+  bar.hidden = false;
+  const mineN = state.teachers.filter(isMine).length;
+  const unmarkedN = state.teachers.filter(isUnmarked).length;
+  const pill = (val, label, n) => `
+    <button type="button" class="subject-pill ${unitsScope === val ? 'active' : ''}" data-scope="${val}">
+      ${label} (${n})
+    </button>`;
+  bar.innerHTML = '<span class="filter-label">יח"ל</span>' +
+    pill('mine', 'הקבוצה שלי', mineN) +
+    pill('unmarked', 'טרם סומן', unmarkedN) +
+    pill('all', 'כל מורי המקצוע', state.teachers.length);
+  bar.querySelectorAll('[data-scope]').forEach(b =>
+    b.addEventListener('click', () => { unitsScope = b.dataset.scope; renderTeachers(); }));
+}
+
 function renderTeachers() {
   renderTrackPills();
+  renderUnitsPills();
   const search = (document.getElementById('teacher-search').value || '').trim().toLowerCase();
   const filtered = state.teachers.filter(t =>
+    inScope(t) &&
     (!currentTrack || (t.type === 'gemer' ? 'gemer' : 'bagrut') === currentTrack) &&
     (!search || (t.name || '').toLowerCase().includes(search) ||
                 (t.schoolName || '').toLowerCase().includes(search))
@@ -194,6 +304,7 @@ function renderTeachers() {
           <div class="te-row-head">
             <span class="te-name-text">${escapeHtml(t.name)}</span>
             <span class="track-chip ${t.type === 'gemer' ? 'gemer' : 'bagrut'}">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</span>
+            ${unitsControl(t)}
             <span class="te-actions">
               <button class="te-icon" title="עריכת מורה" onclick='editTeacherById(${JSON.stringify(String(t.id))})'>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
@@ -440,10 +551,25 @@ function openTeacherModal(teacher) {
   }
   const typeSel = document.getElementById('te-type');
   if (typeSel) typeSel.value = teacher && teacher.type === 'gemer' ? 'gemer' : 'bagrut';
+  const unitsSel = document.getElementById('te-units');
+  if (unitsSel) {
+    unitsSel.value = teacher ? (teacher.units || '') : '';
+    // מדריכה של קבוצה מפוצלת — מורה חדש נפתח כברירת מחדל ברמה שלה
+    if (!teacher && guideUnits() && guideUnits().length === 1) unitsSel.value = guideUnits()[0];
+  }
+  toggleUnitsRow();
   document.getElementById('modal-teacher').classList.add('open');
 }
 function closeTeacherModal() {
   document.getElementById('modal-teacher').classList.remove('open');
+}
+
+// שורת היח"ל במודל מוסתרת בגמר — אין בו יחידות לימוד
+function toggleUnitsRow() {
+  const row = document.getElementById('te-units-row');
+  const typeSel = document.getElementById('te-type');
+  if (!row || !typeSel) return;
+  row.hidden = typeSel.value === 'gemer';
 }
 async function submitTeacher(e) {
   e.preventDefault();

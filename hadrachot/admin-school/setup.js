@@ -8,7 +8,7 @@ let allSchools = [];
 let curSubject = 'מתמטיקה';
 let curType = 'bagrut';
 
-// שורת מורה מקומית: { uid, serverId, name, subject, type, phone, email, seniority,
+// שורת מורה מקומית: { uid, serverId, name, subject, type, phone, email, seniority, units,
 //                     needsCreate, needsUpdate, deleteAfterCreate, error }
 let teachers = [];
 let deleteQueue = [];   // serverIds למחיקה
@@ -183,6 +183,7 @@ async function loadTeachers() {
     subject: t.subject || '',
     type: t.type === 'gemer' ? 'gemer' : 'bagrut',
     phone: (t.phone || '').toString(),
+    units: (t.units || '').toString().trim(),
     email: t.email || '',
     seniority: t.seniority ? String(t.seniority) : '',
     needsCreate: false, needsUpdate: false, deleteAfterCreate: false, error: false
@@ -367,6 +368,7 @@ function addTeacherLocal(name, extra) {
     phone: (extra.phone || (existing ? existing.phone : '') || '').trim(),
     email: extra.email || (existing ? existing.email : '') || '',
     seniority: extra.seniority || (existing ? existing.seniority : '') || '',
+    units: extra.units || '',
     needsCreate: true, needsUpdate: false, deleteAfterCreate: false, error: false
   });
   saveDraft();   // מיידי — לא מחכים לסבב הבא של התור
@@ -410,6 +412,23 @@ const SUBJECT_ALIASES = {
   'לשון': 'עברית', 'לשון והבעה': 'עברית', 'עברית לשון': 'עברית',
   'ספרויות': 'ספרות'
 };
+// זיהוי יחידות לימוד בתא מודבק: 5 יח"ל · 4-5 · "3 ו-5 יח״ל".
+// דורש סימון מפורש של יח"ל (או טווח כמו 4-5) — מספר בודד ערום נשאר ותק,
+// כפי שהיה עד היום. עדיף להשאיר "טרם סומן" מאשר לנחש ולשבץ לקבוצה הלא נכונה.
+function unitsOfCell(c) {
+  const raw = (c || '').toString().trim();
+  if (!raw) return '';
+  const marked = /יח["'׳״]?ל|יחידות/.test(raw);
+  const range  = /^\s*[345]\s*[-–]\s*[345]\s*$/.test(raw);
+  if (!marked && !range) return '';
+  const digits = (raw.match(/[345]/g) || []);
+  if (!digits.length) return '';
+  const low  = digits.indexOf('3') >= 0;
+  const high = digits.indexOf('4') >= 0 || digits.indexOf('5') >= 0;
+  if (low && high) return '3+4-5';
+  return low ? '3' : '4-5';
+}
+
 function subjectOfCell(c) {
   const clean = (c || '').replace(/["'׳״]/g, '').trim();
   if (!clean) return null;
@@ -435,14 +454,16 @@ function parsePaste() {
       runningSubject = subjectOfCell(cells[0]);
       return;
     }
-    const t = { name: '', subject: '', type: '', phone: '', email: '', seniority: '' };
+    const t = { name: '', subject: '', type: '', phone: '', email: '', seniority: '', units: '' };
     cells.forEach(c => {
       const clean = c.replace(/["']/g, '');
       const subj = subjectOfCell(c);
+      const units = unitsOfCell(c);
       if (clean.includes('@')) t.email = clean;
       else if (/^0?\d[\d\s-]{7,}$/.test(clean)) t.phone = clean;
       else if (typeMap[clean]) t.type = typeMap[clean];
       else if (subj) t.subject = subj;
+      else if (units) t.units = units;
       else if (/^\d{1,2}$/.test(clean)) t.seniority = clean;
       else if (!t.name && /[א-ת]/.test(clean)) t.name = clean;
     });
@@ -457,11 +478,12 @@ function parsePaste() {
     `זוהו <b>${parsed.length} מורים</b> · ${withSub} עם מקצוע (לשאר יוצמד ${curSubject})` +
     (noPhone ? ` · <span class="missing-note">⚠️ ${noPhone} בלי טלפון — יסומנו ברשימה להשלמה</span>` : '');
   document.getElementById('preview-table').innerHTML = `
-    <thead><tr><th>שם</th><th>מקצוע</th><th>סוג</th><th>טלפון</th><th>מייל</th></tr></thead>
+    <thead><tr><th>שם</th><th>מקצוע</th><th>סוג</th><th>יח"ל</th><th>טלפון</th><th>מייל</th></tr></thead>
     <tbody>${parsed.map(p => `<tr>
       <td><strong>${p.name}</strong></td>
       <td>${p.subject || `<span style="color:var(--text-3)">${curSubject} (ברירת מחדל)</span>`}</td>
       <td>${p.type === 'gemer' ? 'גמר' : 'בגרות'}</td>
+      <td>${p.type === 'gemer' ? '—' : (p.units || '<span style="color:var(--text-3)">טרם סומן</span>')}</td>
       <td>${p.phone || '<span class="missing-note">חסר ⚠️</span>'}</td><td>${p.email || '—'}</td>
     </tr>`).join('')}</tbody>`;
 }
@@ -487,6 +509,16 @@ function toggleType(uid) {
   if (!t) return;
   t.type = t.type === 'bagrut' ? 'gemer' : 'bagrut';
   markDirty(t);
+  renderAll();
+}
+
+// יח"ל של שורה בודדת (מקצוע אחד), לא של כל השורות של אותו שם
+function setRowUnits(uid, val) {
+  const t = findByUid(uid);
+  if (!t) return;
+  t.units = val || '';
+  markDirty(t);
+  saveDraft();
   renderAll();
 }
 
@@ -521,6 +553,17 @@ function toggleDetails(uid) {
   if (el) el.classList.toggle('open');
 }
 
+// בורר יח"ל בשורת המורה. במסלול גמר אין יחידות לימוד — לכן מוצג "—".
+// שדה רשות: מי שלא בוחר נשמר כ"טרם סומן", והמדריכה משלימה בדשבורד שלה.
+function unitsSelect(t) {
+  if (t.type === 'gemer') return '<span class="t-units-na" title="בגמר אין יחידות לימוד">—</span>';
+  const opts = [`<option value=""${t.units ? '' : ' selected'}>יח"ל?</option>`]
+    .concat(TS.UNITS.map(u =>
+      `<option value="${u.id}"${t.units === u.id ? ' selected' : ''}>${u.short}</option>`));
+  return `<select class="t-units${t.units ? '' : ' unset'}" data-uid="${t.uid}" data-field="units"
+            title="יחידות לימוד">${opts.join('')}</select>`;
+}
+
 function renderAll() {
   document.getElementById('count').textContent = teachers.length;
   renderChips();
@@ -544,6 +587,7 @@ function renderAll() {
         <div class="t-row ${t.error ? 't-error' : ''}">
           <span class="t-name">${t.name}${others.length ? `<span class="also">מלמד/ת גם ${others.join(' · ')}</span>` : ''}</span>
           <button type="button" class="t-type ${t.type}" data-uid="${t.uid}" data-act="type" title="לחיצה מחליפה">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</button>
+          ${unitsSelect(t)}
           <input class="t-phone" placeholder="טלפון חסר!" value="${t.phone}" inputmode="tel" data-uid="${t.uid}" data-field="phone">
           <span class="t-more">${[t.email, t.seniority ? 'ותק ' + t.seniority : ''].filter(Boolean).join(' · ')}${t.error ? ' <span class="missing-note">⚠️ לא נשמר — ננסה שוב</span>' : ''}</span>
           <span class="t-actions">
@@ -564,6 +608,9 @@ function renderAll() {
   roster.querySelectorAll('[data-act="remove"]').forEach(b => b.addEventListener('click', () => removeTeacher(b.dataset.uid)));
   roster.querySelectorAll('input[data-field]').forEach(inp =>
     inp.addEventListener('change', () => saveDetail(inp.dataset.uid, inp.dataset.field, inp.value.trim())));
+  // יח"ל נשמר לשורה הזו בלבד — הוא תלוי מקצוע, בניגוד לטלפון/מייל שמשותפים למורה
+  roster.querySelectorAll('select[data-field="units"]').forEach(sel =>
+    sel.addEventListener('change', () => setRowUnits(sel.dataset.uid, sel.value)));
 }
 
 // ============================================================
@@ -597,7 +644,7 @@ function saveDraft() {
       .filter(t => t.needsCreate || t.needsUpdate || !t.serverId)
       .map(t => ({
         name: t.name, subject: t.subject, type: t.type,
-        phone: t.phone, email: t.email, seniority: t.seniority
+        phone: t.phone, email: t.email, seniority: t.seniority, units: t.units
       }));
 
     // לפני ש-restoreDraft רץ אסור לדרוס או למחוק את הטיוטה הקיימת — היא עדיין
@@ -648,6 +695,7 @@ function restoreDraft() {
       name: x.name, subject: x.subject || 'מתמטיקה',
       type: x.type === 'gemer' ? 'gemer' : 'bagrut',
       phone: (x.phone || '').toString(), email: x.email || '', seniority: x.seniority || '',
+      units: x.units || '',
       needsCreate: true, needsUpdate: false, deleteAfterCreate: false, error: false
     });
     n++;
@@ -710,7 +758,8 @@ async function processQueue() {
         sector: sectorBySchool[schoolId] || '',
         teachers: batch.map(t => ({
           name: t.name, subject: t.subject, type: t.type,
-          phone: t.phone, email: t.email, seniority: t.seniority
+          phone: t.phone, email: t.email, seniority: t.seniority,
+          units: t.type === 'gemer' ? '' : (t.units || '')
         }))
       });
 
@@ -790,7 +839,8 @@ async function processQueue() {
         type: toCreate.type,
         phone: toCreate.phone,
         email: toCreate.email,
-        seniority: toCreate.seniority
+        seniority: toCreate.seniority,
+        units: toCreate.type === 'gemer' ? '' : (toCreate.units || '')
       });
       if (res.ok && res.data) {
         toCreate.serverId = res.data.id;
@@ -819,7 +869,8 @@ async function processQueue() {
         type: toUpdate.type,
         phone: toUpdate.phone,
         email: toUpdate.email,
-        seniority: toUpdate.seniority
+        seniority: toUpdate.seniority,
+        units: toUpdate.type === 'gemer' ? '' : (toUpdate.units || '')
       });
       if (!res.ok) { toUpdate.needsUpdate = true; toUpdate.error = true; renderAll(); }
       else if (toUpdate.error) { toUpdate.error = false; renderAll(); }
@@ -838,10 +889,10 @@ async function processQueue() {
 // ============================================================
 
 function exportCsv() {
-  const headers = ['שם','מקצוע','סוג','טלפון','מייל','ותק'];
+  const headers = ['שם','מקצוע','סוג','יח"ל','טלפון','מייל','ותק'];
   const lines = [headers.join(',')];
   teachers.forEach(t => {
-    const row = [t.name, t.subject, t.type === 'gemer' ? 'גמר' : 'בגרות', t.phone, t.email, t.seniority]
+    const row = [t.name, t.subject, t.type === 'gemer' ? 'גמר' : 'בגרות', t.units, t.phone, t.email, t.seniority]
       .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`);
     lines.push(row.join(','));
   });

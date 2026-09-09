@@ -33,6 +33,28 @@ const TS = (() => {
     { id: 'gemer',  name: 'גמר'   }
   ];
 
+  // יחידות לימוד — רלוונטי למסלול בגרות בלבד (בגמר אין יח"ל).
+  // נשמר בשדה teachers.units. שלושה ערכים בלבד, כדי שהחלוקה בין
+  // קבוצות ההדרכה תהיה חד־משמעית: 3 · 4-5 · מי שמלמד/ת גם וגם.
+  const UNITS = [
+    { id: '3',     name: '3 יח"ל',   short: '3'   },
+    { id: '4-5',   name: '4-5 יח"ל', short: '4-5' },
+    { id: '3+4-5', name: '3 + 4-5',  short: '3+4-5' }
+  ];
+
+  // מפרק ערך שמור לרשימת הרמות שהוא מכיל: '3+4-5' → ['3','4-5'].
+  // ערך ריק (טרם סומן) מחזיר מערך ריק — לא להתייחס אליו כאילו הוא 3.
+  function unitsSet(v) {
+    const s = (v || '').toString().trim();
+    if (!s) return [];
+    if (s === '3+4-5') return ['3', '4-5'];
+    return UNITS.some(u => u.id === s) ? [s] : [];
+  }
+  function unitsLabel(v) {
+    const hit = UNITS.find(u => u.id === (v || '').toString().trim());
+    return hit ? hit.name : '';
+  }
+
   // Client-side cache (5 דקות) — מאיץ פתיחת דשבורדים אחרי הקריאה הראשונה
   const CACHE_TTL_MS = 5 * 60 * 1000;
   function cacheKey(action, params) {
@@ -298,7 +320,8 @@ const TS = (() => {
   }
 
   return {
-    NETWORKS, SECTORS, SUBJECTS, TYPES,
+    NETWORKS, SECTORS, SUBJECTS, TYPES, UNITS,
+    unitsSet, unitsLabel,
     authGet, authSet, authClear,
     api, apiPost,
     netById, secById, netChip, secChip, typeChip,
