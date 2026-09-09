@@ -21,7 +21,7 @@
 // SETUP
 // ============================================================
 
-const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log'];
+const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts'];
 
 const SCHEMA = {
   networks:   ['id','name','color','contactEmail','inviteCode'],
@@ -41,7 +41,10 @@ const SCHEMA = {
   users:      ['id','email','name','role','networkId','schoolId','subjectId','guideId','active','createdAt',
                'passwordHash','salt','token','tokenExpires','passwordSetAt'],
   subjects:   ['id','name','code','order','active'],
-  audit_log:  ['id','timestamp','userEmail','action','targetType','targetId','status','notes']
+  audit_log:  ['id','timestamp','userEmail','action','targetType','targetId','status','notes'],
+  // פרטי קשר אישיים של מדריכות ומפקחים — יושבים כאן ולא בקוד, כי הרפו ציבורי.
+  // נקראים אך ורק דרך contacts.list, שדורש טוקן של אדמין ארצי (STRICT_AUTH_ACTIONS).
+  contacts:   ['id','kind','slug','name','phone','email','updatedAt','updatedBy']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -183,6 +186,15 @@ const ADMIN_ONLY_ACTIONS = new Set([
   'invites.ensure'
 ]);
 
+// פעולות שנושאות מידע אישי: דורשות טוקן תקף של אדמין ארצי **תמיד** —
+// גם כל עוד AUTH_ENFORCED=false. בלי זה הן היו פתוחות לכל מי שיודע את כתובת
+// ה-/exec (הפריסה היא ANYONE_ANONYMOUS), וזה בדיוק מה שרצינו למנוע כשהוצאנו
+// את הטלפונים מהקובץ הסטטי.
+const STRICT_AUTH_ACTIONS = new Set([
+  'contacts.list',
+  'contacts.upsert'
+]);
+
 function getActiveUserEmail_() {
   try {
     return (Session.getActiveUser().getEmail() || '').toLowerCase();
@@ -213,6 +225,14 @@ function findUserByToken_(email, token) {
 function requireAuthAndScope(params, action) {
   if (PUBLIC_ACTIONS.has(action)) {
     return { user: null, scope: { public: true } };
+  }
+
+  // 0. פעולות מידע אישי — טוקן של אדמין ארצי, בלי קשר ל-AUTH_ENFORCED
+  if (STRICT_AUTH_ACTIONS.has(action)) {
+    const strictUser = findUserByToken_(params.authEmail, params.authToken);
+    if (!strictUser) throw new Error('unauthenticated — פרטי קשר דורשים התחברות');
+    if (ADMIN_ROLES.indexOf(strictUser.role) < 0) throw new Error('forbidden_admin_required');
+    return { user: strictUser, scope: enforceScope_(strictUser, params, action) };
   }
 
   // 1. טוקן תקף — המשתמש מזוהה, ה-scope שלו נאכף
@@ -466,6 +486,66 @@ function authRegister(p) {
   return authPayload_(user, tokenInfo);
 }
 
+// ---------- פרטי קשר (admin בלבד — נאכף ב-STRICT_AUTH_ACTIONS) ----------
+// למה כאן ולא בקובץ סטטי: assets/guides-contact.js יושב ברפו ציבורי, ולכן כל
+// טלפון שנכתב בו נגיש לכל מי שיודע את הכתובת. כאן הוא בגיליון הפרטי, ויוצא
+// רק למי שמחזיק טוקן של אדמין ארצי.
+// id = kind:slug (למשל inspector:revital) — כך ייבוא חוזר מעדכן ולא מכפיל.
+
+function contactId_(kind, slug) {
+  return String(kind || '').trim() + ':' + String(slug || '').trim();
+}
+
+function listContacts() {
+  const rows = readAll('contacts');
+  return {
+    ok: true,
+    data: rows.map(r => ({
+      kind: r.kind || '',
+      slug: r.slug || '',
+      name: r.name || '',
+      phone: r.phone || '',
+      email: r.email || '',
+      updatedAt: r.updatedAt || ''
+    }))
+  };
+}
+
+// מקבל רשומה בודדת (kind/slug/phone/email) או params.items = מערך רשומות.
+// שדה שלא נשלח לא נדרס — כדי שעדכון טלפון לא ימחק מייל קיים.
+function upsertContacts(p, user) {
+  let items = p.items;
+  if (typeof items === 'string') { try { items = JSON.parse(items); } catch (e) { items = null; } }
+  if (!Array.isArray(items)) items = [{ kind: p.kind, slug: p.slug, name: p.name, phone: p.phone, email: p.email }];
+
+  const existing = readAll('contacts');
+  const byId = {};
+  existing.forEach(r => { byId[r.id] = r; });
+  const now = new Date().toISOString();
+  const by = (user && user.email) || '';
+  let created = 0, updated = 0;
+  const errors = [];
+
+  items.forEach(item => {
+    const kind = String(item.kind || '').trim();
+    const slug = String(item.slug || '').trim();
+    if (!kind || !slug) { errors.push('missing_kind_or_slug'); return; }
+    const id = contactId_(kind, slug);
+    const prev = byId[id];
+    const row = {
+      id: id, kind: kind, slug: slug,
+      name:  item.name  === undefined ? (prev ? prev.name  : '') : String(item.name),
+      phone: item.phone === undefined ? (prev ? prev.phone : '') : String(item.phone),
+      email: item.email === undefined ? (prev ? prev.email : '') : String(item.email),
+      updatedAt: now, updatedBy: by
+    };
+    if (prev) { updateRowById('contacts', id, row); updated++; }
+    else { appendRow('contacts', row); byId[id] = row; created++; }
+  });
+
+  return { ok: errors.length === 0, created: created, updated: updated, errors: errors };
+}
+
 // ---------- ניהול משתמשים (admin בלבד — נאכף ב-requireAuthAndScope) ----------
 
 function listUsers() {
@@ -694,6 +774,9 @@ function handleRequest(params) {
       case 'users.delete':        result = deleteUser(params); break;
 
       case 'seed.import':         result = seedImport(params); break;
+
+      case 'contacts.list':       result = listContacts(); break;
+      case 'contacts.upsert':     result = upsertContacts(params, user); break;
       case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'), user)); break;
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
       case 'ministry.dashboard':  result = withCache_('ministry.dashboard', scope, params, () => ministryDashboard(params)); break;

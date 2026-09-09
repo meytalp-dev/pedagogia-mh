@@ -132,13 +132,14 @@
     </p>
     <p style="color: var(--text-3); font-size: 13px; margin-bottom: 20px;">
       המקור: קובץ "רשימת מדריכים" תשפ"ז (8.9.26). עדכון מקצוע/מגזר/מפקח — בקובץ
-      <code>assets/guides.js</code>. עדכון טלפון ומייל — בקובץ <code>assets/guides-contact.js</code>
-      (נטען רק מדף זה, ולא מהדפים הפתוחים).
+      <code>assets/guides.js</code>. <b>הטלפונים והמיילים יושבים בגיליון</b> (טאב contacts)
+      ונקראים רק עם התחברות של אדמין ארצי — לא בקוד של האתר.
       הטלפונים של חמשת המפקחים המקצועיים נלקחו מרשימת המשתתפים של זימוני הכשרת
-      הרכזים (אין להם טלפון בקובץ "רשימת מדריכים"). למי שעדיין חסר מספר —
-      "+ הוספת טלפון לוואטסאפ" מזין אותו כאן, והוא נשמר במכשיר הזה בלבד.
+      הרכזים (אין להם טלפון בקובץ "רשימת מדריכים"). "+ הוספת טלפון לוואטסאפ" מזין
+      מספר חדש — הוא נשמר בגיליון וזמין גם מהמחשב וגם מהנייד.
     </p>
 
+    <div id="server-note" class="notice" hidden></div>
     <div id="gaps" class="notice" hidden></div>
 
     <section class="sendmode" id="sendmode" hidden>
@@ -206,11 +207,58 @@ function phonesSet(map) {
 function kindKey(kind) { return kind === 'inspectors' ? 'inspector' : (kind === 'guides' ? 'guide' : kind); }
 function contactsBucket(kind) { return kindKey(kind) === 'inspector' ? 'inspectors' : 'guides'; }
 
-/* פרטי הקשר בפועל = מה שבקובץ + מה שהוזן כאן */
+/* ---- פרטי קשר מהשרת ----
+   מקור האמת לטלפונים ולמיילים הוא טאב contacts בגיליון, שנקרא דרך contacts.list
+   ודורש טוקן של אדמין ארצי. הקובץ הסטטי נשאר רק כרשת ביטחון למקרה שהקריאה
+   נכשלה — אחרת נפילה של השרת הייתה משאירה אותך בלי אף מספר באמצע שליחה. */
+let SERVER_CONTACTS = {};      // 'guide:shira' → { phone, email }
+let CONTACTS_STATE = 'loading'; // loading | ok | denied | error | legacy
+
+async function loadContacts() {
+  const res = await TS.api('contacts.list', {}, { cache: 'no' });
+  if (!res || !res.ok) {
+    const err = (res && res.error) || '';
+    /* השרת עדיין בגרסה שלפני טאב contacts — זה לא תקלה, והדף עובד מהקובץ
+       בדיוק כמו קודם. לא מציגים אזהרה אדומה על משהו שאינו שבור. */
+    CONTACTS_STATE = /unknown_action/.test(err) ? 'legacy'
+      : (/unauthenticated|forbidden/.test(err) ? 'denied' : 'error');
+    return;
+  }
+  SERVER_CONTACTS = {};
+  (res.data || []).forEach(c => {
+    SERVER_CONTACTS[kindKey(c.kind) + ':' + c.slug] = { phone: c.phone || '', email: c.email || '' };
+  });
+  CONTACTS_STATE = 'ok';
+}
+
+/* פרטי הקשר בפועל = הקובץ (גיבוי) ← השרת ← מה שהוזן במכשיר הזה */
 function contactOf(kind, slug) {
-  const base = window.TS_contactOf(contactsBucket(kind), slug);
-  const local = phonesGet()[kindKey(kind) + ':' + slug];
-  return local ? Object.assign({}, base, { phone: local, localPhone: true }) : base;
+  const key = kindKey(kind) + ':' + slug;
+  let out = Object.assign({}, window.TS_contactOf(contactsBucket(kind), slug));
+  const srv = SERVER_CONTACTS[key];
+  if (srv) {
+    if (srv.phone) out.phone = srv.phone;
+    if (srv.email) out.email = srv.email;
+  }
+  const local = phonesGet()[key];
+  if (local) { out.phone = local; out.localPhone = true; }
+  return out;
+}
+
+/* שמירת טלפון בשרת — כדי שיהיה זמין גם מהמחשב וגם מהנייד, לא רק מהמכשיר שהזין.
+   הצליח? מוחקים את העותק המקומי, כי מעכשיו השרת הוא המקור. */
+async function pushContact(kind, slug, phone) {
+  const res = await TS.api('contacts.upsert', {
+    kind: kindKey(kind), slug: slug, name: nameOf(kind, slug), phone: phone
+  }, { cache: 'no' });
+  if (res && res.ok) {
+    const map = phonesGet();
+    delete map[kindKey(kind) + ':' + slug];
+    phonesSet(map);
+    SERVER_CONTACTS[kindKey(kind) + ':' + slug] =
+      Object.assign({}, SERVER_CONTACTS[kindKey(kind) + ':' + slug], { phone: phone });
+  }
+  return res;
 }
 
 /* מחזיר מספר מנורמל, או '' אם אינו נראה כמספר ישראלי */
@@ -240,6 +288,16 @@ function askPhone(kind, slug) {
   map[key] = p;
   phonesSet(map);
   build();
+  /* ניסיון שמירה בשרת — נכשל? המספר נשאר במכשיר וההודעה מסבירה למה */
+  pushContact(kind, slug, p).then(res => {
+    /* build() קורא ל-renderServerNote ומצייר מחדש את ההודעה לפי מצב השרת,
+       ולכן ההסבר על הכישלון נכתב אחריו — אחרת הוא נמחק ברגע שנוצר. */
+    build();
+    if (!res || !res.ok) {
+      setServerNote('המספר של ' + nameOf(kind, slug) + ' נשמר במכשיר הזה בלבד — ' +
+        'השמירה בגיליון נכשלה (' + ((res && res.error) || 'אין תשובה') + '). אפשר לשלוח כרגיל.', 'bad');
+    }
+  });
 }
 
 /* השורות שאני מעתיקה למיטל כדי לקבע את המספרים בקובץ */
@@ -353,7 +411,47 @@ function msgFor(kind, slug) {
   return (LINKS[k] && LINKS[k].msg) || '';
 }
 
+function setServerNote(html, tone) {
+  const box = document.getElementById('server-note');
+  if (!html) { box.hidden = true; return; }
+  box.hidden = false;
+  if (tone === 'bad') {
+    box.style.background = '#FBECEC'; box.style.borderColor = '#E7C0C0'; box.style.color = '#7a2020';
+  } else {
+    box.style.background = ''; box.style.borderColor = ''; box.style.color = '';
+  }
+  box.innerHTML = html;
+}
+
+/* העלאה חד-פעמית של פרטי הקשר מהקובץ הסטטי אל הגיליון.
+   אחרי שהיא רצה — הקובץ מתרוקן מהמספרים, והשרת הוא המקור היחיד. */
+async function seedContactsToServer(btn) {
+  const items = [];
+  const src = window.TS_CONTACTS || {};
+  ['guides', 'inspectors'].forEach(bucket => {
+    Object.keys(src[bucket] || {}).forEach(slug => {
+      const c = src[bucket][slug] || {};
+      if (!c.phone && !c.email) return;
+      items.push({ kind: kindKey(bucket), slug: slug, name: nameOf(kindKey(bucket), slug),
+                   phone: c.phone || '', email: c.email || '' });
+    });
+  });
+  if (!items.length) { alert('אין בקובץ פרטי קשר להעלאה.'); return; }
+  btn.disabled = true; btn.textContent = 'מעלה…';
+  const res = await TS.api('contacts.upsert', { items: JSON.stringify(items) }, { cache: 'no' });
+  if (res && res.ok) {
+    await loadContacts();
+    build();
+    setServerNote('<b>✓ ' + (res.created + res.updated) + ' רשומות קשר נשמרו בגיליון.</b> ' +
+      'מעכשיו הטלפונים נקראים משם, ואפשר להוציא אותם מהקובץ שברפו.');
+  } else {
+    btn.disabled = false; btn.textContent = 'ניסיון נוסף';
+    setServerNote('ההעלאה נכשלה: ' + ((res && res.error) || 'אין תשובה מהשרת') + '.', 'bad');
+  }
+}
+
 async function init() {
+  await loadContacts();
   const res = await TS.api('teachers.list', {}, { cache: 'no' });
   if (res.ok) {
     TEACHERS = res.data || [];
@@ -504,7 +602,39 @@ function build() {
     box.hidden = false;
     box.innerHTML = '<b>מה עוד חסר כדי לשלוח לכולם:</b><ul>' +
       gapsList.map(x => '<li>' + x + '</li>').join('') +
-      '</ul><div style="margin-top:6px;">משלימים ב-<code>assets/guides-contact.js</code> (טלפון/מייל) או ב-<code>assets/guides.js</code> (שיוך מפקח.ת).</div>';
+      '</ul><div style="margin-top:6px;">טלפון/מייל — בכפתור "+ הוספת טלפון" בכרטיס (נשמר בגיליון); ' +
+      'שיוך מפקח.ת — ב-<code>assets/guides.js</code>.</div>';
+  }
+
+  renderServerNote();
+}
+
+/* מה מצב מקור פרטי הקשר — ומה אפשר לעשות עכשיו */
+function renderServerNote() {
+  const count = Object.keys(SERVER_CONTACTS).length;
+
+  if (CONTACTS_STATE === 'legacy') {
+    setServerNote('');   // גרסת שרת ישנה — פרטי הקשר מהקובץ, כמו עד היום
+    return;
+  }
+  if (CONTACTS_STATE === 'denied') {
+    setServerNote('<b>פרטי הקשר לא נטענו מהגיליון</b> — הפעולה דורשת התחברות כאדמין ארצי. ' +
+      'הדף ממשיך לעבוד עם מה שיש בקובץ ובמכשיר הזה, אפשר לשלוח כרגיל. ' +
+      'כדי לטעון מהגיליון: <a href="login.html?next=' + encodeURIComponent(location.pathname) + '">כניסה</a>.', 'bad');
+    return;
+  }
+  if (CONTACTS_STATE === 'error') {
+    setServerNote('<b>הגיליון לא ענה</b> — מוצגים פרטי הקשר שבקובץ ובמכשיר הזה. אפשר לשלוח כרגיל.', 'bad');
+    return;
+  }
+  if (CONTACTS_STATE === 'ok' && count === 0) {
+    setServerNote('<b>הגיליון עדיין ריק מפרטי קשר.</b> לחיצה אחת מעלה אליו את כל הטלפונים ' +
+      'והמיילים שבקובץ — ומשם הם ייקראו בכל מכשיר, בלי שיישבו בקוד הפומבי.' +
+      '<div style="margin-top:10px;"><button type="button" class="copy-mini" onclick="seedContactsToServer(this)">העלאת פרטי הקשר לגיליון</button></div>');
+    return;
+  }
+  if (CONTACTS_STATE === 'ok') {
+    setServerNote('פרטי הקשר נטענים מהגיליון (<b>' + count + '</b> רשומות) — לא מהקוד.');
   }
 }
 
