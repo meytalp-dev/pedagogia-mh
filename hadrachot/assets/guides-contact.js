@@ -44,10 +44,10 @@ window.TS_CONTACTS = {
     liat:     { phone: '050-7597144', email: 'liat.tzabar@labor.gov.il' },
     revital:  { phone: '050-8944480', email: 'revital.amir@labor.gov.il' },
     yasmin:   { phone: '050-9117613', email: 'yasmin.amon@labor.gov.il' },
-    /* נכנסו לפריסה 9.9.26. אינם ברשימת המשתתפים של זימוני הרכזים, ולכן
-       יש להם מייל בלבד — הטלפון יתווסף מהדף בכפתור "+ הוספת טלפון". */
-    sigalit:  { phone: '', email: 'sigalit.day@labor.gov.il' },
-    wesam:    { phone: '', email: 'wesam.swalha@labor.gov.il' }
+    /* נכנסו לפריסה 9.9.26. אינם ברשימת המשתתפים של זימוני הרכזים —
+       הטלפונים התקבלו ישירות ממיטל (9.9.26). */
+    sigalit:  { phone: '052-3253793', email: 'sigalit.day@labor.gov.il' },
+    wesam:    { phone: '050-6290288', email: 'wesam.swalha@labor.gov.il' }
     /* אחמד מחאמיד הוסר מהפריסה 9.9.26 (החלטת מיטל) — המקצועות שלו עברו ליסמין אמון. */
   }
 };
