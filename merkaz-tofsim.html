@@ -69,6 +69,20 @@ h2.sec .sico{flex:0 0 auto;width:38px;height:38px;border-radius:12px;
 h2.sec .sico svg{width:20px;height:20px}
 p.secsub{font-size:15px;color:var(--muted);margin:0 0 18px;padding-inline-start:49px}
 
+details.arch{margin:40px 0 0}
+details.arch>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px}
+details.arch>summary::-webkit-details-marker{display:none}
+details.arch>summary h2.sec{margin:0;flex:1}
+details.arch .archn{font-family:'Heebo',sans-serif;font-size:13px;font-weight:500;color:var(--muted);
+  border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px}
+details.arch>summary .chev{flex:0 0 auto;width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--muted);
+  transition:transform .2s var(--ease),border-color .2s var(--ease)}
+details.arch>summary .chev svg{width:15px;height:15px}
+details.arch>summary:hover .chev{border-color:var(--sky);color:var(--navy)}
+details.arch[open]>summary .chev{transform:rotate(180deg)}
+details.arch>summary+.secsub{margin-top:6px}
+
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;align-items:start}
 
 .c{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-s);
@@ -203,17 +217,29 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   <p class="secsub">כל אחד מהם: טופס למנהלים + דף מעקב חי. הקישור שמעתיקים הוא זה שנשלח לוואטסאפ.</p>
   <div class="cards" id="active"></div>
 
-  <!-- ============ מעקב בלבד ============ -->
-  <h2 class="sec">
-    <span class="sico">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#224292" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 19V5M4 19h16"/><path d="m7.5 14.5 3.5-4 3 3 5-6.5"/>
-      </svg>
-    </span>
-    מעקב בלבד
-  </h2>
-  <p class="secsub">איסוף הנתונים נסגר — דפי המעקב נשארו פעילים ומציגים את מה שנאסף.</p>
-  <div class="cards" id="closed"></div>
+  <!-- ============ ארכיון ============ -->
+  <details class="arch" id="archSec">
+    <summary>
+      <h2 class="sec">
+        <span class="sico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#224292" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3.5" y="4.5" width="17" height="4" rx="1.3"/>
+            <path d="M5.5 8.5v10a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5v-10"/>
+            <path d="M10 12.5h4"/>
+          </svg>
+        </span>
+        ארכיון
+        <span class="archn" id="archN"></span>
+      </h2>
+      <span class="chev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9.5 6 6 6-6"/>
+        </svg>
+      </span>
+    </summary>
+    <p class="secsub">האיסוף הסתיים או עבר זמנו — הטפסים ודפי המעקב נשארו פעילים ומציגים את מה שנאסף.</p>
+    <div class="cards" id="closed"></div>
+  </details>
 
   <!-- ============ מערכות ============ -->
   <h2 class="sec">
@@ -323,7 +349,8 @@ var ACTIVE = [
     desc:"כל אחד מ-54 רכזי התקשוב מקבל במייל את המסלול שלו, השעות והתאריכים, וקישור אישי שבו הסילבוס והמטלה — ושם הוא מאשר את השיבוץ או מבקש להחליף מסלול. במקביל כל מפקח.ת מאשר.ת את בתי הספר שבפיקוחו בקישור משלו.",
     api:GAS+"AKfycbxBvqi9wQKKKDOB4VrjrRkDg2j0v6ghKTl-1bPOq92F35iwdXPVFtlq5lxIU4H7bv6elg/exec?mode=count",
     stats:[{pick:function(j){ return j && j.ok && j.count ? j.count.answered : null; },
-            base:54, lbl:"רכזים ענו על השיבוץ",
+            baseOf:function(j){ return (j && j.ok && j.count && j.count.total) || 54; },
+            lbl:"רכזים ענו על השיבוץ",
             extra:function(j){
               if (!j || !j.ok || !j.count) return "";
               var c = j.count, p = [];
@@ -336,19 +363,6 @@ var ACTIVE = [
       {href:"tikshuv-hodaot.html",  label:"שליחת ההודעות", kind:"pri"},
       {href:"tikshuv-mekav.html",   label:"מעקב אישורי הרכזים", kind:"sec"},
       {href:"tikshuv-shibutz.html", label:"אישור המפקחים", kind:"sec"}
-    ]
-  },
-  {
-    icon:"mishov", title:"משוב מפגשי הרכזים הפדגוגיים",
-    sub:"רכז.ת פדגוגי.ת ממלא.ת · אחרי כל מפגש",
-    desc:"טופס אחד לכל שבעת המפגשים של השנה — בורר המפגש נפתח לבד על המפגש האחרון שהתקיים, אז אותו קישור נשלח בכל פעם. דירוג כללי, דירוג נפרד לכל חלק במפגש, ושלושה שדות פתוחים.",
-    api:GAS+"AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec?mode=count",
-    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
-            base:0, lbl:"משובים התקבלו",
-            extra:function(j){ return j && j.people ? j.people + " רכזים ורכזות" : ""; }}],
-    links:[
-      {href:"mishov-rakazim.html",       label:"הטופס לרכזים", kind:"pri", copy:true},
-      {href:"sikum-mishov-rakazim.html", label:"סיכום חי",     kind:"sec"}
     ]
   },
   {
@@ -381,30 +395,6 @@ var ACTIVE = [
     links:[
       {href:"hishtalmut-beit-sifrit.html", label:"הטופס למנהלים", kind:"pri", copy:true},
       {href:"sikum-hishtalmuyot.html",     label:"דף המעקב",      kind:"sec"}
-    ]
-  },
-  {
-    icon:"door", title:"רישום נתוני יום הפתיחה",
-    sub:"מנהל.ת ממלא.ת · תחילת שנה",
-    desc:"נוכחות תלמידים ביום הראשון, חוסרים במצבת המורים ואיוש בעלי תפקידים מרכזיים, אתגרים וצרכים.",
-    api:GAS+"AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec?mode=count",
-    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
-            base:SCHOOLS_TOTAL, lbl:"בתי ספר דיווחו"}],
-    links:[
-      {href:"rishum-pticha.html", label:"הטופס למנהלים", kind:"pri", copy:true},
-      {href:"sikum-pticha.html",  label:"דף המעקב",      kind:"sec"}
-    ]
-  },
-  {
-    icon:"quest", title:"שאלות מנהלים למפגש",
-    sub:"מנהל.ת שולח.ת · לפני מפגש",
-    desc:"שאלות שמנהלים מעלים לקראת מפגש המנהלים. דף המעקב הוא גם דף השו״ת שבו מפרסמים את התשובות.",
-    api:GAS+"AKfycbxYBiU0gLXp8YG3M11NZYWIyx55REpIDc7Df8DATAsBlNT6-RWWnSMjsld9QbeGngE/exec?mode=data",
-    stats:[{pick:function(j){ return j && j.ok && j.items ? j.items.length : null; },
-            base:0, lbl:"שאלות התקבלו"}],
-    links:[
-      {href:"sheelot-menahalim.html", label:"הטופס למנהלים", kind:"pri", copy:true},
-      {href:"shut-menahalim.html",    label:"שאלות ותשובות", kind:"sec"}
     ]
   },
   {
@@ -490,6 +480,43 @@ var CLOSED = [
     links:[
       {href:"sikum-matzevet.html",  label:"סיכום המצבת",   kind:"sec"},
       {href:"matzevet-list.html",   label:"פירוט לפי פיקוח", kind:"sec"}
+    ]
+  },
+  {
+    icon:"mishov", title:"משוב מפגשי הרכזים הפדגוגיים",
+    sub:"רכז.ת פדגוגי.ת ממלא.ת · אחרי כל מפגש", badge:"בארכיון",
+    desc:"טופס אחד לכל שבעת המפגשים של השנה — בורר המפגש נפתח לבד על המפגש האחרון שהתקיים, אז אותו קישור נשלח בכל פעם. דירוג כללי, דירוג נפרד לכל חלק במפגש, ושלושה שדות פתוחים.",
+    api:GAS+"AKfycbwwMPif17O20EthfY6DNAVbsTwxiZussxS4sJrFwj50vp55W09hY3vyBB2GnojuVxV0nw/exec?mode=count",
+    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
+            base:0, lbl:"משובים התקבלו",
+            extra:function(j){ return j && j.people ? j.people + " רכזים ורכזות" : ""; }}],
+    links:[
+      {href:"mishov-rakazim.html",       label:"הטופס לרכזים", kind:"pri", copy:true},
+      {href:"sikum-mishov-rakazim.html", label:"סיכום חי",     kind:"sec"}
+    ]
+  },
+  {
+    icon:"door", title:"רישום נתוני יום הפתיחה",
+    sub:"מנהל.ת ממלא.ת · תחילת שנה", badge:"בארכיון",
+    desc:"נוכחות תלמידים ביום הראשון, חוסרים במצבת המורים ואיוש בעלי תפקידים מרכזיים, אתגרים וצרכים.",
+    api:GAS+"AKfycbzjSWmA0Kdwvd3rp8MyogOufC-fewFkEfcQojq8ekzHQj2BI6omYi2411RIERjHeU3a/exec?mode=count",
+    stats:[{pick:function(j){ return j && j.ok ? j.count : null; },
+            base:SCHOOLS_TOTAL, lbl:"בתי ספר דיווחו"}],
+    links:[
+      {href:"rishum-pticha.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"sikum-pticha.html",  label:"דף המעקב",      kind:"sec"}
+    ]
+  },
+  {
+    icon:"quest", title:"שאלות מנהלים למפגש",
+    sub:"מנהל.ת שולח.ת · לפני מפגש", badge:"בארכיון",
+    desc:"שאלות שמנהלים מעלים לקראת מפגש המנהלים. דף המעקב הוא גם דף השו״ת שבו מפרסמים את התשובות.",
+    api:GAS+"AKfycbxYBiU0gLXp8YG3M11NZYWIyx55REpIDc7Df8DATAsBlNT6-RWWnSMjsld9QbeGngE/exec?mode=data",
+    stats:[{pick:function(j){ return j && j.ok && j.items ? j.items.length : null; },
+            base:0, lbl:"שאלות התקבלו"}],
+    links:[
+      {href:"sheelot-menahalim.html", label:"הטופס למנהלים", kind:"pri", copy:true},
+      {href:"shut-menahalim.html",    label:"שאלות ותשובות", kind:"sec"}
     ]
   }
 ];
@@ -602,6 +629,7 @@ function build(){
     host.innerHTML = "";
     g[1].forEach(function(d){ host.appendChild(card(d)); });
   });
+  $("archN").textContent = CLOSED.length + " בארכיון";
 }
 
 /* השבב שבשורה המקופלת — כדי שהמספר החשוב ייראה בלי לפתוח את הכרטיס */
