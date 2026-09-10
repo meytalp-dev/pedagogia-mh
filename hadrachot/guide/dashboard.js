@@ -82,8 +82,19 @@ async function loadData() {
   // שתי קריאות במקביל:
   // 1. רשימת המורים של המקצוע — מקור האמת לרשימה (כולל מסלול בגרות/גמר ומגזר)
   // 2. guide.dashboard — היסטוריית נוכחות והדרכות (קיים רק למדריכה עם הדרכות בגיליון)
+  /* מדריכה עם יותר ממקצוע אחד (רבקה נחום — היסטוריה + אזרחות): הפרמטר
+     subject בשרת מקבל מקצוע יחיד, ולכן מושכים את כל המורים ומסננים כאן.
+     אותו שיקול כמו ב-mabat: קריאה נפרדת לכל מקצוע חורגת מתקרת 30 השניות
+     של Apps Script, וחלק מהמקצועות פשוט לא נטענים. מדריכה עם מקצוע אחד
+     ממשיכה בקריאה הממוקדת — בלי שינוי התנהגות. */
+  const mySubjects = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : [])
+    .filter(Boolean);
+  const rosterReq = !mySubjects.length ? Promise.resolve(null)
+    : mySubjects.length === 1 ? TS.api('teachers.list', { subject: mySubjects[0] })
+    : TS.api('teachers.list', {});
+
   const [rosterRes, dashRes] = await Promise.all([
-    GUIDE_CFG.subject ? TS.api('teachers.list', { subject: GUIDE_CFG.subject }) : Promise.resolve(null),
+    rosterReq,
     guideEmail ? TS.api('guide.dashboard', { guide: guideEmail }) : Promise.resolve(null)
   ]);
 
@@ -100,6 +111,8 @@ async function loadData() {
   const sectors = GUIDE_CFG.sectors || null;
   const tracks = (Array.isArray(GUIDE_CFG.tracks) && GUIDE_CFG.tracks.length) ? GUIDE_CFG.tracks : null;
   const roster = (rosterRes.data || []).filter(t =>
+    // סינון המקצוע נדרש רק כשמשכנו את כל המורים (מדריכה רב-מקצועית)
+    (mySubjects.length < 2 || mySubjects.indexOf(t.subject) >= 0) &&
     (!sectors || sectors.indexOf(t.sector || 'kelali') >= 0) &&
     (!tracks || tracks.indexOf(t.type === 'gemer' ? 'gemer' : 'bagrut') >= 0)
   );
@@ -160,7 +173,10 @@ function renderNoGuide() {
 
 function renderAll() {
   const gName = GUIDE_CFG.name || state.guideName || state.guide || 'מדריכה';
-  const gSubject = GUIDE_CFG.subject || state.subject || '';
+  // שני מקצועות מוצגים שניהם בכותרת — "רבקה נחום · היסטוריה · אזרחות"
+  const gSubject = (window.TS_guideSubjects && window.TS_guideSubjects(GUIDE_CFG).length)
+    ? window.TS_guideSubjects(GUIDE_CFG).join(' · ')
+    : (GUIDE_CFG.subject || state.subject || '');
   // ה-KPI מתייחס לקבוצה של המדריכה (הרמות שלה + מי שטרם סומן), לא לכל המקצוע
   const mine = myTeachers();
   const bagrutN = mine.filter(t => t.type !== 'gemer').length;
@@ -496,7 +512,9 @@ function renderResources() {
 }
 
 function sendMaterials(btn) {
-  const subject = GUIDE_CFG.subject || '';
+  // שני מקצועות → "חומרי ההוראה להיסטוריה ואזרחות"
+  const subject = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : [])
+    .filter(Boolean).join(' ו') || GUIDE_CFG.subject || '';
   const lines = ['שלום,', '', `מצורפים חומרי ההוראה${subject ? ' ל' + subject : ''}:`, GUIDE_CFG.drive];
   if (GUIDE_CFG.zoom) lines.push('', 'הזום הקבוע למפגשים:', GUIDE_CFG.zoom);
   lines.push('', 'בהצלחה!');
@@ -561,8 +579,22 @@ function openTeacherModal(teacher) {
     // מדריכה של קבוצה מפוצלת — מורה חדש נפתח כברירת מחדל ברמה שלה
     if (!teacher && guideUnits() && guideUnits().length === 1) unitsSel.value = guideUnits()[0];
   }
+  fillSubjectRow(teacher);
   toggleUnitsRow();
   document.getElementById('modal-teacher').classList.add('open');
+}
+
+/* שורת המקצוע — רלוונטית רק למדריכה עם יותר ממקצוע אחד.
+   בלעדיה כל מורה שרבקה תזין היה נשמר בהיסטוריה, גם אם הוא מורה לאזרחות. */
+function fillSubjectRow(teacher) {
+  const row = document.getElementById('te-subject-row');
+  const sel = document.getElementById('te-subject');
+  if (!row || !sel) return;
+  const subs = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : []).filter(Boolean);
+  if (subs.length < 2) { row.hidden = true; sel.innerHTML = ''; return; }
+  sel.innerHTML = subs.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  sel.value = (teacher && subs.indexOf(teacher.subject) >= 0) ? teacher.subject : subs[0];
+  row.hidden = false;
 }
 function closeTeacherModal() {
   document.getElementById('modal-teacher').classList.remove('open');
@@ -578,7 +610,12 @@ function toggleUnitsRow() {
 async function submitTeacher(e) {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(e.target));
-  data.subject = GUIDE_CFG.subject || state.subject || '';
+  /* מדריכה רב-מקצועית בחרה מקצוע בטופס — לא דורסים אותו.
+     במקצוע יחיד השדה מוסתר וריק, והמקצוע נקבע מהקונפיג כמו תמיד. */
+  const mySubs = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : []).filter(Boolean);
+  if (!(mySubs.length > 1 && data.subject)) {
+    data.subject = GUIDE_CFG.subject || state.subject || '';
+  }
   data.guide = guideEmail || (GUIDE_CFG.email || '');
   // מדריכה של החברה הערבית — מורה חדש נרשם אוטומטית במגזר הערבי
   if (GUIDE_CFG.sectors && GUIDE_CFG.sectors.length === 1) data.sector = GUIDE_CFG.sectors[0];

@@ -158,7 +158,7 @@ function renderGuides() {
   const card = document.getElementById('guides-card');
   card.hidden = false;
   document.getElementById('guides-grid').innerHTML = state.guides.map(g => {
-    const n = state.teachers.filter(t => t.subject === g.subject).length;
+    const n = state.teachers.filter(t => window.TS_guideTeaches(g, t.subject)).length;
     const files = wsOf(g.slug, 'files').length;
     const msgs = wsOf(g.slug, 'messages').length;
     const hoursRows = wsOf(g.slug, 'hours');
@@ -170,7 +170,7 @@ function renderGuides() {
     return `
       <div class="guide-mini">
         <span class="gm-name">${escapeHtml(g.name)}</span>
-        <span class="gm-sub">${escapeHtml(g.subject)}</span>
+        <span class="gm-sub">${escapeHtml(window.TS_guideSubjects(g).join(' · '))}</span>
         <span class="gm-count">${n} מורים${hoursSum ? ' · ' + fmtHours(hoursSum) + ' שעות פרטניות' : ''}</span>
         <div class="gm-actions">
           ${btn('files', ICON_FILE, 'קבצים', files)}
@@ -244,7 +244,8 @@ function renderTeachers() {
     const rows = bySubject[subject];
     const schools = new Set(rows.map(t => t.schoolName)).size;
     const bagrutN = rows.filter(t => t.type !== 'gemer').length;
-    const guide = state.guides.find(g => g.subject === subject);
+    // מדריכה רב-מקצועית משויכת לכל אחת מקבוצות המקצוע שלה
+    const guide = state.guides.find(g => window.TS_guideTeaches(g, subject));
     return `
       <div class="subj-group">
         <div class="subj-header">
@@ -330,7 +331,8 @@ function openGuideWorkspace(slug, tab) {
   if (!wsGuide) return;
   document.getElementById('gw-title').textContent = wsGuide.name;
   document.getElementById('gw-sub').textContent =
-    wsGuide.subject + ' · ' + state.teachers.filter(t => t.subject === wsGuide.subject).length + ' מורים';
+    window.TS_guideSubjects(wsGuide).join(' · ') + ' · ' +
+    state.teachers.filter(t => window.TS_guideTeaches(wsGuide, t.subject)).length + ' מורים';
   fillHoursDefaults();
   switchWsTab(tab || 'files');
   renderWsPanes();
@@ -482,7 +484,9 @@ async function sendMessage() {
 function fillHoursDefaults() {
   const subj = document.getElementById('h-subject');
   // המקצוע של המדריכה ראשון ומסומן — הוא הנפוץ כמעט תמיד
-  const list = [wsGuide.subject].concat(TS.SUBJECTS.filter(s => s !== wsGuide.subject));
+  // המקצועות של המדריכה ראשונים ומסומנים — הם הנפוצים כמעט תמיד
+  const mine = window.TS_guideSubjects(wsGuide);
+  const list = mine.concat(TS.SUBJECTS.filter(s => mine.indexOf(s) < 0));
   subj.innerHTML = list.map(s => `<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('');
 
   const dl = document.getElementById('schools-datalist');

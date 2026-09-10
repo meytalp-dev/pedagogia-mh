@@ -63,9 +63,10 @@ window.TS_GUIDES = {
     zoom: ''
   },
   dana: {
+    /* המגזר החרדי ירד ממנה 10.9.26 — עבר לרבקה נחום, כמו אצל נירה בספרות. */
     name: 'דנה ברצורי',
     subject: 'היסטוריה',
-    sectors: ['kelali', 'haredi'],
+    sectors: ['kelali'],
     inspector: 'sigalit',
     drive: '',
     zoom: ''
@@ -75,7 +76,8 @@ window.TS_GUIDES = {
        שם המשפחה טרם התקבל (בקובץ המקור מופיע שם פרטי בלבד). */
     name: 'אלישבע',
     subject: 'אזרחות',
-    sectors: ['kelali', 'haredi'],
+    /* המגזר החרדי ירד ממנה 10.9.26 — עבר לרבקה נחום. */
+    sectors: ['kelali'],
     inspector: 'sigalit',
     drive: '',
     zoom: ''
@@ -95,9 +97,33 @@ window.TS_GUIDES = {
     zoom: ''
   },
   tali: {
+    /* המגזר החרדי ירד ממנה 10.9.26 — עבר לדינה רוט. */
     name: 'טלי אהרון זיו',
     subject: 'תנ"ך',
-    sectors: ['kelali', 'haredi'],
+    sectors: ['kelali'],
+    inspector: 'yisachar',
+    drive: '',
+    zoom: ''
+  },
+  dina: {
+    /* נוספה 10.9.26 — תנ"ך במגזר החרדי. טלי אהרון זיו צומצמה לכללי בלבד.
+       כאן אין המתח שהיה אצל שרה ורבקה: יששכר חפץ הוא גם מפקח התנ"ך
+       הארצי וגם מפקח המגזר החרדי, ולכן זה אותו שיוך בשני המסלולים. */
+    name: 'דינה רוט',
+    subject: 'תנ"ך',
+    sectors: ['haredi'],
+    inspector: 'yisachar',
+    drive: '',
+    zoom: ''
+  },
+  rivka: {
+    /* נוספה 10.9.26. **המדריכה הראשונה עם יותר ממקצוע אחד** — ולכן נוסף
+       שדה subjects (רשימה) לצד subject הישן. subject נגזר אוטומטית למטה
+       כ-subjects[0], כך שכל דף ותיק שקורא g.subject ממשיך לעבוד.
+       דנה ברצורי (היסטוריה) ואלישבע (אזרחות) צומצמו לכללי בלבד. */
+    name: 'רבקה נחום',
+    subjects: ['היסטוריה', 'אזרחות'],
+    sectors: ['haredi'],
     inspector: 'yisachar',
     drive: '',
     zoom: ''
@@ -199,6 +225,33 @@ window.TS_GUIDES = {
     drive: '',
     zoom: ''
   }
+};
+
+/* subject ↔ subjects — מקצוע יחיד הוא פשוט רשימה באורך 1.
+   כל דף ותיק שקורא g.subject ממשיך לקבל מחרוזת (המקצוע הראשון), וכל דף
+   שצריך את הרשימה המלאה קורא ל-TS_guideSubjects. בלי הנגזרת הזו מדריכה
+   עם שני מקצועות הייתה מאבדת בשקט את המורים של המקצוע השני. */
+(function deriveGuideSubjects() {
+  const guides = window.TS_GUIDES || {};
+  Object.keys(guides).forEach(k => {
+    const g = guides[k];
+    g.subjects = (Array.isArray(g.subjects) && g.subjects.length)
+      ? g.subjects
+      : (g.subject ? [g.subject] : []);
+    g.subject = g.subjects[0] || '';
+  });
+})();
+
+/* המקצועות של מדריכ/ה — תמיד מערך */
+window.TS_guideSubjects = function (g) {
+  if (!g) return [];
+  if (Array.isArray(g.subjects) && g.subjects.length) return g.subjects;
+  return g.subject ? [g.subject] : [];
+};
+
+/* האם המקצוע הזה באחריות המדריכ/ה */
+window.TS_guideTeaches = function (g, subject) {
+  return window.TS_guideSubjects(g).indexOf(subject) >= 0;
 };
 
 /* ============================================================

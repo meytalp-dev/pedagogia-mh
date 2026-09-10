@@ -353,9 +353,9 @@ function guideMessage(g, url) {
     'שלום ' + g.name.split(' ')[0] + ',',
     '',
     'הקמנו עבורך מבט אישי במצפן ההדרכות של הפיקוח.',
-    'במבט: כל מורי ה' + g.subject + ' שבאחריותך ב' + g.societyLabel + ', בחלוקה לבגרות וגמר,',
+    'במבט: כל מורי ה' + window.TS_guideSubjects(g).join(' וה') + ' שבאחריותך ב' + g.societyLabel + ', בחלוקה לבגרות וגמר,',
     'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
-    'המבט מציג רק את המקצוע והמגזר שלך.',
+    'המבט מציג רק את המקצוע' + (window.TS_guideSubjects(g).length > 1 ? 'ות' : '') + ' והמגזר שלך.',
     '',
     'הקישור האישי שלך:',
     url,
@@ -490,7 +490,7 @@ function build() {
     const contact = contactOf('guides', slug);
     g.contact = contact;
     const mine = TEACHERS.filter(t =>
-      t.subject === g.subject &&
+      window.TS_guideTeaches(g, t.subject) &&
       (!g.sectors || g.sectors.indexOf(t.sector || 'kelali') >= 0)
     );
     g.counts = {
@@ -535,7 +535,7 @@ function build() {
   /* רשימת השליחה — נבנית מהקונפיג בלבד, ולכן עובדת גם אם רשימת המורים לא נטענה */
   SEND_ROWS = jewish.concat(arab).map(g => ({
     kind: 'guide', slug: g.slug, name: g.name,
-    meta: g.subject + ' · ה' + g.societyLabel,
+    meta: window.TS_guideSubjects(g).join(' · ') + ' · ה' + g.societyLabel,
     phone: g.contact.phone, email: g.contact.email
   })).concat(inspRows.map(ins => ({
     kind: 'inspector', slug: ins.slug, name: ins.name,
@@ -548,7 +548,7 @@ function build() {
     <div class="guide-card">
       <div class="g-head">
         <span class="g-name">${esc(g.name)}</span>
-        <span class="g-subject">${esc(g.subject)}</span>
+        <span class="g-subject">${esc(window.TS_guideSubjects(g).join(' · '))}</span>
       </div>
       <div class="g-contact">
         ${g.contact.phone ? `<span>${esc(g.contact.phone)}</span>` : '<span class="missing">חסר טלפון</span>'}

@@ -11,29 +11,34 @@
 window.TS_CONTACTS = {
 
   guides: {
-    /* ---------- החברה היהודית ---------- */
-    shira:    { phone: '050-9040252', email: 'Shirasib@gmail.com' },
-    sivan:    { phone: '052-8285022', email: 'sivann66@gmail.com' },
-    moria:    { phone: '054-3168002', email: 'moriah.flint@gmail.com' },
-    nira:     { phone: '054-4642841', email: 'nira23101969@gmail.com' },
-    dana:     { phone: '050-3149106', email: '' },
-    elisheva: { phone: '',            email: 'e7co@hotmail.com' },
-    tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },
-    gal:      { phone: '054-5542889', email: '' },
-    /* המדריכה החרדית לספרות — המייל התקבל ממנה ישירות (10.9.26) */
-    sarah:    { phone: '',            email: '1895barda@gmail.com' },
+    /* ---------- החברה היהודית · המגזר הכללי ---------- */
+    shira:    { phone: '050-9040252', email: 'Shirasib@gmail.com' },      /* מתמטיקה 3 יח"ל */
+    sivan:    { phone: '052-8285022', email: 'sivann66@gmail.com' },      /* אנגלית */
+    moria:    { phone: '054-3168002', email: 'moriah.flint@gmail.com' },  /* עברית */
+    nira:     { phone: '054-4642841', email: 'nira23101969@gmail.com' },  /* ספרות */
+    dana:     { phone: '050-3149106', email: '' },                        /* היסטוריה — אין מייל */
+    elisheva: { phone: '',            email: 'e7co@hotmail.com' },        /* אזרחות — אין טלפון */
+    tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },/* תנ"ך */
+    gal:      { phone: '054-5542889', email: '' },                        /* מתמטיקה 4-5 — אין מייל */
+
+    /* ---------- החברה היהודית · המגזר החרדי ----------
+       נפתח 10.9.26. הפרטים התקבלו מהמדריכות עצמן ישירות (ולא מגיליון
+       ההרשאות או מקובץ "רשימת מדריכים"), ולכן זה המקור היחיד שלהם. */
+    sarah:    { phone: '',            email: '1895barda@gmail.com' },     /* ספרות — אין טלפון */
+    rivka:    { phone: '052-7654555', email: 'rnrn2222@gmail.com' },      /* היסטוריה + אזרחות */
+    dina:     { phone: '',            email: 'Dinarot2@gmail.com' },      /* תנ"ך — אין טלפון */
 
     /* ---------- החברה הערבית ---------- */
-    suha:     { phone: '052-8616162', email: 'soha38815@gmail.com' },
-    rozin:    { phone: '054-8116623', email: 'Rozeen_mtr@yahoo.com' },
-    wael:     { phone: '052-4069544', email: 'laianw@walla.co.il' },
-    rima:     { phone: '054-6211885', email: 'Rimabransi@gmail.com' },
-    abed:     { phone: '052-2618595', email: '' },
-    khaled:   { phone: '052-5618070', email: 'gabarinkhalid@gmail.com' },
-    moshe:    { phone: '052-2978071', email: 'Moshassor@gmail.com' },
-    suliman:  { phone: '052-8621691', email: '' },
-    mansour:  { phone: '',            email: '' },
-    muzna:    { phone: '052-7789995', email: '' }
+    suha:     { phone: '052-8616162', email: 'soha38815@gmail.com' },     /* עברית */
+    rozin:    { phone: '054-8116623', email: 'Rozeen_mtr@yahoo.com' },    /* אנגלית */
+    wael:     { phone: '052-4069544', email: 'laianw@walla.co.il' },      /* ערבית */
+    rima:     { phone: '054-6211885', email: 'Rimabransi@gmail.com' },    /* ספרות */
+    abed:     { phone: '052-2618595', email: '' },                        /* היסטוריה — אין מייל */
+    khaled:   { phone: '052-5618070', email: 'gabarinkhalid@gmail.com' }, /* אזרחות */
+    moshe:    { phone: '052-2978071', email: 'Moshassor@gmail.com' },     /* מתמטיקה */
+    suliman:  { phone: '052-8621691', email: '' },                        /* מתמטיקה — אין מייל */
+    mansour:  { phone: '',            email: '' },                        /* מורשת אסלאמית — אין כלום */
+    muzna:    { phone: '052-7789995', email: '' }                         /* מורשת דרוזית — אין מייל */
   },
 
   /* המיילים מגיעים מגיליון ההרשאות של מרחב הפיקוח (harshaot.csv) —

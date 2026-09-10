@@ -341,6 +341,12 @@
           <label class="form-label">שם המורה *</label>
           <input class="input" name="name" id="te-name" required>
         </div>
+        <!-- מוצג רק למדריכה עם יותר ממקצוע אחד. במקצוע יחיד השורה מוסתרת
+             והמקצוע נקבע מהקונפיג, בדיוק כמו קודם. -->
+        <div class="form-row" id="te-subject-row" hidden>
+          <label class="form-label">מקצוע *</label>
+          <select class="select" name="subject" id="te-subject"></select>
+        </div>
         <div class="form-row">
           <label class="form-label">בית ספר</label>
           <input class="input" name="schoolName" id="te-school" placeholder="שם בית הספר">
