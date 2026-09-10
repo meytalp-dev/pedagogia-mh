@@ -167,8 +167,12 @@ function renderAll() {
   const gemerN = mine.length - bagrutN;
   const unmarkedN = mine.filter(isUnmarked).length;
   const unitsLabel = guideUnits() ? guideUnits().join(' · ') + ' יח"ל' : '';
+  /* מדריכה שהמגזר החרדי הוא כל הקבוצה שלה (שרה ברדה, 10.9.26) לא תיקרא
+     "החברה היהודית" — זה נכון אבל מטשטש בדיוק את מה שמייחד אותה. */
   const societyLabel = GUIDE_CFG.sectors
-    ? (GUIDE_CFG.sectors.indexOf('arab') >= 0 ? 'החברה הערבית' : 'החברה היהודית')
+    ? (GUIDE_CFG.sectors.indexOf('arab') >= 0 ? 'החברה הערבית'
+      : (GUIDE_CFG.sectors.length === 1 && GUIDE_CFG.sectors[0] === 'haredi'
+        ? 'המגזר החרדי' : 'החברה היהודית'))
     : '';
   document.getElementById('user-name').textContent = gName;
   document.getElementById('page-title').textContent =

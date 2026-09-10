@@ -483,7 +483,10 @@ function build() {
   const jewish = [], arab = [];
   Object.keys(guides).forEach(slug => {
     const g = Object.assign({ slug }, guides[slug]);
-    g.societyLabel = (g.sectors && g.sectors.indexOf('arab') >= 0) ? 'חברה הערבית' : 'חברה היהודית';
+    /* בלי ה' בהתחלה — המחרוזת נכנסת גם אחרי 'ב' וגם אחרי 'ה' */
+    g.societyLabel = (g.sectors && g.sectors.indexOf('arab') >= 0) ? 'חברה הערבית'
+      : (g.sectors && g.sectors.length === 1 && g.sectors[0] === 'haredi') ? 'מגזר החרדי'
+      : 'חברה היהודית';
     const contact = contactOf('guides', slug);
     g.contact = contact;
     const mine = TEACHERS.filter(t =>

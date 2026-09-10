@@ -20,6 +20,8 @@ window.TS_CONTACTS = {
     elisheva: { phone: '',            email: 'e7co@hotmail.com' },
     tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },
     gal:      { phone: '054-5542889', email: '' },
+    /* המדריכה החרדית לספרות — המייל התקבל ממנה ישירות (10.9.26) */
+    sarah:    { phone: '',            email: '1895barda@gmail.com' },
 
     /* ---------- החברה הערבית ---------- */
     suha:     { phone: '052-8616162', email: 'soha38815@gmail.com' },
