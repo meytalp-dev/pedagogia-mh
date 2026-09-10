@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const typeSel = document.getElementById('te-type');
   if (typeSel) typeSel.addEventListener('change', toggleUnitsRow);
   renderResources();
+  renderPlan();
   await loadData();
 });
 
@@ -483,6 +484,64 @@ function renderStats() {
       <strong>יעד נוכחות:</strong> 80%. מורים מתחת ל-50% נוכחות שנתית נחשבים בסיכון.
     </div>
   `;
+}
+
+/* ============================================================
+   תוכנית שנתית — מועדי מפגשי ההדרכה (assets/plans.js)
+   הלשונית מוצגת רק למדריכ/ה שיש לה תוכנית רשומה.
+   ============================================================ */
+function renderPlan() {
+  const box = document.getElementById('plan-container');
+  const tabBtn = document.getElementById('tab-btn-plan');
+  if (!box) return;
+  const plan = window.TS_planFor ? window.TS_planFor(guideSlug) : null;
+  if (!plan) { if (tabBtn) tabBtn.hidden = true; return; }
+  if (tabBtn) tabBtn.hidden = false;
+
+  const next = window.TS_nextMeeting ? window.TS_nextMeeting(plan) : null;
+  const ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+  const ICON_FLAG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>';
+
+  const head = `
+    <div class="plan-head">
+      <h2>${escapeHtml(plan.title)}</h2>
+      <p>${escapeHtml(plan.subtitle || '')}${plan.timeNote ? ' · ' + escapeHtml(plan.timeNote) : ''}</p>
+      <div class="plan-next ${next ? '' : 'done'}">
+        ${ICON_CAL}
+        <span>${next
+          ? 'המפגש הבא: ' + escapeHtml(next.label) + ' · ' + escapeHtml(next.time) + ' — ' + escapeHtml(next.topic)
+          : 'כל מפגשי השנה התקיימו'}</span>
+      </div>
+    </div>`;
+
+  const rows = plan.meetings.map(m => {
+    const isNext = next && m.date === next.date;
+    const isPast = next ? m.date < next.date : true;
+    return `
+      <div class="plan-item ${isNext ? 'next' : ''} ${isPast ? 'past' : ''}">
+        <div class="plan-when">
+          <span class="plan-date">${escapeHtml(m.label)}</span>
+          ${m.day ? `<span class="plan-day">יום ${escapeHtml(m.day)}</span>` : ''}
+          ${m.month ? `<span class="plan-day">${escapeHtml(m.month)}</span>` : ''}
+          <span class="plan-time">${escapeHtml(m.time)}</span>
+        </div>
+        <div class="plan-body">
+          ${isNext ? '<span class="plan-badge">המפגש הבא</span>' : ''}
+          <strong>${escapeHtml(m.topic)}</strong>
+          ${m.goal ? `<span class="goal">${escapeHtml(m.goal)}</span>` : ''}
+          ${m.examples ? `<span class="ex">דוגמאות: ${escapeHtml(m.examples)}</span>` : ''}
+          ${m.note ? `<span class="note">${ICON_FLAG}${escapeHtml(m.note)}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  const notes = (plan.notes && plan.notes.length)
+    ? `<div class="plan-notes"><strong>הערות לתוכנית</strong><ul>${
+        plan.notes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul>${
+        plan.source ? `<div style="margin-top:8px;font-size:12px;opacity:.8">${escapeHtml(plan.source)}</div>` : ''}</div>`
+    : (plan.source ? `<div class="plan-notes" style="font-size:12px;opacity:.85">${escapeHtml(plan.source)}</div>` : '');
+
+  box.innerHTML = head + '<div class="plan-list">' + rows + '</div>' + notes;
 }
 
 /* ===== חומרים וקישורים (Drive / זום / שליחת חומרים) ===== */

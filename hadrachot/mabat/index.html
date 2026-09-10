@@ -48,6 +48,20 @@
   .ws-pane.active { display:block; }
   .ws-hint { font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.7; }
 
+  /* תוכנית שנתית */
+  .pl-title { font-size:14px; font-weight:700; margin-bottom:10px; line-height:1.5; }
+  .pl-row { display:grid; grid-template-columns:86px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .pl-row:last-child { border-bottom:none; }
+  .pl-row.past { opacity:.5; }
+  .pl-row.next { background:#F2FAF6; border-radius:8px; padding-inline:10px; }
+  .pl-when { display:flex; flex-direction:column; gap:2px; }
+  .pl-date { font-weight:700; font-size:14px; color:var(--primary,#256A8A); }
+  .pl-time { font-size:11.5px; color:var(--text-muted); }
+  .pl-topic { font-size:13.5px; font-weight:600; line-height:1.5; }
+  .pl-goal { font-size:12px; color:var(--text-2); line-height:1.6; margin-top:2px; }
+  .pl-next-chip { display:inline-block; font-size:10.5px; font-weight:700; color:#15603c; background:#E4F3EA; border-radius:999px; padding:1px 8px; margin-bottom:3px; }
+  .gm-next { font-size:11.5px; font-weight:600; color:#15603c; }
+
   /* קבצים */
   .drop-zone {
     border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center;
@@ -249,6 +263,7 @@
         <button type="button" class="ws-tab active" data-tab="files">קבצים</button>
         <button type="button" class="ws-tab" data-tab="messages">הודעות</button>
         <button type="button" class="ws-tab" data-tab="hours">שעות פרטניות</button>
+        <button type="button" class="ws-tab" data-tab="plan" id="ws-tab-plan" hidden>תוכנית שנתית</button>
       </div>
 
       <!-- קבצים -->
@@ -273,6 +288,12 @@
           <button type="button" class="btn btn-primary" id="msg-send">שליחה</button>
         </div>
         <div class="ws-status" id="msg-status"></div>
+      </div>
+
+      <!-- תוכנית שנתית — מועדי מפגשי ההדרכה -->
+      <div class="ws-pane" id="pane-plan">
+        <div class="ws-hint">מועדי מפגשי ההדרכה כפי שנקבעו בתוכנית השנתית של המדריכ/ה. התוכנית מוצגת גם בדשבורד שלה.</div>
+        <div id="plan-pane-body"></div>
       </div>
 
       <!-- שעות פרטניות -->
@@ -325,6 +346,7 @@
 
 <script src="../assets/app.js?v=20260909d"></script>
 <script src="../assets/guides.js?v=20260908"></script>
-<script src="mabat.js?v=20260909e"></script>
+<script src="../assets/plans.js?v=20260910"></script>
+<script src="mabat.js?v=20260910"></script>
 </body>
 </html>

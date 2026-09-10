@@ -122,6 +122,35 @@
   .copy-link-btn.copied { background: var(--ok); }
   .copy-link-btn svg { width: 14px; height: 14px; }
 
+  /* ---- תוכנית שנתית — מועדי מפגשי ההדרכה ---- */
+  .plan-head { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
+  .plan-head h2 { margin: 0 0 4px; font-size: 18px; }
+  .plan-head p { margin: 0; font-size: 13px; color: var(--text-2); line-height: 1.6; }
+  .plan-next { display:flex; align-items:center; gap:10px; margin-top:12px; padding:10px 14px; border-radius:10px; background: var(--ok-soft, #E4F3EA); color:#15603c; font-size:13.5px; font-weight:600; }
+  .plan-next svg { width:17px; height:17px; flex-shrink:0; }
+  .plan-next.done { background: var(--surface-2); color: var(--text-2); font-weight:500; }
+
+  .plan-list { display:flex; flex-direction:column; gap:10px; }
+  .plan-item { display:grid; grid-template-columns: 104px 1fr; gap:16px; background: var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
+  .plan-item.past { opacity:.55; }
+  .plan-item.next { border-color: var(--mint, #6FB7A6); box-shadow: 0 0 0 2px rgba(111,183,166,.18); }
+  .plan-when { display:flex; flex-direction:column; gap:3px; border-inline-end:1px solid var(--border); padding-inline-end:14px; }
+  .plan-date { font-family:'Frank Ruhl Libre', serif; font-size:17px; font-weight:700; color: var(--primary, #256A8A); }
+  .plan-day { font-size:12px; color: var(--text-muted); }
+  .plan-time { font-size:12px; color: var(--text-2); font-weight:600; }
+  .plan-body strong { display:block; font-size:14.5px; margin-bottom:4px; }
+  .plan-body .goal { font-size:13px; color: var(--text-2); line-height:1.6; }
+  .plan-body .ex { display:inline-block; margin-top:6px; font-size:12px; color: var(--text-2); background: var(--surface-2); border-radius:7px; padding:3px 9px; }
+  .plan-body .note { display:inline-flex; align-items:center; gap:5px; margin-top:6px; font-size:12px; font-weight:600; color:#8a5a1d; background:#FDF6EC; border:1px solid #EBD9BF; border-radius:7px; padding:3px 9px; }
+  .plan-badge { display:inline-block; font-size:11px; font-weight:700; color:#15603c; background: var(--ok-soft, #E4F3EA); border-radius:999px; padding:1px 9px; margin-bottom:6px; }
+  .plan-notes { margin-top:18px; background: var(--surface-soft, #F7FAFB); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; color: var(--text-2); line-height:1.75; }
+  .plan-notes strong { color: var(--text); }
+  .plan-notes ul { margin:6px 0 0; padding-inline-start:18px; }
+  @media (max-width: 620px) {
+    .plan-item { grid-template-columns: 1fr; gap:8px; }
+    .plan-when { flex-direction:row; align-items:baseline; gap:10px; border-inline-end:none; border-bottom:1px solid var(--border); padding:0 0 8px; }
+  }
+
   .training-row { padding: 14px 16px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
   .training-row:last-child { border-bottom: none; }
   .training-row .when { font-weight: 700; }
@@ -253,6 +282,7 @@
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
+      <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
     </div>
 
@@ -272,6 +302,12 @@
         <div id="trainings-list">
           <div class="empty" style="padding:32px;">טוען...</div>
         </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-plan">
+      <div id="plan-container">
+        <div class="empty" style="padding:32px;">טוען...</div>
       </div>
     </div>
 
@@ -405,6 +441,7 @@
 
 <script src="../assets/app.js?v=20260909d"></script>
 <script src="../assets/guides.js?v=20260909"></script>
-<script src="dashboard.js?v=20260909d"></script>
+<script src="../assets/plans.js?v=20260910"></script>
+<script src="dashboard.js?v=20260910"></script>
 </body>
 </html>

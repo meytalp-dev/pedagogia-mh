@@ -148,6 +148,7 @@ function renderAll() {
 const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 const ICON_MSG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>';
 const ICON_CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
 
 function wsOf(slug, kind) {
   return (state.ws && state.ws[kind] && state.ws[kind][slug]) || [];
@@ -163,6 +164,8 @@ function renderGuides() {
     const msgs = wsOf(g.slug, 'messages').length;
     const hoursRows = wsOf(g.slug, 'hours');
     const hoursSum = hoursRows.reduce((s, h) => s + (Number(h.hours) || 0), 0);
+    const plan = window.TS_planFor ? window.TS_planFor(g.slug) : null;
+    const nextMeet = plan && window.TS_nextMeeting ? window.TS_nextMeeting(plan) : null;
     const btn = (kind, icon, label, count) => `
       <button type="button" class="gm-btn" data-guide="${escapeAttr(g.slug)}" data-open="${kind}" title="${escapeAttr(label)} — ${escapeAttr(g.name)}">
         ${icon}<span>${label}</span><span class="n ${count ? '' : 'zero'}">${count}</span>
@@ -172,10 +175,12 @@ function renderGuides() {
         <span class="gm-name">${escapeHtml(g.name)}</span>
         <span class="gm-sub">${escapeHtml(window.TS_guideSubjects(g).join(' · '))}</span>
         <span class="gm-count">${n} מורים${hoursSum ? ' · ' + fmtHours(hoursSum) + ' שעות פרטניות' : ''}</span>
+        ${nextMeet ? `<span class="gm-next">המפגש הבא: ${escapeHtml(nextMeet.label)}</span>` : ''}
         <div class="gm-actions">
           ${btn('files', ICON_FILE, 'קבצים', files)}
           ${btn('messages', ICON_MSG, 'הודעות', msgs)}
           ${btn('hours', ICON_CLOCK, 'שעות', hoursRows.length)}
+          ${plan ? btn('plan', ICON_CAL, 'תוכנית', plan.meetings.length) : ''}
         </div>
       </div>`;
   }).join('');
@@ -353,6 +358,47 @@ function renderWsPanes() {
   renderWsFiles();
   renderWsMessages();
   renderWsHours();
+  renderWsPlan();
+}
+
+// ---------- תוכנית שנתית — מועדי מפגשי ההדרכה (assets/plans.js) ----------
+function renderWsPlan() {
+  const tab = document.getElementById('ws-tab-plan');
+  const body = document.getElementById('plan-pane-body');
+  if (!body) return;
+  const plan = window.TS_planFor ? window.TS_planFor(wsGuide.slug) : null;
+  if (!plan) {
+    if (tab) tab.hidden = true;
+    body.innerHTML = '';
+    return;
+  }
+  if (tab) tab.hidden = false;
+  const next = window.TS_nextMeeting ? window.TS_nextMeeting(plan) : null;
+  const rows = plan.meetings.map(m => {
+    const isNext = next && m.date === next.date;
+    const isPast = next ? m.date < next.date : true;
+    return `
+      <div class="pl-row ${isNext ? 'next' : ''} ${isPast ? 'past' : ''}">
+        <div class="pl-when">
+          <span class="pl-date">${escapeHtml(m.label)}</span>
+          <span class="pl-time">${escapeHtml(m.time)}</span>
+        </div>
+        <div>
+          ${isNext ? '<span class="pl-next-chip">המפגש הבא</span>' : ''}
+          <div class="pl-topic">${escapeHtml(m.topic)}</div>
+          ${m.goal ? `<div class="pl-goal">${escapeHtml(m.goal)}</div>` : ''}
+          ${m.examples ? `<div class="pl-goal">דוגמאות: ${escapeHtml(m.examples)}</div>` : ''}
+          ${m.note ? `<div class="pl-goal"><b>${escapeHtml(m.note)}</b></div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+  const notes = (plan.notes && plan.notes.length)
+    ? '<div class="ws-hint" style="margin-top:12px;"><b>הערות לתוכנית:</b> ' +
+      plan.notes.map(escapeHtml).join(' ') + '</div>'
+    : '';
+  body.innerHTML = `<div class="pl-title">${escapeHtml(plan.title)}</div>` +
+    (plan.timeNote ? `<div class="ws-hint">${escapeHtml(plan.timeNote)}</div>` : '') +
+    rows + notes;
 }
 
 // אחרי כל כתיבה — מושכים מחדש ומרעננים גם את המונים שעל הכרטיסים
