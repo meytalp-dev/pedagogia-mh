@@ -50,7 +50,7 @@ const SCHEMA = {
   contacts:   ['id','kind','slug','name','phone','email','updatedAt','updatedBy'],
   // מרחב המדריכה (9.9.26) — נפתח מתוך "מבט מקצועי", כרטיס לכל מדריכה.
   // guideSlug הוא המפתח מתוך assets/guides.js ולא מזהה פנימי חדש.
-  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt'],
+  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt']
 };
@@ -808,6 +808,7 @@ function handleRequest(params) {
       // מרחב המדריכה — קבצים, הודעות ושעות פרטניות (9.9.26).
       // בלי withCache_: הודעה שנשלחת חייבת להופיע מיד, לא אחרי TTL.
       case 'guide.workspace':     result = guideWorkspace(params); break;
+      case 'guide.group':         result = guideGroup(params); break;
       case 'guide.file.add':      result = guideFileAdd(params); break;
       case 'guide.file.delete':   result = guideFileDelete(params); break;
       case 'guide.message.add':   result = guideMessageAdd(params); break;
@@ -2581,10 +2582,16 @@ function ministryDashboard(params) {
 // נפתח מתוך "מבט מקצועי" (mabat/?i=<slug>), כרטיס לכל מדריכה.
 // שלושה מאגרים נפרדים, כולם ממופתחים ב-guideSlug מתוך assets/guides.js:
 //   guide_files    — קבצים שהועלו (הקובץ עצמו יושב בדרייב, כאן רק המצביע)
-//   guide_messages — לוח הודעות בין המפקח.ת למדריכה
+//   guide_messages — authorRole='guide' = הודעה של המדריכה לקבוצת ההדרכה שלה;
+//                    authorRole='inspector' = הערה של המפקח.ת למדריכה בלבד
 //   guide_hours    — שעות פרטניות שהמדריכה עושה מול מורה בודד/ת
 // הטאבים נוצרים לבד בכתיבה הראשונה (ensureTab_), כדי שלא יידרש
 // setupSchema ידני אחרי הפריסה.
+//
+// עמוד הקבוצה (kvutza/?g=<slug>, 11.9.26) — המורים של הקבוצה רואים את מה
+// שהמדריכה מעלה ומפרסמת. הוא קורא ל-guide.group ולא ל-guide.workspace:
+// guide.workspace מחזיר גם שעות פרטניות (שמות מורים ובתי ספר) וגם את
+// ההערות של המפקח.ת, ושום דבר מזה לא אמור להגיע לדפדפן של מורה.
 // ============================================================
 
 const GUIDE_FILES_ROOT_NAME = 'מצפן ההדרכות — קבצי מדריכות';
@@ -2600,6 +2607,15 @@ function ensureTab_(name) {
     s.appendRow(SCHEMA[name]);
     s.getRange(1, 1, 1, SCHEMA[name].length).setFontWeight('bold').setBackground('#f5f7fa');
     s.setFrozenRows(1);
+  } else {
+    // טאב שנוצר לפני שנוספה עמודה ל-SCHEMA (uploaderRole, 11.9.26): appendRow
+    // כותב לפי הכותרות הפיזיות ומפיל בשקט שדה שאין לו עמודה — מוסיפים בסוף.
+    const width = Math.max(s.getLastColumn(), 1);
+    const have = s.getRange(1, 1, 1, width).getValues()[0].map(String);
+    const missing = SCHEMA[name].filter(h => have.indexOf(h) < 0);
+    if (missing.length) {
+      s.getRange(1, s.getLastColumn() + 1, 1, missing.length).setValues([missing]).setFontWeight('bold');
+    }
   }
   return s;
 }
@@ -2672,7 +2688,8 @@ function guideWorkspace(p) {
   files.forEach(f => out.files[f.guideSlug].push({
     id: f.id, fileName: f.fileName, fileUrl: f.fileUrl, mimeType: f.mimeType,
     size: Number(f.size) || 0, note: f.note || '',
-    uploadedBy: f.uploadedBy || '', createdAt: toIso_(f.createdAt)
+    uploadedBy: f.uploadedBy || '', uploaderRole: f.uploaderRole || '',
+    createdAt: toIso_(f.createdAt)
   }));
   messages.forEach(m => out.messages[m.guideSlug].push({
     id: m.id, authorName: m.authorName || '', authorRole: m.authorRole || '',
@@ -2693,6 +2710,30 @@ function guideWorkspace(p) {
   });
 
   return { ok: true, data: out };
+}
+
+// ---------- עמוד הקבוצה — מה שהמורים רואים ----------
+// מדריכה אחת, ורק מה שנועד לקבוצה: קבצים שהמדריכה העלתה והודעות שהיא
+// פרסמה. בלי שעות פרטניות, בלי הערות המפקח.ת, בלי מזהים פנימיים.
+function guideGroup(p) {
+  const slug = String(p.guide || '').trim();
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const mine = r => String(r.guideSlug || '') === slug;
+
+  const files = readAll('guide_files')
+    .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector')
+    .map(f => ({
+      fileName: f.fileName || '', fileUrl: f.fileUrl || '', mimeType: f.mimeType || '',
+      size: Number(f.size) || 0, createdAt: toIso_(f.createdAt)
+    }))
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+  const messages = readAll('guide_messages')
+    .filter(m => mine(m) && String(m.authorRole || '') === 'guide')
+    .map(m => ({ authorName: m.authorName || '', text: m.text || '', createdAt: toIso_(m.createdAt) }))
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+  return { ok: true, data: { files, messages } };
 }
 
 // ---------- קבצים ----------
@@ -2727,7 +2768,9 @@ function guideFileAdd(p) {
     size: bytes.length,
     note: p.note || '',
     uploadedBy: p.byName || '',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    // 'guide' = חומר לקבוצה (מופיע בעמוד הקבוצה) · 'inspector' = למדריכה בלבד
+    uploaderRole: p.byRole === 'inspector' ? 'inspector' : 'guide'
   };
   appendRow('guide_files', obj);
   return { ok: true, data: obj };
@@ -2755,7 +2798,9 @@ function guideMessageAdd(p) {
     guideSlug: slug,
     guideName: p.guideName || '',
     authorName: p.byName || '',
-    authorRole: p.byRole || '',
+    // רק שני ערכים חוקיים — עמוד הקבוצה מסנן לפי 'guide', וערך חופשי
+    // מהלקוח לא אמור להכריע מה מתפרסם למורים
+    authorRole: p.byRole === 'inspector' ? 'inspector' : 'guide',
     text: text.slice(0, 4000),
     createdAt: new Date().toISOString()
   };

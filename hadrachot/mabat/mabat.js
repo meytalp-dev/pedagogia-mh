@@ -291,6 +291,9 @@ function renderTeachers() {
    מרחב המדריכה — קבצים · הודעות · שעות פרטניות
    נפתח מכרטיס המדריכה שבראש העמוד. שאר העמוד נשאר קריאה בלבד:
    הכתיבה כאן היא של המפקח.ת אל המדריכה, ולא נגיעה בנתוני המורים.
+   מ-11.9.26 המדריכה עצמה מעלה חומרים ומפרסמת הודעות לקבוצה שלה
+   (guide/space.js), והם מופיעים גם כאן. מה שהמפקח.ת כותב.ת או מעלה
+   מכאן נשמר עם byRole 'inspector' — מגיע למדריכה בלבד, לא לעמוד הקבוצה.
    ============================================================ */
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;   // זהה לתקרה בצד השרת
@@ -421,7 +424,7 @@ function renderWsFiles() {
       <span class="fr-icon">${ICON_FILE}</span>
       <div class="fr-body">
         <a class="fr-name" href="${escapeAttr(f.fileUrl)}" target="_blank" rel="noopener">${escapeHtml(f.fileName)}</a>
-        <div class="fr-meta">${fmtSize(f.size)}${f.uploadedBy ? ' · ' + escapeHtml(f.uploadedBy) : ''} · ${fmtWhen(f.createdAt)}</div>
+        <div class="fr-meta"><bdi dir="ltr">${fmtSize(f.size)}</bdi>${f.uploadedBy ? ' · ' + escapeHtml(f.uploadedBy) : ''} · ${fmtWhen(f.createdAt)} · ${f.uploaderRole === 'inspector' ? 'למדריכה בלבד' : 'מוצג בעמוד הקבוצה'}</div>
       </div>
       <button type="button" class="row-del" data-del-file="${escapeAttr(f.id)}" title="מחיקה">מחיקה</button>
     </div>`).join('');
@@ -457,7 +460,8 @@ async function uploadFiles(fileList) {
       fileName: file.name,
       mimeType: file.type || 'application/octet-stream',
       data: data,
-      byName: INSP.name
+      byName: INSP.name,
+      byRole: 'inspector'   // למדריכה בלבד — לא יופיע בעמוד הקבוצה
     });
     if (res && res.ok) done++;
     else status.textContent = `העלאת "${file.name}" נכשלה` + (res && res.error ? ' (' + res.error + ')' : '') + '.';
@@ -492,7 +496,7 @@ function renderWsMessages() {
   el.innerHTML = rows.map(m => `
     <div class="msg ${m.authorRole === 'inspector' ? 'mine' : ''}">
       <div class="msg-head">
-        <span class="msg-author">${escapeHtml(m.authorName || 'ללא שם')}${m.authorRole === 'inspector' ? ' · מפקח.ת' : ''}</span>
+        <span class="msg-author">${escapeHtml(m.authorName || 'ללא שם')}${m.authorRole === 'inspector' ? ' · מפקח.ת · למדריכה בלבד' : ' · הודעה לקבוצה'}</span>
         <span class="msg-time">${fmtWhen(m.createdAt)}</span>
       </div>
       <div class="msg-text">${escapeHtml(m.text)}</div>

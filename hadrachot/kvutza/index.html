@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>קבוצת ההדרכה — מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* עמוד שהמורים פותחים מהוואטסאפ — קודם כול נייד */
+  .group-shell { max-width: 780px; margin: 0 auto; padding: 22px 16px 8px; }
+  .g-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px 22px 18px; margin-bottom: 18px; box-shadow: var(--shadow-card); }
+  .g-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--mint, #2f8f76); margin-bottom: 4px; }
+  .g-hero h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 26px; margin: 0 0 4px; line-height: 1.3; }
+  .g-sub { margin: 0; font-size: 14px; color: var(--text-2); line-height: 1.6; }
+  .g-next { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 11px 14px; border-radius: 11px; background: var(--ok-soft, #E4F3EA); color: #15603c; font-size: 14px; font-weight: 600; line-height: 1.55; }
+  .g-next svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+  .g-next.done { background: var(--surface-2); color: var(--text-2); font-weight: 500; }
+
+  .g-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 18px; }
+  .g-card h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 18px; }
+  .g-card h2 svg { width: 20px; height: 20px; color: var(--primary, #256A8A); }
+  .g-card h2 .n { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+
+  .msg { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+  .msg:first-child { border-color: #CBE0E9; background: #F1F7FA; }
+  .msg-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+  .msg-author { font-size: 12.5px; font-weight: 700; color: var(--primary, #256A8A); }
+  .msg-time { font-size: 11.5px; color: var(--text-muted); }
+  .msg-text { font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+  .msg-text a { word-break: break-all; }
+
+  .file-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; }
+  .file-row:last-child { border-bottom: none; }
+  .file-row:hover { text-decoration: none; }
+  .file-row:hover .fr-name { color: var(--primary, #256A8A); text-decoration: underline; }
+  .fr-icon { width: 38px; height: 38px; flex: none; border-radius: 10px; background: #E6F0F4; display: grid; place-items: center; color: var(--primary, #256A8A); }
+  .fr-icon svg { width: 18px; height: 18px; }
+  .fr-body { flex: 1; min-width: 0; }
+  .fr-name { font-weight: 600; font-size: 14.5px; word-break: break-word; }
+  .fr-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .fr-open { flex: none; font-size: 12.5px; font-weight: 700; color: var(--primary, #256A8A); }
+
+  details.g-plan summary { cursor: pointer; font-size: 16px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
+  details.g-plan summary::-webkit-details-marker { display: none; }
+  details.g-plan summary svg { width: 18px; height: 18px; color: var(--primary, #256A8A); transition: transform .2s; }
+  details.g-plan[open] summary svg.chev { transform: rotate(180deg); }
+  .pl-row { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-row.past { opacity: .5; }
+  .pl-row.next { background: #F2FAF6; border-radius: 8px; padding-inline: 10px; }
+  .pl-date { display: block; font-weight: 700; font-size: 14.5px; color: var(--primary, #256A8A); }
+  .pl-time { display: block; font-size: 12px; color: var(--text-muted); }
+  .pl-topic { font-size: 14px; font-weight: 600; line-height: 1.5; }
+  .pl-goal { font-size: 12.5px; color: var(--text-2); line-height: 1.6; margin-top: 2px; }
+
+  .g-note { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.7; margin: 4px 0 0; }
+  .g-footer { text-align: center; padding: 26px 16px 32px; color: var(--text-3); font-size: 13px; }
+  .g-footer .credit { margin-top: 6px; font-size: .72rem; color: #8A97A6; }
+  .g-footer .credit a { color: inherit; }
+
+  @media (max-width: 520px) {
+    .g-hero h1 { font-size: 22px; }
+    .pl-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body data-role="guide">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">מצפן ההדרכות · קבוצת ההדרכה</span>
+        </div>
+      </div>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>קבוצת ההדרכה</span>
+    </div>
+  </header>
+
+  <main class="group-shell">
+
+    <section class="g-hero">
+      <div class="g-eyebrow">קבוצת ההדרכה</div>
+      <h1 id="g-title">טוען...</h1>
+      <p class="g-sub" id="g-sub"></p>
+      <div id="g-next"></div>
+    </section>
+
+    <section class="g-card" id="g-messages-card">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>
+        <span>הודעות מהמדריכה</span>
+        <span class="n" id="g-msg-n"></span>
+      </h2>
+      <div id="g-messages"><div class="empty" style="padding:20px;">טוען...</div></div>
+    </section>
+
+    <section class="g-card" id="g-files-card">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg>
+        <span>חומרים</span>
+        <span class="n" id="g-files-n"></span>
+      </h2>
+      <div id="g-files"><div class="empty" style="padding:20px;">טוען...</div></div>
+    </section>
+
+    <section class="g-card" id="g-plan-card" hidden>
+      <details class="g-plan">
+        <summary>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span>תוכנית המפגשים לשנה</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-inline-start:auto;"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div id="g-plan" style="margin-top:10px;"></div>
+      </details>
+    </section>
+
+    <p class="g-note">העמוד מתעדכן בכל פעם שהמדריכה מפרסמת. כדאי לשמור את הקישור.</p>
+  </main>
+
+  <footer class="g-footer">
+    מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260911"></script>
+<script src="../assets/guides.js?v=20260911"></script>
+<script src="../assets/plans.js?v=20260910"></script>
+<script src="kvutza.js?v=20260911"></script>
+</body>
+</html>

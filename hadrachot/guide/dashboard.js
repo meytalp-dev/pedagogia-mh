@@ -102,6 +102,10 @@ async function loadData() {
   const dash = (dashRes && dashRes.ok && dashRes.data) ? dashRes.data : null;
 
   if (!rosterRes || !rosterRes.ok) {
+    /* מדריכה מזוהה (יש לה קונפיג) — הכשל הוא בשרת, לא בקישור. עד 11.9.26
+       נפלנו כאן ל"לא זוהתה מדריכה", או לרשימת guide.dashboard — 0 מורים אצל
+       מי שאין לה הדרכות בגיליון. שתיהן נראו למדריכה כמו נתונים חסרים. */
+    if (GUIDE_CFG.subject) { renderApiError(); return; }
     // אין קונפיג מקצוע (קישור ישן עם ?guide= בלבד) — נופלים להתנהגות השרת
     if (dash) { state = dash; renderAll(); } else { renderNoGuide(); }
     return;
@@ -154,6 +158,31 @@ async function loadData() {
     return (a.name || '').localeCompare(b.name || '', 'he');
   });
   renderAll();
+}
+
+// תקלה רגעית בשרת של Google (302→404 או פסק זמן), אחרי שלושה ניסיונות
+// ב-TS.api. הכותרת נשארת של המדריכה, כדי שלא תחשוב שהקישור שלה שבור.
+function renderApiError() {
+  const gName = GUIDE_CFG.name || 'מדריכה';
+  const gSubject = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : []).join(' · ');
+  document.getElementById('user-name').textContent = gName;
+  document.getElementById('page-title').textContent = gName + (gSubject ? ' · ' + gSubject : '');
+  document.getElementById('page-subtitle').textContent = 'רשימת המורים לא נטענה כרגע';
+  document.getElementById('teachers-container').innerHTML = `
+    <div class="empty" style="padding:40px; text-align:center;">
+      <div style="font-size:17px; font-weight:700; margin-bottom:8px;">רשימת המורים לא נטענה</div>
+      <div style="color:var(--text-muted); line-height:1.8; margin-bottom:14px;">
+        תקלה רגעית בשרת — הנתונים שלך לא נפגעו.<br>
+        לחצי על "לנסות שוב". אם זה חוזר — פני למיטל פלג.
+      </div>
+      <button type="button" class="btn btn-primary" id="btn-retry-load">לנסות שוב</button>
+    </div>`;
+  ['stat-teachers', 'stat-schools', 'stat-trainings', 'stat-rate']
+    .forEach(id => document.getElementById(id).textContent = '—');
+  document.getElementById('btn-retry-load').addEventListener('click', async () => {
+    document.getElementById('teachers-container').innerHTML = '<div class="empty" style="padding:32px;">טוען...</div>';
+    await loadData();
+  });
 }
 
 // לא זוהתה מדריכה — במקום נתוני דמו מבלבלים, הסבר ברור איך נכנסים

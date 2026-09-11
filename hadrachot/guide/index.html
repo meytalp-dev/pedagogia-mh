@@ -157,6 +157,59 @@
   .training-row .where { color: var(--text-2); font-size: 13px; }
   .training-row .actions { display:flex; gap:8px; flex-wrap:wrap; }
 
+  /* ---- חומרים והודעות לקבוצה (11.9.26) ---- */
+  .tab-btn .n { display:inline-block; min-width:18px; margin-inline-start:6px; padding:0 5px; border-radius:999px; font-size:11px; line-height:18px; background:var(--primary,#256A8A); color:#fff; vertical-align:1px; }
+  .tab-btn .n.zero { display:none; }
+  .space-grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:start; }
+  @media (max-width: 900px) { .space-grid { grid-template-columns: 1fr; } }
+  .space-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; }
+  .space-card h2 { display:flex; align-items:center; gap:8px; margin:0 0 4px; font-size:17px; }
+  .space-card h2 svg { width:19px; height:19px; color:var(--primary,#256A8A); }
+  .space-hint { font-size:12.5px; color:var(--text-muted); line-height:1.7; margin-bottom:12px; }
+  .group-link-card { display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:#EEF6F3; border:1px solid #CFE5DC; border-radius:14px; padding:16px 18px; margin-bottom:18px; }
+  .group-link-card .gl-ic { width:42px; height:42px; flex:none; border-radius:11px; background:#fff; color:#1f7a5c; display:grid; place-items:center; }
+  .group-link-card .gl-ic svg { width:21px; height:21px; }
+  .group-link-card .gl-tx { flex:1; min-width:220px; }
+  .group-link-card .gl-tx strong { display:block; font-size:15px; margin-bottom:2px; }
+  .group-link-card .gl-tx span { font-size:12.5px; color:var(--text-2); line-height:1.6; }
+  .group-link-card .gl-url { display:block; margin-top:4px; font-size:12px; color:var(--text-muted); direction:ltr; text-align:right; word-break:break-all; }
+  .gl-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .gl-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 13px; border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; }
+  .gl-btn:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); text-decoration:none; }
+  .gl-btn svg { width:15px; height:15px; }
+  .gl-btn.wa { background:#1f7a5c; border-color:#1f7a5c; color:#fff; }
+  .gl-btn.wa:hover { background:#18654b; color:#fff; }
+  .gl-btn.done { border-color:var(--ok,#16a34a); color:var(--ok,#16a34a); }
+
+  .drop-zone { border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center; cursor:pointer; background:var(--surface-soft); transition:border-color .15s, background .15s; }
+  .drop-zone:hover, .drop-zone.over { border-color:var(--primary,#256A8A); background:#EDF4F7; }
+  .drop-zone svg { width:26px; height:26px; color:var(--primary,#256A8A); margin-bottom:6px; }
+  .drop-zone .dz-main { font-weight:700; font-size:14px; }
+  .drop-zone .dz-sub { font-size:12px; color:var(--text-muted); margin-top:3px; }
+  .file-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .file-row:last-child { border-bottom:none; }
+  .file-row .fr-icon { width:32px; height:32px; flex:none; border-radius:8px; background:#E6F0F4; display:flex; align-items:center; justify-content:center; color:var(--primary,#256A8A); }
+  .file-row .fr-icon svg { width:16px; height:16px; }
+  .file-row .fr-body { flex:1; min-width:0; }
+  .file-row .fr-name { font-weight:600; font-size:13.5px; word-break:break-word; }
+  .file-row .fr-meta { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  .from-insp { display:inline-block; font-size:10.5px; font-weight:700; color:#6b4f99; background:#F0EAF7; border-radius:999px; padding:0 7px; margin-inline-start:4px; }
+  .row-del { background:none; border:none; cursor:pointer; color:var(--text-3,#8b9aa3); font-family:inherit; font-size:12px; padding:4px 6px; border-radius:6px; }
+  .row-del:hover { background:var(--err-soft,#fee2e2); color:#991b1b; }
+  .ws-status { font-size:12.5px; color:var(--text-muted); margin-top:8px; min-height:18px; }
+
+  .msg { background:var(--surface-soft); border:1px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:9px; }
+  .msg.insp { background:#F6F2FB; border-color:#E2D8F0; }
+  .msg-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
+  .msg-author { font-size:12px; font-weight:700; color:var(--primary,#256A8A); }
+  .msg.insp .msg-author { color:#6b4f99; }
+  .msg-time { font-size:11px; color:var(--text-muted); }
+  .msg-text { font-size:13.5px; line-height:1.75; white-space:pre-wrap; word-break:break-word; }
+  .msg-actions { display:flex; gap:4px; justify-content:flex-end; margin-top:6px; }
+  .msg-actions a { font-family:inherit; font-size:12px; color:#1f7a5c; padding:3px 7px; border-radius:6px; text-decoration:none; }
+  .msg-actions a:hover { background:#E4F3EA; text-decoration:none; }
+  .space-sub { font-size:13px; font-weight:700; color:var(--text-2); margin:16px 0 8px; }
+
   @media (max-width: 720px) {
     .att-grid { font-size: 12px; }
     .att-grid th, .att-grid td { padding: 6px 4px; }
@@ -281,6 +334,7 @@
 
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
+      <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
       <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
@@ -294,6 +348,59 @@
       </div>
       <div id="teachers-container">
         <div class="empty" style="padding:32px;">טוען...</div>
+      </div>
+    </div>
+
+    <!-- חומרים והודעות לקבוצת ההדרכה — המורים רואים אותם בעמוד הקבוצה (space.js) -->
+    <div class="tab-pane" id="tab-space">
+      <div class="group-link-card">
+        <span class="gl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <div class="gl-tx">
+          <strong>עמוד הקבוצה שלך</strong>
+          <span>כל קובץ והודעה שתפרסמי כאן מופיעים שם מיד. שולחים את הקישור פעם אחת לקבוצת הוואטסאפ של המורים — ומאז הם תמיד רואים את העדכני.</span>
+          <span class="gl-url" id="group-url">—</span>
+        </div>
+        <div class="gl-actions">
+          <button type="button" class="gl-btn" id="group-copy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span>העתקת הקישור</span>
+          </button>
+          <a class="gl-btn wa" id="group-wa" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>
+            שליחה לקבוצה בוואטסאפ
+          </a>
+          <a class="gl-btn" id="group-open" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            איך זה נראה למורים
+          </a>
+        </div>
+      </div>
+
+      <div class="space-grid">
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>הודעה לקבוצה</h2>
+          <div class="space-hint">ההודעה נשמרת בעמוד הקבוצה. אחרי הפרסום אפשר לשלוח אותה גם לקבוצת הוואטסאפ בלחיצה אחת.</div>
+          <textarea class="textarea" id="gmsg-text" placeholder="למשל: המפגש הבא יתקיים ביום שלישי ב-16:00 בזום. מצגת ההכנה נמצאת בחומרים." style="min-height:96px;"></textarea>
+          <div class="btn-row" style="margin-top:8px;">
+            <button type="button" class="btn btn-primary" id="gmsg-send">פרסום לקבוצה</button>
+          </div>
+          <div class="ws-status" id="gmsg-status"></div>
+          <div id="gmsg-list"></div>
+          <div id="insp-msgs"></div>
+        </section>
+
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>קבצים לקבוצה</h2>
+          <div class="space-hint">מצגות, דפי עבודה, מבחנים לדוגמה. כל מי שיש לו את קישור הקבוצה יכול לפתוח — <b>לא להעלות קבצים עם שמות תלמידים, ציונים או פרטים אישיים.</b></div>
+          <div class="drop-zone" id="gdrop-zone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            <div class="dz-main">גררי קבצים לכאן או לחצי לבחירה</div>
+            <div class="dz-sub">עד 8MB לקובץ</div>
+            <input type="file" id="gfile-input" multiple hidden>
+          </div>
+          <div class="ws-status" id="gfiles-status"></div>
+          <div id="gfiles-list" style="margin-top:6px;"></div>
+        </section>
       </div>
     </div>
 
@@ -439,9 +546,10 @@
   </div>
 </div>
 
-<script src="../assets/app.js?v=20260909d"></script>
-<script src="../assets/guides.js?v=20260909"></script>
+<script src="../assets/app.js?v=20260911"></script>
+<script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260910"></script>
-<script src="dashboard.js?v=20260910"></script>
+<script src="dashboard.js?v=20260911"></script>
+<script src="space.js?v=20260911"></script>
 </body>
 </html>

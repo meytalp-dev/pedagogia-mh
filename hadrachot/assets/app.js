@@ -150,19 +150,39 @@ const TS = (() => {
     }
   }
 
+  // Apps Script עונה 302 לכתובת תוכן זמנית, ומדי פעם הכתובת הזו מחזירה 404
+  // ודף HTML במקום JSON (נמדד 11.9.26: עד 3 מתוך 6 קריאות). בלי ניסיון חוזר,
+  // דשבורד המדריכה נפל בשקט ל"לא זוהתה מדריכה". GET בלבד — קריאה בלי תופעות
+  // לוואי. POST לא חוזר: הכתיבה כבר בוצעה לפני ההפניה, וניסיון שני היה משכפל.
+  const GET_ATTEMPTS = 3;
+  const RETRY_DELAYS_MS = [1200, 3000];
+  const sleep_ = ms => new Promise(r => setTimeout(r, ms));
+
   async function fetchFromApi(action, params) {
-    try {
-      const url = new URL(APPS_SCRIPT_URL);
-      url.searchParams.set('action', action);
-      Object.entries(withAuth_(params)).forEach(([k,v]) => {
-        if (v !== undefined && v !== null) url.searchParams.set(k, v);
-      });
-      const res = await fetchWithTimeout(url.toString());
-      return await res.json();
-    } catch (e) {
-      console.error('API error', e);
-      return { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
+    const url = new URL(APPS_SCRIPT_URL);
+    url.searchParams.set('action', action);
+    Object.entries(withAuth_(params)).forEach(([k,v]) => {
+      if (v !== undefined && v !== null) url.searchParams.set(k, v);
+    });
+    let last = null, timeouts = 0;
+    for (let i = 0; i < GET_ATTEMPTS; i++) {
+      if (i) await sleep_(RETRY_DELAYS_MS[i - 1]);
+      try {
+        const res = await fetchWithTimeout(url.toString());
+        if (!res.ok) { last = { ok: false, error: 'http_' + res.status }; continue; }
+        const text = await res.text();
+        try { return JSON.parse(text); }
+        catch (e) { last = { ok: false, error: 'bad_response' }; continue; }
+      } catch (e) {
+        last = { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
+        // פסק זמן אחד מתקבל בניסיון חוזר; שניים ברצף — כבר דקה, לא ממשיכים
+        if (e.name === 'AbortError' && ++timeouts >= 2) break;
+      }
     }
+    console.error('API error', action, last && last.error);
+    // transient — סימן לעמוד להציג "תקלה רגעית" עם כפתור ניסיון חוזר,
+    // ולא הודעה שמאשימה את הקישור או את הנתונים
+    return Object.assign({ transient: true }, last);
   }
 
   async function apiPost(action, body) {
