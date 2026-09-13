@@ -157,7 +157,7 @@ const CAT_OF = {
 const EXTRA_KEYS = {
   "bagrut-bank.html": "שאלונים מבחנים בחינות מועדי בגרות",
   "ogdan-shaot.html": "תקן שעות תקציב גמולים",
-  "prisat-pikuah.html": "מפקחים מפקחת חלוקת בתי ספר",
+  "prisat-pikuah.html": "מפקחים מפקחת חלוקת בתי ספר מערך טיפולי רשתות עמותות סמל מוסד",
   "work-plans.html": "תוכנית עבודה יעדים מדדים בעלי תפקידים",
   "tofes-divuach-chodshi.html": "היעדרויות נוכחות דיווח חודשי",
   "michtav-kabas.html": "קב\"ס ביקור סדיר נשירה",
