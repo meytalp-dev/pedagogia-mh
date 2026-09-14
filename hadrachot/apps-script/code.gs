@@ -1657,18 +1657,22 @@ function verifyMailSend(p, user) {
     const summary = Object.keys(counts).map(function (k) { return k + ' ' + counts[k]; }).join(' · ');
     const link = base + '/verify.html?school=' + encodeURIComponent(id);
 
+    // נוסח תזכורת (14.9.26) — בלי שם אישי בחתימה, רק כותרת היחידה
     const body = [
+      'תזכורת — אימות רשימת המורים',
+      '',
       'שלום' + (s.principalName ? ' ' + s.principalName : '') + ',',
       '',
-      'לקראת פתיחת שנת ההדרכות הוזנו למצפן ההדרכות ' + rows.length + ' מורים עבור ' + s.name + ':',
-      summary + '.',
+      'זו תזכורת: טרם התקבל אישור לרשימת המורים של ' + s.name + ' במצפן ההדרכות.',
+      'הוזנו ' + rows.length + ' מורים: ' + summary + '.',
       '',
       'נא להיכנס לטופס האימות ולוודא שכל מורה משויך/ת למקצוע ולמסלול הנכונים (בגרות/גמר),',
-      'להוסיף מורים שנשכחו, ובמתמטיקה גם לסמן כמה יחידות מלמד/ת כל מורה:',
+      'להוסיף מורים שנשכחו, ובמתמטיקה גם לסמן כמה יחידות מלמד/ת כל מורה — ולאשר:',
       link,
       '',
       'לוקח שתי דקות. תודה רבה!',
-      signer,
+      'שנה טובה!',
+      '',
       'יחידת הפיקוח על הדרכות מורים · משרד העבודה'
     ].join(String.fromCharCode(10));
 
@@ -1677,7 +1681,7 @@ function verifyMailSend(p, user) {
     try {
       const opts = {
         to: email,
-        subject: 'אימות רשימת המורים — ' + s.name,
+        subject: 'תזכורת: אימות רשימת המורים — ' + s.name,
         body: body,
         name: 'מצפן ההדרכות · משרד העבודה'
       };
@@ -2981,6 +2985,26 @@ function meetId_(slug, date) {
   return 'mt_' + slug + '_' + date.replace(/-/g, '');
 }
 
+// היום הוא יום של המפגש: התאריך שלו, או אחד ממועדיו הנוספים (sessionDates).
+// מועד נוסף מתקבל רק עד 14 יום אחרי המפגש — אחרת מפתח של מדריך היה פותח רישום בכל יום.
+function meetIsSessionDay_(date, sessionDates) {
+  const today = meetToday_();
+  if (date === today) return true;
+  const max = Utilities.formatDate(new Date(new Date(date + 'T12:00:00Z').getTime() + 14 * 86400000), 'UTC', 'yyyy-MM-dd');
+  return String(sessionDates || '').split(',').map(x => x.trim())
+    .some(d => /^\d{4}-\d{2}-\d{2}$/.test(d) && d === today && d >= date && d <= max);
+}
+
+// המפגש הפתוח עכשיו של המדריך — עמוד המורה לא יודע באיזה מועד מדובר,
+// ולכן מחפשים לפי חלון פתוח ולא לפי תאריך היום. חלון נסגר תוך 3 שעות לכל היותר.
+function meetOpenFor_(slug, now) {
+  ensureTab_('meetings');
+  const open = readAll('meetings').filter(m => String(m.guideSlug) === slug && Number(m.openUntil) > now);
+  if (!open.length) return null;
+  open.sort((a, b) => String(b.openedAt || '').localeCompare(String(a.openedAt || '')));
+  return open[0];
+}
+
 function meetCodeAt_(meetingId, step) {
   const hex = meetHmacHex_('code:' + meetingId + ':' + step);
   return String(parseInt(hex.slice(0, 8), 16) % 10000).padStart(4, '0');
@@ -3093,8 +3117,8 @@ function meetOpen(p) {
   const slug = meetAuthGuide_(p);
   if (!slug) return { ok: false, error: 'bad_key' };
   const date = meetDate_(p.date);
-  // רישום עצמי רק ביום המפגש — לא פותחים חלון מראש ולא בדיעבד
-  if (!date || date !== meetToday_()) return { ok: false, error: 'not_today' };
+  // רישום עצמי רק ביום המפגש (או ביום המועד השני שלו) — לא מראש ולא בדיעבד
+  if (!date || !meetIsSessionDay_(date, p.sessionDates)) return { ok: false, error: 'not_today' };
   let minutes = Math.round(Number(p.minutes) || MEET_OPEN_DEFAULT_MIN);
   minutes = Math.max(10, Math.min(MEET_OPEN_MAX_MIN, minutes));
   return meetWithLock_(() => {
@@ -3139,7 +3163,7 @@ function meetCode(p) {
   const slug = meetAuthGuide_(p);
   if (!slug) return { ok: false, error: 'bad_key' };
   const date = meetDate_(p.date);
-  if (!date || date !== meetToday_()) return { ok: false, error: 'not_today' };
+  if (!date || !meetIsSessionDay_(date, p.sessionDates)) return { ok: false, error: 'not_today' };
   const m = meetFind_(meetId_(slug, date));
   const now = Date.now();
   if (!m || !(Number(m.openUntil) > now)) return { ok: false, error: 'closed' };
@@ -3254,8 +3278,8 @@ function checkinRoster(p) {
   const slug = meetSlug_(p.g);
   if (!slug) return { ok: false, error: 'missing_guide' };
   const now = Date.now();
-  const m = meetFind_(meetId_(slug, meetToday_()));
-  if (!m || !(Number(m.openUntil) > now)) {
+  const m = meetOpenFor_(slug, now);
+  if (!m) {
     return { ok: true, data: { open: false } };
   }
   const list = v => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
@@ -3284,10 +3308,10 @@ function checkinRoster(p) {
 function checkinSubmit(p) {
   const slug = meetSlug_(p.g);
   if (!slug) return { ok: false, error: 'missing_guide' };
-  const date = meetToday_();
-  const m = meetFind_(meetId_(slug, date));
   const now = Date.now();
-  if (!m || !(Number(m.openUntil) > now)) return { ok: false, error: 'closed' };
+  const m = meetOpenFor_(slug, now);
+  if (!m) return { ok: false, error: 'closed' };
+  const date = meetDate_(m.date);   // תאריך המפגש — גם כשנרשמים במועד השני שלו
 
   const teacherId = meetStr_(p.teacherId, 80);
   let teacherName = meetStr_(p.teacherName, 120);

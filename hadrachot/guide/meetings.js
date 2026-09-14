@@ -62,13 +62,13 @@
     pickDefault();
     renderSelection();
     // ביום המפגש הלשונית נפתחת לבד — זה מה שהמדריכ/ה צריכ/ה באותו יום
-    if (sel && sel.date === S.today && btn) btn.click();
+    if (isLiveDay() && btn) btn.click();
     load();
     window.addEventListener('beforeunload', e => {
       if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ''; }
     });
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && sel && sel.date === S.today) load();
+      if (document.visibilityState === 'visible' && isLiveDay()) load();
     });
   });
 
@@ -113,7 +113,7 @@
   // ---------- בחירת מפגש ----------
   function planMeetings() {
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
-      date: m.date, topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || ''
+      date: m.date, date2: m.date2 || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || ''
     }));
   }
   function allMeetings() {
@@ -128,11 +128,15 @@
   }
   function pickDefault() {
     const list = allMeetings();
-    sel = list.find(m => m.date === S.today)
+    sel = list.find(m => m.date === S.today || m.date2 === S.today)
       || list.filter(m => m.date < S.today).pop()
       || list[0]
       || null;
   }
+  // מפגש בשני ימים (שירה: בוקר ביום א׳, ערב ביום ד׳) — הרישום העצמי נפתח בכל אחד מהם,
+  // והנוכחות נרשמת תחת המפגש (date). בלי date2 זה פשוט היום של המפגש.
+  function isLiveDay() { return !!sel && (sel.date === S.today || sel.date2 === S.today); }
+  function sessionDates() { return sel ? [sel.date, sel.date2].filter(Boolean).join(',') : ''; }
   function serverMeeting(date) { return S.meetings.find(m => m.date === date) || null; }
 
   // ---------- טעינה ----------
@@ -154,7 +158,7 @@
       S.rows = res.data.rows || [];
       S.loaded = true; S.failed = false; S.badKey = false;
       const sm = serverMeeting(date);
-      if (sm && sm.open && date === S.today) { if (!live) fetchCode(); }
+      if (sm && sm.open && isLiveDay()) { if (!live) fetchCode(); }
       else if (live) stopLive();
     } else if (res && res.error === 'bad_key') {
       S.badKey = true;
@@ -167,7 +171,7 @@
   }
   function schedulePoll() {
     clearTimeout(pollTimer);
-    if (sel && sel.date === S.today && !S.badKey && !zoom) {
+    if (isLiveDay() && !S.badKey && !zoom) {
       pollTimer = setTimeout(() => { if (!saving) load(); else schedulePoll(); }, POLL_MS);
     }
   }
@@ -205,7 +209,7 @@
       const d = dateIn.value;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || d > S.today) { TS.toast('בוחרים תאריך של היום או מפגש שכבר התקיים'); return; }
       const topic = document.getElementById('meet-adhoc-topic').value.trim();
-      const existing = allMeetings().find(m => m.date === d);
+      const existing = allMeetings().find(m => m.date === d || m.date2 === d);
       if (existing) { selectMeeting(existing); }
       else {
         const m = { date: d, topic: topic, source: 'adhoc', label: labelOf(d), time: '' };
@@ -239,7 +243,7 @@
     const counts = d => { const m = serverMeeting(d); return m ? m.counts : null; };
     selEl.innerHTML = list.map(m => {
       const c = counts(m.date);
-      const tag = m.date === S.today ? ' · היום'
+      const tag = (m.date === S.today || m.date2 === S.today) ? ' · היום'
         : m.date > S.today ? ' · עתידי'
         : (c && (c.present + c.absent) ? ' · סומנו ' + (c.present + c.absent) : '');
       const topic = m.topic ? ' — ' + (m.topic.length > 42 ? m.topic.slice(0, 42) + '…' : m.topic) : '';
@@ -391,7 +395,7 @@
     const caret = hadFocus ? document.activeElement.selectionStart : 0;
 
     body.innerHTML = `
-      ${sel.date === S.today ? liveCardHtml() : ''}
+      ${isLiveDay() ? liveCardHtml() : ''}
       <section class="meet-card">
         <div class="meet-sum">
           <button type="button" class="meet-stat present${filter === 'present' ? ' on' : ''}" data-filter="present"><b>${c.present}</b><span>נכחו</span></button>
@@ -436,7 +440,7 @@
       s.focus();
       try { s.setSelectionRange(caret, caret); } catch (e) {}
     }
-    if (sel.date === S.today) tick();
+    if (isLiveDay()) tick();
   }
 
   function listHtml(list) {
@@ -863,7 +867,7 @@
     if (openBtn) openBtn.addEventListener('click', async () => {
       openBtn.disabled = true; openBtn.textContent = 'פותח…';
       const res = await TS.apiPost('meet.open', {
-        guide: SLUG, k: KEY, ge: GE, date: sel.date, minutes: document.getElementById('meet-minutes').value,
+        guide: SLUG, k: KEY, ge: GE, date: sel.date, sessionDates: sessionDates(), minutes: document.getElementById('meet-minutes').value,
         topic: sel.topic || '', source: sel.source || 'adhoc', guideName: GUIDE_CFG.name || ''
       });
       if (res && res.ok) { applyCodes(res.data); await load(); }
@@ -901,7 +905,7 @@
     if (codeFetching) return;
     codeFetching = true;
     clearTimeout(codeTimer);
-    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: sel.date }, { cache: 'no' });
+    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: sel.date, sessionDates: sessionDates() }, { cache: 'no' });
     codeFetching = false;
     if (res && res.ok && res.data) { applyCodes(res.data); return; }
     if (res && res.error === 'closed') { stopLive(); load(); return; }

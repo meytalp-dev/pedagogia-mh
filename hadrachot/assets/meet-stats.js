@@ -98,9 +98,10 @@
       const plan = window.TS_planFor ? window.TS_planFor(g.slug) : null;
       const planMeetings = plan && plan.meetings ? plan.meetings : [];
       const unrecorded = planMeetings
-        .filter(pm => pm.date < today && !held.some(m => m.date === pm.date))
+        // מפגש בשני ימים (שירה) — "עבר בלי רישום" רק אחרי המועד השני
+        .filter(pm => (pm.date2 || pm.date) < today && !held.some(m => m.date === pm.date))
         .map(pm => ({ date: pm.date, label: pm.label, topic: pm.topic || '' }));
-      const next = planMeetings.find(pm => pm.date >= today) || null;
+      const next = planMeetings.find(pm => (pm.date2 || pm.date) >= today) || null;
 
       const presentSum = persons.reduce((s, p) => s + p.present, 0);
       const last = held.length ? held[held.length - 1] : null;
