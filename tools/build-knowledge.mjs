@@ -28,15 +28,19 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = "https://pedagogiamh.co.il";
 const OUT = join(ROOT, "knowledge.json");
 
-const MAX_PAGE_CHARS = 2000;   // תקרה לטקסט של עמוד בודד
-const MAX_TOTAL_CHARS = 290000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
+/* 14.9.26: עמודים נכנסים מלאים. החיתוך ל-2,000 תווים הסתיר מעוגן כל מה שבהמשך
+   עמוד ארוך (למשל נוסחת התקצוב 0.22 ש״ש בעמוד רכז.ת החניכות). הקובץ כבר לא נשלח
+   למודל בשלמותו — עוגן (גרסה @18) שולחת רק מפת כותרות + קטעים רלוונטיים לשאלה,
+   ולכן גודל הקובץ לא משפיע על עלות השאלה. */
+const MAX_PAGE_CHARS = 60000;    // תקרה לטקסט של עמוד בודד
+const MAX_TOTAL_CHARS = 3000000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
 const SKIP = new Set(["_doc-template.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
   "admin.html", "admin-mosdot.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
   "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html",
   "nispach-baaley-tafkidim.html", "sikum-nispach-tafkidim.html", "merkaz-tofsim.html",
-  "tikshuv-map.html", "tikshuv-shealon.html", "tikshuv-shibutz.html", "tikshuv-ishur.html",
+  "tikshuv-map.html", "tikshuv-shealon.html", "tikshuv-shibutz.html", "tikshuv-ishur.html", "mosdot-kesher.html",
   "mishov-rakazim.html", "sikum-mishov-rakazim.html"]);
 
 /* עמוד מוגן = עמוד שטוען את /auth.js.
