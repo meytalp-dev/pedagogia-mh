@@ -13,9 +13,16 @@
   }
   const L = d => window.TS_meetDateLabel(d);
 
+  // הדרכה פרטנית — עמודה נפרדת ליד אחוז הנוכחות במפגשים (לא נכנסת לאחוז)
+  window.TS_meetIndividualChip = function (p) {
+    if (!p || !p.individual) return '';
+    return `<span class="mv-ind" title="הדרכה פרטנית: ${p.individual} מפגשים (${p.individualDates.map(L).join(', ')})">פרטני ×${p.individual}</span>`;
+  };
+
   window.TS_meetRateChip = function (p) {
-    if (!p || p.held === 0 || p.rate === null) return '<span class="mv-chip none" title="עוד לא התקיים מפגש עם רישום נוכחות">—</span>';
-    return `<span class="mv-chip ${window.TS_rateClass(p.rate)}" title="${p.present} מתוך ${p.held} מפגשים">${p.present}/${p.held}</span>`;
+    const ind = window.TS_meetIndividualChip(p);
+    if (!p || p.held === 0 || p.rate === null) return '<span class="mv-chip none" title="עוד לא התקיים מפגש עם רישום נוכחות">—</span>' + (ind ? ' ' + ind : '');
+    return `<span class="mv-chip ${window.TS_rateClass(p.rate)}" title="${p.present} מתוך ${p.held} מפגשים">${p.present}/${p.held}</span>` + (ind ? ' ' + ind : '');
   };
 
   window.TS_meetGuideCard = function (g, opts) {
@@ -54,29 +61,49 @@
     const never = g.never;
     const neverBlock = never.length ? `
       <details>
-        <summary>לא השתתפו באף מפגש (${never.length})</summary>
+        <summary>לא השתתפו כלל — לא במפגש ולא בהדרכה פרטנית (${never.length})</summary>
         <div class="mv-people">${never.map(p => `<div><b>${esc(p.name)}</b><span>${esc(p.schoolName)}</span></div>`).join('')}</div>
         <button type="button" class="mv-copy" data-mv-copy="${esc(g.slug)}">העתקת הרשימה</button>
       </details>` : '';
 
-    // לפי בית ספר — איפה הנוכחות נמוכה
+    // לפי בית ספר — איפה הנוכחות נמוכה, וכמה הדרכה פרטנית קיבל (לפחות אחת בשנה)
     let schoolBlock = '';
-    if (heldN && g.persons.length) {
+    if ((heldN || g.hoursLoaded) && g.persons.length) {
       const bySchool = {};
       g.persons.forEach(p => {
         const s = bySchool[p.schoolName] || (bySchool[p.schoolName] = { name: p.schoolName, n: 0, present: 0 });
         s.n++; s.present += p.present;
       });
-      const list = Object.values(bySchool).map(s => Object.assign(s, { rate: Math.round(s.present / (s.n * heldN) * 100) }))
-        .sort((a, b) => a.rate - b.rate);
+      const indOf = {};
+      (g.schools || []).forEach(s => { indOf[s.name] = s.individual; });
+      const list = Object.values(bySchool).map(s => Object.assign(s, {
+        rate: heldN ? Math.round(s.present / (s.n * heldN) * 100) : null,
+        individual: indOf[s.name] || 0
+      })).sort((a, b) => heldN ? (a.rate - b.rate) : (a.individual - b.individual) || a.name.localeCompare(b.name, 'he'));
       schoolBlock = `
       <details>
         <summary>לפי בית ספר (${list.length})</summary>
         <table class="mv-table">
-          <thead><tr><th>בית ספר</th><th>מורים</th><th>נוכחות</th></tr></thead>
-          <tbody>${list.map(s => `<tr><td>${esc(s.name || '—')}</td><td class="num">${s.n}</td><td class="num"><span class="mv-chip ${window.TS_rateClass(s.rate)}">${s.rate}%</span></td></tr>`).join('')}</tbody>
+          <thead><tr><th>בית ספר</th><th>מורים</th><th>נוכחות</th>${g.hoursLoaded ? '<th>פרטני</th>' : ''}</tr></thead>
+          <tbody>${list.map(s => `<tr><td>${esc(s.name || '—')}</td><td class="num">${s.n}</td>
+            <td class="num">${s.rate === null ? '<span class="mv-chip none">—</span>' : `<span class="mv-chip ${window.TS_rateClass(s.rate)}">${s.rate}%</span>`}</td>
+            ${g.hoursLoaded ? `<td class="num">${s.individual ? '<span class="mv-ind">' + s.individual + '</span>' : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>'}</td>` : ''}</tr>`).join('')}</tbody>
         </table>
       </details>`;
+    }
+
+    // דרישה: כל בית ספר לפחות הדרכה פרטנית אחת בשנה
+    let indBlock = '';
+    if (g.hoursLoaded && g.schools && g.schools.length) {
+      const total = g.schools.length, done = g.schoolsWithIndividual, missing = g.schoolsNoIndividual;
+      indBlock = `
+      <div class="mv-line">הדרכה פרטנית השנה: <b>${g.individualSessions}</b> מפגשים · <b>${g.individualTeachers}</b> מורים${g.individualOutside ? ` <span title="נרשמו בשם שלא נמצא ברשימת הקבוצה">(+${g.individualOutside} לא מזוהים)</span>` : ''}</div>
+      ${missing.length ? `
+      <details>
+        <summary>בתי ספר בלי הדרכה פרטנית השנה (${missing.length} מתוך ${total})</summary>
+        <div class="mv-people">${missing.map(n => `<div><b>${esc(n)}</b></div>`).join('')}</div>
+        <button type="button" class="mv-copy" data-mv-copy-schools="${esc(g.slug)}">העתקת הרשימה</button>
+      </details>` : `<div class="mv-line" style="color:#1f7a5c"><b>כל ${done} בתי הספר קיבלו הדרכה פרטנית השנה</b></div>`}`;
     }
 
     return `
@@ -92,8 +119,9 @@
           <div class="mv-kpi"><b>${heldN}${g.planTotal ? '<small style="font-size:11px;color:var(--text-muted)">/' + g.planTotal + '</small>' : ''}</b><span>מפגשים שהתקיימו</span></div>
           <div class="mv-kpi"><b>${g.rosterN}</b><span>מורים בקבוצה</span></div>
           <div class="mv-kpi"><b>${heldN ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
+          ${g.hoursLoaded && g.schools && g.schools.length ? `<div class="mv-kpi${g.schoolsNoIndividual.length ? '' : ' ok'}"><b>${g.schoolsWithIndividual}<small style="font-size:11px;color:var(--text-muted)">/${g.schools.length}</small></b><span>בתי ספר עם הדרכה פרטנית</span></div>` : ''}
         </div>
-        ${lastLine}${nextLine}
+        ${lastLine}${nextLine}${indBlock}
         ${warnings.join('')}
         ${meetingsTable}${schoolBlock}${neverBlock}
       </div>`;
@@ -105,11 +133,21 @@
       b.addEventListener('click', () => {
         const g = stats.guides.find(x => x.slug === b.dataset.mvCopy);
         if (!g) return;
-        const text = g.name + ' — לא השתתפו באף מפגש:\n' + g.never.map(p => p.name + ' · ' + p.schoolName).join('\n');
-        const done = () => { const t = b.textContent; b.textContent = 'הועתק ✓'; setTimeout(() => { b.textContent = t; }, 2000); };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => window.prompt('להעתקה:', text));
-        else window.prompt('להעתקה:', text);
+        const text = g.name + ' — לא השתתפו כלל (לא במפגש ולא בהדרכה פרטנית):\n' + g.never.map(p => p.name + ' · ' + p.schoolName).join('\n');
+        copyText_(b, text);
       });
     });
+    root.querySelectorAll('[data-mv-copy-schools]').forEach(b => {
+      b.addEventListener('click', () => {
+        const g = stats.guides.find(x => x.slug === b.dataset.mvCopySchools);
+        if (!g) return;
+        copyText_(b, g.name + ' — בתי ספר שעוד לא קיבלו הדרכה פרטנית השנה:\n' + g.schoolsNoIndividual.join('\n'));
+      });
+    });
+  };
+  function copyText_(b, text) {
+    const done = () => { const t = b.textContent; b.textContent = 'הועתק ✓'; setTimeout(() => { b.textContent = t; }, 2000); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => window.prompt('להעתקה:', text));
+    else window.prompt('להעתקה:', text);
   };
 })();

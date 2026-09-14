@@ -75,7 +75,74 @@
   });
 
   // dashboard.js קורא לזה אחרי שרשימת המורים נטענה
-  window.MEET_onRoster = function () { if (CAN && sel) renderBody(); };
+  window.MEET_onRoster = function () { renderYear(); if (CAN && sel) renderBody(); };
+
+  // ---------- הדרכה פרטנית כהשתתפות (14.9.26, החלטת מיטל) ----------
+  // מורה שקיבל/ה שעה פרטנית "השתתף/ה השנה". לא נכנס לסימון של מפגש — מוצג
+  // כתווית ליד השם. ודרישה: כל בית ספר בקבוצה לפחות הדרכה פרטנית אחת בשנה.
+  // אותם כללים כמו ב-assets/meet-stats.js (שם + בית ספר, משנת הלימודים הנוכחית).
+  let HOURS = null;   // null = השעות עוד לא נטענו (space.js)
+  window.MEET_onHours = function (rows) {
+    HOURS = rows || [];
+    renderYear();
+    if (CAN && sel && S.loaded && !saving) renderBody();
+  };
+  function yearStart() {
+    const [y, m] = S.today.split('-').map(Number);
+    return (m >= 9 ? y : y - 1) + '-09-01';
+  }
+  function individualIndex() {
+    const idx = { byKey: {}, bySchool: {}, sessions: 0, teachers: 0 };
+    if (!HOURS) return idx;
+    const teachers = (typeof myTeachers === 'function') ? myTeachers() : [];
+    const byName = {};
+    teachers.forEach(t => { (byName[norm(t.name)] = byName[norm(t.name)] || []).push(t); });
+    const ys = yearStart();
+    HOURS.forEach(h => {
+      const d = String(h.date || '').slice(0, 10);
+      if (!d || d < ys || d > S.today) return;
+      idx.sessions++;
+      const full = norm((h.firstName || '') + ' ' + (h.lastName || ''));
+      let school = norm(h.schoolName);
+      const same = (byName[full] || []);
+      if (!same.some(t => norm(t.schoolName) === school) && same.length === 1) school = norm(same[0].schoolName);
+      const key = full + '|' + school;
+      if (!idx.byKey[key]) { idx.byKey[key] = 0; idx.teachers++; }
+      idx.byKey[key]++;
+      if (school) idx.bySchool[school] = (idx.bySchool[school] || 0) + 1;
+    });
+    return idx;
+  }
+  function renderYear() {
+    const box = document.getElementById('meet-year');
+    if (!box) return;
+    const teachers = (typeof myTeachers === 'function') ? myTeachers() : [];
+    if (!HOURS || !teachers.length) { box.innerHTML = ''; return; }
+    const idx = individualIndex();
+    const schools = Array.from(new Set(teachers.map(t => t.schoolName).filter(n => n && n !== '— ללא שיוך —')))
+      .sort((a, b) => a.localeCompare(b, 'he'));
+    const missing = schools.filter(n => !idx.bySchool[norm(n)]);
+    const done = schools.length - missing.length;
+    box.innerHTML = `
+      <section class="meet-card meet-year">
+        <div class="my-row">
+          <div class="my-tx">
+            <h3>${ICON.users}<span>הדרכה פרטנית השנה</span></h3>
+            <div class="space-hint" style="margin:0;">שעה פרטנית נחשבת השתתפות של המורה. כל בית ספר צריך לקבל לפחות הדרכה פרטנית אחת בשנה. רושמים בלשונית "שעות פרטניות".</div>
+          </div>
+          <div class="my-kpis">
+            <div><b>${idx.sessions}</b><span>מפגשים</span></div>
+            <div><b>${idx.teachers}</b><span>מורים</span></div>
+            <div class="${missing.length ? '' : 'ok'}"><b>${done}<small>/${schools.length}</small></b><span>בתי ספר</span></div>
+          </div>
+        </div>
+        ${missing.length ? `
+        <details class="my-missing">
+          <summary>בתי ספר שעוד לא קיבלו הדרכה פרטנית (${missing.length})</summary>
+          <div class="my-chips">${missing.map(n => `<span>${esc(n)}</span>`).join('')}</div>
+        </details>` : '<div class="my-done">כל בתי הספר בקבוצה קיבלו הדרכה פרטנית השנה</div>'}
+      </section>`;
+  }
 
   // ---------- עזרים ----------
   function localToday() {
@@ -251,6 +318,7 @@
           </ol>
         </details>
       </section>
+      <div id="meet-year"></div>
       <div id="meet-body"></div>`;
 
     document.getElementById('meet-select').addEventListener('change', onSelect);
@@ -542,6 +610,8 @@
     if (g.self && g.guide === 'absent') badges.push('<span class="mb gap">פער</span>');
     if (!g.listed) badges.push('<span class="mb unlisted">לא ברשימת הקבוצה</span>');
     if (g.dirty) badges.push('<span class="mb dirty">לא נשמר</span>');
+    const ind = HOURS ? (individualIndex().byKey[norm(g.name) + '|' + norm(g.schoolName)] || 0) : 0;
+    if (ind) badges.push(`<span class="mb ind" title="קיבל/ה הדרכה פרטנית השנה — נחשב השתתפות">פרטני ×${ind}</span>`);
     return `
       <div class="meet-row s-${g.state}" data-key="${esc(g.key)}">
         <div class="mr-tx">

@@ -7,10 +7,10 @@
 <title>נוכחות במפגשי ההדרכה — מבט ארצי · מצפן ההדרכות</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/meet-view.css?v=20260914">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260914b">
 <style>
   [hidden] { display: none !important; }
-  .nk-kpis { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:20px; }
+  .nk-kpis { display:grid; grid-template-columns:repeat(6, 1fr); gap:12px; margin-bottom:20px; }
   @media (max-width: 900px) { .nk-kpis { grid-template-columns:repeat(2, 1fr); } }
   .nk-kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
   .nk-kpi .l { font-size:12px; color:var(--text-muted); font-weight:600; }
@@ -108,9 +108,10 @@
     <section class="nk-kpis" aria-label="נתונים ארציים">
       <div class="nk-kpi"><div class="l">מפגשים שהתקיימו</div><div class="v" id="k-held">—</div><div class="s">עם רישום נוכחות</div></div>
       <div class="nk-kpi"><div class="l">נוכחות ממוצעת</div><div class="v" id="k-rate">—</div><div class="s">יעד: 80%</div></div>
-      <div class="nk-kpi red"><div class="l">לא השתתפו באף מפגש</div><div class="v" id="k-never">—</div><div class="s" id="k-never-s">מורים</div></div>
+      <div class="nk-kpi red"><div class="l">לא השתתפו כלל</div><div class="v" id="k-never">—</div><div class="s" id="k-never-s">מורים</div></div>
       <div class="nk-kpi red"><div class="l">מפגשים בלי רישום</div><div class="v" id="k-unrec">—</div><div class="s">תאריך עבר, אין נוכחות</div></div>
       <div class="nk-kpi amber"><div class="l">ממתינים לאישור</div><div class="v" id="k-pending">—</div><div class="s">רישום עצמי</div></div>
+      <div class="nk-kpi"><div class="l">בתי ספר בלי הדרכה פרטנית</div><div class="v" id="k-ind">—</div><div class="s" id="k-ind-s">השנה</div></div>
     </section>
 
     <div class="flt">
@@ -135,7 +136,7 @@
       <div class="nk-tools"><button type="button" class="nk-btn" data-csv="schools">ייצוא לאקסל (CSV)</button></div>
     </div>
     <div class="nk-wrap"><table class="nk"><thead><tr>
-      <th>בית ספר</th><th>רשת</th><th>מורים</th><th>נוכחות</th><th>לא השתתפו כלל</th><th></th>
+      <th>בית ספר</th><th>רשת</th><th>מורים</th><th>נוכחות</th><th>לא השתתפו כלל</th><th>הדרכה פרטנית</th><th></th>
     </tr></thead><tbody id="nk-schools"></tbody></table></div>
 
     <div class="nk-sec" id="s-networks">
@@ -149,7 +150,7 @@
     <div class="nk-sec" id="s-teachers">
       <div><h2>מורים</h2><p id="nk-teachers-sub"></p></div>
       <div class="nk-tools">
-        <label class="chk" style="display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--text-muted);"><input type="checkbox" id="f-never"> רק מי שלא השתתף באף מפגש</label>
+        <label class="chk" style="display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--text-muted);"><input type="checkbox" id="f-never"> רק מי שלא השתתף כלל (לא במפגש ולא בפרטני)</label>
         <button type="button" class="nk-btn" data-csv="teachers">ייצוא לאקסל (CSV)</button>
       </div>
     </div>
@@ -168,8 +169,8 @@
 <script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260914"></script>
-<script src="../assets/meet-stats.js?v=20260914b"></script>
-<script src="../assets/meet-view.js?v=20260914"></script>
-<script src="nochechut.js?v=20260914"></script>
+<script src="../assets/meet-stats.js?v=20260914c"></script>
+<script src="../assets/meet-view.js?v=20260914b"></script>
+<script src="nochechut.js?v=20260914b"></script>
 </body>
 </html>

@@ -32,7 +32,9 @@
     }
     stats = window.TS_meetStats({
       today: report.today, meetings: report.meetings, rows: report.rows,
-      teachers: state.teachers, guides: state.guides
+      teachers: state.teachers, guides: state.guides,
+      // שעות פרטניות — כבר נטענו ב-mabat.js (guide.workspace). נכשל? בלי העמודה, לא "0 לכולם"
+      hours: (state.ws && state.ws.hours) || null
     });
     Object.keys(personByTeacher).forEach(k => delete personByTeacher[k]);
     stats.persons.forEach(p => p.ids.forEach(id => { if (!personByTeacher[id]) personByTeacher[id] = p; }));

@@ -453,6 +453,8 @@
     const total = document.getElementById('hours-total');
     if (loadFailed) { total.hidden = true; el.innerHTML = failBox(); bindRetry(el); return; }
     const rows = data.hours;   // השרת ממיין לפי תאריך, החדש למעלה
+    // לשונית הנוכחות (meetings.js) סופרת את השעות הפרטניות כהשתתפות — מעדכנים אותה
+    if (typeof window.MEET_onHours === 'function') window.MEET_onHours(rows);
     const badge = document.getElementById('hours-count');
     badge.textContent = rows.length;
     badge.classList.toggle('zero', !rows.length);

@@ -12,6 +12,13 @@
    · הקבוצה של מדריכ/ה = מקצוע + מגזר + מסלול + יח"ל, בדיוק כמו בדשבורד המדריכ/ה:
      מורה בגרות שטרם סומנו לו יח"ל שייך לשתי הקבוצות (שירה וגל).
    · אותו מורה בבגרות ובגמר (שתי שורות במערכת) הוא משתתף אחד.
+   · הדרכה פרטנית (טאב guide_hours, 14.9.26 — החלטת מיטל): מורה שקיבל/ה שעה
+     פרטנית "השתתף/ה השנה" ולא נכנס/ת ל"לא השתתפו כלל". היא **לא** נכנסת לאחוז
+     הנוכחות במפגשים — מוצגת לידו כעמודה נפרדת (אחרת האחוז עובר 100%).
+     התאמה לפי שם + בית ספר (הרישום בטופס ממלא אותם מרשימת הקבוצה; אין teacherId).
+     רק שעות משנת הלימודים הנוכחית (מ-1.9).
+   · דרישה: כל בית ספר בקבוצה מקבל לפחות הדרכה פרטנית אחת בשנה —
+     g.schoolsNoIndividual = בתי הספר שעוד לא.
    ============================================================ */
 (function () {
   function norm(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
@@ -35,12 +42,30 @@
     return true;
   };
 
+  // תחילת שנת הלימודים של תאריך נתון — 1.9
+  window.TS_schoolYearStart = function (today) {
+    const [y, m] = String(today).slice(0, 7).split('-').map(Number);
+    return (m >= 9 ? y : y - 1) + '-09-01';
+  };
+
+  // שעות פרטניות — מקבל { slug: [..] } (כמו guide.workspace) או מערך עם guideSlug
+  function hoursBySlug(hours) {
+    if (!hours) return {};
+    if (!Array.isArray(hours)) return hours;
+    const out = {};
+    hours.forEach(h => { (out[h.guideSlug] = out[h.guideSlug] || []).push(h); });
+    return out;
+  }
+
   window.TS_meetStats = function (opts) {
     const today = opts.today || new Date().toISOString().slice(0, 10);
     const guides = opts.guides || [];
     const teachers = opts.teachers || [];
     const meetings = opts.meetings || [];
     const rows = opts.rows || [];
+    const yearStart = window.TS_schoolYearStart(today);
+    const allHours = hoursBySlug(opts.hours);
+    const hoursLoaded = !!opts.hours;
 
     const rowsByMeeting = {};
     rows.forEach(r => { (rowsByMeeting[r.meetingId] = rowsByMeeting[r.meetingId] || []).push(r); });
@@ -66,7 +91,7 @@
             name: t.name || '', schoolName: t.schoolName || '', school: t.school || '',
             network: String(t.network || '').replace(/^net_/, ''), sector: t.sector || 'kelali',
             subject: t.subject, ids: [], present: 0, absent: 0, pending: 0, zoom: 0,
-            attended: [], missed: []
+            attended: [], missed: [], individual: 0, individualHours: 0, individualDates: []
           };
           persons.push(p);
         }
@@ -92,6 +117,40 @@
         p.missed = held.filter(m => p.attended.indexOf(m.id) < 0).map(m => m.date);
         p.rate = held.length ? Math.round(p.present / held.length * 100) : null;
       });
+      // ---- הדרכה פרטנית ----
+      const byNameSchool = {}, byName = {};
+      persons.forEach(p => {
+        byNameSchool[norm(p.name) + '|' + norm(p.schoolName)] = p;
+        (byName[norm(p.name)] = byName[norm(p.name)] || []).push(p);
+      });
+      const rosterSchools = {};
+      persons.forEach(p => { if (p.schoolName) rosterSchools[norm(p.schoolName)] = p.schoolName; });
+      const schoolSessions = {};   // norm(school) → מספר מפגשים פרטניים
+      let indSessions = 0, indHours = 0, indOutside = 0;
+      (allHours[g.slug] || []).forEach(h => {
+        const d = String(h.date || '').slice(0, 10);
+        if (!d || d < yearStart || d > today) return;
+        indSessions++;
+        indHours += Number(h.hours) || 0;
+        const full = norm((h.firstName || '') + ' ' + (h.lastName || ''));
+        // שם + בית ספר; אם בית הספר נכתב אחרת — שם שמופיע פעם אחת בלבד בקבוצה
+        let p = byNameSchool[full + '|' + norm(h.schoolName)];
+        if (!p && byName[full] && byName[full].length === 1) p = byName[full][0];
+        if (p) {
+          p.individual++;
+          p.individualHours += Number(h.hours) || 0;
+          p.individualDates.push(d);
+        } else indOutside++;
+        const sk = p ? norm(p.schoolName) : norm(h.schoolName);
+        if (sk) schoolSessions[sk] = (schoolSessions[sk] || 0) + 1;
+      });
+      persons.forEach(p => {
+        p.individualDates.sort();
+        p.participated = p.present > 0 || p.individual > 0;
+      });
+      const schoolNames = Object.keys(rosterSchools).map(k => rosterSchools[k]).sort((a, b) => a.localeCompare(b, 'he'));
+      const schools = schoolNames.map(n => ({ name: n, individual: schoolSessions[norm(n)] || 0 }));
+
       persons.sort((a, b) => a.schoolName.localeCompare(b.schoolName, 'he') || a.name.localeCompare(b.name, 'he'));
 
       // מפגשים מהתוכנית שעברו בלי רישום
@@ -118,7 +177,16 @@
         presentSum: presentSum,
         outsidePresent: outside,
         rate: (held.length && persons.length) ? Math.round(presentSum / (held.length * persons.length) * 100) : null,
-        never: held.length ? persons.filter(p => p.present === 0) : [],
+        // "לא השתתפו כלל" — לא במפגש ולא בהדרכה פרטנית
+        never: held.length ? persons.filter(p => !p.participated) : [],
+        hoursLoaded: hoursLoaded,
+        individualSessions: indSessions,
+        individualHours: indHours,
+        individualTeachers: persons.filter(p => p.individual > 0).length,
+        individualOutside: indOutside,
+        schools: schools,
+        schoolsWithIndividual: schools.filter(s => s.individual > 0).length,
+        schoolsNoIndividual: schools.filter(s => !s.individual).map(s => s.name),
         pending: myMeetings.reduce((s, m) => s + (m.counts.pending || 0), 0),
         gaps: myMeetings.reduce((s, m) => s + (m.counts.gaps || 0), 0),
         last: last ? {

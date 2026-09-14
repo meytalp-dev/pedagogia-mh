@@ -4,7 +4,7 @@
    נתונים: meet.report + teachers.list · חישוב: assets/meet-stats.js
    ============================================================ */
 (function () {
-  let report = null, teachers = [], stats = null;
+  let report = null, teachers = [], stats = null, hours = null;
   let showAllTeachers = false;
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -31,10 +31,14 @@
     $('nk-more-btn').addEventListener('click', () => { showAllTeachers = true; render(); });
     document.querySelectorAll('[data-csv]').forEach(b => b.addEventListener('click', () => exportCsv(b.dataset.csv)));
 
-    const [rep, tl] = await Promise.all([
+    const allSlugs = Object.keys(window.TS_GUIDES || {}).join(',');
+    const [rep, tl, ws] = await Promise.all([
       TS.api('meet.report', {}, { cache: 'no' }),
-      TS.api('teachers.list', {})
+      TS.api('teachers.list', {}),
+      // שעות פרטניות של כל המדריכים — נכשל? הדוח עולה בלי עמודת הפרטני
+      TS.api('guide.workspace', { guides: allSlugs }, { cache: 'no' })
     ]);
+    hours = (ws && ws.ok && ws.data && ws.data.hours) || null;
     if (!rep || !rep.ok || !tl || !tl.ok) {
       $('nk-sub').textContent = 'הנתונים לא נטענו — תקלה רגעית בשרת. רעננו בעוד רגע.';
       $('nk-guides').innerHTML = '<div class="mv-empty">הנתונים לא נטענו.</div>';
@@ -48,7 +52,7 @@
       g.society = societyOf(g);
       return g;
     });
-    stats = window.TS_meetStats({ today: report.today, meetings: report.meetings, rows: report.rows, teachers: teachers, guides: guides });
+    stats = window.TS_meetStats({ today: report.today, meetings: report.meetings, rows: report.rows, teachers: teachers, guides: guides, hours: hours });
     render();
   });
 
@@ -63,9 +67,10 @@
     const m = {};
     persons.forEach(p => {
       const k = keyFn(p);
-      const a = m[k] || (m[k] = { key: k, name: nameFn(p), network: p.network, schools: new Set(), n: 0, present: 0, held: 0, never: [] });
+      const a = m[k] || (m[k] = { key: k, name: nameFn(p), network: p.network, schools: new Set(), n: 0, present: 0, held: 0, never: [], individual: 0 });
       a.n++; a.present += p.present; a.held += p.held; a.schools.add(p.schoolName);
-      if (p.held && p.present === 0) a.never.push(p);
+      a.individual += p.individual || 0;
+      if (p.held && !p.participated) a.never.push(p);
     });
     return Object.values(m).map(a => Object.assign(a, { rate: a.held ? Math.round(a.present / a.held * 100) : null }))
       .sort((x, y) => (x.rate === null ? 101 : x.rate) - (y.rate === null ? 101 : y.rate));
@@ -83,7 +88,7 @@
     const held = gs.reduce((s, g) => s + g.held.length, 0);
     const pres = persons.reduce((s, p) => s + p.present, 0);
     const denom = persons.reduce((s, p) => s + p.held, 0);
-    const never = persons.filter(p => p.held && p.present === 0);
+    const never = persons.filter(p => p.held && !p.participated);
     $('k-held').textContent = held;
     $('k-rate').textContent = denom ? Math.round(pres / denom * 100) + '%' : '—';
     $('k-never').textContent = held ? never.length : '—';
@@ -94,6 +99,15 @@
     $('k-never').parentElement.classList.toggle('red', held > 0 && never.length > 0);
     $('k-unrec').parentElement.classList.toggle('red', Number($('k-unrec').textContent) > 0);
     $('k-pending').parentElement.classList.toggle('amber', Number($('k-pending').textContent) > 0);
+    // דרישה: כל בית ספר לפחות הדרכה פרטנית אחת בשנה (בכל מקצועות המדריכים שבסינון)
+    const schoolInd = {};
+    gs.forEach(g => (g.schools || []).forEach(s => { schoolInd[s.name] = (schoolInd[s.name] || 0) + s.individual; }));
+    render.schoolInd = schoolInd;
+    const schoolNames = Object.keys(schoolInd);
+    const noInd = schoolNames.filter(n => !schoolInd[n]);
+    $('k-ind').textContent = hours ? noInd.length : '—';
+    $('k-ind-s').textContent = hours ? 'מתוך ' + schoolNames.length + ' · ' + gs.reduce((s, g) => s + (g.individualSessions || 0), 0) + ' מפגשים פרטניים השנה' : 'השעות הפרטניות לא נטענו';
+    $('k-ind').parentElement.classList.toggle('red', !!hours && noInd.length > 0);
     $('nk-sub').textContent = gs.length + ' מדריכים · ' + persons.length + ' מורים בקבוצות · נכון להיום ' + L(stats.today);
 
     // מדריכים
@@ -114,11 +128,12 @@
         <td class="num">${s.n}</td>
         <td class="num"><span class="mv-chip ${window.TS_rateClass(s.rate)}">${pct(s.rate)}</span></td>
         <td class="num">${s.held ? s.never.length : '—'}</td>
+        <td class="num">${!hours ? '—' : (render.schoolInd[s.name] ? '<span class="mv-ind">' + render.schoolInd[s.name] + '</span>' : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>')}</td>
         <td>${s.never.length ? `<button type="button" class="nk-btn" data-school-copy="${i}" style="padding:3px 9px;font-size:11.5px;">העתקת מי שלא השתתף</button>` : ''}</td>
-      </tr>`).join('') : '<tr><td colspan="6" class="dim" style="text-align:center;padding:18px;">אין נתונים</td></tr>';
+      </tr>`).join('') : '<tr><td colspan="7" class="dim" style="text-align:center;padding:18px;">אין נתונים</td></tr>';
     document.querySelectorAll('[data-school-copy]').forEach(b => b.addEventListener('click', () => {
       const s = schools[Number(b.dataset.schoolCopy)];
-      copy(s.name + ' — מורים שלא השתתפו באף מפגש הדרכה:\n' + s.never.map(p => p.name + ' · ' + p.subject + ' (' + p.guideName + ')').join('\n'), b);
+      copy(s.name + ' — מורים שלא השתתפו כלל (לא במפגש ולא בהדרכה פרטנית):\n' + s.never.map(p => p.name + ' · ' + p.subject + ' (' + p.guideName + ')').join('\n'), b);
     }));
 
     // רשתות
@@ -135,15 +150,15 @@
 
     // מורים
     const onlyNever = $('f-never').checked;
-    let list = qPersons.filter(p => !onlyNever || (p.held && p.present === 0))
+    let list = qPersons.filter(p => !onlyNever || (p.held && !p.participated))
       .slice().sort((a, b) => ((a.rate === null ? 101 : a.rate) - (b.rate === null ? 101 : b.rate)) || a.name.localeCompare(b.name, 'he'));
     render.teachers = list;
-    $('nk-teachers-sub').textContent = list.length + ' מורים' + (onlyNever ? ' שלא השתתפו באף מפגש' : '');
+    $('nk-teachers-sub').textContent = list.length + ' מורים' + (onlyNever ? ' שלא השתתפו כלל' : '');
     const LIMIT = 200;
     const shown = showAllTeachers ? list : list.slice(0, LIMIT);
     $('nk-more').hidden = showAllTeachers || list.length <= LIMIT;
     $('nk-teachers').innerHTML = shown.map(p => `
-      <tr class="${p.held && p.present === 0 ? 'never' : ''}">
+      <tr class="${p.held && !p.participated ? 'never' : ''}">
         <td><b>${esc(p.name)}</b></td>
         <td>${esc(p.schoolName)}</td>
         <td class="dim">${esc(p.subject)}</td>
@@ -162,13 +177,14 @@
   function exportCsv(kind) {
     let head, rows;
     if (kind === 'teachers') {
-      head = ['מורה', 'בית ספר', 'רשת', 'מקצוע', 'מדריך/ה', 'השתתף/ה', 'מפגשים שהתקיימו', 'אחוז', 'תאריכים שהחסיר/ה', 'ממתין לאישור'];
+      head = ['מורה', 'בית ספר', 'רשת', 'מקצוע', 'מדריך/ה', 'השתתף/ה', 'מפגשים שהתקיימו', 'אחוז', 'תאריכים שהחסיר/ה', 'ממתין לאישור', 'הדרכה פרטנית (מפגשים)', 'תאריכי הדרכה פרטנית'];
       rows = (render.teachers || []).map(p => [p.name, p.schoolName, (TS.netById(p.network) || {}).name || p.network, p.subject, p.guideName,
-        p.present, p.held, p.rate === null ? '' : p.rate, p.missed.map(L).join(' '), p.pending || '']);
+        p.present, p.held, p.rate === null ? '' : p.rate, p.missed.map(L).join(' '), p.pending || '', p.individual || 0, p.individualDates.map(L).join(' ')]);
     } else {
       const src = kind === 'schools' ? render.schools : render.networks;
-      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'מפגשים (מורה×מפגש)', 'אחוז', 'לא השתתפו כלל'];
-      rows = (src || []).map(a => [a.name, a.n, a.present, a.held, a.rate === null ? '' : a.rate, a.never.length]);
+      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'מפגשים (מורה×מפגש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)'];
+      rows = (src || []).map(a => [a.name, a.n, a.present, a.held, a.rate === null ? '' : a.rate, a.never.length,
+        kind === 'schools' ? (render.schoolInd[a.name] || 0) : a.individual]);
     }
     const cell = v => { const s = String(v == null ? '' : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const csv = '﻿' + [head].concat(rows).map(r => r.map(cell).join(',')).join('\r\n');   // BOM — אקסל פותח עברית נכון
