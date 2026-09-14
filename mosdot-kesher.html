@@ -51,7 +51,8 @@
   @keyframes sp{to{transform:rotate(360deg)}}
 
   /* לשוניות */
-  .tabs{display:flex;gap:4px;margin:26px 0 0;border-bottom:1px solid var(--line2)}
+  .stick{position:sticky;top:0;z-index:20;background:var(--bg);padding-top:8px;margin-top:18px}
+  .tabs{display:flex;gap:4px;margin:0;border-bottom:1px solid var(--line2)}
   .tabs button{font:inherit;font-weight:700;font-size:1rem;color:var(--text2);background:none;border:0;border-bottom:3px solid transparent;
     padding:10px 16px;margin-bottom:-1px;cursor:pointer}
   .tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--navy)}
@@ -116,6 +117,7 @@
   footer .credit a{color:inherit;font-weight:600}
 
   @media (max-width:860px){
+    .stick{position:static}
     .sc{grid-template-columns:1fr;gap:12px;padding:16px}
     .wrap{padding:22px 16px 40px} h1{font-size:1.6rem}
     .nets{grid-template-columns:1fr}
@@ -150,12 +152,13 @@
   </div>
 
   <div id="app" hidden>
+   <div class="stick" id="stick">
     <div class="tabs" role="tablist" aria-label="תצוגה">
       <button type="button" role="tab" id="tab-s" aria-controls="panel-s" aria-selected="true">בתי הספר<span class="n" id="nS"></span></button>
       <button type="button" role="tab" id="tab-n" aria-controls="panel-n" aria-selected="false" tabindex="-1">רשתות ועמותות<span class="n" id="nN"></span></button>
     </div>
 
-    <section role="tabpanel" id="panel-s" aria-labelledby="tab-s">
+    <div id="head-s">
       <div class="bar">
         <div class="field">
           <label class="sr-only" for="q">חיפוש</label>
@@ -172,12 +175,27 @@
         <button type="button" class="lnk" id="clr" hidden>ניקוי החיפוש</button>
         <span class="end"><button type="button" class="btn" id="copyMail">העתקת מיילי המנהלים ברשימה</button></span>
       </div>
+    </div>
+    <div id="head-n" hidden>
+      <div class="bar">
+        <div class="field">
+          <label class="sr-only" for="qn">חיפוש רשת</label>
+          <input id="qn" type="search" autocomplete="off" placeholder="חיפוש רשת או איש.ת קשר">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+      </div>
+      <div class="meta"><span class="cnt" id="cntN" role="status" aria-live="polite"></span></div>
+    </div>
+   </div>
+
+    <section role="tabpanel" id="panel-s" aria-labelledby="tab-s">
       <ul class="list" id="list"></ul>
       <div class="empty" id="empty" hidden>לא נמצאו בתי ספר שמתאימים לחיפוש.</div>
     </section>
 
     <section role="tabpanel" id="panel-n" aria-labelledby="tab-n" hidden>
       <div class="nets" id="nets"></div>
+      <div class="empty" id="emptyN" hidden>לא נמצאו רשתות שמתאימות לחיפוש.</div>
     </section>
   </div>
 </main>
@@ -280,10 +298,18 @@ function tab(which,focus){
   ['s','n'].forEach(function(k){
     var on=k===which, b=$('tab-'+k);
     b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1;
-    $('panel-'+k).hidden=!on;
+    $('panel-'+k).hidden=!on; $('head-'+k).hidden=!on;
     if(on&&focus) b.focus();
   });
 }
+function renderNets(){
+  var t=norm($('qn').value).split(' ').filter(Boolean);
+  var list=D.nets.filter(function(n){ for(var i=0;i<t.length;i++){ if(n._h.indexOf(t[i])<0) return false; } return true; });
+  $('nets').innerHTML=list.map(netHtml).join('');
+  $('emptyN').hidden=!!list.length;
+  $('cntN').textContent=list.length===D.nets.length?'כל '+list.length+' הרשתות והעמותות':(list.length===1?'רשת אחת':list.length+' רשתות');
+}
+function toTop(){ var y=$('stick').getBoundingClientRect().top+window.pageYOffset-8; if(window.pageYOffset>y) window.scrollTo({top:y,behavior:'smooth'}); }
 
 function toast(msg){ var t=$('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast.h); toast.h=setTimeout(function(){t.hidden=true;},2400); }
 function copy(text,msg){
@@ -303,12 +329,13 @@ function start(data){
   fill(F.sup,D.order.sup); fill(F.ther,D.order.ther); fill(F.d,D.order.d); fill(F.n,D.order.n);
   $('nS').textContent='('+D.schools.length+')'; $('nN').textContent='('+D.nets.length+')';
   $('upd').textContent='מעודכן ל-'+D.updated.schools+' · אנשי הקשר ברשתות: '+D.updated.nets;
-  $('nets').innerHTML=D.nets.map(netHtml).join('');
+  D.nets.forEach(function(n){ n._h=norm([n.name].concat(n.people.map(function(p){return p.n+' '+p.roles.join(' ');})).join(' ')); });
   $('gate').hidden=true; $('app').hidden=false;
-  render();
+  render(); renderNets();
 
   var qT; F.q.addEventListener('input',function(){ clearTimeout(qT); qT=setTimeout(render,120); });
-  [F.sup,F.ther,F.d,F.n].forEach(function(s){ s.addEventListener('change',render); });
+  $('qn').addEventListener('input',function(){ clearTimeout(qT); qT=setTimeout(renderNets,120); });
+  [F.sup,F.ther,F.d,F.n].forEach(function(s){ s.addEventListener('change',function(){ render(); toTop(); }); });
   $('clr').onclick=function(){ F.q.value=''; F.sup.value=F.ther.value=F.d.value=F.n.value=''; render(); F.q.focus(); };
   $('copyMail').onclick=function(){
     var list=filtered(), out=[];
@@ -323,7 +350,7 @@ function start(data){
   $('nets').addEventListener('click',function(ev){
     var b=ev.target.closest('[data-net]'); if(!b) return;
     F.q.value=''; F.sup.value=F.ther.value=F.d.value=''; F.n.value=b.getAttribute('data-net');
-    render(); tab('s',true); window.scrollTo({top:$('app').offsetTop-10,behavior:'smooth'});
+    render(); tab('s',true); toTop();
   });
 }
 

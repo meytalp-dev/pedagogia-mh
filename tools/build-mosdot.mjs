@@ -41,26 +41,21 @@ const text = (html) => decode(String(html).replace(/<[^>]*>/g, ' ')).replace(/\s
 
 function readPrisat() {
   const html = read('prisat-pikuah.html');
-  const rows = html.match(/<tr data-sup="[^"]*"[\s\S]*?<\/tr>/g) || [];
-  const schools = rows.map((row) => {
-    const attr = (n) => decode((row.match(new RegExp(`data-${n}="([^"]*)"`)) || [, ''])[1]);
-    const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map((m) => m[1]);
-    const prevCell = cells[6] || '';
-    return {
-      semel: text(cells[0]) || '',
-      name: text(cells[1]),
-      network: text(cells[2]),
-      district: attr('d'),
-      sector: attr('s'),
-      /* ליווי משותף מסומן בפריסה בשני שמות מופרדים ב-| */
-      sup: attr('sup').split('|')[0].trim(),
-      sups: attr('sup').split('|').map((x) => x.trim()).filter(Boolean),
-      /* בתא "מפקח.ת תשפ״ו" יושבת גם תווית "שינוי" — מסירים אותה */
-      supPrev: text(prevCell.replace(/<span class="chg">[\s\S]*?<\/span>/, '')),
-      changed: attr('chg') === '1',
-      megamot: []
-    };
-  });
+  /* העמוד שומר את 64 המוסדות בבלוק JSON (ppData), שנבנה ב-build-prisat-pikuah.py */
+  const m = html.match(/<script type="application\/json" id="ppData">([\s\S]*?)<\/script>/);
+  if (!m) throw new Error('בלוק ppData לא נמצא ב-prisat-pikuah.html');
+  const schools = JSON.parse(m[1]).schools.map((s) => ({
+    semel: s.semel || '',
+    name: s.name,
+    network: s.net,
+    district: s.d,
+    sector: s.s,
+    sup: s.sups[0],
+    sups: s.sups,
+    supPrev: s.prev || '—',
+    changed: !!s.chg,
+    megamot: []
+  }));
   if (schools.length !== 64) {
     throw new Error(`ציפינו ל-64 מוסדות ב-prisat-pikuah.html, נמצאו ${schools.length}. ` +
                     'אם הפריסה באמת השתנתה — לעדכן גם את הבדיקה הזאת.');

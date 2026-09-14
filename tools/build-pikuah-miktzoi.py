@@ -12,7 +12,7 @@
 שני מוסדות משרד החינוך שבטבלה אינם נמנים על 64 מוסדות הפיקוח
 הפדגוגי, ולכן מסומנים "פיקוח מקצועי בלבד".
 """
-import io, os, re, html
+import io, os, re, html, json
 import openpyxl
 
 DL    = r'C:/Users/meyta/Downloads'
@@ -78,11 +78,12 @@ for sc in schools:
 # ── 4. המפקח.ת הפדגוגי.ת — מצטרף מפריסת הפיקוח שכבר באתר ─────────────────────
 shell_src = io.open(SHELL, encoding='utf-8').read()
 ped = {}
-for sup, semel, school in re.findall(
-        r'<tr data-sup="(.*?)".*?<td class="semel">(.*?)</td><td class="school">(.*?)</td>', shell_src):
-    ped[html.unescape(school)] = html.unescape(sup)
-    if semel.strip().isdigit():
-        ped[semel.strip()] = html.unescape(sup)
+# פריסת הפיקוח שומרת את 64 המוסדות בבלוק JSON (ppData) — העמוד כבר לא טבלה
+for s in json.loads(re.search(r'<script type="application/json" id="ppData">(.*?)</script>',
+                              shell_src, re.S).group(1))['schools']:
+    ped[s['name']] = '|'.join(s['sups'])
+    if s['semel'].isdigit():
+        ped[s['semel']] = '|'.join(s['sups'])
 ALIAS = {'אור דניאל נתניה': 'אור דניאל', 'צור באהר': 'סור באהר',
          'עתיד אור מנחם (קמפוס לשעבר)': 'הקמפוס התורני עתיד'}
 for sc in schools:

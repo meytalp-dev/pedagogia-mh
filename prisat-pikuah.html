@@ -8,7 +8,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>פריסת הפיקוח תשפ״ז · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="מי מלווה כל מוסד בתשפ״ז — 64 מוסדות, המפקחים הפדגוגיים והמפקחות על המערך הטיפולי, לפי מחוז, רשת ומגזר, כולל השוואה לתשפ״ו.">
+<meta name="description" content="פריסת הפיקוח לשנת הלימודים תשפ״ז — 64 מוסדות, המפקחים הפדגוגיים והמפקחות על המערך הטיפולי, לפי מחוז, רשת ומגזר.">
 <meta name="pmh-year" content="תשפ״ז">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,236 +17,77 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="/toolbelt.css">
-<link rel="stylesheet" href="/pagenav.css">
 <style>
-  .pp-wrap{padding:0 var(--px) 56px}
-  .pp-wrap :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-  .pp-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:var(--fs-sm);color:var(--muted);font-weight:600;margin-top:4px}
-  .pp-meta b{color:var(--text2)}
-  /* "דקות קריאה" של site.js סופר את תאי הטבלה כמילים — בעמוד הזה הוא מטעה (החלטת מיטל, 13.9.26) */
+  /* "דקות קריאה" של site.js לא רלוונטי בעמוד רשימה (החלטת מיטל, 13.9.26) */
   main .readmeta{display:none!important}
+  .pp{padding:0 var(--px) 56px;max-width:1280px}
+  .pp :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+  .pp-upd{margin:4px 0 0;color:var(--muted);font-size:var(--fs-sm)}
+  .pp-gate{margin:26px 0;background:#fff;border:1px solid var(--border);border-radius:14px;padding:30px;text-align:center;color:var(--text2)}
 
-  /* מספרים */
-  .pp-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;padding:18px var(--px) 4px}
-  .pp-kpi{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px 12px 14px;box-shadow:var(--sh-sm);
-    text-align:center;font:inherit;color:inherit;display:flex;flex-direction:column;gap:2px;align-items:center}
-  .pp-kpi b{font-size:1.9rem;font-weight:800;color:var(--navy);line-height:1.15;font-variant-numeric:tabular-nums}
-  .pp-kpi span{font-size:var(--fs-sm);color:var(--text2);font-weight:600;line-height:1.35}
-  button.pp-kpi{cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s}
-  button.pp-kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#F0D6A2}
-  button.pp-kpi b{color:#8A5A00}
-  button.pp-kpi .go{font-size:var(--fs-2xs);color:#8A5A00;font-weight:800;margin-top:2px}
+  /* ראש דביק: לשוניות + חיפוש וסינון */
+  .pp-stick{position:sticky;top:var(--navh,0px);z-index:40;background:var(--canvas);padding:6px 0 2px;margin-top:18px}
+  .pp-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border-strong)}
+  .pp-tabs button{font:inherit;font-weight:700;font-size:1rem;color:var(--text2);background:none;border:0;border-bottom:3px solid transparent;
+    padding:10px 16px;margin-bottom:-1px;cursor:pointer}
+  .pp-tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--navy)}
+  .pp-tabs .n{font-weight:600;color:var(--muted);font-size:.9rem;margin-inline-start:4px}
+  .pp-bar{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 8px;align-items:center}
+  .pp-field{position:relative;flex:2 1 300px}
+  .pp-field svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  .pp input[type=search],.pp select{font:inherit;font-size:.95rem;color:var(--text);background:#fff;border:1px solid var(--border-strong);border-radius:10px;
+    padding:10px 12px;min-height:44px;width:100%;box-sizing:border-box}
+  .pp input[type=search]{padding-right:40px}
+  .pp select{flex:1 1 180px;width:auto;cursor:pointer}
+  .pp input[type=search]:focus,.pp select:focus{border-color:var(--navy);outline:none;box-shadow:0 0 0 3px rgba(13,59,102,.12)}
+  .pp-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:0 0 10px;font-size:.92rem;color:var(--text2)}
+  .pp-cnt{font-weight:700;color:var(--text)}
+  .pp-chk{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:600}
+  .pp-chk input{width:17px;height:17px;accent-color:var(--navy);margin:0}
+  .pp-lnk{font:inherit;font-size:.9rem;font-weight:700;color:var(--accent);background:none;border:0;padding:4px 0;cursor:pointer;
+    text-decoration:underline;text-underline-offset:3px}
 
-  /* מדורים */
-  .pp-sec{padding:30px 0 6px;scroll-margin-top:120px}
-  .pp-sec>h2.sub-sec{font-size:var(--fs-3xl);color:var(--navy);margin:0 0 4px}
-  .pp-intro{color:var(--text2);margin:0 0 14px;max-width:760px}
-  .pp-h3{font-size:var(--fs-lg);color:var(--text);margin:18px 0 10px;display:flex;align-items:center;gap:10px}
-  .pp-h3 .hint{font-size:var(--fs-xs);font-weight:600;color:var(--muted)}
-
-  /* כרטיסי מפקחים */
-  .pp-people{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px}
-  .pp-person{font:inherit;text-align:start;color:var(--text);background:#fff;border:1px solid var(--border);border-radius:16px;
-    padding:14px 18px 14px 16px;box-shadow:var(--sh-sm);cursor:pointer;position:relative;overflow:hidden;
-    display:flex;flex-direction:column;gap:7px;transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s}
-  .pp-person::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:5px;background:var(--c)}
-  .pp-person:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--border-strong)}
-  .pp-person[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 2px var(--c),var(--sh-md)}
-  .pp-person .ph{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-  .pp-person .nm{font-weight:800;font-size:1.02rem;display:flex;align-items:center;gap:8px;padding-top:3px}
-  .pp-person .num{font-size:1.7rem;font-weight:800;color:var(--c);line-height:1;font-variant-numeric:tabular-nums;
-    display:flex;flex-direction:column;align-items:center}
-  .pp-person .num small{font-size:var(--fs-2xs);color:var(--muted);font-weight:700;margin-top:3px}
-  .pp-person .ln{font-size:var(--fs-xs);color:var(--text2);line-height:1.55}
-  .pp-person .ln b{color:var(--text);font-weight:700;margin-inline-end:4px}
-  .pp-person .on-ind{position:absolute;bottom:12px;inset-inline-end:12px;color:#fff;background:var(--c);border-radius:50%;
-    padding:3px;width:22px;height:22px;box-sizing:border-box;opacity:0;transform:scale(.6);transition:.2s var(--ease)}
-  .pp-person[aria-pressed="true"] .on-ind{opacity:1;transform:none}
-  .pp-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--soft-bg);gap:2px}
-  .pp-bar i{display:block;height:100%}
-
-  /* סימנים */
-  .pp-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
-  .pp-dm{display:inline-block;width:9px;height:9px;background:var(--c);transform:rotate(45deg);border-radius:2px;flex:none;margin:0 1px}
-  .pp-sq{display:inline-block;width:10px;height:10px;background:var(--c);border-radius:3px;flex:none}
-  .sup-cell{display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--text);white-space:nowrap}
-  .chg{display:inline-block;margin-inline-start:6px;background:#FFF4E0;color:#8A5A00;border:1px solid #F0D6A2;
-    border-radius:999px;padding:0 8px;font-size:.72rem;font-weight:700;vertical-align:middle;white-space:nowrap}
-
-  /* חיפוש, תצוגה, קיבוץ */
-  .pp-tools{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:6px 0 12px}
-  .pp-search{position:relative;flex:1 1 320px;min-width:0}
-  .pp-search input{width:100%;box-sizing:border-box;border:1.5px solid var(--border-strong);border-radius:999px;
-    padding:12px 46px 12px 44px;font:inherit;font-size:var(--fs-md);background:#fff;color:var(--text);box-shadow:var(--sh-sm);outline:none}
-  .pp-search input:focus{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-100)}
-  .pp-search>svg{position:absolute;right:17px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-  .pp-search kbd{position:absolute;left:16px;top:50%;transform:translateY(-50%);font:inherit;font-size:var(--fs-2xs);font-weight:800;
-    color:var(--muted);border:1px solid var(--border-strong);border-bottom-width:2px;border-radius:6px;padding:0 7px;background:var(--soft-bg)}
-  .pp-search input:focus~kbd,.pp-search input:not(:placeholder-shown)~kbd{display:none}
-  .pp-seg{display:inline-flex;border:1px solid var(--border-strong);border-radius:999px;padding:3px;background:#fff;box-shadow:var(--sh-sm)}
-  .pp-seg button{font:inherit;font-weight:700;font-size:var(--fs-sm);border:0;background:none;padding:7px 14px;border-radius:999px;
-    color:var(--text2);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
-  .pp-seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
-  .pp-group{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:var(--fs-sm);color:var(--text2)}
-  .pp-group select{font:inherit;font-weight:700;font-size:var(--fs-sm);color:var(--text);border:1px solid var(--border-strong);
-    border-radius:999px;padding:8px 14px;background:#fff;box-shadow:var(--sh-sm);cursor:pointer}
-  .pp-ftoggle{display:none;font:inherit;font-weight:800;font-size:var(--fs-sm);border:1px solid var(--border-strong);background:#fff;
-    color:var(--navy);border-radius:999px;padding:8px 16px;cursor:pointer;align-items:center;gap:8px;box-shadow:var(--sh-sm)}
-  .pp-ftoggle .n{background:var(--navy);color:#fff;border-radius:999px;min-width:20px;padding:0 6px;font-size:var(--fs-2xs);line-height:20px;text-align:center}
-  .pp-ftoggle .n:empty{display:none}
-
-  /* סינונים */
-  .pp-filters{background:#fff;border:1px solid var(--border);border-radius:18px;padding:4px 18px;box-shadow:var(--sh-sm)}
-  .pp-facet{display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:start;padding:12px 0;border-bottom:1px solid #EDF3F9}
-  .pp-facet:last-child{border-bottom:0}
-  .pp-facet .lb{font-weight:800;font-size:var(--fs-sm);color:var(--navy);padding-top:8px}
-  .pp-chips{display:flex;flex-wrap:wrap;gap:6px}
-  .pp-chip{font:inherit;font-size:var(--fs-sm);font-weight:700;display:inline-flex;align-items:center;gap:7px;min-height:36px;
-    border:1px solid var(--border-strong);background:#fff;color:var(--text);border-radius:999px;padding:5px 12px 5px 7px;cursor:pointer;
-    transition:background .15s,border-color .15s,color .15s}
-  .pp-chip:hover:not(:disabled){border-color:var(--cc,var(--navy))}
-  .pp-chip .c{background:var(--soft-bg);color:var(--text2);border-radius:999px;padding:1px 8px;font-size:var(--fs-2xs);
-    font-variant-numeric:tabular-nums;min-width:12px;text-align:center}
-  .pp-chip[aria-pressed="true"]{background:var(--cc,var(--navy));border-color:transparent;color:#fff}
-  .pp-chip[aria-pressed="true"] .c{background:rgba(255,255,255,.24);color:#fff}
-  .pp-chip[aria-pressed="true"] .pp-dot,.pp-chip[aria-pressed="true"] .pp-dm,.pp-chip[aria-pressed="true"] .pp-sq{background:#fff}
-  .pp-chip:disabled{opacity:.4;cursor:default}
-
-  /* שורת מצב */
-  .pp-statusbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:16px 0 12px}
-  .pp-status{font-weight:700;color:var(--text2);outline:none}
-  .pp-status b{color:var(--navy);font-size:1.05rem}
-  .pp-status .note{font-weight:600;color:var(--muted);font-size:var(--fs-xs)}
-  .pp-pills{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .pp-pill{font:inherit;font-size:var(--fs-xs);font-weight:700;background:var(--blue-bg);color:var(--navy);border:1px solid #CFE2F7;
-    border-radius:999px;padding:4px 12px 4px 9px;display:inline-flex;gap:7px;align-items:center;cursor:pointer}
-  .pp-pill:hover{background:#DDEBFB}
-  .pp-clear{font:inherit;font-size:var(--fs-xs);font-weight:800;color:var(--accent);background:none;border:0;cursor:pointer;
-    text-decoration:underline;text-underline-offset:3px;padding:4px}
-  .pp-actions{margin-inline-start:auto;display:flex;gap:6px;flex-wrap:wrap}
-  .pp-act{font:inherit;font-size:var(--fs-xs);font-weight:700;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--border);
-    background:#fff;color:var(--text2);border-radius:10px;padding:7px 11px;cursor:pointer;box-shadow:var(--sh-sm)}
-  .pp-act:hover{border-color:var(--border-strong);color:var(--navy)}
-
-  /* טבלה */
-  .pk-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:var(--sh-sm)}
-  table.pk{width:100%;border-collapse:collapse;font-size:.9rem;min-width:1000px}
-  table.pk thead th{background:var(--navy);color:#fff;font-weight:600;text-align:right;padding:12px 14px;white-space:nowrap;font-size:.85rem}
-  .th-sort{font:inherit;color:inherit;background:none;border:0;cursor:pointer;display:inline-flex;gap:5px;align-items:center;padding:0}
-  .th-sort svg{opacity:.45}
-  th[aria-sort] .th-sort svg{opacity:1}
-  th[aria-sort="descending"] .th-sort svg{transform:rotate(180deg)}
-  table.pk td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-  table.pk tbody tr[data-i]{cursor:pointer}
-  table.pk tbody tr[data-i]:hover{background:var(--blue-bg)}
-  table.pk tr.grp th{background:var(--soft-bg);color:var(--navy);text-align:right;padding:11px 14px;font-weight:800;font-size:.92rem;
-    border-bottom:1px solid var(--border)}
-  .grp-in{display:inline-flex;align-items:center;gap:9px}
-  .gc{font-weight:600;color:var(--muted);font-size:var(--fs-xs)}
-  table.pk .semel{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem;white-space:nowrap}
-  table.pk .school{font-weight:700;color:var(--navy)}
-  .prev{color:var(--muted);font-size:.85rem;white-space:nowrap}
-  td.go{width:1%;padding:6px 10px}
-  .pp-more{font:inherit;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--accent);
-    display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-  .pp-more:hover{background:var(--blue-bg);border-color:var(--border-strong)}
-
-  /* כרטיסי מוסדות */
-  .pp-cards{display:flex;flex-direction:column;gap:22px}
-  .pp-gh{display:flex;align-items:center;gap:9px;font-size:var(--fs-lg);font-weight:800;color:var(--navy);margin:0 0 10px}
-  .pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
-  .pp-card{font:inherit;text-align:start;color:var(--text);background:#fff;border:1px solid var(--border);border-radius:14px;
-    padding:13px 16px;display:flex;flex-direction:column;gap:6px;cursor:pointer;box-shadow:var(--sh-sm);
-    transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s}
-  .pp-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--border-strong)}
-  .pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-  .pc-name{font-weight:800;color:var(--navy);font-size:1rem;line-height:1.35}
-  .pc-off{font-size:var(--fs-xs);color:var(--muted);line-height:1.4}
-  .pc-meta{font-size:var(--fs-xs);color:var(--text2);font-weight:600}
-  .pc-row{display:flex;align-items:center;gap:6px 10px;font-size:var(--fs-sm);flex-wrap:wrap}
-  .pc-k{font-size:var(--fs-2xs);font-weight:800;color:var(--muted);min-width:42px}
-
-  .pk-empty{padding:34px;text-align:center;color:var(--text2);font-weight:600;background:#fff;border:1px dashed var(--border-strong);border-radius:16px}
-  .pk-empty button{margin-top:10px}
+  /* רשימת בתי הספר */
+  .pp-list{list-style:none;margin:6px 0 0;padding:0;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .pp-sc{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px 28px;padding:16px 22px;border-top:1px solid var(--border)}
+  .pp-sc:first-child{border-top:0}
+  .pp-sc h2{margin:0;font-size:1.06rem;line-height:1.35;color:var(--navy);font-weight:800}
+  .pp-sc p{margin:0}
+  .pp-sub{color:var(--text2);font-size:.9rem}
+  .pp-off{color:var(--muted);font-size:.85rem}
+  .pp-lbl{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:2px!important}
+  .pp-v{font-weight:700}
+  .pp-prev{color:var(--muted);font-size:.86rem}
+  .pp-chg{display:inline-block;font-size:.74rem;font-weight:700;color:#8A5A00;background:#FFF4E0;border-radius:999px;padding:0 8px;margin-inline-start:6px}
+  .pp-empty{background:#fff;border:1px dashed var(--border-strong);border-radius:14px;padding:30px;text-align:center;color:var(--text2);margin-top:6px}
 
   /* רשתות */
-  .pp-nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-  .pp-net{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:var(--sh-sm);
-    display:flex;flex-direction:column;gap:8px}
-  .pp-net h3{margin:0;font-size:1.08rem;color:var(--navy);display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-  .pp-net h3 small{font-size:var(--fs-sm);color:var(--text2);font-weight:700;white-space:nowrap}
-  .pp-net .meta{margin:0;font-size:var(--fs-xs);color:var(--muted);font-weight:600;line-height:1.6}
-  .pp-net dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:var(--fs-sm);
-    border-top:1px solid #EDF3F9;padding-top:9px}
-  .pp-net dt{color:var(--muted);font-weight:700;font-size:var(--fs-xs);padding-top:2px;max-width:110px;line-height:1.35}
-  .pp-net dd{margin:0;font-weight:600;line-height:1.5}
-  .pp-net .role{color:var(--muted);font-weight:600;font-size:var(--fs-xs)}
-  .pp-net .na{margin:0;font-size:var(--fs-xs);color:var(--muted);border-top:1px solid #EDF3F9;padding-top:9px}
-  .pp-go{font:inherit;font-size:var(--fs-sm);font-weight:800;color:var(--accent);background:none;border:0;padding:4px 0;cursor:pointer;
-    display:inline-flex;align-items:center;gap:4px;margin-top:auto;align-self:flex-start}
-  .pp-go:hover{text-decoration:underline;text-underline-offset:3px}
-  .pp-note{margin-top:26px;line-height:1.75}
-  .pp-note ul{margin:6px 0 0;padding-inline-start:20px}
+  .pp-nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:6px}
+  .pp-net{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column}
+  .pp-net h2{margin:0;font-size:1.12rem;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .pp-net h2 span{font-size:.88rem;color:var(--text2);font-weight:600;white-space:nowrap}
+  .pp-net .pp-sub{margin:2px 0 10px}
+  .pp-net p{margin:0}
+  .pp-ppl{list-style:none;margin:0;padding:0}
+  .pp-ppl li{padding:8px 0;border-top:1px solid var(--border)}
+  .pp-ppl .role{color:var(--text2);font-size:.88rem}
+  .pp-tag{display:inline-block;font-size:.75rem;font-weight:700;color:var(--accent);background:#E8F4F8;border-radius:999px;padding:1px 9px;margin-inline-start:6px}
+  .pp-net .pp-lnk{margin-top:auto;align-self:flex-start;padding-top:12px}
 
-  /* מגירת פרטי המוסד — מעוגנת לשמאל: translateX שלילי מוציא אותה החוצה גם ב-RTL */
-  .pp-scrim{position:fixed;inset:0;background:rgba(13,59,102,.34);z-index:900;opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s}
-  .pp-scrim.on{opacity:1;visibility:visible;transition:opacity .25s}
-  .pp-dw{position:fixed;top:0;bottom:0;left:0;width:min(470px,100vw);background:#fff;z-index:901;box-shadow:var(--sh-float);
-    transform:translateX(-102%);visibility:hidden;pointer-events:none;display:flex;flex-direction:column;
-    transition:transform .3s var(--ease),visibility 0s .3s}
-  .pp-dw.on{transform:none;visibility:visible;pointer-events:auto;transition:transform .3s var(--ease)}
-  .pp-dw header{padding:22px 24px 18px;background:var(--grad);color:#fff;position:relative}
-  .pp-dw .eyebrow{margin:0 0 4px;font-size:var(--fs-xs);font-weight:700;opacity:.85}
-  .pp-dw h2{margin:0;font-size:1.45rem;line-height:1.25;padding-left:44px}
-  .pp-dw .off{margin:6px 0 0;opacity:.88;font-size:var(--fs-sm)}
-  .pp-dw .x{position:absolute;top:16px;left:16px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.4);
-    background:rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-  .pp-dw .x:hover{background:rgba(255,255,255,.26)}
-  .pp-dw .x:focus-visible{outline:3px solid #fff;outline-offset:2px}
-  .pp-dw .bd{padding:6px 24px 30px;overflow:auto;flex:1}
-  .pp-dw .gh{font-size:var(--fs-xs);font-weight:800;color:var(--accent);margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--border)}
-  .pp-dw .gh:first-child{border-top:0;padding-top:6px}
-  .pp-dw dl{display:grid;grid-template-columns:128px 1fr;gap:9px 12px;margin:0}
-  .pp-dw dt{color:var(--muted);font-weight:700;font-size:var(--fs-sm)}
-  /* block ולא flex — ב-flex התגית <br> מתעלמים ממנה וכל השמות נדחסים לשורה אחת */
-  .pp-dw dd{margin:0;font-weight:600;line-height:1.75}
-  .pp-dw dd .sup-cell{margin-inline-end:10px}
-  .pp-dw dd a{color:var(--accent);font-weight:700;margin-inline-end:12px;white-space:nowrap}
-  .pp-dw .tag2{font-size:var(--fs-2xs);font-weight:800;background:var(--soft-bg);color:var(--text2);border-radius:999px;padding:1px 8px}
-  .pp-dw .acts{display:flex;flex-direction:column;gap:8px}
-  .pp-dw .acts button,.pp-dw .acts a{font:inherit;font-size:var(--fs-sm);font-weight:700;text-align:start;color:var(--navy);text-decoration:none;
-    background:var(--soft-bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;
-    display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .pp-dw .acts button:hover,.pp-dw .acts a:hover{border-color:var(--border-strong);background:var(--blue-bg)}
-
-  @media (max-width:1000px){ .pp-kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
-  @media (max-width:760px){
-    .pp-wrap{padding:0 16px 40px} .pp-kpis{padding:14px 16px 4px;gap:8px}
-    .pp-kpi{padding:12px 8px} .pp-kpi b{font-size:1.5rem}
-    .pp-facet{grid-template-columns:1fr;gap:6px} .pp-facet .lb{padding-top:0}
-    .pp-ftoggle{display:inline-flex}
-    .pp-filters[data-open="false"]{display:none}
-    .pp-search kbd{display:none}
-    .pp-actions{margin-inline-start:0}
-    .pp-dw dl{grid-template-columns:1fr;gap:2px 0} .pp-dw dd{margin-bottom:8px}
-  }
-  @media (max-width:520px){ .pp-kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
-  @media (prefers-reduced-motion:reduce){
-    .pp-person,.pp-card,.pp-kpi,.pp-dw,.pp-scrim,.pp-person .on-ind{transition:none!important}
+  @media (max-width:860px){
+    .pp{padding:0 16px 40px}
+    .pp-stick{position:static}
+    .pp-sc{grid-template-columns:1fr;gap:10px;padding:16px}
+    .pp-field{flex-basis:100%} .pp select{flex:1 1 calc(50% - 5px);min-width:0;font-size:.88rem}
+    .pp-nets{grid-template-columns:1fr}
   }
   @media print{
-    .govbar,.nav,.drawer,.scrim,.foot,#pagebar,.ogenw-launcher,.pn,.pnd,.pp-kpis,.pp-tools,.pp-filters,.pp-actions,.pp-clear,
-    #mefakchim,#reshatot,.pp-note,.pp-dw,.pp-scrim,td.go,th.go,#cardsView{display:none!important}
-    #tableView,#tableView[hidden]{display:block!important}
-    .pk-scroll{border:0;box-shadow:none;overflow:visible}
-    table.pk{min-width:0;font-size:9pt}
-    table.pk thead th,table.pk tr.grp th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .pp-pill svg{display:none}
+    .pp-stick .pp-tabs,.pp-bar,.pp-lnk{display:none!important}
+    .pp-stick{position:static} .pp-sc{break-inside:avoid}
   }
 </style>
 </head>
-<body data-pn-min="3">
+<body>
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
 <!-- nav:start section="supervision" -->
@@ -473,191 +314,64 @@
 <main id="main">
 
 <div class="pagehead">
-  <div class="crumb rv"><a href="index.html">בית</a> ‹ <a href="supervision.html">מרחב פיקוח</a> ‹ פריסת הפיקוח</div>
-  <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <div class="crumb"><a href="index.html">בית</a> ‹ <a href="supervision.html">מרחב פיקוח</a> ‹ פריסת הפיקוח</div>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <h1>פריסת הפיקוח</h1>
     <span class="tag" style="background:var(--navy);color:#fff;font-size:var(--fs-xs)">תשפ״ז</span>
   </div>
-  <p class="rv d2 lead" style="max-width:720px">מי מלווה כל מוסד בתשפ״ז — בפיקוח הפדגוגי ובמערך הטיפולי. חפשו מוסד, סננו לפי מפקח.ת, מחוז, רשת או מגזר, ולחצו על מוסד כדי לראות את כל הפרטים שלו.</p>
-  <div class="pp-meta rv d2"><span><b>עודכן:</b> פריסת הפיקוח ורשימת בתי הספר מ-30.8.2026 · אנשי הקשר ברשתות מ-10.9.2026</span></div>
+  <p class="lead" style="max-width:720px">שיוך המוסדות למפקחים הפדגוגיים ולמפקחות על המערך הטיפולי בשנת הלימודים תשפ״ז.</p>
+  <p class="pp-upd">מעודכן ל-30.8.2026 · הנהלות הרשתות: 10.9.2026</p>
 </div>
 
-<section class="pp-kpis rv d2" aria-label="הפריסה במספרים">
-  <div class="pp-kpi"><b>64</b><span>מוסדות בפיקוח</span></div>
-  <div class="pp-kpi"><b>8</b><span>מפקחים פדגוגיים</span></div>
-  <div class="pp-kpi"><b>4</b><span>מפקחות על המערך הטיפולי</span></div>
-  <div class="pp-kpi"><b>4</b><span>מחוזות</span></div>
-  <div class="pp-kpi"><b>12</b><span>רשתות ועמותות</span></div>
-  <button type="button" class="pp-kpi" data-go="chg"><b>22</b><span>מוסדות שהחליפו מפקח.ת</span><span class="go">להצגת המוסדות</span></button>
-</section>
-
-<div class="pp-wrap">
-
-<section class="pp-sec" id="mefakchim" aria-labelledby="h-mefakchim">
-  <h2 class="sub-sec" id="h-mefakchim">מי מלווה את מי</h2>
-  <p class="pp-intro">כל כרטיס מראה כמה מוסדות בליווי, באילו מגזרים ומחוזות, ועם מי עובדים בצד השני של הפיקוח. לחיצה על כרטיס מסננת את רשימת המוסדות — ולחיצה נוספת מבטלת.</p>
-  <h3 class="pp-h3">פיקוח פדגוגי <span class="hint">עיגול בצבע המפקח.ת</span></h3>
-  <div class="pp-people">
-<button type="button" class="pp-person" data-f="sup" data-v="יסמין אמון" aria-pressed="false" style="--c:#1F7A4D"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>יסמין אמון</span><span class="num">13<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:7.7%;background:#2F74C0"></i><i style="width:92.3%;background:#1F8A4C"></i></span><span class="ln">כללי 1 · ערבי 12</span><span class="ln"><b>מחוזות</b> חיפה 12 · באר שבע 1</span><span class="ln"><b>מערך טיפולי</b> אסתי רייפר 11 · שרית תורג&#x27;מן יפה 1 · עירית אלדד 1</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 5</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="יששכר חפץ" aria-pressed="false" style="--c:#17857F"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>יששכר חפץ</span><span class="num">12<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:8.3%;background:#2F74C0"></i><i style="width:91.7%;background:#7B61B8"></i></span><span class="ln">כללי 1 · חרדי 11</span><span class="ln"><b>מחוזות</b> חיפה 5 · תל אביב 3 · באר שבע 2 · ירושלים 2</span><span class="ln"><b>מערך טיפולי</b> אסתי רייפר 2 · שרית תורג&#x27;מן יפה 7 · ד״ר מיכל גלסר 3</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 1</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="ליאת צבר" aria-pressed="false" style="--c:#6E56A8"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>ליאת צבר</span><span class="num">12<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:83.3%;background:#2F74C0"></i><i style="width:16.7%;background:#1F8A4C"></i></span><span class="ln">כללי 10 · ערבי 2</span><span class="ln"><b>מחוזות</b> חיפה 11 · תל אביב 1</span><span class="ln"><b>מערך טיפולי</b> אסתי רייפר 8 · עירית אלדד 4</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 3</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="סיגלית דאי" aria-pressed="false" style="--c:#B0375E"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>סיגלית דאי</span><span class="num">12<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:91.7%;background:#2F74C0"></i><i style="width:8.3%;background:#1F8A4C"></i></span><span class="ln">כללי 11 · ערבי 1</span><span class="ln"><b>מחוזות</b> תל אביב 7 · באר שבע 3 · ירושלים 2</span><span class="ln"><b>מערך טיפולי</b> שרית תורג&#x27;מן יפה 9 · עירית אלדד 3</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 1</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="ויסאם סואלחה" aria-pressed="false" style="--c:#14548C"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>ויסאם סואלחה</span><span class="num">6<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:100.0%;background:#1F8A4C"></i></span><span class="ln">ערבי 6</span><span class="ln"><b>מחוזות</b> חיפה 1 · תל אביב 1 · ירושלים 4</span><span class="ln"><b>מערך טיפולי</b> עירית אלדד 6</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 6</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="רביב שורץ" aria-pressed="false" style="--c:#9A5B00"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>רביב שורץ</span><span class="num">4<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:50.0%;background:#2F74C0"></i><i style="width:50.0%;background:#1F8A4C"></i></span><span class="ln">כללי 2 · ערבי 2</span><span class="ln"><b>מחוזות</b> חיפה 3 · באר שבע 1</span><span class="ln"><b>מערך טיפולי</b> אסתי רייפר 2 · שרית תורג&#x27;מן יפה 1 · עירית אלדד 1</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 1</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="שרונה בלוך" aria-pressed="false" style="--c:#0E7490"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>שרונה בלוך</span><span class="num">4<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:100.0%;background:#1F8A4C"></i></span><span class="ln">ערבי 4</span><span class="ln"><b>מחוזות</b> באר שבע 4</span><span class="ln"><b>מערך טיפולי</b> שרית תורג&#x27;מן יפה 4</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 4</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="sup" data-v="רויטל אמיר" aria-pressed="false" style="--c:#C0392B"><span class="ph"><span class="nm"><span class="pp-dot" aria-hidden="true"></span>רויטל אמיר</span><span class="num">3<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:100.0%;background:#2F74C0"></i></span><span class="ln">כללי 3</span><span class="ln"><b>מחוזות</b> תל אביב 1 · ירושלים 2</span><span class="ln"><b>מערך טיפולי</b> עירית אלדד 3</span><span class="ln"><b>חדשים בליווי בתשפ״ז</b> 1</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-  </div>
-  <h3 class="pp-h3">פיקוח על המערך הטיפולי <span class="hint">יהלום בצבע המפקחת</span></h3>
-  <div class="pp-people">
-<button type="button" class="pp-person" data-f="ther" data-v="אסתי רייפר" aria-pressed="false" style="--c:#8A4FA0"><span class="ph"><span class="nm"><span class="pp-dm" aria-hidden="true"></span>אסתי רייפר</span><span class="num">23<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:39.1%;background:#2F74C0"></i><i style="width:52.2%;background:#1F8A4C"></i><i style="width:8.7%;background:#7B61B8"></i></span><span class="ln">כללי 9 · ערבי 12 · חרדי 2</span><span class="ln"><b>מחוזות</b> חיפה 23</span><span class="ln"><b>פיקוח פדגוגי</b> יסמין אמון 11 · יששכר חפץ 2 · ליאת צבר 8 · רביב שורץ 2</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="ther" data-v="שרית תורג&#x27;מן יפה" aria-pressed="false" style="--c:#B5543A"><span class="ph"><span class="nm"><span class="pp-dm" aria-hidden="true"></span>שרית תורג&#x27;מן יפה</span><span class="num">21<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:47.6%;background:#2F74C0"></i><i style="width:23.8%;background:#1F8A4C"></i><i style="width:28.6%;background:#7B61B8"></i></span><span class="ln">כללי 10 · ערבי 5 · חרדי 6</span><span class="ln"><b>מחוזות</b> תל אביב 7 · באר שבע 10 · ירושלים 4</span><span class="ln"><b>פיקוח פדגוגי</b> יסמין אמון 1 · יששכר חפץ 7 · סיגלית דאי 9 · רביב שורץ 1 · שרונה בלוך 4</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="ther" data-v="עירית אלדד" aria-pressed="false" style="--c:#3F5FA8"><span class="ph"><span class="nm"><span class="pp-dm" aria-hidden="true"></span>עירית אלדד</span><span class="num">17<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:47.1%;background:#2F74C0"></i><i style="width:52.9%;background:#1F8A4C"></i></span><span class="ln">כללי 8 · ערבי 9</span><span class="ln"><b>מחוזות</b> חיפה 6 · תל אביב 5 · ירושלים 6</span><span class="ln"><b>פיקוח פדגוגי</b> יסמין אמון 1 · ליאת צבר 4 · סיגלית דאי 3 · ויסאם סואלחה 6 · רביב שורץ 1 · רויטל אמיר 3</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-<button type="button" class="pp-person" data-f="ther" data-v="ד״ר מיכל גלסר" aria-pressed="false" style="--c:#2D7F6E"><span class="ph"><span class="nm"><span class="pp-dm" aria-hidden="true"></span>ד״ר מיכל גלסר</span><span class="num">3<small>מוסדות</small></span></span><span class="pp-bar" aria-hidden="true"><i style="width:100.0%;background:#7B61B8"></i></span><span class="ln">חרדי 3</span><span class="ln"><b>מחוזות</b> חיפה 3</span><span class="ln"><b>פיקוח פדגוגי</b> יששכר חפץ 3</span><svg class="on-ind" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
-  </div>
-</section>
-
-<section class="pp-sec" id="mosdot" aria-labelledby="h-mosdot">
-  <h2 class="sub-sec" id="h-mosdot">המוסדות</h2>
-
-  <div class="pp-tools">
-    <div class="pp-search">
-      <label class="sr-only" for="ppQ">חיפוש מוסד</label>
-      <input id="ppQ" type="search" autocomplete="off" placeholder="חיפוש לפי שם מוסד, סמל, יישוב או מפקח.ת" aria-describedby="ppQh">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><kbd aria-hidden="true">/</kbd>
-      <span class="sr-only" id="ppQh">אפשר לחפש כמה מילים יחד, למשל: עתיד חיפה</span>
+<div class="pp">
+  <noscript><div class="pp-gate">לצפייה בפריסה יש להפעיל JavaScript בדפדפן.</div></noscript>
+  <div class="pp-stick" id="stick">
+    <div class="pp-tabs" role="tablist" aria-label="תצוגה">
+      <button type="button" role="tab" id="tab-s" aria-controls="panel-s" aria-selected="true">בתי הספר<span class="n">(64)</span></button>
+      <button type="button" role="tab" id="tab-n" aria-controls="panel-n" aria-selected="false" tabindex="-1">רשתות ועמותות<span class="n">(12)</span></button>
     </div>
-    <button type="button" class="pp-ftoggle" id="ppFtoggle" aria-expanded="false" aria-controls="ppFacets" data-act="filters"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4"/></svg>סינון<span class="n" id="ppFn"></span></button>
-    <div class="pp-seg" role="group" aria-label="תצוגה">
-      <button type="button" data-view="table" aria-pressed="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M3 15h18M9.5 9.5V20"/></svg>טבלה</button>
-      <button type="button" data-view="cards" aria-pressed="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3" y="13" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13" width="7.5" height="7.5" rx="2"/></svg>כרטיסים</button>
+    <div id="head-s">
+      <div class="pp-bar">
+        <div class="pp-field">
+          <label class="sr-only" for="q">חיפוש בית ספר</label>
+          <input id="q" type="search" autocomplete="off" placeholder="חיפוש בית ספר, יישוב, סמל מוסד או מפקח.ת">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+        <label class="sr-only" for="fSup">מפקח.ת פדגוגי.ת</label><select id="fSup"><option value="">כל המפקחים הפדגוגיים</option></select>
+        <label class="sr-only" for="fTher">מפקחת המערך הטיפולי</label><select id="fTher"><option value="">כל מפקחות המערך הטיפולי</option></select>
+        <label class="sr-only" for="fD">מחוז</label><select id="fD"><option value="">כל המחוזות</option></select>
+        <label class="sr-only" for="fN">רשת</label><select id="fN"><option value="">כל הרשתות</option></select>
+      </div>
+      <div class="pp-meta">
+        <span class="pp-cnt" id="cnt" role="status" aria-live="polite"></span>
+        <label class="pp-chk"><input type="checkbox" id="fChg"> רק מוסדות שהחליפו מפקח.ת (22)</label>
+        <button type="button" class="pp-lnk" id="clr" hidden>ניקוי החיפוש</button>
+      </div>
     </div>
-    <label class="pp-group">קיבוץ לפי <select id="ppGroup"><option value="sup" selected>מפקח.ת פדגוגי.ת</option><option value="ther">מפקחת המערך הטיפולי</option><option value="d">מחוז</option><option value="n">רשת</option><option value="s">מגזר</option><option value="">בלי קיבוץ</option></select></label>
-  </div>
-
-  <div class="pp-filters" id="ppFacets" data-open="false" aria-label="סינונים"></div>
-
-  <div class="pp-statusbar">
-    <div class="pp-status" id="ppStatus" tabindex="-1" role="status" aria-live="polite">מוצגים <b id="ppShown">64</b> מתוך 64 מוסדות <span class="note" id="ppNote"></span></div>
-    <div class="pp-pills" id="ppPills"></div>
-    <div class="pp-actions">
-      <button type="button" class="pp-act" data-act="link"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span>העתקת קישור לתצוגה</span></button>
-      <button type="button" class="pp-act" data-act="csv"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4"/><path d="M5 19h14"/></svg><span>ייצוא לאקסל</span></button>
-      <button type="button" class="pp-act" data-act="print"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V4h10v5"/><rect x="3.5" y="9" width="17" height="7.5" rx="2"/><path d="M7 14h10v6H7z"/></svg><span>הדפסה</span></button>
+    <div id="head-n" hidden>
+      <div class="pp-bar">
+        <div class="pp-field">
+          <label class="sr-only" for="qn">חיפוש רשת</label>
+          <input id="qn" type="search" autocomplete="off" placeholder="חיפוש רשת או שם מהנהלת הרשת">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+      </div>
+      <div class="pp-meta"><span class="pp-cnt" id="cntN" role="status" aria-live="polite"></span></div>
     </div>
   </div>
-  <div class="sr-only" aria-live="polite" id="ppLive"></div>
 
-  <div class="pp-cards" id="cardsView" hidden></div>
-  <div class="pk-scroll" id="tableView">
-    <table class="pk">
-      <caption class="sr-only">פריסת הפיקוח תשפ״ז — מוסד, רשת, מחוז, מגזר, מפקח.ת פדגוגי.ת בתשפ״ז ובתשפ״ו ומפקחת המערך הטיפולי</caption>
-      <thead><tr>
-        <th scope="col" data-k="semel"><button type="button" class="th-sort" data-k="semel">סמל מוסד<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="name"><button type="button" class="th-sort" data-k="name">שם המוסד<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="net"><button type="button" class="th-sort" data-k="net">רשת<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="d"><button type="button" class="th-sort" data-k="d">מחוז<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="s"><button type="button" class="th-sort" data-k="s">מגזר<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="sup"><button type="button" class="th-sort" data-k="sup">מפקח.ת פדגוגי.ת תשפ״ז<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="prev"><button type="button" class="th-sort" data-k="prev">תשפ״ו<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" data-k="ther"><button type="button" class="th-sort" data-k="ther">מערך טיפולי<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4-4 4 4M8 2v12"/></svg></button></th><th scope="col" class="go"><span class="sr-only">פרטים</span></th>
-      </tr></thead>
-      <tbody id="tb">
-        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="0"><td class="semel">64100</td><td class="school">בית חנינה בנות</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="0" aria-label="כל הפרטים על בית חנינה בנות"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="1"><td class="semel">64102</td><td class="school">בית חנינה בנים</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="1" aria-label="כל הפרטים על בית חנינה בנים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="2"><td class="semel">64103</td><td class="school">כפר עקב</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">—<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="2" aria-label="כל הפרטים על כפר עקב"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ויסאם סואלחה" data-d="ירושלים" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="3"><td class="semel">64104</td><td class="school">סור באהר</td><td>סכנין</td><td>ירושלים</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">—<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="3" aria-label="כל הפרטים על סור באהר"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ויסאם סואלחה" data-d="תל אביב" data-n="עמל" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="4"><td class="semel">44011</td><td class="school">עמל טייבה ב&#x27;</td><td>עמל</td><td>תל אביב</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="4" aria-label="כל הפרטים על עמל טייבה ב&#x27;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ויסאם סואלחה" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="5"><td class="semel">54101</td><td class="school">ערערה</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#14548C"><span class="pp-dot"></span>ויסאם סואלחה</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="5" aria-label="כל הפרטים על ערערה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="אורט" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="6"><td class="semel">55003</td><td class="school">אורט כרמל</td><td>אורט</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="6" aria-label="כל הפרטים על אורט כרמל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="עירית אלדד" data-i="7"><td class="semel">54113</td><td class="school">אכסאל</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="7" aria-label="כל הפרטים על אכסאל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="8"><td class="semel">54100</td><td class="school">אל אמאני סכנין</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="8" aria-label="כל הפרטים על אל אמאני סכנין"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="9"><td class="semel">54108</td><td class="school">אלחכמה כסרא-סמיע</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="9" aria-label="כל הפרטים על אלחכמה כסרא-סמיע"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="10"><td class="semel">52918</td><td class="school">ג&#x27;וליס בנות</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="10" aria-label="כל הפרטים על ג&#x27;וליס בנות"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="11"><td class="semel">54109</td><td class="school">טורען</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="11" aria-label="כל הפרטים על טורען"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="12"><td class="semel">54102</td><td class="school">כפר יסיף</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="12" aria-label="כל הפרטים על כפר יסיף"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עמל" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="13"><td class="semel">54008</td><td class="school">נצרת</td><td>עמל</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="13" aria-label="כל הפרטים על נצרת"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="14"><td class="semel">52916</td><td class="school">עתיד גליל מערבי ירכא בנים</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="14" aria-label="כל הפרטים על עתיד גליל מערבי ירכא בנים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="15"><td class="semel">52922</td><td class="school">עתיד טק ביר אל מכסור</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="15" aria-label="כל הפרטים על עתיד טק ביר אל מכסור"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="ערבי" data-chg="0" data-th="אסתי רייפר" data-i="16"><td class="semel">52909</td><td class="school">תיכון טכנולוגי אי טק סקול (מסעדה)</td><td>עתיד</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="16" aria-label="כל הפרטים על תיכון טכנולוגי אי טק סקול (מסעדה)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="17"><td class="semel">52920</td><td class="school">תפן ליזמות</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span></td><td class="prev">יסמין אמון</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="17" aria-label="כל הפרטים על תפן ליזמות"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יסמין אמון|סיגלית דאי" data-d="באר שבע" data-n="עמל" data-s="ערבי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="18"><td class="semel">84003</td><td class="school">עמל רהט</td><td>עמל</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#1F7A4D"><span class="pp-dot"></span>יסמין אמון</span> <span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">יסמין אמון + סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="18" aria-label="כל הפרטים על עמל רהט"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="עתיד" data-s="חרדי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="19"><td class="semel">42925</td><td class="school">אור דניאל</td><td>עתיד</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">—<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="19" aria-label="כל הפרטים על אור דניאל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="ירושלים" data-n="עתיד" data-s="חרדי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="20"><td class="semel">62903</td><td class="school">אור העתיד תורני מקצועי</td><td>עתיד</td><td>ירושלים</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="20" aria-label="כל הפרטים על אור העתיד תורני מקצועי"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="באר שבע" data-n="עתיד" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="21"><td class="semel">82923</td><td class="school">בית דוד</td><td>עתיד</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="21" aria-label="כל הפרטים על בית דוד"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="ירושלים" data-n="בית שולמית" data-s="חרדי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="22"><td class="semel">61902</td><td class="school">הדר</td><td>בית שולמית</td><td>ירושלים</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="22" aria-label="כל הפרטים על הדר"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="באר שבע" data-n="עתיד" data-s="חרדי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="23"><td class="semel">82922</td><td class="school">הקמפוס התורני עתיד</td><td>עתיד</td><td>באר שבע</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="23" aria-label="כל הפרטים על הקמפוס התורני עתיד"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="טל חרמון" data-s="חרדי" data-chg="0" data-th="ד״ר מיכל גלסר" data-i="24"><td class="semel">58801</td><td class="school">טל חרמון</td><td>טל חרמון</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#2D7F6E"><span class="pp-dm"></span>ד״ר מיכל גלסר</span></td><td class="go"><button type="button" class="pp-more" data-i="24" aria-label="כל הפרטים על טל חרמון"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="ישיבת חנוך לנער" data-s="חרדי" data-chg="0" data-th="ד״ר מיכל גלסר" data-i="25"><td class="semel">55400</td><td class="school">ישיבת חנוך לנער</td><td>ישיבת חנוך לנער</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#2D7F6E"><span class="pp-dm"></span>ד״ר מיכל גלסר</span></td><td class="go"><button type="button" class="pp-more" data-i="25" aria-label="כל הפרטים על ישיבת חנוך לנער"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="כפר זיתים" data-s="חרדי" data-chg="0" data-th="ד״ר מיכל גלסר" data-i="26"><td class="semel">55501</td><td class="school">כפר זיתים</td><td>כפר זיתים</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#2D7F6E"><span class="pp-dm"></span>ד״ר מיכל גלסר</span></td><td class="go"><button type="button" class="pp-more" data-i="26" aria-label="כל הפרטים על כפר זיתים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="עמל" data-s="חרדי" data-chg="0" data-th="אסתי רייפר" data-i="27"><td class="semel">54009</td><td class="school">מרחביה/מעיינות</td><td>עמל</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="27" aria-label="כל הפרטים על מרחביה/מעיינות"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="נחלים" data-s="חרדי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="28"><td class="semel">46101</td><td class="school">נחלים</td><td>נחלים</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="28" aria-label="כל הפרטים על נחלים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="חיפה" data-n="עתיד" data-s="חרדי" data-chg="0" data-th="אסתי רייפר" data-i="29"><td class="semel">52923</td><td class="school">עתיד בת עמי</td><td>עתיד</td><td>חיפה</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="29" aria-label="כל הפרטים על עתיד בת עמי"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="יששכר חפץ" data-d="תל אביב" data-n="עתיד" data-s="חרדי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="30"><td class="semel">42924</td><td class="school">עתיד כפר חב&quot;ד</td><td>עתיד</td><td>תל אביב</td><td>חרדי</td><td><span class="sup-cell" style="--c:#17857F"><span class="pp-dot"></span>יששכר חפץ</span></td><td class="prev">יששכר חפץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="30" aria-label="כל הפרטים על עתיד כפר חב&quot;ד"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="31"><td class="semel">54107</td><td class="school">אבו סנאן</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="31" aria-label="כל הפרטים על אבו סנאן"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="0" data-th="עירית אלדד" data-i="32"><td class="semel">54105</td><td class="school">אום אל פחם בנות</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="32" aria-label="כל הפרטים על אום אל פחם בנות"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="33"><td class="semel">54021</td><td class="school">אנרג&#x27;י טק</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="33" aria-label="כל הפרטים על אנרג&#x27;י טק"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="בית אל" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="34"><td class="semel">55621</td><td class="school">בית אל</td><td>בית אל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="34" aria-label="כל הפרטים על בית אל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="דרור" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="35"><td class="semel">53405</td><td class="school">דרור גליל</td><td>דרור</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="35" aria-label="כל הפרטים על דרור גליל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="דרור" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="36"><td class="semel">53403</td><td class="school">התיכון החברתי חיפה</td><td>דרור</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="36" aria-label="כל הפרטים על התיכון החברתי חיפה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="1" data-th="אסתי רייפר" data-i="37"><td class="semel">52921</td><td class="school">צור ים</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">קתרינה ברברשטיין<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="37" aria-label="כל הפרטים על צור ים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="רימונים" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="38"><td class="semel">51511</td><td class="school">רימונים</td><td>רימונים</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="38" aria-label="כל הפרטים על רימונים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="39"><td class="semel">54017</td><td class="school">רמת דוד</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="39" aria-label="כל הפרטים על רמת דוד"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="תל אביב" data-n="דרור" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="40"><td class="semel">43403</td><td class="school">תיכון חברתי ת&quot;א</td><td>דרור</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="40" aria-label="כל הפרטים על תיכון חברתי ת&quot;א"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="1" data-th="אסתי רייפר" data-i="41"><td class="semel">52919</td><td class="school">תיכון עוצמ&quot;ה עתיד זוקו</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">רביב שורץ<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="41" aria-label="כל הפרטים על תיכון עוצמ&quot;ה עתיד זוקו"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="ליאת צבר" data-d="חיפה" data-n="עמל" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="42"><td class="semel">54040</td><td class="school">תיכון שיח</td><td>עמל</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#6E56A8"><span class="pp-dot"></span>ליאת צבר</span></td><td class="prev">ליאת צבר</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="42" aria-label="כל הפרטים על תיכון שיח"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="43"><td class="semel">45005</td><td class="school">אורט אורמת</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="43" aria-label="כל הפרטים על אורט אורמת"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="44"><td class="semel">45002</td><td class="school">אורט תל נוף</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="44" aria-label="כל הפרטים על אורט תל נוף"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="45"><td class="semel">45001</td><td class="school">אורט תעשייה אווירית</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="45" aria-label="כל הפרטים על אורט תעשייה אווירית"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="אורט" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="46"><td class="semel">45007</td><td class="school">דן גורמה</td><td>אורט</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="46" aria-label="כל הפרטים על דן גורמה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="ירושלים" data-n="עמל" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="47"><td class="semel">64001</td><td class="school">עמל אשדוד</td><td>עמל</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="47" aria-label="כל הפרטים על עמל אשדוד"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="עמל" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="48"><td class="semel">44050</td><td class="school">עמל טק אין</td><td>עמל</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="48" aria-label="כל הפרטים על עמל טק אין"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="באר שבע" data-n="עתיד" data-s="כללי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="49"><td class="semel">82918</td><td class="school">עתיד באר שבע</td><td>עתיד</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">קתרינה ברברשטיין<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="49" aria-label="כל הפרטים על עתיד באר שבע"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="תל אביב" data-n="עתיד" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="50"><td class="semel">42919</td><td class="school">עתיד פלמחים</td><td>עתיד</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="50" aria-label="כל הפרטים על עתיד פלמחים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="ירושלים" data-n="אורט" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="51"><td class="semel">65079</td><td class="school">צור ברק</td><td>אורט</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="51" aria-label="כל הפרטים על צור ברק"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי" data-d="באר שבע" data-n="עמל" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="52"><td class="semel">82921</td><td class="school">קמ&quot;ג דימונה</td><td>עמל</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span></td><td class="prev">סיגלית דאי</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="52" aria-label="כל הפרטים על קמ&quot;ג דימונה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="סיגלית דאי|רויטל אמיר" data-d="תל אביב" data-n="עמל" data-s="כללי" data-chg="1" data-th="עירית אלדד" data-i="53"><td class="semel">44008</td><td class="school">תיכון החממה</td><td>עמל</td><td>תל אביב</td><td>כללי</td><td><span class="sup-cell" style="--c:#B0375E"><span class="pp-dot"></span>סיגלית דאי</span> <span class="sup-cell" style="--c:#C0392B"><span class="pp-dot"></span>רויטל אמיר</span></td><td class="prev">סיגלית דאי<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="53" aria-label="כל הפרטים על תיכון החממה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="0" data-th="עירית אלדד" data-i="54"><td class="semel">54112</td><td class="school">אום אל פחם בנים</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="pp-dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="54" aria-label="כל הפרטים על אום אל פחם בנים"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רביב שורץ" data-d="באר שבע" data-n="דרור" data-s="כללי" data-chg="0" data-th="שרית תורג&#x27;מן יפה" data-i="55"><td class="semel">83424</td><td class="school">מצפה רמון</td><td>דרור</td><td>באר שבע</td><td>כללי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="pp-dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="55" aria-label="כל הפרטים על מצפה רמון"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="עתיד" data-s="כללי" data-chg="0" data-th="אסתי רייפר" data-i="56"><td class="semel">52901</td><td class="school">עתיד כרמיאל</td><td>עתיד</td><td>חיפה</td><td>כללי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="pp-dot"></span>רביב שורץ</span></td><td class="prev">רביב שורץ</td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="56" aria-label="כל הפרטים על עתיד כרמיאל"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רביב שורץ" data-d="חיפה" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="אסתי רייפר" data-i="57"><td class="semel">54106</td><td class="school">שפרעם</td><td>סכנין</td><td>חיפה</td><td>ערבי</td><td><span class="sup-cell" style="--c:#9A5B00"><span class="pp-dot"></span>רביב שורץ</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#8A4FA0"><span class="pp-dm"></span>אסתי רייפר</span></td><td class="go"><button type="button" class="pp-more" data-i="57" aria-label="כל הפרטים על שפרעם"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רויטל אמיר" data-d="ירושלים" data-n="אורט" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="58"><td class="semel">65007</td><td class="school">אורט בית הערבה</td><td>אורט</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#C0392B"><span class="pp-dot"></span>רויטל אמיר</span></td><td class="prev">רויטל אמיר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="58" aria-label="כל הפרטים על אורט בית הערבה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="רויטל אמיר" data-d="ירושלים" data-n="דרור" data-s="כללי" data-chg="0" data-th="עירית אלדד" data-i="59"><td class="semel">63401</td><td class="school">חוש&quot;ן</td><td>דרור</td><td>ירושלים</td><td>כללי</td><td><span class="sup-cell" style="--c:#C0392B"><span class="pp-dot"></span>רויטל אמיר</span></td><td class="prev">רויטל אמיר</td><td><span class="sup-cell" style="--c:#3F5FA8"><span class="pp-dm"></span>עירית אלדד</span></td><td class="go"><button type="button" class="pp-more" data-i="59" aria-label="כל הפרטים על חוש&quot;ן"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="דרור" data-s="ערבי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="60"><td class="semel">83425</td><td class="school">דרור נווה מדבר</td><td>דרור</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="pp-dot"></span>שרונה בלוך</span></td><td class="prev">יסמין אמון<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="60" aria-label="כל הפרטים על דרור נווה מדבר"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="61"><td class="semel">84101</td><td class="school">לקייה</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="pp-dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="61" aria-label="כל הפרטים על לקייה"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="62"><td class="semel">84104</td><td class="school">סכנין תל שבע</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="pp-dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="62" aria-label="כל הפרטים על סכנין תל שבע"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-        <tr data-sup="שרונה בלוך" data-d="באר שבע" data-n="סכנין" data-s="ערבי" data-chg="1" data-th="שרית תורג&#x27;מן יפה" data-i="63"><td class="semel">84102</td><td class="school">שגב שלום</td><td>סכנין</td><td>באר שבע</td><td>ערבי</td><td><span class="sup-cell" style="--c:#0E7490"><span class="pp-dot"></span>שרונה בלוך</span></td><td class="prev">אחמד מחאמיד<span class="chg">שינוי</span></td><td><span class="sup-cell" style="--c:#B5543A"><span class="pp-dm"></span>שרית תורג&#x27;מן יפה</span></td><td class="go"><button type="button" class="pp-more" data-i="63" aria-label="כל הפרטים על שגב שלום"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="pk-empty" id="ppEmpty" hidden>לא נמצאו מוסדות שמתאימים לחיפוש ולסינון.<br><button type="button" class="pp-act" data-clear="1">ניקוי כל הסינונים</button></div>
-</section>
+  <section role="tabpanel" id="panel-s" aria-labelledby="tab-s">
+    <ul class="pp-list" id="list"></ul>
+    <div class="pp-empty" id="empty" hidden>לא נמצאו בתי ספר שמתאימים לחיפוש.</div>
+  </section>
+  <section role="tabpanel" id="panel-n" aria-labelledby="tab-n" hidden>
+    <div class="pp-nets" id="nets"></div>
+    <div class="pp-empty" id="emptyN" hidden>לא נמצאו רשתות שמתאימות לחיפוש.</div>
+  </section>
 
-<section class="pp-sec" id="reshatot" aria-labelledby="h-reshatot">
-  <h2 class="sub-sec" id="h-reshatot">רשתות ועמותות</h2>
-  <p class="pp-intro">הנהלת כל רשת ואיש.ת הקשר שלה לבתי הספר של משרד העבודה — שמות ותפקידים בלבד, כפי שהם בקובץ אנשי הקשר (שם משפחה ואז שם פרטי). טלפונים ומיילים נמצאים באדמין המוסדות, למורשים.</p>
-  <div class="pp-nets">
-<article class="pp-net"><h3>סכנין <small>17 מוסדות</small></h3><p class="meta">חיפה 10 · באר שבע 3 · ירושלים 4<br>ערבי 17</p><dl><dt>הנהלה</dt><dd>בדרנה עומר <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>עבד אלחמיד מחמוד</dd></dl><button type="button" class="pp-go" data-go="n" data-v="סכנין">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>עתיד <small>16 מוסדות</small></h3><p class="meta">חיפה 9 · תל אביב 3 · באר שבע 3 · ירושלים 1<br>כללי 7 · ערבי 4 · חרדי 5</p><dl><dt>הנהלה</dt><dd>ממו יוסי <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>ארגמן יוליה</dd></dl><button type="button" class="pp-go" data-go="n" data-v="עתיד">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>עמל <small>11 מוסדות</small></h3><p class="meta">חיפה 5 · תל אביב 3 · באר שבע 2 · ירושלים 1<br>כללי 7 · ערבי 3 · חרדי 1</p><dl><dt>הנהלה</dt><dd>טל קארן <span class="role">· מנכ״לית</span><br>תמר פלד אמיר <span class="role">· משנה למנכ״לית</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>עופר ירושלמי</dd></dl><button type="button" class="pp-go" data-go="n" data-v="עמל">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>אורט <small>7 מוסדות</small></h3><p class="meta">חיפה 1 · תל אביב 4 · ירושלים 2<br>כללי 6 · ערבי 1</p><dl><dt>הנהלה</dt><dd>פרויליך רז <span class="role">· מנכ״ל</span><br>תימורה שרי <span class="role">· סמנכ״לית</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>בן יוסף נעה<br>תימורה שרי</dd></dl><button type="button" class="pp-go" data-go="n" data-v="אורט">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>דרור <small>6 מוסדות</small></h3><p class="meta">חיפה 2 · תל אביב 1 · באר שבע 2 · ירושלים 1<br>כללי 5 · ערבי 1</p><dl><dt>הנהלה</dt><dd>רון ענבל <span class="role">· מנכ״לית</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>רז כרמל גליה</dd></dl><button type="button" class="pp-go" data-go="n" data-v="דרור">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>בית אל <small>מוסד אחד</small></h3><p class="meta">חיפה 1<br>כללי 1</p><dl><dt>הנהלה</dt><dd>לנגאור רינהרד <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>גולדרינג שרית</dd></dl><button type="button" class="pp-go" data-go="n" data-v="בית אל">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>בית שולמית <small>מוסד אחד</small></h3><p class="meta">ירושלים 1<br>חרדי 1</p><dl><dt>הנהלה</dt><dd>בניהו הרב דביר <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>בניהו הרב דביר</dd></dl><button type="button" class="pp-go" data-go="n" data-v="בית שולמית">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>טל חרמון <small>מוסד אחד</small></h3><p class="meta">חיפה 1<br>חרדי 1</p><dl><dt>הנהלה</dt><dd>פרץ הרב יחיאל <span class="role">· ראש הישיבה</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>איתמר חנן</dd></dl><button type="button" class="pp-go" data-go="n" data-v="טל חרמון">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>ישיבת חנוך לנער <small>מוסד אחד</small></h3><p class="meta">חיפה 1<br>חרדי 1</p><dl><dt>הנהלה</dt><dd>ליפסקר שניאור <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>ליפסקר שניאור</dd></dl><button type="button" class="pp-go" data-go="n" data-v="ישיבת חנוך לנער">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>כפר זיתים <small>מוסד אחד</small></h3><p class="meta">חיפה 1<br>חרדי 1</p><dl><dt>הנהלה</dt><dd>הרצליך יהודה <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>איתמר פוזן</dd></dl><button type="button" class="pp-go" data-go="n" data-v="כפר זיתים">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>נחלים <small>מוסד אחד</small></h3><p class="meta">תל אביב 1<br>חרדי 1</p><dl><dt>הנהלה</dt><dd>צוויבל צבי <span class="role">· יו״ר עמותה</span><br>אודי נתיב <span class="role">· מנכ״ל</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>אודי נתיב</dd></dl><button type="button" class="pp-go" data-go="n" data-v="נחלים">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-<article class="pp-net"><h3>רימונים <small>מוסד אחד</small></h3><p class="meta">חיפה 1<br>כללי 1</p><dl><dt>הנהלה</dt><dd>אזולאי שני <span class="role">· מנכ״לית מלונות ישראל קנדה</span></dd><dt>איש.ת קשר למשרד העבודה</dt><dd>כהנא גילה</dd></dl><button type="button" class="pp-go" data-go="n" data-v="רימונים">הצגת המוסדות ברשת<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button></article>
-  </div>
-</section>
-
-<div class="notice pp-note">
-  <b>כדאי לדעת</b>
-  <ul>
-    <li>מוסד עם שני מפקחים פדגוגיים הוא ליווי משותף (עמל רהט, תיכון החממה). הוא נספר אצל שניהם, ולכן סכום העומסים בכרטיסים גבוה מ-64.</li>
-    <li>״שינוי״ — המפקח.ת בתשפ״ז שונה מתשפ״ו, או שהמוסד לא היה בפריסה בתשפ״ו.</li>
-    <li>טלפון המוסד מוצג רק כשהוא קו נייח. חסרים בקובץ כתובת וטלפון ל: כפר עקב, סור באהר, אור דניאל.</li>
-    <li>עדכוני פריסה מתבצעים דרך הפיקוח הפדגוגי · <a href="supervision.html" style="color:var(--blue);font-weight:700">חזרה למרחב הפיקוח</a> · <a href="pikuah-miktzoi.html" style="color:var(--blue);font-weight:700">הפיקוח המקצועי — מגמות ומפקחים</a></li>
-  </ul>
+  <p class="pp-upd" style="margin-top:22px">מוסד עם שני מפקחים פדגוגיים — ליווי משותף (עמל רהט, תיכון החממה). ״שינוי״ — המפקח.ת בתשפ״ז שונה מתשפ״ו, או שהמוסד לא היה בפריסה בתשפ״ו.
+  · <a href="pikuah-miktzoi.html" style="color:var(--accent);font-weight:700">הפיקוח המקצועי — מגמות ומפקחים</a></p>
 </div>
-
-</div>
-
-<div class="pp-scrim" id="ppScrim" data-close="1"></div>
-<div class="pp-dw" id="ppDw" role="dialog" aria-modal="true" aria-labelledby="ppDwT" aria-hidden="true"></div>
 
 </main>
 
@@ -665,324 +379,100 @@
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>פריסת הפיקוח · תשפ״ז</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impact-os.app</a></div></div>
 <!-- foot:end -->
 
-<script type="application/json" id="ppData">{"schools":[{"i":0,"semel":"64100","moe":"775676","name":"בית חנינה בנות","off":"בי\"ס טכנו' לבנות ב. חנינה","net":"סכנין","d":"ירושלים","s":"ערבי","city":"ירושלים","addr":["רח' איימן אל שפאעי 7, בית חנינה"],"tel":[{"t":"02-6569104","href":"tel:+97226569104"},{"t":"02-5953122","href":"tel:+97225953122"}],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"i":1,"semel":"64102","moe":"775791","name":"בית חנינה בנים","off":"טכנולוגי לבנים בית חנינה","net":"סכנין","d":"ירושלים","s":"ערבי","city":"ירושלים","addr":["רח' אל ג'דוד 36, בית חנינה"],"tel":[{"t":"02-5438057","href":"tel:+97225438057"}],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"i":2,"semel":"64103","moe":"779124","name":"כפר עקב","off":"","net":"סכנין","d":"ירושלים","s":"ערבי","city":"","addr":[],"tel":[],"sups":["ויסאם סואלחה"],"prev":"","chg":true,"ther":"עירית אלדד","alias":[]},{"i":3,"semel":"64104","moe":"710897","name":"סור באהר","off":"צור באהר","net":"סכנין","d":"ירושלים","s":"ערבי","city":"","addr":[],"tel":[],"sups":["ויסאם סואלחה"],"prev":"","chg":true,"ther":"עירית אלדד","alias":["צור באהר"]},{"i":4,"semel":"44011","moe":"775072","name":"עמל טייבה ב'","off":"","net":"עמל","d":"תל אביב","s":"ערבי","city":"טייבה","addr":["רח' בילאל בן רבאח, ת\"ד 57 טייבה משולש, 40400"],"tel":[{"t":"09-7885542","href":"tel:+97297885542"},{"t":"09-7885549","href":"tel:+97297885549"}],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"i":5,"semel":"54101","moe":"775239","name":"ערערה","off":"תיכון מסאראת ערערה","net":"סכנין","d":"חיפה","s":"ערבי","city":"ערערה","addr":["ערערה, ת.ד 1060 מיקוד 30026"],"tel":[{"t":"04-6357819","href":"tel:+97246357819"},{"t":"04-6354219","href":"tel:+97246354219"}],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":["מסאראת ואדי עארה"]},{"i":6,"semel":"55003","moe":"170712","name":"אורט כרמל","off":"","net":"אורט","d":"חיפה","s":"ערבי","city":"חיפה","addr":["רח' התשעים ושלוש 8, חיפה 3309212"],"tel":[{"t":"04-8666686","href":"tel:+97248666686"},{"t":"04-8642965","href":"tel:+97248642965"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":7,"semel":"54113","moe":"775809","name":"אכסאל","off":"טכנולוגי אכסאל","net":"סכנין","d":"חיפה","s":"ערבי","city":"אכסאל","addr":["ת.ד. 12, אכסאל"],"tel":[{"t":"04-903-0117","href":"tel:+97249030117"}],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"i":8,"semel":"54100","moe":"775221","name":"אל אמאני סכנין","off":"תיכון אל - אמאני סכנין","net":"סכנין","d":"חיפה","s":"ערבי","city":"סכנין","addr":["סכנין, ת.ד 67 מיקוד 30810"],"tel":[{"t":"04-6743658","href":"tel:+97246743658"},{"t":"04-6746332","href":"tel:+97246746332"}],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":9,"semel":"54108","moe":"775528","name":"אלחכמה כסרא-סמיע","off":"תיכון טכנולוגי אלחכמה (כסרע-סמיע)","net":"סכנין","d":"חיפה","s":"ערבי","city":"כסרא-סמיע","addr":["כסרא סמיע, ת.ד 308 מיקוד 20138"],"tel":[{"t":"04-6996184","href":"tel:+97246996184"}],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":10,"semel":"52918","moe":"775668","name":"ג'וליס בנות","off":"עתיד ג'וליס בנות","net":"עתיד","d":"חיפה","s":"ערבי","city":"ג'וליס","addr":["כפר ג'וליס/ירכא 24967, ת.ד. 1145"],"tel":[{"t":"04-9804204","href":"tel:+97249804204"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":11,"semel":"54109","moe":"775510","name":"טורען","off":"תיכון מנאראת טורען","net":"סכנין","d":"חיפה","s":"ערבי","city":"טורען","addr":["טורעאן, ת.ד 1018 מיקוד 16950"],"tel":[{"t":"04-6517207","href":"tel:+97246517207"},{"t":"04-6516601","href":"tel:+97246516601"}],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":12,"semel":"54102","moe":"775247","name":"כפר יסיף","off":"תיכון אלמאנארה כפר יסיף","net":"סכנין","d":"חיפה","s":"ערבי","city":"כפר יאסיף","addr":["כפר יאסיף"],"tel":[{"t":"04-9564412","href":"tel:+97249564412"},{"t":"04-9564413","href":"tel:+97249564413"}],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":13,"semel":"54008","moe":"775189","name":"נצרת","off":"עמל נצרת","net":"עמל","d":"חיפה","s":"ערבי","city":"נצרת","addr":["הר הקפיצה 20 נצרת ת\"ד 4047, 16000"],"tel":[{"t":"04-9118547","href":"tel:+97249118547"},{"t":"04-6555041","href":"tel:+97246555041"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":14,"semel":"52916","moe":"775148","name":"עתיד גליל מערבי ירכא בנים","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"ירכא","addr":["מכללת עתיד ירכא (ת.ד 4161 ירכא 2496700)"],"tel":[{"t":"04-9120674","href":"tel:+97249120674"},{"t":"04-9564311","href":"tel:+97249564311"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":15,"semel":"52922","moe":"775817","name":"עתיד טק ביר אל מכסור","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"ביר אל מכסור","addr":["רח' אל זיתון, ביר אל מכסור"],"tel":[],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":16,"semel":"52909","moe":"775130","name":"תיכון טכנולוגי אי טק סקול (מסעדה)","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"מסעדה","addr":["מסעדה רמת הגולן (מול בניין המועצה המקומית מסעדה)"],"tel":[{"t":"04-6982786","href":"tel:+97246982786"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":17,"semel":"52920","moe":"775684","name":"תפן ליזמות","off":"עתיד תפן ליזמות","net":"עתיד","d":"חיפה","s":"כללי","city":"כפר ורדים","addr":["תפן"],"tel":[{"t":"04-9949035","href":"tel:+97249949035"}],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":18,"semel":"84003","moe":"775379","name":"עמל רהט","off":"","net":"עמל","d":"באר שבע","s":"ערבי","city":"רהט","addr":["ת\"ד 5 רהט, 85357"],"tel":[{"t":"08-9918130","href":"tel:+97289918130"},{"t":"08-6222548/9","href":"tel:+97286222548"}],"sups":["יסמין אמון","סיגלית דאי"],"prev":"יסמין אמון + סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":19,"semel":"42925","moe":"776948","name":"אור דניאל","off":"אור דניאל נתניה","net":"עתיד","d":"תל אביב","s":"חרדי","city":"","addr":[],"tel":[],"sups":["יששכר חפץ"],"prev":"","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"i":20,"semel":"62903","moe":"775742","name":"אור העתיד תורני מקצועי","off":"","net":"עתיד","d":"ירושלים","s":"חרדי","city":"גן יבנה","addr":["רח' הר ציון 31, גן יבנה"],"tel":[{"t":"08-9706140","href":"tel:+97289706140"},{"t":"08-9706147","href":"tel:+97289706147"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":21,"semel":"82923","moe":"775858","name":"בית דוד","off":"עתיד בית דוד","net":"עתיד","d":"באר שבע","s":"כללי","city":"ק.גת","addr":["ירמיהו 3 קריית גת"],"tel":[],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":22,"semel":"61902","moe":"775270","name":"הדר","off":"תיכון הדר","net":"בית שולמית","d":"ירושלים","s":"חרדי","city":"ירושלים","addr":["עם ועולמו 3, גבעת שאול ירושלים"],"tel":[{"t":"02-6577109","href":"tel:+97226577109"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":23,"semel":"82922","moe":"775759","name":"הקמפוס התורני עתיד","off":"הקמפוס התורני עתיד אשקלון","net":"עתיד","d":"באר שבע","s":"חרדי","city":"אשקלון","addr":["רח' דוד ברגר 1, אשקלון"],"tel":[{"t":"04-9118541","href":"tel:+97249118541"},{"t":"08-6453006","href":"tel:+97286453006"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":["חב\"ד אור מנחם אשקלון","ישיבת עתיד אור מנחם"]},{"i":24,"semel":"58801","moe":"775403","name":"טל חרמון","off":"","net":"טל חרמון","d":"חיפה","s":"חרדי","city":"גולן","addr":["צומת אליעד, ת ד 164 קצרין 12950"],"tel":[{"t":"04-6870511","href":"tel:+97246870511"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"i":25,"semel":"55400","moe":"775627","name":"ישיבת חנוך לנער","off":"","net":"ישיבת חנוך לנער","d":"חיפה","s":"חרדי","city":"צפת","addr":["אזור תעשייה דרומי, צפת (ישיבת \"חנוך לנער\")"],"tel":[{"t":"04-6922063","href":"tel:+97246922063"},{"t":"04-6826056","href":"tel:+97246826056"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"i":26,"semel":"55501","moe":"775544","name":"כפר זיתים","off":"ימנו כקדם כפר זיתים","net":"כפר זיתים","d":"חיפה","s":"חרדי","city":"גליל תחתון","addr":["כפר זיתים, משק 14, ת.ד. 3627 טבריה 1413601"],"tel":[{"t":"04-6733083","href":"tel:+97246733083"},{"t":"073-2227431","href":"tel:+972732227431"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"i":27,"semel":"54009","moe":"775197","name":"מרחביה/מעיינות","off":"עמל צפת- מעיינות","net":"עמל","d":"חיפה","s":"חרדי","city":"צפת","addr":["פרומצ'נקוב 50, ק. הסתדרות ת\"ד 1113 צפת, 13310"],"tel":[{"t":"04-6668541","href":"tel:+97246668541"},{"t":"04-6972212","href":"tel:+97246972212"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":28,"semel":"46101","moe":"775593","name":"נחלים","off":"","net":"נחלים","d":"תל אביב","s":"חרדי","city":"חבל מודיעין","addr":["רח' שניר 59, מושב נחלים, ת.ד 1152"],"tel":[{"t":"03-9329338","href":"tel:+97239329338"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":29,"semel":"52923","moe":"775825","name":"עתיד בת עמי","off":"","net":"עתיד","d":"חיפה","s":"חרדי","city":"מרום הגליל","addr":["מרכז מרום גליל"],"tel":[],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":30,"semel":"42924","moe":"775726","name":"עתיד כפר חב\"ד","off":"","net":"עתיד","d":"תל אביב","s":"חרדי","city":"שדות דן","addr":["רח' הרבי מליובאוויטש 1, כפר חב\"ד"],"tel":[{"t":"03-7157546","href":"tel:+97237157546"}],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":31,"semel":"54107","moe":"775445","name":"אבו סנאן","off":"תיכון ח'טאוות (אבו סנאן)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אבו סנאן","addr":["רח' יהושע הצורף 27, ירכא, ת.ד 4322 מיקוד 24967"],"tel":[{"t":"04-9804247","href":"tel:+97249804247"}],"sups":["ליאת צבר"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":["ירכא אבו סנאן"]},{"i":32,"semel":"54105","moe":"775262","name":"אום אל פחם בנות","off":"בדאיאת (אום אל פחם בנות)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אום אל פחם","addr":["שכ' אלעיון, אום אל פחם, ת.ד 1259 מיקוד 30010"],"tel":[{"t":"04-6111201","href":"tel:+97246111201"},{"t":"04-6110997","href":"tel:+97246110997"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":33,"semel":"54021","moe":"775700","name":"אנרג'י טק","off":"אנרג'י טק - עמל","net":"עמל","d":"חיפה","s":"כללי","city":"חדרה","addr":["רח' מבצע יהונתן 1, חדרה"],"tel":[{"t":"076-8634820","href":"tel:+972768634820"},{"t":"04-8675396","href":"tel:+97248675396"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":34,"semel":"55621","moe":"775429","name":"בית אל","off":"טכנולוגי בית-אל","net":"בית אל","d":"חיפה","s":"כללי","city":"זכרון יעקב","addr":["דרך אבשלום 1 ת.ד 166, זכרון יעקב"],"tel":[{"t":"04-6290047","href":"tel:+97246290047"},{"t":"074-7474798","href":"tel:+972747474798"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":35,"semel":"53405","moe":"775775","name":"דרור גליל","off":"דרור הגליל","net":"דרור","d":"חיפה","s":"כללי","city":"גליל תחתון","addr":["קיבוץ רביד, 1496000"],"tel":[{"t":"04-6787833","href":"tel:+97246787833"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":36,"semel":"53403","moe":"170688","name":"התיכון החברתי חיפה","off":"","net":"דרור","d":"חיפה","s":"כללי","city":"חיפה","addr":["רח' העלייה השנייה 45, חיפה, 35016"],"tel":[{"t":"04-8515758","href":"tel:+97248515758"},{"t":"04-8520454","href":"tel:+97248520454"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":37,"semel":"52921","moe":"775411","name":"צור ים","off":"עתיד צור ים","net":"עתיד","d":"חיפה","s":"כללי","city":"חיפה","addr":["רח' שארל לוץ 1, בה\"ד חיל הים חיפה"],"tel":[{"t":"04-8695160","href":"tel:+97248695160"},{"t":"04-8695446/8","href":"tel:+97248695446"}],"sups":["ליאת צבר"],"prev":"קתרינה ברברשטיין","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":38,"semel":"51511","moe":"775536","name":"רימונים","off":"","net":"רימונים","d":"חיפה","s":"כללי","city":"טבריה","addr":["רח' המרחצאות חמי טבריה, ת.ד 22, (מכללת רימונים)"],"tel":[{"t":"04-6728553","href":"tel:+97246728553"},{"t":"04-6728586","href":"tel:+97246728586"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":39,"semel":"54017","moe":"170704","name":"רמת דוד","off":"עמל רמת דוד","net":"עמל","d":"חיפה","s":"כללי","city":"עמק יזרעאל","addr":["מחנה יהודית, ד.נ. העמקים, 36356"],"tel":[{"t":"04-6543147","href":"tel:+97246543147"},{"t":"04-6442385","href":"tel:+97246442385"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":40,"semel":"43403","moe":"775395","name":"תיכון חברתי ת\"א","off":"","net":"דרור","d":"תל אביב","s":"כללי","city":"תל אביב-יפו","addr":["רח' מפרץ שלמה 4, תל אביב","רח' יפת 28, יפו"],"tel":[{"t":"03-5280953","href":"tel:+97235280953"}],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":41,"semel":"52919","moe":"775692","name":"תיכון עוצמ\"ה עתיד זוקו","off":"עתיד זוקו","net":"עתיד","d":"חיפה","s":"כללי","city":"קרית ביאליק","addr":["רח' חרושת 25 קרית ביאליק, מיקוד 2751042"],"tel":[{"t":"04-6732401","href":"tel:+97246732401"},{"t":"04-6732576","href":"tel:+97246732576"}],"sups":["ליאת צבר"],"prev":"רביב שורץ","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":42,"semel":"54040","moe":"775734","name":"תיכון שיח","off":"","net":"עמל","d":"חיפה","s":"כללי","city":"מטה אשר","addr":["רח' האנפה 2, עמקה"],"tel":[],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":43,"semel":"45005","moe":"170589","name":"אורט אורמת","off":"","net":"אורט","d":"תל אביב","s":"כללי","city":"יבנה","addr":["רח' שידולובסקי 1, יבנה"],"tel":[{"t":"08-9421746","href":"tel:+97289421746"},{"t":"08-9422873","href":"tel:+97289422873"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":44,"semel":"45002","moe":"170654","name":"אורט תל נוף","off":"","net":"אורט","d":"תל אביב","s":"כללי","city":"ברנר","addr":["בסיס תל נוף, ת.ד. 3500, גדרה 7071000"],"tel":[{"t":"08-8591377","href":"tel:+97288591377"},{"t":"08-8596696","href":"tel:+97288596696"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"עירית אלדד","alias":[]},{"i":45,"semel":"45001","moe":"170647","name":"אורט תעשייה אווירית","off":"אורט תעשיה אוירית","net":"אורט","d":"תל אביב","s":"כללי","city":"מודיעין","addr":["התעשייה האווירית לישראל, נתב\"ג לוד 7010000"],"tel":[{"t":"03-9353619","href":"tel:+97239353619"},{"t":"03-9732497","href":"tel:+97239732497"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":46,"semel":"45007","moe":"775767","name":"דן גורמה","off":"אורט דן גורמה","net":"אורט","d":"תל אביב","s":"כללי","city":"תל אביב","addr":["רח' נס לגויים 53, תל-אביב"],"tel":[{"t":"073-3746429","href":"tel:+972733746429"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"עירית אלדד","alias":[]},{"i":47,"semel":"64001","moe":"775296","name":"עמל אשדוד","off":"","net":"עמל","d":"ירושלים","s":"כללי","city":"אשדוד","addr":["רח' האורגים 10, ת\"ד 15204, אשדוד 77609"],"tel":[{"t":"08-6990540","href":"tel:+97286990540"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":48,"semel":"44050","moe":"775056","name":"עמל טק אין","off":"","net":"עמל","d":"תל אביב","s":"כללי","city":"שוהם","addr":["מחנה בן עמי, ת\"ד 923 שוהם, 6085001"],"tel":[{"t":"03-6229540","href":"tel:+97236229540"},{"t":"03-9731946","href":"tel:+97239731946"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":49,"semel":"82918","moe":"775320","name":"עתיד באר שבע","off":"תיכון עתיד באר-שבע","net":"עתיד","d":"באר שבע","s":"כללי","city":"באר שבע","addr":["רח' תוצרת הארץ 1, גדוד הנגב באר-שבע"],"tel":[{"t":"08-6552790","href":"tel:+97286552790"}],"sups":["סיגלית דאי"],"prev":"קתרינה ברברשטיין","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"i":50,"semel":"42919","moe":"775023","name":"עתיד פלמחים","off":"","net":"עתיד","d":"תל אביב","s":"כללי","city":"שורק","addr":["בסיס פלמחים, ד.צ 02777 בסיס פלמחים"],"tel":[{"t":"03-9413457","href":"tel:+97239413457"},{"t":"03-9516975","href":"tel:+97239516975"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":51,"semel":"65079","moe":"775452","name":"צור ברק","off":"תיכון אורט צור ברק","net":"אורט","d":"ירושלים","s":"כללי","city":"קריית מלאכי","addr":["מחנה צבאי עמנואל (ג'וליס), ד.צ. 03083, צה\"ל"],"tel":[{"t":"08-8602735","href":"tel:+97288602735"},{"t":"08-8602530","href":"tel:+97288602530"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":52,"semel":"82921","moe":"775338","name":"קמ\"ג דימונה","off":"עתיד קמ\"ג","net":"עמל","d":"באר שבע","s":"כללי","city":"דימונה","addr":["קמ\"ג, ת.ד 9001 באר שבע, 81490"],"tel":[{"t":"08-6568355","href":"tel:+97286568355"},{"t":"08-6568253","href":"tel:+97286568253"}],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":53,"semel":"44008","moe":"775064","name":"תיכון החממה","off":"","net":"עמל","d":"תל אביב","s":"כללי","city":"הוד השרון","addr":["החרש 9 הוד השרון, 4524082"],"tel":[{"t":"09-7402360","href":"tel:+97297402360"},{"t":"09-7884549","href":"tel:+97297884549"}],"sups":["סיגלית דאי","רויטל אמיר"],"prev":"סיגלית דאי","chg":true,"ther":"עירית אלדד","alias":[]},{"i":54,"semel":"54112","moe":"775643","name":"אום אל פחם בנים","off":"אלאופוק (אום אל פחם בנים)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אום אל פחם","addr":["רח' עין אלנבי 45, אום אל פחם 30010"],"tel":[{"t":"04-7707820","href":"tel:+97247707820"},{"t":"04-7707823","href":"tel:+97247707823"}],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"עירית אלדד","alias":[]},{"i":55,"semel":"83424","moe":"775783","name":"מצפה רמון","off":"התיכון החברתי מצפה רמון","net":"דרור","d":"באר שבע","s":"כללי","city":"מצפה רמון","addr":["רח' נחל האלה 5, מצפה רמון"],"tel":[],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"i":56,"semel":"52901","moe":"775122","name":"עתיד כרמיאל","off":"","net":"עתיד","d":"חיפה","s":"כללי","city":"כרמיאל","addr":["רח' צהל 103 כרמיאל, תד 1039"],"tel":[{"t":"04-9983637","href":"tel:+97249983637"},{"t":"04-9081948","href":"tel:+97249081948"}],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"i":57,"semel":"54106","moe":"775437","name":"שפרעם","off":"תיכון מהאראת (שפרעם)","net":"סכנין","d":"חיפה","s":"ערבי","city":"שפרעם","addr":["רח' תאופיק זיאד 150, שפרעם, ת.ד 769, מיקוד 20200"],"tel":[{"t":"04-9502119","href":"tel:+97249502119"},{"t":"04-9867975","href":"tel:+97249867975"}],"sups":["רביב שורץ"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"i":58,"semel":"65007","moe":"170720","name":"אורט בית הערבה","off":"","net":"אורט","d":"ירושלים","s":"כללי","city":"ירושלים","addr":["רח' בית הערבה 7, ירושלים 9338907"],"tel":[{"t":"02-5374682","href":"tel:+97225374682"},{"t":"02-5370454","href":"tel:+97225370454"}],"sups":["רויטל אמיר"],"prev":"רויטל אמיר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":59,"semel":"63401","moe":"775288","name":"חוש\"ן","off":"","net":"דרור","d":"ירושלים","s":"כללי","city":"ירושלים","addr":["רח' רבי חייא 3, ירושלים, 93669"],"tel":[{"t":"02-5666788","href":"tel:+97225666788"},{"t":"02-5666794","href":"tel:+97225666794"}],"sups":["רויטל אמיר"],"prev":"רויטל אמיר","chg":false,"ther":"עירית אלדד","alias":[]},{"i":60,"semel":"83425","moe":"775841","name":"דרור נווה מדבר","off":"","net":"דרור","d":"באר שבע","s":"ערבי","city":"נווה מדבר","addr":["נווה מדבר"],"tel":[],"sups":["שרונה בלוך"],"prev":"יסמין אמון","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"i":61,"semel":"84101","moe":"775569","name":"לקייה","off":"סכנין - לקייה","net":"סכנין","d":"באר שבע","s":"ערבי","city":"לקייה","addr":["רח' אלחקמה, שכונה 8 מגרש 293, לקייה"],"tel":[{"t":"08-9971337","href":"tel:+97289971337"},{"t":"08-8599727","href":"tel:+97288599727"}],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"i":62,"semel":"84104","moe":"775833","name":"סכנין תל שבע","off":"","net":"סכנין","d":"באר שבע","s":"ערבי","city":"סכנין","addr":["תל שבע שכונה 11"],"tel":[],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"i":63,"semel":"84102","moe":"775650","name":"שגב שלום","off":"סכנין -שגב שלום","net":"סכנין","d":"באר שבע","s":"ערבי","city":"שגב שלום","addr":["א.ת. שגב שלום"],"tel":[{"t":"08-6420154","href":"tel:+97286420154"},{"t":"08-9581670","href":"tel:+97289581670"}],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]}],"nets":{"אורט":{"lead":[{"n":"פרויליך רז","r":"מנכ״ל"},{"n":"תימורה שרי","r":"סמנכ״לית"}],"contact":["בן יוסף נעה","תימורה שרי"]},"דרור":{"lead":[{"n":"רון ענבל","r":"מנכ״לית"}],"contact":["רז כרמל גליה"]},"סכנין":{"lead":[{"n":"בדרנה עומר","r":"מנכ״ל"}],"contact":["עבד אלחמיד מחמוד"]},"עמל":{"lead":[{"n":"טל קארן","r":"מנכ״לית"},{"n":"תמר פלד אמיר","r":"משנה למנכ״לית"}],"contact":["עופר ירושלמי"]},"עתיד":{"lead":[{"n":"ממו יוסי","r":"מנכ״ל"}],"contact":["ארגמן יוליה"]},"רימונים":{"lead":[{"n":"אזולאי שני","r":"מנכ״לית מלונות ישראל קנדה"}],"contact":["כהנא גילה"]},"בית אל":{"lead":[{"n":"לנגאור רינהרד","r":"מנכ״ל"}],"contact":["גולדרינג שרית"]},"בית שולמית":{"lead":[{"n":"בניהו הרב דביר","r":"מנכ״ל"}],"contact":["בניהו הרב דביר"]},"ישיבת חנוך לנער":{"lead":[{"n":"ליפסקר שניאור","r":"מנכ״ל"}],"contact":["ליפסקר שניאור"]},"טל חרמון":{"lead":[{"n":"פרץ הרב יחיאל","r":"ראש הישיבה"}],"contact":["איתמר חנן"]},"כפר זיתים":{"lead":[{"n":"הרצליך יהודה","r":"מנכ״ל"}],"contact":["איתמר פוזן"]},"נחלים":{"lead":[{"n":"צוויבל צבי","r":"יו״ר עמותה"},{"n":"אודי נתיב","r":"מנכ״ל"}],"contact":["אודי נתיב"]}},"order":{"sup":["יסמין אמון","יששכר חפץ","ליאת צבר","סיגלית דאי","ויסאם סואלחה","רביב שורץ","שרונה בלוך","רויטל אמיר"],"ther":["אסתי רייפר","שרית תורג'מן יפה","עירית אלדד","ד״ר מיכל גלסר"],"d":["חיפה","תל אביב","באר שבע","ירושלים"],"s":["כללי","ערבי","חרדי"],"n":["סכנין","עתיד","עמל","אורט","דרור","בית אל","בית שולמית","טל חרמון","ישיבת חנוך לנער","כפר זיתים","נחלים","רימונים"]},"colors":{"sup":{"יסמין אמון":"#1F7A4D","יששכר חפץ":"#17857F","ליאת צבר":"#6E56A8","סיגלית דאי":"#B0375E","ויסאם סואלחה":"#14548C","רביב שורץ":"#9A5B00","שרונה בלוך":"#0E7490","רויטל אמיר":"#C0392B"},"ther":{"עירית אלדד":"#3F5FA8","אסתי רייפר":"#8A4FA0","שרית תורג'מן יפה":"#B5543A","ד״ר מיכל גלסר":"#2D7F6E"},"sector":{"כללי":"#2F74C0","ערבי":"#1F8A4C","חרדי":"#7B61B8"}}}</script>
+<script type="application/json" id="ppData">{"updated":"מעודכן ל-30.8.2026 · הנהלות הרשתות: 10.9.2026","schools":[{"semel":"64100","moe":"775676","name":"בית חנינה בנות","off":"בי\"ס טכנו' לבנות ב. חנינה","net":"סכנין","d":"ירושלים","s":"ערבי","city":"ירושלים","addr":["רח' איימן אל שפאעי 7, בית חנינה"],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"64102","moe":"775791","name":"בית חנינה בנים","off":"טכנולוגי לבנים בית חנינה","net":"סכנין","d":"ירושלים","s":"ערבי","city":"ירושלים","addr":["רח' אל ג'דוד 36, בית חנינה"],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"64103","moe":"779124","name":"כפר עקב","off":"","net":"סכנין","d":"ירושלים","s":"ערבי","city":"","addr":[],"sups":["ויסאם סואלחה"],"prev":"","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"64104","moe":"710897","name":"סור באהר","off":"צור באהר","net":"סכנין","d":"ירושלים","s":"ערבי","city":"","addr":[],"sups":["ויסאם סואלחה"],"prev":"","chg":true,"ther":"עירית אלדד","alias":["צור באהר"]},{"semel":"44011","moe":"775072","name":"עמל טייבה ב'","off":"","net":"עמל","d":"תל אביב","s":"ערבי","city":"טייבה","addr":["רח' בילאל בן רבאח, ת\"ד 57 טייבה משולש, 40400"],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"54101","moe":"775239","name":"ערערה","off":"תיכון מסאראת ערערה","net":"סכנין","d":"חיפה","s":"ערבי","city":"ערערה","addr":["ערערה, ת.ד 1060 מיקוד 30026"],"sups":["ויסאם סואלחה"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":["מסאראת ואדי עארה"]},{"semel":"55003","moe":"170712","name":"אורט כרמל","off":"","net":"אורט","d":"חיפה","s":"ערבי","city":"חיפה","addr":["רח' התשעים ושלוש 8, חיפה 3309212"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"54113","moe":"775809","name":"אכסאל","off":"טכנולוגי אכסאל","net":"סכנין","d":"חיפה","s":"ערבי","city":"אכסאל","addr":["ת.ד. 12, אכסאל"],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"54100","moe":"775221","name":"אל אמאני סכנין","off":"תיכון אל - אמאני סכנין","net":"סכנין","d":"חיפה","s":"ערבי","city":"סכנין","addr":["סכנין, ת.ד 67 מיקוד 30810"],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"54108","moe":"775528","name":"אלחכמה כסרא-סמיע","off":"תיכון טכנולוגי אלחכמה (כסרע-סמיע)","net":"סכנין","d":"חיפה","s":"ערבי","city":"כסרא-סמיע","addr":["כסרא סמיע, ת.ד 308 מיקוד 20138"],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"52918","moe":"775668","name":"ג'וליס בנות","off":"עתיד ג'וליס בנות","net":"עתיד","d":"חיפה","s":"ערבי","city":"ג'וליס","addr":["כפר ג'וליס/ירכא 24967, ת.ד. 1145"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"54109","moe":"775510","name":"טורען","off":"תיכון מנאראת טורען","net":"סכנין","d":"חיפה","s":"ערבי","city":"טורען","addr":["טורעאן, ת.ד 1018 מיקוד 16950"],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"54102","moe":"775247","name":"כפר יסיף","off":"תיכון אלמאנארה כפר יסיף","net":"סכנין","d":"חיפה","s":"ערבי","city":"כפר יאסיף","addr":["כפר יאסיף"],"sups":["יסמין אמון"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"54008","moe":"775189","name":"נצרת","off":"עמל נצרת","net":"עמל","d":"חיפה","s":"ערבי","city":"נצרת","addr":["הר הקפיצה 20 נצרת ת\"ד 4047, 16000"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"52916","moe":"775148","name":"עתיד גליל מערבי ירכא בנים","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"ירכא","addr":["מכללת עתיד ירכא (ת.ד 4161 ירכא 2496700)"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"52922","moe":"775817","name":"עתיד טק ביר אל מכסור","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"ביר אל מכסור","addr":["רח' אל זיתון, ביר אל מכסור"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"52909","moe":"775130","name":"תיכון טכנולוגי אי טק סקול (מסעדה)","off":"","net":"עתיד","d":"חיפה","s":"ערבי","city":"מסעדה","addr":["מסעדה רמת הגולן (מול בניין המועצה המקומית מסעדה)"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"52920","moe":"775684","name":"תפן ליזמות","off":"עתיד תפן ליזמות","net":"עתיד","d":"חיפה","s":"כללי","city":"כפר ורדים","addr":["תפן"],"sups":["יסמין אמון"],"prev":"יסמין אמון","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"84003","moe":"775379","name":"עמל רהט","off":"","net":"עמל","d":"באר שבע","s":"ערבי","city":"רהט","addr":["ת\"ד 5 רהט, 85357"],"sups":["יסמין אמון","סיגלית דאי"],"prev":"יסמין אמון + סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"42925","moe":"776948","name":"אור דניאל","off":"אור דניאל נתניה","net":"עתיד","d":"תל אביב","s":"חרדי","city":"","addr":[],"sups":["יששכר חפץ"],"prev":"","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"62903","moe":"775742","name":"אור העתיד תורני מקצועי","off":"","net":"עתיד","d":"ירושלים","s":"חרדי","city":"גן יבנה","addr":["רח' הר ציון 31, גן יבנה"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"82923","moe":"775858","name":"בית דוד","off":"עתיד בית דוד","net":"עתיד","d":"באר שבע","s":"כללי","city":"ק.גת","addr":["ירמיהו 3 קריית גת"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"61902","moe":"775270","name":"הדר","off":"תיכון הדר","net":"בית שולמית","d":"ירושלים","s":"חרדי","city":"ירושלים","addr":["עם ועולמו 3, גבעת שאול ירושלים"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"82922","moe":"775759","name":"הקמפוס התורני עתיד","off":"הקמפוס התורני עתיד אשקלון","net":"עתיד","d":"באר שבע","s":"חרדי","city":"אשקלון","addr":["רח' דוד ברגר 1, אשקלון"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":["חב\"ד אור מנחם אשקלון","ישיבת עתיד אור מנחם"]},{"semel":"58801","moe":"775403","name":"טל חרמון","off":"","net":"טל חרמון","d":"חיפה","s":"חרדי","city":"גולן","addr":["צומת אליעד, ת ד 164 קצרין 12950"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"semel":"55400","moe":"775627","name":"ישיבת חנוך לנער","off":"","net":"ישיבת חנוך לנער","d":"חיפה","s":"חרדי","city":"צפת","addr":["אזור תעשייה דרומי, צפת (ישיבת \"חנוך לנער\")"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"semel":"55501","moe":"775544","name":"כפר זיתים","off":"ימנו כקדם כפר זיתים","net":"כפר זיתים","d":"חיפה","s":"חרדי","city":"גליל תחתון","addr":["כפר זיתים, משק 14, ת.ד. 3627 טבריה 1413601"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"ד״ר מיכל גלסר","alias":[]},{"semel":"54009","moe":"775197","name":"מרחביה/מעיינות","off":"עמל צפת- מעיינות","net":"עמל","d":"חיפה","s":"חרדי","city":"צפת","addr":["פרומצ'נקוב 50, ק. הסתדרות ת\"ד 1113 צפת, 13310"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"46101","moe":"775593","name":"נחלים","off":"","net":"נחלים","d":"תל אביב","s":"חרדי","city":"חבל מודיעין","addr":["רח' שניר 59, מושב נחלים, ת.ד 1152"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"52923","moe":"775825","name":"עתיד בת עמי","off":"","net":"עתיד","d":"חיפה","s":"חרדי","city":"מרום הגליל","addr":["מרכז מרום גליל"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"42924","moe":"775726","name":"עתיד כפר חב\"ד","off":"","net":"עתיד","d":"תל אביב","s":"חרדי","city":"שדות דן","addr":["רח' הרבי מליובאוויטש 1, כפר חב\"ד"],"sups":["יששכר חפץ"],"prev":"יששכר חפץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"54107","moe":"775445","name":"אבו סנאן","off":"תיכון ח'טאוות (אבו סנאן)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אבו סנאן","addr":["רח' יהושע הצורף 27, ירכא, ת.ד 4322 מיקוד 24967"],"sups":["ליאת צבר"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":["ירכא אבו סנאן"]},{"semel":"54105","moe":"775262","name":"אום אל פחם בנות","off":"בדאיאת (אום אל פחם בנות)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אום אל פחם","addr":["שכ' אלעיון, אום אל פחם, ת.ד 1259 מיקוד 30010"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"54021","moe":"775700","name":"אנרג'י טק","off":"אנרג'י טק - עמל","net":"עמל","d":"חיפה","s":"כללי","city":"חדרה","addr":["רח' מבצע יהונתן 1, חדרה"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"55621","moe":"775429","name":"בית אל","off":"טכנולוגי בית-אל","net":"בית אל","d":"חיפה","s":"כללי","city":"זכרון יעקב","addr":["דרך אבשלום 1 ת.ד 166, זכרון יעקב"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"53405","moe":"775775","name":"דרור גליל","off":"דרור הגליל","net":"דרור","d":"חיפה","s":"כללי","city":"גליל תחתון","addr":["קיבוץ רביד, 1496000"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"53403","moe":"170688","name":"התיכון החברתי חיפה","off":"","net":"דרור","d":"חיפה","s":"כללי","city":"חיפה","addr":["רח' העלייה השנייה 45, חיפה, 35016"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"52921","moe":"775411","name":"צור ים","off":"עתיד צור ים","net":"עתיד","d":"חיפה","s":"כללי","city":"חיפה","addr":["רח' שארל לוץ 1, בה\"ד חיל הים חיפה"],"sups":["ליאת צבר"],"prev":"קתרינה ברברשטיין","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"51511","moe":"775536","name":"רימונים","off":"","net":"רימונים","d":"חיפה","s":"כללי","city":"טבריה","addr":["רח' המרחצאות חמי טבריה, ת.ד 22, (מכללת רימונים)"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"54017","moe":"170704","name":"רמת דוד","off":"עמל רמת דוד","net":"עמל","d":"חיפה","s":"כללי","city":"עמק יזרעאל","addr":["מחנה יהודית, ד.נ. העמקים, 36356"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"43403","moe":"775395","name":"תיכון חברתי ת\"א","off":"","net":"דרור","d":"תל אביב","s":"כללי","city":"תל אביב-יפו","addr":["רח' מפרץ שלמה 4, תל אביב","רח' יפת 28, יפו"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"52919","moe":"775692","name":"תיכון עוצמ\"ה עתיד זוקו","off":"עתיד זוקו","net":"עתיד","d":"חיפה","s":"כללי","city":"קרית ביאליק","addr":["רח' חרושת 25 קרית ביאליק, מיקוד 2751042"],"sups":["ליאת צבר"],"prev":"רביב שורץ","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"54040","moe":"775734","name":"תיכון שיח","off":"","net":"עמל","d":"חיפה","s":"כללי","city":"מטה אשר","addr":["רח' האנפה 2, עמקה"],"sups":["ליאת צבר"],"prev":"ליאת צבר","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"45005","moe":"170589","name":"אורט אורמת","off":"","net":"אורט","d":"תל אביב","s":"כללי","city":"יבנה","addr":["רח' שידולובסקי 1, יבנה"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"45002","moe":"170654","name":"אורט תל נוף","off":"","net":"אורט","d":"תל אביב","s":"כללי","city":"ברנר","addr":["בסיס תל נוף, ת.ד. 3500, גדרה 7071000"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"45001","moe":"170647","name":"אורט תעשייה אווירית","off":"אורט תעשיה אוירית","net":"אורט","d":"תל אביב","s":"כללי","city":"מודיעין","addr":["התעשייה האווירית לישראל, נתב\"ג לוד 7010000"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"45007","moe":"775767","name":"דן גורמה","off":"אורט דן גורמה","net":"אורט","d":"תל אביב","s":"כללי","city":"תל אביב","addr":["רח' נס לגויים 53, תל-אביב"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"64001","moe":"775296","name":"עמל אשדוד","off":"","net":"עמל","d":"ירושלים","s":"כללי","city":"אשדוד","addr":["רח' האורגים 10, ת\"ד 15204, אשדוד 77609"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"44050","moe":"775056","name":"עמל טק אין","off":"","net":"עמל","d":"תל אביב","s":"כללי","city":"שוהם","addr":["מחנה בן עמי, ת\"ד 923 שוהם, 6085001"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"82918","moe":"775320","name":"עתיד באר שבע","off":"תיכון עתיד באר-שבע","net":"עתיד","d":"באר שבע","s":"כללי","city":"באר שבע","addr":["רח' תוצרת הארץ 1, גדוד הנגב באר-שבע"],"sups":["סיגלית דאי"],"prev":"קתרינה ברברשטיין","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"42919","moe":"775023","name":"עתיד פלמחים","off":"","net":"עתיד","d":"תל אביב","s":"כללי","city":"שורק","addr":["בסיס פלמחים, ד.צ 02777 בסיס פלמחים"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"65079","moe":"775452","name":"צור ברק","off":"תיכון אורט צור ברק","net":"אורט","d":"ירושלים","s":"כללי","city":"קריית מלאכי","addr":["מחנה צבאי עמנואל (ג'וליס), ד.צ. 03083, צה\"ל"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"82921","moe":"775338","name":"קמ\"ג דימונה","off":"עתיד קמ\"ג","net":"עמל","d":"באר שבע","s":"כללי","city":"דימונה","addr":["קמ\"ג, ת.ד 9001 באר שבע, 81490"],"sups":["סיגלית דאי"],"prev":"סיגלית דאי","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"44008","moe":"775064","name":"תיכון החממה","off":"","net":"עמל","d":"תל אביב","s":"כללי","city":"הוד השרון","addr":["החרש 9 הוד השרון, 4524082"],"sups":["סיגלית דאי","רויטל אמיר"],"prev":"סיגלית דאי","chg":true,"ther":"עירית אלדד","alias":[]},{"semel":"54112","moe":"775643","name":"אום אל פחם בנים","off":"אלאופוק (אום אל פחם בנים)","net":"סכנין","d":"חיפה","s":"ערבי","city":"אום אל פחם","addr":["רח' עין אלנבי 45, אום אל פחם 30010"],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"83424","moe":"775783","name":"מצפה רמון","off":"התיכון החברתי מצפה רמון","net":"דרור","d":"באר שבע","s":"כללי","city":"מצפה רמון","addr":["רח' נחל האלה 5, מצפה רמון"],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"52901","moe":"775122","name":"עתיד כרמיאל","off":"","net":"עתיד","d":"חיפה","s":"כללי","city":"כרמיאל","addr":["רח' צהל 103 כרמיאל, תד 1039"],"sups":["רביב שורץ"],"prev":"רביב שורץ","chg":false,"ther":"אסתי רייפר","alias":[]},{"semel":"54106","moe":"775437","name":"שפרעם","off":"תיכון מהאראת (שפרעם)","net":"סכנין","d":"חיפה","s":"ערבי","city":"שפרעם","addr":["רח' תאופיק זיאד 150, שפרעם, ת.ד 769, מיקוד 20200"],"sups":["רביב שורץ"],"prev":"אחמד מחאמיד","chg":true,"ther":"אסתי רייפר","alias":[]},{"semel":"65007","moe":"170720","name":"אורט בית הערבה","off":"","net":"אורט","d":"ירושלים","s":"כללי","city":"ירושלים","addr":["רח' בית הערבה 7, ירושלים 9338907"],"sups":["רויטל אמיר"],"prev":"רויטל אמיר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"63401","moe":"775288","name":"חוש\"ן","off":"","net":"דרור","d":"ירושלים","s":"כללי","city":"ירושלים","addr":["רח' רבי חייא 3, ירושלים, 93669"],"sups":["רויטל אמיר"],"prev":"רויטל אמיר","chg":false,"ther":"עירית אלדד","alias":[]},{"semel":"83425","moe":"775841","name":"דרור נווה מדבר","off":"","net":"דרור","d":"באר שבע","s":"ערבי","city":"נווה מדבר","addr":["נווה מדבר"],"sups":["שרונה בלוך"],"prev":"יסמין אמון","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"84101","moe":"775569","name":"לקייה","off":"סכנין - לקייה","net":"סכנין","d":"באר שבע","s":"ערבי","city":"לקייה","addr":["רח' אלחקמה, שכונה 8 מגרש 293, לקייה"],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"84104","moe":"775833","name":"סכנין תל שבע","off":"","net":"סכנין","d":"באר שבע","s":"ערבי","city":"סכנין","addr":["תל שבע שכונה 11"],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]},{"semel":"84102","moe":"775650","name":"שגב שלום","off":"סכנין -שגב שלום","net":"סכנין","d":"באר שבע","s":"ערבי","city":"שגב שלום","addr":["א.ת. שגב שלום"],"sups":["שרונה בלוך"],"prev":"אחמד מחאמיד","chg":true,"ther":"שרית תורג'מן יפה","alias":[]}],"nets":[{"name":"סכנין","count":17,"people":[{"n":"עומר בדרנה","roles":["מנכ״ל"],"contact":false},{"n":"מחמוד עבד אלחמיד","roles":[],"contact":true}],"d":"חיפה 10 · באר שבע 3 · ירושלים 4"},{"name":"עתיד","count":16,"people":[{"n":"יוסי ממו","roles":["מנכ״ל"],"contact":false},{"n":"יוליה ארגמן","roles":[],"contact":true}],"d":"חיפה 9 · תל אביב 3 · באר שבע 3 · ירושלים 1"},{"name":"עמל","count":11,"people":[{"n":"קארן טל","roles":["מנכ״לית"],"contact":false},{"n":"עופר ירושלמי","roles":[],"contact":true},{"n":"תמר פלד אמיר","roles":["משנה למנכ״לית"],"contact":false}],"d":"חיפה 5 · תל אביב 3 · באר שבע 2 · ירושלים 1"},{"name":"אורט","count":7,"people":[{"n":"רז פרויליך","roles":["מנכ״ל"],"contact":false},{"n":"נעה בן יוסף","roles":[],"contact":true},{"n":"שרי תימורה","roles":["סמנכ״לית"],"contact":true}],"d":"חיפה 1 · תל אביב 4 · ירושלים 2"},{"name":"דרור","count":6,"people":[{"n":"ענבל רון","roles":["מנכ״לית"],"contact":false},{"n":"גליה רז כרמל","roles":[],"contact":true}],"d":"חיפה 2 · תל אביב 1 · באר שבע 2 · ירושלים 1"},{"name":"בית אל","count":1,"people":[{"n":"רינהרד לנגאור","roles":["מנכ״ל"],"contact":false},{"n":"שרית גולדרינג","roles":[],"contact":true}],"d":"חיפה 1"},{"name":"בית שולמית","count":1,"people":[{"n":"הרב דביר בניהו","roles":["מנכ״ל"],"contact":true}],"d":"ירושלים 1"},{"name":"טל חרמון","count":1,"people":[{"n":"הרב יחיאל פרץ","roles":["ראש הישיבה"],"contact":false},{"n":"איתמר חנן","roles":[],"contact":true}],"d":"חיפה 1"},{"name":"ישיבת חנוך לנער","count":1,"people":[{"n":"שניאור ליפסקר","roles":["מנכ״ל"],"contact":true}],"d":"חיפה 1"},{"name":"כפר זיתים","count":1,"people":[{"n":"יהודה הרצליך","roles":["מנכ״ל"],"contact":false},{"n":"איתמר פוזן","roles":[],"contact":true}],"d":"חיפה 1"},{"name":"נחלים","count":1,"people":[{"n":"צבי צוויבל","roles":["יו״ר עמותה"],"contact":false},{"n":"אודי נתיב","roles":["מנכ״ל"],"contact":true}],"d":"תל אביב 1"},{"name":"רימונים","count":1,"people":[{"n":"שני אזולאי","roles":["מנכ״לית מלונות ישראל קנדה"],"contact":false},{"n":"גילה כהנא","roles":[],"contact":true}],"d":"חיפה 1"}],"order":{"sup":["יסמין אמון","יששכר חפץ","ליאת צבר","סיגלית דאי","ויסאם סואלחה","רביב שורץ","שרונה בלוך","רויטל אמיר"],"ther":["אסתי רייפר","שרית תורג'מן יפה","עירית אלדד","ד״ר מיכל גלסר"],"d":["חיפה","תל אביב","באר שבע","ירושלים"],"s":["כללי","ערבי","חרדי"],"n":["סכנין","עתיד","עמל","אורט","דרור","בית אל","בית שולמית","טל חרמון","ישיבת חנוך לנער","כפר זיתים","נחלים","רימונים"]}}</script>
 <script src="site.js" defer></script>
 <script src="search.js" defer></script>
 <script>
 (function(){
 'use strict';
 var D=JSON.parse(document.getElementById('ppData').textContent);
-var S=D.schools, C=D.colors, coll=new Intl.Collator('he');
-var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var coll=new Intl.Collator('he');
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-/* חיפוש סלחני: בלי גרשיים, מקפים וסוגריים, וכל מילה בנפרד */
-function norm(s){return String(s||'').toLowerCase().replace(/[\u05F3\u05F4'"`]/g,'').replace(/[-\u2013\u2014_\/\\(),.:;\u00B7|+]/g,' ').replace(/\s+/g,' ').trim();}
-var X='<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"/></svg>';
-var GO='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg>';
+function norm(s){return String(s||'').toLowerCase().replace(/[\u05F3\u05F4'"`]/g,'').replace(/[-\u2013\u2014_\/\\(),.:;|+]/g,' ').replace(/\s+/g,' ').trim();}
+function toks(v){return norm(v).split(' ').filter(Boolean);}
+function hit(h,t){for(var i=0;i<t.length;i++){if(h.indexOf(t[i])<0)return false;}return true;}
 
-var F=[
-  {k:'sup', lb:'מפקח.ת פדגוגי.ת', sh:'פדגוגי', get:function(s){return s.sups;}, col:C.sup, mk:'dot'},
-  {k:'ther',lb:'מפקחת המערך הטיפולי', sh:'טיפולי', get:function(s){return s.ther?[s.ther]:[];}, col:C.ther, mk:'dm'},
-  {k:'d',   lb:'מחוז', sh:'מחוז', get:function(s){return [s.d];}},
-  {k:'s',   lb:'מגזר', sh:'מגזר', get:function(s){return [s.s];}, col:C.sector, mk:'sq'},
-  {k:'n',   lb:'רשת / עמותה', sh:'רשת', get:function(s){return [s.net];}}
-];
-var FK={}; F.forEach(function(f){FK[f.k]=f;});
-var FLAGS=[
-  {k:'chg',  lb:'החליפו מפקח.ת מתשפ״ו', t:function(s){return s.chg;}},
-  {k:'joint',lb:'ליווי משותף', t:function(s){return s.sups.length>1;}}
-];
-var FL={}; FLAGS.forEach(function(x){FL[x.k]=x;});
+var S=D.schools.slice().sort(function(a,b){return coll.compare(a.name,b.name);});
+S.forEach(function(s){ s._h=norm([s.name,s.off,s.semel,s.moe,s.net,s.d,s.s,s.city,s.sups.join(' '),s.prev,s.ther,(s.alias||[]).join(' ')].join(' ')); });
+D.nets.forEach(function(n){ n._h=norm([n.name].concat(n.people.map(function(p){return p.n+' '+p.roles.join(' ');})).join(' ')); });
 
-var st={q:'',f:{},fl:{},g:'sup',sk:'name',sd:1,view:'table'};
-function resetFilters(){ st.q=''; F.forEach(function(f){st.f[f.k]=[];}); FLAGS.forEach(function(x){st.fl[x.k]=false;}); }
-resetFilters();
+/* הראש הדביק נעצר מתחת לתפריט האתר, שגם הוא דביק */
+function navh(){ var nv=document.querySelector('.nav'); document.documentElement.style.setProperty('--navh',(nv?nv.offsetHeight:0)+'px'); }
+navh(); window.addEventListener('resize',navh);
 
-S.forEach(function(s){
-  s._h=norm([s.name,s.off,s.semel,s.moe,s.net,s.d,s.s,s.city,(s.addr||[]).join(' '),s.sups.join(' '),s.prev,s.ther,(s.alias||[]).join(' ')].join(' '));
-});
+var F={q:$('q'),sup:$('fSup'),ther:$('fTher'),d:$('fD'),n:$('fN'),chg:$('fChg')};
+function fill(sel,vals){ vals.forEach(function(v){ var o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); }); }
+fill(F.sup,D.order.sup); fill(F.ther,D.order.ther); fill(F.d,D.order.d); fill(F.n,D.order.n);
 
-function match(s,skipF,skipFl){
-  if(st.q){ var t=norm(st.q).split(' '); for(var i=0;i<t.length;i++){ if(t[i]&&s._h.indexOf(t[i])<0) return false; } }
-  for(var j=0;j<F.length;j++){
-    var f=F[j]; if(f.k===skipF) continue;
-    var sel=st.f[f.k]; if(!sel.length) continue;
-    var v=f.get(s), ok=false;
-    for(var m=0;m<v.length;m++){ if(sel.indexOf(v[m])>-1){ok=true;break;} }
-    if(!ok) return false;
-  }
-  for(var k=0;k<FLAGS.length;k++){ var x=FLAGS[k]; if(x.k!==skipFl && st.fl[x.k] && !x.t(s)) return false; }
-  return true;
+function schoolHtml(s){
+  return '<li class="pp-sc">'
+    +'<div><h2>'+esc(s.name)+'</h2>'
+      +'<p class="pp-sub">'+esc([s.net,s.d,s.s].join(' · '))+(s.city?' · '+esc(s.city):'')+'</p>'
+      +(s.off?'<p class="pp-off">'+esc(s.off)+'</p>':'')
+      +'<p class="pp-off">סמל מוסד '+esc(s.semel)+(s.moe?' · סמל משרד החינוך '+esc(s.moe):'')+'</p></div>'
+    +'<div><p class="pp-lbl">פיקוח פדגוגי</p><p class="pp-v">'+esc(s.sups.join(', '))+'</p>'
+      +'<p class="pp-prev">בתשפ״ו: '+esc(s.prev||'לא היה בפריסה')+(s.chg?'<span class="pp-chg">שינוי</span>':'')+'</p></div>'
+    +'<div><p class="pp-lbl">מערך טיפולי</p><p class="pp-v">'+esc(s.ther||'—')+'</p></div>'
+    +'</li>';
 }
-function mark(kind,c){ return c?'<span class="pp-'+kind+'" style="--c:'+c+'" aria-hidden="true"></span>':''; }
-function activeCount(){ var n=st.q?1:0; F.forEach(function(f){n+=st.f[f.k].length;}); FLAGS.forEach(function(x){if(st.fl[x.k])n++;}); return n; }
+function netHtml(n){
+  var ppl=n.people.length?'<ul class="pp-ppl">'+n.people.map(function(p){
+    return '<li><span class="pp-v">'+esc(p.n)+'</span>'+(p.contact?'<span class="pp-tag">איש.ת קשר לבתי הספר</span>':'')
+      +(p.roles.length?'<p class="role">'+esc(p.roles.join(' · '))+'</p>':'')+'</li>';
+  }).join('')+'</ul>':'<p class="pp-off">אין פרטי הנהלה לרשת בקובץ.</p>';
+  return '<article class="pp-net"><h2>'+esc(n.name)+'<span>'+(n.count===1?'בית ספר אחד':n.count+' בתי ספר')+'</span></h2>'
+    +'<p class="pp-sub">'+esc(n.d)+'</p>'+ppl
+    +'<button type="button" class="pp-lnk" data-net="'+esc(n.name)+'">בתי הספר של הרשת</button></article>';
+}
 
-/* ---- בניית לוח הסינונים (פעם אחת) ---- */
-var fbox=$('ppFacets');
-(function(){
-  var h='';
-  F.forEach(function(f){
-    h+='<div class="pp-facet" role="group" aria-labelledby="fl-'+f.k+'"><div class="lb" id="fl-'+f.k+'">'+esc(f.lb)+'</div><div class="pp-chips">';
-    D.order[f.k].forEach(function(v){
-      var c=f.col&&f.col[v];
-      h+='<button type="button" class="pp-chip" data-f="'+f.k+'" data-v="'+esc(v)+'" aria-pressed="false"'+(c?' style="--cc:'+c+'"':'')+'>'+mark(f.mk,c)+'<span>'+esc(v)+'</span><span class="c"></span></button>';
-    });
-    h+='</div></div>';
+function render(){
+  var t=toks(F.q.value);
+  var list=S.filter(function(s){
+    return (!F.sup.value||s.sups.indexOf(F.sup.value)>-1)&&(!F.ther.value||s.ther===F.ther.value)
+      &&(!F.d.value||s.d===F.d.value)&&(!F.n.value||s.net===F.n.value)&&(!F.chg.checked||s.chg)&&hit(s._h,t);
   });
-  h+='<div class="pp-facet" role="group" aria-labelledby="fl-x"><div class="lb" id="fl-x">מצב</div><div class="pp-chips">';
-  FLAGS.forEach(function(x){ h+='<button type="button" class="pp-chip" data-fl="'+x.k+'" aria-pressed="false" style="--cc:#8A5A00"><span>'+esc(x.lb)+'</span><span class="c"></span></button>'; });
-  fbox.innerHTML=h+'</div></div>';
-})();
-var CHIPS=[].slice.call(fbox.querySelectorAll('.pp-chip'));
-var PEOPLE=[].slice.call(document.querySelectorAll('.pp-person'));
-
-/* ---- מיון וקיבוץ ---- */
-var SORTK={semel:function(s){return s.semel;},name:function(s){return s.name;},net:function(s){return s.net;},d:function(s){return s.d;},
-  s:function(s){return s.s;},sup:function(s){return s.sups.join(' ');},prev:function(s){return s.prev;},ther:function(s){return s.ther;}};
-function sortList(a){
-  var k=st.sk, g=SORTK[k]||SORTK.name, d=st.sd;
-  return a.slice().sort(function(x,y){
-    var r=k==='semel'?((+x.semel||0)-(+y.semel||0)):coll.compare(g(x)||'',g(y)||'');
-    return (r||coll.compare(x.name,y.name))*d;
+  $('list').innerHTML=list.map(schoolHtml).join('');
+  $('list').hidden=!list.length; $('empty').hidden=!!list.length;
+  $('cnt').textContent=list.length===S.length?'כל '+S.length+' בתי הספר':(list.length===1?'בית ספר אחד':list.length+' בתי ספר');
+  $('clr').hidden=!(F.q.value||F.sup.value||F.ther.value||F.d.value||F.n.value||F.chg.checked);
+}
+function renderNets(){
+  var t=toks($('qn').value), list=D.nets.filter(function(n){return hit(n._h,t);});
+  $('nets').innerHTML=list.map(netHtml).join('');
+  $('emptyN').hidden=!!list.length;
+  $('cntN').textContent=list.length===D.nets.length?'כל '+list.length+' הרשתות והעמותות':(list.length===1?'רשת אחת':list.length+' רשתות');
+}
+function tab(which,focus){
+  ['s','n'].forEach(function(k){
+    var on=k===which, b=$('tab-'+k);
+    b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1;
+    $('panel-'+k).hidden=!on; $('head-'+k).hidden=!on;
+    if(on&&focus) b.focus();
   });
 }
-function groups(list){
-  if(!st.g) return [{k:'',items:sortList(list)}];
-  var f=FK[st.g], m={}, sel=st.f[st.g];
-  /* כשמסננים לפי אותה עמודה שמקבצים לפיה — רק הערכים שנבחרו מקבלים כותרת,
-     אחרת מוסד בליווי משותף היה פותח קבוצה גם למפקח.ת שלא סוננו אליו */
-  list.forEach(function(s){ f.get(s).forEach(function(v){ if(sel.length&&sel.indexOf(v)<0) return; (m[v]=m[v]||[]).push(s); }); });
-  return D.order[st.g].filter(function(v){return m[v];}).map(function(v){return {k:v,items:sortList(m[v])};});
-}
-function plural(n){ return n===1?'מוסד אחד':n+' מוסדות'; }
-function ghead(g){ var f=FK[st.g]; return '<span class="grp-in">'+mark(f.mk,f.col&&f.col[g.k])+'<span>'+esc(g.k)+'</span><span class="gc">'+plural(g.items.length)+'</span></span>'; }
-function supsHtml(s){ return s.sups.map(function(n){return '<span class="sup-cell">'+mark('dot',C.sup[n]||'#52687A')+esc(n)+'</span>';}).join(' '); }
-function therHtml(s){ return s.ther?'<span class="sup-cell">'+mark('dm',C.ther[s.ther]||'#52687A')+esc(s.ther)+'</span>':'—'; }
+function toTop(){ var y=$('stick').getBoundingClientRect().top+window.pageYOffset-(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--navh'))||0)-8;
+  if(window.pageYOffset>y) window.scrollTo({top:y,behavior:'smooth'}); }
 
-/* ---- טבלה: השורות הסטטיות מסודרות מחדש; מוסד בליווי משותף משוכפל לקבוצה השנייה ---- */
-var tb=$('tb'), ROW={};
-[].forEach.call(tb.querySelectorAll('tr[data-i]'),function(tr){ROW[tr.getAttribute('data-i')]=tr;});
-function renderTable(gs){
-  var frag=document.createDocumentFragment(), used={};
-  gs.forEach(function(g){
-    if(g.k){ var tr=document.createElement('tr'); tr.className='grp'; tr.innerHTML='<th colspan="9" scope="colgroup">'+ghead(g)+'</th>'; frag.appendChild(tr); }
-    g.items.forEach(function(s){ var r=ROW[s.i]; if(used[s.i]) r=r.cloneNode(true); used[s.i]=1; frag.appendChild(r); });
-  });
-  tb.textContent=''; tb.appendChild(frag);
-  [].forEach.call(document.querySelectorAll('table.pk thead th[data-k]'),function(th){
-    if(th.getAttribute('data-k')===st.sk) th.setAttribute('aria-sort',st.sd>0?'ascending':'descending'); else th.removeAttribute('aria-sort');
-  });
-}
-function card(s){
-  return '<button type="button" class="pp-card" data-i="'+s.i+'">'
-    +'<span class="pc-top"><span class="pc-name">'+esc(s.name)+'</span>'+(s.chg?'<span class="chg">שינוי</span>':'')+'</span>'
-    +(s.off?'<span class="pc-off">'+esc(s.off)+'</span>':'')
-    +'<span class="pc-meta">'+esc([s.net,s.d,s.s].join(' · '))+(s.semel?' · סמל '+esc(s.semel):'')+'</span>'
-    +'<span class="pc-row"><span class="pc-k">פדגוגי</span>'+supsHtml(s)+'</span>'
-    +'<span class="pc-row"><span class="pc-k">טיפולי</span>'+therHtml(s)+'</span></button>';
-}
-function renderCards(gs){
-  $('cardsView').innerHTML=gs.map(function(g){
-    return '<section>'+(g.k?'<h3 class="pp-gh">'+ghead(g)+'</h3>':'')+'<div class="pp-grid">'+g.items.map(card).join('')+'</div></section>';
-  }).join('');
-}
-
-/* ---- כתובת: מצב הסינון נשמר ב-# כדי שאפשר לשתף תצוגה ---- */
-function syncHash(){
-  var p=[];
-  if(st.q) p.push('q='+encodeURIComponent(st.q));
-  F.forEach(function(f){ if(st.f[f.k].length) p.push(f.k+'='+st.f[f.k].map(encodeURIComponent).join(',')); });
-  FLAGS.forEach(function(x){ if(st.fl[x.k]) p.push(x.k+'=1'); });
-  if(st.g!=='sup') p.push('g='+(st.g||'none'));
-  var h=p.length?'#'+p.join('&'):'';
-  if(!h && location.hash.indexOf('=')<0) return;      /* לא לדרוס עוגן של מדור */
-  if(location.hash!==h) try{ history.replaceState(null,'',location.pathname+location.search+h); }catch(e){}
-}
-function readHash(){
-  var h=location.hash.slice(1); if(h.indexOf('=')<0) return false;
-  resetFilters(); st.g='sup';
-  h.split('&').forEach(function(kv){
-    var i=kv.indexOf('='); if(i<0) return;
-    var k=kv.slice(0,i), v=kv.slice(i+1);
-    try{
-      if(k==='q') st.q=decodeURIComponent(v);
-      else if(FK[k]) st.f[k]=v.split(',').map(decodeURIComponent).filter(function(x){return D.order[k].indexOf(x)>-1;});
-      else if(FL[k]) st.fl[k]=v==='1';
-      else if(k==='g') st.g=(v==='none')?'':(FK[v]?v:'sup');
-    }catch(e){}
-  });
-  $('ppQ').value=st.q; $('ppGroup').value=st.g;
-  return true;
-}
-
-/* ---- עדכון כללי ---- */
-function update(){
-  var list=S.filter(function(s){return match(s);});
-  CHIPS.forEach(function(b){
-    var n=0, on, fk=b.getAttribute('data-f'), v=b.getAttribute('data-v'), fl=b.getAttribute('data-fl');
-    if(fk){ var f=FK[fk]; S.forEach(function(s){ if(f.get(s).indexOf(v)>-1 && match(s,fk)) n++; }); on=st.f[fk].indexOf(v)>-1; }
-    else { var x=FL[fl]; S.forEach(function(s){ if(x.t(s) && match(s,null,fl)) n++; }); on=st.fl[fl]; }
-    b.querySelector('.c').textContent=n;
-    b.setAttribute('aria-pressed',on?'true':'false');
-    b.disabled=!on&&n===0;
-  });
-  PEOPLE.forEach(function(b){ b.setAttribute('aria-pressed',st.f[b.getAttribute('data-f')].indexOf(b.getAttribute('data-v'))>-1?'true':'false'); });
-
-  $('ppShown').textContent=list.length;
-  var gs=groups(list), dup=st.g==='sup'&&gs.length>1&&list.some(function(s){return s.sups.length>1;});
-  $('ppNote').textContent=dup?'· מוסד בליווי משותף מופיע אצל שני המפקחים':'';
-  var p='';
-  if(st.q) p+=pill('q','','חיפוש: '+st.q);
-  F.forEach(function(f){ st.f[f.k].forEach(function(v){ p+=pill(f.k,v,f.sh+': '+v); }); });
-  FLAGS.forEach(function(x){ if(st.fl[x.k]) p+=pill('fl',x.k,x.lb); });
-  if(p) p+='<button type="button" class="pp-clear" data-clear="1">ניקוי כל הסינונים</button>';
-  $('ppPills').innerHTML=p;
-  var n=activeCount(); $('ppFn').textContent=n||'';
-  $('ppEmpty').hidden=list.length>0;
-  $('tableView').hidden=st.view!=='table'||!list.length;
-  $('cardsView').hidden=st.view!=='cards'||!list.length;
-  renderTable(gs); renderCards(gs); syncHash();
-}
-function pill(k,v,label){ return '<button type="button" class="pp-pill" data-pk="'+k+'" data-pv="'+esc(v)+'" aria-label="הסרת הסינון '+esc(label)+'">'+esc(label)+X+'</button>'; }
-function toggleF(k,v){ var a=st.f[k], i=a.indexOf(v); if(i>-1){a.splice(i,1);return false;} a.push(v); return true; }
-function toList(focus){
-  var sec=$('mosdot'); if(sec.getBoundingClientRect().top>140||sec.getBoundingClientRect().top<-40) sec.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
-  if(focus) $('ppStatus').focus({preventScroll:true});
-}
-function say(msg){ var l=$('ppLive'); l.textContent=''; setTimeout(function(){l.textContent=msg;},60); }
-
-/* ---- תצוגה ---- */
-function setView(v,save){
-  st.view=v==='cards'?'cards':'table';
-  [].forEach.call(document.querySelectorAll('[data-view]'),function(b){ b.setAttribute('aria-pressed',b.getAttribute('data-view')===st.view?'true':'false'); });
-  if(save) try{ localStorage.setItem('pp-view',st.view); }catch(e){}
-  update();
-}
-
-/* ---- מגירת פרטי המוסד ---- */
-var dw=$('ppDw'), scrim=$('ppScrim'), lastFocus=null;
-function openDw(i,from){
-  var s=S[i]; if(!s) return;
-  lastFocus=from||document.activeElement;
-  var net=D.nets[s.net], h='';
-  function row(k,v){ if(v) h+='<dt>'+k+'</dt><dd>'+v+'</dd>'; }
-  h+='<header><p class="eyebrow">'+esc(s.net)+' · '+esc(s.d)+' · '+esc(s.s)+'</p><h2 id="ppDwT">'+esc(s.name)+'</h2>'
-    +(s.off?'<p class="off">'+esc(s.off)+'</p>':'')
-    +'<button type="button" class="x" data-close="1" aria-label="סגירת הפרטים">'+X.replace(/11/g,'16')+'</button></header><div class="bd">';
-  h+='<div class="gh">הפיקוח בתשפ״ז</div><dl>';
-  row('פיקוח פדגוגי',supsHtml(s)+(s.sups.length>1?'<span class="tag2">ליווי משותף</span>':''));
-  row('בתשפ״ו',esc(s.prev||'לא היה בפריסה')+(s.chg?'<span class="chg">שינוי</span>':''));
-  row('מערך טיפולי',therHtml(s));
-  h+='</dl><div class="gh">פרטי המוסד</div><dl>';
-  row('סמל מוסד',esc(s.semel)); row('סמל משרד החינוך',esc(s.moe));
-  row('רשת',esc(s.net)); row('מחוז',esc(s.d)); row('מגזר',esc(s.s)); row('רשות מקומית',esc(s.city));
-  row('כתובת',(s.addr||[]).map(esc).join('<br>'));
-  row('טלפון המוסד',(s.tel||[]).map(function(t){return '<a href="'+esc(t.href)+'" dir="ltr">'+esc(t.t)+'</a>';}).join(''));
-  h+='</dl>';
-  if(net&&(net.lead.length||net.contact.length)){
-    h+='<div class="gh">הרשת · '+esc(s.net)+'</div><dl>';
-    row('הנהלה',net.lead.map(function(x){return esc(x.n)+(x.r?' <span class="tag2">'+esc(x.r)+'</span>':'');}).join('<br>'));
-    row('איש.ת קשר',net.contact.map(esc).join('<br>'));
-    h+='</dl>';
-  }
-  h+='<div class="gh">להמשיך מכאן</div><div class="acts">';
-  s.sups.forEach(function(n){ h+='<button type="button" data-go="sup" data-v="'+esc(n)+'">כל המוסדות של '+esc(n)+GO+'</button>'; });
-  if(s.ther) h+='<button type="button" data-go="ther" data-v="'+esc(s.ther)+'">כל המוסדות של '+esc(s.ther)+' · מערך טיפולי'+GO+'</button>';
-  h+='<button type="button" data-go="n" data-v="'+esc(s.net)+'">כל המוסדות ברשת '+esc(s.net)+GO+'</button>';
-  h+='<a href="pikuah-miktzoi.html">המגמות והפיקוח המקצועי במוסדות'+GO+'</a></div></div>';
-  dw.innerHTML=h;
-  dw.classList.add('on'); scrim.classList.add('on'); dw.setAttribute('aria-hidden','false');
-  document.documentElement.style.overflow='hidden';
-  setTimeout(function(){ var x=dw.querySelector('.x'); if(x) x.focus(); },30);
-}
-function closeDw(keepFocus){
-  if(!dw.classList.contains('on')) return;
-  dw.classList.remove('on'); scrim.classList.remove('on'); dw.setAttribute('aria-hidden','true');
-  document.documentElement.style.overflow='';
-  if(!keepFocus&&lastFocus&&document.body.contains(lastFocus)) lastFocus.focus();
-}
-dw.addEventListener('keydown',function(ev){
-  if(ev.key==='Escape'){ ev.preventDefault(); closeDw(); return; }
-  if(ev.key!=='Tab') return;
-  var f=dw.querySelectorAll('a[href],button:not([disabled])'); if(!f.length) return;
-  var a=f[0], z=f[f.length-1];
-  if(ev.shiftKey&&document.activeElement===a){ ev.preventDefault(); z.focus(); }
-  else if(!ev.shiftKey&&document.activeElement===z){ ev.preventDefault(); a.focus(); }
-});
-
-/* ---- פעולות ---- */
-function copyLink(btn){
-  var url=location.href, lbl=btn.querySelector('span'), orig=lbl.textContent;
-  function done(){ lbl.textContent='הקישור הועתק'; say('הקישור לתצוגה הנוכחית הועתק'); setTimeout(function(){lbl.textContent=orig;},2200); }
-  function fallback(){ var ta=document.createElement('textarea'); ta.value=url; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); done(); }catch(e){} ta.remove(); }
-  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(url).then(done,fallback); else fallback();
-}
-function csv(){
-  var list=sortList(S.filter(function(s){return match(s);}));
-  var H=['סמל מוסד','סמל משרד החינוך','שם המוסד','שם רשמי','רשת','מחוז','מגזר','רשות מקומית','מפקח.ת פדגוגי.ת תשפ״ז','מפקח.ת פדגוגי.ת תשפ״ו','מפקחת המערך הטיפולי','כתובת','טלפון המוסד'];
-  var rows=[H].concat(list.map(function(s){ return [s.semel,s.moe,s.name,s.off||'',s.net,s.d,s.s,s.city,s.sups.join(' + '),s.prev,s.ther,(s.addr||[]).join(' · '),(s.tel||[]).map(function(t){return t.t;}).join(' / ')]; }));
-  var txt='\ufeff'+rows.map(function(r){ return r.map(function(c){ c=String(c==null?'':c); return /[",\r\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(','); }).join('\r\n');
-  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));
-  a.download='פריסת-פיקוח-תשפז.csv'; document.body.appendChild(a); a.click();
-  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },800);
-  say('הקובץ ירד — '+plural(list.length));
-}
-
-document.addEventListener('click',function(ev){
-  var t=ev.target, b; if(!t.closest) return;
-  if((b=t.closest('.pp-chip'))){
-    var fl=b.getAttribute('data-fl');
-    if(fl) st.fl[fl]=!st.fl[fl]; else toggleF(b.getAttribute('data-f'),b.getAttribute('data-v'));
-    update(); return;
-  }
-  if((b=t.closest('.pp-person'))){ if(toggleF(b.getAttribute('data-f'),b.getAttribute('data-v'))){ update(); toList(); } else update(); return; }
-  if((b=t.closest('.pp-pill'))){
-    var k=b.getAttribute('data-pk'), v=b.getAttribute('data-pv');
-    if(k==='q'){ st.q=''; $('ppQ').value=''; } else if(k==='fl') st.fl[v]=false; else toggleF(k,v);
-    update(); $('ppStatus').focus({preventScroll:true}); return;
-  }
-  if(t.closest('[data-clear]')){ resetFilters(); $('ppQ').value=''; update(); $('ppQ').focus(); return; }
-  if((b=t.closest('[data-go]'))){
-    resetFilters(); $('ppQ').value='';
-    var g=b.getAttribute('data-go'); if(g==='chg') st.fl.chg=true; else st.f[g]=[b.getAttribute('data-v')];
-    closeDw(true); update(); toList(true); return;
-  }
-  if((b=t.closest('.th-sort'))){ var sk=b.getAttribute('data-k'); if(st.sk===sk) st.sd=-st.sd; else { st.sk=sk; st.sd=1; } update(); return; }
-  if((b=t.closest('.pp-card'))){ openDw(+b.getAttribute('data-i'),b); return; }
-  if((b=t.closest('#tb tr[data-i]'))){ if(t.closest('a')) return; openDw(+b.getAttribute('data-i'),b.querySelector('.pp-more')); return; }
-  if(t.closest('[data-close]')){ closeDw(); return; }
-  if((b=t.closest('[data-view]'))){ setView(b.getAttribute('data-view'),true); return; }
-  if((b=t.closest('[data-act]'))){
-    var a=b.getAttribute('data-act');
-    if(a==='link') copyLink(b); else if(a==='csv') csv(); else if(a==='print') window.print();
-    else if(a==='filters'){ var open=fbox.getAttribute('data-open')!=='true'; fbox.setAttribute('data-open',open?'true':'false'); b.setAttribute('aria-expanded',open?'true':'false'); }
-    return;
-  }
-});
 var qT;
-$('ppQ').addEventListener('input',function(){ var v=this.value; clearTimeout(qT); qT=setTimeout(function(){ st.q=v.trim(); update(); },140); });
-$('ppGroup').addEventListener('change',function(){ st.g=this.value; update(); });
-document.addEventListener('keydown',function(ev){
-  if(ev.key==='/'&&!ev.ctrlKey&&!ev.metaKey&&!ev.altKey){
-    var a=document.activeElement, tag=a&&a.tagName;
-    if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(a&&a.isContentEditable)||dw.classList.contains('on')) return;
-    ev.preventDefault(); $('ppQ').focus();
-  }
+F.q.addEventListener('input',function(){ clearTimeout(qT); qT=setTimeout(render,120); });
+[F.sup,F.ther,F.d,F.n,F.chg].forEach(function(x){ x.addEventListener('change',function(){ render(); toTop(); }); });
+$('qn').addEventListener('input',function(){ clearTimeout(qT); qT=setTimeout(renderNets,120); });
+$('clr').onclick=function(){ F.q.value=''; F.sup.value=F.ther.value=F.d.value=F.n.value=''; F.chg.checked=false; render(); F.q.focus(); };
+$('tab-s').onclick=function(){tab('s');}; $('tab-n').onclick=function(){tab('n');};
+document.querySelector('.pp-tabs').addEventListener('keydown',function(ev){
+  if(ev.key==='ArrowLeft'||ev.key==='ArrowRight'){ ev.preventDefault(); tab($('tab-s').getAttribute('aria-selected')==='true'?'n':'s',true); }
 });
-window.addEventListener('hashchange',function(){ if(readHash()) update(); });
-
-/* ---- התחלה ---- */
-readHash();
-var saved=null; try{ saved=localStorage.getItem('pp-view'); }catch(e){}
-setView(saved||(window.matchMedia&&matchMedia('(max-width:760px)').matches?'cards':'table'),false);
+$('nets').addEventListener('click',function(ev){
+  var b=ev.target.closest('[data-net]'); if(!b) return;
+  F.q.value=''; F.sup.value=F.ther.value=F.d.value=''; F.chg.checked=false; F.n.value=b.getAttribute('data-net');
+  render(); tab('s',true); toTop();
+});
+render(); renderNets();
 })();
 </script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>
 <script src="/ogen-widget.pinned.js" defer></script>
 <script src="feedback.js" defer></script>
-<script src="/toolbelt.js" defer></script>
-<script src="/pagenav.js" defer></script>
 </body>
 </html>
