@@ -240,6 +240,8 @@ function renderAll() {
   renderTeachers();
   renderTrainings();
   renderStats();
+  // לשונית "נוכחות במפגשים" (meetings.js) בונה את הרשימה מאותה קבוצה
+  if (typeof window.MEET_onRoster === 'function') window.MEET_onRoster();
 }
 
 function renderTrackPills() {

@@ -357,6 +357,9 @@ function guideMessage(g, url) {
     'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
     'המבט מציג רק את המקצוע' + (window.TS_guideSubjects(g).length > 1 ? 'ות' : '') + ' והמגזר שלך.',
     '',
+    'חדש: לשונית "נוכחות במפגשים" — מסמנים שם מי השתתף בכל מפגש זום,',
+    'ואפשר לפתוח רישום עצמי למורים עם קוד שמוקרן במפגש.',
+    '',
     'הקישור האישי שלך:',
     url,
     '',
@@ -450,8 +453,22 @@ async function seedContactsToServer(btn) {
   }
 }
 
+/* מפתחות רישום הנוכחות (14.9.26) — נוסעים בקישור האישי של כל מדריכ/ה (&k=).
+   נשלפים מהשרת בטוקן אדמין בלבד; בלי התחברות הקישורים נבנים בלי מפתח,
+   ולשונית הנוכחות אצל המדריכ/ה מבקשת קישור מעודכן. */
+let MEET_KEYS = {};
+let MEET_KEYS_STATE = 'unknown';
+async function loadMeetKeys() {
+  const slugs = Object.keys(window.TS_GUIDES || {}).join(',');
+  const res = await TS.api('meet.guideKeys', { slugs: slugs }, { cache: 'no' });
+  if (res && res.ok && res.data) { MEET_KEYS = res.data; MEET_KEYS_STATE = 'ok'; return; }
+  const err = (res && res.error) || '';
+  MEET_KEYS_STATE = /unknown_action/.test(err) ? 'legacy'
+    : (/unauthenticated|forbidden/.test(err) ? 'denied' : 'error');
+}
+
 async function init() {
-  await loadContacts();
+  await Promise.all([loadContacts(), loadMeetKeys()]);
   const res = await TS.api('teachers.list', {}, { cache: 'no' });
   if (res.ok) {
     TEACHERS = res.data || [];
@@ -478,6 +495,13 @@ function build() {
   const guides = window.TS_GUIDES || {};
   const inspectors = window.TS_INSPECTORS || {};
   const gapsList = [];
+  if (MEET_KEYS_STATE !== 'ok') {
+    gapsList.push('<b>קישורי המדריכות נבנו בלי מפתח הנוכחות</b> — ' +
+      (MEET_KEYS_STATE === 'denied' ? 'צריך להתחבר (login.html) ולרענן את הדף'
+        : MEET_KEYS_STATE === 'legacy' ? 'גרסת השרת עוד לא כוללת את רישום הנוכחות'
+        : 'השרת לא ענה, לרענן בעוד רגע') +
+      '. בלי המפתח לשונית "נוכחות במפגשים" אצל המדריכ/ה נעולה.');
+  }
 
   /* ----- מדריכות ----- */
   const jewish = [], arab = [];
@@ -502,7 +526,8 @@ function build() {
     /* המייל נוסע בקישור האישי בלבד — כך הוא לא יושב בקובץ ציבורי,
        והמדריכה עדיין רואה את הנוכחות וההדרכות שלה. */
     const url = BASE_URL + '/guide/?g=' + slug +
-      (contact.email ? '&guide=' + encodeURIComponent(contact.email) : '');
+      (contact.email ? '&guide=' + encodeURIComponent(contact.email) : '') +
+      (MEET_KEYS[slug] ? '&k=' + encodeURIComponent(MEET_KEYS[slug]) : '');
     LINKS['guide:' + slug] = { url, msg: guideMessage(g, url) };
     g.url = url;
     if (!contact.phone) gapsList.push('אין טלפון ל<b>' + esc(g.name) + '</b> (' + esc(g.subject) + ') — אי אפשר לשלוח בוואטסאפ');

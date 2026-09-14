@@ -24,7 +24,7 @@
 // ============================================================
 
 const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts',
-              'guide_files','guide_messages','guide_hours'];
+              'guide_files','guide_messages','guide_hours','meetings','meeting_attendance'];
 
 const SCHEMA = {
   networks:   ['id','name','color','contactEmail','inviteCode'],
@@ -52,7 +52,13 @@ const SCHEMA = {
   // guideSlug הוא המפתח מתוך assets/guides.js ולא מזהה פנימי חדש.
   guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
-  guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt']
+  guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
+  // נוכחות במפגשי ההדרכה (14.9.26) — ראו את המקטע בסוף הקובץ.
+  // בכוונה לא trainings/attendance: הדוחות הישנים מחשבים כל הדרכה מול כל מורי
+  // המקצוע בכל המגזרים, ומפגש של קבוצה אחת היה מסמן את כל השאר "לא נכחו".
+  meetings:           ['id','guideSlug','guideName','date','topic','source','openUntil','openedAt','closedAt','createdAt','updatedAt'],
+  meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
+                       'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -179,7 +185,11 @@ const PUBLIC_ACTIONS = new Set([
   // התחברות וקביעת סיסמה — חייבים להיות פתוחים
   'auth.status', 'auth.login', 'auth.setPassword', 'auth.changePassword', 'auth.verify',
   // הרשמה עצמית של רשתות עם קוד הזמנה — הקוד עצמו הוא ההרשאה
-  'auth.registerInfo', 'auth.register'
+  'auth.registerInfo', 'auth.register',
+  // נוכחות במפגשים — למדריכות ולמורים אין חשבונות. ההרשאה בפנים:
+  // meet.* דורשות מפתח מדריכה (k), checkin.* דורשות מפגש פתוח עכשיו + קוד מתחלף
+  'meet.state', 'meet.open', 'meet.close', 'meet.code', 'meet.mark',
+  'checkin.roster', 'checkin.submit'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -203,7 +213,9 @@ const STRICT_AUTH_ACTIONS = new Set([
   'contacts.upsert',
   // שליחת מייל בשם בעלת הסקריפט — בלי טוקן אדמין זו תיבת ריליי פתוחה לכל מי
   // שיודע את כתובת ה-/exec. חייב להישאר כאן גם אחרי הדלקת AUTH_ENFORCED.
-  'verify.mailSend'
+  'verify.mailSend',
+  // מפתחות הכניסה של המדריכות לרישום הנוכחות — מי שמחזיק מפתח מסמן נוכחות
+  'meet.guideKeys'
 ]);
 
 function getActiveUserEmail_() {
@@ -816,6 +828,16 @@ function handleRequest(params) {
       case 'guide.hours.add':     result = guideHoursAdd(params); break;
       case 'guide.hours.update':  result = guideHoursUpdate(params); break;
       case 'guide.hours.delete':  result = guideHoursDelete(params); break;
+
+      // נוכחות במפגשי ההדרכה (14.9.26)
+      case 'meet.state':          result = meetState(params); break;
+      case 'meet.open':           result = meetOpen(params); break;
+      case 'meet.close':          result = meetClose(params); break;
+      case 'meet.code':           result = meetCode(params); break;
+      case 'meet.mark':           result = meetMark(params); break;
+      case 'meet.guideKeys':      result = meetGuideKeys(params); break;
+      case 'checkin.roster':      result = checkinRoster(params); break;
+      case 'checkin.submit':      result = checkinSubmit(params); break;
 
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
       case 'ministry.dashboard':  result = withCache_('ministry.dashboard', scope, params, () => ministryDashboard(params)); break;
@@ -2858,4 +2880,452 @@ function guideHoursDelete(p) {
   if (!p.id) return { ok: false, error: 'missing_id' };
   const ok = deleteRowById_('guide_hours', p.id);
   return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
+}
+
+// ============================================================
+// נוכחות במפגשי ההדרכה (14.9.26)
+// ============================================================
+// המפגשים בזום. שני מסלולים, והמדריכה היא הקובעת:
+//
+// 1. המדריכה מסמנת נוכחות (meet.mark) מתוך רשימת הקבוצה בדשבורד שלה.
+// 2. גיבוי — המורה נרשם בעצמו בעמוד mifgash/?g=<slug> (checkin.submit).
+//    רישום עצמי נקלט רק כש:
+//      · המדריכה פתחה רישום למפגש של היום (meet.open) והחלון לא נסגר;
+//      · המורה הקליד את הקוד בן 4 הספרות שמוקרן במפגש. הקוד מתחלף כל דקה
+//        (HMAC על מזהה המפגש וחלון הזמן) — צילום שנשלח לוואטסאפ פג תוך דקה-שתיים.
+//    רישום עצמי נשמר כ-'pending' ולא נספר כנוכחות עד שהמדריכה מאשרת.
+//    מורה שנרשם בעצמו והמדריכה סימנה "לא נכח" — מסומן כפער.
+//
+// הרשאות: למדריכות ולמורים אין חשבונות, ולכן כל הפעולות ב-PUBLIC_ACTIONS.
+// פעולות המדריכה דורשות מפתח k = HMAC(סוד, slug) שנוסע בקישור האישי שלה.
+// מיטל מקבלת את המפתחות ב-meet.guideKeys (STRICT — טוקן אדמין). הסוד עצמו
+// יושב ב-ScriptProperties ולא יוצא מהשרת; גם הקוד המתחלף נגזר ממנו.
+// מי שיודע רק את ה-slug (הוא מופיע בכתובת עמוד הקבוצה) לא יכול לסמן נוכחות.
+
+const MEET_TZ = 'Asia/Jerusalem';
+const MEET_CODE_STEP_SEC = 60;        // הקוד מתחלף כל דקה
+const MEET_CODE_GRACE_STEPS = 1;      // גם הקוד הקודם מתקבל — עד שתי דקות סה"כ
+const MEET_OPEN_DEFAULT_MIN = 90;
+const MEET_OPEN_MAX_MIN = 180;
+const MEET_FAIL_PER_PERSON = 6;       // ניסיונות קוד שגויים לאדם לפני נעילה
+const MEET_FAIL_PER_MEETING = 200;    // תקרה כללית למפגש — מונע ניחוש בכוח
+const MEET_FAIL_WINDOW_SEC = 600;
+const MEET_MAX_MARK_RECORDS = 500;
+
+function meetSecret_() {
+  const props = PropertiesService.getScriptProperties();
+  let s = props.getProperty('MEET_SECRET');
+  if (!s) {
+    s = Utilities.getUuid() + Utilities.getUuid();
+    props.setProperty('MEET_SECRET', s);
+  }
+  return s;
+}
+
+function meetHmacHex_(msg) {
+  const sig = Utilities.computeHmacSha256Signature(String(msg), meetSecret_());
+  return sig.map(b => ((b + 256) % 256).toString(16).padStart(2, '0')).join('');
+}
+
+function meetSlug_(v) {
+  const s = String(v || '').trim();
+  return /^[a-z0-9_-]{1,40}$/i.test(s) ? s : '';
+}
+
+function meetGuideKey_(slug) {
+  return meetHmacHex_('guide:' + slug).slice(0, 16);
+}
+
+// השוואה באורך קבוע — לא מדליפה כמה תווים נכונים דרך זמן התגובה
+function meetSafeEqual_(a, b) {
+  a = String(a || ''); b = String(b || '');
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+// מחזיר את ה-slug אם המפתח תקין, אחרת ''
+function meetAuthGuide_(p) {
+  const slug = meetSlug_(p.guide);
+  if (!slug) return '';
+  return meetSafeEqual_(p.k, meetGuideKey_(slug)) ? slug : '';
+}
+
+function meetToday_() {
+  return Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd');
+}
+
+function meetDate_(v) {
+  const s = String(toIso_(v) || '').slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : '';
+}
+
+function meetId_(slug, date) {
+  return 'mt_' + slug + '_' + date.replace(/-/g, '');
+}
+
+function meetCodeAt_(meetingId, step) {
+  const hex = meetHmacHex_('code:' + meetingId + ':' + step);
+  return String(parseInt(hex.slice(0, 8), 16) % 10000).padStart(4, '0');
+}
+
+function meetStep_(ms) {
+  return Math.floor(ms / 1000 / MEET_CODE_STEP_SEC);
+}
+
+function meetStr_(v, max) {
+  return String(v === undefined || v === null ? '' : v).trim().slice(0, max);
+}
+
+function meetNormName_(s) {
+  return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function meetRecords_(v) {
+  if (Array.isArray(v)) return v;
+  if (typeof v === 'string' && v) { try { const a = JSON.parse(v); return Array.isArray(a) ? a : []; } catch (e) {} }
+  return [];
+}
+
+// כל הכתיבות לנוכחות עוברות במנעול: עשרות מורים נרשמים באותה דקה,
+// ובלי מנעול שתי בקשות קוראות "אין שורה" ושתיהן מוסיפות.
+function meetWithLock_(fn) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(25000)) return { ok: false, error: 'busy' };
+  try { return fn(); } finally { lock.releaseLock(); }
+}
+
+function meetFind_(id) {
+  ensureTab_('meetings');
+  return readAll('meetings').find(m => String(m.id) === id) || null;
+}
+
+function meetPublic_(m, now) {
+  const openUntil = Number(m.openUntil) || 0;
+  return {
+    id: String(m.id), date: meetDate_(m.date), topic: m.topic || '', source: m.source || '',
+    open: openUntil > now, openUntil: openUntil
+  };
+}
+
+// יוצר את שורת המפגש בפעם הראשונה שנוגעים בו. מזהה קבוע לפי מדריכה+תאריך:
+// שני המועדים של אותו יום (בוקר/ערב) הם מפגש אחד — מורה משתתף באחד מהם.
+function meetEnsure_(slug, date, p) {
+  const id = meetId_(slug, date);
+  const found = meetFind_(id);
+  if (found) {
+    if (p.topic && !found.topic) updateRowById('meetings', id, { topic: meetStr_(p.topic, 300) });
+    return found;
+  }
+  const nowIso = new Date().toISOString();
+  const obj = {
+    id: id, guideSlug: slug, guideName: meetStr_(p.guideName, 80),
+    // גרש מוביל — אחרת Sheets הופך את התאריך לתא Date
+    date: "'" + date, topic: meetStr_(p.topic, 300),
+    source: p.source === 'plan' ? 'plan' : 'adhoc',
+    openUntil: 0, openedAt: '', closedAt: '', createdAt: nowIso, updatedAt: nowIso
+  };
+  appendRow('meetings', obj);
+  obj.date = date;
+  return obj;
+}
+
+function meetRowPublic_(r) {
+  return {
+    id: String(r.id), teacherId: String(r.teacherId || ''), teacherName: r.teacherName || '',
+    schoolName: r.schoolName || '', status: r.status || '', guideStatus: r.guideStatus || '',
+    selfCheckinAt: toIso_(r.selfCheckinAt), markedAt: toIso_(r.markedAt), source: r.source || ''
+  };
+}
+
+// ---------- המדריכה: מצב המפגשים ----------
+function meetState(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const now = Date.now();
+  ensureTab_('meeting_attendance');
+  const meetings = readAll('meetings').filter(m => String(m.guideSlug) === slug);
+  const rows = readAll('meeting_attendance').filter(r => String(r.guideSlug) === slug);
+
+  const counts = {};
+  rows.forEach(r => {
+    const c = counts[r.meetingId] || (counts[r.meetingId] = { present: 0, absent: 0, pending: 0, gaps: 0 });
+    if (c[r.status] !== undefined) c[r.status]++;
+    if (r.selfCheckinAt && r.guideStatus === 'absent') c.gaps++;
+  });
+
+  const date = meetDate_(p.date);
+  const data = {
+    now: now, today: meetToday_(),
+    meetings: meetings.map(m => Object.assign(meetPublic_(m, now),
+      { counts: counts[m.id] || { present: 0, absent: 0, pending: 0, gaps: 0 } }))
+      .sort((a, b) => a.date.localeCompare(b.date)),
+    rows: []
+  };
+  if (date) {
+    const id = meetId_(slug, date);
+    data.meetingId = id;
+    data.rows = rows.filter(r => String(r.meetingId) === id).map(meetRowPublic_);
+  }
+  return { ok: true, data: data };
+}
+
+// ---------- המדריכה: פתיחת רישום עצמי ----------
+function meetOpen(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const date = meetDate_(p.date);
+  // רישום עצמי רק ביום המפגש — לא פותחים חלון מראש ולא בדיעבד
+  if (!date || date !== meetToday_()) return { ok: false, error: 'not_today' };
+  let minutes = Math.round(Number(p.minutes) || MEET_OPEN_DEFAULT_MIN);
+  minutes = Math.max(10, Math.min(MEET_OPEN_MAX_MIN, minutes));
+  return meetWithLock_(() => {
+    const m = meetEnsure_(slug, date, p);
+    const now = Date.now();
+    const openUntil = now + minutes * 60 * 1000;
+    const nowIso = new Date(now).toISOString();
+    updateRowById('meetings', m.id, { openUntil: openUntil, openedAt: nowIso, updatedAt: nowIso });
+    m.openUntil = openUntil;
+    return { ok: true, data: Object.assign(meetPublic_(m, now), meetCodes_(m.id, now)) };
+  });
+}
+
+function meetClose(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const date = meetDate_(p.date);
+  if (!date) return { ok: false, error: 'bad_date' };
+  const id = meetId_(slug, date);
+  return meetWithLock_(() => {
+    if (!meetFind_(id)) return { ok: false, error: 'not_found' };
+    const nowIso = new Date().toISOString();
+    updateRowById('meetings', id, { openUntil: 0, closedAt: nowIso, updatedAt: nowIso });
+    return { ok: true, data: { id: id, open: false } };
+  });
+}
+
+// הקוד הנוכחי ושני הבאים, עם גבולות הזמן — המסך של המדריכה מחליף קוד לבד
+// לפי השעון, בלי לפנות לשרת כל דקה. serverNow מאפשר לתקן סטיית שעון.
+function meetCodes_(meetingId, now) {
+  const step = meetStep_(now);
+  const codes = [];
+  for (let i = 0; i < 3; i++) {
+    const s = step + i;
+    codes.push({ code: meetCodeAt_(meetingId, s),
+      from: s * MEET_CODE_STEP_SEC * 1000, to: (s + 1) * MEET_CODE_STEP_SEC * 1000 });
+  }
+  return { codes: codes, serverNow: now, stepSec: MEET_CODE_STEP_SEC };
+}
+
+function meetCode(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const date = meetDate_(p.date);
+  if (!date || date !== meetToday_()) return { ok: false, error: 'not_today' };
+  const m = meetFind_(meetId_(slug, date));
+  const now = Date.now();
+  if (!m || !(Number(m.openUntil) > now)) return { ok: false, error: 'closed' };
+  return { ok: true, data: Object.assign(meetPublic_(m, now), meetCodes_(m.id, now)) };
+}
+
+// ---------- המדריכה: סימון נוכחות ----------
+// records: [{ teacherId?, rowId?, teacherName, schoolName, status: present|absent|clear }]
+// המדריכה קובעת: guideStatus שלה הוא הסטטוס. 'clear' מחזיר למצב לא מסומן —
+// ואם המורה נרשם בעצמו, השורה חוזרת ל"ממתין לאישור".
+function meetMark(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const date = meetDate_(p.date);
+  if (!date) return { ok: false, error: 'bad_date' };
+  if (date > meetToday_()) return { ok: false, error: 'future_meeting' };
+  const records = meetRecords_(p.records).slice(0, MEET_MAX_MARK_RECORDS);
+  if (!records.length) return { ok: false, error: 'no_records' };
+
+  return meetWithLock_(() => {
+    const m = meetEnsure_(slug, date, p);
+    const s = ensureTab_('meeting_attendance');
+    const values = s.getDataRange().getValues();
+    const headers = values[0].map(String);
+    const col = {};
+    headers.forEach((h, i) => { col[h] = i; });
+    const nowIso = new Date().toISOString();
+
+    const byTeacher = {}, byRow = {};
+    for (let i = 1; i < values.length; i++) {
+      if (String(values[i][col.meetingId]) !== m.id) continue;
+      const tid = String(values[i][col.teacherId] || '');
+      if (tid) byTeacher[tid] = i;
+      byRow[String(values[i][col.id])] = i;
+    }
+
+    const dirty = {}, toDelete = [], newRows = [];
+    let changed = 0;
+    records.forEach(r => {
+      const status = String(r.status || '');
+      if (['present', 'absent', 'clear'].indexOf(status) < 0) return;
+      const tid = meetStr_(r.teacherId, 80);
+      const rid = meetStr_(r.rowId, 80);
+      const idx = tid && byTeacher[tid] > 0 ? byTeacher[tid]
+        : (rid && byRow[rid] > 0 ? byRow[rid] : -1);
+
+      if (idx > 0) {
+        const row = values[idx];
+        if (status === 'clear') {
+          if (row[col.selfCheckinAt]) {
+            row[col.guideStatus] = ''; row[col.status] = 'pending';
+          } else {
+            if (toDelete.indexOf(idx) < 0) toDelete.push(idx);
+            changed++; return;
+          }
+        } else {
+          row[col.guideStatus] = status; row[col.status] = status;
+        }
+        row[col.markedAt] = nowIso; row[col.updatedAt] = nowIso;
+        dirty[idx] = true; changed++;
+        return;
+      }
+      if (status === 'clear' || !tid || byTeacher[tid] === -2) return;   // שורה חדשה רק למורה מהרשימה
+      const obj = {
+        id: newId('ma'), meetingId: m.id, guideSlug: slug, date: "'" + date,
+        teacherId: tid, teacherName: meetStr_(r.teacherName, 120), schoolName: meetStr_(r.schoolName, 120),
+        status: status, guideStatus: status, selfCheckinAt: '', markedAt: nowIso,
+        source: 'guide', updatedAt: nowIso
+      };
+      byTeacher[tid] = -2;   // כפילות באותה בקשה
+      newRows.push(headers.map(h => obj[h] === undefined ? '' : obj[h]));
+      changed++;
+    });
+
+    Object.keys(dirty).forEach(k => {
+      const i = Number(k);
+      if (toDelete.indexOf(i) >= 0) return;
+      const row = values[i].slice();
+      // התאריך נקרא כמחרוזת; כתיבה חוזרת בלי גרש הייתה הופכת אותו לתא Date
+      row[col.date] = "'" + meetDate_(row[col.date]);
+      s.getRange(i + 1, 1, 1, headers.length).setValues([row]);
+    });
+    if (newRows.length) {
+      s.getRange(s.getLastRow() + 1, 1, newRows.length, headers.length).setValues(newRows);
+    }
+    // מוחקים מלמטה למעלה — אחרת כל מחיקה מזיזה את האינדקסים של השורות שאחריה
+    toDelete.sort((a, b) => b - a).forEach(i => s.deleteRow(i + 1));
+
+    updateRowById('meetings', m.id, { updatedAt: nowIso });
+    return { ok: true, data: { meetingId: m.id, changed: changed } };
+  });
+}
+
+// ---------- מיטל: מפתחות המדריכות לקישורים האישיים ----------
+function meetGuideKeys(p) {
+  const slugs = String(p.slugs || '').split(',').map(meetSlug_).filter(Boolean);
+  const out = {};
+  slugs.forEach(s => { out[s] = meetGuideKey_(s); });
+  return { ok: true, data: out };
+}
+
+// ---------- המורה: רשימת הקבוצה ----------
+// מחזירה שמות ובתי ספר רק בזמן שהרישום פתוח — מחוץ לחלון העמוד לא חושף כלום.
+// המקצועות/מגזרים מגיעים מהלקוח (guides.js לא קיים בשרת); זו רשימה שממילא
+// נגישה היום ב-teachers.list, ומוגבלת כאן לשם + בית ספר.
+function checkinRoster(p) {
+  const slug = meetSlug_(p.g);
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const now = Date.now();
+  const m = meetFind_(meetId_(slug, meetToday_()));
+  if (!m || !(Number(m.openUntil) > now)) {
+    return { ok: true, data: { open: false } };
+  }
+  const list = v => String(v || '').split(',').map(x => x.trim()).filter(Boolean);
+  const subjects = list(p.subjects), sectors = list(p.sectors), tracks = list(p.tracks);
+  if (!subjects.length) return { ok: false, error: 'missing_subjects' };
+  const teachers = readAll('teachers').filter(t =>
+    subjects.indexOf(String(t.subject || '')) >= 0 &&
+    (!sectors.length || sectors.indexOf(String(t.sector || 'kelali')) >= 0) &&
+    (!tracks.length || tracks.indexOf(t.type === 'gemer' ? 'gemer' : 'bagrut') >= 0) &&
+    String(t.name || '').trim()
+  );
+  // אותו מורה בבגרות ובגמר הוא שתי שורות בגיליון — למורה מציגים שם אחד
+  const seen = {};
+  const roster = [];
+  teachers.forEach(t => {
+    const key = meetNormName_(t.name) + '|' + String(t.school || t.schoolName || '');
+    if (seen[key]) return;
+    seen[key] = true;
+    roster.push({ id: String(t.id), name: String(t.name).trim(), schoolName: String(t.schoolName || '').trim() });
+  });
+  roster.sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  return { ok: true, data: { open: true, topic: m.topic || '', openUntil: Number(m.openUntil), roster: roster } };
+}
+
+// ---------- המורה: רישום עצמי ----------
+function checkinSubmit(p) {
+  const slug = meetSlug_(p.g);
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const date = meetToday_();
+  const m = meetFind_(meetId_(slug, date));
+  const now = Date.now();
+  if (!m || !(Number(m.openUntil) > now)) return { ok: false, error: 'closed' };
+
+  const teacherId = meetStr_(p.teacherId, 80);
+  let teacherName = meetStr_(p.teacherName, 120);
+  let schoolName = meetStr_(p.schoolName, 120);
+  if (!teacherId && (!teacherName || !schoolName)) return { ok: false, error: 'missing_params' };
+
+  const who = teacherId || meetNormName_(teacherName) + '|' + meetNormName_(schoolName);
+  const cache = CacheService.getScriptCache();
+  const personKey = 'mfail:' + m.id + ':' + meetHmacHex_('who:' + who).slice(0, 24);
+  const meetingKey = 'mfail:' + m.id;
+  const personFails = Number(cache.get(personKey) || 0);
+  const meetingFails = Number(cache.get(meetingKey) || 0);
+  if (personFails >= MEET_FAIL_PER_PERSON || meetingFails >= MEET_FAIL_PER_MEETING) {
+    return { ok: false, error: 'locked' };
+  }
+
+  const code = String(p.code || '').replace(/\D/g, '');
+  const step = meetStep_(now);
+  let codeOk = false;
+  for (let i = 0; i <= MEET_CODE_GRACE_STEPS; i++) {
+    if (code.length === 4 && meetSafeEqual_(code, meetCodeAt_(m.id, step - i))) { codeOk = true; break; }
+  }
+  if (!codeOk) {
+    cache.put(personKey, String(personFails + 1), MEET_FAIL_WINDOW_SEC);
+    cache.put(meetingKey, String(meetingFails + 1), MEET_FAIL_WINDOW_SEC);
+    return { ok: false, error: 'bad_code' };
+  }
+
+  // מורה מהרשימה — השם ובית הספר נלקחים מהגיליון, לא מהדפדפן
+  if (teacherId) {
+    const t = readAll('teachers').find(x => String(x.id) === teacherId);
+    if (!t) return { ok: false, error: 'unknown_teacher' };
+    teacherName = String(t.name || '').trim();
+    schoolName = String(t.schoolName || '').trim();
+  }
+
+  return meetWithLock_(() => {
+    ensureTab_('meeting_attendance');
+    const rows = readAll('meeting_attendance').filter(r => String(r.meetingId) === m.id);
+    const existing = teacherId
+      ? rows.find(r => String(r.teacherId) === teacherId)
+      : rows.find(r => !r.teacherId &&
+          meetNormName_(r.teacherName) === meetNormName_(teacherName) &&
+          meetNormName_(r.schoolName) === meetNormName_(schoolName));
+    const nowIso = new Date(now).toISOString();
+
+    if (existing) {
+      if (existing.selfCheckinAt) return { ok: true, data: { duplicate: true } };
+      updateRowById('meeting_attendance', existing.id, {
+        selfCheckinAt: nowIso, updatedAt: nowIso,
+        status: existing.guideStatus || 'pending'
+      });
+      return { ok: true, data: { duplicate: false } };
+    }
+    appendRow('meeting_attendance', {
+      id: newId('ma'), meetingId: m.id, guideSlug: slug, date: "'" + date,
+      teacherId: teacherId, teacherName: teacherName, schoolName: schoolName,
+      status: 'pending', guideStatus: '', selfCheckinAt: nowIso, markedAt: '',
+      source: teacherId ? 'self' : 'self_unlisted', updatedAt: nowIso
+    });
+    return { ok: true, data: { duplicate: false } };
+  });
 }

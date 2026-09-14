@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>רישום נוכחות למפגש — מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<style>
+  /* נפתח מהצ'אט של הזום — בטלפון או במחשב, באמצע מפגש. מסך אחד, צעד אחד בכל פעם. */
+  [hidden] { display: none !important; }
+  .mf-shell { max-width: 520px; margin: 0 auto; padding: 22px 16px 10px; }
+  .mf-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 22px 20px; box-shadow: var(--shadow-card); }
+  .mf-eyebrow { font-size: 12px; font-weight: 700; color: #1f7a5c; margin-bottom: 4px; }
+  .mf-card h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 24px; line-height: 1.3; margin: 0 0 2px; }
+  .mf-sub { font-size: 14px; color: var(--text-2); line-height: 1.6; margin: 0; }
+  .ar { display: block; font-size: .9em; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+  h1 .ar { font-family: inherit; font-size: 17px; }
+
+  .mf-step { margin-top: 18px; }
+  .mf-q { font-size: 15.5px; font-weight: 700; margin-bottom: 8px; line-height: 1.45; }
+  .mf-input { width: 100%; box-sizing: border-box; font-size: 16px; padding: 12px 14px; border-radius: 12px; }
+  .mf-list { margin-top: 8px; max-height: 46vh; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; }
+  .mf-item { display: block; width: 100%; text-align: right; background: #fff; border: none; border-bottom: 1px solid var(--border); padding: 12px 14px; font-family: inherit; cursor: pointer; color: var(--text); }
+  .mf-item:last-child { border-bottom: none; }
+  .mf-item:hover, .mf-item:focus-visible { background: #F1F7FA; }
+  .mf-item b { display: block; font-size: 15px; }
+  .mf-item span { font-size: 12.5px; color: var(--text-muted); }
+  .mf-hint { font-size: 13px; color: var(--text-muted); padding: 14px; text-align: center; line-height: 1.6; }
+  .mf-link { background: none; border: none; color: var(--primary, #256A8A); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 0 0; text-decoration: underline; }
+
+  .mf-me { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #F1F7FA; border: 1px solid #CFE0E8; }
+  .mf-me b { display: block; font-size: 16px; }
+  .mf-me span { font-size: 13px; color: var(--text-muted); }
+  .mf-me .mf-link { padding: 0; margin-inline-start: auto; font-size: 13px; }
+
+  .mf-code { width: 100%; box-sizing: border-box; font-size: 40px; font-weight: 800; letter-spacing: .35em; text-align: center; padding: 10px 0 10px .35em; border-radius: 14px; border: 2px solid var(--border); font-variant-numeric: tabular-nums; font-family: inherit; color: var(--text); }
+  .mf-code:focus { outline: none; border-color: #1f7a5c; box-shadow: 0 0 0 3px rgba(31,122,92,.18); }
+  .mf-btn { width: 100%; margin-top: 14px; min-height: 52px; font-size: 17px; font-weight: 700; border-radius: 14px; border: none; background: #1f7a5c; color: #fff; font-family: inherit; cursor: pointer; line-height: 1.3; }
+  .mf-btn:disabled { opacity: .55; cursor: default; }
+  .mf-btn .ar { color: #d7efe4; font-size: 13px; }
+  .mf-btn.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); }
+  .mf-err { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #FBE9E5; color: #8f2f1c; font-size: 14px; font-weight: 600; line-height: 1.55; }
+  .mf-err .ar { color: #a4503d; }
+
+  .mf-free label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin: 10px 0 4px; }
+
+  .mf-state { text-align: center; padding: 10px 0 4px; }
+  .mf-ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; }
+  .mf-ic svg { width: 32px; height: 32px; }
+  .mf-ic.ok { background: #E4F3EA; color: #1f7a5c; }
+  .mf-ic.wait { background: #EEF3F5; color: var(--primary, #256A8A); }
+  .mf-state h2 { font-size: 21px; margin: 0 0 6px; line-height: 1.35; }
+  .mf-state p { font-size: 14.5px; color: var(--text-2); line-height: 1.7; margin: 0; }
+
+  .mf-foot { text-align: center; padding: 22px 16px 30px; color: var(--text-3); font-size: 12.5px; line-height: 1.7; }
+  .mf-foot .credit { margin-top: 4px; font-size: .72rem; color: #8A97A6; }
+  .mf-foot .credit a { color: inherit; }
+</style>
+</head>
+<body data-role="teacher">
+
+  <main class="mf-shell">
+    <section class="mf-card">
+      <div class="mf-eyebrow">מצפן ההדרכות · משרד העבודה</div>
+      <h1 id="mf-title">רישום נוכחות למפגש</h1>
+      <p class="mf-sub" id="mf-sub"></p>
+
+      <!-- טעינה -->
+      <div class="mf-state" id="st-loading" style="margin-top:18px;">
+        <p>טוען…</p>
+      </div>
+
+      <!-- קישור שגוי -->
+      <div class="mf-state" id="st-invalid" hidden>
+        <h2>הקישור אינו תקין</h2>
+        <p>נכנסים דרך הקישור שנשלח בצ'אט של המפגש.</p>
+      </div>
+
+      <!-- הרישום סגור -->
+      <div class="mf-state" id="st-closed" hidden>
+        <div class="mf-ic wait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h2 id="closed-h"></h2>
+        <p id="closed-p"></p>
+        <button type="button" class="mf-btn secondary" id="btn-retry"></button>
+      </div>
+
+      <!-- בחירת שם -->
+      <div class="mf-step" id="st-who" hidden>
+        <div id="me-saved" hidden>
+          <div class="mf-q" id="q-me"></div>
+          <div class="mf-me">
+            <div><b id="me-name"></b><span id="me-school"></span></div>
+            <button type="button" class="mf-link" id="btn-not-me"></button>
+          </div>
+          <button type="button" class="mf-btn" id="btn-its-me"></button>
+        </div>
+
+        <div id="who-pick">
+          <div class="mf-q" id="q-name"></div>
+          <input type="search" class="input mf-input" id="who-search" autocomplete="off" enterkeyhint="search">
+          <div class="mf-list" id="who-list" role="list"></div>
+          <button type="button" class="mf-link" id="btn-unlisted"></button>
+        </div>
+
+        <div id="who-free" class="mf-free" hidden>
+          <div class="mf-q" id="q-free"></div>
+          <label for="free-name" id="lbl-free-name"></label>
+          <input type="text" class="input mf-input" id="free-name" maxlength="80" autocomplete="name">
+          <label for="free-school" id="lbl-free-school"></label>
+          <input type="text" class="input mf-input" id="free-school" maxlength="80">
+          <button type="button" class="mf-btn" id="btn-free-next"></button>
+          <button type="button" class="mf-link" id="btn-back-list"></button>
+        </div>
+      </div>
+
+      <!-- הקלדת הקוד -->
+      <div class="mf-step" id="st-code" hidden>
+        <div class="mf-me" style="margin-bottom:16px;">
+          <div><b id="code-name"></b><span id="code-school"></span></div>
+          <button type="button" class="mf-link" id="btn-change"></button>
+        </div>
+        <label class="mf-q" for="code-input" id="q-code" style="display:block;"></label>
+        <input type="text" class="mf-code" id="code-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" dir="ltr">
+        <div class="mf-err" id="code-err" hidden></div>
+        <button type="button" class="mf-btn" id="btn-submit" disabled></button>
+      </div>
+
+      <!-- נרשם -->
+      <div class="mf-state" id="st-done" hidden>
+        <div class="mf-ic ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h2 id="done-h"></h2>
+        <p id="done-p"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mf-foot">
+    <span id="foot-note">הנוכחות נספרת אחרי אישור בסיום המפגש.</span>
+    <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260911"></script>
+<script src="../assets/guides.js?v=20260911"></script>
+<script src="mifgash.js?v=20260914"></script>
+</body>
+</html>

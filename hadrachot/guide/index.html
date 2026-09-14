@@ -232,6 +232,115 @@
   .h-actions .edit { font-family:inherit; font-size:12px; color:var(--primary,#256A8A); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; }
   .h-actions .edit:hover { background:#E6F0F4; }
 
+  /* ---- נוכחות במפגשים (14.9.26) ---- */
+  .meet-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  .meet-card h2 { display:flex; align-items:center; gap:8px; margin:0 0 4px; font-size:17px; }
+  .meet-card h2 svg, .meet-card h3 svg { width:19px; height:19px; color:var(--primary,#256A8A); flex:none; }
+  .meet-card h3 { display:flex; align-items:center; gap:8px; margin:0 0 6px; font-size:15.5px; }
+  .meet-card h3 .n { font-size:12px; font-weight:700; background:#FFF3DC; color:#8a5a00; border-radius:999px; padding:0 8px; }
+  .meet-head-row { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; }
+  .meet-head-tx { flex:1; min-width:260px; }
+  .meet-pick { display:flex; flex-direction:column; gap:4px; min-width:260px; max-width:100%; }
+  .meet-pick span, .meet-adhoc span, .ml-open label span { font-size:11.5px; font-weight:600; color:var(--text-muted); }
+  .meet-pick .select { font-size:14px; padding:9px 10px; }
+  .meet-adhoc { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-top:14px; padding-top:14px; border-top:1px dashed var(--border); }
+  .meet-adhoc[hidden] { display:none; }
+  .meet-adhoc label { display:flex; flex-direction:column; gap:4px; }
+  .meet-adhoc label.grow { flex:1; min-width:180px; }
+  .meet-adhoc .input { padding:8px 10px; font-size:13.5px; }
+  .meet-meta { display:flex; gap:10px; flex-wrap:wrap; align-items:baseline; margin-top:12px; }
+  .meet-meta:empty { display:none; }
+  .meet-date { font-weight:800; font-size:16px; color:var(--primary,#256A8A); }
+  .meet-time { font-size:12.5px; color:var(--text-muted); }
+  .meet-topic { font-size:13.5px; font-weight:600; color:var(--text); }
+  .meet-notice { display:flex; gap:14px; align-items:flex-start; background:#F4F8FA; }
+  .meet-notice.warn { background:#FFF6EC; border-color:#F0D8B8; }
+  .meet-notice-ic { width:40px; height:40px; flex:none; border-radius:10px; background:#fff; display:grid; place-items:center; color:var(--primary,#256A8A); }
+  .meet-notice-ic svg { width:20px; height:20px; }
+  .meet-notice strong { display:block; font-size:15px; margin-bottom:4px; }
+  .meet-notice p { margin:0; font-size:13.5px; line-height:1.75; color:var(--text-2); }
+
+  .meet-live { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+  .meet-live.closed { background:#F6FAF8; border-color:#D5E8DF; }
+  .meet-live.open { background:#EEF6F3; border-color:#BFDCCF; }
+  .meet-live .ml-tx { flex:1; min-width:260px; }
+  .meet-live .ml-tx p { margin:0 0 10px; font-size:13px; line-height:1.75; color:var(--text-2); }
+  .ml-open { display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; }
+  .ml-open label { display:flex; flex-direction:column; gap:4px; }
+  .ml-open .select { padding:8px 10px; font-size:13.5px; }
+  .ml-code-wrap { background:#fff; border:1px solid #BFDCCF; border-radius:14px; padding:14px 22px; text-align:center; min-width:210px; }
+  .ml-label { font-size:12px; font-weight:700; color:#1f7a5c; }
+  .ml-code { font-size:52px; font-weight:800; letter-spacing:.14em; color:#17324D; font-variant-numeric:tabular-nums; line-height:1.15; }
+  .ml-bar, .proj-bar { height:5px; border-radius:99px; background:#DDEBE5; overflow:hidden; margin-top:6px; }
+  .ml-bar span, .proj-bar span { display:block; height:100%; background:#1f7a5c; transition:width 1s linear; }
+  .ml-count { font-size:11.5px; color:var(--text-muted); margin-top:5px; }
+  .ml-url { font-size:12.5px; color:var(--text-2); word-break:break-all; background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px 10px; margin-bottom:10px; text-align:left; }
+  .live-dot { width:10px; height:10px; border-radius:50%; background:#1f9d6b; box-shadow:0 0 0 0 rgba(31,157,107,.5); animation:livePulse 1.8s infinite; flex:none; }
+  @keyframes livePulse { 0% { box-shadow:0 0 0 0 rgba(31,157,107,.5); } 70% { box-shadow:0 0 0 9px rgba(31,157,107,0); } 100% { box-shadow:0 0 0 0 rgba(31,157,107,0); } }
+  @media (prefers-reduced-motion: reduce) { .live-dot { animation:none; } .ml-bar span, .proj-bar span { transition:none; } }
+  .ws-status .bad, .meet-save-note .bad { color:#991b1b; font-weight:600; }
+
+  .meet-sum { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+  @media (max-width: 640px) { .meet-sum { grid-template-columns:repeat(2, 1fr); } }
+  .meet-stat { display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 6px; border-radius:12px; border:1px solid var(--border); background:var(--surface-soft); cursor:pointer; font-family:inherit; color:var(--text); }
+  .meet-stat b { font-size:24px; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .meet-stat span { font-size:12px; color:var(--text-2); }
+  .meet-stat.present b { color:#1f7a5c; }
+  .meet-stat.absent b { color:#a4442f; }
+  .meet-stat.pending b { color:#9a6400; }
+  .meet-stat.none b { color:var(--text-muted); }
+  .meet-stat.on { border-color:var(--primary,#256A8A); box-shadow:0 0 0 2px rgba(37,106,138,.18); background:#fff; }
+  .meet-warn { display:flex; gap:8px; align-items:flex-start; margin-top:12px; padding:9px 12px; border-radius:10px; background:#FFF6EC; color:#7a4a00; font-size:13px; line-height:1.6; }
+  .meet-warn svg { width:17px; height:17px; flex:none; margin-top:2px; }
+  .meet-save-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+  .meet-save-bar .btn[disabled] { opacity:.55; cursor:default; }
+  .meet-save-note { font-size:12.5px; color:#9a6400; }
+
+  .meet-pending { border-color:#F0D8B8; background:#FFFBF4; }
+  .meet-list-head { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+  .meet-list-head h3 { margin:0; flex:none; }
+  .meet-list-head .input { flex:1; min-width:180px; padding:8px 10px; font-size:13.5px; }
+  .meet-clear-filter { background:none; border:none; color:var(--primary,#256A8A); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .meet-row { display:flex; gap:12px; align-items:center; padding:9px 10px; border-bottom:1px solid var(--border); border-inline-start:3px solid transparent; }
+  .meet-row:last-child { border-bottom:none; }
+  .meet-row.s-present { border-inline-start-color:#1f7a5c; }
+  .meet-row.s-absent { border-inline-start-color:#c56b5c; }
+  .meet-row.s-pending { border-inline-start-color:#e0a030; }
+  .mr-tx { flex:1; min-width:0; }
+  .mr-name { font-weight:700; font-size:14px; }
+  .mr-meta { font-size:12px; color:var(--text-muted); margin-top:1px; line-height:1.7; }
+  .mb { display:inline-block; font-size:10.5px; font-weight:700; border-radius:999px; padding:0 7px; line-height:17px; vertical-align:1px; }
+  .mb.self { background:#E6F0F4; color:var(--primary,#256A8A); }
+  .mb.gap { background:#FBE4DF; color:#8f2f1c; }
+  .mb.unlisted { background:#F0EAF7; color:#6b4f99; }
+  .mb.dirty { background:#FFF3DC; color:#8a5a00; }
+  .mr-act { display:flex; gap:6px; flex:none; }
+  .mr-btn { font-family:inherit; font-size:12.5px; font-weight:600; padding:7px 12px; min-height:36px; border-radius:9px; border:1px solid var(--border); background:#fff; color:var(--text-2); cursor:pointer; }
+  .mr-btn.yes:hover { border-color:#1f7a5c; color:#1f7a5c; }
+  .mr-btn.no:hover { border-color:#c56b5c; color:#a4442f; }
+  .mr-btn.yes.on { background:#1f7a5c; border-color:#1f7a5c; color:#fff; }
+  .mr-btn.no.on { background:#c56b5c; border-color:#c56b5c; color:#fff; }
+  @media (max-width: 520px) { .meet-row { flex-wrap:wrap; } .mr-act { width:100%; } .mr-btn { flex:1; } }
+
+  /* הקרנה על מסך הזום — קריא גם בתמונה מוקטנת של שיתוף מסך */
+  .meet-proj { position:fixed; inset:0; z-index:9999; background:#10283D; color:#fff; display:flex; align-items:center; justify-content:center; padding:4vh 4vw; }
+  .proj-x { position:absolute; top:14px; left:18px; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.3); background:transparent; color:#fff; font-size:28px; line-height:1; cursor:pointer; }
+  .proj-grid { display:grid; grid-template-columns:minmax(260px, 1fr) 1.6fr; gap:5vw; align-items:center; width:100%; max-width:1300px; }
+  .proj-h { font-size:clamp(24px, 3.2vw, 44px); font-weight:800; }
+  .proj-ar { font-size:clamp(20px, 2.6vw, 36px); font-weight:700; color:#BFE3D4; margin-top:2px; }
+  .proj-steps { margin:18px 0; padding-inline-start:1.3em; font-size:clamp(15px, 1.6vw, 22px); line-height:1.7; }
+  .proj-steps span { display:block; font-size:.82em; color:#BFE3D4; }
+  .proj-qr { background:#fff; border-radius:12px; padding:8px; display:inline-block; }
+  .proj-qr canvas { display:block; }
+  .proj-url { font-size:clamp(14px, 1.5vw, 20px); color:#BFE3D4; margin-top:10px; word-break:break-all; }
+  .proj-main { text-align:center; }
+  .proj-label { font-size:clamp(18px, 2.2vw, 30px); color:#BFE3D4; font-weight:700; }
+  .proj-code { font-size:clamp(90px, 17vw, 260px); font-weight:800; letter-spacing:.1em; line-height:1; font-variant-numeric:tabular-nums; }
+  .meet-proj .proj-bar { height:10px; background:rgba(255,255,255,.18); max-width:70%; margin:18px auto 0; }
+  .meet-proj .proj-bar span { background:#6FD3A8; }
+  .proj-count { font-size:clamp(15px, 1.6vw, 22px); color:#BFE3D4; margin-top:10px; }
+  @media (max-width: 760px) { .proj-grid { grid-template-columns:1fr; } .proj-side { order:2; text-align:center; } }
+
   @media (max-width: 720px) {
     .att-grid { font-size: 12px; }
     .att-grid th, .att-grid td { padding: 6px 4px; }
@@ -356,11 +465,16 @@
 
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
+      <button class="tab-btn" data-tab="meet" id="tab-btn-meet">נוכחות במפגשים<span class="n zero" id="meet-count">0</span></button>
       <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
       <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות פרטניות<span class="n zero" id="hours-count">0</span></button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
       <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
+    </div>
+
+    <div class="tab-pane" id="tab-meet">
+      <div id="meet-root"></div>
     </div>
 
     <div class="tab-pane active" id="tab-teachers">
@@ -633,7 +747,8 @@
 <script src="../assets/app.js?v=20260911"></script>
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260910"></script>
-<script src="dashboard.js?v=20260911"></script>
+<script src="dashboard.js?v=20260914"></script>
 <script src="space.js?v=20260914"></script>
+<script src="meetings.js?v=20260914"></script>
 </body>
 </html>
