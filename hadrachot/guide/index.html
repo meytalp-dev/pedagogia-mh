@@ -260,6 +260,44 @@
   .meet-notice strong { display:block; font-size:15px; margin-bottom:4px; }
   .meet-notice p { margin:0; font-size:13.5px; line-height:1.75; color:var(--text-2); }
 
+  /* ---- המפגש הבא + קיצורי דרך (14.9.26) ----
+     styles.css בלי כלל [hidden], ו-display שמוגדר כאן גובר עליו — לכן במפורש */
+  #next-meet[hidden], .ql-btn[hidden], #units-filter[hidden], #track-filter[hidden] { display:none !important; }
+  .nm-card { display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:linear-gradient(135deg,#17324D 0%,#256A8A 100%); color:#fff; border-radius:16px; padding:20px 24px; margin:0 0 14px; box-shadow:var(--shadow-card); }
+  .nm-card.today { background:linear-gradient(135deg,#145c45 0%,#1f7a5c 100%); }
+  .nm-date { flex:none; min-width:92px; text-align:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:8px 12px; }
+  .nm-date b { display:block; font-size:26px; line-height:1.15; font-variant-numeric:tabular-nums; }
+  .nm-date span { font-size:12.5px; opacity:.85; }
+  .nm-tx { flex:1; min-width:220px; }
+  .nm-eyebrow { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:.04em; opacity:.85; }
+  .nm-title { font-size:19px; font-weight:800; margin:3px 0 2px; }
+  .nm-sub { font-size:13.5px; opacity:.9; line-height:1.7; }
+  .nm-act { display:flex; gap:8px; flex-wrap:wrap; }
+  .nm-btn { display:inline-flex; align-items:center; gap:7px; font-family:inherit; font-size:14px; font-weight:700; padding:10px 16px; min-height:42px; border-radius:10px; border:1px solid rgba(255,255,255,.35); background:transparent; color:#fff; cursor:pointer; text-decoration:none; }
+  .nm-btn svg { width:17px; height:17px; }
+  .nm-btn.primary { background:#fff; color:#17324D; border-color:#fff; }
+  .nm-btn:hover { filter:brightness(1.06); }
+  .nm-btn:focus-visible, .ql-btn:focus-visible { outline:3px solid #9fd3c2; outline-offset:2px; }
+  .quick-links { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 22px; }
+  .ql-btn { display:inline-flex; align-items:center; gap:7px; font-family:inherit; font-size:13.5px; font-weight:600; padding:8px 14px; min-height:38px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; }
+  .ql-btn svg { width:16px; height:16px; color:var(--primary,#256A8A); }
+  .ql-btn:hover { border-color:var(--primary,#256A8A); }
+  .te-find { display:flex; gap:8px; flex-wrap:wrap; }
+  .te-find .select { flex:0 1 260px; min-width:200px; }
+  .te-find .input { flex:1; min-width:200px; }
+
+  /* איך ממלאים נוכחות */
+  .meet-howto { margin-top:14px; border-top:1px dashed var(--border); padding-top:10px; }
+  .meet-howto summary { cursor:pointer; font-size:13.5px; font-weight:700; color:var(--primary,#256A8A); }
+  .meet-howto ol { margin:10px 0 2px; padding-inline-start:0; list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; counter-reset:st; }
+  @media (max-width: 760px) { .meet-howto ol { grid-template-columns:1fr; } }
+  .meet-howto li { counter-increment:st; background:var(--surface-soft,#F4F8FA); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.7; color:var(--text-2); }
+  .meet-howto li::before { content:counter(st); display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--primary,#256A8A); color:#fff; font-weight:800; font-size:12px; margin-inline-end:6px; }
+  .meet-howto li b { color:var(--text); }
+  .meet-school-h { font-size:12.5px; font-weight:800; color:var(--primary,#256A8A); background:var(--surface-soft,#F4F8FA); padding:6px 10px; border-radius:8px; margin:10px 0 2px; }
+  .meet-school-h span { font-weight:600; color:var(--text-muted); }
+  .meet-list-head .select { flex:0 1 240px; min-width:180px; padding:8px 10px; font-size:13.5px; }
+
   .meet-live { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
   .meet-live.closed { background:#F6FAF8; border-color:#D5E8DF; }
   .meet-live.open { background:#EEF6F3; border-color:#BFDCCF; }
@@ -431,6 +469,30 @@
       </div>
     </section>
 
+    <!-- המפגש הבא — נבנה ב-meetings.js מתוך התוכנית השנתית (14.9.26).
+         משם המדריכ/ה נכנס/ת למפגש וממלא/ת נוכחות. -->
+    <section class="nm-card" id="next-meet" hidden aria-label="המפגש הבא"></section>
+
+    <!-- קיצורי דרך ללשוניות שיושבות נמוך בעמוד -->
+    <nav class="quick-links" aria-label="קיצורי דרך">
+      <button type="button" class="ql-btn" data-go="meet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>נוכחות במפגשים</span>
+      </button>
+      <button type="button" class="ql-btn" data-go="space">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>חומרים והודעות לקבוצה</span>
+      </button>
+      <button type="button" class="ql-btn" data-go="hours">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>שעות פרטניות</span>
+      </button>
+      <button type="button" class="ql-btn" data-go="plan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>תוכנית שנתית</span>
+      </button>
+    </nav>
+
     <!-- Compass Divider -->
     <div class="compass-divider" aria-hidden="true">
       <span class="label">תמונת מצב</span>
@@ -497,7 +559,8 @@
     <div class="tab-pane active" id="tab-teachers">
       <div class="subject-filter-bar" id="units-filter" style="margin-bottom:8px;" hidden></div>
       <div class="subject-filter-bar" id="track-filter" style="margin-bottom:12px;"></div>
-      <div class="search-bar">
+      <div class="search-bar te-find">
+        <select class="select" id="teacher-school" aria-label="סינון לפי בית ספר"><option value="">כל בתי הספר</option></select>
         <input type="search" class="input" id="teacher-search" placeholder="חיפוש מורה / בית ספר...">
       </div>
       <div id="teachers-container">
@@ -765,8 +828,8 @@
 <script src="../assets/app.js?v=20260911"></script>
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260914"></script>
-<script src="dashboard.js?v=20260914b"></script>
+<script src="dashboard.js?v=20260914c"></script>
 <script src="space.js?v=20260914"></script>
-<script src="meetings.js?v=20260914c"></script>
+<script src="meetings.js?v=20260914d"></script>
 </body>
 </html>

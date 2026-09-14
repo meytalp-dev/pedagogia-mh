@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-new-training').addEventListener('click', openNewTraining);
   document.getElementById('form-training').addEventListener('submit', submitTraining);
   document.getElementById('teacher-search').addEventListener('input', renderTeachers);
+  document.getElementById('teacher-school').addEventListener('change', renderTeachers);
   const addBtn = document.getElementById('btn-add-teacher');
   if (addBtn) addBtn.addEventListener('click', () => openTeacherModal());
   const teacherForm = document.getElementById('form-teacher');
@@ -60,6 +61,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeSel) typeSel.addEventListener('change', toggleUnitsRow);
   renderResources();
   renderPlan();
+  // space.js / meetings.js מסתירים את הלשוניות שלהם ב-DOMContentLoaded משלהם
+  setTimeout(syncQuickLinks, 0);
   await loadData();
 });
 
@@ -71,6 +74,29 @@ function bindTabs() {
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
+  });
+  // קיצורי הדרך בראש העמוד (14.9.26) — הלשוניות יושבות מתחת לחומרים ולנתונים,
+  // ומדריכות לא מצאו את "חומרים והודעות" ואת "שעות פרטניות".
+  document.querySelectorAll('[data-go]').forEach(b =>
+    b.addEventListener('click', () => goTab(b.dataset.go)));
+}
+
+// פתיחת לשונית וגלילה אליה — משמש גם את כרטיס "המפגש הבא" (meetings.js)
+function goTab(name) {
+  const btn = document.getElementById('tab-btn-' + name) ||
+    document.querySelector('.tab-btn[data-tab="' + name + '"]');
+  if (!btn || btn.hidden) return;
+  btn.click();
+  const bar = document.querySelector('.tabs-bar');
+  if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.TS_goTab = goTab;
+
+// קיצור דרך ללשונית מוסתרת (תוכנית שנתית למדריכה בלי תוכנית) — מוסתר גם הוא
+function syncQuickLinks() {
+  document.querySelectorAll('[data-go]').forEach(b => {
+    const btn = document.getElementById('tab-btn-' + b.dataset.go);
+    b.hidden = !btn || btn.hidden;
   });
 }
 
@@ -327,9 +353,12 @@ function renderTeachers() {
   renderTrackPills();
   renderUnitsPills();
   const search = (document.getElementById('teacher-search').value || '').trim().toLowerCase();
+  const inTrack = t => inScope(t) &&
+    (!currentTrack || (t.type === 'gemer' ? 'gemer' : 'bagrut') === currentTrack);
+  const schoolSel = renderSchoolSelect(state.teachers.filter(inTrack));
   const filtered = state.teachers.filter(t =>
-    inScope(t) &&
-    (!currentTrack || (t.type === 'gemer' ? 'gemer' : 'bagrut') === currentTrack) &&
+    inTrack(t) &&
+    (!schoolSel || (t.schoolName || '— ללא שיוך —') === schoolSel) &&
     (!search || (t.name || '').toLowerCase().includes(search) ||
                 (t.schoolName || '').toLowerCase().includes(search))
   );
@@ -349,7 +378,9 @@ function renderTeachers() {
   }
 
   const today = new Date();
-  container.innerHTML = Object.values(bySchool).map(group => {
+  container.innerHTML = Object.values(bySchool)
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'))
+    .map(group => {
     const teachersHtml = group.teachers.map(t => `
       <tr>
         <td class="name-cell">
@@ -399,6 +430,22 @@ function renderTeachers() {
       </div>
     `;
   }).join('');
+}
+
+// בורר בית הספר — לפי א"ב, עם מספר המורים. בית ספר שנבחר ונעלם מהסינון (מסלול
+// אחר) מתאפס, אחרת הרשימה נשארת ריקה בלי סיבה נראית.
+function renderSchoolSelect(teachers) {
+  const el = document.getElementById('teacher-school');
+  if (!el) return '';
+  const counts = {};
+  teachers.forEach(t => { const k = t.schoolName || '— ללא שיוך —'; counts[k] = (counts[k] || 0) + 1; });
+  const names = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'he'));
+  let cur = el.value;
+  if (cur && !counts[cur]) cur = '';
+  el.innerHTML = `<option value="">כל בתי הספר (${names.length})</option>` +
+    names.map(n => `<option value="${escapeHtml(n).replace(/"/g, '&quot;')}">${escapeHtml(n)} · ${counts[n]}</option>`).join('');
+  el.value = cur;
+  return cur;
 }
 
 function attCell(att, trainingDate, today) {

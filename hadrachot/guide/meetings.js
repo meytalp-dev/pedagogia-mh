@@ -36,6 +36,7 @@
   let live = null;          // { codes, offset, openUntil }
   let filter = 'all';
   let search = '';
+  let schoolF = '';         // סינון רשימת הקבוצה לפי בית ספר
   let saving = false;
   let pollTimer = null, tickTimer = null, codeTimer = null;
   let adhocMeetings = [];
@@ -58,6 +59,7 @@
     const btn = document.getElementById('tab-btn-meet');
     if (!SLUG) { if (btn) btn.hidden = true; return; }
     renderShell();
+    renderNextMeet();
     if (!CAN) { renderNoKey(); return; }
     pickDefault();
     renderSelection();
@@ -113,8 +115,49 @@
   // ---------- בחירת מפגש ----------
   function planMeetings() {
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
-      date: m.date, date2: m.date2 || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || ''
+      date: m.date, date2: m.date2 || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
     }));
+  }
+
+  // ---------- כרטיס "המפגש הבא" בראש העמוד (14.9.26) ----------
+  // מדריכות לא מצאו איך נכנסים לנוכחות — הלשונית יושבת נמוך, ובמפגש עתידי
+  // היא הציגה רק "המפגש עוד לא התקיים". הכרטיס מוביל ישר לרישום של אותו מפגש.
+  function daysUntil(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    const [ty, tm, td] = S.today.split('-').map(Number);
+    return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(ty, tm - 1, td)) / 86400000);
+  }
+  function nextMeeting() {
+    return allMeetings().find(m => m.date >= S.today || (m.date2 && m.date2 >= S.today)) || null;
+  }
+  function renderNextMeet() {
+    const box = document.getElementById('next-meet');
+    if (!box) return;
+    const m = nextMeeting();
+    if (!m) { box.hidden = true; return; }
+    const isToday = m.date === S.today || m.date2 === S.today;
+    // מפגש בשני ימים: הספירה לאחור עד המועד הקרוב שעוד לא עבר
+    const upcoming = [m.date, m.date2].filter(d => d && d >= S.today).sort()[0];
+    const n = daysUntil(upcoming);
+    const when = isToday ? 'היום' : n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים';
+    const zoomUrl = GUIDE_CFG && /^https:\/\//.test(GUIDE_CFG.zoom || '') ? GUIDE_CFG.zoom : '';
+    box.className = 'nm-card' + (isToday ? ' today' : '');
+    box.innerHTML = `
+      <div class="nm-date"><b>${esc(labelOf(upcoming).replace(/\.\d\d$/, ''))}</b><span>${esc(m.day || '')}</span></div>
+      <div class="nm-tx">
+        <div class="nm-eyebrow">${isToday ? '<span class="live-dot"></span>' : ''}<span>${isToday ? 'המפגש היום' : 'המפגש הבא · ' + esc(when)}</span></div>
+        <div class="nm-title">${esc(m.topic || 'מפגש הדרכה')}</div>
+        <div class="nm-sub">${esc(m.label)}${m.time ? ' · <bdi dir="ltr">' + esc(m.time) + '</bdi>' : ''}${isToday ? '' : ' · ביום המפגש נכנסים מכאן לרישום הנוכחות'}</div>
+      </div>
+      <div class="nm-act">
+        ${zoomUrl ? `<a class="nm-btn" href="${esc(zoomUrl)}" target="_blank" rel="noopener">${ICON.screen}<span>כניסה לזום</span></a>` : ''}
+        <button type="button" class="nm-btn primary" id="nm-go">${ICON.check}<span>${isToday ? 'כניסה למפגש ומילוי נוכחות' : 'למפגש ולנוכחות'}</span></button>
+      </div>`;
+    box.hidden = false;
+    document.getElementById('nm-go').addEventListener('click', () => {
+      if (CAN && (!sel || sel.date !== m.date)) selectMeeting(m);
+      if (window.TS_goTab) window.TS_goTab('meet');
+    });
   }
   function allMeetings() {
     const list = planMeetings();
@@ -166,6 +209,7 @@
       S.failed = true;
     }
     renderSelectOptions();
+    renderNextMeet();
     renderBody();
     schedulePoll();
   }
@@ -198,6 +242,14 @@
           <button type="button" class="btn btn-secondary" id="meet-adhoc-cancel">ביטול</button>
         </div>
         <div class="meet-meta" id="meet-meta"></div>
+        <details class="meet-howto" id="meet-howto">
+          <summary>איך ממלאים נוכחות? שלושה צעדים</summary>
+          <ol>
+            <li><b>ביום המפגש</b> נכנסים מהכרטיס "המפגש הבא" בראש העמוד. המפגש של היום נבחר לבד, ורשימת המורים של הקבוצה נפתחת כאן.</li>
+            <li><b>בתחילת המפגש (רשות)</b> לוחצים "פתיחת רישום עצמי", משתפים מסך עם הקוד ומדביקים בצ'אט של הזום את הקישור. המורים נרשמים בעצמם.</li>
+            <li><b>בסוף המפגש</b> מסמנים ליד כל מורה "נכח/ה" או "לא נכח/ה", מאשרים את מי שנרשם בעצמו, ולוחצים <b>"שמירת הסימונים"</b>. אפשר גם לייבא את דוח המשתתפים מהזום.</li>
+          </ol>
+        </details>
       </section>
       <div id="meet-body"></div>`;
 
@@ -361,8 +413,13 @@
       return;
     }
     if (sel.date > S.today) {
-      body.innerHTML = `<section class="meet-card"><div class="empty" style="padding:26px;">
-        המפגש עוד לא התקיים. ביום המפגש יופיעו כאן רשימת הקבוצה והרישום העצמי.</div></section>`;
+      const n = daysUntil(sel.date);
+      const howto = document.getElementById('meet-howto');
+      if (howto) howto.open = true;
+      body.innerHTML = `<section class="meet-card"><div class="empty" style="padding:26px; line-height:1.9;">
+        <b>המפגש של ${esc(sel.label)} עוד לא התקיים</b> (${n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים'}).<br>
+        ביום המפגש נכנסים לכאן מהכרטיס "המפגש הבא" שבראש העמוד, ורשימת המורים של הקבוצה תופיע לסימון.<br>
+        מפגש שכבר התקיים? בוחרים אותו ברשימה "המפגש" למעלה.</div></section>`;
       return;
     }
     if (typeof state === 'undefined' || !state.teachers || !state.teachers.length) {
@@ -428,6 +485,7 @@
       <section class="meet-card">
         <div class="meet-list-head">
           <h3>רשימת הקבוצה</h3>
+          ${schoolSelectHtml(list)}
           <input type="search" class="input" id="meet-search" placeholder="חיפוש שם או בית ספר" value="${esc(search)}">
           ${filter !== 'all' ? '<button type="button" class="meet-clear-filter" data-filter="all">הצגת כולם</button>' : ''}
         </div>
@@ -443,14 +501,39 @@
     if (isLiveDay()) tick();
   }
 
+  // בורר בית ספר ברשימת הקבוצה — לפי א"ב (14.9.26)
+  const NO_SCHOOL = '— ללא בית ספר —';
+  function schoolOf(g) { return g.schoolName || NO_SCHOOL; }
+  function schoolSelectHtml(list) {
+    const counts = {};
+    list.forEach(g => { counts[schoolOf(g)] = (counts[schoolOf(g)] || 0) + 1; });
+    const names = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'he'));
+    if (schoolF && !counts[schoolF]) schoolF = '';
+    return `<select class="select" id="meet-school" aria-label="סינון לפי בית ספר">
+      <option value="">כל בתי הספר (${names.length})</option>
+      ${names.map(n => `<option value="${esc(n)}"${n === schoolF ? ' selected' : ''}>${esc(n)} · ${counts[n]}</option>`).join('')}
+    </select>`;
+  }
+
   function listHtml(list) {
     const q = norm(search);
     const shown = list.filter(g =>
       (filter === 'all' || g.state === filter) &&
-      (!q || norm(g.name).includes(q) || norm(g.schoolName).includes(q)));
+      (!schoolF || schoolOf(g) === schoolF) &&
+      (!q || norm(g.name).includes(q) || norm(g.schoolName).includes(q)))
+      // מסודר לפי בית ספר (א"ב) ובתוכו לפי שם, עם כותרת לכל בית ספר
+      .sort((a, b) => schoolOf(a).localeCompare(schoolOf(b), 'he') || String(a.name).localeCompare(String(b.name), 'he'));
     if (!list.length) return '<div class="empty" style="padding:22px;">רשימת המורים של הקבוצה עדיין נטענת…</div>';
     if (!shown.length) return '<div class="empty" style="padding:22px;">אין מורים שמתאימים לחיפוש</div>';
-    return shown.map(g => rowHtml(g, false)).join('');
+    const perSchool = {};
+    shown.forEach(g => { perSchool[schoolOf(g)] = (perSchool[schoolOf(g)] || 0) + 1; });
+    let last = null;
+    return shown.map(g => {
+      const s = schoolOf(g);
+      const head = s !== last ? `<div class="meet-school-h">${esc(s)} <span>· ${perSchool[s]}</span></div>` : '';
+      last = s;
+      return head + rowHtml(g, false);
+    }).join('');
   }
 
   function rowHtml(g, pendingBox) {
@@ -489,6 +572,12 @@
     const s = document.getElementById('meet-search');
     s.addEventListener('input', () => {
       search = s.value;
+      document.getElementById('meet-list').innerHTML = listHtml(entries());
+      bindRows(byKey);
+    });
+    const sch = document.getElementById('meet-school');
+    if (sch) sch.addEventListener('change', () => {
+      schoolF = sch.value;
       document.getElementById('meet-list').innerHTML = listHtml(entries());
       bindRows(byKey);
     });
