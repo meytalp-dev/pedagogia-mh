@@ -37,7 +37,7 @@ window.TS_GUIDES = {
     zoom: ''
   },
   sivan: {
-    name: 'סיוון נחליאלי',
+    name: 'סיון נחליאלי',
     subject: 'אנגלית',
     sectors: ['kelali', 'haredi'],
     inspector: 'liat',
