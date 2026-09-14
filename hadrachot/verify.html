@@ -334,7 +334,7 @@ async function saveEmail(inp) {
 // ---- בורר יחידות לימוד — מתמטיקה במסלול בגרות בלבד ----
 function unitsCell(t) {
   if (t.type === 'gemer') return '<span class="units-na">בגמר אין יח"ל</span>';
-  const cur = (t.units || '').trim();
+  const cur = String(t.units || '').trim();
   const opts = [`<option value=""${cur ? ' disabled' : ' selected'}>טרם סומן</option>`]
     .concat((TS.UNITS || []).map(u =>
       `<option value="${esc(u.id)}"${cur === u.id ? ' selected' : ''}>${esc(u.name)}</option>`));
@@ -346,7 +346,7 @@ function unitsCell(t) {
 function refreshMathNote() {
   const box = document.getElementById('math-note');
   if (!box) return;
-  const marked = mathBagrut.filter(t => (t.units || '').trim()).length;
+  const marked = mathBagrut.filter(t => String(t.units || '').trim()).length;
   const left = mathBagrut.length - marked;
   box.innerHTML = left
     ? `<b>נא לסמן כמה יחידות מלמד/ת כל מורה במתמטיקה.</b> סומנו ${marked} מתוך ${mathBagrut.length}
@@ -370,7 +370,7 @@ function wireUnits() {
     sel.addEventListener('change', async () => {
       const id = sel.dataset.id;
       const t = byId[id];
-      const prev = (t && t.units) || '';
+      const prev = String((t && t.units) || '');
       const val = sel.value;
       if (!val || val === prev) return;
       const tick = document.querySelector(`[data-tick="${id}"]`);
@@ -430,7 +430,7 @@ document.getElementById('verify-form').addEventListener('submit', async e => {
     notes: document.getElementById('notes').value.trim(),
     teachers: teacherCount,
     mathBagrut: mathBagrut.length,
-    mathUnitsMarked: mathBagrut.filter(t => (t.units || '').trim()).length,
+    mathUnitsMarked: mathBagrut.filter(t => String(t.units || '').trim()).length,
     teachersWithEmail: new Set(Object.values(byId).filter(t => isEmail(t.email)).map(nameKey)).size,
     at: new Date().toISOString()
   };
