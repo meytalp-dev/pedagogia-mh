@@ -150,6 +150,17 @@
 }
 .t-phone:focus { outline: none; border-color: #256A8A; }
 .t-phone:placeholder-shown { background: #FEF2F2; border-color: #D97757; }
+/* מייל — שדה חובה (14.9.26): ריק או לא תקין מסומן באדום */
+.t-email {
+  width: 210px; padding: 6px 12px; font-size: 13px; font-family: inherit;
+  border: 1px solid var(--border, #D8E1E5); border-radius: 8px; direction: ltr; text-align: right;
+}
+.t-email:focus { outline: none; border-color: #256A8A; }
+.t-email:placeholder-shown, .t-email.invalid { background: #FEF2F2; border-color: #D97757; }
+.email-banner {
+  margin: 0 22px 14px; padding: 10px 14px; border-radius: 10px; font-size: 13.5px; line-height: 1.6;
+  background: #FEF2F2; border: 1px solid #F5C2B3; color: #7f2d14;
+}
 .t-more { font-size: 13px; color: var(--text-3, #7b8b98); flex: 1; }
 .t-actions { display: flex; gap: 6px; }
 .mini-btn {
@@ -179,7 +190,7 @@
   .seg-label { font-size: 13px; }
 
   /* iOS מבצע זום אוטומטי על שדה עם פונט קטן מ-16px — מיישרים הכל ל-16 */
-  .rapid-input, .t-phone, .t-units, .t-details input, .paste-area, .input, .select { font-size: 16px !important; }
+  .rapid-input, .t-phone, .t-email, .t-units, .t-details input, .paste-area, .input, .select { font-size: 16px !important; }
 
   .rapid-wrap { flex-direction: column; }
   .rapid-input { min-width: 0 !important; width: 100%; }
@@ -190,6 +201,8 @@
   .t-row { padding: 10px 12px; gap: 8px; }
   .t-row .t-name { min-width: 100%; }
   .t-phone { flex: 1; width: auto; min-width: 130px; }
+  .t-email { flex: 1 1 100%; width: auto; }
+  .email-banner { margin: 0 10px 12px; }
   .t-more { flex-basis: 100%; order: 5; }
   .t-details input { width: 100%; }
   #roster { padding: 0 10px 12px !important; }
@@ -261,7 +274,7 @@
     <div class="setup-hero">
       <div>
         <h1 id="hero-title">המורים שלי</h1>
-        <p class="sub">רק שם + טלפון + מקצוע + בגרות/גמר. את כל השאר אפשר להשלים אחר־כך.</p>
+        <p class="sub">שם + מייל (חובה) + טלפון + מקצוע + בגרות/גמר. את כל השאר אפשר להשלים אחר־כך.</p>
         <div class="hero-line">
           <strong style="color:var(--text)">בית ספר:</strong> <span id="school-name">—</span>
           <span id="network-chip"></span>
@@ -296,15 +309,16 @@
       <div class="rapid-wrap">
         <input class="rapid-input" id="rapid" placeholder="שם המורה…" autocomplete="off" style="flex:2; min-width:200px;">
         <input class="rapid-input" id="rapid-phone" placeholder="טלפון (מומלץ)" autocomplete="off" inputmode="tel" style="flex:1; min-width:140px;">
+        <input class="rapid-input" id="rapid-email" type="email" placeholder="מייל (חובה) *" autocomplete="off" inputmode="email" dir="ltr" style="flex:1.4; min-width:190px; text-align:right;">
         <span class="flash-add" id="flash">נוסף ✓</span>
       </div>
-      <p class="rapid-hint">כל <kbd>Enter</kbd> מוסיף מורה למקצוע שנבחר · <kbd>Tab</kbd> קופץ לטלפון · מורה שמלמד עוד מקצוע? הקלידו את שמו שוב במקצוע השני — הטלפון יושלם לבד · אין טלפון? המורה ייקלט ויסומן להשלמה · את היח"ל אפשר לבחור ברשימה שמתחת (רשות)</p>
+      <p class="rapid-hint">כל <kbd>Enter</kbd> מוסיף מורה למקצוע שנבחר · <kbd>Tab</kbd> קופץ לטלפון ולמייל · <b>המייל חובה</b> — בלי מייל תקין Enter לא יוסיף · מורה שמלמד עוד מקצוע? הקלידו את שמו שוב במקצוע השני — הטלפון והמייל יושלמו לבד · אין טלפון? המורה ייקלט ויסומן להשלמה · את היח"ל אפשר לבחור ברשימה שמתחת (רשות)</p>
     </div>
 
     <!-- Panel: paste -->
     <div class="entry-panel" id="panel-paste" style="display:none;">
       <textarea class="paste-area" id="paste" placeholder="העתיקו את טבלת המורים מהאקסל (או רשימת שמות, שם בכל שורה) והדביקו כאן…&#10;&#10;לדוגמה:&#10;שרה כהן	מתמטיקה	בגרות	050-1234567&#10;אחמד עלי	אנגלית	גמר&#10;רותי לוי"></textarea>
-      <p class="paste-note">המערכת מזהה לבד את העמודות: שם, מקצוע, בגרות/גמר, יח"ל (5 יח"ל / 4-5), טלפון, מייל, ותק. מה שלא זוהה — אפשר לתקן אחרי ההוספה.</p>
+      <p class="paste-note">המערכת מזהה לבד את העמודות: שם, מקצוע, בגרות/גמר, יח"ל (5 יח"ל / 4-5), טלפון, מייל, ותק. <b>המייל חובה</b> — כדאי להדביק את הטבלה עם עמודת המייל. מה שלא זוהה — אפשר לתקן אחרי ההוספה.</p>
       <div class="preview-box" id="preview-box" style="display:none;">
         <div class="preview-head">
           <span class="detected" id="detected"></span>
@@ -322,6 +336,7 @@
           <button type="button" class="btn btn-secondary" id="btn-export">ייצוא ל-CSV</button>
         </div>
       </div>
+      <div class="email-banner" id="email-banner" hidden></div>
       <div id="roster" style="padding: 0 18px 18px;"></div>
     </div>
 
@@ -329,7 +344,7 @@
   </main>
 </div>
 
-<script src="../assets/app.js?v=20260909d"></script>
-<script src="setup.js?v=20260909d"></script>
+<script src="../assets/app.js?v=20260911"></script>
+<script src="setup.js?v=20260914"></script>
 </body>
 </html>

@@ -78,6 +78,21 @@
     padding: 32px 24px; text-align: center; color: #14532d;
   }
   .done-card b { font-size: 18px; display: block; margin-bottom: 6px; }
+  /* ---- מייל לכל מורה — שדה חובה (14.9.26) ---- */
+  .email-in {
+    font: inherit; font-size: 13px; padding: 3px 9px; border-radius: 8px;
+    border: 1px solid var(--border); background: #fff; width: 220px; max-width: 100%;
+    box-sizing: border-box; direction: ltr; text-align: right;
+  }
+  .email-in:focus { outline: none; border-color: var(--primary, #256A8A); }
+  .email-in.missing, .email-in.invalid { border-color: #D97757; background: #FEF2F2; }
+  .email-in:disabled { opacity: .6; cursor: progress; }
+  .email-note {
+    background: #FEF2F2; border: 1px solid #F5C2B3; border-radius: 10px;
+    padding: 10px 12px; margin: 0 0 12px; font-size: 13px; line-height: 1.65; color: #7f2d14;
+  }
+  .email-note.done { background: #EAF6EF; border-color: #BFE3CC; color: #14532d; }
+  @media (max-width: 520px) { .email-in { width: 100%; font-size: 16px; } }
   .msg-err { background: var(--err-soft, #fdeaea); color: #7f1d1d; border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-top: 10px; display: none; }
 </style>
 </head>
@@ -94,7 +109,7 @@
     <h1 id="school-title">אימות רשימת המורים</h1>
     <p>יחידת הפיקוח על הדרכות מורים · משרד העבודה<br>
        נא לוודא שכל מורה מופיע/ה במקצוע הנכון ובמסלול הנכון (בגרות/גמר),
-       להוסיף מורים שנשכחו, ולסמן במתמטיקה את היחידות שכל מורה מלמד/ת.</p>
+       להוסיף מורים שנשכחו, <b>להשלים מייל לכל מורה (חובה)</b>, ולסמן במתמטיקה את היחידות שכל מורה מלמד/ת.</p>
   </div>
 
   <div class="roster-card" id="roster"><div class="empty" style="padding:24px; text-align:center;">טוען את הרשימה…</div></div>
@@ -136,7 +151,7 @@
 
 </div>
 
-<script src="assets/app.js?v=20260909d"></script>
+<script src="assets/app.js?v=20260911"></script>
 <script>
 const schoolId = TS.urlParam('school', '');
 let school = null, teacherCount = 0;
@@ -149,6 +164,10 @@ const MATH = 'מתמטיקה';
 let mathBagrut = [], byId = {};
 const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ESC_MAP[c]);
+// מייל חובה (החלטת מיטל 14.9.26): אי אפשר לאשר רשימה שיש בה מורה בלי מייל תקין
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+const isEmail = v => EMAIL_RE.test(String(v || '').trim());
+const nameKey = t => String((t && t.name) || '').trim();
 
 async function init() {
   if (!schoolId) {
@@ -185,6 +204,7 @@ async function init() {
 
     document.getElementById('roster').innerHTML =
       '<div style="font-weight:700; margin-bottom:12px;">' + teachers.length + ' מורים · ' + order.length + ' מקצועות</div>' +
+      '<div class="email-note" id="email-note"></div>' +
       order.map(s => `
         <div class="subj-group">
           <div class="sg-head">${esc(s)} <span class="n">${bySubj[s].length} מורים</span></div>
@@ -199,6 +219,8 @@ async function init() {
     document.getElementById('add-cta').href = 'admin-school/setup.html?school=' + encodeURIComponent(schoolId);
     wireUnits();
     refreshMathNote();
+    wireEmails();
+    refreshEmailNote();
   }
   document.getElementById('form-card').hidden = false;
 }
@@ -207,7 +229,93 @@ async function init() {
 function rowHtml(t, subjDisplay) {
   const tag = t.type === 'gemer' ? '<span class="track-tag gemer">גמר</span>' : '';
   const cell = subjDisplay === MATH ? unitsCell(t) : '';
-  return `<li class="t-row"><span class="t-name">${esc(t.name)}${tag}</span>${cell}</li>`;
+  return `<li class="t-row"><span class="t-name">${esc(t.name)}${tag}</span>${cell}${emailCell(t)}</li>`;
+}
+
+// ---- מייל — כל המקצועות, כל המסלולים ----
+function emailCell(t) {
+  const cur = String(t.email || '').trim();
+  const cls = !cur ? ' missing' : (isEmail(cur) ? '' : ' invalid');
+  return `<input class="email-in${cls}" type="email" inputmode="email" autocomplete="off"
+            placeholder="מייל (חובה)" value="${esc(cur)}" data-email-id="${esc(t.id)}"
+            aria-label="המייל של ${esc(t.name)}">` +
+         `<span class="units-tick" data-etick="${esc(t.id)}"></span>`;
+}
+
+// מורה רב-מקצועי מופיע בכמה שורות — נספר פעם אחת
+function missingEmailNames() {
+  const names = new Set();
+  Object.values(byId).forEach(t => { if (!isEmail(t.email)) names.add(nameKey(t)); });
+  return names;
+}
+
+function refreshEmailNote() {
+  const box = document.getElementById('email-note');
+  if (!box) return;
+  const total = new Set(Object.values(byId).map(nameKey)).size;
+  const left = missingEmailNames().size;
+  box.className = 'email-note' + (left ? '' : ' done');
+  box.innerHTML = left
+    ? `<b>מייל לכל מורה — שדה חובה.</b> חסר מייל ל-${left} מתוך ${total} מורים.
+       ההקלדה נשמרת מיד; מורה שמלמד/ת כמה מקצועות — מספיק פעם אחת. אי אפשר לאשר את הרשימה לפני שהמיילים הושלמו.`
+    : `<b>✓ לכל ${total} המורים יש מייל.</b> תודה!`;
+}
+
+function wireEmails() {
+  document.querySelectorAll('.email-in').forEach(inp => {
+    inp.addEventListener('input', () => inp.classList.remove('invalid'));
+    inp.addEventListener('change', () => saveEmail(inp));
+  });
+}
+
+// שמירה אחת בכל רגע לכל מורה: השבתת שדה שעדיין בפוקוס מפעילה change נוסף,
+// ובלי הנעילה אותו מייל נשלח פעמיים לכל שורה (נתפס בבדיקת הדפדפן).
+const emailSaving = {};
+
+async function saveEmail(inp) {
+  const t = byId[inp.dataset.emailId];
+  if (!t) return;
+  const val = inp.value.trim();
+  const tick = document.querySelector(`[data-etick="${inp.dataset.emailId}"]`);
+  // השרת לא מוחק ערך קיים בעדכון ריק — לכן ריק לא נשלח, רק מסומן
+  if (!val) { inp.value = String(t.email || ''); inp.classList.toggle('missing', !t.email); return; }
+  if (!isEmail(val)) {
+    inp.classList.add('invalid');
+    if (tick) { tick.className = 'units-tick err'; tick.textContent = 'מייל לא תקין'; }
+    return;
+  }
+  const key = nameKey(t);
+  if (emailSaving[key] === val) return;
+  emailSaving[key] = val;
+  // אותו מורה בכל המקצועות שלו
+  const rows = Object.values(byId).filter(x => nameKey(x) === key);
+  const inputs = Array.from(document.querySelectorAll('.email-in'))
+    .filter(o => rows.some(r => r.id === o.dataset.emailId));
+  inputs.forEach(o => { o.value = val; o.disabled = true; o.classList.remove('missing', 'invalid'); });
+  if (tick) { tick.className = 'units-tick'; tick.textContent = 'שומר…'; }
+
+  let failed = 0;
+  for (const r of rows) {
+    if (String(r.email || '').trim() === val) continue;
+    const res = await TS.apiPost('teachers.update', { id: r.id, email: val });
+    if (res && res.ok) r.email = val; else failed++;
+  }
+  delete emailSaving[key];
+  inputs.forEach(o => {
+    o.disabled = false;
+    const r = byId[o.dataset.emailId];
+    // שורה שלא נשמרה חוזרת לערך האמיתי — שלא ייראה כאילו נשמר
+    if (r && String(r.email || '').trim() !== val) {
+      o.value = String(r.email || '');
+      o.classList.add(r.email ? 'invalid' : 'missing');
+    }
+  });
+  if (tick) {
+    tick.className = 'units-tick' + (failed ? ' err' : '');
+    tick.textContent = failed ? 'לא נשמר — לנסות שוב' : 'נשמר ✓';
+    if (!failed) setTimeout(() => { tick.textContent = ''; }, 2200);
+  }
+  refreshEmailNote();
 }
 
 // ---- בורר יחידות לימוד — מתמטיקה במסלול בגרות בלבד ----
@@ -275,6 +383,18 @@ document.getElementById('verify-form').addEventListener('submit', async e => {
   const btn = document.getElementById('btn-send');
   const err = document.getElementById('err');
   err.style.display = 'none';
+
+  // מייל חובה — לא מאשרים רשימה עם מורה בלי מייל תקין
+  const missing = missingEmailNames().size;
+  if (missing) {
+    err.textContent = `אי אפשר לאשר עדיין — חסר מייל ל-${missing} ${missing === 1 ? 'מורה' : 'מורים'}. ` +
+      'המייל הוא שדה חובה; השדות החסרים מסומנים באדום ברשימה למעלה.';
+    err.style.display = 'block';
+    const first = document.querySelector('.email-in.missing, .email-in.invalid');
+    if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); first.focus({ preventScroll: true }); }
+    return;
+  }
+
   btn.disabled = true; btn.textContent = 'שולח…';
 
   const payload = {
@@ -287,6 +407,7 @@ document.getElementById('verify-form').addEventListener('submit', async e => {
     teachers: teacherCount,
     mathBagrut: mathBagrut.length,
     mathUnitsMarked: mathBagrut.filter(t => (t.units || '').trim()).length,
+    teachersWithEmail: new Set(Object.values(byId).filter(t => isEmail(t.email)).map(nameKey)).size,
     at: new Date().toISOString()
   };
   const res = await TS.apiPost('questions.create', {

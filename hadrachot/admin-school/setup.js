@@ -275,6 +275,11 @@ function initEntryUI() {
   document.getElementById('rapid-phone').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); rapidAdd(); }
   });
+  const rapidEmail = document.getElementById('rapid-email');
+  rapidEmail.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); rapidAdd(); }
+  });
+  rapidEmail.addEventListener('input', () => rapidEmail.classList.remove('field-missing'));
   // הדבקת כמה שורות ישר לשדה השם
   document.getElementById('rapid').addEventListener('paste', e => {
     const txt = (e.clipboardData || window.clipboardData).getData('text');
@@ -302,7 +307,9 @@ function initEntryUI() {
 // או משייך אותו למקצוע הלא נכון.
 function commitPending() {
   const el = document.getElementById('rapid');
-  if (el && el.value.trim()) rapidAdd();
+  // force: המייל חובה, אבל כאן המנהל.ת עוברים הקשר — השם חייב להיקלט (מסומן
+  // "חסר מייל") ולא להיעלם. חסימה במעבר מקצוע היא בדיוק מה שאיבד מורים ב-3.9.
+  if (el && el.value.trim()) rapidAdd({ force: true });
 }
 
 function switchTab(t) {
@@ -345,6 +352,14 @@ function renderChips() {
 
 }
 
+// מייל חובה (החלטת מיטל 14.9.26) — רק 183 מתוך 877 מורים הוזנו עם מייל,
+// ובלעדיו אין איך להגיע למורים שאין להם וואטסאפ (בעיקר במגזר החרדי).
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+function isEmail(v) { return EMAIL_RE.test(String(v || '').trim()); }
+function attr(v) {
+  return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
 function flash(msg) {
   const f = document.getElementById('flash');
   f.textContent = msg || 'נוסף ✓';
@@ -368,7 +383,7 @@ function addTeacherLocal(name, extra) {
     subject,
     type: type,
     phone: (extra.phone || (existing ? existing.phone : '') || '').trim(),
-    email: extra.email || (existing ? existing.email : '') || '',
+    email: (extra.email || (existing ? existing.email : '') || '').trim(),
     seniority: extra.seniority || (existing ? existing.seniority : '') || '',
     units: extra.units || '',
     needsCreate: true, needsUpdate: false, deleteAfterCreate: false, error: false
@@ -377,26 +392,40 @@ function addTeacherLocal(name, extra) {
   return true;
 }
 
-function rapidAdd() {
+function rapidAdd(opts) {
+  const force = !!(opts && opts.force);
   const nameEl = document.getElementById('rapid');
   const phoneEl = document.getElementById('rapid-phone');
+  const emailEl = document.getElementById('rapid-email');
   const name = nameEl.value.trim();
   if (!name) return;
 
   const existing = teachers.find(t => t.name === name);
   if (teachers.some(t => t.name === name && t.subject === curSubject && t.type === curType)) {
     flash('כבר ברשימה של ' + curSubject + ' ב' + (curType === 'gemer' ? 'גמר' : 'בגרות'));
-    nameEl.value = ''; phoneEl.value = ''; nameEl.focus();
+    nameEl.value = ''; phoneEl.value = ''; emailEl.value = ''; nameEl.focus();
     return;
   }
   let phone = phoneEl.value.trim();
   if (!phone && existing && existing.phone) phone = existing.phone;
-  // מורה בלי טלפון נקלט ומסומן להשלמה — בדיוק כמו במסלול ההדבקה.
-  // חסימה כאן איבדה מורים בשקט: השם נשאר בתיבה והמעבר למקצוע הבא מחק אותו.
+  // מורה שכבר הוזן במקצוע אחר — המייל שלו מושלם לבד, לא מקלידים שוב
+  let email = emailEl.value.trim();
+  if (!email && existing && existing.email) email = existing.email;
+
+  // המייל חובה: Enter בלי מייל תקין לא מוסיף. השם והטלפון נשארים בתיבות,
+  // ולכן שום דבר לא אובד — ומעבר מקצוע/לשונית קולט אותם ממילא (force).
+  if (!isEmail(email) && !force) {
+    emailEl.classList.add('field-missing');
+    flash(email ? 'המייל לא תקין' : 'חסר מייל — שדה חובה');
+    emailEl.focus();
+    return;
+  }
+  emailEl.classList.remove('field-missing');
   phoneEl.classList.remove('field-missing');
-  if (addTeacherLocal(name, { phone })) {
-    nameEl.value = ''; phoneEl.value = '';
-    flash(!phone ? 'נוסף — חסר טלפון ⚠️'
+  if (addTeacherLocal(name, { phone, email })) {
+    nameEl.value = ''; phoneEl.value = ''; emailEl.value = '';
+    flash(!isEmail(email) ? 'נוסף — חסר מייל ⚠️'
+        : !phone ? 'נוסף — חסר טלפון ⚠️'
         : existing ? 'נוסף גם ל' + curSubject + ' ✓' : 'נוסף ✓');
     renderAll();
     nameEl.focus();
@@ -480,9 +509,11 @@ function parsePaste() {
   box.style.display = '';
   const withSub = parsed.filter(p => p.subject).length;
   const noPhone = parsed.filter(p => !p.phone).length;
+  const noEmail = parsed.filter(p => !isEmail(p.email)).length;
   document.getElementById('detected').innerHTML =
     `זוהו <b>${parsed.length} מורים</b> · ${withSub} עם מקצוע (לשאר יוצמד ${curSubject})` +
-    (noPhone ? ` · <span class="missing-note">⚠️ ${noPhone} בלי טלפון — יסומנו ברשימה להשלמה</span>` : '');
+    (noEmail ? ` · <span class="missing-note">⚠️ ${noEmail} בלי מייל — המייל חובה, יסומנו ברשימה להשלמה</span>` : '') +
+    (noPhone ? ` · <span class="missing-note">⚠️ ${noPhone} בלי טלפון</span>` : '');
   document.getElementById('preview-table').innerHTML = `
     <thead><tr><th>שם</th><th>מקצוע</th><th>סוג</th><th>יח"ל</th><th>טלפון</th><th>מייל</th></tr></thead>
     <tbody>${parsed.map(p => `<tr>
@@ -490,7 +521,7 @@ function parsePaste() {
       <td>${p.subject || `<span style="color:var(--text-3)">${curSubject} (ברירת מחדל)</span>`}</td>
       <td>${p.type === 'gemer' ? 'גמר' : 'בגרות'}</td>
       <td>${p.type === 'gemer' ? '—' : (p.units || '<span style="color:var(--text-3)">טרם סומן</span>')}</td>
-      <td>${p.phone || '<span class="missing-note">חסר ⚠️</span>'}</td><td>${p.email || '—'}</td>
+      <td>${p.phone || '<span class="missing-note">חסר ⚠️</span>'}</td><td dir="ltr">${isEmail(p.email) ? p.email : '<span class="missing-note">חסר — חובה ⚠️</span>'}</td>
     </tr>`).join('')}</tbody>`;
 }
 
@@ -574,6 +605,7 @@ function renderAll() {
   document.getElementById('count').textContent = teachers.length;
   renderChips();
   updateSaveStatus();
+  updateEmailBanner();
   const roster = document.getElementById('roster');
   if (!teachers.length) {
     roster.innerHTML = `<div class="empty-roster">עדיין אין מורים — הקלידו שם וטלפון למעלה ולחצו Enter</div>`;
@@ -584,9 +616,10 @@ function renderAll() {
   const subjectOrder = [...TS.SUBJECTS, ...Object.keys(groups).filter(s => !TS.SUBJECTS.includes(s))];
   roster.innerHTML = subjectOrder.filter(s => groups[s]).map(s => {
     const missing = groups[s].filter(t => !t.phone).length;
+    const noMail = groups[s].filter(t => !isEmail(t.email)).length;
     return `
     <div class="subject-group">
-      <div class="subject-group-head"><span>${s}</span><span class="n">${groups[s].length} מורים${missing ? ` · <span class="missing-note">⚠️ ${missing} בלי טלפון</span>` : ''}</span></div>
+      <div class="subject-group-head"><span>${s}</span><span class="n">${groups[s].length} מורים${noMail ? ` · <span class="missing-note">⚠️ ${noMail} בלי מייל</span>` : ''}${missing ? ` · <span class="missing-note">⚠️ ${missing} בלי טלפון</span>` : ''}</span></div>
       ${groups[s].map(t => {
         const others = teachers.filter(x => x.name === t.name && x.subject !== t.subject).map(x => x.subject);
         return `
@@ -595,13 +628,13 @@ function renderAll() {
           <button type="button" class="t-type ${t.type}" data-uid="${t.uid}" data-act="type" title="לחיצה מחליפה">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</button>
           ${unitsSelect(t)}
           <input class="t-phone" placeholder="טלפון חסר!" value="${t.phone}" inputmode="tel" data-uid="${t.uid}" data-field="phone">
-          <span class="t-more">${[t.email, t.seniority ? 'ותק ' + t.seniority : ''].filter(Boolean).join(' · ')}${t.error ? ' <span class="missing-note">⚠️ לא נשמר — ננסה שוב</span>' : ''}</span>
+          <input class="t-email${t.email && !isEmail(t.email) ? ' invalid' : ''}" type="email" placeholder="מייל חסר! (חובה)" value="${attr(t.email)}" inputmode="email" autocomplete="off" data-uid="${t.uid}" data-field="email" title="${t.email && !isEmail(t.email) ? 'המייל לא תקין' : 'מייל המורה — שדה חובה'}">
+          <span class="t-more">${[t.seniority ? 'ותק ' + t.seniority : ''].filter(Boolean).join(' · ')}${t.error ? ' <span class="missing-note">⚠️ לא נשמר — ננסה שוב</span>' : ''}</span>
           <span class="t-actions">
             <button type="button" class="mini-btn" data-uid="${t.uid}" data-act="details">פרטים</button>
             <button type="button" class="mini-btn" data-uid="${t.uid}" data-act="remove">הסרה</button>
           </span>
           <div class="t-details" id="det-${t.uid}">
-            <input placeholder="מייל" value="${t.email}" data-uid="${t.uid}" data-field="email">
             <input placeholder="שנות ותק" value="${t.seniority}" data-uid="${t.uid}" data-field="seniority">
           </div>
         </div>`;
@@ -617,6 +650,18 @@ function renderAll() {
   // יח"ל נשמר לשורה הזו בלבד — הוא תלוי מקצוע, בניגוד לטלפון/מייל שמשותפים למורה
   roster.querySelectorAll('select[data-field="units"]').forEach(sel =>
     sel.addEventListener('change', () => setRowUnits(sel.dataset.uid, sel.value)));
+}
+
+// באנר מעל הרשימה — כמה מורים (לפי שם, מורה רב-מקצועי נספר פעם אחת) בלי מייל תקין
+function updateEmailBanner() {
+  const el = document.getElementById('email-banner');
+  if (!el) return;
+  const names = new Set(teachers.filter(t => !isEmail(t.email)).map(t => t.name));
+  el.hidden = !names.size;
+  el.innerHTML = names.size
+    ? `<b>המייל הוא שדה חובה.</b> חסר מייל תקין ל-${names.size} ${names.size === 1 ? 'מורה' : 'מורים'} — ` +
+      `משלימים ישירות בשדה המסומן באדום בשורה. מורה שמלמד כמה מקצועות — מספיק פעם אחת.`
+    : '';
 }
 
 // ============================================================
