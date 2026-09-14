@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>מוסדות ואנשי קשר · תשפ״ז · מינהל הכשרה מקצועית</title>
+<link rel="icon" type="image/png" href="logo.png">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!--
+  העמוד הזה ריק מנתונים בכוונה — הרפו ציבורי.
+  הנתונים (כולל ניידים ומיילים) נמסרים מ-Apps Script פרטי רק למפתח תקף בקישור:
+    mosdot-kesher.html#k=<מפתח>
+  המפתח יושב אחרי # כדי שלא יישלח לשרת האתר ולא למדידת הטראפיק (אין כאן analytics).
+  בנייה, מפתחות וביטול: Downloads\רויטל\mosdot-kesher\build.py
+-->
+<style>
+  :root{
+    --navy:#0D3B66; --navy2:#124D7A; --accent:#0A7799; --blue:#1677FF;
+    --text:#102A43; --text2:#52687A; --muted:#5C7285;
+    --line:#DCE7F1; --line2:#C3D6E7; --soft:#F3F7FB; --bg:#F7FAFD;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:Assistant,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--bg)}
+  a{color:var(--accent)}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+  .sr-only{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  [hidden]{display:none!important}
+
+  .top{background:#fff;border-bottom:1px solid var(--line)}
+  .top .in{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px}
+  .top img{height:38px;width:auto}
+  .top .org{display:flex;flex-direction:column;line-height:1.25;font-size:.9rem;color:var(--text2)}
+  .top .org b{color:var(--navy);font-size:.95rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:30px 24px 48px}
+  h1{margin:0;font-size:2rem;line-height:1.2;color:var(--navy);font-weight:800}
+  .lead{margin:6px 0 0;color:var(--text2);font-size:1.05rem}
+  .upd{margin:4px 0 0;color:var(--muted);font-size:.86rem}
+
+  /* מצב טעינה / שגיאה */
+  .gate{margin:34px 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:34px 26px;text-align:center;color:var(--text2)}
+  .gate b{display:block;color:var(--navy);font-size:1.15rem;margin-bottom:4px}
+  .gate button{margin-top:14px}
+  .spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--navy);border-radius:50%;margin:0 auto 12px;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* לשוניות */
+  .tabs{display:flex;gap:4px;margin:26px 0 0;border-bottom:1px solid var(--line2)}
+  .tabs button{font:inherit;font-weight:700;font-size:1rem;color:var(--text2);background:none;border:0;border-bottom:3px solid transparent;
+    padding:10px 16px;margin-bottom:-1px;cursor:pointer}
+  .tabs button[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--navy)}
+  .tabs .n{font-weight:600;color:var(--muted);font-size:.9rem;margin-inline-start:4px}
+
+  /* חיפוש וסינון */
+  .bar{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 10px}
+  .field{position:relative;flex:2 1 300px}
+  .field svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  input[type=search],select{font:inherit;font-size:.95rem;color:var(--text);background:#fff;border:1px solid var(--line2);border-radius:10px;
+    padding:10px 12px;min-height:44px;width:100%}
+  input[type=search]{padding-right:40px}
+  select{flex:1 1 180px;width:auto;cursor:pointer}
+  input[type=search]:focus,select:focus{border-color:var(--navy);outline:none;box-shadow:0 0 0 3px rgba(13,59,102,.12)}
+  .meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0 0 12px;font-size:.92rem;color:var(--text2)}
+  .meta .cnt{font-weight:700;color:var(--text)}
+  .lnk{font:inherit;font-size:.9rem;font-weight:700;color:var(--accent);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .btn{font:inherit;font-weight:700;font-size:.9rem;color:var(--navy);background:#fff;border:1px solid var(--line2);border-radius:10px;padding:8px 14px;cursor:pointer}
+  .btn:hover{border-color:var(--navy)}
+  .meta .end{margin-inline-start:auto}
+
+  /* רשימת בתי הספר */
+  .list{list-style:none;margin:0;padding:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .sc{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:6px 28px;padding:18px 22px;border-top:1px solid var(--line)}
+  .sc:first-child{border-top:0}
+  .sc h2{margin:0;font-size:1.08rem;line-height:1.35;color:var(--navy);font-weight:800}
+  .sc p{margin:0}
+  .sub{color:var(--text2);font-size:.9rem}
+  .off{color:var(--muted);font-size:.85rem}
+  .lbl{font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:2px!important}
+  .pn{font-weight:700}
+  .ct{font-size:.93rem}
+  .ct a{text-decoration:none;font-weight:600}
+  .ct a:hover{text-decoration:underline}
+  .ltr{direction:ltr;unicode-bidi:isolate}
+  .sup p{font-size:.93rem}
+  .sup .k{color:var(--muted);font-size:.84rem;margin-inline-end:6px}
+  .school{grid-column:1/-1;margin-top:6px!important;padding-top:10px;border-top:1px dashed var(--line);font-size:.88rem;color:var(--text2);
+    display:flex;flex-wrap:wrap;gap:4px 18px}
+  .school .k{font-weight:700;color:var(--muted)}
+  .na{color:var(--muted);font-size:.9rem}
+  .empty{background:#fff;border:1px dashed var(--line2);border-radius:14px;padding:30px;text-align:center;color:var(--text2)}
+
+  /* רשתות */
+  .nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-top:18px}
+  .net{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column}
+  .net h2{margin:0 0 10px;font-size:1.15rem;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .net h2 span{font-size:.88rem;color:var(--text2);font-weight:600;white-space:nowrap}
+  .net p{margin:0}
+  .ppl{list-style:none;margin:0;padding:0}
+  .ppl li{padding:10px 0;border-top:1px solid var(--line)}
+  .ppl li:first-child{border-top:0;padding-top:0}
+  .ppl .role{color:var(--text2);font-size:.88rem}
+  .ppl .tag{display:inline-block;font-size:.75rem;font-weight:700;color:var(--accent);background:#E8F4F8;border-radius:999px;padding:1px 9px;margin-inline-start:6px;vertical-align:1px}
+  .net .lnk{margin-top:auto;align-self:flex-start;padding-top:12px}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-weight:700;border-radius:10px;
+    padding:10px 18px;box-shadow:0 10px 30px rgba(13,59,102,.25);z-index:50}
+
+  footer{max-width:1180px;margin:0 auto;padding:0 24px 30px;text-align:center;color:var(--muted);font-size:.85rem}
+  footer .credit{font-size:.72rem;color:#8A97A6;margin-top:10px}
+  footer .credit a{color:inherit;font-weight:600}
+
+  @media (max-width:860px){
+    .sc{grid-template-columns:1fr;gap:12px;padding:16px}
+    .wrap{padding:22px 16px 40px} h1{font-size:1.6rem}
+    .nets{grid-template-columns:1fr}
+    .field{flex-basis:100%} select{flex:1 1 calc(50% - 5px);min-width:0;font-size:.88rem}
+    .meta .end{margin-inline-start:0}
+  }
+  @media (prefers-reduced-motion:reduce){ .spin{animation:none} }
+  @media print{
+    .top,.tabs,.bar,.meta .end,.lnk,footer .credit{display:none!important}
+    body{background:#fff} .list,.net{border:0}
+    .sc{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <img src="logo.png" alt="משרד העבודה" width="1200" height="420">
+    <div class="org"><b>מינהל הכשרה מקצועית</b><span>משרד העבודה</span></div>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <h1>מוסדות ואנשי קשר</h1>
+  <p class="lead">שנת הלימודים תשפ״ז · פריסת הפיקוח ופרטי ההתקשרות של בתי הספר, המנהלים והרשתות</p>
+  <p class="upd" id="upd"></p>
+
+  <div class="gate" id="gate" role="status" aria-live="polite">
+    <div class="spin" aria-hidden="true"></div>
+    <b>טוען את הנתונים…</b>
+  </div>
+
+  <div id="app" hidden>
+    <div class="tabs" role="tablist" aria-label="תצוגה">
+      <button type="button" role="tab" id="tab-s" aria-controls="panel-s" aria-selected="true">בתי הספר<span class="n" id="nS"></span></button>
+      <button type="button" role="tab" id="tab-n" aria-controls="panel-n" aria-selected="false" tabindex="-1">רשתות ועמותות<span class="n" id="nN"></span></button>
+    </div>
+
+    <section role="tabpanel" id="panel-s" aria-labelledby="tab-s">
+      <div class="bar">
+        <div class="field">
+          <label class="sr-only" for="q">חיפוש</label>
+          <input id="q" type="search" autocomplete="off" placeholder="חיפוש בית ספר, מנהל.ת, יישוב או סמל מוסד">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+        <label class="sr-only" for="fSup">מפקח.ת פדגוגי.ת</label><select id="fSup"><option value="">כל המפקחים הפדגוגיים</option></select>
+        <label class="sr-only" for="fTher">מפקחת המערך הטיפולי</label><select id="fTher"><option value="">כל מפקחות המערך הטיפולי</option></select>
+        <label class="sr-only" for="fD">מחוז</label><select id="fD"><option value="">כל המחוזות</option></select>
+        <label class="sr-only" for="fN">רשת</label><select id="fN"><option value="">כל הרשתות</option></select>
+      </div>
+      <div class="meta">
+        <span class="cnt" id="cnt" role="status" aria-live="polite"></span>
+        <button type="button" class="lnk" id="clr" hidden>ניקוי החיפוש</button>
+        <span class="end"><button type="button" class="btn" id="copyMail">העתקת מיילי המנהלים ברשימה</button></span>
+      </div>
+      <ul class="list" id="list"></ul>
+      <div class="empty" id="empty" hidden>לא נמצאו בתי ספר שמתאימים לחיפוש.</div>
+    </section>
+
+    <section role="tabpanel" id="panel-n" aria-labelledby="tab-n" hidden>
+      <div class="nets" id="nets"></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  המידע מיועד לשימוש פנימי בלבד. נא לא להעביר את הקישור לגורמים נוספים.
+  <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+'use strict';
+var API='https://script.google.com/macros/s/AKfycbwBsSw-ySsclBU4avHlybMcGiIaLwijfPNtqLv3n0B69JTGXmJ-r2iaB3eRB1Xxk0OCpw/exec';
+
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function norm(s){return String(s||'').toLowerCase().replace(/[׳״'"`]/g,'').replace(/[-–—_\/\\(),.:;|+@]/g,' ').replace(/\s+/g,' ').trim();}
+var coll=new Intl.Collator('he');
+var D=null;
+
+/* ---- טעינה ---- */
+var m=location.hash.match(/[#&]k=([^&]+)/), key=m?decodeURIComponent(m[1]):'';
+function gate(kind){
+  var g=$('gate');
+  if(kind==='nokey') g.innerHTML='<b>הדף נפתח רק דרך הקישור שנשלח אליכם</b>אם קיבלתם קישור — פתחו אותו שוב במלואו.';
+  else if(kind==='badkey') g.innerHTML='<b>הקישור אינו פעיל</b>לקבלת קישור מעודכן יש לפנות למי ששלח אותו.';
+  else { g.innerHTML='<b>לא הצלחנו לטעון את הנתונים</b>כדאי לבדוק את החיבור לאינטרנט ולנסות שוב.<br><button type="button" class="btn" id="retry">ניסיון נוסף</button>';
+    $('retry').onclick=function(){ g.innerHTML='<div class="spin" aria-hidden="true"></div><b>טוען את הנתונים…</b>'; load(0); }; }
+}
+function load(tries){
+  if(!key){ gate('nokey'); return; }
+  fetch(API+'?k='+encodeURIComponent(key),{cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ if(!j||!j.ok){ gate('badkey'); return; } start(j.data); })
+    .catch(function(){ if(tries<2) setTimeout(function(){load(tries+1);},1000); else gate('net'); });
+}
+
+/* ---- בניית קטעים ---- */
+function tel(t){ return t&&/^tel:/.test(t.href)?'<a class="ltr" href="'+esc(t.href)+'">'+esc(t.t)+'</a>':''; }
+function mail(x){ return '<a class="ltr" href="mailto:'+esc(x)+'">'+esc(x)+'</a>'; }
+function lines(arr){ return arr.map(function(h){return '<p class="ct">'+h+'</p>';}).join(''); }
+
+function schoolHtml(s){
+  var p=s.principal||{}, pc=[];
+  if(p.tel) pc.push(tel(p.tel));
+  (p.mail||[]).forEach(function(x){pc.push(mail(x));});
+  var extra=[];
+  if((s.addr||[]).length) extra.push('<span><span class="k">כתובת:</span> '+s.addr.map(esc).join(' · ')+'</span>');
+  if((s.tel||[]).length) extra.push('<span><span class="k">טלפון בית הספר:</span> '+s.tel.map(tel).join(' · ')+'</span>');
+  if((s.mail||[]).length) extra.push('<span><span class="k">מייל בית הספר:</span> '+s.mail.map(mail).join(' · ')+'</span>');
+  return '<li class="sc">'
+    +'<div><h2>'+esc(s.name)+'</h2>'
+      +'<p class="sub">'+esc([s.net,s.d,s.s].join(' · '))+'</p>'
+      +(s.off?'<p class="off">'+esc(s.off)+'</p>':'')
+      +'<p class="off">סמל מוסד '+esc(s.semel)+(s.moe?' · סמל משרד החינוך '+esc(s.moe):'')+'</p></div>'
+    +'<div><p class="lbl">מנהל.ת</p>'+(p.n?'<p class="pn">'+esc(p.n)+'</p>'+lines(pc):'<p class="na">לא צוין בקובץ</p>')+'</div>'
+    +'<div class="sup"><p class="lbl">פיקוח</p>'
+      +'<p><span class="k">פדגוגי</span>'+esc(s.sups.join(', '))+'</p>'
+      +'<p><span class="k">מערך טיפולי</span>'+esc(s.ther||'—')+'</p></div>'
+    +(extra.length?'<p class="school">'+extra.join('')+'</p>':'')
+    +'</li>';
+}
+function netHtml(n){
+  var ppl=n.people.length?'<ul class="ppl">'+n.people.map(function(p){
+    var c=[]; if(p.tel) c.push(tel(p.tel)); (p.mail||[]).forEach(function(x){c.push(mail(x));});
+    return '<li><span class="pn">'+esc(p.n)+'</span>'+(p.contact?'<span class="tag">איש.ת קשר לבתי הספר</span>':'')
+      +(p.roles.length?'<p class="role">'+esc(p.roles.join(' · '))+'</p>':'')+lines(c)+'</li>';
+  }).join('')+'</ul>':'<p class="na">אין פרטי קשר לרשת בקובץ.</p>';
+  return '<article class="net"><h2>'+esc(n.name)+'<span>'+(n.count===1?'בית ספר אחד':n.count+' בתי ספר')+'</span></h2>'+ppl
+    +'<button type="button" class="lnk" data-net="'+esc(n.name)+'">בתי הספר של הרשת</button></article>';
+}
+
+/* ---- סינון ---- */
+var F={q:$('q'),sup:$('fSup'),ther:$('fTher'),d:$('fD'),n:$('fN')};
+function filtered(){
+  var t=norm(F.q.value).split(' ').filter(Boolean);
+  return D.schools.filter(function(s){
+    if(F.sup.value&&s.sups.indexOf(F.sup.value)<0) return false;
+    if(F.ther.value&&s.ther!==F.ther.value) return false;
+    if(F.d.value&&s.d!==F.d.value) return false;
+    if(F.n.value&&s.net!==F.n.value) return false;
+    for(var i=0;i<t.length;i++){ if(s._h.indexOf(t[i])<0) return false; }
+    return true;
+  });
+}
+function render(){
+  var list=filtered(), n=list.length;
+  $('list').innerHTML=list.map(schoolHtml).join('');
+  $('list').hidden=!n; $('empty').hidden=!!n;
+  $('cnt').textContent=n===D.schools.length?'כל '+n+' בתי הספר':(n===1?'בית ספר אחד':n+' בתי ספר');
+  $('clr').hidden=!(F.q.value||F.sup.value||F.ther.value||F.d.value||F.n.value);
+  $('copyMail').disabled=!n;
+}
+function fill(sel,vals){ vals.forEach(function(v){ var o=document.createElement('option'); o.textContent=v; o.value=v; sel.appendChild(o); }); }
+
+/* ---- לשוניות ---- */
+function tab(which,focus){
+  ['s','n'].forEach(function(k){
+    var on=k===which, b=$('tab-'+k);
+    b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1;
+    $('panel-'+k).hidden=!on;
+    if(on&&focus) b.focus();
+  });
+}
+
+function toast(msg){ var t=$('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast.h); toast.h=setTimeout(function(){t.hidden=true;},2400); }
+function copy(text,msg){
+  function ok(){ toast(msg); }
+  function fb(){ var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){ toast('ההעתקה לא הצליחה'); } ta.remove(); }
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(text).then(ok,fb); else fb();
+}
+
+function start(data){
+  D=data;
+  D.schools.sort(function(a,b){return coll.compare(a.name,b.name);});
+  D.schools.forEach(function(s){
+    var p=s.principal||{};
+    s._h=norm([s.name,s.off,s.semel,s.moe,s.net,s.d,s.s,s.city,(s.addr||[]).join(' '),s.sups.join(' '),s.ther,p.n,(s.alias||[]).join(' ')].join(' '));
+  });
+  fill(F.sup,D.order.sup); fill(F.ther,D.order.ther); fill(F.d,D.order.d); fill(F.n,D.order.n);
+  $('nS').textContent='('+D.schools.length+')'; $('nN').textContent='('+D.nets.length+')';
+  $('upd').textContent='מעודכן ל-'+D.updated.schools+' · אנשי הקשר ברשתות: '+D.updated.nets;
+  $('nets').innerHTML=D.nets.map(netHtml).join('');
+  $('gate').hidden=true; $('app').hidden=false;
+  render();
+
+  var qT; F.q.addEventListener('input',function(){ clearTimeout(qT); qT=setTimeout(render,120); });
+  [F.sup,F.ther,F.d,F.n].forEach(function(s){ s.addEventListener('change',render); });
+  $('clr').onclick=function(){ F.q.value=''; F.sup.value=F.ther.value=F.d.value=F.n.value=''; render(); F.q.focus(); };
+  $('copyMail').onclick=function(){
+    var list=filtered(), out=[];
+    list.forEach(function(s){ var x=(s.principal&&s.principal.mail||[])[0]; if(x) out.push(x); });
+    if(!out.length){ toast('אין כתובות מייל ברשימה'); return; }
+    copy(out.join(', '), out.length===1?'הועתקה כתובת אחת':'הועתקו '+out.length+' כתובות מייל');
+  };
+  $('tab-s').onclick=function(){tab('s');}; $('tab-n').onclick=function(){tab('n');};
+  document.querySelector('.tabs').addEventListener('keydown',function(ev){
+    if(ev.key==='ArrowLeft'||ev.key==='ArrowRight'){ ev.preventDefault(); tab($('tab-s').getAttribute('aria-selected')==='true'?'n':'s',true); }
+  });
+  $('nets').addEventListener('click',function(ev){
+    var b=ev.target.closest('[data-net]'); if(!b) return;
+    F.q.value=''; F.sup.value=F.ther.value=F.d.value=''; F.n.value=b.getAttribute('data-net');
+    render(); tab('s',true); window.scrollTo({top:$('app').offsetTop-10,behavior:'smooth'});
+  });
+}
+
+load(0);
+})();
+</script>
+</body>
+</html>
