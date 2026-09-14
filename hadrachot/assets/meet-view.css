@@ -1,0 +1,40 @@
+/* נוכחות במפגשי ההדרכה — כרטיסי מדריכ/ה, משותף ל-mabat ול-ministry/nochechut (14.9.26) */
+.mv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:14px; }
+@media (max-width: 420px) { .mv-grid { grid-template-columns:1fr; } }
+.mv-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:10px; }
+.mv-card.alert { border-color:#E7C0B5; box-shadow:inset 3px 0 0 #c56b5c; }
+.mv-head { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.mv-name { font-weight:800; font-size:15px; line-height:1.35; }
+.mv-sub { font-size:12px; color:var(--text-muted); margin-top:1px; }
+.mv-rate { text-align:center; min-width:64px; }
+.mv-rate b { display:block; font-size:26px; line-height:1; font-variant-numeric:tabular-nums; }
+.mv-rate span { font-size:10.5px; color:var(--text-muted); }
+.mv-rate.high b { color:#1f7a5c; } .mv-rate.mid b { color:#9a6400; } .mv-rate.low b { color:#a4442f; } .mv-rate.none b { color:var(--text-soft,#95A3AE); font-size:20px; }
+.mv-kpis { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+.mv-kpi { background:var(--surface-soft); border-radius:9px; padding:7px 6px; text-align:center; }
+.mv-kpi b { display:block; font-size:16px; font-variant-numeric:tabular-nums; }
+.mv-kpi span { font-size:10.5px; color:var(--text-muted); line-height:1.3; display:block; }
+.mv-line { font-size:12.5px; color:var(--text-2); line-height:1.6; }
+.mv-line b { color:var(--text); }
+.mv-warn { display:flex; gap:7px; align-items:flex-start; font-size:12.5px; line-height:1.55; padding:7px 10px; border-radius:9px; background:#FBECE8; color:#8f2f1c; }
+.mv-warn.soft { background:#FFF6EC; color:#7a4a00; }
+.mv-warn svg { width:15px; height:15px; flex:none; margin-top:2px; }
+.mv-card details { border-top:1px solid var(--border); padding-top:8px; }
+.mv-card summary { cursor:pointer; font-size:12.5px; font-weight:700; color:var(--primary,#256A8A); list-style:none; }
+.mv-card summary::-webkit-details-marker { display:none; }
+.mv-card summary::before { content:'‹ '; display:inline-block; transition:transform .15s; }
+.mv-card details[open] summary::before { transform:rotate(-90deg); }
+.mv-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-top:6px; }
+.mv-table th { font-size:11px; color:var(--text-muted); font-weight:600; text-align:right; padding:4px 5px; border-bottom:1px solid var(--border); }
+.mv-table td { padding:5px; border-bottom:1px solid var(--border-soft,#E8EEF0); vertical-align:top; }
+.mv-table td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.mv-people { margin-top:6px; font-size:12.5px; line-height:1.8; max-height:220px; overflow-y:auto; }
+.mv-people div { display:flex; justify-content:space-between; gap:8px; border-bottom:1px dashed var(--border-soft,#E8EEF0); }
+.mv-people span { color:var(--text-muted); font-size:11.5px; }
+.mv-copy { margin-top:6px; font-family:inherit; font-size:12px; font-weight:600; padding:5px 10px; border-radius:8px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; }
+.mv-copy:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); }
+.mv-chip { display:inline-block; min-width:38px; text-align:center; font-size:11.5px; font-weight:700; border-radius:999px; padding:1px 8px; font-variant-numeric:tabular-nums; }
+.mv-chip.high { background:#E4F3EA; color:#1f7a5c; } .mv-chip.mid { background:#FFF3DC; color:#8a5a00; }
+.mv-chip.low { background:#FBE4DF; color:#8f2f1c; } .mv-chip.none { background:var(--surface-soft); color:var(--text-soft,#95A3AE); }
+.mv-zoom { font-size:10.5px; font-weight:700; color:#2D5BB9; background:#E8EEFB; border-radius:999px; padding:0 6px; }
+.mv-empty { font-size:13px; color:var(--text-muted); padding:14px; text-align:center; line-height:1.7; }

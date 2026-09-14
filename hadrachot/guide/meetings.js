@@ -42,6 +42,8 @@
   let openMinutes = '90';
   let codeFetching = false;
   let lastCodeFetch = 0;
+  let zoom = null;          // חלון ייבוא דוח הזום — ראו "ייבוא דוח משתתפים"
+  let zoomMeta = {};        // entryKey → { minutes } — סימונים שבאו מהדוח
 
   const ICON = {
     users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
@@ -165,7 +167,7 @@
   }
   function schedulePoll() {
     clearTimeout(pollTimer);
-    if (sel && sel.date === S.today && !S.badKey) {
+    if (sel && sel.date === S.today && !S.badKey && !zoom) {
       pollTimer = setTimeout(() => { if (!saving) load(); else schedulePoll(); }, POLL_MS);
     }
   }
@@ -263,6 +265,7 @@
       return;
     }
     edits = {};
+    zoom = null; zoomMeta = {};
     stopLive();
     sel = m;
     S.rows = []; S.loaded = false; S.failed = false;
@@ -337,6 +340,7 @@
   }
 
   function setMark(g, status) {
+    delete zoomMeta[g.key];   // סימון ידני גובר על ההתאמה מהזום
     const orig = g.row ? (g.row.guideStatus || '') : '';
     if (status === orig) delete edits[g.key];
     else edits[g.key] = status || 'clear';
@@ -401,10 +405,13 @@
           <button type="button" class="btn btn-primary" id="meet-save"${dirtyN && !saving ? '' : ' disabled'}>
             ${saving ? 'שומר…' : dirtyN ? 'שמירת ' + dirtyN + ' סימונים' : 'הכל שמור'}
           </button>
+          <button type="button" class="btn btn-secondary" id="meet-zoom-btn">ייבוא דוח משתתפים מהזום</button>
           <button type="button" class="btn btn-secondary" id="meet-rest-absent"${c.none ? '' : ' disabled'}>כל מי שלא סומן — לא נכח/ה</button>
           <span class="meet-save-note" id="meet-save-note">${dirtyN ? 'יש סימונים שלא נשמרו' : ''}</span>
         </div>
       </section>
+
+      ${zoom ? zoomPanelHtml(list) : ''}
 
       ${pending.length ? `
       <section class="meet-card meet-pending">
@@ -492,6 +499,7 @@
       renderBody();
     });
     bindLive();
+    bindZoom(list);
   }
   function bindRows(byKey) {
     document.querySelectorAll('#meet-list .meet-row [data-mark]').forEach(b => {
@@ -500,6 +508,255 @@
         if (!g) return;
         setMark(g, g.guide === b.dataset.mark ? '' : b.dataset.mark);
       });
+    });
+  }
+
+  // ---------- ייבוא דוח משתתפים מהזום (14.9.26) ----------
+  // הדוח (CSV) יורד מאתר הזום: Reports → Usage → מספר המשתתפים ליד המפגש → Export.
+  // אותו אדם שנכנס ויצא כמה פעמים מופיע בכמה שורות — מחברים את הדקות.
+  // ההתאמה לשמות הקבוצה היא הצעה בלבד: המדריכ/ה רואה כל שורה, מתקנ/ת ומאשר/ת,
+  // ורק אז זה נכנס לסימונים (ועדיין צריך "שמירה"). נשמר עם markedVia='zoom'.
+  const ZOOM_DEFAULT_MIN = 20;
+
+  function viaOf(k) { return zoomMeta[k] ? 'zoom' : 'manual'; }
+  function zoomMinOf(k) { return zoomMeta[k] ? zoomMeta[k].minutes : ''; }
+
+  function parseCsv(text) {
+    const rows = []; let row = [], cell = '', q = false;
+    const t = String(text || '').replace(/^﻿/, '');
+    const delim = (t.split('\n')[0].match(/\t/g) || []).length > (t.split('\n')[0].match(/,/g) || []).length ? '\t' : ',';
+    for (let i = 0; i < t.length; i++) {
+      const ch = t[i];
+      if (q) {
+        if (ch === '"') { if (t[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+        else cell += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === delim) { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && t[i + 1] === '\n') i++;
+        row.push(cell); rows.push(row); row = []; cell = '';
+      } else cell += ch;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows.map(r => r.map(c => c.trim()));
+  }
+
+  // מאתר את שורת הכותרות של טבלת המשתתפים. בקובץ הזום יש לפעמים קודם טבלת
+  // סיכום של המפגש ("Host name", "Duration") — לכן מחפשים עמודת שם שאינה של המארח
+  // וגם עמודת הצטרפות/עזיבה/מייל, ובוחרים את ההתאמה האחרונה.
+  function zoomParse(text) {
+    const rows = parseCsv(text).filter(r => r.some(Boolean));
+    let hIdx = -1, cols = null;
+    rows.forEach((r, i) => {
+      const low = r.map(c => c.toLowerCase());
+      const name = low.findIndex(c => /^(name|שם|participant|משתתף|الاسم)/.test(c) || /name \(|שם \(/.test(c));
+      const dur = low.findIndex(c => /duration|משך|minutes|דקות|المدة/.test(c));
+      const email = low.findIndex(c => /e-?mail|מייל|דוא"?ל|דואר/.test(c));
+      const extra = low.some(c => /join|leave|guest|הצטרפות|עזיבה|אורח/.test(c)) || email >= 0;
+      if (name >= 0 && !/host|מארח/.test(low[name]) && extra) { hIdx = i; cols = { name, dur, email }; }
+    });
+    if (hIdx < 0) {
+      // בלי כותרות (הדבקה של רשימת שמות מחלון המשתתפים) — כל שורה = שם
+      const names = rows.map(r => r[0]).filter(n => n && n.length < 80);
+      return names.map(n => ({ raw: n, minutes: 0 }));
+    }
+    const byName = {};
+    rows.slice(hIdx + 1).forEach(r => {
+      const raw = r[cols.name] || '';
+      if (!raw) return;
+      const key = norm(raw.replace(/\s*\(.*\)\s*$/, '')) || norm(raw);
+      const it = byName[key] || (byName[key] = { raw: raw, minutes: 0, email: '' });
+      it.minutes += cols.dur >= 0 ? (Number(String(r[cols.dur]).replace(/[^\d.]/g, '')) || 0) : 0;
+      if (cols.email >= 0 && r[cols.email]) it.email = r[cols.email].toLowerCase();
+    });
+    return Object.values(byName);
+  }
+
+  // נרמול לשם השוואה: בלי ניקוד, בלי פיסוק, אותיות סופיות כרגילות
+  function nameKey(s) {
+    return String(s || '').toLowerCase()
+      .replace(/[֑-ׇً-ٟ]/g, '')
+      .replace(/[ךםןףץ]/g, ch => ({ 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' })[ch])
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function nameScore(a, b) {
+    const x = nameKey(a), y = nameKey(b);
+    if (!x || !y) return 0;
+    if (x === y) return 1;
+    const tx = x.split(' '), ty = y.split(' ');
+    const common = tx.filter(w => w.length > 1 && ty.indexOf(w) >= 0).length;
+    let s = common / Math.max(tx.length, ty.length);
+    if (common && (x.includes(y) || y.includes(x))) s = Math.max(s, 0.85);
+    return s;
+  }
+
+  function zoomMatch(items, list) {
+    const emailOf = {};
+    ((typeof myTeachers === 'function') ? myTeachers() : []).forEach(t => {
+      if (t.email) emailOf[String(t.email).trim().toLowerCase()] = String(t.id);
+    });
+    const guideName = GUIDE_CFG.name || '';
+    const cands = [];
+    items.forEach((it, i) => {
+      // "כינוי (שם מקורי)" — בודקים את שני החלקים
+      const m = it.raw.match(/^(.*?)\s*\((.*)\)\s*$/);
+      const names = m ? [m[1], m[2]] : [it.raw];
+      it.display = names[0] || it.raw;
+      it.host = guideName && names.some(n => nameScore(n, guideName) >= 0.6);
+      list.forEach(g => {
+        let sc = Math.max.apply(null, names.map(n => nameScore(n, g.name)));
+        if (it.email && emailOf[it.email] && g.ids.indexOf(emailOf[it.email]) >= 0) sc = 1.01;
+        if (sc >= 0.5) cands.push({ i, key: g.key, sc });
+      });
+    });
+    // התאמה חמדנית: הציון הגבוה קודם, כל משתתף וכל מורה פעם אחת
+    cands.sort((a, b) => b.sc - a.sc);
+    const usedItem = new Set(), usedKey = new Set();
+    cands.forEach(c => {
+      if (usedItem.has(c.i) || usedKey.has(c.key) || items[c.i].host) return;
+      usedItem.add(c.i); usedKey.add(c.key);
+      items[c.i].matchKey = c.key; items[c.i].score = c.sc;
+    });
+    items.forEach(it => {
+      if (it.matchKey === undefined) it.matchKey = '';
+      it.checked = !!it.matchKey && !it.host && (it.minutes === 0 || it.minutes >= zoom.minMin) && (it.score || 0) >= 0.6;
+    });
+    items.sort((a, b) => (a.host - b.host) || (!!a.matchKey - !!b.matchKey) || a.display.localeCompare(b.display, 'he'));
+  }
+
+  function zoomPanelHtml(list) {
+    if (zoom.stage === 'input') {
+      return `
+      <section class="meet-card meet-zoom">
+        <h3>ייבוא דוח משתתפים מהזום</h3>
+        <div class="space-hint">
+          מורידים את הדוח מאתר הזום (zoom.us, לא מהאפליקציה): <b>Reports</b> ← <b>Usage</b> ← לוחצים על מספר המשתתפים ליד המפגש ← <b>Export</b>.
+          המערכת מחברת כניסות חוזרות של אותו אדם, מציעה התאמה לשמות הקבוצה, ואתם מאשרים לפני שמשהו מסומן.
+        </div>
+        <div class="zoom-drop" id="zoom-drop">
+          <input type="file" id="zoom-file" accept=".csv,.txt,text/csv">
+          <div>או הדבקה של רשימת המשתתפים (שם בכל שורה):</div>
+          <textarea class="textarea" id="zoom-paste" rows="4" placeholder="מדביקים כאן…"></textarea>
+        </div>
+        ${zoom.error ? `<div class="meet-warn">${ICON.alert}<span>${esc(zoom.error)}</span></div>` : ''}
+        <div class="meet-save-bar">
+          <button type="button" class="btn btn-primary" id="zoom-read">קריאת הרשימה</button>
+          <button type="button" class="btn btn-secondary" id="zoom-cancel">ביטול</button>
+        </div>
+      </section>`;
+    }
+    const byKey = {};
+    list.forEach(g => { byKey[g.key] = g; });
+    const opts = list.slice().sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    const matched = zoom.items.filter(it => it.matchKey && !it.host).length;
+    const checked = zoom.items.filter(it => it.checked).length;
+    const unmatched = zoom.items.filter(it => !it.matchKey && !it.host).length;
+    const hasMinutes = zoom.items.some(it => it.minutes > 0);
+    return `
+      <section class="meet-card meet-zoom">
+        <h3>ייבוא דוח משתתפים מהזום${zoom.fileName ? ' · <span style="font-weight:500;color:var(--text-muted);font-size:12.5px;">' + esc(zoom.fileName) + '</span>' : ''}</h3>
+        <div class="space-hint">
+          ${zoom.items.length} משתתפים בדוח · <b>${matched}</b> הותאמו לרשימת הקבוצה${unmatched ? ' · <b style="color:#9a6400">' + unmatched + ' לא הותאמו</b> — בוחרים ידנית, או משאירים "לא מהקבוצה"' : ''}.
+          בודקים כל שורה. רק שורות מסומנות ב-✓ יסומנו "נכח/ה".
+        </div>
+        ${hasMinutes ? `<label class="zoom-min">מינימום דקות במפגש כדי להיחשב נוכח/ת:
+          <input type="number" class="input" id="zoom-min" min="0" max="300" value="${zoom.minMin}"></label>` : ''}
+        <div class="zoom-table-wrap">
+          <table class="zoom-table">
+            <thead><tr><th>✓</th><th>השם בזום</th>${hasMinutes ? '<th>דקות</th>' : ''}<th>מורה ברשימה</th></tr></thead>
+            <tbody>${zoom.items.map((it, i) => `
+              <tr class="${it.host ? 'host' : !it.matchKey ? 'nomatch' : (hasMinutes && it.minutes < zoom.minMin ? 'short' : '')}">
+                <td><input type="checkbox" data-zchk="${i}"${it.checked ? ' checked' : ''}${it.matchKey ? '' : ' disabled'} aria-label="לסמן נכח/ה"></td>
+                <td>${esc(it.raw)}${it.host ? ' <span class="mb self">המדריך/ה</span>' : ''}${it.email ? '<div class="zoom-email">' + esc(it.email) + '</div>' : ''}</td>
+                ${hasMinutes ? `<td class="num">${Math.round(it.minutes)}</td>` : ''}
+                <td><select class="select" data-zsel="${i}">
+                  <option value="">— לא מהקבוצה —</option>
+                  ${opts.map(g => `<option value="${esc(g.key)}"${it.matchKey === g.key ? ' selected' : ''}>${esc(g.name)} · ${esc(g.schoolName || '')}</option>`).join('')}
+                </select></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="meet-save-bar">
+          <button type="button" class="btn btn-primary" id="zoom-apply"${checked ? '' : ' disabled'}>סימון ${checked} כ"נכח/ה"</button>
+          <button type="button" class="btn btn-secondary" id="zoom-back">קובץ אחר</button>
+          <button type="button" class="btn btn-secondary" id="zoom-cancel">ביטול</button>
+        </div>
+      </section>`;
+  }
+
+  function bindZoom(list) {
+    const btn = document.getElementById('meet-zoom-btn');
+    if (btn) btn.addEventListener('click', () => {
+      zoom = { stage: 'input', items: [], minMin: ZOOM_DEFAULT_MIN, fileName: '', error: '' };
+      clearTimeout(pollTimer);
+      renderBody();
+      const p = document.querySelector('.meet-zoom');
+      if (p) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    if (!zoom) return;
+    const cancel = document.getElementById('zoom-cancel');
+    if (cancel) cancel.addEventListener('click', () => { zoom = null; renderBody(); schedulePoll(); });
+
+    if (zoom.stage === 'input') {
+      const run = (text, fileName) => {
+        const items = zoomParse(text);
+        if (!items.length) { zoom.error = 'לא נמצאו משתתפים בקובץ. בודקים שזה דוח המשתתפים (Participants) מאתר הזום.'; renderBody(); return; }
+        zoom.items = items; zoom.fileName = fileName || ''; zoom.stage = 'review'; zoom.error = '';
+        zoomMatch(zoom.items, list);
+        renderBody();
+      };
+      document.getElementById('zoom-read').addEventListener('click', () => {
+        const f = document.getElementById('zoom-file').files[0];
+        const pasted = document.getElementById('zoom-paste').value;
+        if (f) {
+          if (/\.xlsx?$/i.test(f.name)) { zoom.error = 'זה קובץ אקסל. בזום בוחרים ייצוא כ-CSV, או פותחים באקסל ושומרים בשם כ-CSV.'; renderBody(); return; }
+          const fr = new FileReader();
+          fr.onload = () => run(String(fr.result || ''), f.name);
+          fr.onerror = () => { zoom.error = 'הקובץ לא נקרא.'; renderBody(); };
+          fr.readAsText(f, 'utf-8');
+        } else if (pasted.trim()) run(pasted, '');
+        else { zoom.error = 'בוחרים קובץ או מדביקים רשימה.'; renderBody(); }
+      });
+      return;
+    }
+
+    document.querySelectorAll('[data-zchk]').forEach(c => c.addEventListener('change', () => {
+      zoom.items[Number(c.dataset.zchk)].checked = c.checked; renderBody();
+    }));
+    document.querySelectorAll('[data-zsel]').forEach(s => s.addEventListener('change', () => {
+      const it = zoom.items[Number(s.dataset.zsel)];
+      // אותו מורה לא יכול להיות מותאם לשני משתתפים — ההתאמה הקודמת מתבטלת
+      if (s.value) zoom.items.forEach(o => { if (o !== it && o.matchKey === s.value) { o.matchKey = ''; o.checked = false; } });
+      it.matchKey = s.value;
+      it.checked = !!s.value && !it.host;
+      renderBody();
+    }));
+    const minEl = document.getElementById('zoom-min');
+    if (minEl) minEl.addEventListener('change', () => {
+      zoom.minMin = Math.max(0, Number(minEl.value) || 0);
+      zoom.items.forEach(it => { if (it.matchKey && !it.host) it.checked = it.minutes >= zoom.minMin; });
+      renderBody();
+    });
+    document.getElementById('zoom-back').addEventListener('click', () => { zoom.stage = 'input'; zoom.items = []; renderBody(); });
+    document.getElementById('zoom-apply').addEventListener('click', () => {
+      const byKey = {};
+      list.forEach(g => { byKey[g.key] = g; });
+      const marked = new Set();
+      zoom.items.filter(it => it.checked && it.matchKey && byKey[it.matchKey]).forEach(it => {
+        const g = byKey[it.matchKey];
+        marked.add(g.key);
+        zoomMeta[g.key] = { minutes: Math.round(it.minutes) || '' };
+        edits[g.key] = 'present';
+      });
+      // מי שמסומן "נכח/ה" אבל לא הופיע בדוח — להפנות תשומת לב, לא לשנות לבד
+      const notInZoom = list.filter(g => g.guide === 'present' && !marked.has(g.key));
+      zoom = null;
+      renderBody();
+      schedulePoll();
+      const note = document.getElementById('meet-save-note');
+      if (note) note.innerHTML = 'סומנו ' + marked.size + ' מתוך דוח הזום — לוחצים "שמירה".' +
+        (notInZoom.length ? '<br><span class="bad">מסומנים "נכח/ה" ולא מופיעים בדוח: ' + esc(notInZoom.map(g => g.name).join(', ')) + '</span>' : '');
     });
   }
 
@@ -513,8 +770,8 @@
       const g = byKey[k];
       if (!g) return null;
       return g.teacherId
-        ? { teacherId: g.teacherId, teacherName: g.name, schoolName: g.schoolName, status: want[k] }
-        : { rowId: g.rowId, status: want[k] };
+        ? { teacherId: g.teacherId, teacherName: g.name, schoolName: g.schoolName, status: want[k], via: viaOf(k), zoomMinutes: zoomMinOf(k) }
+        : { rowId: g.rowId, status: want[k], via: viaOf(k), zoomMinutes: zoomMinOf(k) };
     }).filter(Boolean);
     if (!records.length) { edits = {}; renderBody(); return; }
 
@@ -528,7 +785,7 @@
 
     if (res && res.ok) {
       // מה שסומן בזמן השמירה נשאר לשמירה הבאה
-      Object.keys(want).forEach(k => { if (edits[k] === want[k]) delete edits[k]; });
+      Object.keys(want).forEach(k => { if (edits[k] === want[k]) { delete edits[k]; delete zoomMeta[k]; } });
       await load();
       TS.toast('הנוכחות נשמרה');
       return;

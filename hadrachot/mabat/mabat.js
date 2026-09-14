@@ -37,7 +37,9 @@ async function loadData() {
   // (או שהפריסה עדיין בלי הפעולה), הטבלה עולה כרגיל והכרטיסים מציגים 0.
   const [res] = await Promise.all([
     TS.api('teachers.list', {}),
-    loadWorkspace()
+    loadWorkspace(),
+    // נוכחות במפגשים (meet.js) — גם היא לא חוסמת את רשימת המורים
+    window.MEET_load ? window.MEET_load() : null
   ]);
   if (!res || !res.ok) { renderApiError(); return; }
 
@@ -57,7 +59,10 @@ async function loadData() {
       network: netKey,
       networkName: TS.netById(netKey).name || netKey,
       type: t.type === 'gemer' ? 'gemer' : 'bagrut',
-      sector: sector
+      sector: sector,
+      // לחישוב הנוכחות: שיוך לקבוצת המדריכ/ה לפי יח"ל (שירה/גל), כמו בדשבורד המדריכ/ה
+      units: (t.units || '').toString().trim(),
+      school: t.school || ''
     });
   });
 
@@ -142,6 +147,7 @@ function renderAll() {
   document.getElementById('stat-guides').textContent = state.guides.length;
 
   renderGuides();
+  if (window.MEET_render) window.MEET_render();
   renderTeachers();
 }
 
@@ -270,6 +276,7 @@ function renderTeachers() {
                 <th>בית ספר</th>
                 <th>רשת</th>
                 <th>מסלול</th>
+                <th title="מפגשים שהשתתף בהם מתוך המפגשים שהתקיימו">נוכחות</th>
               </tr>
             </thead>
             <tbody>
@@ -279,6 +286,7 @@ function renderTeachers() {
                   <td>${escapeHtml(t.schoolName)}</td>
                   <td><span class="net-chip ${escapeAttr(t.network)}">${escapeHtml(t.networkName || t.network)}</span></td>
                   <td><span class="track-chip ${t.type}">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</span></td>
+                  <td>${window.MEET_cell ? window.MEET_cell(t.id) : ''}</td>
                 </tr>`).join('')}
             </tbody>
           </table>

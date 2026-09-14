@@ -58,7 +58,9 @@ const SCHEMA = {
   // המקצוע בכל המגזרים, ומפגש של קבוצה אחת היה מסמן את כל השאר "לא נכחו".
   meetings:           ['id','guideSlug','guideName','date','topic','source','openUntil','openedAt','closedAt','createdAt','updatedAt'],
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
-                       'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt']
+                       'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt',
+                       // markedVia: 'manual' | 'zoom' — סימון שנעשה מתוך דוח המשתתפים של הזום
+                       'markedVia','zoomMinutes']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -836,6 +838,7 @@ function handleRequest(params) {
       case 'meet.code':           result = meetCode(params); break;
       case 'meet.mark':           result = meetMark(params); break;
       case 'meet.guideKeys':      result = meetGuideKeys(params); break;
+      case 'meet.report':         result = meetReport(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -3048,7 +3051,8 @@ function meetRowPublic_(r) {
   return {
     id: String(r.id), teacherId: String(r.teacherId || ''), teacherName: r.teacherName || '',
     schoolName: r.schoolName || '', status: r.status || '', guideStatus: r.guideStatus || '',
-    selfCheckinAt: toIso_(r.selfCheckinAt), markedAt: toIso_(r.markedAt), source: r.source || ''
+    selfCheckinAt: toIso_(r.selfCheckinAt), markedAt: toIso_(r.markedAt), source: r.source || '',
+    markedVia: r.markedVia || '', zoomMinutes: Number(r.zoomMinutes) || 0
   };
 }
 
@@ -3179,6 +3183,8 @@ function meetMark(p) {
       if (['present', 'absent', 'clear'].indexOf(status) < 0) return;
       const tid = meetStr_(r.teacherId, 80);
       const rid = meetStr_(r.rowId, 80);
+      const via = r.via === 'zoom' ? 'zoom' : 'manual';
+      const zoomMin = Math.max(0, Math.min(1000, Math.round(Number(r.zoomMinutes) || 0))) || '';
       const idx = tid && byTeacher[tid] > 0 ? byTeacher[tid]
         : (rid && byRow[rid] > 0 ? byRow[rid] : -1);
 
@@ -3195,6 +3201,8 @@ function meetMark(p) {
           row[col.guideStatus] = status; row[col.status] = status;
         }
         row[col.markedAt] = nowIso; row[col.updatedAt] = nowIso;
+        if (col.markedVia !== undefined) row[col.markedVia] = status === 'clear' ? '' : via;
+        if (col.zoomMinutes !== undefined) row[col.zoomMinutes] = via === 'zoom' ? zoomMin : '';
         dirty[idx] = true; changed++;
         return;
       }
@@ -3203,7 +3211,8 @@ function meetMark(p) {
         id: newId('ma'), meetingId: m.id, guideSlug: slug, date: "'" + date,
         teacherId: tid, teacherName: meetStr_(r.teacherName, 120), schoolName: meetStr_(r.schoolName, 120),
         status: status, guideStatus: status, selfCheckinAt: '', markedAt: nowIso,
-        source: 'guide', updatedAt: nowIso
+        source: 'guide', updatedAt: nowIso,
+        markedVia: via, zoomMinutes: via === 'zoom' ? zoomMin : ''
       };
       byTeacher[tid] = -2;   // כפילות באותה בקשה
       newRows.push(headers.map(h => obj[h] === undefined ? '' : obj[h]));
@@ -3341,4 +3350,39 @@ function checkinSubmit(p) {
     });
     return { ok: true, data: { duplicate: false } };
   });
+}
+
+// ---------- דוח נוכחות — מבט המפקח.ת והמבט הארצי (14.9.26) ----------
+// קריאה בלבד. בכוונה לא ב-PUBLIC_ACTIONS: כשתידלק AUTH_ENFORCED הדוח ידרוש
+// התחברות כמו שאר הדשבורדים. guides=<slug,slug> מצמצם למדריכים של מפקח.ת.
+// המכנה (מי שייך לאיזו קבוצה) מחושב בדפדפן מ-guides.js — השרת לא מכיר אותו.
+function meetReport(p) {
+  ensureTab_('meetings');
+  ensureTab_('meeting_attendance');
+  const slugs = String(p.guides || '').split(',').map(meetSlug_).filter(Boolean);
+  const inScope = r => !slugs.length || slugs.indexOf(String(r.guideSlug || '')) >= 0;
+  const now = Date.now();
+
+  const rows = readAll('meeting_attendance').filter(inScope).map(r => ({
+    meetingId: String(r.meetingId || ''), guideSlug: String(r.guideSlug || ''),
+    date: meetDate_(r.date), teacherId: String(r.teacherId || ''),
+    teacherName: r.teacherName || '', schoolName: r.schoolName || '',
+    status: r.status || '', guideStatus: r.guideStatus || '',
+    self: !!r.selfCheckinAt, markedVia: r.markedVia || '', zoomMinutes: Number(r.zoomMinutes) || 0
+  }));
+
+  const counts = {};
+  rows.forEach(r => {
+    const c = counts[r.meetingId] || (counts[r.meetingId] = { present: 0, absent: 0, pending: 0, gaps: 0, zoom: 0 });
+    if (c[r.status] !== undefined) c[r.status]++;
+    if (r.self && r.guideStatus === 'absent') c.gaps++;
+    if (r.markedVia === 'zoom') c.zoom++;
+  });
+
+  const meetings = readAll('meetings').filter(inScope).map(m => Object.assign(meetPublic_(m, now), {
+    guideSlug: String(m.guideSlug || ''), guideName: m.guideName || '',
+    counts: counts[m.id] || { present: 0, absent: 0, pending: 0, gaps: 0, zoom: 0 }
+  })).sort((a, b) => a.date.localeCompare(b.date));
+
+  return { ok: true, data: { today: meetToday_(), meetings: meetings, rows: rows } };
 }

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>נוכחות במפגשי ההדרכה — מבט ארצי · מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260914">
+<style>
+  [hidden] { display: none !important; }
+  .nk-kpis { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:20px; }
+  @media (max-width: 900px) { .nk-kpis { grid-template-columns:repeat(2, 1fr); } }
+  .nk-kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
+  .nk-kpi .l { font-size:12px; color:var(--text-muted); font-weight:600; }
+  .nk-kpi .v { font-size:28px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--primary-dark,#17324D); }
+  .nk-kpi .s { font-size:11.5px; color:var(--text-muted); }
+  .nk-kpi.red { border-color:#E7C0B5; background:#FDF4F1; } .nk-kpi.red .v { color:#a4442f; }
+  .nk-kpi.amber .v { color:#9a6400; }
+
+  .flt { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 12px; position:sticky; top:var(--pn-h, 56px); z-index:5; }
+  .flt select, .flt input[type="search"] { padding:8px 12px; border:1px solid var(--border); border-radius:9px; background:var(--surface); font:inherit; font-size:.84rem; color:var(--text); }
+  .flt input[type="search"] { flex:1; min-width:180px; }
+  .flt label.chk { display:inline-flex; align-items:center; gap:6px; font-size:.84rem; color:var(--text-muted); cursor:pointer; }
+
+  .nk-sec { margin:28px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .nk-sec h2 { margin:0; font-family:'Frank Ruhl Libre', serif; font-size:21px; }
+  .nk-sec p { margin:2px 0 0; font-size:12.5px; color:var(--text-muted); }
+  .nk-tools { display:flex; gap:8px; flex-wrap:wrap; }
+  .nk-btn { font-family:inherit; font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:9px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; }
+  .nk-btn:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); }
+
+  .nk-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
+  table.nk { width:100%; border-collapse:collapse; font-size:13px; }
+  table.nk th { position:sticky; top:0; background:var(--surface-soft); font-size:11.5px; font-weight:700; color:var(--text-muted); text-align:right; padding:8px 10px; white-space:nowrap; }
+  table.nk td { padding:7px 10px; border-top:1px solid var(--border-soft,#E8EEF0); vertical-align:top; }
+  table.nk td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+  table.nk td.dim { color:var(--text-muted); font-size:12px; }
+  table.nk tr.never td:first-child { box-shadow:inset 3px 0 0 #c56b5c; }
+  .nk-more { text-align:center; padding:10px; }
+  .lead-note { background:var(--sand-soft,#F7F0E3); border:1px solid var(--sand,#E6D3AE); border-radius:12px; padding:12px 16px; font-size:.82rem; color:var(--text-muted); line-height:1.8; margin-bottom:16px; }
+</style>
+</head>
+<body data-role="ministry">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>מבט ארצי</span>
+    </div>
+  </header>
+
+  <nav class="pn" aria-label="ניווט בעמוד">
+    <div class="pn-inner">
+      <span class="pn-label">קפיצה אל</span>
+      <a href="../ministry/" title="חזרה למבט הרשת הארצי">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        מבט רשת ארצי
+      </a>
+      <a href="#s-guides" class="on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        לפי מדריך/ה
+      </a>
+      <a href="#s-schools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11"/></svg>
+        לפי בית ספר
+      </a>
+      <a href="#s-networks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
+        לפי רשת
+      </a>
+      <a href="#s-teachers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        מורים
+      </a>
+    </div>
+  </nav>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט ארצי · נוכחות</div>
+        <h1>נוכחות במפגשי ההדרכה</h1>
+        <p class="page-header-sub" id="nk-sub">טוען…</p>
+      </div>
+    </section>
+
+    <div class="lead-note">
+      <b>איך נספר:</b> רק מפגש שהמדריך/ה רשמ/ה בו נוכחות נכנס לחישוב. מפגש מהתוכנית שתאריכו עבר ואין בו רישום מופיע כהתראה, ולא כהיעדרות של הקבוצה.
+      רישום עצמי של מורה נספר רק אחרי אישור המדריך/ה. מורה בגרות שטרם סומנו לו יח"ל במתמטיקה נספר בשתי הקבוצות (שירה וגל).
+    </div>
+
+    <section class="nk-kpis" aria-label="נתונים ארציים">
+      <div class="nk-kpi"><div class="l">מפגשים שהתקיימו</div><div class="v" id="k-held">—</div><div class="s">עם רישום נוכחות</div></div>
+      <div class="nk-kpi"><div class="l">נוכחות ממוצעת</div><div class="v" id="k-rate">—</div><div class="s">יעד: 80%</div></div>
+      <div class="nk-kpi red"><div class="l">לא השתתפו באף מפגש</div><div class="v" id="k-never">—</div><div class="s" id="k-never-s">מורים</div></div>
+      <div class="nk-kpi red"><div class="l">מפגשים בלי רישום</div><div class="v" id="k-unrec">—</div><div class="s">תאריך עבר, אין נוכחות</div></div>
+      <div class="nk-kpi amber"><div class="l">ממתינים לאישור</div><div class="v" id="k-pending">—</div><div class="s">רישום עצמי</div></div>
+    </section>
+
+    <div class="flt">
+      <select id="f-insp"><option value="">כל המפקחים</option></select>
+      <select id="f-society">
+        <option value="">כל המגזרים</option>
+        <option value="jewish">החברה היהודית</option>
+        <option value="arab">החברה הערבית</option>
+        <option value="haredi">המגזר החרדי</option>
+      </select>
+      <select id="f-subject"><option value="">כל המקצועות</option></select>
+      <input type="search" id="f-q" placeholder="חיפוש מדריך/ה, בית ספר או מורה">
+    </div>
+
+    <div class="nk-sec" id="s-guides">
+      <div><h2>לפי מדריך/ה</h2><p>קודם מי שיש אצלם מפגש בלי רישום, אחר כך מהנוכחות הנמוכה לגבוהה.</p></div>
+    </div>
+    <div class="mv-grid" id="nk-guides"><div class="mv-empty">טוען…</div></div>
+
+    <div class="nk-sec" id="s-schools">
+      <div><h2>לפי בית ספר</h2><p>אחוז הנוכחות של מורי בית הספר בכל קבוצות ההדרכה. מהנמוך לגבוה.</p></div>
+      <div class="nk-tools"><button type="button" class="nk-btn" data-csv="schools">ייצוא לאקסל (CSV)</button></div>
+    </div>
+    <div class="nk-wrap"><table class="nk"><thead><tr>
+      <th>בית ספר</th><th>רשת</th><th>מורים</th><th>נוכחות</th><th>לא השתתפו כלל</th><th></th>
+    </tr></thead><tbody id="nk-schools"></tbody></table></div>
+
+    <div class="nk-sec" id="s-networks">
+      <div><h2>לפי רשת</h2></div>
+      <div class="nk-tools"><button type="button" class="nk-btn" data-csv="networks">ייצוא לאקסל (CSV)</button></div>
+    </div>
+    <div class="nk-wrap"><table class="nk"><thead><tr>
+      <th>רשת</th><th>בתי ספר</th><th>מורים</th><th>נוכחות</th><th>לא השתתפו כלל</th>
+    </tr></thead><tbody id="nk-networks"></tbody></table></div>
+
+    <div class="nk-sec" id="s-teachers">
+      <div><h2>מורים</h2><p id="nk-teachers-sub"></p></div>
+      <div class="nk-tools">
+        <label class="chk" style="display:inline-flex;align-items:center;gap:6px;font-size:.84rem;color:var(--text-muted);"><input type="checkbox" id="f-never"> רק מי שלא השתתף באף מפגש</label>
+        <button type="button" class="nk-btn" data-csv="teachers">ייצוא לאקסל (CSV)</button>
+      </div>
+    </div>
+    <div class="nk-wrap"><table class="nk"><thead><tr>
+      <th>מורה</th><th>בית ספר</th><th>מקצוע</th><th>מדריך/ה</th><th>נוכחות</th><th>החסיר/ה</th>
+    </tr></thead><tbody id="nk-teachers"></tbody></table></div>
+    <div class="nk-more" id="nk-more" hidden><button type="button" class="nk-btn" id="nk-more-btn">הצגת כל המורים</button></div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260911"></script>
+<script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script src="../assets/guides.js?v=20260911"></script>
+<script src="../assets/plans.js?v=20260910"></script>
+<script src="../assets/meet-stats.js?v=20260914"></script>
+<script src="../assets/meet-view.js?v=20260914"></script>
+<script src="nochechut.js?v=20260914"></script>
+</body>
+</html>

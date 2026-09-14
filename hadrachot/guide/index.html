@@ -322,6 +322,23 @@
   .mr-btn.no.on { background:#c56b5c; border-color:#c56b5c; color:#fff; }
   @media (max-width: 520px) { .meet-row { flex-wrap:wrap; } .mr-act { width:100%; } .mr-btn { flex:1; } }
 
+  /* ייבוא דוח משתתפים מהזום */
+  .meet-zoom { border-color:#C9D6F2; background:#F6F9FE; }
+  .zoom-drop { display:flex; flex-direction:column; gap:8px; font-size:12.5px; color:var(--text-2); background:#fff; border:1px dashed #C9D6F2; border-radius:10px; padding:12px; }
+  .zoom-drop .textarea { font-size:13px; }
+  .zoom-min { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-2); margin:4px 0 10px; }
+  .zoom-min .input { width:80px; padding:5px 8px; }
+  .zoom-table-wrap { max-height:420px; overflow:auto; background:#fff; border:1px solid var(--border); border-radius:10px; }
+  .zoom-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .zoom-table th { position:sticky; top:0; background:#EEF3FB; font-size:11.5px; color:var(--text-muted); text-align:right; padding:6px 8px; z-index:1; }
+  .zoom-table td { padding:6px 8px; border-top:1px solid var(--border-soft,#E8EEF0); vertical-align:middle; }
+  .zoom-table td.num { font-variant-numeric:tabular-nums; }
+  .zoom-table .select { font-size:12.5px; padding:5px 6px; max-width:260px; width:100%; }
+  .zoom-table tr.nomatch { background:#FFFBF2; }
+  .zoom-table tr.short td { color:var(--text-muted); }
+  .zoom-table tr.host td { color:var(--text-soft,#95A3AE); }
+  .zoom-email { font-size:11px; color:var(--text-muted); direction:ltr; text-align:right; }
+
   /* הקרנה על מסך הזום — קריא גם בתמונה מוקטנת של שיתוף מסך */
   .meet-proj { position:fixed; inset:0; z-index:9999; background:#10283D; color:#fff; display:flex; align-items:center; justify-content:center; padding:4vh 4vw; }
   .proj-x { position:absolute; top:14px; left:18px; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.3); background:transparent; color:#fff; font-size:28px; line-height:1; cursor:pointer; }
@@ -749,6 +766,6 @@
 <script src="../assets/plans.js?v=20260910"></script>
 <script src="dashboard.js?v=20260914"></script>
 <script src="space.js?v=20260914"></script>
-<script src="meetings.js?v=20260914"></script>
+<script src="meetings.js?v=20260914b"></script>
 </body>
 </html>
