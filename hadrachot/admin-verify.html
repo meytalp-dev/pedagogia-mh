@@ -68,6 +68,12 @@
   .v-chip.approved { background: var(--ok-soft, #e7f6ef); color: #14532d; }
   .v-chip.fixed    { background: #E6F0F4; color: #17324D; }
   .v-chip.pending  { background: var(--surface-2); color: var(--text-3); }
+  .e-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-inline-start: 6px; }
+  .e-chip.full { background: var(--ok-soft, #e7f6ef); color: #14532d; }
+  .e-chip.part { background: #FFF4E0; color: #8a5a00; }
+  .e-chip.none { background: #FDECEC; color: #a12626; }
+  .sec-tag { font-size: 11.5px; font-weight: 600; color: var(--text-3); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; margin-inline-start: 6px; }
+  .mask-note { background: #FDECEC; border: 1px solid #F3C3C3; color: #7f1d1d; border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 13.5px; }
   .v-detail { font-size: 12.5px; color: var(--text-2); margin-top: 6px; }
   .v-detail .note { color: #92400e; }
 
@@ -167,6 +173,21 @@
         <option value="approved">🟢 אושר כפי שהוא</option>
         <option value="fixed">🔵 אושר אחרי תיקונים</option>
       </select>
+      <select class="select" id="fSector">
+        <option value="">כל המגזרים</option>
+        <option value="kelali">כללי</option>
+        <option value="arab">ערבי</option>
+        <option value="haredi">חרדי</option>
+      </select>
+      <select class="select" id="fEmail">
+        <option value="">כל מצבי המייל</option>
+        <option value="missing">חסרים מיילים</option>
+        <option value="approved-missing">אישרו — אבל חסרים מיילים</option>
+        <option value="full">כל המיילים הושלמו</option>
+      </select>
+    </div>
+    <div class="mask-note" id="mask-note" hidden>
+      המיילים של המורים מוסתרים כי הדף לא מזהה התחברות — נכנסים ב-<a href="login.html">login.html</a> וחוזרים לכאן כדי לראות כמה מיילים הושלמו.
     </div>
 
     <div id="list"><div class="empty" style="padding:32px;">טוען את הגיליון…</div></div>
@@ -186,6 +207,10 @@ const SUBJECT_ORDER = ['מתמטיקה','אנגלית','עברית','ספרות'
 const SUBJECT_DISPLAY = { 'תנ': 'תנ"ך' };
 let schools = [];
 let verifyLog = [];
+let contactsMasked = false;
+// מייל חובה לכל מורה (14.9.26) — נספר לפי שם, כמו בטופס האימות: מורה רב-מקצועי נספר פעם אחת
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+const SECTOR_LABEL = { kelali: 'כללי', arab: 'ערבי', haredi: 'חרדי' };
 
 async function init() {
   const [tRes, sRes, qRes] = await Promise.all([
@@ -199,6 +224,10 @@ async function init() {
     return;
   }
   const teachers = tRes.data || [];
+  // בלי token השרת מחזיר טלפון ממוסך (•••123) ומייל ריק — אז אי אפשר לספור מיילים
+  // (לפי רוב: בגיליון יש שורות בודדות שנשמר בהן טלפון ממוסך כערך אמיתי)
+  const phones = teachers.map(t => String(t.phone || '')).filter(Boolean);
+  contactsMasked = phones.length > 0 && phones.filter(ph => ph.startsWith('•••')).length > phones.length * 0.8;
   const byId = {};
   (sRes.data || []).forEach(s => byId[s.id] = s);
 
@@ -238,7 +267,16 @@ async function init() {
                        ...Object.keys(bySubj).filter(s => !SUBJECT_ORDER.includes(s)).sort()];
     const missing = ['מתמטיקה','אנגלית','עברית'].filter(s => !bySubj[s]);
     const v = verifyBySchool[key.startsWith('name:') ? '' : key] || null;
+    const names = new Set(rows.map(t => String(t.name || '').trim()));
+    const withEmail = new Set(rows.filter(t => EMAIL_RE.test(String(t.email || '').trim()))
+                                  .map(t => String(t.name || '').trim()));
+    const secCount = {};
+    rows.forEach(t => { if (t.sector) secCount[t.sector] = (secCount[t.sector] || 0) + 1; });
+    const sector = Object.keys(secCount).sort((a, b) => secCount[b] - secCount[a])[0] || '';
     return {
+      sector,
+      namesTotal: names.size,
+      emailDone: withEmail.size,
       id: key.startsWith('name:') ? '' : key,
       name: info.name || rows[0].schoolName || key,
       principalName: info.principalName || '',
@@ -520,20 +558,38 @@ function fmtDate(iso) {
 function render() {
   const q = (document.getElementById('q').value || '').trim();
   const fs = document.getElementById('fStatus').value;
+  const fSec = document.getElementById('fSector').value;
+  const fEm = document.getElementById('fEmail').value;
+  document.getElementById('mask-note').hidden = !contactsMasked;
 
-  const nApproved = schools.filter(s => s.verify && s.verify.status === 'approved').length;
-  const nFixed = schools.filter(s => s.verify && s.verify.status === 'fixed').length;
-  const nPending = schools.length - nApproved - nFixed;
+  // הסיכום נספר על המגזר הנבחר, כדי שסינון "חרדי" יראה את המספרים של החרדי בלבד
+  const pool = fSec ? schools.filter(s => s.sector === fSec) : schools;
+  const nApproved = pool.filter(s => s.verify && s.verify.status === 'approved').length;
+  const nFixed = pool.filter(s => s.verify && s.verify.status === 'fixed').length;
+  const nPending = pool.length - nApproved - nFixed;
+  const emTotal = pool.reduce((n, s) => n + s.namesTotal, 0);
+  const emDone = pool.reduce((n, s) => n + s.emailDone, 0);
+  const emFullSchools = pool.filter(s => s.namesTotal && s.emailDone === s.namesTotal).length;
+  const emCells = contactsMasked ? '' : `
+    <div class="cell"><b style="color:${emDone < emTotal ? '#92400e' : 'var(--ok, #1F7A4D)'};">${emDone}/${emTotal}</b><small>מורים עם מייל</small></div>
+    <div class="cell"><b>${emFullSchools}</b><small>בתי ספר שהשלימו את כל המיילים</small></div>`;
   document.getElementById('summary').innerHTML = `
-    <div class="cell"><b>${schools.length}</b><small>בתי ספר עם מורים</small></div>
+    <div class="cell"><b>${pool.length}</b><small>בתי ספר עם מורים${fSec ? ' · ' + SECTOR_LABEL[fSec] : ''}</small></div>
     <div class="cell"><b style="color:var(--ok, #1F7A4D);">${nApproved + nFixed}</b><small>אישרו את הרשימה</small></div>
     <div class="cell"><b>${nFixed}</b><small>מהם אחרי תיקונים</small></div>
-    <div class="cell"><b style="color:${nPending ? '#92400e' : 'inherit'};">${nPending}</b><small>טרם אישרו</small></div>`;
+    <div class="cell"><b style="color:${nPending ? '#92400e' : 'inherit'};">${nPending}</b><small>טרם אישרו</small></div>${emCells}`;
 
   const shown = schools.filter(s => {
     if (q && !s.name.includes(q)) return false;
     const st = s.verify ? s.verify.status : 'pending';
     if (fs && st !== fs) return false;
+    if (fSec && s.sector !== fSec) return false;
+    if (fEm && !contactsMasked) {
+      const full = s.emailDone === s.namesTotal;
+      if (fEm === 'full' && !full) return false;
+      if (fEm === 'missing' && full) return false;
+      if (fEm === 'approved-missing' && (full || !s.verify)) return false;
+    }
     return true;
   });
 
@@ -544,11 +600,14 @@ function render() {
       : v.status === 'fixed'
         ? '<span class="v-chip fixed">🔵 אושר אחרי תיקונים</span>'
         : '<span class="v-chip approved">🟢 אושר</span>';
+    const emChip = contactsMasked ? '' :
+      `<span class="e-chip ${s.emailDone === s.namesTotal ? 'full' : s.emailDone ? 'part' : 'none'}"
+             title="מורים (לפי שם) שיש להם מייל תקין">מיילים ${s.emailDone}/${s.namesTotal}</span>`;
     return `
     <div class="school-card ${v ? 'ok-border' : ''}">
       <div class="sc-head">
-        <span class="nm">${s.name}</span>
-        <span>${chip}</span>
+        <span class="nm">${s.name}${s.sector ? '<span class="sec-tag">' + SECTOR_LABEL[s.sector] + '</span>' : ''}</span>
+        <span>${chip}${emChip}</span>
       </div>
       <div class="sc-head" style="margin-top:2px;">
         <span class="meta">${s.count} מורים · ${s.subjSummary}${s.principalName ? ' · מנהל/ת: ' + s.principalName : ''}</span>
@@ -625,6 +684,8 @@ document.getElementById('sp-save').addEventListener('click', saveBlob);
 document.getElementById('sp-clear').addEventListener('click', clearPhones);
 document.getElementById('q').addEventListener('input', render);
 document.getElementById('fStatus').addEventListener('change', render);
+document.getElementById('fSector').addEventListener('change', render);
+document.getElementById('fEmail').addEventListener('change', render);
 init();
 </script>
 </body>
