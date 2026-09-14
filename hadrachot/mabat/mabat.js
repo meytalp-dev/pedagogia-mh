@@ -568,7 +568,7 @@ function renderWsHours() {
     <div class="table-wrap" style="border:none;">
       <table class="t-grid">
         <thead>
-          <tr><th>מורה</th><th>מקצוע</th><th>בית ספר</th><th>נושא ההדרכה</th><th>תאריך</th><th>שעות</th><th></th></tr>
+          <tr><th>מורה</th><th>מקצוע</th><th>בית ספר</th><th>נושא ומה נעשה</th><th>תאריך</th><th>שעות</th><th></th></tr>
         </thead>
         <tbody>
           ${rows.map(h => `
@@ -576,7 +576,7 @@ function renderWsHours() {
               <td class="school-row-name">${escapeHtml((h.firstName + ' ' + h.lastName).trim())}</td>
               <td>${escapeHtml(h.subject || '—')}</td>
               <td>${escapeHtml(h.schoolName || '—')}</td>
-              <td>${escapeHtml(h.topic || '—')}</td>
+              <td>${escapeHtml(h.topic || '—')}${h.notes ? `<div style="font-size:12px; color:var(--text-2); line-height:1.6; white-space:pre-wrap; margin-top:3px;">${escapeHtml(h.notes)}</div>` : ''}</td>
               <td>${fmtDateOnly(h.date)}</td>
               <td>${fmtHours(h.hours)}</td>
               <td><button type="button" class="row-del" data-del-hours="${escapeAttr(h.id)}" title="מחיקה">מחיקה</button></td>

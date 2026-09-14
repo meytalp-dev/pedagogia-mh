@@ -210,6 +210,28 @@
   .msg-actions a:hover { background:#E4F3EA; text-decoration:none; }
   .space-sub { font-size:13px; font-weight:700; color:var(--text-2); margin:16px 0 8px; }
 
+  /* ---- שעות פרטניות (14.9.26) ---- */
+  .hours-form { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; }
+  .hours-form .full { grid-column:1/-1; }
+  .hours-form label { display:block; font-size:11.5px; font-weight:600; color:var(--text-muted); margin-bottom:4px; }
+  .hours-form .input, .hours-form .select, .hours-form .textarea { padding:8px 10px; font-size:13.5px; width:100%; box-sizing:border-box; }
+  /* styles.css בלי כלל [hidden], ו-.btn מגדיר display — בלי זה הכפתור תמיד גלוי */
+  #h-cancel[hidden] { display:none; }
+  .hours-total { display:inline-block; background:#E6F0F4; color:var(--primary,#256A8A); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; margin-bottom:10px; }
+  .h-row { border:1px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:9px; background:var(--surface-soft); }
+  .h-row.editing { border-color:var(--primary,#256A8A); box-shadow:0 0 0 2px rgba(37,106,138,.15); }
+  .h-top { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; align-items:baseline; }
+  .h-who { font-weight:700; font-size:14px; }
+  .h-when { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+  .h-meta { font-size:12px; color:var(--text-2); margin-top:2px; }
+  .h-topic { font-size:13.5px; font-weight:600; margin-top:6px; }
+  .h-notes { font-size:13px; color:var(--text-2); line-height:1.7; white-space:pre-wrap; word-break:break-word; margin-top:3px; }
+  .h-notes.none { color:var(--text-3,#8b9aa3); font-style:italic; }
+  .h-by { color:#6b4f99; }
+  .h-actions { display:flex; gap:4px; justify-content:flex-end; margin-top:6px; }
+  .h-actions .edit { font-family:inherit; font-size:12px; color:var(--primary,#256A8A); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; }
+  .h-actions .edit:hover { background:#E6F0F4; }
+
   @media (max-width: 720px) {
     .att-grid { font-size: 12px; }
     .att-grid th, .att-grid td { padding: 6px 4px; }
@@ -335,6 +357,7 @@
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
       <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
+      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות פרטניות<span class="n zero" id="hours-count">0</span></button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
       <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
@@ -400,6 +423,67 @@
           </div>
           <div class="ws-status" id="gfiles-status"></div>
           <div id="gfiles-list" style="margin-top:6px;"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- שעות פרטניות — המדריכה רושמת ומעדכנת; המפקח.ת רואה במבט המקצועי (space.js) -->
+    <div class="tab-pane" id="tab-hours">
+      <div class="space-grid">
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="hours-form-title">רישום שעה פרטנית</span></h2>
+          <div class="space-hint">מפגש אישי עם מורה: עם מי, מה עשיתן ומתי. הרישום מופיע גם אצל המפקח.ת במבט המקצועי — לא בעמוד הקבוצה.</div>
+          <form id="hours-form" class="hours-form">
+            <div class="full">
+              <label for="h-pick">בחירה מהמורים שלי</label>
+              <input class="input" id="h-pick" list="h-teachers-dl" autocomplete="off" placeholder="התחילי להקליד שם — או מלאי ידנית למטה">
+              <datalist id="h-teachers-dl"></datalist>
+            </div>
+            <div>
+              <label for="h-first">שם פרטי *</label>
+              <input class="input" id="h-first">
+            </div>
+            <div>
+              <label for="h-last">שם משפחה</label>
+              <input class="input" id="h-last">
+            </div>
+            <div>
+              <label for="h-subject">מקצוע</label>
+              <select class="select" id="h-subject"></select>
+            </div>
+            <div>
+              <label for="h-school">בית ספר</label>
+              <input class="input" id="h-school" list="h-schools-dl" autocomplete="off">
+              <datalist id="h-schools-dl"></datalist>
+            </div>
+            <div class="full">
+              <label for="h-topic">נושא ההדרכה</label>
+              <input class="input" id="h-topic" placeholder="למשל: בניית מבחן מותאם, ניתוח שאלון בגרות...">
+            </div>
+            <div class="full">
+              <label for="h-notes">מה עשינו במפגש</label>
+              <textarea class="textarea" id="h-notes" style="min-height:84px;" placeholder="מה נעשה, מה סוכם, מה הלאה. אפשר להשלים גם אחרי המפגש — בכפתור &quot;עדכון&quot;."></textarea>
+            </div>
+            <div>
+              <label for="h-date">תאריך</label>
+              <input class="input" id="h-date" type="date">
+            </div>
+            <div>
+              <label for="h-hours">מספר שעות</label>
+              <input class="input" id="h-hours" type="number" min="0.25" step="0.25" value="1">
+            </div>
+            <div class="full btn-row">
+              <button type="submit" class="btn btn-primary" id="h-submit">הוספה</button>
+              <button type="button" class="btn btn-secondary" id="h-cancel" hidden>ביטול העדכון</button>
+            </div>
+          </form>
+          <div class="ws-status" id="hours-status"></div>
+        </section>
+
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>השעות שלי</h2>
+          <div id="hours-total" class="hours-total" hidden></div>
+          <div id="hours-list"><div class="empty" style="padding:18px;">טוען...</div></div>
         </section>
       </div>
     </div>
@@ -550,6 +634,6 @@
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260910"></script>
 <script src="dashboard.js?v=20260911"></script>
-<script src="space.js?v=20260911"></script>
+<script src="space.js?v=20260914"></script>
 </body>
 </html>

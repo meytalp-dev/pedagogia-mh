@@ -9,23 +9,28 @@
    אותם טאבים בגיליון כמו ב-mabat (guide_files / guide_messages):
      byRole 'guide'     — חומר / הודעה לקבוצה, מופיע בעמוד הקבוצה
      byRole 'inspector' — נכתב במבט המפקח.ת, מוצג כאן למדריכה בלבד
-   נטען אחרי dashboard.js ומשתמש ב-GUIDE_CFG שלו.
+   שעות פרטניות (14.9.26, קביעת מיטל): המדריכה רושמת ומעדכנת "מה עשינו
+   במפגש" בטאב נפרד; המפקח.ת רואה אותן במבט המקצועי. הן לא חלק מעמוד
+   הקבוצה — guide.group לא מחזיר אותן.
+   נטען אחרי dashboard.js ומשתמש ב-GUIDE_CFG וב-state שלו.
    ============================================================ */
 (function () {
   const SLUG = (typeof GUIDE_CFG !== 'undefined' && GUIDE_CFG.slug) || '';
   const MAX_FILE_BYTES = 8 * 1024 * 1024;   // זהה לתקרה בצד השרת
   const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 
-  let data = { files: [], messages: [] };
+  let data = { files: [], messages: [], hours: [] };
   let loadFailed = false;
 
   document.addEventListener('DOMContentLoaded', () => {
     const tabBtn = document.getElementById('tab-btn-space');
     // בלי slug אין לאיזו קבוצה לפרסם (קישור ישן עם ?guide= בלבד)
-    if (!SLUG) { if (tabBtn) tabBtn.hidden = true; return; }
+    const hoursBtn = document.getElementById('tab-btn-hours');
+    if (!SLUG) { [tabBtn, hoursBtn].forEach(b => { if (b) b.hidden = true; }); return; }
     initLinkCard();
     document.getElementById('gmsg-send').addEventListener('click', sendMessage);
     initUpload();
+    initHours();
     loadSpace();
   });
 
@@ -81,7 +86,8 @@
       loadFailed = false;
       data = {
         files: (res.data.files && res.data.files[SLUG]) || [],
-        messages: (res.data.messages && res.data.messages[SLUG]) || []
+        messages: (res.data.messages && res.data.messages[SLUG]) || [],
+        hours: (res.data.hours && res.data.hours[SLUG]) || []
       };
     } else {
       loadFailed = true;
@@ -96,6 +102,7 @@
     badge.classList.toggle('zero', !n);
     renderMessages();
     renderFiles();
+    renderHours();
   }
 
   function failBox() {
@@ -284,6 +291,221 @@
       r.onerror = () => reject(r.error);
       r.readAsDataURL(file);
     });
+  }
+
+  // ---------- שעות פרטניות ----------
+  let editingHoursId = '';
+  const val = id => document.getElementById(id).value.trim();
+
+  function initHours() {
+    document.getElementById('hours-form').addEventListener('submit', e => { e.preventDefault(); saveHours(); });
+    document.getElementById('h-cancel').addEventListener('click', () => {
+      resetHoursForm();
+      document.getElementById('hours-status').textContent = '';
+    });
+    fillSubjectSelect();
+    // רשימת המורים נטענת ב-dashboard.js אחרי שהעמוד עלה — ממלאים בפוקוס
+    ['h-pick', 'h-school'].forEach(id => document.getElementById(id).addEventListener('focus', fillTeacherLists));
+    document.getElementById('h-pick').addEventListener('change', applyPickedTeacher);
+    setToday();
+  }
+
+  function myRoster() {
+    return (typeof state !== 'undefined' && state && Array.isArray(state.teachers)) ? state.teachers : [];
+  }
+
+  function fillSubjectSelect() {
+    // המקצועות של המדריכה ראשונים — הם כמעט תמיד הנכונים
+    const mine = window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG).filter(Boolean) : [];
+    const list = mine.concat((TS.SUBJECTS || []).filter(s => mine.indexOf(s) < 0));
+    document.getElementById('h-subject').innerHTML =
+      list.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  }
+
+  const NO_SCHOOL = '— ללא שיוך —';
+  function pickLabel(t) { return t.name + (t.schoolName && t.schoolName !== NO_SCHOOL ? ' · ' + t.schoolName : ''); }
+
+  function fillTeacherLists() {
+    const roster = myRoster();
+    const dl = document.getElementById('h-teachers-dl');
+    if (dl.childElementCount !== roster.length) {
+      dl.innerHTML = roster.map(t => `<option value="${esc(pickLabel(t))}"></option>`).join('');
+    }
+    const schools = Array.from(new Set(roster.map(t => t.schoolName)))
+      .filter(s => s && s !== NO_SCHOOL).sort((a, b) => a.localeCompare(b, 'he'));
+    document.getElementById('h-schools-dl').innerHTML =
+      schools.map(s => `<option value="${esc(s)}"></option>`).join('');
+  }
+
+  // בחירה מהרשימה ממלאת שם ובית ספר. השם נחתך במילה הראשונה — אם במערכת
+  // הוא רשום "משפחה פרטי", המדריכה מתקנת בשדות; שום דבר לא ננעל.
+  function applyPickedTeacher() {
+    const v = val('h-pick');
+    const t = myRoster().find(x => pickLabel(x) === v);
+    if (!t) return;
+    const parts = String(t.name || '').trim().split(/\s+/);
+    document.getElementById('h-first').value = parts.shift() || '';
+    document.getElementById('h-last').value = parts.join(' ');
+    if (t.schoolName && t.schoolName !== NO_SCHOOL) document.getElementById('h-school').value = t.schoolName;
+    document.getElementById('h-topic').focus();
+  }
+
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function setToday() { document.getElementById('h-date').value = todayStr(); }
+
+  function readHoursForm() {
+    return {
+      firstName: val('h-first'),
+      lastName: val('h-last'),
+      subject: document.getElementById('h-subject').value,
+      schoolName: val('h-school'),
+      topic: val('h-topic'),
+      notes: val('h-notes'),
+      date: document.getElementById('h-date').value,
+      hours: document.getElementById('h-hours').value
+    };
+  }
+
+  async function saveHours() {
+    const f = readHoursForm();
+    const status = document.getElementById('hours-status');
+    if (!f.firstName && !f.lastName) { status.textContent = 'חסר שם המורה.'; document.getElementById('h-first').focus(); return; }
+    if (!(Number(f.hours) > 0)) { status.textContent = 'מספר השעות צריך להיות גדול מ-0.'; return; }
+    const btn = document.getElementById('h-submit');
+    const id = editingHoursId;
+    btn.disabled = true;
+    status.textContent = 'שומרת...';
+
+    const res = id
+      ? await TS.apiPost('guide.hours.update', Object.assign({ id: id }, f))
+      : await TS.apiPost('guide.hours.add', Object.assign({
+          guide: SLUG, guideName: GUIDE_CFG.name || '', byName: GUIDE_CFG.name || ''
+        }, f));
+
+    // כמו בהודעות: POST לא חוזר, אבל התשובה שלו יכולה ליפול אחרי שנשמר.
+    // טוענים ובודקים אם הרישום נחת לפני שאומרים "לא נשמר".
+    await loadSpace();
+    const same = h => (h.firstName || '') === f.firstName && (h.lastName || '') === f.lastName &&
+      String(h.topic || '') === f.topic && String(h.notes || '') === f.notes &&
+      Number(h.hours) === Number(f.hours) && String(h.date || '').slice(0, 10) === f.date;
+    const landed = (res && res.ok) ||
+      (id ? data.hours.some(h => h.id === id && same(h)) : data.hours.some(same));
+    btn.disabled = false;
+
+    if (landed) {
+      resetHoursForm();
+      status.textContent = id ? 'העדכון נשמר ✓' : 'הרישום נשמר ✓';
+      renderHours();
+    } else {
+      status.textContent = 'לא נשמר. נסי שוב בעוד רגע.';
+    }
+  }
+
+  // אחרי הוספה: שם, נושא ותיאור מתנקים; תאריך, מקצוע ובית ספר נשארים —
+  // כמה מורים מאותו בית ספר באותו יום זה המקרה הרגיל. אחרי עדכון — איפוס מלא.
+  function resetHoursForm() {
+    const wasEditing = !!editingHoursId;
+    editingHoursId = '';
+    ['h-pick', 'h-first', 'h-last', 'h-topic', 'h-notes'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('h-hours').value = '1';
+    if (wasEditing) {
+      setToday();
+      document.getElementById('h-school').value = '';
+      fillSubjectSelect();
+    }
+    document.getElementById('hours-form-title').textContent = 'רישום שעה פרטנית';
+    document.getElementById('h-submit').textContent = 'הוספה';
+    document.getElementById('h-cancel').hidden = true;
+    document.querySelectorAll('.h-row.editing').forEach(r => r.classList.remove('editing'));
+  }
+
+  function startEditHours(id) {
+    const h = data.hours.find(x => x.id === id);
+    if (!h) return;
+    editingHoursId = id;
+    document.getElementById('h-pick').value = '';
+    document.getElementById('h-first').value = h.firstName || '';
+    document.getElementById('h-last').value = h.lastName || '';
+    const sel = document.getElementById('h-subject');
+    if (h.subject && !Array.from(sel.options).some(o => o.value === h.subject)) {
+      sel.insertAdjacentHTML('beforeend', `<option value="${esc(h.subject)}">${esc(h.subject)}</option>`);
+    }
+    if (h.subject) sel.value = h.subject;
+    document.getElementById('h-school').value = h.schoolName || '';
+    document.getElementById('h-topic').value = h.topic || '';
+    document.getElementById('h-notes').value = h.notes || '';
+    document.getElementById('h-date').value = String(h.date || '').slice(0, 10);
+    document.getElementById('h-hours').value = h.hours || 1;
+    document.getElementById('hours-form-title').textContent = 'עדכון רישום';
+    document.getElementById('h-submit').textContent = 'שמירת העדכון';
+    document.getElementById('h-cancel').hidden = false;
+    document.getElementById('hours-status').textContent = '';
+    document.querySelectorAll('.h-row').forEach(r => r.classList.toggle('editing', r.dataset.hrow === id));
+    document.getElementById('hours-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('h-notes').focus({ preventScroll: true });
+  }
+
+  function renderHours() {
+    const el = document.getElementById('hours-list');
+    const total = document.getElementById('hours-total');
+    if (loadFailed) { total.hidden = true; el.innerHTML = failBox(); bindRetry(el); return; }
+    const rows = data.hours;   // השרת ממיין לפי תאריך, החדש למעלה
+    const badge = document.getElementById('hours-count');
+    badge.textContent = rows.length;
+    badge.classList.toggle('zero', !rows.length);
+
+    if (!rows.length) {
+      total.hidden = true;
+      el.innerHTML = '<div class="empty" style="padding:18px;">עדיין לא נרשמו שעות פרטניות</div>';
+      return;
+    }
+    const sum = rows.reduce((s, h) => s + (Number(h.hours) || 0), 0);
+    total.hidden = false;
+    total.textContent = `סה"כ ${fmtHours(sum)} שעות · ` + (rows.length === 1 ? 'מפגש אחד' : rows.length + ' מפגשים');
+
+    el.innerHTML = rows.map(h => {
+      // רישום שהמפקח.ת הוסיפ.ה מהמבט שלה — מסומן, כדי שלא ייראה כמו טעות
+      const byOther = h.createdBy && GUIDE_CFG.name && h.createdBy !== GUIDE_CFG.name;
+      const n = Number(h.hours) || 0;
+      return `
+      <div class="h-row ${h.id === editingHoursId ? 'editing' : ''}" data-hrow="${esc(h.id)}">
+        <div class="h-top">
+          <span class="h-who">${esc((String(h.firstName || '') + ' ' + String(h.lastName || '')).trim() || '—')}</span>
+          <span class="h-when">${fmtDateOnly(h.date)} · <bdi dir="ltr">${fmtHours(n)}</bdi> ${n === 1 ? 'שעה' : 'שעות'}</span>
+        </div>
+        <div class="h-meta">${esc([h.subject, h.schoolName].filter(Boolean).join(' · '))}${byOther ? ' · <span class="h-by">נרשם ע"י ' + esc(h.createdBy) + '</span>' : ''}</div>
+        ${h.topic ? `<div class="h-topic">${esc(h.topic)}</div>` : ''}
+        ${h.notes ? `<div class="h-notes">${linkify(h.notes)}</div>` : '<div class="h-notes none">עוד לא נכתב מה נעשה במפגש</div>'}
+        <div class="h-actions">
+          <button type="button" class="edit" data-edit-hours="${esc(h.id)}">עדכון</button>
+          <button type="button" class="row-del" data-del-hours="${esc(h.id)}">מחיקה</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    el.querySelectorAll('[data-edit-hours]').forEach(b =>
+      b.addEventListener('click', () => startEditHours(b.dataset.editHours)));
+    el.querySelectorAll('[data-del-hours]').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('למחוק את הרישום? הוא יימחק גם מהמבט של המפקח.ת.')) return;
+      b.disabled = true;
+      const delId = b.dataset.delHours;
+      const res = await TS.apiPost('guide.hours.delete', { id: delId });
+      if (res && res.ok) TS.toast('הרישום נמחק');
+      if (editingHoursId === delId) resetHoursForm();
+      await loadSpace();
+    }));
+  }
+
+  // 1.5 ולא 1.50
+  function fmtHours(n) { return String(Math.round((Number(n) || 0) * 100) / 100); }
+  // התאריך נשמר כטקסט yyyy-mm-dd; new Date() היה מזיז יום אחורה בשעון ישראל
+  function fmtDateOnly(v) {
+    const s = String(v || '').slice(0, 10);
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    return m ? `${m[3]}.${m[2]}.${m[1]}` : (s || '—');
   }
 
   // ---------- עיצוב ערכים ----------
