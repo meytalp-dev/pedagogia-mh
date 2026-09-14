@@ -159,7 +159,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     <div class="kpi"><div class="v" id="kTotal">—</div><div class="k">בתי ספר בחרו</div></div>
     <div class="kpi pending"><div class="v" id="kPending">—</div><div class="k">ממתינות למפקח.ת</div></div>
     <div class="kpi approved"><div class="v" id="kApproved">—</div><div class="k">אושרו ועברו לאלנט</div></div>
-    <div class="kpi returned"><div class="v" id="kReturned">—</div><div class="k">הוחזרו לתיקון</div></div>
+    <div class="kpi returned"><div class="v" id="kReturned">—</div><div class="k">הוחזרו לתיקון / נדחו</div></div>
     <div class="kpi missing"><div class="v" id="kMissing">—</div><div class="k">טרם בחרו</div></div>
   </div>
 
@@ -193,6 +193,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       <option value="ממתין לאישור מפקח.ת">ממתין למפקח.ת</option>
       <option value="מאושר — נשלח לאלנט">מאושר</option>
       <option value="הוחזר לתיקון">הוחזר לתיקון</option>
+      <option value="נדחה על ידי אלנט">נדחה על ידי אלנט</option>
     </select>
     <select id="fSup"><option value="">כל המפקחים</option></select>
     <select id="fTrack">
@@ -255,6 +256,7 @@ function g(r, k){ return r && r[k] ? String(r[k]).trim() : ""; }
 function pill(st){
   if (st === "מאושר — נשלח לאלנט") return '<span class="pill approved">מאושר</span>';
   if (st === "הוחזר לתיקון") return '<span class="pill returned">הוחזר לתיקון</span>';
+  if (st === "נדחה על ידי אלנט") return '<span class="pill returned">נדחה על ידי אלנט</span>';
   return '<span class="pill pending">ממתין למפקח.ת</span>';
 }
 
@@ -318,7 +320,7 @@ function kpis(){
     seen[g(r,"בית הספר")] = true;
     var s = g(r,"סטטוס");
     if (s === "מאושר — נשלח לאלנט") a++;
-    else if (s === "הוחזר לתיקון") rt++;
+    else if (s === "הוחזר לתיקון" || s === "נדחה על ידי אלנט") rt++;
     else p++;
   });
   $("kTotal").textContent = ALL.length;

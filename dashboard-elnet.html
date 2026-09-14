@@ -143,9 +143,57 @@ h1{font-family:'Rubik',sans-serif;font-size:clamp(24px,4vw,33px);color:var(--nav
   color:#fff;background:linear-gradient(100deg,var(--navy),var(--blue));border-radius:14px;padding:13px 34px}
 .gate .gerr{color:var(--danger);font-size:15px;font-weight:600;margin:14px 0 0}
 
+.kpi.rej .v{color:#8c2b34}
+.secttl.rejd h2{color:#8c2b34}
+.secttl.rejd .n{background:#fff5f6;color:#8c2b34}
+.pill.rejected{background:#fff1f1;color:#a02a2a}
+.c.rejc{border-inline-start-color:#e59a9a;background:#fffafa}
+
+/* שורת הסטטוס האישית */
+.mine{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+.mine-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.6px;font-weight:700;color:var(--navy);margin-bottom:7px}
+.mine-h svg{width:14px;height:14px}
+.mine-h .only{font-weight:600;color:var(--muted);font-size:12.8px;background:var(--bg);border:1px solid var(--line);
+  border-radius:999px;padding:1px 10px}
+.mine-row{display:flex;gap:8px;flex-wrap:wrap}
+.mine-in{flex:1 1 260px;min-width:0;padding:10px 13px;border:2px solid var(--line);border-radius:11px;background:#fbfcff;
+  font-family:inherit;font-size:15.5px;color:var(--ink)}
+.mine-in:focus{outline:none;border-color:var(--blue);background:#fff}
+.mine.dirty .mine-in{border-color:#f0c98a;background:#fffdf7}
+.mine-save{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--navy);border-radius:11px;
+  padding:9px 18px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
+.mine-save:hover{border-color:var(--sky)}
+.mine-at{font-size:13px;color:var(--muted);margin-top:5px;min-height:1em}
+.mine-at.ok{color:#0c6d60}
+.mine-at.bad{color:var(--danger);font-weight:600}
+
+/* דחייה */
+.rejbox{background:#fff1f1;border:1px solid #f0b6b6;border-radius:12px;padding:11px 15px;margin-top:12px;
+  font-size:14.8px;color:#7a2020;white-space:pre-wrap}
+.rejbox b{color:#a02a2a;white-space:normal}
+.rej-open{appearance:none;border:1.5px solid #f0c4c4;background:#fff;color:#a02a2a;border-radius:12px;
+  padding:9px 18px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;margin-top:12px}
+.rej-open:hover{background:#fff5f5;border-color:#e59a9a}
+.rej{margin-top:12px;background:#fff8f8;border:1px solid #f0c4c4;border-radius:13px;padding:14px 16px}
+.rej label{display:block;font-size:14.5px;font-weight:700;color:#8c2b34;margin-bottom:6px}
+.rej label span{display:block;font-weight:400;font-size:13.4px;color:var(--muted)}
+.rej textarea{width:100%;min-height:84px;padding:10px 13px;border:2px solid #f0c4c4;border-radius:11px;background:#fff;
+  font-family:inherit;font-size:15.5px;color:var(--ink);resize:vertical}
+.rej textarea:focus{outline:none;border-color:#d64550}
+.rej .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rej-send{appearance:none;border:0;background:#c0392b;color:#fff;border-radius:11px;padding:10px 20px;
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.rej-send:disabled{opacity:.6;cursor:default}
+.rej-cancel{appearance:none;border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:11px;
+  padding:9px 18px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
+.rej-err{color:var(--danger);font-size:14px;font-weight:600;margin-top:8px}
+
+.toast{position:fixed;inset-inline:16px;bottom:18px;margin:0 auto;max-width:520px;background:var(--ink);color:#fff;
+  border-radius:14px;padding:13px 18px;font-size:15px;box-shadow:var(--shadow-m);z-index:9;text-align:center}
+
 footer{margin-top:44px;text-align:center;color:var(--muted);font-size:14px}
 footer a{color:var(--navy);font-weight:600;text-decoration:none}
-@media print{.bar,.reload,.live,.more,.xls{display:none!important}.c{break-inside:avoid}}
+@media print{.bar,.reload,.live,.more,.xls,.rej-open,.rej,.mine-save,.toast{display:none!important}.c{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -189,6 +237,7 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
       <div class="kpi ext"><div class="v" id="kExternal">—</div><div class="k">עם מנחה חיצוני</div></div>
       <div class="kpi"><div class="v" id="kCatalog">—</div><div class="k">מהקטלוג</div></div>
       <div class="kpi wait"><div class="v" id="kPending">—</div><div class="k">בדרך · טרם אושרו</div></div>
+      <div class="kpi rej"><div class="v" id="kRejected">—</div><div class="k">נדחו על ידי אלנט</div></div>
     </div>
 
     <div class="bar">
@@ -214,6 +263,14 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     <div class="cards" id="approved"></div>
     <div class="empty" id="emptyApproved" hidden>אין עדיין השתלמויות מאושרות</div>
 
+    <div id="rejectedWrap" hidden>
+      <div class="secttl rejd">
+        <h2>נדחו</h2><span class="n" id="nRejected">—</span>
+        <span class="hint">הסיבה נשלחה למפקח.ת ולמנהל.ת. הגשה חדשה של בית הספר תופיע שוב ב"בדרך"</span>
+      </div>
+      <div class="cards" id="rejected"></div>
+    </div>
+
     <div id="pendingWrap" hidden>
       <div class="secttl wait">
         <h2>בדרך</h2><span class="n" id="nPending">—</span>
@@ -223,6 +280,8 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
       <div class="cards" id="pending" hidden style="margin-top:14px"></div>
     </div>
   </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
 
   <footer>
     המנהיגות הפדגוגית היוצרת · משרד העבודה, מינהל הכשרה מקצועית<br>
@@ -250,9 +309,11 @@ function g(r,k){ return r && r[k] ? String(r[k]).trim() : ""; }
 
 var ST_APPROVED = "מאושר — נשלח לאלנט";
 var ST_RETURNED = "הוחזר לתיקון";
+var ST_REJECTED = "נדחה על ידי אלנט";
 
 function pill(st){
   if (st === ST_APPROVED) return '<span class="pill approved">מאושר</span>';
+  if (st === ST_REJECTED) return '<span class="pill rejected">נדחה</span>';
   if (st === ST_RETURNED) return '<span class="pill returned">הוחזר לתיקון</span>';
   return '<span class="pill pending">ממתין למפקח.ת</span>';
 }
@@ -273,7 +334,7 @@ function ico(p){
 function card(r){
   var ext = g(r,"מסלול") === "מנחה חיצוני";
   var st = g(r,"סטטוס");
-  var cls = st === ST_APPROVED ? "" : (st === ST_RETURNED ? " ret" : " pend");
+  var cls = st === ST_APPROVED ? "" : st === ST_REJECTED ? " rejc" : (st === ST_RETURNED ? " ret" : " pend");
 
   var scope = "";
   if (ext){
@@ -337,6 +398,46 @@ function card(r){
         ico('<path d="M6 3.5A1.5 1.5 0 0 1 7.5 2H14l4 4v14a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 20z"/><path d="M13.5 2v4.5H18M9.5 12h5M9.5 15.5h3"/>') +
         'פתיחת הסילבוס</a>'
       : "") +
+    (st === ST_REJECTED
+      ? '<div class="rejbox"><b>סיבת הדחייה' + (g(r,"תאריך דחייה") ? " · " + esc(g(r,"תאריך דחייה")) : "") +
+        '</b>\n' + esc(g(r,"סיבת דחייה")) + '</div>'
+      : "") +
+    (st === ST_APPROVED || st === ST_REJECTED ? mineBox(r) : "") +
+    (st === ST_APPROVED ? rejectBox(r) : "") +
+  '</div>';
+}
+
+/* שורת הסטטוס האישית — נשמרת בגיליון ומוצגת רק בדשבורד הזה */
+function rowAttrs(r){
+  return ' data-id="' + esc(g(r,"מזהה")) + '" data-school="' + esc(g(r,"בית הספר")) + '"';
+}
+function mineBox(r){
+  var v = g(r,"סטטוס אלנט");
+  return '<div class="mine"' + rowAttrs(r) + ' data-saved="' + esc(v) + '">' +
+    '<div class="mine-h">' +
+      ico('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>') +
+      'הסטטוס שלי<span class="only">גלוי רק לך · נכלל בייצוא לאקסל</span></div>' +
+    '<div class="mine-row">' +
+      '<input class="mine-in" type="text" maxlength="500" value="' + esc(v) + '" ' +
+        'placeholder="למשל: דיברתי עם המנהל.ת, מחכה לתאריכים מהמנחה" aria-label="הסטטוס שלי">' +
+      '<button class="mine-save" type="button">שמירה</button>' +
+    '</div>' +
+    '<div class="mine-at">' + (g(r,"עדכון סטטוס אלנט") ? "עודכן " + esc(g(r,"עדכון סטטוס אלנט")) : "") + '</div>' +
+  '</div>';
+}
+function rejectBox(r){
+  return '<div class="rejw"' + rowAttrs(r) + '>' +
+    '<button class="rej-open" type="button">דחיית הבקשה</button>' +
+    '<div class="rej" hidden>' +
+      '<label>סיבת הדחייה<span>תישלח במייל למפקח.ת ולמנהל.ת של ' + esc(g(r,"בית הספר")) +
+        ', עם עותק למיטל. תשובה למייל תגיע אלייך.</span></label>' +
+      '<textarea class="rej-in" maxlength="2000"></textarea>' +
+      '<div class="rej-err" hidden></div>' +
+      '<div class="acts">' +
+        '<button class="rej-send" type="button">שליחת הדחייה</button>' +
+        '<button class="rej-cancel" type="button">ביטול</button>' +
+      '</div>' +
+    '</div>' +
   '</div>';
 }
 
@@ -347,29 +448,83 @@ function match(r){
   if (mz && g(r,"מחוז") !== mz) return false;
   if (!q) return true;
   return [g(r,"בית הספר"), g(r,"שם המנהל.ת"), g(r,"שם המנחה"),
-          g(r,"שם ההשתלמות"), g(r,"מפקח.ת"), g(r,"ארגון / מכון")].join(" ").indexOf(q) >= 0;
+          g(r,"שם ההשתלמות"), g(r,"מפקח.ת"), g(r,"ארגון / מכון"),
+          g(r,"סטטוס אלנט")].join(" ").indexOf(q) >= 0;
+}
+
+function rowKey(id, school){ return id + "" + school; }
+function findRow(id, school){
+  for (var i = 0; i < ALL.length; i++)
+    if (g(ALL[i],"מזהה") === id && g(ALL[i],"בית הספר") === school) return ALL[i];
+  return null;
+}
+
+/* ציור מחדש (סינון, רענון) לא מוחק מה שהתחלת להקליד */
+function captureDrafts(){
+  var d = {};
+  document.querySelectorAll("#app .mine").forEach(function(m){
+    var inp = m.querySelector(".mine-in");
+    if (inp.value.trim() !== m.getAttribute("data-saved"))
+      d[rowKey(m.dataset.id, m.dataset.school)] = { mine: inp.value };
+  });
+  document.querySelectorAll("#app .rejw").forEach(function(w){
+    var box = w.querySelector(".rej");
+    if (box.hidden) return;
+    var k = rowKey(w.dataset.id, w.dataset.school);
+    d[k] = d[k] || {};
+    d[k].rej = w.querySelector(".rej-in").value;
+  });
+  return d;
+}
+function restoreDrafts(d){
+  document.querySelectorAll("#app .mine").forEach(function(m){
+    var x = d[rowKey(m.dataset.id, m.dataset.school)];
+    if (x && x.mine !== undefined){ m.querySelector(".mine-in").value = x.mine; m.classList.add("dirty"); }
+  });
+  document.querySelectorAll("#app .rejw").forEach(function(w){
+    var x = d[rowKey(w.dataset.id, w.dataset.school)];
+    if (x && x.rej !== undefined){
+      w.querySelector(".rej").hidden = false;
+      w.querySelector(".rej-open").hidden = true;
+      w.querySelector(".rej-in").value = x.rej;
+    }
+  });
+}
+function editing(){
+  var a = document.activeElement;
+  if (a && a.closest && a.closest("#app .cards")) return true;
+  return Object.keys(captureDrafts()).length > 0;
 }
 
 function render(){
+  var drafts = captureDrafts();
   var rows = ALL.filter(match);
   var app = rows.filter(function(r){ return g(r,"סטטוס") === ST_APPROVED; });
-  var pen = rows.filter(function(r){ return g(r,"סטטוס") !== ST_APPROVED; });
+  var rej = rows.filter(function(r){ return g(r,"סטטוס") === ST_REJECTED; });
+  var pen = rows.filter(function(r){ var s = g(r,"סטטוס"); return s !== ST_APPROVED && s !== ST_REJECTED; });
 
   $("approved").innerHTML = app.map(card).join("");
   $("emptyApproved").hidden = app.length > 0;
   $("nApproved").textContent = app.length;
 
+  $("rejectedWrap").hidden = rej.length === 0;
+  $("nRejected").textContent = rej.length;
+  $("rejected").innerHTML = rej.map(card).join("");
+
   $("pendingWrap").hidden = pen.length === 0;
   $("nPending").textContent = pen.length;
   $("pending").innerHTML = pen.map(card).join("");
+  restoreDrafts(drafts);
 }
 
 function kpis(){
   var app = ALL.filter(function(r){ return g(r,"סטטוס") === ST_APPROVED; });
+  var rej = ALL.filter(function(r){ return g(r,"סטטוס") === ST_REJECTED; }).length;
   $("kApproved").textContent = app.length;
   $("kExternal").textContent = app.filter(function(r){ return g(r,"מסלול") === "מנחה חיצוני"; }).length;
   $("kCatalog").textContent  = app.filter(function(r){ return g(r,"מסלול") === "מהקטלוג"; }).length;
-  $("kPending").textContent  = ALL.length - app.length;
+  $("kPending").textContent  = ALL.length - app.length - rej;
+  $("kRejected").textContent = rej;
 
   var sel = $("fMahoz"), seen = {};
   while (sel.options.length > 1) sel.remove(1);
@@ -388,12 +543,15 @@ var COLS = ["בית הספר","סמל מוסד","מחוז","רשת","מגזר","
             'דוא"ל המנהל.ת',"טלפון המנהל.ת","מטרת ההשתלמות","מסלול","שם ההשתלמות",
             "שם המנחה","טלפון המנחה","ארגון / מכון","עלות (₪)","סה\"כ שעות",
             "מפגשים פיזיים","מפגשי זום","מספר משתתפים","מטלת סיום","חריגים",
-            "סילבוס","סטטוס","מי אישר.ה","תאריך החלטה","הערת המפקח.ת"];
+            "סילבוס","סטטוס","סטטוס אלנט","עדכון סטטוס אלנט","סיבת דחייה","תאריך דחייה",
+            "מי אישר.ה","תאריך החלטה","הערת המפקח.ת"];
+/* כותרות ידידותיות בקובץ, במקום שמות העמודות בגיליון */
+var COL_LABEL = { "סטטוס אלנט": "הסטטוס שלי", "עדכון סטטוס אלנט": "הסטטוס שלי — עודכן" };
 
 function csv(){
   var rows = ALL.filter(match);
   var q = function(v){ return '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"'; };
-  var lines = [COLS.map(q).join(",")];
+  var lines = [COLS.map(function(c){ return q(COL_LABEL[c] || c); }).join(",")];
   rows.forEach(function(r){ lines.push(COLS.map(function(c){ return q(g(r,c)); }).join(",")); });
 
   /* BOM כדי שאקסל יזהה עברית */
@@ -429,6 +587,144 @@ function fetchJson(url, tries){
       });
   };
   return attempt(1);
+}
+
+/* ---------- כתיבה: סטטוס אישי ודחייה ---------- */
+function postJson(body, tries){
+  tries = tries || 1;
+  var attempt = function(n){
+    var ctl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 25000);
+    var o = { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(body) };
+    if (ctl) o.signal = ctl.signal;
+    return fetch(API_URL, o)
+      .then(function(r){ clearTimeout(timer); if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .catch(function(e){
+        clearTimeout(timer);
+        if (n >= tries) throw e;
+        return new Promise(function(res){ setTimeout(res, 900 * n); }).then(function(){ return attempt(n + 1); });
+      });
+  };
+  return attempt(1);
+}
+
+var toastTimer;
+function toast(msg){
+  var t = $("toast");
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.hidden = true; }, 5000);
+}
+
+function errText(j){
+  if (!j) return "לא הצלחנו לשמור — כדאי לבדוק את החיבור ולנסות שוב";
+  if (j.error === "denied") return "הקוד אינו תקף — צריך קישור עדכני ממיטל";
+  if (j.error === "notfound") return "הבקשה עודכנה בינתיים על ידי בית הספר. כדאי לרענן את הדף";
+  return j.error || "משהו השתבש";
+}
+
+function saveMine(m){
+  var inp = m.querySelector(".mine-in"), at = m.querySelector(".mine-at");
+  var val = inp.value.trim();
+  if (val === m.getAttribute("data-saved")){ m.classList.remove("dirty"); return; }
+  if (m._busy){ m._again = true; return; }
+  m._busy = true;
+  at.className = "mine-at";
+  at.textContent = "שומר…";
+  /* שמירת טקסט חוזרת על עצמה בלי נזק, ולכן מותר לנסות שוב */
+  postJson({ action:"elnetStatus", key:KEY, id:m.dataset.id, school:m.dataset.school, text:val }, 3)
+    .catch(function(){ return null; })
+    .then(function(j){
+      m._busy = false;
+      if (j && j.ok){
+        m.setAttribute("data-saved", j.text);
+        var r = findRow(m.dataset.id, m.dataset.school);
+        if (r){ r["סטטוס אלנט"] = j.text; r["עדכון סטטוס אלנט"] = j.at; }
+        if (inp.value.trim() === val){ inp.value = j.text; m.classList.remove("dirty"); }
+        at.className = "mine-at ok";
+        at.textContent = j.text ? "נשמר · " + j.at : "נמחק";
+      } else {
+        at.className = "mine-at bad";
+        at.textContent = errText(j);
+      }
+      if (m._again){ m._again = false; saveMine(m); }
+    });
+}
+
+function sendReject(w){
+  var box = w.querySelector(".rej"), inp = w.querySelector(".rej-in");
+  var err = w.querySelector(".rej-err"), btn = w.querySelector(".rej-send");
+  var reason = inp.value.trim();
+  if (!reason){
+    err.textContent = "צריך לכתוב סיבה — היא נשלחת למפקח.ת ולמנהל.ת";
+    err.hidden = false;
+    inp.focus();
+    return;
+  }
+  err.hidden = true;
+  btn.disabled = true;
+  btn.textContent = "שולחת…";
+  /* ניסיון אחד בלבד: הדחייה שולחת מיילים, ואסור שתישלח פעמיים */
+  postJson({ action:"elnetReject", key:KEY, id:w.dataset.id, school:w.dataset.school, reason:reason }, 1)
+    .catch(function(){ return null; })
+    .then(function(j){
+      if (j && j.ok){
+        var r = findRow(w.dataset.id, w.dataset.school);
+        if (r){ r["סטטוס"] = ST_REJECTED; r["סיבת דחייה"] = reason; r["תאריך דחייה"] = j.at; }
+        box.hidden = true;
+        kpis();
+        render();
+        toast("הדחייה של " + w.dataset.school + " נשלחה למפקח.ת ולמנהל.ת");
+        return;
+      }
+      btn.disabled = false;
+      btn.textContent = "שליחת הדחייה";
+      err.textContent = j ? errText(j)
+        : "לא התקבלה תשובה. לפני שמנסים שוב כדאי לרענן — ייתכן שהדחייה כבר נשלחה";
+      err.hidden = false;
+    });
+}
+
+function wireCards(){
+  var app = $("app");
+  app.addEventListener("click", function(e){
+    var t = e.target;
+    var m = t.closest(".mine");
+    if (m && t.closest(".mine-save")){ saveMine(m); return; }
+    var w = t.closest(".rejw");
+    if (!w) return;
+    if (t.closest(".rej-open")){
+      w.querySelector(".rej").hidden = false;
+      t.closest(".rej-open").hidden = true;
+      w.querySelector(".rej-in").focus();
+    } else if (t.closest(".rej-cancel")){
+      w.querySelector(".rej").hidden = true;
+      w.querySelector(".rej-open").hidden = false;
+      w.querySelector(".rej-in").value = "";
+      w.querySelector(".rej-err").hidden = true;
+    } else if (t.closest(".rej-send")){
+      sendReject(w);
+    }
+  });
+  app.addEventListener("input", function(e){
+    var m = e.target.closest(".mine");
+    if (m) m.classList.toggle("dirty", e.target.value.trim() !== m.getAttribute("data-saved"));
+  });
+  app.addEventListener("change", function(e){
+    var m = e.target.closest(".mine");
+    if (m && e.target.classList.contains("mine-in")) saveMine(m);
+  });
+  app.addEventListener("keydown", function(e){
+    if (e.key === "Enter" && e.target.classList.contains("mine-in")){
+      e.preventDefault();
+      saveMine(e.target.closest(".mine"));
+    }
+  });
+  /* לא יוצאים מהדף עם סטטוס שלא נשמר */
+  window.addEventListener("beforeunload", function(e){
+    if (document.querySelector("#app .mine.dirty")){ e.preventDefault(); e.returnValue = ""; }
+  });
 }
 
 /* ---------- טעינה ---------- */
@@ -502,9 +798,8 @@ function keyFrom(text){
     $("gerr").hidden = true;
   });
 
-  if (!KEY){ $("gate").hidden = false; $("liveTxt").textContent = "ממתין לקישור"; return; }
-  load();
-
+  /* המאזינים נרשמים לפני הבדיקה אם יש מפתח — אחרת כניסה דרך תיבת השחזור
+     מציגה דשבורד שהסינון, הייצוא והשמירה בו לא עובדים */
   ["q","fTrack","fMahoz"].forEach(function(id){
     $(id).addEventListener(id === "q" ? "input" : "change", render);
   });
@@ -515,10 +810,14 @@ function keyFrom(text){
     p.hidden = !p.hidden;
     this.textContent = p.hidden ? "הצגת מה שבדרך" : "הסתרת מה שבדרך";
   });
+  wireCards();
 
-  /* רענון אוטומטי כל שלוש דקות, רק כשהלשונית פתוחה */
-  setInterval(function(){ if (!document.hidden) load(); }, 180000);
-  document.addEventListener("visibilitychange", function(){ if (!document.hidden) load(); });
+  /* רענון אוטומטי כל שלוש דקות, רק כשהלשונית פתוחה — ולא באמצע הקלדה */
+  setInterval(function(){ if (KEY && !document.hidden && !editing()) load(); }, 180000);
+  document.addEventListener("visibilitychange", function(){ if (KEY && !document.hidden && !editing()) load(); });
+
+  if (!KEY){ $("gate").hidden = false; $("liveTxt").textContent = "ממתין לקישור"; return; }
+  load();
 })();
 </script>
 </body>
