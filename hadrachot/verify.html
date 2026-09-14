@@ -151,7 +151,7 @@
 
 </div>
 
-<script src="assets/app.js?v=20260911"></script>
+<script src="assets/app.js?v=20260914"></script>
 <script>
 const schoolId = TS.urlParam('school', '');
 let school = null, teacherCount = 0;
@@ -297,7 +297,7 @@ async function saveEmail(inp) {
   let failed = 0;
   for (const r of rows) {
     if (String(r.email || '').trim() === val) continue;
-    const res = await TS.apiPost('teachers.update', { id: r.id, email: val });
+    const res = await updateWithRetry({ id: r.id, email: val });
     if (res && res.ok) r.email = val; else failed++;
   }
   delete emailSaving[key];
@@ -341,6 +341,17 @@ function refreshMathNote() {
     : `<b>✓ כל ${mathBagrut.length} מורי המתמטיקה סומנו.</b> תודה — זה בדיוק מה שהיה חסר לנו.`;
 }
 
+// teachers.update כותב ערך קבוע לשורה קיימת — חזרה עליו לא משכפלת כלום,
+// ולכן נפילת רשת רגעית (עומס בשרת) מקבלת ניסיון שני לפני "לא נשמר".
+async function updateWithRetry(body) {
+  let res = await TS.apiPost('teachers.update', body);
+  if (!(res && res.ok) && !(res && res.ok === false && !res.error)) {
+    await new Promise(r => setTimeout(r, 2000));
+    res = await TS.apiPost('teachers.update', body);
+  }
+  return res;
+}
+
 function wireUnits() {
   document.querySelectorAll('.units-sel').forEach(sel => {
     sel.addEventListener('change', async () => {
@@ -353,7 +364,7 @@ function wireUnits() {
       sel.disabled = true;
       if (tick) { tick.className = 'units-tick'; tick.textContent = 'שומר…'; }
 
-      const res = await TS.apiPost('teachers.update', { id, units: TS.unitsForWrite(val) });
+      const res = await updateWithRetry({ id, units: TS.unitsForWrite(val) });
       sel.disabled = false;
 
       if (res && res.ok) {
@@ -410,10 +421,20 @@ document.getElementById('verify-form').addEventListener('submit', async e => {
     teachersWithEmail: new Set(Object.values(byId).filter(t => isEmail(t.email)).map(nameKey)).size,
     at: new Date().toISOString()
   };
-  const res = await TS.apiPost('questions.create', {
+  let res = await TS.apiPost('questions.create', {
     teacherId: 'verify:' + schoolId,
     question: JSON.stringify(payload)
   });
+  // תשובה שלא הגיעה (timeout / דף HTML של גוגל) לא אומרת שהאישור לא נשמר —
+  // מחפשים אותו לפי חותמת הזמן לפני שמציגים שגיאה ושולחים את המנהל לנסות שוב.
+  if (!res.ok && !/^(unauthenticated|forbidden)/.test(res.error || '')) {
+    btn.textContent = 'בודק שהאישור נקלט…';
+    const chk = await TS.api('questions.list', { teacherId: 'verify:' + schoolId }, { cache: 'no' });
+    const saved = chk && chk.ok && (chk.data || []).some(q => {
+      try { return JSON.parse(q.question).at === payload.at; } catch (e) { return false; }
+    });
+    if (saved) res = { ok: true };
+  }
   if (res.ok) {
     document.getElementById('form-card').hidden = true;
     document.getElementById('roster').hidden = true;

@@ -140,9 +140,13 @@ const TS = (() => {
   // fetch עם תקרת זמן. בלי זה בקשה שנתקעת ברשת סלולרית חלשה לא נכשלת לעולם,
   // ותור השמירה של הזנת המורים נשאר תקוע עליה בשקט עד שהדף נסגר.
   const REQUEST_TIMEOUT_MS = 30000;
-  async function fetchWithTimeout(url, opts) {
+  // כתיבה מקבלת יותר: השרת ממתין עד 45 שניות למנעול, ובעומס (14.9.26) נמדדו
+  // כ-30% מהבקשות ב-32–35 שניות — ממש מעל 30. הלקוח ויתר והציג "timeout"
+  // על בקשה שהייתה מסתיימת (ולפעמים כבר נכתבה).
+  const POST_TIMEOUT_MS = 90000;
+  async function fetchWithTimeout(url, opts, ms) {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), REQUEST_TIMEOUT_MS);
+    const timer = setTimeout(() => ctl.abort(), ms || REQUEST_TIMEOUT_MS);
     try {
       return await fetch(url, Object.assign({}, opts, { signal: ctl.signal }));
     } finally {
@@ -192,7 +196,7 @@ const TS = (() => {
         method: 'POST',
         body: JSON.stringify({ action, ...withAuth_(body) }),
         headers: { 'Content-Type': 'text/plain' }
-      });
+      }, POST_TIMEOUT_MS);
       const json = await res.json();
       // הזרמת cache אחרי POST שמשנה נתונים
       if (json && json.ok) cacheInvalidate();
