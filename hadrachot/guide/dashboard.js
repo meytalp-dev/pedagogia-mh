@@ -671,7 +671,38 @@ function openTeacherModal(teacher) {
   }
   fillSubjectRow(teacher);
   toggleUnitsRow();
+  setEmailField(!teacher);
   document.getElementById('modal-teacher').classList.add('open');
+}
+
+/* מייל המורה — חובה בהוספת מורה (החלטת מיטל 14.9.26), כמו בהזנת המורים
+   ובאימות של המנהלים. בעריכה לא: הרשימה כאן מגיעה מ-teachers.list הפתוח,
+   שבו השרת ממסך את המייל ל-'' — השדה ריק גם אצל מורה שיש לו מייל, וחובה
+   הייתה חוסמת כל עריכה. ריק בעריכה לא דורס (updateTeacher מדלג על ריק). */
+const TE_EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+function setEmailField(isNew) {
+  const inp = document.getElementById('te-email');
+  const label = document.getElementById('te-email-label');
+  const err = document.getElementById('te-email-err');
+  if (!inp) return;
+  if (label) label.textContent = isNew ? 'מייל *' : 'מייל';
+  inp.placeholder = isNew ? 'חובה — name@example.com' : 'להשאיר ריק כדי לא לשנות את המייל הקיים';
+  inp.style.borderColor = '';
+  if (err) { err.hidden = true; err.textContent = ''; }
+  inp.oninput = () => { inp.style.borderColor = ''; if (err) err.hidden = true; };
+  // type="email" — הדפדפן עוצר את השליחה לפני submitTeacher ומציג בועה משלו.
+  // מבטלים את הבועה ומציגים את אותה הודעה אדומה כמו בשאר המקרים.
+  inp.oninvalid = ev => {
+    ev.preventDefault();
+    if (err) { err.textContent = 'המייל לא תקין'; err.hidden = false; }
+    inp.style.borderColor = '#D97757';
+    inp.focus();
+  };
+}
+function emailProblem(email, isNew) {
+  const v = (email || '').trim();
+  if (!v) return isNew ? 'המייל הוא שדה חובה' : '';
+  return TE_EMAIL_RE.test(v) ? '' : 'המייל לא תקין';
 }
 
 /* שורת המקצוע — רלוונטית רק למדריכה עם יותר ממקצוע אחד.
@@ -710,6 +741,17 @@ async function submitTeacher(e) {
   // מדריכה של החברה הערבית — מורה חדש נרשם אוטומטית במגזר הערבי
   if (GUIDE_CFG.sectors && GUIDE_CFG.sectors.length === 1) data.sector = GUIDE_CFG.sectors[0];
   const editing = !!data.id;
+
+  data.email = (data.email || '').trim();
+  const problem = emailProblem(data.email, !editing);
+  if (problem) {
+    const inp = document.getElementById('te-email');
+    const err = document.getElementById('te-email-err');
+    if (err) { err.textContent = problem; err.hidden = false; }
+    if (inp) { inp.style.borderColor = '#D97757'; inp.focus(); }
+    return;
+  }
+  if (editing && !data.email) delete data.email;   // לא שולחים ריק
 
   if (!TS.getAppsScriptUrl()) {
     TS.toast('אין חיבור לשרת — לא ניתן לשמור');
