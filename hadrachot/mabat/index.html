@@ -298,42 +298,7 @@
 
       <!-- שעות פרטניות -->
       <div class="ws-pane" id="pane-hours">
-        <div class="ws-hint">שעות פרטניות שהמדריכה מקיימת מול מורה בודד/ת. המדריכה רושמת ומעדכנת אותן בדשבורד שלה, והן מופיעות כאן — כולל מה נעשה במפגש.</div>
-        <form id="hours-form" class="hours-form">
-          <div>
-            <label for="h-first">שם פרטי *</label>
-            <input class="input" id="h-first" required>
-          </div>
-          <div>
-            <label for="h-last">שם משפחה *</label>
-            <input class="input" id="h-last" required>
-          </div>
-          <div>
-            <label for="h-subject">מקצוע</label>
-            <select class="select" id="h-subject"></select>
-          </div>
-          <div>
-            <label for="h-school">בית ספר</label>
-            <input class="input" id="h-school" list="schools-datalist" autocomplete="off">
-            <datalist id="schools-datalist"></datalist>
-          </div>
-          <div class="full">
-            <label for="h-topic">נושא ההדרכה</label>
-            <input class="input" id="h-topic" placeholder="למשל: בניית מבחן מותאם, ניתוח שאלון בגרות...">
-          </div>
-          <div>
-            <label for="h-date">תאריך</label>
-            <input class="input" id="h-date" type="date">
-          </div>
-          <div>
-            <label for="h-hours">מספר שעות</label>
-            <input class="input" id="h-hours" type="number" min="0" step="0.5" value="1">
-          </div>
-          <div class="full btn-row">
-            <button type="submit" class="btn btn-primary">הוספה</button>
-          </div>
-        </form>
-        <div class="ws-status" id="hours-status"></div>
+        <div class="ws-hint">שעות פרטניות שהמדריכה מקיימת מול מורה בודד/ת — צפייה בלבד. המדריכה רושמת ומעדכנת אותן בדשבורד שלה, והן מופיעות כאן כולל מה נעשה במפגש.</div>
         <div id="hours-total" class="hours-total" hidden></div>
         <div id="hours-list"></div>
       </div>
@@ -347,6 +312,6 @@
 <script src="../assets/app.js?v=20260911"></script>
 <script src="../assets/guides.js?v=20260908"></script>
 <script src="../assets/plans.js?v=20260910"></script>
-<script src="mabat.js?v=20260914"></script>
+<script src="mabat.js?v=20260914b"></script>
 </body>
 </html>

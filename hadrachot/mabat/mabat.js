@@ -327,11 +327,8 @@ function initGuideWorkspaceUI() {
   // ---- הודעות ----
   document.getElementById('msg-send').addEventListener('click', sendMessage);
 
-  // ---- שעות פרטניות ----
-  document.getElementById('hours-form').addEventListener('submit', e => {
-    e.preventDefault();
-    addHours();
-  });
+  // שעות פרטניות — צפייה בלבד (14.9.26, קביעת מיטל): המדריכה רושמת
+  // ומעדכנת בדשבורד שלה (guide/space.js), המפקח.ת רואה כאן.
 }
 
 function openGuideWorkspace(slug, tab) {
@@ -341,7 +338,6 @@ function openGuideWorkspace(slug, tab) {
   document.getElementById('gw-sub').textContent =
     window.TS_guideSubjects(wsGuide).join(' · ') + ' · ' +
     state.teachers.filter(t => window.TS_guideTeaches(wsGuide, t.subject)).length + ' מורים';
-  fillHoursDefaults();
   switchWsTab(tab || 'files');
   renderWsPanes();
   document.getElementById('guide-modal').classList.add('open');
@@ -531,24 +527,6 @@ async function sendMessage() {
 }
 
 // ---------- שעות פרטניות ----------
-function fillHoursDefaults() {
-  const subj = document.getElementById('h-subject');
-  // המקצוע של המדריכה ראשון ומסומן — הוא הנפוץ כמעט תמיד
-  // המקצועות של המדריכה ראשונים ומסומנים — הם הנפוצים כמעט תמיד
-  const mine = window.TS_guideSubjects(wsGuide);
-  const list = mine.concat(TS.SUBJECTS.filter(s => mine.indexOf(s) < 0));
-  subj.innerHTML = list.map(s => `<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('');
-
-  const dl = document.getElementById('schools-datalist');
-  const schools = Array.from(new Set(state.teachers.map(t => t.schoolName)))
-    .filter(s => s && s !== '— ללא שיוך —').sort((a, b) => a.localeCompare(b, 'he'));
-  dl.innerHTML = schools.map(s => `<option value="${escapeAttr(s)}"></option>`).join('');
-
-  const d = new Date();
-  document.getElementById('h-date').value =
-    d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
-
 function renderWsHours() {
   const rows = wsOf(wsGuide.slug, 'hours');
   const total = document.getElementById('hours-total');
@@ -568,7 +546,7 @@ function renderWsHours() {
     <div class="table-wrap" style="border:none;">
       <table class="t-grid">
         <thead>
-          <tr><th>מורה</th><th>מקצוע</th><th>בית ספר</th><th>נושא ומה נעשה</th><th>תאריך</th><th>שעות</th><th></th></tr>
+          <tr><th>מורה</th><th>מקצוע</th><th>בית ספר</th><th>נושא ומה נעשה</th><th>תאריך</th><th>שעות</th></tr>
         </thead>
         <tbody>
           ${rows.map(h => `
@@ -579,55 +557,11 @@ function renderWsHours() {
               <td>${escapeHtml(h.topic || '—')}${h.notes ? `<div style="font-size:12px; color:var(--text-2); line-height:1.6; white-space:pre-wrap; margin-top:3px;">${escapeHtml(h.notes)}</div>` : ''}</td>
               <td>${fmtDateOnly(h.date)}</td>
               <td>${fmtHours(h.hours)}</td>
-              <td><button type="button" class="row-del" data-del-hours="${escapeAttr(h.id)}" title="מחיקה">מחיקה</button></td>
             </tr>`).join('')}
         </tbody>
       </table>
     </div>`;
 
-  el.querySelectorAll('[data-del-hours]').forEach(b => b.addEventListener('click', async () => {
-    if (!confirm('למחוק את הרישום?')) return;
-    b.disabled = true;
-    const res = await TS.apiPost('guide.hours.delete', { id: b.dataset.delHours });
-    if (res && res.ok) { TS.toast('הרישום נמחק'); await refreshWorkspace(); }
-    else { b.disabled = false; TS.toast('המחיקה נכשלה'); }
-  }));
-}
-
-async function addHours() {
-  if (!wsGuide) return;
-  const form = document.getElementById('hours-form');
-  const status = document.getElementById('hours-status');
-  const btn = form.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  status.textContent = 'שומר...';
-
-  const res = await TS.apiPost('guide.hours.add', {
-    guide: wsGuide.slug,
-    guideName: wsGuide.name,
-    firstName: document.getElementById('h-first').value.trim(),
-    lastName: document.getElementById('h-last').value.trim(),
-    subject: document.getElementById('h-subject').value,
-    schoolName: document.getElementById('h-school').value.trim(),
-    topic: document.getElementById('h-topic').value.trim(),
-    date: document.getElementById('h-date').value,
-    hours: document.getElementById('h-hours').value,
-    byName: INSP.name
-  });
-  btn.disabled = false;
-
-  if (res && res.ok) {
-    status.textContent = '';
-    // מנקים את שם המורה, הנושא והשעות. התאריך, המקצוע ובית הספר נשארים —
-    // רישום של כמה מורים מאותו בית ספר ביום אחד הוא המקרה הרגיל.
-    ['h-first', 'h-last', 'h-topic'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('h-hours').value = '1';
-    TS.toast('הרישום נשמר');
-    await refreshWorkspace();
-    document.getElementById('h-first').focus();
-  } else {
-    status.textContent = 'הרישום לא נשמר' + (res && res.error ? ' (' + res.error + ')' : '') + '. נסו שוב.';
-  }
 }
 
 // ---------- עיצוב ערכים ----------
