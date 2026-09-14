@@ -2904,7 +2904,9 @@ function guideHoursDelete(p) {
 
 const MEET_TZ = 'Asia/Jerusalem';
 const MEET_CODE_STEP_SEC = 60;        // הקוד מתחלף כל דקה
-const MEET_CODE_GRACE_STEPS = 1;      // גם הקוד הקודם מתקבל — עד שתי דקות סה"כ
+// הקוד על המסך מתחלף כל דקה, אבל כל קוד שהוצג מתקבל 5 דקות (החלטת מיטל
+// 14.9.26 — זמן להיכנס לקישור, למצוא את השם ולהקליד). צילום ישן מ-5 דק׳ ומעלה נדחה.
+const MEET_CODE_GRACE_STEPS = 4;
 const MEET_OPEN_DEFAULT_MIN = 90;
 const MEET_OPEN_MAX_MIN = 180;
 const MEET_FAIL_PER_PERSON = 6;       // ניסיונות קוד שגויים לאדם לפני נעילה
@@ -2946,10 +2948,21 @@ function meetSafeEqual_(a, b) {
 }
 
 // מחזיר את ה-slug אם המפתח תקין, אחרת ''
+// שתי דרכים: המפתח k, או המייל של המדריכ/ה שכבר נוסע בקישור האישי שהופץ
+// ב-8.9.26 (&guide=<email>) — כך הקישורים הקיימים ממשיכים לעבוד בלי הפצה
+// מחדש (בקשת מיטל 14.9.26). המייל נבדק מול טאב contacts בשרת, לא מול הדפדפן.
+// מי שאין לו מייל במערכת (עבד, גל ועוד) — רק מפתח.
 function meetAuthGuide_(p) {
   const slug = meetSlug_(p.guide);
   if (!slug) return '';
-  return meetSafeEqual_(p.k, meetGuideKey_(slug)) ? slug : '';
+  if (p.k && meetSafeEqual_(p.k, meetGuideKey_(slug))) return slug;
+  const email = String(p.ge || '').trim().toLowerCase();
+  if (email && email.indexOf('@') > 0) {
+    const c = readAll('contacts').find(r => String(r.id) === 'guide:' + slug);
+    const known = c ? String(c.email || '').trim().toLowerCase() : '';
+    if (known && meetSafeEqual_(email, known)) return slug;
+  }
+  return '';
 }
 
 function meetToday_() {

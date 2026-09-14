@@ -3,7 +3,7 @@
    -----------------------------------------------------------
    המפגשים בזום. המדריכ/ה מסמנ/ת נוכחות מתוך רשימת הקבוצה — זו הרשימה
    הקובעת. גיבוי: בזמן המפגש פותחים "רישום עצמי", מקרינים קוד בן 4 ספרות
-   שמתחלף כל דקה, והמורים נרשמים בעמוד mifgash/?g=<slug>. רישום עצמי מופיע
+   שמתחלף כל דקה (כל קוד תקף 5 דקות), והמורים נרשמים בעמוד mifgash/?g=<slug>. רישום עצמי מופיע
    כאן כ"ממתין לאישור" ולא נספר עד שמאשרים.
 
    הרשאה: מפתח k בקישור האישי (נוצר ב-admin-guides.html). נשמר במכשיר,
@@ -23,6 +23,10 @@
     if (fromUrl) { localStorage.setItem('ts.meet.k.' + SLUG, fromUrl); KEY = fromUrl; }
     else KEY = localStorage.getItem('ts.meet.k.' + SLUG) || '';
   } catch (e) { KEY = TS.urlParam('k', ''); }
+
+  // המייל שכבר בקישור האישי (&guide=) — מספיק לזיהוי בשרת, בלי מפתח
+  const GE = (typeof guideEmail !== "undefined" && guideEmail) ? String(guideEmail) : "";
+  const CAN = !!(KEY || GE);
 
   const PLAN = window.TS_planFor ? window.TS_planFor(SLUG) : null;
 
@@ -52,7 +56,7 @@
     const btn = document.getElementById('tab-btn-meet');
     if (!SLUG) { if (btn) btn.hidden = true; return; }
     renderShell();
-    if (!KEY) { renderNoKey(); return; }
+    if (!CAN) { renderNoKey(); return; }
     pickDefault();
     renderSelection();
     // ביום המפגש הלשונית נפתחת לבד — זה מה שהמדריכ/ה צריכ/ה באותו יום
@@ -67,7 +71,7 @@
   });
 
   // dashboard.js קורא לזה אחרי שרשימת המורים נטענה
-  window.MEET_onRoster = function () { if (KEY && sel) renderBody(); };
+  window.MEET_onRoster = function () { if (CAN && sel) renderBody(); };
 
   // ---------- עזרים ----------
   function localToday() {
@@ -133,7 +137,7 @@
   async function load() {
     if (!sel) {
       // בלי תוכנית (שירה): אולי כבר נרשמו מפגשים שלא בתוכנית — מושכים את הרשימה
-      const r0 = await TS.api('meet.state', { guide: SLUG, k: KEY }, { cache: 'no' });
+      const r0 = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE }, { cache: 'no' });
       if (r0 && r0.ok && r0.data) { S.meetings = r0.data.meetings || []; }
       else if (r0 && r0.error === 'bad_key') { S.badKey = true; renderSelection(); renderBody(); return; }
       pickDefault();
@@ -141,7 +145,7 @@
       if (!sel) return;
     }
     const date = sel.date;
-    const res = await TS.api('meet.state', { guide: SLUG, k: KEY, date: date }, { cache: 'no' });
+    const res = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, date: date }, { cache: 'no' });
     if (!sel || sel.date !== date) return;   // בינתיים נבחר מפגש אחר
     if (res && res.ok && res.data) {
       S.meetings = res.data.meetings || [];
@@ -342,7 +346,7 @@
   // ---------- גוף הלשונית ----------
   function renderBody() {
     const body = document.getElementById('meet-body');
-    if (!body || !sel || !KEY) return;
+    if (!body || !sel || !CAN) return;
     if (S.badKey) {
       body.innerHTML = `<section class="meet-card meet-notice warn"><div class="meet-notice-ic">${ICON.key}</div>
         <div><strong>המפתח שבקישור אינו תקין</strong><p>${esc(errText('bad_key'))}</p></div></section>`;
@@ -517,7 +521,7 @@
     saving = true;
     renderBody();
     const res = await TS.apiPost('meet.mark', {
-      guide: SLUG, k: KEY, date: sel.date, topic: sel.topic || '', source: sel.source || 'adhoc',
+      guide: SLUG, k: KEY, ge: GE, date: sel.date, topic: sel.topic || '', source: sel.source || 'adhoc',
       guideName: GUIDE_CFG.name || '', records: JSON.stringify(records)
     });
     saving = false;
@@ -561,7 +565,7 @@
       <section class="meet-card meet-live closed">
         <div class="ml-tx">
           <h3>${ICON.screen}<span>רישום עצמי למשתתפים (גיבוי)</span></h3>
-          <p>פותחים בתחילת המפגש. על המסך יוקרן קוד שמתחלף כל דקה, והמורים נרשמים איתו מהטלפון או מהמחשב. מי שלא נמצא במפגש לא יכול לראות את הקוד. אחרי שסוגרים את הרישום, או כשהזמן נגמר, אי אפשר יותר להירשם.</p>
+          <p>פותחים בתחילת המפגש. על המסך יוקרן קוד שמתחלף כל דקה, וכל קוד תקף 5 דקות. המורים נרשמים איתו מהטלפון או מהמחשב. מי שלא נמצא במפגש לא יכול לראות את הקוד. אחרי שסוגרים את הרישום, או כשהזמן נגמר, אי אפשר יותר להירשם.</p>
         </div>
         <div class="ml-open">
           <label><span>פתוח למשך</span>
@@ -585,7 +589,7 @@
         </div>
         <div class="ml-tx">
           <h3><span class="live-dot"></span><span>הרישום העצמי פתוח עד ${esc(hhmm(sm.openUntil))}</span></h3>
-          <p>משתפים מסך עם הקוד, ומדביקים בצ'אט של הזום את הקישור. הקוד מתחלף כל דקה.</p>
+          <p>משתפים מסך עם הקוד, ומדביקים בצ'אט של הזום את הקישור. הקוד מתחלף כל דקה, וכל קוד תקף 5 דקות — יש זמן להקליד.</p>
           <div class="ml-url" dir="ltr">${esc(mifgashUrl())}</div>
           <div class="gl-actions">
             <button type="button" class="gl-btn" id="meet-copy">${ICON.copy}<span>העתקת הודעה לצ'אט</span></button>
@@ -602,7 +606,7 @@
     if (openBtn) openBtn.addEventListener('click', async () => {
       openBtn.disabled = true; openBtn.textContent = 'פותח…';
       const res = await TS.apiPost('meet.open', {
-        guide: SLUG, k: KEY, date: sel.date, minutes: document.getElementById('meet-minutes').value,
+        guide: SLUG, k: KEY, ge: GE, date: sel.date, minutes: document.getElementById('meet-minutes').value,
         topic: sel.topic || '', source: sel.source || 'adhoc', guideName: GUIDE_CFG.name || ''
       });
       if (res && res.ok) { applyCodes(res.data); await load(); }
@@ -619,7 +623,7 @@
     if (closeBtn) closeBtn.addEventListener('click', async () => {
       if (!confirm('לסגור את הרישום העצמי? אחרי הסגירה המורים לא יוכלו להירשם.')) return;
       closeBtn.disabled = true;
-      const res = await TS.apiPost('meet.close', { guide: SLUG, k: KEY, date: sel.date });
+      const res = await TS.apiPost('meet.close', { guide: SLUG, k: KEY, ge: GE, date: sel.date });
       if (!(res && res.ok)) TS.toast(errText(res && res.error));
       stopLive();
       await load();
@@ -640,7 +644,7 @@
     if (codeFetching) return;
     codeFetching = true;
     clearTimeout(codeTimer);
-    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, date: sel.date }, { cache: 'no' });
+    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: sel.date }, { cache: 'no' });
     codeFetching = false;
     if (res && res.ok && res.data) { applyCodes(res.data); return; }
     if (res && res.error === 'closed') { stopLive(); load(); return; }
