@@ -151,7 +151,7 @@
 
 </div>
 
-<script src="assets/app.js?v=20260914"></script>
+<script src="assets/app.js?v=20260914b"></script>
 <script>
 const schoolId = TS.urlParam('school', '');
 let school = null, teacherCount = 0;
@@ -177,10 +177,23 @@ async function init() {
   }
   document.getElementById('fix-link').href = 'admin-school/setup.html?school=' + encodeURIComponent(schoolId);
 
+  const roster = document.getElementById('roster');
+  roster.innerHTML = '<div class="empty" style="padding:24px; text-align:center;">טוען את הרשימה… (בשעות עומס זה יכול לקחת עד דקה)</div>';
   const [sRes, tRes] = await Promise.all([
     TS.api('school.get', { id: schoolId }, { cache: 'no' }),
     TS.api('teachers.list', { school: schoolId }, { cache: 'no' })
   ]);
+  // טעינה שנכשלה איננה רשימה ריקה. עד 14.9.26 כשל רשת הציג "עדיין לא הוזנו
+  // מורים" — ומנהלים שהזינו הכול היו עלולים להזין שוב ולשכפל.
+  if (!(tRes && tRes.ok)) {
+    roster.innerHTML =
+      '<div style="padding:16px; text-align:center; line-height:1.8;">' +
+      '<b>השרת עמוס ולא הצלחנו לטעון את הרשימה.</b><br>' +
+      '<span style="color:var(--text-2);">הרשימה שהזנתם שמורה — לא צריך להזין מחדש.</span><br>' +
+      '<button type="button" class="btn btn-primary" id="btn-reload" style="margin-top:12px;">לנסות שוב</button></div>';
+    document.getElementById('btn-reload').addEventListener('click', init);
+    return;
+  }
   school = (sRes.ok && sRes.data) ? sRes.data : { id: schoolId, name: '' };
   const teachers = (tRes.ok && tRes.data) ? tRes.data : [];
   teacherCount = teachers.length;
