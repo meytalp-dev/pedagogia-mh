@@ -27,7 +27,7 @@
       const o = document.createElement('option'); o.value = s; o.textContent = s;   // דרך ה-DOM — הגרשיים של תנ"ך
       $('f-subject').appendChild(o);
     });
-    ['f-insp', 'f-society', 'f-subject', 'f-q', 'f-never'].forEach(id => $(id).addEventListener('input', render));
+    ['f-insp', 'f-society', 'f-subject', 'f-q', 'f-never', 'f-noind'].forEach(id => $(id).addEventListener('input', render));
     $('nk-more-btn').addEventListener('click', () => { showAllTeachers = true; render(); });
     document.querySelectorAll('[data-csv]').forEach(b => b.addEventListener('click', () => exportCsv(b.dataset.csv)));
 
@@ -70,6 +70,7 @@
       const a = m[k] || (m[k] = { key: k, name: nameFn(p), network: p.network, schools: new Set(), n: 0, present: 0, held: 0, never: [], individual: 0 });
       a.n++; a.present += p.present; a.held += p.held; a.schools.add(p.schoolName);
       a.individual += p.individual || 0;
+      if (p.individual) a.indT = (a.indT || 0) + 1; else a.indT = a.indT || 0;
       if (p.held && !p.participated) a.never.push(p);
     });
     return Object.values(m).map(a => Object.assign(a, { rate: a.held ? Math.round(a.present / a.held * 100) : null }))
@@ -108,6 +109,10 @@
     $('k-ind').textContent = hours ? noInd.length : '—';
     $('k-ind-s').textContent = hours ? 'מתוך ' + schoolNames.length + ' · ' + gs.reduce((s, g) => s + (g.individualSessions || 0), 0) + ' מפגשים פרטניים השנה' : 'השעות הפרטניות לא נטענו';
     $('k-ind').parentElement.classList.toggle('red', !!hours && noInd.length > 0);
+    const tNoInd = persons.filter(p => !p.individual);
+    $('k-tind').textContent = hours ? tNoInd.length : '—';
+    $('k-tind-s').textContent = hours ? 'מתוך ' + persons.length + ' מורים בקבוצות' : 'השעות הפרטניות לא נטענו';
+    $('k-tind').parentElement.classList.toggle('red', !!hours && tNoInd.length > 0);
     $('nk-sub').textContent = gs.length + ' מדריכים · ' + persons.length + ' מורים בקבוצות · נכון להיום ' + L(stats.today);
 
     // מדריכים
@@ -128,7 +133,7 @@
         <td class="num">${s.n}</td>
         <td class="num"><span class="mv-chip ${window.TS_rateClass(s.rate)}">${pct(s.rate)}</span></td>
         <td class="num">${s.held ? s.never.length : '—'}</td>
-        <td class="num">${!hours ? '—' : (render.schoolInd[s.name] ? '<span class="mv-ind">' + render.schoolInd[s.name] + '</span>' : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>')}</td>
+        <td class="num">${!hours ? '—' : (render.schoolInd[s.name] ? '<span class="mv-ind" title="' + render.schoolInd[s.name] + ' מפגשים פרטניים">' + s.indT + '/' + s.n + ' מורים</span>' : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>')}</td>
         <td>${s.never.length ? `<button type="button" class="nk-btn" data-school-copy="${i}" style="padding:3px 9px;font-size:11.5px;">העתקת מי שלא השתתף</button>` : ''}</td>
       </tr>`).join('') : '<tr><td colspan="7" class="dim" style="text-align:center;padding:18px;">אין נתונים</td></tr>';
     document.querySelectorAll('[data-school-copy]').forEach(b => b.addEventListener('click', () => {
@@ -150,10 +155,11 @@
 
     // מורים
     const onlyNever = $('f-never').checked;
-    let list = qPersons.filter(p => !onlyNever || (p.held && !p.participated))
+    const onlyNoInd = $('f-noind').checked;
+    let list = qPersons.filter(p => (!onlyNever || (p.held && !p.participated)) && (!onlyNoInd || !p.individual))
       .slice().sort((a, b) => ((a.rate === null ? 101 : a.rate) - (b.rate === null ? 101 : b.rate)) || a.name.localeCompare(b.name, 'he'));
     render.teachers = list;
-    $('nk-teachers-sub').textContent = list.length + ' מורים' + (onlyNever ? ' שלא השתתפו כלל' : '');
+    $('nk-teachers-sub').textContent = list.length + ' מורים' + (onlyNever ? ' שלא השתתפו כלל' : '') + (onlyNoInd ? ' · בלי הדרכה פרטנית השנה' : '');
     const LIMIT = 200;
     const shown = showAllTeachers ? list : list.slice(0, LIMIT);
     $('nk-more').hidden = showAllTeachers || list.length <= LIMIT;
@@ -163,9 +169,10 @@
         <td>${esc(p.schoolName)}</td>
         <td class="dim">${esc(p.subject)}</td>
         <td class="dim">${esc(p.guideName)}</td>
-        <td class="num">${window.TS_meetRateChip(p)}${p.pending ? ' <span class="dim" title="רישום עצמי שממתין לאישור">+' + p.pending + ' ממתין</span>' : ''}</td>
+        <td class="num">${window.TS_meetRateChip(p).replace(/ ?<span class="mv-ind"[^]*?<\/span>/, '')}${p.pending ? ' <span class="dim" title="רישום עצמי שממתין לאישור">+' + p.pending + ' ממתין</span>' : ''}</td>
         <td class="dim">${esc(p.missed.map(L).join(', '))}</td>
-      </tr>`).join('') || '<tr><td colspan="6" class="dim" style="text-align:center;padding:18px;">אין מורים שמתאימים לסינון</td></tr>';
+        <td class="num">${!hours ? '—' : (p.individual ? window.TS_meetIndividualChip(p) : '<span class="mv-ind zero" title="עוד לא קיבל/ה הדרכה פרטנית השנה">אין</span>')}</td>
+      </tr>`).join('') || '<tr><td colspan="7" class="dim" style="text-align:center;padding:18px;">אין מורים שמתאימים לסינון</td></tr>';
   }
 
   function copy(text, btn) {
@@ -182,9 +189,9 @@
         p.present, p.held, p.rate === null ? '' : p.rate, p.missed.map(L).join(' '), p.pending || '', p.individual || 0, p.individualDates.map(L).join(' ')]);
     } else {
       const src = kind === 'schools' ? render.schools : render.networks;
-      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'מפגשים (מורה×מפגש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)'];
+      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'מפגשים (מורה×מפגש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)', 'מורים עם הדרכה פרטנית'];
       rows = (src || []).map(a => [a.name, a.n, a.present, a.held, a.rate === null ? '' : a.rate, a.never.length,
-        kind === 'schools' ? (render.schoolInd[a.name] || 0) : a.individual]);
+        kind === 'schools' ? (render.schoolInd[a.name] || 0) : a.individual, a.indT || 0]);
     }
     const cell = v => { const s = String(v == null ? '' : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const csv = '﻿' + [head].concat(rows).map(r => r.map(cell).join(',')).join('\r\n');   // BOM — אקסל פותח עברית נכון

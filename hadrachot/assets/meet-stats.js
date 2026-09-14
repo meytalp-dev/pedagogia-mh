@@ -183,6 +183,8 @@
         individualSessions: indSessions,
         individualHours: indHours,
         individualTeachers: persons.filter(p => p.individual > 0).length,
+        // מעקב גם לפי מורה (החלטת מיטל) — מי עוד לא קיבל/ה הדרכה פרטנית השנה
+        teachersNoIndividual: persons.filter(p => !p.individual),
         individualOutside: indOutside,
         schools: schools,
         schoolsWithIndividual: schools.filter(s => s.individual > 0).length,

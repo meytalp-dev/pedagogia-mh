@@ -123,6 +123,18 @@
       .sort((a, b) => a.localeCompare(b, 'he'));
     const missing = schools.filter(n => !idx.bySchool[norm(n)]);
     const done = schools.length - missing.length;
+    // גם לפי מורה (החלטת מיטל) — אותו מורה בבגרות ובגמר נספר פעם אחת
+    const people = [];
+    const seen = new Set();
+    teachers.forEach(t => {
+      const k = norm(t.name) + '|' + norm(t.schoolName);
+      if (seen.has(k)) return;
+      seen.add(k);
+      people.push({ name: t.name, schoolName: t.schoolName, has: !!idx.byKey[k] });
+    });
+    const tMissing = people.filter(p => !p.has)
+      .sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') || String(a.name).localeCompare(String(b.name), 'he'));
+    const tDone = people.length - tMissing.length;
     box.innerHTML = `
       <section class="meet-card meet-year">
         <div class="my-row">
@@ -132,10 +144,15 @@
           </div>
           <div class="my-kpis">
             <div><b>${idx.sessions}</b><span>מפגשים</span></div>
-            <div><b>${idx.teachers}</b><span>מורים</span></div>
+            <div class="${tMissing.length ? '' : 'ok'}"><b>${tDone}<small>/${people.length}</small></b><span>מורים</span></div>
             <div class="${missing.length ? '' : 'ok'}"><b>${done}<small>/${schools.length}</small></b><span>בתי ספר</span></div>
           </div>
         </div>
+        ${tMissing.length ? `
+        <details class="my-missing">
+          <summary>מורים שעוד לא קיבלו הדרכה פרטנית (${tMissing.length})</summary>
+          <div class="my-people">${tMissing.map(p => `<div><b>${esc(p.name)}</b><span>${esc(p.schoolName || '')}</span></div>`).join('')}</div>
+        </details>` : '<div class="my-done">כל המורים בקבוצה קיבלו הדרכה פרטנית השנה</div>'}
         ${missing.length ? `
         <details class="my-missing">
           <summary>בתי ספר שעוד לא קיבלו הדרכה פרטנית (${missing.length})</summary>

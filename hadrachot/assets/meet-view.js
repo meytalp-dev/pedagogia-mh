@@ -71,8 +71,8 @@
     if ((heldN || g.hoursLoaded) && g.persons.length) {
       const bySchool = {};
       g.persons.forEach(p => {
-        const s = bySchool[p.schoolName] || (bySchool[p.schoolName] = { name: p.schoolName, n: 0, present: 0 });
-        s.n++; s.present += p.present;
+        const s = bySchool[p.schoolName] || (bySchool[p.schoolName] = { name: p.schoolName, n: 0, present: 0, indT: 0 });
+        s.n++; s.present += p.present; if (p.individual) s.indT++;
       });
       const indOf = {};
       (g.schools || []).forEach(s => { indOf[s.name] = s.individual; });
@@ -87,7 +87,7 @@
           <thead><tr><th>בית ספר</th><th>מורים</th><th>נוכחות</th>${g.hoursLoaded ? '<th>פרטני</th>' : ''}</tr></thead>
           <tbody>${list.map(s => `<tr><td>${esc(s.name || '—')}</td><td class="num">${s.n}</td>
             <td class="num">${s.rate === null ? '<span class="mv-chip none">—</span>' : `<span class="mv-chip ${window.TS_rateClass(s.rate)}">${s.rate}%</span>`}</td>
-            ${g.hoursLoaded ? `<td class="num">${s.individual ? '<span class="mv-ind">' + s.individual + '</span>' : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>'}</td>` : ''}</tr>`).join('')}</tbody>
+            ${g.hoursLoaded ? `<td class="num">${s.individual ? `<span class="mv-ind" title="${s.individual} מפגשים פרטניים · ${s.indT} מתוך ${s.n} מורים">${s.indT}/${s.n} מורים</span>` : '<span class="mv-ind zero" title="עוד לא קיבל הדרכה פרטנית השנה">0</span>'}</td>` : ''}</tr>`).join('')}</tbody>
         </table>
       </details>`;
     }
@@ -96,8 +96,15 @@
     let indBlock = '';
     if (g.hoursLoaded && g.schools && g.schools.length) {
       const total = g.schools.length, done = g.schoolsWithIndividual, missing = g.schoolsNoIndividual;
+      const tMissing = g.teachersNoIndividual || [];
       indBlock = `
-      <div class="mv-line">הדרכה פרטנית השנה: <b>${g.individualSessions}</b> מפגשים · <b>${g.individualTeachers}</b> מורים${g.individualOutside ? ` <span title="נרשמו בשם שלא נמצא ברשימת הקבוצה">(+${g.individualOutside} לא מזוהים)</span>` : ''}</div>
+      <div class="mv-line">הדרכה פרטנית השנה: <b>${g.individualSessions}</b> מפגשים · <b>${g.individualTeachers}</b> מתוך ${g.rosterN} מורים · <b>${done}</b> מתוך ${total} בתי ספר${g.individualOutside ? ` <span title="נרשמו בשם שלא נמצא ברשימת הקבוצה">(+${g.individualOutside} לא מזוהים)</span>` : ''}</div>
+      ${tMissing.length ? `
+      <details>
+        <summary>מורים בלי הדרכה פרטנית השנה (${tMissing.length} מתוך ${g.rosterN})</summary>
+        <div class="mv-people">${tMissing.map(p => `<div><b>${esc(p.name)}</b><span>${esc(p.schoolName)}</span></div>`).join('')}</div>
+        <button type="button" class="mv-copy" data-mv-copy-tind="${esc(g.slug)}">העתקת הרשימה</button>
+      </details>` : `<div class="mv-line" style="color:#1f7a5c"><b>כל המורים בקבוצה קיבלו הדרכה פרטנית השנה</b></div>`}
       ${missing.length ? `
       <details>
         <summary>בתי ספר בלי הדרכה פרטנית השנה (${missing.length} מתוך ${total})</summary>
@@ -119,6 +126,7 @@
           <div class="mv-kpi"><b>${heldN}${g.planTotal ? '<small style="font-size:11px;color:var(--text-muted)">/' + g.planTotal + '</small>' : ''}</b><span>מפגשים שהתקיימו</span></div>
           <div class="mv-kpi"><b>${g.rosterN}</b><span>מורים בקבוצה</span></div>
           <div class="mv-kpi"><b>${heldN ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
+          ${g.hoursLoaded && g.rosterN ? `<div class="mv-kpi${(g.teachersNoIndividual || []).length ? '' : ' ok'}"><b>${g.individualTeachers}<small style="font-size:11px;color:var(--text-muted)">/${g.rosterN}</small></b><span>מורים עם הדרכה פרטנית</span></div>` : ''}
           ${g.hoursLoaded && g.schools && g.schools.length ? `<div class="mv-kpi${g.schoolsNoIndividual.length ? '' : ' ok'}"><b>${g.schoolsWithIndividual}<small style="font-size:11px;color:var(--text-muted)">/${g.schools.length}</small></b><span>בתי ספר עם הדרכה פרטנית</span></div>` : ''}
         </div>
         ${lastLine}${nextLine}${indBlock}
@@ -135,6 +143,13 @@
         if (!g) return;
         const text = g.name + ' — לא השתתפו כלל (לא במפגש ולא בהדרכה פרטנית):\n' + g.never.map(p => p.name + ' · ' + p.schoolName).join('\n');
         copyText_(b, text);
+      });
+    });
+    root.querySelectorAll('[data-mv-copy-tind]').forEach(b => {
+      b.addEventListener('click', () => {
+        const g = stats.guides.find(x => x.slug === b.dataset.mvCopyTind);
+        if (!g) return;
+        copyText_(b, g.name + ' — מורים שעוד לא קיבלו הדרכה פרטנית השנה:\n' + g.teachersNoIndividual.map(p => p.name + ' · ' + p.schoolName).join('\n'));
       });
     });
     root.querySelectorAll('[data-mv-copy-schools]').forEach(b => {
