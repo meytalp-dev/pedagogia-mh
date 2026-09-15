@@ -641,6 +641,29 @@ function setChip(el, txt, isErr){
 }
 
 /* ---------- מונים חיים ---------- */
+/* Apps Script לפעמים עונה 302→404 או לא עונה בכלל — פסק זמן ועד 3 ניסיונות,
+   אחרת הכרטיס נתקע על "טוען" לתמיד */
+function fetchJson(url, tries){
+  tries = tries || 3;
+  var attempt = function(n){
+    var ctl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 45000);  /* מצפן ההדרכות עונה לפעמים רק אחרי ~30ש׳ */
+    return fetch(url, ctl ? {cache:"no-store", signal:ctl.signal} : {cache:"no-store"})
+      .then(function(r){
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.text();
+      })
+      .then(function(t){ clearTimeout(timer); return JSON.parse(t); })
+      .catch(function(e){
+        clearTimeout(timer);
+        if (n >= tries) throw e;
+        return new Promise(function(res){ setTimeout(res, 900 * n); })
+          .then(function(){ return attempt(n + 1); });
+      });
+  };
+  return attempt(1);
+}
+
 function loadCounts(manual){
   var btn = $("refreshBtn");
   if (manual) btn.classList.add("spin");
@@ -652,9 +675,7 @@ function loadCounts(manual){
     var d = el._src;
     /* apis: כמה מקורות לאותו כרטיס — pick מקבל מערך תשובות לפי הסדר */
     var urls = d.apis || [d.api];
-    return Promise.all(urls.map(function(u){
-        return fetch(u, {cache:"no-store"}).then(function(r){ return r.json(); });
-      }))
+    return Promise.all(urls.map(function(u){ return fetchJson(u); }))
       .then(function(js){
         var j = d.apis ? js : js[0];
         d.stats.forEach(function(s, i){
