@@ -29,6 +29,8 @@ const SKIP = new Set([
   "ogdan-megama.html",   // תבנית מגמה בודדת — נטענת עם ?m=<סמל>
   "em-head.tmp.html",
   "mosdot-kesher.html",  // נפתח רק בקישור עם מפתח — לא להופיע בחיפוש
+  "ishur-tochnit.html",   // אישור תוכניות הגמר — נפתח רק בקישור אישי עם מפתח
+  "ishur-tochniyot-dash.html", // דשבורד אישור התוכניות — קישור ניהול עם מפתח
   "bagmgr.html",
   "chipus.html",
   "work-plans-app.html",

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" href="logo.png">
+<title>מעקב אישור תוכניות הגמר</title>
+<!--
+  העמוד ריק מנתונים בכוונה — הרפו ציבורי.
+  הנתונים נמסרים מ-Apps Script רק למפתח הניהול בקישור:  ishur-tochniyot-dash.html#k=<מפתח>
+  המפתח אחרי # כדי שלא יישלח לשרת האתר. אין כאן analytics.
+  בנייה ומפתחות: Downloads\רויטל\אישור-תוכניות-גמר\ (README.md)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED; --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5; --bg:#f5f8fd;
+  --amber:#b86e00; --amber-soft:#fff4e0; --amber-line:#f3d7a6;
+  --green:#1f8a5b; --green-soft:#e6f6ee; --red:#c2413b; --red-soft:#fdecea;
+  --edit:#fffbe8; --shadow-m:0 8px 28px -12px rgba(34,66,146,.18);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:16px;line-height:1.55;color:var(--ink);background:var(--bg)}
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy))}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:18px;padding-block:24px 60px}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:'Rubik';color:var(--navy);font-size:clamp(26px,4.6vw,36px);margin:6px 0 2px;line-height:1.2}
+.lede{color:var(--muted);margin:0 0 18px}
+.topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{border:1px solid var(--line);background:#fff;font:inherit;font-weight:700;font-size:14.5px;color:var(--navy);border-radius:10px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.btn:hover{border-color:#c9d5ee;background:var(--blue-soft)}
+.upd{font-size:13.5px;color:var(--muted)}
+
+.gate{margin:50px auto;max-width:520px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px 26px;text-align:center;color:var(--muted);box-shadow:var(--shadow-m)}
+.gate b{display:block;color:var(--navy);font-size:19px;margin-bottom:6px;font-family:'Rubik'}
+.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--navy);border-radius:50%;margin:0 auto 14px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-m)}
+.kpi b{display:block;font-family:'Rubik';font-size:30px;color:var(--navy);line-height:1.1}
+.kpi span{font-size:14px;color:var(--muted)}
+.kpi.g b{color:var(--green)} .kpi.a b{color:var(--amber)} .kpi.r b{color:var(--red)}
+@media (max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-m);padding:18px;margin-top:16px}
+.card h2{font-family:'Rubik';font-size:19px;color:var(--navy);margin:0 0 10px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card h2 .n{font-family:'Assistant';font-size:14px;color:var(--muted);font-weight:600}
+.miss{display:flex;flex-wrap:wrap;gap:8px}
+.miss span{background:var(--red-soft);color:var(--red);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:600}
+.miss span.w{background:var(--amber-soft);color:var(--amber)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 0}
+.chip{border:1.5px solid var(--line);background:#fff;font:inherit;font-weight:700;font-size:14px;color:var(--muted);border-radius:999px;padding:5px 14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.filters select{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:10px;padding:5px 10px;background:#fff}
+
+.tblwrap{overflow-x:auto;margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-m)}
+table.t{border-collapse:collapse;width:100%;min-width:980px;font-size:14.5px}
+.t th{background:var(--blue-soft);color:var(--navy);text-align:right;padding:9px 10px;font-weight:700;white-space:nowrap}
+.t td{border-top:1px solid var(--line);padding:9px 10px;vertical-align:middle}
+.t tr.row{cursor:pointer}
+.t tr.row:hover td{background:#fafcff}
+.t td.nm b{color:var(--navy)}
+.t td.nm small{display:block;color:var(--muted)}
+.sec{font-size:12.5px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--sky-soft);color:var(--navy);white-space:nowrap}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;min-width:90px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--sky))}
+.pct{font-size:12.5px;color:var(--muted)}
+.cnt{display:inline-flex;gap:4px}
+.cnt span{min-width:26px;text-align:center;border-radius:7px;font-weight:700;font-size:13px;padding:1px 6px}
+.cnt .o{background:var(--green-soft);color:var(--green)} .cnt .f{background:var(--amber-soft);color:var(--amber)} .cnt .d{background:var(--red-soft);color:var(--red)}
+.st{font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.st.sent{background:var(--green-soft);color:var(--green)} .st.work{background:var(--amber-soft);color:var(--amber)} .st.none{background:#f1f3f8;color:var(--muted)}
+
+/* פירוט */
+.detail{margin-top:18px}
+.dhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.dhead h2{margin:0}
+.gen{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:760px){.gen{grid-template-columns:1fr}}
+.qa{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.qa b{display:block;color:var(--navy);font-size:14px}
+.qa p{margin:4px 0 0;white-space:pre-wrap}
+.empty{color:#9aa6c2;font-style:italic}
+.mod{border:1px solid var(--line);border-radius:14px;margin-top:12px;overflow:hidden}
+.mod.ok{border-color:#9fd8bd} .mod.fix{border-color:#efd98a} .mod.talk{border-color:#f0b4b0} .mod.gone{opacity:.7}
+.mh{display:flex;gap:10px;align-items:center;padding:10px 14px;background:#fbfcff;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.mh .num{width:30px;height:30px;border-radius:9px;background:var(--blue-soft);color:var(--navy);display:grid;place-items:center;font-family:'Rubik';font-weight:600;flex:none}
+.mh b{color:var(--navy);font-family:'Rubik';font-weight:600}
+.pill{font-size:12.5px;font-weight:700;border-radius:999px;padding:2px 10px}
+.pill.ok{background:var(--green-soft);color:var(--green)} .pill.fix{background:var(--amber-soft);color:var(--amber)} .pill.talk{background:var(--red-soft);color:var(--red)} .pill.none{background:#f1f3f8;color:var(--muted)} .pill.gone{background:var(--red-soft);color:var(--red)} .pill.new{background:var(--green-soft);color:var(--green)}
+.mb{padding:10px 14px;display:grid;gap:10px}
+.blk h4{margin:0 0 4px;font-size:14px;color:var(--navy)}
+.comment{background:var(--blue-soft);border-radius:10px;padding:8px 12px;white-space:pre-wrap}
+ul.d{margin:0;padding-inline-start:18px}
+ul.d li{margin:2px 0}
+.add{color:var(--green);font-weight:600}
+.del{color:var(--red);text-decoration:line-through}
+.chg ins{background:var(--edit);text-decoration:none;font-weight:600}
+.chg s{color:var(--muted)}
+.gtab{border-collapse:collapse;font-size:14px}
+.gtab td{border:1px solid var(--line);padding:4px 8px;vertical-align:top}
+.gtab td:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+.files a{display:inline-flex;gap:6px;align-items:center;margin-inline-end:12px}
+.nochange{color:var(--muted);font-size:14px}
+footer{text-align:center;color:#8A97A6;font-size:.8rem;margin-top:40px;line-height:1.8}
+footer a{color:#8A97A6}
+</style>
+</head>
+<body>
+<div class="strip"></div>
+<main class="wrap">
+  <div class="gate" id="gate"><div class="spin"></div><b>טוענים את נתוני המעקב…</b>רגע אחד</div>
+
+  <div id="app" hidden>
+    <div class="topline">
+      <div>
+        <h1>מעקב אישור תוכניות הלימודים · נתיב הגמר</h1>
+        <p class="lede">מה כל מדריך ומדריכה אישרו, תיקנו והעירו — לפי תוכנית ומגזר.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="upd" id="upd"></span>
+        <button class="btn" id="refresh"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg>רענון</button>
+        <button class="btn" id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>ייצוא לאקסל</button>
+        <a class="btn" id="folder" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>תיקיית הקבצים</a>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <section class="card" id="missCard">
+      <h2>מי עוד לא סיים <span class="n" id="missN"></span>
+        <button class="btn" id="copyMiss" style="margin-inline-start:auto"><svg class="i" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>העתקת הרשימה</button></h2>
+      <div class="miss" id="miss"></div>
+    </section>
+
+    <div class="filters" id="filters">
+      <button class="chip" data-sec="" aria-pressed="true">כל המגזרים</button>
+      <button class="chip" data-sec="kelali" aria-pressed="false">כללי</button>
+      <button class="chip" data-sec="haredi" aria-pressed="false">חרדי</button>
+      <button class="chip" data-sec="arab" aria-pressed="false">ערבי</button>
+      <select id="subj" aria-label="תחום דעת"><option value="">כל תחומי הדעת</option></select>
+    </div>
+    <div class="tblwrap"><table class="t" id="tbl"></table></div>
+
+    <section class="card detail" id="detail" hidden></section>
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה<br>
+    נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const API = 'https://script.google.com/macros/s/AKfycbwysuIlGtEQBMAY7QDoOJjdLd7DYBivX-W7zr087YtzDntkCyQR3W0sJg-ssd0p1wZS/exec';
+  const GRADES = ['ט׳', 'י׳', 'י״א', 'י״ב'];
+  const STATUS = {ok:'מאושרת', fix:'מאושרת עם תיקונים', talk:'דורשת דיון'};
+  const hk = location.hash.match(/[#&]k=([^&]+)/), K = hk ? decodeURIComponent(hk[1]) : '';
+  const gate = document.getElementById('gate');
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt = iso => iso ? new Date(iso).toLocaleString('he-IL', {day:'numeric', month:'numeric', hour:'2-digit', minute:'2-digit'}) : '—';
+  let D = null, sec = '', subj = '', openId = null;
+  const getJSON = async (url, tries = 4) => {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const r = await fetch(url, {cache:'no-store'});
+        const t = await r.text();
+        if (t.trim().startsWith('{')) return JSON.parse(t);
+      } catch (e) {}
+      await new Promise(res => setTimeout(res, 1500 * (i + 1)));
+    }
+    throw new Error('network');
+  };
+
+  if (!K) { gate.innerHTML = '<b>הקישור חסר</b>יש לפתוח את הדף מהקישור שנשלח אליכם.'; return; }
+
+  async function load() {
+    try {
+      const r = await getJSON(API + '?mode=dash&k=' + encodeURIComponent(K));
+      if (!r.ok) { gate.innerHTML = r.error === 'key' ? '<b>הקישור אינו תקף</b>' : '<b>שגיאה בטעינה</b>' + esc(r.error); return; }
+      D = r;
+      gate.hidden = true;
+      document.getElementById('app').hidden = false;
+      document.getElementById('folder').href = r.folder;
+      render();
+    } catch (e) {
+      if (!D) gate.innerHTML = '<b>לא הצלחנו לטעון</b>בדקו את החיבור ורעננו.';
+    }
+  }
+
+  /* ---------- סיכום לכל מדריך×תוכנית ---------- */
+  function sum(it) {
+    const s = it.state;
+    const total = s ? s.modules.length : D.programs[it.program].n;
+    if (!s) return {total, decided:0, ok:0, fix:0, talk:0, gone:0, grades:0, rubrics:0, att:0, state:'none', saved:null, sent:null};
+    const live = s.modules.filter(m => !m.gone);
+    const c = v => live.filter(m => m.status === v).length;
+    let att = (s.general.files || []).length + (s.general.links || []).filter(l => l.url).length;
+    s.modules.forEach(m => { att += (m.files || []).length + (m.links || []).filter(l => l.url).length; });
+    const decided = s.modules.filter(m => m.gone || m.status).length;
+    return {total, decided, ok:c('ok'), fix:c('fix'), talk:c('talk'), gone:s.modules.filter(m => m.gone).length,
+      grades: live.filter(m => (m.grades || []).some(g => g.on)).length,
+      rubrics: live.filter(m => m.rubric && m.rubric.verdict).length,
+      att, state: s.submittedAt ? 'sent' : 'work', saved: s.serverSavedAt || s.savedAt, sent: s.submittedAt};
+  }
+
+  function render() {
+    const items = D.items.map(it => Object.assign(it, {S: sum(it)}));
+    document.getElementById('upd').textContent = 'עודכן ' + fmt(D.now);
+    const guides = [...new Set(items.map(i => i.slug))];
+    const sent = items.filter(i => i.S.state === 'sent').length, work = items.filter(i => i.S.state === 'work').length;
+    const talk = items.reduce((a, i) => a + i.S.talk, 0);
+    document.getElementById('kpis').innerHTML = [
+      [guides.length, 'מדריכים ומדריכות', ''], [items.length, 'תוכניות לבדיקה (כולל עותקים מגזריים)', ''],
+      [sent, 'נשלחו לאישור', 'g'], [work, 'בעבודה', 'a'], [talk, 'מודולות שדורשות דיון', 'r']
+    ].map(([n, t, c]) => `<div class="kpi ${c}"><b>${n}</b><span>${t}</span></div>`).join('');
+
+    const notDone = items.filter(i => i.S.state !== 'sent');
+    document.getElementById('missN').textContent = notDone.length + ' מתוך ' + items.length;
+    document.getElementById('miss').innerHTML = notDone.length
+      ? notDone.map(i => `<span class="${i.S.state === 'work' ? 'w' : ''}" title="${i.S.state === 'work' ? 'התחיל/ה ולא שלח/ה' : 'טרם נכנס/ה'}">${esc(i.guide)} · ${esc(i.title)} (${esc(i.sectorLabel)})</span>`).join('')
+      : '<span class="w" style="background:var(--green-soft);color:var(--green)">כולם שלחו</span>';
+    document.getElementById('missCard').hidden = false;
+
+    const sel = document.getElementById('subj');
+    if (sel.options.length === 1) [...new Set(items.map(i => i.subject))].sort().forEach(s => sel.add(new Option(s, s)));
+
+    const rows = items.filter(i => (!sec || i.sector === sec) && (!subj || i.subject === subj))
+      .sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.sector.localeCompare(b.sector) || a.guide.localeCompare(b.guide, 'he'));
+    document.getElementById('tbl').innerHTML = `<thead><tr><th>מדריך/ה</th><th>תוכנית</th><th>מגזר</th><th>התקדמות</th>
+      <th title="מאושרות · עם תיקונים · דורשות דיון">החלטות</th><th>שכבות</th><th>מחוונים</th><th>קבצים</th><th>עדכון אחרון</th><th>מצב</th></tr></thead><tbody>` +
+      rows.map(i => {
+        const S = i.S, pct = S.total ? Math.round(S.decided / S.total * 100) : 0;
+        return `<tr class="row" data-id="${esc(i.slug + '|' + i.id)}">
+          <td class="nm"><b>${esc(i.guide)}</b></td>
+          <td class="nm">${esc(i.title)}${i.copy ? '<small>עותק מגזרי</small>' : ''}</td>
+          <td><span class="sec">${esc(i.sectorLabel)}</span></td>
+          <td><div class="bar"><i style="width:${pct}%"></i></div><span class="pct">${S.decided}/${S.total} מודולות</span></td>
+          <td><span class="cnt"><span class="o">${S.ok}</span><span class="f">${S.fix}</span><span class="d">${S.talk}</span></span></td>
+          <td>${S.grades}/${S.total - S.gone}</td><td>${S.rubrics}/${S.total - S.gone}</td><td>${S.att || '—'}</td>
+          <td>${fmt(S.saved)}</td>
+          <td><span class="st ${S.state}">${{sent:'נשלח ' + fmt(S.sent), work:'בעבודה', none:'טרם נכנס/ה'}[S.state]}</span></td></tr>`;
+      }).join('') + '</tbody>';
+    if (openId) showDetail(openId, false);
+  }
+
+  /* ---------- פירוט ---------- */
+  const itemsDiff = arr => {
+    const out = (arr || []).map(it => {
+      if (it.orig === null) return it.text.trim() ? `<li class="add">+ ${esc(it.text)}</li>` : '';
+      if (it.gone) return `<li class="del">${esc(it.orig)}</li>`;
+      if (it.text !== it.orig) return `<li class="chg"><ins>${esc(it.text)}</ins><br><s>במקור: ${esc(it.orig)}</s></li>`;
+      return '';
+    }).join('');
+    return out ? `<ul class="d">${out}</ul>` : '';
+  };
+  const fieldDiff = (label, now, orig) => now !== orig
+    ? `<div class="blk chg"><h4>${label}</h4><ins>${esc(now) || '<i>נמחק</i>'}</ins><br><s>במקור: ${esc(orig) || '—'}</s></div>` : '';
+
+  function showDetail(id, scroll = true) {
+    openId = id;
+    const [slug, aid] = id.split('|');
+    const it = D.items.find(i => i.slug === slug && i.id === aid);
+    const el = document.getElementById('detail');
+    el.hidden = false;
+    const s = it.state;
+    let html = `<div class="dhead"><h2>${esc(it.guide)} · ${esc(it.title)} <span class="sec">מגזר ${esc(it.sectorLabel)}</span></h2>
+      <button class="btn" id="closeD">סגירה</button></div>`;
+    if (!s) { el.innerHTML = html + '<p class="nochange">עדיין לא נכנס/ה לתוכנית.</p>'; bindClose(); if (scroll) el.scrollIntoView({behavior:'smooth'}); return; }
+    html += `<p class="upd">עדכון אחרון ${fmt(it.S.saved)} · ${s.submittedAt ? 'נשלח לאישור ' + fmt(s.submittedAt) : 'טרם נשלח לאישור'}</p>`;
+    const g = s.general || {};
+    const Q = [['missing', 'מה חסר בתוכנית'], ['hours', 'שעות, סדר ופריסה על פני השכבות'], ['assess', 'הערכה ומחוונים'], ['fit', 'התאמה לתלמידים ולמגזר'], ['other', 'הערות נוספות']];
+    html += '<h3 style="color:var(--navy);font-family:Rubik;margin:14px 0 8px">הערות רוחביות</h3><div class="gen">' +
+      Q.map(([k, t]) => `<div class="qa"><b>${t}</b><p>${(g[k] || '').trim() ? esc(g[k]) : '<span class="empty">לא נכתב</span>'}</p></div>`).join('') + '</div>';
+    html += attList(g);
+
+    html += '<h3 style="color:var(--navy);font-family:Rubik;margin:18px 0 0">מודולות</h3>';
+    s.modules.forEach((m, i) => {
+      const cls = m.gone ? 'gone' : (m.status || 'none');
+      const pill = m.gone ? '<span class="pill gone">הוצע למחוק</span>' : `<span class="pill ${m.status || 'none'}">${STATUS[m.status] || 'טרם הוחלט'}</span>`;
+      let body = '';
+      if ((m.comment || '').trim()) body += `<div class="comment"><b>הערה:</b> ${esc(m.comment)}</div>`;
+      if (!m.isNew) body += fieldDiff('שם המודולה', m.name, m.origName);
+      const kd = itemsDiff(m.knowledge), sd = itemsDiff(m.skills), md = itemsDiff(m.methods);
+      if (m.isNew) {
+        body += `<div class="blk"><h4>ידע</h4><ul class="d">${m.knowledge.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul></div>
+                 <div class="blk"><h4>מיומנות</h4><ul class="d">${m.skills.map(x => `<li>${esc(x.text)}</li>`).join('')}</ul></div>
+                 <div class="blk"><h4>תוצר / הערכה</h4>${esc(m.assessment)}</div><div class="blk"><h4>שעות</h4>${esc(m.hours)}</div>`;
+      } else {
+        if (kd) body += `<div class="blk"><h4>ידע — שינויים</h4>${kd}</div>`;
+        if (sd) body += `<div class="blk"><h4>מיומנות — שינויים</h4>${sd}</div>`;
+        body += fieldDiff('חניכות / התנסות', m.apprenticeship, m.origApprenticeship);
+        body += fieldDiff('תוצר למידה / אופן הערכה', m.assessment, m.origAssessment);
+        body += fieldDiff('המלצה לשעות', m.hours, m.origHours);
+      }
+      const gOn = (m.grades || []).map((x, gi) => x.on ? `<tr><td>${GRADES[gi]}</td><td>${esc(x.depth || '')}</td><td>${esc(x.text || '')}</td></tr>` : '').join('');
+      if (gOn || (m.gradesNote || '').trim()) body += `<div class="blk"><h4>התאמה לשכבות</h4>${gOn ? `<table class="gtab">${gOn}</table>` : ''}${(m.gradesNote || '').trim() ? `<p style="margin:6px 0 0">${esc(m.gradesNote)}</p>` : ''}</div>`;
+      const r = m.rubric || {criteria:[]};
+      const rd = r.criteria.map(c => {
+        if (c.isNew) return c.name.trim() ? `<li class="add">+ ${esc(c.name)}: ${c.desc.map((d, di) => `<b>${esc(r.levels[di])}</b> ${esc(d)}`).join(' · ')}</li>` : '';
+        if (c.gone) return `<li class="del">${esc(c.origName)}</li>`;
+        const ch = [];
+        if (c.name !== c.origName) ch.push(`שם: <ins>${esc(c.name)}</ins> <s>(${esc(c.origName)})</s>`);
+        c.desc.forEach((d, di) => { if (d !== c.origDesc[di]) ch.push(`<b>${esc(r.levels[di])}:</b> <ins>${esc(d)}</ins>`); });
+        return ch.length ? `<li class="chg">${esc(c.origName)} — ${ch.join(' · ')}</li>` : '';
+      }).join('');
+      if (r.verdict || rd || (r.note || '').trim()) {
+        body += `<div class="blk"><h4>מחוון${r.verdict ? ' — ' + {ok:'מתאים', fix:'מתאים עם תיקונים', other:'נדרש מחוון אחר'}[r.verdict] : ''}</h4>${rd ? `<ul class="d">${rd}</ul>` : ''}${(r.note || '').trim() ? `<p style="margin:4px 0 0">${esc(r.note)}</p>` : ''}</div>`;
+      }
+      if (md || (m.methodsNote || '').trim()) body += `<div class="blk"><h4>דרכי הוראה וגיוון</h4>${md}${(m.methodsNote || '').trim() ? `<p style="margin:4px 0 0;white-space:pre-wrap">${esc(m.methodsNote)}</p>` : ''}</div>`;
+      body += attList(m);
+      html += `<div class="mod ${cls}"><div class="mh"><span class="num">${i + 1}</span><b>${esc(m.name || 'ללא שם')}</b>${m.isNew ? '<span class="pill new">מודולה חדשה</span>' : ''}${pill}</div>
+        <div class="mb">${body || '<span class="nochange">בלי שינויים או הערות</span>'}</div></div>`;
+    });
+    el.innerHTML = html;
+    bindClose();
+    if (scroll) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function attList(a) {
+    const f = (a.files || []), l = (a.links || []).filter(x => x.url);
+    if (!f.length && !l.length) return '';
+    return `<div class="blk files"><h4>קבצים וקישורים</h4>${f.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M21 11l-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/></svg>${esc(x.name)}</a>`).join('')}${l.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>${esc(x.title || x.url)}</a>`).join('')}</div>`;
+  }
+  function bindClose() { document.getElementById('closeD').onclick = () => { openId = null; document.getElementById('detail').hidden = true; }; }
+
+  /* ---------- אירועים ---------- */
+  document.getElementById('tbl').addEventListener('click', e => { const tr = e.target.closest('tr.row'); if (tr) showDetail(tr.dataset.id); });
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    sec = b.dataset.sec;
+    document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === b));
+    render();
+  });
+  document.getElementById('subj').addEventListener('change', e => { subj = e.target.value; render(); });
+  document.getElementById('refresh').addEventListener('click', load);
+  document.getElementById('copyMiss').addEventListener('click', () => {
+    const list = D.items.filter(i => sum(i).state !== 'sent').map((i, n) => `${n + 1}. ${i.guide} — ${i.title} (${i.sectorLabel})${sum(i).state === 'work' ? ' · התחיל/ה' : ''}`).join('\n');
+    navigator.clipboard.writeText('טרם שלחו את אישור התוכנית:\n' + list).then(() => {
+      const b = document.getElementById('copyMiss'); const t = b.innerHTML; b.textContent = 'הועתק'; setTimeout(() => b.innerHTML = t, 1500);
+    });
+  });
+  document.getElementById('csv').addEventListener('click', () => {
+    const head = ['מדריך/ה', 'תחום', 'תוכנית', 'מגזר', 'הוחלט', 'מודולות', 'מאושרות', 'עם תיקונים', 'דורשות דיון', 'הוצע למחוק', 'שכבות', 'מחוונים', 'קבצים', 'עדכון אחרון', 'נשלח'];
+    const rows = D.items.map(i => { const S = sum(i); return [i.guide, i.subject, i.title, i.sectorLabel, S.decided, S.total, S.ok, S.fix, S.talk, S.gone, S.grades, S.rubrics, S.att, fmt(S.saved), S.sent ? fmt(S.sent) : '']; });
+    const csv = '﻿' + [head, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    a.download = 'אישור-תוכניות-גמר.csv'; a.click();
+  });
+  load();
+  setInterval(load, 120000);
+})();
+</script>
+</body>
+</html>

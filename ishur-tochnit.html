@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" href="logo.png">
+<!--
+  העמוד ריק מתוכן בכוונה — הרפו ציבורי.
+  התוכנית והטיוטה נמסרות מ-Apps Script רק למפתח אישי תקף בקישור:  ishur-tochnit.html#k=<מפתח>
+  המפתח אחרי # כדי שלא יישלח לשרת האתר. אין כאן analytics.
+  בנייה ומפתחות: Downloads\רויטל\אישור-תוכניות-גמר\ (README.md)
+-->
+<title>אישור תוכנית לימודים · נתיב הגמר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#224292; --blue:#185CFF; --sky:#74C3ED;
+  --sky-soft:#e7f4fc; --blue-soft:#eaf0ff;
+  --ink:#16203c; --muted:#65739a; --line:#e3e9f5; --bg:#f5f8fd;
+  --amber:#b86e00; --amber-soft:#fff4e0; --amber-line:#f3d7a6;
+  --green:#1f8a5b; --green-soft:#e6f6ee;
+  --red:#c2413b; --red-soft:#fdecea;
+  --edit:#fffbe8; --edit-line:#efd98a;
+  --shadow-s:0 1px 2px rgba(22,32,60,.06);
+  --shadow-m:0 8px 28px -12px rgba(34,66,146,.18);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Assistant','Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.6;color:var(--ink);background:var(--bg)}
+.strip{height:6px;background:linear-gradient(90deg,var(--navy),var(--blue) 38%,var(--sky) 68%,var(--navy))}
+.wrap{max-width:1060px;margin:0 auto;padding-inline:18px;padding-block:28px 60px}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.gate{margin:40px auto;max-width:560px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px 26px;text-align:center;color:var(--muted);box-shadow:var(--shadow-m)}
+.gate b{display:block;color:var(--navy);font-size:19px;margin-bottom:6px;font-family:'Rubik'}
+.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--navy);border-radius:50%;margin:0 auto 14px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.atabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.atabs a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;font-size:15px;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 14px}
+.atabs a[aria-current="page"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.atabs small{font-weight:600;opacity:.8}
+.copynote{background:var(--sky-soft);border:1px solid #bfe2f6;border-radius:14px;padding:12px 16px;font-size:15.5px;margin:0 0 16px}
+.copynote b{color:var(--navy)}
+.saved.err{color:var(--red)}
+.uploading{font-size:14px;color:var(--blue);display:flex;align-items:center;gap:8px}
+.uploading .spin{width:16px;height:16px;border-width:2px;margin:0}
+
+/* ---------- ראש ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-s);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--navy)}
+h1{font-family:'Rubik',sans-serif;font-size:clamp(28px,5.6vw,40px);line-height:1.15;margin:14px 0 6px;color:var(--navy)}
+h1 .sector{display:inline-block;vertical-align:middle;font-size:.42em;font-weight:600;background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:4px 14px;margin-inline-start:8px}
+.hello{font-size:19px;margin:0 0 4px}
+.hello b{color:var(--navy)}
+.lede{color:var(--muted);margin:0 0 20px;max-width:780px}
+.intro{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 18px;font-size:15.5px;color:var(--ink);margin:0 0 20px}
+.intro b{color:var(--navy)}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 22px}
+.step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.step .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:'Rubik';font-weight:600;font-size:15px}
+.step b{display:block;color:var(--navy);font-size:16px}
+.step span{font-size:14.5px;color:var(--muted);line-height:1.45}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+/* ---------- פס עליון דביק ---------- */
+.bar{position:sticky;top:0;z-index:20;background:rgba(245,248,253,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-inline:-18px;padding:10px 18px}
+.bar-in{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.prog{flex:1 1 240px;display:flex;align-items:center;gap:10px;font-size:15px;color:var(--muted)}
+.prog b{color:var(--navy);font-family:'Rubik';font-weight:600}
+.track{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden;min-width:80px}
+.track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--sky));border-radius:99px;transition:width .5s var(--ease)}
+.saved{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.saved.on{color:var(--green)}
+.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;font:inherit;font-size:14.5px;font-weight:600;color:var(--muted);padding:6px 14px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.jump{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.jump a{font-size:13px;font-weight:700;text-decoration:none;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:8px;min-width:30px;text-align:center;padding:2px 8px}
+.jump a.ok{background:var(--green-soft);border-color:#9fd8bd;color:var(--green)}
+.jump a.fix{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber)}
+.jump a.talk{background:var(--red-soft);border-color:#f0b4b0;color:var(--red)}
+
+/* ---------- כרטיס מודולה ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;color:var(--muted);margin:18px 0 6px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;border:1px solid}
+.mod{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-m);margin-top:18px;overflow:hidden;transition:border-color .3s;scroll-margin-top:120px}
+.mod.st-ok{border-color:#9fd8bd}
+.mod.st-fix{border-color:var(--edit-line)}
+.mod.st-talk{border-color:#f0b4b0}
+.mod.removed .mod-body{opacity:.45}
+.mod-head{display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(180deg,#fbfcff,#fff);border-bottom:1px solid var(--line)}
+.mod-num{flex:none;width:38px;height:38px;border-radius:12px;background:var(--blue-soft);color:var(--navy);display:grid;place-items:center;font-family:'Rubik';font-weight:600}
+.mod-head .grow{flex:1;min-width:0}
+.mod-head label{font-size:12.5px;color:var(--muted);font-weight:600;display:block}
+.pill{flex:none;font-size:13px;font-weight:700;border-radius:999px;padding:4px 12px;display:none}
+.st-ok .pill{display:inline-block;background:var(--green-soft);color:var(--green)}
+.st-fix .pill{display:inline-block;background:var(--amber-soft);color:var(--amber)}
+.st-talk .pill{display:inline-block;background:var(--red-soft);color:var(--red)}
+.mod-body{padding:6px 20px 18px}
+
+.fld{margin-top:16px}
+.fld > h3{font-family:'Rubik';font-size:15.5px;font-weight:600;color:var(--navy);margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fld > h3 small{font-family:'Assistant';font-weight:500;color:var(--muted);font-size:13.5px}
+
+textarea.ed, input.ed{width:100%;font:inherit;font-size:16px;line-height:1.55;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;resize:none;overflow:hidden;transition:border-color .2s,background .2s}
+input.ed.title{font-family:'Rubik';font-weight:600;font-size:18px;color:var(--navy);border-color:transparent;padding:4px 8px;background:transparent}
+input.ed.title:hover{border-color:var(--line)}
+.ed:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.ed.changed{background:var(--edit);border-color:var(--edit-line)}
+input.ed.title.changed{background:var(--edit)}
+.ed::placeholder{color:#9aa6c2}
+
+.items{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start}
+.item .dot{width:8px;height:8px;border-radius:50%;background:var(--sky);margin-top:17px}
+.item.new .dot{background:var(--green)}
+.item.gone textarea{text-decoration:line-through;color:var(--muted);background:#f7f8fb}
+.item .acts{display:flex;gap:2px;margin-top:4px}
+.ib{border:0;background:transparent;color:var(--muted);width:32px;height:32px;border-radius:8px;display:grid;place-items:center;cursor:pointer}
+.ib:hover{background:var(--blue-soft);color:var(--navy)}
+.ib.del:hover{background:var(--red-soft);color:var(--red)}
+.orig{grid-column:2;font-size:13.5px;color:var(--muted);background:#f7f8fb;border-radius:8px;padding:6px 10px;display:none}
+.orig b{font-weight:700}
+.show-orig .orig.has{display:block}
+.flag{grid-column:2;font-size:13px;color:var(--amber);display:flex;gap:6px;align-items:center;margin-top:-2px}
+.addbtn{margin-top:8px;border:1px dashed #c9d5ee;background:transparent;color:var(--blue);font:inherit;font-size:14.5px;font-weight:600;border-radius:10px;padding:6px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.addbtn:hover{background:var(--blue-soft);border-style:solid}
+.row2{display:grid;grid-template-columns:1fr 200px;gap:16px}
+@media (max-width:700px){.row2{grid-template-columns:1fr}}
+.note{font-size:13.5px;color:var(--muted);margin:0 0 8px}
+
+/* ---------- מקטעים מתקפלים בתוך מודולה ---------- */
+details.sec{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+details.sec > summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-family:'Rubik';font-weight:600;font-size:15.5px;color:var(--navy)}
+details.sec > summary::-webkit-details-marker{display:none}
+details.sec > summary .chev{margin-inline-start:auto;transition:transform .25s var(--ease);color:var(--muted)}
+details.sec[open] > summary .chev{transform:rotate(180deg)}
+details.sec > summary .meta{font-family:'Assistant';font-weight:600;font-size:13px;color:var(--muted);background:var(--bg);border-radius:999px;padding:2px 10px}
+details.sec > summary .meta.done{background:var(--green-soft);color:var(--green)}
+details.sec .inner{padding:0 16px 16px}
+details.sec .ico{width:30px;height:30px;border-radius:9px;background:var(--sky-soft);color:var(--navy);display:grid;place-items:center;flex:none}
+
+/* שכבות */
+.grades{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.gchip{border:1.5px solid var(--line);background:#fff;font:inherit;font-weight:700;font-size:16px;color:var(--ink);min-width:58px;padding:6px 14px;border-radius:12px;cursor:pointer}
+.gchip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.grow-list{display:grid;gap:10px}
+.gradecard{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:start}
+.gradecard .gname{font-family:'Rubik';font-weight:600;color:var(--navy);font-size:17px;padding-top:4px}
+.depth{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.depth button{border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--muted);padding:3px 12px;border-radius:999px;cursor:pointer}
+.depth button[aria-pressed="true"]{background:var(--sky-soft);border-color:var(--sky);color:var(--navy)}
+@media (max-width:520px){.gradecard{grid-template-columns:1fr}}
+
+/* מחוון */
+.rubwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table.rub{border-collapse:collapse;width:100%;min-width:760px;font-size:14.5px}
+.rub th{background:var(--blue-soft);color:var(--navy);font-weight:700;padding:8px;text-align:right;font-size:14px}
+.rub th:first-child{width:22%}
+.rub td{border-top:1px solid var(--line);padding:6px;vertical-align:top}
+.rub textarea.ed{font-size:14px;padding:6px 8px;border-radius:8px}
+.rub tr.gone textarea{text-decoration:line-through;color:var(--muted);background:#f7f8fb}
+.rub td.act{width:40px;text-align:center}
+.verdict{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px}
+
+/* קבצים וקישורים */
+.att{display:grid;gap:8px}
+.linkrow{display:grid;grid-template-columns:1fr 1.4fr auto;gap:8px;align-items:center}
+@media (max-width:620px){.linkrow{grid-template-columns:1fr auto}.linkrow input:nth-child(2){grid-column:1}}
+.filelist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.filelist li{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14.5px}
+.filelist li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filelist li small{color:var(--muted)}
+.drop{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #c9d5ee;border-radius:12px;padding:14px;color:var(--blue);font-weight:600;font-size:15px;cursor:pointer;background:#fbfcff;text-align:center}
+.drop:hover,.drop.over{background:var(--blue-soft);border-color:var(--blue)}
+.drop input{display:none}
+
+/* החלטה על המודולה */
+.decide{margin-top:18px;padding:14px 16px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.decide h4{margin:0 0 10px;font-size:15px;color:var(--navy);font-family:'Rubik';font-weight:600}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{border:1.5px solid var(--line);background:#fff;font:inherit;font-size:15px;font-weight:600;color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .2s}
+.choice:hover{border-color:#c9d5ee}
+.choice[data-v="ok"][aria-pressed="true"]{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.choice[data-v="fix"][aria-pressed="true"]{background:var(--amber-soft);border-color:var(--amber);color:var(--amber)}
+.choice[data-v="talk"][aria-pressed="true"]{background:var(--red-soft);border-color:var(--red);color:var(--red)}
+.decide textarea{margin-top:10px;min-height:64px}
+.modfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px}
+.linkbtn{border:0;background:transparent;font:inherit;font-size:14px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:4px 6px;border-radius:8px}
+.linkbtn:hover{color:var(--red);background:var(--red-soft)}
+.linkbtn.restore:hover{color:var(--green);background:var(--green-soft)}
+
+.addmod{width:100%;margin-top:18px;border:2px dashed #c9d5ee;background:#fff;border-radius:20px;padding:18px;font:inherit;font-weight:700;color:var(--blue);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.addmod:hover{background:var(--blue-soft)}
+
+/* ---------- תצוגת טבלה ---------- */
+.tblwrap{overflow-x:auto;margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-m)}
+table.syl{border-collapse:collapse;width:100%;min-width:860px;font-size:14.5px;line-height:1.5}
+.syl th{background:var(--navy);color:#fff;font-weight:700;text-align:right;padding:10px 12px}
+.syl td{border-top:1px solid var(--line);vertical-align:top;padding:10px 12px}
+.syl td:first-child{font-weight:700;color:var(--navy);width:15%}
+.syl td:first-child small{display:block;font-weight:600;color:var(--muted);margin-top:4px}
+.syl td:last-child{width:9%}
+.syl ul{margin:0;padding-inline-start:16px}
+.syl li{margin-bottom:4px}
+.syl .chg{background:var(--edit)}
+.syl .newli{color:var(--green);font-weight:600}
+.syl tr.gone td{text-decoration:line-through;color:var(--muted)}
+.tag{display:inline;background:var(--amber-soft);color:var(--amber);border-radius:5px;padding:0 4px;font-size:.9em}
+
+/* ---------- הערות רוחביות + שליחה ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-m);padding:22px;margin-top:28px}
+.card h2{font-family:'Rubik';font-size:21px;color:var(--navy);margin:0 0 4px;font-weight:600;display:flex;align-items:center;gap:10px}
+.card .sub{color:var(--muted);font-size:15.5px;margin:0 0 16px}
+.q{margin-top:14px}
+.q label{display:block;font-weight:700;font-size:15.5px;margin-bottom:6px}
+.q label span{display:block;font-weight:400;color:var(--muted);font-size:14px}
+.q textarea{min-height:92px}
+
+.send{background:linear-gradient(160deg,#fff, var(--blue-soft))}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:16px;margin:6px 0 16px;cursor:pointer}
+.check input{width:20px;height:20px;margin-top:3px;accent-color:var(--navy)}
+.missing{font-size:14.5px;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:10px;padding:8px 12px;margin-bottom:14px;display:none}
+.missing.on{display:block}
+.primary{border:0;background:var(--navy);color:#fff;font:inherit;font-weight:700;font-size:17px;padding:13px 28px;border-radius:14px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 10px 24px -10px rgba(34,66,146,.6)}
+.primary:disabled{background:#9aa8c7;box-shadow:none;cursor:not-allowed}
+.primary:not(:disabled):hover{background:var(--blue)}
+.smallnote{font-size:13.5px;color:var(--muted);margin-top:10px}
+.done{display:none;margin-top:14px;padding:12px 16px;border-radius:12px;background:var(--green-soft);color:var(--green);font-weight:600}
+.done.on{display:flex;gap:10px;align-items:center}
+.helpbtn{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-size:14px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 14px;text-decoration:none;background:#fff}
+.helpbtn:hover{color:var(--navy);border-color:#c9d5ee}
+footer{text-align:center;color:#8A97A6;font-size:.8rem;margin-top:40px;line-height:1.8}
+footer a{color:#8A97A6}
+</style>
+</head>
+<body>
+<div class="strip"></div>
+<main class="wrap">
+
+  <div class="gate" id="gate"><div class="spin"></div><b>טוענים את התוכנית…</b>זה יכול לקחת כמה שניות</div>
+  <div id="app" hidden>
+  <nav class="atabs" id="atabs" hidden aria-label="התוכניות שלי"></nav>
+
+  <span class="eyebrow">
+    <svg class="i" viewBox="0 0 24 24"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/><path d="M18 8h2v13H7"/></svg>
+    אישור תוכנית לימודים · נתיב הגמר
+  </span>
+  <h1 id="title"></h1>
+  <p class="hello" id="hello"></p>
+  <p class="lede">לפניכם הטיוטה של תוכנית הלימודים, מפורקת למודולות. כמומחי התוכן — עברו על כל מודולה, תקנו ישירות בטקסט, התאימו אותה לשכבות, אשרו או עדכנו את המחוון והוסיפו דרכי הוראה, קבצים וקישורים. הכול נשמר אוטומטית, ואפשר לחזור ולהמשיך מאותו קישור.</p>
+  <div class="copynote" id="copynote" hidden></div>
+  <div class="intro" id="intro"></div>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><b>עוברים על כל מודולה</b><span>תוכן · התאמה לשכבות ט׳–י״ב · מחוון · דרכי הוראה · קבצים</span></div></div>
+    <div class="step"><div class="n">2</div><div><b>מחליטים על המודולה</b><span>מאושרת · מאושרת עם תיקונים · דורשת דיון — ומוסיפים הערה</span></div></div>
+    <div class="step"><div class="n">3</div><div><b>הערות כלליות ושליחה</b><span>מבט על התוכנית כולה, ואישור סופי בתחתית הדף</span></div></div>
+  </div>
+
+  <div class="bar">
+    <div class="bar-in">
+      <div class="prog">עברתם על <b id="pDone">0</b> מתוך <b id="pAll">0</b> מודולות <div class="track"><i id="pBar"></i></div></div>
+      <span class="saved" id="saved"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><span>טרם נערך</span></span>
+      <div class="seg" role="group" aria-label="תצוגה">
+        <button type="button" data-view="edit" aria-pressed="true"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>עריכה</button>
+        <button type="button" data-view="table" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/></svg>הטבלה המתוקנת</button>
+      </div>
+    </div>
+    <nav class="jump" id="jump" aria-label="מעבר למודולה"></nav>
+  </div>
+
+  <section id="editView">
+    <div class="legend">
+      <span><i class="sw" style="background:var(--edit);border-color:var(--edit-line)"></i>טקסט שתוקן</span>
+      <span><i class="sw" style="background:var(--green-soft);border-color:var(--green)"></i>שורה שנוספה</span>
+      <span><i class="sw" style="background:var(--amber-soft);border-color:var(--amber-line)"></i>מסומן בטיוטה לאימות — נא לאשר או לתקן</span>
+      <label class="check" style="margin:0;font-size:13.5px"><input type="checkbox" id="showOrig" style="width:16px;height:16px;margin-top:2px">להציג את הנוסח המקורי מתחת לכל תיקון</label>
+    </div>
+    <div id="mods"></div>
+    <button type="button" class="addmod" id="addMod"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>הוספת מודולה שחסרה בתוכנית</button>
+  </section>
+
+  <section id="tableView" hidden>
+    <p class="lede" style="margin:18px 0 0">כך תיראה הטבלה עם התיקונים שלכם. תיקונים מסומנים בצהוב, שורות חדשות בירוק.</p>
+    <div class="tblwrap"><table class="syl" id="syl"></table></div>
+  </section>
+
+  <section class="card">
+    <h2><svg class="i" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 13.5h4"/></svg>הערות רוחביות על התוכנית</h2>
+    <p class="sub">מבט על התוכנית כולה — לא על מודולה מסוימת.</p>
+    <div class="q"><label for="g_missing">מה חסר בתוכנית?<span>נושא, מיומנות או תוכן שלדעתכם חייבים להיכלל בנתיב הגמר</span></label><textarea class="ed" id="g_missing" data-gen="missing"></textarea></div>
+    <div class="q"><label for="g_hours">היקף השעות, סדר המודולות והפריסה על פני השכבות<span>האם השעות והחלוקה ביניהן מתאימות למציאות בכיתה? האם הרצף בין ט׳ ל־י״ב נכון?</span></label><textarea class="ed" id="g_hours" data-gen="hours"></textarea></div>
+    <div class="q"><label for="g_assess">הערכה ומחוונים<span>האם דרכי ההערכה ומטלת הגמר מתאימות לתלמידי נתיב הגמר?</span></label><textarea class="ed" id="g_assess" data-gen="assess"></textarea></div>
+    <div class="q"><label for="g_fit">התאמה לתלמידים ולמגזר<span>התאמה לאוכלוסיית התלמידים בנתיב הגמר ולמגזר שאתם מלווים</span></label><textarea class="ed" id="g_fit" data-gen="fit"></textarea></div>
+    <div class="q"><label for="g_other">הערות נוספות</label><textarea class="ed" id="g_other" data-gen="other"></textarea></div>
+    <div class="q"><label>קבצים וקישורים לתוכנית כולה<span>תוכניות קיימות, מחוונים, חומרי הוראה או כל מקור שכדאי שהצוות יכיר</span></label><div id="genAtt"></div></div>
+  </section>
+
+  <section class="card send">
+    <h2><svg class="i" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>אישור ושליחה</h2>
+    <p class="sub">אחרי השליחה התיקונים וההערות יגיעו לצוות המינהל. אפשר לחזור לקישור ולעדכן גם אחר כך.</p>
+    <div class="missing" id="missing"></div>
+    <label class="check"><input type="checkbox" id="confirm">עברתי על כל מודולות התוכנית, והתיקונים וההערות שלי משקפים את עמדתי המקצועית</label>
+    <button type="button" class="primary" id="submit" disabled><svg class="i" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z"/></svg><span>שליחת האישור</span></button>
+    <div class="done" id="done"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><span></span></div>
+    <a class="helpbtn" id="help" href="https://wa.me/972536256653" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01"/></svg>נתקלתם בבעיה? שלחו הודעה</a>
+  </section>
+
+  </div>
+
+  <footer>
+    המנהיגות הפדגוגית היוצרת · משרד העבודה<br>
+    נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a>
+  </footer>
+</main>
+
+<script>
+(async () => {
+  const SECTORS = {kelali:'מגזר כללי', haredi:'מגזר חרדי', arab:'מגזר ערבי'};
+  const GRADES = ['ט׳', 'י׳', 'י״א', 'י״ב'];
+  const DEPTHS = ['היכרות', 'העמקה', 'שליטה ויישום'];
+  const API = 'https://script.google.com/macros/s/AKfycbwysuIlGtEQBMAY7QDoOJjdLd7DYBivX-W7zr087YtzDntkCyQR3W0sJg-ssd0p1wZS/exec';
+  const hk = location.hash.match(/[#&]k=([^&]+)/), K = hk ? decodeURIComponent(hk[1]) : '';
+  const ha = location.hash.match(/[#&]a=([^&]+)/);
+  const gate = document.getElementById('gate');
+  const fail = (t, d) => { gate.innerHTML = '<b>' + t + '</b>' + d; };
+  window.addEventListener('hashchange', () => location.reload());
+  if (!K) { fail('הקישור חסר', 'יש לפתוח את הדף מהקישור האישי שנשלח אליכם.'); return; }
+  const getJSON = async (url, tries = 4) => {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const r = await fetch(url, {cache:'no-store'});
+        const t = await r.text();
+        if (t.trim().startsWith('{')) return JSON.parse(t);
+      } catch (e) {}
+      await new Promise(res => setTimeout(res, 1500 * (i + 1)));
+    }
+    throw new Error('network');
+  };
+  let init;
+  try { init = await getJSON(API + '?mode=init&k=' + encodeURIComponent(K)); }
+  catch (e) { init = {ok:false, error:'network'}; }
+  if (!init.ok) {
+    if (init.error === 'key') fail('הקישור אינו תקף', 'ייתכן שהקישור הועתק חלקית. אפשר לפנות למיטל בוואטסאפ: 053-6256653.');
+    else fail('לא הצלחנו לטעון את התוכנית', 'בדקו את החיבור לאינטרנט ורעננו את הדף.');
+    return;
+  }
+  const A = init.assignments.find(x => ha && x.id === decodeURIComponent(ha[1])) || init.assignments[0];
+  const P = A.base, pid = A.id, guideName = init.guide.name;
+  const KEY = 'ishur:v1:' + init.guide.slug + ':' + A.id;
+  gate.hidden = true;
+  document.getElementById('app').hidden = false;
+
+  if (init.assignments.length > 1) {
+    const nav = document.getElementById('atabs');
+    nav.hidden = false;
+    nav.innerHTML = init.assignments.map(x =>
+      `<a href="#k=${encodeURIComponent(K)}&a=${encodeURIComponent(x.id)}" ${x.id === A.id ? 'aria-current="page"' : ''}>${esc(x.title)} <small>· מגזר ${esc(x.sectorLabel)}</small></a>`).join('');
+  }
+  document.getElementById('title').innerHTML = esc(A.title) + '<span class="sector">מגזר ' + esc(A.sectorLabel) + '</span>';
+  document.getElementById('hello').innerHTML = 'שלום <b>' + esc(guideName) + '</b>, תודה על המעבר המקצועי על התוכנית.';
+  document.getElementById('intro').innerHTML = '<b>על התוכנית:</b> ' + tagify(P.intro);
+  if (A.copy) {
+    const cn = document.getElementById('copynote');
+    cn.hidden = false;
+    cn.innerHTML = `<b>עותק לבדיקה עבור המגזר ה${esc(A.sectorLabel)}.</b> התוכנית נכתבה במקור למגזר ה${esc(SECTORS[P.sector].replace('מגזר ', ''))}. עברו עליה מנקודת המבט של המגזר ה${esc(A.sectorLabel)}: מה מתאים כמו שהוא, מה צריך להתאים ומה חסר.`;
+  }
+  document.title = 'אישור תוכנית · ' + A.title + ' · ' + A.sectorLabel;
+  document.getElementById('help').href = 'https://wa.me/972536256653?text=' +
+    encodeURIComponent('שלום מיטל, כאן ' + guideName + ' (אישור תוכנית ' + A.title + ', מגזר ' + A.sectorLabel + '). נתקלתי בבעיה בדף:\n');
+
+  /* ---------- מצב ---------- */
+  const items = arr => (arr || []).map(t => ({text:t, orig:t, gone:false}));
+  const freshMod = m => ({
+    name: m.name, origName: m.name,
+    hours: m.hours, origHours: m.hours,
+    assessment: m.assessment, origAssessment: m.assessment,
+    apprenticeship: m.apprenticeship || '', origApprenticeship: m.apprenticeship || '',
+    knowledge: items(m.knowledge), skills: items(m.skills), methods: items(m.methods),
+    methodsShared: !!m.methodsShared, methodsNote: '',
+    grades: GRADES.map((_, gi) => ({on: m.grade === gi, depth:'', text:''})), gradesNote: '',
+    rubric: {
+      source: m.rubric ? m.rubric.source : 'skills',
+      levels: m.rubric ? m.rubric.levels : ['מצוין','טוב','בסיסי','טרם הושג'],
+      criteria: (m.rubric ? m.rubric.criteria : []).map(c => ({name:c.name, origName:c.name, desc:[...c.descriptors], origDesc:[...c.descriptors], gone:false, isNew:false})),
+      verdict: '', note: ''
+    },
+    links: [], files: [],
+    status: '', comment: '', gone: false, isNew: false
+  });
+  const fresh = () => ({
+    modules: P.modules.map(freshMod),
+    general: {missing:'', hours:'', assess:'', fit:'', other:'', links:[], files:[]},
+    confirmed: false, submittedAt: null, savedAt: null
+  });
+  let S, local = null;
+  try { local = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  const srv = A.state;
+  S = (local && (!srv || (local.savedAt || '') > (srv.savedAt || ''))) ? local : (srv || fresh());
+  const pendingFromLocal = S === local && !!local && (!srv || local.savedAt !== srv.savedAt);
+
+  let saveT, pushT, dirty = false, pushing = false;
+  const savedEl = document.getElementById('saved');
+  const setSaved = (cls, txt) => { savedEl.className = 'saved ' + cls; savedEl.querySelector('span').textContent = txt; };
+  const hhmm = () => new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
+  function save() {
+    S.savedAt = new Date().toISOString();
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+    dirty = true;
+    setSaved('', 'שומר…');
+    clearTimeout(pushT);
+    pushT = setTimeout(push, 1500);
+    progress();
+  }
+  async function push() {
+    if (pushing) { pushT = setTimeout(push, 800); return; }
+    pushing = true; dirty = false;
+    try {
+      const r = await (await fetch(API, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify({action:'save', k:K, a:A.id, state:S})})).json();
+      if (!r.ok) throw new Error(r.error);
+      if (!dirty) {
+        setSaved('on', 'נשמר ' + hhmm());
+        clearTimeout(saveT); saveT = setTimeout(() => savedEl.classList.remove('on'), 2500);
+      }
+    } catch (e) {
+      dirty = true;
+      setSaved('err', 'לא נשמר בשרת — ננסה שוב');
+      clearTimeout(pushT); pushT = setTimeout(push, 8000);
+    } finally { pushing = false; }
+  }
+  window.addEventListener('beforeunload', () => {
+    if (!dirty) return;
+    try { navigator.sendBeacon(API, new Blob([JSON.stringify({action:'save', k:K, a:A.id, state:S})], {type:'text/plain;charset=utf-8'})); } catch (err) {}
+  });
+
+  function esc(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  const FLAG = /\[(לאימות|דורש מומחה)[^\]]*\]/;
+  function tagify(s) { return esc(s).replace(/\[(לאימות|דורש מומחה)[^\]]*\]/g, m => '<span class="tag">' + m + '</span>'); }
+  const I = {
+    trash: '<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+    undo: '<svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+    plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+    flag: '<svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
+    chev: '<svg class="i chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
+    layers: '<svg class="i" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+    rubric: '<svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg>',
+    bulb: '<svg class="i" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>',
+    clip: '<svg class="i" viewBox="0 0 24 24"><path d="M21 11l-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/></svg>',
+    link: '<svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
+    file: '<svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
+    book: '<svg class="i" viewBox="0 0 24 24"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3z"/><path d="M8 9h6M8 13h6"/></svg>'
+  };
+  function autosize(t) { if (t.tagName !== 'TEXTAREA' || !t.offsetParent) return; t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+  const openSecs = new Set();   // אילו מקטעים פתוחים — נשמר בין רינדורים
+
+  /* ---------- רינדור ---------- */
+  const mods = document.getElementById('mods');
+
+  function renderItems(mi, key, ph) {
+    const m = S.modules[mi];
+    return m[key].map((it, ii) => {
+      const changed = it.orig !== null && it.text !== it.orig && !it.gone;
+      const isNew = it.orig === null;
+      return `<li class="item ${isNew ? 'new' : ''} ${it.gone ? 'gone' : ''}">
+        <i class="dot"></i>
+        <textarea class="ed ${changed ? 'changed' : ''}" rows="1" data-m="${mi}" data-k="${key}" data-i="${ii}" ${it.gone ? 'readonly' : ''}
+          placeholder="${isNew ? ph : ''}">${esc(it.text)}</textarea>
+        <span class="acts">${it.gone
+          ? `<button type="button" class="ib" title="ביטול המחיקה" data-act="restoreItem" data-m="${mi}" data-k="${key}" data-i="${ii}">${I.undo}</button>`
+          : `<button type="button" class="ib del" title="מחיקת השורה" data-act="delItem" data-m="${mi}" data-k="${key}" data-i="${ii}">${I.trash}</button>`}</span>
+        ${FLAG.test(it.text) && !it.gone ? `<span class="flag">${I.flag}מסומן בטיוטה לאימות — יש לאשר או לתקן את השורה</span>` : ''}
+        <span class="orig ${changed ? 'has' : ''}"><b>במקור:</b> ${esc(it.orig)}</span>
+      </li>`;
+    }).join('');
+  }
+
+  function field(mi, f, label, sub, rows) {
+    const m = S.modules[mi];
+    const o = 'orig' + f[0].toUpperCase() + f.slice(1);
+    const ch = !m.isNew && m[f] !== m[o];
+    return `<div class="fld"><h3>${label}${sub ? ` <small>${sub}</small>` : ''}</h3>
+      <textarea class="ed ${ch ? 'changed' : ''}" rows="${rows || 2}" data-m="${mi}" data-f="${f}">${esc(m[f])}</textarea>
+      ${FLAG.test(m[f]) ? `<div class="flag">${I.flag}כולל חלק שמסומן לאימות</div>` : ''}
+      <div class="orig ${ch ? 'has' : ''}" style="margin-top:6px"><b>במקור:</b> ${esc(m[o]) || '<i>ריק</i>'}</div>
+    </div>`;
+  }
+
+  function sec(mi, id, icon, title, meta, metaDone, body) {
+    const key = mi + ':' + id;
+    return `<details class="sec" data-sec="${key}" ${openSecs.has(key) ? 'open' : ''}>
+      <summary><span class="ico">${icon}</span>${title}<span class="meta ${metaDone ? 'done' : ''}">${meta}</span>${I.chev}</summary>
+      <div class="inner">${body}</div></details>`;
+  }
+
+  function gradesBody(mi) {
+    const m = S.modules[mi];
+    return `<p class="note">באילו שכבות נלמדת המודולה? אותה מודולה יכולה להופיע בכמה שכבות — בכל שכבה בעומק ובתוכן אחרים.</p>
+      <div class="grades">${GRADES.map((g, gi) => `<button type="button" class="gchip" data-act="grade" data-m="${mi}" data-g="${gi}" aria-pressed="${m.grades[gi].on}">${g}</button>`).join('')}</div>
+      <div class="grow-list">${m.grades.map((g, gi) => !g.on ? '' : `
+        <div class="gradecard"><div class="gname">${GRADES[gi]}</div><div>
+          <div class="depth">${DEPTHS.map(d => `<button type="button" data-act="depth" data-m="${mi}" data-g="${gi}" data-d="${d}" aria-pressed="${g.depth === d}">${d}</button>`).join('')}</div>
+          <textarea class="ed" rows="2" data-m="${mi}" data-grade="${gi}" placeholder="מה נלמד בשכבה ${GRADES[gi]} ובאיזה עומק — אילו רכיבי ידע ומיומנות, ומה שונה משכבה אחרת">${esc(g.text)}</textarea>
+        </div></div>`).join('')}</div>
+      <div class="fld" style="margin-top:12px"><h3>הערה על הפריסה בין השכבות <small>לא חובה</small></h3>
+        <textarea class="ed" rows="1" data-m="${mi}" data-f="gradesNote" placeholder="למשל: היכרות ב־ט׳, העמקה ב־י״א, ובי״ב רק כחלק ממטלת הגמר">${esc(m.gradesNote)}</textarea></div>`;
+  }
+
+  function rubricBody(mi) {
+    const r = S.modules[mi].rubric;
+    const srcTxt = r.source === 'program'
+      ? 'זה מחוון רמות השליטה האחיד של התוכנית עצמה, על ארבע מיומנויות השפה. כדאי לגזור ממנו 3–5 קריטריונים ספציפיים לתוצר של המודולה.'
+      : r.source === 'assessment'
+      ? 'הקריטריונים נלקחו מתוצר הלמידה / אופן ההערכה שבתוכנית. תיאורי הרמות הם נוסח כללי — אפשר וכדאי לדייק אותם לתחום הדעת.'
+      : 'בתוכנית לא פורטו קריטריונים למודולה זו, ולכן הקריטריונים המוצעים נגזרו מהמיומנויות. תיאורי הרמות הם נוסח כללי — אפשר וכדאי לדייק אותם לתחום הדעת.';
+    return `<p class="note"><b>מחוון מוצע לאישור.</b> ${srcTxt}</p>
+      <div class="rubwrap"><table class="rub"><thead><tr><th>קריטריון</th>${r.levels.map(l => `<th>${esc(l)}</th>`).join('')}<th></th></tr></thead><tbody>
+      ${r.criteria.map((c, ci) => `<tr class="${c.gone ? 'gone' : ''}">
+        <td><textarea class="ed ${!c.isNew && c.name !== c.origName ? 'changed' : ''}" rows="2" data-m="${mi}" data-rc="${ci}" data-rf="name" ${c.gone ? 'readonly' : ''} placeholder="שם הקריטריון">${esc(c.name)}</textarea></td>
+        ${c.desc.map((d, di) => `<td><textarea class="ed ${!c.isNew && d !== c.origDesc[di] ? 'changed' : ''}" rows="2" data-m="${mi}" data-rc="${ci}" data-rd="${di}" ${c.gone ? 'readonly' : ''}>${esc(d)}</textarea></td>`).join('')}
+        <td class="act">${c.gone
+          ? `<button type="button" class="ib" title="ביטול המחיקה" data-act="restoreCrit" data-m="${mi}" data-c="${ci}">${I.undo}</button>`
+          : `<button type="button" class="ib del" title="מחיקת הקריטריון" data-act="delCrit" data-m="${mi}" data-c="${ci}">${I.trash}</button>`}</td>
+      </tr>`).join('')}
+      </tbody></table></div>
+      <button type="button" class="addbtn" data-act="addCrit" data-m="${mi}">${I.plus}הוספת קריטריון</button>
+      <div class="verdict">
+        ${[['ok','המחוון מתאים'],['fix','מתאים עם התיקונים שלי'],['other','נדרש מחוון אחר']].map(([v, t]) =>
+          `<button type="button" class="choice" data-act="rverdict" data-m="${mi}" data-v="${v === 'other' ? 'talk' : v}" data-rv="${v}" aria-pressed="${r.verdict === v}">${t}</button>`).join('')}
+      </div>
+      <textarea class="ed" rows="1" data-m="${mi}" data-rnote="1" placeholder="הערה על המחוון, או מחוון שאתם כבר עובדים איתו (אפשר גם לצרף אותו כקובץ למטה)">${esc(r.note)}</textarea>`;
+  }
+
+  function methodsBody(mi) {
+    const m = S.modules[mi];
+    return `<p class="note">${m.methodsShared
+        ? 'בתוכנית המקורית דרכי הלמידה פורטו לתוכנית כולה ולא לכל מודולה — השאירו את מה שמתאים למודולה הזו והוסיפו.'
+        : 'דרכי הלמידה המגוונות שהופיעו בתוכנית למודולה זו. תקנו, מחקו או הוסיפו.'}</p>
+      <ul class="items">${renderItems(mi, 'methods', 'דרך הוראה נוספת')}</ul>
+      <button type="button" class="addbtn" data-act="addItem" data-m="${mi}" data-k="methods">${I.plus}הוספת דרך הוראה</button>
+      <div class="fld"><h3>דיון: דרכי הוראה ואפשרויות לגיוון <small>מה עובד בכיתה, ומה אפשר להציע</small></h3>
+        <textarea class="ed" rows="3" data-m="${mi}" data-f="methodsNote" placeholder="למשל: התאמות לתלמידים מתקשים ולמתקדמים, למידה דיגיטלית, למידה מחוץ לכיתה, שילוב עם המגמה המקצועית, חומרים שהוכיחו את עצמם">${esc(m.methodsNote)}</textarea></div>`;
+  }
+
+  function attBody(scope) {
+    const a = scope === 'g' ? S.general : S.modules[scope];
+    return `<div class="att">
+      <label class="drop" data-drop="${scope}">${I.clip}<span>גררו לכאן קבצים או לחצו לבחירה<br><small style="font-weight:500;color:var(--muted)">מערכי שיעור, מחוונים, דפי עבודה, מצגות</small></span>
+        <input type="file" multiple data-files="${scope}"></label>
+      ${a.files.length ? `<ul class="filelist">${a.files.map((f, fi) => `<li>${I.file}<span>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}</a>` : esc(f.name)}</span><small>${fmtSize(f.size)}</small>
+        <button type="button" class="ib del" title="הסרה" data-act="delFile" data-s="${scope}" data-x="${fi}">${I.trash}</button></li>`).join('')}</ul>` : ''}
+      ${a.links.map((l, li) => `<div class="linkrow">
+        <input class="ed" data-s="${scope}" data-l="${li}" data-lf="title" value="${esc(l.title)}" placeholder="שם הקישור">
+        <input class="ed" dir="ltr" data-s="${scope}" data-l="${li}" data-lf="url" value="${esc(l.url)}" placeholder="https://">
+        <button type="button" class="ib del" title="הסרה" data-act="delLink" data-s="${scope}" data-x="${li}">${I.trash}</button></div>`).join('')}
+      <div><button type="button" class="addbtn" data-act="addLink" data-s="${scope}">${I.link}הוספת קישור</button></div>
+    </div>`;
+  }
+  const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+
+  function renderMod(mi) {
+    const m = S.modules[mi];
+    const st = m.gone ? '' : (m.status ? 'st-' + m.status : '');
+    const pillTxt = {ok:'מאושרת', fix:'מאושרת עם תיקונים', talk:'דורשת דיון'}[m.status] || '';
+    const chName = !m.isNew && m.name !== m.origName;
+    const gOn = m.grades.filter(g => g.on).length;
+    const rLive = m.rubric.criteria.filter(c => !c.gone).length;
+    const nAtt = m.files.length + m.links.filter(l => l.url.trim()).length;
+    return `<article class="mod ${st} ${m.gone ? 'removed' : ''}" id="mod-${mi}">
+      <div class="mod-head">
+        <div class="mod-num">${mi + 1}</div>
+        <div class="grow">
+          <label for="name-${mi}">${m.isNew ? 'מודולה חדשה שנוספה' : 'מודולה'}</label>
+          <input class="ed title ${chName ? 'changed' : ''}" id="name-${mi}" data-m="${mi}" data-f="name" value="${esc(m.name)}" placeholder="שם המודולה">
+        </div>
+        <span class="pill">${m.gone ? '' : pillTxt}</span>
+      </div>
+      <div class="mod-body">
+        ${sec(mi, 'content', I.book, 'תוכן המודולה', 'ידע · מיומנות · הערכה · שעות', false, `
+          <div class="fld"><h3>ידע <small>מה הלומד צריך לדעת</small></h3>
+            <ul class="items">${renderItems(mi, 'knowledge', 'כותבים כאן את שורת הידע החדשה')}</ul>
+            <button type="button" class="addbtn" data-act="addItem" data-m="${mi}" data-k="knowledge">${I.plus}הוספת שורת ידע</button>
+          </div>
+          <div class="fld"><h3>מיומנות <small>מה הלומד יודע לעשות בסוף המודולה</small></h3>
+            <ul class="items">${renderItems(mi, 'skills', 'כותבים כאן את המיומנות החדשה')}</ul>
+            <button type="button" class="addbtn" data-act="addItem" data-m="${mi}" data-k="skills">${I.plus}הוספת מיומנות</button>
+          </div>
+          ${m.origApprenticeship || m.isNew ? field(mi, 'apprenticeship', P.id === 'hebrew-arab' ? 'שאלת היציאה ויציאה לעולם' : 'חניכות / התנסות אותנטית', 'משימות אמת מחוץ לכיתה', 2) : ''}
+          <div class="row2">
+            ${field(mi, 'assessment', 'תוצר למידה / אופן הערכה', '', 2)}
+            ${field(mi, 'hours', 'המלצה לשעות', '', 1)}
+          </div>`)}
+        ${sec(mi, 'grades', I.layers, 'התאמה לשכבות ט׳–י״ב', gOn ? m.grades.map((g, i) => g.on ? GRADES[i] : null).filter(Boolean).join(' · ') : 'טרם סומן', gOn > 0, gradesBody(mi))}
+        ${sec(mi, 'rubric', I.rubric, 'מחוון מוצע', m.rubric.verdict ? {ok:'אושר', fix:'אושר עם תיקונים', other:'נדרש מחוון אחר'}[m.rubric.verdict] : rLive + ' קריטריונים · לאישור', !!m.rubric.verdict, rubricBody(mi))}
+        ${sec(mi, 'methods', I.bulb, 'דרכי הוראה וגיוון', m.methodsNote.trim() ? 'נכתב דיון' : m.methods.filter(x => !x.gone).length + ' דרכים', !!m.methodsNote.trim(), methodsBody(mi))}
+        ${sec(mi, 'att', I.clip, 'קבצים וקישורים', nAtt ? nAtt + ' צורפו' : 'לא חובה', nAtt > 0, attBody(mi))}
+        <div class="decide">
+          <h4>מה ההחלטה על המודולה?</h4>
+          <div class="choices">
+            <button type="button" class="choice" data-act="status" data-m="${mi}" data-v="ok" aria-pressed="${m.status === 'ok'}"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>מאושרת כמו שהיא</button>
+            <button type="button" class="choice" data-act="status" data-m="${mi}" data-v="fix" aria-pressed="${m.status === 'fix'}"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>מאושרת עם התיקונים שלי</button>
+            <button type="button" class="choice" data-act="status" data-m="${mi}" data-v="talk" aria-pressed="${m.status === 'talk'}"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>דורשת דיון</button>
+          </div>
+          <textarea class="ed" rows="2" data-m="${mi}" data-f="comment" placeholder="הערה למודולה (לא חובה) — למשל: למה צריך את התיקון, מה לא ברור, מה להוסיף">${esc(m.comment)}</textarea>
+          <div class="modfoot">
+            <span class="smallnote" style="margin:0">${m.status === 'talk' && !m.comment.trim() ? 'כדאי לכתוב בהערה מה דורש דיון' : ''}</span>
+            ${m.gone
+              ? `<button type="button" class="linkbtn restore" data-act="restoreMod" data-m="${mi}">${I.undo}ביטול ההצעה למחוק את המודולה</button>`
+              : `<button type="button" class="linkbtn" data-act="delMod" data-m="${mi}">${I.trash}${m.isNew ? 'מחיקת המודולה החדשה' : 'להציע למחוק את המודולה'}</button>`}
+          </div>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function sizeAll(root) { root.querySelectorAll('textarea').forEach(autosize); }
+  function renderAll() {
+    mods.innerHTML = S.modules.map((_, i) => renderMod(i)).join('');
+    sizeAll(mods); progress();
+  }
+  function rerenderMod(mi, focusSel) {
+    const el = document.getElementById('mod-' + mi);
+    const y = el.getBoundingClientRect().top;
+    el.outerHTML = renderMod(mi);
+    const nel = document.getElementById('mod-' + mi);
+    sizeAll(nel);
+    window.scrollBy(0, nel.getBoundingClientRect().top - y);
+    if (focusSel) { const f = nel.querySelector(focusSel); if (f) f.focus(); }
+  }
+  function rerenderGen() { document.getElementById('genAtt').innerHTML = attBody('g'); }
+
+  /* ---------- אירועים ---------- */
+  document.addEventListener('toggle', e => {
+    const d = e.target; if (!d.dataset || !d.dataset.sec) return;
+    d.open ? openSecs.add(d.dataset.sec) : openSecs.delete(d.dataset.sec);
+    if (d.open) sizeAll(d);
+  }, true);
+
+  function isModChanged(m) {
+    if (m.isNew) return true;
+    return m.name !== m.origName || m.hours !== m.origHours || m.assessment !== m.origAssessment || m.apprenticeship !== m.origApprenticeship ||
+      ['knowledge', 'skills', 'methods'].some(k => m[k].some(it => it.orig === null || it.gone || it.text !== it.orig)) ||
+      m.rubric.criteria.some(c => c.isNew || c.gone || c.name !== c.origName || c.desc.some((d, i) => d !== c.origDesc[i]));
+  }
+  function autoFix(mi) {
+    const m = S.modules[mi];
+    if (m.status || !isModChanged(m)) return;
+    m.status = 'fix';
+    const art = document.getElementById('mod-' + mi);
+    art.classList.add('st-fix');
+    art.querySelector('.pill').textContent = 'מאושרת עם תיקונים';
+    art.querySelector('.decide [data-v="fix"]').setAttribute('aria-pressed', 'true');
+  }
+
+  document.addEventListener('input', e => {
+    const t = e.target;
+    if (t.tagName === 'TEXTAREA') autosize(t);
+    if (t.dataset.l !== undefined) {           // קישור
+      const a = t.dataset.s === 'g' ? S.general : S.modules[+t.dataset.s];
+      a.links[+t.dataset.l][t.dataset.lf] = t.value; save(); return;
+    }
+    if (t.dataset.gen) { S.general[t.dataset.gen] = t.value; save(); return; }
+    if (t.dataset.m === undefined) return;
+    const mi = +t.dataset.m, m = S.modules[mi];
+    if (t.dataset.k) {
+      const it = m[t.dataset.k][+t.dataset.i];
+      it.text = t.value;
+      t.classList.toggle('changed', it.orig !== null && it.text !== it.orig);
+    } else if (t.dataset.grade !== undefined) {
+      m.grades[+t.dataset.grade].text = t.value;
+    } else if (t.dataset.rc !== undefined) {
+      const c = m.rubric.criteria[+t.dataset.rc];
+      if (t.dataset.rf) { c.name = t.value; t.classList.toggle('changed', !c.isNew && c.name !== c.origName); }
+      else { const di = +t.dataset.rd; c.desc[di] = t.value; t.classList.toggle('changed', !c.isNew && c.desc[di] !== c.origDesc[di]); }
+    } else if (t.dataset.rnote) {
+      m.rubric.note = t.value;
+    } else if (t.dataset.f) {
+      m[t.dataset.f] = t.value;
+      const o = 'orig' + t.dataset.f[0].toUpperCase() + t.dataset.f.slice(1);
+      if (o in m && !m.isNew) t.classList.toggle('changed', m[t.dataset.f] !== m[o]);
+    }
+    if (t.dataset.f !== 'comment') autoFix(mi);
+    save();
+  });
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b) return;
+    const act = b.dataset.act;
+    if (['addLink', 'delLink', 'delFile'].includes(act)) {
+      const s = b.dataset.s, a = s === 'g' ? S.general : S.modules[+s];
+      if (act === 'addLink') a.links.push({title:'', url:''});
+      if (act === 'delLink') a.links.splice(+b.dataset.x, 1);
+      if (act === 'delFile') a.files.splice(+b.dataset.x, 1);
+      s === 'g' ? rerenderGen() : rerenderMod(+s, act === 'addLink' ? `[data-l="${a.links.length - 1}"][data-lf="title"]` : null);
+      save(); return;
+    }
+    const mi = +b.dataset.m, m = S.modules[mi], k = b.dataset.k, ii = +b.dataset.i;
+    switch (act) {
+      case 'addItem':
+        m[k].push({text:'', orig:null, gone:false});
+        rerenderMod(mi, `textarea[data-k="${k}"][data-i="${m[k].length - 1}"]`); break;
+      case 'delItem':
+        if (m[k][ii].orig === null) m[k].splice(ii, 1); else m[k][ii].gone = true;
+        rerenderMod(mi); break;
+      case 'restoreItem': m[k][ii].gone = false; rerenderMod(mi); break;
+      case 'status': m.status = m.status === b.dataset.v ? '' : b.dataset.v; rerenderMod(mi); break;
+      case 'grade': { const g = m.grades[+b.dataset.g]; g.on = !g.on; rerenderMod(mi, g.on ? `textarea[data-grade="${b.dataset.g}"]` : null); break; }
+      case 'depth': { const g = m.grades[+b.dataset.g]; g.depth = g.depth === b.dataset.d ? '' : b.dataset.d; rerenderMod(mi); break; }
+      case 'addCrit':
+        m.rubric.criteria.push({name:'', origName:'', desc:m.rubric.levels.map(() => ''), origDesc:m.rubric.levels.map(() => ''), gone:false, isNew:true});
+        rerenderMod(mi, `textarea[data-rc="${m.rubric.criteria.length - 1}"][data-rf="name"]`); autoFix(mi); break;
+      case 'delCrit': {
+        const c = m.rubric.criteria[+b.dataset.c];
+        if (c.isNew) m.rubric.criteria.splice(+b.dataset.c, 1); else c.gone = true;
+        rerenderMod(mi); autoFix(mi); break;
+      }
+      case 'restoreCrit': m.rubric.criteria[+b.dataset.c].gone = false; rerenderMod(mi); break;
+      case 'rverdict': m.rubric.verdict = m.rubric.verdict === b.dataset.rv ? '' : b.dataset.rv; rerenderMod(mi); break;
+      case 'delMod':
+        if (m.isNew) { S.modules.splice(mi, 1); renderAll(); }
+        else { m.gone = true; m.status = ''; rerenderMod(mi); }
+        break;
+      case 'restoreMod': m.gone = false; rerenderMod(mi); break;
+    }
+    save();
+  });
+
+  /* קבצים: עולים לתיקיית הדרייב של המערכת; במצב נשמרים שם, גודל וקישור */
+  const readB64 = f => new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(f);
+  });
+  async function addFiles(scope, list) {
+    const a = scope === 'g' ? S.general : S.modules[+scope];
+    const zone = document.querySelector(`[data-drop="${scope}"]`);
+    for (const f of [...list]) {
+      if (f.size > 20 * 1024 * 1024) { alert('הקובץ ' + f.name + ' גדול מ-20MB. אפשר לשתף אותו כקישור.'); continue; }
+      const note = document.createElement('div');
+      note.className = 'uploading';
+      note.innerHTML = '<div class="spin"></div>מעלה את ' + esc(f.name) + '…';
+      if (zone) zone.after(note);
+      try {
+        const data = await readB64(f);
+        let r = null;
+        for (let i = 0; i < 3 && !(r && r.ok); i++) {
+          try {
+            const t = await (await fetch(API, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+              body: JSON.stringify({action:'upload', k:K, a:A.id, scope, name:f.name, type:f.type, data})})).text();
+            r = t.trim().startsWith('{') ? JSON.parse(t) : null;
+          } catch (e) { r = null; }
+          if (!(r && r.ok)) await new Promise(res => setTimeout(res, 2000 * (i + 1)));
+        }
+        if (!(r && r.ok)) throw new Error('upload');
+        a.files.push({name:f.name, size:f.size, type:f.type, id:r.id, url:r.url});
+      } catch (e) {
+        alert('העלאת ' + f.name + ' נכשלה. נסו שוב, או שתפו אותו כקישור.');
+      }
+      note.remove();
+    }
+    scope === 'g' ? rerenderGen() : rerenderMod(+scope);
+    save();
+  }
+  document.addEventListener('change', e => { if (e.target.dataset.files !== undefined) addFiles(e.target.dataset.files, e.target.files); });
+  document.addEventListener('dragover', e => { const d = e.target.closest('[data-drop]'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+  document.addEventListener('dragleave', e => { const d = e.target.closest('[data-drop]'); if (d) d.classList.remove('over'); });
+  document.addEventListener('drop', e => { const d = e.target.closest('[data-drop]'); if (d) { e.preventDefault(); addFiles(d.dataset.drop, e.dataTransfer.files); } });
+
+  document.getElementById('addMod').addEventListener('click', () => {
+    const nm = freshMod({name:'', hours:'', assessment:'', apprenticeship:'', knowledge:[], skills:[], methods:[], rubric:null});
+    Object.assign(nm, {isNew:true, knowledge:[{text:'', orig:null, gone:false}], skills:[{text:'', orig:null, gone:false}]});
+    S.modules.push(nm);
+    const mi = S.modules.length - 1;
+    openSecs.add(mi + ':content');
+    mods.insertAdjacentHTML('beforeend', renderMod(mi));
+    const el = document.getElementById('mod-' + mi);
+    sizeAll(el);
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(() => el.querySelector('input').focus(), 350);
+    save();
+  });
+
+  document.getElementById('showOrig').addEventListener('change', e => mods.classList.toggle('show-orig', e.target.checked));
+
+  document.querySelectorAll("[data-gen]").forEach(t => { t.value = S.general[t.dataset.gen] || ''; autosize(t); });
+
+  /* ---------- התקדמות + שליחה ---------- */
+  const confirmEl = document.getElementById('confirm'), submitEl = document.getElementById('submit');
+  confirmEl.checked = !!S.confirmed;
+  confirmEl.addEventListener('change', () => { S.confirmed = confirmEl.checked; save(); });
+
+  function progress() {
+    const decided = S.modules.filter(m => m.gone || m.status).length;
+    document.getElementById('pDone').textContent = decided;
+    document.getElementById('pAll').textContent = S.modules.length;
+    document.getElementById('pBar').style.width = (S.modules.length ? decided / S.modules.length * 100 : 0) + '%';
+    document.getElementById('jump').innerHTML = S.modules.map((m, i) =>
+      `<a href="#mod-${i}" class="${m.gone ? '' : m.status}" title="${esc(m.name)}">${i + 1}</a>`).join('');
+    const open = S.modules.map((m, i) => (!m.gone && !m.status) ? i + 1 : null).filter(Boolean);
+    const miss = document.getElementById('missing');
+    miss.classList.toggle('on', open.length > 0);
+    miss.textContent = open.length ? 'עדיין לא סומנה החלטה במודולות: ' + open.join(', ') : '';
+    submitEl.disabled = !(S.confirmed && open.length === 0 && S.modules.some(m => !m.gone));
+    if (S.submittedAt) showDone();
+  }
+  submitEl.addEventListener('click', () => { S.submittedAt = new Date().toISOString(); save(); showDone(); });
+  function showDone() {
+    const d = document.getElementById('done');
+    d.classList.add('on');
+    d.querySelector('span').textContent = 'האישור נשלח ב-' + new Date(S.submittedAt).toLocaleString('he-IL', {day:'numeric', month:'numeric', hour:'2-digit', minute:'2-digit'}) + '. תודה רבה! אפשר להמשיך לעדכן — השינויים יישלחו שוב.';
+    submitEl.querySelector('span').textContent = 'שליחת עדכון';
+  }
+
+  /* ---------- תצוגת טבלה ---------- */
+  function renderTable() {
+    const li = arr => '<ul>' + arr.filter(it => !it.gone && it.text.trim()).map(it =>
+      `<li class="${it.orig === null ? 'newli' : (it.text !== it.orig ? 'chg' : '')}">${tagify(it.text)}</li>`).join('') + '</ul>';
+    document.getElementById('syl').innerHTML =
+      '<thead><tr><th>מודולה</th><th>ידע</th><th>מיומנות</th><th>תוצר למידה / אופן הערכה</th><th>המלצה לשעות</th></tr></thead><tbody>' +
+      S.modules.map(m => {
+        const gr = m.grades.map((g, i) => g.on ? GRADES[i] + (g.depth ? ' (' + g.depth + ')' : '') : null).filter(Boolean);
+        return `<tr class="${m.gone ? 'gone' : ''}">
+        <td class="${m.isNew ? 'newli' : (m.name !== m.origName ? 'chg' : '')}">${esc(m.name) || '<i>ללא שם</i>'}${gr.length ? `<small>${gr.join(' · ')}</small>` : ''}</td>
+        <td>${li(m.knowledge)}</td><td>${li(m.skills)}</td>
+        <td class="${!m.isNew && m.assessment !== m.origAssessment ? 'chg' : ''}">${tagify(m.assessment)}</td>
+        <td class="${!m.isNew && m.hours !== m.origHours ? 'chg' : ''}">${tagify(m.hours)}</td></tr>`;
+      }).join('') + '</tbody>';
+  }
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    const tbl = b.dataset.view === 'table';
+    if (tbl) renderTable();
+    document.getElementById('editView').hidden = tbl;
+    document.getElementById('tableView').hidden = !tbl;
+    document.getElementById('jump').hidden = tbl;
+    if (!tbl) sizeAll(mods);
+  }));
+
+  window.addEventListener('resize', () => document.querySelectorAll('textarea').forEach(autosize));
+  openSecs.add('0:content');
+  renderAll();
+  rerenderGen();
+  if (pendingFromLocal) save();
+  if (S.savedAt) {
+    document.getElementById('saved').querySelector('span').textContent =
+      'טיוטה מ-' + new Date(S.savedAt).toLocaleString('he-IL', {day:'numeric', month:'numeric', hour:'2-digit', minute:'2-digit'});
+  }
+})();
+</script>
+</body>
+</html>
