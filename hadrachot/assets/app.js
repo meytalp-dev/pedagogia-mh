@@ -264,14 +264,27 @@ const TS = (() => {
   }
 
   // Gmail compose
-  function gmailCompose({to='', subject='', body=''} = {}) {
+  // authuser: כל מייל שיוצא בשם מיטל נשלח מהג'ימייל ולא מחשבון אורט — לדומיין
+  // bethaarava.ort.org.il אין רשומת SPF, ושרתי מיקרוסופט דוחים ממנו (3 מתוך 32
+  // נחסמו כך בסבב לרכזי התקשוב). אם נפתח חשבון אחר — מחליפים חשבון בפינה.
+  const MAIL_FROM = 'mlypeleg@gmail.com';
+  function gmailCompose({to='', subject='', body='', cc='', authuser=MAIL_FROM} = {}) {
     const u = new URL('https://mail.google.com/mail/');
+    if (authuser) u.searchParams.set('authuser', authuser);
     u.searchParams.set('view', 'cm');
     u.searchParams.set('fs', '1');
     if (to) u.searchParams.set('to', to);
+    if (cc) u.searchParams.set('cc', cc);
     if (subject) u.searchParams.set('su', subject);
     if (body) u.searchParams.set('body', body);
     return u.toString();
+  }
+
+  /* הנוסח כטקסט אחד להעתקה — לכל מי שלא שולחת דרך ג'ימייל בדפדפן
+     (אאוטלוק, אפליקציית מייל בנייד, הדבקה לוואטסאפ web). */
+  function mailPlainText({to='', subject='', body=''} = {}) {
+    return [to ? 'אל: ' + to : '', subject ? 'נושא: ' + subject : '', '', body]
+      .filter((l, i) => l !== '' || i === 2).join('\n');
   }
 
   // WhatsApp
@@ -362,7 +375,7 @@ const TS = (() => {
     netById, secById, netChip, secChip, typeChip,
     attendanceBadge, toast, urlParam,
     monthLabel, formatDate,
-    gmailCompose, whatsappLink,
+    gmailCompose, mailPlainText, MAIL_FROM, whatsappLink,
     setAppsScriptUrl, getAppsScriptUrl,
     renderTrendChart
   };

@@ -41,6 +41,8 @@
   }
   .copy-mini.secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
   .copy-mini.wa { background: #1FA855; color: #fff; }
+  /* מייל — ערוץ שווה־מעמד לוואטסאפ מאז החסימה (9.9.26), ולכן כפתור צבעוני ולא משני */
+  .copy-mini.mail { background: #1D6FA5; color: #fff; }
   .copy-mini.copied { background: var(--ok); color: white; }
   .copy-mini[disabled], .copy-mini.off { opacity: .45; pointer-events: none; }
   .copy-mini svg { width: 14px; height: 14px; }
@@ -57,6 +59,21 @@
   .sendmode { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; }
   .sm-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
   .sm-head h2 { font-family: 'Frank Ruhl Libre', serif; font-size: 19px; margin: 0; }
+  /* מי פתח את הקישור האישי (16.9.26) */
+  .seen {
+    display: inline-block; font-size: 11.5px; font-weight: 600; border-radius: 999px;
+    padding: 2px 9px; margin-inline-start: 6px; vertical-align: middle; white-space: nowrap;
+  }
+  .seen.yes { background: #E8F5EE; color: #1F6B47; border: 1px solid #C6E4D4; }
+  .seen.no  { background: #FDF0EC; color: #9A3A1C; border: 1px solid #F2D2C6; }
+
+  #notopened {
+    background: #FDF4EC; border: 1px solid #F0D5BE; border-radius: 10px;
+    padding: 11px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.8; color: #7a4a1d;
+  }
+  #notopened b { color: #5c3512; }
+  #notopened .who { color: #5c3512; font-weight: 600; }
+
   .sm-progress { font-size: 13px; color: var(--text-2); font-weight: 600; }
   .sm-progress b { color: var(--ok, #2E7D5B); font-size: 15px; }
   .sm-sub { font-size: 13px; color: var(--text-3); margin: 0 0 14px; line-height: 1.7; }
@@ -128,7 +145,9 @@
     <p style="color: var(--text-2); margin-bottom: 8px;">
       לכל מדריכ/ה ולכל מפקח.ת יש כאן קישור אישי אחד, קבוע, שמראה לה.ו
       <b>רק את המקצוע והמגזר שבאחריותה.ו</b> — לא את שאר המערכת.
-      לוחצים "וואטסאפ" ונפתחת שיחה עם ההודעה מוכנה, או "העתקת הודעה" לשליחה ידנית.
+      לוחצים "וואטסאפ" ונפתחת שיחה עם ההודעה מוכנה, "שליחה במייל" פותחת חלון כתיבה
+      בג'ימייל עם הנמען והנוסח, ו"העתקה למייל" מעתיקה כתובת, נושא ונוסח לכל תוכנת מייל.
+      ליד כל שם מופיע אם הקישור <b>נפתח בפועל</b> — ולא רק אם נשלח.
     </p>
     <p style="color: var(--text-3); font-size: 13px; margin-bottom: 20px;">
       המקור: קובץ "רשימת מדריכים" תשפ"ז (8.9.26). עדכון מקצוע/מגזר/מפקח — בקובץ
@@ -152,6 +171,7 @@
         כל מי שנשלח לו מסומן אוטומטית, כדי שלא תאבדי את המקום באמצע.
       </p>
       <div class="sm-bar"><i id="sm-bar" style="width:0"></i></div>
+      <div id="notopened" hidden></div>
       <div id="sm-list"></div>
       <div style="margin-top:12px; text-align:left;">
         <button type="button" class="sm-reset" onclick="copyPhonesForFile(this)">העתקת הטלפונים שהזנתי (לקיבוע בקובץ)</button>
@@ -168,7 +188,7 @@
   </footer>
 </div>
 
-<script src="assets/app.js?v=20260914b"></script>
+<script src="assets/app.js?v=20260916"></script>
 <script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="assets/guides.js?v=20260908"></script>
 <script src="assets/guides-contact.js?v=20260909"></script>
@@ -400,9 +420,15 @@ function actionsHtml(kind, slug, url, contact) {
            </a>`
         : `<button type="button" class="copy-mini secondary" onclick="askPhone('${kind}', '${slug}')">+ הוספת טלפון לוואטסאפ</button>`}
       ${contact.email
-        ? `<a class="copy-mini secondary" href="${esc(TS.gmailCompose({ to: contact.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msgFor(kind, slug) }))}" target="_blank" rel="noopener">מייל</a>`
+        ? `<a class="copy-mini mail" href="${esc(mailLink(contact.email, kind, slug))}" target="_blank" rel="noopener"
+              onclick="markSent('${kind}', '${slug}')" title="נפתח חלון כתיבה בג'ימייל של ${esc(TS.MAIL_FROM)} עם הנמען, הנושא והנוסח">
+             שליחה במייל
+           </a>
+           <button type="button" class="copy-mini secondary" onclick="copyMail(this, '${kind}', '${slug}')"
+              title="מעתיק כתובת, נושא ונוסח — להדבקה בכל תוכנת מייל">העתקה למייל</button>`
         : ''}
-    </div>`;
+    </div>
+    ${seenChip(kind, slug)}`;
 }
 
 /* ---- נתונים ---- */
@@ -467,8 +493,48 @@ async function loadMeetKeys() {
     : (/unauthenticated|forbidden/.test(err) ? 'denied' : 'error');
 }
 
+/* מי פתח את הקישור האישי שלו (16.9.26) — התשובה האמיתית ל"שלחנו לכולם?".
+   הסימון ✓ למטה נשמר בדפדפן הזה ומעיד על לחיצה בלבד; זה מגיע מהשרת
+   ומעיד על פתיחה בפועל, בכל מכשיר. דורש טוקן אדמין (STRICT_AUTH_ACTIONS). */
+let VIEWS = {};            // kind:slug → { lastSeenAt, views }
+let VIEWS_STATE = 'unknown';
+async function loadViews() {
+  const res = await TS.api('link.views', {}, { cache: 'no' });
+  if (res && res.ok) {
+    VIEWS = {};
+    (res.data || []).forEach(r => { VIEWS[r.kind + ':' + r.slug] = r; });
+    VIEWS_STATE = 'ok';
+    return;
+  }
+  const err = (res && res.error) || '';
+  VIEWS_STATE = /unknown_action/.test(err) ? 'legacy'
+    : (/unauthenticated|forbidden/.test(err) ? 'denied' : 'error');
+}
+
+/* "נפתח לפני יומיים · 3 פעמים" / "טרם נפתח" */
+function seenOf(kind, slug) { return VIEWS[kind + ':' + slug] || null; }
+
+function sinceLabel(iso) {
+  const t = Date.parse(iso || '');
+  if (!t) return '';
+  const days = Math.floor((Date.now() - t) / 86400000);
+  if (days <= 0) return 'היום';
+  if (days === 1) return 'אתמול';
+  if (days < 7) return 'לפני ' + days + ' ימים';
+  const d = new Date(t);
+  return d.getDate() + '.' + (d.getMonth() + 1);
+}
+
+function seenChip(kind, slug) {
+  if (VIEWS_STATE !== 'ok') return '';
+  const v = seenOf(kind, slug);
+  if (!v) return '<span class="seen no">טרם נפתח</span>';
+  return '<span class="seen yes">נפתח ' + esc(sinceLabel(v.lastSeenAt)) +
+         (v.views > 1 ? ' · ' + v.views + ' פעמים' : '') + '</span>';
+}
+
 async function init() {
-  await Promise.all([loadContacts(), loadMeetKeys()]);
+  await Promise.all([loadContacts(), loadMeetKeys(), loadViews()]);
   const res = await TS.api('teachers.list', {}, { cache: 'no' });
   if (res.ok) {
     TEACHERS = res.data || [];
@@ -678,9 +744,14 @@ function renderSendList() {
   const reachable = SEND_ROWS.filter(r => r.phone || r.email);
   const stuck = SEND_ROWS.length - reachable.length;
   const done = reachable.filter(r => sent[r.kind + ':' + r.slug]).length;
+  /* שני מונים שונים בכוונה: "נשלחו" הוא מה שסומן בדפדפן הזה, ו"פתחו" הוא
+     מה שהשרת ראה בפועל — בכל מכשיר. הפער ביניהם הוא בדיוק מה שחיפשנו. */
+  const opened = VIEWS_STATE === 'ok' ? SEND_ROWS.filter(r => seenOf(r.kind, r.slug)).length : null;
   document.getElementById('sm-progress').innerHTML =
     'נשלחו <b>' + done + '</b> מתוך ' + reachable.length +
-    (stuck ? ' <span style="color:var(--coral);font-weight:600;">(' + stuck + ' בלי פרטי קשר)</span>' : '');
+    (stuck ? ' <span style="color:var(--coral);font-weight:600;">(' + stuck + ' בלי פרטי קשר)</span>' : '') +
+    (opened === null ? ''
+      : ' · פתחו בפועל <b>' + opened + '</b> מתוך ' + SEND_ROWS.length);
   document.getElementById('sm-bar').style.width =
     (reachable.length ? Math.round(done / reachable.length * 100) : 0) + '%';
 
@@ -689,16 +760,23 @@ function renderSendList() {
   const row = r => {
     const isDone = !!sent[r.kind + ':' + r.slug];
     const msg = msgFor(r.kind, r.slug);
+    /* מייל תמיד כשיש כתובת — גם למי שיש טלפון. וואטסאפ נחסם (9.9.26)
+       ויש מי שלא קיבלה שם, ולכן הערוץ השני חייב להיות זמין באותה שורה
+       ולא רק בכרטיס. "העתקה" — לכל תוכנת מייל שאינה ג'ימייל בדפדפן. */
+    const mailBtns = r.email
+      ? `<a class="sm-send mail" href="${esc(mailLink(r.email, r.kind, r.slug))}"
+             target="_blank" rel="noopener" onclick="markSent('${r.kind}', '${r.slug}')">מייל</a>
+         <button type="button" class="sm-addphone" title="העתקת כתובת, נושא ונוסח"
+             onclick="copyMail(this, '${r.kind}', '${r.slug}')">העתקה</button>`
+      : '';
     let action;
     if (r.phone) {
       action = `<a class="sm-send" href="${esc(waLink(waPhone(r.phone), msg))}" target="_blank" rel="noopener"
-                   onclick="markSent('${r.kind}', '${r.slug}')">${waIcon} וואטסאפ</a>`;
+                   onclick="markSent('${r.kind}', '${r.slug}')">${waIcon} וואטסאפ</a>` + mailBtns;
     } else if (r.email) {
-      /* אין טלפון — נשלח במייל מאותו מקום, כדי שלא ייפול בין הכיסאות,
-         ולצדו כפתור להזנת נייד שמדליק את הוואטסאפ בו במקום */
-      action = `<a class="sm-send mail" href="${esc(TS.gmailCompose({ to: r.email, subject: 'המבט האישי שלך במצפן ההדרכות', body: msg }))}"
-                   target="_blank" rel="noopener" onclick="markSent('${r.kind}', '${r.slug}')">מייל</a>
-                <button type="button" class="sm-addphone" title="הזנת נייד — הוואטסאפ יידלק"
+      /* אין טלפון — המייל הוא הערוץ היחיד, ולצדו כפתור להזנת נייד */
+      action = mailBtns +
+               `<button type="button" class="sm-addphone" title="הזנת נייד — הוואטסאפ יידלק"
                    onclick="askPhone('${r.kind}', '${r.slug}')">+ נייד</button>`;
     } else {
       action = `<button type="button" class="sm-addphone" onclick="askPhone('${r.kind}', '${r.slug}')">+ הוספת נייד</button>`;
@@ -706,8 +784,8 @@ function renderSendList() {
     return `
       <div class="sm-row ${isDone ? 'done' : ''}">
         <div class="sm-who">
-          <div class="n">${esc(r.name)}</div>
-          <div class="m">${esc(r.meta)}</div>
+          <div class="n">${esc(r.name)} ${seenChip(r.kind, r.slug)}</div>
+          <div class="m">${esc(r.meta)}${r.email ? ' · <span dir="ltr">' + esc(r.email) + '</span>' : ' · אין מייל'}</div>
         </div>
         <div class="sm-actions">
           ${action}
@@ -720,6 +798,8 @@ function renderSendList() {
 
   const group = (title, rows) => rows.length
     ? '<div class="sm-group">' + title + '</div>' + rows.map(row).join('') : '';
+
+  renderNotOpened();
 
   document.getElementById('sm-list').innerHTML =
     group('מדריכות — יש טלפון', SEND_ROWS.filter(r => r.kind === 'guide' && r.phone)) +
@@ -741,6 +821,72 @@ function copyLink(btn, url) {
 
 function copyMessage(btn, kind, slug) {
   navigator.clipboard.writeText(msgFor(kind, slug)).then(() => flashBtn(btn, '✓ ההודעה הועתקה'));
+}
+
+/* ---- מי טרם פתח את הקישור (16.9.26) ----
+   לא רק "מי כן" — דף מעקב חייב להראות את מי שחסר, ובלחיצה אחת להעתיק
+   את הרשימה כדי לפנות אליהם. */
+function renderNotOpened() {
+  const box = document.getElementById('notopened');
+  if (!box) return;
+
+  if (VIEWS_STATE === 'legacy') {
+    box.hidden = false;
+    box.innerHTML = '<b>גרסת השרת עדיין לא מתעדת פתיחת קישורים.</b> ' +
+      'אחרי פריסת הגרסה החדשה יופיע כאן מי פתח את הקישור האישי שלו ומי לא.';
+    return;
+  }
+  if (VIEWS_STATE === 'denied') {
+    box.hidden = false;
+    box.innerHTML = '<b>כדי לראות מי פתח את הקישור — צריך להתחבר כאדמין ארצי.</b> ' +
+      '<a href="login.html?next=' + encodeURIComponent(location.pathname) + '">כניסה</a>. ' +
+      'השליחה עצמה עובדת כרגיל גם בלי זה.';
+    return;
+  }
+  if (VIEWS_STATE !== 'ok') { box.hidden = true; return; }
+
+  const missing = SEND_ROWS.filter(r => !seenOf(r.kind, r.slug));
+  if (!missing.length) {
+    box.hidden = false;
+    box.innerHTML = '<b>✓ כל ' + SEND_ROWS.length + ' פתחו את הקישור האישי שלהם.</b>';
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = '<b>טרם פתחו את הקישור האישי (' + missing.length + '):</b> ' +
+    '<span class="who">' + missing.map(r => esc(r.name)).join(' · ') + '</span>' +
+    '<div style="margin-top:8px;">' +
+    '<button type="button" class="copy-mini" onclick="copyNotOpened(this)">העתקת הרשימה</button>' +
+    ' <span style="font-size:12px;">כולל מקצוע ומייל — להדבקה בתזכורת או בהודעה למפקח.ת.</span></div>';
+}
+
+function copyNotOpened(btn) {
+  const lines = SEND_ROWS.filter(r => !seenOf(r.kind, r.slug))
+    .map(r => r.name + ' · ' + r.meta + (r.email ? ' · ' + r.email : ' · אין מייל') +
+              (r.phone ? ' · ' + r.phone : ' · אין טלפון'));
+  navigator.clipboard.writeText('טרם פתחו את הקישור האישי במצפן ההדרכות (' + lines.length + '):\n' +
+    lines.join('\n')).then(() => flashBtn(btn, '✓ הרשימה הועתקה'));
+}
+
+/* ---- מייל (16.9.26) ---- */
+const MAIL_SUBJECT = 'המבט האישי שלך במצפן ההדרכות';
+
+function mailLink(email, kind, slug) {
+  return TS.gmailCompose({ to: email, subject: MAIL_SUBJECT, body: msgFor(kind, slug) });
+}
+
+/* העתקה למייל — לכל מי שלא שולחת דרך ג'ימייל בדפדפן (אאוטלוק, מייל בנייד).
+   מעתיק כתובת + נושא + נוסח, ומסמן כנשלח כמו הכפתורים האחרים. */
+function copyMail(btn, kind, slug) {
+  const email = emailFor(kind, slug);
+  const txt = TS.mailPlainText({ to: email, subject: MAIL_SUBJECT, body: msgFor(kind, slug) });
+  navigator.clipboard.writeText(txt).then(() => {
+    flashBtn(btn, '✓ הועתק למייל');
+    markSent(kind, slug);
+  });
+}
+
+function emailFor(kind, slug) {
+  return (contactOf(contactsBucket(kind), slug) || {}).email || '';
 }
 
 init();

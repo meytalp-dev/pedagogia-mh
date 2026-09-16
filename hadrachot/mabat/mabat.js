@@ -23,7 +23,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!INSP) { renderNoInspector(); return; }
   initGuideWorkspaceUI();
   await loadData();
+  reportSeen();
 });
+
+/* תיעוד פתיחה (16.9.26) — ראו את אותה פונקציה ב-guide/dashboard.js.
+   בלי await ובתוך try: כשל כאן לא ייראה למפקח.ת ולא יעכב את הדף. */
+function reportSeen() {
+  if (!INSP || !INSP.slug) return;
+  try {
+    TS.api('link.seen', { kind: 'inspector', slug: INSP.slug, name: INSP.name || '' },
+           { cache: 'no' });
+  } catch (e) { /* לא שובר את הדף */ }
+}
 
 async function loadData() {
   if (!TS.getAppsScriptUrl()) { renderNoInspector(); return; }

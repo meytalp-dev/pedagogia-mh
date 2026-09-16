@@ -64,7 +64,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   // space.js / meetings.js מסתירים את הלשוניות שלהם ב-DOMContentLoaded משלהם
   setTimeout(syncQuickLinks, 0);
   await loadData();
+  reportSeen();
 });
+
+/* תיעוד פתיחה (16.9.26) — כדי שהשאלה "מי קיבל את הקישור האישי שלו" תיענה
+   מהנתונים ולא מהזיכרון. נשלח אחרי הטעינה ובלי await: כשל כאן לא ייראה
+   למדריכה ולא יעכב את הדף. רק מי, מתי וכמה פעמים — בלי IP ובלי דפדפן. */
+function reportSeen() {
+  if (!guideSlug) return;
+  try {
+    TS.api('link.seen', { kind: 'guide', slug: guideSlug, name: GUIDE_CFG.name || '' },
+           { cache: 'no' });
+  } catch (e) { /* לא שובר את הדף */ }
+}
 
 function bindTabs() {
   document.querySelectorAll('.tab-btn').forEach(btn => {

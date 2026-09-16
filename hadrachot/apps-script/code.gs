@@ -24,7 +24,7 @@
 // ============================================================
 
 const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts',
-              'guide_files','guide_messages','guide_hours','meetings','meeting_attendance'];
+              'guide_files','guide_messages','guide_hours','meetings','meeting_attendance','link_views'];
 
 const SCHEMA = {
   networks:   ['id','name','color','contactEmail','inviteCode'],
@@ -60,7 +60,11 @@ const SCHEMA = {
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
                        'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt',
                        // markedVia: 'manual' | 'zoom' — סימון שנעשה מתוך דוח המשתתפים של הזום
-                       'markedVia','zoomMinutes']
+                       'markedVia','zoomMinutes'],
+  // מי פתח את הקישור האישי שלו (16.9.26) — התשובה ל"שלחנו לכולם?".
+  // סימון "נשלח" ב-admin-guides נשמר בדפדפן ומעיד רק על לחיצה; זה מעיד על
+  // פתיחה בפועל. אין כאן IP ואין user-agent — רק מי, מתי, וכמה פעמים.
+  link_views:         ['id','kind','slug','name','firstSeenAt','lastSeenAt','views']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -191,7 +195,10 @@ const PUBLIC_ACTIONS = new Set([
   // נוכחות במפגשים — למדריכות ולמורים אין חשבונות. ההרשאה בפנים:
   // meet.* דורשות מפתח מדריכה (k), checkin.* דורשות מפגש פתוח עכשיו + קוד מתחלף
   'meet.state', 'meet.open', 'meet.close', 'meet.code', 'meet.mark',
-  'checkin.roster', 'checkin.submit'
+  'checkin.roster', 'checkin.submit',
+  // תיעוד פתיחת הקישור האישי — נשלח מהדשבורד של המדריכה וממבט המפקח.ת,
+  // ולשניהם אין חשבון. כותב רק לתוך link_views, ורק slug שקיים בסכימה.
+  'link.seen'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -217,7 +224,9 @@ const STRICT_AUTH_ACTIONS = new Set([
   // שיודע את כתובת ה-/exec. חייב להישאר כאן גם אחרי הדלקת AUTH_ENFORCED.
   'verify.mailSend',
   // מפתחות הכניסה של המדריכות לרישום הנוכחות — מי שמחזיק מפתח מסמן נוכחות
-  'meet.guideKeys'
+  'meet.guideKeys',
+  // מי פתח את הקישור האישי ומתי — קריאה לאדמין ארצי בלבד
+  'link.views'
 ]);
 
 function getActiveUserEmail_() {
@@ -585,6 +594,76 @@ function upsertContacts(p, user) {
   return { ok: errors.length === 0, created: created, updated: updated, errors: errors };
 }
 
+// ============================================================
+// פתיחת הקישור האישי (16.9.26)
+// ------------------------------------------------------------
+// עד היום השאלה "שלחנו לכולם את הקישור?" נענתה מהסימונים ב-admin-guides,
+// שנשמרים ב-localStorage של הדפדפן ששלח ומעידים על לחיצה — לא על הגעה.
+// מכאן והלאה הדשבורד של המדריכה ומבט המפקח.ת מדווחים פתיחה, ולכן אפשר
+// לראות מי באמת נכנס. פעולת הכתיבה ציבורית (למדריכה אין חשבון) ולכן היא
+// מקבלת רק kind/slug מוכרים, ולא כותבת שום דבר מהבקשה עצמה.
+// ============================================================
+
+function ensureLinkViewsSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let s = ss.getSheetByName('link_views');
+  if (s) return s;
+  s = ss.insertSheet('link_views');
+  s.appendRow(SCHEMA.link_views);
+  s.getRange(1, 1, 1, SCHEMA.link_views.length).setFontWeight('bold').setBackground('#f5f7fa');
+  s.setFrozenRows(1);
+  return s;
+}
+
+const LINK_KINDS = ['guide', 'inspector'];
+
+function linkSeen(p) {
+  const kind = String(p.kind || '').trim();
+  const slug = String(p.slug || '').trim();
+  if (LINK_KINDS.indexOf(kind) < 0) return { ok: false, error: 'bad_kind' };
+  if (!/^[a-z][a-z0-9_]{0,30}$/.test(slug)) return { ok: false, error: 'bad_slug' };
+
+  ensureLinkViewsSheet_();
+  const id = kind + ':' + slug;
+  const now = new Date().toISOString();
+
+  // מנעול קצר — שתי פתיחות באותה שנייה היו יוצרות שתי שורות לאותו אדם
+  const lock = LockService.getScriptLock();
+  try { lock.waitLock(10000); } catch (e) { return { ok: false, error: 'busy' }; }
+  try {
+    const prev = readAll('link_views').find(r => r.id === id);
+    // השם נשמר פעם אחת בלבד, כדי שהגיליון יהיה קריא בלי להצליב מול guides.js
+    const name = String(p.name || (prev ? prev.name : '') || '').slice(0, 60);
+    if (prev) {
+      updateRowById('link_views', id, {
+        name: name,
+        lastSeenAt: now,
+        views: (Number(prev.views) || 0) + 1
+      });
+    } else {
+      appendRow('link_views', {
+        id: id, kind: kind, slug: slug, name: name,
+        firstSeenAt: now, lastSeenAt: now, views: 1
+      });
+    }
+  } finally {
+    lock.releaseLock();
+  }
+  return { ok: true };
+}
+
+function linkViews() {
+  const rows = readAll('link_views').map(r => ({
+    kind: r.kind || '',
+    slug: r.slug || '',
+    name: r.name || '',
+    firstSeenAt: r.firstSeenAt || '',
+    lastSeenAt: r.lastSeenAt || '',
+    views: Number(r.views) || 0
+  }));
+  return { ok: true, data: rows };
+}
+
 // ---------- ניהול משתמשים (admin בלבד — נאכף ב-requireAuthAndScope) ----------
 
 function listUsers() {
@@ -737,6 +816,49 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
   } catch (e) { /* never break the request on audit failure */ }
 }
 
+// ---- עומס (14.9.26) ----
+// בשעות העומס כ-30% מהבקשות חיכו 32–39 שניות — גם בקשה בלי שום פעולה — ומנהלים
+// קיבלו "השליחה נכשלה (timeout)" ורשימת מורים שלא נטענה. כל בקשה, כולל GET
+// והפולינג של דפי הנוכחות, כתבה שורה ל-audit_log בגיליון, ולכן:
+// (1) קריאות מוצלחות לא נרשמות ביומן — כתיבות, התחברות ושגיאות ממשיכות להירשם;
+// (2) teachers.list נשמר במטמון 2 דקות. כל כתיבה (כל פעולה שאינה קריאה) מחליפה
+//     את מספר הדור, כך שמה שנשמר מופיע מיד ולא אחרי ה-TTL.
+// link.seen כותב, אבל נמצא ברשימה בכוונה: הוא נשלח בכל פתיחת דשבורד, ובלעדיו
+// כל פתיחה הייתה מאפסת את מטמון רשימת המורים (bumpTeachersGen_) וכותבת שורה
+// ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard)$/;
+const TEACHERS_CACHE_TTL_ = 120;
+
+function teachersGen_() {
+  const cache = CacheService.getScriptCache();
+  let gen = cache.get('teachersGen');
+  if (!gen) { gen = String(Date.now()); cache.put('teachersGen', gen, 21600); }
+  return gen;
+}
+
+function bumpTeachersGen_() {
+  try {
+    CacheService.getScriptCache().put('teachersGen', Date.now() + '_' + Math.floor(Math.random() * 1e6), 21600);
+  } catch (e) { /* מטמון לא זמין — הקריאה הבאה פשוט תקרא מהגיליון */ }
+}
+
+function listTeachersCached_(p, user) {
+  let cache, key;
+  try {
+    cache = CacheService.getScriptCache();
+    const q = {};
+    ['school', 'network', 'subject', 'sector'].forEach(k => { if (p[k]) q[k] = p[k]; });
+    // הזהות נכנסת למפתח: בלי משתמש ובלי בית ספר פרטי הקשר ממוסכים
+    key = 'tl|' + teachersGen_() + '|' + (user ? user.email : '') + '|' + JSON.stringify(q);
+    if (key.length > 240) key = 'tl|' + Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, key));
+    const hit = readCacheChunked_(cache, key);
+    if (hit) return hit;
+  } catch (e) { cache = null; }
+  const fresh = listTeachers(p, user);
+  if (cache && fresh && fresh.ok) writeCacheChunked_(cache, key, fresh, TEACHERS_CACHE_TTL_);
+  return fresh;
+}
+
 function handleRequest(params) {
   const action = params.action || '';
   let userEmail = '';
@@ -754,7 +876,7 @@ function handleRequest(params) {
 
       case 'admin.reset':         result = adminReset(params); break;
 
-      case 'teachers.list':       result = listTeachers(params, user); break;
+      case 'teachers.list':       result = listTeachersCached_(params, user); break;
       case 'teacher.get':         result = getTeacher(params.id); break;
       case 'teachers.create':     result = createTeacher(params); break;
       case 'teachers.createMany': result = createTeachersBatch(params); break;
@@ -842,13 +964,23 @@ function handleRequest(params) {
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
+      // פתיחת הקישור האישי (16.9.26)
+      case 'link.seen':           result = linkSeen(params); break;
+      case 'link.views':          result = linkViews(); break;
+
       case 'school.dashboard':    result = withCache_('school.dashboard',   scope, params, () => schoolDashboard(applyScopeParams_(params, scope, 'school'))); break;
       case 'ministry.dashboard':  result = withCache_('ministry.dashboard', scope, params, () => ministryDashboard(params)); break;
       case 'network.dashboard':   result = withCache_('network.dashboard',  scope, params, () => networkDashboard(applyScopeParams_(params, scope, 'network'))); break;
 
       default: result = { ok: false, error: 'unknown_action: ' + action };
     }
-    auditLog_(userEmail, action, 'endpoint', '', result && result.ok ? 'ok' : 'error', '');
+    if (READ_ONLY_RE_.test(action)) {
+      // קריאה מוצלחת לא נרשמת ביומן; קריאה שנכשלה כן
+      if (!(result && result.ok)) auditLog_(userEmail, action, 'endpoint', '', 'error', '');
+    } else {
+      auditLog_(userEmail, action, 'endpoint', '', result && result.ok ? 'ok' : 'error', '');
+      bumpTeachersGen_();   // כל כתיבה מבטלת את מטמון רשימות המורים
+    }
     return jsonOut(result);
   } catch (err) {
     auditLog_(userEmail, action, 'endpoint', '', 'error', err.message);
