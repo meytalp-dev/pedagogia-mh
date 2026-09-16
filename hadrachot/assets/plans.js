@@ -400,3 +400,38 @@ window.TS_nextMeeting = function (plan) {
   // מפגש בשני ימים (שירה) נשאר "הבא" עד שעבר גם המועד השני
   return plan.meetings.find(m => (m.date2 || m.date) >= iso) || null;
 };
+
+/* כל מועדי ההתחלה של מפגש: [{ date, start, part }] — תאריך ISO, שעת התחלה HH:MM,
+   ותווית המועד (תוכנית/בוקר/ערב). משמש את תזכורת המייל שהשרת שולח למיטל בתחילת
+   כל מפגש (code.gs → meetRemindTick) — השרת טוען את הקובץ הזה ולא מחזיק לוח משלו.
+   הפורמטים שבקובץ:
+     · time עם תאריך לכל מועד — "בוקר 22.9 · 14:00–15:30 · ערב 23.9 · 20:00–21:30" (שירה, שרה)
+     · goal עם שעה לכל תוכנית — "70% חיצוני (ג׳ 13.10 בשעה 16:00, …): …" (מוריה)
+     · time בלי תאריך — כל שעת התחלה ביום date: "11:00 / 18:00", "9:00–10:00 · 17:00–18:00" */
+window.TS_meetingSlots = function (m) {
+  if (!m || !m.date) return [];
+  const days = (m.dates && m.dates.length) ? m.dates : [m.date, m.date2].filter(Boolean);
+  const pad = t => (t.length === 4 ? '0' : '') + t;
+  const isoOf = (d, mo) => days.find(x => +x.slice(8, 10) === +d && +x.slice(5, 7) === +mo) || '';
+  const out = [];
+  const add = (date, start, part) => {
+    if (date && start && !out.some(s => s.date === date && s.start === pad(start))) out.push({ date: date, start: pad(start), part: part || '' });
+  };
+  const time = String(m.time || '');
+  const goal = String(m.goal || '');
+  let r;
+  if (/בשעה \d/.test(goal)) {
+    goal.split(' · ').forEach(seg => {
+      const track = seg.split(' (')[0].replace(/^לכל שלוש התוכניות$/, '').trim();
+      const re = /(\d{1,2})\.(\d{1,2}) בשעה (\d{1,2}:\d{2})/g;
+      while ((r = re.exec(seg))) add(isoOf(r[1], r[2]), r[3], track);
+    });
+  } else if (/\d{1,2}\.\d{1,2} · \d{1,2}:\d{2}/.test(time)) {
+    const re = /(בוקר|ערב|אחה"צ)?\s*(\d{1,2})\.(\d{1,2}) · (\d{1,2}:\d{2})/g;
+    while ((r = re.exec(time))) add(isoOf(r[2], r[3]), r[4], r[1]);
+  } else {
+    const re = /(^|[^–\-\d:])(\d{1,2}:\d{2})/g;
+    while ((r = re.exec(time))) add(m.date, r[2], '');
+  }
+  return out.sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+};

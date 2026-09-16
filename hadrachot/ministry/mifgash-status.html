@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>בדיקת מפגש הדרכה · מצפן ההדרכות</title>
+<link rel="stylesheet" href="../assets/fonts-local.css">
+<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260914b">
+<style>
+  [hidden] { display: none !important; }
+  .nk-kpis { display:grid; grid-template-columns:repeat(7, 1fr); gap:12px; margin-bottom:20px; }
+  @media (max-width: 900px) { .nk-kpis { grid-template-columns:repeat(2, 1fr); } }
+  .nk-kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
+  .nk-kpi .l { font-size:12px; color:var(--text-muted); font-weight:600; }
+  .nk-kpi .v { font-size:28px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--primary-dark,#17324D); }
+  .nk-kpi .s { font-size:11.5px; color:var(--text-muted); }
+  .nk-kpi.red { border-color:#E7C0B5; background:#FDF4F1; } .nk-kpi.red .v { color:#a4442f; }
+  .nk-kpi.amber .v { color:#9a6400; }
+
+  .ms-pick { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
+  .ms-pick select { padding:8px 12px; border:1px solid var(--border); border-radius:9px; background:var(--surface); font:inherit; font-size:.86rem; color:var(--text); max-width:100%; }
+  .ms-pick .sp { flex:1; }
+  .ms-pick small { color:var(--text-muted); font-size:12px; }
+  .nk-btn { font-family:inherit; font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:9px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; text-decoration:none; }
+  .nk-btn:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); }
+  .nk-kpis { grid-template-columns:repeat(5, 1fr); }
+  @media (max-width: 900px) { .nk-kpis { grid-template-columns:repeat(2, 1fr); } }
+  .ms-meet { margin-bottom:14px; }
+  .ms-when { display:flex; flex-wrap:wrap; gap:8px; }
+  .ms-when span { background:var(--surface-soft); border:1px solid var(--border); border-radius:999px; padding:4px 12px; font-size:13px; font-variant-numeric:tabular-nums; }
+  .ms-topic { margin-top:8px; font-size:13.5px; color:var(--text-2); line-height:1.7; }
+  .ms-status { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  @media (max-width: 640px) { .ms-status { grid-template-columns:1fr; } }
+  .ms-q { border-radius:14px; padding:14px 16px; border:1px solid var(--border); background:var(--surface); box-shadow:inset 4px 0 0 var(--border); }
+  .ms-q span { display:block; font-size:12px; color:var(--text-muted); font-weight:600; }
+  .ms-q b { display:block; font-size:18px; margin-top:2px; }
+  .ms-q.ok { box-shadow:inset 4px 0 0 #2f8f6b; } .ms-q.ok b { color:#1f7a5c; }
+  .ms-q.warn { box-shadow:inset 4px 0 0 #d19a2a; background:#FFF8EC; } .ms-q.warn b { color:#8a5a00; }
+  .ms-q.bad { box-shadow:inset 4px 0 0 #c56b5c; background:#FDF4F1; } .ms-q.bad b { color:#a4442f; }
+  .ms-q.wait b { color:var(--text-muted); }
+  .ms-grp { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; margin-bottom:10px; }
+  .ms-grp summary { cursor:pointer; font-weight:700; font-size:14px; display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; }
+  .ms-grp summary b { font-variant-numeric:tabular-nums; }
+  .ms-grp summary span { font-weight:400; font-size:12px; color:var(--text-muted); }
+  .ms-grp.ok summary b { color:#1f7a5c; } .ms-grp.warn summary b { color:#8a5a00; } .ms-grp.bad summary b { color:#a4442f; }
+  .ms-grp .mv-people { max-height:none; }
+</style>
+</head>
+<body data-role="ministry">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
+          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
+        </svg>
+        <div class="command-bar-text">
+          <span class="unit">משרד העבודה</span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>בדיקת מפגש</span>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">בדיקת מפגש · נוכחות</div>
+        <h1 id="ms-title">בדיקת מפגש הדרכה</h1>
+        <p class="page-header-sub" id="ms-sub">טוען…</p>
+      </div>
+    </section>
+
+    <div class="ms-pick">
+      <select id="ms-guide" aria-label="מדריך/ה"></select>
+      <select id="ms-meeting" aria-label="מפגש"></select>
+      <span class="sp"></span>
+      <small id="ms-updated"></small>
+      <button type="button" class="nk-btn" id="ms-refresh">רענון</button>
+      <a href="#" class="nk-btn" id="ms-guide-link" hidden>לדשבורד המדריך/ה</a>
+      <a href="nochechut.html" class="nk-btn">הדוח הארצי</a>
+    </div>
+
+    <div id="ms-body"><div class="mv-empty">טוען…</div></div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260914b"></script>
+<script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script src="../assets/guides.js?v=20260916"></script>
+<script src="../assets/plans.js?v=20260916c"></script>
+<script src="../assets/meet-stats.js?v=20260916"></script>
+<script src="mifgash-status.js?v=20260916"></script>
+</body>
+</html>

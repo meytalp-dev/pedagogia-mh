@@ -72,6 +72,8 @@ document.addEventListener('DOMContentLoaded', async () => {
    למדריכה ולא יעכב את הדף. רק מי, מתי וכמה פעמים — בלי IP ובלי דפדפן. */
 function reportSeen() {
   if (!guideSlug) return;
+  // מיטל נכנסת מעמוד בדיקת המפגש — לא פתיחה של המדריכ/ה
+  if (new URLSearchParams(location.search).get('by') === 'admin') return;
   try {
     TS.api('link.seen', { kind: 'guide', slug: guideSlug, name: GUIDE_CFG.name || '' },
            { cache: 'no' });

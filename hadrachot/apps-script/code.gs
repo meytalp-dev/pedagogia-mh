@@ -3537,8 +3537,180 @@ function meetReport(p) {
 
   const meetings = readAll('meetings').filter(inScope).map(m => Object.assign(meetPublic_(m, now), {
     guideSlug: String(m.guideSlug || ''), guideName: m.guideName || '',
+    openedAt: String(toIso_(m.openedAt) || ''),
     counts: counts[m.id] || { present: 0, absent: 0, pending: 0, gaps: 0, zoom: 0 }
   })).sort((a, b) => a.date.localeCompare(b.date));
 
   return { ok: true, data: { today: meetToday_(), meetings: meetings, rows: rows } };
+}
+
+// ============================================================
+// תזכורת במייל למיטל בתחילת כל מפגש הדרכה (16.9.26)
+// ------------------------------------------------------------
+// טריגר זמן כל 5 דקות (meetRemindTick) → לכל מועד שהתחיל ב-15 הדקות האחרונות
+// נשלח מייל אחד, עם קישור לעמוד בדיקת המפגש (ministry/mifgash-status.html)
+// ומצב הרישום ברגע השליחה.
+// לוח המפגשים לא מוחזק כאן: הקוד טוען מהאתר את guides.js ו-plans.js (מקור האמת
+// היחיד) ומשתמש ב-TS_meetingSlots שבו. כך מדריך/ה חדש/ה ב-plans.js נכנס/ת
+// לתזכורות לבד, בלי לגעת בשרת. הטעינה נשמרת במטמון לשעה.
+//
+// הפעלה חד-פעמית: בעורך Apps Script מריצים setupMeetReminders ומאשרים הרשאות
+// (שליפת קבצים מהאתר + טריגרים). בדיקה: meetRemindTest שולח מייל לדוגמה.
+// כיבוי: stopMeetReminders.
+// ============================================================
+
+const REMIND_TO = 'meytalp@bethaarava.ort.org.il';
+const REMIND_SITE = 'https://pedagogiamh.co.il/hadrachot/';
+const REMIND_WINDOW_MIN = 15;     // מועד שהתחיל עד לפני 15 דק׳ עדיין נשלח (הטריגר רץ כל 5)
+const REMIND_EARLY_MIN = 0;       // כמה דקות לפני תחילת המפגש לשלוח
+
+// { slots: [{ slug, mdate, date, start, part, topic, subject }], guides: { slug: { name, subject, insp } } }
+function remindLoad_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('remind_data_v1');
+  if (hit) return JSON.parse(hit);
+  const ts = Date.now();
+  const get = f => {
+    const r = UrlFetchApp.fetch(REMIND_SITE + 'assets/' + f + '?t=' + ts, { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) throw new Error(f + ' HTTP ' + r.getResponseCode());
+    return r.getContentText('UTF-8');
+  };
+  const win = {};
+  // הקבצים כותבים רק ל-window.* — מריצים אותם עם window מקומי
+  new Function('window', get('guides.js') + '\n;\n' + get('plans.js'))(win);
+  const data = { slots: [], guides: {} };
+  Object.keys(win.TS_GUIDES || {}).forEach(k => {
+    const g = win.TS_GUIDES[k];
+    data.guides[k] = { name: g.name || k, subject: g.subject || (g.subjects || []).join(' + '),
+                       insp: ((win.TS_INSPECTORS || {})[g.inspector] || {}).name || '' };
+  });
+  Object.keys(win.TS_PLANS || {}).forEach(slug => {
+    (win.TS_PLANS[slug].meetings || []).forEach(m => {
+      win.TS_meetingSlots(m).forEach(x => data.slots.push({
+        slug: slug, mdate: m.date, date: x.date, start: x.start, part: x.part,
+        topic: m.topic || '', subject: m.subject || ''
+      }));
+    });
+  });
+  const json = JSON.stringify(data);
+  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v1', json, 3600);
+  return data;
+}
+
+// כל המועדים, עם at = דקות לפי שעון ישראל
+function remindSlots_(data) {
+  return data.slots.map(s => Object.assign({ at: remindMinutes_(s.date, s.start) }, s));
+}
+
+// דקות מאז 1970 לפי שעון ישראל — השוואה בלי להתעסק בשעון קיץ
+function remindMinutes_(date, hhmm) {
+  const d = date.split('-').map(Number), t = hhmm.split(':').map(Number);
+  return Math.round(Date.UTC(d[0], d[1] - 1, d[2], t[0], t[1]) / 60000);
+}
+
+function remindNowMinutes_() {
+  const s = Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd HH:mm').split(' ');
+  return remindMinutes_(s[0], s[1]);
+}
+
+function meetRemindTick() {
+  let data;
+  try { data = remindLoad_(); }
+  catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
+  const now = remindNowMinutes_();
+  const due = remindSlots_(data).filter(s =>
+    s.at - REMIND_EARLY_MIN <= now && now - s.at < REMIND_WINDOW_MIN);
+  if (!due.length) return;
+  const props = PropertiesService.getScriptProperties();
+  due.forEach(s => {
+    const key = 'remind_' + s.slug + '_' + s.date + '_' + s.start.replace(':', '');
+    if (props.getProperty(key)) return;
+    props.setProperty(key, String(Date.now()));   // קודם מסמנים — כשל שליחה לא יציף במיילים
+    try { remindSend_(data, s, false); }
+    catch (e) { console.error('meetRemindTick: send failed ' + key + ' ' + e); }
+  });
+  remindCleanup_(props, now);
+}
+
+// מוחק סימוני "נשלח" בני יותר מ-3 ימים
+function remindCleanup_(props, now) {
+  const all = props.getProperties();
+  Object.keys(all).forEach(k => {
+    const m = /^remind_.+_(\d{4}-\d{2}-\d{2})_(\d{2})(\d{2})$/.exec(k);
+    if (m && now - remindMinutes_(m[1], m[2] + ':' + m[3]) > 3 * 24 * 60) props.deleteProperty(k);
+  });
+}
+
+function remindEsc_(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function remindSend_(data, s, isTest) {
+  const g = data.guides[s.slug] || {};
+  const insp = g.insp || '';
+  const subject = s.subject || g.subject || '';
+  const name = g.name || s.slug;
+  const dm = +s.date.slice(8, 10) + '.' + +s.date.slice(5, 7);
+  const link = REMIND_SITE + 'ministry/mifgash-status.html?g=' + encodeURIComponent(s.slug) + '&d=' + s.mdate;
+
+  // מצב הרישום ברגע השליחה (המפגש נרשם תחת mdate גם כשהמועד ביום אחר)
+  const row = meetFind_(meetId_(s.slug, s.mdate));
+  let state;
+  if (!row) state = 'המדריך/ה עוד לא נכנס/ה ללשונית הנוכחות של המפגש הזה.';
+  else {
+    const open = Number(row.openUntil) > Date.now();
+    const rows = readAll('meeting_attendance').filter(r => String(r.meetingId) === String(row.id));
+    const c = { present: 0, absent: 0, pending: 0 };
+    rows.forEach(r => { if (c[r.status] !== undefined) c[r.status]++; });
+    state = (open ? 'הרישום העצמי פתוח עכשיו. ' : 'הרישום העצמי סגור כרגע. ') +
+      'סומנו: ' + c.present + ' נוכחים · ' + c.absent + ' לא נכחו · ' + c.pending + ' נרשמו בעצמם וממתינים לאישור.';
+  }
+
+  const title = (isTest ? '[בדיקה] ' : '') + 'מתחילה עכשיו הדרכה: ' + subject + ' · ' + name + ' · ' + s.start;
+  const lines = [
+    ['מדריך/ה', name],
+    ['מקצוע', subject],
+    ['מועד', dm + ' בשעה ' + s.start + (s.part ? ' · ' + s.part : '')],
+    ['נושא', s.topic],
+    ['מפקח/ת', insp],
+    ['מצב הרישום', state]
+  ].filter(x => x[1]);
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a3a">' +
+    '<p style="margin:0 0 12px">מיטל, מתחיל עכשיו מפגש הדרכה. כדאי לוודא שהרישום מתבצע.</p>' +
+    '<table style="border-collapse:collapse;margin-bottom:16px">' +
+    lines.map(x => '<tr><td style="padding:4px 0 4px 16px;color:#5b6b7b;white-space:nowrap;vertical-align:top">' +
+      remindEsc_(x[0]) + '</td><td style="padding:4px 0">' + remindEsc_(x[1]) + '</td></tr>').join('') +
+    '</table>' +
+    '<p style="margin:0 0 18px"><a href="' + link + '" style="background:#256A8A;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">בדיקת הנוכחות במפגש</a></p>' +
+    '<p style="margin:0;font-size:12px;color:#8a97a6">העמוד מתעדכן כל דקה: האם הרישום נפתח, מי סומן ומי עוד לא. נדרשת התחברות כמנהלת.<br>' +
+    'תזכורת אוטומטית ממצפן ההדרכות · הכיבוי: stopMeetReminders בעורך Apps Script.</p></div>';
+  const text = lines.map(x => x[0] + ': ' + x[1]).join('\n') + '\n\nבדיקת הנוכחות: ' + link;
+  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מצפן ההדרכות' });
+}
+
+// להריץ פעם אחת מהעורך: מאשר הרשאות, מתקין טריגר כל 5 דקות, ושולח מייל בדיקה
+function setupMeetReminders() {
+  stopMeetReminders();
+  ScriptApp.newTrigger('meetRemindTick').timeBased().everyMinutes(5).create();
+  const data = remindLoad_();
+  const now = remindNowMinutes_();
+  const next = remindSlots_(data).filter(s => s.at >= now).sort((a, b) => a.at - b.at).slice(0, 5);
+  console.log('הטריגר הותקן. המועדים הקרובים: ' +
+    next.map(s => s.slug + ' ' + s.date + ' ' + s.start).join(' | '));
+  meetRemindTest();
+}
+
+function stopMeetReminders() {
+  ScriptApp.getProjectTriggers()
+    .filter(t => t.getHandlerFunction() === 'meetRemindTick')
+    .forEach(t => ScriptApp.deleteTrigger(t));
+}
+
+// מייל בדיקה על המועד הקרוב ביותר — לא מסמן "נשלח"
+function meetRemindTest() {
+  const data = remindLoad_();
+  const now = remindNowMinutes_();
+  const s = remindSlots_(data).filter(x => x.at >= now).sort((a, b) => a.at - b.at)[0];
+  if (s) remindSend_(data, s, true);
 }
