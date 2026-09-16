@@ -199,7 +199,7 @@
   // ---------- בחירת מפגש ----------
   function planMeetings() {
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
-      date: m.date, date2: m.date2 || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
+      date: m.date, date2: m.date2 || '', dates: m.dates || null, topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
     }));
   }
 
@@ -211,6 +211,9 @@
     const [ty, tm, td] = S.today.split('-').map(Number);
     return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(ty, tm - 1, td)) / 86400000);
   }
+  // כל ימי המפגש: dates (מוריה — עד 3 ימים בחודש), או date + date2
+  function daysOf(m) { return m ? (m.dates && m.dates.length ? m.dates : [m.date, m.date2].filter(Boolean)) : []; }
+  function isDayOf(m, d) { return daysOf(m).indexOf(d) !== -1; }
   function nextMeeting() {
     return allMeetings().find(m => m.date >= S.today || (m.date2 && m.date2 >= S.today)) || null;
   }
@@ -219,9 +222,9 @@
     if (!box) return;
     const m = nextMeeting();
     if (!m) { box.hidden = true; return; }
-    const isToday = m.date === S.today || m.date2 === S.today;
+    const isToday = isDayOf(m, S.today);
     // מפגש בשני ימים: הספירה לאחור עד המועד הקרוב שעוד לא עבר
-    const upcoming = [m.date, m.date2].filter(d => d && d >= S.today).sort()[0];
+    const upcoming = daysOf(m).filter(d => d >= S.today).sort()[0];
     const n = daysUntil(upcoming);
     const when = isToday ? 'היום' : n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים';
     const zoomUrl = GUIDE_CFG && /^https:\/\//.test(GUIDE_CFG.zoom || '') ? GUIDE_CFG.zoom : '';
@@ -255,15 +258,15 @@
   }
   function pickDefault() {
     const list = allMeetings();
-    sel = list.find(m => m.date === S.today || m.date2 === S.today)
+    sel = list.find(m => isDayOf(m, S.today))
       || list.filter(m => m.date < S.today).pop()
       || list[0]
       || null;
   }
   // מפגש בשני ימים (שירה: בוקר ביום א׳, ערב ביום ד׳) — הרישום העצמי נפתח בכל אחד מהם,
   // והנוכחות נרשמת תחת המפגש (date). בלי date2 זה פשוט היום של המפגש.
-  function isLiveDay() { return !!sel && (sel.date === S.today || sel.date2 === S.today); }
-  function sessionDates() { return sel ? [sel.date, sel.date2].filter(Boolean).join(',') : ''; }
+  function isLiveDay() { return !!sel && isDayOf(sel, S.today); }
+  function sessionDates() { return daysOf(sel).join(','); }
   function serverMeeting(date) { return S.meetings.find(m => m.date === date) || null; }
 
   // ---------- טעינה ----------
@@ -346,7 +349,7 @@
       const d = dateIn.value;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || d > S.today) { TS.toast('בוחרים תאריך של היום או מפגש שכבר התקיים'); return; }
       const topic = document.getElementById('meet-adhoc-topic').value.trim();
-      const existing = allMeetings().find(m => m.date === d || m.date2 === d);
+      const existing = allMeetings().find(m => isDayOf(m, d));
       if (existing) { selectMeeting(existing); }
       else {
         const m = { date: d, topic: topic, source: 'adhoc', label: labelOf(d), time: '' };
@@ -380,7 +383,7 @@
     const counts = d => { const m = serverMeeting(d); return m ? m.counts : null; };
     selEl.innerHTML = list.map(m => {
       const c = counts(m.date);
-      const tag = (m.date === S.today || m.date2 === S.today) ? ' · היום'
+      const tag = isDayOf(m, S.today) ? ' · היום'
         : m.date > S.today ? ' · עתידי'
         : (c && (c.present + c.absent) ? ' · סומנו ' + (c.present + c.absent) : '');
       const topic = m.topic ? ' — ' + (m.topic.length > 42 ? m.topic.slice(0, 42) + '…' : m.topic) : '';
