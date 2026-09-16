@@ -71,13 +71,13 @@
     if ((heldN || g.hoursLoaded) && g.persons.length) {
       const bySchool = {};
       g.persons.forEach(p => {
-        const s = bySchool[p.schoolName] || (bySchool[p.schoolName] = { name: p.schoolName, n: 0, present: 0, indT: 0 });
-        s.n++; s.present += p.present; if (p.individual) s.indT++;
+        const s = bySchool[p.schoolName] || (bySchool[p.schoolName] = { name: p.schoolName, n: 0, present: 0, held: 0, indT: 0 });
+        s.n++; s.present += p.present; s.held += p.held; if (p.individual) s.indT++;
       });
       const indOf = {};
       (g.schools || []).forEach(s => { indOf[s.name] = s.individual; });
       const list = Object.values(bySchool).map(s => Object.assign(s, {
-        rate: heldN ? Math.round(s.present / (s.n * heldN) * 100) : null,
+        rate: s.held ? Math.round(s.present / s.held * 100) : null,
         individual: indOf[s.name] || 0
       })).sort((a, b) => heldN ? (a.rate - b.rate) : (a.individual - b.individual) || a.name.localeCompare(b.name, 'he'));
       schoolBlock = `

@@ -77,6 +77,8 @@
       const myMeetings = meetings.filter(m => m.guideSlug === g.slug);
       const held = myMeetings.filter(m => m.date <= today && (m.counts.present + m.counts.absent) > 0);
       const heldIds = new Set(held.map(m => m.id));
+      // מדריכה בשני מקצועות (רבקה): מפגש של מקצוע אחד לא נספר למורי המקצוע השני
+      const subjOf = m => (window.TS_meetingSubject ? window.TS_meetingSubject(g.slug, m.date) : '');
 
       // משתתפים: קיבוץ לפי שם + בית ספר
       const groups = {};
@@ -90,12 +92,13 @@
             key: g.slug + ':' + key, guideSlug: g.slug, guideName: g.name,
             name: t.name || '', schoolName: t.schoolName || '', school: t.school || '',
             network: String(t.network || '').replace(/^net_/, ''), sector: t.sector || 'kelali',
-            subject: t.subject, ids: [], present: 0, absent: 0, pending: 0, zoom: 0,
+            subject: t.subject, subjects: [], ids: [], present: 0, absent: 0, pending: 0, zoom: 0,
             attended: [], missed: [], individual: 0, individualHours: 0, individualDates: []
           };
           persons.push(p);
         }
         p.ids.push(String(t.id));
+        if (t.subject && p.subjects.indexOf(t.subject) < 0) p.subjects.push(t.subject);
       });
       const personById = {};
       persons.forEach(p => p.ids.forEach(id => { personById[id] = p; }));
@@ -113,9 +116,10 @@
         // אותו אדם עם שתי שורות (בגרות+גמר) שסומן פעמיים באותו מפגש — נספר פעם אחת
         p.attended = Array.from(new Set(p.attended));
         p.present = p.attended.length;
-        p.held = held.length;
-        p.missed = held.filter(m => p.attended.indexOf(m.id) < 0).map(m => m.date);
-        p.rate = held.length ? Math.round(p.present / held.length * 100) : null;
+        const mine = held.filter(m => { const s = subjOf(m); return !s || p.subjects.indexOf(s) >= 0; });
+        p.held = mine.length;
+        p.missed = mine.filter(m => p.attended.indexOf(m.id) < 0).map(m => m.date);
+        p.rate = mine.length ? Math.round(p.present / mine.length * 100) : null;
       });
       // ---- הדרכה פרטנית ----
       const byNameSchool = {}, byName = {};
@@ -163,6 +167,7 @@
       const next = planMeetings.find(pm => (pm.date2 || pm.date) >= today) || null;
 
       const presentSum = persons.reduce((s, p) => s + p.present, 0);
+      const heldSum = persons.reduce((s, p) => s + p.held, 0);
       const last = held.length ? held[held.length - 1] : null;
       Object.assign(g, {
         persons: persons,
@@ -176,7 +181,7 @@
         rosterN: persons.length,
         presentSum: presentSum,
         outsidePresent: outside,
-        rate: (held.length && persons.length) ? Math.round(presentSum / (held.length * persons.length) * 100) : null,
+        rate: heldSum ? Math.round(presentSum / heldSum * 100) : null,
         // "לא השתתפו כלל" — לא במפגש ולא בהדרכה פרטנית
         never: held.length ? persons.filter(p => !p.participated) : [],
         hoursLoaded: hoursLoaded,

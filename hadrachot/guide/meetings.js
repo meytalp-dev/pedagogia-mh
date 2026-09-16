@@ -199,7 +199,7 @@
   // ---------- בחירת מפגש ----------
   function planMeetings() {
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
-      date: m.date, date2: m.date2 || '', dates: m.dates || null, topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
+      date: m.date, date2: m.date2 || '', dates: m.dates || null, subject: m.subject || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
     }));
   }
 
@@ -441,7 +441,9 @@
   // ---------- רשימת המשתתפים ----------
   // אותו מורה בבגרות ובגמר הוא שתי שורות במערכת — במפגש הוא אדם אחד.
   function entries() {
-    const teachers = (typeof myTeachers === 'function') ? myTeachers() : [];
+    const all = (typeof myTeachers === 'function') ? myTeachers() : [];
+    // מפגש של מקצוע אחד אצל מדריכה בשני מקצועות (רבקה) — רק מורי אותו מקצוע
+    const teachers = sel && sel.subject ? all.filter(t => t.subject === sel.subject) : all;
     const groups = {};
     const list = [];
     teachers.forEach(t => {
