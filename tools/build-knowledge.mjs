@@ -305,6 +305,33 @@ function buildPinned(files) {
     }
   }
 
+  /* לוח הגאנט: כל התאריכים (חגים וחופשות, השתלמויות, מפגשים, בחינות) יושבים
+     במערך EVENTS ב-JS ומרונדרים בדפדפן — בלי הנעיצה הזו עוגן ענתה "אין לי את
+     לוח החופשות" על שאלה כמו "מתי חופשת סוכות". */
+  if (files.includes("gantt.html")) {
+    const src = readFileSync(join(ROOT, "gantt.html"), "utf8");
+    const T = evalLiteral(src, /const\s+TRACKS\s*=\s*(\{[\s\S]*?\n\});/, "TRACKS בעמוד הגאנט");
+    const E = evalLiteral(src, /const\s+EVENTS\s*=\s*(\[[\s\S]*?\n\]);/, "EVENTS בעמוד הגאנט");
+    if (T && E) {
+      const fmt = (d) => { const [y, m, day] = d.split("-"); return `${+day}.${+m}.${y}`; };
+      const out = [
+        "כל תאריכי לוח השנה תשפ״ז של מינהל הכשרה מקצועית (משרד העבודה), לפי מסלול: חגים וחופשות, השתלמויות, מפגשים ומועדי בחינות.",
+        "בטווח תאריכים (א–ב) החופשה/האירוע נמשכים מהתאריך הראשון עד האחרון כולל. תאריכים שמסומנים \"מועד משוער\" אינם סופיים.",
+      ];
+      for (const [key, tr] of Object.entries(T)) {
+        const evs = E.filter((e) => e.t === key);
+        if (!evs.length) continue;
+        out.push(`## ${tr.name}${tr.sub ? " (" + tr.sub + ")" : ""}${tr.aud ? " — מיועד ל: " + tr.aud : ""}`);
+        for (const e of evs) {
+          const when = e.d2 ? `${fmt(e.d)}–${fmt(e.d2)}` : fmt(e.d);
+          const extra = [e.s, e.a ? "מיועד ל: " + e.a : ""].filter(Boolean).join(" · ");
+          out.push(`  ${when}: ${e.n}${extra ? " — " + extra : ""}`);
+        }
+      }
+      add("gantt.html", out.join("\n"));
+    }
+  }
+
   const dataPath = join(ROOT, "ogdan-data.js");
   if (existsSync(dataPath) && files.includes("ogdan-shaot.html")) {
     add("ogdan-shaot.html", ogdanMegamot(readFileSync(dataPath, "utf8")));
@@ -333,6 +360,12 @@ for (const f of files) {
   const html = readFileSync(join(ROOT, f), "utf8");
   const page = extractPage(html, `${SITE}/${f}`);
   if (pinned.has(f)) page.pinned = pinned.get(f);
+  /* עוגן מדרגת עמודים לפי מילים בכותרת ובתיאור. "לוח גאנט צוותים" לא מכיל
+     אף מילה ששואלים בה על חופשות, והעמוד נפל למקום 43 בשאלה על חופשת סוכות. */
+  if (f === "gantt.html") {
+    page.title = "לוח השנה תשפ״ז — תאריכים של חגים וחופשות, השתלמויות ומפגשים (לוח גאנט צוותים)";
+    page.description = "תאריכי חופשת החגים בשנת הלימודים תשפ״ז: ראש השנה, יום כיפור, חופשת סוכות, חנוכה, פורים, חופשת פסח, שבועות, רמדאן ועיד, ימי זיכרון, סיום שנת הלימודים ומועדי בחינות הבגרות. " + page.description;
+  }
   pages.push(page);
 }
 // עמוד הכלים (רשימת כל הכלים הדיגיטליים); עמודי הכלים עצמם הם אפליקציות — אין בהם טקסט
