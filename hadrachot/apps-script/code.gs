@@ -3557,17 +3557,21 @@ function meetReport(p) {
 // הפעלה חד-פעמית: בעורך Apps Script מריצים setupMeetReminders ומאשרים הרשאות
 // (שליפת קבצים מהאתר + טריגרים). בדיקה: meetRemindTest שולח מייל לדוגמה.
 // כיבוי: stopMeetReminders.
+// סיכום נוכחות (16.9.26): שעתיים אחרי המועד האחרון של כל יום מפגש נשלח מייל שני —
+// כמה נוכחים מתוך הקבוצה, מי ממתין לאישור, ואזהרה אם לא הוזנה נוכחות. בדיקה: meetSummaryTest.
 // ============================================================
 
 const REMIND_TO = 'meytalp@bethaarava.ort.org.il';
 const REMIND_SITE = 'https://pedagogiamh.co.il/hadrachot/';
 const REMIND_WINDOW_MIN = 15;     // מועד שהתחיל עד לפני 15 דק׳ עדיין נשלח (הטריגר רץ כל 5)
 const REMIND_EARLY_MIN = 0;       // כמה דקות לפני תחילת המפגש לשלוח
+// מייל סיכום נוכחות: שעתיים אחרי המועד האחרון של אותו יום (לכל מפגש בנפרד)
+const REMIND_SUMMARY_AFTER_MIN = 120;
 
 // { slots: [{ slug, mdate, date, start, part, topic, subject }], guides: { slug: { name, subject, insp } } }
 function remindLoad_() {
   const cache = CacheService.getScriptCache();
-  const hit = cache.get('remind_data_v1');
+  const hit = cache.get('remind_data_v2');
   if (hit) return JSON.parse(hit);
   const ts = Date.now();
   const get = f => {
@@ -3577,8 +3581,8 @@ function remindLoad_() {
   };
   const win = {};
   // הקבצים כותבים רק ל-window.* — מריצים אותם עם window מקומי
-  new Function('window', get('guides.js') + '\n;\n' + get('plans.js'))(win);
-  const data = { slots: [], guides: {} };
+  new Function('window', get('guides.js') + '\n;\n' + get('plans.js') + '\n;\n' + get('meet-stats.js'))(win);
+  const data = { slots: [], guides: {}, roster: {} };
   Object.keys(win.TS_GUIDES || {}).forEach(k => {
     const g = win.TS_GUIDES[k];
     data.guides[k] = { name: g.name || k, subject: g.subject || (g.subjects || []).join(' + '),
@@ -3592,8 +3596,27 @@ function remindLoad_() {
       }));
     });
   });
+  // גודל הקבוצה לכל מדריכ/ה, ולכל מקצוע אצל מדריכ/ה בכמה מקצועות — אדם אחד לשם+בית ספר
+  try {
+    const teachers = readAll('teachers');
+    const norm = x => String(x || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    Object.keys(win.TS_PLANS || {}).forEach(slug => {
+      const g = Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug]);
+      if (!g.name) return;
+      const seen = {};
+      teachers.forEach(t => {
+        if (!win.TS_guideHasTeacher(g, t)) return;
+        const k = norm(t.name) + '|' + norm(t.schoolName);
+        [slug, slug + '|' + t.subject].forEach(key => {
+          const set = seen[key] || (seen[key] = {});
+          set[k] = 1;
+        });
+      });
+      Object.keys(seen).forEach(key => { data.roster[key] = Object.keys(seen[key]).length; });
+    });
+  } catch (e) { console.error('remindLoad_: roster ' + e); }
   const json = JSON.stringify(data);
-  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v1', json, 3600);
+  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v2', json, 3600);
   return data;
 }
 
@@ -3618,10 +3641,19 @@ function meetRemindTick() {
   try { data = remindLoad_(); }
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
   const now = remindNowMinutes_();
-  const due = remindSlots_(data).filter(s =>
+  const slots = remindSlots_(data);
+  const due = slots.filter(s =>
     s.at - REMIND_EARLY_MIN <= now && now - s.at < REMIND_WINDOW_MIN);
-  if (!due.length) return;
+  const sums = remindSummaries_(slots).filter(x => x.at <= now && now - x.at < REMIND_WINDOW_MIN);
+  if (!due.length && !sums.length) return;
   const props = PropertiesService.getScriptProperties();
+  sums.forEach(x => {
+    const key = 'remind_sum_' + x.slug + '_' + x.date + '_' + x.last.replace(':', '');
+    if (props.getProperty(key)) return;
+    props.setProperty(key, String(Date.now()));
+    try { remindSendSummary_(data, x, false); }
+    catch (e) { console.error('meetRemindTick: summary failed ' + key + ' ' + e); }
+  });
   due.forEach(s => {
     const key = 'remind_' + s.slug + '_' + s.date + '_' + s.start.replace(':', '');
     if (props.getProperty(key)) return;
@@ -3687,6 +3719,92 @@ function remindSend_(data, s, isTest) {
     'תזכורת אוטומטית ממצפן ההדרכות · הכיבוי: stopMeetReminders בעורך Apps Script.</p></div>';
   const text = lines.map(x => x[0] + ': ' + x[1]).join('\n') + '\n\nבדיקת הנוכחות: ' + link;
   MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מצפן ההדרכות' });
+}
+
+// יום מפגש = כל המועדים של מפגש אחד באותו תאריך. הסיכום יוצא REMIND_SUMMARY_AFTER_MIN
+// אחרי המועד האחרון שלו, ומסכם את המפגש כולו עד אותו רגע (שני ימים = מצטבר).
+function remindSummaries_(slots) {
+  const byDay = {};
+  slots.forEach(s => {
+    const k = s.slug + '|' + s.mdate + '|' + s.date;
+    const d = byDay[k] || (byDay[k] = { slug: s.slug, mdate: s.mdate, date: s.date, topic: s.topic, subject: s.subject, last: s.start, lastAt: s.at });
+    if (s.at > d.lastAt) { d.lastAt = s.at; d.last = s.start; }
+  });
+  const days = Object.keys(byDay).map(k => byDay[k]);
+  days.forEach(d => {
+    d.at = d.lastAt + REMIND_SUMMARY_AFTER_MIN;
+    d.later = days.filter(o => o.slug === d.slug && o.mdate === d.mdate && o.date > d.date).map(o => o.date).sort();
+  });
+  return days;
+}
+
+function remindSendSummary_(data, x, isTest) {
+  const g = data.guides[x.slug] || {};
+  const name = g.name || x.slug;
+  const subject = x.subject || g.subject || '';
+  const dm = d => +d.slice(8, 10) + '.' + +d.slice(5, 7);
+  const link = REMIND_SITE + 'ministry/mifgash-status.html?g=' + encodeURIComponent(x.slug) + '&d=' + x.mdate;
+  const total = data.roster[x.subject ? x.slug + '|' + x.subject : x.slug] || 0;
+
+  const row = meetFind_(meetId_(x.slug, x.mdate));
+  const rows = row ? readAll('meeting_attendance').filter(r => String(r.meetingId) === String(row.id)) : [];
+  const by = { present: [], absent: [], pending: [] };
+  rows.forEach(r => { if (by[r.status]) by[r.status].push(r); });
+  const gaps = rows.filter(r => r.selfCheckinAt && r.guideStatus === 'absent').length;
+  const marked = by.present.length + by.absent.length;
+  const pct = total ? Math.round(by.present.length / total * 100) : null;
+
+  const headline = marked
+    ? 'נוכחים: ' + by.present.length + (total ? ' מתוך ' + total + ' (' + pct + '%)' : '')
+    : (by.pending.length ? 'המדריך/ה לא אישר/ה נוכחות — ' + by.pending.length + ' נרשמו בעצמם' : 'לא הוזנה נוכחות');
+  const title = (isTest ? '[בדיקה] ' : '') + 'סיכום נוכחות: ' + subject + ' · ' + name + ' · ' + dm(x.date) + ' — ' + headline;
+
+  const facts = [
+    ['מדריך/ה', name],
+    ['מקצוע', subject],
+    ['מפגש', dm(x.mdate) + (x.date !== x.mdate ? ' (מועד נוסף ' + dm(x.date) + ')' : '') + (x.topic ? ' · ' + x.topic : '')],
+    ['נוכחים', by.present.length + (total ? ' מתוך ' + total + ' מורים בקבוצה · ' + pct + '%' : '')],
+    ['לא נכחו', String(by.absent.length)],
+    ['נרשמו בעצמם וממתינים לאישור', String(by.pending.length)],
+    ['פערים', gaps ? gaps + ' (נרשמו בעצמם וסומנו "לא נכח")' : ''],
+    ['הערה', x.later.length ? 'זה סיכום ביניים — למפגש יש עוד מועד ב-' + x.later.map(dm).join(', ') + '.' : '']
+  ].filter(f => f[1]);
+  const warn = marked ? '' : (row
+    ? 'המדריך/ה נכנס/ה למפגש אבל עוד לא סימן/ה נוכחות.'
+    : 'המדריך/ה לא נכנס/ה ללשונית הנוכחות של המפגש הזה.');
+
+  const names = (arr, max) => {
+    const sorted = arr.slice().sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') ||
+      String(a.teacherName).localeCompare(String(b.teacherName), 'he'));
+    const shown = sorted.slice(0, max).map(r => remindEsc_(r.teacherName) + ' <span style="color:#8a97a6">· ' + remindEsc_(r.schoolName) + '</span>');
+    return shown.join('<br>') + (sorted.length > max ? '<br><span style="color:#8a97a6">ועוד ' + (sorted.length - max) + '…</span>' : '');
+  };
+  const block = (t, arr) => arr.length
+    ? '<p style="margin:14px 0 4px;font-weight:bold">' + remindEsc_(t) + ' (' + arr.length + ')</p><div style="font-size:13px;line-height:1.7">' + names(arr, 80) + '</div>'
+    : '';
+
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a3a">' +
+    '<p style="margin:0 0 6px;font-size:20px;font-weight:bold;color:' + (marked ? '#1f7a5c' : '#a4442f') + '">' + remindEsc_(headline) + '</p>' +
+    (warn ? '<p style="margin:0 0 12px;padding:8px 12px;background:#FDF4F1;border-radius:8px;color:#8f2f1c">' + remindEsc_(warn) + '</p>' : '') +
+    '<table style="border-collapse:collapse;margin:8px 0 14px">' +
+    facts.map(f => '<tr><td style="padding:3px 0 3px 16px;color:#5b6b7b;white-space:nowrap;vertical-align:top">' +
+      remindEsc_(f[0]) + '</td><td style="padding:3px 0">' + remindEsc_(f[1]) + '</td></tr>').join('') +
+    '</table>' +
+    '<p style="margin:0 0 6px"><a href="' + link + '" style="background:#256A8A;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">לפירוט המלא — כולל מי לא סומן</a></p>' +
+    block('נוכחים', by.present) + block('ממתינים לאישור המדריך/ה', by.pending) + block('סומנו "לא נכח/ה"', by.absent) +
+    '<p style="margin:18px 0 0;font-size:12px;color:#8a97a6">סיכום אוטומטי ממצפן ההדרכות, שעתיים אחרי המועד האחרון של היום.</p></div>';
+  const text = headline + '\n' + (warn ? warn + '\n' : '') + '\n' +
+    facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nפירוט: ' + link;
+  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מצפן ההדרכות' });
+}
+
+// מייל סיכום לדוגמה — על יום המפגש האחרון שכבר עבר (לא מסמן "נשלח")
+function meetSummaryTest() {
+  const data = remindLoad_();
+  const now = remindNowMinutes_();
+  const x = remindSummaries_(remindSlots_(data)).filter(d => d.lastAt <= now).sort((a, b) => b.lastAt - a.lastAt)[0];
+  if (x) remindSendSummary_(data, x, true);
 }
 
 // להריץ פעם אחת מהעורך: מאשר הרשאות, מתקין טריגר כל 5 דקות, ושולח מייל בדיקה
