@@ -3042,10 +3042,10 @@ function guideHoursDelete(p) {
 // מי שיודע רק את ה-slug (הוא מופיע בכתובת עמוד הקבוצה) לא יכול לסמן נוכחות.
 
 const MEET_TZ = 'Asia/Jerusalem';
-const MEET_CODE_STEP_SEC = 60;        // הקוד מתחלף כל דקה
-// הקוד על המסך מתחלף כל דקה, אבל כל קוד שהוצג מתקבל 5 דקות (החלטת מיטל
-// 14.9.26 — זמן להיכנס לקישור, למצוא את השם ולהקליד). צילום ישן מ-5 דק׳ ומעלה נדחה.
-const MEET_CODE_GRACE_STEPS = 4;
+const MEET_CODE_STEP_SEC = 300;       // הקוד על המסך מתחלף כל 5 דקות (החלטת מיטל 17.9.26)
+// גם הקוד הקודם מתקבל — מי שהתחיל להקליד רגע לפני ההחלפה לא נדחה.
+// קוד שהוצג לאחרונה לפני 5 דקות ומעלה נדחה.
+const MEET_CODE_GRACE_STEPS = 1;
 const MEET_OPEN_DEFAULT_MIN = 90;
 const MEET_OPEN_MAX_MIN = 180;
 const MEET_FAIL_PER_PERSON = 6;       // ניסיונות קוד שגויים לאדם לפני נעילה
@@ -3279,7 +3279,7 @@ function meetClose(p) {
 }
 
 // הקוד הנוכחי ושני הבאים, עם גבולות הזמן — המסך של המדריכה מחליף קוד לבד
-// לפי השעון, בלי לפנות לשרת כל דקה. serverNow מאפשר לתקן סטיית שעון.
+// לפי השעון, בלי לפנות לשרת בכל החלפה. serverNow מאפשר לתקן סטיית שעון.
 function meetCodes_(meetingId, now) {
   const step = meetStep_(now);
   const codes = [];

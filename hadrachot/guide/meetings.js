@@ -3,7 +3,7 @@
    -----------------------------------------------------------
    המפגשים בזום. המדריכ/ה מסמנ/ת נוכחות מתוך רשימת הקבוצה — זו הרשימה
    הקובעת. גיבוי: בזמן המפגש פותחים "רישום עצמי", מקרינים קוד בן 4 ספרות
-   שמתחלף כל דקה (כל קוד תקף 5 דקות), והמורים נרשמים בעמוד mifgash/?g=<slug>. רישום עצמי מופיע
+   שמתחלף כל 5 דקות (גם הקוד הקודם מתקבל), והמורים נרשמים בעמוד mifgash/?g=<slug>. רישום עצמי מופיע
    כאן כ"ממתין לאישור" ולא נספר עד שמאשרים.
 
    הרשאה: מפתח k בקישור האישי (נוצר ב-admin-guides.html). נשמר במכשיר,
@@ -1007,7 +1007,7 @@
       <section class="meet-card meet-live closed">
         <div class="ml-tx">
           <h3>${ICON.screen}<span>רישום עצמי למשתתפים (גיבוי)</span></h3>
-          <p>פותחים בתחילת המפגש. על המסך יוקרן קוד שמתחלף כל דקה, וכל קוד תקף 5 דקות. המורים נרשמים איתו מהטלפון או מהמחשב. מי שלא נמצא במפגש לא יכול לראות את הקוד. אחרי שסוגרים את הרישום, או כשהזמן נגמר, אי אפשר יותר להירשם.</p>
+          <p>פותחים בתחילת המפגש. על המסך יוקרן קוד שמתחלף כל 5 דקות. המורים נרשמים איתו מהטלפון או מהמחשב. מי שלא נמצא במפגש לא יכול לראות את הקוד. אחרי שסוגרים את הרישום, או כשהזמן נגמר, אי אפשר יותר להירשם.</p>
         </div>
         <div class="ml-open">
           <label><span>פתוח למשך</span>
@@ -1031,7 +1031,7 @@
         </div>
         <div class="ml-tx">
           <h3><span class="live-dot"></span><span>הרישום העצמי פתוח עד ${esc(hhmm(sm.openUntil))}</span></h3>
-          <p>משתפים מסך עם הקוד, ומדביקים בצ'אט של הזום את הקישור. הקוד מתחלף כל דקה, וכל קוד תקף 5 דקות — יש זמן להקליד.</p>
+          <p>משתפים מסך עם הקוד, ומדביקים בצ'אט של הזום את הקישור. הקוד מתחלף כל 5 דקות, וגם מי שהקליד רגע לפני ההחלפה נקלט.</p>
           <div class="ml-url" dir="ltr">${esc(mifgashUrl())}</div>
           <div class="gl-actions">
             <button type="button" class="gl-btn" id="meet-copy">${ICON.copy}<span>העתקת הודעה לצ'אט</span></button>
@@ -1094,7 +1094,7 @@
   }
   function applyCodes(d) {
     if (!d || !d.codes) return;
-    live = { codes: d.codes, offset: (d.serverNow || Date.now()) - Date.now(), openUntil: d.openUntil, stepSec: d.stepSec || 60 };
+    live = { codes: d.codes, offset: (d.serverNow || Date.now()) - Date.now(), openUntil: d.openUntil, stepSec: d.stepSec || 300 };
     clearInterval(tickTimer);
     tickTimer = setInterval(tick, 1000);
     clearTimeout(codeTimer);
@@ -1128,7 +1128,7 @@
       const bar = document.getElementById(b);
       if (bar) bar.style.width = Math.round(frac * 100) + '%';
       const cnt = document.getElementById(c);
-      if (cnt) cnt.textContent = cur ? 'מתחלף בעוד ' + left + ' שנ׳' : 'טוען קוד…';
+      if (cnt) cnt.textContent = cur ? 'מתחלף בעוד ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0') : 'טוען קוד…';
     });
   }
 
