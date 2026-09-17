@@ -3640,6 +3640,8 @@ function meetRemindTick() {
   let data;
   try { data = remindLoad_(); }
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
+  try { monthlyTick_(data); }
+  catch (e) { console.error('meetRemindTick: monthly failed ' + e); }
   const now = remindNowMinutes_();
   const slots = remindSlots_(data);
   const due = slots.filter(s =>
@@ -3831,4 +3833,429 @@ function meetRemindTest() {
   const now = remindNowMinutes_();
   const s = remindSlots_(data).filter(x => x.at >= now).sort((a, b) => a.at - b.at)[0];
   if (s) remindSend_(data, s, true);
+}
+
+// ============================================================
+// דוח נוכחות חודשי במייל — מנהלים, מפקחים ומבט כולל (17.9.26)
+// ------------------------------------------------------------
+// ב-1 לכל חודש ב-08:00 (בדיקה בתוך meetRemindTick — אין טריגר נוסף) נשלח סיכום
+// של החודש שהסתיים:
+//   · לכל מנהל/ת — מייל אחד לכל המקצועות: מי ממורי בית הספר השתתף/ה במפגש הדרכה
+//     החודש ומי לא. בלי תאריכים ושעות.
+//   · לכל מפקח/ת (פריסת הפיקוח — _data/inspector-map-2027.json באתר) — בתי הספר שלו/ה.
+//   · מבט כולל (MONTHLY_RECIPIENTS.overview) + העתק ויומן שליחה למיטל.
+// מפגש שהמועד השני שלו נופל בחודש הבא — השליחה נדחית ליום שאחרי המועד האחרון.
+//
+// החישוב = TS_meetStats מ-meet-stats.js (אותם כללים כמו בדשבורדים): רק מפגש שהמדריך/ה
+// סימנ/ה בו נוכחות נספר; pending לא נחשב נוכחות; הדרכה פרטנית = השתתפות.
+// מפגש מהתוכנית שעבר בלי סימון — המנהל/ת מקבל/ת "הנוכחות טרם הוזנה", לא "לא השתתף".
+//
+// הנמענים (מיילים אישיים) לא נמצאים כאן — הרפו ציבורי. הם בקובץ נפרד בפרויקט
+// Apps Script בלבד: נמענים.js → const MONTHLY_RECIPIENTS (נבנה מקומית
+// ב-Downloads\push-tizkorot\build-recipients.py, לא נכנס ל-git).
+//
+// מצב: תצוגה מקדימה כברירת מחדל — הכל נשלח למיטל בלבד (כ-10 מיילים).
+// אחרי אישור: להריץ בעורך monthlyEnableLive. חזרה: monthlyDisableLive.
+// תצוגה מקדימה עכשיו: monthlyPreview (החודש הנוכחי עד היום) / monthlyPreviewLastMonth.
+// ============================================================
+
+const MONTHLY_SEND_HOUR = 8;
+const MONTHLY_HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי',
+  'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+const MONTHLY_SIGN = 'יחידת הפיקוח על הדרכות מורים · משרד העבודה';
+
+function monthlyIsLive_() {
+  return PropertiesService.getScriptProperties().getProperty('MONTHLY_LIVE') === '1';
+}
+
+function monthlyEnableLive() {
+  PropertiesService.getScriptProperties().setProperty('MONTHLY_LIVE', '1');
+  console.log('הדוח החודשי יישלח מעכשיו לנמענים האמיתיים.');
+}
+
+function monthlyDisableLive() {
+  PropertiesService.getScriptProperties().deleteProperty('MONTHLY_LIVE');
+  console.log('הדוח החודשי חזר למצב תצוגה מקדימה (הכל למיטל).');
+}
+
+function monthlyLabel_(month) {
+  return MONTHLY_HE_MONTHS[Number(month.slice(5, 7)) - 1] + ' ' + month.slice(0, 4);
+}
+
+function monthlyAddMonths_(month, n) {
+  const d = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1 + n, 1));
+  return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
+}
+
+function monthlyLastDay_(month) {
+  const d = new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0));
+  return month + '-' + String(d.getUTCDate()).padStart(2, '0');
+}
+
+// נקרא מ-meetRemindTick כל 5 דקות. שולח פעם אחת לכל חודש.
+function monthlyTick_(data) {
+  const parts = Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd HH').split(' ');
+  const today = parts[0], hour = Number(parts[1]);
+  if (hour < MONTHLY_SEND_HOUR) return;
+  const month = monthlyAddMonths_(today.slice(0, 7), -1);
+  // המועד האחרון של מפגשי החודש (מפגש בכמה ימים יכול לגלוש לחודש הבא)
+  let last = monthlyLastDay_(month);
+  (data.slots || []).forEach(s => { if (s.mdate.slice(0, 7) === month && s.date > last) last = s.date; });
+  if (today <= last) return;
+  const props = PropertiesService.getScriptProperties();
+  const key = 'monthly_sent_' + month;
+  if (props.getProperty(key)) return;
+  props.setProperty(key, String(Date.now()));   // קודם מסמנים — כשל לא יציף במיילים
+  monthlySend_(month, monthlyIsLive_(), today);
+}
+
+function monthlyPreview() {
+  const today = meetToday_();
+  monthlySend_(today.slice(0, 7), false, today);
+}
+
+function monthlyPreviewLastMonth() {
+  const today = meetToday_();
+  monthlySend_(monthlyAddMonths_(today.slice(0, 7), -1), false, today);
+}
+
+function monthlyFetch_(path) {
+  const r = UrlFetchApp.fetch(REMIND_SITE + path + '?t=' + Date.now(), { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) throw new Error(path + ' HTTP ' + r.getResponseCode());
+  return r.getContentText('UTF-8');
+}
+
+const MONTHLY_RANK = { present: 3, individual: 2, pending: 1, absent: 0 };
+
+function monthlyNorm_(s) {
+  return String(s || '').replace(/\s+/g, ' ').trim();
+}
+
+// entries: [{ school, schoolName, name, subject, guide, status }] — מורה×מקצוע שהיה לו מפגש החודש
+// guides: שורה לכל מדריך/ה · rosterBySchool: { schoolId: { slug: יש מפגש בלי נוכחות } }
+function monthlyCompute_(month, today) {
+  const win = {};
+  new Function('window', monthlyFetch_('assets/guides.js') + '\n;\n' +
+    monthlyFetch_('assets/plans.js') + '\n;\n' + monthlyFetch_('assets/meet-stats.js'))(win);
+  const map = JSON.parse(monthlyFetch_('_data/inspector-map-2027.json'));
+
+  const end = monthlyLastDay_(month) < today ? monthlyLastDay_(month) : today;
+  const rep = meetReport({}).data;
+  const teachers = readAll('teachers');
+  ensureTab_('guide_hours');
+  const hours = readAll('guide_hours').map(h => ({
+    guideSlug: String(h.guideSlug || ''), firstName: h.firstName, lastName: h.lastName,
+    schoolName: h.schoolName, date: meetDate_(h.date), hours: h.hours
+  }));
+  const guides = Object.keys(win.TS_GUIDES || {}).map(k => Object.assign({ slug: k }, win.TS_GUIDES[k]));
+  const stats = win.TS_meetStats({ today: end, guides: guides, teachers: teachers,
+    meetings: rep.meetings, rows: rep.rows, hours: hours });
+
+  const pendingKey = {};
+  rep.rows.forEach(r => { if (r.status === 'pending') pendingKey[r.meetingId + '|' + r.teacherId] = 1; });
+  const inMonth = d => String(d || '').slice(0, 7) === month;
+
+  const merged = {}, rosterBySchool = {}, guideRows = [];
+  stats.guides.forEach(g => {
+    const subjOf = m => win.TS_meetingSubject ? win.TS_meetingSubject(g.slug, m.date) : '';
+    const held = g.held.filter(m => inMonth(m.date));
+    const unrec = g.unrecorded.filter(u => inMonth(u.date));
+    const plan = win.TS_planFor ? win.TS_planFor(g.slug) : null;
+    const planned = plan && plan.meetings ? plan.meetings.filter(pm => inMonth(pm.date)).length : 0;
+    const gr = { slug: g.slug, name: g.name, subject: win.TS_guideSubjects(g).join(' + '),
+      hasPlan: !!(plan && plan.meetings && plan.meetings.length),
+      planned: planned, held: held.length, unrecorded: unrec.length, n: 0, present: 0 };
+    guideRows.push(gr);
+
+    g.persons.forEach(p => {
+      if (p.school) {
+        const r = rosterBySchool[p.school] || (rosterBySchool[p.school] = {});
+        r[g.slug] = unrec.length > 0;
+      }
+      const indiv = p.individualDates.filter(inMonth).length;
+      p.subjects.forEach(s => {
+        const mine = held.filter(m => { const ms = subjOf(m); return !ms || ms === s; });
+        if (!mine.length && !indiv) return;
+        let status = 'absent';
+        if (mine.some(m => p.attended.indexOf(m.id) >= 0)) status = 'present';
+        else if (indiv) status = 'individual';
+        else if (mine.some(m => p.ids.some(id => pendingKey[m.id + '|' + id]))) status = 'pending';
+        gr.n++;
+        if (status === 'present' || status === 'individual') gr.present++;
+        // מורה מתמטיקה שטרם סומנו לו יח"ל נמצא אצל שתי מדריכות — שורה אחת, הסטטוס הטוב
+        const k = p.school + '|' + monthlyNorm_(p.name) + '|' + s;
+        const cur = merged[k];
+        if (!cur || MONTHLY_RANK[status] > MONTHLY_RANK[cur.status]) {
+          merged[k] = { school: p.school, schoolName: p.schoolName, name: monthlyNorm_(p.name),
+            subject: s, guide: g.name, status: status };
+        }
+      });
+    });
+  });
+  return { month: month, end: end, entries: Object.keys(merged).map(k => merged[k]),
+    guides: guideRows, rosterBySchool: rosterBySchool, map: map };
+}
+
+function monthlyWrapHtml_(inner) {
+  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a3a;max-width:720px">' +
+    inner + '<p style="margin:22px 0 0;font-size:12px;color:#8a97a6">' + remindEsc_(MONTHLY_SIGN) + '</p></div>';
+}
+
+function monthlyIsIn_(e) { return e.status === 'present' || e.status === 'individual'; }
+
+function monthlyNameList_(arr) {
+  return arr.slice().sort((a, b) => a.name.localeCompare(b.name, 'he')).map(e =>
+    remindEsc_(e.name) + (e.status === 'individual' ? ' <span style="color:#8a97a6">(הדרכה פרטנית)</span>'
+      : e.status === 'pending' ? ' <span style="color:#8a97a6">(נרשם/ה, טרם אושר/ה ע״י המדריך/ה)</span>' : '')
+  ).join('<br>');
+}
+
+const MONTHLY_CELL = 'padding:7px 10px;border-bottom:1px solid #e3e8ee;vertical-align:top;text-align:right';
+
+function monthlyTh_(labels) {
+  return '<tr style="background:#f1f5f9">' + labels.map(h => '<th style="' + MONTHLY_CELL + '">' + h + '</th>').join('') + '</tr>';
+}
+
+// מייל למנהל/ת — כל המזהים של בית הספר (מסאראת=ערערה)
+function monthlyPrincipalMail_(C, school, principalName) {
+  const ids = [school.id].concat(school.alias || []);
+  const entries = C.entries.filter(e => ids.indexOf(e.school) >= 0);
+  const pendingGuides = {};
+  ids.forEach(id => {
+    const r = C.rosterBySchool[id] || {};
+    Object.keys(r).forEach(slug => { if (r[slug]) pendingGuides[slug] = 1; });
+  });
+  const notYet = C.guides.filter(g => pendingGuides[g.slug]).map(g => g.subject)
+    .filter((s, i, a) => a.indexOf(s) === i);
+  if (!entries.length) return null;
+
+  const bySubj = {};
+  entries.forEach(e => { (bySubj[e.subject] = bySubj[e.subject] || []).push(e); });
+  const subjects = Object.keys(bySubj).sort((a, b) => a.localeCompare(b, 'he'));
+  const inN = entries.filter(monthlyIsIn_).length;
+
+  const rows = subjects.map(s => {
+    const list = bySubj[s];
+    const yes = list.filter(monthlyIsIn_), no = list.filter(e => !monthlyIsIn_(e));
+    return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) +
+      '<div style="font-weight:normal;font-size:12px;color:#5b6b7b">' + yes.length + ' מתוך ' + list.length + '</div></td>' +
+      '<td style="' + MONTHLY_CELL + ';color:#1f7a5c">' + (monthlyNameList_(yes) || '—') + '</td>' +
+      '<td style="' + MONTHLY_CELL + ';color:#a4442f">' + (monthlyNameList_(no) || '—') + '</td></tr>';
+  }).join('');
+
+  const label = monthlyLabel_(C.month);
+  const html = monthlyWrapHtml_(
+    '<p style="margin:0 0 10px">שלום' + (principalName ? ' ' + remindEsc_(principalName) : '') + ',</p>' +
+    '<p style="margin:0 0 14px">להלן השתתפות מורי <b>' + remindEsc_(school.name) + '</b> במפגשי ההדרכה המקצועית בחודש ' +
+      remindEsc_(label) + '. מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש (בוקר או ערב), או קיבל/ה הדרכה פרטנית.</p>' +
+    '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו החודש: ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
+    '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
+      monthlyTh_(['מקצוע', 'השתתפו', 'לא השתתפו']) + rows + '</table>' +
+    (notYet.length
+      ? '<p style="margin:14px 0 0;color:#5b6b7b;font-size:13px">הנוכחות במפגשי החודש ב' +
+        remindEsc_(notYet.join(', ')) + ' טרם הוזנה, ולכן אינה מופיעה כאן.</p>'
+      : '') +
+    '<p style="margin:16px 0 0">נודה לעידוד המורים שלא השתתפו להצטרף למפגש ההדרכה בחודש הבא.</p>'
+  );
+  return { subject: 'השתתפות המורים בהדרכות — ' + school.name + ' · ' + label, html: html, n: entries.length, inN: inN };
+}
+
+// מסאראת = ערערה (אותו בית ספר, שני מזהים) — שורה אחת ומייל אחד
+function monthlySchools_(C, aliases) {
+  const out = [];
+  C.map.schools.forEach(s => {
+    if (aliases[s.id]) return;
+    out.push(Object.assign({}, s, { alias: Object.keys(aliases).filter(k => aliases[k] === s.id) }));
+  });
+  return out;
+}
+
+function monthlySchoolRow_(C, school) {
+  const ids = [school.id].concat(school.alias || []);
+  const list = C.entries.filter(e => ids.indexOf(e.school) >= 0);
+  const yes = list.filter(monthlyIsIn_).length;
+  return { name: school.name, inspector: school.inspector, n: list.length, yes: yes,
+    no: list.filter(e => !monthlyIsIn_(e)), pct: list.length ? Math.round(yes / list.length * 100) : null };
+}
+
+function monthlyPct_(yes, n) { return n ? Math.round(yes / n * 100) : null; }
+
+function monthlyPctColor_(p) {
+  return p === null ? '#8a97a6' : p >= 80 ? '#1f7a5c' : p >= 60 ? '#9A5B00' : '#a4442f';
+}
+
+function monthlyRatio_(yes, n) {
+  return n ? yes + ' / ' + n + ' · ' + monthlyPct_(yes, n) + '%' : '—';
+}
+
+function monthlySchoolTable_(rows, withInspector, withNames) {
+  const head = ['בית ספר'].concat(withInspector ? ['מפקח/ת'] : [], ['השתתפו'], withNames ? ['לא השתתפו'] : []);
+  return '<table style="border-collapse:collapse;width:100%;font-size:14px">' + monthlyTh_(head) +
+    rows.map(r => '<tr><td style="' + MONTHLY_CELL + '">' + remindEsc_(r.name) + '</td>' +
+      (withInspector ? '<td style="' + MONTHLY_CELL + '">' + remindEsc_(r.inspector) + '</td>' : '') +
+      '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(r.pct) + '">' +
+        (r.n ? monthlyRatio_(r.yes, r.n) : '<span style="font-weight:normal">אין מפגשים החודש</span>') + '</td>' +
+      (withNames ? '<td style="' + MONTHLY_CELL + ';font-size:13px">' + (r.no.length
+        ? r.no.slice().sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.name.localeCompare(b.name, 'he'))
+            .map(e => remindEsc_(e.name) + ' <span style="color:#8a97a6">· ' + remindEsc_(e.subject) + '</span>').join('<br>')
+        : (r.n ? 'כולם השתתפו' : '—')) + '</td>' : '') +
+      '</tr>').join('') + '</table>';
+}
+
+function monthlyGuideWarnings_(C) {
+  const unrec = C.guides.filter(g => g.unrecorded > 0);
+  if (!unrec.length) return '';
+  return '<p style="margin:14px 0 4px;padding:8px 12px;background:#FDF4F1;border-radius:8px;color:#8f2f1c">' +
+    'מפגשים שעברו בלי שהוזנה נוכחות: ' + unrec.map(g => remindEsc_(g.subject + ' (' + g.name + ')')).join(' · ') +
+    '. המפגשים האלה לא נכללו בדוח.</p>';
+}
+
+function monthlyInspectorMail_(C, inspName, schools) {
+  const rows = schools.filter(s => s.inspector === inspName).map(s => monthlySchoolRow_(C, s))
+    .sort((a, b) => (a.pct === null) - (b.pct === null) || (a.pct || 0) - (b.pct || 0) || a.name.localeCompare(b.name, 'he'));
+  const n = rows.reduce((t, r) => t + r.n, 0), yes = rows.reduce((t, r) => t + r.yes, 0);
+  if (!n) return null;
+  const label = monthlyLabel_(C.month);
+  const html = monthlyWrapHtml_(
+    '<p style="margin:0 0 10px">שלום ' + remindEsc_(inspName) + ',</p>' +
+    '<p style="margin:0 0 12px">סיכום השתתפות המורים במפגשי ההדרכה המקצועית בחודש ' + remindEsc_(label) +
+      ' בבתי הספר שבפיקוחך. מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית.</p>' +
+    '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו: ' + yes + ' מתוך ' + n +
+      ' מורים (' + monthlyPct_(yes, n) + '%)</p>' +
+    monthlySchoolTable_(rows, false, true) +
+    monthlyGuideWarnings_(C) +
+    '<p style="margin:14px 0 0;font-size:13px;color:#5b6b7b">כל מנהל/ת קיבל/ה מייל עם הפירוט של בית הספר שלו/ה.</p>'
+  );
+  return { subject: 'השתתפות המורים בהדרכות — בתי הספר שבפיקוחך · ' + label, html: html, n: n, yes: yes };
+}
+
+function monthlyOverviewMail_(C, schools, log) {
+  const label = monthlyLabel_(C.month);
+  const rows = schools.map(s => monthlySchoolRow_(C, s));
+  const n = rows.reduce((t, r) => t + r.n, 0), yes = rows.reduce((t, r) => t + r.yes, 0);
+  const td = (v, extra) => '<td style="' + MONTHLY_CELL + (extra || '') + '">' + v + '</td>';
+
+  const guideTable = '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
+    monthlyTh_(['מקצוע', 'מדריך/ה', 'מפגשים החודש', 'השתתפו']) +
+    C.guides.slice().sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.name.localeCompare(b.name, 'he')).map(g => {
+      const meet = g.held ? String(g.held) + (g.unrecorded ? ' · <span style="color:#a4442f">' + g.unrecorded + ' בלי נוכחות</span>' : '')
+        : g.unrecorded ? '<span style="color:#a4442f">לא הוזנה נוכחות</span>'
+        : !g.hasPlan ? '<span style="color:#8a97a6">אין תוכנית במערכת</span>'
+        : g.planned ? '—' : 'אין מפגש בתוכנית';
+      return '<tr>' + td(remindEsc_(g.subject)) + td(remindEsc_(g.name)) + td(meet) +
+        td(monthlyRatio_(g.present, g.n), ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(monthlyPct_(g.present, g.n))) + '</tr>';
+    }).join('') + '</table>';
+
+  const byInsp = {};
+  rows.forEach(r => {
+    const x = byInsp[r.inspector] || (byInsp[r.inspector] = { n: 0, yes: 0, schools: 0 });
+    x.n += r.n; x.yes += r.yes; if (r.n) x.schools++;
+  });
+  const inspTable = '<table style="border-collapse:collapse;font-size:14px">' +
+    monthlyTh_(['מפקח/ת', 'בתי ספר עם מפגשים', 'השתתפו']) +
+    Object.keys(byInsp).sort((a, b) => a.localeCompare(b, 'he')).map(k => {
+      const x = byInsp[k];
+      return '<tr>' + td(remindEsc_(k)) + td(x.schools) +
+        td(monthlyRatio_(x.yes, x.n), ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(monthlyPct_(x.yes, x.n))) + '</tr>';
+    }).join('') + '</table>';
+
+  const withMeet = rows.filter(r => r.n).sort((a, b) => a.pct - b.pct || a.name.localeCompare(b.name, 'he'));
+  const none = rows.filter(r => !r.n).map(r => r.name).sort((a, b) => a.localeCompare(b, 'he'));
+
+  const html = monthlyWrapHtml_(
+    '<p style="margin:0 0 6px;font-size:20px;font-weight:bold">השתתפות בהדרכות — ' + remindEsc_(label) + '</p>' +
+    '<p style="margin:0 0 12px;font-size:18px;font-weight:bold;color:' + monthlyPctColor_(monthlyPct_(yes, n)) + '">' +
+      'השתתפו: ' + yes + ' מתוך ' + n + ' מורים' + (n ? ' (' + monthlyPct_(yes, n) + '%)' : '') + '</p>' +
+    '<p style="margin:0 0 12px;font-size:13px;color:#5b6b7b">מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית. ' +
+      'נספרים רק מפגשים שהמדריך/ה הזין/ה בהם נוכחות.</p>' +
+    monthlyGuideWarnings_(C) +
+    '<p style="margin:18px 0 6px;font-weight:bold">לפי מקצוע ומדריך/ה</p>' + guideTable +
+    '<p style="margin:18px 0 6px;font-weight:bold">לפי מפקח/ת</p>' + inspTable +
+    '<p style="margin:18px 0 6px;font-weight:bold">לפי בית ספר (מהנמוך לגבוה)</p>' +
+      (withMeet.length ? monthlySchoolTable_(withMeet, true, false) : '<p style="margin:0">אין עדיין נתוני נוכחות לחודש הזה.</p>') +
+    (none.length ? '<p style="margin:10px 0 0;font-size:13px;color:#5b6b7b">בלי מורים במפגשי החודש: ' + remindEsc_(none.join(' · ')) + '</p>' : '') +
+    (log ? '<div style="margin:18px 0 0;padding:10px 12px;background:#f1f5f9;border-radius:8px;font-size:13px">' + log + '</div>' : '')
+  );
+  return { subject: 'השתתפות בהדרכות — מבט כולל · ' + label, html: html };
+}
+
+function monthlyMail_(to, subject, html, cc) {
+  const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
+    .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
+  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מצפן ההדרכות · משרד העבודה' };
+  if (cc) opts.cc = cc;
+  MailApp.sendEmail(opts);
+}
+
+function monthlyPreviewBanner_(to) {
+  return '<p dir="rtl" style="margin:0 0 14px;padding:8px 12px;background:#FFF6DB;border-radius:8px;font-family:Arial,sans-serif;font-size:13px">' +
+    '<b>תצוגה מקדימה — לא נשלח לאף אחד חוץ ממך.</b> במצב חי יישלח אל: ' + remindEsc_(to) + '</p>';
+}
+
+// live=false → הכל למיטל: מבט כולל, מייל לכל מפקח/ת, ומייל אחד שמרכז את כל מיילי המנהלים
+function monthlySend_(month, live, today) {
+  const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
+  const principals = R.principals || {}, inspectors = R.inspectors || {};
+  const C = monthlyCompute_(month, today || meetToday_());
+  const schools = monthlySchools_(C, R.aliases || {});
+  const sent = [], skipped = [], failed = [];
+  const tag = live ? '' : '[תצוגה מקדימה] ';
+  const label = monthlyLabel_(month);
+
+  // ---- מנהלים ----
+  const previewParts = [];
+  schools.forEach(s => {
+    const p = principals[s.id];
+    const mail = monthlyPrincipalMail_(C, s, p ? p.name : '');
+    if (!mail) { skipped.push(s.name + ' — אין מורים במפגשי החודש'); return; }
+    if (!p || !p.email) { skipped.push(s.name + ' — אין מייל מנהל/ת'); return; }
+    const line = s.name + ' (' + mail.inN + '/' + mail.n + ')';
+    if (!live) {
+      previewParts.push('<div style="margin:0 0 26px;padding:0 0 18px;border-bottom:3px solid #256A8A">' +
+        '<p dir="rtl" style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#256A8A"><b>אל:</b> ' +
+        remindEsc_(p.name + ' <' + p.email + '>') + '<br><b>נושא:</b> ' + remindEsc_(mail.subject) + '</p>' + mail.html + '</div>');
+      sent.push(line);
+      return;
+    }
+    try { monthlyMail_(p.email, mail.subject, mail.html); sent.push(line); }
+    catch (e) { failed.push(s.name + ': ' + e.message); }
+  });
+  if (previewParts.length) {
+    try {
+      monthlyMail_(REMIND_TO, tag + 'מיילי המנהלים (' + previewParts.length + ') · ' + label,
+        monthlyPreviewBanner_('כל מנהל/ת בנפרד — ' + previewParts.length + ' מיילים') + previewParts.join(''));
+    } catch (e) { failed.push('תצוגת המנהלים: ' + e.message); }
+  }
+
+  // ---- מפקחים ----
+  C.map.inspectors.forEach(ins => {
+    const mail = monthlyInspectorMail_(C, ins.name, schools);
+    if (!mail) { skipped.push('מפקח/ת ' + ins.name + ' — אין מורים במפגשי החודש'); return; }
+    const email = inspectors[ins.name];
+    if (!email) { skipped.push('מפקח/ת ' + ins.name + ' — אין מייל'); return; }
+    try {
+      if (live) monthlyMail_(email, mail.subject, mail.html);
+      else monthlyMail_(REMIND_TO, tag + 'מפקח/ת ' + ins.name + ' · ' + label,
+        monthlyPreviewBanner_(ins.name + ' <' + email + '>') + mail.html);
+      sent.push('מפקח/ת ' + ins.name + ' (' + mail.yes + '/' + mail.n + ')');
+    } catch (e) { failed.push(ins.name + ': ' + e.message); }
+  });
+
+  // ---- מבט כולל, ואז יומן השליחה למיטל ----
+  const ovTo = (R.overview || []).map(o => o.email).filter(Boolean);
+  if (live && ovTo.length) {
+    const clean = monthlyOverviewMail_(C, schools, '');
+    try { monthlyMail_(ovTo.join(','), clean.subject, clean.html); sent.push('מבט כולל'); }
+    catch (e) { failed.push('מבט כולל: ' + e.message); }
+  }
+  const log = '<b>' + (live ? 'נשלח' : 'יישלח') + ' (' + sent.length + '):</b> ' + remindEsc_(sent.join(' · ') || '—') +
+    (skipped.length ? '<br><b>לא נשלח (' + skipped.length + '):</b> ' + remindEsc_(skipped.join(' · ')) : '') +
+    (failed.length ? '<br><b style="color:#a4442f">נכשל (' + failed.length + '):</b> ' + remindEsc_(failed.join(' · ')) : '');
+  const ov = monthlyOverviewMail_(C, schools, log);
+  monthlyMail_(REMIND_TO, tag + (live ? 'יומן שליחה — ' : '') + ov.subject,
+    (live ? '' : monthlyPreviewBanner_(ovTo.join(', ') || '(לא הוגדר נמען למבט הכולל)')) + ov.html);
+  console.log('monthlySend_ ' + month + ' live=' + live + ' sent=' + sent.length +
+    ' skipped=' + skipped.length + ' failed=' + failed.length);
+  return { sent: sent, skipped: skipped, failed: failed };
 }
