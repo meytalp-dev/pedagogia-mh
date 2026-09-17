@@ -130,6 +130,7 @@ function copy(text, m){
     document.body.removeChild(ta);
   }
 }
+function isErr(t){ return t.indexOf('שגיאה') === 0 || t.indexOf('חסרות עמודות') > -1; }
 function of(k){ return rows.filter(function(r){ return r.workshop === k; }); }
 function wsOf(k){ for (var i = 0; i < WS.length; i++) if (WS[i].k === k) return WS[i]; }
 
@@ -152,14 +153,14 @@ function tiles(){
 function detail(){
   var w = wsOf(cur), list = of(cur);
   $('dTitle').textContent = 'נרשמים · ' + w.t + ' (' + list.length + ')';
-  var bad = list.filter(function(r){ return w.al && r.alnet.indexOf('שגיאה') === 0; });
-  $('dWarn').innerHTML = bad.length ? '<div class="warn"><b>' + bad.length + ' רישומים לא נכתבו לאלנט.</b> צריך להעביר אותם ידנית, או לבקש מהנרשם לשלוח שוב.</div>' : '';
+  var bad = list.filter(function(r){ return w.al && isErr(r.alnet); });
+  $('dWarn').innerHTML = bad.length ? '<div class="warn"><b>' + bad.length + ' רישומים לא עברו במלואם לאלנט.</b> ייתכן שהגיליון של אלנט שונה (לשונית או כותרת עמודה). הפירוט בעמודת "אלנט".</div>' : '';
   if (!list.length){ $('dTable').innerHTML = '<div class="empty">עדיין אין נרשמים להשתלמות הזו</div>'; return; }
   var hasG = list.some(function(r){ return r.group; });
   var h = '<div class="tabs-wrap"><table><tr><th>#</th><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th><th>עיר</th><th>ת״ז</th>' +
     (hasG ? '<th>קבוצה</th>' : '') + '<th>נרשם/ה</th>' + (w.al ? '<th>אלנט</th>' : '') + '</tr>';
   list.forEach(function(r, i){
-    var st = r.alnet.indexOf('שגיאה') === 0 ? 'st-err' : 'st-ok';
+    var st = isErr(r.alnet) ? 'st-err' : 'st-ok';
     h += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.school) + '</td>' +
       '<td class="ltr">' + esc(r.phone) + '</td><td class="ltr">' + esc(r.email) + '</td><td>' + esc(r.city) + '</td><td>' + (r.hasId ? '<span class="st-ok">✓</span>' : '<span class="st-err">חסר</span>') + '</td>' +
       (hasG ? '<td>' + esc(r.group) + '</td>' : '') + '<td class="ltr">' + esc(r.date) + '</td>' +
