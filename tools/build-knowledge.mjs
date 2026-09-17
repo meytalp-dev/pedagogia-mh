@@ -36,7 +36,7 @@ const MAX_PAGE_CHARS = 60000;    // תקרה לטקסט של עמוד בודד
 const MAX_TOTAL_CHARS = 3000000; // תקרה כוללת לכל הידע — טקסט + קישורים (נאכפת ע"י הקטנת תקרת העמוד)
 const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמוד
 
-const SKIP = new Set(["_doc-template.html", "ishur-tochnit.html", "ishur-tochniyot-dash.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
+const SKIP = new Set(["_doc-template.html", "rishum-mekav.html", "ishur-tochnit.html", "ishur-tochniyot-dash.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
   "admin.html", "admin-mosdot.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
   "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html",
   "nispach-baaley-tafkidim.html", "sikum-nispach-tafkidim.html", "merkaz-tofsim.html",

@@ -5,7 +5,7 @@
 <script src="/analytics.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>השתלמויות ופיתוח מקצועי · תשפ״ז</title>
-<meta name="description" content="כל ההשתלמויות והמפגשים של מינהל הכשרה מקצועית לשנה״ל תשפ״ז — רכזים חברתיים, מת״לים, התחום הייעוצי-טיפולי, רכזים פדגוגיים, רכזי תקשוב, מורים חונכים, מפגשי מנהלים ובני ובנות שירות: מועדים, סילבוסים והרשמה.">
+<meta name="description" content="כל ההשתלמויות והמפגשים של מינהל הכשרה מקצועית לשנה״ל תשפ״ז — רכזים חברתיים, מת״לים, התחום הייעוצי-טיפולי, רכזים פדגוגיים, רכזי תקשוב, מורים חונכים, מפגשי מנהלים ובני ובנות שירות: מועדים, סילבוסים ורישום מקוון לכל השתלמות.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
 <meta property="og:title" content="השתלמויות ופיתוח מקצועי · תשפ״ז — הבית של המנהיגות הפדגוגית היוצרת">
@@ -66,6 +66,51 @@
 .note-box{background:#FFF8E8;border:1px solid #EDD49A;border-radius:14px;padding:14px 18px;font-size:.88rem;margin-top:16px}
 .note-box b{color:#7A5A10}
 .dl-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+/* ---- רישום להשתלמויות ---- */
+.p-navy .stripe{background:linear-gradient(180deg,#124D7A,#087B9C)}
+#rishum{scroll-margin-top:90px}
+.rg-pick{border:0;margin:0;padding:0;min-width:0}
+.rg-lbl{display:block;font-weight:800;color:var(--navy);font-size:.95rem;margin-bottom:8px}
+.rg-req{color:#C42B2B}
+.rg-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.rg-opt{position:relative;display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,box-shadow .15s}
+.rg-opt:hover{border-color:var(--border-strong);background:var(--soft-bg)}
+.rg-opt input{position:absolute;opacity:0;pointer-events:none}
+.rg-opt .dot{flex:none;width:12px;height:12px;border-radius:50%;margin-top:6px}
+.rg-opt b{display:block;color:var(--navy);font-size:.93rem;line-height:1.35}
+.rg-opt small{display:block;color:var(--text2);font-size:.78rem;margin-top:2px;line-height:1.45}
+.rg-opt:has(input:checked){border-color:var(--accent);background:#EAF6FA;box-shadow:0 0 0 3px rgba(10,119,153,.14)}
+.rg-opt:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.rg-body{margin-top:22px;padding-top:20px;border-top:1px solid var(--border)}
+.rg-chosen{font-size:.9rem;color:var(--text2);margin-bottom:14px}
+.rg-chosen b{color:var(--navy)}
+.rg-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.rg-full{grid-column:1/-1}
+@media(max-width:700px){.rg-grid{grid-template-columns:1fr}}
+.rg-grid input[type=text],.rg-grid input[type=tel],.rg-grid input[type=email],.rg-grid select{width:100%;padding:11px 14px;border:1.5px solid var(--border-strong);border-radius:12px;font-family:inherit;font-size:1rem;background:#fff;color:var(--text)}
+.rg-grid input:focus,.rg-grid select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,119,153,.15)}
+.rg-grid input[dir=ltr]{text-align:right}
+.rg-grid .bad{border-color:#C42B2B !important}
+.rg-seg{display:flex;gap:8px;flex-wrap:wrap}
+.rg-seg label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--border-strong);border-radius:999px;padding:8px 18px;cursor:pointer;font-weight:700;color:var(--navy);font-size:.92rem}
+.rg-seg label:has(input:checked){background:var(--navy);border-color:var(--navy);color:#fff}
+.rg-seg input{accent-color:var(--navy)}
+.rg-check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;cursor:pointer;line-height:1.55}
+.rg-check input{width:19px;height:19px;margin-top:3px;flex:none;accent-color:var(--navy)}
+.rg-err{display:none;color:#C42B2B;font-size:.82rem;font-weight:700;margin-top:5px}
+.rg-err.on{display:block}
+.rg-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px}
+.rg-actions .btn[disabled]{opacity:.6;cursor:wait;transform:none}
+.rg-status{font-size:.9rem;font-weight:700;color:var(--text2)}
+.rg-status.bad{color:#C42B2B}
+.rg-done{display:flex;gap:14px;align-items:flex-start;background:#E9F7EF;border:1px solid #A9DDBB;border-radius:16px;padding:18px 20px;color:#17603A}
+.rg-done[hidden]{display:none}
+.rg-done:focus{outline:none}
+.rg-done svg{flex:none;margin-top:2px}
+.rg-done b{font-size:1.08rem;color:#17603A}
+.rg-done p{margin:4px 0 12px;color:#24473A;font-size:.93rem}
+.rg-done #rg-done-extra{background:#fff;border:1px solid #E3CDA4;border-radius:12px;padding:10px 14px;color:#6A4C10}
+.rg-done #rg-done-extra a{color:var(--accent);font-weight:800}
 </style>
 </head>
 <body data-pn-drawer="on">
@@ -308,6 +353,82 @@
 
 <div style="padding:8px var(--px) 44px;max-width:1150px">
 
+  <!-- ===== רישום להשתלמויות ===== -->
+  <!-- הנתונים נשמרים ב-Apps Script "rishum-hishtalmuyot" (רויטל\rishum-hishtalmuyot-gas).
+       רכזים חברתיים ומת"ליות נכתבים גם לגיליונות של אלנט. בקובץ הזה אין שום נתון אישי. -->
+  <section class="prog p-navy rv" id="rishum">
+    <div class="ph">
+      <span class="stripe"></span>
+      <div>
+        <h2>רישום להשתלמויות <small>· תשפ״ז</small></h2>
+        <p>בוחרים השתלמות, ממלאים פרטים ושולחים. <b>כל השתלמות נרשמת בנפרד</b>, כך שאם אתם משתתפים ביותר מאחת, מגישים טופס לכל אחת מהן. לתיקון פרטים ממלאים שוב עם אותו מייל, והרישום הקיים מתעדכן.</p>
+      </div>
+    </div>
+    <div class="pb">
+      <form id="rg-form" novalidate>
+        <fieldset class="rg-pick">
+          <legend class="rg-lbl">1. לאיזו השתלמות נרשמים? <span class="rg-req">*</span></legend>
+          <div class="rg-opts" id="rg-opts"></div>
+          <div class="rg-err" id="rg-e-workshop">נא לבחור השתלמות</div>
+        </fieldset>
+
+        <div class="rg-body" id="rg-body" hidden>
+          <div class="rg-chosen" id="rg-chosen" aria-live="polite"></div>
+
+          <div class="rg-grid">
+            <div class="rg-full" id="rg-group-wrap" hidden>
+              <span class="rg-lbl" id="rg-group-lbl">קבוצה <span class="rg-req">*</span></span>
+              <div class="rg-seg" role="radiogroup" aria-labelledby="rg-group-lbl" id="rg-groups"></div>
+              <div class="rg-err" id="rg-e-group">נא לבחור קבוצה</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-name">שם מלא <span class="rg-req">*</span></label>
+              <input id="rg-name" type="text" autocomplete="name" placeholder="שם פרטי ושם משפחה">
+              <div class="rg-err" id="rg-e-name">נא לכתוב שם פרטי ושם משפחה</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-school">בית ספר <span class="rg-req">*</span></label>
+              <select id="rg-school" autocomplete="organization">
+                <option value="" disabled selected>בחרו בית ספר מהרשימה</option>
+              </select>
+              <div class="rg-err" id="rg-e-school">נא לבחור בית ספר מהרשימה</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-phone">טלפון נייד <span class="rg-req">*</span></label>
+              <input id="rg-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="050-0000000">
+              <div class="rg-err" id="rg-e-phone">נא לכתוב מספר טלפון תקין</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-email">מייל <span class="rg-req">*</span></label>
+              <input id="rg-email" type="email" autocomplete="email" dir="ltr" placeholder="name@example.com">
+              <div class="rg-err" id="rg-e-email">נא לכתוב כתובת מייל תקינה</div>
+            </div>
+            <div class="rg-full">
+              <label class="rg-check"><input id="rg-consent" type="checkbox"> <span>אני מאשר/ת את ההרשמה להשתלמות ואת העברת הפרטים לגורם המפעיל, לצורך ניהול ההשתלמות והנוכחות. <span class="rg-req">*</span></span></label>
+              <div class="rg-err" id="rg-e-consent">נא לסמן אישור</div>
+            </div>
+          </div>
+
+          <div class="rg-actions">
+            <button class="btn primary" type="submit" id="rg-send">שליחת הרישום</button>
+            <span class="rg-status" id="rg-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </form>
+
+      <div class="rg-done" id="rg-done" hidden tabindex="-1">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="m7.8 12.3 2.9 2.9 5.6-6"/></svg>
+        <div>
+          <b id="rg-done-title">הרישום התקבל</b>
+          <p id="rg-done-text"></p>
+          <p id="rg-done-extra" hidden></p>
+          <button class="btn line" type="button" id="rg-again">רישום נוסף</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- ===== רכזים חברתיים ===== -->
   <section class="prog p-green rv" id="rakazim">
     <div class="ph">
@@ -341,7 +462,8 @@
       </div>
       <div class="note-box"><b>הסיורים:</b> יתקיימו 2 קבוצות במקביל — כל רכז.ת משובצים בנושא לפי בחירתם, אך שלושת מפגשי הסיורים חובה לכולם.</div>
       <div class="dl-row">
-        <a class="btn primary" href="docs/hishtalmut-rakazim-tashpaz.pdf" download>הורדת תוכנית ההשתלמות (PDF) ⬇</a>
+        <a class="btn primary" href="#rishum" data-rg="social">להרשמה להשתלמות</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/hishtalmut-rakazim-tashpaz.pdf" download>הורדת תוכנית ההשתלמות (PDF) ⬇</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
       </div>
     </div>
@@ -373,6 +495,7 @@
       </table>
       </div>
       <div class="dl-row">
+        <a class="btn primary" href="#rishum" data-rg="ped">להרשמה להשתלמות</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
       </div>
     </div>
@@ -429,8 +552,9 @@
       </div>
       <div class="note-box"><b>מטלת סיכום:</b> "מתיאוריה למעשה — הובלת צוות מורים" — העברת יחידת הדרכה (כ-45 דקות) לצוות מורים בבית הספר, על בסיס כלי מתוך ההשתלמות, בצירוף תיעוד ורפלקציה (עד 4–5 עמודים).</div>
       <div class="dl-row">
-        <a class="btn primary" href="docs/silabus-matal-yom-a.docx" download>סילבוס ימי א׳ (Word) ⬇</a>
-        <a class="btn primary" href="docs/silabus-matal-yom-b.docx" download>סילבוס ימי ב׳ (Word) ⬇</a>
+        <a class="btn primary" href="#rishum" data-rg="matal">להרשמה להשתלמות</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/silabus-matal-yom-a.docx" download>סילבוס ימי א׳ (Word) ⬇</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/silabus-matal-yom-b.docx" download>סילבוס ימי ב׳ (Word) ⬇</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
       </div>
     </div>
@@ -565,7 +689,8 @@
       <div class="note-box"><b>חובות הקורס:</b> השתתפות בלפחות <b>80%</b> מהמפגשים והמטלות, ובסיום — הגשת מטלת סיום.</div>
       <div class="note-box" style="background:#F4F1FC;border-color:#C7BCEA"><b>מנחות הקורס:</b> רחל פולק — רכזת חונכים, מכללת הרצוג · רויטל אמיר — מפקחת פדגוגית ארצית, משרד העבודה.</div>
       <div class="dl-row">
-        <a class="btn primary" href="https://rashim3.herzog.ac.il/Portals/ex/registration/chonchimfree" target="_blank" rel="noopener">הרשמה לקורס החונכים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a class="btn primary" href="#rishum" data-rg="honchim">להרשמה להשתלמות</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="https://rashim3.herzog.ac.il/Portals/ex/registration/chonchimfree" target="_blank" rel="noopener">הרשמה בפורטל מכללת הרצוג ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/hishtalmut-honchim-tashpaz.pdf" download>לוח הזמנים (PDF) ⬇</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="morim-honchim.html">ערכת המורה החונך.ת</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
@@ -638,7 +763,8 @@
       </table>
       </div>
       <div class="dl-row">
-        <a class="btn primary" href="sherut-leumi.html">הנחיות הקליטה</a>
+        <a class="btn primary" href="#rishum" data-rg="sherut">להרשמה להשתלמות</a>
+        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="sherut-leumi.html">הנחיות הקליטה</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="livuy-rigshi.html">ליווי רגשי</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
       </div>
@@ -890,6 +1016,174 @@
 <div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>השתלמויות ופיתוח מקצועי · תשפ״ז</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impact-os.app</a></div></div>
 <!-- foot:end -->
 
+<script>
+/* ===== רישום להשתלמויות =====
+   שרת: rishum-hishtalmuyot (רויטל\rishum-hishtalmuyot-gas). upsert לפי מייל + השתלמות.
+   המפתחות (social/matal/honchim/ped/sherut) חייבים להיות זהים ל-WORKSHOPS בשרת. */
+(function(){
+'use strict';
+var API = "https://script.google.com/macros/s/AKfycbxraYAhcv_oefTLHxyOfripC0R2LlmPMgYNIWR4rCQUa0FFybRoFHIe4zqgWB1MikF9/exec";
+var WS = [
+  {k:"social",  t:"רכזים חברתיים",               s:"11 מפגשים · ימי רביעי בבוקר",        c:"#A9DDBB"},
+  {k:"matal",   t:"מת״ליות · רכזי הכלה והשתלבות", s:"12 מפגשים · ימי א׳ או ב׳ · עדי ספיבק", c:"#A9CDF3",
+    g:[["sun","ימי ראשון · ⁦14:00–15:30⁩"],["mon","ימי שני · ⁦14:30–16:00⁩"]]},
+  {k:"honchim", t:"מורים חונכים",                 s:"קורס מקוון · מכללת הרצוג",           c:"#C7BCEA",
+    x:'חשוב: הקורס מתנהל במכללת הרצוג, ולכן יש להשלים גם את <a href="https://rashim3.herzog.ac.il/Portals/ex/registration/chonchimfree" target="_blank" rel="noopener">ההרשמה בפורטל של המכללה ↗</a>.'},
+  {k:"ped",     t:"רכזים פדגוגיים",               s:"7 מפגשים · קמפוס בני ברק וזום",      c:"#F5BE93"},
+  {k:"sherut",  t:"שירות לאומי",                  s:"3 מפגשים · פנים אל פנים",            c:"#F0B5B5"}
+];
+var SCHOOLS = ["אבו סנאן", "אום אל פחם בנות", "אום אל פחם בנים", "אור דניאל", "אור העתיד תורני מקצועי", "אורט אורמת", "אורט בית הערבה", "אורט כרמל", "אורט תל נוף", "אורט תעשייה אווירית", "אכסאל", "אל אמאני סכנין", "אלחכמה כסרא-סמיע", "אנרג'י טק", "בית אל", "בית דוד", "בית חנינה בנות", "בית חנינה בנים", "ג'וליס בנות", "דן גורמה", "דרור גליל", "דרור נווה מדבר", "הדר", "הקמפוס התורני עתיד", "התיכון החברתי חיפה", "חוש\"ן", "טורען", "טל חרמון", "ישיבת חנוך לנער", "כפר זיתים", "כפר יסיף", "כפר עקב", "לקייה", "מצפה רמון", "מרחביה/מעיינות", "נחלים", "נצרת", "סור באהר", "סכנין תל שבע", "עמל אשדוד", "עמל טייבה ב'", "עמל טק אין", "עמל רהט", "ערערה", "עתיד באר שבע", "עתיד בת עמי", "עתיד גליל מערבי ירכא בנים", "עתיד טק ביר אל מכסור", "עתיד כפר חב\"ד", "עתיד כרמיאל", "עתיד פלמחים", "צור ברק", "צור ים", "קמ\"ג דימונה", "רימונים", "רמת דוד", "שגב שלום", "שפרעם", "תיכון החממה", "תיכון חברתי ת\"א", "תיכון טכנולוגי אי טק סקול (מסעדה)", "תיכון עוצמ\"ה עתיד זוקו", "תיכון שיח", "תפן ליזמות"];
+
+function $(id){ return document.getElementById(id); }
+var byKey = {}; WS.forEach(function(w){ byKey[w.k] = w; });
+var cur = null;
+
+/* בחירת השתלמות */
+var opts = $("rg-opts");
+WS.forEach(function(w){
+  var l = document.createElement("label"); l.className = "rg-opt";
+  var i = document.createElement("input"); i.type = "radio"; i.name = "rg-w"; i.value = w.k;
+  var d = document.createElement("span"); d.className = "dot"; d.style.background = w.c;
+  var tx = document.createElement("span");
+  var b = document.createElement("b"); b.textContent = w.t;
+  var sm = document.createElement("small"); sm.textContent = w.s;
+  tx.appendChild(b); tx.appendChild(sm);
+  l.appendChild(i); l.appendChild(d); l.appendChild(tx);
+  i.addEventListener("change", function(){ choose(w.k, false); });
+  opts.appendChild(l);
+});
+
+var sel = $("rg-school");
+SCHOOLS.forEach(function(s){ var o = document.createElement("option"); o.value = s; o.textContent = s; sel.appendChild(o); });
+
+try{
+  var mem = JSON.parse(localStorage.getItem("rg-me") || "{}");
+  if (mem.name) $("rg-name").value = mem.name;
+  if (mem.phone) $("rg-phone").value = mem.phone;
+  if (mem.email) $("rg-email").value = mem.email;
+  if (mem.school && SCHOOLS.indexOf(mem.school) > -1) sel.value = mem.school;
+}catch(e){}
+
+function choose(k, scroll){
+  var w = byKey[k]; if (!w) return;
+  cur = w;
+  var r = document.querySelector('input[name="rg-w"][value="' + k + '"]'); if (r) r.checked = true;
+  $("rg-e-workshop").classList.remove("on");
+  $("rg-body").hidden = false;
+  $("rg-done").hidden = true; $("rg-form").hidden = false;
+  $("rg-chosen").innerHTML = "";
+  $("rg-chosen").appendChild(document.createTextNode("נרשמים ל: "));
+  var b = document.createElement("b"); b.textContent = w.t; $("rg-chosen").appendChild(b);
+  var gw = $("rg-group-wrap"), box = $("rg-groups");
+  box.innerHTML = "";
+  gw.hidden = !w.g;
+  if (w.g) w.g.forEach(function(g){
+    var l = document.createElement("label");
+    var i = document.createElement("input"); i.type = "radio"; i.name = "rg-g"; i.value = g[0];
+    i.addEventListener("change", function(){ $("rg-e-group").classList.remove("on"); });
+    l.appendChild(i); l.appendChild(document.createTextNode(g[1]));
+    box.appendChild(l);
+  });
+  if (scroll) $("rishum").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* כפתורי "להרשמה" בתוך הסקשנים של כל השתלמות */
+document.querySelectorAll("[data-rg]").forEach(function(a){
+  a.addEventListener("click", function(ev){ ev.preventDefault(); choose(a.getAttribute("data-rg"), true); history.replaceState(null, "", "#rishum"); });
+});
+var hm = /[#&]rg=(\w+)/.exec(location.hash);
+if (hm && byKey[hm[1]]) choose(hm[1], false);
+
+function flag(id, bad){
+  var el = $("rg-" + id); if (el && el.tagName !== "DIV") el.classList.toggle("bad", bad);
+  $("rg-e-" + id).classList.toggle("on", bad);
+  return !bad;
+}
+
+function phoneOk(v){
+  var d = String(v).replace(/\D/g, "");
+  if (d.indexOf("972") === 0) d = "0" + d.slice(3);
+  return /^0\d{8,9}$/.test(d);
+}
+
+function fetchJson(url, init, tries){
+  return new Promise(function(res, rej){
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    var t = setTimeout(function(){ if (ctl) ctl.abort(); }, 45000);
+    fetch(url, Object.assign({}, init, ctl ? {signal: ctl.signal} : {}))
+      .then(function(r){ return r.json(); })
+      .then(function(j){ clearTimeout(t); res(j); })
+      .catch(function(e){
+        clearTimeout(t);
+        if (tries > 1) setTimeout(function(){ fetchJson(url, init, tries - 1).then(res, rej); }, 1500);
+        else rej(e);
+      });
+  });
+}
+
+$("rg-form").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  if (!cur){ $("rg-e-workshop").classList.add("on"); return; }
+  var g = document.querySelector('input[name="rg-g"]:checked');
+  var d = {
+    workshop: cur.k,
+    group: g ? g.value : "",
+    name: $("rg-name").value.trim().replace(/\s+/g, " "),
+    school: sel.value,
+    phone: $("rg-phone").value.trim(),
+    email: $("rg-email").value.trim(),
+    consent: $("rg-consent").checked
+  };
+  var ok = true;
+  if (cur.g){ var gb = !d.group; $("rg-e-group").classList.toggle("on", gb); ok = !gb && ok; }
+  ok = flag("name", d.name.indexOf(" ") < 1) && ok;
+  ok = flag("school", !d.school) && ok;
+  ok = flag("phone", !phoneOk(d.phone)) && ok;
+  ok = flag("email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) && ok;
+  ok = flag("consent", !d.consent) && ok;
+  if (!ok){
+    var first = document.querySelector("#rishum .bad, #rishum .rg-err.on");
+    if (first) first.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  try{ localStorage.setItem("rg-me", JSON.stringify({name:d.name, phone:d.phone, email:d.email, school:d.school})); }catch(e){}
+
+  var btn = $("rg-send"), st = $("rg-status");
+  btn.disabled = true; btn.textContent = "שולח…";
+  st.className = "rg-status"; st.textContent = "";
+  fetchJson(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(d)}, 3)
+    .then(function(r){
+      btn.disabled = false; btn.textContent = "שליחת הרישום";
+      if (!r || !r.ok){
+        var why = {name:"נא לכתוב שם מלא", school:"בית הספר לא נמצא ברשימה", phone:"מספר הטלפון לא תקין", email:"כתובת המייל לא תקינה", busy:"המערכת עמוסה כרגע, נסו שוב בעוד רגע"}[r && r.error];
+        st.className = "rg-status bad";
+        st.textContent = why || "השליחה לא הצליחה. נסו שוב, ואם זה חוזר, פנו אלינו דרך עמוד יצירת הקשר.";
+        return;
+      }
+      var gl = "";
+      if (cur.g && d.group) cur.g.forEach(function(x){ if (x[0] === d.group) gl = " · " + x[1]; });
+      $("rg-done-title").textContent = r.updated ? "הרישום עודכן" : "הרישום התקבל";
+      $("rg-done-text").textContent = "תודה, " + d.name.split(" ")[0] + ". נרשמת ל" + cur.t + gl + ". מועדי המפגשים מופיעים בעמוד הזה ובלוח הגאנט.";
+      var ex = $("rg-done-extra");
+      ex.hidden = !cur.x; ex.innerHTML = cur.x || "";
+      $("rg-form").hidden = true; $("rg-done").hidden = false; $("rg-done").focus();
+      $("rg-consent").checked = false;
+    })
+    .catch(function(){
+      btn.disabled = false; btn.textContent = "שליחת הרישום";
+      st.className = "rg-status bad";
+      st.textContent = "אין חיבור לשרת. בדקו את החיבור לאינטרנט ונסו שוב.";
+    });
+});
+
+$("rg-again").addEventListener("click", function(){
+  $("rg-done").hidden = true; $("rg-form").hidden = false;
+  document.querySelectorAll('input[name="rg-w"]').forEach(function(i){ i.checked = false; });
+  cur = null; $("rg-body").hidden = true;
+  $("rishum").scrollIntoView({behavior:"smooth", block:"start"});
+});
+})();
+</script>
 <script src="site.js" defer></script>
 <script src="search.js" defer></script>
 <script>window.OGEN_WIDGET_POSITION="left";</script>

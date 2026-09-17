@@ -344,6 +344,24 @@ function uniqSchools(rows){
 
 var ACTIVE = [
   {
+    icon:"guide", title:"רישום להשתלמויות תשפ״ז",
+    sub:"המשתתף.ת נרשם.ת · רכזים חברתיים ומת״ליות עוברים לאלנט מיד",
+    desc:"טופס רישום אחד בעמוד ההשתלמויות, עם בחירה בין רכזים חברתיים, מת״ליות, מורים חונכים, רכזים פדגוגיים ושירות לאומי. כל רישום נשמר אצלנו, ורישומי הרכזים החברתיים והמת״ליות נכתבים באותו רגע גם לגיליונות של אלנט.",
+    api:GAS+"AKfycbxraYAhcv_oefTLHxyOfripC0R2LlmPMgYNIWR4rCQUa0FFybRoFHIe4zqgWB1MikF9/exec?mode=count",
+    stats:[{pick:function(j){ return j && j.ok ? j.total : null; },
+            base:0, lbl:"רישומים להשתלמויות",
+            extra:function(j){
+              if (!j || !j.ok || !j.workshops) return "";
+              var w = j.workshops, L = {social:"חברתיים", matal:"מת״ליות", honchim:"חונכים", ped:"פדגוגיים", sherut:"שירות לאומי"}, p = [];
+              Object.keys(L).forEach(function(k){ if (w[k] && w[k].n) p.push(w[k].n + " " + L[k]); });
+              return p.join(" · ");
+            }}],
+    links:[
+      {href:"hishtalmuyot.html#rishum", label:"טופס הרישום", kind:"pri", copy:true},
+      {href:"rishum-mekav.html",        label:"דף המעקב",    kind:"sec"}
+    ]
+  },
+  {
     icon:"compass", title:"שיבוץ רכזי התקשוב למסלולי ההכשרה",
     sub:"מיטל שולחת · הרכז.ת מאשר.ת · המפקח.ת מאשר.ת",
     desc:"כל אחד מרכזי התקשוב מקבל במייל את המסלול שלו, השעות והתאריכים, וקישור אישי שבו הסילבוס והמטלה — ושם הוא מאשר את השיבוץ או מבקש להחליף מסלול. במקביל כל מפקח.ת מאשר.ת את בתי הספר שבפיקוחו בקישור משלו.",

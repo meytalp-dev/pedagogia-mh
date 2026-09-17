@@ -1,0 +1,225 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<script src="/auth.js" data-space="tikshuv"></script>
+<title>מעקב הרישום להשתלמויות · תשפ״ז</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D3B66;--accent:#0A7799;--bg:#F8FBFF;--line:#D8E6F2;--line2:#BED4E7;--muted:#52687A;
+  --green:#1F7A42;--green-bg:#E9F7EF;--red:#B3261E;--red-bg:#FDEEEC;--amber:#8A6209;--amber-bg:#FFF6E0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#102A43;font-family:'Assistant','Segoe UI',Arial,sans-serif;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 60px}
+header.top{background:linear-gradient(135deg,#124D7A,#087B9C);color:#fff;padding:18px 0 20px;margin-bottom:20px}
+.top .wrap{display:flex;align-items:center;gap:14px;padding-bottom:0}
+.top img{height:46px;background:#fff;border-radius:10px;padding:4px 8px}
+.top h1{margin:0;font-size:1.3rem}
+.top p{margin:2px 0 0;opacity:.92;font-size:.9rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+h2{font-size:1.1rem;margin:0 0 10px;color:var(--navy)}
+.muted{color:var(--muted)}.small{font-size:.85rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.tile{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;cursor:pointer;text-align:right;font:inherit;color:inherit}
+.tile:hover{border-color:var(--line2)}
+.tile[aria-pressed=true]{border-color:var(--accent);background:#EAF6FA;box-shadow:0 0 0 3px rgba(10,119,153,.13)}
+.tile .t{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);font-size:.95rem}
+.tile .dot{width:11px;height:11px;border-radius:50%;flex:none}
+.tile .n{font-size:1.7rem;font-weight:800;color:var(--navy);line-height:1.2;margin-top:4px}
+.tile .s{font-size:.8rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 9px;border:1px solid var(--line)}
+.tag.al{background:#EAF6FA;color:var(--accent);border-color:#B9DCE8}
+.tag.ours{background:#F2F4F7;color:var(--muted)}
+.tabs-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{background:#F2F7FC;color:var(--navy);text-align:right;padding:9px 11px;border-bottom:1.5px solid var(--line2);white-space:nowrap}
+td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.ltr{direction:ltr;text-align:right;white-space:nowrap}
+.st-ok{color:var(--green);font-weight:700}.st-err{color:var(--red);font-weight:700}
+.row2{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.btn{font:inherit;font-size:.87rem;font-weight:700;border:1.5px solid var(--line2);background:#fff;color:var(--navy);border-radius:999px;padding:7px 16px;cursor:pointer}
+.btn:hover{background:#F2F7FC}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:#fff}
+.miss{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px;font-size:.88rem;margin:0;padding:0;list-style:none}
+.miss li{padding:3px 0;border-bottom:1px dashed var(--line)}
+.miss li small{color:var(--muted)}
+.empty{color:var(--muted);font-size:.9rem;padding:16px;text-align:center;border:1px dashed var(--line2);border-radius:12px}
+.warn{background:var(--red-bg);border:1px solid #F0B5B0;color:var(--red);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:.9rem}
+.links a{color:var(--accent);font-weight:700}
+footer{text-align:center;font-size:.76rem;color:#8A97A6;padding:20px 0 4px}
+footer a{color:inherit;font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <img src="logo.png" alt="משרד העבודה">
+    <div>
+      <h1>מעקב הרישום להשתלמויות · תשפ״ז</h1>
+      <p>מי נרשם לכל השתלמות, מה עבר לאלנט, ומאילו בתי ספר עוד לא נרשמו</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <h2>מצב הרישום</h2>
+    <div class="tiles" id="tiles"></div>
+    <p class="small muted" id="stamp" role="status">טוען…</p>
+    <p class="small links">טופס הרישום: <a href="hishtalmuyot.html#rishum" target="_blank" rel="noopener">pedagogiamh.co.il/hishtalmuyot.html#rishum</a> ·
+      גיליונות אלנט: <a href="https://docs.google.com/spreadsheets/d/1Ej5QKVrsN28dHnXuj-IP5akefF1PIKvd2ach1uDnupw/edit" target="_blank" rel="noopener">רכזים חברתיים</a> ·
+      <a href="https://docs.google.com/spreadsheets/d/1HemwdRb3kbcqwfjBgXz5aBhNb5LznBUbwz-V25OORIQ/edit" target="_blank" rel="noopener">מת״ליות</a> ·
+      <a href="https://docs.google.com/spreadsheets/d/14zN3xJ9nhqFxXutf3U_U8r-jhb5QWbOkpx4r4hgi5as/edit" target="_blank" rel="noopener">הגיליון שלנו</a></p>
+  </div>
+
+  <div class="card" id="detail">
+    <h2 id="dTitle">נרשמים</h2>
+    <div id="dWarn"></div>
+    <div id="dTable"></div>
+    <div class="row2">
+      <button class="btn pri" id="csv" type="button">ייצוא CSV</button>
+      <button class="btn" id="copyRows" type="button">העתקת הרשימה</button>
+      <span class="small muted" id="msg" role="status"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="mTitle">מאילו בתי ספר טרם נרשמו</h2>
+    <p class="small muted">מתוך 64 בתי הספר. בית ספר שלא נדרש להשתתף בהשתלמות הזו יופיע כאן בכל זאת.</p>
+    <ul class="miss" id="miss"></ul>
+    <div class="row2">
+      <button class="btn" id="copyMiss" type="button">העתקת הרשימה לוואטסאפ</button>
+    </div>
+  </div>
+
+  <footer>נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+var API = 'https://script.google.com/macros/s/AKfycbxraYAhcv_oefTLHxyOfripC0R2LlmPMgYNIWR4rCQUa0FFybRoFHIe4zqgWB1MikF9/exec';
+var KEY = '63bd6012d716a9e3964613e3';
+var WS = [
+  {k:'social',  t:'רכזים חברתיים',               c:'#A9DDBB', al:true},
+  {k:'matal',   t:'מת״ליות · רכזי הכלה והשתלבות', c:'#A9CDF3', al:true},
+  {k:'honchim', t:'מורים חונכים (הרצוג)',         c:'#C7BCEA', al:false},
+  {k:'ped',     t:'רכזים פדגוגיים',               c:'#F5BE93', al:false},
+  {k:'sherut',  t:'שירות לאומי',                  c:'#F0B5B5', al:false}
+];
+var SCHOOLS = ["אבו סנאן", "אום אל פחם בנות", "אום אל פחם בנים", "אור דניאל", "אור העתיד תורני מקצועי", "אורט אורמת", "אורט בית הערבה", "אורט כרמל", "אורט תל נוף", "אורט תעשייה אווירית", "אכסאל", "אל אמאני סכנין", "אלחכמה כסרא-סמיע", "אנרג'י טק", "בית אל", "בית דוד", "בית חנינה בנות", "בית חנינה בנים", "ג'וליס בנות", "דן גורמה", "דרור גליל", "דרור נווה מדבר", "הדר", "הקמפוס התורני עתיד", "התיכון החברתי חיפה", "חוש\"ן", "טורען", "טל חרמון", "ישיבת חנוך לנער", "כפר זיתים", "כפר יסיף", "כפר עקב", "לקייה", "מצפה רמון", "מרחביה/מעיינות", "נחלים", "נצרת", "סור באהר", "סכנין תל שבע", "עמל אשדוד", "עמל טייבה ב'", "עמל טק אין", "עמל רהט", "ערערה", "עתיד באר שבע", "עתיד בת עמי", "עתיד גליל מערבי ירכא בנים", "עתיד טק ביר אל מכסור", "עתיד כפר חב\"ד", "עתיד כרמיאל", "עתיד פלמחים", "צור ברק", "צור ים", "קמ\"ג דימונה", "רימונים", "רמת דוד", "שגב שלום", "שפרעם", "תיכון החממה", "תיכון חברתי ת\"א", "תיכון טכנולוגי אי טק סקול (מסעדה)", "תיכון עוצמ\"ה עתיד זוקו", "תיכון שיח", "תפן ליזמות"];
+var rows = [], cur = 'social';
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+function flash(m){ $('msg').textContent = m; setTimeout(function(){ $('msg').textContent = ''; }, 2500); }
+function copy(text, m){
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ flash(m); }, fb);
+  } else fb();
+  function fb(){
+    var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); flash(m); } catch(e){ flash('ההעתקה נכשלה'); }
+    document.body.removeChild(ta);
+  }
+}
+function of(k){ return rows.filter(function(r){ return r.workshop === k; }); }
+function wsOf(k){ for (var i = 0; i < WS.length; i++) if (WS[i].k === k) return WS[i]; }
+
+function tiles(){
+  var box = $('tiles'); box.innerHTML = '';
+  WS.forEach(function(w){
+    var list = of(w.k), sc = {};
+    list.forEach(function(r){ sc[r.school] = 1; });
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-pressed', w.k === cur);
+    b.innerHTML = '<span class="t"><span class="dot" style="background:' + w.c + '"></span>' + esc(w.t) + '</span>' +
+      '<div class="n">' + list.length + '</div>' +
+      '<div class="s">' + Object.keys(sc).length + ' בתי ספר · ' +
+      (w.al ? '<span class="tag al">עובר לאלנט</span>' : '<span class="tag ours">אצלנו בלבד</span>') + '</div>';
+    b.addEventListener('click', function(){ cur = w.k; render(); });
+    box.appendChild(b);
+  });
+}
+
+function detail(){
+  var w = wsOf(cur), list = of(cur);
+  $('dTitle').textContent = 'נרשמים · ' + w.t + ' (' + list.length + ')';
+  var bad = list.filter(function(r){ return w.al && r.alnet.indexOf('שגיאה') === 0; });
+  $('dWarn').innerHTML = bad.length ? '<div class="warn"><b>' + bad.length + ' רישומים לא נכתבו לאלנט.</b> צריך להעביר אותם ידנית, או לבקש מהנרשם לשלוח שוב.</div>' : '';
+  if (!list.length){ $('dTable').innerHTML = '<div class="empty">עדיין אין נרשמים להשתלמות הזו</div>'; return; }
+  var hasG = list.some(function(r){ return r.group; });
+  var h = '<div class="tabs-wrap"><table><tr><th>#</th><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th>' +
+    (hasG ? '<th>קבוצה</th>' : '') + '<th>נרשם/ה</th>' + (w.al ? '<th>אלנט</th>' : '') + '</tr>';
+  list.forEach(function(r, i){
+    var st = r.alnet.indexOf('שגיאה') === 0 ? 'st-err' : 'st-ok';
+    h += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.school) + '</td>' +
+      '<td class="ltr">' + esc(r.phone) + '</td><td class="ltr">' + esc(r.email) + '</td>' +
+      (hasG ? '<td>' + esc(r.group) + '</td>' : '') + '<td class="ltr">' + esc(r.date) + '</td>' +
+      (w.al ? '<td class="' + st + '">' + esc(r.alnet) + '</td>' : '') + '</tr>';
+  });
+  $('dTable').innerHTML = h + '</table></div>';
+}
+
+function missing(){
+  var w = wsOf(cur), have = {};
+  of(cur).forEach(function(r){ have[r.school] = 1; });
+  var m = SCHOOLS.filter(function(s){ return !have[s]; });
+  $('mTitle').textContent = 'מאילו בתי ספר טרם נרשמו · ' + w.t + ' (' + m.length + ' מתוך ' + SCHOOLS.length + ')';
+  $('miss').innerHTML = m.length ? m.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') : '<li>מכל בתי הספר נרשמו</li>';
+  $('copyMiss').onclick = function(){
+    copy('*' + w.t + ' — בתי ספר שטרם נרשמו (' + m.length + ')*\n' + m.map(function(s, i){ return (i + 1) + '. ' + s; }).join('\n') +
+      '\n\nלרישום: https://pedagogiamh.co.il/hishtalmuyot.html#rishum', 'הרשימה הועתקה');
+  };
+}
+
+function render(){ tiles(); detail(); missing(); }
+
+$('csv').addEventListener('click', function(){
+  var w = wsOf(cur), list = of(cur);
+  var head = ['שם', 'בית ספר', 'טלפון', 'מייל', 'קבוצה', 'תאריך', 'אלנט'];
+  var q = function(v){ return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+  var csv = '﻿' + head.map(q).join(',') + '\n' + list.map(function(r){
+    return [r.name, r.school, r.phone, r.email, r.group, r.date, r.alnet].map(q).join(',');
+  }).join('\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = 'rishum-' + w.k + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+});
+$('copyRows').addEventListener('click', function(){
+  var list = of(cur);
+  copy(list.map(function(r){ return [r.name, r.school, r.phone, r.email, r.group].filter(Boolean).join('\t'); }).join('\n'), 'הרשימה הועתקה');
+});
+
+function load(){
+  var ctl = ('AbortController' in window) ? new AbortController() : null;
+  var t = setTimeout(function(){ if (ctl) ctl.abort(); }, 45000);
+  fetch(API + '?mode=rows&key=' + encodeURIComponent(KEY), ctl ? {signal: ctl.signal} : {})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      clearTimeout(t);
+      if (!j || !j.ok) throw new Error(j && j.error);
+      rows = j.rows || [];
+      render();
+      $('stamp').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'}) + ' · ' + rows.length + ' רישומים בסך הכל · מתרענן כל 2 דקות';
+    })
+    .catch(function(){
+      clearTimeout(t);
+      $('stamp').textContent = 'הטעינה נכשלה. ננסה שוב בעוד 2 דקות.';
+      if (!rows.length) render();
+    });
+}
+load();
+setInterval(load, 120000);
+})();
+</script>
+</body>
+</html>
