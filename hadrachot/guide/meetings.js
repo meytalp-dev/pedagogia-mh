@@ -191,7 +191,8 @@
       future_meeting: 'אי אפשר לסמן נוכחות למפגש שעוד לא התקיים.',
       busy: 'השרת עמוס ברגע זה — לנסות שוב בעוד כמה שניות.',
       closed: 'הרישום העצמי נסגר.',
-      timeout: 'אין תשובה מהשרת (תקשורת איטית).'
+      timeout: 'אין תשובה מהשרת (תקשורת איטית).',
+      bad_response: 'תקלה רגעית בשרת של גוגל — ללחוץ שוב על הכפתור.'
     };
     return map[err] || ('תקלה: ' + (err || 'אין תשובה מהשרת'));
   }
@@ -1047,10 +1048,16 @@
     const openBtn = document.getElementById('meet-open');
     if (openBtn) openBtn.addEventListener('click', async () => {
       openBtn.disabled = true; openBtn.textContent = 'פותח…';
-      const res = await TS.apiPost('meet.open', {
+      const body = {
         guide: SLUG, k: KEY, ge: GE, date: sel.date, sessionDates: sessionDates(), minutes: document.getElementById('meet-minutes').value,
         topic: sel.topic || '', source: sel.source || 'adhoc', guideName: GUIDE_CFG.name || ''
-      });
+      };
+      let res = await TS.apiPost('meet.open', body);
+      // תשובה שהתקלקלה בדרך — פתיחה חוזרת בטוחה (רק מעדכנת את שעת הסגירה)
+      for (let i = 0; i < 2 && res && res.error === 'bad_response'; i++) {
+        await new Promise(r => setTimeout(r, 1500));
+        res = await TS.apiPost('meet.open', body);
+      }
       if (res && res.ok) { applyCodes(res.data); await load(); }
       else {
         await load();   // אולי נפתח למרות שהתשובה נפלה

@@ -198,7 +198,13 @@ const TS = (() => {
         body: JSON.stringify({ action, ...withAuth_(body) }),
         headers: { 'Content-Type': 'text/plain' }
       }, POST_TIMEOUT_MS);
-      const json = await res.json();
+      // אותה תקלה רגעית כמו ב-GET: ההפניה מחזירה לפעמים דף HTML של "הדף לא נמצא".
+      // בלי זה המשתמש ראה "Unexpected token '<' ... is not valid JSON" (דנה, 17.9.26).
+      // הכתיבה עצמה בדרך כלל כבר בוצעה — העמוד מחליט אם לבדוק מחדש או לנסות שוב.
+      const text = await res.text();
+      let json;
+      try { json = JSON.parse(text); }
+      catch (e) { return { ok: false, error: 'bad_response', transient: true }; }
       // הזרמת cache אחרי POST שמשנה נתונים
       if (json && json.ok) cacheInvalidate();
       return json;
