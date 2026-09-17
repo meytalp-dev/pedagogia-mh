@@ -25,7 +25,8 @@ const MAX_TEXT = 2600; // תווי טקסט לעמוד — מספיק להתאמ
 
 /* עמודים שאינם חלק מהאתר הציבורי (טפסים, גיליונות, תבניות) */
 const SKIP = new Set([
-  "rishum-mekav.html",   // מעקב הרישום להשתלמויות — פנימי, מאחורי השער
+  "rishum-mekav.html",
+  "sikum-rishum-hishtalmuyot.html", // מעקב הרישום לפי בתי ספר — לא מקושר מהאתר   // מעקב הרישום להשתלמויות — פנימי, מאחורי השער
   "_doc-template.html",
   "ogdan-megama.html",   // תבנית מגמה בודדת — נטענת עם ?m=<סמל>
   "em-head.tmp.html",

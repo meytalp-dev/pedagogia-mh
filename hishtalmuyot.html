@@ -1114,7 +1114,7 @@ document.querySelectorAll("[data-rg]").forEach(function(a){
   a.addEventListener("click", function(ev){ ev.preventDefault(); choose(a.getAttribute("data-rg"), true); history.replaceState(null, "", "#rishum"); });
 });
 var hm = /[#&]rg=(\w+)/.exec(location.hash);
-if (hm && byKey[hm[1]]) choose(hm[1], false);
+if (hm && byKey[hm[1]]) setTimeout(function(){ choose(hm[1], true); }, 300);
 
 function flag(id, bad){
   var el = $("rg-" + id); if (el && el.tagName !== "DIV") el.classList.toggle("bad", bad);
