@@ -156,12 +156,12 @@ function detail(){
   $('dWarn').innerHTML = bad.length ? '<div class="warn"><b>' + bad.length + ' רישומים לא נכתבו לאלנט.</b> צריך להעביר אותם ידנית, או לבקש מהנרשם לשלוח שוב.</div>' : '';
   if (!list.length){ $('dTable').innerHTML = '<div class="empty">עדיין אין נרשמים להשתלמות הזו</div>'; return; }
   var hasG = list.some(function(r){ return r.group; });
-  var h = '<div class="tabs-wrap"><table><tr><th>#</th><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th>' +
+  var h = '<div class="tabs-wrap"><table><tr><th>#</th><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th><th>עיר</th><th>ת״ז</th>' +
     (hasG ? '<th>קבוצה</th>' : '') + '<th>נרשם/ה</th>' + (w.al ? '<th>אלנט</th>' : '') + '</tr>';
   list.forEach(function(r, i){
     var st = r.alnet.indexOf('שגיאה') === 0 ? 'st-err' : 'st-ok';
     h += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.school) + '</td>' +
-      '<td class="ltr">' + esc(r.phone) + '</td><td class="ltr">' + esc(r.email) + '</td>' +
+      '<td class="ltr">' + esc(r.phone) + '</td><td class="ltr">' + esc(r.email) + '</td><td>' + esc(r.city) + '</td><td>' + (r.hasId ? '<span class="st-ok">✓</span>' : '<span class="st-err">חסר</span>') + '</td>' +
       (hasG ? '<td>' + esc(r.group) + '</td>' : '') + '<td class="ltr">' + esc(r.date) + '</td>' +
       (w.al ? '<td class="' + st + '">' + esc(r.alnet) + '</td>' : '') + '</tr>';
   });
@@ -184,10 +184,10 @@ function render(){ tiles(); detail(); missing(); }
 
 $('csv').addEventListener('click', function(){
   var w = wsOf(cur), list = of(cur);
-  var head = ['שם', 'בית ספר', 'טלפון', 'מייל', 'קבוצה', 'תאריך', 'אלנט'];
+  var head = ['שם', 'בית ספר', 'טלפון', 'מייל', 'עיר', 'קבוצה', 'תאריך', 'אלנט'];
   var q = function(v){ return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
   var csv = '﻿' + head.map(q).join(',') + '\n' + list.map(function(r){
-    return [r.name, r.school, r.phone, r.email, r.group, r.date, r.alnet].map(q).join(',');
+    return [r.name, r.school, r.phone, r.email, r.city, r.group, r.date, r.alnet].map(q).join(',');
   }).join('\n');
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));

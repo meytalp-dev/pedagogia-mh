@@ -97,6 +97,7 @@
 .rg-seg input{accent-color:var(--navy)}
 .rg-check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;cursor:pointer;line-height:1.55}
 .rg-check input{width:19px;height:19px;margin-top:3px;flex:none;accent-color:var(--navy)}
+.rg-note{margin:0 0 8px;font-size:.84rem;color:var(--text2)}
 .rg-err{display:none;color:#C42B2B;font-size:.82rem;font-weight:700;margin-top:5px}
 .rg-err.on{display:block}
 .rg-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px}
@@ -382,9 +383,19 @@
               <div class="rg-err" id="rg-e-group">נא לבחור קבוצה</div>
             </div>
             <div>
-              <label class="rg-lbl" for="rg-name">שם מלא <span class="rg-req">*</span></label>
-              <input id="rg-name" type="text" autocomplete="name" placeholder="שם פרטי ושם משפחה">
-              <div class="rg-err" id="rg-e-name">נא לכתוב שם פרטי ושם משפחה</div>
+              <label class="rg-lbl" for="rg-first">שם פרטי <span class="rg-req">*</span></label>
+              <input id="rg-first" type="text" autocomplete="given-name">
+              <div class="rg-err" id="rg-e-first">נא לכתוב שם פרטי</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-last">שם משפחה <span class="rg-req">*</span></label>
+              <input id="rg-last" type="text" autocomplete="family-name">
+              <div class="rg-err" id="rg-e-last">נא לכתוב שם משפחה</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-tz">תעודת זהות <span class="rg-req">*</span></label>
+              <input id="rg-tz" type="text" inputmode="numeric" autocomplete="off" dir="ltr" maxlength="11" placeholder="9 ספרות, כולל ספרת ביקורת">
+              <div class="rg-err" id="rg-e-tz">מספר תעודת הזהות לא תקין. נא לבדוק שכל 9 הספרות נכונות</div>
             </div>
             <div>
               <label class="rg-lbl" for="rg-school">בית ספר <span class="rg-req">*</span></label>
@@ -403,7 +414,18 @@
               <input id="rg-email" type="email" autocomplete="email" dir="ltr" placeholder="name@example.com">
               <div class="rg-err" id="rg-e-email">נא לכתוב כתובת מייל תקינה</div>
             </div>
+            <div>
+              <label class="rg-lbl" for="rg-city">עיר מגורים <span class="rg-req">*</span></label>
+              <input id="rg-city" type="text" autocomplete="address-level2">
+              <div class="rg-err" id="rg-e-city">נא לכתוב עיר מגורים</div>
+            </div>
+            <div>
+              <label class="rg-lbl" for="rg-address">כתובת מגורים מלאה <span class="rg-req">*</span></label>
+              <input id="rg-address" type="text" autocomplete="street-address" placeholder="רחוב, מספר בית ודירה">
+              <div class="rg-err" id="rg-e-address">נא לכתוב כתובת מגורים מלאה</div>
+            </div>
             <div class="rg-full">
+              <p class="rg-note">הפרטים נדרשים לדיווח ההשתתפות בהשתלמות ולהכרה בה, ומועברים רק לגורם המפעיל.</p>
               <label class="rg-check"><input id="rg-consent" type="checkbox"> <span>אני מאשר/ת את ההרשמה להשתלמות ואת העברת הפרטים לגורם המפעיל, לצורך ניהול ההשתלמות והנוכחות. <span class="rg-req">*</span></span></label>
               <div class="rg-err" id="rg-e-consent">נא לסמן אישור</div>
             </div>
@@ -1058,7 +1080,7 @@ SCHOOLS.forEach(function(s){ var o = document.createElement("option"); o.value =
 
 try{
   var mem = JSON.parse(localStorage.getItem("rg-me") || "{}");
-  if (mem.name) $("rg-name").value = mem.name;
+  ["first","last","city","address"].forEach(function(f){ if (mem[f]) $("rg-" + f).value = mem[f]; });
   if (mem.phone) $("rg-phone").value = mem.phone;
   if (mem.email) $("rg-email").value = mem.email;
   if (mem.school && SCHOOLS.indexOf(mem.school) > -1) sel.value = mem.school;
@@ -1106,6 +1128,16 @@ function phoneOk(v){
   return /^0\d{8,9}$/.test(d);
 }
 
+/* ספרת ביקורת של ת"ז — אותה בדיקה כמו בשרת */
+function tzOk(v){
+  var d = String(v).replace(/\D/g, "");
+  if (d.length < 5 || d.length > 9) return false;
+  while (d.length < 9) d = "0" + d;
+  var s = 0;
+  for (var i = 0; i < 9; i++){ var n = +d.charAt(i) * (i % 2 + 1); s += n > 9 ? n - 9 : n; }
+  return s % 10 === 0;
+}
+
 function fetchJson(url, init, tries){
   return new Promise(function(res, rej){
     var ctl = ("AbortController" in window) ? new AbortController() : null;
@@ -1128,7 +1160,11 @@ $("rg-form").addEventListener("submit", function(ev){
   var d = {
     workshop: cur.k,
     group: g ? g.value : "",
-    name: $("rg-name").value.trim().replace(/\s+/g, " "),
+    first: $("rg-first").value.trim().replace(/\s+/g, " "),
+    last: $("rg-last").value.trim().replace(/\s+/g, " "),
+    tz: $("rg-tz").value.trim(),
+    city: $("rg-city").value.trim().replace(/\s+/g, " "),
+    address: $("rg-address").value.trim().replace(/\s+/g, " "),
     school: sel.value,
     phone: $("rg-phone").value.trim(),
     email: $("rg-email").value.trim(),
@@ -1136,17 +1172,21 @@ $("rg-form").addEventListener("submit", function(ev){
   };
   var ok = true;
   if (cur.g){ var gb = !d.group; $("rg-e-group").classList.toggle("on", gb); ok = !gb && ok; }
-  ok = flag("name", d.name.indexOf(" ") < 1) && ok;
+  ok = flag("first", !d.first) && ok;
+  ok = flag("last", !d.last) && ok;
+  ok = flag("tz", !tzOk(d.tz)) && ok;
   ok = flag("school", !d.school) && ok;
   ok = flag("phone", !phoneOk(d.phone)) && ok;
   ok = flag("email", !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) && ok;
+  ok = flag("city", !d.city) && ok;
+  ok = flag("address", d.address.length < 4) && ok;
   ok = flag("consent", !d.consent) && ok;
   if (!ok){
     var first = document.querySelector("#rishum .bad, #rishum .rg-err.on");
     if (first) first.scrollIntoView({behavior:"smooth", block:"center"});
     return;
   }
-  try{ localStorage.setItem("rg-me", JSON.stringify({name:d.name, phone:d.phone, email:d.email, school:d.school})); }catch(e){}
+  try{ localStorage.setItem("rg-me", JSON.stringify({first:d.first, last:d.last, phone:d.phone, email:d.email, school:d.school, city:d.city, address:d.address})); }catch(e){}
 
   var btn = $("rg-send"), st = $("rg-status");
   btn.disabled = true; btn.textContent = "שולח…";
@@ -1155,7 +1195,7 @@ $("rg-form").addEventListener("submit", function(ev){
     .then(function(r){
       btn.disabled = false; btn.textContent = "שליחת הרישום";
       if (!r || !r.ok){
-        var why = {name:"נא לכתוב שם מלא", school:"בית הספר לא נמצא ברשימה", phone:"מספר הטלפון לא תקין", email:"כתובת המייל לא תקינה", busy:"המערכת עמוסה כרגע, נסו שוב בעוד רגע"}[r && r.error];
+        var why = {first:"נא לכתוב שם פרטי", last:"נא לכתוב שם משפחה", tz:"מספר תעודת הזהות לא תקין", city:"נא לכתוב עיר מגורים", address:"נא לכתוב כתובת מגורים מלאה", school:"בית הספר לא נמצא ברשימה", phone:"מספר הטלפון לא תקין", email:"כתובת המייל לא תקינה", busy:"המערכת עמוסה כרגע, נסו שוב בעוד רגע"}[r && r.error];
         st.className = "rg-status bad";
         st.textContent = why || "השליחה לא הצליחה. נסו שוב, ואם זה חוזר, פנו אלינו דרך עמוד יצירת הקשר.";
         return;
@@ -1163,11 +1203,12 @@ $("rg-form").addEventListener("submit", function(ev){
       var gl = "";
       if (cur.g && d.group) cur.g.forEach(function(x){ if (x[0] === d.group) gl = " · " + x[1]; });
       $("rg-done-title").textContent = r.updated ? "הרישום עודכן" : "הרישום התקבל";
-      $("rg-done-text").textContent = "תודה, " + d.name.split(" ")[0] + ". נרשמת ל" + cur.t + gl + ". מועדי המפגשים מופיעים בעמוד הזה ובלוח הגאנט.";
+      $("rg-done-text").textContent = "תודה, " + d.first + ". נרשמת ל" + cur.t + gl + ". מועדי המפגשים מופיעים בעמוד הזה ובלוח הגאנט.";
       var ex = $("rg-done-extra");
       ex.hidden = !cur.x; ex.innerHTML = cur.x || "";
       $("rg-form").hidden = true; $("rg-done").hidden = false; $("rg-done").focus();
       $("rg-consent").checked = false;
+      $("rg-tz").value = "";
     })
     .catch(function(){
       btn.disabled = false; btn.textContent = "שליחת הרישום";
