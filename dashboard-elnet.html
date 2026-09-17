@@ -144,7 +144,7 @@ h1{font-family:'Rubik',sans-serif;font-size:clamp(24px,4vw,33px);color:var(--nav
 .gate .gerr{color:var(--danger);font-size:15px;font-weight:600;margin:14px 0 0}
 
 .kpi.rej .v{color:#8c2b34}
-.secttl.rejd h2{color:#8c2b34}
+.secttl.rejd h2,.secttl.rejd .ttl{color:#8c2b34}
 .secttl.rejd .n{background:#fff5f6;color:#8c2b34}
 .pill.rejected{background:#fff1f1;color:#a02a2a}
 .c.rejc{border-inline-start-color:#e59a9a;background:#fffafa}
@@ -326,11 +326,14 @@ footer a{color:var(--navy);font-weight:600;text-decoration:none}
     </div>
 
     <div id="rejectedWrap" hidden>
-      <div class="secttl rejd">
-        <h2>נדחו</h2><span class="n" id="nRejected">—</span>
+      <button type="button" class="secttl rejd acc" aria-expanded="false" aria-controls="rejectedBody" data-acc="rejected">
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+        <span class="ttl">נדחו</span><span class="n" id="nRejected">—</span>
         <span class="hint">הסיבה נשלחה למפקח.ת ולמנהל.ת. הגשה חדשה של בית הספר תופיע שוב ב"בדרך"</span>
+      </button>
+      <div class="acc-body" id="rejectedBody" hidden>
+        <div class="cards" id="rejected"></div>
       </div>
-      <div class="cards" id="rejected"></div>
     </div>
 
     <div id="pendingWrap" hidden>
@@ -618,7 +621,8 @@ function render(){
   $("nPending").textContent = pen.length;
   $("pending").innerHTML = pen.map(card).join("");
 
-  var counts = { approved: app.length, ready: rdy.length, started: strt.length, pending: pen.length };
+  var counts = { approved: app.length, ready: rdy.length, started: strt.length,
+                 rejected: rej.length, pending: pen.length };
   var searching = !!$("q").value.trim();
   Object.keys(counts).forEach(function(k){
     /* בחיפוש נפתחים לבד המקטעים שיש בהם תוצאה; בלי חיפוש — מה שנבחר ידנית */
