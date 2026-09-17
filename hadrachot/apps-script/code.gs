@@ -3848,7 +3848,8 @@ function meetRemindTest() {
 //
 // החישוב = TS_meetStats מ-meet-stats.js (אותם כללים כמו בדשבורדים): רק מפגש שהמדריך/ה
 // סימנ/ה בו נוכחות נספר; pending לא נחשב נוכחות; הדרכה פרטנית = השתתפות.
-// מפגש מהתוכנית שעבר בלי סימון — המנהל/ת מקבל/ת "הנוכחות טרם הוזנה", לא "לא השתתף".
+// חריג (מיטל 17.9.26): כאן גם מפגש מהתוכנית שעבר בלי סימון נספר — המנהל/ת והמפקח/ת
+// רואים רק השתתף/לא השתתף. ההתראה על נוכחות שלא הוזנה מופיעה רק במבט הכולל.
 //
 // הנמענים (מיילים אישיים) לא נמצאים כאן — הרפו ציבורי. הם בקובץ נפרד בפרויקט
 // Apps Script בלבד: נמענים.js → const MONTHLY_RECIPIENTS (נבנה מקומית
@@ -3955,11 +3956,14 @@ function monthlyCompute_(month, today) {
   rep.rows.forEach(r => { if (r.status === 'pending') pendingKey[r.meetingId + '|' + r.teacherId] = 1; });
   const inMonth = d => String(d || '').slice(0, 7) === month;
 
-  const merged = {}, rosterBySchool = {}, guideRows = [];
+  const merged = {}, guideRows = [];
   stats.guides.forEach(g => {
     const subjOf = m => win.TS_meetingSubject ? win.TS_meetingSubject(g.slug, m.date) : '';
-    const held = g.held.filter(m => inMonth(m.date));
+    // מפגש מהתוכנית שעבר בלי סימון נספר גם הוא (החלטת מיטל 17.9.26: המנהל/ת רואה רק
+    // השתתף/לא השתתף, בלי תלות בהזנת המדריך/ה) — מי שלא סומן/ה כנוכח/ת = לא השתתף/ה
     const unrec = g.unrecorded.filter(u => inMonth(u.date));
+    const held = g.held.filter(m => inMonth(m.date))
+      .concat(unrec.map(u => ({ id: meetId_(g.slug, u.date), date: u.date })));
     const plan = win.TS_planFor ? win.TS_planFor(g.slug) : null;
     const planned = plan && plan.meetings ? plan.meetings.filter(pm => inMonth(pm.date)).length : 0;
     const gr = { slug: g.slug, name: g.name, subject: win.TS_guideSubjects(g).join(' + '),
@@ -3968,10 +3972,6 @@ function monthlyCompute_(month, today) {
     guideRows.push(gr);
 
     g.persons.forEach(p => {
-      if (p.school) {
-        const r = rosterBySchool[p.school] || (rosterBySchool[p.school] = {});
-        r[g.slug] = unrec.length > 0;
-      }
       const indiv = p.individualDates.filter(inMonth).length;
       p.subjects.forEach(s => {
         const mine = held.filter(m => { const ms = subjOf(m); return !ms || ms === s; });
@@ -3993,7 +3993,7 @@ function monthlyCompute_(month, today) {
     });
   });
   return { month: month, end: end, entries: Object.keys(merged).map(k => merged[k]),
-    guides: guideRows, rosterBySchool: rosterBySchool, map: map };
+    guides: guideRows, map: map };
 }
 
 function monthlyWrapHtml_(inner) {
@@ -4020,13 +4020,6 @@ function monthlyTh_(labels) {
 function monthlyPrincipalMail_(C, school, principalName) {
   const ids = [school.id].concat(school.alias || []);
   const entries = C.entries.filter(e => ids.indexOf(e.school) >= 0);
-  const pendingGuides = {};
-  ids.forEach(id => {
-    const r = C.rosterBySchool[id] || {};
-    Object.keys(r).forEach(slug => { if (r[slug]) pendingGuides[slug] = 1; });
-  });
-  const notYet = C.guides.filter(g => pendingGuides[g.slug]).map(g => g.subject)
-    .filter((s, i, a) => a.indexOf(s) === i);
   if (!entries.length) return null;
 
   const bySubj = {};
@@ -4051,10 +4044,6 @@ function monthlyPrincipalMail_(C, school, principalName) {
     '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו החודש: ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
     '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
       monthlyTh_(['מקצוע', 'השתתפו', 'לא השתתפו']) + rows + '</table>' +
-    (notYet.length
-      ? '<p style="margin:14px 0 0;color:#5b6b7b;font-size:13px">הנוכחות במפגשי החודש ב' +
-        remindEsc_(notYet.join(', ')) + ' טרם הוזנה, ולכן אינה מופיעה כאן.</p>'
-      : '') +
     '<p style="margin:16px 0 0">נודה לעידוד המורים שלא השתתפו להצטרף למפגש ההדרכה בחודש הבא.</p>'
   );
   return { subject: 'השתתפות המורים בהדרכות — ' + school.name + ' · ' + label, html: html, n: entries.length, inN: inN };
@@ -4107,7 +4096,7 @@ function monthlyGuideWarnings_(C) {
   if (!unrec.length) return '';
   return '<p style="margin:14px 0 4px;padding:8px 12px;background:#FDF4F1;border-radius:8px;color:#8f2f1c">' +
     'מפגשים שעברו בלי שהוזנה נוכחות: ' + unrec.map(g => remindEsc_(g.subject + ' (' + g.name + ')')).join(' · ') +
-    '. המפגשים האלה לא נכללו בדוח.</p>';
+    '. המורים של המפגשים האלה נספרו כמי שלא השתתפו.</p>';
 }
 
 function monthlyInspectorMail_(C, inspName, schools) {
@@ -4123,7 +4112,6 @@ function monthlyInspectorMail_(C, inspName, schools) {
     '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו: ' + yes + ' מתוך ' + n +
       ' מורים (' + monthlyPct_(yes, n) + '%)</p>' +
     monthlySchoolTable_(rows, false, true) +
-    monthlyGuideWarnings_(C) +
     '<p style="margin:14px 0 0;font-size:13px;color:#5b6b7b">כל מנהל/ת קיבל/ה מייל עם הפירוט של בית הספר שלו/ה.</p>'
   );
   return { subject: 'השתתפות המורים בהדרכות — בתי הספר שבפיקוחך · ' + label, html: html, n: n, yes: yes };
