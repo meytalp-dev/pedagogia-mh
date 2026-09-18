@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeSel) typeSel.addEventListener('change', toggleUnitsRow);
   renderResources();
   renderPlan();
+  loadSchools();   // רשימת בתי הספר מוכנה עוד לפני שנפתח חלון ההוספה
   // space.js / meetings.js מסתירים את הלשוניות שלהם ב-DOMContentLoaded משלהם
   setTimeout(syncQuickLinks, 0);
   await loadData();
@@ -114,7 +115,11 @@ function syncQuickLinks() {
   });
 }
 
-async function loadData() {
+/* opts.fresh — אחרי שמירה: עוקפים את המטמון המקומי. בטעינה רגילה הרשימה
+   מוצגת מהמטמון (עד 5 דקות) ומתרעננת ברקע; עד 17.9.26 הרענון נשמר ולא הוצג,
+   ולכן מורה שנוסף ממכשיר אחר "לקח זמן עד שהופיע". */
+async function loadData(opts) {
+  opts = opts || {};
   if (!TS.getAppsScriptUrl() || (!guideEmail && !GUIDE_CFG.subject)) {
     renderNoGuide();
     return;
@@ -130,9 +135,15 @@ async function loadData() {
      ממשיכה בקריאה הממוקדת — בלי שינוי התנהגות. */
   const mySubjects = (window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : [])
     .filter(Boolean);
+  let rosterSig = '';
+  const apiOpts = opts.fresh ? { cache: 'no' } : {
+    onRefresh: res => {
+      if (res && res.ok && JSON.stringify(res.data) !== rosterSig) loadData({ fresh: true });
+    }
+  };
   const rosterReq = !mySubjects.length ? Promise.resolve(null)
-    : mySubjects.length === 1 ? TS.api('teachers.list', { subject: mySubjects[0] })
-    : TS.api('teachers.list', {});
+    : mySubjects.length === 1 ? TS.api('teachers.list', { subject: mySubjects[0] }, apiOpts)
+    : TS.api('teachers.list', {}, apiOpts);
 
   const [rosterRes, dashRes] = await Promise.all([
     rosterReq,
@@ -140,6 +151,7 @@ async function loadData() {
   ]);
 
   const dash = (dashRes && dashRes.ok && dashRes.data) ? dashRes.data : null;
+  if (rosterRes && rosterRes.ok) rosterSig = JSON.stringify(rosterRes.data);
 
   if (!rosterRes || !rosterRes.ok) {
     /* מדריכה מזוהה (יש לה קונפיג) — הכשל הוא בשרת, לא בקישור. עד 11.9.26
@@ -166,6 +178,7 @@ async function loadData() {
   const dashById = {};
   if (dash) (dash.teachers || []).forEach(t => { dashById[t.id] = t; });
   const trainings = dash ? (dash.trainings || []) : [];
+  legacyTrainings = trainings;
 
   state = {
     guide: guideEmail || GUIDE_CFG.email || '',
@@ -182,6 +195,7 @@ async function loadData() {
         email: t.email,
         notes: t.notes || '',
         school: t.school,
+        subject: t.subject,
         schoolName: t.schoolName || (d && d.schoolName) || '— ללא שיוך —',
         network: netKey,
         networkName: TS.netById(netKey).name || netKey,
@@ -189,7 +203,9 @@ async function loadData() {
         units: (t.units || '').toString().trim(),
         sector: t.sector || 'kelali',
         attendance: d ? d.attendance : {},
-        stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 }
+        stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 },
+        legacyAttendance: d ? d.attendance : {},
+        legacyStats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 }
       };
     })
   };
@@ -197,8 +213,75 @@ async function loadData() {
     if (a.schoolName !== b.schoolName) return a.schoolName.localeCompare(b.schoolName, 'he');
     return (a.name || '').localeCompare(b.name || '', 'he');
   });
+  applyMeetings();
   renderAll();
 }
+
+/* ============================================================
+   מפגשי ההדרכה (meetings.js) כחלק מ"המורים שלי" — 17.9.26
+   -----------------------------------------------------------
+   הנוכחות נרשמת היום בלשונית "נוכחות במפגשים" (טאבים meetings /
+   meeting_attendance), אבל הטבלה, אחוז הנוכחות, "ההדרכות שלי" והסטטיסטיקה
+   קראו רק את טאב ההדרכות הישן. מוריה סימנה 36 נוכחויות בשני מפגשים וראתה
+   0 הדרכות ו-0%. כאן כל מפגש שהתקיים נכנס כהדרכה (virtual) לאותו state,
+   ושאר הקוד נשאר כמו שהוא.
+   כללי הספירה — כמו ב-assets/meet-stats.js: מפגש שהתקיים = עד היום ויש בו
+   לפחות סימון אחד; נוכחות = present בלבד; אותו מורה בבגרות ובגמר = אדם אחד;
+   מפגש של מקצוע אחר (רבקה) לא נספר למורה. הדרכה פרטנית לא נכנסת לאחוז.
+   ============================================================ */
+let legacyTrainings = [];
+function meetNorm(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+function applyMeetings() {
+  const M = window.MEET_ALL;
+  if (!M) return;
+  const today = M.today || new Date().toISOString().slice(0, 10);
+  const held = (M.meetings || [])
+    .filter(m => m.date <= today && m.counts && (m.counts.present + m.counts.absent) > 0)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const subjOf = m => (window.TS_meetingSubject ? window.TS_meetingSubject(guideSlug, m.date) : '') || '';
+  const heldIds = new Set(held.map(m => m.id));
+
+  // נוכחות לפי אדם (שם + בית ספר), כדי ששורת הבגרות ושורת הגמר יסומנו יחד
+  const personOf = t => meetNorm(t.name) + '|' + meetNorm(t.schoolName);
+  const personById = {};
+  state.teachers.forEach(t => { personById[String(t.id)] = personOf(t); });
+  const attended = {};   // personKey → Set(meetingId)
+  (M.rows || []).forEach(r => {
+    if (r.status !== 'present' || !heldIds.has(r.meetingId)) return;
+    const k = personById[String(r.teacherId)];
+    if (!k) return;
+    (attended[k] = attended[k] || new Set()).add(r.meetingId);
+  });
+
+  state.trainings = legacyTrainings.concat(held.map(m => ({
+    id: m.id, date: m.date, virtual: true, subject: subjOf(m),
+    location: 'מפגש הדרכה', notes: m.topic || ''
+  })));
+  state.teachers.forEach(t => {
+    const att = Object.assign({}, t.legacyAttendance || {});
+    const set = attended[personOf(t)] || new Set();
+    let total = 0, present = 0;
+    held.forEach(m => {
+      const s = subjOf(m);
+      if (s && s !== t.subject) { att[m.id] = { status: 'na' }; return; }
+      total++;
+      if (set.has(m.id)) { present++; att[m.id] = { status: 'present' }; }
+    });
+    const ls = t.legacyStats || { present: 0, partial: 0, total: legacyTrainings.length };
+    const allTotal = (ls.total || 0) + total;
+    const allPresent = (ls.present || 0) + present;
+    t.attendance = att;
+    t.stats = {
+      present: allPresent, partial: ls.partial || 0, total: allTotal,
+      rate: allTotal ? Math.round(allPresent / allTotal * 100) : null
+    };
+  });
+}
+window.DASH_onMeetings = function () {
+  if (!state.teachers.length) return;   // הרשימה עוד לא נטענה — loadData יחיל בסוף
+  applyMeetings();
+  renderAll();
+};
 
 // תקלה רגעית בשרת של Google (302→404 או פסק זמן), אחרי שלושה ניסיונות
 // ב-TS.api. הכותרת נשארת של המדריכה, כדי שלא תחשוב שהקישור שלה שבור.
@@ -269,13 +352,15 @@ function renderAll() {
     (societyLabel ? ' · ' + societyLabel : '') +
     (unmarkedN ? ' · ' + unmarkedN + ' טרם סומנה להם רמה' : '');
 
-  const totalRate = mine.length
-    ? Math.round(mine.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / mine.length)
-    : 0;
+  // מורה שעוד לא התקיים מפגש שרלוונטי אליו — לא נספר כ-0%
+  const rated = mine.filter(t => t.stats.total);
+  const totalRate = rated.length
+    ? Math.round(rated.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / rated.length)
+    : null;
   document.getElementById('stat-teachers').textContent = mine.length;
   document.getElementById('stat-schools').textContent = new Set(mine.map(t => t.schoolName)).size;
   document.getElementById('stat-trainings').textContent = state.trainings.length;
-  document.getElementById('stat-rate').textContent = totalRate + '%';
+  document.getElementById('stat-rate').textContent = totalRate === null ? '—' : totalRate + '%';
 
   renderTeachers();
   renderTrainings();
@@ -417,7 +502,7 @@ function renderTeachers() {
           </div>` : `<button class="te-addnote" onclick='editNoteById(${JSON.stringify(String(t.id))})'>+ הוספת הערה</button>`}
         </td>
         ${state.trainings.map(tr => attCell(t.attendance[tr.id], tr.date, today)).join('')}
-        <td class="rate-cell ${rateClass(t.stats.rate)}">${t.stats.rate}%</td>
+        ${t.stats.total ? `<td class="rate-cell ${rateClass(t.stats.rate)}">${t.stats.rate}%</td>` : '<td class="rate-cell">—</td>'}
       </tr>
     `).join('');
     return `
@@ -434,7 +519,7 @@ function renderTeachers() {
             <thead>
               <tr>
                 <th style="text-align:right;">שם המורה</th>
-                ${state.trainings.map(tr => `<th class="att-cell">${shortDate(tr.date)}</th>`).join('')}
+                ${state.trainings.map(tr => `<th class="att-cell" title="${escapeHtml(tr.notes || '')}">${shortDate(tr.date)}</th>`).join('')}
                 <th>נוכחות</th>
               </tr>
             </thead>
@@ -467,6 +552,7 @@ function attCell(att, trainingDate, today) {
   if (trDate > today) {
     return '<td class="att-cell"><span class="att-mark future" title="עתידי">·</span></td>';
   }
+  if (att && att.status === 'na') return '<td class="att-cell"><span class="att-mark future" title="מפגש במקצוע אחר">·</span></td>';
   if (!att) return '<td class="att-cell"><span class="att-mark absent" title="לא נוכחה">—</span></td>';
   if (att.status === 'present') return '<td class="att-cell"><span class="att-mark present" title="נוכחה">V</span></td>';
   if (att.status === 'partial') return '<td class="att-cell"><span class="att-mark partial" title="חצי נוכחות">½</span></td>';
@@ -474,9 +560,12 @@ function attCell(att, trainingDate, today) {
   return `<td class="att-cell"><span class="att-mark absent" title="${title}">—</span></td>`;
 }
 
+// יום.חודש — שני מפגשים באותו חודש (15.9 ו-16.9) נראו בפורמט חודש/שנה כעמודה כפולה
 function shortDate(d) {
+  const m = String(d || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return Number(m[3]) + '.' + Number(m[2]);
   const dt = new Date(d);
-  return ('0' + (dt.getMonth() + 1)).slice(-2) + '/' + String(dt.getFullYear()).slice(-2);
+  return dt.getDate() + '.' + (dt.getMonth() + 1);
 }
 
 function rateClass(r) {
@@ -494,7 +583,7 @@ function escapeHtml(s) {
 function renderTrainings() {
   const list = document.getElementById('trainings-list');
   if (!state.trainings.length) {
-    list.innerHTML = '<div class="empty" style="padding:32px;">אין הדרכות עדיין</div>';
+    list.innerHTML = '<div class="empty" style="padding:32px;">אין הדרכות עדיין. נוכחות שמסמנים בלשונית "נוכחות במפגשים" תופיע כאן.</div>';
     return;
   }
   const baseUrl = location.origin + location.pathname.replace(/\/guide\/?$/, '');
@@ -509,6 +598,20 @@ function renderTrainings() {
       const a = tch.attendance[t.id];
       return a && a.status === 'present';
     }).length;
+    if (t.virtual) {
+      const pool = state.teachers.filter(tch => !t.subject || tch.subject === t.subject).length;
+      return `
+      <div class="training-row">
+        <div>
+          <div class="when">${TS.formatDate(t.date)}</div>
+          <div class="where">${escapeHtml(t.notes || 'מפגש הדרכה')}</div>
+        </div>
+        <div class="actions">
+          <span style="color:var(--text-2); font-size:13px;">${presentCount} מתוך ${pool} נוכחו</span>
+          <button type="button" class="btn btn-secondary" onclick="goTab('meet')">לרשימת הנוכחות</button>
+        </div>
+      </div>`;
+    }
     return `
       <div class="training-row">
         <div>
@@ -553,7 +656,7 @@ function renderStats() {
       const a = tch.attendance[t.id];
       return a && a.status === 'present';
     }).length;
-    const total = state.teachers.length;
+    const total = state.teachers.filter(tch => !t.subject || tch.subject === t.subject).length || 1;
     const rate = Math.round((present / total) * 100);
     return { date: t.date, label: TS.formatDate(t.date), present, total, rate };
   });
@@ -714,11 +817,17 @@ function openTeacherModal(teacher) {
   f.reset();
   document.getElementById('te-id').value = teacher ? (teacher.id || '') : '';
   document.getElementById('teacher-modal-title').textContent = teacher ? 'עריכת מורה' : 'הוספת מורה';
+  fillSchoolSelect(teacher);
   if (teacher) {
     document.getElementById('te-name').value = teacher.name || '';
-    document.getElementById('te-school').value = teacher.schoolName || '';
     document.getElementById('te-network').value = (teacher.network || '').replace(/^net_/, '');
-    document.getElementById('te-phone').value = teacher.phone || '';
+    /* הטלפון מגיע ל-teachers.list הפתוח ממוסך ("•••993"). עד 17.9.26 הוא הוצג
+       בשדה, וכל עריכה כתבה את הכוכביות לגיליון במקום המספר (קרה בפועל למורה
+       אחד). מוצג ריק עם הסבר — ומה שריק לא נשלח ולא דורס. */
+    const ph = document.getElementById('te-phone');
+    const masked = /[•]/.test(teacher.phone || '');
+    ph.value = masked ? '' : (teacher.phone || '');
+    ph.placeholder = masked ? 'שמור במערכת — למילוי רק כדי להחליף' : '05...';
     document.getElementById('te-email').value = teacher.email || '';
     document.getElementById('te-notes').value = teacher.notes || '';
   }
@@ -736,18 +845,82 @@ function openTeacherModal(teacher) {
   document.getElementById('modal-teacher').classList.add('open');
 }
 
-/* מייל המורה — חובה בהוספת מורה (החלטת מיטל 14.9.26), כמו בהזנת המורים
-   ובאימות של המנהלים. בעריכה לא: הרשימה כאן מגיעה מ-teachers.list הפתוח,
-   שבו השרת ממסך את המייל ל-'' — השדה ריק גם אצל מורה שיש לו מייל, וחובה
-   הייתה חוסמת כל עריכה. ריק בעריכה לא דורס (updateTeacher מדלג על ריק). */
+/* ===== בית ספר מרשימה סגורה (17.9.26, בקשת מוריה) =====
+   עד היום השדה היה טקסט חופשי: המורה נשמר עם השם שאמר ("אור מנחם עתיד
+   אשקלון") ובלי מזהה בית ספר. בלי מזהה הוא לא נספר לבית הספר, לא מגיע
+   לטופס האימות של המנהל, מקבל מגזר ברירת מחדל, וההגנה מכפילויות בשרת
+   (לפי מזהה + שם + מקצוע + מסלול) לא חלה — ולכן כל לחיצה חוזרת יצרה שורה.
+   הרשימה: schools.list, מסוננת למגזרים של המדריכה (sector-map-2027.json). */
+let SCHOOLS = null;              // [{ id, name, network, sector }]
+let schoolsLoading = null;
+function loadSchools() {
+  if (SCHOOLS) return Promise.resolve(SCHOOLS);
+  if (schoolsLoading) return schoolsLoading;
+  schoolsLoading = Promise.all([
+    TS.api('schools.list', {}),
+    fetch('../_data/sector-map-2027.json').then(r => r.json()).catch(() => ({}))
+  ]).then(([res, map]) => {
+    const sectorById = {};
+    ((map && map.schools) || []).forEach(x => { sectorById[x.id] = x.sector; });
+    if (!res || !res.ok) { schoolsLoading = null; return null; }
+    SCHOOLS = (res.data || []).map(x => ({
+      id: String(x.id), name: String(x.name || '').trim(),
+      network: String(x.network || '').replace(/^net_/, ''),
+      sector: sectorById[x.id] || ''
+    })).filter(x => x.id && x.name)
+      .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+    return SCHOOLS;
+  });
+  return schoolsLoading;
+}
+function schoolById(id) { return (SCHOOLS || []).find(x => x.id === String(id || '')) || null; }
+
+function fillSchoolSelect(teacher) {
+  const sel = document.getElementById('te-school');
+  const hint = document.getElementById('te-school-hint');
+  if (!sel) return;
+  const cur = teacher ? String(teacher.school || '') : '';
+  const draw = () => {
+    const secs = GUIDE_CFG.sectors || null;
+    const list = (SCHOOLS || []).filter(x => !secs || !x.sector || secs.indexOf(x.sector) >= 0 || x.id === cur);
+    sel.innerHTML = '<option value="">בחרי בית ספר מהרשימה</option>' +
+      list.map(x => `<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)}</option>`).join('');
+    sel.value = cur && schoolById(cur) ? cur : '';
+    sel.onchange = () => {
+      const s = schoolById(sel.value);
+      if (s && s.network) document.getElementById('te-network').value = s.network;
+      if (hint) hint.hidden = true;
+    };
+    // מורה ישן שנשמר בשם חופשי — מראים מה נכתב, כדי שיהיה קל לבחור את הנכון
+    if (hint) {
+      const free = teacher && !schoolById(cur) && teacher.schoolName && teacher.schoolName !== '— ללא שיוך —';
+      hint.textContent = free ? 'רשום כרגע: "' + teacher.schoolName + '" — בחרי את בית הספר הרשמי מהרשימה' : '';
+      hint.hidden = !free;
+    }
+  };
+  if (SCHOOLS) { draw(); return; }
+  sel.innerHTML = '<option value="">טוען את רשימת בתי הספר…</option>';
+  loadSchools().then(list => {
+    if (list) draw();
+    else sel.innerHTML = '<option value="">הרשימה לא נטענה — סגרי ופתחי שוב</option>';
+  });
+}
+
+/* מייל המורה — רשות (17.9.26, החלטת מיטל לבקשת מוריה). ב-14.9.26 נקבע חובה,
+   אבל למדריכה לא תמיד יש את המייל. מורה שנשמר בלי מייל מסומן בטופס האימות
+   של המנהל/ת (verify.html), שחוסם את האישור עד שלכולם יש מייל.
+   בעריכה: הרשימה כאן מגיעה מ-teachers.list הפתוח, שבו השרת ממסך את המייל
+   ל-'' — ריק בעריכה לא דורס (updateTeacher מדלג על ריק). */
 const TE_EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
 function setEmailField(isNew) {
   const inp = document.getElementById('te-email');
   const label = document.getElementById('te-email-label');
   const err = document.getElementById('te-email-err');
+  const note = document.getElementById('te-email-note');
   if (!inp) return;
-  if (label) label.textContent = isNew ? 'מייל *' : 'מייל';
-  inp.placeholder = isNew ? 'חובה — name@example.com' : 'להשאיר ריק כדי לא לשנות את המייל הקיים';
+  if (label) label.textContent = 'מייל';
+  if (note) note.hidden = !isNew;
+  inp.placeholder = isNew ? 'name@example.com' : 'להשאיר ריק כדי לא לשנות את המייל הקיים';
   inp.style.borderColor = '';
   if (err) { err.hidden = true; err.textContent = ''; }
   inp.oninput = () => { inp.style.borderColor = ''; if (err) err.hidden = true; };
@@ -760,9 +933,9 @@ function setEmailField(isNew) {
     inp.focus();
   };
 }
-function emailProblem(email, isNew) {
+function emailProblem(email) {
   const v = (email || '').trim();
-  if (!v) return isNew ? 'המייל הוא שדה חובה' : '';
+  if (!v) return '';
   return TE_EMAIL_RE.test(v) ? '' : 'המייל לא תקין';
 }
 
@@ -799,12 +972,25 @@ async function submitTeacher(e) {
     data.subject = GUIDE_CFG.subject || state.subject || '';
   }
   data.guide = guideEmail || (GUIDE_CFG.email || '');
-  // מדריכה של החברה הערבית — מורה חדש נרשם אוטומטית במגזר הערבי
-  if (GUIDE_CFG.sectors && GUIDE_CFG.sectors.length === 1) data.sector = GUIDE_CFG.sectors[0];
   const editing = !!data.id;
 
+  // בית הספר קובע שם רשמי, רשת ומגזר. בלי מגזר נכון המורה לא מופיע
+  // אצל המדריכה הנכונה ולא בדשבורדים הארציים.
+  const school = schoolById(data.school);
+  if (!school) {
+    TS.toast('יש לבחור בית ספר מהרשימה');
+    document.getElementById('te-school').focus();
+    return;
+  }
+  data.schoolName = school.name;
+  if (school.network) data.network = school.network;
+  if (school.sector) data.sector = school.sector;
+  else if (GUIDE_CFG.sectors && GUIDE_CFG.sectors.length === 1) data.sector = GUIDE_CFG.sectors[0];
+  // Google Sheets הופך "4-5" לתאריך ו-"3" למספר — חייבים לעבור דרך unitsForWrite
+  if (data.units) data.units = TS.unitsForWrite(data.units);
+
   data.email = (data.email || '').trim();
-  const problem = emailProblem(data.email, !editing);
+  const problem = emailProblem(data.email);
   if (problem) {
     const inp = document.getElementById('te-email');
     const err = document.getElementById('te-email-err');
@@ -812,21 +998,52 @@ async function submitTeacher(e) {
     if (inp) { inp.style.borderColor = '#D97757'; inp.focus(); }
     return;
   }
-  if (editing && !data.email) delete data.email;   // לא שולחים ריק
+  if (!data.email) delete data.email;   // לא שולחים ריק
+  if (!data.phone || /[•]/.test(data.phone)) delete data.phone;   // ריק או ממוסך — לא דורסים
 
   if (!TS.getAppsScriptUrl()) {
     TS.toast('אין חיבור לשרת — לא ניתן לשמור');
     return;
   }
 
-  const res = await TS.apiPost(editing ? 'teachers.update' : 'teachers.create', data);
-  if (res.ok) {
-    TS.toast(editing ? 'המורה עודכן' : 'המורה נוסף');
-    closeTeacherModal();
-    await loadData();
-  } else {
-    TS.toast('שגיאה — ' + (res.error || ''));
+  /* שמירה כפולה (17.9.26) — מוריה לחצה שוב כשהתשובה לא חזרה, ואייל גונן
+     נשמר שלוש פעמים. שלוש שכבות: (1) הכפתור ננעל בזמן השמירה; (2) המפתח
+     של בית הספר מפעיל את ההגנה מכפילויות בשרת; (3) תשובה שנפלה בדרך
+     (Apps Script מחזיר מדי פעם דף HTML) נבדקת מול השרת לפני שמכריזים כישלון —
+     הכתיבה כמעט תמיד כבר בוצעה. */
+  const btn = document.getElementById('te-submit');
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent; btn.textContent = 'שומר…'; }
+  let saved = false;
+  try {
+    const res = await TS.apiPost(editing ? 'teachers.update' : 'teachers.create', data);
+    saved = !!res.ok;
+    if (!saved && !editing) saved = await teacherLanded(data);
+    if (saved) {
+      TS.toast((editing ? 'המורה עודכן' : 'המורה נוסף') +
+        (!editing && !data.email ? ' · בלי מייל — המנהל/ת יתבקש/תתבקש להשלים' : ''));
+      closeTeacherModal();
+    } else {
+      TS.toast('לא נשמר — ' + (res.error === 'bad_response' || res.transient
+        ? 'תקלה רגעית בשרת. אפשר ללחוץ שוב על "שמירה"' : (res.error || '')));
+    }
+  } finally {
+    // משחררים לפני רענון הרשימה: הרענון לוקח כמה שניות, ובבדיקה הכפתור
+    // נשאר "שומר…" גם בחלון הבא ונראה תקוע.
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'שמירה'; }
   }
+  if (saved) await loadData({ fresh: true });
+}
+
+// האם המורה בכל זאת נכתב? בדיקה ישירה מול רשימת בית הספר, בלי מטמון.
+async function teacherLanded(data) {
+  const res = await TS.api('teachers.list', { school: data.school }, { cache: 'no' });
+  if (!res || !res.ok) return false;
+  const name = (data.name || '').trim();
+  const type = data.type === 'gemer' ? 'gemer' : 'bagrut';
+  return (res.data || []).some(t =>
+    (t.name || '').trim() === name && t.subject === data.subject &&
+    (t.type === 'gemer' ? 'gemer' : 'bagrut') === type);
 }
 
 function openNewTraining() {

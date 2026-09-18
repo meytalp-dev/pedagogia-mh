@@ -274,15 +274,16 @@
   async function load() {
     if (!sel) {
       // בלי תוכנית (שירה): אולי כבר נרשמו מפגשים שלא בתוכנית — מושכים את הרשימה
-      const r0 = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE }, { cache: 'no' });
-      if (r0 && r0.ok && r0.data) { S.meetings = r0.data.meetings || []; }
+      const r0 = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, all: 1 }, { cache: 'no' });
+      if (r0 && r0.ok && r0.data) { S.meetings = r0.data.meetings || []; publishAll(r0.data); }
       else if (r0 && r0.error === 'bad_key') { S.badKey = true; renderSelection(); renderBody(); return; }
       pickDefault();
       renderSelection();
       if (!sel) return;
     }
     const date = sel.date;
-    const res = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, date: date }, { cache: 'no' });
+    const res = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, date: date, all: 1 }, { cache: 'no' });
+    if (res && res.ok && res.data) publishAll(res.data);
     if (!sel || sel.date !== date) return;   // בינתיים נבחר מפגש אחר
     if (res && res.ok && res.data) {
       S.meetings = res.data.meetings || [];
@@ -300,6 +301,19 @@
     renderNextMeet();
     renderBody();
     schedulePoll();
+  }
+  // כל המפגשים והרישומים של המדריכ/ה → לשונית "המורים שלי", אחוז הנוכחות
+  // ו"ההדרכות שלי" (dashboard.js). עד 17.9.26 אלה הציגו רק את טאב ההדרכות
+  // הישן, ומדריכה שסימנה נוכחות כאן ראתה שם 0 הדרכות ו-0%.
+  // שרת ישן בלי allRows — לא מפרסמים, והדשבורד נשאר כמו שהיה.
+  let allSig = '';
+  function publishAll(d) {
+    if (!d || !Array.isArray(d.allRows)) return;
+    const sig = JSON.stringify([d.meetings, d.allRows.map(r => [r.meetingId, r.teacherId, r.status])]);
+    if (sig === allSig) return;
+    allSig = sig;
+    window.MEET_ALL = { today: d.today || S.today, meetings: d.meetings || [], rows: d.allRows };
+    if (typeof window.DASH_onMeetings === 'function') window.DASH_onMeetings();
   }
   function schedulePoll() {
     clearTimeout(pollTimer);

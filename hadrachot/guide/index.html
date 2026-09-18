@@ -787,9 +787,14 @@
           <label class="form-label">מקצוע *</label>
           <select class="select" name="subject" id="te-subject"></select>
         </div>
-        <div class="form-row">
-          <label class="form-label">בית ספר</label>
-          <input class="input" name="schoolName" id="te-school" placeholder="שם בית הספר">
+        <!-- בית ספר מרשימה סגורה (17.9.26, בקשת מוריה) — השם שהמורה אומר/ת
+             לא תמיד השם הרשמי. הבחירה קובעת גם רשת ומגזר. -->
+        <div class="form-row" style="grid-column:1/-1;">
+          <label class="form-label" for="te-school">בית ספר *</label>
+          <select class="select" name="school" id="te-school" required>
+            <option value="">טוען את רשימת בתי הספר…</option>
+          </select>
+          <div id="te-school-hint" style="font-size:12.5px; color:var(--text-muted); margin-top:4px;" hidden></div>
         </div>
         <div class="form-row">
           <label class="form-label">רשת</label>
@@ -827,9 +832,10 @@
           <input class="input" name="phone" id="te-phone" placeholder="05...">
         </div>
         <div class="form-row">
-          <label class="form-label" id="te-email-label" for="te-email">מייל *</label>
+          <label class="form-label" id="te-email-label" for="te-email">מייל</label>
           <input type="email" class="input" name="email" id="te-email" dir="ltr" inputmode="email" autocomplete="off">
           <div id="te-email-err" style="font-size:12.5px; color:#b91c1c; margin-top:4px;" hidden></div>
+          <div id="te-email-note" style="font-size:12.5px; color:var(--text-muted); margin-top:4px;" hidden>אין מייל? אפשר לשמור בלי. המנהל/ת יתבקש/תתבקש להשלים אותו בטופס אימות המורים.</div>
         </div>
         <div class="form-row" style="grid-column:1/-1;">
           <label class="form-label">הערה אישית (נראית רק לך)</label>
@@ -847,8 +853,8 @@
 <script src="../assets/app.js?v=20260916"></script>
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260916c"></script>
-<script src="dashboard.js?v=20260916b"></script>
+<script src="dashboard.js?v=20260917"></script>
 <script src="space.js?v=20260914b"></script>
-<script src="meetings.js?v=20260916"></script>
+<script src="meetings.js?v=20260917"></script>
 </body>
 </html>

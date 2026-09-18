@@ -1259,8 +1259,8 @@ function createTeacher(p) {
     seniority: parseInt(p.seniority || 0, 10),
     units: p.units || '',
     students: parseInt(p.students || 0, 10),
-    phone: p.phone || '',
-    email: p.email || '',
+    phone: isMasked_(p.phone) ? '' : (p.phone || ''),
+    email: isMasked_(p.email) ? '' : (p.email || ''),
     notes: p.notes || '',
     moeApproval: toBool(p.moeApproval),
     moeFile: p.moeFile || '',
@@ -1386,16 +1386,34 @@ function createTeachersBatch(p) {
   };
 }
 
+/* ערך ממוסך לא נכתב לעולם (17.9.26). teachers.list הפתוח מחזיר טלפון כ"•••993",
+   וכל מסך שמציג ערך כזה בשדה ושומר אותו מוחק את המספר האמיתי. קרה בפועל.
+   ההגנה כאן ולא רק בדף, כי אותו ערך עלול להישלח מכל מסך. */
+function isMasked_(v) { return /[\u2022]/.test(String(v == null ? '' : v)); }
+
 function updateTeacher(p) {
   if (!p.id) return { ok: false, error: 'missing_id' };
+  if (isMasked_(p.phone)) delete p.phone;
+  if (isMasked_(p.email)) delete p.email;
   const updates = {};
   ['name','schoolName','subject','type','sector','seniority','units','students','phone','email','moeApproval','moeFile','pdActive','pdFile','pdYear'].forEach(k => {
     if (p[k] !== undefined && p[k] !== '') updates[k] = p[k];
   });
   // notes — מותר לעדכן גם לערך ריק (מחיקת הערה)
   if (p.notes !== undefined) updates.notes = p.notes;
+  // ניקוי מפורש של טלפון/מייל. ערך ריק רגיל פירושו "אל תיגע" (כל מסכי ההזנה
+  // שולחים שדות ריקים), ולכן מחיקה דורשת דגל — אחרת אי אפשר לתקן ערך שגוי.
+  if (String(p.clearPhone || '') === '1') updates.phone = '';
+  if (String(p.clearEmail || '') === '1') updates.email = '';
   // network — מנרמלים (ללא קידומת net_) כדי לתאום את תצוגת הצ'יפ
   if (p.network !== undefined && p.network !== '') updates.network = p.network.toString().replace(/^net_/, '');
+  // שיוך לבית ספר (17.9.26) — המדריכה בוחרת מהרשימה הסגורה. בלי זה תיקון שם בית
+  // הספר בעריכה שינה רק את הטקסט, והמורה נשאר בלי מזהה: לא נספר לבית הספר,
+  // לא מופיע אצל המנהל, וההגנה מכפילויות (לפי מזהה) לא חלה עליו.
+  if (p.school !== undefined && String(p.school).trim() !== '') {
+    updates.school = String(p.school).trim();
+    if (!updates.schoolName) updates.schoolName = resolveSchoolName_(updates.school, '');
+  }
   if (p.moeApproval !== undefined) updates.moeApproval = toBool(p.moeApproval);
   if (p.pdActive !== undefined) updates.pdActive = toBool(p.pdActive);
   const ok = updateRowById('teachers', p.id, updates);
@@ -3241,6 +3259,9 @@ function meetState(p) {
     data.meetingId = id;
     data.rows = rows.filter(r => String(r.meetingId) === id).map(meetRowPublic_);
   }
+  // all=1 (17.9.26) — כל רישומי המדריכ/ה, ללשונית "המורים שלי" ולאחוז הנוכחות.
+  // אותה הרשאה ואותו סינון slug; meet.report לא מתאים כי ייסגר עם AUTH_ENFORCED.
+  if (String(p.all || '') === '1') data.allRows = rows.map(r => Object.assign(meetRowPublic_(r), { meetingId: String(r.meetingId) }));
   return { ok: true, data: data };
 }
 
