@@ -4078,12 +4078,24 @@ function monthlyWrapHtml_(inner) {
 
 function monthlyIsIn_(e) { return e.status === 'present' || e.status === 'individual'; }
 
-function monthlyNameList_(arr) {
-  return arr.slice().sort((a, b) => a.name.localeCompare(b.name, 'he')).map(e =>
+/* רשימת שמות — עד 12 שמות, והשאר כמספר. רשימות ארוכות הפכו את המייל
+   לבלתי קריא (מיטל, 18.9.26); הרשימה המלאה נמצאת במסך. */
+function monthlyNameList_(arr, limit) {
+  const max = limit || 12;
+  const sorted = arr.slice().sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  const extra = sorted.length > max ? sorted.length - max : 0;
+  return monthlyNames_(extra ? sorted.slice(0, max) : sorted) +
+    (extra ? '<br><span style="color:#8a97a6">ועוד ' + extra + ' מורים — ברשימה המלאה במסך</span>' : '');
+}
+
+function monthlyNames_(arr) {
+  return arr.map(e =>
     remindEsc_(e.name) + (e.status === 'individual' ? ' <span style="color:#8a97a6">(הדרכה פרטנית)</span>'
       : e.status === 'pending' ? ' <span style="color:#8a97a6">(נרשם/ה, טרם אושר/ה ע״י המדריך/ה)</span>' : '')
   ).join('<br>');
 }
+
+const MONTHLY_SITE = 'https://pedagogiamh.co.il/hadrachot';
 
 const MONTHLY_CELL = 'padding:7px 10px;border-bottom:1px solid #e3e8ee;vertical-align:top;text-align:right';
 
@@ -4091,7 +4103,9 @@ function monthlyTh_(labels) {
   return '<tr style="background:#f1f5f9">' + labels.map(h => '<th style="' + MONTHLY_CELL + '">' + h + '</th>').join('') + '</tr>';
 }
 
-// מייל למנהל/ת — כל המזהים של בית הספר (מסאראת=ערערה)
+/* מייל למנהל/ת — תמציתי (בקשת מיטל 18.9.26): מספר אחד גדול, שורה לכל מקצוע
+   עם אחוז, ורק **מי שלא השתתף/ה**. רשימת המשתתפים הוסרה — היא הכפילה את אורך
+   המייל בלי להוסיף פעולה. הפירוט המלא, וכל החודשים, נמצאים במסך בית הספר. */
 function monthlyPrincipalMail_(C, school, principalName) {
   const ids = [school.id].concat(school.alias || []);
   const entries = C.entries.filter(e => ids.indexOf(e.school) >= 0);
@@ -4101,25 +4115,31 @@ function monthlyPrincipalMail_(C, school, principalName) {
   entries.forEach(e => { (bySubj[e.subject] = bySubj[e.subject] || []).push(e); });
   const subjects = Object.keys(bySubj).sort((a, b) => a.localeCompare(b, 'he'));
   const inN = entries.filter(monthlyIsIn_).length;
+  const pct = monthlyPct_(inN, entries.length);
 
   const rows = subjects.map(s => {
     const list = bySubj[s];
     const yes = list.filter(monthlyIsIn_), no = list.filter(e => !monthlyIsIn_(e));
-    return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) +
-      '<div style="font-weight:normal;font-size:12px;color:#5b6b7b">' + yes.length + ' מתוך ' + list.length + '</div></td>' +
-      '<td style="' + MONTHLY_CELL + ';color:#1f7a5c">' + (monthlyNameList_(yes) || '—') + '</td>' +
-      '<td style="' + MONTHLY_CELL + ';color:#a4442f">' + (monthlyNameList_(no) || '—') + '</td></tr>';
+    const p = monthlyPct_(yes.length, list.length);
+    return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) + '</td>' +
+      '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(p) + '">' +
+        p + '%<span style="font-weight:normal;color:#5b6b7b"> · ' + yes.length + '/' + list.length + '</span></td>' +
+      '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' +
+        (no.length ? monthlyNameList_(no) : '<span style="color:#1f7a5c">כולם השתתפו</span>') + '</td></tr>';
   }).join('');
 
   const label = monthlyLabel_(C.month);
+  const link = MONTHLY_SITE + '/admin-school/?school=' + encodeURIComponent(school.id);
   const html = monthlyWrapHtml_(
     '<p style="margin:0 0 10px">שלום' + (principalName ? ' ' + remindEsc_(principalName) : '') + ',</p>' +
-    '<p style="margin:0 0 14px">להלן השתתפות מורי <b>' + remindEsc_(school.name) + '</b> במפגשי ההדרכה המקצועית בחודש ' +
-      remindEsc_(label) + '. מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש (בוקר או ערב), או קיבל/ה הדרכה פרטנית.</p>' +
-    '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו החודש: ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
+    '<p style="margin:0 0 14px">השתתפות מורי <b>' + remindEsc_(school.name) + '</b> בהדרכה המקצועית בחודש ' +
+      remindEsc_(label) + '.</p>' +
+    '<p style="margin:0 0 4px;font-size:26px;font-weight:bold;color:' + monthlyPctColor_(pct) + '">' + pct + '%</p>' +
+    '<p style="margin:0 0 14px;font-size:15px">השתתפו ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
     '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
-      monthlyTh_(['מקצוע', 'השתתפו', 'לא השתתפו']) + rows + '</table>' +
-    '<p style="margin:16px 0 0">נודה לעידוד המורים שלא השתתפו להצטרף למפגש ההדרכה בחודש הבא.</p>'
+      monthlyTh_(['מקצוע', 'נוכחות', 'מי לא השתתף/ה']) + rows + '</table>' +
+    '<p style="margin:16px 0 0"><a href="' + link + '" style="color:#256A8A;font-weight:bold">למסך בית הספר — כל החודשים, לפי מקצוע ומדריכ/ה</a></p>' +
+    '<p style="margin:10px 0 0;font-size:12.5px;color:#5b6b7b">בכל חודש מתקיימת הדרכה אחת בשני מועדים, בוקר וערב — השתתפות באחד מהם נספרת כנוכחות. גם הדרכה פרטנית נספרת.</p>'
   );
   return { subject: 'השתתפות המורים בהדרכות — ' + school.name + ' · ' + label, html: html, n: entries.length, inN: inN };
 }
@@ -4160,9 +4180,11 @@ function monthlySchoolTable_(rows, withInspector, withNames) {
       '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(r.pct) + '">' +
         (r.n ? monthlyRatio_(r.yes, r.n) : '<span style="font-weight:normal">אין מפגשים החודש</span>') + '</td>' +
       (withNames ? '<td style="' + MONTHLY_CELL + ';font-size:13px">' + (r.no.length
-        ? r.no.slice().sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.name.localeCompare(b.name, 'he'))
-            .map(e => remindEsc_(e.name) + ' <span style="color:#8a97a6">· ' + remindEsc_(e.subject) + '</span>').join('<br>')
-        : (r.n ? 'כולם השתתפו' : '—')) + '</td>' : '') +
+        ? '<b>' + r.no.length + ' לא השתתפו:</b> ' +
+          r.no.slice().sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.name.localeCompare(b.name, 'he'))
+            .slice(0, 8).map(e => remindEsc_(e.name) + ' <span style="color:#8a97a6">(' + remindEsc_(e.subject) + ')</span>').join(' · ') +
+          (r.no.length > 8 ? ' <span style="color:#8a97a6">ועוד ' + (r.no.length - 8) + '</span>' : '')
+        : (r.n ? '<span style="color:#1f7a5c">כולם השתתפו</span>' : '—')) + '</td>' : '') +
       '</tr>').join('') + '</table>';
 }
 
