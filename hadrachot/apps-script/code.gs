@@ -826,7 +826,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // link.seen כותב, אבל נמצא ברשימה בכוונה: הוא נשלח בכל פתיחת דשבורד, ובלעדיו
 // כל פתיחה הייתה מאפסת את מטמון רשימת המורים (bumpTeachersGen_) וכותבת שורה
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard)$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -961,6 +961,7 @@ function handleRequest(params) {
       case 'meet.mark':           result = meetMark(params); break;
       case 'meet.guideKeys':      result = meetGuideKeys(params); break;
       case 'meet.report':         result = meetReport(params); break;
+      case 'meet.scope':          result = meetScope(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -1194,7 +1195,13 @@ function maskContact_(t) {
 function listTeachers(p, user) {
   let data = readAll('teachers').map(t => ({...t, moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive)}));
   if (p.school)   data = data.filter(t => t.school === p.school);
-  if (p.network)  data = data.filter(t => t.network === p.network);
+  /* הרשת נשמרת אצל המורה בלי הקידומת ("atid"), אבל חלק מהמסכים שולחים
+     "net_atid" (כך היא נשמרת בטאב schools). עד 18.9.26 הסינון החזיר אפס
+     שורות בשקט — פילוח המגזרים בדשבורד הרשת היה ריק בלי שום שגיאה. */
+  if (p.network) {
+    const net_ = String(p.network).replace(/^net_/, '');
+    data = data.filter(t => String(t.network || '').replace(/^net_/, '') === net_);
+  }
   if (p.subject)  data = data.filter(t => t.subject === p.subject);
   if (p.sector)   data = data.filter(t => t.sector === p.sector);
   // בלי token ובלי סינון לבית ספר יחיד (זרימת ההזנה) — בלי פרטי קשר
@@ -3563,6 +3570,53 @@ function meetReport(p) {
   })).sort((a, b) => a.date.localeCompare(b.date));
 
   return { ok: true, data: { today: meetToday_(), meetings: meetings, rows: rows } };
+}
+
+/* ============================================================
+   נוכחות במפגשים לבית ספר או לרשת — 18.9.26
+   ------------------------------------------------------------
+   למנהל/ת ולמנהל/ת הרשת. אותם נתונים כמו meet.report, אבל **רק** שורות
+   הנוכחות של המורים שבתחום שלהם: מנהלת רואה את בית ספרה בלבד, רשת את
+   בתי הספר שלה. ספירת "מפגש שהתקיים" נשארת גלובלית (counts מכל השורות),
+   אחרת מפגש שבו אף מורה מבית הספר לא סומן היה נעלם מהמכנה.
+   השעות הפרטניות מסוננות לפי שם בית הספר (בטאב guide_hours אין teacherId).
+   ============================================================ */
+function meetScope(p) {
+  const schoolId = String(p.school || '').trim();
+  const networkId = String(p.network || '').replace(/^net_/, '').trim();
+  if (!schoolId && !networkId) return { ok: false, error: 'missing_scope' };
+
+  const teachers = readAll('teachers').filter(function (t) {
+    if (schoolId) return String(t.school || '').trim() === schoolId;
+    return String(t.network || '').replace(/^net_/, '').trim() === networkId;
+  });
+  const ids = {};
+  const schoolNames = {};
+  teachers.forEach(function (t) {
+    ids[String(t.id)] = true;
+    const n = meetNormName_(t.schoolName);
+    if (n) schoolNames[n] = true;
+  });
+
+  const full = meetReport({});
+  if (!full.ok) return full;
+  const data = full.data;
+  data.rows = data.rows.filter(function (r) { return ids[String(r.teacherId || '')]; });
+  data.hours = readAll('guide_hours').filter(function (h) {
+    return schoolNames[meetNormName_(h.schoolName)];
+  }).map(function (h) {
+    return {
+      guideSlug: String(h.guideSlug || ''), firstName: h.firstName || '', lastName: h.lastName || '',
+      subject: h.subject || '', schoolName: h.schoolName || '', topic: h.topic || '',
+      date: meetDate_(h.date), hours: Number(h.hours) || 0
+    };
+  });
+  data.scope = schoolId ? { kind: 'school', id: schoolId } : { kind: 'network', id: networkId };
+  return { ok: true, data: data };
+}
+
+function meetNormName_(v) {
+  return String(v == null ? '' : v).replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
 // ============================================================

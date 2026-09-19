@@ -6,6 +6,7 @@
 <title>מבט רשת — מצפן הפיקוח</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260914b">
 <style>
   /* command-strip עם 5 KPIs */
   .command-strip { grid-template-columns: repeat(5, 1fr); }
@@ -193,6 +194,22 @@
       <div class="line"></div>
     </div>
 
+    <!-- נוכחות במפגשי ההדרכה (18.9.26) — כרטיס לכל מקצוע ומדריכ/ה -->
+    <section class="attention-card" style="margin-bottom:18px;">
+      <div class="attention-head">
+        <div>
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            נוכחות במפגשי ההדרכה
+          </h3>
+          <p class="sub" id="nw-meet-summary">טוען…</p>
+        </div>
+      </div>
+      <div style="padding:14px 16px;">
+        <div id="nw-meet-grid" class="mv-grid"><div class="mv-empty">טוען נוכחות…</div></div>
+      </div>
+    </section>
+
     <!-- Schools table -->
     <section class="attention-card">
       <div class="attention-head">
@@ -226,6 +243,11 @@
 
 <script src="../assets/app.js"></script>
 <script src="../assets/auth-guard.js" data-roles="network_admin"></script>
+<script src="../assets/guides.js?v=20260911"></script>
+<script src="../assets/plans.js?v=20260916c"></script>
+<script src="../assets/meet-stats.js?v=20260916"></script>
+<script src="../assets/meet-view.js?v=20260916"></script>
 <script src="dashboard.js"></script>
+<script src="meet.js?v=20260918"></script>
 </body>
 </html>

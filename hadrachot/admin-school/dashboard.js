@@ -224,6 +224,7 @@ function renderTeachers() {
         </td>
         ${trainings.map(tr => attCell(t.attendance[tr.id], tr.date, today)).join('')}
         <td class="rate-cell ${t.stats.total ? rateClass(t.stats.rate) : ''}">${t.stats.total ? t.stats.rate + '%' : '—'}</td>
+        <td class="num">${window.SCHOOL_meetCell ? window.SCHOOL_meetCell(t.id) : ''}</td>
       </tr>
     `).join('');
     return `
@@ -241,6 +242,7 @@ function renderTeachers() {
                 <th style="text-align:right;">שם המורה</th>
                 ${trainings.map(tr => `<th class="att-cell">${shortDate(tr.date)}</th>`).join('')}
                 <th>%</th>
+                <th title="נוכחות במפגשי ההדרכה השנה">מפגשים</th>
               </tr>
             </thead>
             <tbody>${teachersHtml}</tbody>
@@ -309,3 +311,8 @@ function renderTrainings() {
   }).join('');
 }
 
+// נתוני המפגשים (meet.js) מגיעים אחרי טבלת המורים — מציירים מחדש כדי
+// שעמודת "מפגשים" לא תישאר ריקה.
+window.SCHOOL_onMeet = function () {
+  if (state && state.teachers && state.teachers.length) renderTeachers();
+};

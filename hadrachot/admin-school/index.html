@@ -6,6 +6,7 @@
 <title>מבט בית ספר — מצפן הפיקוח</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
 <link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260914b">
 <style>
   /* command-strip עם 4 KPIs (במקום 6 ברירת המחדל) */
   .command-strip { grid-template-columns: repeat(4, 1fr); }
@@ -162,7 +163,8 @@
 
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
-      <button class="tab-btn" data-tab="trainings">ההדרכות</button>
+      <button class="tab-btn" data-tab="meet">נוכחות בהדרכות</button>
+      <button class="tab-btn" data-tab="trainings">ההדרכות הישנות</button>
     </div>
 
     <div class="tab-pane active" id="tab-teachers">
@@ -184,6 +186,17 @@
       </div>
     </div>
 
+    <!-- נוכחות במפגשי ההדרכה (18.9.26) — כרטיס לכל מקצוע ומדריכ/ה -->
+    <div class="tab-pane" id="tab-meet">
+      <div class="card" style="padding:16px 18px; margin-bottom:14px;">
+        <h3 style="margin:0 0 6px; font-size:17px;">נוכחות המורים במפגשי ההדרכה</h3>
+        <div id="meet-summary" style="color:var(--text-2); font-size:14px;">טוען…</div>
+      </div>
+      <div id="meet-container" class="mv-grid">
+        <div class="mv-empty">טוען נוכחות…</div>
+      </div>
+    </div>
+
     <div class="tab-pane" id="tab-trainings">
       <div class="card" style="padding:0;">
         <div id="trainings-list">
@@ -195,6 +208,11 @@
   </main>
 
 <script src="../assets/app.js"></script>
-<script src="dashboard.js"></script>
+<script src="../assets/guides.js?v=20260911"></script>
+<script src="../assets/plans.js?v=20260916c"></script>
+<script src="../assets/meet-stats.js?v=20260916"></script>
+<script src="../assets/meet-view.js?v=20260916"></script>
+<script src="dashboard.js?v=20260918"></script>
+<script src="meet.js?v=20260918"></script>
 </body>
 </html>
