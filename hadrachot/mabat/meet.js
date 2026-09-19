@@ -40,11 +40,12 @@
     stats.persons.forEach(p => p.ids.forEach(id => { if (!personByTeacher[id]) personByTeacher[id] = p; }));
 
     const alerts = stats.guides.reduce((s, g) => s + g.unrecorded.length, 0);
-    const heldAll = stats.guides.reduce((s, g) => s + g.held.length, 0);
+    // יחידת הספירה היא חודש (18.9.26) — שני מועדים באותו חודש הם הדרכה אחת
+  const heldAll = stats.guides.reduce((s, g) => s + ((g.months || []).length), 0);
     const sum = document.getElementById('meet-summary');
     sum.innerHTML = heldAll
-      ? `${heldAll} מפגשים עם רישום נוכחות${alerts ? ` · <b style="color:#8f2f1c">${alerts} מפגשים שעברו בלי רישום</b>` : ''}`
-      : (alerts ? `<b style="color:#8f2f1c">${alerts} מפגשים שעברו בלי רישום נוכחות</b>` : 'עוד לא התקיימו מפגשים עם רישום נוכחות');
+      ? `${heldAll === 1 ? 'הדרכה חודשית אחת' : heldAll + ' הדרכות חודשיות'} עם רישום נוכחות${alerts ? ` · <b style="color:#8f2f1c">${alerts} מועדים שעברו בלי רישום</b>` : ''}`
+      : (alerts ? `<b style="color:#8f2f1c">${alerts} מועדים שעברו בלי רישום נוכחות</b>` : 'עוד לא התקיימה הדרכה עם רישום נוכחות');
 
     // מדריכ/ה עם התראה — קודם
     const ordered = stats.guides.slice().sort((a, b) =>

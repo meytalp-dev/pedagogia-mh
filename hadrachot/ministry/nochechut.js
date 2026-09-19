@@ -86,14 +86,14 @@
       [p.name, p.schoolName, p.guideName].some(s => String(s || '').toLowerCase().includes(q)));
 
     // KPI
-    const held = gs.reduce((s, g) => s + g.held.length, 0);
+    const held = gs.reduce((s, g) => s + ((g.months || []).length), 0);   // חודשים, לא מועדים
     const pres = persons.reduce((s, p) => s + p.present, 0);
     const denom = persons.reduce((s, p) => s + p.held, 0);
     const never = persons.filter(p => p.held && !p.participated);
     $('k-held').textContent = held;
     $('k-rate').textContent = denom ? Math.round(pres / denom * 100) + '%' : '—';
     $('k-never').textContent = held ? never.length : '—';
-    $('k-never-s').textContent = held ? 'מתוך ' + persons.filter(p => p.held).length + ' מורים בקבוצות שנפגשו' : 'עוד לא התקיימו מפגשים';
+    $('k-never-s').textContent = held ? 'מתוך ' + persons.filter(p => p.held).length + ' מורים בקבוצות שנפגשו' : 'עוד לא התקיימו הדרכות';
     $('k-unrec').textContent = gs.reduce((s, g) => s + g.unrecorded.length, 0);
     $('k-pending').textContent = gs.reduce((s, g) => s + g.pending, 0);
     // אדום רק כשיש משהו לטפל בו — אפס באדום מושך תשומת לב לשווא
@@ -184,12 +184,12 @@
   function exportCsv(kind) {
     let head, rows;
     if (kind === 'teachers') {
-      head = ['מורה', 'בית ספר', 'רשת', 'מקצוע', 'מדריך/ה', 'השתתף/ה', 'מפגשים שהתקיימו', 'אחוז', 'תאריכים שהחסיר/ה', 'ממתין לאישור', 'הדרכה פרטנית (מפגשים)', 'תאריכי הדרכה פרטנית'];
+      head = ['מורה', 'בית ספר', 'רשת', 'מקצוע', 'מדריך/ה', 'השתתף/ה', 'הדרכות חודשיות שהתקיימו', 'אחוז', 'חודשים שהחסיר/ה', 'ממתין לאישור', 'הדרכה פרטנית (מפגשים)', 'תאריכי הדרכה פרטנית'];
       rows = (render.teachers || []).map(p => [p.name, p.schoolName, (TS.netById(p.network) || {}).name || p.network, p.subject, p.guideName,
         p.present, p.held, p.rate === null ? '' : p.rate, p.missed.map(L).join(' '), p.pending || '', p.individual || 0, p.individualDates.map(L).join(' ')]);
     } else {
       const src = kind === 'schools' ? render.schools : render.networks;
-      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'מפגשים (מורה×מפגש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)', 'מורים עם הדרכה פרטנית'];
+      head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'הדרכות (מורה×חודש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)', 'מורים עם הדרכה פרטנית'];
       rows = (src || []).map(a => [a.name, a.n, a.present, a.held, a.rate === null ? '' : a.rate, a.never.length,
         kind === 'schools' ? (render.schoolInd[a.name] || 0) : a.individual, a.indT || 0]);
     }

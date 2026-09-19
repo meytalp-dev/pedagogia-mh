@@ -231,9 +231,9 @@ function renderTeachers() {
       <div class="subject-group">
         <div class="subject-header">
           <h3>${escapeHtml(subj)} — ${teachers.length} מורים</h3>
-          <span class="meta">${trainings.length
+          <span class="meta">${meetMeta(subj) || (trainings.length
             ? `ממוצע נוכחות: <strong class="${rateClass(avgRate)}">${avgRate}%</strong>`
-            : 'טרם התקיימו הדרכות'}</span>
+            : 'ההדרכות במקצוע טרם התחילו')}</span>
         </div>
         <div class="table-wrap" style="border:none;">
           <table class="att-grid">
@@ -316,3 +316,11 @@ function renderTrainings() {
 window.SCHOOL_onMeet = function () {
   if (state && state.teachers && state.teachers.length) renderTeachers();
 };
+
+// סיכום הנוכחות במפגשי ההדרכה לכותרת קבוצת המקצוע (meet.js מחשב)
+function meetMeta(subject) {
+  const m = window.SCHOOL_meetSubject && window.SCHOOL_meetSubject(subject);
+  if (!m) return '';
+  return `${m.months === 1 ? 'הדרכה אחת' : m.months + ' הדרכות'} · ממוצע נוכחות: <strong class="${rateClass(m.rate)}">${m.rate}%</strong>` +
+    (m.never ? ` · <strong style="color:#8f2f1c">${m.never} לא השתתפו כלל</strong>` : '');
+}

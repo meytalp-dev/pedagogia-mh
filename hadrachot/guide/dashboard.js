@@ -228,6 +228,8 @@ async function loadData(opts) {
    כללי הספירה — כמו ב-assets/meet-stats.js: מפגש שהתקיים = עד היום ויש בו
    לפחות סימון אחד; נוכחות = present בלבד; אותו מורה בבגרות ובגמר = אדם אחד;
    מפגש של מקצוע אחר (רבקה) לא נספר למורה. הדרכה פרטנית לא נכנסת לאחוז.
+   **18.9.26 (קביעת מיטל): העמודה היא חודש, לא מועד.** בכל חודש שני מועדים,
+   בוקר וערב, והם הדרכה אחת — מי שהיה באחד מהם נחשב נוכח בהדרכה של החודש.
    ============================================================ */
 let legacyTrainings = [];
 function meetNorm(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
@@ -253,19 +255,36 @@ function applyMeetings() {
     (attended[k] = attended[k] || new Set()).add(r.meetingId);
   });
 
-  state.trainings = legacyTrainings.concat(held.map(m => ({
-    id: m.id, date: m.date, virtual: true, subject: subjOf(m),
-    location: 'מפגש הדרכה', notes: m.topic || ''
+  // קיבוץ לחודשים: כל חודש = עמודה אחת, ובתוכה כל המועדים שלו
+  const monthsMap = {};
+  held.forEach(m => {
+    const k = m.date.slice(0, 7);
+    const mo = monthsMap[k] || (monthsMap[k] = { key: k, date: m.date, ids: [], dates: [], subjects: {}, topics: [] });
+    mo.ids.push(m.id);
+    mo.dates.push(m.date);
+    const sx = subjOf(m);
+    if (sx) mo.subjects[sx] = 1;
+    if (m.topic && mo.topics.indexOf(m.topic) < 0) mo.topics.push(m.topic);
+  });
+  const months = Object.keys(monthsMap).sort().map(k => monthsMap[k]);
+
+  state.trainings = legacyTrainings.concat(months.map(mo => ({
+    id: 'mon_' + mo.key, date: mo.date, virtual: true, month: mo,
+    subject: Object.keys(mo.subjects).length === 1 ? Object.keys(mo.subjects)[0] : '',
+    location: 'הדרכה חודשית',
+    // הכותרת היא שם החודש (נבנית בתצוגה); כאן רק הנושאים של אותו חודש
+    notes: mo.topics.join(' · ')
   })));
   state.teachers.forEach(t => {
     const att = Object.assign({}, t.legacyAttendance || {});
     const set = attended[personOf(t)] || new Set();
     let total = 0, present = 0;
-    held.forEach(m => {
-      const s = subjOf(m);
-      if (s && s !== t.subject) { att[m.id] = { status: 'na' }; return; }
+    months.forEach(mo => {
+      const subs = Object.keys(mo.subjects);
+      if (subs.length && subs.indexOf(t.subject) < 0) { att['mon_' + mo.key] = { status: 'na' }; return; }
       total++;
-      if (set.has(m.id)) { present++; att[m.id] = { status: 'present' }; }
+      // נוכחות באחד המועדים של החודש = נוכחות בהדרכה החודשית
+      if (mo.ids.some(id => set.has(id))) { present++; att['mon_' + mo.key] = { status: 'present' }; }
     });
     const ls = t.legacyStats || { present: 0, partial: 0, total: legacyTrainings.length };
     const allTotal = (ls.total || 0) + total;
@@ -519,7 +538,7 @@ function renderTeachers() {
             <thead>
               <tr>
                 <th style="text-align:right;">שם המורה</th>
-                ${state.trainings.map(tr => `<th class="att-cell" title="${escapeHtml(tr.notes || '')}">${shortDate(tr.date)}</th>`).join('')}
+                ${state.trainings.map(tr => `<th class="att-cell" title="${escapeHtml((tr.month ? window.TS_meetMonthLabel(tr.month.key) + ' · ' : '') + (tr.notes || '') + (tr.month ? ' · ' + tr.month.dates.map(shortDate).join(', ') : ''))}">${tr.month ? escapeHtml(monthShort(tr.month.key)) : shortDate(tr.date)}</th>`).join('')}
                 <th>נוכחות</th>
               </tr>
             </thead>
@@ -558,6 +577,12 @@ function attCell(att, trainingDate, today) {
   if (att.status === 'partial') return '<td class="att-cell"><span class="att-mark partial" title="חצי נוכחות">½</span></td>';
   const title = att.notes ? att.notes.replace(/"/g, '&quot;') : 'לא נוכחה';
   return `<td class="att-cell"><span class="att-mark absent" title="${title}">—</span></td>`;
+}
+
+// שם החודש לכותרת העמודה — עמודה אחת לכל הדרכה חודשית
+function monthShort(key) {
+  const full = window.TS_meetMonthLabel ? window.TS_meetMonthLabel(key) : key;
+  return full.replace(/ \d{4}$/, '');
 }
 
 // יום.חודש — שני מפגשים באותו חודש (15.9 ו-16.9) נראו בפורמט חודש/שנה כעמודה כפולה
@@ -600,11 +625,12 @@ function renderTrainings() {
     }).length;
     if (t.virtual) {
       const pool = state.teachers.filter(tch => !t.subject || tch.subject === t.subject).length;
+      const dates = t.month ? t.month.dates.map(d => TS.formatDate(d)).join(' · ') : TS.formatDate(t.date);
       return `
       <div class="training-row">
         <div>
-          <div class="when">${TS.formatDate(t.date)}</div>
-          <div class="where">${escapeHtml(t.notes || 'מפגש הדרכה')}</div>
+          <div class="when">${escapeHtml(t.month ? monthShort(t.month.key) : TS.formatDate(t.date))}</div>
+          <div class="where">${escapeHtml(t.notes || 'הדרכה חודשית')}<br><span style="color:var(--text-muted)">${escapeHtml(t.month && t.month.dates.length > 1 ? 'שני מועדים — בוקר וערב: ' + dates : dates)}</span></div>
         </div>
         <div class="actions">
           <span style="color:var(--text-2); font-size:13px;">${presentCount} מתוך ${pool} נוכחו</span>

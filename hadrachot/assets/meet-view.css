@@ -43,3 +43,24 @@
 /* הדרכה פרטנית (14.9.26) — עמודה נפרדת ליד אחוז הנוכחות */
 .mv-ind { display:inline-block; font-size:11px; font-weight:700; border-radius:999px; padding:1px 8px; background:#EEE8F7; color:#5b4391; font-variant-numeric:tabular-nums; white-space:nowrap; }
 .mv-ind.zero { background:#FBE4DF; color:#8f2f1c; }
+
+/* שורת "לא השתתפו" מתחת לשורת החודש, ותווית קטנה מתחת ל-KPI (18.9.26) */
+.mv-table tr.mv-sub-row td { background:#FBF7F0; color:var(--text-2); font-size:12.5px; line-height:1.7; padding-top:4px; padding-bottom:8px; }
+.mv-kpi-note { display:block; font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+/* "השורה התחתונה" — אחוז הנוכחות של בית הספר / הרשת, לפני הפירוט (18.9.26) */
+.mv-bottom { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.mv-bottom-rate { display:flex; align-items:baseline; gap:8px; }
+.mv-bottom-rate b { font-family:'Frank Ruhl Libre', serif; font-size:34px; line-height:1; }
+.mv-bottom-rate span { font-size:13px; color:var(--text-2); }
+.mv-bottom-rate.high b { color:#1f7a5c; } .mv-bottom-rate.mid b { color:#b26b00; } .mv-bottom-rate.low b { color:#8f2f1c; }
+.mv-bottom-tx { color:var(--text-2); font-size:13.5px; }
+
+/* גרף מגמה חודשי (18.9.26) */
+.mv-trend { display:flex; align-items:flex-end; gap:10px; padding:10px 4px; min-height:150px; }
+.mv-trend-col { flex:1; min-width:44px; text-align:center; }
+.mv-trend-bar-wrap { height:110px; display:flex; align-items:flex-end; }
+.mv-trend-bar { width:100%; border-radius:6px 6px 0 0; background:#8aa6b3; transition:height .3s; }
+.mv-trend-bar.high { background:#3f9c7d; } .mv-trend-bar.mid { background:#d99a2b; } .mv-trend-bar.low { background:#c26a55; }
+.mv-trend-val { font-weight:700; font-size:13px; margin-top:4px; }
+.mv-trend-lbl { font-size:12px; color:var(--text-2); }

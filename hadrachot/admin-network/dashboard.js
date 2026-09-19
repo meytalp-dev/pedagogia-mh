@@ -110,13 +110,14 @@ function render() {
   const missedEl = document.getElementById('stat-missed');
   if (missedEl) missedEl.textContent = noData ? '—' : s.atRisk || 0;
 
-  // גרף המגמה — יופיע כשיהיו רישומי נוכחות
+  // גרף המגמה נבנה ב-meet.js מההדרכות החודשיות; כאן רק מצב ביניים.
   const trendEl = document.getElementById('trend-chart');
   if (trendEl) {
     trendEl.innerHTML = '<div class="empty">' + (noData
-      ? 'מדידת הנוכחות טרם החלה — הגרף ייבנה מהצ\'ק-אינים הראשונים.'
+      ? 'ההדרכות טרם התחילו — הגרף ייבנה מההדרכה החודשית הראשונה.'
       : 'נתוני המגמה מצטברים מחודש לחודש.') + '</div>';
   }
+  if (typeof window.NW_meetApply === 'function') window.NW_meetApply();
 
   // Schools table
   const tbody = document.getElementById('schools-body');

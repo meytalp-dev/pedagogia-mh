@@ -3,13 +3,100 @@
    -----------------------------------------------------------
    עד היום דשבורד הרשת קרא רק את מערכת ההדרכות הישנה, והציג "מדידת הנוכחות
    טרם החלה" גם כשכבר נרשמו נוכחויות במפגשי הזום.
-   כאן: כרטיס לכל **מקצוע · מדריכ/ה** שיש בה מורים מהרשת, עם פירוט לפי
-   בית ספר ורשימת מי שלא השתתף — אותו כרטיס בדיוק שהמפקח.ת והמבט הארצי
-   רואים (assets/meet-view.js), רק שהנתונים מוגבלים לרשת.
+   המבנה (בקשת מיטל 18.9.26): קודם **השורה התחתונה** — אחוז הנוכחות של
+   הרשת; אחריה **טבלה חודשית** — לכל חודש אחוז, ובפתיחה אילו בתי ספר לא
+   השתתפו; ורק אחר כך הפירוט לפי מקצוע ומדריכ/ה.
+   **יחידת הספירה היא חודש:** שני המועדים של אותו חודש (בוקר וערב) הם
+   הדרכה אחת, ומי שהיה באחד מהם השתתף בהדרכה של החודש.
    שליפה: meet.scope?network=<id> — שורות הנוכחות של מורי הרשת בלבד.
    ============================================================ */
 (function () {
   let stats = null, failed = false, loaded = false;
+
+  const esc = s => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const L = d => (window.TS_meetDateLabel ? window.TS_meetDateLabel(d) : d);
+
+  /* חודשי ההדרכה של הרשת — איחוד של כל קבוצות ההדרכה, ולכל חודש חתך
+     לפי בית ספר. זה החתך שמנהל/ת הרשת מבקש/ת: מי לא השתתף החודש. */
+  function networkMonths(gs) {
+    const byMonth = {};
+    gs.forEach(g => (g.months || []).forEach(mo => {
+      const m = byMonth[mo.key] || (byMonth[mo.key] = {
+        key: mo.key, label: mo.label, n: 0, present: 0, dates: {}, schools: {}
+      });
+      m.n += mo.rosterN;
+      m.present += mo.rosterPresent;
+      mo.dates.forEach(d => { m.dates[d] = 1; });
+      const add = (p, ok) => {
+        const name = p.schoolName || '— ללא שיוך —';
+        const sc = m.schools[name] || (m.schools[name] = { name: name, n: 0, present: 0, absent: [] });
+        sc.n++;
+        if (ok) sc.present++; else sc.absent.push(p.name);
+      };
+      mo.present.forEach(p => add(p, true));
+      mo.absent.forEach(p => add(p, false));
+    }));
+    return Object.keys(byMonth).sort().reverse().map(k => {
+      const m = byMonth[k];
+      m.rate = m.n ? Math.round(m.present / m.n * 100) : null;
+      m.schoolList = Object.keys(m.schools).map(n => {
+        const sc = m.schools[n];
+        sc.rate = sc.n ? Math.round(sc.present / sc.n * 100) : null;
+        return sc;
+      }).sort((a, b) => a.rate - b.rate || a.name.localeCompare(b.name, 'he'));
+      m.dateList = Object.keys(m.dates).sort();
+      return m;
+    });
+  }
+
+  function monthsHtml(gs) {
+    const months = networkMonths(gs);
+    if (!months.length) return '';
+    const n = months.reduce((s, m) => s + m.n, 0);
+    const present = months.reduce((s, m) => s + m.present, 0);
+    const rate = n ? Math.round(present / n * 100) : null;
+    const rc = window.TS_rateClass ? window.TS_rateClass(rate) : '';
+    return `
+      <div class="mv-bottom" style="margin-bottom:12px;">
+        <div class="mv-bottom-rate ${rc}"><b>${rate}%</b><span>נוכחות הרשת בהדרכות</span></div>
+        <div class="mv-bottom-tx">${months.length === 1 ? 'הדרכה חודשית אחת התקיימה' : months.length + ' הדרכות חודשיות התקיימו'} · ${gs.length} קבוצות הדרכה</div>
+      </div>
+      <table class="mv-table">
+        <thead><tr><th>חודש</th><th>מועדים</th><th>אחוז נוכחות</th><th>השתתפו</th><th>בתי ספר</th></tr></thead>
+        <tbody>${months.map(m => {
+          const zero = m.schoolList.filter(sc => !sc.present);
+          return `
+          <tr>
+            <td><b>${esc(m.label)}</b></td>
+            <td class="num">${m.dateList.map(L).join(' · ')}</td>
+            <td class="num"><span class="mv-chip ${window.TS_rateClass(m.rate)}">${m.rate}%</span></td>
+            <td class="num">${m.present}/${m.n}</td>
+            <td>${zero.length
+              ? `<b style="color:#8f2f1c">${zero.length} בתי ספר בלי אף משתתף</b>`
+              : '<span style="color:#1f7a5c">בכל בתי הספר היו משתתפים</span>'}</td>
+          </tr>
+          <tr class="mv-sub-row"><td colspan="5">
+            <details>
+              <summary>פירוט לפי בית ספר (${m.schoolList.length})</summary>
+              <table class="mv-table">
+                <thead><tr><th>בית ספר</th><th>אחוז</th><th>השתתפו</th><th>מי לא השתתף/ה</th></tr></thead>
+                <tbody>${m.schoolList.map(sc => `
+                  <tr>
+                    <td>${esc(sc.name)}</td>
+                    <td class="num"><span class="mv-chip ${window.TS_rateClass(sc.rate)}">${sc.rate}%</span></td>
+                    <td class="num">${sc.present}/${sc.n}</td>
+                    <td>${sc.absent.length ? esc(sc.absent.join(' · ')) : '<span style="color:#1f7a5c">כולם השתתפו</span>'}</td>
+                  </tr>`).join('')}
+                </tbody>
+              </table>
+            </details>
+          </td></tr>`;
+        }).join('')}
+        </tbody>
+      </table>`;
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     const id = TS.urlParam('network', '');
@@ -50,21 +137,35 @@
       if (sum) sum.textContent = '';
       return;
     }
-    const held = gs.reduce((s, g) => s + g.held.length, 0);
+    const monthsN = new Set();
+    gs.forEach(g => (g.months || []).forEach(mo => monthsN.add(mo.key)));
     const persons = gs.reduce((a, g) => a.concat(g.persons), []);
     const never = persons.filter(p => !p.participated).length;
+    const held = monthsN.size;
     if (sum) {
       sum.innerHTML = held
-        ? `${gs.length} קבוצות הדרכה · ${held} מפגשים שהתקיימו · ` +
-          (never ? `<b style="color:#8f2f1c">${never} מורים לא השתתפו באף מפגש</b>`
+        ? `${held === 1 ? 'הדרכה חודשית אחת התקיימה' : held + ' הדרכות חודשיות התקיימו'} · ${gs.length} קבוצות הדרכה · ` +
+          (never ? `<b style="color:#8f2f1c">${never} מורים לא השתתפו באף הדרכה</b>`
                  : '<b style="color:#1f7a5c">כל המורים השתתפו לפחות פעם אחת</b>')
-        : `${gs.length} קבוצות הדרכה · עוד לא התקיים מפגש עם רישום נוכחות`;
+        : `${gs.length} קבוצות הדרכה · ההדרכות טרם התחילו`;
     }
+    // קודם החודשים (השורה התחתונה והפירוט), ואז הכרטיסים לפי מקצוע ומדריכ/ה
+    const monthsBox = document.getElementById('nw-meet-months');
+    if (monthsBox) monthsBox.innerHTML = monthsHtml(gs);
     box.innerHTML = gs.map(g => window.TS_meetGuideCard(g)).join('');
     window.TS_meetBindCopy(box, stats);
+    applyToPage(gs, persons, never, held);
+  }
 
-    // ה-KPI בראש הדף הגיע מהמערכת הישנה והציג "—" גם כשיש נתונים
-    const rated = persons.filter(p => p.held > 0);
+  /* ה-KPI וגרף המגמה שייכים לדשבורד הישן, והוא מצייר אותם כשהתשובה שלו
+     מגיעה — לפעמים אחרינו, ואז הוא דרס את הנתונים האמיתיים ב-"—".
+     dashboard.js קורא לנו בסוף ה-render שלו, והפונקציה בטוחה לקריאה חוזרת. */
+  let last = null;
+  function applyToPage(gs, persons, never, held) {
+    if (gs) last = { gs: gs, persons: persons, never: never, held: held };
+    if (!last) return;
+    renderTrend(last.gs);
+    const rated = last.persons.filter(p => p.held > 0);
     const rate = rated.length ? Math.round(rated.reduce((s, p) => s + p.rate, 0) / rated.length) : null;
     const attEl = document.getElementById('stat-attendance');
     if (attEl && rate !== null) {
@@ -72,6 +173,27 @@
       attEl.className = 'cmd-metric-value ' + (rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : 'err');
     }
     const missedEl = document.getElementById('stat-missed');
-    if (missedEl && held) missedEl.textContent = never;
+    if (missedEl && last.held) missedEl.textContent = last.never;
+  }
+  window.NW_meetApply = function () { applyToPage(); };
+
+  /* "מגמת נוכחות 6 חודשים" היה ריק תמיד — הגרף נבנה מהמערכת הישנה.
+     עכשיו: עמודה לכל חודש הדרכה שהתקיים. */
+  function renderTrend(gs) {
+    const el = document.getElementById('trend-chart');
+    if (!el) return;
+    const months = networkMonths(gs).slice().reverse();
+    if (!months.length) {
+      el.innerHTML = '<div class="empty">ההדרכות טרם התחילו — הגרף ייבנה מההדרכה החודשית הראשונה.</div>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="mv-trend">${months.map(m => `
+        <div class="mv-trend-col" title="${esc(m.label)}: ${m.present} מתוך ${m.n}">
+          <div class="mv-trend-bar-wrap"><div class="mv-trend-bar ${window.TS_rateClass(m.rate)}" style="height:${Math.max(m.rate, 2)}%"></div></div>
+          <div class="mv-trend-val">${m.rate}%</div>
+          <div class="mv-trend-lbl">${esc(m.label.replace(/ \d{4}$/, ''))}</div>
+        </div>`).join('')}
+      </div>`;
   }
 })();

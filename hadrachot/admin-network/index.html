@@ -6,7 +6,7 @@
 <title>מבט רשת — מצפן הפיקוח</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
 <link rel="stylesheet" href="../assets/styles.css">
-<link rel="stylesheet" href="../assets/meet-view.css?v=20260914b">
+<link rel="stylesheet" href="../assets/meet-view.css?v=20260918">
 <style>
   /* command-strip עם 5 KPIs */
   .command-strip { grid-template-columns: repeat(5, 1fr); }
@@ -206,7 +206,11 @@
         </div>
       </div>
       <div style="padding:14px 16px;">
-        <div id="nw-meet-grid" class="mv-grid"><div class="mv-empty">טוען נוכחות…</div></div>
+        <div id="nw-meet-months"></div>
+        <details style="margin-top:14px;">
+          <summary style="cursor:pointer; font-weight:700; padding:6px 0;">פירוט לפי מקצוע ומדריכ/ה</summary>
+          <div id="nw-meet-grid" class="mv-grid" style="margin-top:10px;"><div class="mv-empty">טוען נוכחות…</div></div>
+        </details>
       </div>
     </section>
 
@@ -245,8 +249,8 @@
 <script src="../assets/auth-guard.js" data-roles="network_admin"></script>
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260916c"></script>
-<script src="../assets/meet-stats.js?v=20260916"></script>
-<script src="../assets/meet-view.js?v=20260916"></script>
+<script src="../assets/meet-stats.js?v=20260918"></script>
+<script src="../assets/meet-view.js?v=20260918"></script>
 <script src="dashboard.js"></script>
 <script src="meet.js?v=20260918"></script>
 </body>

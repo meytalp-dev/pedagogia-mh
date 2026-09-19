@@ -1,6 +1,7 @@
 /* ============================================================
    נוכחות במפגשים — תצוגה משותפת (14.9.26)
-   כרטיס לכל מדריכ/ה: אחוז נוכחות, מפגשים שהתקיימו, המפגש האחרון,
+   כרטיס לכל מדריכ/ה: אחוז נוכחות, הדרכות שהתקיימו (חודש = הדרכה אחת,
+   גם כששני המועדים בוקר/ערב), ההדרכה האחרונה,
    התראה על מפגש שעבר בלי רישום, ומי לא השתתף באף מפגש (עם העתקה).
    משמש את mabat/ (מבט המפקח.ת) ואת ministry/nochechut.html.
    הנתונים מחושבים ב-meet-stats.js.
@@ -21,8 +22,10 @@
 
   window.TS_meetRateChip = function (p) {
     const ind = window.TS_meetIndividualChip(p);
-    if (!p || p.held === 0 || p.rate === null) return '<span class="mv-chip none" title="עוד לא התקיים מפגש עם רישום נוכחות">—</span>' + (ind ? ' ' + ind : '');
-    return `<span class="mv-chip ${window.TS_rateClass(p.rate)}" title="${p.present} מתוך ${p.held} מפגשים">${p.present}/${p.held}</span>` + (ind ? ' ' + ind : '');
+    if (!p || p.held === 0 || p.rate === null) return '<span class="mv-chip none" title="עוד לא התקיימה הדרכה עם רישום נוכחות">—</span>' + (ind ? ' ' + ind : '');
+    const title = `${p.present} מתוך ${p.held} הדרכות חודשיות` +
+      (p.monthsMissed && p.monthsMissed.length ? ' · לא השתתף/ה: ' + p.missed.join(', ') : '');
+    return `<span class="mv-chip ${window.TS_rateClass(p.rate)}" title="${esc(title)}">${p.present}/${p.held}</span>` + (ind ? ' ' + ind : '');
   };
 
   window.TS_meetGuideCard = function (g, opts) {
@@ -37,23 +40,29 @@
     if (g.pending) warnings.push(`<div class="mv-warn soft">${ALERT}<span>${g.pending} רישומים עצמיים ממתינים לאישור המדריכ/ה</span></div>`);
     if (g.gaps) warnings.push(`<div class="mv-warn soft">${ALERT}<span>${g.gaps} נרשמו בעצמם אבל סומנו "לא נכח/ה"</span></div>`);
 
-    const lastLine = g.last
-      ? `<div class="mv-line">המפגש האחרון (${esc(L(g.last.date))}): <b>${g.last.present}</b> מתוך ${g.rosterN} השתתפו</div>`
+    const lastMonth = (g.months && g.months.length) ? g.months[g.months.length - 1] : null;
+    const lastLine = lastMonth
+      ? `<div class="mv-line">ההדרכה האחרונה (${esc(lastMonth.label)}): <b>${lastMonth.rosterPresent}</b> מתוך ${lastMonth.rosterN} השתתפו</div>`
       : `<div class="mv-line">${g.planTotal ? 'עוד לא התקיים מפגש עם רישום נוכחות' : 'אין תוכנית מפגשים במערכת, ועוד לא נרשמה נוכחות'}</div>`;
     const nextLine = g.next ? `<div class="mv-line">המפגש הבא: <b>${esc(g.next.label || L(g.next.date))}</b>${g.next.topic ? ' · ' + esc(g.next.topic) : ''}</div>` : '';
 
-    const meetingsTable = heldN ? `
+    /* פירוט לפי חודש — שני המועדים של אותו חודש (בוקר/ערב) הם הדרכה אחת,
+       ולכן שורה אחת לחודש, ולצידה מי לא השתתף באף אחד מהמועדים. */
+    const months = g.months || [];
+    const meetingsTable = months.length ? `
       <details>
-        <summary>פירוט המפגשים (${heldN})</summary>
+        <summary>לפי חודש (${months.length})</summary>
         <table class="mv-table">
-          <thead><tr><th>תאריך</th><th>נושא</th><th>השתתפו</th><th>ממתינים</th></tr></thead>
-          <tbody>${g.held.slice().reverse().map(m => `
+          <thead><tr><th>חודש</th><th>מועדים</th><th>השתתפו</th><th>אחוז</th></tr></thead>
+          <tbody>${months.slice().reverse().map(mo => `
             <tr>
-              <td class="num">${esc(L(m.date))}</td>
-              <td>${esc(m.topic || '—')}${m.counts.zoom ? ' <span class="mv-zoom" title="סומן מתוך דוח המשתתפים של הזום">זום</span>' : ''}</td>
-              <td class="num">${m.rosterPresent}/${g.rosterN}${g.outsidePresent && m.counts.present > m.rosterPresent ? ' <span title="השתתפו גם מחוץ לרשימת הקבוצה">+' + (m.counts.present - m.rosterPresent) + '</span>' : ''}</td>
-              <td class="num">${m.counts.pending || ''}</td>
-            </tr>`).join('')}
+              <td>${esc(mo.label)}</td>
+              <td class="num" title="${esc(mo.topics.join(' · '))}">${mo.dates.map(L).join(' · ')}</td>
+              <td class="num">${mo.rosterPresent}/${mo.rosterN}</td>
+              <td class="num">${mo.rate === null ? '<span class="mv-chip none">—</span>' : `<span class="mv-chip ${window.TS_rateClass(mo.rate)}">${mo.rate}%</span>`}</td>
+            </tr>
+            ${mo.absent && mo.absent.length ? `<tr class="mv-sub-row"><td colspan="4"><b>לא השתתפו:</b> ${esc(mo.absent.map(pp => pp.name + (pp.schoolName ? ' (' + pp.schoolName + ')' : '')).join(' · '))}</td></tr>` : ''}
+          `).join('')}
           </tbody>
         </table>
       </details>` : '';
@@ -123,7 +132,7 @@
           <div class="mv-rate ${rc}"><b>${g.rate === null ? '—' : g.rate + '%'}</b><span>נוכחות ממוצעת</span></div>
         </div>
         <div class="mv-kpis">
-          <div class="mv-kpi"><b>${heldN}${g.planTotal ? '<small style="font-size:11px;color:var(--text-muted)">/' + g.planTotal + '</small>' : ''}</b><span>מפגשים שהתקיימו</span></div>
+          <div class="mv-kpi"><b>${months.length}</b><span>הדרכות שהתקיימו</span><small class="mv-kpi-note">${heldN} מועדים</small></div>
           <div class="mv-kpi"><b>${g.rosterN}</b><span>מורים בקבוצה</span></div>
           <div class="mv-kpi"><b>${heldN ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
           ${g.hoursLoaded && g.rosterN ? `<div class="mv-kpi${(g.teachersNoIndividual || []).length ? '' : ' ok'}"><b>${g.individualTeachers}<small style="font-size:11px;color:var(--text-muted)">/${g.rosterN}</small></b><span>מורים עם הדרכה פרטנית</span></div>` : ''}

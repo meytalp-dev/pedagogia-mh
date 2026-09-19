@@ -9,6 +9,10 @@
      רק הוא נכנס למכנה. מפגש מהתוכנית שתאריכו עבר ואין בו סימון — "לא הוזנה
      נוכחות", ומוצג כהתראה ולא כהיעדרות של כל הקבוצה.
    · נוכחות = status 'present' בלבד. רישום עצמי שלא אושר ('pending') לא נספר.
+   · **יחידת הספירה היא חודש, לא מועד (18.9.26, קביעת מיטל).** בכל חודש יש
+     שני מועדים — בוקר וערב — אבל זו הדרכה אחת, והמורה צריך/ה להשתתף באחד
+     מהם. לכן `present`/`held` של כל משתתף/ת נספרים ב**חודשים**: חודש שבו
+     נכח/ה באחד המועדים נספר כנוכחות מלאה. פירוט המועדים נשמר ב-`sessions*`.
    · הקבוצה של מדריכ/ה = מקצוע + מגזר + מסלול + יח"ל, בדיוק כמו בדשבורד המדריכ/ה:
      מורה בגרות שטרם סומנו לו יח"ל שייך לשתי הקבוצות (שירה וגל).
    · אותו מורה בבגרות ובגמר (שתי שורות במערכת) הוא משתתף אחד.
@@ -22,6 +26,16 @@
    ============================================================ */
 (function () {
   function norm(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+
+  // תוויות חודש — בלי תלות ב-TS: meet-stats נטען גם בשרת (הדוח החודשי במייל)
+  const HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+                     'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  function monthKey(date) { return String(date || '').slice(0, 7); }
+  function monthLabel(key) {
+    const m = String(key || '').match(/^(\d{4})-(\d{2})$/);
+    return m ? HE_MONTHS[Number(m[2]) - 1] + ' ' + m[1] : String(key || '');
+  }
+  window.TS_meetMonthLabel = monthLabel;
 
   function unitsOf(v) {
     return (window.TS && TS.unitsSet) ? TS.unitsSet(v) : (String(v || '').trim() ? [String(v).trim()] : []);
@@ -112,14 +126,41 @@
         else if (r.status === 'absent') p.absent++;
         else if (r.status === 'pending') p.pending++;
       });
+      // חודשי ההדרכה שהתקיימו — יחידת הספירה. מועד בוקר ומועד ערב באותו חודש
+      // הם הדרכה אחת, ולכן הם מתמזגים לשורה אחת.
+      const monthsMap = {};
+      held.forEach(m => {
+        const k = monthKey(m.date);
+        const mo = monthsMap[k] || (monthsMap[k] = {
+          key: k, label: monthLabel(k), meetings: [], dates: [], subjects: {}, topics: []
+        });
+        mo.meetings.push(m.id);
+        mo.dates.push(m.date);
+        const sub = subjOf(m);
+        if (sub) mo.subjects[sub] = 1;
+        if (m.topic && mo.topics.indexOf(m.topic) < 0) mo.topics.push(m.topic);
+      });
+      const months = Object.keys(monthsMap).sort().map(k => monthsMap[k]);
+
       persons.forEach(p => {
         // אותו אדם עם שתי שורות (בגרות+גמר) שסומן פעמיים באותו מפגש — נספר פעם אחת
         p.attended = Array.from(new Set(p.attended));
-        p.present = p.attended.length;
         const mine = held.filter(m => { const s = subjOf(m); return !s || p.subjects.indexOf(s) >= 0; });
-        p.held = mine.length;
-        p.missed = mine.filter(m => p.attended.indexOf(m.id) < 0).map(m => m.date);
-        p.rate = mine.length ? Math.round(p.present / mine.length * 100) : null;
+        p.sessionsPresent = p.attended.length;
+        p.sessionsHeld = mine.length;
+        p.sessionsMissed = mine.filter(m => p.attended.indexOf(m.id) < 0).map(m => m.date);
+        // חודש רלוונטי = חודש שיש בו מועד במקצוע של המורה; נוכחות באחד המועדים מספיקה
+        const myMonths = months.filter(mo => {
+          const subs = Object.keys(mo.subjects);
+          return !subs.length || subs.some(sx => p.subjects.indexOf(sx) >= 0);
+        });
+        p.monthsAttended = myMonths.filter(mo => mo.meetings.some(id => p.attended.indexOf(id) >= 0)).map(mo => mo.key);
+        p.monthsMissed = myMonths.filter(mo => p.monthsAttended.indexOf(mo.key) < 0).map(mo => mo.key);
+        p.present = p.monthsAttended.length;
+        p.held = myMonths.length;
+        // תאריכי ההיעדרות נשארים לתצוגה מפורטת, אבל הספירה חודשית
+        p.missed = p.monthsMissed.map(monthLabel);
+        p.rate = p.held ? Math.round(p.present / p.held * 100) : null;
       });
       // ---- הדרכה פרטנית ----
       const byNameSchool = {}, byName = {};
@@ -169,8 +210,20 @@
       const presentSum = persons.reduce((s, p) => s + p.present, 0);
       const heldSum = persons.reduce((s, p) => s + p.held, 0);
       const last = held.length ? held[held.length - 1] : null;
+      // סיכום לכל חודש: כמה מהקבוצה השתתפו, ומי לא
+      months.forEach(mo => {
+        const subs = Object.keys(mo.subjects);
+        const rel = persons.filter(p => !subs.length || subs.some(sx => p.subjects.indexOf(sx) >= 0));
+        mo.rosterN = rel.length;
+        mo.present = rel.filter(p => p.monthsAttended.indexOf(mo.key) >= 0);
+        mo.absent = rel.filter(p => p.monthsAttended.indexOf(mo.key) < 0);
+        mo.rosterPresent = mo.present.length;
+        mo.rate = rel.length ? Math.round(mo.rosterPresent / rel.length * 100) : null;
+      });
+
       Object.assign(g, {
         persons: persons,
+        months: months,
         meetings: myMeetings,
         held: held.map(m => Object.assign({}, m, {
           rosterPresent: persons.filter(p => p.attended.indexOf(m.id) >= 0).length
