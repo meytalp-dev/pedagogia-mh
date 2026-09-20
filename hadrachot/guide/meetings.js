@@ -86,6 +86,30 @@
     HOURS = rows || [];
     renderYear();
     if (CAN && sel && S.loaded && !saving) renderBody();
+    // הדשבורד סופר את החודשים הפרטניים (קביעת מיטל 20.9.26) — מחשב מחדש
+    if (typeof window.DASH_onMeetings === 'function') window.DASH_onMeetings();
+  };
+
+  /* חודשי ההדרכה הפרטנית לכל אדם (שם|בית ספר) — הדשבורד מצרף אותם לספירה,
+     בדיוק כמו assets/meet-stats.js. null = השעות עוד לא נטענו. */
+  window.MEET_indMonths = function () {
+    if (!HOURS) return null;
+    const idx = individualIndex();       // מיישר שם/בית ספר באותם כללים
+    const out = {};
+    const teachers = (typeof myTeachers === 'function') ? myTeachers() : [];
+    const byName = {};
+    teachers.forEach(t => { (byName[norm(t.name)] = byName[norm(t.name)] || []).push(t); });
+    const ys = yearStart();
+    HOURS.forEach(h => {
+      const d = String(h.date || '').slice(0, 10);
+      if (!d || d < ys || d > S.today) return;
+      const full = norm((h.firstName || '') + ' ' + (h.lastName || ''));
+      let school = norm(h.schoolName);
+      const same = (byName[full] || []);
+      if (!same.some(t => norm(t.schoolName) === school) && same.length === 1) school = norm(same[0].schoolName);
+      (out[full + '|' + school] = out[full + '|' + school] || new Set()).add(d.slice(0, 7));
+    });
+    return out;
   };
   function yearStart() {
     const [y, m] = S.today.split('-').map(Number);

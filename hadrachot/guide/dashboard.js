@@ -245,6 +245,7 @@ function applyMeetings() {
     .sort((a, b) => a.date.localeCompare(b.date));
   const subjOf = m => (window.TS_meetingSubject ? window.TS_meetingSubject(guideSlug, m.date) : '') || '';
   const heldIds = new Set(held.map(m => m.id));
+  const indMonths = (typeof window.MEET_indMonths === 'function') ? window.MEET_indMonths() : null;
 
   // נוכחות לפי אדם (שם + בית ספר), כדי ששורת הבגרות ושורת הגמר יסומנו יחד
   const personOf = t => meetNorm(t.name) + '|' + meetNorm(t.schoolName);
@@ -286,14 +287,20 @@ function applyMeetings() {
       if (sx && sx !== t.subject) { att[m.id] = { status: 'na' }; return; }
       if (set.has(m.id)) att[m.id] = { status: 'present' };
     });
-    // ספירה: חודשית — נוכחות באחד המועדים של החודש = נוכחות בהדרכה של החודש
+    /* ספירה: חודשית — נוכחות באחד המועדים של החודש = נוכחות בהדרכה של החודש.
+       שעה פרטנית מספקת אף היא את החודש שבו ניתנה (קביעת מיטל 20.9.26),
+       וחודש שניתנה בו שעה פרטנית בלי הדרכה קבוצתית נכנס לספירה. */
+    const indM = indMonths ? (indMonths[personOf(t)] || new Set()) : new Set();
+    const counted = {};
     let total = 0, present = 0;
     months.forEach(mo => {
       const subs = Object.keys(mo.subjects);
       if (subs.length && subs.indexOf(t.subject) < 0) return;
+      counted[mo.key] = 1;
       total++;
-      if (mo.ids.some(id => set.has(id))) present++;
+      if (mo.ids.some(id => set.has(id)) || indM.has(mo.key)) present++;
     });
+    indM.forEach(k => { if (!counted[k]) { total++; present++; } });
     const ls = t.legacyStats || { present: 0, partial: 0, total: legacyTrainings.length };
     const allTotal = (ls.total || 0) + total;
     const allPresent = (ls.present || 0) + present;
@@ -362,6 +369,17 @@ function renderAll() {
   const bagrutN = mine.filter(t => t.type !== 'gemer').length;
   const gemerN = mine.length - bagrutN;
   const unmarkedN = mine.filter(isUnmarked).length;
+  /* אותו אדם בבגרות ובגמר = שתי שורות במערכת ואדם אחד בספירה (כלל מיטל).
+     עד 20.9.26 הדשבורד ספר שורות, ולכן הראה 87 מורים ו-39% בעוד המפקחת
+     ראתה 86 ו-38% על אותה קבוצה (קודקס). כאן מקובצים לאנשים, כמו
+     assets/meet-stats.js — שורת בגרות ושורת גמר מקבלות ממילא אותו t.stats. */
+  const peopleMap = {};
+  mine.forEach(t => {
+    const k = meetNorm(t.name) + '|' + meetNorm(t.schoolName);
+    if (!peopleMap[k]) peopleMap[k] = t;
+  });
+  const people = Object.keys(peopleMap).map(k => peopleMap[k]);
+  const bothN = mine.length - people.length;
   const unitsLabel = guideUnits() ? guideUnits().join(' · ') + ' יח"ל' : '';
   /* מדריכה שהמגזר החרדי הוא כל הקבוצה שלה (שרה ברדה, 10.9.26) לא תיקרא
      "החברה היהודית" — זה נכון אבל מטשטש בדיוק את מה שמייחד אותה. */
@@ -374,17 +392,18 @@ function renderAll() {
   document.getElementById('page-title').textContent =
     gName + (gSubject ? ' · ' + gSubject : '') + (unitsLabel ? ' · ' + unitsLabel : '');
   document.getElementById('page-subtitle').textContent =
-    mine.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר) · ' +
+    people.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר' +
+    (bothN ? ' · ' + bothN + ' בשניהם' : '') + ') · ' +
     new Set(mine.map(t => t.schoolName)).size + ' בתי ספר' +
     (societyLabel ? ' · ' + societyLabel : '') +
     (unmarkedN ? ' · ' + unmarkedN + ' טרם סומנה להם רמה' : '');
 
   // מורה שעוד לא התקיים מפגש שרלוונטי אליו — לא נספר כ-0%
-  const rated = mine.filter(t => t.stats.total);
+  const rated = people.filter(t => t.stats.total);
   const totalRate = rated.length
     ? Math.round(rated.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / rated.length)
     : null;
-  document.getElementById('stat-teachers').textContent = mine.length;
+  document.getElementById('stat-teachers').textContent = people.length;
   document.getElementById('stat-schools').textContent = new Set(mine.map(t => t.schoolName)).size;
   /* "הדרכות השנה" — כמה מועדים העבירה בפועל, ומתחת כמה הדרכות חודשיות זה
      לצורך הספירה של המפקח.ת (מיטל, 20.9.26: "היא עשתה שתיים"). */
