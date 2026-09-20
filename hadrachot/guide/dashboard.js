@@ -228,8 +228,11 @@ async function loadData(opts) {
    כללי הספירה — כמו ב-assets/meet-stats.js: מפגש שהתקיים = עד היום ויש בו
    לפחות סימון אחד; נוכחות = present בלבד; אותו מורה בבגרות ובגמר = אדם אחד;
    מפגש של מקצוע אחר (רבקה) לא נספר למורה. הדרכה פרטנית לא נכנסת לאחוז.
-   **18.9.26 (קביעת מיטל): העמודה היא חודש, לא מועד.** בכל חודש שני מועדים,
-   בוקר וערב, והם הדרכה אחת — מי שהיה באחד מהם נחשב נוכח בהדרכה של החודש.
+   **18.9.26 (קביעת מיטל): המדריכ/ה רואה כל מועד שהעבירה — הספירה חודשית.**
+   בכל חודש שני מועדים, בוקר וערב, והם הדרכה אחת: מי שהיה באחד מהם נחשב
+   נוכח בהדרכה של החודש. לכן בטבלה יש עמודה לכל מועד (כדי שהמדריכ/ה תראה
+   את העבודה שלה ומי היה בכל מועד), אבל **אחוז הנוכחות נספר לפי חודשים** —
+   וזה גם מה שהמפקח.ת והדוחות רואים.
    ============================================================ */
 let legacyTrainings = [];
 function meetNorm(s) { return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase(); }
@@ -268,23 +271,28 @@ function applyMeetings() {
   });
   const months = Object.keys(monthsMap).sort().map(k => monthsMap[k]);
 
-  state.trainings = legacyTrainings.concat(months.map(mo => ({
-    id: 'mon_' + mo.key, date: mo.date, virtual: true, month: mo,
-    subject: Object.keys(mo.subjects).length === 1 ? Object.keys(mo.subjects)[0] : '',
-    location: 'הדרכה חודשית',
-    // הכותרת היא שם החודש (נבנית בתצוגה); כאן רק הנושאים של אותו חודש
-    notes: mo.topics.join(' · ')
+  // עמודה לכל מועד, מקובצת תחת החודש שלה
+  state.months = months;
+  state.trainings = legacyTrainings.concat(held.map(m => ({
+    id: m.id, date: m.date, virtual: true, monthKey: m.date.slice(0, 7),
+    subject: subjOf(m), location: 'מועד הדרכה', notes: m.topic || ''
   })));
   state.teachers.forEach(t => {
     const att = Object.assign({}, t.legacyAttendance || {});
     const set = attended[personOf(t)] || new Set();
+    // תצוגה: מה היה בכל מועד
+    held.forEach(m => {
+      const sx = subjOf(m);
+      if (sx && sx !== t.subject) { att[m.id] = { status: 'na' }; return; }
+      if (set.has(m.id)) att[m.id] = { status: 'present' };
+    });
+    // ספירה: חודשית — נוכחות באחד המועדים של החודש = נוכחות בהדרכה של החודש
     let total = 0, present = 0;
     months.forEach(mo => {
       const subs = Object.keys(mo.subjects);
-      if (subs.length && subs.indexOf(t.subject) < 0) { att['mon_' + mo.key] = { status: 'na' }; return; }
+      if (subs.length && subs.indexOf(t.subject) < 0) return;
       total++;
-      // נוכחות באחד המועדים של החודש = נוכחות בהדרכה החודשית
-      if (mo.ids.some(id => set.has(id))) { present++; att['mon_' + mo.key] = { status: 'present' }; }
+      if (mo.ids.some(id => set.has(id))) present++;
     });
     const ls = t.legacyStats || { present: 0, partial: 0, total: legacyTrainings.length };
     const allTotal = (ls.total || 0) + total;
@@ -378,7 +386,17 @@ function renderAll() {
     : null;
   document.getElementById('stat-teachers').textContent = mine.length;
   document.getElementById('stat-schools').textContent = new Set(mine.map(t => t.schoolName)).size;
+  /* "הדרכות השנה" — כמה מועדים העבירה בפועל, ומתחת כמה הדרכות חודשיות זה
+     לצורך הספירה של המפקח.ת (מיטל, 20.9.26: "היא עשתה שתיים"). */
+  const monN = (state.months || []).length;
   document.getElementById('stat-trainings').textContent = state.trainings.length;
+  const trSub = document.getElementById('stat-trainings-sub');
+  if (trSub) {
+    trSub.textContent = monN
+      ? 'מועדים · ' + (monN === 1 ? 'הדרכה חודשית אחת' : monN + ' הדרכות חודשיות') + ' בספירה'
+      : '';
+    trSub.hidden = !monN;
+  }
   document.getElementById('stat-rate').textContent = totalRate === null ? '—' : totalRate + '%';
 
   renderTeachers();
@@ -536,9 +554,10 @@ function renderTeachers() {
         <div class="table-wrap" style="border:none;">
           <table class="att-grid">
             <thead>
+              ${monthHeaderRow()}
               <tr>
                 <th style="text-align:right;">שם המורה</th>
-                ${state.trainings.map(tr => `<th class="att-cell" title="${escapeHtml((tr.month ? window.TS_meetMonthLabel(tr.month.key) + ' · ' : '') + (tr.notes || '') + (tr.month ? ' · ' + tr.month.dates.map(shortDate).join(', ') : ''))}">${tr.month ? escapeHtml(monthShort(tr.month.key)) : shortDate(tr.date)}</th>`).join('')}
+                ${state.trainings.map(tr => `<th class="att-cell" title="${escapeHtml(tr.notes || '')}">${shortDate(tr.date)}</th>`).join('')}
                 <th>נוכחות</th>
               </tr>
             </thead>
@@ -577,6 +596,27 @@ function attCell(att, trainingDate, today) {
   if (att.status === 'partial') return '<td class="att-cell"><span class="att-mark partial" title="חצי נוכחות">½</span></td>';
   const title = att.notes ? att.notes.replace(/"/g, '&quot;') : 'לא נוכחה';
   return `<td class="att-cell"><span class="att-mark absent" title="${title}">—</span></td>`;
+}
+
+/* שורת החודשים מעל שורת המועדים: "ספטמבר · הדרכה אחת" מעל 15.9 ו-16.9.
+   ככה רואים גם כל מועד שהתקיים, וגם שהם הדרכה אחת לצורך הספירה. */
+function monthHeaderRow() {
+  const cols = state.trainings;
+  if (!cols.some(t => t.monthKey)) return '';
+  const groups = [];
+  cols.forEach(t => {
+    const k = t.monthKey || '';
+    const last = groups[groups.length - 1];
+    if (last && last.key === k) last.n++;
+    else groups.push({ key: k, n: 1 });
+  });
+  return `<tr class="month-head">
+      <th></th>
+      ${groups.map(gp => `<th class="att-cell" colspan="${gp.n}">${gp.key
+        ? escapeHtml(monthShort(gp.key)) + (gp.n > 1 ? ` <small>· ${gp.n} מועדים · הדרכה אחת בספירה</small>` : '')
+        : ''}</th>`).join('')}
+      <th></th>
+    </tr>`;
 }
 
 // שם החודש לכותרת העמודה — עמודה אחת לכל הדרכה חודשית
@@ -625,12 +665,14 @@ function renderTrainings() {
     }).length;
     if (t.virtual) {
       const pool = state.teachers.filter(tch => !t.subject || tch.subject === t.subject).length;
-      const dates = t.month ? t.month.dates.map(d => TS.formatDate(d)).join(' · ') : TS.formatDate(t.date);
+      const mo = (state.months || []).find(x => x.key === t.monthKey);
+      const sameMonth = mo && mo.dates.length > 1;
       return `
       <div class="training-row">
         <div>
-          <div class="when">${escapeHtml(t.month ? monthShort(t.month.key) : TS.formatDate(t.date))}</div>
-          <div class="where">${escapeHtml(t.notes || 'הדרכה חודשית')}<br><span style="color:var(--text-muted)">${escapeHtml(t.month && t.month.dates.length > 1 ? 'שני מועדים — בוקר וערב: ' + dates : dates)}</span></div>
+          <div class="when">${TS.formatDate(t.date)}</div>
+          <div class="where">${escapeHtml(t.notes || 'מפגש הדרכה')}<br><span style="color:var(--text-muted)">${escapeHtml(
+            monthShort(t.monthKey) + (sameMonth ? ' · אחד מ-' + mo.dates.length + ' מועדים של אותה הדרכה' : ''))}</span></div>
         </div>
         <div class="actions">
           <span style="color:var(--text-2); font-size:13px;">${presentCount} מתוך ${pool} נוכחו</span>

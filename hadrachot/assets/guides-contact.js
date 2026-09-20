@@ -33,7 +33,7 @@ window.TS_CONTACTS = {
     rozin:    { phone: '054-8116623', email: 'Rozeen_mtr@yahoo.com' },    /* אנגלית */
     wael:     { phone: '052-4069544', email: 'laianw@walla.co.il' },      /* ערבית */
     rima:     { phone: '054-6211885', email: 'Rimabransi@gmail.com' },    /* ספרות */
-    abed:     { phone: '052-2618595', email: '' },                        /* היסטוריה — אין מייל */
+    abed:     { phone: '052-2618595', email: 'habayiba@yahoo.com' },      /* היסטוריה — המייל ממיטל 14.9.26 */
     khaled:   { phone: '052-5618070', email: 'gabarinkhalid@gmail.com' }, /* אזרחות */
     moshe:    { phone: '052-2978071', email: 'Moshassor@gmail.com' },     /* מתמטיקה */
     suliman:  { phone: '052-8621691', email: '' },                        /* מתמטיקה — אין מייל */
