@@ -170,7 +170,7 @@
         <td class="dim">${esc(p.subject)}</td>
         <td class="dim">${esc(p.guideName)}</td>
         <td class="num">${window.TS_meetRateChip(p).replace(/ ?<span class="mv-ind"[^]*?<\/span>/, '')}${p.pending ? ' <span class="dim" title="רישום עצמי שממתין לאישור">+' + p.pending + ' ממתין</span>' : ''}</td>
-        <td class="dim">${esc(p.missed.map(L).join(', '))}</td>
+        <td class="dim">${esc(p.missed.join(', '))}</td>
         <td class="num">${!hours ? '—' : (p.individual ? window.TS_meetIndividualChip(p) : '<span class="mv-ind zero" title="עוד לא קיבל/ה הדרכה פרטנית השנה">אין</span>')}</td>
       </tr>`).join('') || '<tr><td colspan="7" class="dim" style="text-align:center;padding:18px;">אין מורים שמתאימים לסינון</td></tr>';
   }
@@ -186,7 +186,7 @@
     if (kind === 'teachers') {
       head = ['מורה', 'בית ספר', 'רשת', 'מקצוע', 'מדריך/ה', 'השתתף/ה', 'הדרכות חודשיות שהתקיימו', 'אחוז', 'חודשים שהחסיר/ה', 'ממתין לאישור', 'הדרכה פרטנית (מפגשים)', 'תאריכי הדרכה פרטנית'];
       rows = (render.teachers || []).map(p => [p.name, p.schoolName, (TS.netById(p.network) || {}).name || p.network, p.subject, p.guideName,
-        p.present, p.held, p.rate === null ? '' : p.rate, p.missed.map(L).join(' '), p.pending || '', p.individual || 0, p.individualDates.map(L).join(' ')]);
+        p.present, p.held, p.rate === null ? '' : p.rate, p.missed.join(' · '), p.pending || '', p.individual || 0, p.individualDates.map(L).join(' ')]);
     } else {
       const src = kind === 'schools' ? render.schools : render.networks;
       head = [kind === 'schools' ? 'בית ספר' : 'רשת', 'מורים', 'השתתפויות', 'הדרכות (מורה×חודש)', 'אחוז', 'לא השתתפו כלל', 'הדרכה פרטנית (מפגשים)', 'מורים עם הדרכה פרטנית'];

@@ -140,13 +140,22 @@
     const monthsN = new Set();
     gs.forEach(g => (g.months || []).forEach(mo => monthsN.add(mo.key)));
     const persons = gs.reduce((a, g) => a.concat(g.persons), []);
-    const never = persons.filter(p => !p.participated).length;
+    /* "לא השתתף/ה" נאמר רק על מי שיש לו מדידה. מורה בקבוצה שטרם התקיימה בה
+       הדרכה עם רישום נוכחות הוא "טרם נמדד" — לא היעדרות. בלי ההפרדה הזו
+       הכרטיס הציג 191 "לא השתתפו" כש-169 מהם כלל לא נמדדו (קודקס, 20.9.26).
+       אותו כלל כבר קיים במנוע (never) ובמבט הארצי (f-never). */
+    const measured = persons.filter(p => p.held > 0);
+    const never = measured.filter(p => !p.participated).length;
+    const unmeasured = persons.length - measured.length;
+    const groupsMeasured = gs.filter(g => (g.months || []).length).length;
     const held = monthsN.size;
     if (sum) {
       sum.innerHTML = held
-        ? `${held === 1 ? 'הדרכה חודשית אחת התקיימה' : held + ' הדרכות חודשיות התקיימו'} · ${gs.length} קבוצות הדרכה · ` +
+        ? `${held === 1 ? 'הדרכה חודשית אחת התקיימה' : held + ' הדרכות חודשיות התקיימו'} · ` +
+          `מבוסס על ${groupsMeasured} מתוך ${gs.length} קבוצות הדרכה · ` +
           (never ? `<b style="color:#8f2f1c">${never} מורים לא השתתפו באף הדרכה</b>`
-                 : '<b style="color:#1f7a5c">כל המורים השתתפו לפחות פעם אחת</b>')
+                 : '<b style="color:#1f7a5c">כל מי שנמדד השתתף לפחות פעם אחת</b>') +
+          (unmeasured ? ` · <span style="color:var(--text-muted)">${unmeasured} מורים טרם נמדדו</span>` : '')
         : `${gs.length} קבוצות הדרכה · ההדרכות טרם התחילו`;
     }
     // קודם החודשים (השורה התחתונה והפירוט), ואז הכרטיסים לפי מקצוע ומדריכ/ה
@@ -154,17 +163,19 @@
     if (monthsBox) monthsBox.innerHTML = monthsHtml(gs);
     box.innerHTML = gs.map(g => window.TS_meetGuideCard(g)).join('');
     window.TS_meetBindCopy(box, stats);
-    applyToPage(gs, persons, never, held);
+    applyToPage(gs, persons, { never: never, unmeasured: unmeasured, held: held,
+      groups: gs.length, groupsMeasured: groupsMeasured });
   }
 
   /* ה-KPI וגרף המגמה שייכים לדשבורד הישן, והוא מצייר אותם כשהתשובה שלו
      מגיעה — לפעמים אחרינו, ואז הוא דרס את הנתונים האמיתיים ב-"—".
      dashboard.js קורא לנו בסוף ה-render שלו, והפונקציה בטוחה לקריאה חוזרת. */
   let last = null;
-  function applyToPage(gs, persons, never, held) {
-    if (gs) last = { gs: gs, persons: persons, never: never, held: held };
+  function applyToPage(gs, persons, info) {
+    if (gs) last = { gs: gs, persons: persons, info: info };
     if (!last) return;
     renderTrend(last.gs);
+    const i = last.info;
     const rated = last.persons.filter(p => p.held > 0);
     const rate = rated.length ? Math.round(rated.reduce((s, p) => s + p.rate, 0) / rated.length) : null;
     const attEl = document.getElementById('stat-attendance');
@@ -172,8 +183,15 @@
       attEl.textContent = rate + '%';
       attEl.className = 'cmd-metric-value ' + (rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : 'err');
     }
+    // אחוז בלי בסיס מדידה מטעה בתחילת השנה — כמה קבוצות בכלל נמדדו
+    const attSub = document.getElementById('stat-attendance-sub');
+    if (attSub) attSub.textContent = i.groupsMeasured
+      ? 'מבוסס על ' + i.groupsMeasured + ' מתוך ' + i.groups + ' קבוצות'
+      : 'טרם נמדד';
     const missedEl = document.getElementById('stat-missed');
-    if (missedEl && last.held) missedEl.textContent = last.never;
+    if (missedEl && i.held) missedEl.textContent = i.never;
+    const missedSub = document.getElementById('stat-missed-sub');
+    if (missedSub) missedSub.textContent = i.unmeasured ? i.unmeasured + ' מורים טרם נמדדו' : '';
   }
   window.NW_meetApply = function () { applyToPage(); };
 

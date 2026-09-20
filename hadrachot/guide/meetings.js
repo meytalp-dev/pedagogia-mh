@@ -455,6 +455,38 @@
 
   // ---------- רשימת המשתתפים ----------
   // אותו מורה בבגרות ובגמר הוא שתי שורות במערכת — במפגש הוא אדם אחד.
+  /* ------------------------------------------------------------------
+     הכלל של מיטל: בכל חודש שני מועדים — בוקר וערב — אבל זו הדרכה אחת,
+     ומי שהיה באחד מהם השתתף בהדרכה של החודש. המדריכה מסמנת **מועד**,
+     והמערכת סופרת **חודש**, ולכן "60 לא סומנו" במועד הערב אינו "60
+     שלא השתתפו החודש" — חלקם נכחו בבוקר (קודקס, 20.9.26).
+     כאן מחושב המצב החודשי מ-window.MEET_ALL (כל רישומי המדריכ/ה, כבר
+     בדף — meet.state?all=1), בלי קריאה נוספת ובלי לשנות את כללי הספירה.
+     ------------------------------------------------------------------ */
+  function monthOf(d) { return String(d || '').slice(0, 7); }
+  let mPresentCache = new Set();   // מתעדכן בכל ציור, נקרא משורת המורה
+
+  // המועדים של אותו חודש ואותו מקצוע כמו המפגש הנבחר
+  function monthMeetingIds() {
+    if (!sel) return [];
+    const all = (window.MEET_ALL && window.MEET_ALL.meetings) || S.meetings || [];
+    const k = monthOf(sel.date);
+    const subjOf = m => window.TS_meetingSubject ? window.TS_meetingSubject(SLUG, m.date) : '';
+    return all.filter(m => monthOf(m.date) === k &&
+      (!sel.subject || !subjOf(m) || subjOf(m) === sel.subject)).map(m => String(m.id));
+  }
+
+  // מי מהקבוצה כבר יש לו נוכחות מאושרת באחד ממועדי החודש
+  function monthlyPresent() {
+    const ids = new Set(monthMeetingIds());
+    const out = new Set();
+    const rows = (window.MEET_ALL && window.MEET_ALL.rows) || [];
+    rows.forEach(r => {
+      if (r.status === 'present' && r.teacherId && ids.has(String(r.meetingId))) out.add(String(r.teacherId));
+    });
+    return out;
+  }
+
   function entries() {
     const all = (typeof myTeachers === 'function') ? myTeachers() : [];
     // מפגש של מקצוע אחד אצל מדריכה בשני מקצועות (רבקה) — רק מורי אותו מקצוע
@@ -544,6 +576,18 @@
     const list = entries();
     const c = { present: 0, absent: 0, pending: 0, none: 0 };
     list.forEach(g => { c[g.state]++; });
+    // המצב החודשי — לצד המצב של המועד הנבחר
+    const mPresent = monthlyPresent();
+    mPresentCache = mPresent;
+    const monthDone = g => (g.ids || []).some(id => mPresent.has(String(id)));
+    const inRoster = list.filter(g => g.listed);
+    const monthMissing = inRoster.filter(g => !monthDone(g)).length;
+    const monthDates = (function () {
+      const all = (window.MEET_ALL && window.MEET_ALL.meetings) || S.meetings || [];
+      const ids = new Set(monthMeetingIds());
+      return all.filter(m => ids.has(String(m.id))).map(m => m.date).sort();
+    })();
+    const monthLbl = window.TS_meetMonthLabel ? window.TS_meetMonthLabel(monthOf(sel.date)) : '';
     const gaps = list.filter(g => g.self && g.guide === 'absent');
     const pending = list.filter(g => g.state === 'pending');
     const dirtyN = Object.keys(edits).length;
@@ -559,17 +603,27 @@
     body.innerHTML = `
       ${isLiveDay() ? liveCardHtml() : ''}
       <section class="meet-card">
+        <div class="meet-month-head">
+          <b>הדרכת ${esc(monthLbl)}</b>
+          <span>${monthDates.length > 1 ? 'מועדי החודש: ' + monthDates.map(labelOf).join(' · ') : 'מועד יחיד החודש'}</span>
+          <span class="meet-month-now">מסמנים כעת: ${esc(sel.label || labelOf(sel.date))}</span>
+        </div>
         <div class="meet-sum">
-          <button type="button" class="meet-stat present${filter === 'present' ? ' on' : ''}" data-filter="present"><b>${c.present}</b><span>נכחו</span></button>
+          <button type="button" class="meet-stat present${filter === 'present' ? ' on' : ''}" data-filter="present"><b>${c.present}</b><span>נכחו במועד הזה</span></button>
           <button type="button" class="meet-stat absent${filter === 'absent' ? ' on' : ''}" data-filter="absent"><b>${c.absent}</b><span>לא נכחו</span></button>
           <button type="button" class="meet-stat pending${filter === 'pending' ? ' on' : ''}" data-filter="pending"><b>${c.pending}</b><span>ממתינים לאישור</span></button>
-          <button type="button" class="meet-stat none${filter === 'none' ? ' on' : ''}" data-filter="none"><b>${c.none}</b><span>לא סומנו</span></button>
+          <button type="button" class="meet-stat none${filter === 'none' ? ' on' : ''}" data-filter="none"><b>${c.none}</b><span>טרם נבדקו במועד הזה</span></button>
+        </div>
+        <div class="meet-month-note">
+          <b>${monthMissing}</b> מתוך ${inRoster.length} מורים עדיין ללא נוכחות מאושרת ב${esc(monthLbl)}.
+          <span>הספירה בדוחות היא חודשית: מי שאושרה לו נוכחות באחד ממועדי החודש השתתף/ה בהדרכה של החודש,
+          גם אם במועד הזה לא סומן/ה. מי שאין לו נוכחות באף מועד ייספר כמי שלא השתתף/ה.</span>
         </div>
         ${S.failed ? '<div class="meet-warn">הרענון האחרון נכשל — מוצג המצב האחרון שנטען.</div>' : ''}
         ${gaps.length ? `<div class="meet-warn">${ICON.alert}<span><b>${gaps.length}</b> נרשמו בעצמם אבל סומנו "לא נכח/ה". כדאי לבדוק מול דוח המשתתפים של הזום.</span></div>` : ''}
         <div class="meet-save-bar">
           <button type="button" class="btn btn-primary" id="meet-save"${dirtyN && !saving ? '' : ' disabled'}>
-            ${saving ? 'שומר…' : dirtyN ? 'שמירת ' + dirtyN + ' סימונים' : 'הכל שמור'}
+            ${saving ? 'שומר…' : dirtyN ? 'שמירת ' + dirtyN + ' סימונים' : 'כל השינויים נשמרו'}
           </button>
           <button type="button" class="btn btn-secondary" id="meet-zoom-btn">ייבוא דוח משתתפים מהזום</button>
           <button type="button" class="btn btn-secondary" id="meet-rest-absent"${c.none ? '' : ' disabled'}>כל מי שלא סומן — לא נכח/ה</button>
@@ -628,7 +682,12 @@
       (!q || norm(g.name).includes(q) || norm(g.schoolName).includes(q)))
       // מסודר לפי בית ספר (א"ב) ובתוכו לפי שם, עם כותרת לכל בית ספר
       .sort((a, b) => schoolOf(a).localeCompare(schoolOf(b), 'he') || String(a.name).localeCompare(String(b.name), 'he'));
-    if (!list.length) return '<div class="empty" style="padding:22px;">רשימת המורים של הקבוצה עדיין נטענת…</div>';
+    // קבוצה ריקה באמת מול רשימה שעוד לא הגיעה — עד היום שתיהן אמרו "נטענת…"
+    if (!list.length) {
+      const ready = typeof state !== 'undefined' && state.teachers && state.teachers.length;
+      return '<div class="empty" style="padding:22px;">' +
+        (ready ? 'אין מורים בקבוצה הזו.' : 'רשימת המורים של הקבוצה עדיין נטענת…') + '</div>';
+    }
     if (!shown.length) return '<div class="empty" style="padding:22px;">אין מורים שמתאימים לחיפוש</div>';
     const perSchool = {};
     shown.forEach(g => { perSchool[schoolOf(g)] = (perSchool[schoolOf(g)] || 0) + 1; });
@@ -647,6 +706,10 @@
     if (g.self && g.guide === 'absent') badges.push('<span class="mb gap">פער</span>');
     if (!g.listed) badges.push('<span class="mb unlisted">לא ברשימת הקבוצה</span>');
     if (g.dirty) badges.push('<span class="mb dirty">לא נשמר</span>');
+    // נוכחות מאושרת במועד אחר של אותו חודש — ההדרכה החודשית שלו/ה כבר הושלמה
+    if (g.guide !== 'present' && (g.ids || []).some(id => mPresentCache.has(String(id)))) {
+      badges.push('<span class="mb month" title="אושרה לו/ה נוכחות במועד אחר של החודש — נספר/ת כמי שהשתתף/ה בהדרכה החודשית">✓ השלים/ה את החודש</span>');
+    }
     const ind = HOURS ? (individualIndex().byKey[norm(g.name) + '|' + norm(g.schoolName)] || 0) : 0;
     if (ind) badges.push(`<span class="mb ind" title="קיבל/ה הדרכה פרטנית השנה — נחשב השתתפות">פרטני ×${ind}</span>`);
     return `

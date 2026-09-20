@@ -141,6 +141,8 @@ function renderAll() {
   renderAlerts();
   renderTeachers();
   renderTrainings();
+  // נתוני המפגשים מנצחים את ה-KPI של המערכת הישנה, בלי תלות בסדר התשובות
+  if (typeof window.SCHOOL_meetApply === 'function') window.SCHOOL_meetApply();
 }
 
 function populateSubjectFilter() {

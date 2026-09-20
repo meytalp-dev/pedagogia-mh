@@ -37,7 +37,8 @@
       hours: (state.ws && state.ws.hours) || null
     });
     Object.keys(personByTeacher).forEach(k => delete personByTeacher[k]);
-    stats.persons.forEach(p => p.ids.forEach(id => { if (!personByTeacher[id]) personByTeacher[id] = p; }));
+    // כל הקבוצות של אותו מורה, לא הראשונה בלבד — ראו TS_meetRateChips
+    stats.persons.forEach(p => p.ids.forEach(id => { (personByTeacher[id] = personByTeacher[id] || []).push(p); }));
 
     const alerts = stats.guides.reduce((s, g) => s + g.unrecorded.length, 0);
     // יחידת הספירה היא חודש (18.9.26) — שני מועדים באותו חודש הם הדרכה אחת
@@ -57,6 +58,6 @@
   // תא "נוכחות" בטבלת המורים של mabat
   window.MEET_cell = function (teacherId) {
     if (!report) return '<span class="mv-chip none">…</span>';
-    return window.TS_meetRateChip(personByTeacher[teacherId]);
+    return window.TS_meetRateChips(personByTeacher[teacherId]);
   };
 })();

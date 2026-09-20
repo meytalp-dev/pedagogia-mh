@@ -43,7 +43,9 @@
       today: rep.data.today, meetings: rep.data.meetings, rows: rep.data.rows,
       teachers: tl.data || [], guides: guides, hours: hoursBySlug(rep.data.hours)
     });
-    stats.persons.forEach(p => p.ids.forEach(id => { if (!personByTeacher[id]) personByTeacher[id] = p; }));
+    // כל הקבוצות של אותו מורה, לא הראשונה בלבד — ראו TS_meetRateChips
+    Object.keys(personByTeacher).forEach(k => delete personByTeacher[k]);
+    stats.persons.forEach(p => p.ids.forEach(id => { (personByTeacher[id] = personByTeacher[id] || []).push(p); }));
     render();
     updateKpis();
     if (typeof window.SCHOOL_onMeet === 'function') window.SCHOOL_onMeet();
@@ -79,22 +81,31 @@
     if (subEl) subEl.textContent = rated.length ? 'יעד: 80% · בהדרכות החודשיות' : 'טרם התקיימה הדרכה עם רישום נוכחות';
     if (riskEl) riskEl.textContent = rated.length ? rated.filter(p => p.rate < 50).length : '—';
   }
+  /* ה-KPI שייכים לדשבורד הישן, והוא מצייר אותם כשהתשובה שלו מגיעה — לפעמים
+     אחרינו, ואז הוא דרס את נתוני המפגשים ב-"—" (קודקס, 20.9.26). dashboard.js
+     קורא לנו בסוף ה-render שלו; הפונקציה בטוחה לקריאה חוזרת ויוצאת בלי נתונים.
+     אותה תבנית כבר עובדת ב-admin-network (NW_meetApply). */
+  window.SCHOOL_meetApply = function () { if (stats) updateKpis(); };
 
   function render() {
     const box = document.getElementById('meet-container');
     if (!box) return;
-    if (!loaded) { box.innerHTML = '<div class="mv-empty">טוען נוכחות…</div>'; return; }
+    // הכותרת נשארה "טוען…" גם בכישלון ובאפס קבוצות — שלושת המצבים נפרדים
+    const head = document.getElementById('meet-summary');
+    const setHead = t => { if (head) head.innerHTML = t; };
+    if (!loaded) { box.innerHTML = '<div class="mv-empty">טוען נוכחות…</div>'; setHead('טוען…'); return; }
     if (failed) {
       box.innerHTML = '<div class="mv-empty">נתוני הנוכחות לא נטענו — תקלה רגעית בשרת. רעננו בעוד רגע.</div>';
+      setHead('הנתונים לא נטענו');
       return;
     }
     const gs = myGuides();
     if (!gs.length) {
       box.innerHTML = '<div class="mv-empty">אין עדיין קבוצות הדרכה עם מורים מבית הספר.</div>';
+      setHead('אין קבוצות הדרכה עם מורים מבית הספר');
       return;
     }
-    const head = document.getElementById('meet-summary');
-    if (head) head.innerHTML = summaryHtml(gs);
+    setHead(summaryHtml(gs));
     box.innerHTML = gs.map(card).join('');
     bindCopy(box);
   }
@@ -149,7 +160,9 @@
     const months = g.months || [];
     const held = months.length;
     const persons = g.persons;
-    const never = persons.filter(p => !p.participated);
+    // רק מי שנמדד. מורה שבמקצוע שלו לא התקיימה הדרכה (p.held===0) הוא
+    // "טרם נמדד" — גם כשלקבוצה בכללותה יש חודשים שהתקיימו.
+    const never = persons.filter(p => p.held > 0 && !p.participated);
     const rated = persons.filter(p => p.held > 0);
     const rate = rated.length ? Math.round(rated.reduce((s, p) => s + p.rate, 0) / rated.length) : null;
     const rc = window.TS_rateClass ? window.TS_rateClass(rate) : '';
@@ -175,6 +188,14 @@
     const lastLine = lastMonth
       ? `<div class="mv-line">ההדרכה האחרונה (${esc(lastMonth.label)}): <b>${lastMonth.rosterPresent}</b> מתוך ${lastMonth.rosterN} מורים מבית הספר השתתפו</div>`
       : '<div class="mv-line">עוד לא התקיימה הדרכה עם רישום נוכחות</div>';
+    /* בלי זה אי אפשר להבדיל בין מפגש שטרם הגיע לבין מפגש שעבר ולא דווח,
+       והמנהל/ת עלול/ה לפנות למורה כשהפער הוא בהזנה (קודקס, 20.9.26).
+       אותה התראה כבר מוצגת למפקח.ת ובמבט הארצי דרך TS_meetGuideCard. */
+    const unrecLine = (g.unrecorded || []).length
+      ? `<div class="mv-warn">${window.TS_meetAlertIcon || ''}<span><b>לא הוזנה נוכחות</b> למועד${g.unrecorded.length > 1 ? 'ים' : ''} ` +
+        `${esc(g.unrecorded.map(u => u.label || L(u.date)).join(', '))} — הנתון החסר אצל המדריכ/ה, ` +
+        `ואינו נספר כהיעדרות של המורים.</span></div>`
+      : '';
     const nextLine = g.next
       ? `<div class="mv-line">המפגש הבא: <b>${esc(g.next.label || L(g.next.date))}</b>${g.next.topic ? ' · ' + esc(g.next.topic) : ''}</div>` : '';
 
@@ -199,6 +220,7 @@
           <div class="mv-kpi"><b>${persons.length}</b><span>מורים מבית הספר</span></div>
           <div class="mv-kpi"><b>${held ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
         </div>
+        ${unrecLine}
         ${lastLine}${nextLine}
         ${neverBlock}
         ${months.length ? `
@@ -224,7 +246,7 @@
     root.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
       const g = (stats.guides || []).find(x => x.slug === b.dataset.copy);
       if (!g) return;
-      const txt = g.persons.filter(p => !p.participated).map(p => p.name).join('\n');
+      const txt = g.persons.filter(p => p.held > 0 && !p.participated).map(p => p.name).join('\n');
       navigator.clipboard.writeText(txt).then(() => {
         const t = b.textContent; b.textContent = '✓ הועתק';
         setTimeout(() => { b.textContent = t; }, 2000);
@@ -257,7 +279,7 @@
   // תא נוכחות בטבלת המורים של הדף (dashboard.js)
   window.SCHOOL_meetCell = function (teacherId) {
     if (!stats) return '';
-    const p = personByTeacher[String(teacherId)];
-    return p ? window.TS_meetRateChip(p) : '<span class="mv-chip none">—</span>';
+    const list = personByTeacher[String(teacherId)];
+    return list ? window.TS_meetRateChips(list) : '<span class="mv-chip none">—</span>';
   };
 })();

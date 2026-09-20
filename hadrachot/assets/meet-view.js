@@ -13,6 +13,7 @@
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
   const L = d => window.TS_meetDateLabel(d);
+  window.TS_meetAlertIcon = ALERT;   // אותה התראה גם במסכים שלא בונים כרטיס מלא
 
   // הדרכה פרטנית — עמודה נפרדת ליד אחוז הנוכחות במפגשים (לא נכנסת לאחוז)
   window.TS_meetIndividualChip = function (p) {
@@ -26,6 +27,21 @@
     const title = `${p.present} מתוך ${p.held} הדרכות חודשיות` +
       (p.monthsMissed && p.monthsMissed.length ? ' · לא השתתף/ה: ' + p.missed.join(', ') : '');
     return `<span class="mv-chip ${window.TS_rateClass(p.rate)}" title="${esc(title)}">${p.present}/${p.held}</span>` + (ind ? ' ' + ind : '');
+  };
+
+  /* אותו מורה בשתי קבוצות הדרכה — מורה מתמטיקה שטרם סומנה לו רמת יח"ל
+     שייך גם לשירה וגם לגל (כלל מכוון: עדיף שיופיע אצל שתיהן מאשר שייפול
+     בין הכיסאות). התא הציג את הקבוצה הראשונה לפי סדר המדריכים, ולכן הראה
+     "—" גם כשבקבוצה השנייה יש נוכחות מלאה (קודקס, 20.9.26).
+     כאן מוצגות כל הקבוצות שנמדדו, עם שם המדריכ/ה ליד כל אחת. */
+  window.TS_meetRateChips = function (list) {
+    const ps = (list || []).filter(Boolean);
+    if (!ps.length) return window.TS_meetRateChip(null);
+    const measured = ps.filter(p => p.held > 0);
+    if (measured.length < 2) return window.TS_meetRateChip(measured[0] || ps[0]);
+    return measured.map(p => window.TS_meetRateChip(p) +
+      `<span style="color:var(--text-muted);font-size:11px;margin-inline-start:3px">${esc(String(p.guideName || '').split(' ')[0])}</span>`
+    ).join(' ');
   };
 
   window.TS_meetGuideCard = function (g, opts) {
