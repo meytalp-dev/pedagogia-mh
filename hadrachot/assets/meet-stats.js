@@ -16,9 +16,12 @@
    · הקבוצה של מדריכ/ה = מקצוע + מגזר + מסלול + יח"ל, בדיוק כמו בדשבורד המדריכ/ה:
      מורה בגרות שטרם סומנו לו יח"ל שייך לשתי הקבוצות (שירה וגל).
    · אותו מורה בבגרות ובגמר (שתי שורות במערכת) הוא משתתף אחד.
-   · הדרכה פרטנית (טאב guide_hours, 14.9.26 — החלטת מיטל): מורה שקיבל/ה שעה
-     פרטנית "השתתף/ה השנה" ולא נכנס/ת ל"לא השתתפו כלל". היא **לא** נכנסת לאחוז
-     הנוכחות במפגשים — מוצגת לידו כעמודה נפרדת (אחרת האחוז עובר 100%).
+   · הדרכה פרטנית (טאב guide_hours) **נספרת כהשתתפות חודשית** (החלטת מיטל
+     20.9.26, שינוי מ-14.9). היחידה היא חודש, ולכן שעה פרטנית רק **מספקת**
+     את החודש שבו ניתנה — כמו נוכחות באחד המועדים — והאחוז לא יכול לעבור
+     100%. חודש בלי הדרכה קבוצתית שניתנה בו שעה פרטנית **נמדד** דרכה.
+     כך המסכים סופרים בדיוק כמו הדוח החודשי במייל. הפירוט נשאר נפרד:
+     p.groupMonths (קבוצתי בלבד) · p.individualMonths · mo.viaIndividual.
      התאמה לפי שם + בית ספר (הרישום בטופס ממלא אותם מרשימת הקבוצה; אין teacherId).
      רק שעות משנת הלימודים הנוכחית (מ-1.9).
    · דרישה: כל בית ספר בקבוצה מקבל לפחות הדרכה פרטנית אחת בשנה —
@@ -155,6 +158,7 @@
           return !subs.length || subs.some(sx => p.subjects.indexOf(sx) >= 0);
         });
         p.monthsAttended = myMonths.filter(mo => mo.meetings.some(id => p.attended.indexOf(id) >= 0)).map(mo => mo.key);
+        p.groupMonths = myMonths.map(mo => mo.key);   // לפני שילוב הפרטני — לתצוגה
         p.monthsMissed = myMonths.filter(mo => p.monthsAttended.indexOf(mo.key) < 0).map(mo => mo.key);
         p.present = p.monthsAttended.length;
         p.held = myMonths.length;
@@ -189,9 +193,30 @@
         const sk = p ? norm(p.schoolName) : norm(h.schoolName);
         if (sk) schoolSessions[sk] = (schoolSessions[sk] || 0) + 1;
       });
+      /* ---- שילוב ההדרכה הפרטנית בספירה (קביעת מיטל 20.9.26) ----
+         עד כה השעה הפרטנית נספרה כ"השתתף/ה השנה" אבל לא נכנסה לאחוז —
+         בשיטת הספירה לפי מועדים היא הייתה מוסיפה אירוע ומקפיצה את האחוז
+         מעל 100%. בספירה החודשית זה כבר לא קורה: היחידה היא **חודש**,
+         והשעה הפרטנית רק **מספקת** את החודש שבו ניתנה, בדיוק כמו נוכחות
+         באחד המועדים. מכאן שהמסכים סופרים עכשיו כמו הדוח החודשי במייל.
+         · חודש שבו הייתה הדרכה קבוצתית והמורה נעדר/ה אבל קיבל/ה שעה
+           פרטנית — נספר כהשתתפות.
+         · חודש שבו לא התקיימה הדרכה קבוצתית כלל אבל ניתנה שעה פרטנית —
+           נכנס למכנה ולמונה (החודש **נמדד** דרך הפרטני).
+         p.groupMonths נשמר לתצוגה של "ההדרכות הקבוצתיות" בנפרד. */
       persons.forEach(p => {
         p.individualDates.sort();
-        p.participated = p.present > 0 || p.individual > 0;
+        const indMonths = Array.from(new Set(p.individualDates.map(monthKey)));
+        p.individualMonths = indMonths;
+        const allKeys = Array.from(new Set(p.groupMonths.concat(indMonths)));
+        p.monthsAttended = allKeys.filter(k =>
+          p.monthsAttended.indexOf(k) >= 0 || indMonths.indexOf(k) >= 0);
+        p.monthsMissed = allKeys.filter(k => p.monthsAttended.indexOf(k) < 0);
+        p.present = p.monthsAttended.length;
+        p.held = allKeys.length;
+        p.missed = p.monthsMissed.map(monthLabel);
+        p.rate = p.held ? Math.round(p.present / p.held * 100) : null;
+        p.participated = p.present > 0;
       });
       const schoolNames = Object.keys(rosterSchools).map(k => rosterSchools[k]).sort((a, b) => a.localeCompare(b, 'he'));
       const schools = schoolNames.map(n => ({ name: n, individual: schoolSessions[norm(n)] || 0 }));
@@ -215,8 +240,11 @@
         const subs = Object.keys(mo.subjects);
         const rel = persons.filter(p => !subs.length || subs.some(sx => p.subjects.indexOf(sx) >= 0));
         mo.rosterN = rel.length;
+        // monthsAttended כבר כולל חודש שסופק ע"י שעה פרטנית (20.9.26)
         mo.present = rel.filter(p => p.monthsAttended.indexOf(mo.key) >= 0);
         mo.absent = rel.filter(p => p.monthsAttended.indexOf(mo.key) < 0);
+        mo.viaIndividual = mo.present.filter(p => (p.individualMonths || []).indexOf(mo.key) >= 0 &&
+          (p.attended || []).every(id => mo.meetings.indexOf(id) < 0)).length;
         mo.rosterPresent = mo.present.length;
         mo.rate = rel.length ? Math.round(mo.rosterPresent / rel.length * 100) : null;
       });
@@ -236,7 +264,8 @@
         outsidePresent: outside,
         rate: heldSum ? Math.round(presentSum / heldSum * 100) : null,
         // "לא השתתפו כלל" — לא במפגש ולא בהדרכה פרטנית
-        never: held.length ? persons.filter(p => !p.participated) : [],
+        // "לא השתתפו כלל" — רק מי שנמדד (יש לו חודש קבוצתי או פרטני) ולא השתתף
+        never: persons.filter(p => p.held > 0 && !p.participated),
         hoursLoaded: hoursLoaded,
         individualSessions: indSessions,
         individualHours: indHours,

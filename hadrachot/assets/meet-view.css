@@ -9,6 +9,7 @@
 .mv-rate { text-align:center; min-width:64px; }
 .mv-rate b { display:block; font-size:26px; line-height:1; font-variant-numeric:tabular-nums; }
 .mv-rate span { font-size:10.5px; color:var(--text-muted); }
+.mv-rate-base { display:block; margin-top:3px; font-size:10px; line-height:1.35; color:var(--text-muted); max-width:110px; }
 .mv-rate.high b { color:#1f7a5c; } .mv-rate.mid b { color:#9a6400; } .mv-rate.low b { color:#a4442f; } .mv-rate.none b { color:var(--text-soft,#95A3AE); font-size:20px; }
 .mv-kpis { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px; }
 .mv-kpi.ok b { color:#1f7a5c; }

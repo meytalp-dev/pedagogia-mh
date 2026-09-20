@@ -48,6 +48,13 @@
     opts = opts || {};
     const rc = window.TS_rateClass(g.rate);
     const heldN = g.held.length;
+    /* בסיס המדידה לצד האחוז (20.9.26). מאז שההדרכה הפרטנית נספרת, קבוצה
+       יכולה להציג אחוז גם בלי אף הדרכה קבוצתית — 100% ליד "0 הדרכות"
+       נראה שבור בלי המשפט הזה. */
+    const measuredN = g.persons.filter(p => p.held > 0).length;
+    const rateBase = g.rate === null ? 'טרם נמדד'
+      : (g.months || []).length ? 'נמדדו ' + measuredN + ' מתוך ' + g.rosterN + ' מורים'
+      : 'הדרכה פרטנית בלבד · ' + measuredN + ' מתוך ' + g.rosterN;
     const subjects = window.TS_guideSubjects ? window.TS_guideSubjects(g).join(' · ') : (g.subject || '');
     const warnings = [];
     if (g.unrecorded.length) {
@@ -145,12 +152,12 @@
             <div class="mv-name">${esc(g.name)}</div>
             <div class="mv-sub">${esc(subjects)}${opts.showInspector && g.inspectorName ? ' · מפקח.ת: ' + esc(g.inspectorName) : ''}</div>
           </div>
-          <div class="mv-rate ${rc}"><b>${g.rate === null ? '—' : g.rate + '%'}</b><span>נוכחות ממוצעת</span></div>
+          <div class="mv-rate ${rc}"><b>${g.rate === null ? '—' : g.rate + '%'}</b><span>נוכחות ממוצעת</span><small class="mv-rate-base">${esc(rateBase)}</small></div>
         </div>
         <div class="mv-kpis">
-          <div class="mv-kpi"><b>${months.length}</b><span>הדרכות שהתקיימו</span><small class="mv-kpi-note">${heldN} מועדים</small></div>
+          <div class="mv-kpi"><b>${months.length}</b><span>הדרכות קבוצתיות</span><small class="mv-kpi-note">${heldN} מועדים</small></div>
           <div class="mv-kpi"><b>${g.rosterN}</b><span>מורים בקבוצה</span></div>
-          <div class="mv-kpi"><b>${heldN ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
+          <div class="mv-kpi"><b>${measuredN ? never.length : '—'}</b><span>לא השתתפו כלל</span><small class="mv-kpi-note">${measuredN ? 'מתוך ' + measuredN + ' שנמדדו' : 'טרם נמדד'}</small></div>
           ${g.hoursLoaded && g.rosterN ? `<div class="mv-kpi${(g.teachersNoIndividual || []).length ? '' : ' ok'}"><b>${g.individualTeachers}<small style="font-size:11px;color:var(--text-muted)">/${g.rosterN}</small></b><span>מורים עם הדרכה פרטנית</span></div>` : ''}
           ${g.hoursLoaded && g.schools && g.schools.length ? `<div class="mv-kpi${g.schoolsNoIndividual.length ? '' : ' ok'}"><b>${g.schoolsWithIndividual}<small style="font-size:11px;color:var(--text-muted)">/${g.schools.length}</small></b><span>בתי ספר עם הדרכה פרטנית</span></div>` : ''}
         </div>
