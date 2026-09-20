@@ -301,6 +301,8 @@ function applyMeetings() {
       if (mo.ids.some(id => set.has(id)) || indM.has(mo.key)) present++;
     });
     indM.forEach(k => { if (!counted[k]) { total++; present++; } });
+    t.monthsCounted = counted;
+    t.indMonths = indM;
     const ls = t.legacyStats || { present: 0, partial: 0, total: legacyTrainings.length };
     const allTotal = (ls.total || 0) + total;
     const allPresent = (ls.present || 0) + present;
@@ -310,6 +312,30 @@ function applyMeetings() {
       rate: allTotal ? Math.round(allPresent / allTotal * 100) : null
     };
   });
+
+  /* "טרם השלימו את הדרכת <החודש>" — המספר שהמדריכה יכולה לפעול עליו.
+     נספר על **החודש האחרון שהתקיים** ולפי **אנשים**, לא שורות: מי שאין לו
+     נוכחות מאושרת באף אחד ממועדי החודש ולא קיבל שעה פרטנית באותו חודש.
+     זה בדיוק המספר שמוצג במסך הסימון (53 אצל מוריה), ולא מספר הלא-מסומנים
+     במועד בודד (60) — חלקם נכחו במועד האחר. */
+  const lastMo = months.length ? months[months.length - 1] : null;
+  if (!lastMo) { state.lastMonth = null; return; }
+  const subs = Object.keys(lastMo.subjects);
+  const seen = {};
+  let rosterN = 0, missing = 0;
+  state.teachers.forEach(t => {
+    if (typeof isMine === 'function' && !isMine(t)) return;
+    if (subs.length && subs.indexOf(t.subject) < 0) return;
+    const k = personOf(t);
+    if (seen[k]) return;
+    seen[k] = 1;
+    rosterN++;
+    const done = lastMo.ids.some(id => (attended[k] || new Set()).has(id)) ||
+      ((indMonths && indMonths[k]) ? indMonths[k].has(lastMo.key) : false);
+    if (!done) missing++;
+  });
+  state.lastMonth = { key: lastMo.key, rosterN: rosterN, missing: missing,
+    label: (window.TS_meetMonthLabel ? window.TS_meetMonthLabel(lastMo.key) : lastMo.key) };
 }
 window.DASH_onMeetings = function () {
   if (!state.teachers.length) return;   // הרשימה עוד לא נטענה — loadData יחיל בסוף
@@ -334,8 +360,8 @@ function renderApiError() {
       </div>
       <button type="button" class="btn btn-primary" id="btn-retry-load">לנסות שוב</button>
     </div>`;
-  ['stat-teachers', 'stat-schools', 'stat-trainings', 'stat-rate']
-    .forEach(id => document.getElementById(id).textContent = '—');
+  ['stat-teachers', 'stat-schools', 'stat-trainings', 'stat-rate', 'stat-todo', 'stat-units']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
   document.getElementById('btn-retry-load').addEventListener('click', async () => {
     document.getElementById('teachers-container').innerHTML = '<div class="empty" style="padding:32px;">טוען...</div>';
     await loadData();
@@ -395,8 +421,8 @@ function renderAll() {
     people.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר' +
     (bothN ? ' · ' + bothN + ' בשניהם' : '') + ') · ' +
     new Set(mine.map(t => t.schoolName)).size + ' בתי ספר' +
-    (societyLabel ? ' · ' + societyLabel : '') +
-    (unmarkedN ? ' · ' + unmarkedN + ' טרם סומנה להם רמה' : '');
+    (societyLabel ? ' · ' + societyLabel : '');
+    // "טרם סומנה להם רמה" עבר לפס העליון כמספר לפעולה — לא חוזר כאן
 
   // מורה שעוד לא התקיים מפגש שרלוונטי אליו — לא נספר כ-0%
   const rated = people.filter(t => t.stats.total);
@@ -404,7 +430,29 @@ function renderAll() {
     ? Math.round(rated.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / rated.length)
     : null;
   document.getElementById('stat-teachers').textContent = people.length;
-  document.getElementById('stat-schools').textContent = new Set(mine.map(t => t.schoolName)).size;
+  const schoolsN = new Set(mine.map(t => t.schoolName)).size;
+  document.getElementById('stat-schools').textContent = schoolsN;
+  const setTx = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setTx('stat-schools-sub', schoolsN + ' בתי ספר');
+
+  /* שני המספרים לפעולה (20.9.26) — ראו את ההערה בפס ב-index.html */
+  const lm = state.lastMonth;
+  const todoEl = document.getElementById('stat-todo');
+  if (todoEl) {
+    todoEl.textContent = lm ? lm.missing : '—';
+    todoEl.className = 'cmd-metric-value ' + (!lm ? '' : lm.missing ? 'warn' : 'mint');
+    setTx('stat-todo-sub', lm
+      ? 'את הדרכת ' + lm.label.replace(/ \d{4}$/, '') + ' · מתוך ' + lm.rosterN
+      : 'טרם התקיימה הדרכה');
+  }
+  const unitsEl = document.getElementById('stat-units');
+  if (unitsEl) {
+    // רמת יח"ל נדרשת רק בבגרות; בגמר אין יח"ל
+    const unitsRelevant = people.filter(t => t.type !== 'gemer').length;
+    unitsEl.textContent = unmarkedN || '—';
+    unitsEl.className = 'cmd-metric-value ' + (unmarkedN ? 'warn' : 'mint');
+    setTx('stat-units-sub', unmarkedN ? 'מתוך ' + unitsRelevant + ' בבגרות' : 'כל הרמות סומנו');
+  }
   /* "הדרכות השנה" — כמה מועדים העבירה בפועל, ומתחת כמה הדרכות חודשיות זה
      לצורך הספירה של המפקח.ת (מיטל, 20.9.26: "היא עשתה שתיים"). */
   const monN = (state.months || []).length;
@@ -417,6 +465,8 @@ function renderAll() {
     trSub.hidden = !monN;
   }
   document.getElementById('stat-rate').textContent = totalRate === null ? '—' : totalRate + '%';
+  setTx('stat-rate-base', totalRate === null ? 'טרם נמדד'
+    : 'נמדדו ' + rated.length + ' מתוך ' + people.length + ' מורים');
 
   renderTeachers();
   renderTrainings();

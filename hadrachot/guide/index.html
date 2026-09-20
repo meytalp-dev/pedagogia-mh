@@ -7,8 +7,9 @@
 <link rel="stylesheet" href="../assets/fonts-local.css">
 <link rel="stylesheet" href="../assets/styles.css?v=20260920">
 <style>
-  /* command-strip עם 4 KPIs */
-  .command-strip { grid-template-columns: repeat(4, 1fr); }
+  /* command-strip עם 5 KPIs (20.9.26 — נוספו "טרם השלימו" ו"טרם סומנה רמה") */
+  .command-strip { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 1000px) { .command-strip { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 760px) { .command-strip { grid-template-columns: repeat(2, 1fr); } }
 
   /* כפתור פעולה בראש העמוד */
@@ -529,21 +530,34 @@
       <div class="line"></div>
     </div>
 
-    <!-- Command Strip — 4 KPIs -->
+    <!-- Command Strip — 5 KPIs. הראשונים הם מה שדורש פעולה מהמדריכ/ה
+         (20.9.26): עד אז הפס פתח באחוז, והמספרים שהיא יכולה לפעול עליהם
+         היו קבורים — "טרם השלימו" רק בתוך לשונית הסימון, ו"טרם סומנה רמה"
+         כטקסט אפור בכותרת המשנה. "בתי ספר" התמזג לתוך "מורים שלי". -->
     <section class="command-strip" aria-label="נתוני המדריך/ה">
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+          טרם השלימו
+        </div>
+        <div class="cmd-metric-value" id="stat-todo">—</div>
+        <div class="cmd-metric-sub" id="stat-todo-sub"></div>
+      </div>
+      <div class="cmd-metric">
+        <div class="cmd-metric-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          טרם סומנה רמה
+        </div>
+        <div class="cmd-metric-value" id="stat-units">—</div>
+        <div class="cmd-metric-sub" id="stat-units-sub"></div>
+      </div>
       <div class="cmd-metric">
         <div class="cmd-metric-label">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           מורים שלי
         </div>
         <div class="cmd-metric-value" id="stat-teachers">—</div>
-      </div>
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
-          בתי ספר
-        </div>
-        <div class="cmd-metric-value" id="stat-schools">—</div>
+        <div class="cmd-metric-sub" id="stat-schools-sub"></div>
       </div>
       <div class="cmd-metric">
         <div class="cmd-metric-label">
@@ -559,7 +573,9 @@
           אחוז נוכחות ממוצע
         </div>
         <div class="cmd-metric-value mint" id="stat-rate">—</div>
+        <div class="cmd-metric-sub" id="stat-rate-base"></div>
       </div>
+      <span id="stat-schools" hidden></span>
     </section>
 
     <!-- Resources — Drive / Zoom / שליחת חומרים -->
@@ -864,7 +880,7 @@
 <script src="../assets/guides.js?v=20260911"></script>
 <script src="../assets/plans.js?v=20260916c"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260920c"></script>
+<script src="dashboard.js?v=20260920d"></script>
 <script src="space.js?v=20260914b"></script>
 <script src="meetings.js?v=20260920c"></script>
 </body>
