@@ -54,16 +54,104 @@ function showCertResult(data) {
   }
 }
 
+/* הנוכחות החדשה (21.9.26) — הדף קרא `attendance.teacher`, כלומר את מערכת
+   הנוכחות הישנה, בעוד הנוכחות נרשמת ב-meetings/meeting_attendance. התוצאה:
+   מורה שבאמת נכח ראה "0 הדרכות · 0% נוכחות" (נבדק על שיר כהן, עברית).
+   זו אותה תקלה שתוקנה אצל המדריכה ב-18.9.
+   כאן החישוב נעשה ב-assets/meet-stats.js — אותו מנוע כמו כל שאר המסכים,
+   ולכן המורה רואה בדיוק את מה שרואים המדריכה, המנהל/ת והמפקח.ת.
+   הנתונים מ-meet.scope?school=<id>: כל המפגשים (כדי לדעת מה התקיים) ורק
+   שורות הנוכחות של בית הספר. אין צורך בשינוי שרת. */
+let monthly = null;        // המשתתף/ת מתוך TS_meetStats — present · held · rate · חודשים
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/* Apps Script מטפל בבקשות של אותו משתמש **בטור**, ולכן כל קריאה נוספת
+   מאריכה את ההמתנה של המורה. teacher.get קודם (בלעדיו אין school), ומיד
+   אחריו הנוכחות — הכי חשובה למורה. השאלות נטענות אחרונות ולא חוסמות. */
 async function load() {
-  const [teacherRes, attRes, qRes] = await Promise.all([
-    TS.api('teacher.get', { id: teacherId }),
-    TS.api('attendance.teacher', { teacherId }),
-    TS.api('questions.list', { teacherId })
-  ]);
+  const teacherRes = await TS.api('teacher.get', { id: teacherId });
   teacher = teacherRes.data;
-  attendance = attRes.data || [];
-  questions = qRes.data || [];
   render();
+  await loadAttendance();
+  const qRes = await TS.api('questions.list', { teacherId });
+  questions = qRes.data || [];
+  renderQuestions();
+}
+
+async function loadAttendance() {
+  if (!teacher || !teacher.school) return;
+  const res = await TS.api('meet.scope', { school: teacher.school }, { cache: 'no' });
+  if (!res || !res.ok || !res.data) return;
+  const d = res.data;
+  const guides = Object.keys(window.TS_GUIDES || {})
+    .map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));
+  const hours = {};
+  (d.hours || []).forEach(h => { (hours[h.guideSlug] = hours[h.guideSlug] || []).push(h); });
+  const stats = window.TS_meetStats({
+    today: d.today, meetings: d.meetings, rows: d.rows,
+    teachers: [teacher], guides: guides, hours: hours
+  });
+  // המורה מופיע/ה בקבוצה של המדריכ/ה שלו/ה; בלי יח"ל — אצל שתיהן, ואז
+  // נלקחת התמונה המלאה ביותר (אותו כלל כמו TS_meetRateChips).
+  const mine = (stats.persons || []).filter(p => p.held > 0);
+  const p = mine.sort((a, b) => b.held - a.held)[0] || (stats.persons || [])[0];
+  if (!p) return;
+  monthly = p;
+  renderAttendance();
+}
+
+/* יחידת התצוגה היא חודש, כמו בכל המערכת: בכל חודש הדרכה אחת בשני מועדים,
+   ונוכחות באחד מהם היא נוכחות מלאה. שעה פרטנית מספקת אף היא את החודש. */
+function renderAttendance() {
+  const set = (id, v, cls) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = v;
+    if (cls !== undefined) el.className = 'cmd-metric-value ' + cls;
+  };
+  const tbody = document.getElementById('history-body');
+  // "—" נראה כמו אפס. עד שהנוכחות מגיעה (Apps Script עונה בטור, כמה שניות)
+  // מוצג חיווי טעינה מפורש — מורה שרואה אפס אחרי שהשתתף לא חוזר לדף.
+  if (!monthly) {
+    ['stat-total', 'stat-present', 'stat-missed', 'stat-rate'].forEach(id => set(id, '…', ''));
+    if (tbody) tbody.innerHTML = '<tr><td colspan="3" class="empty">טוען את הנוכחות שלך…</td></tr>';
+    return;
+  }
+  set('stat-total', monthly.held);
+  set('stat-present', monthly.present, 'mint');
+  set('stat-missed', monthly.held - monthly.present, 'warn');
+  const rate = monthly.rate;
+  set('stat-rate', rate === null ? '—' : rate + '%',
+    rate === null ? '' : rate >= 80 ? 'mint' : rate >= 60 ? 'warn' : 'err');
+
+  if (!tbody) return;
+  if (!monthly.held) {
+    tbody.innerHTML = '<tr><td colspan="3" class="empty">עוד לא התקיימה הדרכה עם רישום נוכחות.</td></tr>';
+    return;
+  }
+  const L = d => (window.TS_meetDateLabel ? window.TS_meetDateLabel(d) : d);
+  const lbl = k => (window.TS_meetMonthLabel ? window.TS_meetMonthLabel(k) : k);
+  const ind = new Set(monthly.individualMonths || []);
+  const rows = (monthly.monthsAttended || []).map(k => ({ k: k, ok: true }))
+    .concat((monthly.monthsMissed || []).map(k => ({ k: k, ok: false })))
+    .sort((a, b) => b.k.localeCompare(a.k));
+  tbody.innerHTML = rows.map(r => {
+    const viaInd = r.ok && ind.has(r.k);
+    return `
+      <tr>
+        <td><b>${esc(lbl(r.k))}</b></td>
+        <td>${viaInd ? 'הדרכה פרטנית' : 'הדרכה חודשית'}</td>
+        <td>${r.ok
+          ? '<span class="badge ok">השתתפתי</span>'
+          : '<span class="badge err">לא השתתפתי</span>'}</td>
+      </tr>`;
+  }).join('');
+  const dates = (monthly.individualDates || []);
+  if (dates.length) {
+    tbody.innerHTML += `<tr><td colspan="3" class="empty" style="text-align:right;">
+      הדרכה פרטנית השנה: ${dates.map(L).join(' · ')}</td></tr>`;
+  }
 }
 
 function render() {
@@ -82,16 +170,7 @@ function render() {
   document.getElementById('p-units').textContent = teacher.units || '—';
   document.getElementById('p-students').textContent = teacher.students || '—';
 
-  // Stats
-  const total = attendance.length;
-  const present = attendance.filter(a => a.status === 'present').length;
-  const missed = attendance.filter(a => a.status === 'absent').length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-present').textContent = present;
-  document.getElementById('stat-missed').textContent = missed;
-  const rate = total ? Math.round((present / total) * 100) : 0;
-  document.getElementById('stat-rate').textContent = rate + '%';
-  document.getElementById('stat-rate').className = 'stat-value ' + (rate >= 90 ? 'ok' : rate >= 70 ? 'warn' : 'err');
+  renderAttendance();
 
   // PD badge
   document.getElementById('pd-status').innerHTML = teacher.pdActive
@@ -101,25 +180,6 @@ function render() {
   document.getElementById('moe-status').innerHTML = teacher.moeApproval
     ? '<span class="badge info">מודרך גם במשרד החינוך</span>'
     : '<span class="badge neutral">לא מודרך במשה"ח</span>';
-
-  // Attendance history
-  const tbody = document.getElementById('history-body');
-  if (!attendance.length) {
-    tbody.innerHTML = '<tr><td colspan="3" class="empty">אין רישומים עדיין</td></tr>';
-  } else {
-    tbody.innerHTML = attendance.map(a => {
-      const tr = a.training || {};
-      const status = a.status === 'present'
-        ? '<span class="badge ok">נכחתי</span>'
-        : '<span class="badge err">חסרתי</span>';
-      return `
-        <tr>
-          <td>${TS.formatDate(tr.date || a.timestamp)}</td>
-          <td>${tr.subject || '—'}</td>
-          <td>${status}</td>
-        </tr>`;
-    }).join('');
-  }
 
   // Questions
   renderQuestions();
