@@ -33,6 +33,8 @@
             padding: 9px 11px; background: #FBECE8; color: #8f2f1c; }
   .tg-msg.ok { background: #E4F2EB; color: #1f6b52; }
   .tg-btn { width: 100%; margin-top: 16px; }
+  .tg-code { width: 100%; box-sizing: border-box; text-align: center; font-size: 26px;
+             letter-spacing: 9px; font-weight: 700; padding: 10px; }
   .tg-exit { margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
              font-family: inherit; font-size: 12.5px; color: var(--text-muted);
              text-decoration: underline; }
@@ -89,7 +91,16 @@
       <div class="tg-why">רק בכניסה עם מייל הנוכחות שלך נרשמת וההדרכה נזקפת לזכותך.</div>
 
       <div class="tg-msg" id="tg-msg" hidden></div>
-      <button type="button" class="btn btn-primary tg-btn" id="tg-enter">כניסה</button>
+      <button type="button" class="btn btn-primary tg-btn" id="tg-enter">שליחת קוד למייל</button>
+
+      <!-- שלב 2: אימות הקוד. מוצג רק אחרי שנשלח מייל. -->
+      <div id="tg-step2" hidden>
+        <label class="tg-label" for="tg-code">הקוד שקיבלת במייל</label>
+        <input class="input tg-code" id="tg-code" inputmode="numeric" maxlength="6"
+               autocomplete="one-time-code" placeholder="000000">
+        <button type="button" class="btn btn-primary tg-btn" id="tg-verify">כניסה</button>
+        <button type="button" class="tg-exit" id="tg-resend">לא הגיע? שליחה חוזרת</button>
+      </div>
     </section>
 
     <div id="teacher-body">
@@ -275,6 +286,6 @@
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260921"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260921b"></script>
+<script src="dashboard.js?v=20260921c"></script>
 </body>
 </html>

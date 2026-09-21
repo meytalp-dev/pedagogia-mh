@@ -22,7 +22,9 @@ function rememberIdentity(o) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) { /* לא חוסם כניסה */ }
 }
 
-let teacherId = TS.urlParam('id', '') || (savedIdentity() || {}).id || '';
+let teacherKey = (savedIdentity() || {}).k || '';
+let teacherId = teacherKey ? (savedIdentity() || {}).id
+  : (TS.urlParam('id', '') || (savedIdentity() || {}).id || '');
 let teacher = null;
 let attendance = [];
 let questions = [];
@@ -63,6 +65,9 @@ async function showGate() {
     list.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
   sel.addEventListener('change', onGateSchool);
   $g('tg-enter').addEventListener('click', onGateEnter);
+  $g('tg-verify').addEventListener('click', onGateVerify);
+  $g('tg-resend').addEventListener('click', onGateResend);
+  $g('tg-code').addEventListener('keydown', e => { if (e.key === 'Enter') onGateVerify(); });
 }
 
 async function onGateSchool() {
@@ -99,6 +104,20 @@ async function onGateSchool() {
   });
 }
 
+/* שלב 1 — שליחת הקוד. המייל אינו נשמר כאן: הוא נשמר בשרת רק אחרי אימות
+   מוצלח, כך שהכתובת שנאספת היא תמיד כזו שהוכחה גישה אליה. */
+const GATE_ERRORS = {
+  email_mismatch: 'המייל אינו תואם לכתובת הרשומה במערכת. פנו למדריכ/ה שלכם.',
+  cooldown: 'נשלח קוד ממש עכשיו. המתינו דקה ונסו שוב.',
+  quota: 'לא ניתן לשלוח קוד כרגע. נסו שוב מחר, או פנו למדריכ/ה שלכם.',
+  not_found: 'לא נמצאה רשומה מתאימה. פנו למדריכ/ה שלכם.',
+  expired: 'הקוד פג תוקף. בקשו קוד חדש.',
+  wrong_code: 'הקוד שגוי. בדקו ונסו שוב.',
+  too_many: 'יותר מדי ניסיונות. בקשו קוד חדש.',
+  bad_input: 'הפרטים אינם תקינים.'
+};
+const gateErr = r => GATE_ERRORS[r && r.error] || 'תקלה רגעית. נסו שוב בעוד רגע.';
+
 async function onGateEnter() {
   const btn = $g('tg-enter');
   const id = $g('tg-name').value;
@@ -108,23 +127,51 @@ async function onGateEnter() {
 
   btn.disabled = true;
   const label = btn.textContent;
+  btn.textContent = 'שולח…';
+  gateMsg('');
+  const r = await TS.apiPost('teacher.codeSend', { id: id, email: email });
+  btn.disabled = false;
+  btn.textContent = label;
+  if (!r || !r.ok) return gateMsg(gateErr(r));
+
+  $g('tg-step2').hidden = false;
+  ['tg-school', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = true; });
+  btn.hidden = true;
+  gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.', true);
+  $g('tg-code').focus();
+}
+
+// שלב 2 — אימות הקוד. רק כאן נפתחת הדלת.
+async function onGateVerify() {
+  const btn = $g('tg-verify');
+  const id = $g('tg-name').value;
+  const code = String($g('tg-code').value || '').replace(/\D/g, '');
+  if (code.length !== 6) return gateMsg('הקוד הוא 6 ספרות.');
+  btn.disabled = true;
+  const label = btn.textContent;
   btn.textContent = 'נכנס…';
-  const t = gateTeachers.find(x => String(x.id) === id) || {};
-  // נשמר רק כשהוא חדש או שונה — כך נאספים המיילים החסרים בלי לדרוס קיימים
-  if (String(t.email || '').trim().toLowerCase() !== email.toLowerCase()) {
-    const r = await TS.apiPost('teachers.update', { id: id, email: email });
-    if (!r || !r.ok) {
-      btn.disabled = false; btn.textContent = label;
-      return gateMsg('השמירה נכשלה — תקלה רגעית. נסו שוב בעוד רגע.');
-    }
+  const r = await TS.apiPost('teacher.codeVerify', { id: id, code: code });
+  if (!r || !r.ok) {
+    btn.disabled = false; btn.textContent = label;
+    return gateMsg(gateErr(r));
   }
-  rememberIdentity({ id: id, name: t.name || '', at: new Date().toISOString() });
-  teacherId = id;
+  rememberIdentity({ k: r.data.key, id: r.data.id, name: r.data.name || '',
+    at: new Date().toISOString() });
+  teacherKey = r.data.key;
+  teacherId = r.data.id;
   $g('teacher-gate').hidden = true;
   $g('teacher-body').hidden = false;
   const exit = $g('tg-exit');
   if (exit) exit.hidden = false;
   await load();
+}
+
+async function onGateResend() {
+  $g('tg-step2').hidden = true;
+  ['tg-school', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = false; });
+  $g('tg-enter').hidden = false;
+  $g('tg-code').value = '';
+  gateMsg('');
 }
 
 async function requestCertificate() {
@@ -187,8 +234,13 @@ const esc = s => String(s == null ? '' : s)
    מאריכה את ההמתנה של המורה. teacher.get קודם (בלעדיו אין school), ומיד
    אחריו הנוכחות — הכי חשובה למורה. השאלות נטענות אחרונות ולא חוסמות. */
 async function load() {
-  const teacherRes = await TS.api('teacher.get', { id: teacherId });
+  /* מפתח חתום כשיש — הכתובת כבר לא חושפת מזהה שאפשר לנחש. teacher.get
+     נשאר לקישורים הישנים שהופצו עם ?id=. */
+  const teacherRes = teacherKey
+    ? await TS.api('teacher.self', { k: teacherKey })
+    : await TS.api('teacher.get', { id: teacherId });
   teacher = teacherRes && teacherRes.data;
+  if (teacher && teacher.id) teacherId = teacher.id;
   // מורה שנמחק או אוחד — הזיהוי השמור כבר לא תקף, חוזרים לטופס
   if (!teacher) {
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }

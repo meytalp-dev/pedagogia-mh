@@ -57,6 +57,9 @@ const SCHEMA = {
   // בכוונה לא trainings/attendance: הדוחות הישנים מחשבים כל הדרכה מול כל מורי
   // המקצוע בכל המגזרים, ומפגש של קבוצה אחת היה מסמן את כל השאר "לא נכחו".
   meetings:           ['id','guideSlug','guideName','date','topic','source','openUntil','openedAt','closedAt','createdAt','updatedAt'],
+  // כניסת המורה המאומתת (21.9.26) — קוד חד-פעמי במייל. codeHash ולא הקוד
+  // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
+  teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt'],
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
                        'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt',
                        // markedVia: 'manual' | 'zoom' — סימון שנעשה מתוך דוח המשתתפים של הזום
@@ -962,6 +965,10 @@ function handleRequest(params) {
       case 'meet.guideKeys':      result = meetGuideKeys(params); break;
       case 'meet.report':         result = meetReport(params); break;
       case 'meet.scope':          result = meetScope(params); break;
+      // מבט המורה — כניסה מאומתת (21.9.26)
+      case 'teacher.codeSend':    result = teacherCodeSend(params); break;
+      case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
+      case 'teacher.self':        result = teacherSelf(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -4343,4 +4350,161 @@ function monthlySend_(month, live, today) {
   console.log('monthlySend_ ' + month + ' live=' + live + ' sent=' + sent.length +
     ' skipped=' + skipped.length + ' failed=' + failed.length);
   return { sent: sent, skipped: skipped, failed: failed };
+}
+
+
+/* ============================================================
+   מבט המורה — כניסה מאומתת (21.9.26)
+   -----------------------------------------------------------
+   עד היום הדף נפתח ב-`teacher/?id=<teacherId>`: מזהה גלוי שאפשר לנחש,
+   וכל מי ששינה ספרה ראה את הנוכחות והפרטים של מורה אחר.
+
+   החלטת מיטל 21.9.26: **אימות במייל חובה לפני הפצה.** מאחורי הדלת יושבים
+   הנוכחות של המורה, הפרטים האישיים והפקת התעודה — ומיילים של מורים
+   בבתי ספר צפויים לרוב, ולכן זיהוי בלי אימות אינו מספיק.
+
+   הזרימה: teacher.codeSend (שם + מייל) → קוד בן 6 ספרות במייל →
+   teacher.codeVerify → מפתח חתום (HMAC) שנשמר במכשיר. מכאן והלאה
+   teacher.self עם המפתח, בלי מזהה גלוי בכתובת.
+
+   **מכסת המייל היא אילוץ מחייב:** בעלת הפרויקט היא מיטל בחשבון ג'ימייל
+   רגיל — כ-100 נמענים ביום, משותף עם כל מיילי המערכת. לכן codeSend בודק
+   מכסה לפני כל שליחה ומחזיר 'quota' במקום להיכשל בשקט.
+   ============================================================ */
+
+const TEACHER_CODE_TTL_MIN = 20;      // תוקף הקוד
+const TEACHER_CODE_MAX_TRIES = 5;     // ניסיונות הקלדה לפני ביטול
+const TEACHER_CODE_COOLDOWN_SEC = 60; // בין שתי שליחות לאותו מורה
+const TEACHER_QUOTA_FLOOR = 15;       // שומרים מכסה לדוחות ולתזכורות
+/* תקרה יומית לפעולה הזו. הפעולה פתוחה בכוונה — המורה אינו מחובר — ולכן
+   מי שיודע את כתובת ה-/exec יכול לעבור על מזהי מורים ולשרוף את מכסת
+   המייל של מיטל (ג'ימייל רגיל: ~100 ליום, משותפת לכל מיילי המערכת).
+   הקירור לפי מורה לא עוצר תרחיש כזה; התקרה הכוללת כן. */
+const TEACHER_CODE_DAILY_CAP = 60;
+
+// מפתח הכניסה הקבוע של המורה — נגזר מהמזהה, לא ניתן לניחוש
+function teacherKey_(id) {
+  return meetHmacHex_('teacher:' + String(id)).slice(0, 24);
+}
+
+function teacherByKey_(key) {
+  const k = String(key || '').trim();
+  if (!/^[a-f0-9]{24}$/.test(k)) return null;
+  const rows = readAll('teachers');
+  for (let i = 0; i < rows.length; i++) {
+    if (meetSafeEqual_(teacherKey_(rows[i].id), k)) return rows[i];
+  }
+  return null;
+}
+
+function teacherNormMail_(v) { return String(v || '').trim().toLowerCase(); }
+
+/* teacher.codeSend — { id, email } → שולח קוד. לא מגלה אם המייל "נכון":
+   מורה שכבר רשום לו מייל חייב להזין אותו, ומי שאין לו — הכתובת שהזין
+   נשמרת רק אחרי אימות מוצלח, כדי שלא יהיה אפשר לשבץ מייל זר. */
+function teacherCodeSend(p) {
+  const id = String(p.id || '').trim();
+  const email = teacherNormMail_(p.email);
+  if (!id || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_input' };
+  const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
+  if (!t) return { ok: false, error: 'not_found' };
+
+  const known = teacherNormMail_(t.email);
+  if (known && known !== email) return { ok: false, error: 'email_mismatch' };
+
+  ensureTab_('teacher_codes');
+  const now = Date.now();
+  const rows = readAll('teacher_codes');
+  const mine = rows.filter(function (r) { return String(r.teacherId) === id; })
+    .sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); })[0];
+  if (mine && (now - new Date(mine.createdAt).getTime()) < TEACHER_CODE_COOLDOWN_SEC * 1000) {
+    return { ok: false, error: 'cooldown' };
+  }
+  if (MailApp.getRemainingDailyQuota() <= TEACHER_QUOTA_FLOOR) {
+    return { ok: false, error: 'quota' };
+  }
+  const today = new Date(now).toISOString().slice(0, 10);
+  const sentToday = rows.filter(function (r) {
+    return String(r.createdAt || '').slice(0, 10) === today;
+  }).length;
+  if (sentToday >= TEACHER_CODE_DAILY_CAP) return { ok: false, error: 'quota' };
+
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  appendRow('teacher_codes', {
+    id: newId('tcode'), teacherId: id, email: email,
+    codeHash: meetHmacHex_('tcode:' + id + ':' + code),
+    tries: 0, usedAt: '',
+    expiresAt: new Date(now + TEACHER_CODE_TTL_MIN * 60000).toISOString(),
+    createdAt: new Date(now).toISOString()
+  });
+
+  const name = String(t.name || '').trim();
+  MailApp.sendEmail({
+    to: email,
+    subject: 'קוד הכניסה שלך — מצפן ההדרכות',
+    name: 'מצפן ההדרכות · משרד העבודה',
+    body: 'שלום ' + name + ',\n\nקוד הכניסה שלך: ' + code +
+      '\n\nהקוד תקף ל-' + TEACHER_CODE_TTL_MIN + ' דקות.' +
+      '\nאם לא ביקשת להיכנס — אפשר להתעלם מההודעה.\n\n' +
+      'יחידת הפיקוח על הדרכות מורים · משרד העבודה',
+    htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#1b2a3a">' +
+      'שלום ' + remindEsc_(name) + ',<br><br>קוד הכניסה שלך:<br>' +
+      '<div style="font-size:30px;font-weight:bold;letter-spacing:5px;margin:12px 0">' + code + '</div>' +
+      'הקוד תקף ל-' + TEACHER_CODE_TTL_MIN + ' דקות.<br>' +
+      'אם לא ביקשת להיכנס — אפשר להתעלם מההודעה.<br><br>' +
+      '<span style="color:#5C7182;font-size:13px">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span></div>'
+  });
+  return { ok: true, data: { sent: true, ttlMin: TEACHER_CODE_TTL_MIN } };
+}
+
+/* teacher.codeVerify — { id, code } → מפתח הכניסה. רק כאן נשמר המייל
+   לרשומת המורה: כך הכתובת שנאספת היא תמיד כזו שהוכחה גישה אליה. */
+function teacherCodeVerify(p) {
+  const id = String(p.id || '').trim();
+  const code = String(p.code || '').replace(/\D/g, '');
+  if (!id || code.length !== 6) return { ok: false, error: 'bad_input' };
+
+  ensureTab_('teacher_codes');
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('teacher_codes');
+  const rows = readAll('teacher_codes');
+  const now = Date.now();
+  let hit = -1;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const r = rows[i];
+    if (String(r.teacherId) !== id || r.usedAt) continue;
+    if (new Date(r.expiresAt).getTime() < now) continue;
+    hit = i; break;
+  }
+  if (hit < 0) return { ok: false, error: 'expired' };
+  const row = rows[hit];
+  if (Number(row.tries || 0) >= TEACHER_CODE_MAX_TRIES) return { ok: false, error: 'too_many' };
+
+  const headers = SCHEMA['teacher_codes'];
+  const rowNum = hit + 2;   // שורה 1 = כותרות
+  if (!meetSafeEqual_(row.codeHash, meetHmacHex_('tcode:' + id + ':' + code))) {
+    sheet.getRange(rowNum, headers.indexOf('tries') + 1).setValue(Number(row.tries || 0) + 1);
+    return { ok: false, error: 'wrong_code' };
+  }
+  sheet.getRange(rowNum, headers.indexOf('usedAt') + 1).setValue(new Date().toISOString());
+
+  const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
+  if (!t) return { ok: false, error: 'not_found' };
+  if (teacherNormMail_(t.email) !== teacherNormMail_(row.email)) {
+    updateTeacher({ id: id, email: row.email });
+  }
+  return { ok: true, data: { key: teacherKey_(id), id: id, name: t.name || '' } };
+}
+
+/* teacher.self — { k } → הפרטים של המורה, בלי מזהה גלוי בכתובת.
+   מחזיר את אותם שדות שהדף הציג עד היום, ותו לא. */
+function teacherSelf(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  return { ok: true, data: {
+    id: t.id, name: t.name, subject: t.subject, type: t.type, sector: t.sector,
+    school: t.school, schoolName: t.schoolName, network: t.network,
+    seniority: t.seniority, units: t.units, students: t.students,
+    moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive),
+    email: t.email, phone: t.phone
+  } };
 }
