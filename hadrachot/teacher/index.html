@@ -19,6 +19,24 @@
   .command-strip .stat-value.warn { color: var(--sand); }
   .command-strip .stat-value.err  { color: var(--coral); }
 </style>
+<style>
+  .tg-card { max-width: 440px; margin: 40px auto; padding: 26px 24px; }
+  .tg-title { margin: 0 0 4px; font-size: 21px; }
+  .tg-sub { margin: 0 0 18px; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+  .tg-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-2);
+              margin: 14px 0 5px; }
+  .tg-card .select, .tg-card .input { width: 100%; box-sizing: border-box; }
+  .tg-why { margin-top: 10px; font-size: 12.5px; line-height: 1.6; color: var(--text-muted);
+            background: var(--surface-soft, #F4F8FA); border: 1px solid var(--border);
+            border-radius: 9px; padding: 9px 11px; }
+  .tg-msg { margin-top: 12px; font-size: 13px; line-height: 1.55; border-radius: 9px;
+            padding: 9px 11px; background: #FBECE8; color: #8f2f1c; }
+  .tg-msg.ok { background: #E4F2EB; color: #1f6b52; }
+  .tg-btn { width: 100%; margin-top: 16px; }
+  .tg-exit { margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
+             font-family: inherit; font-size: 12.5px; color: var(--text-muted);
+             text-decoration: underline; }
+</style>
 </head>
 <body data-role="teacher">
 
@@ -46,12 +64,44 @@
 
   <main class="dashboard-shell">
 
+    <!-- ==========================================================
+         טופס הכניסה (21.9.26, קביעת מיטל) — הדלת היחידה לדף.
+         קישור אחד לכל המורים, שהמדריכה שולחת לקהילת הווטסאפ שלה.
+         בית ספר מרשימה סגורה של 64 ואז שם מרשימת בית הספר — לעולם
+         לא כתיב חופשי; זה גם מה שמאפשר לזהות את המורה בוודאות.
+         אחרי הכניסה המכשיר זוכר, ובפעם הבאה זו פתיחה ישירה.
+         ⚠ הכניסה עדיין בלי אימות במייל — אין להפיץ את הקישור לפני
+         שהאימות (קוד בן 6 ספרות) נפרס.
+         ========================================================== -->
+    <section class="card tg-card" id="teacher-gate" hidden>
+      <h2 class="tg-title">מבט המורה · מצפן ההדרכות</h2>
+      <p class="tg-sub">כניסה חד-פעמית. מכאן והלאה הדף ייפתח ישירות במכשיר הזה.</p>
+
+      <label class="tg-label" for="tg-school">בית הספר שלי</label>
+      <select class="select" id="tg-school"><option value="">טוען…</option></select>
+
+      <label class="tg-label" for="tg-name">השם שלי</label>
+      <select class="select" id="tg-name" disabled><option value="">קודם בוחרים בית ספר</option></select>
+
+      <label class="tg-label" for="tg-email">המייל שלי</label>
+      <input class="input" id="tg-email" type="email" inputmode="email" autocomplete="email"
+             placeholder="name@example.com">
+      <div class="tg-why">רק בכניסה עם מייל הנוכחות שלך נרשמת וההדרכה נזקפת לזכותך.</div>
+
+      <div class="tg-msg" id="tg-msg" hidden></div>
+      <button type="button" class="btn btn-primary tg-btn" id="tg-enter">כניסה</button>
+    </section>
+
+    <div id="teacher-body">
+
     <!-- Page Header -->
     <section class="page-header">
       <div>
         <div class="page-header-eyebrow">מבט מורה · הסטטוס שלי</div>
         <h1>הסטטוס שלי</h1>
         <p class="page-header-sub">הנוכחות שלי בהדרכות, היסטוריה, תעודה אישית ושאלות למדריכ/ה.</p>
+        <!-- מכשיר משותף חייב דרך החוצה (21.9.26) -->
+        <button type="button" class="tg-exit" id="tg-exit" hidden>זה לא אני — יציאה</button>
       </div>
       <div class="page-compass">
         <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
@@ -218,12 +268,13 @@
         </div>
       </form>
     </div>
+    </div>
   </main>
 
 <script src="../assets/app.js"></script>
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260921"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260921"></script>
+<script src="dashboard.js?v=20260921b"></script>
 </body>
 </html>

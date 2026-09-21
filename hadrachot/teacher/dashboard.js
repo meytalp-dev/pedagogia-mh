@@ -1,14 +1,131 @@
 // Teacher self-view
-const teacherId = TS.urlParam('id', '');
+/* ==========================================================================
+   הזיהוי (21.9.26) — שלושה מקורות, לפי סדר:
+   1. `?id=` בכתובת — הקישורים שכבר הופצו ממשיכים לעבוד.
+   2. זיכרון במכשיר (localStorage) — מהכניסה השנייה ואילך, בלי טופס.
+   3. טופס הכניסה — בית ספר מרשימה סגורה, שם מרשימת בית הספר, ומייל.
+
+   ⚠ אין כאן עדיין אימות במייל. המייל **מזהה ולא מאמת**, ולכן אסור להפיץ
+   את הקישור לפני שנפרס האימות (קוד בן 6 ספרות). קביעת מיטל 21.9.26.
+   ========================================================================== */
+const LS_KEY = 'ts.teacher.v1';
+
+function savedIdentity() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    return (o && o.id) ? o : null;
+  } catch (e) { return null; }   // דפדפן פרטי / אחסון חסום — פשוט טופס
+}
+function rememberIdentity(o) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) { /* לא חוסם כניסה */ }
+}
+
+let teacherId = TS.urlParam('id', '') || (savedIdentity() || {}).id || '';
 let teacher = null;
 let attendance = [];
 let questions = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await load();
   document.getElementById('form-question').addEventListener('submit', submitQuestion);
   document.getElementById('btn-cert').addEventListener('click', requestCertificate);
+  const exit = document.getElementById('tg-exit');
+  if (exit) exit.addEventListener('click', () => {
+    try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
+    location.href = location.pathname;      // בלי ?id= — חוזר לטופס
+  });
+  if (!teacherId) { await showGate(); return; }
+  if (savedIdentity() && exit) exit.hidden = false;
+  await load();
 });
+
+/* ---------------------- טופס הכניסה ---------------------- */
+const $g = id => document.getElementById(id);
+let gateTeachers = [];
+
+function gateMsg(text, ok) {
+  const el = $g('tg-msg');
+  el.hidden = !text;
+  el.textContent = text || '';
+  el.className = 'tg-msg' + (ok ? ' ok' : '');
+}
+
+async function showGate() {
+  $g('teacher-gate').hidden = false;
+  $g('teacher-body').hidden = true;
+  const res = await TS.api('schools.list', {});
+  const list = (res && res.data ? res.data : [])
+    .filter(s => s.name)
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
+  const sel = $g('tg-school');
+  sel.innerHTML = '<option value="">בחרו בית ספר</option>' +
+    list.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join('');
+  sel.addEventListener('change', onGateSchool);
+  $g('tg-enter').addEventListener('click', onGateEnter);
+}
+
+async function onGateSchool() {
+  const id = $g('tg-school').value;
+  const nameSel = $g('tg-name');
+  gateTeachers = [];
+  if (!id) {
+    nameSel.disabled = true;
+    nameSel.innerHTML = '<option value="">קודם בוחרים בית ספר</option>';
+    return;
+  }
+  nameSel.disabled = true;
+  nameSel.innerHTML = '<option value="">טוען…</option>';
+  const res = await TS.api('teachers.list', { school: id });
+  /* אותו אדם בבגרות ובגמר הוא שתי שורות ואדם אחד — מוצג פעם אחת,
+     כמו בכל שאר המסכים. הכניסה נעשית לשורה הראשונה שלו. */
+  const seen = {};
+  gateTeachers = (res && res.data ? res.data : []).filter(t => {
+    const k = String(t.name || '').trim();
+    if (!k || seen[k]) return false;
+    seen[k] = 1;
+    return true;
+  }).sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
+  nameSel.disabled = !gateTeachers.length;
+  nameSel.innerHTML = gateTeachers.length
+    ? '<option value="">בחרו את שמכם</option>' +
+      gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}${t.subject ? ' · ' + esc(t.subject) : ''}</option>`).join('')
+    : '<option value="">בבית הספר הזה עוד לא הוזנו מורים</option>';
+  // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב
+  nameSel.addEventListener('change', () => {
+    const t = gateTeachers.find(x => String(x.id) === nameSel.value);
+    const mail = $g('tg-email');
+    if (t && t.email && String(t.email).indexOf('@') > 0 && !mail.value) mail.value = t.email;
+  });
+}
+
+async function onGateEnter() {
+  const btn = $g('tg-enter');
+  const id = $g('tg-name').value;
+  const email = String($g('tg-email').value || '').trim();
+  if (!id) return gateMsg('בחרו את השם שלכם מהרשימה.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateMsg('כתובת המייל אינה תקינה.');
+
+  btn.disabled = true;
+  const label = btn.textContent;
+  btn.textContent = 'נכנס…';
+  const t = gateTeachers.find(x => String(x.id) === id) || {};
+  // נשמר רק כשהוא חדש או שונה — כך נאספים המיילים החסרים בלי לדרוס קיימים
+  if (String(t.email || '').trim().toLowerCase() !== email.toLowerCase()) {
+    const r = await TS.apiPost('teachers.update', { id: id, email: email });
+    if (!r || !r.ok) {
+      btn.disabled = false; btn.textContent = label;
+      return gateMsg('השמירה נכשלה — תקלה רגעית. נסו שוב בעוד רגע.');
+    }
+  }
+  rememberIdentity({ id: id, name: t.name || '', at: new Date().toISOString() });
+  teacherId = id;
+  $g('teacher-gate').hidden = true;
+  $g('teacher-body').hidden = false;
+  const exit = $g('tg-exit');
+  if (exit) exit.hidden = false;
+  await load();
+}
 
 async function requestCertificate() {
   const btn = document.getElementById('btn-cert');
@@ -71,7 +188,12 @@ const esc = s => String(s == null ? '' : s)
    אחריו הנוכחות — הכי חשובה למורה. השאלות נטענות אחרונות ולא חוסמות. */
 async function load() {
   const teacherRes = await TS.api('teacher.get', { id: teacherId });
-  teacher = teacherRes.data;
+  teacher = teacherRes && teacherRes.data;
+  // מורה שנמחק או אוחד — הזיהוי השמור כבר לא תקף, חוזרים לטופס
+  if (!teacher) {
+    try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
+    if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
+  }
   render();
   await loadAttendance();
   const qRes = await TS.api('questions.list', { teacherId });
