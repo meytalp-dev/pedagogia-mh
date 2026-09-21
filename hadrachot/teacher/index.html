@@ -33,6 +33,13 @@
             padding: 9px 11px; background: #FBECE8; color: #8f2f1c; }
   .tg-msg.ok { background: #E4F2EB; color: #1f6b52; }
   .tg-btn { width: 100%; margin-top: 16px; }
+  .th-card { margin: 0 0 20px; padding: 20px 22px; text-align: center;
+             border: 2px solid var(--mint, #6FB7A6); }
+  .th-when { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .th-btn { min-width: 220px; font-size: 17px; padding: 13px 26px; }
+  .th-msg { margin-top: 12px; font-size: 14px; line-height: 1.6; font-weight: 600; }
+  .th-msg.ok { color: #1f6b52; }
+  .th-msg.err { color: #8f2f1c; }
   .tg-code { width: 100%; box-sizing: border-box; text-align: center; font-size: 26px;
              letter-spacing: 9px; font-weight: 700; padding: 10px; }
   .tg-exit { margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
@@ -104,6 +111,14 @@
     </section>
 
     <div id="teacher-body">
+
+      <!-- "אני כאן" (21.9.26) — מוצג רק ביום שבו מתקיימת הדרכה של הקבוצה
+           והמדריכה פתחה את הרישום. הרישום ממתין לאישורה. -->
+      <section class="card th-card" id="th-card" hidden>
+        <div class="th-when" id="th-when"></div>
+        <button type="button" class="btn btn-primary th-btn" id="th-btn">אני כאן ✓</button>
+        <div class="th-msg" id="th-msg" hidden></div>
+      </section>
 
     <!-- Page Header -->
     <section class="page-header">
@@ -286,6 +301,6 @@
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260921"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260921c"></script>
+<script src="dashboard.js?v=20260921d"></script>
 </body>
 </html>

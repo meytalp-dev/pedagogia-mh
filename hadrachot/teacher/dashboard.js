@@ -273,6 +273,70 @@ async function loadAttendance() {
   if (!p) return;
   monthly = p;
   renderAttendance();
+  renderHere(d, p.guideSlug);
+}
+
+/* "אני כאן" — מוצג רק ביום שבו לקבוצה של המורה יש מועד הדרכה.
+   האם הרישום באמת פתוח נקבע בשרת (meetOpenFor_), ולכן לחיצה ביום שבו
+   המדריכה עוד לא פתחה מקבלת הודעה ברורה ולא כישלון סתום. */
+function renderHere(scope, guideSlug) {
+  const card = document.getElementById('th-card');
+  if (!card || !guideSlug) return;
+  const today = String(scope.today || '').slice(0, 10);
+  const mine = (scope.meetings || []).filter(m =>
+    String(m.guideSlug) === String(guideSlug) && String(m.date).slice(0, 10) === today);
+  if (!mine.length) return;                 // אין הדרכה היום — הכרטיס לא מופיע
+
+  // כבר סומן/נרשם במפגש הזה — מראים את המצב במקום כפתור
+  const ids = new Set(mine.map(m => String(m.id)));
+  const row = (scope.rows || []).find(r =>
+    ids.has(String(r.meetingId)) && String(r.teacherId) === String(teacher.id));
+  card.hidden = false;
+  document.getElementById('th-when').textContent =
+    'היום מתקיימת ההדרכה שלך' + (mine[0].topic ? ' · ' + mine[0].topic : '');
+  if (row) return hereDone(row.status === 'present'
+    ? 'הנוכחות שלך אושרה ✓'
+    : row.status === 'pending' ? 'נרשמת — ממתין לאישור המדריכ/ה.'
+    : 'המדריכ/ה סימנה אותך במפגש הזה.');
+
+  const btn = document.getElementById('th-btn');
+  // הרישום נפתח ע"י המדריכה; עד אז אומרים את זה מראש ולא נותנים ללחוץ לריק
+  if (!mine.some(m => m.open)) {
+    btn.disabled = true;
+    const msg = document.getElementById('th-msg');
+    msg.hidden = false;
+    msg.className = 'th-msg';
+    msg.textContent = 'הרישום ייפתח כשהמדריכ/ה תתחיל את ההדרכה. רעננו את הדף אז.';
+    return;
+  }
+  btn.onclick = async () => {
+    btn.disabled = true;
+    btn.textContent = 'רושם…';
+    const r = await TS.apiPost('teacher.here', { k: teacherKey, g: guideSlug });
+    if (r && r.ok) {
+      return hereDone(r.data.already
+        ? 'כבר נרשמת להדרכה הזו.'
+        : 'נרשמת ✓ ממתין לאישור המדריכ/ה.');
+    }
+    btn.disabled = false;
+    btn.textContent = 'אני כאן ✓';
+    const msg = document.getElementById('th-msg');
+    msg.hidden = false;
+    msg.className = 'th-msg err';
+    msg.textContent = (r && r.error === 'closed')
+      ? 'הרישום עדיין לא נפתח. המדריכ/ה פותחת אותו בתחילת ההדרכה.'
+      : 'תקלה רגעית. נסו שוב בעוד רגע.';
+  };
+}
+
+function hereDone(text) {
+  const btn = document.getElementById('th-btn');
+  if (btn) btn.hidden = true;
+  const msg = document.getElementById('th-msg');
+  if (!msg) return;
+  msg.hidden = false;
+  msg.className = 'th-msg ok';
+  msg.textContent = text;
 }
 
 /* יחידת התצוגה היא חודש, כמו בכל המערכת: בכל חודש הדרכה אחת בשני מועדים,

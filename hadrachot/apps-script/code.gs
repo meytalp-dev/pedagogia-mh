@@ -969,6 +969,7 @@ function handleRequest(params) {
       case 'teacher.codeSend':    result = teacherCodeSend(params); break;
       case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
       case 'teacher.self':        result = teacherSelf(params); break;
+      case 'teacher.here':        result = teacherHere(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -4507,4 +4508,41 @@ function teacherSelf(p) {
     moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive),
     email: t.email, phone: t.phone
   } };
+}
+
+/* teacher.here — "אני כאן" מתוך מבט המורה (21.9.26).
+   המורה כבר מאומת/ת במפתח החתום, וזו הוכחת זהות חזקה יותר מהקוד בן
+   4 הספרות שמוקרן במפגש — ולכן כאן לא נדרש קוד. מה שכן נדרש: שהמדריכה
+   פתחה את הרישום (meetOpenFor_), בדיוק כמו בצ'ק-אין הרגיל.
+   הסטטוס הוא 'pending' וממתין לאישור המדריכה, ככלל הקיים: רישום עצמי
+   אינו נספר כנוכחות עד שאושר. */
+function teacherHere(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const slug = meetSlug_(p.g);
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const now = Date.now();
+  const m = meetOpenFor_(slug, now);
+  if (!m) return { ok: false, error: 'closed' };
+
+  ensureTab_('meeting_attendance');
+  const id = String(t.id);
+  const rows = readAll('meeting_attendance');
+  const exists = rows.filter(function (r) {
+    return String(r.meetingId) === String(m.id) && String(r.teacherId) === id;
+  })[0];
+  // כבר רשום/ה — לא יוצרים שורה שנייה, ולא דורסים סימון של המדריכה
+  if (exists) {
+    return { ok: true, data: { status: String(exists.status || 'pending'), already: true,
+      date: meetDate_(m.date) } };
+  }
+  const iso = new Date(now).toISOString();
+  appendRow('meeting_attendance', {
+    id: newId('mat'), meetingId: String(m.id), guideSlug: slug, date: meetDate_(m.date),
+    teacherId: id, teacherName: String(t.name || '').trim(),
+    schoolName: String(t.schoolName || '').trim(),
+    status: 'pending', guideStatus: '', selfCheckinAt: iso, markedAt: '',
+    source: 'teacher-self', updatedAt: iso, markedVia: 'self'
+  });
+  return { ok: true, data: { status: 'pending', already: false, date: meetDate_(m.date) } };
 }
