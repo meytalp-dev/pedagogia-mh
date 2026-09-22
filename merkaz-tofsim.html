@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <script src="/analytics.js" defer></script>
+<script src="/hadrachot/assets/guides.js?v=20260908"></script>
+<script src="/hadrachot/assets/plans.js?v=20260922"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>מרכז הטפסים והמעקב · תשפ״ז · משרד העבודה</title>
@@ -342,7 +344,25 @@ function uniqSchools(rows){
   return Object.keys(seen).length;
 }
 
+/* סילבוסים של המדריכים — נספר כאן מהקבצים עצמם (guides.js + plans.js), בלי שרת:
+   מי שיש לו תוכנית ב-plans.js = הגיש. */
+var SIL = (function(){
+  var g = window.TS_GUIDES || {}, p = window.TS_PLANS || {};
+  var all = Object.keys(g), have = all.filter(function(k){ return !!p[k]; });
+  return {all: all.length, have: have.length, missing: all.length - have.length};
+})();
+
 var ACTIVE = [
+  {
+    icon:"guide", title:"סילבוסים של המדריכים",
+    sub:"תוכניות ההדרכה השנתיות · " + SIL.have + " הגישו · " + SIL.missing + " עדיין לא",
+    desc:"מי מהמדריכים המקצועיים כבר שלח.ה את סילבוס מפגשי ההדרכה לתשפ״ז, ולמי עוד חסר — עם הודעה מוכנה ומייל בלחיצה מהנייד. אצל מי שכבר הגיש.ה מופיע מה נשאר להשלים (מועד לא ברור, שעה חסרה, מפגשים בלי נושא). הסילבוסים שנקלטו מוצגים בעמוד ההשתלמויות ובדשבורד של כל מדריכ.ה.",
+    links:[
+      {href:"/hadrachot/admin-silabus.html", label:"מי הגיש ולמי חסר · שליחה במייל", kind:"pri"},
+      {href:"hishtalmuyot.html#hadrachot-daat", label:"הסילבוסים שנקלטו — בעמוד ההשתלמויות", kind:"sec"}
+    ],
+    tip:"<b style=\"color:#4a5878\">בלי כפתור העתקה</b> — זה דף ניהול שנפתח רק לאדמין. הודעות למדריכים נשלחות מתוכו."
+  },
   {
     icon:"guide", title:"רישום להשתלמויות תשפ״ז",
     sub:"המשתתף.ת נרשם.ת · רכזים חברתיים ומת״ליות עוברים לאלנט מיד",

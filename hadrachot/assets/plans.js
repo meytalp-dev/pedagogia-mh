@@ -374,6 +374,76 @@ window.TS_PLANS = {
         topic: 'סיכום שנה',
         goal: 'סיכום ומסקנות · מידת העמידה ביעדים ובמטרות' }
     ]
+  },
+  /* ---------- אנגלית · החברה הערבית ---------- */
+  rozin: {
+    title: 'סילבוס מפגשי למידה — מורי אנגלית, שנה"ל 2026–2027',
+    subtitle: 'מפגש חודשי בשני מועדים לבחירה — בוקר ביום א׳ ואחר הצהריים ביום אחר באותו שבוע',
+    timeNote: 'כל מפגש מתקיים פעמיים: מועד בוקר (10:00, ביום א׳) ומועד אחה"צ (18:00, בדרך כלל ביום ה׳). משתתפים באחד מהם.',
+    source: 'המקור: "סילבוס מפגשי למידה — מורי אנגלית — משרד העבודה 2026–2027" (רוזין מטר דאו)',
+    notes: ['ייתכנו שינויים בתכנים ובלוחות הזמנים בהתאם לצרכים.'],
+    meetings: [
+      { date: '2026-09-27', date2: '2026-09-28', label: '27.9 / 28.9.26', day: 'א׳ / ב׳', month: 'ספטמבר',
+        time: 'בוקר 27.9 · 10:00 · אחה"צ 28.9 · 18:00',
+        topic: 'מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית',
+        goal: 'Updates / Mikud · The 3 point Bagrut · Handbook' },
+      /* בסילבוס המקורי נרשם לאוקטובר "8/10/2026 ראשון" ו-"9/10/27 חמישי" — אבל 8.10.26 הוא יום ה׳
+         ו-9.10.26 יום ו׳. נרשמו התאריכים כפי שנכתבו, עם ימות השבוע האמיתיים; לאימות מול המדריכה. */
+      { date: '2026-10-08', date2: '2026-10-09', label: '8.10 / 9.10.26', day: 'ה׳ / ו׳', month: 'אוקטובר',
+        time: 'בוקר 8.10 · 10:00 · אחה"צ 9.10 · 18:00',
+        topic: 'Boost Exam — AI / Digital tools · Practical practice tips · Digital Learning for independent learners',
+        goal: '1) Boost Exam — AI / Digital tools · 2) Practical practice tips (challenges and strategies) · 3) Digital Learning for independent learners (Dig into Digital)',
+        note: 'בסילבוס נרשמו הימים "ראשון" ו"חמישי", שאינם תואמים לתאריכים 8.10 ו-9.10 — המועד לאימות מול המדריכה' },
+      { date: '2026-11-01', date2: '2026-11-05', label: '1.11 / 5.11.26', day: 'א׳ / ה׳', month: 'נובמבר',
+        time: 'בוקר 1.11 · 10:00 · אחה"צ 5.11 · 18:00',
+        topic: 'Aligned Literature Program for 3 points' },
+      { date: '2026-12-13', date2: '2026-12-14', label: '13.12 / 14.12.26', day: 'א׳ / ב׳', month: 'דצמבר',
+        time: 'בוקר 13.12 · 10:00 · אחה"צ 14.12 · 18:00',
+        topic: 'Writing for Module C',
+        goal: 'Building a paragraph step by step — sentence frames and writing scaffolds · Moving from basic to better vocabulary · Common writing difficulties and solutions' },
+      /* בינואר ובפברואר מועד אחה"צ (יום ה׳) קודם למועד הבוקר (יום א׳) — date = המועד הראשון בזמן. */
+      { date: '2027-01-21', date2: '2027-01-24', label: '21.1 / 24.1.27', day: 'ה׳ / א׳', month: 'ינואר',
+        time: 'אחה"צ 21.1 · 18:00 · בוקר 24.1 · 10:00',
+        topic: 'Curriculum 2020 — from Terminology to classroom practice',
+        goal: 'Connecting curriculum goals to lesson planning',
+        note: 'החודש מועד אחה"צ (ה׳ 21.1) קודם למועד הבוקר (א׳ 24.1)' },
+      { date: '2027-02-04', date2: '2027-02-07', label: '4.2 / 7.2.27', day: 'ה׳ / א׳', month: 'פברואר',
+        time: 'אחה"צ 4.2 · 18:00 · בוקר 7.2 · 10:00',
+        topic: 'English for the Real World — Making Learning Meaningful',
+        note: 'החודש מועד אחה"צ (ה׳ 4.2) קודם למועד הבוקר (א׳ 7.2)' },
+      { date: '2027-03-14', date2: '2027-03-18', label: '14.3 / 18.3.27', day: 'א׳ / ה׳', month: 'מרץ',
+        time: 'בוקר 14.3 · 10:00 · אחה"צ 18.3 · 18:00',
+        topic: 'Teaching Vocabulary for Communication',
+        goal: '1) Teaching Vocabulary for Communication · 2) The Rational for Learning Vocabulary (teaching and learning styles for teaching vocabulary)' },
+      { date: '2027-04-25', date2: '2027-04-29', label: '25.4 / 29.4.27', day: 'א׳ / ה׳', month: 'אפריל',
+        time: 'בוקר 25.4 · 10:00 · אחה"צ 29.4 · 18:00',
+        topic: 'Closing Gaps & supporting struggling students' },
+      { date: '2027-05-09', date2: '2027-05-11', label: '9.5 / 11.5.27', day: 'א׳ / ג׳', month: 'מאי',
+        time: 'בוקר 9.5 · 10:00 · אחה"צ 11.5 · 18:00',
+        topic: 'Reading Comprehension Strategies' },
+      { date: '2027-06-13', date2: '2027-06-17', label: '13.6 / 17.6.27', day: 'א׳ / ה׳', month: 'יוני',
+        time: 'בוקר 13.6 · 10:00 · אחה"צ 17.6 · 18:00',
+        topic: 'Looking Back & Planning ahead',
+        goal: 'Reflecting on what worked · Sharing successful classroom practices · Identifying needs for next year' }
+    ]
+  },
+
+  /* ---------- תנ"ך · החברה היהודית ----------
+     אין סילבוס שנתי — רק שלושת המועדים הקרובים שפורסמו בהודעת פתיחת השנה (22.9.26).
+     מועדים נוספים יתווספו כשיפורסמו. */
+  tali: {
+    title: 'מפגשי ההדרכה הקבוצתיים — תנ"ך, תשפ"ז',
+    subtitle: 'המועדים הקרובים שפורסמו לקראת פתיחת השנה — מועדים נוספים יתווספו במהלך השנה',
+    timeNote: 'הנוכחות במפגשים היא חובה, חלק בלתי נפרד מהעבודה השוטפת, ומדווחת במצפן ההדרכות. מי שמתקשה להגיע — מעדכן.ת מראש.',
+    source: 'המקור: הודעת פתיחת השנה למורי התנ"ך (טלי אהרון זיו)',
+    meetings: [
+      { date: '2026-10-12', label: '12.10.26', day: 'ב׳', month: 'אוקטובר', time: 'השעה תפורסם',
+        topic: 'הוראת תנ"ך לתלמידים מתקשים' },
+      { date: '2026-11-02', label: '2.11.26', day: 'ב׳', month: 'נובמבר', time: '19:00',
+        topic: 'מפגש לימוד משותף' },
+      { date: '2026-12-02', label: '2.12.26', day: 'ד׳', month: 'דצמבר', time: '19:00',
+        topic: 'מפגש הכנה לבגרות חורף' }
+    ]
   }
 };
 
