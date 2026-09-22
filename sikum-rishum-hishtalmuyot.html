@@ -135,8 +135,47 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   padding:6px 15px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .wsbtn .d{width:10px;height:10px;border-radius:50%}
 .wsbtn[aria-pressed="true"]{background:#8a5c14;border-color:#8a5c14;color:#fff}
-.kpi.ws{cursor:pointer;border-top:5px solid var(--c,#e3e9f5);transition:box-shadow .16s var(--ease)}
-.kpi.ws:hover{box-shadow:var(--shadow-m)}
+.kpi.ws{cursor:pointer;border-top:5px solid var(--c,#e3e9f5);transition:box-shadow .16s var(--ease),transform .16s var(--ease);
+  appearance:none;font-family:inherit;width:100%;position:relative}
+.kpi.ws:hover{box-shadow:var(--shadow-m);transform:translateY(-1px)}
+.kpi.ws[aria-pressed="true"]{box-shadow:0 0 0 3px var(--c,#e3e9f5),var(--shadow-m);background:#fff}
+.kpi.ws[aria-pressed="true"]::after{content:"";position:absolute;inset-inline:0;bottom:-11px;margin:0 auto;width:0;height:0;
+  border:9px solid transparent;border-top-color:var(--c,#e3e9f5);border-bottom:0}
+.kpi.ws .v small{font-size:15px;font-weight:500;color:var(--muted)}
+.pick-h{font-size:14.5px;color:var(--muted);font-weight:600;margin:26px 0 -6px;text-align:center}
+
+/* ===== שתי הרשימות: נרשמו / טרם נרשמו ===== */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.col{background:#fff;border:1.5px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);padding:20px 22px}
+.col.yes{border-color:#9fe0d3;background:#f7fdfb}
+.col.no{border-color:#f0c98a;background:#fffaf2}
+.col .ch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.col .ch h3{font-family:'Rubik',sans-serif;font-size:19px;margin:0;font-weight:600}
+.col.yes .ch h3{color:#0a5c51}.col.no .ch h3{color:#8a5c14}
+.col .ch .n{border-radius:999px;padding:4px 14px;font-size:14px;font-weight:700;background:#fff;border:1px solid}
+.col.yes .ch .n{border-color:#9fe0d3;color:#0c6d60}.col.no .ch .n{border-color:#f0c98a;color:#8a5c14}
+.col .ch .copy{margin-inline-start:auto}
+.col.yes .copy{border-color:#9fe0d3;color:#0c6d60}.col.yes .copy:hover{background:#e9f9f5}
+.slist{list-style:none;margin:0;padding:0;columns:2;column-gap:22px;font-size:15.4px}
+@media(max-width:1000px){.slist{columns:1}}
+.slist li{break-inside:avoid;padding:6px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:10px}
+.slist li b{font-weight:700;color:var(--navy)}
+.slist li small{color:var(--muted);font-size:13px;white-space:nowrap}
+.col .none{color:var(--muted);font-size:15px;padding:10px 0}
+.col.no .none{color:#0c6d60;font-weight:600}
+
+details.fold{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow-s)}
+details.fold>summary{cursor:pointer;list-style:none;padding:15px 20px;font-family:'Rubik',sans-serif;font-size:16px;font-weight:600;color:var(--navy);
+  display:flex;align-items:center;gap:10px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"";width:9px;height:9px;border-inline-end:2px solid var(--navy);border-bottom:2px solid var(--navy);
+  transform:rotate(45deg);transition:transform .16s var(--ease);margin-top:-4px}
+details.fold[open]>summary::before{transform:rotate(-135deg);margin-top:4px}
+details.fold>summary small{font-weight:400;color:var(--muted);font-size:14px;font-family:'Assistant',sans-serif}
+details.fold>.fold-b{padding:0 20px 20px}
+details.fold .miss,details.fold .names{margin:0;border:0;box-shadow:none;padding:6px 0 0;background:transparent}
+details.fold .bar{margin-top:6px}
 .kpi.ws .k{font-size:13.4px}
 .kpi.ws .s{font-size:12.6px;color:var(--muted);margin-top:2px}
 .kpis.two{margin-top:14px}
@@ -192,7 +231,7 @@ th.num{text-align:center}
       מעקב חי · תשפ״ז
     </span>
     <h1>הרישום להשתלמויות</h1>
-    <p class="lede">מי נרשם לכל השתלמות, מאילו בתי ספר, ומאילו עוד לא. מתעדכן מעצמו.</p>
+    <p class="lede">בוחרים השתלמות למעלה, ומיד רואים אילו בתי ספר כבר נרשמו אליה ואילו עוד לא. מתעדכן מעצמו.</p>
 
     <div>
       <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
@@ -200,13 +239,82 @@ th.num{text-align:center}
     </div>
   </div>
 
-  <div class="kpis">
-    <div class="kpi"><div class="v" id="kTotal">—</div><div class="k">רישומים בסך הכל</div></div>
-    <div class="kpi approved"><div class="v" id="kSchools">—</div><div class="k">בתי ספר עם נרשמים</div></div>
-    <div class="kpi missing"><div class="v" id="kNone">—</div><div class="k">בתי ספר בלי אף נרשם</div></div>
-  </div>
-  <div class="kpis two" id="wsKpis"></div>
+  <p class="pick-h">איזו השתלמות?</p>
+  <div class="kpis two" id="wsKpis" role="group" aria-label="בחירת השתלמות"></div>
 
+  <div class="split">
+    <div class="col yes">
+      <div class="ch">
+        <h3>נרשמו</h3><span class="n" id="regN">—</span>
+        <button class="copy" id="copyReg" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>
+          </svg>
+          העתקה
+        </button>
+      </div>
+      <ul class="slist" id="regList"></ul>
+      <p class="none" id="regNone" hidden>עדיין אף בית ספר לא נרשם להשתלמות הזו.</p>
+    </div>
+    <div class="col no">
+      <div class="ch">
+        <h3>טרם נרשמו</h3><span class="n" id="missN">—</span>
+        <button class="copy" id="copyAll" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>
+          </svg>
+          העתקה + קישור לרישום
+        </button>
+      </div>
+      <ul class="slist" id="missList"></ul>
+      <p class="none" id="allIn" hidden>מכל 64 בתי הספר נרשמו להשתלמות הזו.</p>
+    </div>
+  </div>
+
+  <details class="fold" id="foldSup">
+    <summary>טרם נרשמו — לפי מפקח.ת <small id="bysupN"></small></summary>
+    <div class="fold-b">
+  <div class="miss" id="bysupCard">
+    <div class="mhead">
+      <h3 id="bysupTitle">טרם נרשמו — לפי מפקח.ת</h3>
+      
+    </div>
+    <div class="bysup" id="bysupList"></div>
+  </div>
+
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>הטבלה המלאה <small>כל 64 בתי הספר מול כל ההשתלמויות</small></summary>
+    <div class="fold-b">
+  <div class="bar">
+    <input type="text" id="q" placeholder="חיפוש בית ספר או מפקח.ת…" autocomplete="off">
+    <select id="fSup"><option value="">כל המפקחים</option></select>
+    <select id="fShow">
+      <option value="">כל בתי הספר</option>
+      <option value="none">בלי אף נרשם</option>
+      <option value="some">עם נרשמים</option>
+      <option value="miss">טרם נרשמו להשתלמות שנבחרה</option>
+    </select>
+  </div>
+
+  <div class="tw">
+    <div class="tscroll">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>אין בתי ספר שמתאימים לסינון</div>
+  </div>
+
+    </div>
+  </details>
+
+  <details class="fold">
+    <summary>פירוט שמי של הנרשמים <small>לכניסה מורשית בלבד</small></summary>
+    <div class="fold-b">
   <div class="names" id="namesCard">
     <div class="mhead">
       <h3 id="nmTitle">מי נרשם</h3>
@@ -230,50 +338,8 @@ th.num{text-align:center}
     </div>
   </div>
 
-  <div class="miss" id="missCard">
-    <div class="mhead">
-      <h3 id="missTitle">טרם נרשמו</h3>
-      <span class="n" id="missN">—</span>
-      <button class="copy" id="copyAll">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/>
-        </svg>
-        העתקת הרשימה + קישור לרישום
-      </button>
     </div>
-    <div class="wsbar" id="wsbar" role="group" aria-label="בחירת השתלמות"></div>
-    <div class="chips" id="missList"></div>
-    <p class="allin" id="allIn" hidden>מכל 64 בתי הספר נרשמו להשתלמות הזו.</p>
-  </div>
-
-  <div class="miss" id="bysupCard">
-    <div class="mhead">
-      <h3 id="bysupTitle">טרם נרשמו — לפי מפקח.ת</h3>
-      <span class="n" id="bysupN">—</span>
-    </div>
-    <div class="bysup" id="bysupList"></div>
-  </div>
-
-  <div class="bar">
-    <input type="text" id="q" placeholder="חיפוש בית ספר או מפקח.ת…" autocomplete="off">
-    <select id="fSup"><option value="">כל המפקחים</option></select>
-    <select id="fShow">
-      <option value="">כל בתי הספר</option>
-      <option value="none">בלי אף נרשם</option>
-      <option value="some">עם נרשמים</option>
-      <option value="miss">טרם נרשמו להשתלמות שנבחרה</option>
-    </select>
-  </div>
-
-  <div class="tw">
-    <div class="tscroll">
-      <table>
-        <thead><tr id="thead"></tr></thead>
-        <tbody id="tb"></tbody>
-      </table>
-    </div>
-    <div class="empty" id="empty" hidden>אין בתי ספר שמתאימים לסינון</div>
-  </div>
+  </details>
 
   <div class="privacy">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -342,44 +408,50 @@ function buildStatic(){
   $("thead").innerHTML = '<th>בית הספר</th><th>מפקח.ת</th>' +
     WS.map(function(w){ return '<th class="num">' + esc(w.t) + '</th>'; }).join("") +
     '<th class="num">סה״כ</th>';
-  $("wsbar").innerHTML = $("nmbar").innerHTML = WS.map(function(w){
+  $("nmbar").innerHTML = WS.map(function(w){
     return '<button class="wsbtn" type="button" data-k="' + w.k + '" aria-pressed="' + (w.k === CUR) + '">' +
       '<span class="d" style="background:' + w.c + '"></span>' + esc(w.t) + '</button>';
   }).join("");
 }
 
 function kpis(){
-  var some = 0;
-  SCHOOLS.forEach(function(s){ if (sumOf(s.n) > 0) some++; });
-  $("kTotal").textContent = TOTAL;
-  $("kSchools").textContent = some + " / " + SCHOOLS.length;
-  $("kNone").textContent = SCHOOLS.length - some;
-
+  /* המספר הגדול = בתי ספר שנרשמו (זה מה שמעניין); מספר הנרשמים בקטן */
   $("wsKpis").innerHTML = WS.map(function(w){
     var people = 0, sch = 0;
     SCHOOLS.forEach(function(s){ var v = n(s.n, w.k); people += v; if (v) sch++; });
-    var sub = sch + " בתי ספר";
-    if (w.g) sub += " · " + w.g.map(function(g){
+    var sub = people + (people === 1 ? " נרשם/ה" : " נרשמים");
+    if (w.g && people) sub += " · " + w.g.map(function(g){
       var t = 0; SCHOOLS.forEach(function(s){ t += n(s.n, w.k + ":" + g[0]); });
       return g[1] + " " + t;
     }).join(" · ");
-    return '<div class="kpi ws" style="--c:' + w.c + '" data-k="' + w.k + '" role="button" tabindex="0">' +
-      '<div class="v">' + people + '</div><div class="k">' + esc(w.t) + '</div><div class="s">' + sub + '</div></div>';
+    return '<button type="button" class="kpi ws" style="--c:' + w.c + '" data-k="' + w.k + '" aria-pressed="' + (w.k === CUR) + '">' +
+      '<div class="v">' + sch + ' <small>/ ' + SCHOOLS.length + '</small></div><div class="k">' + esc(w.t) + '</div><div class="s">' + sub + '</div></button>';
   }).join("");
 }
 
+var REGISTERED = [];
 function missing(){
   var w = wsOf(CUR);
+  REGISTERED = SCHOOLS.filter(function(s){ return n(s.n, CUR) > 0; });
   MISSING = SCHOOLS.filter(function(s){ return !n(s.n, CUR); });
-  $("missTitle").textContent = "טרם נרשמו · " + w.t;
+
+  $("regN").textContent = REGISTERED.length + " מתוך " + SCHOOLS.length;
+  $("regNone").hidden = REGISTERED.length > 0;
+  $("copyReg").hidden = REGISTERED.length === 0;
+  $("regList").innerHTML = REGISTERED.map(function(s){
+    var v = n(s.n, CUR), extra = "";
+    if (w.g) extra = w.g.map(function(g){ var t = n(s.n, CUR + ":" + g[0]); return t ? g[1] + " " + t : ""; }).filter(Boolean).join(" · ");
+    return "<li><b>" + esc(s.n) + "</b><small>" + v + (v === 1 ? " נרשם/ה" : " נרשמים") + (extra ? " · " + esc(extra) : "") + "</small></li>";
+  }).join("");
+
   $("missN").textContent = MISSING.length + " מתוך " + SCHOOLS.length;
-  $("missCard").classList.toggle("done", MISSING.length === 0);
   $("allIn").hidden = MISSING.length > 0;
   $("copyAll").hidden = MISSING.length === 0;
   $("missList").innerHTML = MISSING.map(function(s){
-    return "<span>" + esc(s.n) + " · " + esc(s.sup.split("|").join(" · ")) + "</span>";
+    return "<li><b>" + esc(s.n) + "</b><small>" + esc(s.sup.split("|").join(" · ")) + "</small></li>";
   }).join("");
-  Array.prototype.forEach.call(document.querySelectorAll(".wsbtn"), function(b){
+
+  Array.prototype.forEach.call(document.querySelectorAll(".wsbtn, .kpi.ws"), function(b){
     b.setAttribute("aria-pressed", b.getAttribute("data-k") === CUR);
   });
   bySup();
@@ -397,7 +469,7 @@ function bySup(){
     .map(function(k){ return { sup: k, total: tot[k] || 0, missing: miss[k] }; })
     .sort(function(a, b){ return b.missing.length - a.missing.length; });
 
-  $("bysupCard").hidden = MISS_BY_SUP.length === 0;
+  $("foldSup").hidden = MISS_BY_SUP.length === 0;
   $("bysupTitle").textContent = "טרם נרשמו · " + w.t + " — לפי מפקח.ת";
   $("bysupN").textContent = MISS_BY_SUP.length + " מפקחים עם חסרים";
   $("bysupList").innerHTML = MISS_BY_SUP.map(function(gp, i){
@@ -563,6 +635,8 @@ function load(){
 function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); names(); } }
 
 (function init(){
+  var m = /[#&?](?:rg|ws)=([a-z]+)/.exec(location.hash + location.search);
+  if (m && wsOf(m[1])) CUR = m[1];
   fillSups();
   buildStatic();
   all();
@@ -574,11 +648,15 @@ function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); names(); } }
   });
   $("reload").addEventListener("click", load);
 
-  ["wsbar","nmbar"].forEach(function(id){
-    $(id).addEventListener("click", function(e){
-      var b = e.target.closest ? e.target.closest(".wsbtn") : null;
-      if (b) pick(b.getAttribute("data-k"));
-    });
+  $("nmbar").addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest(".wsbtn") : null;
+    if (b) pick(b.getAttribute("data-k"));
+  });
+
+  $("copyReg").addEventListener("click", function(){
+    var w = wsOf(CUR);
+    copyText(this, "*" + w.t + " — בתי ספר שנרשמו (" + REGISTERED.length + ")*\n" +
+      REGISTERED.map(function(s, i){ return (i + 1) + ". " + s.n + " (" + n(s.n, CUR) + ")"; }).join("\n"));
   });
 
   $("nmLogin").addEventListener("click", function(){
@@ -604,12 +682,7 @@ function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); names(); } }
   });
   $("wsKpis").addEventListener("click", function(e){
     var b = e.target.closest ? e.target.closest(".kpi.ws") : null;
-    if (b){ pick(b.getAttribute("data-k")); $(ROWS !== null ? "namesCard" : "missCard").scrollIntoView({behavior:"smooth", block:"start"}); }
-  });
-  $("wsKpis").addEventListener("keydown", function(e){
-    if (e.key !== "Enter" && e.key !== " ") return;
-    var b = e.target.closest ? e.target.closest(".kpi.ws") : null;
-    if (b){ e.preventDefault(); pick(b.getAttribute("data-k")); }
+    if (b) pick(b.getAttribute("data-k"));
   });
 
   $("copyAll").addEventListener("click", function(){
