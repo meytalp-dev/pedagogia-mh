@@ -45,6 +45,9 @@
   let lastCodeFetch = 0;
   let zoom = null;          // חלון ייבוא דוח הזום — ראו "ייבוא דוח משתתפים"
   let zoomMeta = {};        // entryKey → { minutes } — סימונים שבאו מהדוח
+  let wrapDraft = null;     // סיכום ההדרכה בעריכה — { summary, takeaway, hours }, שורד ציור מחדש
+  let wrapSaving = false;
+  let wrapNote = '';
 
   const ICON = {
     users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
@@ -67,7 +70,7 @@
     if (isLiveDay() && btn) btn.click();
     load();
     window.addEventListener('beforeunload', e => {
-      if (Object.keys(edits).length) { e.preventDefault(); e.returnValue = ''; }
+      if (Object.keys(edits).length || wrapDraft) { e.preventDefault(); e.returnValue = ''; }
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible' && isLiveDay()) load();
@@ -449,6 +452,7 @@
     }
     edits = {};
     zoom = null; zoomMeta = {};
+    wrapDraft = null; wrapNote = '';
     stopLive();
     sel = m;
     S.rows = []; S.loaded = false; S.failed = false;
@@ -655,6 +659,8 @@
         </div>
       </section>
 
+      ${wrapCardHtml()}
+
       ${zoom ? zoomPanelHtml(list) : ''}
 
       ${pending.length ? `
@@ -676,12 +682,97 @@
       </section>`;
 
     bindBody(list);
+    bindWrap();
     if (hadFocus) {
       const s = document.getElementById('meet-search');
       s.focus();
       try { s.setSelectionRange(caret, caret); } catch (e) {}
     }
     if (isLiveDay()) tick();
+  }
+
+  /* ------------------------------------------------------------------
+     סיכום ההדרכה (22.9.26) — "בית של המורה".
+     שלושה שדות על המפגש: סיכום ונקודות חשובות · מה לקחת לכיתה · שעות.
+     שני שדות טקסט נפרדים בכוונה (קביעת מיטל 22.9): הקצר הוא זה שמגיע
+     למורה בראש החודש שלו, ואסור שייבלע בארוך. השעות = משך ההדרכה, הבסיס
+     לדוח השעות למונדיי. זה המסך שהמדריכה ממילא פותחת — לא מסך נוסף.
+     הטיוטה נשמרת ב-wrapDraft כי renderBody מצייר מחדש בכל רענון ביום המפגש.
+     ------------------------------------------------------------------ */
+  function wrapValues() {
+    if (wrapDraft) return wrapDraft;
+    const sm = serverMeeting(sel.date) || {};
+    return { summary: sm.summary || '', takeaway: sm.takeaway || '', hours: sm.hours ? String(sm.hours) : '' };
+  }
+  function wrapCardHtml() {
+    if (!sel || sel.date > S.today) return '';
+    const v = wrapValues();
+    const sm = serverMeeting(sel.date) || {};
+    const filled = !!(sm.summary || sm.takeaway || sm.hours);
+    return `
+      <section class="meet-card meet-wrap" id="meet-wrap">
+        <h3>סיכום ההדרכה${filled && !wrapDraft ? ' <span class="n ok">מולא</span>' : ''}</h3>
+        <div class="space-hint">מה שנכתב כאן מגיע למורים במבט המורה, ליד החודש הזה. "מה לקחת לכיתה" הוא המשפט שהמורה רואה ראשון.</div>
+        <div class="meet-wrap-grid">
+          <label class="grow"><span>מה לקחת לכיתה (משפט אחד–שניים)</span>
+            <input type="text" class="input" id="wrap-takeaway" maxlength="600" value="${esc(v.takeaway)}" placeholder="למשל: לפתוח כל שיעור בשאלת אבחון קצרה"></label>
+          <label><span>כמה זמן נמשכה ההדרכה (שעות)</span>
+            <input type="number" class="input" id="wrap-hours" min="0" max="24" step="0.25" value="${esc(v.hours)}" placeholder="1.5"></label>
+          <label class="full"><span>סיכום ונקודות חשובות</span>
+            <textarea class="textarea" id="wrap-summary" rows="4" maxlength="4000" placeholder="הנקודות המרכזיות של ההדרכה, כפי שתרצי שהמורים יזכרו אותן">${esc(v.summary)}</textarea></label>
+        </div>
+        <div class="meet-save-bar">
+          <button type="button" class="btn btn-primary" id="wrap-save"${wrapDraft && !wrapSaving ? '' : ' disabled'}>
+            ${wrapSaving ? 'שומר…' : wrapDraft ? 'שמירת הסיכום' : filled ? 'הסיכום שמור' : 'שמירת הסיכום'}
+          </button>
+          <span class="meet-save-note" id="wrap-note">${esc(wrapNote || (wrapDraft ? 'יש שינויים שלא נשמרו' : ''))}</span>
+        </div>
+      </section>`;
+  }
+  function bindWrap() {
+    const card = document.getElementById('meet-wrap');
+    if (!card) return;
+    const read = () => ({
+      summary: document.getElementById('wrap-summary').value,
+      takeaway: document.getElementById('wrap-takeaway').value,
+      hours: document.getElementById('wrap-hours').value
+    });
+    ['wrap-summary', 'wrap-takeaway', 'wrap-hours'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        wrapDraft = read();
+        wrapNote = '';
+        const btn = document.getElementById('wrap-save');
+        if (btn) { btn.disabled = wrapSaving; btn.textContent = 'שמירת הסיכום'; }
+        const note = document.getElementById('wrap-note');
+        if (note) note.textContent = 'יש שינויים שלא נשמרו';
+      });
+    });
+    document.getElementById('wrap-save').addEventListener('click', async () => {
+      if (!wrapDraft || wrapSaving) return;
+      const v = read();
+      wrapSaving = true;
+      const btn = document.getElementById('wrap-save');
+      btn.disabled = true; btn.textContent = 'שומר…';
+      const res = await TS.apiPost('meet.wrap', {
+        guide: SLUG, k: KEY, ge: GE, date: sel.date, topic: sel.topic || '', source: sel.source || 'adhoc',
+        guideName: GUIDE_CFG.name || '', summary: v.summary, takeaway: v.takeaway, hours: v.hours
+      });
+      wrapSaving = false;
+      if (res && res.ok && res.data) {
+        // מעדכנים את המפגש בזיכרון כדי שהכרטיס יראה "שמור" גם לפני הרענון הבא
+        const i = S.meetings.findIndex(m => m.date === sel.date);
+        if (i >= 0) S.meetings[i] = Object.assign({}, S.meetings[i], res.data);
+        else S.meetings.push(res.data);
+        wrapDraft = null;
+        wrapNote = 'נשמר. המורים יראו את זה במבט המורה.';
+        if (typeof TS !== 'undefined' && TS.toast) TS.toast('סיכום ההדרכה נשמר');
+        renderBody();
+        load();
+      } else {
+        wrapNote = 'השמירה נכשלה — ' + errText(res && res.error);
+        renderBody();
+      }
+    });
   }
 
   // בורר בית ספר ברשימת הקבוצה — לפי א"ב (14.9.26)

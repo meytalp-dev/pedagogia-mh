@@ -5,8 +5,16 @@
    2. זיכרון במכשיר (localStorage) — מהכניסה השנייה ואילך, בלי טופס.
    3. טופס הכניסה — בית ספר מרשימה סגורה, שם מרשימת בית הספר, ומייל.
 
-   ⚠ אין כאן עדיין אימות במייל. המייל **מזהה ולא מאמת**, ולכן אסור להפיץ
-   את הקישור לפני שנפרס האימות (קוד בן 6 ספרות). קביעת מיטל 21.9.26.
+   האימות (21.9.26): קוד בן 6 ספרות במייל → מפתח חתום. פרוס @37.
+
+   "הבית של המורה" (אושר 22.9.26): הדף עבר מספירת נוכחות לליווי הדרכה —
+   ההדרכה הבאה · המסע שלי השנה (חודש · נושא · מה לקחת לכיתה · סיכום) ·
+   חומרים והודעות מהמדריכ/ה · ההדרכה הפרטנית שלי · שאלה למדריכ/ה.
+   אין תעודה (החלטה 9, 22.9). הקרס הוא אחריותיות (החלטה 10): הנוכחות
+   מדווחת למנהל/ת ולמפקח.ת, והערך למורה הוא לוודא שנרשמה נכון.
+   הכול מתוכן שכבר קיים: meet.scope (מפגשים + סיכומים + שעות פרטניות),
+   plans.js (התוכנית השנתית), guide.group (קבצים והודעות).
+   **מקטע ריק לא מוצג.**
    ========================================================================== */
 const LS_KEY = 'ts.teacher.v1';
 
@@ -29,6 +37,8 @@ let teacher = null;
 let attendance = [];
 let questions = [];
 let monthly = null;        // המשתתף/ת מתוך TS_meetStats — present · held · rate · חודשים
+let scopeData = null;      // תשובת meet.scope — מפגשים (עם סיכומים), שורות, שעות פרטניות
+let guideSlug = '';        // המדריכ/ה שהמורה נספר/ת אצלה
 const esc = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -221,8 +231,136 @@ async function loadAttendance() {
   const p = mine.sort((a, b) => b.held - a.held)[0] || (stats.persons || [])[0];
   if (!p) return;
   monthly = p;
+  scopeData = d;
+  guideSlug = p.guideSlug;
   renderAttendance();
   renderHere(d, p.guideSlug);
+  renderNext(d, p.guideSlug);
+  renderIndividual(d, p.guideSlug);
+  loadGroup(p.guideSlug);
+}
+
+/* ---------------------- עזרים לתוכן ההדרכות ---------------------- */
+const normName = s => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+const dateLbl = d => (window.TS_meetDateLabel ? window.TS_meetDateLabel(d) : d);
+const monthLbl = k => (window.TS_meetMonthLabel ? window.TS_meetMonthLabel(k) : k);
+function planMeetings(slug) {
+  const plan = window.TS_planFor ? window.TS_planFor(slug) : null;
+  return (plan && plan.meetings) ? plan.meetings : [];
+}
+function planDays(m) { return (m.dates && m.dates.length) ? m.dates : [m.date, m.date2].filter(Boolean); }
+// הנושא של מועד: מה שנשמר בשרת, ואם אין — מהתוכנית השנתית (87/87 מפגשים עם נושא)
+function planTopic(slug, date) {
+  const m = planMeetings(slug).find(x => planDays(x).indexOf(date) >= 0);
+  return m ? (m.topic || '') : '';
+}
+// המפגשים של המדריכ/ה בחודש נתון, כולל מה שהמדריכה כתבה בסיום ההדרכה
+function monthInfo(k) {
+  const out = { topics: [], takeaways: [], summaries: [] };
+  if (!scopeData) return out;
+  const push = (arr, v) => { v = String(v || '').trim(); if (v && arr.indexOf(v) < 0) arr.push(v); };
+  (scopeData.meetings || [])
+    .filter(m => String(m.guideSlug) === String(guideSlug) && String(m.date).slice(0, 7) === k)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+    .forEach(m => {
+      push(out.topics, m.topic || planTopic(guideSlug, String(m.date).slice(0, 10)));
+      push(out.takeaways, m.takeaway);
+      push(out.summaries, m.summary);
+    });
+  return out;
+}
+// השעות הפרטניות של המורה: meet.scope כבר מסנן לפי בית הספר, ולכן התאמה לפי שם
+function myHours(scope, slug) {
+  const me = normName(teacher && teacher.name);
+  if (!me) return [];
+  return (scope.hours || [])
+    .filter(h => String(h.guideSlug) === String(slug) && normName((h.firstName || '') + ' ' + (h.lastName || '')) === me)
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+const ICON_TAKE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>';
+const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+const ICON_MSG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+const ICON_ONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 14.5-4 16 0"/></svg>';
+
+/* ▸ ההדרכה הבאה — מהתוכנית השנתית של המדריכ/ה. מפגש בשני ימים נשאר "הבא"
+   עד שעבר גם המועד השני; מדריכ/ה בשני מקצועות — רק מפגש של המקצוע שלי. */
+function renderNext(scope, slug) {
+  const sec = document.getElementById('next-sec');
+  if (!sec) return;
+  const today = String(scope.today || '').slice(0, 10);
+  const mySubject = teacher && teacher.subject;
+  const next = planMeetings(slug).find(m =>
+    (m.date2 || m.date) >= today && (!m.subject || !mySubject || m.subject === mySubject));
+  if (!next) return;                         // אין תוכנית — המקטע לא מוצב
+  const days = planDays(next);
+  const isToday = days.indexOf(today) >= 0;
+  const first = days[0] || next.date;
+  const dm = String(first).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  document.getElementById('next-day').textContent = dm ? Number(dm[3]) : '';
+  document.getElementById('next-month').textContent = dm ? monthLbl(dm[1] + '-' + dm[2]).split(' ')[0] : '';
+  document.getElementById('next-topic').textContent = next.topic || 'מפגש הדרכה';
+  const meta = [];
+  if (next.label) meta.push(next.label + (next.day ? ' · ' + next.day : ''));
+  if (next.time) meta.push(next.time);
+  if (next.note) meta.push(next.note);
+  document.getElementById('next-meta').textContent = meta.join(' · ');
+  const soon = document.getElementById('next-soon');
+  const diff = Math.round((new Date(first) - new Date(today)) / 86400000);
+  if (isToday) { soon.hidden = false; soon.textContent = 'היום! הכפתור "אני כאן" מופיע למטה בזמן ההדרכה'; }
+  else if (diff > 0 && diff <= 7) { soon.hidden = false; soon.textContent = diff === 1 ? 'מחר' : 'בעוד ' + diff + ' ימים'; }
+  sec.hidden = false;
+}
+
+/* ▸ ההדרכה הפרטנית שלי — הנושא של כל שעה (guide_hours.topic נכתב בשפע) */
+function renderIndividual(scope, slug) {
+  const sec = document.getElementById('ind-sec');
+  const list = document.getElementById('ind-list');
+  if (!sec || !list) return;
+  const mine = myHours(scope, slug);
+  if (!mine.length) return;
+  list.innerHTML = mine.map(h => `
+    <div class="h-item">${ICON_ONE}
+      <div class="t"><b>${esc(dateLbl(h.date))}</b>${h.topic ? ' · ' + esc(h.topic) : ''}
+        ${h.hours ? `<div class="d">${esc(h.hours)} ${Number(h.hours) === 1 ? 'שעה' : 'שעות'}</div>` : ''}</div>
+    </div>`).join('');
+  sec.hidden = false;
+}
+
+/* ▸ חומרים והודעות מהמדריכ/ה — guide.group, קיים ופתוח. אותם קבצים ואותן
+   הודעות שהמדריכה שולחת לקבוצה (קבצי המפקח.ת מסוננים בשרת). */
+async function loadGroup(slug) {
+  if (!slug) return;
+  let res = null;
+  try { res = await TS.api('guide.group', { guide: slug }); } catch (e) { res = null; }
+  if (!res || !res.ok || !res.data) return;
+  renderGroup(res.data);
+}
+function renderGroup(g) {
+  const files = (g.files || []).filter(f => f.fileName || f.fileUrl);
+  const msgs = (g.messages || []).filter(m => String(m.text || '').trim());
+  const when = iso => {
+    const d = String(iso || '').slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(d) ? dateLbl(d) : '';
+  };
+  if (files.length) {
+    document.getElementById('mat-list').innerHTML = files.map(f => `
+      <div class="h-item">${ICON_FILE}
+        <div class="t">${f.fileUrl
+          ? `<a href="${esc(f.fileUrl)}" target="_blank" rel="noopener">${esc(f.fileName || 'קובץ')}</a>`
+          : esc(f.fileName)}${f.note ? `<div>${esc(f.note)}</div>` : ''}</div>
+        <div class="d">${esc(when(f.createdAt))}</div>
+      </div>`).join('');
+    document.getElementById('mat-sec').hidden = false;
+  }
+  if (msgs.length) {
+    document.getElementById('msg-list').innerHTML = msgs.map(m => `
+      <div class="h-item">${ICON_MSG}
+        <div class="t"><div class="msg">${esc(m.text)}</div>
+          ${m.authorName ? `<div class="d">${esc(m.authorName)}</div>` : ''}</div>
+        <div class="d">${esc(when(m.createdAt))}</div>
+      </div>`).join('');
+    document.getElementById('msg-sec').hidden = false;
+  }
 }
 
 /* "אני כאן" — מוצג רק ביום שבו לקבוצה של המורה יש מועד הדרכה.
@@ -317,28 +455,39 @@ function renderAttendance() {
     tbody.innerHTML = '<tr><td colspan="3" class="empty">עוד לא התקיימה הדרכה עם רישום נוכחות.</td></tr>';
     return;
   }
-  const L = d => (window.TS_meetDateLabel ? window.TS_meetDateLabel(d) : d);
-  const lbl = k => (window.TS_meetMonthLabel ? window.TS_meetMonthLabel(k) : k);
+  const lbl = monthLbl;
   const ind = new Set(monthly.individualMonths || []);
+  const group = new Set(monthly.groupMonths || []);
   const rows = (monthly.monthsAttended || []).map(k => ({ k: k, ok: true }))
     .concat((monthly.monthsMissed || []).map(k => ({ k: k, ok: false })))
     .sort((a, b) => b.k.localeCompare(a.k));
+  const indHours = scopeData ? myHours(scopeData, guideSlug) : [];
   tbody.innerHTML = rows.map(r => {
     const viaInd = r.ok && ind.has(r.k);
+    const info = monthInfo(r.k);
+    // חודש שנמדד דרך שעה פרטנית בלבד — הנושא הוא של השעה
+    let topic = info.topics.join(' · ');
+    if (!group.has(r.k)) {
+      const t = indHours.filter(h => String(h.date).slice(0, 7) === r.k && h.topic).map(h => h.topic);
+      topic = 'הדרכה פרטנית' + (t.length ? ' · ' + t.join(' · ') : '');
+    }
+    const status = r.ok
+      ? '<span class="badge ok">השתתפתי</span>' + (viaInd && group.has(r.k) ? ' <span class="badge info">גם פרטנית</span>' : '')
+      : '<span class="badge err">לא השתתפתי</span>';
+    const detail = (info.takeaways.length || info.summaries.length) ? `
+      <tr class="jr-detail">
+        <td colspan="3">
+          ${info.takeaways.map(t => `<div class="jr-take">${ICON_TAKE}<div><b>מה לקחת לכיתה:</b> ${esc(t)}</div></div>`).join('')}
+          ${info.summaries.map(t => `<details class="jr-sum"><summary>סיכום ונקודות חשובות מההדרכה</summary><p>${esc(t)}</p></details>`).join('')}
+        </td>
+      </tr>` : '';
     return `
       <tr>
         <td><b>${esc(lbl(r.k))}</b></td>
-        <td>${viaInd ? 'הדרכה פרטנית' : 'הדרכה חודשית'}</td>
-        <td>${r.ok
-          ? '<span class="badge ok">השתתפתי</span>'
-          : '<span class="badge err">לא השתתפתי</span>'}</td>
-      </tr>`;
+        <td class="jr-topic">${esc(topic || (group.has(r.k) ? 'הדרכה חודשית' : ''))}</td>
+        <td>${status}</td>
+      </tr>${detail}`;
   }).join('');
-  const dates = (monthly.individualDates || []);
-  if (dates.length) {
-    tbody.innerHTML += `<tr><td colspan="3" class="empty" style="text-align:right;">
-      הדרכה פרטנית השנה: ${dates.map(L).join(' · ')}</td></tr>`;
-  }
 }
 
 function render() {
@@ -348,6 +497,8 @@ function render() {
   }
   document.getElementById('user-name').textContent = teacher.name;
   document.getElementById('user-meta').textContent = teacher.subject;
+  const hello = document.getElementById('hello');
+  if (hello) hello.textContent = 'שלום ' + String(teacher.name || '').trim().split(' ')[0];
 
   // Profile
   document.getElementById('p-subject').textContent = teacher.subject;

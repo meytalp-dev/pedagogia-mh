@@ -56,7 +56,9 @@ const SCHEMA = {
   // נוכחות במפגשי ההדרכה (14.9.26) — ראו את המקטע בסוף הקובץ.
   // בכוונה לא trainings/attendance: הדוחות הישנים מחשבים כל הדרכה מול כל מורי
   // המקצוע בכל המגזרים, ומפגש של קבוצה אחת היה מסמן את כל השאר "לא נכחו".
-  meetings:           ['id','guideSlug','guideName','date','topic','source','openUntil','openedAt','closedAt','createdAt','updatedAt'],
+  meetings:           ['id','guideSlug','guideName','date','topic','source','openUntil','openedAt','closedAt','createdAt','updatedAt',
+                       // סיכום ההדרכה (22.9.26) — שני שדות נפרדים בכוונה: 'takeaway' הקצר הוא מה שמגיע למורה
+                       'summary','takeaway','hours'],
   // כניסת המורה המאומתת (21.9.26) — קוד חד-פעמי במייל. codeHash ולא הקוד
   // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
   teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt'],
@@ -965,6 +967,7 @@ function handleRequest(params) {
       case 'meet.guideKeys':      result = meetGuideKeys(params); break;
       case 'meet.report':         result = meetReport(params); break;
       case 'meet.scope':          result = meetScope(params); break;
+      case 'meet.wrap':           result = meetWrap(params); break;
       // מבט המורה — כניסה מאומתת (21.9.26)
       case 'teacher.codeSend':    result = teacherCodeSend(params); break;
       case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
@@ -3210,7 +3213,9 @@ function meetPublic_(m, now) {
   const openUntil = Number(m.openUntil) || 0;
   return {
     id: String(m.id), date: meetDate_(m.date), topic: m.topic || '', source: m.source || '',
-    open: openUntil > now, openUntil: openUntil
+    open: openUntil > now, openUntil: openUntil,
+    // סיכום ההדרכה (22.9.26) — ריק עד שהמדריכה מילאה
+    summary: String(m.summary || ''), takeaway: String(m.takeaway || ''), hours: Number(m.hours) || 0
   };
 }
 
@@ -3427,6 +3432,35 @@ function meetMark(p) {
 
     updateRowById('meetings', m.id, { updatedAt: nowIso });
     return { ok: true, data: { meetingId: m.id, changed: changed } };
+  });
+}
+
+/* ---------- המדריכה: סיכום ההדרכה (22.9.26) ----------
+   "בית של המורה": מבט המורה מראה לכל חודש את הנושא, "מה לקחת לכיתה" והסיכום.
+   שני שדות נפרדים בכוונה (קביעת מיטל 22.9): השדה הקצר (takeaway) הוא זה
+   שמגיע למורה ואסור שייבלע בארוך. 'hours' = משך ההדרכה — הבסיס לדוח השעות
+   למונדיי (שלב ד). אותה הרשאה כמו סימון נוכחות; רק על מפגש שכבר התקיים.
+   שדה שלא נשלח לא נוגעים בו — אפשר לעדכן רק את השעות בלי למחוק את הסיכום. */
+function meetWrap(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const date = meetDate_(p.date);
+  if (!date) return { ok: false, error: 'bad_date' };
+  if (date > meetToday_()) return { ok: false, error: 'future_meeting' };
+  return meetWithLock_(() => {
+    const m = meetEnsure_(slug, date, p);
+    const nowIso = new Date().toISOString();
+    const upd = { updatedAt: nowIso };
+    if (p.summary !== undefined) upd.summary = meetStr_(p.summary, 4000);
+    if (p.takeaway !== undefined) upd.takeaway = meetStr_(p.takeaway, 600);
+    if (p.hours !== undefined) {
+      const h = Number(String(p.hours).replace(',', '.'));
+      upd.hours = isFinite(h) && h > 0 ? Math.min(24, Math.round(h * 4) / 4) : '';
+    }
+    if (p.topic !== undefined && String(p.topic).trim()) upd.topic = meetStr_(p.topic, 300);
+    updateRowById('meetings', m.id, upd);
+    const fresh = meetFind_(m.id) || m;
+    return { ok: true, data: meetPublic_(fresh, Date.now()) };
   });
 }
 
