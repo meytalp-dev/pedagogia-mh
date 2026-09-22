@@ -35,11 +35,18 @@
                .map(function (s) { return s.trim(); }).filter(Boolean);
   if (!need.length) need = ['pikuah'];
 
+  /* data-optional: העמוד עצמו פתוח לכולם, ורק חלק ממנו דורש כניסה.
+     אין הסתרה ואין מסך כניסה עד שהעמוד קורא ל-PMH_AUTH.login().
+     אחרי כניסה מוצלחת נורה האירוע pmh:in על document. */
+  var optional = !!(me && me.hasAttribute('data-optional'));
+
   /* ===== הסתרה מיידית — לפני שהדפדפן צייר משהו ===== */
-  var hide = document.createElement('style');
-  hide.id = 'pmh-hide';
-  hide.textContent = 'body>*:not(#pmh-gate){visibility:hidden!important}';
-  (document.head || document.documentElement).appendChild(hide);
+  if (!optional) {
+    var hide = document.createElement('style');
+    hide.id = 'pmh-hide';
+    hide.textContent = 'body>*:not(#pmh-gate){visibility:hidden!important}';
+    (document.head || document.documentElement).appendChild(hide);
+  }
 
   function reveal() {
     var s = document.getElementById('pmh-hide');
@@ -49,6 +56,7 @@
     document.documentElement.classList.add('pmh-in');
     fillProtected();
     badge();
+    try { document.dispatchEvent(new CustomEvent('pmh:in')); } catch (e) {}
   }
 
   /* ===== סשן מקומי =====
@@ -138,11 +146,16 @@
     document.head.appendChild(st);
   }
 
+  var CANCEL = '<button id="pmh-cancel" type="button" style="margin-top:14px;border:0;background:none;' +
+    'color:#5A6B80;font:inherit;font-size:.87rem;text-decoration:underline;cursor:pointer">חזרה לעמוד</button>';
+
   /* ===== מסך הכניסה ===== */
   function gate() {
     injectStyle();
 
-    var label = need.map(function (n) { return NAMES[n] || n; }).join(' · ');
+    /* data-label: שם אחר למסך הכניסה, כשהעמוד אינו המרחב עצמו */
+    var label = (me && me.getAttribute('data-label')) ||
+                need.map(function (n) { return NAMES[n] || n; }).join(' · ');
     var g = document.createElement('div');
     g.id = 'pmh-gate';
     g.innerHTML =
@@ -156,8 +169,14 @@
         '<div id="pmh-note">אין לך גישה ואת.ה סבור.ה שהיא מגיעה לך?<br>' +
           '<a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
           encodeURIComponent('בקשת הרשאה — ' + label) + '">פנייה לקבלת הרשאה</a></div>' +
+        (optional ? CANCEL : '') +
       '</div>';
     document.body.appendChild(g);
+    /* במצב optional מסך הכניסה נסגר בלי לרענן. האזנה על המסך כולו,
+       כי תוכן התיבה מתחלף בשלב הסיסמה. */
+    if (optional) g.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'pmh-cancel' && g.parentNode) g.parentNode.removeChild(g);
+    });
 
     /* השדות מתחלפים בין השלבים — לכן מאתרים אותם בכל פעם מחדש */
     function fail(msg) {
@@ -225,7 +244,8 @@
         '<div id="pmh-note">' + (first
           ? 'את הסיסמה אפשר לאפס דרך מנהלת המערכת אם תישכח.'
           : 'שכחת את הסיסמה? <a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
-            encodeURIComponent('איפוס סיסמה אישית — ' + label) + '">בקשת איפוס</a>') + '</div>';
+            encodeURIComponent('איפוס סיסמה אישית — ' + label) + '">בקשת איפוס</a>') + '</div>' +
+        (optional ? CANCEL : '');
 
       /* שם המשתמש נכנס כטקסט, לא כ-HTML */
       document.getElementById('pmh-t').textContent =
@@ -330,6 +350,13 @@
       return s ? { email: s.email, name: s.name, spaces: s.spaces } : null;
     },
     logout: logout,
+    /* מצב data-optional: העמוד פותח את מסך הכניסה כשהמשתמש מבקש */
+    login: function () {
+      if (allowed(session())) return reveal();
+      if (!document.getElementById('pmh-gate')) gate();
+    },
+    /* האם יש סשן תקף שמורשה למרחב של העמוד הזה */
+    allowed: function () { return allowed(session()); },
     /* שליפת תוכן מוגן: PMH_AUTH.load('pikuah-schools').then(function(r){ ... }) */
     load: function (key) {
       var s = session();
@@ -348,6 +375,8 @@
     api({ action: 'verify', token: cur.token, space: need[0] }).then(function (r) {
       if (r && r.ok === false && r.error !== 'network' && r.error !== 'unconfigured') logout();
     });
+  } else if (optional) {
+    /* עמוד פתוח — לא נוגעים בסשן של מרחב אחר, ומחכים ל-PMH_AUTH.login() */
   } else {
     if (cur) { try { var st0 = store(); if (st0) st0.removeItem(KEY); } catch (e) {} }
     if (document.readyState === 'loading') {

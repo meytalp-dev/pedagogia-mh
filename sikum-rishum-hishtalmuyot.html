@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <script src="/analytics.js" defer></script>
+<!-- העמוד פתוח; רק פירוט הנרשמים דורש כניסה (אדמין) -->
+<script src="/auth.js" data-space="tikshuv" data-optional data-label="פירוט הנרשמים"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>מעקב הרישום להשתלמויות · תשפ״ז</title>
@@ -138,6 +140,31 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
 .kpi.ws .k{font-size:13.4px}
 .kpi.ws .s{font-size:12.6px;color:var(--muted);margin-top:2px}
 .kpis.two{margin-top:14px}
+/* ===== הנרשמים בשמות — מוצג רק אחרי כניסה מורשית ===== */
+.names{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-s);padding:22px 24px;margin:24px 0 0}
+.names .mhead h3{color:var(--navy)}
+.names .mhead .n{border-color:var(--line);color:var(--navy)}
+.names .wsbtn{border-color:var(--line);color:var(--navy)}
+.names .wsbtn[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.names .copy{border-color:var(--line);color:var(--navy);margin-inline-start:0}
+.names .copy:hover{background:var(--blue-soft)}
+.names .copy.pri{background:var(--navy);border-color:var(--navy);color:#fff}
+.names .copy.ok{border-color:#9fe0d3;color:#0c6d60;background:#f2fbf8}
+.names .acts{display:flex;gap:9px;flex-wrap:wrap;margin-inline-start:auto}
+.lock{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--blue-soft);border-radius:14px;padding:16px 18px;
+  font-size:15.5px;color:#3d4a70}
+.lock svg{width:22px;height:22px;color:var(--navy);flex:0 0 auto}
+.lock span{flex:1 1 260px}
+.lock button{appearance:none;border:0;background:var(--navy);color:#fff;border-radius:999px;padding:9px 20px;
+  font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
+.lock button:hover{background:#1a3577}
+.ntab{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+.ntab table{min-width:820px;font-size:14.6px}
+.ntab td.ltr{direction:ltr;text-align:right;white-space:nowrap}
+.ok{color:#0c6d60;font-weight:700}.bad{color:#8c2b34;font-weight:700}
+.nwarn{background:#fff5f6;border:1px solid #f0b9be;color:#8c2b34;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:14.6px}
+.lock[hidden],.names .acts[hidden]{display:none}
+.nempty{color:var(--muted);font-size:15.5px;padding:18px;text-align:center;border:1px dashed var(--line);border-radius:14px}
 td.num{text-align:center;white-space:nowrap}
 th.num{text-align:center}
 .cnt{display:inline-block;min-width:30px;border-radius:999px;padding:3px 10px;font-size:13.4px;font-weight:700;background:#e9f9f5;color:#0c6d60}
@@ -165,7 +192,7 @@ th.num{text-align:center}
       מעקב חי · תשפ״ז
     </span>
     <h1>הרישום להשתלמויות</h1>
-    <p class="lede">מאילו בתי ספר כבר נרשמו לכל השתלמות, ומאילו עוד לא. מתעדכן מעצמו.</p>
+    <p class="lede">מי נרשם לכל השתלמות, מאילו בתי ספר, ומאילו עוד לא. מתעדכן מעצמו.</p>
 
     <div>
       <span class="live" id="live"><span class="dot"></span><span id="liveTxt">טוען…</span></span>
@@ -179,6 +206,29 @@ th.num{text-align:center}
     <div class="kpi missing"><div class="v" id="kNone">—</div><div class="k">בתי ספר בלי אף נרשם</div></div>
   </div>
   <div class="kpis two" id="wsKpis"></div>
+
+  <div class="names" id="namesCard">
+    <div class="mhead">
+      <h3 id="nmTitle">מי נרשם</h3>
+      <span class="n" id="nmN" hidden>—</span>
+      <div class="acts" id="nmActs" hidden>
+        <button class="copy pri" id="nmCsv" type="button">ייצוא CSV</button>
+        <button class="copy" id="nmCopy" type="button">העתקת הרשימה</button>
+      </div>
+    </div>
+    <div class="lock" id="nmLock">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+      </svg>
+      <span id="nmLockTxt">השמות ופרטי הקשר של הנרשמים מוצגים רק אחרי כניסה מורשית.</span>
+      <button type="button" id="nmLogin">כניסה לצפייה בשמות</button>
+    </div>
+    <div id="nmBody" hidden>
+      <div class="wsbar" id="nmbar" role="group" aria-label="בחירת השתלמות"></div>
+      <div id="nmWarn"></div>
+      <div id="nmTable"></div>
+    </div>
+  </div>
 
   <div class="miss" id="missCard">
     <div class="mhead">
@@ -229,9 +279,9 @@ th.num{text-align:center}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 3 20 6.5v5c0 4.4-3.2 8.3-8 9.5-4.8-1.2-8-5.1-8-9.5v-5z"/><path d="m9 12 2 2 4-4"/>
     </svg>
-    <div><b>הדף הזה לא מכיל נתונים אישיים.</b> מוצג רק מספר הנרשמים מכל בית ספר.
-      השמות, תעודות הזהות, הטלפונים והכתובות נשמרים בגיליון ובגיליונות של אלנט בלבד,
-      ואינם נשלחים לדף. הפירוט המלא נמצא בדף המעקב הפנימי, מאחורי שער ההרשאות.</div>
+    <div><b>בלי כניסה מורשית הדף מציג מספרים בלבד.</b> השמות, הטלפונים והמיילים אינם כתובים בקובץ הדף;
+      הם נשלפים מהשרת רק אחרי כניסה בחשבון Google ובסיסמה אישית, ורק למי שמורשה.
+      תעודות זהות וכתובות מגורים נשמרות בגיליון ובגיליונות של אלנט בלבד, ואינן מגיעות לדף בכלל.</div>
   </div>
 
   <footer>
@@ -258,6 +308,9 @@ var DATA = {};          /* school -> {social: n, matal: n, "matal:ימי ראש�
 var TOTAL = 0;
 var CUR = "social";
 var MISSING = [];
+var ROWS = null;        /* שורות שמיות — רק אחרי כניסה מורשית */
+var ROWS_KEY = "";      /* מגיע משרת ההרשאות, לא כתוב בקובץ */
+var ALNET = {social:1, matal:1};   /* ההשתלמויות שנכתבות גם לגיליונות אלנט */
 var MISS_BY_SUP = [];
 
 /* 64 המוסדות והמפקחים — אותה רשימה כמו במעקב ההשתלמויות הבית ספריות */
@@ -289,7 +342,7 @@ function buildStatic(){
   $("thead").innerHTML = '<th>בית הספר</th><th>מפקח.ת</th>' +
     WS.map(function(w){ return '<th class="num">' + esc(w.t) + '</th>'; }).join("") +
     '<th class="num">סה״כ</th>';
-  $("wsbar").innerHTML = WS.map(function(w){
+  $("wsbar").innerHTML = $("nmbar").innerHTML = WS.map(function(w){
     return '<button class="wsbtn" type="button" data-k="' + w.k + '" aria-pressed="' + (w.k === CUR) + '">' +
       '<span class="d" style="background:' + w.c + '"></span>' + esc(w.t) + '</button>';
   }).join("");
@@ -357,6 +410,59 @@ function bySup(){
       '</svg>העתקה</button></div>' +
       '<div class="chips">' + gp.missing.map(function(x){ return "<span>" + esc(x) + "</span>"; }).join("") + '</div></div>';
   }).join("");
+}
+
+/* ===== הנרשמים בשמות ===== */
+function rowsOf(k){ return (ROWS || []).filter(function(r){ return r.workshop === k; }); }
+function alnetErr(t){ t = String(t || ""); return t.indexOf("שגיאה") === 0 || t.indexOf("חסרות עמודות") > -1; }
+
+function names(){
+  var open = ROWS !== null;
+  $("nmLock").hidden = open;
+  $("nmBody").hidden = !open;
+  $("nmN").hidden = !open;
+  if (!open){ $("nmTitle").textContent = "מי נרשם"; $("nmActs").hidden = true; return; }
+
+  var w = wsOf(CUR), list = rowsOf(CUR), al = !!ALNET[CUR];
+  $("nmTitle").textContent = "מי נרשם · " + w.t;
+  $("nmN").textContent = list.length + " נרשמים";
+  $("nmActs").hidden = list.length === 0;
+
+  var bad = list.filter(function(r){ return al && alnetErr(r.alnet); });
+  $("nmWarn").innerHTML = bad.length ? '<div class="nwarn"><b>' + bad.length + ' רישומים לא עברו במלואם לאלנט.</b> ' +
+    'ייתכן שהגיליון של אלנט השתנה (לשונית או כותרת עמודה). הפירוט בעמודת "אלנט".</div>' : "";
+
+  if (!list.length){ $("nmTable").innerHTML = '<div class="nempty">עדיין אין נרשמים להשתלמות הזו</div>'; return; }
+  var hasG = list.some(function(r){ return r.group; });
+  $("nmTable").innerHTML = '<div class="ntab"><table><thead><tr><th>#</th><th>שם</th><th>בית הספר</th><th>טלפון</th><th>מייל</th><th>עיר</th><th>ת״ז</th>' +
+    (hasG ? '<th>קבוצה</th>' : '') + '<th>נרשם/ה</th>' + (al ? '<th>אלנט</th>' : '') + '</tr></thead><tbody>' +
+    list.map(function(r, i){
+      return '<tr><td>' + (i + 1) + '</td><td><span class="school">' + esc(r.name) + '</span></td><td>' + esc(r.school) + '</td>' +
+        '<td class="ltr">' + esc(r.phone) + '</td><td class="ltr">' + esc(r.email) + '</td><td>' + esc(r.city) + '</td>' +
+        '<td>' + (r.hasId ? '<span class="ok">נמסרה</span>' : '<span class="bad">חסרה</span>') + '</td>' +
+        (hasG ? '<td>' + esc(r.group) + '</td>' : '') + '<td class="ltr">' + esc(r.date) + '</td>' +
+        (al ? '<td class="' + (alnetErr(r.alnet) ? 'bad' : 'ok') + '">' + esc(r.alnet) + '</td>' : '') + '</tr>';
+    }).join("") + '</tbody></table></div>';
+}
+
+/* המפתח לשורות השמיות יושב בשרת ההרשאות ונמסר רק לסשן מורשה */
+function loadNames(){
+  var A = window.PMH_AUTH;
+  if (!A || !A.allowed || !A.allowed()) return Promise.resolve();
+  var key = ROWS_KEY ? Promise.resolve(ROWS_KEY) : A.load("rishum-rows-key").then(function(r){
+    if (!r || !r.ok || !r.data) throw new Error("nokey");
+    return (ROWS_KEY = String(r.data));
+  });
+  return key
+    .then(function(k){ return fetchJson(API_URL + "?mode=rows&key=" + encodeURIComponent(k)); })
+    .then(function(j){
+      if (!j || !j.ok) throw new Error("bad_response");
+      ROWS = j.rows || [];
+      names();
+    })
+    .catch(function(){
+      if (ROWS === null) $("nmLockTxt").textContent = "נכנסת, אבל לא הצלחנו למשוך את רשימת השמות. אפשר לרענן את הדף ולנסות שוב.";
+    });
 }
 
 function cell(school, w){
@@ -433,7 +539,7 @@ function fetchJson(url, tries){
   return attempt(1);
 }
 
-function all(){ kpis(); missing(); render(); }
+function all(){ kpis(); missing(); render(); names(); }
 
 function load(){
   $("liveTxt").textContent = "טוען…";
@@ -446,6 +552,7 @@ function load(){
       var t = new Date();
       $("liveTxt").textContent = "עודכן " + t.getHours() + ":" + ("0" + t.getMinutes()).slice(-2);
       all();
+      loadNames();
     })
     .catch(function(){
       $("live").classList.add("err");
@@ -453,7 +560,7 @@ function load(){
     });
 }
 
-function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); } }
+function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); names(); } }
 
 (function init(){
   fillSups();
@@ -467,13 +574,37 @@ function pick(k){ if (wsOf(k)){ CUR = k; missing(); render(); } }
   });
   $("reload").addEventListener("click", load);
 
-  $("wsbar").addEventListener("click", function(e){
-    var b = e.target.closest ? e.target.closest(".wsbtn") : null;
-    if (b) pick(b.getAttribute("data-k"));
+  ["wsbar","nmbar"].forEach(function(id){
+    $(id).addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest(".wsbtn") : null;
+      if (b) pick(b.getAttribute("data-k"));
+    });
+  });
+
+  $("nmLogin").addEventListener("click", function(){
+    if (window.PMH_AUTH && PMH_AUTH.login) PMH_AUTH.login();
+    else $("nmLockTxt").textContent = "שער ההרשאות לא נטען. אפשר לרענן את הדף ולנסות שוב.";
+  });
+  document.addEventListener("pmh:in", loadNames);
+
+  $("nmCsv").addEventListener("click", function(){
+    var list = rowsOf(CUR);
+    var q = function(v){ return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
+    var csv = "\ufeff" + ["שם","בית ספר","טלפון","מייל","עיר","קבוצה","תאריך","אלנט"].map(q).join(",") + "\n" +
+      list.map(function(r){ return [r.name, r.school, r.phone, r.email, r.city, r.group, r.date, r.alnet].map(q).join(","); }).join("\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
+    a.download = "rishum-" + CUR + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $("nmCopy").addEventListener("click", function(){
+    copyText(this, rowsOf(CUR).map(function(r){
+      return [r.name, r.school, r.phone, r.email, r.group].filter(Boolean).join("\t");
+    }).join("\n"));
   });
   $("wsKpis").addEventListener("click", function(e){
     var b = e.target.closest ? e.target.closest(".kpi.ws") : null;
-    if (b){ pick(b.getAttribute("data-k")); $("missCard").scrollIntoView({behavior:"smooth", block:"start"}); }
+    if (b){ pick(b.getAttribute("data-k")); $(ROWS !== null ? "namesCard" : "missCard").scrollIntoView({behavior:"smooth", block:"start"}); }
   });
   $("wsKpis").addEventListener("keydown", function(e){
     if (e.key !== "Enter" && e.key !== " ") return;
