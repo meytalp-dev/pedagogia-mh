@@ -556,6 +556,8 @@ function load(){
   fillSups();
   load();
 
+  /* ?q=<שם בית ספר> — פתיחה מסוננת מתוך "הבית של המפקח" (tfasim/mefakeach). הסינון עצמו קורה ב-render. */
+  (function(){ var pq = new URLSearchParams(location.search).get("q"); if (pq) $("q").value = pq; })();
   ["q","fStatus","fSup","fTrack"].forEach(function(id){
     $(id).addEventListener(id === "q" ? "input" : "change", render);
   });

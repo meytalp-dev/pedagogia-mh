@@ -449,6 +449,9 @@ function render(){
 });
 $("refreshBtn").addEventListener("click", function(){ load(true); });
 
+/* ?q=<שם בית ספר> — פתיחה מסוננת מתוך "הבית של המפקח" (tfasim/mefakeach). הסינון עצמו קורה ב-render. */
+(function(){ var pq = new URLSearchParams(location.search).get("q"); if (pq) $("q").value = pq; })();
+
 load(false);
 TIMER = setInterval(function(){ load(false); }, 60000);
 document.addEventListener("visibilitychange", function(){
