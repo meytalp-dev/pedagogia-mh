@@ -20,7 +20,7 @@
 
   function deny(text) {
     document.documentElement.innerHTML =
-      '<body style="font-family:Heebo,sans-serif; direction:rtl; display:grid; place-items:center; min-height:90vh; background:#F3F7FA; color:#143E4C;">' +
+      '<body style="font-family:Fredoka,Heebo,sans-serif; direction:rtl; display:grid; place-items:center; min-height:90vh; background:#F3F7FA; color:#143E4C;">' +
       '<div style="text-align:center; max-width:420px; padding:24px;">' +
       '<div style="font-size:20px; font-weight:700; margin-bottom:10px;">אין הרשאה לעמוד הזה</div>' +
       '<div style="color:#4F6E7A; line-height:1.8;">' + text + '</div>' +

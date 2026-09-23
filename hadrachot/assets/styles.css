@@ -117,7 +117,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  font-family: 'Heebo', 'Assistant', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -126,7 +126,7 @@ html, body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Frank Ruhl Libre', 'Heebo', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 700;
   line-height: 1.25;
   color: var(--text);
@@ -181,7 +181,7 @@ button {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 700;
   font-size: 18px;
   color: var(--brand-primary);
@@ -190,10 +190,10 @@ button {
 .topbar-brand svg { width: 36px; height: 36px; color: var(--brand-primary); }
 .topbar-brand .logo-img { height: 44px; width: auto; max-width: 260px; object-fit: contain; }
 .topbar-brand .brand-stack { display: flex; flex-direction: column; line-height: 1.15; }
-.topbar-brand .brand-stack .ministry { font-size: 12px; color: var(--text-2); font-weight: 600; letter-spacing: 0.04em; font-family: 'Heebo', sans-serif; }
-.topbar-brand .brand-stack .system-name { font-size: 17px; font-weight: 700; color: var(--brand-primary); font-family: 'Frank Ruhl Libre', serif; }
+.topbar-brand .brand-stack .ministry { font-size: 12px; color: var(--text-2); font-weight: 600; letter-spacing: 0.04em; font-family: 'Fredoka', 'Heebo', sans-serif; }
+.topbar-brand .brand-stack .system-name { font-size: 17px; font-weight: 700; color: var(--brand-primary); font-family: 'Fredoka', 'Heebo', sans-serif; }
 .topbar-brand .role-divider { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
-.topbar-brand .role-label { font-family: 'Frank Ruhl Libre', serif; font-weight: 700; font-size: 18px; color: var(--brand-primary); }
+.topbar-brand .role-label { font-family: 'Fredoka', 'Heebo', sans-serif; font-weight: 700; font-size: 18px; color: var(--brand-primary); }
 
 @media (max-width: 600px) {
   .topbar-brand .logo-img { height: 32px; max-width: 140px; }
@@ -267,7 +267,7 @@ button {
 }
 
 .stat-value {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 28px;
   font-weight: 800;
   line-height: 1;
@@ -558,7 +558,7 @@ button {
 }
 .role-card-icon svg { width: 30px; height: 30px; }
 .role-card-title {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: var(--brand-primary);
@@ -594,7 +594,7 @@ button {
   letter-spacing: 0.18em;
   color: var(--brand-accent);
   margin-bottom: var(--sp-3);
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
 }
 .hero h1 {
   margin-bottom: var(--sp-3);
@@ -704,7 +704,7 @@ body { background: var(--bg); color: var(--text); }
 
 /* Typography — מערכת ניהול, לא כרזה */
 .compass-h1 {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: clamp(2rem, 6vw, 3.8rem);
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -713,7 +713,7 @@ body { background: var(--bg); color: var(--text); }
   margin: 0;
 }
 .compass-h2 {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: clamp(1.7rem, 4vw, 2.6rem);
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -722,14 +722,14 @@ body { background: var(--bg); color: var(--text); }
   margin: 0 0 12px;
 }
 .compass-h3 {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--text);
   margin: 0;
 }
 .metric-number {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 900;
   letter-spacing: -0.03em;
   font-feature-settings: "tnum" 1;
@@ -761,7 +761,7 @@ body { background: var(--bg); color: var(--text); }
   line-height: 1.2;
 }
 .command-bar-text .unit {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: var(--text);
@@ -827,7 +827,7 @@ body { background: var(--bg); color: var(--text); }
   border-bottom: 1px solid var(--mint);
 }
 .compass-hero-lead {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: clamp(15px, 1.4vw, 18px);
   line-height: 1.65;
   color: var(--text-muted);
@@ -851,7 +851,7 @@ body { background: var(--bg); color: var(--text); }
   border: none;
   padding: 13px 26px;
   border-radius: var(--radius-md);
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -871,7 +871,7 @@ body { background: var(--bg); color: var(--text); }
   border: 1px solid var(--border);
   padding: 13px 26px;
   border-radius: var(--radius-md);
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1034,7 +1034,7 @@ body { background: var(--bg); color: var(--text); }
   text-transform: none;
 }
 .system-metric .value {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 34px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1114,7 +1114,7 @@ body { background: var(--bg); color: var(--text); }
   margin-bottom: 10px;
 }
 .lens-title {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 700;
   font-size: 24px;
   line-height: 1.15;
@@ -1279,11 +1279,11 @@ body { background: var(--bg); color: var(--text); }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   box-shadow: 0 0 0 3px var(--surface-soft);
 }
 .flow-step-title {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 700;
   color: var(--text);
   font-size: 14px;
@@ -1366,7 +1366,7 @@ body { background: var(--bg); color: var(--text); }
   background: var(--mint);
 }
 .page-header h1 {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: clamp(1.8rem, 3.5vw, 2.4rem);
   font-weight: 700;
   color: var(--text);
@@ -1450,7 +1450,7 @@ body { background: var(--bg); color: var(--text); }
 }
 .compass-divider svg { width: 14px; height: 14px; color: var(--primary); opacity: 0.7; }
 .compass-divider .label {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -1513,7 +1513,7 @@ body { background: var(--bg); color: var(--text); }
 }
 .cmd-metric-label svg { width: 13px; height: 13px; opacity: 0.7; }
 .cmd-metric-value {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -1539,7 +1539,7 @@ body { background: var(--bg); color: var(--text); }
   margin-bottom: 18px;
 }
 .section-head-flex h2 {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 26px;
   font-weight: 700;
   margin: 0 0 6px;
@@ -1662,7 +1662,7 @@ body { background: var(--bg); color: var(--text); }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 800;
   font-size: 16px;
   color: var(--text);
@@ -1696,7 +1696,7 @@ body { background: var(--bg); color: var(--text); }
   background: var(--border-soft);
 }
 .net-lens-stat-num {
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 800;
   font-size: 18px;
   color: var(--text);
@@ -1757,7 +1757,7 @@ body { background: var(--bg); color: var(--text); }
   background: transparent;
   color: var(--text);
   transition: all .2s;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
 }
 .net-lens-cta .btn-soft-sm:hover { background: var(--surface-soft); border-color: var(--lens-net, var(--primary)); color: var(--lens-net, var(--primary)); }
 .net-lens-cta .btn-soft-sm.primary {
@@ -1785,7 +1785,7 @@ body { background: var(--bg); color: var(--text); }
   margin-bottom: 18px;
 }
 .attention-head h3 {
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 22px;
   font-weight: 700;
   margin: 0 0 4px;
@@ -1849,7 +1849,7 @@ body { background: var(--bg); color: var(--text); }
 .attention-table .att-progress-val {
   font-size: 12px;
   font-weight: 800;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   min-width: 36px;
   color: var(--text);
 }
@@ -1864,7 +1864,7 @@ body { background: var(--bg); color: var(--text); }
   text-decoration: none;
   cursor: pointer;
   transition: all .2s;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
 }
 .attention-table .open-btn:hover {
   background: var(--primary);
@@ -1897,7 +1897,7 @@ body { background: var(--bg); color: var(--text); }
   color: var(--text-muted);
   padding: 7px 16px;
   border-radius: 999px;
-  font-family: 'Heebo', sans-serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1939,7 +1939,7 @@ body { background: var(--bg); color: var(--text); }
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-weight: 700;
   color: var(--text);
   font-size: 14px;
@@ -2073,7 +2073,7 @@ body { background: var(--bg); color: var(--text); }
   gap: 0.7rem;
   margin-bottom: 1.25rem;
   color: var(--hero-primary);
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-size: 0.9rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -2088,7 +2088,7 @@ body { background: var(--bg); color: var(--text); }
 
 .compass-hero__title {
   margin: 0;
-  font-family: "Frank Ruhl Libre", Georgia, serif;
+  font-family: 'Fredoka', 'Heebo', sans-serif;
   font-size: clamp(3rem, 7.2vw, 5.8rem);
   line-height: 0.92;
   font-weight: 900;
@@ -2098,7 +2098,7 @@ body { background: var(--bg); color: var(--text); }
 
 .compass-hero__lead {
   margin: 1.6rem 0 0;
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-size: clamp(1.25rem, 2.4vw, 1.8rem);
   line-height: 1.55;
   font-weight: 700;
@@ -2108,7 +2108,7 @@ body { background: var(--bg); color: var(--text); }
 .compass-hero__text {
   margin: 1rem 0 0;
   max-width: 560px;
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-size: clamp(1rem, 1.5vw, 1.12rem);
   line-height: 1.85;
   color: var(--hero-muted);
@@ -2129,7 +2129,7 @@ body { background: var(--bg); color: var(--text); }
   gap: 0.55rem;
   padding: 0.85rem 1.45rem;
   border-radius: 16px;
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-weight: 800;
   font-size: 1rem;
   text-decoration: none;
@@ -2176,7 +2176,7 @@ body { background: var(--bg); color: var(--text); }
 
 .compass-hero__hint {
   margin: 0;
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--hero-muted);
@@ -2363,7 +2363,7 @@ body { background: var(--bg); color: var(--text); }
   min-width: 118px;
   color: var(--hero-primary-dark);
   text-decoration: none;
-  font-family: "Heebo", system-ui, sans-serif;
+  font-family: 'Fredoka', 'Heebo', system-ui, sans-serif;
   font-weight: 500;
   font-size: 0.78rem;
   line-height: 1.25;
@@ -2729,3 +2729,27 @@ body { background: var(--bg); color: var(--text); }
   color: var(--primary); font-weight: 600; font-size: 15px; }
 .home-loading .spinner { width: 20px; height: 20px; flex-shrink: 0; }
 .home-loading[hidden] { display: none; }
+
+/* פס הנתונים (24.9.26) — בהיר בירוק־מרווה של הלוגו במקום הכהה הכחלחל */
+body .command-strip {
+  background: linear-gradient(135deg, #E5EDE3 0%, #EEF3EC 100%);
+  color: var(--primary);
+  border: 1px solid #CFDCCB;
+  box-shadow: 0 10px 28px rgba(20, 62, 76, 0.07);
+}
+body .command-strip::before { background: radial-gradient(circle, rgba(140, 166, 139, 0.25) 0%, transparent 70%); }
+body .command-strip .cmd-metric::before { background: rgba(26, 83, 101, 0.15); }
+body .command-strip .cmd-metric-label { color: #4F6E7A; }
+body .command-strip .cmd-metric-sub { color: #4F6E7A; }
+body .command-strip .cmd-metric-value,
+body .command-strip .cmd-metric-value.ok,
+body .command-strip .stat-value,
+body .command-strip .stat-value.ok { color: var(--primary); }
+body .command-strip .cmd-metric-value.mint,
+body .command-strip .stat-value.mint { color: #4E6B4D; }
+body .command-strip .cmd-metric-value.warn,
+body .command-strip .stat-value.warn { color: #8A5A12; }
+body .command-strip .cmd-metric-value.err,
+body .command-strip .stat-value.err { color: #A8452A; }
+body .command-strip .stat-value.info { color: var(--primary); }
+.home-loading { background: #EEF3EC; border-color: #CFDCCB; }

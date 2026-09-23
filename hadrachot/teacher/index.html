@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מבט המורה — מנור</title>
-<link rel="stylesheet" href="../assets/fonts-local.css">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924d">
+<link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924e">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* command-strip עם 4 KPIs */
@@ -13,7 +13,7 @@
   @media (max-width: 760px) { .command-strip { grid-template-columns: repeat(2, 1fr); } }
   /* גשר: ה-JS דורס stat-rate ל-class "stat-value" — שיֵראה כמו cmd-metric-value בפס הכהה */
   .command-strip .stat-value {
-    font-family: 'Heebo', sans-serif; font-size: 30px; font-weight: 800;
+    font-family: 'Fredoka', 'Heebo', sans-serif; font-size: 30px; font-weight: 800;
     letter-spacing: -0.02em; line-height: 1; color: #fff;
   }
   .command-strip .stat-value.ok   { color: var(--mint); }
@@ -36,6 +36,18 @@
   .tg-btn { width: 100%; margin-top: 16px; }
   .th-card { margin: 0 0 20px; padding: 20px 22px; text-align: center;
              border: 2px solid var(--mint, #8CA68B); }
+  .next-sessions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .next-sessions:empty { display: none; }
+  .ns-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); }
+  .ns-when { font-size: 14px; font-weight: 600; color: var(--text); }
+  .ns-btn { font-size: 13px; padding: 7px 14px; }
+  .ns-wait { font-size: 12.5px; color: var(--text-2); }
+  .ns-done { font-size: 13px; font-weight: 700; color: #1f6b52; }
+  .th-form { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .th-form[hidden] { display: none; }
+  .th-label { font-size: 14px; font-weight: 600; color: var(--text-2); }
+  .th-code { max-width: 180px; text-align: center; font-size: 26px; letter-spacing: 0.35em; font-weight: 700; }
   .th-when { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
   .th-btn { min-width: 220px; font-size: 17px; padding: 13px 26px; }
   .th-msg { margin-top: 12px; font-size: 14px; line-height: 1.6; font-weight: 600; }
@@ -58,7 +70,7 @@
                border-right: 4px solid var(--primary, #1A5365); }
   .next-date { min-width: 96px; text-align: center; padding: 10px 12px; border-radius: 12px;
                background: var(--surface-soft, #EAF2F7); border: 1px solid var(--border); }
-  .next-date b { display: block; font-family: 'Heebo', sans-serif; font-size: 24px; line-height: 1.1;
+  .next-date b { display: block; font-family: 'Fredoka', 'Heebo', sans-serif; font-size: 24px; line-height: 1.1;
                  color: var(--primary, #1A5365); }
   .next-date span { display: block; font-size: 12px; color: var(--text-2); margin-top: 3px; }
   .next-body { flex: 1; min-width: 200px; }
@@ -130,8 +142,11 @@
       <label class="tg-label" for="tg-school">בית הספר שלי</label>
       <select class="select" id="tg-school"><option value="">טוען…</option></select>
 
+      <label class="tg-label" for="tg-subject">המקצוע שלי</label>
+      <select class="select" id="tg-subject" disabled><option value="">קודם בוחרים בית ספר</option></select>
+
       <label class="tg-label" for="tg-name">השם שלי</label>
-      <select class="select" id="tg-name" disabled><option value="">קודם בוחרים בית ספר</option></select>
+      <select class="select" id="tg-name" disabled><option value="">קודם בוחרים מקצוע</option></select>
 
       <label class="tg-label" for="tg-email">המייל שלי</label>
       <input class="input" id="tg-email" type="email" inputmode="email" autocomplete="email"
@@ -180,7 +195,7 @@
           <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
           <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#1A5365" stroke-width="1.2"/>
           <circle cx="40" cy="40" r="1.5" fill="#1A5365"/>
-          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#1A5365">N</text>
+          <text x="40" y="15" text-anchor="middle" font-family="Fredoka, Heebo, sans-serif" font-size="8" font-weight="700" fill="#1A5365">N</text>
         </svg>
         <div class="page-compass-info">
           <strong id="user-name">—</strong>
@@ -211,6 +226,8 @@
           <div class="next-topic" id="next-topic"></div>
           <div class="next-meta" id="next-meta"></div>
           <span class="next-soon" id="next-soon" hidden></span>
+          <!-- רישום נוכחות ליד כל מועד (24.9.26) — עם הקוד שמוצג במפגש -->
+          <div class="next-sessions" id="next-sessions"></div>
         </div>
       </div>
     </section>
@@ -219,7 +236,12 @@
            והמדריכה פתחה את הרישום. הרישום ממתין לאישורה. -->
       <section class="card th-card" id="th-card" hidden>
         <div class="th-when" id="th-when"></div>
-        <button type="button" class="btn btn-primary th-btn" id="th-btn">אני כאן ✓</button>
+        <div class="th-form" id="th-form">
+          <label class="th-label" for="th-code">הקוד שמוצג עכשיו במפגש</label>
+          <input class="input th-code" id="th-code" inputmode="numeric" maxlength="4"
+                 autocomplete="off" placeholder="0000" aria-describedby="th-msg">
+          <button type="button" class="btn btn-primary th-btn" id="th-btn" disabled>רישום נוכחות</button>
+        </div>
         <div class="th-msg" id="th-msg" hidden></div>
       </section>
 
@@ -358,6 +380,6 @@
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260921"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260924d"></script>
+<script src="dashboard.js?v=20260924e"></script>
 </body>
 </html>

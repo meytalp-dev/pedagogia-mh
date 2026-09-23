@@ -349,11 +349,11 @@ const TS = (() => {
         ${yLabels.map(v => {
           const y = padY + innerH - (v / maxY) * innerH;
           return `<line x1="${padX}" y1="${y}" x2="${w - padX}" y2="${y}" stroke="#e5e7eb" stroke-width="1"/>
-                  <text x="${padX - 8}" y="${y + 4}" text-anchor="end" fill="#9ca3af" font-size="11" font-family="Heebo">${v}%</text>`;
+                  <text x="${padX - 8}" y="${y + 4}" text-anchor="end" fill="#9ca3af" font-size="11" font-family="Fredoka, Heebo, sans-serif">${v}%</text>`;
         }).join('')}
         <!-- target line at 80% -->
         <line x1="${padX}" y1="${padY + innerH - 0.8 * innerH}" x2="${w - padX}" y2="${padY + innerH - 0.8 * innerH}" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
-        <text x="${w - padX + 4}" y="${padY + innerH - 0.8 * innerH + 4}" fill="#16a34a" font-size="10" font-family="Heebo">יעד 80%</text>
+        <text x="${w - padX + 4}" y="${padY + innerH - 0.8 * innerH + 4}" fill="#16a34a" font-size="10" font-family="Fredoka, Heebo, sans-serif">יעד 80%</text>
         <!-- line -->
         <path d="${linePath}" fill="none" stroke="#0891b2" stroke-width="2.5" stroke-linecap="round"/>
         <!-- points -->
@@ -362,12 +362,12 @@ const TS = (() => {
           const [x, y] = xy(i, p.rate);
           const color = p.rate >= 90 ? '#16a34a' : p.rate >= 70 ? '#f59e0b' : '#dc2626';
           return `<circle cx="${x}" cy="${y}" r="5" fill="${color}" stroke="white" stroke-width="2"/>
-                  <text x="${x}" y="${y - 12}" text-anchor="middle" fill="${color}" font-size="11" font-weight="700" font-family="Heebo">${p.rate}%</text>`;
+                  <text x="${x}" y="${y - 12}" text-anchor="middle" fill="${color}" font-size="11" font-weight="700" font-family="Fredoka, Heebo, sans-serif">${p.rate}%</text>`;
         }).join('')}
         <!-- X labels -->
         ${series.map((p, i) => {
           const [x] = xy(i, 0);
-          return `<text x="${x}" y="${h - 14}" text-anchor="middle" fill="#6b7280" font-size="12" font-family="Heebo">${shortMonth(p.month)}</text>`;
+          return `<text x="${x}" y="${h - 14}" text-anchor="middle" fill="#6b7280" font-size="12" font-family="Fredoka, Heebo, sans-serif">${shortMonth(p.month)}</text>`;
         }).join('')}
       </svg>
     `;

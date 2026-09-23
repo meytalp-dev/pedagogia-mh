@@ -86,36 +86,65 @@ async function showGate() {
   $g('tg-code').addEventListener('keydown', e => { if (e.key === 'Enter') onGateVerify(); });
 }
 
+/* סינון מקצוע (24.9.26): בבית ספר גדול רשימת השמות הייתה ארוכה מדי.
+   בוחרים בית ספר → מקצוע → שם. מורה שמלמד/ת שני מקצועות מופיע/ה בשניהם. */
+let gateSchoolRows = [];
+
 async function onGateSchool() {
   const id = $g('tg-school').value;
+  const subjSel = $g('tg-subject');
   const nameSel = $g('tg-name');
-  gateTeachers = [];
+  gateTeachers = []; gateSchoolRows = [];
+  nameSel.disabled = true;
+  nameSel.innerHTML = '<option value="">קודם בוחרים מקצוע</option>';
   if (!id) {
-    nameSel.disabled = true;
-    nameSel.innerHTML = '<option value="">קודם בוחרים בית ספר</option>';
+    subjSel.disabled = true;
+    subjSel.innerHTML = '<option value="">קודם בוחרים בית ספר</option>';
     return;
   }
-  nameSel.disabled = true;
-  nameSel.innerHTML = '<option value="">טוען…</option>';
+  subjSel.disabled = true;
+  subjSel.innerHTML = '<option value="">טוען…</option>';
   const res = await TS.api('teachers.list', { school: id });
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
-  /* אותו אדם בבגרות ובגמר הוא שתי שורות ואדם אחד — מוצג פעם אחת,
-     כמו בכל שאר המסכים. הכניסה נעשית לשורה הראשונה שלו. */
+  // רק מורי בית הספר שנבחר — גם אם השרת או מטמון ישן החזירו יותר
+  gateSchoolRows = (res && res.data ? res.data : []).filter(t =>
+    String(t.school || '') === String(id) && String(t.name || '').trim());
+  const subjects = [...new Set(gateSchoolRows.map(t => String(t.subject || '').trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'he'));
+  if (!gateSchoolRows.length) {
+    subjSel.innerHTML = '<option value="">בבית הספר הזה עוד לא הוזנו מורים</option>';
+    return;
+  }
+  subjSel.disabled = false;
+  subjSel.innerHTML = '<option value="">בחרו מקצוע</option>' +
+    subjects.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  subjSel.onchange = onGateSubject;
+  if (subjects.length === 1) { subjSel.value = subjects[0]; onGateSubject(); }
+}
+
+function onGateSubject() {
+  const subj = $g('tg-subject').value;
+  const nameSel = $g('tg-name');
+  if (!subj) {
+    gateTeachers = [];
+    nameSel.disabled = true;
+    nameSel.innerHTML = '<option value="">קודם בוחרים מקצוע</option>';
+    return;
+  }
+  /* אותו אדם בבגרות ובגמר הוא שתי שורות ואדם אחד — מוצג פעם אחת.
+     הכניסה נעשית לשורה הראשונה שלו. */
   const seen = {};
-  gateTeachers = (res && res.data ? res.data : []).filter(t => {
-    // רק מורי בית הספר שנבחר — גם אם השרת או מטמון ישן החזירו יותר
-    if (String(t.school || '') !== String(id)) return false;
+  gateTeachers = gateSchoolRows.filter(t => {
+    if (String(t.subject || '').trim() !== subj) return false;
     const k = String(t.name || '').trim();
-    if (!k || seen[k]) return false;
+    if (seen[k]) return false;
     seen[k] = 1;
     return true;
   }).sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
   nameSel.disabled = !gateTeachers.length;
-  nameSel.innerHTML = gateTeachers.length
-    ? '<option value="">בחרו את שמכם</option>' +
-      gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}${t.subject ? ' · ' + esc(t.subject) : ''}</option>`).join('')
-    : '<option value="">בבית הספר הזה עוד לא הוזנו מורים</option>';
+  nameSel.innerHTML = '<option value="">בחרו את שמכם</option>' +
+    gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
   // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב
   nameSel.onchange = () => {
     const t = gateTeachers.find(x => String(x.id) === nameSel.value);
@@ -155,7 +184,7 @@ async function onGateEnter() {
   if (!r || !r.ok) return gateMsg(gateErr(r));
 
   $g('tg-step2').hidden = false;
-  ['tg-school', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = true; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = true; });
   btn.hidden = true;
   gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.', true);
   $g('tg-code').focus();
@@ -188,7 +217,7 @@ async function onGateVerify() {
 
 async function onGateResend() {
   $g('tg-step2').hidden = true;
-  ['tg-school', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = false; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = false; });
   $g('tg-enter').hidden = false;
   $g('tg-code').value = '';
   gateMsg('');
@@ -237,7 +266,8 @@ async function load() {
     scopePromise || Promise.resolve(null),
     qPromise || TS.api('questions.list', { teacherId })
   ]);
-  applyScope(scopeRes);
+  // תקלה בעיבוד לא משאירה את הודעת הטעינה על המסך לתמיד
+  try { applyScope(scopeRes); } catch (e) { console.error("applyScope", e); }
   showLoading(false);
   questions = (qRes && qRes.data) || [];
   renderQuestions();
@@ -345,8 +375,24 @@ function renderNext(scope, slug) {
   document.getElementById('next-meta').textContent = meta.join(' · ');
   const soon = document.getElementById('next-soon');
   const diff = Math.round((new Date(first) - new Date(today)) / 86400000);
-  if (isToday) { soon.hidden = false; soon.textContent = 'היום! הכפתור "אני כאן" מופיע למטה בזמן ההדרכה'; }
+  if (isToday) { soon.hidden = false; soon.textContent = 'היום! רושמים נוכחות עם הקוד שמוצג במפגש'; }
   else if (diff > 0 && diff <= 7) { soon.hidden = false; soon.textContent = diff === 1 ? 'מחר' : 'בעוד ' + diff + ' ימים'; }
+  // שורה לכל מועד, ולידה רישום הנוכחות — פעיל ביום ההדרכה עצמו
+  const row = myRowToday(scope, slug);
+  document.getElementById('next-sessions').innerHTML = days.filter(d => d >= today).map(d => {
+    const act = d === today
+      ? (row ? `<span class="ns-done">${esc(rowText(row))}</span>`
+             : '<button type="button" class="btn btn-primary ns-btn ns-act" data-go-here>רישום נוכחות</button>')
+      : `<span class="ns-wait">הרישום ייפתח ביום ההדרכה</span>`;
+    return `<div class="ns-row"${d === today ? ' data-today="1"' : ''}><span class="ns-when">${esc(dateLbl(d))}</span>${act}</div>`;
+  }).join('');
+  document.querySelectorAll('[data-go-here]').forEach(b => b.onclick = () => {
+    const card = document.getElementById('th-card');
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const inp = document.getElementById('th-code');
+    if (inp) setTimeout(() => inp.focus(), 350);
+  });
   sec.hidden = false;
 }
 
@@ -405,64 +451,84 @@ function renderGroup(g) {
 /* "אני כאן" — מוצג רק ביום שבו לקבוצה של המורה יש מועד הדרכה.
    האם הרישום באמת פתוח נקבע בשרת (meetOpenFor_), ולכן לחיצה ביום שבו
    המדריכה עוד לא פתחה מקבלת הודעה ברורה ולא כישלון סתום. */
+/* ▸ רישום נוכחות מדף המורה (24.9.26, בקשת מיטל): ביום ההדרכה המורה מקליד/ה
+   את הקוד בן 4 הספרות שהמדריכ/ה מציג/ה במפגש — אותו קוד ואותו checkin.submit
+   של דף mifgash/, רק בלי לבחור שוב בית ספר ושם. הרישום ממתין לאישור המדריכ/ה.
+   מחליף את "אני כאן" בלי קוד: הקוד מוכיח שהמורה באמת במפגש. */
+function myRowToday(scope, guideSlug) {
+  const today = String(scope.today || '').slice(0, 10);
+  const open = (scope.meetings || []).filter(m => String(m.guideSlug) === String(guideSlug) &&
+    (m.open || String(m.date).slice(0, 10) === today));
+  const ids = new Set(open.map(m => String(m.id)));
+  return (scope.rows || []).find(r => ids.has(String(r.meetingId)) && String(r.teacherId) === String(teacher.id));
+}
+function isSessionDay(scope, guideSlug) {
+  const today = String(scope.today || '').slice(0, 10);
+  if ((scope.meetings || []).some(m => String(m.guideSlug) === String(guideSlug) &&
+      (m.open || String(m.date).slice(0, 10) === today))) return true;
+  return planMeetings(guideSlug).some(m => planDays(m).indexOf(today) >= 0);
+}
+function rowText(row) {
+  return row.status === 'present' ? 'הנוכחות שלך אושרה ✓'
+    : row.status === 'pending' ? 'נרשמת ✓ ממתין לאישור המדריכ/ה.'
+    : 'המדריכ/ה סימנה אותך במפגש הזה.';
+}
+
 function renderHere(scope, guideSlug) {
   const card = document.getElementById('th-card');
-  if (!card || !guideSlug) return;
-  const today = String(scope.today || '').slice(0, 10);
-  const mine = (scope.meetings || []).filter(m =>
-    String(m.guideSlug) === String(guideSlug) && String(m.date).slice(0, 10) === today);
-  if (!mine.length) return;                 // אין הדרכה היום — הכרטיס לא מופיע
-
-  // כבר סומן/נרשם במפגש הזה — מראים את המצב במקום כפתור
-  const ids = new Set(mine.map(m => String(m.id)));
-  const row = (scope.rows || []).find(r =>
-    ids.has(String(r.meetingId)) && String(r.teacherId) === String(teacher.id));
+  if (!card || !guideSlug || !isSessionDay(scope, guideSlug)) return;   // אין הדרכה היום — אין כרטיס
+  const mine = (scope.meetings || []).filter(m => String(m.guideSlug) === String(guideSlug) && m.open);
+  const topic = (mine[0] && mine[0].topic) || '';
   card.hidden = false;
   document.getElementById('th-when').textContent =
-    'היום מתקיימת ההדרכה שלך' + (mine[0].topic ? ' · ' + mine[0].topic : '');
-  if (row) return hereDone(row.status === 'present'
-    ? 'הנוכחות שלך אושרה ✓'
-    : row.status === 'pending' ? 'נרשמת — ממתין לאישור המדריכ/ה.'
-    : 'המדריכ/ה סימנה אותך במפגש הזה.');
+    'היום מתקיימת ההדרכה שלך' + (topic ? ' · ' + topic : '');
+  const row = myRowToday(scope, guideSlug);
+  if (row) return hereDone(rowText(row));
 
+  const input = document.getElementById('th-code');
   const btn = document.getElementById('th-btn');
-  // הרישום נפתח ע"י המדריכה; עד אז אומרים את זה מראש ולא נותנים ללחוץ לריק
-  if (!mine.some(m => m.open)) {
-    btn.disabled = true;
-    const msg = document.getElementById('th-msg');
-    msg.hidden = false;
-    msg.className = 'th-msg';
-    msg.textContent = 'הרישום ייפתח כשהמדריכ/ה תתחיל את ההדרכה. רעננו את הדף אז.';
-    return;
-  }
+  const msg = document.getElementById('th-msg');
+  const say = (text, cls) => { msg.hidden = !text; msg.className = 'th-msg' + (cls ? ' ' + cls : ''); msg.textContent = text || ''; };
+  if (!mine.length) say('הרישום ייפתח כשהמדריכ/ה תתחיל את ההדרכה ותציג את הקוד.', '');
+  input.oninput = () => {
+    input.value = input.value.replace(/\D/g, '').slice(0, 4);
+    btn.disabled = input.value.length !== 4;
+  };
+  input.onkeydown = e => { if (e.key === 'Enter' && !btn.disabled) btn.click(); };
+  let sending = false;
   btn.onclick = async () => {
-    btn.disabled = true;
-    btn.textContent = 'רושם…';
-    const r = await TS.apiPost('teacher.here', { k: teacherKey, g: guideSlug });
+    const code = input.value.replace(/\D/g, '');
+    if (code.length !== 4 || sending) return;
+    sending = true; btn.disabled = true; btn.textContent = 'רושם…';
+    const r = await TS.apiPost('checkin.submit', { g: guideSlug, teacherId: String(teacher.id), code: code });
+    sending = false; btn.textContent = 'רישום נוכחות';
     if (r && r.ok) {
-      return hereDone(r.data.already
-        ? 'כבר נרשמת להדרכה הזו.'
-        : 'נרשמת ✓ ממתין לאישור המדריכ/ה.');
+      renderSessionDone();
+      return hereDone(r.data && r.data.duplicate ? 'כבר נרשמת להדרכה הזו ✓' : 'נרשמת ✓ הנוכחות תאושר בסיום ההדרכה.');
     }
-    btn.disabled = false;
-    btn.textContent = 'אני כאן ✓';
-    const msg = document.getElementById('th-msg');
-    msg.hidden = false;
-    msg.className = 'th-msg err';
-    msg.textContent = (r && r.error === 'closed')
-      ? 'הרישום עדיין לא נפתח. המדריכ/ה פותחת אותו בתחילת ההדרכה.'
-      : 'תקלה רגעית. נסו שוב בעוד רגע.';
+    const err = r && r.error;
+    say(err === 'closed' ? 'הרישום עוד לא נפתח או כבר נסגר. הקוד מוצג במפגש כשהמדריכ/ה פותח/ת את הרישום.'
+      : err === 'bad_code' ? 'הקוד לא נכון או שכבר התחלף. מקלידים את הקוד שמופיע עכשיו במפגש.'
+      : err === 'locked' ? 'יותר מדי ניסיונות. אפשר לנסות שוב בעוד 10 דקות, או לפנות למדריכ/ה בצ\'אט.'
+      : 'לא הצלחנו לרשום כרגע. אפשר לנסות שוב.', 'err');
+    if (err === 'bad_code') { input.value = ''; input.focus(); }
+    btn.disabled = input.value.length !== 4;
   };
 }
 
 function hereDone(text) {
-  const btn = document.getElementById('th-btn');
-  if (btn) btn.hidden = true;
+  const form = document.getElementById('th-form');
+  if (form) form.hidden = true;
   const msg = document.getElementById('th-msg');
   if (!msg) return;
   msg.hidden = false;
   msg.className = 'th-msg ok';
   msg.textContent = text;
+}
+function renderSessionDone() {
+  document.querySelectorAll('.ns-row[data-today="1"] .ns-act').forEach(el => {
+    el.outerHTML = '<span class="ns-done">נרשמת ✓</span>';
+  });
 }
 
 /* יחידת התצוגה היא חודש, כמו בכל המערכת: בכל חודש הדרכה אחת בשני מועדים,

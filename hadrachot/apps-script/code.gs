@@ -3656,6 +3656,33 @@ function checkinSubmit(p) {
 // קריאה בלבד. בכוונה לא ב-PUBLIC_ACTIONS: כשתידלק AUTH_ENFORCED הדוח ידרוש
 // התחברות כמו שאר הדשבורדים. guides=<slug,slug> מצמצם למדריכים של מפקח.ת.
 // המכנה (מי שייך לאיזו קבוצה) מחושב בדפדפן מ-guides.js — השרת לא מכיר אותו.
+// קריאת טאב מהמטמון (24.9.26) — לנתוני המפגשים שכל מבט טוען (meet.report / meet.scope).
+// קריאת הגיליון היא רוב זמן הבקשה; כך בית ספר אחד ממלא את המטמון לכולם.
+// המפתח כולל את teachersGen_, וכל כתיבה דרך ה-API מחליפה אותו — אז נוכחות,
+// פתיחת רישום או סיכום חדשים מופיעים מיד. תאריכים נשמרים כמחרוזת בשעון ישראל
+// (toIso_), בדיוק מה ש-meetDate_ היה מחשב מהערך המקורי. עריכה ידנית בגיליון —
+// אחרי 5 דקות לכל היותר.
+const SHEET_CACHE_TTL_ = 300;
+function readAllCachedIso_(name) {
+  let cache, key;
+  try {
+    cache = CacheService.getScriptCache();
+    key = 'ra|' + teachersGen_() + '|' + name;
+    const hit = readCacheChunked_(cache, key);
+    if (hit) return hit;
+  } catch (e) { cache = null; }
+  const rows = readAll(name).map(function (r) {
+    const o = {};
+    Object.keys(r).forEach(function (k) {
+      const v = r[k];
+      o[k] = Object.prototype.toString.call(v) === '[object Date]' ? toIso_(v) : v;
+    });
+    return o;
+  });
+  if (cache) writeCacheChunked_(cache, key, rows, SHEET_CACHE_TTL_);
+  return rows;
+}
+
 function meetReport(p) {
   ensureTab_('meetings');
   ensureTab_('meeting_attendance');
@@ -3663,7 +3690,7 @@ function meetReport(p) {
   const inScope = r => !slugs.length || slugs.indexOf(String(r.guideSlug || '')) >= 0;
   const now = Date.now();
 
-  const rows = readAll('meeting_attendance').filter(inScope).map(r => ({
+  const rows = readAllCachedIso_('meeting_attendance').filter(inScope).map(r => ({
     meetingId: String(r.meetingId || ''), guideSlug: String(r.guideSlug || ''),
     date: meetDate_(r.date), teacherId: String(r.teacherId || ''),
     teacherName: r.teacherName || '', schoolName: r.schoolName || '',
@@ -3679,7 +3706,7 @@ function meetReport(p) {
     if (r.markedVia === 'zoom') c.zoom++;
   });
 
-  const meetings = readAll('meetings').filter(inScope).map(m => Object.assign(meetPublic_(m, now), {
+  const meetings = readAllCachedIso_('meetings').filter(inScope).map(m => Object.assign(meetPublic_(m, now), {
     guideSlug: String(m.guideSlug || ''), guideName: m.guideName || '',
     openedAt: String(toIso_(m.openedAt) || ''),
     counts: counts[m.id] || { present: 0, absent: 0, pending: 0, gaps: 0, zoom: 0 }
@@ -3721,7 +3748,7 @@ function meetScope(p) {
   const networkId = String(p.network || '').replace(/^net_/, '').trim();
   if (!schoolId && !networkId) return { ok: false, error: 'missing_scope' };
 
-  const teachers = readAll('teachers').filter(function (t) {
+  const teachers = readAllCachedIso_('teachers').filter(function (t) {
     if (schoolId) return String(t.school || '').trim() === schoolId;
     return String(t.network || '').replace(/^net_/, '').trim() === networkId;
   });
@@ -3737,7 +3764,7 @@ function meetScope(p) {
   if (!full.ok) return full;
   const data = full.data;
   data.rows = data.rows.filter(function (r) { return ids[String(r.teacherId || '')]; });
-  data.hours = readAll('guide_hours').filter(function (h) {
+  data.hours = readAllCachedIso_('guide_hours').filter(function (h) {
     return schoolNames[meetNormName_(h.schoolName)];
   }).map(function (h) {
     return {
