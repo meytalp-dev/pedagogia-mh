@@ -30,9 +30,13 @@ function rememberIdentity(o) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) { /* לא חוסם כניסה */ }
 }
 
-let teacherKey = (savedIdentity() || {}).k || '';
+/* קישור עם ?id= של מורה אחר/ת גובר על הזיהוי השמור בדפדפן (24.9.26) —
+   אחרת מי שנכנס/ה פעם אחת כמורה א׳ ופותח/ת קישור של מורה ב׳ רואה שוב את א׳. */
+const urlTeacherId_ = TS.urlParam('id', '');
+const savedForOther_ = urlTeacherId_ && String((savedIdentity() || {}).id || '') !== urlTeacherId_;
+let teacherKey = savedForOther_ ? '' : ((savedIdentity() || {}).k || '');
 let teacherId = teacherKey ? (savedIdentity() || {}).id
-  : (TS.urlParam('id', '') || (savedIdentity() || {}).id || '');
+  : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
 let attendance = [];
 let questions = [];
@@ -200,7 +204,7 @@ async function load() {
   /* מהירות (24.9.26): כל בקשה ל-Apps Script לוקחת 3 עד 30 שניות, ועד היום הן
      נשלחו אחת אחרי השנייה. עכשיו השאלות ונתוני המפגשים יוצאים יחד עם פרטי
      המורה (בית הספר שמור מהכניסה), והמסך מראה "טוען" במקום להיות ריק. */
-  const saved = savedIdentity() || {};
+  const saved = savedForOther_ ? {} : (savedIdentity() || {});
   showLoading(true);
   if (saved.name) {
     const hello = document.getElementById('hello');
