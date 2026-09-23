@@ -340,6 +340,8 @@
     if (sig === allSig) return;
     allSig = sig;
     window.MEET_ALL = { today: d.today || S.today, meetings: d.meetings || [], rows: d.allRows };
+    // דוח השעות למונדיי (space.js) בונה את השורות הקבוצתיות מכאן
+    if (typeof window.SPACE_onMeetings === 'function') window.SPACE_onMeetings();
     if (typeof window.DASH_onMeetings === 'function') window.DASH_onMeetings();
   }
   function schedulePoll() {

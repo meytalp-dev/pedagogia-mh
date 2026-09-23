@@ -226,6 +226,27 @@
   .h-when { font-size:12px; color:var(--text-muted); white-space:nowrap; }
   .h-meta { font-size:12px; color:var(--text-2); margin-top:2px; }
   .h-topic { font-size:13.5px; font-weight:600; margin-top:6px; }
+  /* פעילות אחרת + דוח שעות למונדיי (23.9.26, שלב ד') */
+  .space-grid + .space-grid, .space-grid + .space-card { margin-top:18px; }
+  .rep-head { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:6px 0 10px; }
+  .rep-head .select { width:auto; min-width:160px; }
+  .rep-total { margin-inline-start:auto; background:#E6F0F4; color:var(--primary,#256A8A); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; }
+  .rep-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
+  .rep-table { width:100%; border-collapse:collapse; font-size:13px; min-width:760px; }
+  .rep-table th { text-align:right; font-size:12px; color:var(--text-2); background:var(--surface-soft); padding:8px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
+  .rep-table td { padding:5px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .rep-table tr:last-child td { border-bottom:none; }
+  .rep-table .input, .rep-table .select { padding:5px 7px; font-size:13px; width:100%; box-sizing:border-box; min-width:0; }
+  .rep-table .name .input { min-width:220px; }
+  .rep-table .t .input { width:82px; direction:ltr; text-align:center; }
+  .rep-table .d .input { width:130px; direction:ltr; }
+  .rep-table .h { width:56px; text-align:center; font-weight:700; white-space:nowrap; }
+  .rep-table .kind { font-size:11px; color:var(--text-3); white-space:nowrap; }
+  .rep-table tr.proposed td { background:#FFFBEB; }
+  .rep-table .prop { display:inline-block; font-size:10.5px; color:#8a5a00; background:#FFF3DC; border-radius:999px; padding:0 7px; margin-inline-start:4px; white-space:nowrap; }
+  .rep-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+  .rep-legend { font-size:12px; color:var(--text-2); line-height:1.6; margin-top:8px; }
+  .rep-empty { padding:22px; text-align:center; color:var(--text-2); }
   .h-notes { font-size:13px; color:var(--text-2); line-height:1.7; white-space:pre-wrap; word-break:break-word; margin-top:3px; }
   .h-notes.none { color:var(--text-3,#8b9aa3); font-style:italic; }
   .h-by { color:#6b4f99; }
@@ -598,7 +619,7 @@
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
       <button class="tab-btn" data-tab="meet" id="tab-btn-meet">נוכחות במפגשים<span class="n zero" id="meet-count">0</span></button>
       <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
-      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות פרטניות<span class="n zero" id="hours-count">0</span></button>
+      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות ודוח למונדיי<span class="n zero" id="hours-count">0</span></button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
       <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
@@ -732,6 +753,83 @@
           <div id="hours-list"><div class="empty" style="padding:18px;">טוען...</div></div>
         </section>
       </div>
+
+      <!-- פעילות אחרת (23.9.26) — מה שמדווח במונדיי ואינו הדרכה: השתלמות, ישיבה,
+           הכנת שנה, מענה למורים. נרשם כאן כדי שדוח השעות יהיה שלם. -->
+      <div class="space-grid">
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg><span id="act-form-title">פעילות אחרת</span></h2>
+          <div class="space-hint">מה שאת מדווחת במונדיי ואינו הדרכה קבוצתית או פרטנית: השתלמות, ישיבה, הכנת שנה, מענה למורים. נכנס לדוח השעות למטה.</div>
+          <form id="act-form" class="hours-form">
+            <div class="full">
+              <label for="a-name">שם הפעילות *</label>
+              <input class="input" id="a-name" maxlength="200" placeholder="למשל: השתלמות מדריכות, מענה לשאלות מורים, הכנת שנה הבאה">
+            </div>
+            <div>
+              <label for="a-date">תאריך *</label>
+              <input class="input" id="a-date" type="date">
+            </div>
+            <div>
+              <label for="a-location">מיקום</label>
+              <select class="select" id="a-location">
+                <option value="זום">זום</option>
+                <option value="טלפון">טלפון</option>
+                <option value="מחשב">מחשב</option>
+                <option value="פרונטלי">פרונטלי</option>
+              </select>
+            </div>
+            <div>
+              <label for="a-start">שעת התחלה</label>
+              <input class="input" id="a-start" type="time" step="900">
+            </div>
+            <div>
+              <label for="a-end">שעת סיום</label>
+              <input class="input" id="a-end" type="time" step="900">
+            </div>
+            <div>
+              <label for="a-hours">שעות (אם אין שעות התחלה/סיום)</label>
+              <input class="input" id="a-hours" type="number" min="0.25" step="0.25" placeholder="מחושב מהשעות">
+            </div>
+            <div class="full">
+              <label for="a-notes">הערה</label>
+              <input class="input" id="a-notes" maxlength="1000">
+            </div>
+            <div class="full btn-row">
+              <button type="submit" class="btn btn-primary" id="a-submit">הוספה</button>
+              <button type="button" class="btn btn-secondary" id="a-cancel" hidden>ביטול העדכון</button>
+            </div>
+          </form>
+          <div class="ws-status" id="act-status"></div>
+        </section>
+
+        <section class="space-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>הפעילויות האחרות שלי</h2>
+          <div id="act-list"><div class="empty" style="padding:18px;">טוען...</div></div>
+        </section>
+      </div>
+
+      <!-- דוח שעות למונדיי (שלב ד') — הטבלה בפורמט שורת המשנה של לוח "דוחות ביצוע".
+           קביעות מיטל 23.9.26: מיקום ברירת מחדל זום · השעות מוצעות והמדריכה מתקנת כאן ·
+           הדוח כולל הדרכות קבוצתיות, פרטניות ופעילות אחרת. אין כתיבה למונדיי — העתקה/Excel. -->
+      <section class="space-card" id="rep-card">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg>דוח שעות למונדיי</h2>
+        <div class="space-hint">כל מה שעשית החודש, בפורמט של שורות המשנה בלוח "דוחות ביצוע": פעילות · תאריך · שעת התחלה · מיקום · שעת סיום. השורות המסומנות בצהוב הן הצעה — תקני כאן ואז העתיקי.</div>
+        <div class="rep-head">
+          <label for="rep-month" style="font-size:12.5px; font-weight:600; color:var(--text-muted);">חודש</label>
+          <select class="select" id="rep-month"></select>
+          <button type="button" class="btn btn-secondary" id="rep-refresh">רענון</button>
+          <span class="rep-total" id="rep-total" hidden></span>
+        </div>
+        <div class="rep-wrap"><table class="rep-table" id="rep-table"><tbody id="rep-body"><tr><td class="rep-empty">בוחרים חודש</td></tr></tbody></table></div>
+        <div class="rep-actions">
+          <button type="button" class="btn btn-primary" id="rep-copy">העתקת הטבלה להדבקה במונדיי</button>
+          <button type="button" class="btn btn-secondary" id="rep-csv">הורדה ל-Excel</button>
+          <span class="ws-status" id="rep-status" style="margin:0;"></span>
+        </div>
+        <div class="rep-legend">
+          <b>מה מוצע ומה בטוח:</b> הדרכה קבוצתית — התאריך והנושא מהנוכחות שסימנת, שעת ההתחלה מהתוכנית השנתית, והמשך מ"סיכום ההדרכה" (אם לא מילאת — מוצע). הדרכה פרטנית — התאריך והמשך מהרישום שלך, שעת ההתחלה מוצעת. פעילות אחרת — כפי שרשמת. המיקום ברירת מחדל זום.
+        </div>
+      </section>
     </div>
 
     <div class="tab-pane" id="tab-trainings">
@@ -888,7 +986,8 @@
 <script src="../assets/plans.js?v=20260916c"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="dashboard.js?v=20260920d"></script>
-<script src="space.js?v=20260914b"></script>
+<script src="../assets/hours-report.js?v=20260923"></script>
+<script src="space.js?v=20260923"></script>
 <script src="meetings.js?v=20260922"></script>
 </body>
 </html>

@@ -24,7 +24,7 @@
 // ============================================================
 
 const TABS = ['networks','schools','teachers','trainings','attendance','pd','questions','knowledge','feedback','alerts','users','subjects','audit_log','contacts',
-              'guide_files','guide_messages','guide_hours','meetings','meeting_attendance','link_views'];
+              'guide_files','guide_messages','guide_hours','guide_activities','meetings','meeting_attendance','link_views'];
 
 const SCHEMA = {
   networks:   ['id','name','color','contactEmail','inviteCode'],
@@ -53,6 +53,9 @@ const SCHEMA = {
   guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
+  // פעילות אחרת של המדריכה (23.9.26) — מה שאינו הדרכה קבוצתית/פרטנית אבל מדווח
+  // במונדיי של מרמנט (השתלמות, ישיבה, הכנה). start/end כ-HH:MM, location = זום/טלפון/מחשב/פרונטלי.
+  guide_activities: ['id','guideSlug','guideName','name','date','start','end','location','hours','notes','createdBy','createdAt'],
   // נוכחות במפגשי ההדרכה (14.9.26) — ראו את המקטע בסוף הקובץ.
   // בכוונה לא trainings/attendance: הדוחות הישנים מחשבים כל הדרכה מול כל מורי
   // המקצוע בכל המגזרים, ומפגש של קבוצה אחת היה מסמן את כל השאר "לא נכחו".
@@ -957,6 +960,9 @@ function handleRequest(params) {
       case 'guide.hours.add':     result = guideHoursAdd(params); break;
       case 'guide.hours.update':  result = guideHoursUpdate(params); break;
       case 'guide.hours.delete':  result = guideHoursDelete(params); break;
+      case 'guide.activity.add':    result = guideActivityAdd(params); break;
+      case 'guide.activity.update': result = guideActivityUpdate(params); break;
+      case 'guide.activity.delete': result = guideActivityDelete(params); break;
 
       // נוכחות במפגשי ההדרכה (14.9.26)
       case 'meet.state':          result = meetState(params); break;
@@ -2878,9 +2884,15 @@ function guideWorkspace(p) {
   const files = readAll('guide_files').filter(inSlugs);
   const messages = readAll('guide_messages').filter(inSlugs);
   const hours = readAll('guide_hours').filter(inSlugs);
+  const activities = sheet('guide_activities') ? readAll('guide_activities').filter(inSlugs) : [];
 
   const bucket = () => slugs.reduce((acc, s) => { acc[s] = []; return acc; }, {});
-  const out = { files: bucket(), messages: bucket(), hours: bucket() };
+  const out = { files: bucket(), messages: bucket(), hours: bucket(), activities: bucket() };
+  activities.forEach(a => out.activities[a.guideSlug].push({
+    id: a.id, name: a.name || '', date: toIso_(a.date), start: actTime_(a.start), end: actTime_(a.end),
+    location: a.location || '', hours: Number(a.hours) || 0, notes: a.notes || '',
+    createdBy: a.createdBy || '', createdAt: toIso_(a.createdAt)
+  }));
 
   files.forEach(f => out.files[f.guideSlug].push({
     id: f.id, fileName: f.fileName, fileUrl: f.fileUrl, mimeType: f.mimeType,
@@ -2903,6 +2915,7 @@ function guideWorkspace(p) {
   slugs.forEach(s => {
     out.files[s].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
     out.hours[s].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    out.activities[s].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     out.messages[s].sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
   });
 
@@ -3054,6 +3067,67 @@ function guideHoursUpdate(p) {
 function guideHoursDelete(p) {
   if (!p.id) return { ok: false, error: 'missing_id' };
   const ok = deleteRowById_('guide_hours', p.id);
+  return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
+}
+
+// ---------- פעילות אחרת (23.9.26) ----------
+// מה שהמדריכה מדווחת במונדיי ואינו הדרכה: השתלמות, ישיבה, הכנת שנה, מענה
+// למורים. נרשם כאן כדי שדוח השעות למונדיי יהיה שלם ולא ידרוש הקלדה כפולה.
+// אותה הרשאה כמו השעות הפרטניות (רישום פתוח לפי slug, בלי מפתח).
+// שעה נשמרת כטקסט HH:MM עם גרש — אחרת Sheets הופך אותה לתא זמן.
+function actTime_(v) {
+  if (v instanceof Date) return Utilities.formatDate(v, MEET_TZ, 'HH:mm');
+  const m = String(v || '').trim().match(/^'?(\d{1,2}):(\d{2})/);
+  return m ? (m[1].length === 1 ? '0' : '') + m[1] + ':' + m[2] : '';
+}
+function actHours_(start, end, given) {
+  const g = Number(given);
+  if (isFinite(g) && g > 0) return Math.round(g * 4) / 4;
+  const a = actTime_(start), b = actTime_(end);
+  if (!a || !b) return 0;
+  const mins = (Number(b.slice(0, 2)) * 60 + Number(b.slice(3))) - (Number(a.slice(0, 2)) * 60 + Number(a.slice(3)));
+  return mins > 0 ? Math.round(mins / 15) / 4 : 0;
+}
+function guideActivityAdd(p) {
+  const slug = String(p.guide || '').trim();
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const name = meetStr_(p.name, 200);
+  if (!name) return { ok: false, error: 'missing_name' };
+  const date = meetDate_(p.date);
+  if (!date) return { ok: false, error: 'bad_date' };
+  ensureTab_('guide_activities');
+  const start = actTime_(p.start), end = actTime_(p.end);
+  const obj = {
+    id: newId('ga'), guideSlug: slug, guideName: meetStr_(p.guideName, 80),
+    name: name, date: "'" + date,
+    start: start ? "'" + start : '', end: end ? "'" + end : '',
+    location: meetStr_(p.location, 40), hours: actHours_(start, end, p.hours),
+    notes: meetStr_(p.notes, 1000), createdBy: meetStr_(p.byName, 80),
+    createdAt: new Date().toISOString()
+  };
+  appendRow('guide_activities', obj);
+  obj.date = date; obj.start = start; obj.end = end;
+  return { ok: true, data: obj };
+}
+function guideActivityUpdate(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const updates = {};
+  if (p.name !== undefined) updates.name = meetStr_(p.name, 200);
+  if (p.location !== undefined) updates.location = meetStr_(p.location, 40);
+  if (p.notes !== undefined) updates.notes = meetStr_(p.notes, 1000);
+  if (p.date !== undefined) { const d = meetDate_(p.date); if (d) updates.date = "'" + d; }
+  if (p.start !== undefined) { const t = actTime_(p.start); updates.start = t ? "'" + t : ''; }
+  if (p.end !== undefined) { const t = actTime_(p.end); updates.end = t ? "'" + t : ''; }
+  if (p.hours !== undefined || p.start !== undefined || p.end !== undefined) {
+    const cur = readAll('guide_activities').find(a => String(a.id) === String(p.id)) || {};
+    updates.hours = actHours_(p.start !== undefined ? p.start : cur.start, p.end !== undefined ? p.end : cur.end, p.hours);
+  }
+  const ok = updateRowById('guide_activities', p.id, updates);
+  return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
+}
+function guideActivityDelete(p) {
+  if (!p.id) return { ok: false, error: 'missing_id' };
+  const ok = deleteRowById_('guide_activities', p.id);
   return ok ? { ok: true, data: { id: p.id } } : { ok: false, error: 'not_found' };
 }
 

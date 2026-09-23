@@ -19,7 +19,7 @@
   const MAX_FILE_BYTES = 8 * 1024 * 1024;   // זהה לתקרה בצד השרת
   const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 
-  let data = { files: [], messages: [], hours: [] };
+  let data = { files: [], messages: [], hours: [], activities: [] };
   let loadFailed = false;
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -31,6 +31,8 @@
     document.getElementById('gmsg-send').addEventListener('click', sendMessage);
     initUpload();
     initHours();
+    initActivities();
+    initReport();
     loadSpace();
   });
 
@@ -87,7 +89,9 @@
       data = {
         files: (res.data.files && res.data.files[SLUG]) || [],
         messages: (res.data.messages && res.data.messages[SLUG]) || [],
-        hours: (res.data.hours && res.data.hours[SLUG]) || []
+        hours: (res.data.hours && res.data.hours[SLUG]) || [],
+        // שרת ישן בלי פעילויות — רשימה ריקה, לא שגיאה
+        activities: (res.data.activities && res.data.activities[SLUG]) || []
       };
     } else {
       loadFailed = true;
@@ -103,6 +107,8 @@
     renderMessages();
     renderFiles();
     renderHours();
+    renderActivities();
+    renderReport();
   }
 
   function failBox() {
@@ -499,6 +505,229 @@
       if (editingHoursId === delId) resetHoursForm();
       await loadSpace();
     }));
+  }
+
+  /* ================================================================
+     פעילות אחרת (23.9.26, שלב ד') — מה שמדווח במונדיי ואינו הדרכה.
+     אותו דפוס כמו השעות הפרטניות: טופס, רשימה, עדכון ומחיקה.
+     ================================================================ */
+  let editingActId = '';
+  function initActivities() {
+    const form = document.getElementById('act-form');
+    if (!form) return;
+    form.addEventListener('submit', e => { e.preventDefault(); saveActivity(); });
+    document.getElementById('a-cancel').addEventListener('click', () => {
+      resetActForm();
+      document.getElementById('act-status').textContent = '';
+    });
+    document.getElementById('a-date').value = todayStr();
+  }
+  function readActForm() {
+    return {
+      name: val('a-name'), date: document.getElementById('a-date').value,
+      start: document.getElementById('a-start').value, end: document.getElementById('a-end').value,
+      location: document.getElementById('a-location').value,
+      hours: document.getElementById('a-hours').value, notes: val('a-notes')
+    };
+  }
+  async function saveActivity() {
+    const f = readActForm();
+    const status = document.getElementById('act-status');
+    if (!f.name) { status.textContent = 'חסר שם הפעילות.'; document.getElementById('a-name').focus(); return; }
+    if (!f.date) { status.textContent = 'חסר תאריך.'; return; }
+    if (!(Number(f.hours) > 0) && !(f.start && f.end && f.end > f.start)) {
+      status.textContent = 'צריך שעת התחלה וסיום, או מספר שעות.'; return;
+    }
+    const btn = document.getElementById('a-submit');
+    const id = editingActId;
+    btn.disabled = true;
+    status.textContent = 'שומרת...';
+    const res = id
+      ? await TS.apiPost('guide.activity.update', Object.assign({ id: id }, f))
+      : await TS.apiPost('guide.activity.add', Object.assign({
+          guide: SLUG, guideName: GUIDE_CFG.name || '', byName: GUIDE_CFG.name || ''
+        }, f));
+    await loadSpace();
+    const same = a => String(a.name || '') === f.name && String(a.date || '').slice(0, 10) === f.date &&
+      String(a.start || '') === f.start && String(a.end || '') === f.end;
+    const landed = (res && res.ok) ||
+      (id ? data.activities.some(a => a.id === id && same(a)) : data.activities.some(same));
+    btn.disabled = false;
+    if (landed) {
+      resetActForm();
+      status.textContent = id ? 'העדכון נשמר ✓' : 'הפעילות נשמרה ✓ והיא כבר בדוח למטה';
+      renderActivities();
+      renderReport();
+    } else {
+      status.textContent = 'לא נשמר. נסי שוב בעוד רגע.';
+    }
+  }
+  function resetActForm() {
+    const wasEditing = !!editingActId;
+    editingActId = '';
+    ['a-name', 'a-start', 'a-end', 'a-hours', 'a-notes'].forEach(i => document.getElementById(i).value = '');
+    if (wasEditing) { document.getElementById('a-date').value = todayStr(); document.getElementById('a-location').value = 'זום'; }
+    document.getElementById('act-form-title').textContent = 'פעילות אחרת';
+    document.getElementById('a-submit').textContent = 'הוספה';
+    document.getElementById('a-cancel').hidden = true;
+    document.querySelectorAll('.h-row.editing[data-arow]').forEach(r => r.classList.remove('editing'));
+  }
+  function startEditActivity(id) {
+    const a = data.activities.find(x => x.id === id);
+    if (!a) return;
+    editingActId = id;
+    document.getElementById('a-name').value = a.name || '';
+    document.getElementById('a-date').value = String(a.date || '').slice(0, 10);
+    document.getElementById('a-start').value = a.start || '';
+    document.getElementById('a-end').value = a.end || '';
+    document.getElementById('a-location').value = a.location || 'זום';
+    document.getElementById('a-hours').value = a.hours || '';
+    document.getElementById('a-notes').value = a.notes || '';
+    document.getElementById('act-form-title').textContent = 'עדכון פעילות';
+    document.getElementById('a-submit').textContent = 'שמירת העדכון';
+    document.getElementById('a-cancel').hidden = false;
+    document.getElementById('act-status').textContent = '';
+    document.querySelectorAll('[data-arow]').forEach(r => r.classList.toggle('editing', r.dataset.arow === id));
+    document.getElementById('act-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function renderActivities() {
+    const el = document.getElementById('act-list');
+    if (!el) return;
+    if (loadFailed) { el.innerHTML = failBox(); bindRetry(el); return; }
+    const rows = data.activities || [];
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty" style="padding:18px;">עדיין לא נרשמו פעילויות אחרות. הדרכות קבוצתיות ופרטניות נכנסות לדוח לבד — כאן רק מה שמעבר להן.</div>';
+      return;
+    }
+    el.innerHTML = rows.map(a => {
+      const n = Number(a.hours) || 0;
+      return `
+      <div class="h-row ${a.id === editingActId ? 'editing' : ''}" data-arow="${esc(a.id)}">
+        <div class="h-top">
+          <span class="h-who">${esc(a.name || '—')}</span>
+          <span class="h-when">${fmtDateOnly(a.date)}${a.start ? ' · <bdi dir="ltr">' + esc(a.start) + (a.end ? '–' + esc(a.end) : '') + '</bdi>' : ''} · <bdi dir="ltr">${fmtHours(n)}</bdi> ${n === 1 ? 'שעה' : 'שעות'}</span>
+        </div>
+        <div class="h-meta">${esc(a.location || 'זום')}${a.notes ? ' · ' + esc(a.notes) : ''}</div>
+        <div class="h-actions">
+          <button type="button" class="edit" data-edit-act="${esc(a.id)}">עדכון</button>
+          <button type="button" class="row-del" data-del-act="${esc(a.id)}">מחיקה</button>
+        </div>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('[data-edit-act]').forEach(b => b.addEventListener('click', () => startEditActivity(b.dataset.editAct)));
+    el.querySelectorAll('[data-del-act]').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('למחוק את הפעילות?')) return;
+      b.disabled = true;
+      const delId = b.dataset.delAct;
+      const res = await TS.apiPost('guide.activity.delete', { id: delId });
+      if (res && res.ok) TS.toast('הפעילות נמחקה');
+      if (editingActId === delId) resetActForm();
+      await loadSpace();
+    }));
+  }
+
+  /* ================================================================
+     דוח שעות למונדיי (שלב ד') — המנוע ב-assets/hours-report.js.
+     המפגשים הקבוצתיים מ-window.MEET_ALL (meetings.js מפרסם אחרי meet.state),
+     השעות הפרטניות והפעילויות מ-data. הטבלה ניתנת לעריכה לפני ההעתקה;
+     העריכה לא נשמרת — היא תיקון של ההצעה לקראת ההדבקה במונדיי.
+     ================================================================ */
+  let repRows = [];
+  function initReport() {
+    const sel = document.getElementById('rep-month');
+    if (!sel) return;
+    const t = todayStr();
+    const [y, m] = t.split('-').map(Number);
+    const startY = m >= 9 ? y : y - 1;
+    const months = [];
+    for (let i = 0; i < 12; i++) {
+      const mm = ((8 + i) % 12) + 1, yy = startY + (8 + i >= 12 ? 1 : 0);
+      const key = yy + '-' + String(mm).padStart(2, '0');
+      if (key > t.slice(0, 7)) break;
+      months.push(key);
+    }
+    sel.innerHTML = months.map(k => `<option value="${k}">${esc(window.TS_meetMonthLabel ? TS_meetMonthLabel(k) : k)}</option>`).join('');
+    sel.value = t.slice(0, 7);
+    sel.addEventListener('change', renderReport);
+    document.getElementById('rep-refresh').addEventListener('click', renderReport);
+    document.getElementById('rep-copy').addEventListener('click', copyReport);
+    document.getElementById('rep-csv').addEventListener('click', downloadReport);
+    // הנוכחות נטענת אחרי המרחב — כשהיא מגיעה הדוח מתעדכן
+    document.addEventListener('meet:all', renderReport);
+  }
+  window.SPACE_onMeetings = function () { renderReport(); };
+  function renderReport() {
+    const body = document.getElementById('rep-body');
+    const sel = document.getElementById('rep-month');
+    if (!body || !sel || !window.TS_hoursReport) return;
+    const M = window.MEET_ALL || {};
+    const plan = window.TS_planFor ? window.TS_planFor(SLUG) : null;
+    const rep = window.TS_hoursReport({
+      month: sel.value, slug: SLUG, today: M.today || todayStr(),
+      meetings: (M.meetings || []).filter(m => !m.guideSlug || m.guideSlug === SLUG),
+      hours: data.hours, activities: data.activities, plan: plan
+    });
+    repRows = rep.rows;
+    const total = document.getElementById('rep-total');
+    total.hidden = !rep.rows.length;
+    total.textContent = 'סה"כ ' + fmtHours(rep.total) + ' שעות · ' + rep.rows.length + ' שורות';
+    if (!rep.rows.length) {
+      body.innerHTML = '<tr><td class="rep-empty">אין עדיין פעילות בחודש הזה. הדרכה קבוצתית נכנסת אחרי שסימנת בה נוכחות; פרטנית ופעילות אחרת — אחרי שרשמת אותן למעלה.</td></tr>';
+      return;
+    }
+    const KIND = { group: 'קבוצתית', individual: 'פרטנית', other: 'אחרת' };
+    body.innerHTML = `<tr><th>פעילות</th><th>תאריך</th><th>יום</th><th>שעת התחלה</th><th>מיקום</th><th>שעת סיום</th><th>שעות</th></tr>` +
+      rep.rows.map((r, i) => `
+      <tr class="${r.proposed ? 'proposed' : ''}" data-i="${i}">
+        <td class="name"><input class="input" data-f="name" value="${esc(r.name)}"><span class="kind">${KIND[r.kind] || ''}${r.proposed && r.note ? '<span class="prop">' + esc(r.note) + '</span>' : ''}</span></td>
+        <td class="d"><input class="input" type="date" data-f="date" value="${esc(r.date)}"></td>
+        <td class="kind" data-day>${esc('יום ' + r.day)}</td>
+        <td class="t"><input class="input" type="time" step="900" data-f="start" value="${esc(r.start)}"></td>
+        <td><select class="select" data-f="location">${['זום', 'טלפון', 'מחשב', 'פרונטלי'].map(l => `<option${l === r.location ? ' selected' : ''}>${l}</option>`).join('')}</select></td>
+        <td class="t"><input class="input" type="time" step="900" data-f="end" value="${esc(r.end)}"></td>
+        <td class="h" data-hours>${fmtHours(r.hours)}</td>
+      </tr>`).join('');
+    body.querySelectorAll('[data-f]').forEach(inp => inp.addEventListener('input', () => {
+      const tr = inp.closest('tr');
+      const r = repRows[Number(tr.dataset.i)];
+      const f = inp.dataset.f;
+      if (f === 'start' && inp.value) {
+        // הזזת ההתחלה שומרת על המשך; הסיום זז איתה
+        r.start = inp.value;
+        r.end = window.TS_reportAddHours(r.start, r.hours);
+        tr.querySelector('[data-f="end"]').value = r.end;
+      } else if (f === 'end' && inp.value && r.start) {
+        r.end = inp.value;
+        const mins = (Number(r.end.slice(0, 2)) * 60 + Number(r.end.slice(3))) - (Number(r.start.slice(0, 2)) * 60 + Number(r.start.slice(3)));
+        if (mins > 0) { r.hours = window.TS_reportRound(mins / 60); tr.querySelector('[data-hours]').textContent = fmtHours(r.hours); }
+      } else {
+        r[f] = inp.value;
+        if (f === 'date') { r.day = window.TS_reportDayLabel(r.date); tr.querySelector('[data-day]').textContent = 'יום ' + r.day; }
+      }
+      r.proposed = false;
+      tr.classList.remove('proposed');
+      const p = tr.querySelector('.prop'); if (p) p.remove();
+      total.textContent = 'סה"כ ' + fmtHours(repRows.reduce((s, x) => s + (Number(x.hours) || 0), 0)) + ' שעות · ' + repRows.length + ' שורות';
+    }));
+  }
+  async function copyReport() {
+    const status = document.getElementById('rep-status');
+    if (!repRows.length) { status.textContent = 'אין שורות להעתקה.'; return; }
+    const text = window.TS_hoursReportTsv(repRows, false);
+    try {
+      await navigator.clipboard.writeText(text);
+      status.textContent = repRows.length + ' שורות הועתקו. במונדיי: פותחים את הפריט שלך בחודש, לוחצים על תא "Subitem" הראשון הריק ומדביקים (Ctrl+V) — כל שורה נכנסת כשורת משנה.';
+    } catch (e) {
+      status.textContent = 'ההעתקה נחסמה בדפדפן — הורידי ל-Excel במקום.';
+    }
+  }
+  function downloadReport() {
+    if (!repRows.length) return;
+    const csv = window.TS_hoursReportCsv(repRows);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'דוח-שעות-' + (GUIDE_CFG.name || SLUG) + '-' + document.getElementById('rep-month').value + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
   }
 
   // 1.5 ולא 1.50
