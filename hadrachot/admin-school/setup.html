@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>הזנת מורים — מנהל בית ספר</title>
-<link rel="stylesheet" href="../assets/styles.css?v=20260920">
+<link rel="stylesheet" href="../assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
 /* ---------- hero ---------- */
 .setup-hero {
@@ -37,14 +38,14 @@
 /* ---------- school picker ---------- */
 .school-picker-card { max-width: 560px; margin: 40px auto; }
 .school-picker-card .picker-sub { color: var(--text-2); font-size: 14px; margin: 4px 0 16px; }
-.school-list { max-height: 340px; overflow-y: auto; margin-top: 12px; border: 1px solid var(--border, #D8E1E5); border-radius: 12px; }
+.school-list { max-height: 340px; overflow-y: auto; margin-top: 12px; border: 1px solid var(--border, #D3E1E8); border-radius: 12px; }
 .school-item {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   width: 100%; text-align: right; padding: 12px 16px; border: none; background: none;
-  cursor: pointer; font: inherit; border-bottom: 1px solid var(--border, #D8E1E5);
+  cursor: pointer; font: inherit; border-bottom: 1px solid var(--border, #D3E1E8);
 }
 .school-item:last-child { border-bottom: none; }
-.school-item:hover, .school-item:focus-visible { background: #F4F7F8; }
+.school-item:hover, .school-item:focus-visible { background: #F3F7FA; }
 .school-item .s-name { font-weight: 600; }
 .s-net-none { font-size: 12px; color: #92400E; background: #FEF3C7; border-radius: 999px; padding: 3px 12px; }
 .school-list .empty-msg { padding: 20px; text-align: center; color: var(--text-3); font-size: 14px; }
@@ -52,24 +53,24 @@
 /* ---------- entry tabs ---------- */
 .entry-tabs { display: flex; gap: 8px; }
 .entry-tab {
-  flex: 1; padding: 12px 18px; border-radius: 14px 14px 0 0; border: 1px solid var(--border, #D8E1E5);
-  border-bottom: none; background: #EEF3F5; cursor: pointer; font: inherit; font-weight: 600;
+  flex: 1; padding: 12px 18px; border-radius: 14px 14px 0 0; border: 1px solid var(--border, #D3E1E8);
+  border-bottom: none; background: #EAF2F7; cursor: pointer; font: inherit; font-weight: 600;
   color: var(--text-2); display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .entry-tab.active { background: #fff; color: var(--text); }
 .entry-panel {
-  background: #fff; border: 1px solid var(--border, #D8E1E5); border-radius: 0 0 16px 16px;
+  background: #fff; border: 1px solid var(--border, #D3E1E8); border-radius: 0 0 16px 16px;
   padding: 24px; margin-bottom: 24px;
 }
 
 /* ---------- subject chips + type ---------- */
 .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .subject-chip {
-  padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--border, #D8E1E5);
+  padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--border, #D3E1E8);
   background: #fff; cursor: pointer; font: inherit; font-size: 15px; font-weight: 600; color: var(--text-2);
 }
-.subject-chip:hover { border-color: #256A8A; color: #256A8A; }
-.subject-chip.active { background: #256A8A; border-color: #256A8A; color: #fff; }
+.subject-chip:hover { border-color: #1A5365; color: #1A5365; }
+.subject-chip.active { background: #1A5365; border-color: #1A5365; color: #fff; }
 .subject-chip .cnt {
   display: inline-block; min-width: 20px; padding: 0 5px; margin-right: 6px; border-radius: 999px;
   background: rgba(0,0,0,.12); font-size: 12px; text-align: center;
@@ -77,21 +78,21 @@
 .subject-chip.active .cnt { background: rgba(255,255,255,.25); }
 .seg-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
 .seg-label { font-size: 14px; color: var(--text-2); font-weight: 600; }
-.seg { display: inline-flex; border: 1.5px solid var(--border, #D8E1E5); border-radius: 999px; overflow: hidden; }
+.seg { display: inline-flex; border: 1.5px solid var(--border, #D3E1E8); border-radius: 999px; overflow: hidden; }
 .seg button { padding: 8px 22px; border: none; background: #fff; cursor: pointer; font: inherit; font-weight: 600; color: var(--text-2); }
-.seg button.active { background: #17324D; color: #fff; }
+.seg button.active { background: #143E4C; color: #fff; }
 
 /* ---------- rapid entry ---------- */
 .rapid-wrap { position: relative; display: flex; gap: 10px; flex-wrap: wrap; }
 .rapid-input {
-  padding: 14px 18px; font-size: 17px; border: 2px solid #256A8A; border-radius: 14px;
+  padding: 14px 18px; font-size: 17px; border: 2px solid #1A5365; border-radius: 14px;
   font-family: inherit; box-sizing: border-box;
 }
 .rapid-input:focus { outline: none; box-shadow: 0 0 0 4px rgba(37,106,138,.15); }
 .rapid-input.field-missing { border-color: #D97757; background: #FEF2F2; }
 .rapid-hint { font-size: 13px; color: var(--text-3, #7b8b98); margin-top: 8px; }
 .rapid-hint kbd {
-  background: #EEF3F5; border: 1px solid var(--border); border-radius: 5px; padding: 1px 7px; font-family: inherit; font-size: 12px;
+  background: #EAF2F7; border: 1px solid var(--border); border-radius: 5px; padding: 1px 7px; font-family: inherit; font-size: 12px;
 }
 .flash-add {
   position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
@@ -103,7 +104,7 @@
 /* ---------- paste ---------- */
 .paste-area {
   width: 100%; min-height: 150px; padding: 14px 16px; font-size: 14px; font-family: inherit;
-  border: 2px dashed #256A8A; border-radius: 14px; box-sizing: border-box; resize: vertical; background: #F8FBFC;
+  border: 2px dashed #1A5365; border-radius: 14px; box-sizing: border-box; resize: vertical; background: #F8FBFC;
 }
 .paste-area:focus { outline: none; background: #fff; }
 .paste-note { font-size: 13px; color: var(--text-3, #7b8b98); margin: 8px 0 0; }
@@ -114,14 +115,14 @@
 .missing-note { font-size: 12px; font-weight: 700; color: #B45309; }
 
 /* ---------- roster ---------- */
-.subject-group { border: 1px solid var(--border, #D8E1E5); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+.subject-group { border: 1px solid var(--border, #D3E1E8); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
 .subject-group-head {
   display: flex; justify-content: space-between; align-items: center;
-  background: #F4F7F8; padding: 12px 18px; font-weight: 700;
+  background: #F3F7FA; padding: 12px 18px; font-weight: 700;
 }
 .subject-group-head .n { font-size: 13px; color: var(--text-2); font-weight: 600; }
 .t-row {
-  display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--border, #D8E1E5);
+  display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--border, #D3E1E8);
   flex-wrap: wrap;
 }
 .t-row.t-error { background: #FFF7ED; }
@@ -142,20 +143,20 @@
   border: 1px solid #cfe0e8; background: #F1F7FA; color: #1f5a75;
 }
 .t-units.unset { border-style: dashed; border-color: #C9D3DA; background: #fff; color: #7b8b98; }
-.t-units:focus { outline: none; border-color: #256A8A; }
+.t-units:focus { outline: none; border-color: #1A5365; }
 .t-units-na { font-size: 12px; color: var(--text-3, #7b8b98); width: 46px; text-align: center; }
 .t-phone {
   width: 140px; padding: 6px 12px; font-size: 13px; font-family: inherit;
-  border: 1px solid var(--border, #D8E1E5); border-radius: 8px; direction: ltr; text-align: right;
+  border: 1px solid var(--border, #D3E1E8); border-radius: 8px; direction: ltr; text-align: right;
 }
-.t-phone:focus { outline: none; border-color: #256A8A; }
+.t-phone:focus { outline: none; border-color: #1A5365; }
 .t-phone:placeholder-shown { background: #FEF2F2; border-color: #D97757; }
 /* מייל — שדה חובה (14.9.26): ריק או לא תקין מסומן באדום */
 .t-email {
   width: 210px; padding: 6px 12px; font-size: 13px; font-family: inherit;
-  border: 1px solid var(--border, #D8E1E5); border-radius: 8px; direction: ltr; text-align: right;
+  border: 1px solid var(--border, #D3E1E8); border-radius: 8px; direction: ltr; text-align: right;
 }
-.t-email:focus { outline: none; border-color: #256A8A; }
+.t-email:focus { outline: none; border-color: #1A5365; }
 .t-email:placeholder-shown, .t-email.invalid { background: #FEF2F2; border-color: #D97757; }
 .email-banner {
   margin: 0 22px 14px; padding: 10px 14px; border-radius: 10px; font-size: 13.5px; line-height: 1.6;
@@ -164,10 +165,10 @@
 .t-more { font-size: 13px; color: var(--text-3, #7b8b98); flex: 1; }
 .t-actions { display: flex; gap: 6px; }
 .mini-btn {
-  border: 1px solid var(--border, #D8E1E5); background: #fff; border-radius: 8px; padding: 4px 12px;
+  border: 1px solid var(--border, #D3E1E8); background: #fff; border-radius: 8px; padding: 4px 12px;
   font: inherit; font-size: 13px; cursor: pointer; color: var(--text-2);
 }
-.mini-btn:hover { border-color: #256A8A; color: #256A8A; }
+.mini-btn:hover { border-color: #1A5365; color: #1A5365; }
 .t-details { width: 100%; display: none; gap: 10px; flex-wrap: wrap; padding-top: 8px; }
 .t-details.open { display: flex; }
 .t-details input { padding: 7px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; width: 150px; }
@@ -242,7 +243,7 @@
           בית הספר שלי לא ברשימה
         </button>
 
-        <form id="form-new-school" hidden style="margin-top:16px; border-top:1px solid var(--border, #D8E1E5); padding-top:16px;">
+        <form id="form-new-school" hidden style="margin-top:16px; border-top:1px solid var(--border, #D3E1E8); padding-top:16px;">
           <div class="form-grid">
             <div class="form-row">
               <label class="form-label">שם בית הספר *</label>

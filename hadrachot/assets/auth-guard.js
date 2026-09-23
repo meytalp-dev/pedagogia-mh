@@ -20,11 +20,11 @@
 
   function deny(text) {
     document.documentElement.innerHTML =
-      '<body style="font-family:Heebo,sans-serif; direction:rtl; display:grid; place-items:center; min-height:90vh; background:#F4F7F8; color:#17324D;">' +
+      '<body style="font-family:Heebo,sans-serif; direction:rtl; display:grid; place-items:center; min-height:90vh; background:#F3F7FA; color:#143E4C;">' +
       '<div style="text-align:center; max-width:420px; padding:24px;">' +
       '<div style="font-size:20px; font-weight:700; margin-bottom:10px;">אין הרשאה לעמוד הזה</div>' +
-      '<div style="color:#5C7182; line-height:1.8;">' + text + '</div>' +
-      '<a href="' + ROOT + 'login.html" style="display:inline-block; margin-top:18px; color:#256A8A; font-weight:600;">מעבר לדף הכניסה</a>' +
+      '<div style="color:#4F6E7A; line-height:1.8;">' + text + '</div>' +
+      '<a href="' + ROOT + 'login.html" style="display:inline-block; margin-top:18px; color:#1A5365; font-weight:600;">מעבר לדף הכניסה</a>' +
       '</div></body>';
   }
 

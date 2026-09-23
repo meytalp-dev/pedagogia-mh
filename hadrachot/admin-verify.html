@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>אימות רשימות מול בתי הספר — אדמין</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
-<link rel="stylesheet" href="assets/styles.css?v=20260920">
+<link rel="stylesheet" href="assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
 <style>
   .sum-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .sum-strip .cell { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: center; }
@@ -15,7 +16,7 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 14px; padding: 18px 20px; margin-bottom: 14px;
   }
-  .school-card.ok-border { border-inline-start: 4px solid var(--mint, #6FB7A6); }
+  .school-card.ok-border { border-inline-start: 4px solid var(--mint, #8CA68B); }
 
   /* ---- פאנל שליחה מהנייד ---- */
   .send-panel {
@@ -47,9 +48,9 @@
     text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
   }
   .sp-btn.wa { background: #fff; border-color: #b7d9c4; color: #1a7f4b; }
-  .sp-btn.mail { background: var(--brand-accent, #256A8A); border-color: var(--brand-accent, #256A8A); color: #fff; }
+  .sp-btn.mail { background: var(--brand-accent, #1A5365); border-color: var(--brand-accent, #1A5365); color: #fff; }
   .sp-btn.tick { min-width: 40px; justify-content: center; }
-  .sp-btn.tick.on { background: var(--ok-soft, #e7f6ef); border-color: #6FB7A6; color: #14532d; }
+  .sp-btn.tick.on { background: var(--ok-soft, #e7f6ef); border-color: #8CA68B; color: #14532d; }
   .sp-miss { font-size: 12.5px; color: #8a5a00; }
   .sp-report {
     margin-top: 10px; padding: 12px 14px; border-radius: 10px;
@@ -66,7 +67,7 @@
   .sc-head .meta { font-size: 13px; color: var(--text-2); }
   .v-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; }
   .v-chip.approved { background: var(--ok-soft, #e7f6ef); color: #14532d; }
-  .v-chip.fixed    { background: #E6F0F4; color: #17324D; }
+  .v-chip.fixed    { background: #E6F0F4; color: #143E4C; }
   .v-chip.pending  { background: var(--surface-2); color: var(--text-3); }
   .e-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-inline-start: 6px; }
   .e-chip.full { background: var(--ok-soft, #e7f6ef); color: #14532d; }
@@ -297,7 +298,7 @@ function msgFor(s) {
   return [
     'שלום' + (s.principalName ? ' ' + s.principalName : '') + ',',
     '',
-    'לקראת פתיחת שנת ההדרכות — הוזנו למצפן ההדרכות ' + s.count + ' מורים עבור ' + s.name + ':',
+    'לקראת פתיחת שנת ההדרכות — הוזנו למנור ' + s.count + ' מורים עבור ' + s.name + ':',
     s.subjSummary + '.',
     '',
     'נא להיכנס לטופס האימות, לוודא שכל מורה משויך/ת למקצוע ולמסלול הנכונים (בגרות/גמר), לתקן אם צריך — ולאשר:',

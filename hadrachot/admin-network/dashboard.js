@@ -61,7 +61,7 @@ function setNetworkTitle() {
   const name = 'רשת ' + data.network.name;
   const titleEl = document.getElementById('network-title');
   if (titleEl) titleEl.textContent = name;
-  document.title = name + ' — מצפן ההדרכות';
+  document.title = name + ' — מנור';
   document.getElementById('user-network').textContent = name;
   const tag = document.querySelector('.network-tag');
   if (tag) tag.innerHTML = `<span class="net-chip ${data.network.color}">${escapeHtml(data.network.name)}</span>`;

@@ -314,7 +314,7 @@ var GAS = "https://script.google.com/macros/s/";
 var HADRACHOT = GAS + "AKfycbwDOLGv0Hr7KNjFJBIslJkDt9cDa2g4-Gfho3dTfI0AP3uwjlM3NGCwSnQkXZd4DUlyHg/exec";
 
 /* אישורי המנהלים לרשימת המורים — הרשומה האחרונה לכל בית ספר.
-   מגיעות מ-questions.list של מצפן ההדרכות, עם teacherId שמתחיל ב-"verify:". */
+   מגיעות מ-questions.list של מנור, עם teacherId שמתחיל ב-"verify:". */
 var ESC_MAP = {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
 function esc(t){ return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){ return ESC_MAP[c]; }); }
 
@@ -470,7 +470,7 @@ var ACTIVE = [
   {
     icon:"verify", title:"אישור מיפוי המורים",
     sub:"מנהל.ת מאשר.ת · קישור אישי לכל בית ספר",
-    desc:"הרשימה שהוזנה למצפן ההדרכות חוזרת למנהל.ת לאימות: כל מורה מול המקצוע והמסלול (בגרות/גמר), תיקון אם צריך — ואישור בחתימת שם. האישורים נאספים ללוח האישורים, ומשם גם נשלחות התזכורות במייל.",
+    desc:"הרשימה שהוזנה למנור חוזרת למנהל.ת לאימות: כל מורה מול המקצוע והמסלול (בגרות/גמר), תיקון אם צריך — ואישור בחתימת שם. האישורים נאספים ללוח האישורים, ומשם גם נשלחות התזכורות במייל.",
     apis:[HADRACHOT + "?action=questions.list", HADRACHOT + "?action=ministry.dashboard"],
     stats:[{
       pick:function(js){ return Object.keys(verifyBySchool(js[0])).length; },
@@ -579,7 +579,7 @@ var SYSTEMS = [
   {icon:"panel", title:"פאנל ניהול התוכן", sub:"עדכון הודעות ותכנים באתר",
    desc:"ניהול ההודעות והעדכונים שמופיעים באתר, בלי לגעת בקוד.",
    links:[{href:"admin.html", label:"פתיחת הפאנל", kind:"sec"}]},
-  {icon:"compass", title:"מצפן ההדרכות", sub:"מערכת ההדרכות והשיוך למגזרים",
+  {icon:"compass", title:"מנור", sub:"מערכת ההדרכות והשיוך למגזרים",
    desc:"רישום מדריכים, שיוך בתי ספר, אימות ודוחות — מערכת עצמאית עם פאנלי ניהול משלה.",
    links:[{href:"hadrachot/", label:"כניסה למערכת", kind:"sec"}]},
   {icon:"compass", title:"מצפן החינוך היוצר", sub:"כלי אבחון עצמי לבית הספר",
@@ -696,7 +696,7 @@ function fetchJson(url, tries){
   tries = tries || 3;
   var attempt = function(n){
     var ctl = window.AbortController ? new AbortController() : null;
-    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 45000);  /* מצפן ההדרכות עונה לפעמים רק אחרי ~30ש׳ */
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 45000);  /* מנור עונה לפעמים רק אחרי ~30ש׳ */
     return fetch(url, ctl ? {cache:"no-store", signal:ctl.signal} : {cache:"no-store"})
       .then(function(r){
         if (!r.ok) throw new Error("http " + r.status);

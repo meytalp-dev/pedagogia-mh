@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מבט המורה — מצפן ההדרכות</title>
+<title>מבט המורה — מנור</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
-<link rel="stylesheet" href="../assets/styles.css?v=20260920">
+<link rel="stylesheet" href="../assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* command-strip עם 4 KPIs */
   .command-strip { grid-template-columns: repeat(4, 1fr); }
@@ -34,7 +35,7 @@
   .tg-msg.ok { background: #E4F2EB; color: #1f6b52; }
   .tg-btn { width: 100%; margin-top: 16px; }
   .th-card { margin: 0 0 20px; padding: 20px 22px; text-align: center;
-             border: 2px solid var(--mint, #6FB7A6); }
+             border: 2px solid var(--mint, #8CA68B); }
   .th-when { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
   .th-btn { min-width: 220px; font-size: 17px; padding: 13px 26px; }
   .th-msg { margin-top: 12px; font-size: 14px; line-height: 1.6; font-weight: 600; }
@@ -50,27 +51,27 @@
   /* ---- "הבית של המורה" (22.9.26) ---- */
   .home-sec { margin-bottom: 20px; }
   .home-sec h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: 17px; }
-  .home-sec h2 svg { width: 20px; height: 20px; color: var(--primary, #256A8A); flex: none; }
+  .home-sec h2 svg { width: 20px; height: 20px; color: var(--primary, #1A5365); flex: none; }
   .home-sec .hint { margin: -4px 0 12px; font-size: 13px; color: var(--text-2); line-height: 1.55; }
   /* ההדרכה הבאה */
   .next-card { display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
-               border-right: 4px solid var(--primary, #256A8A); }
+               border-right: 4px solid var(--primary, #1A5365); }
   .next-date { min-width: 96px; text-align: center; padding: 10px 12px; border-radius: 12px;
-               background: var(--surface-soft, #EEF3F5); border: 1px solid var(--border); }
+               background: var(--surface-soft, #EAF2F7); border: 1px solid var(--border); }
   .next-date b { display: block; font-family: 'Heebo', sans-serif; font-size: 24px; line-height: 1.1;
-                 color: var(--primary, #256A8A); }
+                 color: var(--primary, #1A5365); }
   .next-date span { display: block; font-size: 12px; color: var(--text-2); margin-top: 3px; }
   .next-body { flex: 1; min-width: 200px; }
   .next-topic { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
   .next-meta { font-size: 13px; color: var(--text-2); line-height: 1.55; }
   .next-soon { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; color: #1f6b52;
-               background: #DBEDE6; border-radius: 999px; padding: 2px 10px; }
+               background: #E5EDE3; border-radius: 999px; padding: 2px 10px; }
   /* המסע שלי — שורת חודש + שורת "מה לקחת" */
   .jr-topic { color: var(--text-1); }
-  .jr-detail td { background: var(--surface-soft, #EEF3F5); border-top: 0; padding: 10px 16px 14px; }
+  .jr-detail td { background: var(--surface-soft, #EAF2F7); border-top: 0; padding: 10px 16px 14px; }
   .jr-take { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.6; }
-  .jr-take svg { width: 18px; height: 18px; flex: none; color: var(--primary, #256A8A); margin-top: 3px; }
-  .jr-take b { color: var(--primary, #256A8A); }
+  .jr-take svg { width: 18px; height: 18px; flex: none; color: var(--primary, #1A5365); margin-top: 3px; }
+  .jr-take b { color: var(--primary, #1A5365); }
   .jr-sum { margin-top: 8px; font-size: 13px; line-height: 1.65; color: var(--text-1); }
   .jr-sum summary { cursor: pointer; font-weight: 700; color: var(--text-2); font-size: 12.5px; }
   .jr-sum p { margin: 6px 0 0; white-space: pre-line; }
@@ -78,17 +79,17 @@
   .h-list { display: flex; flex-direction: column; gap: 8px; }
   .h-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 10px;
             border: 1px solid var(--border); background: var(--surface); }
-  .h-item svg { width: 18px; height: 18px; flex: none; color: var(--primary, #256A8A); margin-top: 2px; }
+  .h-item svg { width: 18px; height: 18px; flex: none; color: var(--primary, #1A5365); margin-top: 2px; }
   .h-item .t { flex: 1; min-width: 0; font-size: 14px; line-height: 1.55; }
-  .h-item .t a { font-weight: 700; color: var(--primary, #256A8A); text-decoration: none; word-break: break-word; }
+  .h-item .t a { font-weight: 700; color: var(--primary, #1A5365); text-decoration: none; word-break: break-word; }
   .h-item .t a:hover { text-decoration: underline; }
   .h-item .d { font-size: 12px; color: var(--text-3); white-space: nowrap; }
   .h-item .msg { white-space: pre-line; }
   /* פתיח האחריותיות (החלטה 10, 22.9) — שירותי, לא מאיים */
   .why-card { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; margin-bottom: 20px;
-              background: var(--surface-soft, #EEF3F5); border: 1px solid var(--border); border-radius: 12px;
+              background: var(--surface-soft, #EAF2F7); border: 1px solid var(--border); border-radius: 12px;
               font-size: 13.5px; line-height: 1.6; color: var(--text-1); }
-  .why-card svg { width: 20px; height: 20px; flex: none; color: var(--primary, #256A8A); margin-top: 2px; }
+  .why-card svg { width: 20px; height: 20px; flex: none; color: var(--primary, #1A5365); margin-top: 2px; }
   /* הפרטים שלי — בתחתית, מקופל */
   .prof details summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--text-2); }
 </style>
@@ -99,15 +100,10 @@
   <header class="command-bar">
     <div class="command-bar-left">
       <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
-        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="currentColor"/>
-          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
-          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
-        </svg>
+        <img class="compass-icon" src="../assets/menor-mark.svg" alt="" aria-hidden="true">
         <div class="command-bar-text">
-          <span class="unit">משרד העבודה</span>
-          <span class="sub">מבט המורה · מצפן ההדרכות</span>
+          <span class="unit">מנור</span>
+          <span class="sub">מבט המורה</span>
         </div>
       </a>
     </div>
@@ -128,7 +124,7 @@
          האימות: קוד בן 6 ספרות במייל + מפתח חתום (פרוס @37).
          ========================================================== -->
     <section class="card tg-card" id="teacher-gate" hidden>
-      <h2 class="tg-title">מבט המורה · מצפן ההדרכות</h2>
+      <h2 class="tg-title">מבט המורה · מנור</h2>
       <p class="tg-sub">כניסה חד-פעמית. מכאן והלאה הדף ייפתח ישירות במכשיר הזה.</p>
 
       <label class="tg-label" for="tg-school">בית הספר שלי</label>
@@ -169,7 +165,7 @@
     <!-- Page Header -->
     <section class="page-header">
       <div>
-        <div class="page-header-eyebrow">מבט המורה · מצפן ההדרכות</div>
+        <div class="page-header-eyebrow">מבט המורה · מנור</div>
         <h1 id="hello">שלום</h1>
         <p class="page-header-sub">ההדרכה הבאה שלך, מה לקחת מכל הדרכה לכיתה, וחומרים והודעות מהמדריכ/ה.</p>
         <!-- מכשיר משותף חייב דרך החוצה (21.9.26) -->
@@ -177,14 +173,14 @@
       </div>
       <div class="page-compass">
         <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-          <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
-          <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
-          <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
-          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+          <circle cx="40" cy="40" r="34" stroke="#D3E1E8" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="40" cy="40" r="22" stroke="#D3E1E8" stroke-width="1"/>
+          <circle cx="40" cy="40" r="10" stroke="#8CA68B" stroke-width="1.2" opacity="0.7"/>
+          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#1A5365"/>
           <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
-          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
-          <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
-          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#256A8A">N</text>
+          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#1A5365" stroke-width="1.2"/>
+          <circle cx="40" cy="40" r="1.5" fill="#1A5365"/>
+          <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#1A5365">N</text>
         </svg>
         <div class="page-compass-info">
           <strong id="user-name">—</strong>

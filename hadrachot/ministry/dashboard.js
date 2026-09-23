@@ -1,4 +1,4 @@
-// Ministry / National Inspector Dashboard — מצפן הפיקוח · רויטל אמיר
+// Ministry / National Inspector Dashboard — מנור · רויטל אמיר
 let state = {
   filter: { subject: '', availableSubjects: [] },
   summary: {},

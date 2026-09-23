@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>קבוצת ההדרכה — מצפן ההדרכות</title>
+<title>קבוצת ההדרכה — מנור</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
-<link rel="stylesheet" href="../assets/styles.css?v=20260920">
+<link rel="stylesheet" href="../assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* עמוד שהמורים פותחים מהוואטסאפ — קודם כול נייד */
   .group-shell { max-width: 780px; margin: 0 auto; padding: 22px 16px 8px; }
@@ -20,13 +21,13 @@
 
   .g-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; margin-bottom: 18px; }
   .g-card h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 18px; }
-  .g-card h2 svg { width: 20px; height: 20px; color: var(--primary, #256A8A); }
+  .g-card h2 svg { width: 20px; height: 20px; color: var(--primary, #1A5365); }
   .g-card h2 .n { font-size: 12px; font-weight: 700; color: var(--text-muted); }
 
   .msg { background: var(--surface-soft); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
   .msg:first-child { border-color: #CBE0E9; background: #F1F7FA; }
   .msg-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
-  .msg-author { font-size: 12.5px; font-weight: 700; color: var(--primary, #256A8A); }
+  .msg-author { font-size: 12.5px; font-weight: 700; color: var(--primary, #1A5365); }
   .msg-time { font-size: 11.5px; color: var(--text-muted); }
   .msg-text { font-size: 15px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
   .msg-text a { word-break: break-all; }
@@ -34,23 +35,23 @@
   .file-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; }
   .file-row:last-child { border-bottom: none; }
   .file-row:hover { text-decoration: none; }
-  .file-row:hover .fr-name { color: var(--primary, #256A8A); text-decoration: underline; }
-  .fr-icon { width: 38px; height: 38px; flex: none; border-radius: 10px; background: #E6F0F4; display: grid; place-items: center; color: var(--primary, #256A8A); }
+  .file-row:hover .fr-name { color: var(--primary, #1A5365); text-decoration: underline; }
+  .fr-icon { width: 38px; height: 38px; flex: none; border-radius: 10px; background: #E6F0F4; display: grid; place-items: center; color: var(--primary, #1A5365); }
   .fr-icon svg { width: 18px; height: 18px; }
   .fr-body { flex: 1; min-width: 0; }
   .fr-name { font-weight: 600; font-size: 14.5px; word-break: break-word; }
   .fr-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .fr-open { flex: none; font-size: 12.5px; font-weight: 700; color: var(--primary, #256A8A); }
+  .fr-open { flex: none; font-size: 12.5px; font-weight: 700; color: var(--primary, #1A5365); }
 
   details.g-plan summary { cursor: pointer; font-size: 16px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
   details.g-plan summary::-webkit-details-marker { display: none; }
-  details.g-plan summary svg { width: 18px; height: 18px; color: var(--primary, #256A8A); transition: transform .2s; }
+  details.g-plan summary svg { width: 18px; height: 18px; color: var(--primary, #1A5365); transition: transform .2s; }
   details.g-plan[open] summary svg.chev { transform: rotate(180deg); }
   .pl-row { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
   .pl-row:last-child { border-bottom: none; }
   .pl-row.past { opacity: .5; }
   .pl-row.next { background: #F2FAF6; border-radius: 8px; padding-inline: 10px; }
-  .pl-date { display: block; font-weight: 700; font-size: 14.5px; color: var(--primary, #256A8A); }
+  .pl-date { display: block; font-weight: 700; font-size: 14.5px; color: var(--primary, #1A5365); }
   .pl-time { display: block; font-size: 12px; color: var(--text-muted); }
   .pl-topic { font-size: 14px; font-weight: 600; line-height: 1.5; }
   .pl-goal { font-size: 12.5px; color: var(--text-2); line-height: 1.6; margin-top: 2px; }
@@ -71,15 +72,10 @@
   <header class="command-bar">
     <div class="command-bar-left">
       <div style="display:flex; align-items:center; gap:14px;">
-        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="currentColor"/>
-          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
-          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
-        </svg>
+        <img class="compass-icon" src="../assets/menor-mark.svg" alt="" aria-hidden="true">
         <div class="command-bar-text">
-          <span class="unit">משרד העבודה</span>
-          <span class="sub">מצפן ההדרכות · קבוצת ההדרכה</span>
+          <span class="unit">מנור</span>
+          <span class="sub">קבוצת ההדרכה</span>
         </div>
       </div>
     </div>
@@ -131,7 +127,7 @@
   </main>
 
   <footer class="g-footer">
-    מצפן ההדרכות · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    מנור · הפיקוח על החינוך הטכנולוגי · משרד העבודה
     <div class="credit">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener">impactos · impact-os.app</a></div>
   </footer>
 

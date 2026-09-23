@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מבט מקצועי — מצפן הפיקוח</title>
+<title>מבט מקצועי — מנור</title>
 <link rel="stylesheet" href="../assets/fonts-local.css">
-<link rel="stylesheet" href="../assets/styles.css?v=20260920">
+<link rel="stylesheet" href="../assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* command-strip עם 5 KPIs (20.9.26 — נוספו "טרם השלימו" ו"טרם סומנה רמה") */
   .command-strip { grid-template-columns: repeat(5, 1fr); }
@@ -25,7 +26,7 @@
   .resource-link .ic { width:40px; height:40px; flex-shrink:0; border-radius:10px; display:grid; place-items:center; }
   .resource-link .ic svg { width:20px; height:20px; }
   .resource-link .ic.drive { background:#E6F0F4; color:var(--primary); }
-  .resource-link .ic.zoom  { background:#DBEDE6; color:var(--mint); }
+  .resource-link .ic.zoom  { background:#E5EDE3; color:var(--mint); }
   .resource-link .ic.send  { background:#F8DDD0; color:var(--coral); }
   .resource-link .tx { display:flex; flex-direction:column; gap:2px; min-width:0; }
   .resource-link .tx strong { font-size:14px; font-weight:700; }
@@ -100,7 +101,7 @@
     padding: 1px 8px; border-radius: 999px;
     font-size: 11px; font-weight: 700; line-height: 1.6;
   }
-  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
+  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #1A5365); }
   .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
 
   /* בורר יחידות לימוד בשורת המורה — הכלי לחלוקה בין קבוצות ההדרכה */
@@ -112,7 +113,7 @@
   .units-select.unset {
     border-style: dashed; border-color: #d8b48a; background: #FDF6EC; color: #8a5a1d;
   }
-  .units-select:focus { outline: 2px solid var(--brand-accent, #256A8A); outline-offset: 1px; }
+  .units-select:focus { outline: 2px solid var(--brand-accent, #1A5365); outline-offset: 1px; }
 
   .copy-link-btn {
     display:inline-flex; align-items:center; gap:6px;
@@ -134,9 +135,9 @@
   .plan-list { display:flex; flex-direction:column; gap:10px; }
   .plan-item { display:grid; grid-template-columns: 104px 1fr; gap:16px; background: var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
   .plan-item.past { opacity:.55; }
-  .plan-item.next { border-color: var(--mint, #6FB7A6); box-shadow: 0 0 0 2px rgba(111,183,166,.18); }
+  .plan-item.next { border-color: var(--mint, #8CA68B); box-shadow: 0 0 0 2px rgba(111,183,166,.18); }
   .plan-when { display:flex; flex-direction:column; gap:3px; border-inline-end:1px solid var(--border); padding-inline-end:14px; }
-  .plan-date { font-family:'Frank Ruhl Libre', serif; font-size:17px; font-weight:700; color: var(--primary, #256A8A); }
+  .plan-date { font-family:'Frank Ruhl Libre', serif; font-size:17px; font-weight:700; color: var(--primary, #1A5365); }
   .plan-day { font-size:12px; color: var(--text-muted); }
   .plan-time { font-size:12px; color: var(--text-2); font-weight:600; }
   .plan-body strong { display:block; font-size:14.5px; margin-bottom:4px; }
@@ -159,13 +160,13 @@
   .training-row .actions { display:flex; gap:8px; flex-wrap:wrap; }
 
   /* ---- חומרים והודעות לקבוצה (11.9.26) ---- */
-  .tab-btn .n { display:inline-block; min-width:18px; margin-inline-start:6px; padding:0 5px; border-radius:999px; font-size:11px; line-height:18px; background:var(--primary,#256A8A); color:#fff; vertical-align:1px; }
+  .tab-btn .n { display:inline-block; min-width:18px; margin-inline-start:6px; padding:0 5px; border-radius:999px; font-size:11px; line-height:18px; background:var(--primary,#1A5365); color:#fff; vertical-align:1px; }
   .tab-btn .n.zero { display:none; }
   .space-grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:start; }
   @media (max-width: 900px) { .space-grid { grid-template-columns: 1fr; } }
   .space-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; }
   .space-card h2 { display:flex; align-items:center; gap:8px; margin:0 0 4px; font-size:17px; }
-  .space-card h2 svg { width:19px; height:19px; color:var(--primary,#256A8A); }
+  .space-card h2 svg { width:19px; height:19px; color:var(--primary,#1A5365); }
   .space-hint { font-size:12.5px; color:var(--text-muted); line-height:1.7; margin-bottom:12px; }
   .group-link-card { display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:#EEF6F3; border:1px solid #CFE5DC; border-radius:14px; padding:16px 18px; margin-bottom:18px; }
   .group-link-card .gl-ic { width:42px; height:42px; flex:none; border-radius:11px; background:#fff; color:#1f7a5c; display:grid; place-items:center; }
@@ -176,20 +177,20 @@
   .group-link-card .gl-url { display:block; margin-top:4px; font-size:12px; color:var(--text-muted); direction:ltr; text-align:right; word-break:break-all; }
   .gl-actions { display:flex; gap:8px; flex-wrap:wrap; }
   .gl-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 13px; border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; }
-  .gl-btn:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); text-decoration:none; }
+  .gl-btn:hover { border-color:var(--primary,#1A5365); color:var(--primary,#1A5365); text-decoration:none; }
   .gl-btn svg { width:15px; height:15px; }
   .gl-btn.wa { background:#1f7a5c; border-color:#1f7a5c; color:#fff; }
   .gl-btn.wa:hover { background:#18654b; color:#fff; }
   .gl-btn.done { border-color:var(--ok,#16a34a); color:var(--ok,#16a34a); }
 
   .drop-zone { border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center; cursor:pointer; background:var(--surface-soft); transition:border-color .15s, background .15s; }
-  .drop-zone:hover, .drop-zone.over { border-color:var(--primary,#256A8A); background:#EDF4F7; }
-  .drop-zone svg { width:26px; height:26px; color:var(--primary,#256A8A); margin-bottom:6px; }
+  .drop-zone:hover, .drop-zone.over { border-color:var(--primary,#1A5365); background:#EDF4F7; }
+  .drop-zone svg { width:26px; height:26px; color:var(--primary,#1A5365); margin-bottom:6px; }
   .drop-zone .dz-main { font-weight:700; font-size:14px; }
   .drop-zone .dz-sub { font-size:12px; color:var(--text-muted); margin-top:3px; }
   .file-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
   .file-row:last-child { border-bottom:none; }
-  .file-row .fr-icon { width:32px; height:32px; flex:none; border-radius:8px; background:#E6F0F4; display:flex; align-items:center; justify-content:center; color:var(--primary,#256A8A); }
+  .file-row .fr-icon { width:32px; height:32px; flex:none; border-radius:8px; background:#E6F0F4; display:flex; align-items:center; justify-content:center; color:var(--primary,#1A5365); }
   .file-row .fr-icon svg { width:16px; height:16px; }
   .file-row .fr-body { flex:1; min-width:0; }
   .file-row .fr-name { font-weight:600; font-size:13.5px; word-break:break-word; }
@@ -202,7 +203,7 @@
   .msg { background:var(--surface-soft); border:1px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:9px; }
   .msg.insp { background:#F6F2FB; border-color:#E2D8F0; }
   .msg-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
-  .msg-author { font-size:12px; font-weight:700; color:var(--primary,#256A8A); }
+  .msg-author { font-size:12px; font-weight:700; color:var(--primary,#1A5365); }
   .msg.insp .msg-author { color:#6b4f99; }
   .msg-time { font-size:11px; color:var(--text-muted); }
   .msg-text { font-size:13.5px; line-height:1.75; white-space:pre-wrap; word-break:break-word; }
@@ -216,11 +217,11 @@
   .hours-form .full { grid-column:1/-1; }
   .hours-form label { display:block; font-size:11.5px; font-weight:600; color:var(--text-muted); margin-bottom:4px; }
   .hours-form .input, .hours-form .select, .hours-form .textarea { padding:8px 10px; font-size:13.5px; width:100%; box-sizing:border-box; }
-  /* styles.css?v=20260920 בלי כלל [hidden], ו-.btn מגדיר display — בלי זה הכפתור תמיד גלוי */
+  /* styles.css?v=20260923 בלי כלל [hidden], ו-.btn מגדיר display — בלי זה הכפתור תמיד גלוי */
   #h-cancel[hidden] { display:none; }
-  .hours-total { display:inline-block; background:#E6F0F4; color:var(--primary,#256A8A); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; margin-bottom:10px; }
+  .hours-total { display:inline-block; background:#E6F0F4; color:var(--primary,#1A5365); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; margin-bottom:10px; }
   .h-row { border:1px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:9px; background:var(--surface-soft); }
-  .h-row.editing { border-color:var(--primary,#256A8A); box-shadow:0 0 0 2px rgba(37,106,138,.15); }
+  .h-row.editing { border-color:var(--primary,#1A5365); box-shadow:0 0 0 2px rgba(37,106,138,.15); }
   .h-top { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; align-items:baseline; }
   .h-who { font-weight:700; font-size:14px; }
   .h-when { font-size:12px; color:var(--text-muted); white-space:nowrap; }
@@ -230,7 +231,7 @@
   .space-grid + .space-grid, .space-grid + .space-card { margin-top:18px; }
   .rep-head { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:6px 0 10px; }
   .rep-head .select { width:auto; min-width:160px; }
-  .rep-total { margin-inline-start:auto; background:#E6F0F4; color:var(--primary,#256A8A); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; }
+  .rep-total { margin-inline-start:auto; background:#E6F0F4; color:var(--primary,#1A5365); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; }
   .rep-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; }
   .rep-table { width:100%; border-collapse:collapse; font-size:13px; min-width:760px; }
   .rep-table th { text-align:right; font-size:12px; color:var(--text-2); background:var(--surface-soft); padding:8px 10px; border-bottom:1px solid var(--border); white-space:nowrap; }
@@ -251,13 +252,13 @@
   .h-notes.none { color:var(--text-3,#8b9aa3); font-style:italic; }
   .h-by { color:#6b4f99; }
   .h-actions { display:flex; gap:4px; justify-content:flex-end; margin-top:6px; }
-  .h-actions .edit { font-family:inherit; font-size:12px; color:var(--primary,#256A8A); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; }
+  .h-actions .edit { font-family:inherit; font-size:12px; color:var(--primary,#1A5365); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; }
   .h-actions .edit:hover { background:#E6F0F4; }
 
   /* ---- נוכחות במפגשים (14.9.26) ---- */
   .meet-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
   .meet-card h2 { display:flex; align-items:center; gap:8px; margin:0 0 4px; font-size:17px; }
-  .meet-card h2 svg, .meet-card h3 svg { width:19px; height:19px; color:var(--primary,#256A8A); flex:none; }
+  .meet-card h2 svg, .meet-card h3 svg { width:19px; height:19px; color:var(--primary,#1A5365); flex:none; }
   .meet-card h3 { display:flex; align-items:center; gap:8px; margin:0 0 6px; font-size:15.5px; }
   .meet-card h3 .n { font-size:12px; font-weight:700; background:#FFF3DC; color:#8a5a00; border-radius:999px; padding:0 8px; }
   .meet-head-row { display:flex; gap:16px; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; }
@@ -272,20 +273,20 @@
   .meet-adhoc .input { padding:8px 10px; font-size:13.5px; }
   .meet-meta { display:flex; gap:10px; flex-wrap:wrap; align-items:baseline; margin-top:12px; }
   .meet-meta:empty { display:none; }
-  .meet-date { font-weight:800; font-size:16px; color:var(--primary,#256A8A); }
+  .meet-date { font-weight:800; font-size:16px; color:var(--primary,#1A5365); }
   .meet-time { font-size:12.5px; color:var(--text-muted); }
   .meet-topic { font-size:13.5px; font-weight:600; color:var(--text); }
   .meet-notice { display:flex; gap:14px; align-items:flex-start; background:#F4F8FA; }
   .meet-notice.warn { background:#FFF6EC; border-color:#F0D8B8; }
-  .meet-notice-ic { width:40px; height:40px; flex:none; border-radius:10px; background:#fff; display:grid; place-items:center; color:var(--primary,#256A8A); }
+  .meet-notice-ic { width:40px; height:40px; flex:none; border-radius:10px; background:#fff; display:grid; place-items:center; color:var(--primary,#1A5365); }
   .meet-notice-ic svg { width:20px; height:20px; }
   .meet-notice strong { display:block; font-size:15px; margin-bottom:4px; }
   .meet-notice p { margin:0; font-size:13.5px; line-height:1.75; color:var(--text-2); }
 
   /* ---- המפגש הבא + קיצורי דרך (14.9.26) ----
-     styles.css?v=20260920 בלי כלל [hidden], ו-display שמוגדר כאן גובר עליו — לכן במפורש */
+     styles.css?v=20260923 בלי כלל [hidden], ו-display שמוגדר כאן גובר עליו — לכן במפורש */
   #next-meet[hidden], .ql-btn[hidden], #units-filter[hidden], #track-filter[hidden] { display:none !important; }
-  .nm-card { display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:linear-gradient(135deg,#17324D 0%,#256A8A 100%); color:#fff; border-radius:16px; padding:20px 24px; margin:0 0 14px; box-shadow:var(--shadow-card); }
+  .nm-card { display:flex; gap:20px; align-items:center; flex-wrap:wrap; background:linear-gradient(135deg,#143E4C 0%,#1A5365 100%); color:#fff; border-radius:16px; padding:20px 24px; margin:0 0 14px; box-shadow:var(--shadow-card); }
   .nm-card.today { background:linear-gradient(135deg,#145c45 0%,#1f7a5c 100%); }
   .nm-date { flex:none; min-width:92px; text-align:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:8px 12px; }
   .nm-date b { display:block; font-size:26px; line-height:1.15; font-variant-numeric:tabular-nums; }
@@ -297,24 +298,24 @@
   .nm-act { display:flex; gap:8px; flex-wrap:wrap; }
   .nm-btn { display:inline-flex; align-items:center; gap:7px; font-family:inherit; font-size:14px; font-weight:700; padding:10px 16px; min-height:42px; border-radius:10px; border:1px solid rgba(255,255,255,.35); background:transparent; color:#fff; cursor:pointer; text-decoration:none; }
   .nm-btn svg { width:17px; height:17px; }
-  .nm-btn.primary { background:#fff; color:#17324D; border-color:#fff; }
+  .nm-btn.primary { background:#fff; color:#143E4C; border-color:#fff; }
   .nm-btn:hover { filter:brightness(1.06); }
   .nm-btn:focus-visible, .ql-btn:focus-visible { outline:3px solid #9fd3c2; outline-offset:2px; }
   .quick-links { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 22px; }
   .ql-btn { display:inline-flex; align-items:center; gap:7px; font-family:inherit; font-size:13.5px; font-weight:600; padding:8px 14px; min-height:38px; border-radius:999px; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; }
-  .ql-btn svg { width:16px; height:16px; color:var(--primary,#256A8A); }
-  .ql-btn:hover { border-color:var(--primary,#256A8A); }
+  .ql-btn svg { width:16px; height:16px; color:var(--primary,#1A5365); }
+  .ql-btn:hover { border-color:var(--primary,#1A5365); }
   .te-find { display:flex; gap:8px; flex-wrap:wrap; }
   .te-find .select { flex:0 1 260px; min-width:200px; }
   .te-find .input { flex:1; min-width:200px; }
 
   /* איך ממלאים נוכחות */
   .meet-howto { margin-top:14px; border-top:1px dashed var(--border); padding-top:10px; }
-  .meet-howto summary { cursor:pointer; font-size:13.5px; font-weight:700; color:var(--primary,#256A8A); }
+  .meet-howto summary { cursor:pointer; font-size:13.5px; font-weight:700; color:var(--primary,#1A5365); }
   .meet-howto ol { margin:10px 0 2px; padding-inline-start:0; list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; counter-reset:st; }
   @media (max-width: 760px) { .meet-howto ol { grid-template-columns:1fr; } }
   .meet-howto li { counter-increment:st; background:var(--surface-soft,#F4F8FA); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.7; color:var(--text-2); }
-  .meet-howto li::before { content:counter(st); display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--primary,#256A8A); color:#fff; font-weight:800; font-size:12px; margin-inline-end:6px; }
+  .meet-howto li::before { content:counter(st); display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--primary,#1A5365); color:#fff; font-weight:800; font-size:12px; margin-inline-end:6px; }
   .meet-howto li b { color:var(--text); }
   /* הדרכה פרטנית השנה — נחשבת השתתפות; כל בית ספר לפחות פעם בשנה */
   .meet-year { background:#FAF8FD; border-color:#E2D9F0; }
@@ -335,7 +336,7 @@
   .my-people span { color:var(--text-muted); font-size:11.5px; text-align:left; }
   .my-done { margin-top:8px; font-size:13px; font-weight:700; color:#1f7a5c; }
   .mb.ind { background:#EEE8F7; color:#5b4391; }
-  .meet-school-h { font-size:12.5px; font-weight:800; color:var(--primary,#256A8A); background:var(--surface-soft,#F4F8FA); padding:6px 10px; border-radius:8px; margin:10px 0 2px; }
+  .meet-school-h { font-size:12.5px; font-weight:800; color:var(--primary,#1A5365); background:var(--surface-soft,#F4F8FA); padding:6px 10px; border-radius:8px; margin:10px 0 2px; }
   .meet-school-h span { font-weight:600; color:var(--text-muted); }
   .meet-list-head .select { flex:0 1 240px; min-width:180px; padding:8px 10px; font-size:13.5px; }
 
@@ -349,7 +350,7 @@
   .ml-open .select { padding:8px 10px; font-size:13.5px; }
   .ml-code-wrap { background:#fff; border:1px solid #BFDCCF; border-radius:14px; padding:14px 22px; text-align:center; min-width:210px; }
   .ml-label { font-size:12px; font-weight:700; color:#1f7a5c; }
-  .ml-code { font-size:52px; font-weight:800; letter-spacing:.14em; color:#17324D; font-variant-numeric:tabular-nums; line-height:1.15; }
+  .ml-code { font-size:52px; font-weight:800; letter-spacing:.14em; color:#143E4C; font-variant-numeric:tabular-nums; line-height:1.15; }
   .ml-bar, .proj-bar { height:5px; border-radius:99px; background:#DDEBE5; overflow:hidden; margin-top:6px; }
   .ml-bar span, .proj-bar span { display:block; height:100%; background:#1f7a5c; transition:width 1s linear; }
   .ml-count { font-size:11.5px; color:var(--text-muted); margin-top:5px; }
@@ -363,12 +364,12 @@
   .meet-month-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin-bottom:10px; }
   .meet-month-head b { font-size:16px; }
   .meet-month-head span { font-size:12.5px; color:var(--text-muted); }
-  .meet-month-head .meet-month-now { font-weight:700; color:var(--primary,#256A8A); }
+  .meet-month-head .meet-month-now { font-weight:700; color:var(--primary,#1A5365); }
   .meet-month-note { margin-top:10px; padding:9px 12px; border-radius:10px; background:var(--surface-soft,#F4F8FA); border:1px solid var(--border); font-size:13px; line-height:1.55; }
   .meet-month-note b { font-size:15px; color:#a4442f; }
   .meet-month-note span { display:block; margin-top:3px; font-size:12px; color:var(--text-2); }
   /* סיכום ההדרכה (22.9.26) */
-  .meet-wrap h3 .n.ok { background:#DBEDE6; color:#1f6b52; }
+  .meet-wrap h3 .n.ok { background:#E5EDE3; color:#1f6b52; }
   .meet-wrap-grid { display:grid; grid-template-columns: 1fr 190px; gap:10px 14px; margin-top:10px; }
   .meet-wrap-grid label { display:flex; flex-direction:column; gap:4px; font-size:12.5px; font-weight:700; color:var(--text-2); }
   .meet-wrap-grid label .input, .meet-wrap-grid label .textarea { width:100%; box-sizing:border-box; font-weight:400; }
@@ -383,7 +384,7 @@
   .meet-stat.absent b { color:#a4442f; }
   .meet-stat.pending b { color:#9a6400; }
   .meet-stat.none b { color:var(--text-muted); }
-  .meet-stat.on { border-color:var(--primary,#256A8A); box-shadow:0 0 0 2px rgba(37,106,138,.18); background:#fff; }
+  .meet-stat.on { border-color:var(--primary,#1A5365); box-shadow:0 0 0 2px rgba(37,106,138,.18); background:#fff; }
   .meet-warn { display:flex; gap:8px; align-items:flex-start; margin-top:12px; padding:9px 12px; border-radius:10px; background:#FFF6EC; color:#7a4a00; font-size:13px; line-height:1.6; }
   .meet-warn svg { width:17px; height:17px; flex:none; margin-top:2px; }
   .meet-save-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
@@ -394,7 +395,7 @@
   .meet-list-head { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
   .meet-list-head h3 { margin:0; flex:none; }
   .meet-list-head .input { flex:1; min-width:180px; padding:8px 10px; font-size:13.5px; }
-  .meet-clear-filter { background:none; border:none; color:var(--primary,#256A8A); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .meet-clear-filter { background:none; border:none; color:var(--primary,#1A5365); font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
   .meet-row { display:flex; gap:12px; align-items:center; padding:9px 10px; border-bottom:1px solid var(--border); border-inline-start:3px solid transparent; }
   .meet-row:last-child { border-bottom:none; }
   .meet-row.s-present { border-inline-start-color:#1f7a5c; }
@@ -404,7 +405,7 @@
   .mr-name { font-weight:700; font-size:14px; }
   .mr-meta { font-size:12px; color:var(--text-muted); margin-top:1px; line-height:1.7; }
   .mb { display:inline-block; font-size:10.5px; font-weight:700; border-radius:999px; padding:0 7px; line-height:17px; vertical-align:1px; }
-  .mb.self { background:#E6F0F4; color:var(--primary,#256A8A); }
+  .mb.self { background:#E6F0F4; color:var(--primary,#1A5365); }
   .mb.gap { background:#FBE4DF; color:#8f2f1c; }
   .mb.unlisted { background:#F0EAF7; color:#6b4f99; }
   .mb.dirty { background:#FFF3DC; color:#8a5a00; }
@@ -467,14 +468,9 @@
   <header class="command-bar">
     <div class="command-bar-left">
       <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
-        <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="16" r="2" fill="currentColor"/>
-          <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
-          <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
-        </svg>
+        <img class="compass-icon" src="../assets/menor-mark.svg" alt="" aria-hidden="true">
         <div class="command-bar-text">
-          <span class="unit">משרד העבודה</span>
+          <span class="unit">מנור</span>
           <span class="sub">מבט מקצועי · מדריך/ה</span>
         </div>
       </a>
@@ -507,14 +503,14 @@
         </div>
         <div class="page-compass">
           <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-            <circle cx="40" cy="40" r="34" stroke="#D8E1E5" stroke-width="1" stroke-dasharray="3 4"/>
-            <circle cx="40" cy="40" r="22" stroke="#D8E1E5" stroke-width="1"/>
-            <circle cx="40" cy="40" r="10" stroke="#6FB7A6" stroke-width="1.2" opacity="0.7"/>
-            <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#256A8A"/>
+            <circle cx="40" cy="40" r="34" stroke="#D3E1E8" stroke-width="1" stroke-dasharray="3 4"/>
+            <circle cx="40" cy="40" r="22" stroke="#D3E1E8" stroke-width="1"/>
+            <circle cx="40" cy="40" r="10" stroke="#8CA68B" stroke-width="1.2" opacity="0.7"/>
+            <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#1A5365"/>
             <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
-            <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#256A8A" stroke-width="1.2"/>
-            <circle cx="40" cy="40" r="1.5" fill="#256A8A"/>
-            <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#256A8A">N</text>
+            <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#1A5365" stroke-width="1.2"/>
+            <circle cx="40" cy="40" r="1.5" fill="#1A5365"/>
+            <text x="40" y="15" text-anchor="middle" font-family="Frank Ruhl Libre" font-size="8" font-weight="700" fill="#1A5365">N</text>
           </svg>
           <div class="page-compass-info">
             <strong id="user-name">—</strong>

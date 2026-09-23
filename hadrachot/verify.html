@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>אימות רשימת המורים — מצפן ההדרכות</title>
+<title>אימות רשימת המורים — מנור</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
-<link rel="stylesheet" href="assets/styles.css?v=20260920">
+<link rel="stylesheet" href="assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
 <style>
-  body { background: var(--bg, #F4F7F8); }
+  body { background: var(--bg, #F3F7FA); }
   .wrap { max-width: 660px; margin: 0 auto; padding: 20px 16px 60px; }
   .head-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 16px; padding: 24px; margin-bottom: 16px; text-align: center;
   }
-  .head-card .compass-icon { width: 40px; height: 40px; color: var(--primary, #256A8A); }
+  .head-card .compass-icon { width: 40px; height: 40px; color: var(--primary, #1A5365); }
   .head-card h1 { font-family: 'Frank Ruhl Libre', serif; font-size: 22px; margin: 8px 0 4px; }
   .head-card p { color: var(--text-2); font-size: 14px; margin: 0; line-height: 1.7; }
   .roster-card, .form-card {
@@ -38,7 +39,7 @@
     border: 1px solid var(--border); background: #fff; color: var(--text-1, #1b2a33);
     min-width: 104px; cursor: pointer;
   }
-  .units-sel:focus { outline: none; border-color: var(--primary, #256A8A); }
+  .units-sel:focus { outline: none; border-color: var(--primary, #1A5365); }
   .units-sel.unset { border-style: dashed; border-color: #D9A441; background: #FFF9EC; color: #8a5a00; font-weight: 600; }
   .units-sel:disabled { opacity: .55; cursor: progress; }
   .units-na { font-size: 12px; color: var(--text-3, #7b8b98); }
@@ -51,8 +52,8 @@
   .math-note b { color: #4a3404; }
   .add-cta {
     display: block; text-align: center; margin-top: 16px; padding: 14px;
-    border: 1px solid var(--primary, #256A8A); border-radius: 12px;
-    background: #F0F6F9; color: var(--primary, #256A8A);
+    border: 1px solid var(--primary, #1A5365); border-radius: 12px;
+    background: #F0F6F9; color: var(--primary, #1A5365);
     font-weight: 700; font-size: 14.5px; text-decoration: none;
   }
   .add-cta small { display: block; font-weight: 400; font-size: 12.5px; color: var(--text-2); margin-top: 3px; }
@@ -63,15 +64,15 @@
     border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
   }
-  .choice input { margin-top: 3px; accent-color: var(--primary, #256A8A); width: 17px; height: 17px; }
+  .choice input { margin-top: 3px; accent-color: var(--primary, #1A5365); width: 17px; height: 17px; }
   .choice b { display: block; font-size: 14.5px; }
   .choice small { color: var(--text-2); font-size: 13px; line-height: 1.6; display: block; }
-  .choice.sel { border-color: var(--primary, #256A8A); background: #F0F6F9; }
+  .choice.sel { border-color: var(--primary, #1A5365); background: #F0F6F9; }
   .btn-full { width: 100%; justify-content: center; margin-top: 14px; }
   .fix-link {
     display: block; text-align: center; margin: 4px 0 0; padding: 12px;
     border: 1px dashed var(--border); border-radius: 12px;
-    color: var(--primary, #256A8A); font-weight: 600; font-size: 14px; text-decoration: none;
+    color: var(--primary, #1A5365); font-weight: 600; font-size: 14px; text-decoration: none;
   }
   .done-card {
     background: var(--ok-soft, #e7f6ef); border-radius: 16px;
@@ -84,7 +85,7 @@
     border: 1px solid var(--border); background: #fff; width: 220px; max-width: 100%;
     box-sizing: border-box; direction: ltr; text-align: right;
   }
-  .email-in:focus { outline: none; border-color: var(--primary, #256A8A); }
+  .email-in:focus { outline: none; border-color: var(--primary, #1A5365); }
   .email-in.missing, .email-in.invalid { border-color: #D97757; background: #FEF2F2; }
   .email-in:disabled { opacity: .6; cursor: progress; }
   .email-note {
@@ -100,12 +101,7 @@
 <div class="wrap">
 
   <div class="head-card">
-    <svg class="compass-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="2" fill="currentColor"/>
-      <path d="M16 6 L18 16 L16 16 Z M16 26 L14 16 L16 16 Z" fill="currentColor" opacity="0.85"/>
-      <path d="M6 16 L16 14 L16 16 Z M26 16 L16 18 L16 16 Z" fill="currentColor" opacity="0.45"/>
-    </svg>
+    <img class="compass-icon" src="assets/menor-mark.svg" alt="" aria-hidden="true">
     <h1 id="school-title">אימות רשימת המורים</h1>
     <p>יחידת הפיקוח על הדרכות מורים · משרד העבודה<br>
        נא לוודא שכל מורה מופיע/ה במקצוע הנכון ובמסלול הנכון (בגרות/גמר),

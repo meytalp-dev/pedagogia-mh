@@ -1837,7 +1837,7 @@ function verifyMailSend(p, user) {
       '',
       'שלום' + (s.principalName ? ' ' + s.principalName : '') + ',',
       '',
-      'זו תזכורת: טרם התקבל אישור לרשימת המורים של ' + s.name + ' במצפן ההדרכות.',
+      'זו תזכורת: טרם התקבל אישור לרשימת המורים של ' + s.name + ' במנור.',
       'הוזנו ' + rows.length + ' מורים: ' + summary + '.',
       '',
       'נא להיכנס לטופס האימות ולוודא שכל מורה משויך/ת למקצוע ולמסלול הנכונים (בגרות/גמר),',
@@ -1857,7 +1857,7 @@ function verifyMailSend(p, user) {
         to: email,
         subject: 'תזכורת: אימות רשימת המורים — ' + s.name,
         body: body,
-        name: 'מצפן ההדרכות · משרד העבודה'
+        name: 'מנור · משרד העבודה'
       };
       if (replyTo) opts.replyTo = replyTo;
       MailApp.sendEmail(opts);
@@ -2797,7 +2797,7 @@ function ministryDashboard(params) {
 // ההערות של המפקח.ת, ושום דבר מזה לא אמור להגיע לדפדפן של מורה.
 // ============================================================
 
-const GUIDE_FILES_ROOT_NAME = 'מצפן ההדרכות — קבצי מדריכות';
+const GUIDE_FILES_ROOT_NAME = 'מצפן ההדרכות — קבצי מדריכות';  // שם תיקיית הדרייב הקיימת — לא לשנות (המערכת מאתרת אותה לפי השם)
 // 8MB. מגבלת ה-POST של Apps Script גבוהה יותר, אבל base64 מנפח ב-33%
 // ובקשה כבדה נתקעת בתקרת 30 השניות ברשת סלולרית. עדיף שגיאה ברורה.
 const MAX_GUIDE_FILE_BYTES = 8 * 1024 * 1024;
@@ -3909,9 +3909,9 @@ function remindSend_(data, s, isTest) {
     '</table>' +
     '<p style="margin:0 0 18px"><a href="' + link + '" style="background:#256A8A;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">בדיקת הנוכחות במפגש</a></p>' +
     '<p style="margin:0;font-size:12px;color:#8a97a6">העמוד מתעדכן כל דקה: האם הרישום נפתח, מי סומן ומי עוד לא. נדרשת התחברות כמנהלת.<br>' +
-    'תזכורת אוטומטית ממצפן ההדרכות · הכיבוי: stopMeetReminders בעורך Apps Script.</p></div>';
+    'תזכורת אוטומטית ממנור · הכיבוי: stopMeetReminders בעורך Apps Script.</p></div>';
   const text = lines.map(x => x[0] + ': ' + x[1]).join('\n') + '\n\nבדיקת הנוכחות: ' + link;
-  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מצפן ההדרכות' });
+  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מנור' });
 }
 
 // יום מפגש = כל המועדים של מפגש אחד באותו תאריך. הסיכום יוצא REMIND_SUMMARY_AFTER_MIN
@@ -3986,10 +3986,10 @@ function remindSendSummary_(data, x, isTest) {
     '</table>' +
     '<p style="margin:0 0 6px"><a href="' + link + '" style="background:#256A8A;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">לפירוט המלא — כולל מי לא סומן</a></p>' +
     block('נוכחים', by.present) + block('ממתינים לאישור המדריך/ה', by.pending) + block('סומנו "לא נכח/ה"', by.absent) +
-    '<p style="margin:18px 0 0;font-size:12px;color:#8a97a6">סיכום אוטומטי ממצפן ההדרכות, שעתיים אחרי המועד האחרון של היום.</p></div>';
+    '<p style="margin:18px 0 0;font-size:12px;color:#8a97a6">סיכום אוטומטי ממנור, שעתיים אחרי המועד האחרון של היום.</p></div>';
   const text = headline + '\n' + (warn ? warn + '\n' : '') + '\n' +
     facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nפירוט: ' + link;
-  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מצפן ההדרכות' });
+  MailApp.sendEmail({ to: REMIND_TO, subject: title, body: text, htmlBody: html, name: 'מנור' });
 }
 
 // מייל סיכום לדוגמה — על יום המפגש האחרון שכבר עבר (לא מסמן "נשלח")
@@ -4384,7 +4384,7 @@ function monthlyMail_(to, subject, html, cc) {
   const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
     .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
     .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
-  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מצפן ההדרכות · משרד העבודה' };
+  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה' };
   if (cc) opts.cc = cc;
   MailApp.sendEmail(opts);
 }
@@ -4550,8 +4550,8 @@ function teacherCodeSend(p) {
   const name = String(t.name || '').trim();
   MailApp.sendEmail({
     to: email,
-    subject: 'קוד הכניסה שלך — מצפן ההדרכות',
-    name: 'מצפן ההדרכות · משרד העבודה',
+    subject: 'קוד הכניסה שלך — מנור',
+    name: 'מנור · משרד העבודה',
     body: 'שלום ' + name + ',\n\nקוד הכניסה שלך: ' + code +
       '\n\nהקוד תקף ל-' + TEACHER_CODE_TTL_MIN + ' דקות.' +
       '\nאם לא ביקשת להיכנס — אפשר להתעלם מההודעה.\n\n' +

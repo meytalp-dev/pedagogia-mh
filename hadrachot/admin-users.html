@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ניהול משתמשים — אדמין</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
-<link rel="stylesheet" href="assets/styles.css?v=20260920">
+<link rel="stylesheet" href="assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
 <style>
   .pilot-step {
     background: var(--surface);
@@ -39,7 +40,7 @@
     padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--surface); color: var(--text-2); white-space: nowrap;
   }
-  .btn-mini.primary { background: var(--primary, #256A8A); border-color: var(--primary, #256A8A); color: #fff; }
+  .btn-mini.primary { background: var(--primary, #1A5365); border-color: var(--primary, #1A5365); color: #fff; }
   .btn-mini.danger  { color: var(--err); border-color: var(--err-soft); }
   .btn-mini:disabled { opacity: .5; cursor: default; }
   .table-scroll { overflow-x: auto; }
@@ -227,7 +228,7 @@ function renderNetworks() {
     }
     const link = inviteLink(inv.inviteCode);
     const waText = encodeURIComponent(
-      'שלום! מצורף קישור ההרשמה של רשת ' + n.name + ' למצפן ההדרכות של יחידת הפיקוח:\n' + link +
+      'שלום! מצורף קישור ההרשמה של רשת ' + n.name + ' למנור של יחידת הפיקוח:\n' + link +
       '\nנרשמים עם המייל שלכם וקובעים סיסמה — והדשבורד מציג את נתוני הרשת שלכם בלבד.');
     return `
       <tr>

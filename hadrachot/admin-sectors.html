@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>טעינת מגזרים — אדמין</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
-<link rel="stylesheet" href="assets/styles.css?v=20260920">
+<link rel="stylesheet" href="assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
 <style>
   .pilot-step {
     background: var(--surface);
@@ -197,7 +198,7 @@ async function runSectorLoad() {
     status.className = 'status-pill ok';
     status.textContent = '✓ הושלם';
     result.innerHTML = '<div class="alert ok"><div class="alert-body"><strong>' + done +
-      ' מורים עודכנו.</strong><br>אפשר לראות את הפילוח החדש ב<a href="ministry/">מצפן הפיקוח — מבט ארצי</a>.</div></div>';
+      ' מורים עודכנו.</strong><br>אפשר לראות את הפילוח החדש ב<a href="ministry/">מנור — מבט ארצי</a>.</div></div>';
     // רענון תמונת המצב
     const res2 = await TS.api('teachers.list', {}, { cache: 'no' });
     if (res2.ok) { teachers = res2.data || []; computePending(); renderPreview(); }

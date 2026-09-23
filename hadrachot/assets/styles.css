@@ -5,35 +5,41 @@
 @import url('./fonts-local.css');
 
 :root {
-  /* ====== מצפן הפיקוח — Design Tokens ====== */
+  /* ====== מנור — Design Tokens ====== */
   /* Core neutrals */
-  --bg: #F4F7F8;
+  --bg: #F3F7FA;
   --surface: #FFFFFF;
-  --surface-soft: #EEF3F5;
+  --surface-soft: #EAF2F7;
 
-  --text: #17324D;
-  --text-muted: #5C7182;
-  --text-soft: #95A3AE;
+  --text: #143E4C;
+  --text-muted: #4F6E7A;
+  --text-soft: #8FA4AD;
 
   /* Brand */
-  --primary: #256A8A;
-  --primary-dark: #17324D;
-  --primary-soft: #DCE7EC;
+  --primary: #1A5365;
+  --primary-dark: #0F3A48;
+  --primary-soft: #D9ECF6;
 
-  /* Accents */
-  --mint: #6FB7A6;
-  --mint-soft: #DBEDE6;
+  /* Accents — צבעי הלוגו */
+  --sky: #86C3EF;
+  --sky-soft: #E3F1FB;
+  --lilac: #B598C3;
+  --lilac-soft: #EFE6F3;
+  --sage: #8CA68B;
+  --sage-soft: #E5EDE3;
+  --mint: #8CA68B;
+  --mint-soft: #E5EDE3;
   --sand: #E9DDC7;
   --sand-soft: #F4EEDE;
   --coral: #D97757;
   --coral-soft: #F8DDD0;
 
   /* Lines & shadows */
-  --border: #D8E1E5;
-  --border-soft: #E8EEF0;
-  --shadow-soft: 0 18px 45px rgba(23, 50, 77, 0.08);
-  --shadow-card: 0 10px 28px rgba(23, 50, 77, 0.07);
-  --shadow-hover: 0 24px 48px rgba(23, 50, 77, 0.12);
+  --border: #D3E1E8;
+  --border-soft: #E4EDF2;
+  --shadow-soft: 0 18px 45px rgba(20, 62, 76, 0.08);
+  --shadow-card: 0 10px 28px rgba(20, 62, 76, 0.07);
+  --shadow-hover: 0 24px 48px rgba(20, 62, 76, 0.12);
 
   /* Radius */
   --radius-xl: 28px;
@@ -58,12 +64,12 @@
   --role-accent: var(--primary);
 
   /* Per-network palette (שמרתי קיים — שמיש בchips) */
-  --net-ort: #256A8A;
+  --net-ort: #1A5365;
   --net-amal: #D97757;
-  --net-atid: #6FB7A6;
-  --net-sakhnin: #8B7BB8;
-  --net-dror: #5C9EAE;
-  --net-ezraei_haredi: #5C7182;
+  --net-atid: #8CA68B;
+  --net-sakhnin: #B598C3;
+  --net-dror: #5AA4D6;
+  --net-ezraei_haredi: #4F6E7A;
   --net-beit_el: #C9A66B;
   --net-kanada_israel: #C56B7B;
   --net-shulamit_haredi: #7B6B9B;
@@ -682,14 +688,14 @@ button {
 .sec-chip.kelali { background: #eff6ff; color: #1d4ed8; }
 
 /* ============================================================ */
-/* ========== מצפן הפיקוח — Compass Design System ============= */
+/* ========== מנור — Compass Design System ============= */
 /* ============================================================ */
 
 /* Role accents — נדבק ל-body[data-role="..."] */
 body[data-role="ministry"]    { --role-accent: var(--primary); }
 body[data-role="network"]     { --role-accent: var(--mint); }
-body[data-role="school"]      { --role-accent: #A9CFE2; }
-body[data-role="coordinator"] { --role-accent: #8B7BB8; }
+body[data-role="school"]      { --role-accent: #86C3EF; }
+body[data-role="coordinator"] { --role-accent: #B598C3; }
 body[data-role="guide"]       { --role-accent: var(--coral); }
 body[data-role="teacher"]     { --role-accent: #C8B9D9; }
 
@@ -1167,8 +1173,8 @@ body { background: var(--bg); color: var(--text); }
   --lens-accent: var(--primary);
 }
 .lens-medium-1 { --lens-accent: var(--mint); }
-.lens-medium-2 { --lens-accent: #A9CFE2; }
-.lens-small-1  { --lens-accent: #8B7BB8; }
+.lens-medium-2 { --lens-accent: #86C3EF; }
+.lens-small-1  { --lens-accent: #B598C3; }
 .lens-small-2  { --lens-accent: var(--coral); }
 .lens-large .lens-title { font-size: 28px; }
 .lens-large .lens-desc { font-size: 14.5px; }
@@ -1256,7 +1262,7 @@ body { background: var(--bg); color: var(--text); }
   margin: 0 auto 18px;
   position: relative;
   z-index: 1;
-  box-shadow: 0 0 0 6px var(--surface-soft), 0 6px 16px rgba(23, 50, 77, 0.08);
+  box-shadow: 0 0 0 6px var(--surface-soft), 0 6px 16px rgba(20, 62, 76, 0.08);
 }
 .flow-step-node svg { width: 22px; height: 22px; }
 .flow-step-num {
@@ -1309,7 +1315,7 @@ body { background: var(--bg); color: var(--text); }
 }
 
 /* ============================================================ */
-/* ====== מצפן הפיקוח — Dashboard Components (Ministry) ======= */
+/* ====== מנור — Dashboard Components (Ministry) ======= */
 /* ============================================================ */
 
 .dashboard-shell {
@@ -1454,7 +1460,7 @@ body { background: var(--bg); color: var(--text); }
 
 /* === Command Strip === */
 .command-strip {
-  background: linear-gradient(135deg, #17324D 0%, #1f4566 100%);
+  background: linear-gradient(135deg, #143E4C 0%, #1f4566 100%);
   color: white;
   padding: 26px 32px;
   border-radius: var(--radius-lg);
@@ -1464,7 +1470,7 @@ body { background: var(--bg); color: var(--text); }
   position: relative;
   overflow: hidden;
   margin-bottom: 28px;
-  box-shadow: 0 18px 40px rgba(23, 50, 77, 0.18);
+  box-shadow: 0 18px 40px rgba(20, 62, 76, 0.18);
 }
 .command-strip::before {
   content: "";
@@ -2018,22 +2024,22 @@ body { background: var(--bg); color: var(--text); }
 
 
 /* =========================================================
-   Compass Hero — מצפן הפיקוח
+   Compass Hero — מנור
    Static version first. No animation yet.
    ========================================================= */
 
 .compass-hero-v2 {
-  --hero-bg: #f4f7f8;
+  --hero-bg: #F3F7FA;
   --hero-surface: #ffffff;
-  --hero-text: #17324d;
-  --hero-muted: #5c7182;
-  --hero-primary: #256a8a;
-  --hero-primary-dark: #17324d;
-  --hero-mint: #6fb7a6;
+  --hero-text: #143E4C;
+  --hero-muted: #4F6E7A;
+  --hero-primary: #1A5365;
+  --hero-primary-dark: #143E4C;
+  --hero-mint: #8CA68B;
   --hero-sand: #e9ddc7;
   --hero-coral: #d97757;
-  --hero-purple: #8b7bb8;
-  --hero-border: #d8e1e5;
+  --hero-purple: #B598C3;
+  --hero-border: #D3E1E8;
 
   background:
     radial-gradient(circle at 18% 40%, rgba(111, 183, 166, 0.14), transparent 30%),
@@ -2145,7 +2151,7 @@ body { background: var(--bg); color: var(--text); }
 
 .compass-btn--primary {
   color: #ffffff;
-  background: linear-gradient(135deg, #256a8a, #0f5a78);
+  background: linear-gradient(135deg, #1A5365, #0f5a78);
   box-shadow: 0 16px 34px rgba(37, 106, 138, 0.22);
 }
 
@@ -2153,7 +2159,7 @@ body { background: var(--bg); color: var(--text); }
   color: var(--hero-primary-dark);
   background: rgba(255, 255, 255, 0.68);
   border: 1px solid var(--hero-border);
-  box-shadow: 0 10px 28px rgba(23, 50, 77, 0.06);
+  box-shadow: 0 10px 28px rgba(20, 62, 76, 0.06);
 }
 
 .compass-hero__visual {
@@ -2197,7 +2203,7 @@ body { background: var(--bg); color: var(--text); }
   background:
     radial-gradient(circle at center, #ffffff 0 24%, rgba(255, 255, 255, 0.66) 25% 48%, transparent 70%);
   box-shadow:
-    0 26px 70px rgba(23, 50, 77, 0.08),
+    0 26px 70px rgba(20, 62, 76, 0.08),
     inset 0 0 0 1px rgba(37, 106, 138, 0.07);
   z-index: -2;
 }
@@ -2295,7 +2301,7 @@ body { background: var(--bg); color: var(--text); }
   width: 92px;
   height: 285px;
   pointer-events: none;
-  filter: drop-shadow(0 16px 18px rgba(23, 50, 77, 0.12));
+  filter: drop-shadow(0 16px 18px rgba(20, 62, 76, 0.12));
 }
 
 .compass-map__needle-top,
@@ -2311,7 +2317,7 @@ body { background: var(--bg); color: var(--text); }
   top: 0;
   border-left: 22px solid transparent;
   border-right: 22px solid transparent;
-  border-bottom: 145px solid #256a8a;
+  border-bottom: 145px solid #1A5365;
 }
 
 .compass-map__needle-bottom {
@@ -2330,9 +2336,9 @@ body { background: var(--bg); color: var(--text); }
   translate: -50% -50%;
   border-radius: 999px;
   background: #ffffff;
-  border: 5px solid #256a8a;
+  border: 5px solid #1A5365;
   box-shadow:
-    0 10px 26px rgba(23, 50, 77, 0.16),
+    0 10px 26px rgba(20, 62, 76, 0.16),
     inset 0 0 0 8px rgba(37, 106, 138, 0.08);
 }
 
@@ -2345,7 +2351,7 @@ body { background: var(--bg); color: var(--text); }
   height: 10px;
   translate: -50% -50%;
   border-radius: 999px;
-  background: #17324d;
+  background: #143E4C;
 }
 
 /* nodes */
@@ -2372,7 +2378,7 @@ body { background: var(--bg); color: var(--text); }
   border-radius: 999px;
   background: #ffffff;
   border: 1px solid rgba(37, 106, 138, 0.2);
-  box-shadow: 0 10px 26px rgba(23, 50, 77, 0.09);
+  box-shadow: 0 10px 26px rgba(20, 62, 76, 0.09);
 }
 
 .compass-map__node-icon svg {
@@ -2390,13 +2396,13 @@ body { background: var(--bg); color: var(--text); }
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(216, 225, 229, 0.85);
-  box-shadow: 0 8px 20px rgba(23, 50, 77, 0.05);
+  box-shadow: 0 8px 20px rgba(20, 62, 76, 0.05);
   white-space: nowrap;
 }
 
 .compass-map__node:hover .compass-map__node-icon {
   border-color: rgba(37, 106, 138, 0.45);
-  box-shadow: 0 18px 38px rgba(23, 50, 77, 0.16);
+  box-shadow: 0 18px 38px rgba(20, 62, 76, 0.16);
 }
 
 .compass-map__node:focus-visible {
@@ -2410,26 +2416,26 @@ body { background: var(--bg); color: var(--text); }
   top: 2%;
   left: 50%;
   translate: -50% 0;
-  color: #256a8a;
+  color: #1A5365;
 }
 
 .compass-map__node--right {
   top: 29%;
   right: 4%;
   translate: 0 -50%;
-  color: #6fb7a6;
+  color: #8CA68B;
 }
 
 .compass-map__node--bottom-right {
   right: 12%;
   bottom: 8%;
-  color: #256a8a;
+  color: #1A5365;
 }
 
 .compass-map__node--bottom-left {
   left: 12%;
   bottom: 8%;
-  color: #8b7bb8;
+  color: #B598C3;
 }
 
 .compass-map__node--left {
@@ -2707,3 +2713,8 @@ body { background: var(--bg); color: var(--text); }
 /* שורת החודשים מעל שורת המועדים בטבלת הנוכחות של המדריכ/ה (20.9.26) */
 .att-grid thead tr.month-head th { background:#F3F1EC; font-size:12.5px; font-weight:700; color:#5b6b7b; border-bottom:1px solid #e3e8ee; padding:4px 10px; white-space:nowrap; }
 .att-grid thead tr.month-head th small { font-weight:400; color:#8a97a6; }
+
+/* ====== מנור — לוגו ====== */
+.compass-icon { object-fit: contain; }
+.menor-hero-mark img { width: clamp(96px, 11vw, 150px); height: auto; display: block; margin-bottom: 0.8rem; }
+.compass-footer-mark .compass-icon { width: 28px; height: 28px; }

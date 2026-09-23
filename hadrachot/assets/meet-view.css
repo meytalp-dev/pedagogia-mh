@@ -22,7 +22,7 @@
 .mv-warn.soft { background:#FFF6EC; color:#7a4a00; }
 .mv-warn svg { width:15px; height:15px; flex:none; margin-top:2px; }
 .mv-card details { border-top:1px solid var(--border); padding-top:8px; }
-.mv-card summary { cursor:pointer; font-size:12.5px; font-weight:700; color:var(--primary,#256A8A); list-style:none; }
+.mv-card summary { cursor:pointer; font-size:12.5px; font-weight:700; color:var(--primary,#1A5365); list-style:none; }
 .mv-card summary::-webkit-details-marker { display:none; }
 .mv-card summary::before { content:'‹ '; display:inline-block; transition:transform .15s; }
 .mv-card details[open] summary::before { transform:rotate(-90deg); }
@@ -34,7 +34,7 @@
 .mv-people div { display:flex; justify-content:space-between; gap:8px; border-bottom:1px dashed var(--border-soft,#E8EEF0); }
 .mv-people span { color:var(--text-muted); font-size:11.5px; }
 .mv-copy { margin-top:6px; font-family:inherit; font-size:12px; font-weight:600; padding:5px 10px; border-radius:8px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; }
-.mv-copy:hover { border-color:var(--primary,#256A8A); color:var(--primary,#256A8A); }
+.mv-copy:hover { border-color:var(--primary,#1A5365); color:var(--primary,#1A5365); }
 .mv-chip { display:inline-block; min-width:38px; text-align:center; font-size:11.5px; font-weight:700; border-radius:999px; padding:1px 8px; font-variant-numeric:tabular-nums; }
 .mv-chip.high { background:#E4F3EA; color:#1f7a5c; } .mv-chip.mid { background:#FFF3DC; color:#8a5a00; }
 .mv-chip.low { background:#FBE4DF; color:#8f2f1c; } .mv-chip.none { background:var(--surface-soft); color:var(--text-soft,#95A3AE); }

@@ -1381,7 +1381,7 @@
     const target = document.getElementById('proj-qr');
     const draw = () => {
       if (!window.QRCode || !target) return;
-      QRCode.toCanvas(url, { width: 220, margin: 1, color: { dark: '#17324D', light: '#FFFFFF' } }, (err, canvas) => {
+      QRCode.toCanvas(url, { width: 220, margin: 1, color: { dark: '#143E4C', light: '#FFFFFF' } }, (err, canvas) => {
         if (canvas && target.isConnected) { target.innerHTML = ''; target.appendChild(canvas); }
       });
     };

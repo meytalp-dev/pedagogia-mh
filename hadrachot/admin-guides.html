@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>שליחת קישורים אישיים — מדריכות ומפקחים</title>
 <link rel="stylesheet" href="assets/fonts-local.css">
-<link rel="stylesheet" href="assets/styles.css?v=20260920">
+<link rel="stylesheet" href="assets/styles.css?v=20260923b">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
 <style>
   .society-head {
     font-family: 'Frank Ruhl Libre', serif;
@@ -52,7 +53,7 @@
     padding: 1px 8px; border-radius: 999px;
     font-size: 11px; font-weight: 700; line-height: 1.6;
   }
-  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #256A8A); }
+  .track-chip.bagrut { background: #E6F0F4; color: var(--primary, #1A5365); }
   .track-chip.gemer  { background: #F8DDD0; color: #9a3f1d; }
 
   /* ---- מצב שליחה מהנייד ---- */
@@ -372,7 +373,7 @@ function guideMessage(g, url) {
   return [
     'שלום ' + g.name.split(' ')[0] + ',',
     '',
-    'הקמנו עבורך מבט אישי במצפן ההדרכות של הפיקוח.',
+    'הקמנו עבורך מבט אישי במנור של הפיקוח.',
     'במבט: כל מורי ה' + window.TS_guideSubjects(g).join(' וה') + ' שבאחריותך ב' + g.societyLabel + ', בחלוקה לבגרות וגמר,',
     'לפי בתי ספר — עם נוכחות, הדרכות וחיפוש.',
     'המבט מציג רק את המקצוע' + (window.TS_guideSubjects(g).length > 1 ? 'ות' : '') + ' והמגזר שלך.',
@@ -392,7 +393,7 @@ function inspectorMessage(ins, url) {
   return [
     'שלום ' + ins.name.split(' ')[0] + ',',
     '',
-    'הקמנו עבורך מבט מקצועי במצפן ההדרכות של הפיקוח.',
+    'הקמנו עבורך מבט מקצועי במנור של הפיקוח.',
     'במבט: כל המורים ב' + ins.subjects.join(', ') + ' ב' + ins.society + ' —',
     'לפי מקצוע ובית ספר, בחלוקה לבגרות וגמר, עם המדריכות שבאחריותך.',
     'המבט מציג רק את המקצועות והמגזר שבאחריותך, והוא לקריאה בלבד.',
@@ -863,12 +864,12 @@ function copyNotOpened(btn) {
   const lines = SEND_ROWS.filter(r => !seenOf(r.kind, r.slug))
     .map(r => r.name + ' · ' + r.meta + (r.email ? ' · ' + r.email : ' · אין מייל') +
               (r.phone ? ' · ' + r.phone : ' · אין טלפון'));
-  navigator.clipboard.writeText('טרם פתחו את הקישור האישי במצפן ההדרכות (' + lines.length + '):\n' +
+  navigator.clipboard.writeText('טרם פתחו את הקישור האישי במנור (' + lines.length + '):\n' +
     lines.join('\n')).then(() => flashBtn(btn, '✓ הרשימה הועתקה'));
 }
 
 /* ---- מייל (16.9.26) ---- */
-const MAIL_SUBJECT = 'המבט האישי שלך במצפן ההדרכות';
+const MAIL_SUBJECT = 'המבט האישי שלך במנור';
 
 function mailLink(email, kind, slug) {
   return TS.gmailCompose({ to: email, subject: MAIL_SUBJECT, body: msgFor(kind, slug) });
