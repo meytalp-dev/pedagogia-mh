@@ -93,7 +93,7 @@ async function onGateSchool() {
   }
   nameSel.disabled = true;
   nameSel.innerHTML = '<option value="">טוען…</option>';
-  const res = await TS.api('teachers.list', { school: id }, { cache: 'no' });
+  const res = await TS.api('teachers.list', { school: id });
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
   /* אותו אדם בבגרות ובגמר הוא שתי שורות ואדם אחד — מוצג פעם אחת,
