@@ -93,11 +93,15 @@ async function onGateSchool() {
   }
   nameSel.disabled = true;
   nameSel.innerHTML = '<option value="">טוען…</option>';
-  const res = await TS.api('teachers.list', { school: id });
+  const res = await TS.api('teachers.list', { school: id }, { cache: 'no' });
+  // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
+  if ($g('tg-school').value !== id) return;
   /* אותו אדם בבגרות ובגמר הוא שתי שורות ואדם אחד — מוצג פעם אחת,
      כמו בכל שאר המסכים. הכניסה נעשית לשורה הראשונה שלו. */
   const seen = {};
   gateTeachers = (res && res.data ? res.data : []).filter(t => {
+    // רק מורי בית הספר שנבחר — גם אם השרת או מטמון ישן החזירו יותר
+    if (String(t.school || '') !== String(id)) return false;
     const k = String(t.name || '').trim();
     if (!k || seen[k]) return false;
     seen[k] = 1;
@@ -109,11 +113,11 @@ async function onGateSchool() {
       gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}${t.subject ? ' · ' + esc(t.subject) : ''}</option>`).join('')
     : '<option value="">בבית הספר הזה עוד לא הוזנו מורים</option>';
   // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב
-  nameSel.addEventListener('change', () => {
+  nameSel.onchange = () => {
     const t = gateTeachers.find(x => String(x.id) === nameSel.value);
     const mail = $g('tg-email');
     if (t && t.email && String(t.email).indexOf('@') > 0 && !mail.value) mail.value = t.email;
-  });
+  };
 }
 
 /* שלב 1 — שליחת הקוד. המייל אינו נשמר כאן: הוא נשמר בשרת רק אחרי אימות
