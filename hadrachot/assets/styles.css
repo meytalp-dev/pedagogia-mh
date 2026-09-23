@@ -2728,3 +2728,4 @@ body { background: var(--bg); color: var(--text); }
   background: var(--sky-soft); border: 1px solid var(--border); border-radius: var(--radius-md);
   color: var(--primary); font-weight: 600; font-size: 15px; }
 .home-loading .spinner { width: 20px; height: 20px; flex-shrink: 0; }
+.home-loading[hidden] { display: none; }
