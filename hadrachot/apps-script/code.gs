@@ -972,7 +972,7 @@ function handleRequest(params) {
       case 'meet.mark':           result = meetMark(params); break;
       case 'meet.guideKeys':      result = meetGuideKeys(params); break;
       case 'meet.report':         result = meetReport(params); break;
-      case 'meet.scope':          result = meetScope(params); break;
+      case 'meet.scope':          result = meetScopeCached_(params); break;
       case 'meet.wrap':           result = meetWrap(params); break;
       // מבט המורה — כניסה מאומתת (21.9.26)
       case 'teacher.codeSend':    result = teacherCodeSend(params); break;
@@ -3697,6 +3697,25 @@ function meetReport(p) {
    אחרת מפגש שבו אף מורה מבית הספר לא סומן היה נעלם מהמכנה.
    השעות הפרטניות מסוננות לפי שם בית הספר (בטאב guide_hours אין teacherId).
    ============================================================ */
+// מטמון ל-meet.scope (24.9.26): הקריאה בונה את כל דוח הנוכחות מהגיליון ונמדדה
+// ב-5 עד 31 שניות, והיא הדבר הראשון שהמורה מחכה לו אחרי הכניסה. נשמר לפי
+// בית ספר/רשת ל-2 דקות. המפתח כולל את מספר הדור של teachersGen_, וכל כתיבה
+// דרך ה-API מחליפה אותו, כך שנוכחות או סיכום חדשים מופיעים מיד.
+// עריכה ידנית בגיליון מופיעה אחרי ה-TTL.
+function meetScopeCached_(p) {
+  let cache, key;
+  try {
+    cache = CacheService.getScriptCache();
+    key = 'ms|' + teachersGen_() + '|' + String(p.school || '').trim() + '|' +
+      String(p.network || '').replace(/^net_/, '').trim();
+    const hit = readCacheChunked_(cache, key);
+    if (hit) return hit;
+  } catch (e) { cache = null; }
+  const fresh = meetScope(p);
+  if (cache && fresh && fresh.ok) writeCacheChunked_(cache, key, fresh, TEACHERS_CACHE_TTL_);
+  return fresh;
+}
+
 function meetScope(p) {
   const schoolId = String(p.school || '').trim();
   const networkId = String(p.network || '').replace(/^net_/, '').trim();

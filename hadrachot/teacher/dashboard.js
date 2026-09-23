@@ -172,7 +172,7 @@ async function onGateVerify() {
     return gateMsg(gateErr(r));
   }
   rememberIdentity({ k: r.data.key, id: r.data.id, name: r.data.name || '',
-    at: new Date().toISOString() });
+    school: $g('tg-school').value || '', at: new Date().toISOString() });
   teacherKey = r.data.key;
   teacherId = r.data.id;
   $g('teacher-gate').hidden = true;
@@ -197,6 +197,19 @@ async function onGateResend() {
    אותו מנוע כמו כל המסכים, ולכן המורה רואה בדיוק את מה שרואים המדריכה,
    המנהל/ת והמפקח.ת. הנתונים מ-meet.scope?school=; אין צורך בשינוי שרת. */
 async function load() {
+  /* מהירות (24.9.26): כל בקשה ל-Apps Script לוקחת 3 עד 30 שניות, ועד היום הן
+     נשלחו אחת אחרי השנייה. עכשיו השאלות ונתוני המפגשים יוצאים יחד עם פרטי
+     המורה (בית הספר שמור מהכניסה), והמסך מראה "טוען" במקום להיות ריק. */
+  const saved = savedIdentity() || {};
+  showLoading(true);
+  if (saved.name) {
+    const hello = document.getElementById('hello');
+    if (hello) hello.textContent = 'שלום ' + String(saved.name).trim().split(' ')[0];
+  }
+  const qPromise = teacherId ? TS.api('questions.list', { teacherId }) : null;
+  let scopePromise = saved.school && String(saved.id) === String(teacherId)
+    ? fetchScope(saved.school) : null;
+
   /* מפתח חתום כשיש — הכתובת כבר לא חושפת מזהה שאפשר לנחש. teacher.get
      נשאר לקישורים הישנים שהופצו עם ?id=. */
   const teacherRes = teacherKey
@@ -206,20 +219,38 @@ async function load() {
   if (teacher && teacher.id) teacherId = teacher.id;
   // מורה שנמחק או אוחד — הזיהוי השמור כבר לא תקף, חוזרים לטופס
   if (!teacher) {
+    showLoading(false);
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
     if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
   }
   render();
-  await loadAttendance();
-  const qRes = await TS.api('questions.list', { teacherId });
-  questions = qRes.data || [];
+  // זיהוי ישן בלי בית ספר, או שבית הספר השתנה — מבקשים לפי הרשומה העדכנית
+  if (teacher && teacher.school && (!scopePromise || saved.school !== teacher.school)) {
+    scopePromise = fetchScope(teacher.school);
+    if (saved.k) rememberIdentity(Object.assign({}, saved, { school: teacher.school }));
+  }
+  const [scopeRes, qRes] = await Promise.all([
+    scopePromise || Promise.resolve(null),
+    qPromise || TS.api('questions.list', { teacherId })
+  ]);
+  applyScope(scopeRes);
+  showLoading(false);
+  questions = (qRes && qRes.data) || [];
   renderQuestions();
 }
 
-async function loadAttendance() {
-  if (!teacher || !teacher.school) return;
-  const res = await TS.api('meet.scope', { school: teacher.school }, { cache: 'no' });
-  if (!res || !res.ok || !res.data) return;
+function showLoading(on) {
+  const el = document.getElementById('home-loading');
+  if (el) el.hidden = !on;
+}
+
+/* נתוני המפגשים: מהמטמון של הדפדפן מיד (אם יש), ורענון ברקע שמצייר מחדש */
+function fetchScope(school) {
+  return TS.api('meet.scope', { school: school }, { onRefresh: applyScope });
+}
+
+function applyScope(res) {
+  if (!teacher || !res || !res.ok || !res.data) return;
   const d = res.data;
   const guides = Object.keys(window.TS_GUIDES || {})
     .map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));

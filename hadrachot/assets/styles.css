@@ -2723,3 +2723,8 @@ body { background: var(--bg); color: var(--text); }
 .menor-word { display: block; height: 22px; width: auto; }
 .menor-word--lg { height: 40px; margin: 0 auto 6px; }
 .menor-word--hero { height: clamp(64px, 8vw, 104px); }
+/* מבט המורה — הודעת טעינה בזמן שהשרת עונה */
+.home-loading { display: flex; align-items: center; gap: 12px; margin: 0 0 20px; padding: 16px 20px;
+  background: var(--sky-soft); border: 1px solid var(--border); border-radius: var(--radius-md);
+  color: var(--primary); font-weight: 600; font-size: 15px; }
+.home-loading .spinner { width: 20px; height: 20px; flex-shrink: 0; }
