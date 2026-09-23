@@ -619,7 +619,8 @@
       <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
       <button class="tab-btn" data-tab="meet" id="tab-btn-meet">נוכחות במפגשים<span class="n zero" id="meet-count">0</span></button>
       <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
-      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות ודוח למונדיי<span class="n zero" id="hours-count">0</span></button>
+      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות פרטניות<span class="n zero" id="hours-count">0</span></button>
+      <button class="tab-btn" data-tab="monday" id="tab-btn-monday">דיווח למונדיי</button>
       <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
       <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
       <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
@@ -754,6 +755,10 @@
         </section>
       </div>
 
+    </div>
+
+    <!-- דיווח למונדיי (23.9.26, שלב ד') — לשונית נפרדת לבקשת מיטל: פעילות אחרת + הדוח -->
+    <div class="tab-pane" id="tab-monday">
       <!-- פעילות אחרת (23.9.26) — מה שמדווח במונדיי ואינו הדרכה: השתלמות, ישיבה,
            הכנת שנה, מענה למורים. נרשם כאן כדי שדוח השעות יהיה שלם. -->
       <div class="space-grid">
@@ -987,7 +992,7 @@
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="dashboard.js?v=20260920d"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20260923"></script>
+<script src="space.js?v=20260923b"></script>
 <script src="meetings.js?v=20260922"></script>
 </body>
 </html>

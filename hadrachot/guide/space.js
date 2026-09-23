@@ -26,7 +26,8 @@
     const tabBtn = document.getElementById('tab-btn-space');
     // בלי slug אין לאיזו קבוצה לפרסם (קישור ישן עם ?guide= בלבד)
     const hoursBtn = document.getElementById('tab-btn-hours');
-    if (!SLUG) { [tabBtn, hoursBtn].forEach(b => { if (b) b.hidden = true; }); return; }
+    const mondayBtn = document.getElementById('tab-btn-monday');
+    if (!SLUG) { [tabBtn, hoursBtn, mondayBtn].forEach(b => { if (b) b.hidden = true; }); return; }
     initLinkCard();
     document.getElementById('gmsg-send').addEventListener('click', sendMessage);
     initUpload();
