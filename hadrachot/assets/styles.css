@@ -1460,7 +1460,7 @@ body { background: var(--bg); color: var(--text); }
 
 /* === Command Strip === */
 .command-strip {
-  background: linear-gradient(135deg, #143E4C 0%, #1f4566 100%);
+  background: linear-gradient(135deg, #1A5365 0%, #2B6E78 100%);  /* טורקיז הלוגו, בלי הכחול־נייבי */
   color: white;
   padding: 26px 32px;
   border-radius: var(--radius-lg);
@@ -1480,7 +1480,7 @@ body { background: var(--bg); color: var(--text); }
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(111, 183, 166, 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(134, 195, 239, 0.22) 0%, transparent 70%);
   pointer-events: none;
 }
 .cmd-metric {
