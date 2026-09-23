@@ -2718,3 +2718,8 @@ body { background: var(--bg); color: var(--text); }
 .compass-icon { object-fit: contain; }
 .menor-hero-mark img { width: clamp(96px, 11vw, 150px); height: auto; display: block; margin-bottom: 0.8rem; }
 .compass-footer-mark .compass-icon { width: 28px; height: 28px; }
+/* מנור — הלוגו והמילה כתמונה, בגופן של הלוגו */
+.command-bar .compass-icon { width: auto; height: 40px; }
+.menor-word { display: block; height: 22px; width: auto; }
+.menor-word--lg { height: 40px; margin: 0 auto 6px; }
+.menor-word--hero { height: clamp(64px, 8vw, 104px); }
