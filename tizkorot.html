@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <script src="/analytics.js" defer></script>
 <script src="/auth.js" data-space="netunim"></script>
+<script src="/school-names.js"></script>
 <title>תזכורות ווטסאפ — סקר צרכים והזנת מורים</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📨</text></svg>">
 <style>
@@ -207,21 +208,22 @@ const MERGE = {
   "תיכון מסאראת": "ערערה"
 };
 // תיקוני שם מנהל/ת שחסרים או שגויים בגיליון
+// מפתחות לפי השם האחיד (SchoolNames.canon)
 const PRINCIPAL_FIX = {
-  "אורט תעשיה אווירית": "בני זיזו",
+  "אורט תעשייה אווירית": "בני זיזו",
   "שגב שלום": "מאהר אלפראונה",
   "אום אל פחם בנות": "נורה מחאג'נה",
   "בית אל": "שרית גולדרינג",
   "בית חנינה בנות": "פרדאוס אלבאז",
-  "זוקו": "יוסי לוי",
+  "תיכון עוצמ\"ה עתיד זוקו": "יוסי לוי",
   "טל חרמון": "ליאואפר חזן",
-  "כסרא סמיע": "עלים עלואן",
-  "עמל אנרגיטק": "דרור לוי",
+  "אלחכמה כסרא-סמיע": "עלים עלואן",
+  "אנרג'י טק": "דרור לוי",
   "עמל טק אין": "אודליה גלנוס איטח",
-  "עמל טייבה": "זיאד חאג יחיא",
-  "עתיד ירכא בנים": "אחמד חמזה",
-  "רימונים טבריה": "גילה כהנא",
-  "תל שבע": "שאקר בטיחאת"
+  "עמל טייבה ב'": "זיאד חאג יחיא",
+  "עתיד גליל מערבי ירכא בנים": "אחמד חמזה",
+  "רימונים": "גילה כהנא",
+  "סכנין תל שבע": "שאקר בטיחאת"
 };
 
 // ---- snapshot 31.8.2026 (ערב) — מוצג עד שהחיבור החי נטען ----
@@ -345,7 +347,7 @@ function phoneFor(sc) {
   if (!map) return "";
   if (map[sc.name]) return map[sc.name];
   const n = normName(sc.name);
-  for (const k in map) if (normName(k) === n) return map[k];
+  for (const k in map) if (normName(k) === n || CANON(k) === sc.name) return map[k];
   return "";
 }
 function fmtPhone(p) { return "0" + p.slice(3, 5) + "-" + p.slice(5); }
@@ -362,7 +364,8 @@ async function loadPhones() {
 }
 
 // ---- state ----
-const state = { schools: SNAPSHOT.map(s => ({ ...s })), live: false, phones: null, unmatchedSurvey: [], unmatchedTeachers: [] };
+const CANON = n => window.SchoolNames.canon(n);
+const state = { schools: SNAPSHOT.map(s => ({ ...s, name: CANON(s.name) })), live: false, phones: null, unmatchedSurvey: [], unmatchedTeachers: [] };
 let filter = "need", q = "";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
@@ -473,22 +476,24 @@ async function refresh() {
     const res = await fetch(DATA_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
+    // השם המוצג = השם האחיד מפריסת הפיקוח; רשומה כפולה של אותו בית ספר מוצגת פעם אחת
+    const seen = new Set();
     const schools = (data.schools || []).filter(s => s.name && !MERGE[s.name]).map(s => ({
-      name: s.name, net: s.net || "",
-      principal: PRINCIPAL_FIX[s.name] || (s.principal === "ל" ? "" : (s.principal || "")),
+      name: CANON(s.name), net: s.net || "",
+      principal: PRINCIPAL_FIX[CANON(s.name)] || (s.principal === "ל" ? "" : (s.principal || "")),
       survey: false, teachers: false
-    }));
+    })).filter(s => !seen.has(s.name) && seen.add(s.name));
     const surveyNames = new Set();
     state.unmatchedSurvey = [];
     for (const row of (data.survey || [])) {
-      const m = matchSchool(MERGE[row.school] ? MERGE[row.school] : row.school, row.principal, schools);
-      if (m) surveyNames.add(MERGE[m] || m);
+      const m = matchSchool(CANON(MERGE[row.school] || row.school), row.principal, schools);
+      if (m) surveyNames.add(CANON(MERGE[m] || m));
       else state.unmatchedSurvey.push(`"${row.school}" (${row.principal || "ללא שם מנהל"})`);
     }
     const teacherNames = new Set();
     for (const t of (data.teachers || [])) {
-      const m = matchSchool(t.school, "", schools) || (t.school || "").trim();
-      teacherNames.add(MERGE[m] || m);
+      const m = matchSchool(CANON(t.school), "", schools) || CANON(t.school);
+      teacherNames.add(CANON(MERGE[m] || m));
     }
     state.unmatchedTeachers = [...teacherNames].filter(n => !schools.some(sc => sc.name === n));
     for (const sc of schools) {

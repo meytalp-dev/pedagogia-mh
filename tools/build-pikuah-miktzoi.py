@@ -78,10 +78,12 @@ for sc in schools:
 # ── 4. המפקח.ת הפדגוגי.ת — מצטרף מפריסת הפיקוח שכבר באתר ─────────────────────
 shell_src = io.open(SHELL, encoding='utf-8').read()
 ped = {}
+canon_name = {}  # סמל מוסד → השם האחיד בפריסה (כך מוצג בכל האתר)
 # פריסת הפיקוח שומרת את 64 המוסדות בבלוק JSON (ppData) — העמוד כבר לא טבלה
 for s in json.loads(re.search(r'<script type="application/json" id="ppData">(.*?)</script>',
                               shell_src, re.S).group(1))['schools']:
     ped[s['name']] = '|'.join(s['sups'])
+    canon_name[s['semel']] = s['name']
     if s['semel'].isdigit():
         ped[s['semel']] = '|'.join(s['sups'])
 ALIAS = {'אור דניאל נתניה': 'אור דניאל', 'צור באהר': 'סור באהר',
@@ -89,6 +91,8 @@ ALIAS = {'אור דניאל נתניה': 'אור דניאל', 'צור באהר':
 for sc in schools:
     key = sc['semel'] if sc['semel'] in ped else ALIAS.get(sc['name'], sc['name'])
     sc['ped'] = ped.get(key, '')
+    # השם המוצג = השם בפריסת הפיקוח (אדמין המוסדות), לא הכתיב שבאקסל
+    sc['name'] = canon_name.get(sc['semel']) or ALIAS.get(sc['name'], sc['name'])
 
 # ── 5. צבעים למפקחים המקצועיים ───────────────────────────────────────────────
 PALETTE = ['#14548C', '#9A5B00', '#6E56A8', '#1F7A4D', '#B0375E', '#A8437A', '#0E7490',
