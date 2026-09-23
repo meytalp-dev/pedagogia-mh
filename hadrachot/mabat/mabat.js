@@ -39,52 +39,68 @@ function reportSeen() {
 async function loadData() {
   if (!TS.getAppsScriptUrl()) { renderNoInspector(); return; }
 
-  // קריאה אחת בלבד. חשוב: Apps Script מטפל בבקשות של אותו משתמש בטור,
-  // ולכן קריאה נפרדת לכל מקצוע (5 אצל אחמד מחאמיד) חורגת מתקרת 30 השניות
-  // וחלק מהמקצועות פשוט לא נטענים. מושכים הכול פעם אחת ומסננים כאן.
   state.guides = (window.TS_guidesOfInspector ? window.TS_guidesOfInspector(INSP.slug) : []);
 
-  // שתי הקריאות במקביל. מרחב המדריכה לא חוסם את רשימת המורים: אם הוא נכשל
-  // (או שהפריסה עדיין בלי הפעולה), הטבלה עולה כרגיל והכרטיסים מציגים 0.
-  const [res] = await Promise.all([
-    TS.api('teachers.list', {}),
+  /* 23.9.26 — רשימת המורים נטענת לבד, ורק אחריה מרחב המדריכה והנוכחות.
+     קודם שלוש הקריאות רצו במקביל והטבלה חיכתה לאיטית שבהן: Apps Script מטפל
+     בבקשות של אותו משתמש בטור, וכשקריאה אחת נופלת ל-404 רגעי (302→404) הניסיון
+     החוזר שלה נעמד בתור מאחורי השתיים האחרות. נמדד בחי: 35 שניות של "טוען..."
+     בלי שום חיווי, והמפקחת הבינה שהדף לא נטען. */
+  const container = document.getElementById('teachers-container');
+  const hint = setTimeout(() => {
+    if (container && /^טוען/.test(container.textContent.trim())) {
+      container.innerHTML = `<div class="empty" style="padding:32px; line-height:1.8;">
+        עדיין טוען…<br><span style="color:var(--text-muted); font-size:14px;">השרת מושך את רשימת המורים. לפעמים זה לוקח עד חצי דקה — לא צריך לרענן.</span></div>`;
+    }
+  }, 6000);
+
+  const res = await TS.api('teachers.list', {});
+  clearTimeout(hint);
+
+  if (!res || !res.ok) {
+    renderApiError();
+  } else {
+    const teachers = [];
+    (res.data || []).forEach(t => {
+      const sector = t.sector || 'kelali';
+      /* הצלבה של subjects×sectors לא מספיקה מאז 9.9.26: יששכר הוא תנ"ך ארצי
+         ובנוסף כל המקצועות במגזר החרדי, וליאת ארצית באנגלית ובספרות אבל לא
+         בעברית לדוברי ערבית. TS_inspectorCovers היא הבדיקה היחידה הנכונה. */
+      if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
+      const netKey = (t.network || '').toString().replace(/^net_/, '');
+      teachers.push({
+        id: t.id,
+        name: t.name || '',
+        subject: t.subject,
+        schoolName: t.schoolName || '— ללא שיוך —',
+        network: netKey,
+        networkName: TS.netById(netKey).name || netKey,
+        type: t.type === 'gemer' ? 'gemer' : 'bagrut',
+        sector: sector,
+        // לחישוב הנוכחות: שיוך לקבוצת המדריכ/ה לפי יח"ל (שירה/גל), כמו בדשבורד המדריכ/ה
+        units: (t.units || '').toString().trim(),
+        school: t.school || ''
+      });
+    });
+
+    teachers.sort((a, b) => {
+      if (a.subject !== b.subject) return a.subject.localeCompare(b.subject, 'he');
+      if (a.schoolName !== b.schoolName) return a.schoolName.localeCompare(b.schoolName, 'he');
+      return a.name.localeCompare(b.name, 'he');
+    });
+    state.teachers = teachers;
+    renderAll();
+  }
+
+  // מרחב המדריכה והנוכחות — לא חוסמים את הטבלה. עד שהם מגיעים הכרטיסים
+  // מציגים 0 והנוכחות "טוען נוכחות…", ואז מצטיירים מחדש.
+  await Promise.all([
     loadWorkspace(),
-    // נוכחות במפגשים (meet.js) — גם היא לא חוסמת את רשימת המורים
     window.MEET_load ? window.MEET_load() : null
   ]);
-  if (!res || !res.ok) { renderApiError(); return; }
-
-  const teachers = [];
-  (res.data || []).forEach(t => {
-    const sector = t.sector || 'kelali';
-    /* הצלבה של subjects×sectors לא מספיקה מאז 9.9.26: יששכר הוא תנ"ך ארצי
-       ובנוסף כל המקצועות במגזר החרדי, וליאת ארצית באנגלית ובספרות אבל לא
-       בעברית לדוברי ערבית. TS_inspectorCovers היא הבדיקה היחידה הנכונה. */
-    if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
-    const netKey = (t.network || '').toString().replace(/^net_/, '');
-    teachers.push({
-      id: t.id,
-      name: t.name || '',
-      subject: t.subject,
-      schoolName: t.schoolName || '— ללא שיוך —',
-      network: netKey,
-      networkName: TS.netById(netKey).name || netKey,
-      type: t.type === 'gemer' ? 'gemer' : 'bagrut',
-      sector: sector,
-      // לחישוב הנוכחות: שיוך לקבוצת המדריכ/ה לפי יח"ל (שירה/גל), כמו בדשבורד המדריכ/ה
-      units: (t.units || '').toString().trim(),
-      school: t.school || ''
-    });
-  });
-
-  teachers.sort((a, b) => {
-    if (a.subject !== b.subject) return a.subject.localeCompare(b.subject, 'he');
-    if (a.schoolName !== b.schoolName) return a.schoolName.localeCompare(b.schoolName, 'he');
-    return a.name.localeCompare(b.name, 'he');
-  });
-
-  state.teachers = teachers;
-  renderAll();
+  renderGuides();
+  if (window.MEET_render) window.MEET_render();
+  if (state.teachers.length) renderTeachers();
 }
 
 // cache:'no' — קובץ שהועלה או הודעה שנשלחה חייבים להופיע מיד, לא אחרי TTL
