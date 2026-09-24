@@ -228,7 +228,7 @@
       const planMeetings = plan && plan.meetings ? plan.meetings : [];
       const unrecorded = planMeetings
         // מפגש בשני ימים (שירה) — "עבר בלי רישום" רק אחרי המועד השני
-        .filter(pm => (pm.date2 || pm.date) < today && !held.some(m => m.date === pm.date))
+        .filter(pm => (pm.date2 || pm.date) < today && !held.some(m => ((pm.dates && pm.dates.length) ? pm.dates : [pm.date, pm.date2]).indexOf(m.date) >= 0))
         .map(pm => ({ date: pm.date, label: pm.label, topic: pm.topic || '' }));
       const next = planMeetings.find(pm => (pm.date2 || pm.date) >= today) || null;
 

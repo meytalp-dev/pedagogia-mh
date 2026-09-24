@@ -10,6 +10,16 @@
    כדי שקישור ישן שנפתח אחר כך מאותו מכשיר ימשיך לעבוד.
    נטען אחרי dashboard.js ומשתמש ב-GUIDE_CFG, ב-state וב-myTeachers שלו.
    צד השרת: meet.* / checkin.* בסוף apps-script/code.gs.
+
+   24.9.26 (בקשת מיטל): "רישום הנוכחות צריך להיות הרבה יותר פשוט".
+   במקום בורר מפגש אחד — רשימה לפי חודשים (כל חודש מתקפל), ובתוכה כל
+   **יום מפגש** בשורה משלו: תאריך · יום · שעות/מסלולים · נושא. ליד כל שורה:
+   "פתיחת הרישום" (ביום המפגש) → הקוד הגדול בתוך השורה + "סגירת הרישום",
+   ו"סימון נוכחות" שפותח מתחת לשורה את הסימון הידני של אותו מועד.
+   יחידת הרישום בשרת היא יום (meetId_ = slug + תאריך) — לכן כל יום מפגש
+   נרשם עכשיו תחת התאריך שלו, ולא תחת היום הראשון של החודש כמו קודם.
+   מועדים באותו יום (16:00/17:00/18:00 אצל מוריה) הם שורה אחת: לשרת אין
+   דרך להבדיל ביניהם, וקוד פתוח אחד משרת את כל מועדי היום.
    ============================================================ */
 (function () {
   const SLUG = (typeof GUIDE_CFG !== 'undefined' && GUIDE_CFG.slug) || '';
@@ -30,8 +40,10 @@
 
   const PLAN = window.TS_planFor ? window.TS_planFor(SLUG) : null;
 
-  const S = { today: localToday(), meetings: [], rows: [], loaded: false, failed: false, badKey: false };
-  let sel = null;           // { date, topic, source, label, time }
+  const S = { today: localToday(), meetings: [], rows: [], rowsDate: '', loaded: false, failed: false, badKey: false };
+  let sel = null;           // המועד שהסימון הידני שלו פתוח — { date, topic, source, subject, label, slots }
+  let openMonths = null;    // חודשים פתוחים ('YYYY-MM'); null = ברירת המחדל (החודש הנוכחי)
+  let monthsSig = '';
   let edits = {};           // entryKey → 'present' | 'absent' | 'clear'
   let live = null;          // { codes, offset, openUntil }
   let filter = 'all';
@@ -40,7 +52,6 @@
   let saving = false;
   let pollTimer = null, tickTimer = null, codeTimer = null;
   let adhocMeetings = [];
-  let openMinutes = '90';
   let codeFetching = false;
   let lastCodeFetch = 0;
   let zoom = null;          // חלון ייבוא דוח הזום — ראו "ייבוא דוח משתתפים"
@@ -60,14 +71,12 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('tab-btn-meet');
-    if (!SLUG) { if (btn) btn.hidden = true; return; }
+    // בלי slug (קישור ישן עם ?guide= בלבד) אין תוכנית ואין רישום — המקטעים מוסתרים
+    if (!SLUG) { ['sec-month', 'sec-months', 'tool-adhoc', 'tool-year'].forEach(id => { const el = document.getElementById(id); if (el) el.hidden = true; }); return; }
     renderShell();
     renderNextMeet();
     if (!CAN) { renderNoKey(); return; }
-    pickDefault();
-    renderSelection();
-    // ביום המפגש הלשונית נפתחת לבד — זה מה שהמדריכ/ה צריכ/ה באותו יום
-    if (isLiveDay() && btn) btn.click();
+    renderMonths();
     load();
     window.addEventListener('beforeunload', e => {
       if (Object.keys(edits).length || wrapDraft) { e.preventDefault(); e.returnValue = ''; }
@@ -78,7 +87,13 @@
   });
 
   // dashboard.js קורא לזה אחרי שרשימת המורים נטענה
-  window.MEET_onRoster = function () { renderYear(); if (CAN && sel) renderBody(); };
+  window.MEET_onRoster = function () {
+    renderYear();
+    if (!CAN) return;
+    monthsSig = '';
+    renderMonths();
+    if (sel) renderBody();
+  };
 
   // ---------- הדרכה פרטנית כהשתתפות (14.9.26, החלטת מיטל) ----------
   // מורה שקיבל/ה שעה פרטנית "השתתף/ה השנה". לא נכנס לסימון של מפגש — מוצג
@@ -88,7 +103,7 @@
   window.MEET_onHours = function (rows) {
     HOURS = rows || [];
     renderYear();
-    if (CAN && sel && S.loaded && !saving) renderBody();
+    if (CAN && sel && S.rowsDate === sel.date && !saving) renderBody();
     // הדשבורד סופר את החודשים הפרטניים (קביעת מיטל 20.9.26) — מחשב מחדש
     if (typeof window.DASH_onMeetings === 'function') window.DASH_onMeetings();
   };
@@ -224,108 +239,139 @@
     return map[err] || ('תקלה: ' + (err || 'אין תשובה מהשרת'));
   }
 
-  // ---------- בחירת מפגש ----------
+  // ---------- המועדים (24.9.26) ----------
+  // כל יום מפגש מהתוכנית = מועד (שורה) משלו. מפגש שנרשם בשרת ולא מופיע
+  // בתוכנית (מפגש נוסף שהמדריכ/ה הוסיפה) — גם הוא שורה.
+  const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+  const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  function weekday(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+  }
+  function monthName(k) {
+    const [y, m] = String(k).split('-').map(Number);
+    return (MONTHS[m - 1] || '') + ' ' + y;
+  }
+  function shortLabel(iso) { const p = iso.split('-'); return Number(p[2]) + '.' + Number(p[1]); }
+
   function planMeetings() {
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
-      date: m.date, date2: m.date2 || '', dates: m.dates || null, subject: m.subject || '', topic: m.topic || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
+      date: m.date, date2: m.date2 || '', dates: m.dates || null, subject: m.subject || '', topic: m.topic || '',
+      goal: m.goal || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
     }));
+  }
+  // כל ימי המפגש: dates (מוריה — עד 3 ימים בחודש), או date + date2
+  function daysOf(m) { return m ? (m.dates && m.dates.length ? m.dates : [m.date, m.date2].filter(Boolean)) : []; }
+
+  // "70% חיצוני (ג׳ 15.9 בשעה 16:00, …): מפרט ההיבחנות" → { '70% חיצוני': 'מפרט ההיבחנות' }
+  function trackTopics(pm) {
+    const out = {};
+    String(pm.goal || '').split(' · ').forEach(seg => {
+      const i = seg.indexOf('): ');
+      if (i < 0) return;
+      out[seg.split(' (')[0].trim()] = seg.slice(i + 3).trim();
+    });
+    return out;
+  }
+
+  let sessCache = null, sessSig = '';
+  function sessions() {
+    const sig = S.meetings.map(m => m.date + m.topic).join('|') + '#' + adhocMeetings.map(m => m.date).join('|');
+    if (sessCache && sig === sessSig) return sessCache;
+    const out = [], have = new Set();
+    planMeetings().forEach(pm => {
+      const slots = window.TS_meetingSlots ? window.TS_meetingSlots(pm) : [];
+      const tt = trackTopics(pm);
+      const days = daysOf(pm);
+      days.forEach(d => {
+        if (!d || have.has(d)) return;
+        have.add(d);
+        const mine = slots.filter(x => x.date === d).map(x => ({ start: x.start, part: x.part || '', topic: tt[x.part] || '' }));
+        out.push({
+          date: d, subject: pm.subject, topic: pm.topic, source: 'plan', label: labelOf(d), slots: mine,
+          // שעה בלי תאריך ("11:00 / 18:00") — רק כשיש יום אחד בחודש, אחרת היא לא שייכת לשורה מסוימת
+          time: mine.length ? '' : (days.length === 1 ? pm.time : '')
+        });
+      });
+    });
+    S.meetings.concat(adhocMeetings).forEach(m => {
+      if (!m.date || have.has(m.date)) return;
+      have.add(m.date);
+      out.push({ date: m.date, subject: '', topic: m.topic || '', source: 'adhoc', label: labelOf(m.date), slots: [], time: '' });
+    });
+    out.sort((a, b) => a.date.localeCompare(b.date));
+    sessCache = out; sessSig = sig;
+    return out;
+  }
+  function sessionByDate(d) { return sessions().find(s => s.date === d) || null; }
+  function todaySession() { return sessionByDate(S.today); }
+  function nextSession() { return sessions().find(s => s.date >= S.today) || null; }
+  function timesText(s) {
+    if (s.slots && s.slots.length) return s.slots.map(x => x.start + (x.part ? ' ' + x.part : '')).join(' · ');
+    return s.time || '';
   }
 
   // ---------- כרטיס "המפגש הבא" בראש העמוד (14.9.26) ----------
-  // מדריכות לא מצאו איך נכנסים לנוכחות — הלשונית יושבת נמוך, ובמפגש עתידי
-  // היא הציגה רק "המפגש עוד לא התקיים". הכרטיס מוביל ישר לרישום של אותו מפגש.
+  // מדריכות לא מצאו איך נכנסים לנוכחות — הכרטיס מוביל ישר לשורה של המועד.
   function daysUntil(iso) {
     const [y, m, d] = iso.split('-').map(Number);
     const [ty, tm, td] = S.today.split('-').map(Number);
     return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(ty, tm - 1, td)) / 86400000);
   }
-  // כל ימי המפגש: dates (מוריה — עד 3 ימים בחודש), או date + date2
-  function daysOf(m) { return m ? (m.dates && m.dates.length ? m.dates : [m.date, m.date2].filter(Boolean)) : []; }
-  function isDayOf(m, d) { return daysOf(m).indexOf(d) !== -1; }
-  function nextMeeting() {
-    return allMeetings().find(m => m.date >= S.today || (m.date2 && m.date2 >= S.today)) || null;
-  }
   function renderNextMeet() {
     const box = document.getElementById('next-meet');
     if (!box) return;
-    const m = nextMeeting();
-    if (!m) { box.hidden = true; return; }
-    const isToday = isDayOf(m, S.today);
-    // מפגש בשני ימים: הספירה לאחור עד המועד הקרוב שעוד לא עבר
-    const upcoming = daysOf(m).filter(d => d >= S.today).sort()[0];
-    const n = daysUntil(upcoming);
+    const s = nextSession();
+    if (!s) { box.hidden = true; return; }
+    const isToday = s.date === S.today;
+    const n = daysUntil(s.date);
     const when = isToday ? 'היום' : n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים';
     const zoomUrl = GUIDE_CFG && /^https:\/\//.test(GUIDE_CFG.zoom || '') ? GUIDE_CFG.zoom : '';
+    const tt = timesText(s);
     box.className = 'nm-card' + (isToday ? ' today' : '');
     box.innerHTML = `
-      <div class="nm-date"><b>${esc(labelOf(upcoming).replace(/\.\d\d$/, ''))}</b><span>${esc(m.day || '')}</span></div>
+      <div class="nm-date"><b>${esc(shortLabel(s.date))}</b><span>יום ${esc(weekday(s.date))}</span></div>
       <div class="nm-tx">
         <div class="nm-eyebrow">${isToday ? '<span class="live-dot"></span>' : ''}<span>${isToday ? 'המפגש היום' : 'המפגש הבא · ' + esc(when)}</span></div>
-        <div class="nm-title">${esc(m.topic || 'מפגש הדרכה')}</div>
-        <div class="nm-sub">${esc(m.label)}${m.time ? ' · <bdi dir="ltr">' + esc(m.time) + '</bdi>' : ''}${isToday ? '' : ' · ביום המפגש נכנסים מכאן לרישום הנוכחות'}</div>
+        <div class="nm-title">${esc(s.topic || 'מפגש הדרכה')}</div>
+        <div class="nm-sub">${tt ? '<bdi>' + esc(tt) + '</bdi>' : esc(s.label)}${isToday ? '' : ' · ביום המפגש פותחים מכאן את רישום הנוכחות'}</div>
       </div>
       <div class="nm-act">
         ${zoomUrl ? `<a class="nm-btn" href="${esc(zoomUrl)}" target="_blank" rel="noopener">${ICON.screen}<span>כניסה לזום</span></a>` : ''}
-        <button type="button" class="nm-btn primary" id="nm-go">${ICON.check}<span>${isToday ? 'כניסה למפגש ומילוי נוכחות' : 'למפגש ולנוכחות'}</span></button>
+        <button type="button" class="nm-btn primary" id="nm-go">${ICON.check}<span>${isToday ? 'לפתיחת רישום הנוכחות' : 'למועדים ולנוכחות'}</span></button>
       </div>`;
     box.hidden = false;
     document.getElementById('nm-go').addEventListener('click', () => {
-      if (CAN && (!sel || sel.date !== m.date)) selectMeeting(m);
       if (window.TS_goTab) window.TS_goTab('meet');
+      if (CAN) revealSession(s.date);
     });
   }
-  function allMeetings() {
-    const list = planMeetings();
-    const have = new Set(list.map(m => m.date));
-    S.meetings.concat(adhocMeetings).forEach(m => {
-      if (have.has(m.date)) return;
-      have.add(m.date);
-      list.push({ date: m.date, topic: m.topic || '', source: 'adhoc', label: labelOf(m.date), time: '' });
-    });
-    return list.sort((a, b) => a.date.localeCompare(b.date));
-  }
-  function pickDefault() {
-    const list = allMeetings();
-    sel = list.find(m => isDayOf(m, S.today))
-      || list.filter(m => m.date < S.today).pop()
-      || list[0]
-      || null;
-  }
-  // מפגש בשני ימים (שירה: בוקר ביום א׳, ערב ביום ד׳) — הרישום העצמי נפתח בכל אחד מהם,
-  // והנוכחות נרשמת תחת המפגש (date). בלי date2 זה פשוט היום של המפגש.
-  function isLiveDay() { return !!sel && isDayOf(sel, S.today); }
-  function sessionDates() { return daysOf(sel).join(','); }
+
+  // מועד שנרשם בשרת — לפי התאריך שלו (meetId_ = slug + תאריך)
   function serverMeeting(date) { return S.meetings.find(m => m.date === date) || null; }
+  function isLiveDay() { return !!todaySession() || S.meetings.some(m => m.open); }
 
   // ---------- טעינה ----------
   async function load() {
-    if (!sel) {
-      // בלי תוכנית (שירה): אולי כבר נרשמו מפגשים שלא בתוכנית — מושכים את הרשימה
-      const r0 = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, all: 1 }, { cache: 'no' });
-      if (r0 && r0.ok && r0.data) { S.meetings = r0.data.meetings || []; publishAll(r0.data); }
-      else if (r0 && r0.error === 'bad_key') { S.badKey = true; renderSelection(); renderBody(); return; }
-      pickDefault();
-      renderSelection();
-      if (!sel) return;
-    }
-    const date = sel.date;
-    const res = await TS.api('meet.state', { guide: SLUG, k: KEY, ge: GE, date: date, all: 1 }, { cache: 'no' });
-    if (res && res.ok && res.data) publishAll(res.data);
-    if (!sel || sel.date !== date) return;   // בינתיים נבחר מפגש אחר
+    const date = sel ? sel.date : '';
+    const params = { guide: SLUG, k: KEY, ge: GE, all: 1 };
+    if (date) params.date = date;
+    const res = await TS.api('meet.state', params, { cache: 'no' });
     if (res && res.ok && res.data) {
+      publishAll(res.data);
       S.meetings = res.data.meetings || [];
-      S.rows = res.data.rows || [];
       S.loaded = true; S.failed = false; S.badKey = false;
-      const sm = serverMeeting(date);
-      if (sm && sm.open && isLiveDay()) { if (!live) fetchCode(); }
+      if (sel && sel.date === date) { S.rows = res.data.rows || []; S.rowsDate = date; }
+      const sm = serverMeeting(S.today);
+      if (sm && sm.open) { if (!live) fetchCode(); }
       else if (live) stopLive();
     } else if (res && res.error === 'bad_key') {
       S.badKey = true;
     } else {
       S.failed = true;
     }
-    renderSelectOptions();
     renderNextMeet();
+    renderMonths();
     renderBody();
     schedulePoll();
   }
@@ -344,6 +390,13 @@
     if (typeof window.SPACE_onMeetings === 'function') window.SPACE_onMeetings();
     if (typeof window.DASH_onMeetings === 'function') window.DASH_onMeetings();
   }
+  // הרישומים של מועד אחד מתוך כל הרישומים שכבר בדף — הסימון נפתח מיד, בלי לחכות לשרת
+  function rowsFromAll(date) {
+    const sm = serverMeeting(date);
+    if (!sm) return S.loaded ? [] : null;
+    if (!window.MEET_ALL || !Array.isArray(window.MEET_ALL.rows)) return null;
+    return window.MEET_ALL.rows.filter(r => String(r.meetingId) === String(sm.id));
+  }
   function schedulePoll() {
     clearTimeout(pollTimer);
     if (isLiveDay() && !S.badKey && !zoom) {
@@ -351,41 +404,20 @@
     }
   }
 
-  // ---------- שלד ----------
+  // ---------- שלד (24.9.26 — עמוד אחד) ----------
+  // מקטע 1 (#meet-root) — מועדי החודש. מקטע 2 (#meet-history) — חודש-חודש.
+  // "מפגש שלא מופיע בתוכנית" עבר ל"כלים נוספים" (#meet-adhoc-host).
+  let selWhere = 'cur';     // איפה נפתח הסימון: 'cur' = מקטע החודש · 'hist' = נוכחות לפי חודשים
   function renderShell() {
-    const root = document.getElementById('meet-root');
-    root.innerHTML = `
-      <section class="meet-card meet-head">
-        <div class="meet-head-row">
-          <div class="meet-head-tx">
-            <h2>${ICON.users}<span>נוכחות במפגשי ההדרכה</span></h2>
-            <div class="space-hint" style="margin:0;">מסמנים כאן מי השתתף. הרשימה כאן היא הקובעת. רישום עצמי של המורים הוא גיבוי, ונספר רק אחרי אישור.</div>
-          </div>
-          <label class="meet-pick">
-            <span>המפגש</span>
-            <select class="select" id="meet-select"></select>
-          </label>
-        </div>
-        <div id="meet-adhoc" class="meet-adhoc" hidden>
-          <label><span>תאריך המפגש</span><input type="date" class="input" id="meet-adhoc-date"></label>
-          <label class="grow"><span>נושא (לא חובה)</span><input type="text" class="input" id="meet-adhoc-topic" maxlength="200"></label>
-          <button type="button" class="btn btn-primary" id="meet-adhoc-go">לרישום הנוכחות</button>
-          <button type="button" class="btn btn-secondary" id="meet-adhoc-cancel">ביטול</button>
-        </div>
-        <div class="meet-meta" id="meet-meta"></div>
-        <details class="meet-howto" id="meet-howto">
-          <summary>איך ממלאים נוכחות? שלושה צעדים</summary>
-          <ol>
-            <li><b>ביום המפגש</b> נכנסים מהכרטיס "המפגש הבא" בראש העמוד. המפגש של היום נבחר לבד, ורשימת המורים של הקבוצה נפתחת כאן.</li>
-            <li><b>בתחילת המפגש (רשות)</b> לוחצים "פתיחת רישום עצמי", משתפים מסך עם הקוד ומדביקים בצ'אט של הזום את הקישור. המורים נרשמים בעצמם.</li>
-            <li><b>בסוף המפגש</b> מסמנים ליד כל מורה "נכח/ה" או "לא נכח/ה", מאשרים את מי שנרשם בעצמו, ולוחצים <b>"שמירת הסימונים"</b>. אפשר גם לייבא את דוח המשתתפים מהזום.</li>
-          </ol>
-        </details>
-      </section>
-      <div id="meet-year"></div>
-      <div id="meet-body"></div>`;
-
-    document.getElementById('meet-select').addEventListener('change', onSelect);
+    const host = document.getElementById('meet-adhoc-host');
+    if (!host) return;
+    host.innerHTML = `
+      <div class="space-hint" style="margin-top:0;">מפגש נוסף או מפגש שהוזז לתאריך שלא בתוכנית. בוחרים תאריך (היום או מפגש שכבר התקיים), ואחר כך מסמנים נוכחות כרגיל.</div>
+      <div id="meet-adhoc" class="meet-adhoc" style="margin-top:6px; padding-top:0; border-top:none;">
+        <label><span>תאריך המפגש</span><input type="date" class="input" id="meet-adhoc-date"></label>
+        <label class="grow"><span>נושא (לא חובה)</span><input type="text" class="input" id="meet-adhoc-topic" maxlength="200"></label>
+        <button type="button" class="btn btn-primary" id="meet-adhoc-go">הוספת המפגש וסימון נוכחות</button>
+      </div>`;
     const dateIn = document.getElementById('meet-adhoc-date');
     dateIn.max = S.today;
     dateIn.value = S.today;
@@ -393,24 +425,19 @@
       const d = dateIn.value;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || d > S.today) { TS.toast('בוחרים תאריך של היום או מפגש שכבר התקיים'); return; }
       const topic = document.getElementById('meet-adhoc-topic').value.trim();
-      const existing = allMeetings().find(m => isDayOf(m, d));
-      if (existing) { selectMeeting(existing); }
-      else {
-        const m = { date: d, topic: topic, source: 'adhoc', label: labelOf(d), time: '' };
-        adhocMeetings.push(m);
-        selectMeeting(m);
-      }
-      document.getElementById('meet-adhoc').hidden = true;
-    });
-    document.getElementById('meet-adhoc-cancel').addEventListener('click', () => {
-      document.getElementById('meet-adhoc').hidden = true;
-      renderSelectOptions();
+      if (!sessionByDate(d)) adhocMeetings.push({ date: d, topic: topic });
+      const s = sessionByDate(d);
+      if (!s) return;
+      const where = monthOf(d) === focusMonth(sessions()) ? 'cur' : 'hist';
+      if (!(sel && sel.date === d)) selectSession(s, where);
+      else revealSession(d, where);
     });
   }
 
   function renderNoKey() {
-    document.getElementById('meet-select').closest('.meet-pick').hidden = true;
-    document.getElementById('meet-body').innerHTML = `
+    const tool = document.getElementById('tool-adhoc');
+    if (tool) tool.hidden = true;
+    const html = `
       <section class="meet-card meet-notice">
         <div class="meet-notice-ic">${ICON.key}</div>
         <div>
@@ -418,69 +445,311 @@
           <p>הקישור שדרכו נכנסת עדיין לא כולל את מפתח הנוכחות. צריך לבקש ממיטל פלג את הקישור המעודכן, ולהיכנס ממנו פעם אחת. אחרי זה המכשיר יזכור את המפתח.</p>
         </div>
       </section>`;
+    const root = document.getElementById('meet-root');
+    if (root) root.innerHTML = html;
+    const hist = document.getElementById('meet-history');
+    if (hist) hist.innerHTML = '';
   }
 
-  function renderSelectOptions() {
-    const selEl = document.getElementById('meet-select');
-    if (!selEl) return;
-    const list = allMeetings();
-    const counts = d => { const m = serverMeeting(d); return m ? m.counts : null; };
-    selEl.innerHTML = list.map(m => {
-      const c = counts(m.date);
-      const tag = isDayOf(m, S.today) ? ' · היום'
-        : m.date > S.today ? ' · עתידי'
-        : (c && (c.present + c.absent) ? ' · סומנו ' + (c.present + c.absent) : '');
-      const topic = m.topic ? ' — ' + (m.topic.length > 42 ? m.topic.slice(0, 42) + '…' : m.topic) : '';
-      return `<option value="${esc(m.date)}"${sel && sel.date === m.date ? ' selected' : ''}>${esc(m.label + tag + topic)}</option>`;
-    }).join('') + '<option value="__adhoc">+ מפגש שלא מופיע בתוכנית…</option>';
-    if (!list.length) selEl.value = '__adhoc';
+  // ---------- חישובים חודשיים ----------
+  // רשימת הקבוצה (אדם = שם + בית ספר), למקצוע של המועד אצל מדריכה בשני מקצועות
+  function rosterGroups(subject) {
+    const all = (typeof myTeachers === 'function') ? myTeachers() : [];
+    const ts = subject ? all.filter(t => t.subject === subject) : all;
+    const groups = {}, out = [];
+    ts.forEach(t => {
+      const k = norm(t.name) + '|' + norm(t.schoolName);
+      if (!groups[k]) { groups[k] = { key: k, ids: [], name: t.name, school: t.schoolName || '' }; out.push(groups[k]); }
+      groups[k].ids.push(String(t.id));
+    });
+    return out;
+  }
+  // השתתפו / לא השתתפו / קיבלו הדרכה פרטנית — לפי אותם כללים של הדוחות:
+  // נוכחות מאושרת באחד ממועדי החודש = השתתף/ה. שעה פרטנית באותו חודש מספקת
+  // אף היא את החודש (קביעת מיטל 20.9.26), ולכן מי שקיבל/ה פרטני לא נספר/ת "לא השתתפו".
+  function monthSummary(k, list) {
+    if (!window.MEET_ALL) return null;
+    const subs = Array.from(new Set(list.map(s => s.subject || '')));
+    const groups = rosterGroups(subs.length === 1 ? subs[0] : '');
+    if (!groups.length) return null;
+    const ids = new Set((window.MEET_ALL.meetings || []).filter(m => monthOf(m.date) === k).map(m => String(m.id)));
+    const present = new Set();
+    (window.MEET_ALL.rows || []).forEach(r => {
+      if (r.status === 'present' && ids.has(String(r.meetingId))) present.add(String(r.teacherId));
+    });
+    const indAll = window.MEET_indMonths ? window.MEET_indMonths() : null;   // null = השעות עוד לא נטענו
+    const byName = (a, b) => String(a.school).localeCompare(String(b.school), 'he') || String(a.name).localeCompare(String(b.name), 'he');
+    const att = [], not = [], ind = [];
+    groups.forEach(g => {
+      const was = g.ids.some(id => present.has(id));
+      const gotInd = !!(indAll && indAll[g.key] && indAll[g.key].has(k));
+      if (was) att.push(g);
+      if (gotInd) ind.push(g);
+      if (!was && !gotInd) not.push(g);
+    });
+    return { att: att.sort(byName), not: not.sort(byName), ind: ind.sort(byName), total: groups.length, indLoaded: !!indAll, current: k === monthOf(S.today) };
+  }
+  // המועדים של מקטע 1: החודש הנוכחי, ואם אין בו מפגשים — החודש הבא שיש בו
+  function focusMonth(list) {
+    if (!list.length) return '';
+    const cur = monthOf(S.today);
+    if (list.some(s => monthOf(s.date) === cur)) return cur;
+    const nx = list.find(s => s.date >= S.today);
+    return nx ? monthOf(nx.date) : monthOf(list[list.length - 1].date);
   }
 
-  function onSelect(e) {
-    const v = e.target.value;
-    if (v === '__adhoc') {
-      document.getElementById('meet-adhoc').hidden = false;
-      document.getElementById('meet-adhoc-date').focus();
+  function renderMonths() {
+    const root = document.getElementById('meet-root');
+    const hist = document.getElementById('meet-history');
+    if (!root || !CAN) return;
+    if (S.badKey) {
+      root.innerHTML = `<section class="meet-card meet-notice warn"><div class="meet-notice-ic">${ICON.key}</div>
+        <div><strong>המפתח שבקישור אינו תקין</strong><p>${esc(errText('bad_key'))}</p></div></section>`;
+      if (hist) hist.innerHTML = '';
       return;
     }
-    const m = allMeetings().find(x => x.date === v);
-    if (m) selectMeeting(m);
+    const list = sessions();
+    if (!openMonths) openMonths = new Set();
+    // הרענון כל 20 שניות ביום המפגש — מציירים מחדש רק כשמשהו השתנה
+    const sig = JSON.stringify([S.meetings, sel && sel.date, selWhere, Array.from(openMonths), S.failed, S.loaded,
+      list.length, (window.MEET_ALL && window.MEET_ALL.rows || []).length, allSig.length, HOURS ? HOURS.length : -1,
+      (typeof myTeachers === 'function') ? myTeachers().length : 0]);
+    if (sig === monthsSig && root.querySelector('.ss-row, .cur-empty')) return;
+    monthsSig = sig;
+    const hadFocus = document.activeElement && document.activeElement.id && document.activeElement.closest &&
+      document.activeElement.closest('#meet-root, #meet-history') ? document.activeElement.id : '';
+
+    const fm = focusMonth(list);
+    // התג בכותרת מקטע 1 סופר רק את החודש שמוצג בו — ממתינים מחודש קודם מסומנים במקטע 2
+    const badge = document.getElementById('meet-count');
+    const pendCur = S.meetings.filter(m => monthOf(m.date) === fm).reduce((n, m) => n + ((m.counts && m.counts.pending) || 0), 0);
+    if (badge) { badge.hidden = !pendCur; badge.textContent = pendCur + ' ממתינים לאישור'; }
+    const title = document.querySelector('#sec-month-title span');
+    if (title) {
+      title.textContent = !fm ? 'החודש'
+        : fm === monthOf(S.today) ? 'החודש — ' + monthName(fm)
+        : fm > monthOf(S.today) ? 'החודש הבא — ' + monthName(fm) : 'המפגשים האחרונים — ' + monthName(fm);
+    }
+
+    // ---- מקטע 1 ----
+    const warn = S.failed && !S.loaded
+      ? `<div class="meet-warn" style="margin:0 0 12px;">${ICON.alert}<span>הנוכחות לא נטענה — תקלה רגעית בשרת. <button type="button" class="mh-edit" id="meet-retry">לנסות שוב</button></span></div>` : '';
+    if (!list.length) {
+      root.innerHTML = warn + `<div class="cur-empty">${S.loaded || S.failed
+        ? 'תוכנית המפגשים השנתית עדיין לא הוזנה למערכת. כדי לרשום נוכחות: "כלים נוספים" ← "מפגש שלא מופיע בתוכנית".'
+        : 'טוען…'}</div>`;
+    } else {
+      const cur = list.filter(s => monthOf(s.date) === fm);
+      const ms = fm <= monthOf(S.today) && cur.some(s => s.date <= S.today) ? monthSummary(fm, cur) : null;
+      const later = cur.some(s => s.date >= S.today) ? null : list.find(s => s.date > S.today);
+      root.innerHTML = warn +
+        (ms ? `<div class="mh-sum" style="margin:-6px 0 10px;">${sumHtml(ms)}<button type="button" class="mh-edit" data-gohist="${esc(fm)}">מי השתתף ומי לא</button></div>` : '') +
+        `<div class="mm-rows cur-rows">${cur.map(s => sessRowHtml(s, 'cur')).join('')}</div>` +
+        (later ? `<div class="cur-empty" style="margin-top:10px;">המפגש הבא: <b>יום ${esc(weekday(later.date))} ${esc(shortLabel(later.date))}</b>${timesText(later) ? ' · <bdi>' + esc(timesText(later)) + '</bdi>' : ''} — ${esc(later.topic || 'מפגש הדרכה')}. ביום המפגש הוא יופיע כאן עם כפתור "פתיחת הרישום".</div>` : '');
+    }
+
+    // ---- מקטע 2: חודשים שכבר התחילו ----
+    if (hist) {
+      const byMonth = {};
+      list.forEach(s => { (byMonth[monthOf(s.date)] = byMonth[monthOf(s.date)] || []).push(s); });
+      const keys = Object.keys(byMonth).filter(k => k <= monthOf(S.today) && byMonth[k].some(s => s.date <= S.today)).sort().reverse();
+      hist.innerHTML = !keys.length
+        ? '<div class="cur-empty">עוד לא התקיים אף מפגש השנה. אחרי המפגש הראשון החודש יופיע כאן.</div>'
+        : keys.map(k => monthHtml(k, byMonth[k])).join('');
+    }
+    bindMonths();
+    if (live) tick();
+    if (hadFocus) { const el = document.getElementById(hadFocus); if (el) el.focus(); }
   }
 
-  function selectMeeting(m) {
-    if (Object.keys(edits).length && !confirm('יש סימונים שלא נשמרו. לעבור מפגש בלי לשמור?')) {
-      renderSelectOptions();
-      return;
+  function sumHtml(ms) {
+    return `<span class="ok">השתתפו <b>${ms.att.length}</b></span> · <span class="bad">${ms.current ? 'עוד לא השתתפו' : 'לא השתתפו'} <b>${ms.not.length}</b></span>` +
+      (ms.indLoaded ? ` · <span class="ind">פרטני <b>${ms.ind.length}</b></span>` : '') + ` <span>(מתוך ${ms.total})</span>`;
+  }
+  function peopleHtml(arr, cls, title, empty, copy) {
+    return `
+      <div class="mh-list ${cls}">
+        <h4><span>${title}</span><span class="c">${arr.length}</span></h4>
+        ${arr.length ? `<ul class="mh-people">${arr.map(g => `<li><b>${esc(g.name)}</b><span>${esc(g.school)}</span></li>`).join('')}</ul>`
+          : `<div class="mh-empty">${empty}</div>`}
+        ${copy && arr.length ? `<button type="button" class="mh-copy" data-copy="${esc(arr.map(g => g.name + (g.school ? ' — ' + g.school : '')).join('\n'))}">העתקת הרשימה</button>` : ''}
+      </div>`;
+  }
+  function monthHtml(k, ss) {
+    const ms = monthSummary(k, ss);
+    const pend = ss.reduce((n, s) => { const sm = serverMeeting(s.date); return n + ((sm && sm.counts && sm.counts.pending) || 0); }, 0);
+    const days = ss.filter(s => s.date <= S.today);
+    return `
+      <details class="mm" data-month="${k}"${openMonths.has(k) ? ' open' : ''}>
+        <summary>
+          <svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="mm-name">${esc(monthName(k))}</span>
+          <span class="mh-sum">${ms ? sumHtml(ms) : 'טוען…'}</span>
+          ${pend ? `<span class="mm-chip pend">${pend} ממתינים לאישור</span>` : ''}
+        </summary>
+        <div class="mm-rows">
+          ${ms ? `
+          <div class="mh-lists">
+            ${peopleHtml(ms.att, 'ok', 'השתתפו החודש', 'עוד אין נוכחות מאושרת החודש', false)}
+            ${peopleHtml(ms.not, 'bad', ms.current ? 'עוד לא השתתפו' : 'לא השתתפו', 'כל הקבוצה השתתפה החודש', true)}
+            ${ms.indLoaded ? peopleHtml(ms.ind, 'ind', 'קיבלו הדרכה פרטנית', 'לא נרשמה החודש הדרכה פרטנית', false)
+              : '<div class="mh-list ind"><h4><span>קיבלו הדרכה פרטנית</span></h4><div class="mh-empty">טוען…</div></div>'}
+          </div>
+          <div class="mh-note">מי שהשתתף/ה באחד ממועדי החודש השתתף/ה בהדרכה של החודש. מי שקיבל/ה הדרכה פרטנית החודש לא נספר/ת ב"לא השתתפו".</div>` : ''}
+          <div class="mh-days">
+            <h4>מועדי החודש</h4>
+            ${days.map(s => dayRowHtml(s)).join('')}
+          </div>
+        </div>
+      </details>`;
+  }
+  function dayRowHtml(s) {
+    const sm = serverMeeting(s.date);
+    const c = (sm && sm.counts) || { present: 0, absent: 0, pending: 0 };
+    const isSel = !!sel && sel.date === s.date && selWhere === 'hist';
+    const st = (c.present + c.absent + c.pending)
+      ? `<span class="ss-st ok">נוכחים <b>${c.present}</b></span>${c.pending ? `<span class="ss-st pend">${c.pending} ממתינים לאישור</span>` : ''}`
+      : '<span class="ss-st none">לא סומנה נוכחות</span>';
+    return `
+      <div class="mh-dayrow${isSel ? ' sel' : ''}" id="sh-${esc(s.date)}">
+        <div class="mh-day">
+          <span class="d">יום ${esc(weekday(s.date))} ${esc(shortLabel(s.date))}</span>
+          <span class="st">${st}</span>
+          <button type="button" class="mh-edit" data-hpanel="${esc(s.date)}" aria-expanded="${isSel}">${isSel ? 'סגירת העריכה' : c.pending ? 'אישור ועריכת הנוכחות' : 'עריכת הנוכחות'}</button>
+        </div>
+        ${isSel ? '<div class="ss-panel" id="meet-body"></div>' : ''}
+      </div>`;
+  }
+
+  function sessRowHtml(s) {
+    const sm = serverMeeting(s.date);
+    const c = (sm && sm.counts) || { present: 0, absent: 0, pending: 0 };
+    const isToday = s.date === S.today;
+    const future = s.date > S.today;
+    const open = !!(sm && sm.open);
+    const isSel = !!sel && sel.date === s.date && selWhere === 'cur';
+    const total = rosterGroups(s.subject).length;
+    const slots = s.slots && s.slots.length
+      ? s.slots.map(x => `<li><bdi dir="ltr" class="ss-hour">${esc(x.start)}</bdi>${x.part ? `<span class="ss-part"><bdi>${esc(x.part)}</bdi></span>` : ''}${x.topic ? `<span class="ss-ttl">${esc(x.topic)}</span>` : ''}</li>`).join('')
+      : (s.time ? `<li><span class="ss-ttl">${esc(s.time)}</span></li>` : '');
+
+    let status;
+    if (future) {
+      const n = daysUntil(s.date);
+      status = `<span class="ss-st fut">${n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים'}</span>`;
+    } else if (c.present + c.absent + c.pending) {
+      status = `<span class="ss-st ok">נוכחים <b>${c.present}</b>${total ? ' מתוך ' + total : ''}</span>` +
+        (c.pending ? `<span class="ss-st pend">${c.pending} ממתינים לאישור</span>` : '');
+    } else {
+      status = `<span class="ss-st none">${isToday ? 'עוד לא נרשמה נוכחות' : 'לא סומנה נוכחות'}</span>`;
     }
+
+    const acts = [];
+    /* "פתיחת הרישום" ליד כל מפגש (מיטל, 24.9.26). השרת פותח רישום רק ביום המפגש —
+       בכוונה, כדי שלא יירשמו מראש או בדיעבד — ולכן בשאר הימים הכפתור מוצג אפור עם הסבר. */
+    const openBtnOff = t => `<button type="button" class="btn btn-secondary ss-btn ss-off" disabled title="${esc(t)}">${ICON.screen}<span>פתיחת הרישום</span></button><span class="ss-later">${esc(t)}</span>`;
+    if (future) {
+      acts.push(openBtnOff('ייפתח ביום המפגש, ' + shortLabel(s.date)));
+    } else {
+      if (isToday && !open) acts.push(`<button type="button" class="btn btn-primary ss-btn" data-open="${esc(s.date)}">${ICON.screen}<span>פתיחת הרישום</span></button>`);
+      if (!isToday) acts.push(openBtnOff('המפגש עבר — מסמנים ידנית'));
+      if (open) acts.push(`<button type="button" class="btn btn-secondary ss-btn ss-close" data-close="${esc(s.date)}">סגירת הרישום</button>`);
+      acts.push(`<button type="button" class="btn ${isSel ? 'btn-secondary' : (!isToday && (c.pending || !(c.present + c.absent)) ? 'btn-primary' : 'btn-secondary')} ss-btn" data-panel="${esc(s.date)}" aria-expanded="${isSel}">
+        ${isSel ? 'סגירת הסימון' : c.pending ? ICON.check + '<span>אישור וסימון נוכחות</span>' : ICON.check + '<span>סימון נוכחות ידני</span>'}</button>`);
+    }
+
+    return `
+      <div class="ss-row${isToday ? ' today' : ''}${future ? ' future' : ''}${isSel ? ' sel' : ''}${open ? ' live' : ''}" id="ss-${esc(s.date)}">
+        <div class="ss-main">
+          <div class="ss-date"><b>${esc(shortLabel(s.date))}</b><span>יום ${esc(weekday(s.date))}</span>${isToday ? '<em>היום</em>' : ''}</div>
+          <div class="ss-tx">
+            <div class="ss-topic">${esc(s.topic || 'מפגש הדרכה')}${s.source === 'adhoc' ? ' <span class="mb unlisted">לא בתוכנית</span>' : ''}</div>
+            ${slots ? `<ul class="ss-slots">${slots}</ul>` : ''}
+            <div class="ss-status">${status}</div>
+          </div>
+          <div class="ss-act">${acts.join('')}</div>
+        </div>
+        ${open ? livePanelHtml(sm) : ''}
+        ${isSel ? '<div class="ss-panel" id="meet-body"></div>' : ''}
+      </div>`;
+  }
+
+  function bindMonths() {
+    ['meet-root', 'meet-history'].forEach(id => {
+      const box = document.getElementById(id);
+      if (!box) return;
+      box.querySelectorAll('details.mm').forEach(d => d.addEventListener('toggle', () => {
+        if (d.open) openMonths.add(d.dataset.month); else openMonths.delete(d.dataset.month);
+      }));
+      box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openRegistration(sessionByDate(b.dataset.open), b)));
+      box.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeRegistration(b.dataset.close, b)));
+      box.querySelectorAll('[data-panel], [data-hpanel]').forEach(b => b.addEventListener('click', () => {
+        const where = b.dataset.hpanel ? 'hist' : 'cur';
+        const s = sessionByDate(b.dataset.hpanel || b.dataset.panel);
+        if (!s) return;
+        if (sel && sel.date === s.date && selWhere === where) closePanel(); else selectSession(s, where);
+      }));
+      box.querySelectorAll('[data-gohist]').forEach(b => b.addEventListener('click', () => {
+        openMonths.add(b.dataset.gohist);
+        renderMonths();
+        const d = document.querySelector('#meet-history details.mm[data-month="' + b.dataset.gohist + '"]');
+        if (d) d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }));
+      box.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+        const text = b.dataset.copy;
+        const done = () => { b.textContent = 'הועתק ✓'; setTimeout(() => { b.textContent = 'העתקת הרשימה'; }, 2000); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => window.prompt('להעתקה:', text));
+        else window.prompt('להעתקה:', text);
+      }));
+    });
+    const retry = document.getElementById('meet-retry');
+    if (retry) retry.addEventListener('click', () => { S.failed = false; load(); });
+    bindLive();
+  }
+
+  // מגלגל אל המועד (ובמקטע 2 — פותח את החודש שלו)
+  function revealSession(date, where) {
+    if (!openMonths) openMonths = new Set();
+    if (where === 'hist') openMonths.add(monthOf(date));
+    renderMonths();
+    if (sel) renderBody();
+    setTimeout(() => {
+      const row = document.getElementById((where === 'hist' ? 'sh-' : 'ss-') + date);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  }
+
+  function unsavedOk() {
+    if (Object.keys(edits).length && !confirm('יש סימונים שלא נשמרו. להמשיך בלי לשמור?')) return false;
+    if (wrapDraft && !confirm('סיכום ההדרכה לא נשמר. להמשיך בלי לשמור?')) return false;
+    return true;
+  }
+  function resetPanel() {
     edits = {};
     zoom = null; zoomMeta = {};
     wrapDraft = null; wrapNote = '';
-    stopLive();
-    sel = m;
-    S.rows = []; S.loaded = false; S.failed = false;
-    renderSelection();
+    filter = 'all'; search = ''; schoolF = '';
+  }
+  function selectSession(s, where) {
+    if (!unsavedOk()) return;
+    resetPanel();
+    sel = s;
+    selWhere = where === 'hist' ? 'hist' : 'cur';
+    // מועד מחוץ לחודש של מקטע 1 נפתח תמיד במקטע 2
+    if (selWhere === 'cur' && monthOf(s.date) !== focusMonth(sessions())) selWhere = 'hist';
+    const rows = rowsFromAll(s.date);
+    S.rows = rows || [];
+    S.rowsDate = rows ? s.date : '';
+    revealSession(s.date, selWhere);
     load();
   }
-
-  function renderSelection() {
-    renderSelectOptions();
-    const meta = document.getElementById('meet-meta');
-    if (!sel) {
-      meta.innerHTML = '';
-      document.getElementById('meet-adhoc').hidden = false;
-      document.getElementById('meet-body').innerHTML = S.badKey
-        ? `<section class="meet-card meet-notice warn"><div class="meet-notice-ic">${ICON.key}</div>
-            <div><strong>המפתח שבקישור אינו תקין</strong><p>${esc(errText('bad_key'))}</p></div></section>`
-        : `<section class="meet-card"><div class="empty" style="padding:24px;">
-            תוכנית המפגשים השנתית עדיין לא הוזנה למערכת. בוחרים למעלה את תאריך המפגש כדי לרשום נוכחות.
-          </div></section>`;
-      return;
-    }
-    meta.innerHTML = `
-      <span class="meet-date">${esc(sel.label)}</span>
-      ${sel.time ? `<span class="meet-time">${esc(sel.time)}</span>` : ''}
-      ${sel.topic ? `<span class="meet-topic">${esc(sel.topic)}</span>` : ''}`;
-    renderBody();
+  function closePanel() {
+    if (!unsavedOk()) return;
+    resetPanel();
+    sel = null;
+    S.rows = []; S.rowsDate = '';
+    renderMonths();
+    schedulePoll();
   }
 
   // ---------- רשימת המשתתפים ----------
@@ -579,27 +848,15 @@
         <div><strong>המפתח שבקישור אינו תקין</strong><p>${esc(errText('bad_key'))}</p></div></section>`;
       return;
     }
-    if (sel.date > S.today) {
-      const n = daysUntil(sel.date);
-      const howto = document.getElementById('meet-howto');
-      if (howto) howto.open = true;
-      body.innerHTML = `<section class="meet-card"><div class="empty" style="padding:26px; line-height:1.9;">
-        <b>המפגש של ${esc(sel.label)} עוד לא התקיים</b> (${n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים'}).<br>
-        ביום המפגש נכנסים לכאן מהכרטיס "המפגש הבא" שבראש העמוד, ורשימת המורים של הקבוצה תופיע לסימון.<br>
-        מפגש שכבר התקיים? בוחרים אותו ברשימה "המפגש" למעלה.</div></section>`;
-      return;
-    }
-    if (typeof state === 'undefined' || !state.teachers || !state.teachers.length) {
-      if (!S.loaded && !S.failed) {
-        body.innerHTML = '<section class="meet-card"><div class="empty" style="padding:26px;">טוען…</div></section>';
-        return;
-      }
-    }
-    if (S.failed && !S.loaded) {
-      body.innerHTML = `<section class="meet-card"><div class="empty" style="padding:22px; text-align:center;">
-        הנוכחות לא נטענה — תקלה רגעית בשרת.<br>
-        <button type="button" class="btn btn-secondary" id="meet-retry" style="margin-top:10px;">לנסות שוב</button></div></section>`;
-      document.getElementById('meet-retry').addEventListener('click', () => { S.failed = false; renderBody(); load(); });
+    if (sel.date > S.today) { body.innerHTML = ''; return; }   // אין סימון למפגש שעוד לא התקיים
+    if (S.rowsDate !== sel.date) {
+      body.innerHTML = S.failed && !S.loaded
+        ? `<section class="meet-card"><div class="empty" style="padding:22px; text-align:center;">
+            הנוכחות לא נטענה — תקלה רגעית בשרת.<br>
+            <button type="button" class="btn btn-secondary" id="meet-retry2" style="margin-top:10px;">לנסות שוב</button></div></section>`
+        : '<section class="meet-card"><div class="empty" style="padding:26px;">טוען את רשימת הקבוצה…</div></section>';
+      const r = document.getElementById('meet-retry2');
+      if (r) r.addEventListener('click', () => { S.failed = false; renderBody(); load(); });
       return;
     }
 
@@ -617,21 +874,16 @@
       const ids = new Set(monthMeetingIds());
       return all.filter(m => ids.has(String(m.id))).map(m => m.date).sort();
     })();
-    const monthLbl = window.TS_meetMonthLabel ? window.TS_meetMonthLabel(monthOf(sel.date)) : '';
+    const monthLbl = window.TS_meetMonthLabel ? window.TS_meetMonthLabel(monthOf(sel.date)) : monthName(monthOf(sel.date));
     const gaps = list.filter(g => g.self && g.guide === 'absent');
     const pending = list.filter(g => g.state === 'pending');
     const dirtyN = Object.keys(edits).length;
-    const badge = document.getElementById('meet-count');
-    if (badge) { badge.textContent = pending.length; badge.classList.toggle('zero', !pending.length); }
 
     // שמירה על המיקוד בשדה החיפוש בזמן ציור מחדש
-    const minutesEl = document.getElementById('meet-minutes');
-    if (minutesEl) openMinutes = minutesEl.value;
     const hadFocus = document.activeElement && document.activeElement.id === 'meet-search';
     const caret = hadFocus ? document.activeElement.selectionStart : 0;
 
     body.innerHTML = `
-      ${isLiveDay() ? liveCardHtml() : ''}
       <section class="meet-card">
         <div class="meet-month-head">
           <b>הדרכת ${esc(monthLbl)}</b>
@@ -661,8 +913,6 @@
         </div>
       </section>
 
-      ${wrapCardHtml()}
-
       ${zoom ? zoomPanelHtml(list) : ''}
 
       ${pending.length ? `
@@ -681,7 +931,9 @@
           ${filter !== 'all' ? '<button type="button" class="meet-clear-filter" data-filter="all">הצגת כולם</button>' : ''}
         </div>
         <div id="meet-list">${listHtml(list)}</div>
-      </section>`;
+      </section>
+
+      ${wrapCardHtml()}`;
 
     bindBody(list);
     bindWrap();
@@ -690,7 +942,6 @@
       s.focus();
       try { s.setSelectionRange(caret, caret); } catch (e) {}
     }
-    if (isLiveDay()) tick();
   }
 
   /* ------------------------------------------------------------------
@@ -1193,31 +1444,21 @@
     }
   }
 
-  // ---------- רישום עצמי חי ----------
-  function liveCardHtml() {
-    const sm = serverMeeting(sel.date);
-    const open = sm && sm.open;
-    if (!open) {
-      return `
-      <section class="meet-card meet-live closed">
-        <div class="ml-tx">
-          <h3>${ICON.screen}<span>רישום עצמי למשתתפים (גיבוי)</span></h3>
-          <p>פותחים בתחילת המפגש. על המסך יוקרן קוד שמתחלף כל 5 דקות. המורים נרשמים איתו מהטלפון או מהמחשב. מי שלא נמצא במפגש לא יכול לראות את הקוד. אחרי שסוגרים את הרישום, או כשהזמן נגמר, אי אפשר יותר להירשם.</p>
-        </div>
-        <div class="ml-open">
-          <label><span>פתוח למשך</span>
-            <select class="select" id="meet-minutes">
-              ${[['60', 'שעה'], ['90', 'שעה וחצי'], ['120', 'שעתיים']].map(([v, t]) =>
-                `<option value="${v}"${v === openMinutes ? ' selected' : ''}>${t}</option>`).join('')}
-            </select>
-          </label>
-          <button type="button" class="btn btn-primary" id="meet-open">פתיחת רישום עצמי</button>
-        </div>
-        <div class="ws-status" id="meet-live-status"></div>
-      </section>`;
-    }
+  // ---------- רישום עצמי חי — בתוך השורה של המועד (24.9.26) ----------
+  // משך הפתיחה לפי מועדי היום: מהשעה הראשונה עד שעה אחרי האחרונה (מוריה:
+  // 16:00–19:00 = שלוש שעות). בלי שעות בתוכנית — שעה וחצי. השרת מגביל ל-10–180.
+  function openMinutesFor(s) {
+    const mins = (s && s.slots ? s.slots : []).map(x => { const [h, m] = x.start.split(':').map(Number); return h * 60 + m; }).sort((a, b) => a - b);
+    if (mins.length < 2) return 90;
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const end = mins[mins.length - 1] + 75;
+    return Math.max(60, Math.min(180, end - Math.min(nowMin, mins[0])));
+  }
+
+  function livePanelHtml(sm) {
     return `
-      <section class="meet-card meet-live open">
+      <div class="ss-live meet-live open">
         <div class="ml-code-wrap">
           <div class="ml-label">הקוד עכשיו</div>
           <div class="ml-code" id="meet-code" dir="ltr">····</div>
@@ -1225,52 +1466,65 @@
           <div class="ml-count" id="meet-countdown"></div>
         </div>
         <div class="ml-tx">
-          <h3><span class="live-dot"></span><span>הרישום העצמי פתוח עד ${esc(hhmm(sm.openUntil))}</span></h3>
-          <p>משתפים מסך עם הקוד, ומדביקים בצ'אט של הזום את הקישור. הקוד מתחלף כל 5 דקות, וגם מי שהקליד רגע לפני ההחלפה נקלט.</p>
+          <h3><span class="live-dot"></span><span>הרישום פתוח עד ${esc(hhmm(sm.openUntil))}</span></h3>
+          <p>משתפים מסך עם הקוד ומדביקים בצ'אט של הזום את הקישור. המורים נכנסים לקישור, בוחרים את השם ומקלידים את הקוד. הקוד מתחלף כל 5 דקות, וגם מי שהקליד רגע לפני ההחלפה נקלט.</p>
           <div class="ml-url" dir="ltr">${esc(mifgashUrl())}</div>
           <div class="gl-actions">
-            <button type="button" class="gl-btn" id="meet-copy">${ICON.copy}<span>העתקת הודעה לצ'אט</span></button>
             <button type="button" class="gl-btn wa" id="meet-project">${ICON.screen}<span>הקרנה במסך מלא</span></button>
-            <button type="button" class="gl-btn" id="meet-close">סגירת הרישום</button>
+            <button type="button" class="gl-btn" id="meet-copy">${ICON.copy}<span>העתקת הודעה לצ'אט</span></button>
+            <button type="button" class="gl-btn" id="meet-extend">הארכה בשעה</button>
           </div>
           <div class="ws-status" id="meet-live-status"></div>
         </div>
-      </section>`;
+      </div>`;
+  }
+
+  async function openRegistration(s, btn, minutes) {
+    if (!s) return;
+    if (btn) { btn.disabled = true; const t = btn.querySelector('span') || btn; t.textContent = 'פותח…'; }
+    const body = {
+      guide: SLUG, k: KEY, ge: GE, date: s.date, sessionDates: s.date, minutes: minutes || openMinutesFor(s),
+      topic: s.topic || '', source: s.source || 'adhoc', guideName: GUIDE_CFG.name || ''
+    };
+    let res = await TS.apiPost('meet.open', body);
+    // תשובה שהתקלקלה בדרך — פתיחה חוזרת בטוחה (רק מעדכנת את שעת הסגירה)
+    for (let i = 0; i < 2 && res && res.error === 'bad_response'; i++) {
+      await new Promise(r => setTimeout(r, 1500));
+      res = await TS.apiPost('meet.open', body);
+    }
+    if (res && res.ok) {
+      if (res.data) {
+        // השורה נפתחת מיד, לפני הרענון
+        const i = S.meetings.findIndex(m => m.date === s.date);
+        const patch = { date: s.date, id: res.data.id, open: true, openUntil: res.data.openUntil, topic: res.data.topic || s.topic || '' };
+        if (i >= 0) S.meetings[i] = Object.assign({}, S.meetings[i], patch);
+        else S.meetings.push(Object.assign({ counts: { present: 0, absent: 0, pending: 0, gaps: 0 } }, patch));
+        renderMonths();
+        applyCodes(res.data);
+      }
+      await load();
+      return;
+    }
+    await load();   // אולי נפתח למרות שהתשובה נפלה
+    const sm = serverMeeting(s.date);
+    if (!(sm && sm.open)) TS.toast(errText(res && res.error));
+  }
+
+  async function closeRegistration(date, btn) {
+    if (!confirm('לסגור את הרישום? אחרי הסגירה המורים לא יוכלו להירשם עם הקוד.')) return;
+    if (btn) { btn.disabled = true; btn.textContent = 'סוגר…'; }
+    const res = await TS.apiPost('meet.close', { guide: SLUG, k: KEY, ge: GE, date: date });
+    if (!(res && res.ok)) TS.toast(errText(res && res.error));
+    else {
+      const i = S.meetings.findIndex(m => m.date === date);
+      if (i >= 0) S.meetings[i] = Object.assign({}, S.meetings[i], { open: false, openUntil: 0 });
+      TS.toast('הרישום נסגר');
+    }
+    stopLive();
+    await load();
   }
 
   function bindLive() {
-    const openBtn = document.getElementById('meet-open');
-    if (openBtn) openBtn.addEventListener('click', async () => {
-      openBtn.disabled = true; openBtn.textContent = 'פותח…';
-      const body = {
-        guide: SLUG, k: KEY, ge: GE, date: sel.date, sessionDates: sessionDates(), minutes: document.getElementById('meet-minutes').value,
-        topic: sel.topic || '', source: sel.source || 'adhoc', guideName: GUIDE_CFG.name || ''
-      };
-      let res = await TS.apiPost('meet.open', body);
-      // תשובה שהתקלקלה בדרך — פתיחה חוזרת בטוחה (רק מעדכנת את שעת הסגירה)
-      for (let i = 0; i < 2 && res && res.error === 'bad_response'; i++) {
-        await new Promise(r => setTimeout(r, 1500));
-        res = await TS.apiPost('meet.open', body);
-      }
-      if (res && res.ok) { applyCodes(res.data); await load(); }
-      else {
-        await load();   // אולי נפתח למרות שהתשובה נפלה
-        const sm = serverMeeting(sel.date);
-        if (!(sm && sm.open)) {
-          const st = document.getElementById('meet-live-status');
-          if (st) st.innerHTML = '<span class="bad">' + esc(errText(res && res.error)) + '</span>';
-        }
-      }
-    });
-    const closeBtn = document.getElementById('meet-close');
-    if (closeBtn) closeBtn.addEventListener('click', async () => {
-      if (!confirm('לסגור את הרישום העצמי? אחרי הסגירה המורים לא יוכלו להירשם.')) return;
-      closeBtn.disabled = true;
-      const res = await TS.apiPost('meet.close', { guide: SLUG, k: KEY, ge: GE, date: sel.date });
-      if (!(res && res.ok)) TS.toast(errText(res && res.error));
-      stopLive();
-      await load();
-    });
     const copyBtn = document.getElementById('meet-copy');
     if (copyBtn) copyBtn.addEventListener('click', () => {
       const text = 'רישום נוכחות למפגש' + (ARAB ? ' | تسجيل الحضور' : '') + ':\n' + mifgashUrl() +
@@ -1281,13 +1535,20 @@
     });
     const projBtn = document.getElementById('meet-project');
     if (projBtn) projBtn.addEventListener('click', openProjector);
+    const extBtn = document.getElementById('meet-extend');
+    if (extBtn) extBtn.addEventListener('click', () => {
+      const sm = serverMeeting(S.today);
+      const left = sm && sm.openUntil ? Math.max(0, Math.ceil((sm.openUntil - Date.now()) / 60000)) : 0;
+      openRegistration(todaySession() || { date: S.today, topic: '', source: 'adhoc', slots: [] }, extBtn, Math.min(180, left + 60));
+    });
   }
 
+  // הקוד של המועד שפתוח היום
   async function fetchCode() {
     if (codeFetching) return;
     codeFetching = true;
     clearTimeout(codeTimer);
-    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: sel.date, sessionDates: sessionDates() }, { cache: 'no' });
+    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: S.today, sessionDates: S.today }, { cache: 'no' });
     codeFetching = false;
     if (res && res.ok && res.data) { applyCodes(res.data); return; }
     if (res && res.error === 'closed') { stopLive(); load(); return; }

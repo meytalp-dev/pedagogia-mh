@@ -99,7 +99,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const id = TS.urlParam('network', '');
+    const id = TS.urlParam('network', '').replace(/^net_/, '');   // net_ort → ort (ראו dashboard.js)
     if (id) load(id);
   });
 

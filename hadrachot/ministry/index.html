@@ -7,6 +7,35 @@
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
 <link rel="stylesheet" href="../assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
+<style>
+  /* מקצועות עם הנוכחות הנמוכה והגבוהה (24.9.26) */
+  .sa-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 720px) { .sa-cols { grid-template-columns: 1fr; } }
+  .sa-col { border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; background: var(--surface); min-width: 0; }
+  .sa-col h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 15px; color: #2F4A2E; }
+  .sa-col h4 svg { width: 16px; height: 16px; flex: none; }
+  .sa-col.low h4 svg { color: #B4532F; }
+  .sa-col.high h4 svg { color: #4E6B4D; }
+  .sa-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--border-soft, #E4ECE2); }
+  .sa-row:first-of-type { border-top: 0; }
+  .sa-name { font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
+  .sa-rate { font-family: 'Fredoka', 'Heebo', sans-serif; font-weight: 800; font-size: 20px; line-height: 1; }
+  .sa-rate.high { color: #3E5A3D; }
+  .sa-rate.mid  { color: #9A6B1F; }
+  .sa-rate.low  { color: #B4532F; }
+  .sa-meta { grid-column: 1 / -1; font-size: 12.5px; color: var(--text-muted); }
+  .sa-bar { grid-column: 1 / -1; height: 6px; border-radius: 999px; background: var(--surface-soft); overflow: hidden; }
+  .sa-bar i { display: block; height: 100%; border-radius: 999px; background: #8CA68B; }
+  .sa-bar i.mid { background: #E0B866; }
+  .sa-bar i.low { background: #D97757; }
+  .sa-row.sel .sa-name::after { content: ' · במסנן'; font-weight: 600; font-size: 12px; color: #4E6B4D; }
+  .sa-empty { padding: 20px 22px; border: 1px dashed var(--border); border-radius: 14px; color: var(--text-muted); line-height: 1.8; text-align: center; }
+  .sa-all { margin-top: 14px; }
+  .sa-all summary { cursor: pointer; font-weight: 700; color: #2F4A2E; padding: 6px 0; }
+  .sa-all .table-wrap { overflow-x: auto; }
+  .sa-all td.num, .sa-all th.num { text-align: center; }
+</style>
 </head>
 <body data-role="ministry" data-look="menor">
 
@@ -41,9 +70,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M10.5 14L7 17M13.5 14L17 17"/></svg>
         לפי רשת
       </a>
-      <a href="#s-sectors">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
-        לפי מגזר
+      <a href="#s-subjects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        נוכחות לפי מקצוע
       </a>
       <a href="#s-schools">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -52,10 +81,6 @@
       <a href="pearim.html" style="background:var(--sand-soft); border-color:var(--sand); font-weight:700">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
         פערים ומעקב · מי טרם הזין · לפי מפקח.ת ›
-      </a>
-      <a href="nochechut.html" style="background:var(--mint-soft); border-color:var(--mint); font-weight:700">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        נוכחות במפגשי ההדרכה ›
       </a>
     </div>
   </nav>
@@ -182,51 +207,28 @@
       <div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-muted);">טוען...</div>
     </div>
 
-    <!-- Compass Divider בין רשתות למגזרים -->
-    <div class="compass-divider" id="s-sectors" aria-hidden="true">
-      <span class="label">פילוח לפי מגזר</span>
+    <!-- Compass Divider בין רשתות לנוכחות לפי מקצוע -->
+    <div class="compass-divider" id="s-subjects" aria-hidden="true">
+      <span class="label">נוכחות לפי מקצוע</span>
       <div class="line"></div>
-      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></div>
+      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div>
       <div class="line"></div>
     </div>
 
-    <!-- Section: Sectors — הזנת המורים לפי מגזר ומקצוע -->
-    <div class="section-head-flex">
-      <div>
-        <h2>המורים שהוזנו — לפי מגזר</h2>
-        <p class="sub">כל המורים שבתי הספר הזינו למערכת, מפולחים לשלושת המגזרים. סינון המקצוע למעלה חל גם כאן.</p>
-      </div>
-    </div>
-    <div class="networks-grid" id="sector-lenses" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
-      <div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-muted);">טוען...</div>
-    </div>
-
-    <!-- Sector × Subject Matrix -->
-    <section class="attention-card" style="margin-top: 20px;">
+    <!-- מקצועות עם הנוכחות הנמוכה והגבוהה (24.9.26, בקשת מיטל) —
+         מחושב מנוכחות מפגשי ההדרכה (meet.report), באותם כללים כמו דוח הנוכחות -->
+    <section class="attention-card" id="subject-att-card" style="margin-top: 0;">
       <div class="attention-head">
         <div>
           <h3>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-            מורים לפי מקצוע ומגזר
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+            מקצועות עם הנוכחות הנמוכה והגבוהה
           </h3>
-          <p class="sub">כמה מורים הוזנו בכל מקצוע, בכל מגזר. השורה התחתונה — סך הכול.</p>
+          <p class="sub" id="subject-att-sub">אחוז ההשתתפות של המורים בהדרכות החודשיות, לפי מקצוע.</p>
         </div>
       </div>
-      <div class="table-wrap" style="border:none;">
-        <table class="attention-table">
-          <thead>
-            <tr>
-              <th>מקצוע</th>
-              <th>כללי</th>
-              <th>חרדי</th>
-              <th>ערבי</th>
-              <th>סה"כ</th>
-            </tr>
-          </thead>
-          <tbody id="sector-matrix-body">
-            <tr><td colspan="5" style="padding:24px; text-align:center; color:var(--text-muted);">טוען...</td></tr>
-          </tbody>
-        </table>
+      <div id="subject-att">
+        <div class="sa-empty">טוען נוכחות לפי מקצוע…</div>
       </div>
     </section>
 
@@ -269,20 +271,6 @@
       </div>
     </section>
 
-    <!-- מעבר לדוח הנוכחות במפגשי ההדרכה (14.9.26) -->
-    <a href="nochechut.html" class="attention-card" style="display:block; margin-top:22px; text-decoration:none; color:inherit; border-color:var(--mint); background:linear-gradient(180deg,var(--mint-soft),var(--surface));">
-      <div class="attention-head" style="margin-bottom:0">
-        <div>
-          <h3>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            נוכחות במפגשי ההדרכה (זום)
-          </h3>
-          <p class="sub">הנוכחות שהמדריכים רושמים בכל מפגש: לפי מדריך/ה, בית ספר, רשת ומורה. כולל מי לא השתתף באף מפגש ומפגשים שעברו בלי רישום.</p>
-        </div>
-        <span class="badge info">מעבר לעמוד ›</span>
-      </div>
-    </a>
-
     <!-- מעבר לעמוד הפערים -->
     <a href="pearim.html" class="attention-card" style="display:block; margin-top:22px; text-decoration:none; color:inherit; border-color:var(--sand); background:linear-gradient(180deg,var(--sand-soft),var(--surface));">
       <div class="attention-head" style="margin-bottom:0">
@@ -301,10 +289,14 @@
 
 <script src="../assets/app.js"></script>
 <script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
-<script src="dashboard.js"></script>
+<!-- נוכחות לפי מקצוע: אותו חישוב כמו דוח הנוכחות (nochechut.html) -->
+<script src="../assets/guides.js?v=20260924g"></script>
+<script src="../assets/plans.js?v=20260924n"></script>
+<script src="../assets/meet-stats.js?v=20260920b"></script>
+<script src="dashboard.js?v=20260924s"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): סיור, "שאלה או קושי", סמלי כותרות -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260924f"></script>
+<script src="view.js?v=20260924s"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

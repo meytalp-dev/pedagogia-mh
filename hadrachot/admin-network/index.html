@@ -24,6 +24,8 @@
   .command-strip .stat-value.info { color: #86C3EF; }
 
   .page-header-actions { display:flex; flex-direction:column; align-items:flex-end; gap:16px; }
+  /* טבלת החודשים רחבה מ-390px בטלפון — גלילה בתוך הכרטיס, לא בכל הדף */
+  #nw-meet-months { overflow-x: auto; }
   @media (max-width: 720px) { .page-header-actions { align-items: stretch; } }
 </style>
 </head>
@@ -249,8 +251,8 @@
 <script src="../assets/plans.js?v=20260924n"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="../assets/meet-view.js?v=20260920b"></script>
-<script src="dashboard.js"></script>
-<script src="meet.js?v=20260920"></script>
+<script src="dashboard.js?v=20260924s"></script>
+<script src="meet.js?v=20260924s"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
 <script src="view.js?v=20260924f"></script>

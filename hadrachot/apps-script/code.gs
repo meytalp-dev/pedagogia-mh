@@ -3962,7 +3962,8 @@ function remindSend_(data, s, isTest) {
   const link = REMIND_SITE + 'ministry/mifgash-status.html?g=' + encodeURIComponent(s.slug) + '&d=' + s.mdate;
 
   // מצב הרישום ברגע השליחה (המפגש נרשם תחת mdate גם כשהמועד ביום אחר)
-  const row = meetFind_(meetId_(s.slug, s.mdate));
+  // מ-24.9.26 כל יום מפגש נרשם תחת היום שלו; רישומים ישנים — תחת היום הראשון
+  const row = meetFind_(meetId_(s.slug, s.date)) || meetFind_(meetId_(s.slug, s.mdate));
   let state;
   if (!row) state = 'המדריך/ה עוד לא נכנס/ה ללשונית הנוכחות של המפגש הזה.';
   else {
@@ -4022,7 +4023,7 @@ function remindSendSummary_(data, x, isTest) {
   const link = REMIND_SITE + 'ministry/mifgash-status.html?g=' + encodeURIComponent(x.slug) + '&d=' + x.mdate;
   const total = data.roster[x.subject ? x.slug + '|' + x.subject : x.slug] || 0;
 
-  const row = meetFind_(meetId_(x.slug, x.mdate));
+  const row = meetFind_(meetId_(x.slug, x.date)) || meetFind_(meetId_(x.slug, x.mdate));
   const rows = row ? readAll('meeting_attendance').filter(r => String(r.meetingId) === String(row.id)) : [];
   const by = { present: [], absent: [], pending: [] };
   rows.forEach(r => { if (by[r.status]) by[r.status].push(r); });

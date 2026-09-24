@@ -92,10 +92,14 @@
     $('ms-title').textContent = g.name + ' · ' + subject;
     $('ms-sub').textContent = [pm ? 'מפגש ' + pm.label : L(date), insp ? 'מפקח/ת: ' + insp : ''].filter(Boolean).join(' · ');
 
-    const id = 'mt_' + slug + '_' + date.replace(/-/g, '');
-    const m = (data.meetings || []).find(x => x.id === id);
-    const rows = (data.rows || []).filter(r => r.meetingId === id);
-    const c = m ? m.counts : { present: 0, absent: 0, pending: 0, gaps: 0 };
+    // מ-24.9.26 כל יום מפגש נרשם בנפרד (mt_<slug>_<יום>) — מאחדים את כל ימי המפגש של החודש
+    const days = [date].concat(pm ? window.TS_meetingSlots(pm).map(s => s.date) : []);
+    const ids = days.filter((d, i) => d && days.indexOf(d) === i).map(d => 'mt_' + slug + '_' + d.replace(/-/g, ''));
+    const ms = (data.meetings || []).filter(x => ids.indexOf(x.id) >= 0);
+    const m = ms.find(x => x.open) || ms.slice().sort((a, b) => String(b.openedAt || '').localeCompare(String(a.openedAt || '')))[0];
+    const rows = (data.rows || []).filter(r => ids.indexOf(r.meetingId) >= 0);
+    const c = { present: 0, absent: 0, pending: 0, gaps: 0 };
+    ms.forEach(x => Object.keys(c).forEach(k => { c[k] += Number((x.counts || {})[k] || 0); }));
     const slots = pm ? window.TS_meetingSlots(pm) : [];
     const now = Date.now();
     const started = slots.some(s => new Date(s.date + 'T' + s.start + ':00').getTime() <= now);

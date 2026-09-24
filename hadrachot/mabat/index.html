@@ -66,6 +66,25 @@
   .pl-next-chip { display:inline-block; font-size:10.5px; font-weight:700; color:#15603c; background:#E4F3EA; border-radius:999px; padding:1px 8px; margin-bottom:3px; }
   .gm-next { font-size:11.5px; font-weight:600; color:#15603c; }
 
+  /* כרטיס מדריכ/ה מצומצם (24.9.26) — נוכחות + הדרכה פרטנית, והשאר תחת "פרטים נוספים" */
+  .gx-note { margin:-6px 0 14px; font-size:12.5px; color:var(--text-muted); line-height:1.7; }
+  #guides-grid.gx { grid-template-columns:repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap:14px; align-items:start; }
+  .gx-card { gap:8px; min-width:0; }
+  .gx-facts { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:13px; color:var(--text-2); }
+  .gx-facts b { color:var(--text); font-size:15px; font-variant-numeric:tabular-nums; }
+  .gx-ind { background:#F4F1FA; border-radius:10px; padding:8px 11px; }
+  .gx-ind-head { font-size:13px; color:#4a3780; }
+  .gx-ind-head b { color:#3d2c6e; }
+  .gx-ind-list { margin-top:4px; font-size:12.5px; line-height:1.75; max-height:180px; overflow-y:auto; }
+  .gx-ind-list div { display:flex; justify-content:space-between; gap:8px; border-top:1px dashed #DDD5EC; }
+  .gx-ind-list div:first-child { border-top:none; }
+  .gx-ind-list span { color:var(--text-muted); font-size:11.5px; text-align:left; }
+  .gx-ind-list small { color:#5b4391; font-weight:700; }
+  .gx-ind-note { font-size:11.5px; color:var(--text-muted); margin-top:3px; }
+  .gx-more-body { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .gx-sub-h { font-size:12px; font-weight:700; color:var(--text-2); margin-top:4px; }
+  .gx-more .gm-actions { margin-top:0; }
+
   /* קבצים */
   .drop-zone {
     border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center;
@@ -228,22 +247,14 @@
 
     <!-- המדריכות שתחת המפקח.ת -->
     <section class="guides-card" id="guides-card" hidden>
-      <div class="guides-head">
+      <!-- מ-24.9.26 כרטיס אחד לכל מדריכ/ה: הנוכחות (meet.js) נכנסה לכאן, ואין עוד מקטע נוכחות נפרד -->
+      <div class="guides-head" style="flex-wrap:wrap;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         <span>המדריכות שבאחריותי</span>
-      </div>
-      <div class="guides-grid" id="guides-grid"></div>
-    </section>
-
-    <!-- נוכחות במפגשי ההדרכה (14.9.26) — meet.js -->
-    <section class="guides-card" id="meet-card" hidden>
-      <div class="guides-head" style="flex-wrap:wrap;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>נוכחות במפגשי ההדרכה</span>
         <span id="meet-summary" style="font-family:inherit; font-size:12.5px; font-weight:500; color:var(--text-muted); margin-inline-start:auto;"></span>
       </div>
-      <p style="margin:-6px 0 14px; font-size:12.5px; color:var(--text-muted); line-height:1.7;">נספרים רק מפגשים שהמדריכ/ה רשמ/ה בהם נוכחות. רישום עצמי של מורים נספר רק אחרי אישור. מפגש מהתוכנית שעבר בלי רישום מסומן באדום.</p>
-      <div class="mv-grid" id="meet-grid"></div>
+      <p class="gx-note">הנוכחות נספרת רק במפגשים שהמדריכ/ה רשמ/ה בהם נוכחות. מפגש שעבר בלי רישום מסומן באדום.</p>
+      <div class="guides-grid" id="guides-grid"></div>
     </section>
 
     <div class="subject-filter-bar" id="subject-filter" style="margin-bottom:10px;"></div>
@@ -324,11 +335,11 @@
 <script src="../assets/plans.js?v=20260924n"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="../assets/meet-view.js?v=20260920b"></script>
-<script src="mabat.js?v=20260923"></script>
-<script src="meet.js?v=20260920"></script>
+<script src="mabat.js?v=20260924g"></script>
+<script src="meet.js?v=20260924g"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260924f"></script>
+<script src="view.js?v=20260924g"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

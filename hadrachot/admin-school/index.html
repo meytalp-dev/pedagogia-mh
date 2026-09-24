@@ -60,6 +60,19 @@
   .reminder-btn { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:6px; background:white; border:1px solid #fcd34d; color:#78350f; font-family:inherit; font-size:12px; font-weight:600; text-decoration:none; cursor:pointer; }
   .reminder-btn svg { width:12px; height:12px; }
 
+  /* מי השתתף/ה — ירוק ורגוע, לצד מי לא (בקשת מיטל 24.9.26) */
+  .sa-who { line-height:1.65; overflow-wrap:anywhere; }
+  .sa-who + .sa-who { margin-top:4px; }
+  .sa-tag { display:inline-block; font-size:10.5px; font-weight:700; border-radius:999px; padding:0 8px; margin-inline-end:6px; line-height:1.7; }
+  .sa-yes { color:#2F4A2E; }
+  .sa-yes .sa-tag { background:#E5EDE3; color:#2F4A2E; }
+  .sa-no { color:var(--text-2); }
+  .sa-no .sa-tag { background:#F3EDE4; color:#7A5A3A; }
+  .mv-card details.sa-came > summary, .mv-table details.sa-came > summary { color:#2F6B45; }
+  details.sa-came .mv-people b { color:#2F4A2E; }
+  details.sa-came .mv-people span { color:#4E6B4D; }
+  .mv-table details + details { margin-top:4px; }
+
   @media (max-width: 720px) {
     .att-grid { font-size:12px; }
     .att-grid th, .att-grid td { padding:6px 4px; }
@@ -211,7 +224,7 @@
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="../assets/meet-view.js?v=20260920b"></script>
 <script src="dashboard.js?v=20260920"></script>
-<script src="meet.js?v=20260920"></script>
+<script src="meet.js?v=20260924a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
 <script src="view.js?v=20260924f"></script>

@@ -7,15 +7,17 @@ let state = {
 };
 let currentSubject = '';
 
-// פילוח מגזרים — נבנה בצד הלקוח מרשימת המורים + מפת המגזרים של פריסת הפיקוח
-let allTeachers = [];
+// מגזר לכל בית ספר — לצ'יפ המגזר בטבלת בתי הספר (מפת פריסת הפיקוח)
 let sectorBySchool = {};   // sch_id -> kelali | haredi | arab
-const SECTOR_ORDER = ['kelali', 'haredi', 'arab'];
-const SECTOR_COLORS = { kelali: '#1d4ed8', haredi: '#5b21b6', arab: '#047857' };
+
+// נוכחות לפי מקצוע (24.9.26, בקשת מיטל) — במקום "המורים שהוזנו לפי מגזר"
+// ו"מורים לפי מקצוע ומגזר". null = עוד נטען; { failed } = לא נטען.
+let subjectAtt = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('month-label').textContent = TS.monthLabel();
-  loadSectorData();   // רץ במקביל ל-load — לא חוסם את שאר הדשבורד
+  loadSectorMap();       // קובץ סטטי — לצ'יפ המגזר בטבלה
+  loadSubjectAttendance();   // רץ במקביל ל-load — לא חוסם את שאר הדשבורד
   await load();
 });
 
@@ -41,21 +43,13 @@ function renderLoadError(err) {
   if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">' + msg + '</td></tr>';
 }
 
-async function loadSectorData() {
+async function loadSectorMap() {
   try {
     const mapRes = await fetch('../_data/sector-map-2027.json');
     const map = await mapRes.json();
     (map.schools || []).forEach(s => { sectorBySchool[s.id] = s.sector; });
-  } catch (e) { /* המפה לא זמינה — ניפול לשדה sector של המורה */ }
-
-  const res = await TS.api('teachers.list', {});
-  if (res.ok && res.data) allTeachers = res.data;
-  renderSectorView();
+  } catch (e) { /* המפה לא זמינה — הטבלה בלי צ'יפ מגזר */ }
   renderWeakSchools();   // רענון — כדי להוסיף צ'יפ מגזר לטבלה
-}
-
-function teacherSector(t) {
-  return sectorBySchool[t.school] || t.sector || 'kelali';
 }
 
 function render() {
@@ -63,99 +57,136 @@ function render() {
   renderCommandStrip();
   renderNetworkLenses();
   renderWeakSchools();
-  renderSectorView();
+  renderSubjectAttendance();   // הדגשת המקצוע שבמסנן
 }
 
-function renderSectorView() {
-  const lensesEl = document.getElementById('sector-lenses');
-  const matrixEl = document.getElementById('sector-matrix-body');
-  if (!lensesEl || !matrixEl) return;
-  if (!allTeachers.length) {
-    lensesEl.innerHTML = emptyMsg('טוען את רשימת המורים...');
+/* ============================================================
+   מקצועות עם הנוכחות הנמוכה והגבוהה (24.9.26)
+   -----------------------------------------------------------
+   מקור: נוכחות מפגשי ההדרכה (meet.report) + רשימת המורים + השעות
+   הפרטניות, מחושב ב-assets/meet-stats.js — בדיוק כמו בדוח הנוכחות
+   (nochechut.html): יחידת הספירה היא חודש הדרכה, ושעה פרטנית מספקת את
+   החודש. לכל מקצוע: סך החודשים שהמורים השתתפו בהם ÷ סך החודשים שנמדדו.
+   נכנסים רק מורים שנמדדו (היה להם לפחות חודש הדרכה אחד).
+   ============================================================ */
+const SA_MIN_TEACHERS = 3;   // מקצוע עם פחות מורים שנמדדו לא נכנס לדירוג — אחוז של מורה אחד/שניים מטעה
+
+async function loadSubjectAttendance() {
+  try {
+    if (typeof window.TS_meetStats !== 'function') throw new Error('meet-stats');
+    const slugs = Object.keys(window.TS_GUIDES || {});
+    const [rep, tl, ws] = await Promise.all([
+      TS.api('meet.report', {}, { cache: 'no' }),
+      TS.api('teachers.list', {}),
+      // השעות הפרטניות נספרות כהשתתפות — נכשל? מחשבים בלעדיהן
+      TS.api('guide.workspace', { guides: slugs.join(',') }, { cache: 'no' })
+    ]);
+    if (!rep || !rep.ok || !rep.data || !tl || !tl.ok) { subjectAtt = { failed: true }; renderSubjectAttendance(); return; }
+    const hours = (ws && ws.ok && ws.data && ws.data.hours) || null;
+    const guides = slugs.map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));
+    const stats = window.TS_meetStats({
+      today: rep.data.today, meetings: rep.data.meetings, rows: rep.data.rows,
+      teachers: tl.data || [], guides: guides, hours: hours
+    });
+    subjectAtt = aggregateBySubject(stats);
+  } catch (e) {
+    console.error('subject attendance', e);
+    subjectAtt = { failed: true };
+  }
+  renderSubjectAttendance();
+}
+
+function aggregateBySubject(stats) {
+  const bySubj = {};
+  (stats.guides || []).forEach(g => {
+    (g.persons || []).forEach(p => {
+      if (!p.held) return;   // לא נמדד/ה עדיין — לא נכנס לאחוז
+      const mine = (p.subjects || []).filter(s => window.TS_guideTeaches(g, s));
+      const subs = mine.length ? mine : [p.subject || window.TS_guideSubjects(g)[0] || '—'];
+      subs.forEach(s => {
+        const a = bySubj[s] || (bySubj[s] = { name: s, present: 0, held: 0, people: {}, guides: {} });
+        a.present += p.present;
+        a.held += p.held;
+        a.people[(p.name || '') + '|' + (p.schoolName || '')] = 1;
+        a.guides[g.slug] = 1;
+      });
+    });
+  });
+  const list = Object.values(bySubj).map(a => ({
+    name: a.name,
+    rate: a.held ? Math.round(a.present / a.held * 100) : null,
+    teachers: Object.keys(a.people).length,
+    guides: Object.keys(a.guides).length,
+    present: a.present, held: a.held
+  })).filter(a => a.rate !== null);
+  return { list: list, today: stats.today };
+}
+
+function renderSubjectAttendance() {
+  const box = document.getElementById('subject-att');
+  if (!box) return;
+  if (!subjectAtt) { box.innerHTML = '<div class="sa-empty">טוען נוכחות לפי מקצוע…</div>'; return; }
+  if (subjectAtt.failed) {
+    box.innerHTML = '<div class="sa-empty">נתוני הנוכחות לא נטענו — תקלה רגעית בשרת. רעננו את הדף בעוד רגע.</div>';
     return;
   }
+  const all = subjectAtt.list.slice();
+  if (!all.length) {
+    box.innerHTML = '<div class="sa-empty">טרם נמדדה נוכחות — עדיין לא התקיימו הדרכות עם רישום נוכחות. ' +
+      'ברגע שהמדריכים ירשמו נוכחות, יופיעו כאן המקצועות עם הנוכחות הנמוכה והגבוהה.</div>';
+    return;
+  }
+  // דירוג רק על מקצועות עם מספיק מורים שנמדדו; אם אין מספיק כאלה — על כולם
+  let ranked = all.filter(a => a.teachers >= SA_MIN_TEACHERS);
+  const usedMin = ranked.length >= 2;
+  if (!usedMin) ranked = all;
+  ranked.sort((a, b) => a.rate - b.rate || b.teachers - a.teachers || a.name.localeCompare(b.name, 'he'));
+  const lowN = Math.min(3, Math.floor(ranked.length / 2));
+  const low = ranked.slice(0, lowN);
+  const high = ranked.slice(lowN).reverse().slice(0, 3);
 
-  const teachers = currentSubject
-    ? allTeachers.filter(t => t.subject === currentSubject)
-    : allTeachers;
+  const rc = r => (window.TS_rateClass ? window.TS_rateClass(r) : (r >= 80 ? 'high' : r >= 60 ? 'mid' : 'low'));
+  const row = a => `
+    <div class="sa-row${currentSubject === a.name ? ' sel' : ''}">
+      <span class="sa-name">${escapeHtml(a.name)}</span>
+      <span class="sa-rate ${rc(a.rate)}">${a.rate}%</span>
+      <span class="sa-bar" aria-hidden="true"><i class="${rc(a.rate)}" style="width:${Math.max(2, a.rate)}%"></i></span>
+      <span class="sa-meta">${a.teachers} מורים שנמדדו · ${a.guides} ${a.guides === 1 ? 'מדריך/ה' : 'מדריכים'}</span>
+    </div>`;
+  const ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l6 6 4-4 8 8"/><path d="M21 11v6h-6"/></svg>';
+  const ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>';
 
-  // כרטיס לכל מגזר: מורים · בתי ספר · המקצוע הגדול ביותר
-  const bySector = {};
-  SECTOR_ORDER.forEach(s => bySector[s] = { teachers: 0, schools: {}, subjects: {} });
-  teachers.forEach(t => {
-    const sec = teacherSector(t);
-    const b = bySector[sec] || bySector.kelali;
-    b.teachers++;
-    if (t.school) b.schools[t.school] = true;
-    const subj = t.subject || '—';
-    b.subjects[subj] = (b.subjects[subj] || 0) + 1;
-  });
+  const sub = document.getElementById('subject-att-sub');
+  if (sub) sub.textContent = 'אחוז ההשתתפות של המורים בהדרכות החודשיות, לפי מקצוע (כולל הדרכה פרטנית). ' +
+    all.length + ' מקצועות נמדדו' + (usedMin ? ' · בדירוג רק מקצועות עם ' + SA_MIN_TEACHERS + ' מורים שנמדדו לפחות' : '') + '.';
 
-  const total = teachers.length || 1;
-  lensesEl.innerHTML = SECTOR_ORDER.map(sec => {
-    const b = bySector[sec];
-    const pct = Math.round((b.teachers / total) * 100);
-    const topSubjects = Object.entries(b.subjects)
-      .sort((a, z) => z[1] - a[1]).slice(0, 3)
-      .map(([name, n]) => `${escapeHtml(name)} · ${n}`).join('<br>');
-    return `
-      <div class="net-lens" style="--lens-net: ${SECTOR_COLORS[sec]};">
-        <div class="net-lens-row-1">
-          <div class="net-lens-name-block">
-            ${TS.secChip(sec)}
-            <span class="net-lens-status-tag ok">${pct}% מהמורים</span>
-          </div>
-        </div>
-        <div class="net-lens-stats">
-          <div class="net-lens-stat">
-            <div class="net-lens-stat-num">${b.teachers}</div>
-            <div class="net-lens-stat-label">מורים</div>
-          </div>
-          <div class="net-lens-stat">
-            <div class="net-lens-stat-num">${Object.keys(b.schools).length}</div>
-            <div class="net-lens-stat-label">בתי ספר</div>
-          </div>
-          <div class="net-lens-stat">
-            <div class="net-lens-stat-num">${Object.keys(b.subjects).length}</div>
-            <div class="net-lens-stat-label">מקצועות</div>
-          </div>
-        </div>
-        ${topSubjects ? `<div style="font-size:13px; color:var(--text-muted); line-height:1.7; padding-top:10px; border-top:1px solid var(--border);">${topSubjects}</div>` : ''}
-      </div>`;
-  }).join('');
-
-  // מטריצה — מקצוע × מגזר (תמיד על כל המורים, בלי סינון המקצוע)
-  const matrix = {};
-  allTeachers.forEach(t => {
-    const subj = t.subject || '—';
-    const sec = teacherSector(t);
-    matrix[subj] = matrix[subj] || { kelali: 0, haredi: 0, arab: 0 };
-    matrix[subj][sec] = (matrix[subj][sec] || 0) + 1;
-  });
-  const subjectOrder = [...TS.SUBJECTS.filter(s => matrix[s]),
-                        ...Object.keys(matrix).filter(s => !TS.SUBJECTS.includes(s)).sort()];
-  const totals = { kelali: 0, haredi: 0, arab: 0 };
-  matrixEl.innerHTML = subjectOrder.map(subj => {
-    const row = matrix[subj];
-    SECTOR_ORDER.forEach(s => totals[s] += row[s] || 0);
-    const rowTotal = SECTOR_ORDER.reduce((n, s) => n + (row[s] || 0), 0);
-    const active = currentSubject === subj;
-    return `
-      <tr${active ? ' style="background:var(--surface-soft);"' : ''}>
-        <td class="school-cell">${escapeHtml(subj)}</td>
-        <td>${row.kelali || '—'}</td>
-        <td>${row.haredi || '—'}</td>
-        <td>${row.arab || '—'}</td>
-        <td><strong>${rowTotal}</strong></td>
-      </tr>`;
-  }).join('') + `
-    <tr style="border-top:2px solid var(--border);">
-      <td class="school-cell"><strong>סה"כ</strong></td>
-      <td><strong>${totals.kelali}</strong></td>
-      <td><strong>${totals.haredi}</strong></td>
-      <td><strong>${totals.arab}</strong></td>
-      <td><strong>${totals.kelali + totals.haredi + totals.arab}</strong></td>
-    </tr>`;
+  const allSorted = all.slice().sort((a, b) => a.rate - b.rate || a.name.localeCompare(b.name, 'he'));
+  // מעט מקצועות נמדדו (תחילת השנה) — "נמוך" ו"גבוה" עוד לא אומרים הרבה: דירוג אחד
+  const cols = ranked.length < 4
+    ? `<div class="sa-cols" style="grid-template-columns:1fr;">
+         <div class="sa-col"><h4>${ICON_UP}דירוג המקצועות שנמדדו עד כה — מהגבוה לנמוך</h4>${ranked.slice().reverse().map(row).join('')}</div>
+       </div>`
+    : `<div class="sa-cols">
+         <div class="sa-col low"><h4>${ICON_DOWN}הנוכחות הנמוכה ביותר</h4>${low.map(row).join('')}</div>
+         <div class="sa-col high"><h4>${ICON_UP}הנוכחות הגבוהה ביותר</h4>${high.map(row).join('')}</div>
+       </div>`;
+  box.innerHTML = cols + `
+    <details class="sa-all">
+      <summary>כל המקצועות (${all.length})</summary>
+      <div class="table-wrap" style="border:none;">
+        <table class="attention-table">
+          <thead><tr><th>מקצוע</th><th class="num">אחוז נוכחות</th><th class="num">מורים שנמדדו</th><th class="num">חודשי השתתפות</th></tr></thead>
+          <tbody>${allSorted.map(a => `
+            <tr${currentSubject === a.name ? ' style="background:var(--surface-soft);"' : ''}>
+              <td class="school-cell">${escapeHtml(a.name)}</td>
+              <td class="num"><span class="sa-rate ${rc(a.rate)}" style="font-size:15px">${a.rate}%</span></td>
+              <td class="num">${a.teachers}</td>
+              <td class="num">${a.present}/${a.held}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </details>`;
 }
 
 function renderSubjectPills() {

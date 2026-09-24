@@ -1,5 +1,8 @@
 // Network Admin Dashboard — מנהל/ת רשת
-const networkId = TS.urlParam('network', '');
+// הרשת מגיעה בשתי צורות: "ort" (הבורר, דף הבית) או "net_ort" (כפתור "פתח דשבורד"
+// במבט הארצי). מנרמלים לצורה בלי הקידומת — אחרת teachers.list קיבל "net_net_ort"
+// והחזיר אפס מורים: פילוח המגזרים ונוכחות המפגשים יצאו ריקים (24.9.26).
+const networkId = TS.urlParam('network', '').replace(/^net_/, '');
 let data = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -13,6 +16,15 @@ async function loadData() {
   if (!networkId) {
     renderNetworkPicker();
     return;
+  }
+  // השרת עונה לאט (7–30 שניות) — שם הרשת מוצג מיד, כדי שיהיה ברור שהרשת נפתחה
+  const known = (TS.NETWORKS || []).find(n => n.id === networkId);
+  if (known) {
+    const titleEl = document.getElementById('network-title');
+    if (titleEl) titleEl.textContent = 'רשת ' + known.name;
+    document.title = 'רשת ' + known.name + ' — מנור';
+    const un = document.getElementById('user-network');
+    if (un) un.textContent = 'טוען את נתוני הרשת…';
   }
   const res = TS.getAppsScriptUrl()
     ? await TS.api('network.dashboard', { network: networkId })

@@ -115,10 +115,11 @@
   function schoolMonths(gs) {
     const byMonth = {};
     gs.forEach(g => (g.months || []).forEach(mo => {
-      const m = byMonth[mo.key] || (byMonth[mo.key] = { key: mo.key, label: mo.label, n: 0, present: 0, absent: [], groups: [] });
+      const m = byMonth[mo.key] || (byMonth[mo.key] = { key: mo.key, label: mo.label, n: 0, present: 0, absent: [], came: [], groups: [] });
       m.n += mo.rosterN;
       m.present += mo.rosterPresent;
       mo.absent.forEach(p => m.absent.push({ name: p.name, subject: p.subject || '', guide: g.name }));
+      (mo.present || []).forEach(p => m.came.push({ name: p.name, subject: p.subject || '', guide: g.name }));
       m.groups.push(g.name);
     }));
     return Object.keys(byMonth).sort().reverse().map(k => {
@@ -141,14 +142,16 @@
         <div class="mv-bottom-tx">${months.length === 1 ? 'הדרכה חודשית אחת התקיימה' : months.length + ' הדרכות חודשיות התקיימו'} · ${gs.length} קבוצות הדרכה</div>
       </div>
       <table class="mv-table" style="margin-top:10px;">
-        <thead><tr><th>חודש</th><th>אחוז נוכחות</th><th>השתתפו</th><th>מי לא השתתף/ה</th></tr></thead>
+        <thead><tr><th>חודש</th><th>אחוז נוכחות</th><th>השתתפו</th><th>מי השתתף/ה · מי לא</th></tr></thead>
         <tbody>${months.map(m => `
           <tr>
             <td><b>${esc(m.label)}</b></td>
             <td class="num"><span class="mv-chip ${window.TS_rateClass(m.rate)}">${m.rate}%</span></td>
             <td class="num">${m.present}/${m.n}</td>
-            <td>${m.absent.length
-              ? `<details><summary>${m.absent.length} מורים</summary><div class="mv-people">${m.absent.map(a => `<div><b>${esc(a.name)}</b><span>${esc(a.subject)}${a.guide ? ' · ' + esc(a.guide) : ''}</span></div>`).join('')}</div></details>`
+            <td>${m.came.length
+              ? `<details class="sa-came"><summary>השתתפו: ${m.came.length} מורים</summary><div class="mv-people">${m.came.map(a => `<div><b>${esc(a.name)}</b><span>${esc(a.subject)}${a.guide ? ' · ' + esc(a.guide) : ''}</span></div>`).join('')}</div></details>`
+              : ''}${m.absent.length
+              ? `<details><summary>לא השתתפו: ${m.absent.length} מורים</summary><div class="mv-people">${m.absent.map(a => `<div><b>${esc(a.name)}</b><span>${esc(a.subject)}${a.guide ? ' · ' + esc(a.guide) : ''}</span></div>`).join('')}</div></details>`
               : '<span style="color:#1f7a5c">כולם השתתפו</span>'}</td>
           </tr>`).join('')}
         </tbody>
@@ -181,7 +184,12 @@
         <td><b>${esc(mo.label)}</b><br><span style="color:var(--text-muted); font-size:12px;">${mo.dates.map(L).join(' · ')}</span></td>
         <td class="num">${mo.rate === null ? '—' : `<span class="mv-chip ${window.TS_rateClass(mo.rate)}">${mo.rate}%</span>`}</td>
         <td class="num">${mo.rosterPresent}/${mo.rosterN}</td>
-        <td>${mo.absent.length ? esc(mo.absent.map(pp => pp.name).join(' · ')) : '<span style="color:#1f7a5c">כולם השתתפו</span>'}</td>
+        <td>
+          ${(mo.present || []).length ? `<div class="sa-who sa-yes"><span class="sa-tag">השתתפו</span>${esc(mo.present.map(pp => pp.name).join(' · '))}</div>` : ''}
+          ${mo.absent.length
+            ? `<div class="sa-who sa-no"><span class="sa-tag">לא השתתפו</span>${esc(mo.absent.map(pp => pp.name).join(' · '))}</div>`
+            : '<div class="sa-who sa-yes"><span style="color:#1f7a5c">כולם השתתפו</span></div>'}
+        </td>
       </tr>`).join('');
 
     const lastMonth = months.length ? months[months.length - 1] : null;
@@ -198,6 +206,19 @@
       : '';
     const nextLine = g.next
       ? `<div class="mv-line">המפגש הבא: <b>${esc(g.next.label || L(g.next.date))}</b>${g.next.topic ? ' · ' + esc(g.next.topic) : ''}</div>` : '';
+
+    /* "במקצוע תרשום גם מי כן השתתף" (מיטל, 24.9.26): לצד מי לא הגיע —
+       מי כן השתתף/ה, בשמו/ה, ובאילו חודשים. */
+    const monthLabel = {};
+    months.forEach(mo => { monthLabel[mo.key] = mo.label; });
+    const came = persons.filter(p => p.held > 0 && p.participated)
+      .sort((a, b) => (b.rate || 0) - (a.rate || 0) || a.name.localeCompare(b.name, 'he'));
+    const cameBlock = came.length ? `
+      <details open class="sa-came">
+        <summary>השתתפו בהדרכות (${came.length})</summary>
+        <div class="mv-people">${came.map(p => `<div><b>${esc(p.name)}</b><span>${
+          esc((p.monthsAttended || []).map(k => monthLabel[k] || k).join(' · ') || (p.subject || ''))}</span></div>`).join('')}</div>
+      </details>` : '';
 
     const neverBlock = (held && never.length) ? `
       <details open>
@@ -218,16 +239,18 @@
         <div class="mv-kpis">
           <div class="mv-kpi"><b>${held}</b><span>הדרכות שהתקיימו</span></div>
           <div class="mv-kpi"><b>${persons.length}</b><span>מורים מבית הספר</span></div>
+          <div class="mv-kpi ok"><b>${held ? came.length : '—'}</b><span>השתתפו</span></div>
           <div class="mv-kpi"><b>${held ? never.length : '—'}</b><span>לא השתתפו כלל</span></div>
         </div>
         ${unrecLine}
         ${lastLine}${nextLine}
+        ${cameBlock}
         ${neverBlock}
         ${months.length ? `
         <details open>
           <summary>לפי חודש (${months.length})</summary>
           <table class="mv-table">
-            <thead><tr><th>חודש</th><th>אחוז</th><th>השתתפו</th><th>מי לא השתתף/ה</th></tr></thead>
+            <thead><tr><th>חודש</th><th>אחוז</th><th>השתתפו</th><th>מי השתתף/ה · מי לא</th></tr></thead>
             <tbody>${monthRows}</tbody>
           </table>
         </details>` : ''}

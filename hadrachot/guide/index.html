@@ -17,6 +17,11 @@
 
   /* כפתור פעולה בראש העמוד */
   .page-header-actions { display:flex; flex-direction:column; align-items:flex-end; gap:16px; }
+  .gq-acts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .gq { display:inline-flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; min-height:40px; font-size:14px; }
+  .gq svg { width:16px; height:16px; flex:none; }
+  .page-header-actions .page-compass-svg { display:none; }
+  @media (max-width: 760px) { .gq-acts { width:100%; } }
 
   /* כרטיס חומרים וקישורים */
   .resources-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg, 16px); padding: 20px 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
@@ -456,6 +461,145 @@
   .proj-count { font-size:clamp(15px, 1.6vw, 22px); color:#BFE3D4; margin-top:10px; }
   @media (max-width: 760px) { .proj-grid { grid-template-columns:1fr; } .proj-side { order:2; text-align:center; } }
 
+  /* ---------- נוכחות: מועדים לפי חודשים (24.9.26) ---------- */
+  .meet-head .meet-head-row { align-items:center; }
+  .meet-head .meet-head-row > .btn { flex:none; }
+  .mm { background:var(--surface); border:1px solid var(--border); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .mm > summary { list-style:none; cursor:pointer; display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; padding:14px 18px; background:var(--surface-soft,#F4F8FA); user-select:none; }
+  .mm > summary::-webkit-details-marker { display:none; }
+  .mm > summary:focus-visible { outline:3px solid #9fd3c2; outline-offset:-3px; }
+  .mm[open] > summary { border-bottom:1px solid var(--border); }
+  .mm-chev { width:18px; height:18px; flex:none; color:var(--primary,#1A5365); transition:transform .18s; }
+  .mm:not([open]) .mm-chev, details.school-group:not([open]) .mm-chev { transform:rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { .mm-chev { transition:none; } }
+  .mm-name { font-size:16.5px; font-weight:800; color:var(--primary-dark,#143E4C); }
+  .mm-sub { font-size:13px; color:var(--text-2); }
+  .mm-chip { font-size:12px; font-weight:700; border-radius:999px; padding:1px 10px; }
+  .mm-chip.today { background:var(--primary,#1A5365); color:#fff; }
+  .mm-chip.pend { background:#FFF3DC; color:#8a5a00; }
+  .mm.future > summary .mm-name { color:var(--text-2); }
+  .mm-rows { padding:6px 12px 10px; }
+  .ss-row { border-bottom:1px solid var(--border-soft,#E4ECE2); padding:12px 6px; }
+  .ss-row:last-child { border-bottom:none; }
+  .ss-row.today { background:var(--sky-soft,#EEF6F3); border-radius:12px; border-bottom-color:transparent; padding:12px 10px; margin:4px 0; }
+  .ss-row.sel { background:var(--surface-soft,#F4F8FA); border-radius:12px; padding:12px 10px; }
+  .ss-row.future { opacity:.8; }
+  .ss-main { display:flex; gap:14px; align-items:flex-start; }
+  .ss-date { flex:none; width:66px; text-align:center; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:6px 4px; }
+  .ss-date b { display:block; font-size:19px; line-height:1.2; color:var(--primary-dark,#143E4C); font-variant-numeric:tabular-nums; }
+  .ss-date span { display:block; font-size:12px; color:var(--text-muted); }
+  .ss-date em { display:block; font-style:normal; font-size:11px; font-weight:800; color:#fff; background:var(--primary,#1A5365); border-radius:6px; margin-top:4px; }
+  .ss-tx { flex:1; min-width:0; }
+  .ss-topic { font-size:14.5px; font-weight:700; color:var(--text); line-height:1.5; }
+  .ss-slots { list-style:none; margin:4px 0 0; padding:0; display:flex; flex-direction:column; gap:2px; }
+  .ss-slots li { font-size:13px; color:var(--text-2); line-height:1.55; }
+  .ss-hour { font-weight:800; color:var(--primary-dark,#143E4C); font-variant-numeric:tabular-nums; margin-left:8px; }
+  .ss-part { font-weight:700; margin-inline-end:6px; }
+  .ss-part + .ss-ttl::before { content:'· '; }
+  .ss-status { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .ss-st { font-size:12.5px; border-radius:999px; padding:1px 10px; }
+  .ss-st.ok { background:#E4F2EB; color:#1f6b52; }
+  .ss-st.ok b { font-size:13.5px; }
+  .ss-st.pend { background:#FFF3DC; color:#8a5a00; font-weight:700; }
+  .ss-st.none { background:#F6EFEF; color:#8f2f1c; }
+  .ss-st.fut { background:var(--surface-soft,#F4F8FA); color:var(--text-muted); }
+  .ss-act { flex:none; display:flex; flex-direction:column; gap:6px; align-items:stretch; min-width:170px; }
+  .ss-btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; min-height:40px; }
+  .ss-btn svg { width:16px; height:16px; }
+  .ss-later { font-size:12px; color:var(--text-muted); text-align:center; padding-top:2px; }
+  .ss-off[disabled] { opacity:.5; cursor:not-allowed; }
+  .ss-live { margin:12px 0 2px; padding:14px 16px; border:1px solid #BFDCCF; border-radius:12px; }
+  .ss-live h3 { display:flex; align-items:center; gap:8px; margin:0 0 6px; font-size:15px; }
+  .ss-panel { margin-top:12px; }
+  .ss-panel .meet-card { margin-bottom:12px; }
+  @media (max-width: 640px) {
+    .ss-main { flex-wrap:wrap; }
+    .ss-tx { flex-basis:calc(100% - 82px); }
+    .ss-act { flex-basis:100%; flex-direction:row; flex-wrap:wrap; min-width:0; }
+    .ss-act .ss-btn { flex:1 1 150px; }
+    .mm > summary { padding:12px 14px; }
+    .mm-rows { padding:4px 8px 8px; }
+    .ml-code-wrap { flex:1 1 100%; }
+    .meet-head .meet-head-row > .btn { width:100%; }
+  }
+
+  /* ---------- עמוד אחד, שישה מקטעים (24.9.26) ---------- */
+  .gsec { display:block; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 22px; margin:0 0 18px; }
+  .gsec-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .gsec h2 { display:flex; align-items:center; gap:10px; margin:0; font-size:19px; font-weight:800; color:var(--primary-dark,#143E4C); }
+  .gsec-ic { width:30px; height:30px; flex:none; padding:6px; box-sizing:border-box; border-radius:9px; background:var(--primary,#1A5365); color:#fff; }
+  .gsec-hint { margin:4px 0 14px; font-size:13.5px; line-height:1.7; color:var(--text-2); }
+  .gsec-head .n { display:inline-block; min-width:20px; padding:0 7px; border-radius:999px; font-size:12px; line-height:20px; text-align:center; background:var(--primary,#1A5365); color:#fff; }
+  .gsec-head .n.zero { display:none; }
+  .gsec .group-link-card { margin-bottom:14px; }
+  #sec-month { border-color:var(--primary,#1A5365); border-width:2px; }
+  .gfold { padding:0; overflow:hidden; }
+  .gfold > summary { list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:16px 20px; }
+  .gfold > summary::-webkit-details-marker { display:none; }
+  .gfold > summary:focus-visible, .tool > summary:focus-visible { outline:3px solid #9fd3c2; outline-offset:-3px; }
+  .gfold:not([open]) > summary > .mm-chev, .tool:not([open]) > summary > .mm-chev { transform:rotate(90deg); }
+  .gfold[open] > summary { border-bottom:1px solid var(--border); }
+  .gfold-sub { font-size:13px; color:var(--text-2); }
+  .gfold-body { padding:16px 20px 20px; }
+  .te-toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+  .te-toolbar .btn svg { width:16px; height:16px; }
+  .tool { border:1px solid var(--border); border-radius:12px; margin-bottom:10px; background:var(--surface); overflow:hidden; }
+  .tool > summary { list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:10px; padding:12px 16px; font-weight:700; font-size:14.5px; color:var(--text); background:var(--surface-soft,#F4F8FA); }
+  .tool > summary::-webkit-details-marker { display:none; }
+  .tool > summary .n { font-size:11.5px; font-weight:700; min-width:18px; padding:0 6px; border-radius:999px; line-height:18px; text-align:center; background:var(--primary,#1A5365); color:#fff; }
+  .tool > summary .n.zero { display:none; }
+  .tool-body { padding:14px 16px 16px; }
+  .tool-body .resources-card { margin:0; border:none; padding:0; box-shadow:none; }
+  .tool-body .meet-card { margin-bottom:0; }
+  .cur-empty { padding:18px; border-radius:12px; background:var(--surface-soft,#F4F8FA); font-size:14px; color:var(--text-2); line-height:1.7; }
+  /* נוכחות לפי חודשים */
+  .mh-sum { font-size:13px; color:var(--text-2); display:flex; gap:6px; flex-wrap:wrap; }
+  .mh-sum b { color:var(--text); }
+  .mh-sum .ok b { color:#1f6b52; }
+  .mh-sum .bad b { color:#a4442f; }
+  .mh-sum .ind b { color:#5b4391; }
+  .mh-lists { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+  @media (max-width: 900px) { .mh-lists { grid-template-columns:1fr; } }
+  .mh-list { border:1px solid var(--border); border-radius:12px; padding:10px 12px; background:var(--surface); min-width:0; }
+  .mh-list h4 { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 8px; font-size:14px; }
+  .mh-list h4 .c { font-size:13px; font-weight:800; border-radius:999px; padding:0 9px; }
+  .mh-list.ok h4 .c { background:#E4F2EB; color:#1f6b52; }
+  .mh-list.bad h4 .c { background:#FBE4DF; color:#8f2f1c; }
+  .mh-list.ind h4 .c { background:#EEE8F7; color:#5b4391; }
+  .mh-people { list-style:none; margin:0; padding:0; max-height:280px; overflow:auto; }
+  .mh-people li { display:flex; justify-content:space-between; gap:8px; padding:4px 0; border-bottom:1px dashed var(--border-soft,#E4ECE2); font-size:13px; }
+  .mh-people li:last-child { border-bottom:none; }
+  .mh-people li span { color:var(--text-muted); font-size:12px; text-align:left; }
+  .mh-empty { font-size:12.5px; color:var(--text-muted); }
+  .mh-copy { font-family:inherit; font-size:12px; font-weight:700; border:1px solid var(--border); background:var(--surface); border-radius:8px; padding:3px 9px; cursor:pointer; color:var(--primary-dark,#143E4C); margin-top:8px; }
+  .mh-note { font-size:12px; color:var(--text-muted); margin:-6px 0 12px; }
+  .mh-days h4 { margin:0 0 6px; font-size:14px; }
+  .mh-day { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:8px 0; border-top:1px solid var(--border-soft,#E4ECE2); }
+  .mh-day .d { font-weight:800; min-width:92px; color:var(--primary-dark,#143E4C); }
+  .mh-day .st { flex:1; display:flex; gap:6px; flex-wrap:wrap; }
+  .mh-edit { font-family:inherit; font-size:13px; font-weight:700; background:none; border:none; color:var(--primary,#1A5365); text-decoration:underline; cursor:pointer; padding:4px 2px; }
+  .mh-dayrow { border-top:1px solid var(--border-soft,#E4ECE2); }
+  .mh-dayrow .ss-panel { margin:0 0 12px; }
+  /* שאלות מהמורים */
+  .q-item { border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+  .q-item.open { border-color:#F0D8B8; background:#FFFBF4; }
+  .q-meta { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:12.5px; color:var(--text-muted); margin-bottom:6px; }
+  .q-meta b { color:var(--text); font-size:13.5px; }
+  .q-text { font-size:14px; line-height:1.7; white-space:pre-wrap; }
+  .q-ans { margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--sky-soft,#EEF3EC); font-size:13.5px; line-height:1.7; white-space:pre-wrap; }
+  .q-form { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .q-form .textarea { flex:1 1 260px; min-height:56px; }
+
+  /* ---------- המורים שלי: בתי ספר מתקפלים (24.9.26) ---------- */
+  .te-foldbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin:0 0 10px; font-size:13.5px; color:var(--text-2); }
+  .te-foldbar b { color:var(--text); }
+  details.school-group { margin-bottom:10px; }
+  details.school-group > summary.school-header { list-style:none; cursor:pointer; user-select:none; }
+  details.school-group > summary.school-header::-webkit-details-marker { display:none; }
+  details.school-group > summary.school-header:focus-visible { outline:3px solid #9fd3c2; outline-offset:-3px; }
+  .school-header .te-sh { display:flex; align-items:center; gap:10px; }
+  details.school-group[open] > summary.school-header { border-bottom:1px solid var(--border); }
+
   @media (max-width: 720px) {
     .att-grid { font-size: 12px; }
     .att-grid th, .att-grid td { padding: 6px 4px; }
@@ -493,15 +637,13 @@
         <p class="page-header-sub" id="page-subtitle">—</p>
       </div>
       <div class="page-header-actions">
-        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="btn btn-primary" id="btn-new-training">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            הדרכה חדשה
-          </button>
-          <button class="btn btn-secondary" id="btn-add-teacher">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-            הוספת מורה
-          </button>
+        <!-- פעולות מהירות בראש הדף (מיטל, 24.9.26): הדרכה, מורה, שעה פרטנית ודוח למונדיי —
+             כל כפתור פותח את הכלי שלו (שנשאר גם ב"כלים נוספים") וגולל אליו -->
+        <div class="gq-acts" role="group" aria-label="פעולות מהירות">
+          <button type="button" class="btn btn-primary gq" data-tool="tool-adhoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הדרכה חדשה</span></button>
+          <button type="button" class="btn btn-secondary gq" data-add-teacher><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הוספת מורה</span></button>
+          <button type="button" class="btn btn-secondary gq" data-tool="tool-hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>שעה פרטנית</span></button>
+          <button type="button" class="btn btn-secondary gq" data-tool="tool-monday"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span>דוח למונדיי</span></button>
         </div>
         <div class="page-compass">
           <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
@@ -524,124 +666,31 @@
       </div>
     </section>
 
-    <!-- המפגש הבא — נבנה ב-meetings.js מתוך התוכנית השנתית (14.9.26).
-         משם המדריכ/ה נכנס/ת למפגש וממלא/ת נוכחות. -->
-    <section class="nm-card" id="next-meet" hidden aria-label="המפגש הבא"></section>
+    <!-- 24.9.26 (מיטל): "זה המבט הכי חשוב — עמוד אחד פשוט, בלי לשוניות".
+         מלמעלה למטה: 1 החודש · 2 נוכחות לפי חודשים · 3 חומרים והודעות ·
+         4 שאלות מהמורים · 5 המורים שלי (מקופל) · 6 כלים נוספים (מקופל).
+         הלשוניות, פס המספרים, קיצורי הדרך ו"המפגש הבא" הוסרו — מקטע 1 מחליף אותם. -->
 
-    <!-- קיצורי דרך ללשוניות שיושבות נמוך בעמוד -->
-    <nav class="quick-links" aria-label="קיצורי דרך">
-      <button type="button" class="ql-btn" data-go="meet">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span>נוכחות במפגשים</span>
-      </button>
-      <button type="button" class="ql-btn" data-go="space">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span>חומרים והודעות לקבוצה</span>
-      </button>
-      <button type="button" class="ql-btn" data-go="hours">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        <span>שעות פרטניות</span>
-      </button>
-      <button type="button" class="ql-btn" data-go="plan">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span>תוכנית שנתית</span>
-      </button>
-    </nav>
-
-    <!-- Compass Divider -->
-    <div class="compass-divider" aria-hidden="true">
-      <span class="label">תמונת מצב</span>
-      <div class="line"></div>
-      <div class="node"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></div>
-      <div class="line"></div>
-    </div>
-
-    <!-- Command Strip — 5 KPIs. הראשונים הם מה שדורש פעולה מהמדריכ/ה
-         (20.9.26): עד אז הפס פתח באחוז, והמספרים שהיא יכולה לפעול עליהם
-         היו קבורים — "טרם השלימו" רק בתוך לשונית הסימון, ו"טרם סומנה רמה"
-         כטקסט אפור בכותרת המשנה. "בתי ספר" התמזג לתוך "מורים שלי". -->
-    <section class="command-strip" aria-label="נתוני המדריך/ה">
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
-          טרם השלימו
-        </div>
-        <div class="cmd-metric-value" id="stat-todo">—</div>
-        <div class="cmd-metric-sub" id="stat-todo-sub"></div>
+    <!-- 1. החודש — המועדים של החודש, פתיחת הרישום והסימון (meetings.js) -->
+    <section class="gsec" id="sec-month" aria-labelledby="sec-month-title">
+      <div class="gsec-head">
+        <h2 id="sec-month-title"><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>החודש</span></h2>
+        <span class="mm-chip pend" id="meet-count" hidden></span>
       </div>
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
-          טרם סומנה רמה
-        </div>
-        <div class="cmd-metric-value" id="stat-units">—</div>
-        <div class="cmd-metric-sub" id="stat-units-sub"></div>
-      </div>
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          מורים שלי
-        </div>
-        <div class="cmd-metric-value" id="stat-teachers">—</div>
-        <div class="cmd-metric-sub" id="stat-schools-sub"></div>
-      </div>
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          הדרכות השנה
-        </div>
-        <div class="cmd-metric-value" id="stat-trainings">—</div>
-        <div class="cmd-metric-sub" id="stat-trainings-sub" hidden></div>
-      </div>
-      <div class="cmd-metric">
-        <div class="cmd-metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-          אחוז נוכחות ממוצע
-        </div>
-        <div class="cmd-metric-value mint" id="stat-rate">—</div>
-        <div class="cmd-metric-sub" id="stat-rate-base"></div>
-      </div>
-      <span id="stat-schools" hidden></span>
+      <p class="gsec-hint" id="sec-month-sub">ביום המפגש לוחצים <b>"פתיחת הרישום"</b> ומקרינים את הקוד. אחרי המפגש — <b>"סימון נוכחות"</b>.</p>
+      <div id="meet-root"><div class="empty" style="padding:24px;">טוען…</div></div>
     </section>
 
-    <!-- Resources — Drive / Zoom / שליחת חומרים -->
-    <section class="resources-card" id="resources-card" hidden>
-      <div class="resources-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg>
-        <span>חומרים וקישורים</span>
-      </div>
-      <div class="resources-grid" id="resources-grid"></div>
+    <!-- 2. נוכחות לפי חודשים — מי השתתף, מי לא, מי קיבל הדרכה פרטנית (meetings.js) -->
+    <section class="gsec" id="sec-months">
+      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>נוכחות לפי חודשים</span></h2></div>
+      <p class="gsec-hint">לוחצים על חודש כדי לראות מי השתתף, מי לא, ומי קיבל הדרכה פרטנית. אפשר גם לתקן שם נוכחות של מועד שעבר.</p>
+      <div id="meet-history"></div>
     </section>
 
-    <div class="tabs-bar">
-      <button class="tab-btn active" data-tab="teachers">המורים שלי</button>
-      <button class="tab-btn" data-tab="meet" id="tab-btn-meet">נוכחות במפגשים<span class="n zero" id="meet-count">0</span></button>
-      <button class="tab-btn" data-tab="space" id="tab-btn-space">חומרים והודעות לקבוצה<span class="n zero" id="space-count">0</span></button>
-      <button class="tab-btn" data-tab="hours" id="tab-btn-hours">שעות פרטניות<span class="n zero" id="hours-count">0</span></button>
-      <button class="tab-btn" data-tab="monday" id="tab-btn-monday">דיווח למונדיי</button>
-      <button class="tab-btn" data-tab="trainings">ההדרכות שלי</button>
-      <button class="tab-btn" data-tab="plan" id="tab-btn-plan" hidden>תוכנית שנתית</button>
-      <button class="tab-btn" data-tab="stats">סטטיסטיקה חודשית</button>
-    </div>
-
-    <div class="tab-pane" id="tab-meet">
-      <div id="meet-root"></div>
-    </div>
-
-    <div class="tab-pane active" id="tab-teachers">
-      <div class="subject-filter-bar" id="units-filter" style="margin-bottom:8px;" hidden></div>
-      <div class="subject-filter-bar" id="track-filter" style="margin-bottom:12px;"></div>
-      <div class="search-bar te-find">
-        <select class="select" id="teacher-school" aria-label="סינון לפי בית ספר"><option value="">כל בתי הספר</option></select>
-        <input type="search" class="input" id="teacher-search" placeholder="חיפוש מורה / בית ספר...">
-      </div>
-      <div id="teachers-container">
-        <div class="empty" style="padding:32px;">טוען...</div>
-      </div>
-    </div>
-
-    <!-- חומרים והודעות לקבוצת ההדרכה — המורים רואים אותם בעמוד הקבוצה (space.js) -->
-    <div class="tab-pane" id="tab-space">
+    <!-- 3. חומרים והודעות לקבוצה — המורים רואים אותם בעמוד הקבוצה (space.js) -->
+    <section class="gsec" id="sec-space">
+      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>חומרים והודעות לקבוצה</span></h2><span class="n zero" id="space-count">0</span></div>
       <div class="group-link-card">
         <span class="gl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
         <div class="gl-tx">
@@ -691,10 +740,49 @@
           <div id="gfiles-list" style="margin-top:6px;"></div>
         </section>
       </div>
-    </div>
+    </section>
 
-    <!-- שעות פרטניות — המדריכה רושמת ומעדכנת; המפקח.ת רואה במבט המקצועי (space.js) -->
-    <div class="tab-pane" id="tab-hours">
+    <!-- 4. שאלות מהמורים — "שאלה למדריכ/ה" במבט המורה (questions.*, dashboard.js) -->
+    <section class="gsec" id="sec-questions">
+      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg><span>שאלות מהמורים</span></h2><span class="mm-chip pend" id="q-count" hidden></span></div>
+      <div id="q-root"><div class="empty" style="padding:18px;">טוען…</div></div>
+    </section>
+
+    <!-- 5. המורים שלי — כל המקטע מקופל, ובתוכו כל בית ספר מקופל (dashboard.js) -->
+    <details class="gsec gfold" id="sec-teachers">
+      <summary>
+        <svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>המורים שלי</span></h2>
+        <span class="gfold-sub" id="te-count">טוען…</span>
+      </summary>
+      <div class="gfold-body">
+        <div class="te-toolbar">
+          <button class="btn btn-secondary" id="btn-add-teacher">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            הוספת מורה
+          </button>
+        </div>
+      <div class="subject-filter-bar" id="units-filter" style="margin-bottom:8px;" hidden></div>
+      <div class="subject-filter-bar" id="track-filter" style="margin-bottom:12px;"></div>
+      <div class="search-bar te-find">
+        <select class="select" id="teacher-school" aria-label="סינון לפי בית ספר"><option value="">כל בתי הספר</option></select>
+        <input type="search" class="input" id="teacher-search" placeholder="חיפוש מורה / בית ספר...">
+      </div>
+      <div id="teachers-container">
+        <div class="empty" style="padding:32px;">טוען...</div>
+      </div>
+      </div>
+    </details>
+
+    <!-- 6. כלים נוספים — כל מה שעובד ואסור לאבד, במקום אחד מקופל -->
+    <details class="gsec gfold" id="sec-tools">
+      <summary>
+        <svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span>כלים נוספים</span></h2>
+        <span class="gfold-sub">שעות פרטניות · דיווח למונדיי · מפגש שלא בתוכנית · תוכנית שנתית ועוד</span>
+      </summary>
+      <div class="gfold-body">
+        <details class="tool" id="tool-hours">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>רישום שעות פרטניות</span><span class="n zero" id="hours-count">0</span></summary>
+          <div class="tool-body">
       <div class="space-grid">
         <section class="space-card">
           <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="hours-form-title">רישום שעה פרטנית</span></h2>
@@ -753,10 +841,11 @@
         </section>
       </div>
 
-    </div>
-
-    <!-- דיווח למונדיי (23.9.26, שלב ד') — לשונית נפרדת לבקשת מיטל: פעילות אחרת + הדוח -->
-    <div class="tab-pane" id="tab-monday">
+          </div>
+        </details>
+        <details class="tool" id="tool-monday">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>דיווח שעות למונדיי · פעילות אחרת</span></summary>
+          <div class="tool-body">
       <!-- פעילות אחרת (23.9.26) — מה שמדווח במונדיי ואינו הדרכה: השתלמות, ישיבה,
            הכנת שנה, מענה למורים. נרשם כאן כדי שדוח השעות יהיה שלם. -->
       <div class="space-grid">
@@ -833,28 +922,48 @@
           <b>מה מוצע ומה בטוח:</b> הדרכה קבוצתית — התאריך והנושא מהנוכחות שסימנת, שעת ההתחלה מהתוכנית השנתית, והמשך מ"סיכום ההדרכה" (אם לא מילאת — מוצע). הדרכה פרטנית — התאריך והמשך מהרישום שלך, שעת ההתחלה מוצעת. פעילות אחרת — כפי שרשמת. המיקום ברירת מחדל זום.
         </div>
       </section>
-    </div>
-
-    <div class="tab-pane" id="tab-trainings">
-      <div class="card" style="padding:0;">
-        <div id="trainings-list">
-          <div class="empty" style="padding:32px;">טוען...</div>
-        </div>
+          </div>
+        </details>
+        <details class="tool" id="tool-adhoc">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>מפגש שלא מופיע בתוכנית</span></summary>
+          <div class="tool-body" id="meet-adhoc-host"></div>
+        </details>
+        <details class="tool" id="tool-year">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>הדרכה פרטנית השנה — מי עוד לא קיבל</span></summary>
+          <div class="tool-body"><div id="meet-year"></div></div>
+        </details>
+        <details class="tool" id="tool-plan">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>התוכנית השנתית</span></summary>
+          <div class="tool-body"><div id="plan-container"></div></div>
+        </details>
+        <details class="tool" id="tool-links">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>חומרי ההוראה ב-Drive</span></summary>
+          <div class="tool-body">
+    <!-- Resources — Drive / Zoom / שליחת חומרים -->
+    <section class="resources-card" id="resources-card" hidden>
+      <div class="resources-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg>
+        <span>חומרים וקישורים</span>
       </div>
-    </div>
+      <div class="resources-grid" id="resources-grid"></div>
+    </section>
 
-    <div class="tab-pane" id="tab-plan">
-      <div id="plan-container">
-        <div class="empty" style="padding:32px;">טוען...</div>
+          </div>
+        </details>
+        <details class="tool" id="tool-trainings">
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>ההדרכות שלי (כל המועדים) · הדרכה ידנית</span></summary>
+          <div class="tool-body">
+            <div class="te-toolbar">
+          <button class="btn btn-primary" id="btn-new-training">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            הדרכה חדשה
+          </button>
+            </div>
+            <div class="card" style="padding:0;"><div id="trainings-list"><div class="empty" style="padding:24px;">טוען...</div></div></div>
+          </div>
+        </details>
       </div>
-    </div>
-
-    <div class="tab-pane" id="tab-stats">
-      <div class="card">
-        <div class="card-title">אחוז נוכחות חודשי</div>
-        <div id="stats-chart"></div>
-      </div>
-    </div>
+    </details>
   </main>
 
 <!-- New training modal -->
@@ -988,13 +1097,13 @@
 <script src="../assets/guides.js?v=20260924g"></script>
 <script src="../assets/plans.js?v=20260924n"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260920d"></script>
+<script src="dashboard.js?v=20260924r4"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20260923b"></script>
-<script src="meetings.js?v=20260922"></script>
+<script src="space.js?v=20260924r3"></script>
+<script src="meetings.js?v=20260924r4"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260924f"></script>
+<script src="view.js?v=20260924r4"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

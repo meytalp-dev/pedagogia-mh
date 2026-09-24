@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
    בלי await ובתוך try: כשל כאן לא ייראה למפקח.ת ולא יעכב את הדף. */
 function reportSeen() {
   if (!INSP || !INSP.slug) return;
+  // כניסת מטה (staff.js, 24.9.26) — צפייה של מיטל/רויטל אינה פתיחה של הקישור
+  try { if (((window.TS_staff && TS_staff.get()) || {}).roles.some(r => r.role === 'ministry')) return; } catch (e) {}
   try {
     TS.api('link.seen', { kind: 'inspector', slug: INSP.slug, name: INSP.name || '' },
            { cache: 'no' });
@@ -187,39 +189,52 @@ function wsOf(slug, kind) {
   return (state.ws && state.ws[kind] && state.ws[kind][slug]) || [];
 }
 
+/* כפתורי מרחב המדריכה (קבצים · הודעות · שעות · תוכנית) — משותפים לכרטיס
+   הזמני שכאן ולכרטיס המלא ש-meet.js מצייר אחרי שהנוכחות נטענת (24.9.26). */
+function guideActionsHtml(g) {
+  const files = wsOf(g.slug, 'files').length;
+  const msgs = wsOf(g.slug, 'messages').length;
+  const hoursRows = wsOf(g.slug, 'hours');
+  const plan = window.TS_planFor ? window.TS_planFor(g.slug) : null;
+  const btn = (kind, icon, label, count) => `
+    <button type="button" class="gm-btn" data-guide="${escapeAttr(g.slug)}" data-open="${kind}" title="${escapeAttr(label)} — ${escapeAttr(g.name)}">
+      ${icon}<span>${label}</span><span class="n ${count ? '' : 'zero'}">${count}</span>
+    </button>`;
+  return `
+    <div class="gm-actions">
+      ${btn('files', ICON_FILE, 'קבצים', files)}
+      ${btn('messages', ICON_MSG, 'הודעות', msgs)}
+      ${btn('hours', ICON_CLOCK, 'שעות', hoursRows.length)}
+      ${plan ? btn('plan', ICON_CAL, 'תוכנית', plan.meetings.length) : ''}
+    </div>`;
+}
+function bindGuideActions(root) {
+  root.querySelectorAll('[data-open]').forEach(b =>
+    b.addEventListener('click', () => openGuideWorkspace(b.dataset.guide, b.dataset.open)));
+}
+
+/* כרטיס זמני — עד שהנוכחות נטענת. אחר כך meet.js (MEET_render) מחליף אותו
+   בכרטיס המלא והמצומצם, באותו מקום. */
 function renderGuides() {
   if (!state.guides.length) return;
   const card = document.getElementById('guides-card');
   card.hidden = false;
-  document.getElementById('guides-grid').innerHTML = state.guides.map(g => {
+  const grid = document.getElementById('guides-grid');
+  grid.classList.remove('gx');
+  grid.innerHTML = state.guides.map(g => {
     const n = state.teachers.filter(t => window.TS_guideTeaches(g, t.subject)).length;
-    const files = wsOf(g.slug, 'files').length;
-    const msgs = wsOf(g.slug, 'messages').length;
-    const hoursRows = wsOf(g.slug, 'hours');
-    const hoursSum = hoursRows.reduce((s, h) => s + (Number(h.hours) || 0), 0);
     const plan = window.TS_planFor ? window.TS_planFor(g.slug) : null;
     const nextMeet = plan && window.TS_nextMeeting ? window.TS_nextMeeting(plan) : null;
-    const btn = (kind, icon, label, count) => `
-      <button type="button" class="gm-btn" data-guide="${escapeAttr(g.slug)}" data-open="${kind}" title="${escapeAttr(label)} — ${escapeAttr(g.name)}">
-        ${icon}<span>${label}</span><span class="n ${count ? '' : 'zero'}">${count}</span>
-      </button>`;
     return `
       <div class="guide-mini">
         <span class="gm-name">${escapeHtml(g.name)}</span>
         <span class="gm-sub">${escapeHtml(window.TS_guideSubjects(g).join(' · '))}</span>
-        <span class="gm-count">${n} מורים${hoursSum ? ' · ' + fmtHours(hoursSum) + ' שעות פרטניות' : ''}</span>
+        <span class="gm-count">${n} מורים</span>
         ${nextMeet ? `<span class="gm-next">המפגש הבא: ${escapeHtml(nextMeet.label)}</span>` : ''}
-        <div class="gm-actions">
-          ${btn('files', ICON_FILE, 'קבצים', files)}
-          ${btn('messages', ICON_MSG, 'הודעות', msgs)}
-          ${btn('hours', ICON_CLOCK, 'שעות', hoursRows.length)}
-          ${plan ? btn('plan', ICON_CAL, 'תוכנית', plan.meetings.length) : ''}
-        </div>
+        ${guideActionsHtml(g)}
       </div>`;
   }).join('');
-
-  document.querySelectorAll('#guides-grid [data-open]').forEach(b =>
-    b.addEventListener('click', () => openGuideWorkspace(b.dataset.guide, b.dataset.open)));
+  bindGuideActions(grid);
 }
 
 // 1.5 ולא 1.50, 2 ולא 2.0
@@ -439,6 +454,8 @@ function renderWsPlan() {
 async function refreshWorkspace() {
   await loadWorkspace();
   renderGuides();
+  // הכרטיס המלא (meet.js) מצויר מעל הזמני — אחרת כתיבה הייתה מחזירה את הזמני
+  if (window.MEET_render) window.MEET_render();
   if (wsGuide) renderWsPanes();
 }
 

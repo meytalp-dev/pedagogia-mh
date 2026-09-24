@@ -50,6 +50,31 @@ function myTeachers() {
 document.addEventListener('DOMContentLoaded', async () => {
   bindTabs();
   document.getElementById('btn-new-training').addEventListener('click', openNewTraining);
+  // פעולות מהירות בראש הדף — פותחות את הכלי המקופל שלו וגוללות אליו
+  document.querySelectorAll('.gq[data-tool]').forEach(b => b.addEventListener('click', () => {
+    const tool = document.getElementById(b.dataset.tool);
+    if (!tool) return;
+    const outer = tool.closest('details:not(.tool)');
+    if (outer) outer.open = true;
+    tool.open = true;
+    tool.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const f = tool.querySelector('input, select, textarea');
+    if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (e) {} }, 450);
+  }));
+  // כפתור ניווט שמוביל לכלי מקופל (open ב-view.js) — פותחים אותו וגוללים אליו
+  document.addEventListener('click', e => {
+    const a = e.target.closest('#menor-nav a[data-i]');
+    const it = a && window.MENOR_VIEW && MENOR_VIEW.nav[+a.dataset.i];
+    if (!it || !it.open) return;
+    const tool = document.getElementById(it.open);
+    if (!tool || tool.hidden) return;
+    const outer = tool.closest('details:not(.tool)');
+    if (outer) outer.open = true;
+    tool.open = true;
+    setTimeout(() => tool.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  });
+  const qAdd = document.querySelector('.gq[data-add-teacher]');
+  if (qAdd) qAdd.addEventListener('click', () => { const b = document.getElementById('btn-add-teacher'); if (b) b.click(); });
   document.getElementById('form-training').addEventListener('submit', submitTraining);
   document.getElementById('teacher-search').addEventListener('input', renderTeachers);
   document.getElementById('teacher-school').addEventListener('change', renderTeachers);
@@ -75,6 +100,8 @@ function reportSeen() {
   if (!guideSlug) return;
   // מיטל נכנסת מעמוד בדיקת המפגש — לא פתיחה של המדריכ/ה
   if (new URLSearchParams(location.search).get('by') === 'admin') return;
+  // כניסת מטה (staff.js, 24.9.26) — צפייה של מיטל/רויטל אינה פתיחה של הקישור
+  try { if (((window.TS_staff && TS_staff.get()) || {}).roles.some(r => r.role === 'ministry')) return; } catch (e) {}
   try {
     TS.api('link.seen', { kind: 'guide', slug: guideSlug, name: GUIDE_CFG.name || '' },
            { cache: 'no' });
@@ -96,14 +123,24 @@ function bindTabs() {
     b.addEventListener('click', () => goTab(b.dataset.go)));
 }
 
-// פתיחת לשונית וגלילה אליה — משמש גם את כרטיס "המפגש הבא" (meetings.js)
+/* 24.9.26 — אין יותר לשוניות: העמוד הוא שישה מקטעים. goTab נשאר (מבט המדריכ/ה,
+   meetings.js, "לרשימת הנוכחות") ומוביל למקטע, ופותח אותו אם הוא מקופל. */
+const SECTION_OF = {
+  meet: ['sec-month'], months: ['sec-months'], space: ['sec-space'], questions: ['sec-questions'],
+  teachers: ['sec-teachers'], tools: ['sec-tools'],
+  hours: ['sec-tools', 'tool-hours'], monday: ['sec-tools', 'tool-monday'], plan: ['sec-tools', 'tool-plan'],
+  trainings: ['sec-tools', 'tool-trainings'], adhoc: ['sec-tools', 'tool-adhoc'], year: ['sec-tools', 'tool-year']
+};
 function goTab(name) {
-  const btn = document.getElementById('tab-btn-' + name) ||
-    document.querySelector('.tab-btn[data-tab="' + name + '"]');
-  if (!btn || btn.hidden) return;
-  btn.click();
-  const bar = document.querySelector('.tabs-bar');
-  if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const ids = SECTION_OF[name] || [];
+  let el = null;
+  ids.forEach(id => {
+    const x = document.getElementById(id);
+    if (!x) return;
+    if (x.tagName === 'DETAILS') x.open = true;
+    el = x;
+  });
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 window.TS_goTab = goTab;
 
@@ -380,8 +417,7 @@ function renderNoGuide() {
         לא קיבלת קישור? פני למיטל פלג.
       </div>
     </div>`;
-  ['stat-teachers','stat-schools','stat-trainings'].forEach(id => document.getElementById(id).textContent = '0');
-  document.getElementById('stat-rate').textContent = '—';
+  ['stat-teachers','stat-schools','stat-trainings'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '0'; });
 }
 
 function renderAll() {
@@ -429,10 +465,12 @@ function renderAll() {
   const totalRate = rated.length
     ? Math.round(rated.reduce((sum, t) => sum + (t.stats.rate || 0), 0) / rated.length)
     : null;
-  document.getElementById('stat-teachers').textContent = people.length;
-  const schoolsN = new Set(mine.map(t => t.schoolName)).size;
-  document.getElementById('stat-schools').textContent = schoolsN;
   const setTx = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setTx('stat-teachers', people.length);
+  const schoolsN = new Set(mine.map(t => t.schoolName)).size;
+  setTx('stat-schools', schoolsN);
+  // מקטע "המורים שלי" מקופל — המספר מופיע בכותרת שלו
+  setTx('te-count', people.length + ' מורים · ' + schoolsN + ' בתי ספר · לוחצים כדי לפתוח');
   setTx('stat-schools-sub', schoolsN + ' בתי ספר');
 
   /* שני המספרים לפעולה (20.9.26) — ראו את ההערה בפס ב-index.html */
@@ -456,7 +494,7 @@ function renderAll() {
   /* "הדרכות השנה" — כמה מועדים העבירה בפועל, ומתחת כמה הדרכות חודשיות זה
      לצורך הספירה של המפקח.ת (מיטל, 20.9.26: "היא עשתה שתיים"). */
   const monN = (state.months || []).length;
-  document.getElementById('stat-trainings').textContent = state.trainings.length;
+  setTx('stat-trainings', state.trainings.length);
   const trSub = document.getElementById('stat-trainings-sub');
   if (trSub) {
     trSub.textContent = monN
@@ -464,13 +502,14 @@ function renderAll() {
       : '';
     trSub.hidden = !monN;
   }
-  document.getElementById('stat-rate').textContent = totalRate === null ? '—' : totalRate + '%';
+  setTx('stat-rate', totalRate === null ? '—' : totalRate + '%');
   setTx('stat-rate-base', totalRate === null ? 'טרם נמדד'
     : 'נמדדו ' + rated.length + ' מתוך ' + people.length + ' מורים');
 
   renderTeachers();
   renderTrainings();
   renderStats();
+  renderQuestions();
   // לשונית "נוכחות במפגשים" (meetings.js) בונה את הרשימה מאותה קבוצה
   if (typeof window.MEET_onRoster === 'function') window.MEET_onRoster();
 }
@@ -554,6 +593,7 @@ function renderUnitsPills() {
     b.addEventListener('click', () => { unitsScope = b.dataset.scope; renderTeachers(); }));
 }
 
+const teOpenSchools = new Set();   // בתי ספר שהמדריכ/ה פתחה ברשימה
 function renderTeachers() {
   renderTrackPills();
   renderUnitsPills();
@@ -583,8 +623,16 @@ function renderTeachers() {
   }
 
   const today = new Date();
-  container.innerHTML = Object.values(bySchool)
-    .sort((a, b) => a.name.localeCompare(b.name, 'he'))
+  /* 24.9.26 (בקשת מיטל): "המורים שלי צריך להיות מקופל" — כל בית ספר מתקפל,
+     וסגור כברירת מחדל. בחיפוש או בבחירת בית ספר — פתוח, כדי שהתוצאה תיראה מיד. */
+  const groups = Object.values(bySchool).sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  const forceOpen = !!(search || schoolSel || groups.length === 1);
+  const allOpen = forceOpen || groups.every(g => teOpenSchools.has(g.name));
+  container.innerHTML = `
+    <div class="te-foldbar">
+      <span><b>${filtered.length}</b> מורים ב-<b>${groups.length}</b> בתי ספר${forceOpen ? '' : ' · לוחצים על בית ספר כדי לראות את המורים'}</span>
+      ${forceOpen ? '' : `<button type="button" class="btn btn-secondary" id="te-fold-all" style="padding:6px 12px; font-size:13px;">${allOpen ? 'קיפול כל בתי הספר' : 'פתיחת כל בתי הספר'}</button>`}
+    </div>` + groups
     .map(group => {
     const teachersHtml = group.teachers.map(t => `
       <tr>
@@ -612,14 +660,14 @@ function renderTeachers() {
       </tr>
     `).join('');
     return `
-      <div class="school-group">
-        <div class="school-header">
-          <h3>${escapeHtml(group.name)}</h3>
+      <details class="school-group" data-school="${escapeHtml(group.name)}"${forceOpen || teOpenSchools.has(group.name) ? ' open' : ''}>
+        <summary class="school-header">
+          <span class="te-sh"><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><h3>${escapeHtml(group.name)}</h3></span>
           <span class="meta">
             <span class="net-chip ${group.networkColor}">${escapeHtml(group.network || group.networkColor)}</span>
             · ${group.teachers.length} מורים
           </span>
-        </div>
+        </summary>
         <div class="table-wrap" style="border:none;">
           <table class="att-grid">
             <thead>
@@ -633,9 +681,22 @@ function renderTeachers() {
             <tbody>${teachersHtml}</tbody>
           </table>
         </div>
-      </div>
+      </details>
     `;
   }).join('');
+  // הפתיחה נזכרת בין ציורים (סינון מסלול, שמירת רמה) — אבל לא בזמן חיפוש
+  container.querySelectorAll('details.school-group').forEach(d => d.addEventListener('toggle', () => {
+    if (forceOpen) return;
+    if (d.open) teOpenSchools.add(d.dataset.school); else teOpenSchools.delete(d.dataset.school);
+    const b = document.getElementById('te-fold-all');
+    if (b) b.textContent = groups.every(g => teOpenSchools.has(g.name)) ? 'קיפול כל בתי הספר' : 'פתיחת כל בתי הספר';
+  }));
+  const foldAll = document.getElementById('te-fold-all');
+  if (foldAll) foldAll.addEventListener('click', () => {
+    const open = !groups.every(g => teOpenSchools.has(g.name));
+    groups.forEach(g => { if (open) teOpenSchools.add(g.name); else teOpenSchools.delete(g.name); });
+    renderTeachers();
+  });
 }
 
 // בורר בית הספר — לפי א"ב, עם מספר המורים. בית ספר שנבחר ונעלם מהסינון (מסלול
@@ -717,7 +778,7 @@ function escapeHtml(s) {
 function renderTrainings() {
   const list = document.getElementById('trainings-list');
   if (!state.trainings.length) {
-    list.innerHTML = '<div class="empty" style="padding:32px;">אין הדרכות עדיין. נוכחות שמסמנים בלשונית "נוכחות במפגשים" תופיע כאן.</div>';
+    list.innerHTML = '<div class="empty" style="padding:32px;">אין הדרכות עדיין. נוכחות שמסמנים במקטע "החודש" תופיע כאן.</div>';
     return;
   }
   const baseUrl = location.origin + location.pathname.replace(/\/guide\/?$/, '');
@@ -784,6 +845,7 @@ function copyCheckinUrl(btn) {
 
 function renderStats() {
   const container = document.getElementById('stats-chart');
+  if (!container) return;   // "סטטיסטיקה חודשית" הוסרה מהעמוד (24.9.26)
   if (!state.trainings.length || !state.teachers.length) {
     container.innerHTML = '<div class="empty">אין מספיק נתונים</div>';
     return;
@@ -819,12 +881,84 @@ function renderStats() {
 }
 
 /* ============================================================
+   שאלות מהמורים (24.9.26) — מה שמורה שולח/ת ב"שאלה למדריכ/ה" במבט המורה
+   (questions.create). השרת מחזיר את כל השאלות, ולכן מסננים כאן לפי המורים
+   של הקבוצה. תשובה נשמרת ב-questions.answer ומופיעה למורה באותו מקום.
+   ============================================================ */
+let questionsData = null, questionsLoading = false, qDrafts = {};
+async function loadQuestions() {
+  if (questionsLoading) return;
+  questionsLoading = true;
+  const res = await TS.api('questions.list', {}, { cache: 'no' });
+  questionsLoading = false;
+  questionsData = (res && res.ok && Array.isArray(res.data)) ? res.data : (questionsData || []);
+  if (!(res && res.ok)) questionsData.failed = true;
+  renderQuestions();
+}
+function renderQuestions() {
+  const box = document.getElementById('q-root');
+  if (!box) return;
+  if (!state.teachers.length) return;
+  if (questionsData === null) { loadQuestions(); return; }
+  const byId = {};
+  state.teachers.forEach(t => { byId[String(t.id)] = t; });
+  const mine = questionsData.filter(q => byId[String(q.teacherId)])
+    .sort((a, b) => (a.status === 'answered') - (b.status === 'answered') ||
+      String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  const openN = mine.filter(q => q.status !== 'answered').length;
+  const badge = document.getElementById('q-count');
+  if (badge) { badge.hidden = !openN; badge.textContent = openN + (openN === 1 ? ' שאלה מחכה לתשובה' : ' שאלות מחכות לתשובה'); }
+  if (!mine.length) {
+    box.innerHTML = `<div class="empty" style="padding:18px; line-height:1.8;">${questionsData.failed
+      ? 'השאלות לא נטענו כרגע — תקלה רגעית בשרת. <button type="button" class="mh-edit" id="q-retry">לנסות שוב</button>'
+      : 'עדיין אין שאלות. מורה ששואל/ת ב"שאלה למדריכ/ה" במבט המורה — השאלה תופיע כאן.'}</div>`;
+    const r = document.getElementById('q-retry');
+    if (r) r.addEventListener('click', () => { questionsData = null; renderQuestions(); });
+    return;
+  }
+  box.innerHTML = mine.map(q => {
+    const t = byId[String(q.teacherId)];
+    const answered = q.status === 'answered';
+    return `
+      <div class="q-item${answered ? '' : ' open'}" data-q="${escapeHtml(q.id)}">
+        <div class="q-meta"><span><b>${escapeHtml(t.name)}</b> · ${escapeHtml(t.schoolName || '')}</span>
+          <span>${q.createdAt ? TS.formatDate(q.createdAt) : ''} · ${answered ? 'נענתה' : 'מחכה לתשובה'}</span></div>
+        <div class="q-text">${escapeHtml(q.question || '')}</div>
+        ${answered ? `<div class="q-ans"><b>התשובה שלך:</b> ${escapeHtml(q.answer || '')}</div>` : `
+        <div class="q-form">
+          <textarea class="textarea" data-qa="${escapeHtml(q.id)}" placeholder="התשובה תופיע למורה במבט המורה">${escapeHtml(qDrafts[q.id] || '')}</textarea>
+          <button type="button" class="btn btn-primary" data-qsend="${escapeHtml(q.id)}">שליחת תשובה</button>
+        </div>`}
+      </div>`;
+  }).join('');
+  box.querySelectorAll('[data-qa]').forEach(ta => ta.addEventListener('input', () => { qDrafts[ta.dataset.qa] = ta.value; }));
+  box.querySelectorAll('[data-qsend]').forEach(b => b.addEventListener('click', async () => {
+    const id = b.dataset.qsend;
+    // מבט המורה מציג את התשובה כ-HTML — שולחים טקסט נקי בלבד
+    const answer = String(qDrafts[id] || '').replace(/[<>]/g, '').trim();
+    if (!answer) { TS.toast('כותבים תשובה ואז שולחים'); return; }
+    b.disabled = true; b.textContent = 'שולח…';
+    const res = await TS.apiPost('questions.answer', { id: id, answer: answer });
+    if (res && res.ok) {
+      const q = questionsData.find(x => String(x.id) === String(id));
+      if (q) { q.answer = answer; q.status = 'answered'; q.answeredAt = new Date().toISOString(); }
+      delete qDrafts[id];
+      TS.toast('התשובה נשלחה למורה');
+      renderQuestions();
+    } else {
+      b.disabled = false; b.textContent = 'שליחת תשובה';
+      TS.toast('התשובה לא נשלחה — לנסות שוב');
+    }
+  }));
+}
+
+/* ============================================================
    תוכנית שנתית — מועדי מפגשי ההדרכה (assets/plans.js)
    הלשונית מוצגת רק למדריכ/ה שיש לה תוכנית רשומה.
    ============================================================ */
 function renderPlan() {
   const box = document.getElementById('plan-container');
-  const tabBtn = document.getElementById('tab-btn-plan');
+  const tabBtn = document.getElementById('tool-plan');
   if (!box) return;
   const plan = window.TS_planFor ? window.TS_planFor(guideSlug) : null;
   if (!plan) { if (tabBtn) tabBtn.hidden = true; return; }
@@ -897,7 +1031,8 @@ function renderResources() {
       <span class="ic send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
       <span class="tx"><strong>שליחת חומרים למורים</strong><span>העתקת הודעה מוכנה לוואטסאפ</span></span></button>`);
   }
-  if (!items.length) { card.hidden = true; return; }
+  const tool = document.getElementById('tool-links');
+  if (!items.length) { card.hidden = true; if (tool) tool.hidden = true; return; }
   grid.innerHTML = items.join('');
   card.hidden = false;
 }
