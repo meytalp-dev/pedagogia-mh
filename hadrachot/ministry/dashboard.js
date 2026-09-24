@@ -6,6 +6,7 @@ let state = {
   schoolBreakdown: []
 };
 let currentSubject = '';
+let dashLoaded = false;   // ministry.dashboard הגיע (רשתות, בתי ספר, מורים)
 
 // מגזר לכל בית ספר — לצ'יפ המגזר בטבלת בתי הספר (מפת פריסת הפיקוח)
 let sectorBySchool = {};   // sch_id -> kelali | haredi | arab
@@ -27,6 +28,7 @@ async function load() {
     : { ok: false, error: 'no_url' };
   if (res.ok && res.data) {
     state = res.data;
+    dashLoaded = true;
     render();
   } else {
     renderLoadError(res.error || '');
@@ -52,13 +54,7 @@ async function loadSectorMap() {
   renderWeakSchools();   // רענון — כדי להוסיף צ'יפ מגזר לטבלה
 }
 
-function render() {
-  renderSubjectPills();
-  renderCommandStrip();
-  renderNetworkLenses();
-  renderWeakSchools();
-  renderSubjectAttendance();   // הדגשת המקצוע שבמסנן
-}
+function render() { renderMeetParts(); }
 
 /* ============================================================
    מקצועות עם הנוכחות הנמוכה והגבוהה (24.9.26)
@@ -81,19 +77,85 @@ async function loadSubjectAttendance() {
       // השעות הפרטניות נספרות כהשתתפות — נכשל? מחשבים בלעדיהן
       TS.api('guide.workspace', { guides: slugs.join(',') }, { cache: 'no' })
     ]);
-    if (!rep || !rep.ok || !rep.data || !tl || !tl.ok) { subjectAtt = { failed: true }; renderSubjectAttendance(); return; }
+    if (!rep || !rep.ok || !rep.data || !tl || !tl.ok) {
+      subjectAtt = { failed: true }; meetStats = { failed: true };
+      renderMeetParts(); return;
+    }
     const hours = (ws && ws.ok && ws.data && ws.data.hours) || null;
     const guides = slugs.map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));
     const stats = window.TS_meetStats({
       today: rep.data.today, meetings: rep.data.meetings, rows: rep.data.rows,
       teachers: tl.data || [], guides: guides, hours: hours
     });
+    meetStats = stats;
     subjectAtt = aggregateBySubject(stats);
   } catch (e) {
     console.error('subject attendance', e);
-    subjectAtt = { failed: true };
+    subjectAtt = { failed: true }; meetStats = { failed: true };
   }
+  renderMeetParts();
+}
+
+// כל מה שנשען על נוכחות המפגשים — מתרענן כשהנתונים מגיעים ובכל החלפת מקצוע
+function renderMeetParts() {
+  renderSubjectPills();
+  renderCommandStrip();
+  renderNetworkLenses();
+  renderWeakSchools();
   renderSubjectAttendance();
+}
+
+/* ============================================================
+   נוכחות ארצית / לפי רשת / לפי בית ספר — מאותם נתוני מפגשים (24.9.26)
+   -----------------------------------------------------------
+   עד היום הריבועים העליונים, כרטיסי הרשתות וטבלת בתי הספר קראו את
+   מערכת ההדרכות הישנה (טאב attendance), שבה אין אף רישום — ולכן הכול
+   הראה "—" / "טרם החלה מדידה" גם כשהמדריכים כבר רשמו נוכחות בזום.
+   עכשיו הכול מחושב מ-meetStats (meet.report + teachers.list + שעות
+   פרטניות, דרך TS_meetStats) — באותו כלל חודשי כמו דוח הנוכחות.
+   המספרים המבניים (רשתות, בתי ספר, מורים) נשארים מ-ministry.dashboard.
+   ============================================================ */
+let meetStats = null;          // null = נטען · { failed } = לא נטען · אחרת תוצאת TS_meetStats
+const MIN_MEASURED = 3;        // רשת/בית ספר עם פחות מורים שנמדדו לא נכנס לדירוג "החלשים"
+
+// הקבוצות והמשתתפים — בסינון המקצוע אם נבחר
+function meetGroups() {
+  if (!meetStats || meetStats.failed) return [];
+  const gs = meetStats.guides || [];
+  return currentSubject ? gs.filter(g => window.TS_guideTeaches(g, currentSubject)) : gs;
+}
+function meetPersons() {
+  const out = [];
+  meetGroups().forEach(g => (g.persons || []).forEach(p => {
+    if (currentSubject && (p.subjects || []).indexOf(currentSubject) < 0) return;
+    out.push(p);
+  }));
+  return out;
+}
+function rateOf(ps) {
+  const held = ps.reduce((s, p) => s + p.held, 0);
+  const present = ps.reduce((s, p) => s + p.present, 0);
+  return held ? Math.round(present / held * 100) : null;
+}
+// סיכום לקבוצת משתתפים: כמה נמדדו, אחוז, מי השתתף, מי בסיכון (מתחת ל-50%)
+function summarize(ps) {
+  const measured = ps.filter(p => p.held > 0);
+  return {
+    all: ps.length,
+    measured: measured.length,
+    rate: rateOf(measured),
+    participated: measured.filter(p => p.participated).length,
+    risk: measured.filter(p => p.rate !== null && p.rate < 50).length,
+    onTarget: measured.filter(p => p.rate !== null && p.rate >= 80).length
+  };
+}
+const netKey = id => String(id || '').replace(/^net_/, '');
+function byNetwork() {
+  const m = {};
+  meetPersons().forEach(p => { (m[netKey(p.network)] = m[netKey(p.network)] || []).push(p); });
+  const out = {};
+  Object.keys(m).forEach(k => { out[k] = summarize(m[k]); });
+  return out;
 }
 
 function aggregateBySubject(stats) {
@@ -189,6 +251,7 @@ function renderSubjectAttendance() {
     </details>`;
 }
 
+// המקצועות בסינון — מהמדריכים (guides.js), לא מטאב ההדרכות הישן שבו רק מקצוע אחד
 function renderSubjectPills() {
   const container = document.getElementById('subject-filter-bar');
   container.innerHTML = '<span class="filter-label">סינון מקצוע</span>';
@@ -199,83 +262,124 @@ function renderSubjectPills() {
   all.onclick = () => switchSubject('');
   container.appendChild(all);
 
-  const subjects = state.filter?.availableSubjects || [];
-  subjects.forEach(s => {
+  const set = new Set();
+  Object.values(window.TS_GUIDES || {}).forEach(g => window.TS_guideSubjects(g).forEach(s => set.add(s)));
+  Array.from(set).sort((a, b) => a.localeCompare(b, 'he')).forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'subject-pill' + (currentSubject === s ? ' active' : '');
     btn.dataset.subject = s;
-    btn.textContent = s;
+    btn.textContent = s;   // דרך ה-DOM — הגרשיים של תנ"ך
     btn.onclick = () => switchSubject(s);
     container.appendChild(btn);
   });
 }
-async function switchSubject(s) { currentSubject = s; await load(); }
+// ה-ministry.dashboard מסונן מחדש (מורים ובתי ספר במקצוע); הנוכחות מחושבת מקומית
+async function switchSubject(s) { currentSubject = s; renderMeetParts(); await load(); }
+
+function setKpi(id, text, cls) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove('ok', 'warn', 'err', 'mint');
+  if (cls) el.classList.add(cls);
+}
+function setSub(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
 
 function renderCommandStrip() {
   const s = state.summary || {};
-  document.getElementById('cmd-networks').textContent = s.networks || 0;
-  document.getElementById('cmd-schools').textContent = s.schools || 0;
-  document.getElementById('cmd-teachers').textContent = s.teachers || 0;
-  document.getElementById('cmd-trainings').textContent = s.trainings || 0;
-  const rateEl = document.getElementById('cmd-rate');
-  rateEl.classList.remove('ok', 'warn', 'err', 'mint');
-  if (noAttendanceYet()) {
-    rateEl.textContent = '—';
-  } else {
-    rateEl.textContent = (s.avgRate || 0) + '%';
-    rateEl.classList.add(s.avgRate >= 80 ? 'mint' : s.avgRate >= 50 ? 'warn' : 'err');
+  if (dashLoaded) {
+    setKpi('cmd-networks', s.networks || 0, 'mint');
+    setKpi('cmd-schools', s.schools || 0);
+    setKpi('cmd-teachers', s.teachers || 0);
   }
-  document.getElementById('cmd-records').textContent = s.attendanceRecords || 0;
+  if (!meetStats) {
+    ['cmd-trainings', 'cmd-rate', 'cmd-participated'].forEach(id => setKpi(id, '…'));
+    setSub('cmd-rate-sub', 'טוען נוכחות…');
+    return;
+  }
+  if (meetStats.failed) {
+    ['cmd-trainings', 'cmd-rate', 'cmd-participated'].forEach(id => setKpi(id, '—'));
+    setSub('cmd-rate-sub', 'הנוכחות לא נטענה — רעננו');
+    setSub('cmd-participated-sub', '');
+    return;
+  }
+  const trainings = meetGroups().reduce((n, g) => n + (g.months || []).length, 0);
+  const groups = meetGroups().filter(g => (g.months || []).length).length;
+  setKpi('cmd-trainings', trainings);
+  setSub('cmd-trainings-sub', !trainings ? 'עוד לא התקיימו הדרכות'
+    : (trainings === 1 ? 'הדרכה חודשית אחת' : 'הדרכות חודשיות') + ' · ' + (groups === 1 ? 'קבוצה אחת' : groups + ' קבוצות'));
+  const sum = summarize(meetPersons());
+  if (sum.rate === null) {
+    setKpi('cmd-rate', '—');
+    setSub('cmd-rate-sub', 'טרם נמדדה נוכחות · יעד: 80%');
+    setKpi('cmd-participated', '—');
+    setSub('cmd-participated-sub', '');
+    return;
+  }
+  setKpi('cmd-rate', sum.rate + '%', sum.rate >= 80 ? 'mint' : sum.rate >= 50 ? 'warn' : 'err');
+  setSub('cmd-rate-sub', 'יעד: 80% · ' + sum.measured + ' מורים נמדדו');
+  setKpi('cmd-participated', sum.participated, 'mint');
+  setSub('cmd-participated-sub', 'מתוך ' + sum.measured + ' מורים שנמדדו');
 }
 
-// עוד לא נרשמה אף נוכחות במערכת → 0% אצל כולם הוא "אין נתונים", לא "בסיכון"
+// אין עדיין אף מורה שנמדד בסינון הנוכחי → אין דירוג ואין התראות
 function noAttendanceYet() {
-  return !((state.summary || {}).attendanceRecords > 0);
+  if (!meetStats || meetStats.failed) return true;
+  return summarize(meetPersons()).measured === 0;
 }
 
 function renderNetworkLenses() {
+  const featEl = document.getElementById('networks-featured');
+  const gridEl = document.getElementById('networks-grid');
   const nets = (state.networkBreakdown || []).slice();
+  if (!dashLoaded) return;   // ministry.dashboard עוד לא הגיע — נשאר "טוען..."
   if (!nets.length) {
-    document.getElementById('networks-featured').innerHTML = emptyMsg('אין נתונים עבור הסינון הנוכחי');
-    document.getElementById('networks-grid').innerHTML = '';
+    featEl.innerHTML = emptyMsg('אין נתונים עבור הסינון הנוכחי');
+    gridEl.innerHTML = '';
     return;
   }
+  const att = byNetwork();
+  nets.forEach(n => { n.att = att[netKey(n.id)] || summarize([]); });
+  const note = text => '<div style="grid-column:1/-1; padding:20px 24px; border:1px dashed var(--border); border-radius:14px; color:var(--text-muted); line-height:1.8;">' + text + '</div>';
+  const badges = document.querySelectorAll('.badge-attention');
 
-  // אין עדיין נתוני נוכחות — בלי התראות ובלי "רשתות חלשות"; כולן בגריד הרגיל, במצב נייטרלי
-  document.querySelectorAll('.badge-attention').forEach(b => { b.hidden = noAttendanceYet(); });
-  if (noAttendanceYet()) {
+  if (!meetStats || meetStats.failed || noAttendanceYet()) {
+    badges.forEach(b => { b.hidden = true; });
+    featEl.innerHTML = note(!meetStats ? 'טוען את נתוני הנוכחות במפגשי ההדרכה…'
+      : meetStats.failed ? 'נתוני הנוכחות לא נטענו — תקלה רגעית בשרת. רעננו את הדף בעוד רגע.'
+      : 'טרם נמדדה נוכחות' + (currentSubject ? ' במקצוע ' + escapeHtml(currentSubject) : '') + ' — אין עדיין רשתות לדירוג.');
     nets.sort((a, b) => (b.teachers || 0) - (a.teachers || 0));
-    document.getElementById('networks-featured').innerHTML =
-      '<div style="grid-column:1/-1; padding:20px 24px; border:1px dashed var(--border); border-radius:14px; color:var(--text-muted); line-height:1.8;">' +
-      'מדידת הנוכחות טרם החלה — עדיין לא נקלטו רישומי נוכחות, ולכן אין רשתות שדורשות פעולה ואין התראות. ' +
-      'ברגע שייקלטו צ\'ק-אינים ראשונים, הרשתות החלשות יופיעו כאן.' +
-      '</div>';
-    document.getElementById('networks-grid').innerHTML = nets.map(n => networkLensCard(n, false)).join('');
+    gridEl.innerHTML = nets.map(n => networkLensCard(n, false)).join('');
     return;
   }
 
-  // מיון: חלשות ראשונות
-  nets.sort((a, b) => (a.rate || 0) - (b.rate || 0));
-
-  // 2-3 חלשות לטוף Featured
-  const featuredCount = Math.min(3, Math.max(1, Math.floor(nets.length * 0.3)));
-  const featured = nets.slice(0, featuredCount);
-  const rest = nets.slice(featuredCount);
-
-  document.getElementById('networks-featured').innerHTML = featured.map(n => networkLensCard(n, true)).join('');
-  document.getElementById('networks-grid').innerHTML = rest.map(n => networkLensCard(n, false)).join('');
+  // דורשות תשומת לב: רשתות עם מספיק מורים שנמדדו, מתחת ליעד — עד 3 החלשות
+  const featured = nets.filter(n => n.att.measured >= MIN_MEASURED && n.att.rate < 80)
+    .sort((a, b) => a.att.rate - b.att.rate).slice(0, 3);
+  badges.forEach(b => { b.hidden = false; });
+  if (!featured.length) {
+    document.querySelector('.section-head-flex .badge-attention').hidden = true;
+    featEl.innerHTML = note('אין רשת מתחת ליעד (80%) מבין הרשתות שנמדדו בהן ' + MIN_MEASURED + ' מורים לפחות.');
+  } else {
+    featEl.innerHTML = featured.map(n => networkLensCard(n, true)).join('');
+  }
+  // השאר: קודם הנמדדות (מהחלשה לחזקה), אחריהן שטרם נמדדו
+  const rest = nets.filter(n => featured.indexOf(n) < 0).sort((a, b) =>
+    (a.att.rate === null ? 101 : a.att.rate) - (b.att.rate === null ? 101 : b.att.rate) || (b.teachers || 0) - (a.teachers || 0));
+  gridEl.innerHTML = rest.map(n => networkLensCard(n, false)).join('');
 }
 
 function networkLensCard(n, isFeatured) {
-  const noData = noAttendanceYet();
-  const rate = n.rate || 0;
+  const a = n.att || summarize([]);
+  const noData = a.rate === null;
+  const rate = noData ? 0 : a.rate;
   const rateClass = rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : 'err';
   const cssVar = `--lens-net: var(--net-${n.color || 'ort'});`;
-  const action = recommendAction(n, rate);
+  const action = recommendAction(a, rate);
   const circumference = 2 * Math.PI * 30;
   const dash = (rate / 100) * circumference;
   const statusTag = noData
-    ? '<span class="net-lens-status-tag" style="background:var(--surface-soft); color:var(--text-muted);">טרם החלה מדידה</span>'
+    ? `<span class="net-lens-status-tag" style="background:var(--surface-soft); color:var(--text-muted);">${meetStats ? 'טרם נמדדה' : 'טוען…'}</span>`
     : `<span class="net-lens-status-tag ${rateClass}">${rateClass === 'ok' ? 'תקין' : rateClass === 'warn' ? 'מעקב' : 'דורש פעולה'}</span>`;
   return `
     <div class="net-lens" style="${cssVar}">
@@ -300,12 +404,12 @@ function networkLensCard(n, isFeatured) {
           <div class="net-lens-stat-label">מורים</div>
         </div>
         <div class="net-lens-stat">
-          <div class="net-lens-stat-num">${n.schools || 0}</div>
-          <div class="net-lens-stat-label">בתי ספר</div>
+          <div class="net-lens-stat-num">${noData ? '—' : a.measured}</div>
+          <div class="net-lens-stat-label">נמדדו</div>
         </div>
         <div class="net-lens-stat">
-          <div class="net-lens-stat-num ${noData ? '' : n.missed > 0 ? 'coral' : 'mint'}">${noData ? '—' : n.missed || 0}</div>
-          <div class="net-lens-stat-label">בסיכון</div>
+          <div class="net-lens-stat-num ${noData ? '' : a.risk > 0 ? 'coral' : 'mint'}">${noData ? '—' : a.risk}</div>
+          <div class="net-lens-stat-label">מתחת ל-50%</div>
         </div>
       </div>
 
@@ -321,7 +425,7 @@ function networkLensCard(n, isFeatured) {
       ` : ''}
 
       <div class="net-lens-cta">
-        <a class="btn-soft-sm" href="../admin-network/?network=${encodeURIComponent(n.id)}">
+        <a class="btn-soft-sm" href="../admin-network/?network=${encodeURIComponent(netKey(n.id))}">
           פתח דשבורד
         </a>
         <button class="btn-soft-sm primary" onclick="sendToNetwork('${n.id}', '${escapeAttr(n.name)}', '${n.contactEmail || ''}')">
@@ -333,39 +437,48 @@ function networkLensCard(n, isFeatured) {
   `;
 }
 
-function recommendAction(n, rate) {
+function recommendAction(a, rate) {
   if (rate >= 80) return 'המשך מעקב חודשי שגרתי.';
-  if (rate >= 50) return 'שיחה עם מנהל הרשת על מורים בסיכון.';
-  if (n.missed > 5) return 'התראה ל-' + n.missed + ' מורים שמתחת ל-50%.';
+  if (rate >= 50) return 'שיחה עם מנהל הרשת על המורים שמתחת ל-50%.';
+  if (a.risk > 5) return 'פנייה ל-' + a.risk + ' מורים שמתחת ל-50%.';
   return 'שליחת דוח דחוף ובקשת תוכנית התערבות.';
 }
 
+// בתי הספר החלשים — מנוכחות המפגשים, רק בתי ספר עם מספיק מורים שנמדדו
 function renderWeakSchools() {
   const tbody = document.getElementById('weak-schools-body');
-  const schools = (state.schoolBreakdown || []).slice(0, 10);
-  if (noAttendanceYet()) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">מדידת הנוכחות טרם החלה — אין עדיין דירוג בתי ספר.</td></tr>';
-    return;
-  }
+  const msgRow = t => '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">' + t + '</td></tr>';
+  if (!meetStats) { tbody.innerHTML = msgRow('טוען נוכחות…'); return; }
+  if (meetStats.failed) { tbody.innerHTML = msgRow('נתוני הנוכחות לא נטענו — רעננו את הדף בעוד רגע.'); return; }
+  const m = {};
+  meetPersons().forEach(p => {
+    const key = p.school || p.schoolName;
+    if (!key) return;
+    const s = m[key] || (m[key] = { id: p.school, name: p.schoolName || p.school, network: netKey(p.network), ps: [] });
+    s.ps.push(p);
+  });
+  const schools = Object.values(m).map(s => Object.assign(s, summarize(s.ps)))
+    .filter(s => s.measured >= MIN_MEASURED)
+    .sort((a, b) => a.rate - b.rate || b.measured - a.measured)
+    .slice(0, 10);
   if (!schools.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:24px; text-align:center; color:var(--text-muted);">אין נתוני בתי ספר</td></tr>';
+    tbody.innerHTML = msgRow('טרם נמדדה נוכחות' + (currentSubject ? ' במקצוע ' + escapeHtml(currentSubject) : '') +
+      ' — אין עדיין בית ספר עם ' + MIN_MEASURED + ' מורים שנמדדו.');
     return;
   }
   tbody.innerHTML = schools.map(s => {
-    const school = s.school || {};
-    const rate = s.rate || 0;
+    const rate = s.rate;
     const fillClass = rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : '';
-    const netColor = s.networkColor || (school.network || '').replace(/^net_/, '');
-    const netName = s.networkName || netColor || '—';
-    const netChip = netColor ? `<span class="net-chip ${netColor}">${escapeHtml(netName)}</span>` : '—';
-    const sector = sectorBySchool[school.id];
+    const net = TS.netById(s.network);
+    const netChip = s.network ? `<span class="net-chip ${net.color || s.network}">${escapeHtml(net.name || s.network)}</span>` : '—';
+    const sector = sectorBySchool[s.id];
     const secChip = sector ? TS.secChip(sector) : '—';
     return `
       <tr>
-        <td class="school-cell">${escapeHtml(school.name || '')}</td>
+        <td class="school-cell">${escapeHtml(s.name || '')}</td>
         <td>${netChip}</td>
         <td>${secChip}</td>
-        <td>${s.teachers}</td>
+        <td>${s.measured}</td>
         <td>
           <div class="att-progress">
             <div class="att-progress-bar">
@@ -374,7 +487,7 @@ function renderWeakSchools() {
             <span class="att-progress-val">${rate}%</span>
           </div>
         </td>
-        <td><a class="open-btn" href="../admin-school/?school=${encodeURIComponent(school.id)}&network=${encodeURIComponent(school.network || '')}">פתח</a></td>
+        <td>${s.id ? `<a class="open-btn" href="../admin-school/?school=${encodeURIComponent(s.id)}&network=${encodeURIComponent(s.network)}">פתח</a>` : ''}</td>
       </tr>
     `;
   }).join('');
@@ -383,6 +496,7 @@ function renderWeakSchools() {
 function sendToNetwork(netId, netName, netEmail) {
   const n = (state.networkBreakdown || []).find(x => x.id === netId);
   if (!n) return;
+  const a = byNetwork()[netKey(netId)] || summarize([]);
   const subjLabel = currentSubject ? ('— מקצוע: ' + currentSubject) : '';
   const subject = `דוח חודשי — רשת ${netName} ${subjLabel} — ${TS.monthLabel()}`;
   const body = [
@@ -394,16 +508,17 @@ function sendToNetwork(netId, netName, netEmail) {
     `סיכום:`,
     `• מורים ברשת: ${n.teachers}`,
     `• בתי ספר: ${n.schools}`,
-    ...(noAttendanceYet()
-      ? ['• מדידת הנוכחות טרם החלה — נתוני נוכחות יופיעו בדוחות הבאים']
+    ...(a.rate === null
+      ? ['• מדידת הנוכחות במפגשי ההדרכה טרם החלה ברשת — נתוני נוכחות יופיעו בדוחות הבאים']
       : [
-          `• אחוז נוכחות ממוצע: ${n.rate}%`,
-          `• עומדים ביעד (80%+): ${n.present}`,
-          `• בסיכון (מתחת ל-50%): ${n.missed}`
+          `• אחוז נוכחות במפגשי ההדרכה: ${a.rate}% (${a.measured} מורים נמדדו)`,
+          `• השתתפו לפחות פעם אחת: ${a.participated} מתוך ${a.measured}`,
+          `• עומדים ביעד (80%+): ${a.onTarget}`,
+          `• מתחת ל-50%: ${a.risk}`
         ]),
     ``,
     `דשבורד מלא של הרשת:`,
-    `${location.origin}${location.pathname.replace('/ministry/', '/admin-network/')}?network=${netId}${currentSubject ? '&subject=' + encodeURIComponent(currentSubject) : ''}`,
+    `${location.origin}${location.pathname.replace('/ministry/', '/admin-network/')}?network=${netKey(netId)}${currentSubject ? '&subject=' + encodeURIComponent(currentSubject) : ''}`,
     ``,
     `בברכה,`,
     `רויטל אמיר`,

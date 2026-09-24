@@ -7,7 +7,7 @@
 <!-- נעילה: רק בעל התפקיד שלו רואה את המבט (24.9.26) -->
 <script src="../assets/staff.js?v=20260924" data-view="guide"></script>
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924f">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924g">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* command-strip עם 5 KPIs (20.9.26 — נוספו "טרם השלימו" ו"טרם סומנה רמה") */
@@ -17,6 +17,8 @@
 
   /* כפתור פעולה בראש העמוד */
   .page-header-actions { display:flex; flex-direction:column; align-items:flex-end; gap:16px; }
+  /* השם כבר בכותרת — בלי כפילות ובלי "—" עד שהנתונים נטענים */
+  .page-header-actions .page-compass-info { display:none; }
   .gq-acts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .gq { display:inline-flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; min-height:40px; font-size:14px; }
   .gq svg { width:16px; height:16px; flex:none; }
@@ -632,7 +634,7 @@
     <!-- Page Header -->
     <section class="page-header">
       <div>
-        <div class="page-header-eyebrow">מבט מקצועי · המורים שלי</div>
+        <div class="page-header-eyebrow">מבט המדריכ/ה · מנור</div>
         <h1 id="page-title">דשבורד מדריכה</h1>
         <p class="page-header-sub" id="page-subtitle">—</p>
       </div>
@@ -1093,7 +1095,7 @@
   </div>
 </div>
 
-<script src="../assets/app.js?v=20260916"></script>
+<script src="../assets/app.js?v=20260924h"></script>
 <script src="../assets/guides.js?v=20260924g"></script>
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>

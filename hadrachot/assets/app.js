@@ -163,6 +163,35 @@ const TS = (() => {
   const RETRY_DELAYS_MS = [1200, 3000];
   const sleep_ = ms => new Promise(r => setTimeout(r, ms));
 
+  /* בקשה כפולה לקריאות (24.9.26): נמדד שבקשה רגילה עונה ב-2–3 שניות, אבל בערך
+     אחת מחמש נתקעת 20–25 שניות (Google מעיר מופע חדש של השרת) — והדף מחכה לאיטית
+     שבהן. קריאה שלא ענתה תוך HEDGE_MS נשלחת שוב, והתשובה הראשונה מנצחת.
+     רק לקריאות: פעולה שכותבת (גם ב-GET, כמו link.seen) לעולם לא נשלחת פעמיים. */
+  const HEDGE_MS = 5000;
+  const HEDGE_RE = /\.(list|get|dashboard|scope|report|state|self|directory|workspace|group|roster|code|status|verify|timing)$/;
+  function getOnce_(url) {
+    return fetchWithTimeout(url).then(async res => {
+      if (!res.ok) { const e = new Error('http_' + res.status); e.kind = 'http'; throw e; }
+      const text = await res.text();
+      try { return JSON.parse(text); }
+      catch (err) { const e = new Error('bad_response'); e.kind = 'bad'; throw e; }
+    });
+  }
+  function getHedged_(url, hedge) {
+    if (!hedge) return getOnce_(url);
+    return new Promise((resolve, reject) => {
+      let done = false, pending = 0, fired = 0;
+      const fire = () => {
+        pending++; fired++;
+        getOnce_(url).then(j => { if (!done) { done = true; clearTimeout(t); resolve(j); } },
+          e => { if (--pending === 0 && !done && fired === 2) { done = true; reject(e); }
+                 else if (pending === 0 && !done && fired === 1) { done = true; clearTimeout(t); reject(e); } });
+      };
+      const t = setTimeout(() => { if (!done) fire(); }, HEDGE_MS);
+      fire();
+    });
+  }
+
   async function fetchFromApi(action, params) {
     const url = new URL(APPS_SCRIPT_URL);
     url.searchParams.set('action', action);
@@ -173,12 +202,9 @@ const TS = (() => {
     for (let i = 0; i < GET_ATTEMPTS; i++) {
       if (i) await sleep_(RETRY_DELAYS_MS[i - 1]);
       try {
-        const res = await fetchWithTimeout(url.toString());
-        if (!res.ok) { last = { ok: false, error: 'http_' + res.status }; continue; }
-        const text = await res.text();
-        try { return JSON.parse(text); }
-        catch (e) { last = { ok: false, error: 'bad_response' }; continue; }
+        return await getHedged_(url.toString(), HEDGE_RE.test(action) && action !== 'link.seen');
       } catch (e) {
+        if (e.kind === 'http' || e.kind === 'bad') { last = { ok: false, error: e.message }; continue; }
         last = { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
         // פסק זמן אחד מתקבל בניסיון חוזר; שניים ברצף — כבר דקה, לא ממשיכים
         if (e.name === 'AbortError' && ++timeouts >= 2) break;

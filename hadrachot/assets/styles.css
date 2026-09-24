@@ -2914,3 +2914,17 @@ body[data-look="menor"] .pn a.on:hover { background: #3E5A3D; color: #fff; }
 .ti-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
 .mv-tour-link { display: inline-block; margin-top: 10px; background: none; border: 0; padding: 0; cursor: pointer;
   color: #4E6B4D; font-weight: 700; font-size: 13px; text-decoration: underline; font-family: inherit; }
+
+/* ▸ כותרת עמוד קומפקטית בכל המבטים (24.9.26, מיטל: "הכותרת גבוהה מדי") —
+     פחות ריווח, כותרת קטנה יותר, בלי "מערכת מעודכנת". הכותרת היא רק "איפה אני",
+     והתוכן החשוב (החודש, המספרים) צריך להופיע במסך הראשון. */
+body[data-look="menor"] .page-header { padding: 16px 24px; margin-bottom: 16px; gap: 14px; }
+body[data-look="menor"] .page-header-eyebrow { margin-bottom: 2px; font-size: 10.5px; }
+body[data-look="menor"] .page-header h1 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); margin: 0 0 2px; }
+body[data-look="menor"] .page-header-sub { font-size: 13.5px; }
+body[data-look="menor"] .page-compass-status { display: none; }
+body[data-look="menor"] .page-header .tour-start,
+body[data-look="menor"] .page-header [data-tour-start] { margin-top: 4px; }
+@media (max-width: 760px) {
+  body[data-look="menor"] .page-header { padding: 14px 16px; }
+}

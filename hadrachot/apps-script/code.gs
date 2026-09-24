@@ -218,6 +218,8 @@ const PUBLIC_ACTIONS = new Set([
   'staff.codeSend', 'staff.codeVerify', 'staff.self', 'staff.directory',
   // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
   'staff.teacherKey', 'staff.guideKeys',
+  // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
+  'diag.timing',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete'
 ]);
@@ -851,7 +853,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|staff\.(self|directory|teacherKey|guideKeys))$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing)$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1003,6 +1005,7 @@ function handleRequest(params) {
       case 'staff.self':          result = staffSelf(params); break;
       case 'staff.directory':     result = staffDirectory(params); break;
       case 'staff.teacherKey':    result = staffTeacherKey(params); break;
+      case 'diag.timing':         result = diagTiming(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
       case 'notes.list':          result = notesList(params); break;
       case 'notes.save':          result = notesSave(params); break;
@@ -5312,4 +5315,24 @@ function staffGuideKeys(p) {
   const out = {};
   slugs.forEach(s => { out[s] = meetGuideKey_(s); });
   return { ok: true, data: out };
+}
+
+/* ---- אבחון מהירות (24.9.26, "השרת איטי") — מחזיר רק מספרים: כמה שורות ועמודות
+   בכל לשונית וכמה זמן לוקח לקרוא אותה. בלי תוכן, ולכן ציבורי. ---- */
+function diagTiming() {
+  const t0 = Date.now();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const tOpen = Date.now() - t0;
+  const tabs = ss.getSheets().map(sh => {
+    const a = Date.now();
+    const rows = sh.getLastRow(), cols = sh.getLastColumn();
+    const maxRows = sh.getMaxRows(), maxCols = sh.getMaxColumns();
+    return { name: sh.getName(), rows: rows, cols: cols, cells: rows * cols, maxCells: maxRows * maxCols, ms: Date.now() - a };
+  });
+  const reads = {};
+  ['teachers', 'meetings', 'meeting_attendance', 'guide_hours', 'users', 'audit_log'].forEach(n => {
+    const a = Date.now();
+    try { readAll(n); reads[n] = Date.now() - a; } catch (e) { reads[n] = 'err'; }
+  });
+  return { ok: true, data: { openMs: tOpen, totalMs: Date.now() - t0, tabs: tabs, readAllMs: reads } };
 }
