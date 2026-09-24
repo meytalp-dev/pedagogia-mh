@@ -136,6 +136,71 @@
   .pn a:hover { background: #EEF3EC; border-color: #8CA68B; }
   #th-card, #kb-sec { scroll-margin-top: 80px; }
   .demo-bar { padding: 10px 16px; text-align: center; font-size: 14px; background: #EEF3EC; color: #2F4A2E; border-bottom: 1px solid #D5E0D2; }
+  .tg-card { max-width: 480px; }
+  .tg-brand { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #4E6B4D; font-weight: 700; font-size: 13px; }
+  .tg-brand img { height: 28px; width: auto; }
+  .tg-steps { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0 0 18px; }
+  .tg-steps li { flex: 1; display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 10px;
+    background: #F3F6F2; color: #7A8C79; font-size: 12.5px; font-weight: 600; }
+  .tg-steps li b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: #D5E0D2; color: #3E5A3D; font-size: 11.5px; flex: none; }
+  .tg-steps li.on { background: #E5EDE3; color: #2F4A2E; }
+  .tg-steps li.on b { background: #4E6B4D; color: #fff; }
+  .tg-steps li.done b { background: #8CA68B; color: #fff; }
+  #teacher-gate .btn-primary { background: #4E6B4D; border-color: #4E6B4D; }
+  .tg-help { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display: flex;
+    align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); }
+  .helpbtn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1.5px solid #D5E0D2;
+    border-radius: 999px; background: #fff; color: #3E5A3D; font-size: 13.5px; font-weight: 700; text-decoration: none; }
+  .helpbtn:hover { border-color: #8CA68B; background: #EEF3EC; }
+  .helpbtn svg { width: 15px; height: 15px; }
+  .tour-start { margin-top: 8px; margin-inline-end: 14px; background: none; border: 0; padding: 0; cursor: pointer;
+    color: #4E6B4D; font-weight: 700; font-size: 13px; text-decoration: underline; font-family: inherit; }
+  .page-help { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    margin: 0 0 20px; padding: 16px 20px; border: 1px solid #D5E0D2; border-radius: 14px; background: #FFFFFF;
+    border-inline-start: 4px solid #8CA68B; }
+  .ph-text { display: flex; flex-direction: column; gap: 3px; font-size: 14px; color: var(--text-2); }
+  .ph-text b { color: #2F4A2E; font-size: 15px; }
+  .ph-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .page-help .helpbtn { font-family: inherit; cursor: pointer; }
+  .tour-hole { position: fixed; z-index: 9998; border-radius: 14px; pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(20, 35, 20, 0.55); outline: 3px solid #8CA68B;
+    transition: top .3s ease, left .3s ease, width .3s ease, height .3s ease; }
+  .tour-box { position: fixed; z-index: 9999; background: #fff; border-radius: 14px; padding: 16px 18px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.25); border-top: 4px solid #4E6B4D; transition: top .3s ease, left .3s ease; }
+  .tour-box h3 { margin: 2px 0 6px; font-size: 17px; color: #2F4A2E; }
+  .tour-box p { margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: var(--text-1, #1f2d2a); }
+  .tour-count { font-size: 12px; font-weight: 700; color: #6E8A6D; }
+  .tour-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tour-actions button { font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; border-radius: 999px; padding: 7px 16px; }
+  .tour-next { background: #4E6B4D; color: #fff; border: 1px solid #4E6B4D; }
+  .tour-prev { background: #fff; color: #3E5A3D; border: 1px solid #D5E0D2; }
+  .tour-skip { background: none; border: 0; color: var(--text-muted); text-decoration: underline; margin-inline-start: auto; }
+  .sec-note { margin: -4px 0 10px; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+  .plan-card { padding: 16px 18px; border-inline-start: 4px solid #4E6B4D; }
+  .pl-month { padding: 12px 0; border-bottom: 1px solid #E4ECE2; }
+  .pl-month:first-child { padding-top: 0; }
+  .pl-month.past { opacity: .6; }
+  .pl-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+  .pl-head b { color: #2F4A2E; font-size: 15px; min-width: 70px; }
+  .pl-head span { font-size: 14px; color: var(--text-1, #1f2d2a); }
+  .pl-slots { display: flex; flex-direction: column; gap: 6px; }
+  .pl-slot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 7px 10px; border-radius: 9px;
+    background: #F6F9F5; border: 1px solid #E4ECE2; cursor: pointer; font-size: 13.5px; }
+  .pl-slot:hover { border-color: #8CA68B; }
+  .pl-slot input { width: 17px; height: 17px; accent-color: #4E6B4D; flex: none; }
+  .pl-slot.past { cursor: default; }
+  .pl-when { font-weight: 700; color: #2F4A2E; min-width: 110px; }
+  .pl-time { color: var(--text-2); flex: 1; }
+  .pl-time b { color: #2F4A2E; }
+  .pl-g { font-size: 12.5px; font-weight: 700; color: #4E6B4D; text-decoration: underline; white-space: nowrap; }
+  .pl-past { font-size: 12px; color: var(--text-muted); }
+  .plan-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+  .plan-actions .btn[disabled] { opacity: .55; cursor: default; }
+  .plan-hint { font-size: 12.5px; color: var(--text-muted); }
+  .plan-msg { margin-top: 10px; padding: 9px 12px; border-radius: 9px; background: #E5EDE3; color: #2F4A2E; font-size: 13.5px; font-weight: 600; }
+  .plan-msg[hidden] { display: none; }
+  .tg-why { background: #F3F6F2 !important; border-color: #E4ECE2 !important; }
 </style>
 </head>
 <body data-role="teacher">
@@ -170,35 +235,54 @@
          האימות: קוד בן 6 ספרות במייל + מפתח חתום (פרוס @37).
          ========================================================== -->
     <section class="card tg-card" id="teacher-gate" hidden>
-      <h2 class="tg-title">מבט המורה · מנור</h2>
-      <p class="tg-sub">כניסה חד-פעמית. מכאן והלאה הדף ייפתח ישירות במכשיר הזה.</p>
+      <!-- הרשמה ראשונית (24.9.26): שלושה שלבים — פרטים → אימות מייל → סיור קצר בדף -->
+      <div class="tg-brand"><img src="../assets/menor-sail.png" alt="" aria-hidden="true"><span>מבט המורה</span></div>
+      <h2 class="tg-title">הרשמה למבט המורה של מנור</h2>
+      <p class="tg-sub">נרשמים פעם אחת, בערך דקה. מכאן והלאה הדף ייפתח ישירות במכשיר הזה — עם ההדרכה הבאה שלך, רישום הנוכחות, והחומרים מהמדריכ/ה.</p>
+      <ol class="tg-steps" aria-label="שלבי ההרשמה">
+        <li class="on" id="tg-st1"><b>1</b>הפרטים שלי</li>
+        <li id="tg-st2"><b>2</b>אימות המייל</li>
+        <li id="tg-st3"><b>3</b>סיור קצר</li>
+      </ol>
 
-      <label class="tg-label" for="tg-school">בית הספר שלי</label>
-      <select class="select" id="tg-school"><option value="">טוען…</option></select>
+      <div id="tg-step1">
+        <label class="tg-label" for="tg-school">בית הספר שלי</label>
+        <select class="select" id="tg-school"><option value="">טוען…</option></select>
 
-      <label class="tg-label" for="tg-subject">המקצוע שלי</label>
-      <select class="select" id="tg-subject" disabled><option value="">קודם בוחרים בית ספר</option></select>
+        <label class="tg-label" for="tg-subject">המקצוע שלי</label>
+        <select class="select" id="tg-subject" disabled><option value="">קודם בוחרים בית ספר</option></select>
 
-      <label class="tg-label" for="tg-name">השם שלי</label>
-      <select class="select" id="tg-name" disabled><option value="">קודם בוחרים מקצוע</option></select>
+        <label class="tg-label" for="tg-name">השם שלי</label>
+        <select class="select" id="tg-name" disabled><option value="">קודם בוחרים מקצוע</option></select>
 
-      <label class="tg-label" for="tg-email">המייל שלי</label>
-      <input class="input" id="tg-email" type="email" inputmode="email" autocomplete="email"
-             placeholder="name@example.com">
-      <div class="tg-why">רק בכניסה עם מייל הנוכחות שלך נרשמת וההדרכה נזקפת לזכותך.</div>
+        <label class="tg-label" for="tg-email">המייל האישי שלי</label>
+        <input class="input" id="tg-email" type="email" inputmode="email" autocomplete="email"
+               placeholder="name@example.com" dir="ltr">
+        <div class="tg-why">נשלח אליו קוד כניסה. המייל נשמר בכרטיס שלך, וכך הנוכחות וההדרכות נזקפות לזכותך.</div>
+      </div>
 
       <div class="tg-msg" id="tg-msg" hidden></div>
       <button type="button" class="btn btn-primary tg-btn" id="tg-enter">שליחת קוד למייל</button>
 
       <!-- שלב 2: אימות הקוד. מוצג רק אחרי שנשלח מייל. -->
       <div id="tg-step2" hidden>
-        <label class="tg-label" for="tg-code">הקוד שקיבלת במייל</label>
+        <label class="tg-label" for="tg-code">הקוד בן 6 הספרות שקיבלת במייל</label>
         <input class="input tg-code" id="tg-code" inputmode="numeric" maxlength="6"
                autocomplete="one-time-code" placeholder="000000">
-        <button type="button" class="btn btn-primary tg-btn" id="tg-verify">כניסה</button>
-        <button type="button" class="tg-exit" id="tg-resend">לא הגיע? שליחה חוזרת</button>
+        <div class="tg-why">לא מוצאים? כדאי לבדוק גם בתיקיית הספאם / קידומי מכירות.</div>
+        <button type="button" class="btn btn-primary tg-btn" id="tg-verify">סיום ההרשמה</button>
+        <button type="button" class="tg-exit" id="tg-resend">לא הגיע? חזרה ושליחה חוזרת</button>
+      </div>
+
+      <!-- שאלות או קושי (24.9.26) — פנייה ישירה למיטל, כמו בכל טפסי משרד העבודה -->
+      <div class="tg-help">
+        <span>שאלה או קושי בהרשמה?</span>
+        <a class="helpbtn" id="tg-help" href="https://wa.me/972536256653" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          כתבו לנו</a>
       </div>
     </section>
+
 
     <!-- ==========================================================
          "הבית של המורה" (אושר 22.9.26). המערכת עוברת מספירת נוכחות
@@ -218,6 +302,7 @@
         <h1 id="hello">שלום</h1>
         <p class="page-header-sub">ההדרכה הבאה שלך, מה לקחת מכל הדרכה לכיתה, וחומרים והודעות מהמדריכ/ה.</p>
         <!-- מכשיר משותף חייב דרך החוצה (21.9.26) -->
+        <button type="button" class="tour-start" data-tour-start>סיור בדף</button>
         <button type="button" class="tg-exit" id="tg-exit" hidden>זה לא אני — יציאה</button>
       </div>
       <div class="page-compass">
@@ -270,6 +355,20 @@
       </section>
 
     <!-- ▸ המסע שלי השנה -->
+    <!-- ▸ התוכנית השנתית שלי + הוספה ליומן (24.9.26) — plan-cal.js -->
+    <section class="home-sec" id="plan-sec" hidden>
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h3M8 18h3M14 14h2"/></svg>התוכנית השנתית שלי</h2>
+      <p class="sec-note">כל מפגשי ההדרכה השנה, לפי המסלול שלך. בכל חודש יש כמה מועדים — משתתפים באחד מהם. מסמנים את המועדים שמתאימים לך ומוסיפים ליומן.</p>
+      <div class="card plan-card">
+        <div id="plan-list"></div>
+        <div class="plan-actions">
+          <button type="button" class="btn btn-primary" id="plan-ics" disabled>סמנו מועדים להוספה ליומן</button>
+          <span class="plan-hint">קובץ יומן שנפתח בגוגל, באאוטלוק ובאייפון</span>
+        </div>
+        <div class="plan-msg" id="plan-msg" hidden></div>
+      </div>
+    </section>
+
     <section class="home-sec" id="journey-sec">
       <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>המסע שלי השנה</h2>
       <div class="hint">בכל חודש הדרכה אחת בשני מועדים; נוכחות באחד מהם היא נוכחות מלאה. הדרכה פרטנית נספרת גם היא.</div>
@@ -377,6 +476,19 @@
       </div>
     </section>
 
+    <!-- שאלות או קושי (24.9.26) — ערוץ ישיר למיטל + חזרה לסיור -->
+    <section class="page-help" id="page-help">
+      <div class="ph-text"><b>שאלה או קושי טכני בדף?</b><span>אם משהו לא עובד או לא ברור — כתבו לנו ונחזור אליך.</span></div>
+      <div class="ph-actions">
+        <a class="helpbtn" id="page-help-link" href="https://wa.me/972536256653" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          כתבו לנו</a>
+        <button type="button" class="helpbtn" data-tour-start>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8l-2 6.4-6.4 2 2-6.4z"/></svg>
+          סיור בדף</button>
+      </div>
+    </section>
+
     <!-- הפרטים שלי — מקופל בתחתית; לא חלק מהמסע אבל עדיין נגיש -->
     <div class="card prof" style="margin-bottom:20px;">
       <details>
@@ -402,8 +514,10 @@
 
 <script src="../assets/app.js"></script>
 <script src="../assets/guides.js?v=20260921"></script>
-<script src="../assets/plans.js?v=20260921"></script>
+<script src="../assets/plans.js?v=20260924"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260924h"></script>
+<script src="dashboard.js?v=20260924j"></script>
+<script src="plan-cal.js?v=20260924"></script>
+<script src="tour.js?v=20260924b"></script>
 </body>
 </html>

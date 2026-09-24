@@ -887,7 +887,7 @@ function handleRequest(params) {
       case 'admin.reset':         result = adminReset(params); break;
 
       case 'teachers.list':       result = listTeachersCached_(params, user); break;
-      case 'teacher.get':         result = getTeacher(params.id); break;
+      case 'teacher.get':         result = getTeacher(params.id, user); break;
       case 'teachers.create':     result = createTeacher(params); break;
       case 'teachers.createMany': result = createTeachersBatch(params); break;
       case 'teachers.update':     result = updateTeacher(params); break;
@@ -1224,18 +1224,21 @@ function listTeachers(p, user) {
   }
   if (p.subject)  data = data.filter(t => t.subject === p.subject);
   if (p.sector)   data = data.filter(t => t.sector === p.sector);
-  // בלי token ובלי סינון לבית ספר יחיד (זרימת ההזנה) — בלי פרטי קשר
-  if (!user && !p.school) data = data.map(maskContact_);
+  // בלי משתמש מחובר — בלי פרטי קשר (24.9.26, החלטת מיטל). עד היום רשימה של בית
+  // ספר יחיד (?school=) חזרה מלאה לכל מי שיודע את הכתובת; אימות המיילים אצל
+  // המנהלים הסתיים, והמייל של המורה נאסף מעכשיו בכניסה למבט המורה (קוד במייל).
+  if (!user) data = data.map(maskContact_);
   return { ok: true, data };
 }
 
-function getTeacher(id) {
+function getTeacher(id, user) {
   const found = readAll('teachers').find(t => t.id === id);
   if (found) {
     found.moeApproval = toBool(found.moeApproval);
     found.pdActive = toBool(found.pdActive);
   }
-  return { ok: true, data: found || null };
+  // בלי משתמש מחובר — בלי מייל ונייד (24.9.26). המורה עצמו/ה מקבל/ת את הכול דרך teacher.self
+  return { ok: true, data: found ? (user ? found : maskContact_(found)) : null };
 }
 
 // schoolName הוא שדה משוכפל שכל הדשבורדים נשענים עליו. הלקוח שלח לפעמים "—"

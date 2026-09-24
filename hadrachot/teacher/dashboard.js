@@ -104,7 +104,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
     location.href = location.pathname;      // בלי ?id= — חוזר לטופס
   });
-  if (!teacherId) { await showGate(); return; }
+  /* כל כניסה בלי מפתח חתום עוברת בהרשמה (24.9.26, החלטת מיטל): המורה מקליד/ה מייל
+     ומאמת/ת בקוד, וכך המייל נאסף לכרטיס. קישור ישן עם ?id= רק ממלא מראש את הטופס. */
+  if (!teacherKey && !DEMO_) { await showGate(urlTeacherId_ || teacherId); return; }
   if (savedIdentity() && exit && !DEMO_) exit.hidden = false;
   await load();
 });
@@ -120,7 +122,7 @@ function gateMsg(text, ok) {
   el.className = 'tg-msg' + (ok ? ' ok' : '');
 }
 
-async function showGate() {
+async function showGate(prefillId) {
   $g('teacher-gate').hidden = false;
   $g('teacher-body').hidden = true;
   const res = await TS.api('schools.list', {});
@@ -135,6 +137,39 @@ async function showGate() {
   $g('tg-verify').addEventListener('click', onGateVerify);
   $g('tg-resend').addEventListener('click', onGateResend);
   $g('tg-code').addEventListener('keydown', e => { if (e.key === 'Enter') onGateVerify(); });
+  ['tg-school', 'tg-subject', 'tg-name'].forEach(x => $g(x).addEventListener('change', updateHelpLink));
+  updateHelpLink();
+  if (prefillId) await prefillGate(prefillId);
+}
+
+/* קישור ישן עם ?id= — בוחרים מראש בית ספר, מקצוע ושם; המייל והקוד עדיין נדרשים */
+async function prefillGate(id) {
+  let t = null;
+  try { const r = await TS.api('teacher.get', { id: id }, { cache: 'no' }); t = r && r.data; } catch (e) { t = null; }
+  if (!t || !t.school) return;
+  $g('tg-school').value = t.school;
+  await onGateSchool();
+  if (t.subject) { $g('tg-subject').value = String(t.subject).trim(); onGateSubject(); }
+  const opt = [...$g('tg-name').options].find(o => o.textContent.trim() === String(t.name || '').trim());
+  if (opt) $g('tg-name').value = opt.value;
+  updateHelpLink();
+}
+
+/* "שאלה או קושי?" — וואטסאפ למיטל, עם הפרטים שכבר נבחרו (כמו בכל טפסי משרד העבודה) */
+function updateHelpLink() {
+  const a = $g('tg-help');
+  if (!a) return;
+  const txt = sel => { const el = $g(sel); return el && el.value ? el.options[el.selectedIndex].textContent.trim() : ''; };
+  const who = [txt('tg-name'), txt('tg-school'), txt('tg-subject')].filter(Boolean).join(' · ');
+  const msg = 'שלום, יש לי שאלה או קושי בהרשמה למבט המורה של מנור.' + (who ? ' ' + who + '.' : '') + ' תיאור:';
+  a.href = 'https://wa.me/972536256653?text=' + encodeURIComponent(msg);
+}
+
+function gateStep(n) {
+  [1, 2, 3].forEach(i => {
+    const li = $g('tg-st' + i);
+    if (li) { li.classList.toggle('on', i === n); li.classList.toggle('done', i < n); }
+  });
 }
 
 /* סינון מקצוע (24.9.26): בבית ספר גדול רשימת השמות הייתה ארוכה מדי.
@@ -235,6 +270,7 @@ async function onGateEnter() {
   if (!r || !r.ok) return gateMsg(gateErr(r));
 
   $g('tg-step2').hidden = false;
+  gateStep(2);
   ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = true; });
   btn.hidden = true;
   gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.', true);
@@ -259,6 +295,9 @@ async function onGateVerify() {
     school: $g('tg-school').value || '', at: new Date().toISOString() });
   teacherKey = r.data.key;
   teacherId = r.data.id;
+  gateStep(3);
+  // שלב 3: סיור קצר בדף — מתחיל כשהנתונים נטענו (tour.js)
+  try { localStorage.setItem('ts.teacher.tour', 'pending'); } catch (e) { /* לא חוסם */ }
   $g('teacher-gate').hidden = true;
   $g('teacher-body').hidden = false;
   const exit = $g('tg-exit');
@@ -268,6 +307,7 @@ async function onGateVerify() {
 
 async function onGateResend() {
   $g('tg-step2').hidden = true;
+  gateStep(1);
   ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = false; });
   $g('tg-enter').hidden = false;
   $g('tg-code').value = '';
@@ -323,12 +363,14 @@ async function load() {
   questions = (qRes && qRes.data) || [];
   renderQuestions();
   buildNav();
+  if (window.TS_teacherTour) window.TS_teacherTour.maybeStart();
 }
 
 /* ▸ כפתורי ניווט למעלה (24.9.26) — רק למקטעים שמוצגים בפועל (מקטע ריק לא מוצג) */
 const NAV_ITEMS = [
   ['next-sec', 'ההדרכה הבאה', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
   ['th-card', 'רישום נוכחות', '<path d="M20 6L9 17l-5-5"/>'],
+  ['plan-sec', 'התוכנית השנתית', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
   ['journey-sec', 'המסע שלי', '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'],
   ['mat-sec', 'חומרים', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'],
   ['msg-sec', 'הודעות', '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
@@ -386,6 +428,7 @@ function applyScope(res) {
   renderAttendance();
   renderHere(d, p.guideSlug);
   renderNext(d, p.guideSlug);
+  if (window.TS_renderPlan) window.TS_renderPlan(p.guideSlug, ((window.TS_GUIDES || {})[p.guideSlug] || {}).name || '');
   renderIndividual(d, p.guideSlug);
   loadGroup(p.guideSlug);
 }
