@@ -205,10 +205,23 @@ async function onGateSchool() {
     return;
   }
   subjSel.disabled = true;
-  subjSel.innerHTML = '<option value="">טוען…</option>';
+  subjSel.innerHTML = '<option value="">טוען את רשימת המורים…</option>';
   const res = await TS.api('teachers.list', { school: id });
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
+  /* תקלה בטעינה (24.9.26): עד היום תשובה שנכשלה הוצגה כ"בבית הספר הזה עוד לא
+     הוזנו מורים" — מטעה. עכשיו: הודעה ברורה וכפתור לניסיון חוזר. */
+  if (!res || !res.ok) {
+    subjSel.innerHTML = '<option value="">הטעינה נכשלה — נסו שוב</option>';
+    gateMsg('הרשימה לא נטענה (השרת עמוס). לחצו "ניסיון חוזר" או בחרו שוב את בית הספר.');
+    const m = $g('tg-msg');
+    const retry = document.createElement('button');
+    retry.type = 'button'; retry.className = 'tg-retry'; retry.textContent = 'ניסיון חוזר';
+    retry.onclick = () => { gateMsg(''); onGateSchool(); };
+    m.appendChild(document.createTextNode(' ')); m.appendChild(retry);
+    return;
+  }
+  gateMsg('');
   // רק מורי בית הספר שנבחר — גם אם השרת או מטמון ישן החזירו יותר
   gateSchoolRows = (res && res.data ? res.data : []).filter(t =>
     String(t.school || '') === String(id) && String(t.name || '').trim());

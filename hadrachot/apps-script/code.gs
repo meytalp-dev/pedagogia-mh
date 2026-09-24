@@ -1261,7 +1261,11 @@ function getTeacher(id, user) {
 // המסלול הוא חלק מהזהות: אותו מורה יכול ללמד את אותו מקצוע גם לבגרות וגם
 // לגמר, ואלה שתי שורות נפרדות (סחנין ואכסאל, 9.9.26). בלי ה-type כאן שורת
 // הגמר נחסמה כ"כפילות" של הבגרות והוחזרה השורה הקיימת.
-function teacherKey_(schoolId, name, subject, type) {
+// שם נפרד (24.9.26): עד היום הפונקציה נקראה teacherKey_ — בדיוק כמו מפתח הכניסה
+// של מבט המורה (21.9.26). בקובץ Apps Script אחד ההגדרה האחרונה גוברת, ולכן מאז
+// 21.9 בערב המפתח כאן היה HMAC של מזהה בית הספר בלבד — אותו מפתח לכל מורי בית
+// הספר — ו"הגנת הכפילויות" החזירה מורה קיים אחר במקום ליצור מורה חדש.
+function teacherIdentityKey_(schoolId, name, subject, type) {
   return String(schoolId || '').trim() + ' ' +
          String(name || '').trim() + ' ' +
          String(subject || '').trim() + ' ' +
@@ -1274,7 +1278,7 @@ function existingTeachersMap_(schoolId) {
   if (!schoolId) return map;
   readAll('teachers').forEach(function (t) {
     if (String(t.school || '').trim() !== String(schoolId).trim()) return;
-    const k = teacherKey_(t.school, t.name, t.subject, t.type);
+    const k = teacherIdentityKey_(t.school, t.name, t.subject, t.type);
     if (!map[k]) map[k] = t;
   });
   return map;
@@ -1317,7 +1321,7 @@ function createTeacher(p) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
   try {
-    const dup = existingTeachersMap_(obj.school)[teacherKey_(obj.school, obj.name, obj.subject, obj.type)];
+    const dup = existingTeachersMap_(obj.school)[teacherIdentityKey_(obj.school, obj.name, obj.subject, obj.type)];
     if (dup) return { ok: true, data: dup, existed: true };
     appendRow('teachers', obj);
   } finally {
@@ -1393,7 +1397,7 @@ function createTeachersBatch(p) {
     const existing = existingTeachersMap_(batchSchool);
     const seenInBatch = {};
     created.forEach(function (obj) {
-      const k = teacherKey_(obj.school, obj.name, obj.subject, obj.type);
+      const k = teacherIdentityKey_(obj.school, obj.name, obj.subject, obj.type);
       if (existing[k]) { reused.push(existing[k]); return; }
       if (seenInBatch[k]) return;
       seenInBatch[k] = true;
@@ -4563,11 +4567,38 @@ function teacherKey_(id) {
 function teacherByKey_(key) {
   const k = String(key || '').trim();
   if (!/^[a-f0-9]{24}$/.test(k)) return null;
+  /* מהירות (24.9.26): עד היום חושב HMAC לכל ~870 המורים בכל בקשה — teacher.self
+     ו-notes.list נמדדו ב-17 עד 30 שניות. עכשיו המיפוי מפתח→מזהה נשמר במטמון
+     (6 שעות); בהחטאה (מורה חדש) מחשבים פעם אחת לכולם ושומרים. */
+  let cache = null;
+  try { cache = CacheService.getScriptCache(); } catch (e) { cache = null; }
   const rows = readAll('teachers');
-  for (let i = 0; i < rows.length; i++) {
-    if (meetSafeEqual_(teacherKey_(rows[i].id), k)) return rows[i];
+  const byId = id => rows.find(r => String(r.id) === String(id)) || null;
+  if (cache) {
+    const hitId = cache.get('tk:' + k);
+    if (hitId) {
+      const t = byId(hitId);
+      if (t && meetSafeEqual_(teacherKey_(t.id), k)) return t;
+    }
   }
-  return null;
+  let found = null;
+  const map = {};
+  for (let i = 0; i < rows.length; i++) {
+    const kk = teacherKey_(rows[i].id);
+    map['tk:' + kk] = String(rows[i].id);
+    if (!found && meetSafeEqual_(kk, k)) found = rows[i];
+  }
+  if (cache) {
+    try {
+      const keys = Object.keys(map);
+      for (let i = 0; i < keys.length; i += 500) {
+        const part = {};
+        keys.slice(i, i + 500).forEach(x => { part[x] = map[x]; });
+        cache.putAll(part, 21600);
+      }
+    } catch (e) { /* מטמון לא זמין — בפעם הבאה שוב חישוב מלא */ }
+  }
+  return found;
 }
 
 function teacherNormMail_(v) { return String(v || '').trim().toLowerCase(); }
