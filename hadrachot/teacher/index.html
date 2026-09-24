@@ -110,37 +110,32 @@
   /* הפרטים שלי — בתחתית, מקופל */
   .prof details summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--text-2); }
 
-  /* ▸ צבע מהלוגו (24.9.26): ירוק־מרווה #8CA68B בעיקר, ותכלת #86C3EF משני — לבקשת מיטל "יותר ירוק מוורוד" */
-  body[data-role] .page-header, .page-header {
-    background: linear-gradient(120deg, #FFFFFF 30%, #DDEEFA 70%, #E1EBDE 100%);
-    border-color: #D6E6F3;
-  }
-  .page-header::before {
-    content: ""; position: absolute; inset-inline-end: -60px; top: -70px; width: 220px; height: 220px;
-    border-radius: 50%; background: radial-gradient(circle, rgba(140,166,139,.32) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .page-header-eyebrow { color: #5E7D5C; }
-  .why-card { background: #EEF3EC; border-color: #CFDCCB; }
-  .why-card svg { color: #5E7D5C; }
-  .home-sec h2 svg { box-sizing: content-box; padding: 6px; border-radius: 10px;
-    background: #E3F1FB; color: #2F7FB8; }
-  #journey-sec h2 svg, #msg-sec h2 svg, #q-sec h2 svg { background: #E5EDE3; color: #5E7D5C; }
-  .next-card { border-inline-start: 4px solid #86C3EF; }
-  .next-date { background: #E3F1FB; border-color: #C5E0F4; }
-  .next-date b { color: #1A5365; }
-  .ns-row { background: #FFFFFF; border-color: #D6E6F3; border-inline-start: 4px solid #8CA68B; }
-  .th-card { background: linear-gradient(135deg, #E3F1FB 0%, #E5EDE3 100%); border-color: #D6E6F3; }
-  .h-item svg { color: #2F7FB8; }
+  /* ▸ צבע (24.9.26, גרסה 3 — "מכובד, הירוק בולט"): ירוק הלוגו בגוון עמוק כצבע המוביל,
+     בלי גרדיאנטים פסטליים ובלי כתמי צבע. לבן נקי + פס ירוק + סמלים ירוקים. */
+  .page-header { background: #FFFFFF; border-color: #D5E0D2; border-inline-start: 6px solid #4E6B4D; }
+  .page-header::after { display: none; }
+  .page-header-eyebrow { color: #4E6B4D; }
+  .page-header h1 { color: #2F4A2E; }
+  .why-card { background: #FFFFFF; border-color: #D5E0D2; border-inline-start: 4px solid #8CA68B; }
+  .why-card svg { color: #4E6B4D; }
+  .home-sec h2 { color: #2F4A2E; }
+  .home-sec h2 svg { box-sizing: content-box; padding: 6px; border-radius: 10px; background: #4E6B4D; color: #FFFFFF; }
+  .next-card.card { border-inline-start: 4px solid #4E6B4D; }
+  .next-date { background: #EEF3EC; border: 1px solid #D5E0D2; }
+  .next-date b { color: #2F4A2E; }
+  .next-soon { background: #E5EDE3; color: #2F4A2E; }
+  .ns-row { background: #FFFFFF; border-color: #D5E0D2; border-inline-start: 4px solid #8CA68B; }
+  .th-card { background: #FFFFFF; border: 2px solid #8CA68B; }
+  .h-item svg { color: #4E6B4D; }
   .kb-card { border-inline-start: 4px solid #8CA68B !important; }
-  .kb-card .kb-ico { background: #E5EDE3 !important; color: #5E7D5C !important; }
-  .next-card.card { border-inline-start: 4px solid #86C3EF; }
-  .demo-bar { position: relative; padding: 10px 16px; text-align: center; font-size: 14px;
-    background: #E5EDE3; color: #3E5A3D; border-bottom: 1px solid #CFDCCB; }
+  .kb-card .kb-ico { background: #EEF3EC !important; color: #4E6B4D !important; }
+  #teacher-body .btn-primary { background: #4E6B4D; border-color: #4E6B4D; }
+  #teacher-body .btn-primary:hover { background: #3E5A3D; border-color: #3E5A3D; }
   .pn[hidden] { display: none; }
-  .pn a.on { background: #5E7D5C; border-color: #5E7D5C; }
-  .pn a:hover { background: #E5EDE3; border-color: #8CA68B; }
+  .pn a.on { background: #4E6B4D; border-color: #4E6B4D; color: #fff; }
+  .pn a:hover { background: #EEF3EC; border-color: #8CA68B; }
   #th-card, #kb-sec { scroll-margin-top: 80px; }
+  .demo-bar { padding: 10px 16px; text-align: center; font-size: 14px; background: #EEF3EC; color: #2F4A2E; border-bottom: 1px solid #D5E0D2; }
 </style>
 </head>
 <body data-role="teacher">
