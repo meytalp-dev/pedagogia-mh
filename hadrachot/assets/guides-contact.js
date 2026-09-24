@@ -17,9 +17,7 @@ window.TS_CONTACTS = {
     moria:    { phone: '054-3168002', email: 'moriah.flint@gmail.com' },  /* עברית */
     nira:     { phone: '054-4642841', email: 'nira23101969@gmail.com' },  /* ספרות */
     dana:     { phone: '050-3149106', email: '' },                        /* היסטוריה — אין מייל */
-    elisheva: { phone: '',            email: 'e7co@hotmail.com' },        /* אזרחות — אין טלפון */
     tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },/* תנ"ך */
-    gal:      { phone: '054-5542889', email: '' },                        /* מתמטיקה 4-5 — אין מייל */
 
     /* ---------- החברה היהודית · המגזר החרדי ----------
        נפתח 10.9.26. הפרטים התקבלו מהמדריכות עצמן ישירות (ולא מגיליון
@@ -36,8 +34,6 @@ window.TS_CONTACTS = {
     abed:     { phone: '052-2618595', email: 'habayiba@yahoo.com' },      /* היסטוריה — המייל ממיטל 14.9.26 */
     khaled:   { phone: '052-5618070', email: 'gabarinkhalid@gmail.com' }, /* אזרחות */
     moshe:    { phone: '052-2978071', email: 'Moshassor@gmail.com' },     /* מתמטיקה */
-    suliman:  { phone: '052-8621691', email: '' },                        /* מתמטיקה — אין מייל */
-    mansour:  { phone: '',            email: '' },                        /* מורשת אסלאמית — אין כלום */
     muzna:    { phone: '052-7789995', email: '' }                         /* מורשת דרוזית — אין מייל */
   },
 

@@ -221,7 +221,7 @@ const out = {
     sources: [
       'prisat-pikuah.html — פריסת הפיקוח הפדגוגי תשפ"ז',
       'pikuah-miktzoi.html — מגמות ומפקחים מקצועיים תשפ"ז',
-      'hadrachot/assets/guides.js — מדריכות ומפקחים, מצפן ההדרכות'
+      'hadrachot/assets/guides.js — מדריכות ומפקחים, מנור'
     ],
     /* מוסדות שמופיעים בפיקוח המקצועי ולא בפריסה — לתיעוד, לא שגיאה */
     unmatched

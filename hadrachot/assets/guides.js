@@ -32,7 +32,8 @@ window.TS_GUIDES = {
     subject: 'מתמטיקה',
     sectors: ['kelali', 'haredi'],
     inspector: 'revital',
-    units: ['3'],          /* 3 יח"ל — הגמר נכנס דרך tracks שלא הוגבל */
+    /* 24.9.26: גל ירדה מהמדריכים — שירה מקבלת את כל רמות הבגרות (3 ו-4–5) ואת הגמר.
+       בלי units אין פיצול יח"ל, ולכן כל מורי המתמטיקה ביהודי ובחרדי אצלה. */
     drive: '',
     zoom: ''
   },
@@ -68,31 +69,6 @@ window.TS_GUIDES = {
     subject: 'היסטוריה',
     sectors: ['kelali'],
     inspector: 'sigalit',
-    drive: '',
-    zoom: ''
-  },
-  elisheva: {
-    /* החליפה את ריקי פולק — קביעת מיטל 8.9.26.
-       שם המשפחה טרם התקבל (בקובץ המקור מופיע שם פרטי בלבד). */
-    name: 'אלישבע',
-    subject: 'אזרחות',
-    /* המגזר החרדי ירד ממנה 10.9.26 — עבר לרבקה נחום. */
-    sectors: ['kelali'],
-    inspector: 'sigalit',
-    drive: '',
-    zoom: ''
-  },
-  gal: {
-    /* קבוצה חדשה 9.9.26 — מתמטיקה 4-5 יח"ל. שם משפחה טרם התקבל.
-       שדה units נוסף לטופס הזנת המורים ולדשבורד המדריכה (9.9.26), ולכן
-       הפיצול פעיל: גל מקבלת את מי שסומן 4-5, שירה את 3 ואת כל הגמר.
-       עד שהמדריכות יסמנו — מורה בלי רמה מופיע אצל שתיהן כ"טרם סומן". */
-    name: 'גל',
-    subject: 'מתמטיקה',
-    sectors: ['kelali', 'haredi'],
-    inspector: 'revital',
-    units: ['4-5'],
-    tracks: ['bagrut'],    /* בגמר אין יח"ל — הגמר כולו נשאר אצל שירה */
     drive: '',
     zoom: ''
   },
@@ -196,22 +172,6 @@ window.TS_GUIDES = {
   moshe: {
     name: 'משה עשור',
     subject: 'מתמטיקה',
-    sectors: ['arab'],
-    inspector: 'yasmin',
-    drive: '',
-    zoom: ''
-  },
-  suliman: {
-    name: 'סולימאן ברייה',
-    subject: 'מתמטיקה',
-    sectors: ['arab'],
-    inspector: 'yasmin',
-    drive: '',
-    zoom: ''
-  },
-  mansour: {
-    name: 'מנסור עתאמנה',
-    subject: 'מורשת אסלאמית',
     sectors: ['arab'],
     inspector: 'yasmin',
     drive: '',

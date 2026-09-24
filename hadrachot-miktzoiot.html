@@ -372,7 +372,7 @@
   </div>
 </article>
 
-<script src="/hadrachot/assets/guides.js?v=20260924"></script>
+<script src="/hadrachot/assets/guides.js?v=20260924g"></script>
 <script src="/hadrachot/assets/plans.js?v=20260924c"></script>
 <script>
 /* ▸ הדרכות מקצועיות (24.9.26, בקשת מיטל): הכל נבנה בדפדפן משלושה מקורות אמת —
@@ -384,7 +384,10 @@
   /* מדריכ.ה שאינו פעיל כרגע — אותה רשימה כמו INACTIVE ב-admin-silabus.html */
   const INACTIVE = ['elisheva'];
   /* תחום בלי מדריכ.ה פעיל.ה — מוצג ככרטיס עם הקהילה בלבד */
-  const VACANT = [{ subject: 'אזרחות', sectors: ['kelali'], note: 'אין כרגע מדריכ.ה בתחום' }];
+  const VACANT = [
+    { subject: 'אזרחות', sectors: ['kelali'], note: 'אין כרגע מדריכ.ה בתחום' },
+    { subject: 'מורשת אסלאמית', sectors: ['arab'], note: 'אין כרגע מדריכ.ה בתחום' }   /* מנסור הוסר 24.9.26 */
+  ];
   const SECTORS = [
     { k: 'all', t: 'כל המגזרים' },
     { k: 'kelali', t: 'החברה היהודית · כללי' },
