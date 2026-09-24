@@ -234,7 +234,9 @@ const STRICT_AUTH_ACTIONS = new Set([
   // מפתחות הכניסה של המדריכות לרישום הנוכחות — מי שמחזיק מפתח מסמן נוכחות
   'meet.guideKeys',
   // מי פתח את הקישור האישי ומתי — קריאה לאדמין ארצי בלבד
-  'link.views'
+  'link.views',
+  // שינוי שם בית ספר בכל הלשוניות (23.9.26) — כתיבה המונית, אדמין ארצי בלבד
+  'schools.rename'
 ]);
 
 function getActiveUserEmail_() {
@@ -945,6 +947,7 @@ function handleRequest(params) {
       case 'seed.import':         result = seedImport(params); break;
 
       case 'verify.mailSend':     result = verifyMailSend(params, user); break;
+      case 'schools.rename':      result = renameSchools(params, user); break;
       case 'contacts.list':       result = listContacts(); break;
       case 'contacts.upsert':     result = upsertContacts(params, user); break;
       case 'guide.dashboard':     result = withCache_('guide.dashboard',    scope, params, () => guideDashboard(applyScopeParams_(params, scope, 'guide'), user)); break;
@@ -4699,4 +4702,88 @@ function teacherHere(p) {
     source: 'teacher-self', updatedAt: iso, markedVia: 'self'
   });
   return { ok: true, data: { status: 'pending', already: false, date: meetDate_(m.date) } };
+}
+
+
+// ============================================================
+// שינוי שמות בתי ספר (23.9.26) — schools.rename
+// ============================================================
+// השם האחיד של בית ספר = השם בפריסת הפיקוח שבאדמין המוסדות (school-names.js באתר).
+// schoolName משוכפל ב-teachers, meeting_attendance ו-guide_hours, ויש קוד שמשווה
+// אותו כמחרוזת — לכן שינוי שם חייב לעבור בכל הלשוניות יחד, בכתיבה אחת לכל עמודה.
+// params.map = JSON {schoolId: newName}. dryRun='true' (ברירת מחדל) רק סופר.
+// מורה משויך לפי school (מזהה); בשאר הלשוניות — לפי השם הישן המדויק.
+function renameSchools(p, user) {
+  let map;
+  try { map = JSON.parse(p.map || '{}'); } catch (e) { return { ok: false, error: 'bad_map' }; }
+  const ids = Object.keys(map || {});
+  if (!ids.length) return { ok: false, error: 'empty_map' };
+  const dryRun = String(p.dryRun) !== 'false';
+
+  const lock = LockService.getScriptLock();
+  if (!dryRun && !lock.tryLock(30000)) return { ok: false, error: 'busy' };
+  try {
+    const schools = {};
+    readAll('schools').forEach(function (s) { schools[s.id] = s; });
+    const oldToNew = {};     // שם ישן → שם חדש
+    const plan = {};         // id → { from, to, counts }
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      const to = String(map[id] || '').replace(/\s+/g, ' ').trim();
+      if (!schools[id]) return { ok: false, error: 'unknown_school: ' + id };
+      if (!to) return { ok: false, error: 'empty_name: ' + id };
+      const from = String(schools[id].name || '').trim();
+      plan[id] = { from: from, to: to, counts: { schools: 0, teachers: 0, meeting_attendance: 0, guide_hours: 0 } };
+      if (from && from !== to) {
+        if (oldToNew[from] && oldToNew[from] !== to) return { ok: false, error: 'ambiguous_old_name: ' + from };
+        oldToNew[from] = to;
+      }
+    }
+    const byOld = {};
+    ids.forEach(function (id) { byOld[plan[id].from] = id; });
+
+    // עמודה אחת בלשונית: קוראים, מחליפים, וכותבים בחזרה רק אם השתנה משהו
+    function renameColumn(tab, col, pick) {
+      const s = sheet(tab);
+      if (!s || s.getLastRow() < 2) return 0;
+      const headers = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0];
+      const c = headers.indexOf(col);
+      if (c < 0) return 0;
+      const n = s.getLastRow() - 1;
+      const values = s.getRange(2, c + 1, n, 1).getValues();
+      const rows = s.getRange(2, 1, n, headers.length).getValues();
+      let changed = 0;
+      for (let r = 0; r < n; r++) {
+        const obj = {};
+        headers.forEach(function (h, k) { obj[h] = rows[r][k]; });
+        const id = pick(obj, String(values[r][0] || '').trim());
+        if (!id || !plan[id]) continue;
+        if (String(values[r][0] || '').trim() === plan[id].to) continue;
+        values[r][0] = plan[id].to;
+        plan[id].counts[tab]++;
+        changed++;
+      }
+      if (changed && !dryRun) s.getRange(2, c + 1, n, 1).setValues(values);
+      return changed;
+    }
+
+    const totals = {
+      schools: renameColumn('schools', 'name', function (o) { return map[o.id] !== undefined ? o.id : null; }),
+      teachers: renameColumn('teachers', 'schoolName', function (o, cur) {
+        if (map[o.school] !== undefined) return o.school;
+        return byOld[cur] || null;
+      }),
+      meeting_attendance: renameColumn('meeting_attendance', 'schoolName', function (o, cur) { return byOld[cur] || null; }),
+      guide_hours: renameColumn('guide_hours', 'schoolName', function (o, cur) { return byOld[cur] || null; })
+    };
+
+    if (!dryRun) {
+      bumpTeachersGen_();
+      auditLog_(user && user.email, 'schools.rename', 'schools', ids.length + ' schools', 'ok', JSON.stringify(totals));
+    }
+    return { ok: true, dryRun: dryRun, totals: totals,
+             schools: ids.map(function (id) { return Object.assign({ id: id }, plan[id]); }) };
+  } finally {
+    if (!dryRun) lock.releaseLock();
+  }
 }
