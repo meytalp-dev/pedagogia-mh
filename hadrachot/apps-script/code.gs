@@ -5235,13 +5235,23 @@ function staffDirectory_() {
     if (!seenSchool[s.id]) add('principal:' + s.id, 'principal', s.principalName, s.name, s.principalEmail);
   });
 
+  // מטה · אדמין (24.9.26, מיטל: "במטה אני ורויטל") — ministry_admin ב-users + מקבלי המבט הכולל.
+  // רשומת האדמין של מיטל נקראת בגיליון "אדמין ראשי" — מוצגת בשמה. מייל שכבר ברשימה לא חוזר.
+  const hqSeen = {};
+  const addHq = (id, name, email) => {
+    const e = staffNormMail_(email);
+    if (!e || hqSeen[e]) return;
+    hqSeen[e] = 1;
+    const shown = /אדמין/.test(String(name || '')) || !String(name || '').trim() ? 'מיטל פלג' : name;
+    add(id, 'hq', shown, 'מטה', e);
+  };
+  (R.overview || []).forEach((o, i) => addHq('overview:' + i, o.name, o.email));
   readAll('users').forEach(u => {
     if (String(u.active).toUpperCase() === 'FALSE') return;
-    if (u.role === ROLES.MINISTRY_ADMIN) add('user:' + u.id, 'staff', u.name || u.email, 'מטה', u.email);
-    if (u.role === ROLES.NETWORK_ADMIN) add('user:' + u.id, 'staff', u.name || u.email,
-      'רשת ' + (netName[String(u.networkId || '').replace(/^net_/, '')] || ''), u.email);
+    if (u.role === ROLES.MINISTRY_ADMIN) addHq('user:' + u.id, u.name, u.email);
+    if (u.role === ROLES.NETWORK_ADMIN) add('user:' + u.id, 'network', u.name || u.email,
+      netName[String(u.networkId || '').replace(/^net_/, '')] || '', u.email);
   });
-  (R.overview || []).forEach((o, i) => add('overview:' + i, 'staff', o.name, 'מטה', o.email));
   return out;
 }
 

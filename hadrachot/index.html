@@ -134,7 +134,8 @@
                   <option value="guide">מדריכ/ה</option>
                   <option value="inspector">מפקח.ת</option>
                   <option value="principal">מנהל/ת בית ספר</option>
-                  <option value="staff">מטה / רשת</option>
+                  <option value="network" hidden>מנהל/ת רשת</option>
+                  <option value="hq">מטה · אדמין</option>
                 </select>
                 <label class="mg-label mg-gap" for="mg-who">השם שלי</label>
                 <select class="select" id="mg-who" disabled><option value="">קודם בוחרים תפקיד</option></select>
@@ -426,20 +427,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   /* ---- לפי שם: התפקיד → השם מרשימה סגורה (staff.directory — שמות בלבד, בלי מיילים) ---- */
-  let byMail = false, who = '', dir = [];
-  const KIND_EMPTY = { guide: 'מדריכ/ה', inspector: 'מפקח.ת', principal: 'מנהל/ת', staff: 'מטה / רשת' };
+  let byMail = false, who = '', dir = [], dirLoaded = false;
   function whoLabel(x) {
     if (x.kind === 'guide') {
       const g = (window.TS_GUIDES || {})[x.sub] || {};
       return x.name + (g.subject ? ' · ' + g.subject : '');
     }
     if (x.kind === 'principal') return (x.sub ? x.sub + ' · ' : '') + x.name;
-    if (x.kind === 'staff') return x.name + (x.sub ? ' · ' + x.sub : '');
+    if (x.kind === 'network') return x.name + (x.sub ? ' · רשת ' + x.sub : '');
     return x.name;
   }
   function fillWho() {
     const kind = $('mg-kind').value, sel = $('mg-who');
     if (!kind) { sel.disabled = true; sel.innerHTML = '<option value="">קודם בוחרים תפקיד</option>'; return; }
+    // השרת עונה לאט — בלי זה נראה כאילו אין אף שם ברשימה
+    if (!dirLoaded) { sel.disabled = true; sel.innerHTML = '<option value="">טוענים את הרשימה…</option>'; return; }
     const list = dir.filter(x => x.kind === kind).map(x => ({ id: x.id, t: whoLabel(x) }))
       .sort((a, b) => a.t.localeCompare(b.t, 'he'));
     sel.disabled = !list.length;
@@ -453,9 +455,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     $('mg-mode').textContent = mail ? 'חזרה לבחירה מהרשימה' : 'מעדיפים להקליד את המייל?';
     msg('');
   }
-  TS.api('staff.directory', {}, { cache: 'fresh', onRefresh: r => { if (r && r.ok) { dir = r.data || []; fillWho(); } } })
+  TS.api('staff.directory', {}, { cache: 'fresh', onRefresh: r => { if (r && r.ok) { dir = r.data || []; dirLoaded = true; fillWho(); } } })
     .then(r => {
-      if (r && r.ok) { dir = r.data || []; fillWho(); }
+      if (r && r.ok) {
+        dir = r.data || []; dirLoaded = true; fillWho();
+        // "מנהל/ת רשת" מוצג רק כשיש בכלל מנהלי רשת רשומים
+        $('mg-kind').querySelector('[value="network"]').hidden = !dir.some(x => x.kind === 'network');
+      }
       else setMode(true);   // הרשימה לא נטענה — נשארת הקלדת מייל
     }).catch(() => setMode(true));
   $('mg-kind').addEventListener('change', fillWho);
