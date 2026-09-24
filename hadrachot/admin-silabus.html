@@ -250,7 +250,7 @@ function msgMissing(g) {
   /* נוסח קצר ואישי מהנייד של מיטל (24.9.26) — בלי חתימה רשמית */
   const who = g ? 'הי ' + firstName(g.name) + ',' : 'הי,';
   const sfx = g ? ({ f: 'י', m: '' }[GENDER[g.slug]] ?? '/י') : '/י';
-  const subj = g ? ' ב' + g.subject : '';
+  const subj = g ? ' ב' + g.subject + ' (' + sectorsOf(g) + ')' : '';
   return who + ' גמר חתימה טובה!\n' +
     'אשמח שתעביר' + sfx + ' לי את התוכנית השנתית שלך' + subj + '.\n' +
     'תודה!';
