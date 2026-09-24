@@ -186,6 +186,10 @@
    פערים שנרשמו ידנית — דברים שראינו במקור ולא ניתן לזהות מהנתונים לבד.
    כשמדריכ/ה משלימ/ה — מוחקים את השורה כאן (ומתקנים ב-plans.js).
    ============================================================ */
+/* מדריכ/ה שאינו/ה פעיל/ה כרגע — לא נספר/ת ב"למי חסר" (24.9.26: באזרחות בחברה היהודית
+   אין כרגע מדריכ.ה; מיטל תעדכן כשיהיה/תהיה). ברשימת המדריכים (guides.js) לא נגענו. */
+const INACTIVE = { elisheva: true };
+
 const MANUAL_GAPS = {
   rozin: [
     'מפגש אוקטובר: בסילבוס נרשם "8/10/2026 ראשון" ו-"9/10/27 חמישי" — אבל 8.10.26 הוא יום ה׳ ו-9.10.26 יום ו׳. צריך לאשר את התאריכים הנכונים למועד הבוקר ולמועד אחה"צ.'
@@ -290,7 +294,7 @@ function build() {
   const guides = window.TS_GUIDES || {};
   const plans = window.TS_PLANS || {};
   const sent = sentGet();
-  const all = Object.keys(guides).map(slug => Object.assign({ slug: slug }, guides[slug], contactOf(slug), { plan: plans[slug] || null }));
+  const all = Object.keys(guides).filter(slug => !INACTIVE[slug]).map(slug => Object.assign({ slug: slug }, guides[slug], contactOf(slug), { plan: plans[slug] || null }));
   const have = all.filter(g => g.plan);
   const missing = all.filter(g => !g.plan);
 
@@ -403,7 +407,7 @@ document.getElementById('msg-missing').addEventListener('input', function () {
 function copyAllMissingMsg(btn) { copyText(btn, document.getElementById('msg-missing').value, '✓ הנוסח הועתק'); }
 function copyAllMissingEmails(btn) {
   const guides = window.TS_GUIDES || {}, plans = window.TS_PLANS || {};
-  const mails = Object.keys(guides).filter(s => !plans[s]).map(s => contactOf(s).email).filter(Boolean);
+  const mails = Object.keys(guides).filter(s => !plans[s] && !INACTIVE[s]).map(s => contactOf(s).email).filter(Boolean);
   copyText(btn, mails.join(', '), '✓ ' + mails.length + ' כתובות הועתקו');
 }
 
