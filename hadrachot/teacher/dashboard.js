@@ -68,15 +68,31 @@ if (DEMO_) {
       goal: '70% חיצוני (' + dm + ' בשעה 16:00): טקסטים ארוכים · 30% פנימי (' + dm + ' בשעה 17:00): תהליך הכתיבה' }]
       .concat((plan.meetings || []).filter(x => (x.date2 || x.date) > today)) });
   };
+  const DEMO_NOTES = [{ id: 'demo_n1', date: '2026-09-15', meetingTopic: 'מפגש פתיחת שנה', title: 'שלושה דברים לזכור',
+    text: 'לפתוח כל שיעור בכתיבה חופשית של 5 דקות.\nלבדוק את מפרט ההיבחנות החדש.\nלשתף את הצוות במצגת.',
+    files: [], updatedAt: '2026-09-15T18:00:00' }];
   const reply = data => Promise.resolve({ ok: true, data: data });
   TS.api = (action) => {
     if (action === 'teacher.self' || action === 'teacher.get') return reply(SELF);
     if (action === 'meet.scope') return reply(SCOPE);
+    if (action === 'notes.list') return reply(JSON.parse(JSON.stringify(DEMO_NOTES)));
     if (action === 'guide.group') return reply({ files: [], messages: [
       { authorName: 'מוריה פלינט', text: 'בהדמיה: כאן מופיעות הודעות מהמדריכה.', createdAt: new Date().toISOString() }] });
     return reply([]);
   };
   TS.apiPost = (action, body) => new Promise(res => setTimeout(() => {
+    if (action === 'notes.save') {
+      const n = Object.assign({ id: body.id || 'demo_n' + Date.now(), files: [] }, DEMO_NOTES.find(x => x.id === body.id) || {},
+        { date: body.date, meetingTopic: body.meetingTopic, title: body.title, text: body.text, updatedAt: new Date().toISOString() });
+      const i = DEMO_NOTES.findIndex(x => x.id === n.id); if (i >= 0) DEMO_NOTES[i] = n; else DEMO_NOTES.unshift(n);
+      return res({ ok: true, data: JSON.parse(JSON.stringify(n)) });
+    }
+    if (action === 'notes.file') {
+      const f = { fileId: 'demo_f' + Date.now(), name: body.fileName, url: '#', mimeType: body.mimeType, size: 0 };
+      const n = DEMO_NOTES.find(x => x.id === body.noteId); if (n) n.files.push(f);
+      return res({ ok: true, data: f });
+    }
+    if (action === 'notes.delete' || action === 'notes.fileDelete') return res({ ok: true, data: {} });
     if (action === 'checkin.submit') {
       res(String(body.code) === '1234' ? { ok: true, data: { duplicate: false } } : { ok: false, error: 'bad_code' });
     } else res({ ok: false, error: 'demo' });
@@ -360,6 +376,7 @@ async function load() {
   // תקלה בעיבוד לא משאירה את הודעת הטעינה על המסך לתמיד
   try { applyScope(scopeRes); } catch (e) { console.error("applyScope", e); }
   showLoading(false);
+  if (window.TS_notes) TS_notes.init(guideSlug);
   questions = (qRes && qRes.data) || [];
   renderQuestions();
   buildNav();
@@ -371,6 +388,7 @@ const NAV_ITEMS = [
   ['next-sec', 'ההדרכה הבאה', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
   ['th-card', 'רישום נוכחות', '<path d="M20 6L9 17l-5-5"/>'],
   ['plan-sec', 'התוכנית השנתית', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
+  ['notes-sec', 'המחברת שלי', '<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h6"/>'],
   ['journey-sec', 'המסע שלי', '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'],
   ['mat-sec', 'חומרים', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'],
   ['msg-sec', 'הודעות', '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],

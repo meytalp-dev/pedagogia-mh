@@ -65,6 +65,8 @@ const SCHEMA = {
   // כניסת המורה המאומתת (21.9.26) — קוד חד-פעמי במייל. codeHash ולא הקוד
   // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
   teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt'],
+  // מחברת הידע של המורה (24.9.26) — פרטית למורה; files = JSON של [{fileId,name,url,mimeType,size}]
+  teacher_notes:      ['id','teacherId','date','meetingTopic','title','text','files','createdAt','updatedAt'],
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
                        'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt',
                        // markedVia: 'manual' | 'zoom' — סימון שנעשה מתוך דוח המשתתפים של הזום
@@ -206,7 +208,12 @@ const PUBLIC_ACTIONS = new Set([
   'checkin.roster', 'checkin.submit',
   // תיעוד פתיחת הקישור האישי — נשלח מהדשבורד של המדריכה וממבט המפקח.ת,
   // ולשניהם אין חשבון. כותב רק לתוך link_views, ורק slug שקיים בסכימה.
-  'link.seen'
+  'link.seen',
+  // מבט המורה — ההרשאה בפנים: קוד במייל (codeSend/codeVerify) או מפתח חתום (k).
+  // בלי זה הדף היה נסגר ברגע שתידלק AUTH_ENFORCED.
+  'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
+  // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
+  'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -982,6 +989,11 @@ function handleRequest(params) {
       case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
       case 'teacher.self':        result = teacherSelf(params); break;
       case 'teacher.here':        result = teacherHere(params); break;
+      case 'notes.list':          result = notesList(params); break;
+      case 'notes.save':          result = notesSave(params); break;
+      case 'notes.delete':        result = notesDelete(params); break;
+      case 'notes.file':          result = notesFile(params); break;
+      case 'notes.fileDelete':    result = notesFileDelete(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -4789,4 +4801,124 @@ function renameSchools(p, user) {
   } finally {
     if (!dryRun) lock.releaseLock();
   }
+}
+
+
+// ============================================================
+// מחברת הידע של המורה (24.9.26, בקשת מיטל)
+// ------------------------------------------------------------
+// המורה כותב/ת תוך כדי ההדרכה ומצרף/ת קבצים לעצמו/ה. פרטי לחלוטין:
+// כל פעולה מזהה את המורה לפי המפתח החתום (k) — לא לפי מזהה שנשלח מהדפדפן,
+// ומורה רואה ונוגע/ת רק בהערות שלו/ה. הקבצים בדרייב בתיקייה לכל מורה,
+// משותפים "כל מי שיש לו הקישור" (כמו קבצי המדריכות) — הקישור אינו ניתן לניחוש.
+// ============================================================
+const NOTES_ROOT_NAME = 'מנור — מחברות מורים';
+const MAX_NOTE_TEXT = 20000;
+const MAX_NOTE_FILES = 10;
+
+function notesFolder_(teacher) {
+  const props = PropertiesService.getScriptProperties();
+  let root = null;
+  const rootId = props.getProperty('teacherNotesRootId');
+  if (rootId) { try { root = DriveApp.getFolderById(rootId); } catch (e) { root = null; } }
+  if (!root) {
+    const it = DriveApp.getFoldersByName(NOTES_ROOT_NAME);
+    root = it.hasNext() ? it.next() : DriveApp.createFolder(NOTES_ROOT_NAME);
+    props.setProperty('teacherNotesRootId', root.getId());
+  }
+  const sub = String(teacher.id);
+  const it2 = root.getFoldersByName(sub);
+  if (it2.hasNext()) return it2.next();
+  const f = root.createFolder(sub);
+  try { f.setDescription(String(teacher.name || '') + ' · ' + String(teacher.schoolName || '')); } catch (e) {}
+  return f;
+}
+function notePublic_(r) {
+  let files = [];
+  try { files = JSON.parse(r.files || '[]') || []; } catch (e) { files = []; }
+  return { id: String(r.id), date: meetDate_(r.date), meetingTopic: String(r.meetingTopic || ''),
+    title: String(r.title || ''), text: String(r.text || ''), files: files,
+    createdAt: toIso_(r.createdAt), updatedAt: toIso_(r.updatedAt) };
+}
+function myNote_(t, id) {
+  return readAll('teacher_notes').find(r => String(r.id) === String(id) && String(r.teacherId) === String(t.id)) || null;
+}
+
+function notesList(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  ensureTab_('teacher_notes');
+  const rows = readAll('teacher_notes').filter(r => String(r.teacherId) === String(t.id)).map(notePublic_);
+  rows.sort((a, b) => (b.date + b.updatedAt).localeCompare(a.date + a.updatedAt));
+  return { ok: true, data: rows };
+}
+
+function notesSave(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  ensureTab_('teacher_notes');
+  const text = String(p.text || '');
+  if (text.length > MAX_NOTE_TEXT) return { ok: false, error: 'too_long' };
+  const now = new Date().toISOString();
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(p.date || '')) ? String(p.date) : meetToday_();
+  const fields = {
+    date: "'" + date,                       // גרש — שהגיליון לא יהפוך לתאריך ויזיז יום
+    meetingTopic: String(p.meetingTopic || '').slice(0, 300),
+    title: String(p.title || '').slice(0, 200),
+    text: text, updatedAt: now
+  };
+  if (p.id) {
+    const row = myNote_(t, p.id);
+    if (!row) return { ok: false, error: 'not_found' };
+    updateRowById('teacher_notes', row.id, fields);
+    return { ok: true, data: notePublic_(Object.assign({}, row, fields, { date: date })) };
+  }
+  const obj = Object.assign({ id: newId('tn'), teacherId: String(t.id), files: '[]', createdAt: now }, fields);
+  appendRow('teacher_notes', obj);
+  return { ok: true, data: notePublic_(Object.assign({}, obj, { date: date })) };
+}
+
+function notesDelete(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const row = myNote_(t, p.id);
+  if (!row) return { ok: false, error: 'not_found' };
+  // הקבצים לפח ולא מחיקה קשה — טעות של קליק אחד חייבת להיות הפיכה
+  notePublic_(row).files.forEach(f => { try { DriveApp.getFileById(f.fileId).setTrashed(true); } catch (e) {} });
+  deleteRowById_('teacher_notes', row.id);
+  return { ok: true, data: { id: String(row.id) } };
+}
+
+function notesFile(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const row = myNote_(t, p.noteId);
+  if (!row) return { ok: false, error: 'not_found' };
+  const files = notePublic_(row).files;
+  if (files.length >= MAX_NOTE_FILES) return { ok: false, error: 'too_many_files' };
+  if (!p.data) return { ok: false, error: 'missing_file' };
+  const b64 = String(p.data).replace(/^data:[^;]*;base64,/, '');
+  let bytes;
+  try { bytes = Utilities.base64Decode(b64); } catch (e) { return { ok: false, error: 'bad_encoding' }; }
+  if (bytes.length > MAX_GUIDE_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+  const name = safeFileName_(p.fileName);
+  const file = notesFolder_(t).createFile(Utilities.newBlob(bytes, p.mimeType || 'application/octet-stream', name));
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  const f = { fileId: file.getId(), name: name, url: file.getUrl(), mimeType: file.getMimeType(), size: bytes.length };
+  files.push(f);
+  updateRowById('teacher_notes', row.id, { files: JSON.stringify(files), updatedAt: new Date().toISOString() });
+  return { ok: true, data: f };
+}
+
+function notesFileDelete(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const row = myNote_(t, p.noteId);
+  if (!row) return { ok: false, error: 'not_found' };
+  const files = notePublic_(row).files;
+  const keep = files.filter(f => String(f.fileId) !== String(p.fileId));
+  if (keep.length === files.length) return { ok: false, error: 'not_found' };
+  try { DriveApp.getFileById(p.fileId).setTrashed(true); } catch (e) {}
+  updateRowById('teacher_notes', row.id, { files: JSON.stringify(keep), updatedAt: new Date().toISOString() });
+  return { ok: true, data: { fileId: String(p.fileId) } };
 }
