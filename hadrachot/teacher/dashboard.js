@@ -812,6 +812,7 @@ function render() {
   document.getElementById('user-meta').textContent = teacher.subject;
   const hello = document.getElementById('hello');
   if (hello) hello.textContent = 'שלום ' + String(teacher.name || '').trim().split(' ')[0];
+  if (window.TS_quickLinks) TS_quickLinks(teacher);
 
   // Profile
   document.getElementById('p-subject').textContent = teacher.subject;

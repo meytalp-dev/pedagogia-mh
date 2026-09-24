@@ -255,6 +255,15 @@
   .ti-skip { background: none; border: 0; cursor: pointer; font-family: inherit; font-size: 14px;
     color: var(--text-muted); text-decoration: underline; padding: 6px; }
   .ti-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+  .quick-links { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 4px; }
+  .quick-links[hidden] { display: none; }
+  .ql { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
+    font-size: 14px; font-weight: 700; text-decoration: none; border: 1.5px solid transparent; }
+  .ql svg { width: 18px; height: 18px; flex: none; }
+  .ql-cur { background: #4E6B4D; color: #fff; }
+  .ql-cur:hover { background: #3E5A3D; }
+  .ql-wa { background: #fff; color: #1E7E4A; border-color: #BFE0CB; }
+  .ql-wa:hover { background: #EAF6EF; border-color: #25D366; }
 </style>
 </head>
 <body data-role="teacher">
@@ -356,6 +365,8 @@
         <h1 id="hello">שלום</h1>
         <p class="page-header-sub">ההדרכה הבאה שלך, מה לקחת מכל הדרכה לכיתה, וחומרים והודעות מהמדריכ/ה.</p>
         <!-- מכשיר משותף חייב דרך החוצה (21.9.26) -->
+        <!-- קישורים מהירים (24.9.26): תוכנית הלימודים + קהילת הווטסאפ של המקצוע — quicklinks.js -->
+        <div class="quick-links" id="quick-links" hidden></div>
         <button type="button" class="tour-start" data-tour-start>סיור בדף</button>
         <button type="button" class="tg-exit" id="tg-exit" hidden>זה לא אני — יציאה</button>
       </div>
@@ -606,9 +617,10 @@
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260924b"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260924k"></script>
+<script src="dashboard.js?v=20260924l"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
-<script src="tour.js?v=20260924d"></script>
+<script src="quicklinks.js?v=20260924"></script>
+<script src="tour.js?v=20260924e"></script>
 </body>
 </html>
