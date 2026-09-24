@@ -5,9 +5,9 @@
 
    מרחבים אפשריים: pikuah | menahalim | netunim  (או כמה, מופרדים בפסיק)
 
-   מה זה עושה: מסתיר את העמוד מיד ומבקש זיהוי דו-שלבי —
-   חשבון Google (מול גיליון ההרשאות) ואחריו סיסמה אישית שכל
-   משתמש קובע לעצמו בכניסה הראשונה. רק אחרי שניהם העמוד נחשף.
+   מה זה עושה: מסתיר את העמוד מיד ומבקש זיהוי — בוחרים שם מהרשימה
+   (או מקלידים מייל), קוד בן 6 ספרות נשלח למייל הרשום בגיליון
+   ההרשאות, והמכשיר זוכר את המשתמש ל-30 יום (מ-24.9.26).
 
    מה זה *לא* עושה: הקובץ עצמו ציבורי ב-GitHub Pages. לכן תוכן
    שחייב הגנה אמיתית לא יושב ב-HTML אלא נשלף מהשרת אחרי אימות —
@@ -60,18 +60,20 @@
   }
 
   /* ===== סשן מקומי =====
-     sessionStorage ולא localStorage: על מחשב משותף בבית ספר, טוקןד
-     ששורד סגירת דפדפן מכניס את המשתמש הבא אוטומטית. */
+     מ-24.9.26: localStorage ל-30 יום — המכשיר זוכר את המשתמש, כמו
+     "מבט המורה" במנור. במחשב משותף — כפתור "יציאה" בפינה מנקה.
+     סשן ישן ב-sessionStorage (הכניסה הקודמת) עדיין נקרא עד שייסגר הדפדפן. */
   function store() {
+    try { return window.localStorage; } catch (e) { return null; }
+  }
+  function oldStore() {
     try { return window.sessionStorage; } catch (e) { return null; }
   }
-  /* שאריות מהגרסה הקודמת — נמחקות פעם אחת ולא נקראות */
-  try { localStorage.removeItem(KEY); } catch (e) {}
 
   function session() {
     try {
-      var st = store(); if (!st) return null;
-      var s = JSON.parse(st.getItem(KEY) || 'null');
+      var st = store(), s = st && JSON.parse(st.getItem(KEY) || 'null');
+      if (!s || !s.token) { var o = oldStore(); s = o && JSON.parse(o.getItem(KEY) || 'null'); }
       if (!s || !s.token || !s.exp || s.exp < Date.now()) return null;
       return s;
     } catch (e) { return null; }
@@ -84,8 +86,12 @@
     }
     return false;
   }
-  function logout() {
+  function clearSession() {
     try { var st = store(); if (st) st.removeItem(KEY); } catch (e) {}
+    try { var o = oldStore(); if (o) o.removeItem(KEY); } catch (e) {}
+  }
+  function logout() {
+    clearSession();
     location.reload();
   }
 
@@ -116,7 +122,20 @@
     '#pmh-box img{height:46px;margin-bottom:16px}',
     '#pmh-box h2{margin:0 0 6px;font-size:1.24rem;color:#0D3B66;font-weight:800;line-height:1.3}',
     '#pmh-box .sub{margin:0 0 22px;font-size:.87rem;color:#5A6B80;line-height:1.55}',
-    '#pmh-g{display:flex;justify-content:center;min-height:44px}',
+    '.pmh-tabs{display:flex;gap:6px;background:#F2F5F8;border-radius:12px;padding:4px;margin-bottom:12px}',
+    '.pmh-tabs[hidden]{display:none}',
+    '.pmh-tab{flex:1;border:0;background:none;border-radius:9px;padding:9px 6px;font:inherit;font-size:.88rem;',
+    'font-weight:700;color:#5A6B80;cursor:pointer}',
+    '.pmh-tab[aria-selected=true]{background:#fff;color:#0D3B66;box-shadow:0 1px 4px rgba(13,59,102,.14)}',
+    '.pmh-in{display:block;width:100%;padding:11px 14px;border:1.5px solid #DDE3EA;border-radius:10px;',
+    'font:inherit;font-size:.94rem;background:#fff;color:#1b2a3a}',
+    '.pmh-in+.pmh-in{margin-top:10px}.pmh-in[hidden]{display:none}',
+    '.pmh-in:focus{outline:none;border-color:#0D3B66;box-shadow:0 0 0 3px rgba(13,59,102,.12)}',
+    '.pmh-code{text-align:center;font-size:1.5rem;letter-spacing:.4em;font-weight:800}',
+    '#pmh-ok{width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;background:#0D3B66;',
+    'color:#fff;font:inherit;font-weight:700;font-size:.94rem;cursor:pointer}#pmh-ok:disabled{opacity:.55}',
+    '.pmh-link{display:block;margin:12px auto 0;border:0;background:none;color:#0D3B66;font:inherit;',
+    'font-size:.84rem;text-decoration:underline;cursor:pointer}',
     '.pmh-pw{width:100%;padding:11px 14px;border:1.5px solid #DDE3EA;border-radius:10px;',
     'font:inherit;font-size:.94rem;text-align:center;direction:ltr}',
     '.pmh-pw:focus{outline:none;border-color:#0D3B66;box-shadow:0 0 0 3px rgba(13,59,102,.12)}',
@@ -149,7 +168,13 @@
   var CANCEL = '<button id="pmh-cancel" type="button" style="margin-top:14px;border:0;background:none;' +
     'color:#5A6B80;font:inherit;font-size:.87rem;text-decoration:underline;cursor:pointer">חזרה לעמוד</button>';
 
-  /* ===== מסך הכניסה ===== */
+  /* ===== מסך הכניסה — קוד במייל (24.9.26) =====
+     כמו "מבט המורה" במנור: בוחרים את השם מהרשימה → קוד בן 6 ספרות
+     נשלח למייל הרשום בגיליון ההרשאות → המכשיר זוכר ל-30 יום.
+     מי שאינו ברשימה (או מעדיף) — מקליד את כתובת המייל. */
+  var LAST = 'pmh_last';   /* האדם האחרון שנבחר במכשיר — למילוי מראש */
+  var SUB1 = 'בחרו את שמכם — נשלח קוד כניסה למייל שלכם.<br>המכשיר יזכור אתכם ל-30 יום.';
+
   function gate() {
     injectStyle();
 
@@ -161,10 +186,26 @@
     g.innerHTML =
       '<div id="pmh-box" role="dialog" aria-modal="true" aria-labelledby="pmh-t">' +
         '<img src="/logo.png" alt="משרד העבודה">' +
-        '<h2 id="pmh-t">כניסה ל' + label + '</h2>' +
-        '<p class="sub">הכניסה בשני שלבים: הזדהות עם חשבון Google,<br>' +
-          'ולאחריה הסיסמה האישית שלך.</p>' +
-        '<div id="pmh-g"></div>' +
+        '<h2 id="pmh-t"></h2>' +
+        '<p class="sub" id="pmh-sub">' + SUB1 + '</p>' +
+        '<div id="pmh-s1">' +
+          '<div class="pmh-tabs" role="tablist">' +
+            '<button type="button" class="pmh-tab" data-role="menahalim">מנהל/ת בית ספר</button>' +
+            '<button type="button" class="pmh-tab" data-role="pikuah">מפקח/ת · מטה</button>' +
+          '</div>' +
+          '<select id="pmh-school" class="pmh-in" aria-label="בית הספר"></select>' +
+          '<select id="pmh-name" class="pmh-in" aria-label="השם שלי"></select>' +
+          '<input id="pmh-mail" class="pmh-in" type="email" dir="ltr" autocomplete="email" ' +
+            'placeholder="כתובת המייל שלך" hidden>' +
+          '<button id="pmh-go" type="button">שליחת קוד למייל</button>' +
+          '<button id="pmh-alt" class="pmh-link" type="button"></button>' +
+        '</div>' +
+        '<div id="pmh-s2" hidden>' +
+          '<input id="pmh-code" class="pmh-in pmh-code" type="text" inputmode="numeric" ' +
+            'autocomplete="one-time-code" maxlength="6" placeholder="••••••" dir="ltr">' +
+          '<button id="pmh-ok" type="button">כניסה</button>' +
+          '<button id="pmh-back" class="pmh-link" type="button">לא הגיע קוד? חזרה ושליחה מחדש</button>' +
+        '</div>' +
         '<div id="pmh-err" role="alert"></div>' +
         '<div id="pmh-note">אין לך גישה ואת.ה סבור.ה שהיא מגיעה לך?<br>' +
           '<a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
@@ -172,138 +213,213 @@
         (optional ? CANCEL : '') +
       '</div>';
     document.body.appendChild(g);
-    /* במצב optional מסך הכניסה נסגר בלי לרענן. האזנה על המסך כולו,
-       כי תוכן התיבה מתחלף בשלב הסיסמה. */
     if (optional) g.addEventListener('click', function (e) {
       if (e.target && e.target.id === 'pmh-cancel' && g.parentNode) g.parentNode.removeChild(g);
     });
 
-    /* השדות מתחלפים בין השלבים — לכן מאתרים אותם בכל פעם מחדש */
-    function fail(msg) {
-      var err = document.getElementById('pmh-err');
-      var go  = document.getElementById('pmh-go');
-      if (err) err.textContent = msg;
-      if (go) go.disabled = false;
+    function $(id) { return document.getElementById(id); }
+    $('pmh-t').textContent = 'כניסה ל' + label;
+    var schoolSel = $('pmh-school'), nameSel = $('pmh-name'), mail = $('pmh-mail');
+    var go = $('pmh-go'), ok = $('pmh-ok'), codeIn = $('pmh-code'), sub = $('pmh-sub');
+    var people = [];
+    var role = (need.indexOf('pikuah') > -1 || need.indexOf('netunim') > -1) &&
+               need.indexOf('menahalim') < 0 ? 'pikuah' : 'menahalim';
+    var byMail = false, who = null;   /* who = {id} או {email} — למי נשלח הקוד */
+
+    function msg(t, good) {
+      var e = $('pmh-err');
+      e.textContent = t || '';
+      e.style.color = good ? '#1E7B4A' : '#C0392B';
+    }
+    function errText(res) {
+      var e = res && res.error;
+      return e === 'notlisted'   ? 'הכתובת ' + (res.email || '') + ' אינה מופיעה ברשימת בעלי ההרשאה.' :
+             e === 'notfound'    ? 'השם לא נמצא. נא לרענן את העמוד ולנסות שוב.' :
+             e === 'bademail'    ? 'כתובת המייל אינה תקינה.' :
+             e === 'nospace'     ? 'ההרשאה שלך אינה כוללת את ' + label + '.' :
+             e === 'inactive'    ? 'ההרשאה שלך הושהתה. נא לפנות למנהלת המערכת.' :
+             e === 'cooldown'    ? 'נשלח קוד ממש עכשיו. בדקו את תיבת המייל (גם בספאם), או נסו שוב בעוד דקה.' :
+             e === 'quota'       ? 'לא ניתן לשלוח קוד כרגע. נסו שוב מאוחר יותר.' :
+             e === 'badcode'     ? 'הקוד שגוי. בדקו ונסו שוב.' :
+             e === 'codeexpired' ? 'הקוד פג תוקף. חזרו ובקשו קוד חדש.' :
+             e === 'toomany'     ? 'יותר מדי ניסיונות. חזרו ובקשו קוד חדש.' :
+             e === 'unconfigured'? 'שער ההרשאות עדיין לא הוגדר. נא לפנות למנהלת האתר.' :
+             e === 'network'     ? 'לא הצלחנו להתחבר לשרת. נסו שוב בעוד רגע.' :
+                                   'תקלה רגעית. נסו שוב בעוד רגע.';
     }
 
-    function accept(res) {
-      if (!res || !res.ok) {
-        var e = res && res.error;
-        return fail(
-          e === 'notlisted'      ? 'החשבון ' + (res.email || '') + ' אינו מופיע ברשימת בעלי ההרשאה.' :
-          e === 'nospace'        ? 'החשבון שלך מאושר, אך לא ל' + label + '.' :
-          e === 'badpass'        ? 'סיסמה שגויה.' :
-          e === 'weakpass'       ? 'הסיסמה קצרה מדי — נדרשים 8 תווים לפחות.' :
-          e === 'locked'         ? 'יותר מדי ניסיונות שגויים. נא להמתין 10 דקות ולנסות שוב.' :
-          e === 'pendingexpired' ? 'עבר זמן רב מדי מהזדהות ה-Google — נא לרענן את העמוד ולהתחבר שוב.' :
-          e === 'haspass'        ? 'כבר נקבעה סיסמה לחשבון זה — נא לרענן את העמוד ולהתחבר שוב.' :
-          e === 'nopass'         ? 'הסיסמה שלך אופסה — נא לרענן את העמוד ולקבוע סיסמה חדשה.' :
-          e === 'inactive'       ? 'ההרשאה שלך הושהתה. נא לפנות למנהלת המערכת.' :
-          e === 'unconfigured'   ? 'שער ההרשאות עדיין לא הוגדר. נא לפנות למנהלת האתר.' :
-          e === 'network'        ? 'לא הצלחנו להתחבר לשרת. נסו שוב בעוד רגע.' :
-                                   'הכניסה נכשלה. נסו שוב.');
+    function opt(v, t) { var o = document.createElement('option'); o.value = v; o.textContent = t; return o; }
+    function cmp(a, b) { return String(a).localeCompare(String(b), 'he'); }
+
+    /* ממלא את הבחירות לפי התפקיד שנבחר */
+    function render() {
+      Array.prototype.forEach.call(g.querySelectorAll('.pmh-tab'), function (b) {
+        b.setAttribute('aria-selected', b.getAttribute('data-role') === role ? 'true' : 'false');
+      });
+      var list = people.filter(function (p) { return p.role === role; });
+      schoolSel.hidden = byMail || role !== 'menahalim';
+      if (role === 'menahalim') {
+        /* תמיד 64 בתי הספר מפריסת הפיקוח (school-names.js) — גם כשאין
+           לבית הספר מנהל/ת רשום/ה בגיליון. שם שאינו מה-64 (רשת) — בסוף. */
+        var cur = schoolSel.value, seen = {}, schools = [], other = [];
+        var S = window.SchoolNames;
+        if (S && S.list) S.list.forEach(function (s) { seen[s] = 1; schools.push(s); });
+        list.forEach(function (p) {
+          if (p.school && !seen[p.school]) { seen[p.school] = 1; (S && S.list ? other : schools).push(p.school); }
+        });
+        schools.sort(cmp); other.sort(cmp);
+        schoolSel.innerHTML = '';
+        schoolSel.appendChild(opt('', 'בחרו את בית הספר'));
+        schools.concat(other).forEach(function (s) { schoolSel.appendChild(opt(s, s)); });
+        if (cur && seen[cur]) schoolSel.value = cur;
+        list = list.filter(function (p) { return p.school && p.school === schoolSel.value; });
       }
-
-      /* השרת ביקש את השלב השני — סיסמה אישית */
-      if (res.step) return passStage(res);
-
-      try {
-        /* ארבע שעות לכל היותר — גם אם השרת מבקש יותר */
-        var hrs = Math.min(Number(res.hours) || 4, 4);
-        var st = store();
-        if (st) st.setItem(KEY, JSON.stringify({
-          token: res.token, email: res.email, name: res.name || res.email,
-          spaces: res.spaces || [], exp: Date.now() + hrs * 3600e3
-        }));
-      } catch (e2) {}
-      if (!allowed(session())) return fail('החשבון שלך מאושר, אך לא ל' + label + '.');
-      reveal();
+      list.sort(function (a, b) { return cmp(a.name, b.name); });
+      nameSel.innerHTML = '';
+      var noOne = role === 'menahalim' && schoolSel.value && !list.length;
+      nameSel.appendChild(opt('', noOne ? 'אין עדיין מנהל/ת רשום/ה לבית הספר' :
+                                  role === 'menahalim' && !schoolSel.value ? 'השם שלי' : 'בחרו את שמכם'));
+      list.forEach(function (p) { nameSel.appendChild(opt(p.id, p.name + '  ·  ' + p.hint)); });
+      nameSel.disabled = !list.length;
+      if (list.length === 1) nameSel.value = list[0].id;
+      if (noOne && !byMail) msg('לבית הספר הזה עוד לא נרשמה הרשאה. אפשר להיכנס עם כתובת המייל, או לפנות לקבלת הרשאה (למטה).');
     }
 
-    /* ===== השלב השני: סיסמה אישית =====
-       'setpassword' — כניסה ראשונה, בחירת סיסמה (פעמיים לאימות).
-       'password'    — כניסה רגילה, הזנת הסיסמה הקיימת. */
-    function passStage(res) {
-      var first = res.step === 'setpassword';
-      var box = document.getElementById('pmh-box');
-      if (!box) return;
-
-      box.innerHTML =
-        '<img src="/logo.png" alt="משרד העבודה">' +
-        '<h2 id="pmh-t"></h2>' +
-        '<p class="sub">' + (first
-          ? 'זו כניסתך הראשונה. נא לבחור סיסמה אישית<br>(8 תווים לפחות) — היא תידרש בכל כניסה.'
-          : 'שלב אחרון: נא להזין את הסיסמה האישית שלך.') + '</p>' +
-        '<input id="pmh-pw1" class="pmh-pw" type="password" ' +
-          'placeholder="' + (first ? 'סיסמה חדשה' : 'הסיסמה האישית') + '" ' +
-          'autocomplete="' + (first ? 'new-password' : 'current-password') + '">' +
-        (first ? '<input id="pmh-pw2" class="pmh-pw" type="password" ' +
-                 'placeholder="הסיסמה שוב, לאימות" autocomplete="new-password">' : '') +
-        '<button id="pmh-go" type="button">' + (first ? 'קביעת סיסמה וכניסה' : 'כניסה') + '</button>' +
-        '<div id="pmh-err" role="alert"></div>' +
-        '<div id="pmh-note">' + (first
-          ? 'את הסיסמה אפשר לאפס דרך מנהלת המערכת אם תישכח.'
-          : 'שכחת את הסיסמה? <a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
-            encodeURIComponent('איפוס סיסמה אישית — ' + label) + '">בקשת איפוס</a>') + '</div>' +
-        (optional ? CANCEL : '');
-
-      /* שם המשתמש נכנס כטקסט, לא כ-HTML */
-      document.getElementById('pmh-t').textContent =
-        first ? 'שלום ' + (res.name || '') + ' — קביעת סיסמה אישית'
-              : 'שלום ' + (res.name || '');
-
-      var pw1 = document.getElementById('pmh-pw1');
-      var pw2 = document.getElementById('pmh-pw2');
-      var go  = document.getElementById('pmh-go');
-
-      function submit() {
-        var v = pw1.value;
-        if (!v) { pw1.focus(); return; }
-        if (first) {
-          if (v.length < 8) return fail('הסיסמה קצרה מדי — נדרשים 8 תווים לפחות.');
-          if (!pw2.value)   { pw2.focus(); return; }
-          if (v !== pw2.value) return fail('שתי הסיסמאות אינן זהות.');
-        }
-        go.disabled = true;
-        document.getElementById('pmh-err').textContent = '';
-        api({
-          action: first ? 'setPassword' : 'checkPassword',
-          pending: res.pending, password: v, space: need[0]
-        }).then(accept);
-      }
-
-      go.addEventListener('click', submit);
-      box.addEventListener('keydown', function (e) { if (e.key === 'Enter') submit(); });
-      pw1.focus();
+    function setMode(m) {
+      byMail = m;
+      g.querySelector('.pmh-tabs').hidden = m;
+      nameSel.hidden = m;
+      mail.hidden = !m;
+      $('pmh-alt').textContent = m ? 'חזרה לבחירה מהרשימה' : 'לא מופיע/ה ברשימה? כניסה עם כתובת מייל';
+      msg('');
+      render();
+      if (m) mail.focus();
     }
+    setMode(false);
 
-    /* כפתור Google — נטען אחרי שהמסך כבר עומד */
-    if (CLIENT_ID && CLIENT_ID.indexOf('PASTE_') !== 0) {
-      var s = document.createElement('script');
-      s.src = GSI; s.async = true; s.defer = true;
-      s.onload = function () {
-        try {
-          google.accounts.id.initialize({
-            client_id: CLIENT_ID,
-            callback: function (r) {
-              fail('');
-              api({ action: 'googleLogin', credential: r.credential, space: need[0] }).then(accept);
-            }
-          });
-          google.accounts.id.renderButton(document.getElementById('pmh-g'), {
-            theme: 'outline', size: 'large', shape: 'pill',
-            text: 'signin_with', locale: 'he', width: 300
-          });
-        } catch (e3) {
-          fail('טעינת ההתחברות של Google נכשלה. נא לרענן את העמוד.');
-        }
+    Array.prototype.forEach.call(g.querySelectorAll('.pmh-tab'), function (b) {
+      b.addEventListener('click', function () { role = b.getAttribute('data-role'); msg(''); render(); });
+    });
+    schoolSel.addEventListener('change', function () { msg(''); render(); });
+    $('pmh-alt').addEventListener('click', function () { setMode(!byMail); });
+
+    /* הרשימה — מהשרת, עם מטמון לסשן הדפדפן */
+    nameSel.disabled = true; schoolSel.disabled = true;
+    nameSel.innerHTML = ''; nameSel.appendChild(opt('', 'טוען את הרשימה…'));
+    /* שמות בתי הספר בגיליון ההרשאות בכתיב חופשי — מציגים את השם האחיד
+       (school-names.js, 64 שמות). כתיב לא מוכר נשאר כמו שהוא. */
+    function canonAll() {
+      var S = window.SchoolNames;
+      if (!S || !S.canon) return;
+      people.forEach(function (p) {
+        if (!p.school) return;
+        var c = S.canon(p.school);
+        if (c && S.list.indexOf(c) > -1) p.school = c;
+      });
+    }
+    if (!window.SchoolNames) {
+      var sn = document.createElement('script');
+      sn.src = '/school-names.js';
+      sn.onload = function () {
+        if (!people.length) return;
+        var keep = nameSel.value;
+        canonAll();
+        var p = keep && people.filter(function (x) { return x.id === keep; })[0];
+        render();
+        if (p && p.school) { schoolSel.value = p.school; render(); }
+        if (p) nameSel.value = p.id;
       };
-      s.onerror = function () { fail('טעינת ההתחברות של Google נכשלה. נא לרענן את העמוד.'); };
-      document.head.appendChild(s);
-    } else {
-      document.getElementById('pmh-g').style.display = 'none';
-      fail('שער ההרשאות עדיין לא הוגדר. נא לפנות למנהלת האתר.');
+      document.head.appendChild(sn);
     }
+    function gotPeople(list) {
+      people = list || [];
+      canonAll();
+      schoolSel.disabled = false;
+      var last = null;
+      try { last = JSON.parse(store().getItem(LAST) || 'null'); } catch (e) {}
+      var p = last && people.filter(function (x) { return x.id === last.id; })[0];
+      if (p) {
+        role = p.role; render();
+        if (p.school) { schoolSel.value = p.school; render(); }
+        nameSel.value = p.id;
+      } else render();
+    }
+    var cached = null;
+    try { cached = JSON.parse(oldStore().getItem('pmh_people') || 'null'); } catch (e) {}
+    if (cached && cached.length) gotPeople(cached);
+    else api({ action: 'people' }).then(function (r) {
+      if (r && r.ok && r.people) {
+        try { oldStore().setItem('pmh_people', JSON.stringify(r.people)); } catch (e) {}
+        gotPeople(r.people);
+      } else {
+        setMode(true);
+        msg('טעינת הרשימה נכשלה — אפשר להיכנס עם כתובת המייל.');
+      }
+    });
+
+    /* שלב 1 — שליחת הקוד */
+    function send() {
+      if (byMail) {
+        var m = String(mail.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) { mail.focus(); return msg('כתובת המייל אינה תקינה.'); }
+        who = { email: m };
+      } else {
+        if (role === 'menahalim' && !schoolSel.value) { schoolSel.focus(); return msg('בחרו את בית הספר.'); }
+        if (!nameSel.value) { nameSel.focus(); return msg('בחרו את שמכם מהרשימה.'); }
+        who = { id: nameSel.value };
+      }
+      go.disabled = true; go.textContent = 'שולח…'; msg('');
+      api({ action: 'codeSend', id: who.id, email: who.email, space: need[0] }).then(function (r) {
+        go.disabled = false; go.textContent = 'שליחת קוד למייל';
+        if (!r || !r.ok) return msg(errText(r));
+        if (who.id) { try { store().setItem(LAST, JSON.stringify({ id: who.id })); } catch (e) {} }
+        $('pmh-s1').hidden = true; $('pmh-s2').hidden = false;
+        sub.innerHTML = '';
+        sub.appendChild(document.createTextNode('שלחנו קוד בן 6 ספרות אל'));
+        sub.appendChild(document.createElement('br'));
+        var b = document.createElement('b'); b.dir = 'ltr'; b.textContent = r.hint || '';
+        sub.appendChild(b);
+        sub.appendChild(document.createElement('br'));
+        sub.appendChild(document.createTextNode('הקוד תקף ל-' + (r.ttlMin || 20) + ' דקות. לא רואים? בדקו גם בספאם.'));
+        codeIn.value = ''; codeIn.focus();
+      });
+    }
+
+    /* שלב 2 — אימות הקוד. רק כאן נפתח המרחב */
+    var verifying = false;
+    function verify() {
+      if (verifying) return;
+      var c = String(codeIn.value || '').replace(/\D/g, '');
+      if (c.length !== 6) { codeIn.focus(); return msg('הקוד הוא 6 ספרות.'); }
+      verifying = true; ok.disabled = true; ok.textContent = 'נכנס…'; msg('');
+      api({ action: 'codeVerify', id: who.id, email: who.email, code: c, space: need[0] }).then(function (r) {
+        verifying = false; ok.disabled = false; ok.textContent = 'כניסה';
+        if (!r || !r.ok) return msg(errText(r));
+        try {
+          var hrs = Math.min(Number(r.hours) || 4, 720);
+          store().setItem(KEY, JSON.stringify({
+            token: r.token, email: r.email, name: r.name || r.email,
+            spaces: r.spaces || [], exp: Date.now() + hrs * 3600e3
+          }));
+        } catch (e) {}
+        if (!allowed(session())) return msg('ההרשאה שלך אינה כוללת את ' + label + '.');
+        reveal();
+      });
+    }
+
+    go.addEventListener('click', send);
+    ok.addEventListener('click', verify);
+    $('pmh-back').addEventListener('click', function () {
+      $('pmh-s2').hidden = true; $('pmh-s1').hidden = false; msg('');
+      sub.innerHTML = SUB1;
+    });
+    mail.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+    codeIn.addEventListener('input', function () {
+      var c = codeIn.value.replace(/\D/g, '').slice(0, 6);
+      if (c !== codeIn.value) codeIn.value = c;
+      if (c.length === 6) verify();
+    });
+    codeIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') verify(); });
   }
 
   /* ===== שבב "מחובר.ת כ..." ===== */
@@ -378,7 +494,7 @@
   } else if (optional) {
     /* עמוד פתוח — לא נוגעים בסשן של מרחב אחר, ומחכים ל-PMH_AUTH.login() */
   } else {
-    if (cur) { try { var st0 = store(); if (st0) st0.removeItem(KEY); } catch (e) {} }
+    if (cur) clearSession();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', gate);
     } else { gate(); }
