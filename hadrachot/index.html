@@ -529,7 +529,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         b.disabled = true;
         const r = await TS.api('staff.teacherKey', { k: s.k, id: $('hub-teacher').value }, { cache: 'no' });
         b.disabled = false;
-        if (r && r.ok && r.data && r.data.key) return go('teacher/?ak=' + encodeURIComponent(r.data.key));
+        if (r && r.ok && r.data && r.data.key) return go('teacher/?ak=' + encodeURIComponent(r.data.key) + '&s=' + encodeURIComponent($('hub-tschool').value));
         return hubMsg('לא הצלחנו לפתוח את מבט המורה' + (r && r.error ? ' (' + r.error + ')' : '') + '.');
       }
       hubMsg('קודם בוחרים מהרשימה.');

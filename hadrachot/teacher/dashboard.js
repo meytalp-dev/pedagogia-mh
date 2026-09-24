@@ -375,8 +375,10 @@ async function load() {
     if (hello) hello.textContent = 'שלום ' + String(saved.name).trim().split(' ')[0];
   }
   const qPromise = teacherId ? TS.api('questions.list', { teacherId }) : null;
-  let scopePromise = saved.school && String(saved.id) === String(teacherId)
-    ? fetchScope(saved.school) : null;
+  // צפייה של מטה: בית הספר מגיע בקישור (&s=), וכך ההדרכות נטענות במקביל לפרטי המורה
+  const adminSchool = ADMIN_KEY_ ? TS.urlParam('s', '') : '';
+  let scopeSchool = adminSchool || (saved.school && String(saved.id) === String(teacherId) ? saved.school : '');
+  let scopePromise = scopeSchool ? fetchScope(scopeSchool) : null;
 
   /* מפתח חתום כשיש — הכתובת כבר לא חושפת מזהה שאפשר לנחש. teacher.get
      נשאר לקישורים הישנים שהופצו עם ?id=. */
@@ -393,8 +395,11 @@ async function load() {
     if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
   }
   render();
+  // כפתורי הניווט מיד — לא מחכים להדרכות (השרת עונה לאט; מתעדכנים שוב בסוף)
+  buildNav();
   // זיהוי ישן בלי בית ספר, או שבית הספר השתנה — מבקשים לפי הרשומה העדכנית
-  if (teacher && teacher.school && (!scopePromise || saved.school !== teacher.school)) {
+  if (teacher && teacher.school && (!scopePromise || scopeSchool !== teacher.school)) {
+    scopeSchool = teacher.school;
     scopePromise = fetchScope(teacher.school);
     if (saved.k) rememberIdentity(Object.assign({}, saved, { school: teacher.school }));
   }
