@@ -309,6 +309,12 @@
     /* שמות בתי הספר בגיליון ההרשאות בכתיב חופשי — מציגים את השם האחיד
        (school-names.js, 64 שמות). כתיב לא מוכר נשאר כמו שהוא. */
     function canonAll() {
+      /* הדבקה לגיליון מכניסה לפעמים תווי כיוון בלתי נראים (RLM) —
+         בלעדיהם שם בית הספר לא מזוהה (ישיבת חנוך לנער, 24.9.26) */
+      people.forEach(function (p) {
+        p.name = String(p.name || '').replace(/[‎‏‪-‮⁦-⁩]/g, '').trim();
+        p.school = String(p.school || '').replace(/[‎‏‪-‮⁦-⁩]/g, '').trim();
+      });
       var S = window.SchoolNames;
       if (!S || !S.canon) return;
       people.forEach(function (p) {
