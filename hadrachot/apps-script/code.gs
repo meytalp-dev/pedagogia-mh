@@ -216,6 +216,8 @@ const PUBLIC_ACTIONS = new Set([
   'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
   // כניסת בעלי התפקידים (24.9.26) — קוד במייל או מפתח חתום; ההרשאה בפנים
   'staff.codeSend', 'staff.codeVerify', 'staff.self', 'staff.directory',
+  // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
+  'staff.teacherKey', 'staff.guideKeys',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete'
 ]);
@@ -998,6 +1000,8 @@ function handleRequest(params) {
       case 'staff.codeVerify':    result = staffCodeVerify(params); break;
       case 'staff.self':          result = staffSelf(params); break;
       case 'staff.directory':     result = staffDirectory(params); break;
+      case 'staff.teacherKey':    result = staffTeacherKey(params); break;
+      case 'staff.guideKeys':     result = staffGuideKeys(params); break;
       case 'notes.list':          result = notesList(params); break;
       case 'notes.save':          result = notesSave(params); break;
       case 'notes.delete':        result = notesDelete(params); break;
@@ -5279,4 +5283,30 @@ function staffMask_(email) {
   const at = e.indexOf('@');
   if (at < 1) return '';
   return e.slice(0, Math.min(2, at)) + '•••' + e.slice(at);
+}
+
+/* ---- לוח המבטים של מטה · אדמין (24.9.26, מיטל: "הרשאה לכל המבטים כולל מורים
+   וכל המדריכים, ומהדף עצמו קישורים") ----
+   רק מי שנכנס/ה בקוד ויש לו/ה תפקיד ministry מקבל/ת מפתחות צפייה:
+   מורה (teacher/?ak=) ומדריכים (guide/?g=&k=). */
+function staffIsHq_(k) {
+  const email = staffEmailByKey_(k);
+  if (!email) return false;
+  return staffRolesFor_(email).roles.some(r => r.role === 'ministry');
+}
+
+function staffTeacherKey(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  const id = String(p.id || '').trim();
+  const t = readAll('teachers').filter(x => String(x.id) === id)[0];
+  if (!t) return { ok: false, error: 'not_found' };
+  return { ok: true, data: { key: teacherKey_(id), name: t.name || '' } };
+}
+
+function staffGuideKeys(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  const slugs = String(p.slugs || '').split(',').map(meetSlug_).filter(Boolean).slice(0, 80);
+  const out = {};
+  slugs.forEach(s => { out[s] = meetGuideKey_(s); });
+  return { ok: true, data: out };
 }

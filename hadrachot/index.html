@@ -58,6 +58,14 @@
     border-radius: 999px; background: #fff; color: #3E5A3D; font-size: 13px; font-weight: 700; text-decoration: none; }
   .mg-helpbtn:hover { border-color: #8CA68B; background: #EEF3EC; }
   .mg-helpbtn svg { width: 15px; height: 15px; }
+  .mg-card.mg-wide { max-width: 560px; }
+  .mg-hub { margin-top: 18px; padding-top: 14px; border-top: 1px solid #E4ECE2; }
+  .mg-hub[hidden], #hub-net-row[hidden] { display: none; }
+  .mg-hub-title { margin: 0 0 10px; font-size: 16px; color: #2F4A2E; }
+  .mg-hub-row { margin-bottom: 12px; }
+  .mg-hub-pick { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .mg-hub-pick .select { flex: 1; min-width: 0; }
+  .mg-hub-pick .btn { flex: none; padding: 9px 16px; }
 </style>
 </head>
 <body data-role="ministry">
@@ -163,6 +171,38 @@
             <h2 class="mg-title" id="mg-hello">שלום</h2>
             <p class="mg-sub">המבטים שלך במנור:</p>
             <div class="mg-role-list" id="mg-role-list"></div>
+            <!-- לוח המבטים של מטה · אדמין (24.9.26) — כניסה לכל מבט: כל מדריכ/ה, מפקח.ת,
+                 בית ספר, רשת, וכל מורה (בצפייה, בלי המחברת הפרטית שלו/ה) -->
+            <div class="mg-hub" id="mg-hub" hidden>
+              <h3 class="mg-hub-title">לוח המבטים — כניסה לכל מבט</h3>
+              <div class="mg-hub-row">
+                <label class="mg-label" for="hub-guide">מבט מדריכ/ה</label>
+                <div class="mg-hub-pick"><select class="select" id="hub-guide"></select>
+                  <button type="button" class="btn btn-primary" data-open="guide">פתיחה</button></div>
+              </div>
+              <div class="mg-hub-row">
+                <label class="mg-label" for="hub-insp">מבט מפקח.ת</label>
+                <div class="mg-hub-pick"><select class="select" id="hub-insp"></select>
+                  <button type="button" class="btn btn-primary" data-open="insp">פתיחה</button></div>
+              </div>
+              <div class="mg-hub-row">
+                <label class="mg-label" for="hub-school">מבט בית ספר</label>
+                <div class="mg-hub-pick"><select class="select" id="hub-school"></select>
+                  <button type="button" class="btn btn-primary" data-open="school">פתיחה</button></div>
+              </div>
+              <div class="mg-hub-row">
+                <label class="mg-label" for="hub-tschool">מבט המורה — בית הספר ואז המורה</label>
+                <div class="mg-hub-pick"><select class="select" id="hub-tschool"></select></div>
+                <div class="mg-hub-pick"><select class="select" id="hub-teacher" disabled><option value="">קודם בוחרים בית ספר</option></select>
+                  <button type="button" class="btn btn-primary" data-open="teacher">פתיחה</button></div>
+              </div>
+              <div class="mg-hub-row" id="hub-net-row" hidden>
+                <label class="mg-label" for="hub-net">מבט רשת</label>
+                <div class="mg-hub-pick"><select class="select" id="hub-net"></select>
+                  <button type="button" class="btn btn-primary" data-open="net">פתיחה</button></div>
+              </div>
+              <div class="mg-msg" id="hub-msg" hidden></div>
+            </div>
             <button type="button" class="mg-link" id="mg-out">זה לא אני — יציאה</button>
           </div>
           <div class="mg-msg" id="mg-msg" role="status" aria-live="polite" hidden></div>
@@ -409,7 +449,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     const roles = (s.roles || []).filter(r => TS_staff.urlFor(r, s));
     // ישר למבט: חזרה לדף שביקשו, או המבט היחיד
     if (next) { location.replace(next); return; }
-    if (roles.length === 1) { location.replace(TS_staff.urlFor(roles[0], s)); return; }
+    const isHq = roles.some(r => r.role === 'ministry');
+    if (roles.length === 1 && !isHq) { location.replace(TS_staff.urlFor(roles[0], s)); return; }
     $('mg-login').hidden = true;
     $('mg-roles').hidden = false;
     $('mg-hello').textContent = s.name ? 'שלום ' + s.name : 'שלום';
@@ -424,6 +465,75 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     $('mg-role-list').innerHTML = list.join('') ||
       '<p class="mg-sub">לא נמצא מבט פתוח עבורך. כתבו לנו ונסדר.</p>';
+    if ((s.roles || []).some(r => r.role === 'ministry')) initHub(s);
+  }
+
+  /* ---- לוח המבטים של מטה · אדמין ---- */
+  let hubReady = false;
+  const opt = (v, t) => '<option value="' + esc(v) + '">' + esc(t) + '</option>';
+  const hubMsg = t => { const el = $('hub-msg'); el.textContent = t || ''; el.hidden = !t; };
+  const SECTOR = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
+  async function initHub(s) {
+    $('mg-hub').hidden = false;
+    $('menor-gate').classList.add('mg-wide');
+    if (hubReady) return;
+    hubReady = true;
+    const G = window.TS_GUIDES || {}, I = window.TS_INSPECTORS || {};
+    $('hub-guide').innerHTML = opt('', 'בוחרים מדריכ/ה…') + Object.keys(G)
+      .map(k => ({ k, t: [G[k].name, G[k].subject, (G[k].sectors || []).map(x => SECTOR[x] || x).join('/')].filter(Boolean).join(' · ') }))
+      .sort((a, b) => a.t.localeCompare(b.t, 'he')).map(x => opt(x.k, x.t)).join('');
+    $('hub-insp').innerHTML = opt('', 'בוחרים מפקח.ת…') + Object.keys(I)
+      .map(k => ({ k, t: I[k].name + (I[k].society ? ' · ' + I[k].society : '') }))
+      .sort((a, b) => a.t.localeCompare(b.t, 'he')).map(x => opt(x.k, x.t)).join('');
+    try {
+      const m = await (await fetch('_data/inspector-map-2027.json', { cache: 'no-cache' })).json();
+      const sch = (m.schools || []).slice().sort((a, b) => a.name.localeCompare(b.name, 'he'));
+      const html = opt('', 'בוחרים בית ספר…') + sch.map(x => opt(x.id, x.name)).join('');
+      $('hub-school').innerHTML = html; $('hub-tschool').innerHTML = html;
+    } catch (e) { hubMsg('רשימת בתי הספר לא נטענה.'); }
+    TS.api('networks.list', {}).then(r => {
+      const n = (r && r.ok && r.data) || [];
+      if (!n.length) return;
+      $('hub-net').innerHTML = opt('', 'בוחרים רשת…') + n.map(x => opt(String(x.id).replace(/^net_/, ''), x.name)).join('');
+      $('hub-net-row').hidden = false;
+    }).catch(() => {});
+    $('hub-tschool').addEventListener('change', async () => {
+      const sel = $('hub-teacher'), sid = $('hub-tschool').value;
+      sel.disabled = true;
+      if (!sid) { sel.innerHTML = opt('', 'קודם בוחרים בית ספר'); return; }
+      sel.innerHTML = opt('', 'טוענים את המורים…');
+      const r = await TS.api('teachers.list', { school: sid });
+      if ($('hub-tschool').value !== sid) return;   // בינתיים נבחר בית ספר אחר
+      const t = ((r && r.ok && r.data) || []).slice()
+        .sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
+      sel.innerHTML = opt('', t.length ? 'בוחרים מורה…' : 'אין מורים בבית הספר') +
+        t.map(x => opt(x.id, x.name + ' · ' + (x.subject || '') + (x.type === 'gmar' ? ' (גמר)' : ''))).join('');
+      sel.disabled = !t.length;
+    });
+    document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', async () => {
+      hubMsg('');
+      const kind = b.dataset.open;
+      if (kind === 'insp' && $('hub-insp').value) return go('mabat/?i=' + encodeURIComponent($('hub-insp').value));
+      if (kind === 'school' && $('hub-school').value) return go('admin-school/?school=' + encodeURIComponent($('hub-school').value));
+      if (kind === 'net' && $('hub-net').value) return go('admin-network/?network=' + encodeURIComponent($('hub-net').value));
+      if (kind === 'guide' && $('hub-guide').value) {
+        const g = $('hub-guide').value;
+        b.disabled = true;
+        const r = await TS.api('staff.guideKeys', { k: s.k, slugs: g }, { cache: 'no' });
+        b.disabled = false;
+        const key = r && r.ok && r.data && r.data[g];
+        // בלי מפתח המבט עדיין נפתח (מטה רואה הכול) — רק פעולות הנוכחות לא יהיו זמינות
+        return go('guide/?g=' + encodeURIComponent(g) + (key ? '&k=' + encodeURIComponent(key) : '') + '&by=admin');
+      }
+      if (kind === 'teacher' && $('hub-teacher').value) {
+        b.disabled = true;
+        const r = await TS.api('staff.teacherKey', { k: s.k, id: $('hub-teacher').value }, { cache: 'no' });
+        b.disabled = false;
+        if (r && r.ok && r.data && r.data.key) return go('teacher/?ak=' + encodeURIComponent(r.data.key));
+        return hubMsg('לא הצלחנו לפתוח את מבט המורה' + (r && r.error ? ' (' + r.error + ')' : '') + '.');
+      }
+      hubMsg('קודם בוחרים מהרשימה.');
+    }));
   }
 
   /* ---- לפי שם: התפקיד → השם מרשימה סגורה (staff.directory — שמות בלבד, בלי מיילים) ---- */

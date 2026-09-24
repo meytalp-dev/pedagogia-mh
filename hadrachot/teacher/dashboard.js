@@ -34,8 +34,12 @@ function rememberIdentity(o) {
    אחרת מי שנכנס/ה פעם אחת כמורה א׳ ופותח/ת קישור של מורה ב׳ רואה שוב את א׳. */
 const urlTeacherId_ = TS.urlParam('id', '');
 const savedForOther_ = urlTeacherId_ && String((savedIdentity() || {}).id || '') !== urlTeacherId_;
-let teacherKey = savedForOther_ ? '' : ((savedIdentity() || {}).k || '');
-let teacherId = teacherKey ? (savedIdentity() || {}).id
+/* צפייה של מטה (24.9.26): teacher/?ak=<מפתח> — הקישור נבנה בלוח המבטים בדף הבית
+   (staff.teacherKey, רק למטה · אדמין). לא נשמר במכשיר, לא נוגע בזיהוי השמור,
+   ו"המחברת שלי" לא נפתחת — היא פרטית למורה. */
+const ADMIN_KEY_ = /^[a-f0-9]{24}$/.test(TS.urlParam('ak', '')) ? TS.urlParam('ak', '') : '';
+let teacherKey = ADMIN_KEY_ || (savedForOther_ ? '' : ((savedIdentity() || {}).k || ''));
+let teacherId = ADMIN_KEY_ ? '' : teacherKey ? (savedIdentity() || {}).id
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
 
@@ -123,7 +127,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   /* כל כניסה בלי מפתח חתום עוברת בהרשמה (24.9.26, החלטת מיטל): המורה מקליד/ה מייל
      ומאמת/ת בקוד, וכך המייל נאסף לכרטיס. קישור ישן עם ?id= רק ממלא מראש את הטופס. */
   if (!teacherKey && !DEMO_) { await showGate(urlTeacherId_ || teacherId); return; }
-  if (savedIdentity() && exit && !DEMO_) exit.hidden = false;
+  if (savedIdentity() && exit && !DEMO_ && !ADMIN_KEY_) exit.hidden = false;
+  if (ADMIN_KEY_) {
+    const bar = document.createElement('div');
+    bar.className = 'demo-bar';
+    bar.innerHTML = '<b>צפייה של מטה</b> — כך המורה רואה את הדף. "המחברת שלי" פרטית למורה ולא מוצגת. ' +
+      '<a href="../" style="color:inherit;font-weight:700">חזרה ללוח המבטים</a>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    // מטה לא רושמת נוכחות בשם המורה
+    const st = document.createElement('style');
+    st.textContent = '#th-card, .ns-btn, .th-notes { display: none !important; }';
+    document.head.appendChild(st);
+  }
   await load();
 });
 
@@ -353,7 +368,7 @@ async function load() {
   /* מהירות (24.9.26): כל בקשה ל-Apps Script לוקחת 3 עד 30 שניות, ועד היום הן
      נשלחו אחת אחרי השנייה. עכשיו השאלות ונתוני המפגשים יוצאים יחד עם פרטי
      המורה (בית הספר שמור מהכניסה), והמסך מראה "טוען" במקום להיות ריק. */
-  const saved = (savedForOther_ || DEMO_) ? {} : (savedIdentity() || {});
+  const saved = (savedForOther_ || DEMO_ || ADMIN_KEY_) ? {} : (savedIdentity() || {});
   showLoading(true);
   if (saved.name) {
     const hello = document.getElementById('hello');
@@ -373,6 +388,7 @@ async function load() {
   // מורה שנמחק או אוחד — הזיהוי השמור כבר לא תקף, חוזרים לטופס
   if (!teacher) {
     showLoading(false);
+    if (ADMIN_KEY_) { alert('המורה לא נמצא/ה (אולי נמחק/ה או אוחד/ה).'); return; }
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
     if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
   }
@@ -389,7 +405,7 @@ async function load() {
   // תקלה בעיבוד לא משאירה את הודעת הטעינה על המסך לתמיד
   try { applyScope(scopeRes); } catch (e) { console.error("applyScope", e); }
   showLoading(false);
-  if (window.TS_notes) TS_notes.init(guideSlug);
+  if (window.TS_notes && !ADMIN_KEY_) TS_notes.init(guideSlug);
   questions = (qRes && qRes.data) || [];
   renderQuestions();
   buildNav();
