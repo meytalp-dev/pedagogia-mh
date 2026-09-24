@@ -499,7 +499,7 @@
       : `<a class="hm-btn wa" href="kehilot.html">${ICON_WA}הקהילות</a>`;
     /* רישום הנוכחות של המורה במפגש — הקישור הקבוע של הקבוצה במנור (נקלט רק כשהמדריך.ה פתח.ה רישום + קוד) */
     const attBtn = it.slug
-      ? `<a class="hm-btn att" href="/hadrachot/mifgash/?g=${encodeURIComponent(it.slug)}" target="_blank" rel="noopener">${ICON_CHECK}רישום נוכחות במפגש<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>`
+      ? `<a class="hm-btn att" href="/hadrachot/mifgash/?g=${encodeURIComponent(it.slug)}" target="_blank" rel="noopener">${ICON_CHECK}רישום נוכחות · בזמן המפגש<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>`
       : '';
     return `<div class="hm-card" id="hm-card-${i}">
       <div class="hm-top"><div class="ic">${ICON_BOOK}</div><div>
