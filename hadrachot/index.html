@@ -24,7 +24,10 @@
   .mg-steps li.on b { background: #4E6B4D; color: #fff; }
   .mg-steps li.done b { background: #8CA68B; color: #fff; }
   .mg-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-2); margin: 0 0 5px; }
-  .mg-card .input { width: 100%; box-sizing: border-box; }
+  .mg-card .input, .mg-card .select { width: 100%; box-sizing: border-box; }
+  .mg-gap { margin-top: 12px; }
+  #mg-byname[hidden], #mg-bymail[hidden] { display: none; }
+  .mg-to { direction: ltr; unicode-bidi: isolate; font-weight: 700; }
   .mg-code { text-align: center; font-size: 26px; letter-spacing: 9px; font-weight: 700; padding: 10px; }
   .mg-btn { width: 100%; margin-top: 14px; }
   .mg-card .btn-primary { background: #4E6B4D; border-color: #4E6B4D; }
@@ -116,16 +119,34 @@
           <div class="mg-brand"><img src="assets/menor-sail.png" alt="" aria-hidden="true"><span>כניסה למנור</span></div>
           <div id="mg-login">
             <h2 class="mg-title" id="mg-title">כניסה לבעלי תפקידים</h2>
-            <p class="mg-sub">מדריכים, מפקחים, מנהלים ומטה: מקלידים את המייל ומקבלים קוד. המערכת תפתח לך את המבט שלך — ורק אותו.</p>
+            <p class="mg-sub">מדריכים, מפקחים, מנהלים ומטה: בוחרים את השם מהרשימה, ומקבלים קוד למייל ששמור אצלנו. המערכת תפתח לך את המבט שלך — ורק אותו.</p>
             <ol class="mg-steps" aria-label="שלבי הכניסה">
-              <li class="on" id="mg-st1"><b>1</b>המייל שלי</li>
+              <li class="on" id="mg-st1"><b>1</b>מי אני</li>
               <li id="mg-st2"><b>2</b>הקוד מהמייל</li>
             </ol>
+            <!-- כניסה לפי שם (24.9.26, מיטל: "הם יכולים להתבלבל עם המייל") — רשימה סגורה,
+                 הקוד נשלח למייל השמור ומוצג ממוסך. הקלדת מייל נשארת כאפשרות משנית. -->
             <div id="mg-step1">
-              <label class="mg-label" for="mg-email">המייל שלי</label>
-              <input class="input" id="mg-email" type="email" inputmode="email" autocomplete="email"
-                     placeholder="name@example.com" dir="ltr">
+              <div id="mg-byname">
+                <label class="mg-label" for="mg-kind">התפקיד שלי</label>
+                <select class="select" id="mg-kind">
+                  <option value="">בוחרים תפקיד…</option>
+                  <option value="guide">מדריכ/ה</option>
+                  <option value="inspector">מפקח.ת</option>
+                  <option value="principal">מנהל/ת בית ספר</option>
+                  <option value="staff">מטה / רשת</option>
+                </select>
+                <label class="mg-label mg-gap" for="mg-who">השם שלי</label>
+                <select class="select" id="mg-who" disabled><option value="">קודם בוחרים תפקיד</option></select>
+                <div class="mg-why">לא מוצאים את השם? כתבו לנו בכפתור למטה ונוסיף.</div>
+              </div>
+              <div id="mg-bymail" hidden>
+                <label class="mg-label" for="mg-email">המייל שלי</label>
+                <input class="input" id="mg-email" type="email" inputmode="email" autocomplete="email"
+                       placeholder="name@example.com" dir="ltr">
+              </div>
               <button type="button" class="btn btn-primary mg-btn" id="mg-send">שליחת קוד למייל</button>
+              <button type="button" class="mg-link" id="mg-mode">מעדיפים להקליד את המייל?</button>
             </div>
             <div id="mg-step2" hidden>
               <label class="mg-label" for="mg-code">הקוד בן 6 הספרות שקיבלת במייל</label>
@@ -133,7 +154,7 @@
                      autocomplete="one-time-code" placeholder="000000">
               <div class="mg-why">לא מוצאים? כדאי לבדוק גם בתיקיית הספאם / קידומי מכירות.</div>
               <button type="button" class="btn btn-primary mg-btn" id="mg-verify">כניסה</button>
-              <button type="button" class="mg-link" id="mg-back">מייל אחר / שליחה חוזרת</button>
+              <button type="button" class="mg-link" id="mg-back">חזרה / שליחה חוזרת</button>
             </div>
           </div>
           <!-- מחובר/ת — רק המבטים שלך (מי שיש לו מבט אחד עובר אליו ישר) -->
@@ -404,13 +425,58 @@ window.addEventListener('DOMContentLoaded', async () => {
       '<p class="mg-sub">לא נמצא מבט פתוח עבורך. כתבו לנו ונסדר.</p>';
   }
 
+  /* ---- לפי שם: התפקיד → השם מרשימה סגורה (staff.directory — שמות בלבד, בלי מיילים) ---- */
+  let byMail = false, who = '', dir = [];
+  const KIND_EMPTY = { guide: 'מדריכ/ה', inspector: 'מפקח.ת', principal: 'מנהל/ת', staff: 'מטה / רשת' };
+  function whoLabel(x) {
+    if (x.kind === 'guide') {
+      const g = (window.TS_GUIDES || {})[x.sub] || {};
+      return x.name + (g.subject ? ' · ' + g.subject : '');
+    }
+    if (x.kind === 'principal') return (x.sub ? x.sub + ' · ' : '') + x.name;
+    if (x.kind === 'staff') return x.name + (x.sub ? ' · ' + x.sub : '');
+    return x.name;
+  }
+  function fillWho() {
+    const kind = $('mg-kind').value, sel = $('mg-who');
+    if (!kind) { sel.disabled = true; sel.innerHTML = '<option value="">קודם בוחרים תפקיד</option>'; return; }
+    const list = dir.filter(x => x.kind === kind).map(x => ({ id: x.id, t: whoLabel(x) }))
+      .sort((a, b) => a.t.localeCompare(b.t, 'he'));
+    sel.disabled = !list.length;
+    sel.innerHTML = '<option value="">' + (list.length ? 'בוחרים את השם…' : 'אין עדיין שמות ברשימה') + '</option>' +
+      list.map(x => '<option value="' + esc(x.id) + '">' + esc(x.t) + '</option>').join('');
+  }
+  function setMode(mail) {
+    byMail = mail;
+    $('mg-byname').hidden = mail;
+    $('mg-bymail').hidden = !mail;
+    $('mg-mode').textContent = mail ? 'חזרה לבחירה מהרשימה' : 'מעדיפים להקליד את המייל?';
+    msg('');
+  }
+  TS.api('staff.directory', {}, { cache: 'fresh', onRefresh: r => { if (r && r.ok) { dir = r.data || []; fillWho(); } } })
+    .then(r => {
+      if (r && r.ok) { dir = r.data || []; fillWho(); }
+      else setMode(true);   // הרשימה לא נטענה — נשארת הקלדת מייל
+    }).catch(() => setMode(true));
+  $('mg-kind').addEventListener('change', fillWho);
+  $('mg-mode').addEventListener('click', () => setMode(!byMail));
+
   async function send() {
     const btn = $('mg-send');
-    email = $('mg-email').value.trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg(ERR.bad_input); return; }
+    let body;
+    if (byMail) {
+      email = $('mg-email').value.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg(ERR.bad_input); return; }
+      who = ''; body = { email: email };
+    } else {
+      who = $('mg-who').value;
+      if (!$('mg-kind').value) { msg('קודם בוחרים תפקיד.'); return; }
+      if (!who) { msg('בוחרים את השם מהרשימה.'); return; }
+      email = ''; body = { who: who };
+    }
     msg('');
     busy(btn, true, 'שולחים…');
-    const r = await TS.apiPost('staff.codeSend', { email: email });
+    const r = await TS.apiPost('staff.codeSend', body);
     busy(btn, false, 'שליחת קוד למייל');
     if (!r || !r.ok) {
       if (r && r.error === 'cooldown') { step(2); }
@@ -418,7 +484,10 @@ window.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     step(2);
-    msg('שלחנו קוד ל-' + email + '. הוא תקף ל-20 דקות.', true);
+    const el = $('mg-msg');
+    el.className = 'mg-msg ok'; el.hidden = false;
+    el.innerHTML = 'שלחנו קוד למייל <span class="mg-to">' + esc((r.data && r.data.to) || email) +
+      '</span>. הוא תקף ל-20 דקות.';
     $('mg-code').focus();
   }
 
@@ -428,7 +497,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (code.length !== 6) { msg('הקוד הוא 6 ספרות.'); return; }
     msg('');
     busy(btn, true, 'בודקים…');
-    const r = await TS.apiPost('staff.codeVerify', { email: email, code: code });
+    const r = await TS.apiPost('staff.codeVerify', who ? { who: who, code: code } : { email: email, code: code });
     busy(btn, false, 'כניסה');
     if (!r || !r.ok || !r.data || !r.data.key) { msg(errText(r && r.error)); return; }
     const s = { k: r.data.key, email: r.data.email, name: r.data.name || '', roles: r.data.roles || [], at: Date.now() };
@@ -441,7 +510,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   $('mg-email').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
   $('mg-verify').addEventListener('click', verify);
   $('mg-code').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
-  $('mg-back').addEventListener('click', () => { step(1); msg(''); $('mg-email').focus(); });
+  $('mg-back').addEventListener('click', () => { step(1); msg(''); });
   $('mg-out').addEventListener('click', () => TS_staff.logout());
 
   // כבר מחובר/ת במכשיר הזה
