@@ -241,6 +241,20 @@
   .nt-text { font-size: 14px; line-height: 1.65; white-space: pre-line; color: var(--text-1, #1f2d2a); margin-top: 4px; }
   .th-notes { margin-top: 12px; background: none; border: 0; color: #4E6B4D; font-weight: 700; font-size: 14px;
     text-decoration: underline; cursor: pointer; font-family: inherit; }
+  .tour-intro { position: fixed; inset: 0; z-index: 10000; background: rgba(20, 35, 20, 0.55);
+    display: grid; place-items: center; padding: 16px; }
+  .ti-card { background: #fff; border-radius: 18px; max-width: 440px; width: 100%; padding: 26px 24px 20px;
+    text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,.3); border-top: 5px solid #4E6B4D; }
+  .ti-card img { height: 54px; width: auto; margin-bottom: 8px; }
+  .ti-card h2 { margin: 0 0 8px; font-size: 21px; color: #2F4A2E; }
+  .ti-card p { margin: 0 0 18px; font-size: 14.5px; line-height: 1.65; color: var(--text-1, #1f2d2a); }
+  .ti-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .ti-go { width: 100%; max-width: 260px; padding: 11px 18px; border-radius: 999px; border: 0; cursor: pointer;
+    background: #4E6B4D; color: #fff; font-family: inherit; font-size: 15.5px; font-weight: 700; }
+  .ti-go:hover { background: #3E5A3D; }
+  .ti-skip { background: none; border: 0; cursor: pointer; font-family: inherit; font-size: 14px;
+    color: var(--text-muted); text-decoration: underline; padding: 6px; }
+  .ti-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
 </style>
 </head>
 <body data-role="teacher">
@@ -595,6 +609,6 @@
 <script src="dashboard.js?v=20260924k"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
-<script src="tour.js?v=20260924c"></script>
+<script src="tour.js?v=20260924d"></script>
 </body>
 </html>

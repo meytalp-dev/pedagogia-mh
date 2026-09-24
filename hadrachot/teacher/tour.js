@@ -107,9 +107,40 @@
     let flag = '';
     try { flag = localStorage.getItem(KEY) || ''; } catch (e) { flag = ''; }
     const forced = new URLSearchParams(location.search).get('tour') === '1';
-    if (forced || flag === 'pending') setTimeout(start, 600);
+    if (forced || flag === 'pending') setTimeout(intro, 600);
   }
-  window.TS_teacherTour = { start: start, maybeStart: maybeStart };
+  /* חלון פתיחה (24.9.26, בקשת מיטל): בכניסה הראשונה קופץ חלון — "סיור קצר?"
+     עם התחלה או דילוג. הכפתור "סיור בדף" מתחיל את הסיור ישירות, בלי החלון. */
+  function intro() {
+    if (box || document.querySelector('.tour-intro')) return;
+    const n = STEPS.filter(s => visible(document.querySelector(s.sel))).length;
+    if (!n) return;
+    const hello = (document.getElementById('hello') || {}).textContent || 'שלום';
+    const wrap = document.createElement('div');
+    wrap.className = 'tour-intro';
+    wrap.innerHTML =
+      `<div class="ti-card" role="dialog" aria-modal="true" aria-labelledby="ti-h">
+         <img src="../assets/menor-sail.png" alt="" aria-hidden="true">
+         <h2 id="ti-h">${hello.replace(/</g, '&lt;')}, ברוכים הבאים למנור</h2>
+         <p>ההרשמה הושלמה. רוצה סיור קצר בדף? ${n} תחנות, פחות מדקה — ההדרכה הבאה, רישום הנוכחות, התוכנית השנתית, המחברת האישית ועוד.</p>
+         <div class="ti-actions">
+           <button type="button" class="ti-go">יאללה, לסיור</button>
+           <button type="button" class="ti-skip">דילוג על הסיור</button>
+         </div>
+         <div class="ti-note">אפשר לחזור לסיור בכל רגע מהכפתור "סיור בדף".</div>
+       </div>`;
+    document.body.appendChild(wrap);
+    const close = () => { wrap.remove(); document.removeEventListener('keydown', esc); };
+    const esc = e => { if (e.key === 'Escape') { skip(); } };
+    const skip = () => { close(); try { localStorage.setItem(KEY, 'done'); } catch (e) { /* לא חוסם */ } };
+    wrap.querySelector('.ti-go').onclick = () => { close(); start(); };
+    wrap.querySelector('.ti-skip').onclick = skip;
+    wrap.addEventListener('click', e => { if (e.target === wrap) skip(); });
+    document.addEventListener('keydown', esc);
+    window.scrollTo({ top: 0 });
+    wrap.querySelector('.ti-go').focus({ preventScroll: true });
+  }
+  window.TS_teacherTour = { start: start, maybeStart: maybeStart, intro: intro };
   document.addEventListener('click', e => {
     if (e.target.closest && e.target.closest('[data-tour-start]')) { e.preventDefault(); start(); }
   });
