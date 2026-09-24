@@ -497,9 +497,9 @@
     const waBtn = wa
       ? `<a class="hm-btn wa" href="${esc(wa)}" target="_blank" rel="noopener">${ICON_WA}קהילת ${esc(shown(it.subject))}<span class="sr-only"> (נפתח בווטסאפ)</span></a>`
       : `<a class="hm-btn wa" href="kehilot.html">${ICON_WA}הקהילות</a>`;
-    /* רישום הנוכחות של המורה במפגש — הקישור הקבוע של הקבוצה במנור (נקלט רק כשהמדריך.ה פתח.ה רישום + קוד) */
+    /* רישום נוכחות — מפנה למנור (החלטת מיטל 24.9.26: לא לדף הרישום mifgash/ ישירות) */
     const attBtn = it.slug
-      ? `<a class="hm-btn att" href="/hadrachot/mifgash/?g=${encodeURIComponent(it.slug)}" target="_blank" rel="noopener">${ICON_CHECK}רישום נוכחות · בזמן המפגש<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>`
+      ? `<a class="hm-btn att" href="/hadrachot/" target="_blank" rel="noopener">${ICON_CHECK}רישום נוכחות במנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>`
       : '';
     return `<div class="hm-card" id="hm-card-${i}">
       <div class="hm-top"><div class="ic">${ICON_BOOK}</div><div>
