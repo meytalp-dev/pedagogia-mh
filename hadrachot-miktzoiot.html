@@ -2,17 +2,15 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="robots" content="noindex,nofollow">
-<script src="/auth.js" data-space="pikuah,menahalim"></script>
 <script src="/analytics.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>קבוצות הדרכה ופרטי המדריכים</title>
-<meta name="description" content="רשימת המדריכים המקצועיים לחברה היהודית ולחברה הערבית — תחומי הדעת, המדריכים והמפקחים המלווים.">
+<title>הדרכות מקצועיות בתחומי הדעת</title>
+<meta name="description" content="ההדרכות המקצועיות בתחומי הדעת לפי מגזר ומקצוע — המדריכים, המפגש הבא, התוכנית השנתית של כל הדרכה וקהילת המורים. וכניסה למנור.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
-<meta property="og:title" content="קבוצות הדרכה ופרטי המדריכים">
-<meta property="og:description" content="רשימת המדריכים המקצועיים לחברה היהודית ולחברה הערבית — תחומי הדעת, המדריכים והמפקחים המלווים.">
-<meta property="og:url" content="https://pedagogiamh.co.il/kvutzot-hadracha.html">
+<meta property="og:title" content="הדרכות מקצועיות בתחומי הדעת">
+<meta property="og:description" content="ההדרכות המקצועיות בתחומי הדעת לפי מגזר ומקצוע — המדריכים, המפגש הבא, התוכנית השנתית של כל הדרכה וקהילת המורים. וכניסה למנור.">
+<meta property="og:url" content="https://pedagogiamh.co.il/hadrachot-miktzoiot.html">
 <meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
 <meta property="og:locale" content="he_IL">
 <link rel="icon" type="image/png" href="logo.png">
@@ -254,75 +252,285 @@
 
 <main id="main">
 
+<style>
+/* ===== הדרכות מקצועיות — עמוד זה בלבד (hm-) ===== */
+.hm-menor{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:6px 0 4px;padding:20px 22px;border-radius:18px;
+  background:linear-gradient(135deg,#1A5365,#236B80);color:#fff;box-shadow:var(--sh-md)}
+.hm-menor img{width:58px;height:58px;flex:0 0 auto;background:#fff;border-radius:14px;padding:7px}
+.hm-menor .t{flex:1 1 260px;min-width:0}
+.hm-menor b{display:block;font-size:var(--fs-xl);font-weight:800;margin-bottom:3px}
+.hm-menor p{margin:0;font-size:var(--fs-sm);color:#D9ECF3;line-height:1.55}
+.hm-menor .go{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#1A5365;font-weight:800;
+  padding:11px 22px;border-radius:999px;text-decoration:none;font-size:var(--fs-md);transition:transform .2s var(--ease)}
+.hm-menor .go:hover{transform:translateY(-2px)}
+.hm-menor .go:focus-visible{outline:3px solid #86C3EF;outline-offset:3px}
+
+.hm-filters{margin:14px 0 6px}
+.hm-filters .lbl{display:block;font-size:var(--fs-xs);font-weight:700;color:var(--muted);margin:12px 0 7px}
+.hm-count{font-size:var(--fs-sm);color:var(--text2);margin:14px 0 4px}
+
+.hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:10px}
+.hm-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--sh-sm);
+  padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hm-card.wide{grid-column:1/-1}
+.hm-top{display:flex;align-items:flex-start;gap:12px}
+.hm-top .ic{background:var(--blue-100);color:var(--navy-800)}
+.hm-top h3{font-size:var(--fs-lg);margin:0 0 2px;color:var(--navy)}
+.hm-top .who{font-size:var(--fs-sm);color:var(--text2);line-height:1.5}
+.hm-top .who b{color:var(--text);font-weight:700}
+.hm-tags{display:flex;flex-wrap:wrap;gap:6px}
+.hm-tags .tag.s-kelali{background:var(--blue-100);color:#145FA8}
+.hm-tags .tag.s-haredi{background:#F1ECF7;color:#6E58A8}
+.hm-tags .tag.s-arab{background:var(--teal-100);color:#087565}
+.hm-next{font-size:var(--fs-sm);background:var(--soft-bg);border-radius:12px;padding:10px 12px;line-height:1.55}
+.hm-next .k{display:block;font-size:var(--fs-2xs);font-weight:800;color:var(--accent);letter-spacing:.02em}
+.hm-next.none{color:var(--muted)}
+.hm-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.hm-btn{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 15px;font-weight:700;
+  font-size:var(--fs-sm);font-family:'Assistant',sans-serif;cursor:pointer;text-decoration:none;
+  border:1.5px solid var(--border-strong);background:#fff;color:var(--navy);transition:all .2s}
+.hm-btn:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.hm-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hm-btn svg{width:17px;height:17px;flex:0 0 auto}
+.hm-btn.wa{border-color:#BFE5CD;color:#1F7A42}
+.hm-btn.wa:hover{background:#EAF7EF;border-color:#2F9F55}
+.hm-btn[aria-expanded="true"]{background:var(--navy-800);color:#fff;border-color:transparent}
+.hm-btn.off{color:var(--muted);border-style:dashed;cursor:default}
+.hm-btn.off:hover{background:#fff;border-color:var(--border-strong)}
+
+.hm-plan{border-top:1px solid var(--border);padding-top:12px}
+.hm-plan[hidden]{display:none}
+.hm-plan .pt{font-weight:800;color:var(--navy);font-size:var(--fs-md)}
+.hm-plan .ps{font-size:var(--fs-sm);color:var(--text2);margin:2px 0 8px;line-height:1.55}
+.hm-plan .src{font-size:var(--fs-2xs);color:var(--muted);margin-top:8px}
+.hm-plan table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+.hm-plan th{text-align:start;font-size:var(--fs-2xs);color:var(--muted);font-weight:800;padding:6px 8px;border-bottom:1.5px solid var(--border-strong)}
+.hm-plan td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.hm-plan td.d{white-space:nowrap;font-weight:700;color:var(--navy)}
+.hm-plan td.d small{display:block;font-weight:500;color:var(--muted)}
+.hm-plan td .g{display:block;color:var(--text2);font-size:var(--fs-xs);margin-top:3px}
+.hm-plan td .sb{display:inline-block;font-size:var(--fs-2xs);font-weight:800;background:var(--blue-100);color:#145FA8;border-radius:999px;padding:1px 8px;margin-inline-end:6px}
+.hm-plan tr.past td{opacity:.55}
+.hm-plan tr.now td{background:#FFFBF0}
+.hm-plan tr.now td.d::after{content:"הבא";display:inline-block;margin-inline-start:6px;font-size:var(--fs-2xs);background:#C08A00;color:#fff;border-radius:999px;padding:0 7px}
+.hm-empty{padding:26px;text-align:center;color:var(--muted);border:1.5px dashed var(--border-strong);border-radius:18px;margin-top:10px}
+@media(max-width:560px){
+  .hm-grid{grid-template-columns:1fr}
+  .hm-plan thead{display:none}
+  .hm-plan tr{display:block;border-bottom:1px solid var(--border);padding:6px 0}
+  .hm-plan td{display:block;border:0;padding:3px 0}
+}
+</style>
 
 <section class="hero">
   <div class="article hero-stagger">
-  <nav class="crumb" aria-label="נתיב העמוד"><a href="index.html">הבית</a> ‹ <a href="procedures.html">נהלים</a> ‹ <a href="hadracha.html">הדרכה ופיתוח מקצועי</a> ‹ <span aria-current="page">קבוצות הדרכה ופרטי המדריכים</span></nav>
+  <nav class="crumb" aria-label="נתיב העמוד"><a href="index.html">הבית</a> ‹ <a href="procedures.html">נהלים</a> ‹ <a href="hadracha.html">הדרכה ופיתוח מקצועי</a> ‹ <span aria-current="page">הדרכות מקצועיות בתחומי הדעת</span></nav>
     <span class="kicker">הדרכה ופיתוח מקצועי</span>
-    <h1>קבוצות הדרכה ופרטי המדריכים</h1>
-    <p class="lead">רשימת המדריכים המקצועיים בתחומי הדעת — לחברה היהודית ולחברה הערבית — לצד המפקח.ת המלווה כל תחום.</p>
-    <div class="meta-row">
-      <span class="src">המקור: <a class="lk" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">הגיליון בדרייב<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></span>
-    </div>
+    <h1>הדרכות מקצועיות בתחומי הדעת</h1>
+    <p class="lead">כל ההדרכות המקצועיות במקום אחד — לפי מגזר ולפי מקצוע: מי מדריך.ה, מתי המפגש הבא, התוכנית השנתית המלאה וקהילת המורים של התחום.</p>
   </div>
 </section>
 
 <article class="body-sec">
   <div class="article">
 
-    <h2 class="sub-sec first rv">מי מדריך במה?</h2>
-    <p class="lead-p rv">לכל תחום דעת מדריך.ה מקצועי.ת, ולצידם מפקח.ת מלווה. לכל מדריך.ה קבוצת ווטסאפ ייעודית לתחום.</p>
-
-    <div class="callout amber rv">
-      <span class="ttl">יצירת קשר עם המדריכים</span>
-      מטעמי פרטיות, מספרי הטלפון וקישורי הווטסאפ של המדריכים אינם מתפרסמים בעמוד זה. את פרטי הקשר המלאים תמצאו <a class="lk" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">בגיליון המקורי בדרייב<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>.
+    <h2 class="sub-sec first rv" id="menor">מנור · מערכת ההדרכות<small>הזנת מורים, נוכחות במפגשים ומבט על כל קבוצת הדרכה</small></h2>
+    <div class="hm-menor rv">
+      <img src="/hadrachot/assets/menor-mark.svg" alt="" width="58" height="58">
+      <div class="t">
+        <b>מנור</b>
+        <p>המערכת שבה המדריכים, המפקחים והמנהלים מנהלים את ההדרכה בתחומי הדעת: רשימות המורים, הנוכחות במפגשים והתוכניות השנתיות. הכניסה בחשבון האישי.</p>
+      </div>
+      <a class="go" href="/hadrachot/" target="_blank" rel="noopener">כניסה למנור <span aria-hidden="true">↗</span><span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
     </div>
 
-    <h2 class="sub-sec rv">רשימת מדריכים לחברה היהודית</h2>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <thead>
-          <tr><th>תחום דעת</th><th>מדריך.ה</th><th>מפקח.ת</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="k">תנ״ך</td><td>טלי אהרון זיו</td><td>יששכר חפץ</td></tr>
-          <tr><td class="k">היסטוריה</td><td>דנה ברצורי</td><td>סיגל דאי</td></tr>
-          <tr><td class="k">אזרחות</td><td>ריקי פולק</td><td>סיגל דאי</td></tr>
-          <tr><td class="k">עברית — לשון והבעה</td><td>מוריה פלינט</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">אנגלית</td><td>סיון נחליאל</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">ספרות</td><td>נירה הראל</td><td>ליאת צבר</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>שירה סיבוני</td><td>רויטל אמיר</td></tr>
-        </tbody>
-      </table>
+    <h2 class="sub-sec rv" id="hadrachot">ההדרכות לפי מגזר ומקצוע<small>בחרו מגזר ומקצוע — ולכל הדרכה: המפגש הבא, התוכנית השנתית והקהילה</small></h2>
+
+    <div class="hm-filters rv">
+      <span class="lbl" id="hm-sec-lbl">מגזר</span>
+      <div class="sbjtabs" role="tablist" aria-labelledby="hm-sec-lbl" id="hm-sectors"></div>
+      <span class="lbl" id="hm-sub-lbl">מקצוע</span>
+      <div class="sbjtabs" role="tablist" aria-labelledby="hm-sub-lbl" id="hm-subjects"></div>
     </div>
 
-    <h2 class="sub-sec rv">רשימת מדריכים לחברה הערבית</h2>
-    <div class="tbl-scroll rv">
-      <table class="doc">
-        <thead>
-          <tr><th>תחום דעת</th><th>מדריך.ה</th><th>מפקח.ת</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="k">עברית לדוברי ערבית</td><td>סוהא ערדה</td><td>ויסאם סואלחה</td></tr>
-          <tr><td class="k">ערבית</td><td>ואאל טאהא</td><td>ויסאם סואלחה</td></tr>
-          <tr><td class="k">אנגלית</td><td>רוזין מטר דאו</td><td>יסמין אמון</td></tr>
-          <tr><td class="k">היסטוריה</td><td>עבד אלוהאב חבאיב</td><td>—</td></tr>
-          <tr><td class="k">אזרחות</td><td>חאלד גבארין</td><td>—</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>משה עשור</td><td>—</td></tr>
-          <tr><td class="k">מתמטיקה</td><td>סולימאן ברייה</td><td>—</td></tr>
-          <tr><td class="k">מורשת אסלאמית</td><td>מנסור עתאמנה</td><td>—</td></tr>
-          <tr><td class="k">מורשת דרוזית</td><td>מזנה סלאלחה</td><td>—</td></tr>
-        </tbody>
-      </table>
+    <p class="hm-count" id="hm-count" aria-live="polite"></p>
+    <div class="hm-grid" id="hm-grid">
+      <noscript><p class="hm-empty">כדי לראות את ההדרכות יש להפעיל JavaScript בדפדפן.</p></noscript>
     </div>
 
-    <div class="source-box rv">
-      <div class="t">המסמך המקורי<small>העמוד הזה הוא מהדורה דיגיטלית נוחה לקריאה — הנוסח המחייב הוא המסמך המקורי.</small></div>
-      <a class="btn" href="https://docs.google.com/spreadsheets/d/1hCUgdMQmVM514MNXczBJNsO-UwmJiMqv/edit" target="_blank" rel="noopener">פתיחה בדרייב ↗<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <h2 class="sub-sec rv" id="kehilot">הקהילות המקצועיות<small>קבוצת ווטסאפ לכל תחום דעת — לדוברי עברית ולדוברי ערבית</small></h2>
+    <p class="lead-p rv">בכל כרטיס הדרכה למעלה יש קישור ישיר לקהילת המורים של התחום. את כל הקהילות — כולל קהילות בעלי התפקידים — אפשר למצוא בעמוד אחד.</p>
+    <p class="rv"><a class="btn line" href="kehilot.html">לכל הקהילות <span class="arr" aria-hidden="true">←</span></a></p>
+
+    <div class="callout rv">
+      <span class="ttl">התוכנית עוד לא מופיעה?</span>
+      התוכניות השנתיות מתפרסמות כאן ברגע שהמדריך.ה מגיש.ה אותן. הדרכה שהתוכנית שלה טרם הוגשה מסומנת "התוכנית תפורסם בהמשך" — והקישור לקהילה זמין כבר עכשיו.
     </div>
 
   </div>
 </article>
+
+<script src="/hadrachot/assets/guides.js?v=20260924"></script>
+<script src="/hadrachot/assets/plans.js?v=20260924"></script>
+<script>
+/* ▸ הדרכות מקצועיות (24.9.26, בקשת מיטל): הכל נבנה בדפדפן משלושה מקורות אמת —
+   guides.js (מי מדריך מה ובאיזה מגזר), plans.js (התוכניות השנתיות) ו-kehilot.html
+   (קישורי הקהילות). תוכנית חדשה שנוספת ל-plans.js / קישור שמתחלף בעמוד הקהילות
+   מופיעים כאן לבד — אין מה לעדכן בעמוד הזה. */
+(function () {
+  const GUIDES = window.TS_GUIDES || {}, INS = window.TS_INSPECTORS || {};
+  /* מדריכ.ה שאינו פעיל כרגע — אותה רשימה כמו INACTIVE ב-admin-silabus.html */
+  const INACTIVE = ['elisheva'];
+  /* תחום בלי מדריכ.ה פעיל.ה — מוצג ככרטיס עם הקהילה בלבד */
+  const VACANT = [{ subject: 'אזרחות', sectors: ['kelali'], note: 'אין כרגע מדריכ.ה בתחום' }];
+  const SECTORS = [
+    { k: 'all', t: 'כל המגזרים' },
+    { k: 'kelali', t: 'החברה היהודית · כללי' },
+    { k: 'haredi', t: 'המגזר החרדי' },
+    { k: 'arab', t: 'החברה הערבית' }
+  ];
+  const SEC_NAME = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
+  const ORDER = ['מתמטיקה', 'אנגלית', 'עברית', 'ערבית', 'ספרות', 'היסטוריה', 'אזרחות', 'תנ"ך', 'מורשת אסלאמית', 'מורשת דרוזית'];
+  const COMMUNITY_NAME = { 'תנ"ך': 'תנ״ך', 'מורשת אסלאמית': 'מורשות', 'מורשת דרוזית': 'מורשות' };
+
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const norm = s => String(s || '').replace(/["״']/g, '').replace(/\s+/g, ' ').trim();
+  const shown = s => String(s).replace(/"/g, '״');
+
+  /* יחידת תצוגה = מדריכ.ה × מקצוע (רבקה מלמדת שניים → שני כרטיסים, כל אחד עם המפגשים שלו) */
+  const items = [];
+  Object.keys(GUIDES).forEach(slug => {
+    if (INACTIVE.indexOf(slug) >= 0) return;
+    const g = GUIDES[slug];
+    const subs = (window.TS_guideSubjects ? window.TS_guideSubjects(g) : [g.subject]).filter(Boolean);
+    subs.forEach(sub => items.push({ slug, name: g.name, subject: sub, sectors: g.sectors || [], inspector: (INS[g.inspector] || {}).name || '', multi: subs.length > 1 }));
+  });
+  VACANT.forEach(v => items.push({ slug: '', name: '', subject: v.subject, sectors: v.sectors, inspector: '', note: v.note }));
+  const rank = s => { const i = ORDER.indexOf(s); return i < 0 ? 99 : i; };
+  items.sort((a, b) => rank(a.subject) - rank(b.subject) || (a.sectors.indexOf('arab') >= 0) - (b.sectors.indexOf('arab') >= 0) || a.name.localeCompare(b.name, 'he'));
+
+  /* קישורי הקהילות — נקראים מ-kehilot.html (כמו quicklinks.js במבט המורה) */
+  let COMM = null;
+  const commReady = fetch('/kehilot.html', { cache: 'no-cache' }).then(r => r.text()).then(html => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    COMM = {};
+    doc.querySelectorAll('a.wa').forEach(a => { const b = a.querySelector('b'); if (b) COMM[norm(b.textContent)] = a.getAttribute('href'); });
+  }).catch(() => { COMM = {}; });
+  const communityFor = it => {
+    const arab = it.sectors.indexOf('arab') >= 0;
+    return (COMM || {})[norm((COMMUNITY_NAME[it.subject] || it.subject) + ' לדוברי ' + (arab ? 'ערבית' : 'עברית'))] || '';
+  };
+
+  const todayIso = (() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+  const meetingsOf = it => {
+    const p = window.TS_planFor && window.TS_planFor(it.slug);
+    if (!p || !p.meetings) return null;
+    return it.multi ? p.meetings.filter(m => !m.subject || m.subject === it.subject) : p.meetings;
+  };
+  const nextOf = ms => (ms || []).find(m => ((m.dates && m.dates[m.dates.length - 1]) || m.date2 || m.date) >= todayIso) || null;
+
+  /* מצב הסינון נשמר בכתובת (#s=arab&m=מתמטיקה) — אפשר לשלוח קישור ישיר לסינון */
+  const st = { s: 'all', m: 'all' };
+  try {
+    const h = new URLSearchParams(location.hash.slice(1));
+    if (SECTORS.some(x => x.k === h.get('s'))) st.s = h.get('s');
+    if (h.get('m')) st.m = h.get('m');
+  } catch (e) {}
+
+  const inSector = it => st.s === 'all' || it.sectors.indexOf(st.s) >= 0;
+  const $sec = document.getElementById('hm-sectors'), $sub = document.getElementById('hm-subjects');
+  const $grid = document.getElementById('hm-grid'), $count = document.getElementById('hm-count');
+
+  function tab(key, text, sel, n) {
+    return `<button type="button" class="sbjtab" role="tab" data-k="${esc(key)}" aria-selected="${sel}">${esc(text)}${n != null ? `<span class="sbjn">${n}</span>` : ''}</button>`;
+  }
+  function drawTabs() {
+    $sec.innerHTML = SECTORS.map(x => tab(x.k, x.t, st.s === x.k, items.filter(it => x.k === 'all' || it.sectors.indexOf(x.k) >= 0).length)).join('');
+    const pool = items.filter(inSector);
+    const subs = [];
+    pool.forEach(it => { if (subs.indexOf(it.subject) < 0) subs.push(it.subject); });
+    if (st.m !== 'all' && subs.indexOf(st.m) < 0) st.m = 'all';
+    $sub.innerHTML = tab('all', 'כל המקצועות', st.m === 'all', pool.length) +
+      subs.map(s => tab(s, shown(s), st.m === s, pool.filter(it => it.subject === s).length)).join('');
+  }
+
+  const ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  const ICON_WA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 20.5l1.3-4.2A8.3 8.3 0 1 1 8 19.4z"/><path d="M9 9.2c.3 1.6 1.3 3.2 2.7 4.3 1 .8 2 1.3 3.1 1.5.5-.4.8-.9 1-1.5l-1.8-1-1 .9c-1-.5-1.9-1.4-2.4-2.5l.9-1-.9-1.8c-.6.2-1.2.5-1.6 1.1z"/></svg>';
+  const ICON_BOOK = '<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8.5 7.5h7M8.5 11h5"/></svg>';
+
+  function planHtml(it, ms, nx) {
+    const p = window.TS_planFor(it.slug);
+    const rows = ms.map(m => {
+      const last = (m.dates && m.dates[m.dates.length - 1]) || m.date2 || m.date;
+      const cls = m === nx ? 'now' : (last < todayIso ? 'past' : '');
+      return `<tr class="${cls}"><td class="d">${esc(m.label || m.date)}${m.day ? `<small>${esc(m.day)}</small>` : ''}</td>` +
+        `<td>${m.subject && !it.multi ? `<span class="sb">${esc(shown(m.subject))}</span>` : ''}${esc(m.topic || '')}` +
+        `${m.goal ? `<span class="g">${esc(m.goal)}</span>` : ''}${m.note ? `<span class="g">${esc(m.note)}</span>` : ''}</td>` +
+        `<td>${esc(m.time || '')}</td></tr>`;
+    }).join('');
+    return `<div class="pt">${esc(p.title || 'התוכנית השנתית')}</div>` +
+      (p.subtitle || p.timeNote ? `<p class="ps">${esc([p.subtitle, p.timeNote].filter(Boolean).join(' · '))}</p>` : '') +
+      `<div class="tbl-scroll"><table><thead><tr><th>מועד</th><th>נושא המפגש</th><th>שעות</th></tr></thead><tbody>${rows}</tbody></table></div>` +
+      (p.source ? `<p class="src">${esc(p.source)}</p>` : '');
+  }
+
+  function cardHtml(it, i) {
+    const ms = it.slug ? meetingsOf(it) : null;
+    const nx = nextOf(ms);
+    const wa = communityFor(it);
+    const tags = it.sectors.map(s => `<span class="tag s-${esc(s)}">${esc(SEC_NAME[s] || s)}</span>`).join('');
+    const who = it.name
+      ? `מדריך.ה: <b>${esc(it.name)}</b>${it.inspector ? ` · מפקח.ת: ${esc(it.inspector)}` : ''}`
+      : esc(it.note || '');
+    let next;
+    if (!it.slug) next = '';
+    else if (!ms) next = `<div class="hm-next none"><span class="k">התוכנית השנתית</span>התוכנית תפורסם בהמשך</div>`;
+    else if (nx) next = `<div class="hm-next"><span class="k">המפגש הבא</span><b>${esc(nx.label || nx.date)}</b>${nx.time ? ' · ' + esc(nx.time) : ''}<br>${esc(nx.topic || '')}</div>`;
+    else next = `<div class="hm-next none"><span class="k">המפגש הבא</span>כל המפגשים השנה התקיימו</div>`;
+    const pid = 'hm-plan-' + i;
+    const planBtn = !it.slug ? '' : ms
+      ? `<button type="button" class="hm-btn" aria-expanded="false" aria-controls="${pid}" data-plan="${i}">${ICON_CAL}תוכנית שנתית · ${ms.length} מפגשים</button>`
+      : `<span class="hm-btn off">${ICON_CAL}תוכנית שנתית — בקרוב</span>`;
+    const waBtn = wa
+      ? `<a class="hm-btn wa" href="${esc(wa)}" target="_blank" rel="noopener">${ICON_WA}קהילת ${esc(shown(it.subject))}<span class="sr-only"> (נפתח בווטסאפ)</span></a>`
+      : `<a class="hm-btn wa" href="kehilot.html">${ICON_WA}הקהילות</a>`;
+    return `<div class="hm-card" id="hm-card-${i}">
+      <div class="hm-top"><div class="ic">${ICON_BOOK}</div><div>
+        <h3>${esc(shown(it.subject))}</h3><div class="who">${who}</div></div></div>
+      <div class="hm-tags">${tags}</div>
+      ${next}
+      <div class="hm-acts">${planBtn}${waBtn}</div>
+      ${ms ? `<div class="hm-plan" id="${pid}" hidden></div>` : ''}
+    </div>`;
+  }
+
+  let view = [];
+  function draw() {
+    drawTabs();
+    view = items.filter(it => inSector(it) && (st.m === 'all' || it.subject === st.m));
+    $count.textContent = view.length ? `${view.length} הדרכות` : '';
+    $grid.innerHTML = view.length ? view.map(cardHtml).join('') : '<p class="hm-empty">אין הדרכות בסינון הזה.</p>';
+    const h = (st.s !== 'all' ? 's=' + st.s : '') + (st.m !== 'all' ? (st.s !== 'all' ? '&' : '') + 'm=' + encodeURIComponent(st.m) : '');
+    try { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); } catch (e) {}
+  }
+
+  $sec.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { st.s = b.dataset.k; draw(); } });
+  $sub.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { st.m = b.dataset.k; draw(); } });
+  $grid.addEventListener('click', e => {
+    const b = e.target.closest('[data-plan]'); if (!b) return;
+    const i = +b.dataset.plan, it = view[i], box = document.getElementById('hm-plan-' + i);
+    if (!it || !box) return;
+    const open = b.getAttribute('aria-expanded') !== 'true';
+    if (open && !box.innerHTML) { const ms = meetingsOf(it); box.innerHTML = planHtml(it, ms, nextOf(ms)); }
+    box.hidden = !open;
+    b.setAttribute('aria-expanded', String(open));
+    document.getElementById('hm-card-' + i).classList.toggle('wide', open);
+  });
+
+  draw();
+  commReady.then(draw);
+})();
+</script>
 
 </main>
 
