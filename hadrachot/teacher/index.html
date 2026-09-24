@@ -36,6 +36,10 @@
   .tg-btn { width: 100%; margin-top: 16px; }
   .th-card { margin: 0 0 20px; padding: 20px 22px; text-align: center;
              border: 2px solid var(--mint, #8CA68B); }
+  .next-soon[hidden], .next-meta[hidden] { display: none; }
+  .ns-info { display: flex; flex-direction: column; gap: 3px; }
+  .ns-times { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+  .ns-times b { color: var(--primary); font-weight: 700; }
   .next-sessions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
   .next-sessions:empty { display: none; }
   .ns-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
@@ -187,16 +191,6 @@
         <button type="button" class="tg-exit" id="tg-exit" hidden>זה לא אני — יציאה</button>
       </div>
       <div class="page-compass">
-        <svg class="page-compass-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-          <circle cx="40" cy="40" r="34" stroke="#D3E1E8" stroke-width="1" stroke-dasharray="3 4"/>
-          <circle cx="40" cy="40" r="22" stroke="#D3E1E8" stroke-width="1"/>
-          <circle cx="40" cy="40" r="10" stroke="#8CA68B" stroke-width="1.2" opacity="0.7"/>
-          <path d="M40 18 L43 40 L40 38 L37 40 Z" fill="#1A5365"/>
-          <path d="M40 62 L37 40 L40 42 L43 40 Z" fill="#C8B9D9" opacity="0.7"/>
-          <circle cx="40" cy="40" r="3.5" fill="#FFFFFF" stroke="#1A5365" stroke-width="1.2"/>
-          <circle cx="40" cy="40" r="1.5" fill="#1A5365"/>
-          <text x="40" y="15" text-anchor="middle" font-family="Fredoka, Heebo, sans-serif" font-size="8" font-weight="700" fill="#1A5365">N</text>
-        </svg>
         <div class="page-compass-info">
           <strong id="user-name">—</strong>
           <span id="user-meta">—</span>
@@ -224,7 +218,7 @@
         <div class="next-date"><b id="next-day">—</b><span id="next-month"></span></div>
         <div class="next-body">
           <div class="next-topic" id="next-topic"></div>
-          <div class="next-meta" id="next-meta"></div>
+          <div class="next-meta" id="next-meta" hidden></div>
           <span class="next-soon" id="next-soon" hidden></span>
           <!-- רישום נוכחות ליד כל מועד (24.9.26) — עם הקוד שמוצג במפגש -->
           <div class="next-sessions" id="next-sessions"></div>
@@ -380,6 +374,6 @@
 <script src="../assets/guides.js?v=20260921"></script>
 <script src="../assets/plans.js?v=20260921"></script>
 <script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260924e"></script>
+<script src="dashboard.js?v=20260924f"></script>
 </body>
 </html>

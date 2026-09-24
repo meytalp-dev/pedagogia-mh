@@ -353,6 +353,66 @@ const ICON_ONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 
 /* ▸ ההדרכה הבאה — מהתוכנית השנתית של המדריכ/ה. מפגש בשני ימים נשאר "הבא"
    עד שעבר גם המועד השני; מדריכ/ה בשני מקצועות — רק מפגש של המקצוע שלי. */
+/* ▸ השעות של כל מועד (24.9.26). בתוכניות יש כמה פורמטים:
+   (1) goal עם "(ג׳ 13.10 בשעה 16:00, א׳ 18.10 בשעה 13:00)" לכל מסלול — מוריה;
+   (2) time עם תאריך ושעה לסירוגין: "בוקר 8.10 · 10:00 · אחה"צ 9.10 · 18:00";
+   (3) time עם שעה לכל מועד לפי הסדר: "11:00 / 18:00", "9:00–10:00 · 16:30–17:30";
+   (4) שעה אחת לכל המועדים: "20:30–21:30".
+   מחזיר [{time, label}], או null כשהמועד שייך רק למסלול שאינו של המורה. */
+const HEB_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+function weekday(iso) {
+  const d = new Date(String(iso).slice(0, 10) + 'T12:00:00');
+  return isNaN(d) ? '' : 'יום ' + HEB_DAYS[d.getDay()];
+}
+function dmOf(iso) {
+  const m = String(iso).match(/^\d{4}-(\d{2})-(\d{2})/);
+  return m ? Number(m[2]) + '.' + Number(m[1]) : '';
+}
+const TIME_RE = /\d{1,2}:\d{2}(?:\s*[–-]\s*\d{1,2}:\d{2})?/;
+function sessionTimes(m, iso) {
+  const dm = dmOf(iso);
+  const hasDm = str => new RegExp('(^|[^\d.])' + dm.replace('.', '\.') + '(?![\d])').test(str);
+  const goal = String(m.goal || '');
+  if (/בשעה/.test(goal)) {
+    const all = [];
+    goal.split(' · ').forEach(seg => {
+      const mm = seg.match(/^\s*([^(]+?)\s*\(([^)]*)\)/);
+      if (!mm) return;
+      mm[2].split(',').forEach(part => {
+        const t = part.match(TIME_RE);
+        if (t && hasDm(part)) all.push({ time: t[0], label: mm[1].trim() });
+      });
+    });
+    if (!all.length) return [];
+    const type = teacher && teacher.type;
+    const isGmar = x => /גמר/.test(x.label);
+    const mine = type === 'gemer' ? all.filter(isGmar) : type === 'bagrut' ? all.filter(x => !isGmar(x)) : all;
+    return mine.length ? mine : null;
+  }
+  const time = String(m.time || '').trim();
+  if (!time || !TIME_RE.test(time)) return time ? [{ time: time, label: '' }] : [];
+  const parts = time.split(/\s*·\s*/);
+  // (2) תאריך ואחריו שעה
+  if (parts.some(hasDm)) {
+    for (let i = 0; i < parts.length; i++) {
+      if (!hasDm(parts[i])) continue;
+      const own = parts[i].match(TIME_RE);
+      if (own) return [{ time: own[0], label: '' }];
+      if (parts[i + 1] && TIME_RE.test(parts[i + 1])) return [{ time: parts[i + 1].match(TIME_RE)[0], label: '' }];
+    }
+    return [];
+  }
+  // (3) שעה לכל מועד לפי הסדר
+  const times = (time.match(new RegExp(TIME_RE.source, 'g')) || []);
+  const days = planDays(m);
+  if (times.length > 1 && times.length === days.length) {
+    const i = days.indexOf(String(iso).slice(0, 10));
+    if (i >= 0) return [{ time: times[i], label: '' }];
+  }
+  // (4) שעה אחת (או כמה) לכל המועדים
+  return [{ time: times.join(' / '), label: '' }];
+}
+
 function renderNext(scope, slug) {
   const sec = document.getElementById('next-sec');
   if (!sec) return;
@@ -372,7 +432,7 @@ function renderNext(scope, slug) {
   if (next.label) meta.push(next.label + (next.day ? ' · ' + next.day : ''));
   if (next.time) meta.push(next.time);
   if (next.note) meta.push(next.note);
-  document.getElementById('next-meta').textContent = meta.join(' · ');
+  document.getElementById('next-meta').textContent = meta.join(' · ');   // מוסתר (24.9.26) — התאריכים והשעות בשורות למטה
   const soon = document.getElementById('next-soon');
   const diff = Math.round((new Date(first) - new Date(today)) / 86400000);
   if (isToday) { soon.hidden = false; soon.textContent = 'היום! רושמים נוכחות עם הקוד שמוצג במפגש'; }
@@ -380,11 +440,16 @@ function renderNext(scope, slug) {
   // שורה לכל מועד, ולידה רישום הנוכחות — פעיל ביום ההדרכה עצמו
   const row = myRowToday(scope, slug);
   document.getElementById('next-sessions').innerHTML = days.filter(d => d >= today).map(d => {
+    const times = sessionTimes(next, d);
+    if (times === null) return '';        // מועד של מסלול אחר (בגרות/גמר) — לא של המורה הזו
     const act = d === today
       ? (row ? `<span class="ns-done">${esc(rowText(row))}</span>`
              : '<button type="button" class="btn btn-primary ns-btn ns-act" data-go-here>רישום נוכחות</button>')
       : `<span class="ns-wait">הרישום ייפתח ביום ההדרכה</span>`;
-    return `<div class="ns-row"${d === today ? ' data-today="1"' : ''}><span class="ns-when">${esc(dateLbl(d))}</span>${act}</div>`;
+    const when = `<span class="ns-when">${esc(weekday(d))} ${esc(dateLbl(d))}</span>`;
+    const tline = times.length ? `<span class="ns-times">${times.map(t =>
+      `<b>${esc(t.time)}</b>${t.label ? ' · ' + esc(t.label) : ''}`).join(' &nbsp;|&nbsp; ')}</span>` : '';
+    return `<div class="ns-row"${d === today ? ' data-today="1"' : ''}><span class="ns-info">${when}${tline}</span>${act}</div>`;
   }).join('');
   document.querySelectorAll('[data-go-here]').forEach(b => b.onclick = () => {
     const card = document.getElementById('th-card');
