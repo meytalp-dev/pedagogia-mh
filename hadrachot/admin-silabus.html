@@ -247,17 +247,20 @@ function copyText(btn, txt, label) {
 
 /* ---- הנוסחים ---- */
 function msgMissing(g) {
-  const who = g ? firstName(g.name) + ' שלום,' : 'שלום רב,';
-  const subj = g ? ' ב' + g.subject + ' (' + sectorsOf(g) + ')' : '';
-  return 'גמר חתימה טובה!\n\n' + who + '\n\n' +
-    'לקראת פתיחת מפגשי ההדרכה לשנת הלימודים תשפ"ז, נבקש לשלוח את הסילבוס השנתי של מפגשי ההדרכה' + subj + ':\n' +
-    '• מועדי המפגשים (תאריך, יום ושעה — ואם יש שני מועדים לבחירה, שניהם)\n' +
-    '• נושא קצר לכל מפגש\n\n' +
-    'התוכנית תופיע בדשבורד האישי שלך במנור' + (g ? ' (' + guideLink(g.slug) + ')' : '') + ', אצל המפקח.ת ובעמוד ההשתלמויות באתר המרחב הפדגוגי — ' +
-    'כך המורים רואים את המועדים מראש והנוכחות נרשמת מולם.\n\n' +
-    'אפשר לשלוח כקובץ (Word / PDF) או פשוט כטבלה, בתשובה להודעה הזו.\n\n' +
-    'תודה,\n' + SIGN;
+  /* נוסח קצר ואישי מהנייד של מיטל (24.9.26) — בלי חתימה רשמית */
+  const who = g ? 'הי ' + firstName(g.name) + ',' : 'הי,';
+  const sfx = g ? ({ f: 'י', m: '' }[GENDER[g.slug]] ?? '/י') : '/י';
+  const subj = g ? ' ב' + g.subject : '';
+  return who + ' גמר חתימה טובה!\n' +
+    'אשמח שתעביר' + sfx + ' לי את התוכנית השנתית שלך' + subj + '.\n' +
+    'תודה!';
 }
+/* מגדר לפנייה בנוסח הקצר; מי שלא ברשימה מקבל/ת "תעביר/י" */
+const GENDER = {
+  shira: 'f', sivan: 'f', moria: 'f', nira: 'f', dana: 'f', elisheva: 'f', tali: 'f',
+  sarah: 'f', rivka: 'f', dina: 'f', suha: 'f', rozin: 'f', rima: 'f', muzna: 'f',
+  wael: 'm', abed: 'm', khaled: 'm', moshe: 'm', suliman: 'm', mansour: 'm'
+};
 function msgGap(g, gaps) {
   return firstName(g.name) + ' שלום,\n\n' +
     'תודה על הסילבוס — הוא כבר מופיע בדשבורד שלך במנור ובעמוד ההשתלמויות (' + PLANS_URL + ').\n' +
@@ -360,7 +363,7 @@ function actionsFor(g, subject, body, slug) {
 
 function rowMissing(g, sent) {
   const body = document.getElementById('msg-missing').dataset.touched
-    ? document.getElementById('msg-missing').value.replace(/^(גמר חתימה טובה!\s*)?שלום רב,/, (m0, pre) => (pre || '') + firstName(g.name) + ' שלום,')
+    ? document.getElementById('msg-missing').value.replace(/^הי,/, 'הי ' + firstName(g.name) + ',')
     : msgMissing(g);
   const done = !!sent[g.slug];
   return '<div class="row ' + (done ? 'done' : '') + '">' +
