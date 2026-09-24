@@ -5,8 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מנור · ניהול פדגוגי — הדרכות מורים</title>
 <link rel="stylesheet" href="assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="assets/styles.css?v=20260924e">
+<link rel="stylesheet" href="assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
+<style>
+  /* ---- דלת הכניסה (24.9.26) — באותה שפה של מבט המורה: ירוק עמוק, לבן נקי ---- */
+  .mg-card { width: 100%; max-width: 440px; justify-self: center; align-self: center;
+    padding: 24px 22px 18px; border-top: 5px solid #4E6B4D; box-shadow: 0 18px 44px rgba(20, 45, 30, .14); }
+  .mg-brand { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #4E6B4D; font-weight: 700; font-size: 13px; }
+  .mg-brand img { height: 28px; width: auto; }
+  .mg-title { margin: 0 0 4px; font-size: 21px; color: #2F4A2E; }
+  .mg-sub { margin: 0 0 16px; font-size: 13.5px; line-height: 1.6; color: var(--text-muted); }
+  .mg-steps { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0 0 16px; }
+  .mg-steps li { flex: 1; display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 10px;
+    background: #F3F6F2; color: #7A8C79; font-size: 12.5px; font-weight: 600; }
+  .mg-steps li b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: #D5E0D2; color: #3E5A3D; font-size: 11.5px; flex: none; }
+  .mg-steps li.on { background: #E5EDE3; color: #2F4A2E; }
+  .mg-steps li.on b { background: #4E6B4D; color: #fff; }
+  .mg-steps li.done b { background: #8CA68B; color: #fff; }
+  .mg-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-2); margin: 0 0 5px; }
+  .mg-card .input { width: 100%; box-sizing: border-box; }
+  .mg-code { text-align: center; font-size: 26px; letter-spacing: 9px; font-weight: 700; padding: 10px; }
+  .mg-btn { width: 100%; margin-top: 14px; }
+  .mg-card .btn-primary { background: #4E6B4D; border-color: #4E6B4D; }
+  .mg-card .btn-primary:hover { background: #3E5A3D; border-color: #3E5A3D; }
+  .mg-card .btn-primary[disabled] { opacity: .6; cursor: default; }
+  .mg-why { margin-top: 10px; font-size: 12.5px; line-height: 1.6; color: var(--text-muted);
+    background: #F3F6F2; border: 1px solid #E4ECE2; border-radius: 9px; padding: 9px 11px; }
+  .mg-link { display: block; margin: 10px auto 0; background: none; border: 0; padding: 0; cursor: pointer;
+    font-family: inherit; font-size: 13px; color: #4E6B4D; text-decoration: underline; }
+  .mg-msg { margin-top: 12px; font-size: 13px; line-height: 1.55; border-radius: 9px; padding: 9px 11px;
+    background: #FBECE8; color: #8f2f1c; }
+  .mg-msg.ok { background: #E5EDE3; color: #2F4A2E; }
+  .mg-msg[hidden], #mg-step1[hidden], #mg-step2[hidden], #mg-login[hidden], #mg-roles[hidden] { display: none; }
+  .mg-role-list { display: flex; flex-direction: column; gap: 8px; }
+  .mg-role { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px;
+    border: 1px solid #D5E0D2; border-inline-start: 4px solid #4E6B4D; border-radius: 12px; background: #fff;
+    text-decoration: none; color: inherit; transition: background .15s, border-color .15s; }
+  .mg-role:hover { background: #EEF3EC; border-color: #8CA68B; }
+  .mg-role b { display: block; font-size: 15px; color: #2F4A2E; }
+  .mg-role span { display: block; font-size: 13px; color: var(--text-2); margin-top: 2px; }
+  .mg-role svg { width: 18px; height: 18px; color: #4E6B4D; flex: none; }
+  .mg-teacher { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); display: flex;
+    justify-content: center; gap: 6px; font-size: 13.5px; color: var(--text-muted); }
+  .mg-teacher a { color: #4E6B4D; font-weight: 700; }
+  .mg-help { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+    flex-wrap: wrap; font-size: 13px; color: var(--text-muted); }
+  .mg-helpbtn { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border: 1.5px solid #D5E0D2;
+    border-radius: 999px; background: #fff; color: #3E5A3D; font-size: 13px; font-weight: 700; text-decoration: none; }
+  .mg-helpbtn:hover { border-color: #8CA68B; background: #EEF3EC; }
+  .mg-helpbtn svg { width: 15px; height: 15px; }
+</style>
 </head>
 <body data-role="ministry">
 
@@ -55,92 +104,57 @@
             מפגשים, תוכניות שנתיות וליווי אישי, מהכיתה ועד התמונה הארצית.
           </p>
 
-          <div class="compass-hero__actions" aria-label="פעולות ראשיות">
-            <a href="#lenses" class="compass-btn compass-btn--primary">
-              בחרי רמת מבט
-              <span aria-hidden="true">←</span>
-            </a>
-
-            <a href="#flow" class="compass-btn compass-btn--secondary">
-              צפייה בדשבורדים
-            </a>
-          </div>
         </div>
 
-        <div class="compass-hero__visual" aria-label="מפת רמות המבט במערכת">
-          <div class="compass-map">
-
-            <div class="compass-map__orbit compass-map__orbit--outer"></div>
-            <div class="compass-map__orbit compass-map__orbit--middle"></div>
-            <div class="compass-map__orbit compass-map__orbit--inner"></div>
-
-            <div class="compass-map__guide compass-map__guide--vertical"></div>
-            <div class="compass-map__guide compass-map__guide--horizontal"></div>
-            <div class="compass-map__guide compass-map__guide--diag-a"></div>
-            <div class="compass-map__guide compass-map__guide--diag-b"></div>
-
-            <div class="compass-map__needle" aria-hidden="true">
-              <div class="compass-map__needle-top"></div>
-              <div class="compass-map__needle-bottom"></div>
-              <div class="compass-map__pin"></div>
+        <!-- ==========================================================
+             דלת הכניסה (24.9.26, בקשת מיטל): במקום מפה של כל המבטים —
+             כל בעל תפקיד נכנס כמו המורה (מייל → קוד) ורואה רק את המבט שלו.
+             התפקיד מזוהה בשרת לפי המייל (staff.* ב-code.gs); הנעילה בכל
+             מבט — assets/staff.js. מורים ממשיכים בכניסה שלהם ב-teacher/.
+             ========================================================== -->
+        <section class="card mg-card" id="menor-gate" aria-labelledby="mg-title">
+          <div class="mg-brand"><img src="assets/menor-sail.png" alt="" aria-hidden="true"><span>כניסה למנור</span></div>
+          <div id="mg-login">
+            <h2 class="mg-title" id="mg-title">כניסה לבעלי תפקידים</h2>
+            <p class="mg-sub">מדריכים, מפקחים, מנהלים ומטה: מקלידים את המייל ומקבלים קוד. המערכת תפתח לך את המבט שלך — ורק אותו.</p>
+            <ol class="mg-steps" aria-label="שלבי הכניסה">
+              <li class="on" id="mg-st1"><b>1</b>המייל שלי</li>
+              <li id="mg-st2"><b>2</b>הקוד מהמייל</li>
+            </ol>
+            <div id="mg-step1">
+              <label class="mg-label" for="mg-email">המייל שלי</label>
+              <input class="input" id="mg-email" type="email" inputmode="email" autocomplete="email"
+                     placeholder="name@example.com" dir="ltr">
+              <button type="button" class="btn btn-primary mg-btn" id="mg-send">שליחת קוד למייל</button>
             </div>
-
-            <a class="compass-map__node compass-map__node--top" href="./ministry/">
-              <span class="compass-map__node-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 3v18M3 12h18" />
-                  <circle cx="12" cy="12" r="7" />
-                </svg>
-              </span>
-              <span class="compass-map__node-label">מבט ארצי</span>
-            </a>
-
-            <a class="compass-map__node compass-map__node--right" href="./admin-network/">
-              <span class="compass-map__node-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="6" cy="6" r="2.5" />
-                  <circle cx="18" cy="6" r="2.5" />
-                  <circle cx="12" cy="18" r="2.5" />
-                  <path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7" />
-                </svg>
-              </span>
-              <span class="compass-map__node-label">מבט רשת</span>
-            </a>
-
-            <a class="compass-map__node compass-map__node--bottom-right" href="./admin-school/">
-              <span class="compass-map__node-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 20h16M6 20V9l6-4 6 4v11" />
-                  <path d="M9 20v-6h6v6M8 10h2M14 10h2" />
-                </svg>
-              </span>
-              <span class="compass-map__node-label">מבט בית ספר</span>
-            </a>
-
-            <a class="compass-map__node compass-map__node--bottom-left" href="./guide/">
-              <span class="compass-map__node-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <rect x="7" y="4" width="10" height="16" rx="2" />
-                  <path d="M10 8h4M10 12h4M10 16h2" />
-                </svg>
-              </span>
-              <span class="compass-map__node-label">מבט מקצועי</span>
-            </a>
-
-            <a class="compass-map__node compass-map__node--left" href="./checkin/">
-              <span class="compass-map__node-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="12" cy="8" r="3" />
-                  <path d="M5 20c1.2-4 12.8-4 14 0" />
-                </svg>
-              </span>
-              <span class="compass-map__node-label">נוכחות מורה</span>
-            </a>
-
+            <div id="mg-step2" hidden>
+              <label class="mg-label" for="mg-code">הקוד בן 6 הספרות שקיבלת במייל</label>
+              <input class="input mg-code" id="mg-code" inputmode="numeric" maxlength="6"
+                     autocomplete="one-time-code" placeholder="000000">
+              <div class="mg-why">לא מוצאים? כדאי לבדוק גם בתיקיית הספאם / קידומי מכירות.</div>
+              <button type="button" class="btn btn-primary mg-btn" id="mg-verify">כניסה</button>
+              <button type="button" class="mg-link" id="mg-back">מייל אחר / שליחה חוזרת</button>
+            </div>
           </div>
-
-          <p class="compass-hero__hint">כל נקודה במפה מובילה לדשבורד אחר</p>
-        </div>
+          <!-- מחובר/ת — רק המבטים שלך (מי שיש לו מבט אחד עובר אליו ישר) -->
+          <div id="mg-roles" hidden>
+            <h2 class="mg-title" id="mg-hello">שלום</h2>
+            <p class="mg-sub">המבטים שלך במנור:</p>
+            <div class="mg-role-list" id="mg-role-list"></div>
+            <button type="button" class="mg-link" id="mg-out">זה לא אני — יציאה</button>
+          </div>
+          <div class="mg-msg" id="mg-msg" role="status" aria-live="polite" hidden></div>
+          <div class="mg-teacher">
+            <span>מורה?</span>
+            <a href="teacher/">הכניסה למבט המורה</a>
+          </div>
+          <div class="mg-help">
+            <span>שאלה או קושי בכניסה?</span>
+            <a class="mg-helpbtn" href="https://wa.me/972536256653" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              כתבו לנו</a>
+          </div>
+        </section>
 
       </div>
     </section>
@@ -192,97 +206,6 @@
             <div class="label">מקצועות עיוניים</div>
             <div class="value metric-number">7</div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Role Lenses -->
-    <section class="lenses-section" id="lenses">
-      <div class="lenses-head">
-        <div>
-          <h2 class="compass-h2">בחרי את רמת המבט שלך</h2>
-          <p class="sub">כל משתמשת רואה את המידע ברזולוציה המתאימה לה — מהמורה הבודדת עד לכל הארץ.</p>
-        </div>
-      </div>
-
-      <div class="lenses-grid">
-        <!-- Large row: Ministry full width -->
-        <a class="lens lens-large" href="ministry/" style="display:grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center;">
-          <div class="lens-icon-box" aria-hidden="true" style="margin-bottom:0; width:56px; height:56px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px; height:26px;"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <div>
-            <div class="lens-label" style="margin-bottom:6px;">מבט ארצי · המפקחת הארצית</div>
-            <div class="lens-title" style="margin-bottom:6px;">תמונה חוצת־רשתות של נוכחות, פערים ודוחות</div>
-            <div class="lens-desc" style="margin-bottom:0;">9 רשתות · סינון לפי מקצוע · שליחת דוחות לכל רשת · זיהוי בתי ספר חלשים</div>
-          </div>
-          <span class="lens-cta" style="margin-top:0; white-space:nowrap;">
-            כניסה
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          </span>
-        </a>
-
-        <!-- Row of 4 -->
-        <div class="lenses-row">
-          <a class="lens lens-medium-1" href="admin-network/">
-            <div class="lens-icon-box" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v3M10 14l-3 3M14 14l3 3"/></svg>
-            </div>
-            <div class="lens-label">מבט רשת</div>
-            <div class="lens-title">מנהל/ת רשת</div>
-            <div class="lens-desc">השוואת בתי ספר וזיהוי מוקדי ליווי.</div>
-            <ul class="lens-bullets">
-              <li>אחוז נוכחות לפי בית ספר</li>
-              <li>פערים מול יעד</li>
-              <li>דוח רשת</li>
-            </ul>
-            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
-          </a>
-
-          <a class="lens lens-medium-2" href="admin-school/">
-            <div class="lens-icon-box" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M3 10l9-7 9 7M5 10v11M19 10v11M9 14h6v7H9z"/></svg>
-            </div>
-            <div class="lens-label">מבט בית ספר</div>
-            <div class="lens-title">מנהלת בית ספר</div>
-            <div class="lens-desc">מעקב אחר צוות המורות והיסטוריית ההדרכות.</div>
-            <ul class="lens-bullets">
-              <li>רשימת מורים</li>
-              <li>נוכחות לפי מקצוע</li>
-              <li>סטטוס אישי</li>
-            </ul>
-            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
-          </a>
-
-          <a class="lens lens-small-1" href="admin-school/">
-            <div class="lens-icon-box" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            </div>
-            <div class="lens-label">מבט מקצועי</div>
-            <div class="lens-title">רכזת פדגוגית</div>
-            <div class="lens-desc">מבט ממוקד מקצוע בבית הספר.</div>
-            <ul class="lens-bullets">
-              <li>פילטר מקצוע</li>
-              <li>מעקב מורות</li>
-              <li>תמונת מצב מהירה</li>
-            </ul>
-            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
-          </a>
-
-          <a class="lens lens-small-2" href="guide/">
-            <div class="lens-icon-box" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            </div>
-            <div class="lens-label">מבט פעולה</div>
-            <div class="lens-title">מדריכה מקצועית</div>
-            <div class="lens-desc">ניהול הדרכות, QR ונוכחות בזמן אמת.</div>
-            <ul class="lens-bullets">
-              <li>הדרכות קרובות</li>
-              <li>רישום נוכחות</li>
-              <li>שליחת קישור</li>
-            </ul>
-            <span class="lens-cta">כניסה <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
-          </a>
         </div>
       </div>
     </section>
@@ -413,6 +336,136 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (e) { /* silent */ }
 });
+</script>
+<script src="assets/guides.js?v=20260911"></script>
+<script src="assets/staff.js?v=20260924"></script>
+<script>
+/* דלת הכניסה (24.9.26) — מייל → קוד → המבט שלך. ראו assets/staff.js */
+(function () {
+  const $ = id => document.getElementById(id);
+  const qs = new URLSearchParams(location.search);
+  // ?next= חוזר רק לדף בתוך מנור — לא לאתר זר
+  const nextRaw = qs.get('next') || '';
+  const next = (nextRaw.indexOf(TS_staff.ROOT) === 0 && nextRaw.indexOf('//') < 0) ? nextRaw : '';
+  let email = '';
+
+  function msg(text, ok) {
+    const el = $('mg-msg');
+    el.textContent = text || '';
+    el.className = 'mg-msg' + (ok ? ' ok' : '');
+    el.hidden = !text;
+  }
+  function busy(btn, on, text) {
+    btn.disabled = on;
+    if (text) btn.textContent = text;
+  }
+  function step(n) {
+    $('mg-step1').hidden = n !== 1;
+    $('mg-step2').hidden = n !== 2;
+    $('mg-st1').className = n === 1 ? 'on' : 'done';
+    $('mg-st2').className = n === 2 ? 'on' : '';
+  }
+
+  const ERR = {
+    bad_input: 'כתובת המייל לא תקינה — כדאי לבדוק שוב.',
+    not_found: 'המייל הזה לא מוכר במנור. אם את/ה מדריכ/ה, מפקח.ת או מנהל/ת — כתבו לנו ונוסיף אותו. מורים נכנסים דרך "מבט המורה" למטה.',
+    cooldown: 'קוד נשלח לפני פחות מדקה — כדאי לבדוק במייל (וגם בספאם).',
+    quota: 'המערכת שלחה היום הרבה מיילים. אפשר לנסות שוב מחר, או לכתוב לנו.',
+    expired: 'הקוד פג או כבר שומש. אפשר לשלוח קוד חדש.',
+    too_many: 'יותר מדי ניסיונות. אפשר לשלוח קוד חדש.',
+    wrong_code: 'הקוד לא נכון — כדאי לבדוק שוב במייל.',
+    timeout: 'השרת לא ענה בזמן. אפשר לנסות שוב.'
+  };
+  const errText = e => ERR[e] || 'משהו השתבש. אפשר לנסות שוב, או לכתוב לנו.';
+
+  function go(url) { if (url) location.href = url; }
+
+  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function showRoles(s) {
+    const roles = (s.roles || []).filter(r => TS_staff.urlFor(r, s));
+    // ישר למבט: חזרה לדף שביקשו, או המבט היחיד
+    if (next) { location.replace(next); return; }
+    if (roles.length === 1) { location.replace(TS_staff.urlFor(roles[0], s)); return; }
+    $('mg-login').hidden = true;
+    $('mg-roles').hidden = false;
+    $('mg-hello').textContent = s.name ? 'שלום ' + s.name : 'שלום';
+    const list = roles.map(r => {
+      const l = TS_staff.label(r);
+      return '<a class="mg-role" href="' + esc(TS_staff.urlFor(r, s)) + '"><div><b>' + esc(l.title) +
+        '</b><span>' + esc(l.sub) + '</span></div>' + ARROW + '</a>';
+    });
+    // מטה — גם מרכז הניהול
+    if ((s.roles || []).some(r => r.role === 'ministry')) {
+      list.push('<a class="mg-role" href="admin.html"><div><b>מרכז הניהול</b><span>כל דפי האדמין והמבטים</span></div>' + ARROW + '</a>');
+    }
+    $('mg-role-list').innerHTML = list.join('') ||
+      '<p class="mg-sub">לא נמצא מבט פתוח עבורך. כתבו לנו ונסדר.</p>';
+  }
+
+  async function send() {
+    const btn = $('mg-send');
+    email = $('mg-email').value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg(ERR.bad_input); return; }
+    msg('');
+    busy(btn, true, 'שולחים…');
+    const r = await TS.apiPost('staff.codeSend', { email: email });
+    busy(btn, false, 'שליחת קוד למייל');
+    if (!r || !r.ok) {
+      if (r && r.error === 'cooldown') { step(2); }
+      msg(errText(r && r.error));
+      return;
+    }
+    step(2);
+    msg('שלחנו קוד ל-' + email + '. הוא תקף ל-20 דקות.', true);
+    $('mg-code').focus();
+  }
+
+  async function verify() {
+    const btn = $('mg-verify');
+    const code = $('mg-code').value.replace(/\D/g, '');
+    if (code.length !== 6) { msg('הקוד הוא 6 ספרות.'); return; }
+    msg('');
+    busy(btn, true, 'בודקים…');
+    const r = await TS.apiPost('staff.codeVerify', { email: email, code: code });
+    busy(btn, false, 'כניסה');
+    if (!r || !r.ok || !r.data || !r.data.key) { msg(errText(r && r.error)); return; }
+    const s = { k: r.data.key, email: r.data.email, name: r.data.name || '', roles: r.data.roles || [], at: Date.now() };
+    TS_staff.set(s);
+    if (r.data.auth && r.data.auth.token) TS.authSet(r.data.auth);   // המבט הארצי/הרשת
+    showRoles(s);
+  }
+
+  $('mg-send').addEventListener('click', send);
+  $('mg-email').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  $('mg-verify').addEventListener('click', verify);
+  $('mg-code').addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+  $('mg-back').addEventListener('click', () => { step(1); msg(''); $('mg-email').focus(); });
+  $('mg-out').addEventListener('click', () => TS_staff.logout());
+
+  // כבר מחובר/ת במכשיר הזה
+  const saved = TS_staff.get();
+  if (saved && saved.k) {
+    showRoles(saved);
+    // רענון התפקידים ברקע
+    TS.api('staff.self', { k: saved.k }, { cache: 'no' }).then(res => {
+      if (!res) return;
+      if (!res.ok && (res.error === 'bad_key' || res.error === 'no_roles')) {
+        TS_staff.clear();
+        $('mg-roles').hidden = true; $('mg-login').hidden = false; step(1);
+        return;
+      }
+      if (res.ok && res.data) {
+        saved.roles = res.data.roles; saved.name = res.data.name || saved.name;
+        TS_staff.set(saved);
+        if (!$('mg-roles').hidden) showRoles(saved);
+      }
+    }).catch(() => {});
+  } else if (next) {
+    msg('כדי לפתוח את הדף צריך להיכנס פעם אחת במכשיר הזה.', true);
+  }
+})();
 </script>
 </body>
 </html>

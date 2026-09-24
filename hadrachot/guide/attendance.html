@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>רישום נוכחות — ניהול פדגוגי</title>
+<!-- נעילה: רק בעל התפקיד שלו רואה את המבט (24.9.26) -->
+<script src="../assets/staff.js?v=20260924" data-view="guide"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924e">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
 .att-row {
@@ -48,7 +50,7 @@
 }
 </style>
 </head>
-<body>
+<body data-look="menor">
 <div class="app-shell">
 
   <header class="topbar">
@@ -149,5 +151,8 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script src="../assets/app.js"></script>
 <script src="attendance.js"></script>
+<!-- ערכת מבט המורה (24.9.26): "שאלה או קושי" -->
+<script>window.MENOR_VIEW = { view: 'attendance' };</script>
+<script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

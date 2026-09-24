@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>פערים ומעקב — מבט ארצי · מנור</title>
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924e">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
   /* ===== כרטיסי פער מקצוע ===== */
@@ -95,7 +95,7 @@
   .mini-link:hover { text-decoration: underline; }
 </style>
 </head>
-<body data-role="ministry">
+<body data-role="ministry" data-look="menor">
 
   <header class="command-bar">
     <div class="command-bar-left">
@@ -343,5 +343,11 @@
 <script src="../assets/app.js"></script>
 <script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="pearim.js"></script>
+<!-- ערכת מבט המורה (24.9.26): "שאלה או קושי" -->
+<script>window.MENOR_VIEW = { view: 'pearim', heads: [
+  { sel: '.section-head-flex h2', match: 'אין להם', icon: 'alert' },
+  { sel: '.section-head-flex h2', match: 'מטריצה', icon: 'grid' },
+  { sel: '.section-head-flex h2', icon: 'users' } ] };</script>
+<script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

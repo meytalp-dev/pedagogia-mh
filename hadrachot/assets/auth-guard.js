@@ -16,7 +16,19 @@
 
   // נתיב יחסי לשורש המערכת (login.html יושב בשורש training-supervision)
   const ROOT = location.pathname.replace(/\/(ministry|guide|admin-network|admin-school|checkin|teacher|knowledge)\/.*$|\/[^\/]*$/, '/');
-  const LOGIN = ROOT + 'login.html?next=' + encodeURIComponent(location.pathname + location.search);
+  // מ-24.9.26 הדלת היא דף הבית של מנור (מייל → קוד); login.html נשאר לכניסה בסיסמה
+  const LOGIN = ROOT + '?next=' + encodeURIComponent(location.pathname + location.search);
+
+  // כניסת בעלי התפקידים (staff.js, 24.9.26) — מתורגמת לתפקיד של הדף
+  function staffAsAuth() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); } catch (e) {}
+    if (!s || !s.k || !Array.isArray(s.roles)) return null;
+    if (s.roles.some(r => r.role === 'ministry')) return { role: 'ministry_admin', email: s.email, name: s.name };
+    const net = s.roles.filter(r => r.role === 'network')[0];
+    if (net) return { role: 'network_admin', networkId: net.network, email: s.email, name: s.name };
+    return { role: 'staff', email: s.email, name: s.name };
+  }
 
   function deny(text) {
     document.documentElement.innerHTML =
@@ -29,8 +41,11 @@
   }
 
   async function guard() {
-    if (!window.TS) return;                    // app.js לא נטען — לא חוסמים
-    const auth = TS.authGet();
+    // typeof ולא window.TS: app.js מגדיר const TS, שאינו נתלה על window — עד 24.9.26
+    // הבדיקה הזו החזירה תמיד והשומר לא נעל כלום
+    if (typeof TS === 'undefined') return;   // app.js לא נטען — לא חוסמים
+    let auth = TS.authGet();
+    const viaStaff = (!auth || !auth.token) ? staffAsAuth() : null;
 
     // בדיקה אם השרת בכלל תומך בהתחברות (פעם בשעה, נשמר ב-sessionStorage)
     let backendReady = sessionStorage.getItem('ts.authBackend');
@@ -43,17 +58,22 @@
     }
     if (backendReady === '0') return;          // מצב חסד — השרת עדיין בלי auth
 
-    if (!auth || !auth.token) { location.href = LOGIN; return; }
-
-    // אימות הטוקן מול השרת (ברקע — אם נפל, מפנים להתחברות)
-    TS.api('auth.verify', {}, { cache: 'no' }).then(res => {
-      if (!res || !res.ok) { TS.authClear(); location.href = LOGIN; }
-    });
+    if (viaStaff) {
+      auth = viaStaff;             // staff.js מאמת את המפתח ברקע בדף הבית ובמבטים
+    } else if (!auth || !auth.token) {
+      location.href = LOGIN; return;
+    } else {
+      // אימות הטוקן מול השרת (ברקע — אם נפל, מפנים להתחברות)
+      TS.api('auth.verify', {}, { cache: 'no' }).then(res => {
+        if (!res || !res.ok) { TS.authClear(); location.href = LOGIN; }
+      });
+    }
 
     // בדיקת תפקיד לדף (אדמין ארצי תמיד מורשה)
     if (allowedRoles.length &&
         auth.role !== 'ministry_admin' &&
         allowedRoles.indexOf(auth.role) < 0) {
+      if (viaStaff) { location.replace(ROOT); return; }   // הדלת תציג את המבטים שלך
       deny('החשבון ' + (auth.email || '') + ' (' + (auth.name || auth.role) + ') אינו מורשה לדף הזה. אם לדעתך זו טעות — פנה/י למיטל פלג.');
       return;
     }
@@ -84,7 +104,7 @@
 
   // כפתור יציאה קטן בפס העליון (אם קיים ומחוברים)
   function addLogout() {
-    const auth = TS && TS.authGet();
+    const auth = (TS && TS.authGet()) || staffAsAuth();
     if (!auth) return;
     const bar = document.querySelector('.command-bar-status');
     if (!bar) return;
@@ -92,7 +112,11 @@
     btn.textContent = 'יציאה';
     btn.title = 'התנתקות ' + (auth.email || '');
     btn.style.cssText = 'background:none;border:1px solid currentColor;border-radius:8px;padding:3px 10px;font-family:inherit;font-size:12px;cursor:pointer;color:inherit;margin-inline-start:10px;';
-    btn.onclick = () => { TS.authClear(); location.href = ROOT + 'login.html'; };
+    btn.onclick = () => {
+      TS.authClear();
+      try { localStorage.removeItem('ts.staff.v1'); } catch (e) {}
+      location.href = ROOT;
+    };
     bar.appendChild(btn);
   }
 

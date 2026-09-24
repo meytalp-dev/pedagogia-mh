@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>נוכחות במפגשי ההדרכה — מבט ארצי · מנור</title>
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924e">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <link rel="stylesheet" href="../assets/meet-view.css?v=20260920b">
 <style>
@@ -43,7 +43,7 @@
   .lead-note { background:var(--sand-soft,#F7F0E3); border:1px solid var(--sand,#E6D3AE); border-radius:12px; padding:12px 16px; font-size:.82rem; color:var(--text-muted); line-height:1.8; margin-bottom:16px; }
 </style>
 </head>
-<body data-role="ministry">
+<body data-role="ministry" data-look="menor">
 
   <header class="command-bar">
     <div class="command-bar-left">
@@ -174,5 +174,12 @@
 <script src="../assets/meet-stats.js?v=20260920b"></script>
 <script src="../assets/meet-view.js?v=20260920b"></script>
 <script src="nochechut.js?v=20260920"></script>
+<!-- ערכת מבט המורה (24.9.26): "שאלה או קושי" -->
+<script>window.MENOR_VIEW = { view: 'nochechut', heads: [
+  { sel: '.nk-sec h2', match: 'מדריך', icon: 'user' },
+  { sel: '.nk-sec h2', match: 'בית ספר', icon: 'school' },
+  { sel: '.nk-sec h2', match: 'רשת', icon: 'network' },
+  { sel: '.nk-sec h2', icon: 'list' } ] };</script>
+<script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

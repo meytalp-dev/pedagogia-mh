@@ -65,6 +65,8 @@ const SCHEMA = {
   // כניסת המורה המאומתת (21.9.26) — קוד חד-פעמי במייל. codeHash ולא הקוד
   // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
   teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt'],
+  // כניסת בעלי התפקידים (24.9.26) — אותו מנגנון, לפי מייל ולא לפי מזהה מורה
+  staff_codes:        ['id','email','codeHash','tries','usedAt','expiresAt','createdAt'],
   // מחברת הידע של המורה (24.9.26) — פרטית למורה; files = JSON של [{fileId,name,url,mimeType,size}]
   teacher_notes:      ['id','teacherId','date','meetingTopic','title','text','files','createdAt','updatedAt'],
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
@@ -212,6 +214,8 @@ const PUBLIC_ACTIONS = new Set([
   // מבט המורה — ההרשאה בפנים: קוד במייל (codeSend/codeVerify) או מפתח חתום (k).
   // בלי זה הדף היה נסגר ברגע שתידלק AUTH_ENFORCED.
   'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
+  // כניסת בעלי התפקידים (24.9.26) — קוד במייל או מפתח חתום; ההרשאה בפנים
+  'staff.codeSend', 'staff.codeVerify', 'staff.self',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete'
 ]);
@@ -989,6 +993,10 @@ function handleRequest(params) {
       case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
       case 'teacher.self':        result = teacherSelf(params); break;
       case 'teacher.here':        result = teacherHere(params); break;
+      // כניסת בעלי התפקידים — מייל → קוד → המבט של כל אחד (24.9.26)
+      case 'staff.codeSend':      result = staffCodeSend(params); break;
+      case 'staff.codeVerify':    result = staffCodeVerify(params); break;
+      case 'staff.self':          result = staffSelf(params); break;
       case 'notes.list':          result = notesList(params); break;
       case 'notes.save':          result = notesSave(params); break;
       case 'notes.delete':        result = notesDelete(params); break;
@@ -4952,4 +4960,234 @@ function notesFileDelete(p) {
   try { DriveApp.getFileById(p.fileId).setTrashed(true); } catch (e) {}
   updateRowById('teacher_notes', row.id, { files: JSON.stringify(keep), updatedAt: new Date().toISOString() });
   return { ok: true, data: { fileId: String(p.fileId) } };
+}
+
+/* ============================================================
+   כניסת בעלי התפקידים (24.9.26, בקשת מיטל) — אותה דלת כמו של המורה.
+   מדריכ/ה, מפקח.ת, מנהל/ת, רשת ומטה: מקלידים מייל → קוד 6 ספרות במייל →
+   מפתח חתום שנשמר במכשיר. המערכת מזהה לבד מי זה ופותחת רק את המבט שלו/ה.
+
+   מאיפה התפקידים (הכול מהשרת, שום דבר מהדפדפן):
+     users            — מטה (ministry_admin), רשת, מנהל/ת שנרשמו בסיסמה
+     contacts         — מדריכים (guide:<slug>) ומפקחים (inspector:<slug>)
+     MONTHLY_RECIPIENTS (נמענים.js, לא בגיט) — מנהלי 64 בתי הספר, המפקחים
+                        לפי שם, ומקבלי המבט הכולל (= מטה)
+     schools.principalEmail — גיבוי למנהלים
+   מי שיש לו שורה פעילה ב-users מקבל בנוסף את הטוקן הרגיל — וכך המבט
+   הארצי ומבט הרשת (auth-guard) נפתחים בלי כניסה שנייה בסיסמה.
+
+   מכסת המייל משותפת עם כל מיילי המערכת (ג'ימייל ~100 ביום) — ולכן
+   תקרה יומית נפרדת, קירור לכל מייל, וכל מכשיר נכנס פעם אחת בלבד.
+   ============================================================ */
+
+const STAFF_CODE_TTL_MIN = 20;
+const STAFF_CODE_MAX_TRIES = 5;
+const STAFF_CODE_COOLDOWN_SEC = 60;
+const STAFF_CODE_DAILY_CAP = 40;
+
+function staffNormMail_(v) { return String(v || '').trim().toLowerCase(); }
+
+function staffB64_(s) {
+  return Utilities.base64EncodeWebSafe(String(s), Utilities.Charset.UTF_8).replace(/=+$/, '');
+}
+function staffUnB64_(s) {
+  let t = String(s || '');
+  while (t.length % 4) t += '=';
+  return Utilities.newBlob(Utilities.base64DecodeWebSafe(t)).getDataAsString('UTF-8');
+}
+
+// המפתח נושא את המייל (כדי לא לסרוק את כל הרשימות בכל בקשה) + חתימה
+function staffKey_(email) {
+  const e = staffNormMail_(email);
+  return staffB64_(e) + '.' + meetHmacHex_('staff:' + e).slice(0, 24);
+}
+function staffEmailByKey_(k) {
+  const parts = String(k || '').trim().split('.');
+  if (parts.length !== 2 || !/^[a-f0-9]{24}$/.test(parts[1])) return '';
+  let e = '';
+  try { e = staffNormMail_(staffUnB64_(parts[0])); } catch (err) { return ''; }
+  if (!e || e.indexOf('@') < 0) return '';
+  return meetSafeEqual_(meetHmacHex_('staff:' + e).slice(0, 24), parts[1]) ? e : '';
+}
+
+/* כל התפקידים של מייל אחד. מחושב מחדש בכל כניסה — שינוי בגיליון (מנהל/ת
+   חדש/ה, מדריכ/ה שהוחלף/ה) חל מיד, בלי להנפיק מפתח חדש. */
+function staffRolesFor_(email) {
+  const e = staffNormMail_(email);
+  const roles = [];
+  let name = '';
+  const seen = {};
+  function add(r) {
+    const id = [r.role, r.slug || '', r.school || '', r.network || ''].join('|');
+    if (seen[id]) return;
+    seen[id] = true;
+    if (!name && r.person) name = r.person;
+    delete r.person;
+    roles.push(r);
+  }
+  if (!e) return { roles: roles, name: '' };
+
+  readAll('users').forEach(u => {
+    if (staffNormMail_(u.email) !== e || String(u.active).toUpperCase() === 'FALSE') return;
+    const person = String(u.name || '').trim();
+    if (u.role === ROLES.MINISTRY_ADMIN) add({ role: 'ministry', person: person });
+    else if (u.role === ROLES.NETWORK_ADMIN && u.networkId)
+      add({ role: 'network', network: String(u.networkId).replace(/^net_/, ''), person: person });
+    else if ((u.role === ROLES.SCHOOL_ADMIN || u.role === ROLES.SUBJECT_COORDINATOR) && u.schoolId)
+      add({ role: 'principal', school: String(u.schoolId), person: person });
+  });
+
+  try {
+    readAll('contacts').forEach(c => {
+      if (staffNormMail_(c.email) !== e) return;
+      const kind = String(c.kind || '').trim();
+      const slug = meetSlug_(c.slug);
+      if (!slug) return;
+      if (kind === 'guide') add({ role: 'guide', slug: slug, person: String(c.name || '').trim() });
+      if (kind === 'inspector') add({ role: 'inspector', slug: slug, person: String(c.name || '').trim() });
+    });
+  } catch (err) { /* אין טאב contacts — ממשיכים */ }
+
+  const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
+  (R.overview || []).forEach(o => {
+    if (staffNormMail_(o.email) === e) add({ role: 'ministry', person: String(o.name || '') });
+  });
+  const pr = R.principals || {};
+  Object.keys(pr).forEach(sid => {
+    if (staffNormMail_(pr[sid].email) === e) add({ role: 'principal', school: sid, person: String(pr[sid].name || '') });
+  });
+  // המפקחים ב-נמענים.js לפי שם; הדפדפן ממפה שם → slug דרך TS_INSPECTORS
+  if (!roles.some(r => r.role === 'inspector')) {
+    const ins = R.inspectors || {};
+    Object.keys(ins).forEach(n => {
+      if (staffNormMail_(ins[n]) === e) add({ role: 'inspector', name: n, person: n });
+    });
+  }
+  const schools = readAll('schools');
+  schools.forEach(s => {
+    if (staffNormMail_(s.principalEmail) === e)
+      add({ role: 'principal', school: String(s.id), person: String(s.principalName || '') });
+  });
+  // שמות לתצוגה בדלת הכניסה ("מבט בית ספר · <שם>")
+  const schoolName = {}, netName = {};
+  schools.forEach(s => { schoolName[String(s.id)] = String(s.name || ''); });
+  try { readAll('networks').forEach(n => { netName[String(n.id).replace(/^net_/, '')] = String(n.name || ''); }); } catch (err) {}
+  roles.forEach(r => {
+    if (r.school) r.label = schoolName[r.school] || '';
+    if (r.network) r.label = netName[r.network] || '';
+  });
+  return { roles: roles, name: name };
+}
+
+/* staff.codeSend — { email } → שולח קוד. מייל שלא מוכר → not_found
+   (קהל קטן וידוע; הודעה ברורה חשובה כאן יותר מהסתרה). */
+function staffCodeSend(p) {
+  const email = staffNormMail_(p.email);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_input' };
+  const who = staffRolesFor_(email);
+  if (!who.roles.length) return { ok: false, error: 'not_found' };
+
+  ensureTab_('staff_codes');
+  const now = Date.now();
+  const rows = readAll('staff_codes');
+  const mine = rows.filter(r => staffNormMail_(r.email) === email)
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
+  if (mine && (now - new Date(mine.createdAt).getTime()) < STAFF_CODE_COOLDOWN_SEC * 1000) {
+    return { ok: false, error: 'cooldown' };
+  }
+  if (MailApp.getRemainingDailyQuota() <= TEACHER_QUOTA_FLOOR) return { ok: false, error: 'quota' };
+  const today = new Date(now).toISOString().slice(0, 10);
+  if (rows.filter(r => String(r.createdAt || '').slice(0, 10) === today).length >= STAFF_CODE_DAILY_CAP) {
+    return { ok: false, error: 'quota' };
+  }
+
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  appendRow('staff_codes', {
+    id: newId('scode'), email: email,
+    codeHash: meetHmacHex_('scode:' + email + ':' + code),
+    tries: 0, usedAt: '',
+    expiresAt: new Date(now + STAFF_CODE_TTL_MIN * 60000).toISOString(),
+    createdAt: new Date(now).toISOString()
+  });
+
+  const hello = who.name ? 'שלום ' + who.name + ',' : 'שלום,';
+  MailApp.sendEmail({
+    to: email,
+    subject: 'קוד הכניסה שלך — מנור',
+    name: 'מנור · משרד העבודה',
+    body: hello + '\n\nקוד הכניסה שלך למנור: ' + code +
+      '\n\nהקוד תקף ל-' + STAFF_CODE_TTL_MIN + ' דקות.' +
+      '\nאם לא ביקשת להיכנס — אפשר להתעלם מההודעה.\n\n' +
+      'יחידת הפיקוח על הדרכות מורים · משרד העבודה',
+    htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#1b2a3a">' +
+      remindEsc_(hello) + '<br><br>קוד הכניסה שלך למנור:<br>' +
+      '<div style="font-size:30px;font-weight:bold;letter-spacing:5px;margin:12px 0;color:#2F4A2E">' + code + '</div>' +
+      'הקוד תקף ל-' + STAFF_CODE_TTL_MIN + ' דקות.<br>' +
+      'אם לא ביקשת להיכנס — אפשר להתעלם מההודעה.<br><br>' +
+      '<span style="color:#5C7182;font-size:13px">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span></div>'
+  });
+  return { ok: true, data: { sent: true, ttlMin: STAFF_CODE_TTL_MIN } };
+}
+
+/* staff.codeVerify — { email, code } → { key, roles, name, auth? } */
+function staffCodeVerify(p) {
+  const email = staffNormMail_(p.email);
+  const code = String(p.code || '').replace(/\D/g, '');
+  if (!email || code.length !== 6) return { ok: false, error: 'bad_input' };
+
+  ensureTab_('staff_codes');
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('staff_codes');
+  const rows = readAll('staff_codes');
+  const now = Date.now();
+  let hit = -1;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const r = rows[i];
+    if (staffNormMail_(r.email) !== email || r.usedAt) continue;
+    if (new Date(r.expiresAt).getTime() < now) continue;
+    hit = i; break;
+  }
+  if (hit < 0) return { ok: false, error: 'expired' };
+  const row = rows[hit];
+  if (Number(row.tries || 0) >= STAFF_CODE_MAX_TRIES) return { ok: false, error: 'too_many' };
+  const headers = SCHEMA['staff_codes'];
+  const rowNum = hit + 2;
+  if (!meetSafeEqual_(row.codeHash, meetHmacHex_('scode:' + email + ':' + code))) {
+    sheet.getRange(rowNum, headers.indexOf('tries') + 1).setValue(Number(row.tries || 0) + 1);
+    return { ok: false, error: 'wrong_code' };
+  }
+  sheet.getRange(rowNum, headers.indexOf('usedAt') + 1).setValue(new Date().toISOString());
+
+  const who = staffRolesFor_(email);
+  if (!who.roles.length) return { ok: false, error: 'not_found' };
+  const data = { key: staffKey_(email), email: email, name: who.name, roles: who.roles };
+
+  // חשבון users פעיל → גם הטוקן הרגיל (auth-guard של המבט הארצי/הרשת).
+  // טוקן תקף קיים נשמר — כדי לא לנתק מכשיר אחר שכבר מחובר בסיסמה.
+  const user = findUserByEmail_(email);
+  if (user) {
+    const valid = user.token && (!user.tokenExpires || new Date(user.tokenExpires) > new Date());
+    const tokenInfo = valid ? { token: user.token, expires: user.tokenExpires } : issueToken_(user);
+    const a = authPayload_(user, tokenInfo);
+    delete a.ok;
+    data.auth = a;
+  }
+  return { ok: true, data: data };
+}
+
+/* staff.self — { k } → התפקידים העדכניים. או { g, gk } — מפתח המדריכ/ה
+   (meetGuideKey_) של מי שאין לו/ה מייל במערכת: הקישור האישי שלו/ה
+   ממשיך לפתוח את המבט שלו/ה בלבד. */
+function staffSelf(p) {
+  if (p.g && p.gk) {
+    const slug = meetSlug_(p.g);
+    if (slug && meetSafeEqual_(String(p.gk), meetGuideKey_(slug))) {
+      return { ok: true, data: { email: '', name: '', roles: [{ role: 'guide', slug: slug, viaKey: true }] } };
+    }
+    return { ok: false, error: 'bad_key' };
+  }
+  const email = staffEmailByKey_(p.k);
+  if (!email) return { ok: false, error: 'bad_key' };
+  const who = staffRolesFor_(email);
+  if (!who.roles.length) return { ok: false, error: 'no_roles' };
+  return { ok: true, data: { email: email, name: who.name, roles: who.roles } };
 }

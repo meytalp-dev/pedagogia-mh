@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>הזנת מורים — מנהל בית ספר</title>
+<!-- נעילה: רק בעל התפקיד שלו רואה את המבט (24.9.26) -->
+<script src="../assets/staff.js?v=20260924" data-view="principal"></script>
 <link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
-<link rel="stylesheet" href="../assets/styles.css?v=20260924e">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924f">
 <link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
 <style>
 /* ---------- hero ---------- */
@@ -213,7 +215,7 @@
 }
 </style>
 </head>
-<body>
+<body data-look="menor">
 <div class="app-shell">
 
   <header class="topbar">
@@ -348,5 +350,8 @@
 
 <script src="../assets/app.js?v=20260914b"></script>
 <script src="setup.js?v=20260914b"></script>
+<!-- ערכת מבט המורה (24.9.26): "שאלה או קושי" בלבד — לא נוגע בזרימת הטופס -->
+<script>window.MENOR_VIEW = { view: 'setup' };</script>
+<script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

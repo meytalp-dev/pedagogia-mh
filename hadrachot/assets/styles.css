@@ -2753,3 +2753,164 @@ body .command-strip .cmd-metric-value.err,
 body .command-strip .stat-value.err { color: #A8452A; }
 body .command-strip .stat-value.info { color: var(--primary); }
 .home-loading { background: #EEF3EC; border-color: #CFDCCB; }
+
+/* ============================================================
+   ערכת העיצוב של מבט המורה — לכל המבטים (24.9.26)
+   ירוק הלוגו בגוון עמוק כצבע המוביל, כמו ב-teacher/index.html ("צבע, גרסה 3"):
+   כותרת עמוד לבנה עם פס ירוק, כותרות מקטע עם סמל לבן בשבב ירוק, כרטיסים
+   עם פס מרווה, כפתורים ירוקים. חל רק על דפים עם body[data-look="menor"]
+   (מבט ארצי, רשת, בית ספר, מדריכ/ה, מפקח.ת, טופס ההזנה והאימות).
+   מבט המורה עצמו לא מסומן — יש לו עקיפות משלו באותם ערכים.
+   ============================================================ */
+body[data-look="menor"] {
+  --primary: #4E6B4D;
+  --primary-dark: #2F4A2E;
+  --primary-soft: #E5EDE3;
+  --brand-primary: #4E6B4D;
+  --brand-secondary: #3E5A3D;
+  --brand-accent: #4E6B4D;
+  --border: #D5E0D2;
+  --border-soft: #E4ECE2;
+  --surface-soft: #F3F6F2;
+  --surface-2: #F3F6F2;
+  --bg-2: #F3F6F2;
+  --border-strong: #4E6B4D;
+  --gold-line: #D5E0D2;
+  --info: #4E6B4D;
+  --info-soft: #E5EDE3;
+  --sky-soft: #EEF3EC;
+  --role-accent: #4E6B4D;
+}
+/* כותרת העמוד — לבן נקי + פס ירוק, בלי קישוט */
+body[data-look="menor"] .page-header { background: #FFFFFF; border-color: #D5E0D2; border-inline-start: 6px solid #4E6B4D; }
+body[data-look="menor"] .page-header::after { display: none; }
+body[data-look="menor"] .page-header-eyebrow { color: #4E6B4D; }
+body[data-look="menor"] .page-header-eyebrow::before { background: #8CA68B; }
+body[data-look="menor"] .page-header h1 { color: #2F4A2E; }
+body[data-look="menor"] .page-compass-svg { display: none; }
+body[data-look="menor"] .page-compass-info strong { color: #2F4A2E; }
+/* פסים עליונים (טופס ההזנה, דף האימות) */
+body[data-look="menor"] .topbar::before { background: #4E6B4D; }
+body[data-look="menor"] .topbar-brand .system-name,
+body[data-look="menor"] .topbar-brand .role-label { color: #2F4A2E; }
+body[data-look="menor"] .status-dot { background: #4E6B4D; box-shadow: 0 0 0 3px #E5EDE3; }
+/* מפרידי המצפן */
+body[data-look="menor"] .compass-divider .label { color: #4E6B4D; }
+body[data-look="menor"] .compass-divider svg { color: #8CA68B; opacity: 1; }
+body[data-look="menor"] .compass-divider .line { background: repeating-linear-gradient(90deg, #D5E0D2 0 5px, transparent 5px 10px); }
+/* כותרות מקטע — סמל לבן בשבב ירוק מעוגל */
+body[data-look="menor"] .section-head-flex h2,
+body[data-look="menor"] .attention-head h3,
+body[data-look="menor"] .card-title,
+body[data-look="menor"] .guides-head,
+body[data-look="menor"] .resources-head,
+body[data-look="menor"] .space-card h2,
+body[data-look="menor"] .meet-card h2 { color: #2F4A2E; }
+body[data-look="menor"] .section-head-flex h2,
+body[data-look="menor"] .nk-sec h2 { display: flex; align-items: center; gap: 10px; color: #2F4A2E; }
+body[data-look="menor"] .mv-ico,
+body[data-look="menor"] .attention-head h3 > svg,
+body[data-look="menor"] .card-title > svg,
+body[data-look="menor"] .guides-head > svg,
+body[data-look="menor"] .resources-head > svg,
+body[data-look="menor"] .space-card h2 > svg,
+body[data-look="menor"] .meet-card h2 > svg {
+  box-sizing: content-box; width: 18px; height: 18px; padding: 6px; flex: none;
+  border-radius: 10px; background: #4E6B4D; color: #FFFFFF; opacity: 1;
+}
+/* כרטיסים — פס מרווה בצד ההתחלה */
+body[data-look="menor"] .card,
+body[data-look="menor"] .attention-card,
+body[data-look="menor"] .guides-card,
+body[data-look="menor"] .resources-card,
+body[data-look="menor"] .space-card,
+body[data-look="menor"] .meet-card,
+body[data-look="menor"] .subject-group,
+body[data-look="menor"] .school-group,
+body[data-look="menor"] .head-card,
+body[data-look="menor"] .setup-hero {
+  border-color: #D5E0D2; border-inline-start: 4px solid #8CA68B;
+}
+body[data-look="menor"] .setup-hero { background: #FFFFFF; border-style: solid; border-width: 1px; border-inline-start-width: 6px; border-inline-start-color: #4E6B4D; }
+/* כפתורים ירוקים */
+body[data-look="menor"] .btn-primary { background: #4E6B4D; border-color: #4E6B4D; color: #fff; }
+body[data-look="menor"] .btn-primary:hover { background: #3E5A3D; border-color: #3E5A3D; }
+body[data-look="menor"] .btn-secondary:hover { background: #EEF3EC; border-color: #8CA68B; }
+body[data-look="menor"] .subject-pill.active { background: #4E6B4D; border-color: #4E6B4D; color: #fff; }
+body[data-look="menor"] .subject-pill:hover { color: #2F4A2E; border-color: #8CA68B; }
+body[data-look="menor"] .tab-btn.active { color: #2F4A2E; border-bottom-color: #4E6B4D; }
+body[data-look="menor"] .tab-btn .n { background: #4E6B4D; }
+/* טבלאות */
+body[data-look="menor"] .table th,
+body[data-look="menor"] .attention-table th { background: #F3F6F2; color: #2F4A2E; }
+body[data-look="menor"] .table tbody tr:hover { background: #F6F9F5; }
+/* שורות — לבן עם פס מרווה */
+body[data-look="menor"] .h-row,
+body[data-look="menor"] .guide-mini,
+body[data-look="menor"] .msg,
+body[data-look="menor"] .resource-link {
+  background: #FFFFFF; border-color: #D5E0D2; border-inline-start: 4px solid #8CA68B;
+}
+body[data-look="menor"] .resource-link:hover { border-color: #8CA68B; }
+body[data-look="menor"] .resource-link .ic.drive,
+body[data-look="menor"] .resource-link .ic.zoom { background: #EEF3EC; color: #4E6B4D; }
+/* כרטיס "המפגש הבא" של המדריכ/ה — ירוק עמוק במקום הטורקיז הכהה */
+body[data-look="menor"] .nm-card { background: #3E5A3D; }
+body[data-look="menor"] .nm-card.today { background: #2F4A2E; }
+body[data-look="menor"] .nm-btn.primary { color: #2F4A2E; }
+body[data-look="menor"] .ql-btn svg { color: #4E6B4D; }
+body[data-look="menor"] .ql-btn:hover { border-color: #8CA68B; background: #EEF3EC; }
+/* ספרות בפרדוקה, כמו אצל המורה */
+body[data-look="menor"] .cmd-metric-value,
+body[data-look="menor"] .stat-value { font-family: 'Fredoka', 'Heebo', sans-serif; }
+/* סרגל הניווט הדביק */
+body[data-look="menor"] .pn a.on { background: #4E6B4D; border-color: #4E6B4D; color: #fff; }
+body[data-look="menor"] .pn a:hover { background: #EEF3EC; border-color: #8CA68B; }
+body[data-look="menor"] .pn a.on:hover { background: #3E5A3D; color: #fff; }
+.pn[hidden] { display: none; }
+[data-mv-sec] { scroll-margin-top: calc(var(--pn-h, 56px) + 14px); }
+@media (max-width: 640px) {
+  body[data-look="menor"] .page-header { border-inline-start-width: 5px; }
+}
+
+/* ---- "שאלה או קושי" + הסיור — משותפים לכל המבטים (זהים למבט המורה) ---- */
+.page-help { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  margin: 24px 0 20px; padding: 16px 20px; border: 1px solid #D5E0D2; border-radius: 14px; background: #FFFFFF;
+  border-inline-start: 4px solid #8CA68B; }
+.ph-text { display: flex; flex-direction: column; gap: 3px; font-size: 14px; color: var(--text-2); }
+.ph-text b { color: #2F4A2E; font-size: 15px; }
+.ph-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.helpbtn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; border: 1.5px solid #D5E0D2;
+  border-radius: 999px; background: #fff; color: #3E5A3D; font-size: 13.5px; font-weight: 700; text-decoration: none;
+  font-family: inherit; cursor: pointer; }
+.helpbtn:hover { border-color: #8CA68B; background: #EEF3EC; text-decoration: none; }
+.helpbtn svg { width: 15px; height: 15px; }
+.tour-hole { position: fixed; z-index: 9998; border-radius: 14px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(20, 35, 20, 0.55); outline: 3px solid #8CA68B;
+  transition: top .3s ease, left .3s ease, width .3s ease, height .3s ease; }
+.tour-box { position: fixed; z-index: 9999; background: #fff; border-radius: 14px; padding: 16px 18px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.25); border-top: 4px solid #4E6B4D; transition: top .3s ease, left .3s ease; }
+.tour-box h3 { margin: 2px 0 6px; font-size: 17px; color: #2F4A2E; }
+.tour-box p { margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: var(--text-1, #1f2d2a); }
+.tour-count { font-size: 12px; font-weight: 700; color: #6E8A6D; }
+.tour-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tour-actions button { font-family: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; border-radius: 999px; padding: 7px 16px; }
+.tour-next { background: #4E6B4D; color: #fff; border: 1px solid #4E6B4D; }
+.tour-prev { background: #fff; color: #3E5A3D; border: 1px solid #D5E0D2; }
+.tour-skip { background: none; border: 0; color: var(--text-muted); text-decoration: underline; margin-inline-start: auto; }
+.tour-intro { position: fixed; inset: 0; z-index: 10000; background: rgba(20, 35, 20, 0.55);
+  display: grid; place-items: center; padding: 16px; }
+.ti-card { background: #fff; border-radius: 18px; max-width: 440px; width: 100%; padding: 26px 24px 20px;
+  text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,.3); border-top: 5px solid #4E6B4D; }
+.ti-card img { height: 54px; width: auto; margin-bottom: 8px; }
+.ti-card h2 { margin: 0 0 8px; font-size: 21px; color: #2F4A2E; }
+.ti-card p { margin: 0 0 18px; font-size: 14.5px; line-height: 1.65; color: var(--text-1, #1f2d2a); }
+.ti-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.ti-go { width: 100%; max-width: 260px; padding: 11px 18px; border-radius: 999px; border: 0; cursor: pointer;
+  background: #4E6B4D; color: #fff; font-family: inherit; font-size: 15.5px; font-weight: 700; }
+.ti-go:hover { background: #3E5A3D; }
+.ti-skip { background: none; border: 0; cursor: pointer; font-family: inherit; font-size: 14px;
+  color: var(--text-muted); text-decoration: underline; padding: 6px; }
+.ti-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+.mv-tour-link { display: inline-block; margin-top: 10px; background: none; border: 0; padding: 0; cursor: pointer;
+  color: #4E6B4D; font-weight: 700; font-size: 13px; text-decoration: underline; font-family: inherit; }
