@@ -179,7 +179,7 @@
 <script src="assets/app.js?v=20260916"></script>
 <script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="assets/guides.js?v=20260908"></script>
-<script src="assets/plans.js?v=20260924"></script>
+<script src="assets/plans.js?v=20260924b"></script>
 <script src="assets/guides-contact.js?v=20260909"></script>
 <script>
 /* ============================================================
@@ -249,13 +249,13 @@ function copyText(btn, txt, label) {
 function msgMissing(g) {
   const who = g ? firstName(g.name) + ' שלום,' : 'שלום רב,';
   const subj = g ? ' ב' + g.subject + ' (' + sectorsOf(g) + ')' : '';
-  return who + '\n\n' +
+  return 'גמר חתימה טובה!\n\n' + who + '\n\n' +
     'לקראת פתיחת מפגשי ההדרכה לשנת הלימודים תשפ"ז, נבקש לשלוח את הסילבוס השנתי של מפגשי ההדרכה' + subj + ':\n' +
     '• מועדי המפגשים (תאריך, יום ושעה — ואם יש שני מועדים לבחירה, שניהם)\n' +
     '• נושא קצר לכל מפגש\n\n' +
     'התוכנית תופיע בדשבורד האישי שלך במנור' + (g ? ' (' + guideLink(g.slug) + ')' : '') + ', אצל המפקח.ת ובעמוד ההשתלמויות באתר המרחב הפדגוגי — ' +
     'כך המורים רואים את המועדים מראש והנוכחות נרשמת מולם.\n\n' +
-    'אפשר לשלוח כקובץ (Word / PDF) או פשוט כטבלה במייל חוזר.\n\n' +
+    'אפשר לשלוח כקובץ (Word / PDF) או פשוט כטבלה, בתשובה להודעה הזו.\n\n' +
     'תודה,\n' + SIGN;
 }
 function msgGap(g, gaps) {
@@ -360,7 +360,7 @@ function actionsFor(g, subject, body, slug) {
 
 function rowMissing(g, sent) {
   const body = document.getElementById('msg-missing').dataset.touched
-    ? document.getElementById('msg-missing').value.replace(/^שלום רב,/, firstName(g.name) + ' שלום,')
+    ? document.getElementById('msg-missing').value.replace(/^(גמר חתימה טובה!\s*)?שלום רב,/, (m0, pre) => (pre || '') + firstName(g.name) + ' שלום,')
     : msgMissing(g);
   const done = !!sent[g.slug];
   return '<div class="row ' + (done ? 'done' : '') + '">' +
