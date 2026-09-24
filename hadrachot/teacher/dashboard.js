@@ -38,6 +38,57 @@ let teacherKey = savedForOther_ ? '' : ((savedIdentity() || {}).k || '');
 let teacherId = teacherKey ? (savedIdentity() || {}).id
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
+
+/* ▸ הדמיה של רישום הנוכחות (24.9.26): teacher/?demo=1
+   מורה לדוגמה, "היום" יש הדרכה והרישום פתוח. הקוד הנכון בהדמיה: 1234.
+   שום בקשה לא יוצאת לשרת — TS.api/TS.apiPost מוחלפים בתשובות מקומיות. */
+const DEMO_ = TS.urlParam('demo', '') === '1';
+if (DEMO_) {
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
+  const mid = 'mt_moria_' + today.replace(/-/g, '');
+  const SELF = { id: 'demo_t', name: 'מורה לדוגמה', subject: 'עברית', type: 'bagrut', sector: 'kelali',
+    school: 'demo_s', schoolName: 'בית ספר לדוגמה' };
+  const SCOPE = { today: today, rows: [
+      { meetingId: 'mt_moria_20260915', guideSlug: 'moria', date: '2026-09-15', teacherId: 'demo_t', status: 'present' }],
+    hours: [], meetings: [
+    { id: 'mt_moria_20260915', guideSlug: 'moria', guideName: 'מוריה פלינט', date: '2026-09-15', topic: 'מפגש פתיחת שנה',
+      open: false, openUntil: 0, summary: '', takeaway: 'לפתוח כל שיעור בכתיבה חופשית של 5 דקות', hours: 0,
+      counts: { present: 1, absent: 0, pending: 0, gaps: 0, zoom: 0 } },
+    { id: mid, guideSlug: 'moria', guideName: 'מוריה פלינט', date: today, topic: 'אסטרטגיות לטקסטים ארוכים',
+      open: true, openUntil: Date.now() + 3 * 3600e3, summary: '', takeaway: '', hours: 0,
+      counts: { present: 0, absent: 0, pending: 0, gaps: 0, zoom: 0 } }] };
+  // בתוכנית של מוריה נוסף מועד "היום", כדי שתופיע גם השורה עם הכפתור ליד התאריך
+  const planFor = window.TS_planFor;
+  window.TS_planFor = slug => {
+    const plan = planFor ? planFor(slug) : null;
+    if (slug !== 'moria' || !plan) return plan;
+    const parts = today.split('-');
+    const dm = Number(parts[2]) + '.' + Number(parts[1]);
+    return Object.assign({}, plan, { meetings: [{ date: today, dates: [today], topic: 'אסטרטגיות לטקסטים ארוכים',
+      goal: '70% חיצוני (' + dm + ' בשעה 16:00): טקסטים ארוכים · 30% פנימי (' + dm + ' בשעה 17:00): תהליך הכתיבה' }]
+      .concat((plan.meetings || []).filter(x => (x.date2 || x.date) > today)) });
+  };
+  const reply = data => Promise.resolve({ ok: true, data: data });
+  TS.api = (action) => {
+    if (action === 'teacher.self' || action === 'teacher.get') return reply(SELF);
+    if (action === 'meet.scope') return reply(SCOPE);
+    if (action === 'guide.group') return reply({ files: [], messages: [
+      { authorName: 'מוריה פלינט', text: 'בהדמיה: כאן מופיעות הודעות מהמדריכה.', createdAt: new Date().toISOString() }] });
+    return reply([]);
+  };
+  TS.apiPost = (action, body) => new Promise(res => setTimeout(() => {
+    if (action === 'checkin.submit') {
+      res(String(body.code) === '1234' ? { ok: true, data: { duplicate: false } } : { ok: false, error: 'bad_code' });
+    } else res({ ok: false, error: 'demo' });
+  }, 700));
+  teacherKey = ''; teacherId = 'demo_t';
+  document.addEventListener('DOMContentLoaded', () => {
+    const bar = document.createElement('div');
+    bar.className = 'demo-bar';
+    bar.innerHTML = '<b>הדמיה</b> — מורה לדוגמה, היום יש הדרכה והרישום פתוח. הקוד שהמדריכה "מציגה במפגש": <b dir="ltr">1234</b>. אפשר לנסות גם קוד שגוי. שום דבר לא נשמר.';
+    document.body.insertBefore(bar, document.body.firstChild);
+  });
+}
 let attendance = [];
 let questions = [];
 let monthly = null;        // המשתתף/ת מתוך TS_meetStats — present · held · rate · חודשים
@@ -54,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     location.href = location.pathname;      // בלי ?id= — חוזר לטופס
   });
   if (!teacherId) { await showGate(); return; }
-  if (savedIdentity() && exit) exit.hidden = false;
+  if (savedIdentity() && exit && !DEMO_) exit.hidden = false;
   await load();
 });
 
@@ -233,7 +284,7 @@ async function load() {
   /* מהירות (24.9.26): כל בקשה ל-Apps Script לוקחת 3 עד 30 שניות, ועד היום הן
      נשלחו אחת אחרי השנייה. עכשיו השאלות ונתוני המפגשים יוצאים יחד עם פרטי
      המורה (בית הספר שמור מהכניסה), והמסך מראה "טוען" במקום להיות ריק. */
-  const saved = savedForOther_ ? {} : (savedIdentity() || {});
+  const saved = (savedForOther_ || DEMO_) ? {} : (savedIdentity() || {});
   showLoading(true);
   if (saved.name) {
     const hello = document.getElementById('hello');
