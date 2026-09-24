@@ -322,6 +322,36 @@ async function load() {
   showLoading(false);
   questions = (qRes && qRes.data) || [];
   renderQuestions();
+  buildNav();
+}
+
+/* ▸ כפתורי ניווט למעלה (24.9.26) — רק למקטעים שמוצגים בפועל (מקטע ריק לא מוצג) */
+const NAV_ITEMS = [
+  ['next-sec', 'ההדרכה הבאה', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
+  ['th-card', 'רישום נוכחות', '<path d="M20 6L9 17l-5-5"/>'],
+  ['journey-sec', 'המסע שלי', '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'],
+  ['mat-sec', 'חומרים', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'],
+  ['msg-sec', 'הודעות', '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
+  ['ind-sec', 'הדרכה פרטנית', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 14.5-4 16 0"/>'],
+  ['kb-sec', 'מאגר הידע', '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'],
+  ['q-sec', 'שאלה למדריכ/ה', '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>']
+];
+let navObs = null;
+function buildNav() {
+  const nav = document.getElementById('teacher-nav');
+  const inner = document.getElementById('teacher-nav-inner');
+  const body = document.getElementById('teacher-body');
+  if (!nav || !inner || !body || body.hidden) return;
+  const shown = NAV_ITEMS.filter(([id]) => { const el = document.getElementById(id); return el && !el.hidden; });
+  inner.innerHTML = '<span class="pn-label">קפיצה אל</span>' + shown.map(([id, label, icon]) =>
+    `<a href="#${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icon}</svg>${label}</a>`).join('');
+  nav.hidden = !shown.length;
+  if (navObs) navObs.disconnect();
+  const links = [...inner.querySelectorAll('a')];
+  navObs = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-20% 0px -70% 0px' });
+  shown.forEach(([id]) => navObs.observe(document.getElementById(id)));
 }
 
 function showLoading(on) {
@@ -562,6 +592,7 @@ function renderGroup(g) {
       </div>`).join('');
     document.getElementById('msg-sec').hidden = false;
   }
+  buildNav();
 }
 
 /* "אני כאן" — מוצג רק ביום שבו לקבוצה של המורה יש מועד הדרכה.
