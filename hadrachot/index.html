@@ -139,6 +139,7 @@
                 <label class="mg-label" for="mg-kind">התפקיד שלי</label>
                 <select class="select" id="mg-kind">
                   <option value="">בוחרים תפקיד…</option>
+                  <option value="teacher">מורה</option>
                   <option value="guide">מדריכ/ה</option>
                   <option value="inspector">מפקח.ת</option>
                   <option value="principal">מנהל/ת בית ספר</option>
@@ -574,7 +575,11 @@ window.addEventListener('DOMContentLoaded', async () => {
       }
       else setMode(true);   // הרשימה לא נטענה — נשארת הקלדת מייל
     }).catch(() => setMode(true));
-  $('mg-kind').addEventListener('change', fillWho);
+  $('mg-kind').addEventListener('change', () => {
+    // מורים נכנסים בהרשמה שלהם (בית ספר → מקצוע → שם) — מעבר ישיר
+    if ($('mg-kind').value === 'teacher') { msg('עוברים לכניסת המורים…', true); location.href = 'teacher/'; return; }
+    fillWho();
+  });
   $('mg-mode').addEventListener('click', () => setMode(!byMail));
 
   async function send() {
