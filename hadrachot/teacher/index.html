@@ -164,7 +164,9 @@
   .tg-brand { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #4E6B4D; font-weight: 700; font-size: 13px; }
   .tg-brand img { height: 28px; width: auto; }
   .tg-steps { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0 0 18px; }
-  .tg-steps li { flex: 1; display: flex; align-items: center; gap: 6px; padding: 7px 8px; border-radius: 10px;
+  /* 28.9.26: המספר מעל התווית, בשורה אחת — ברוחב טלפון התוויות נשברו ל"הפרטים / שלי" */
+  .tg-steps li { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 4px; border-radius: 10px; text-align: center; white-space: nowrap;
     background: #F3F6F2; color: #7A8C79; font-size: 12.5px; font-weight: 600; }
   .tg-steps li b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
     background: #D5E0D2; color: #3E5A3D; font-size: 11.5px; flex: none; }
@@ -324,14 +326,14 @@
          ========================================================== -->
     <section class="card tg-card" id="teacher-gate" hidden>
       <!-- הרשמה ראשונית (24.9.26): פרטים → אימות מייל → השתלמות מקצועית (28.9.26) → סיור קצר בדף -->
-      <div class="tg-brand"><img src="../assets/menor-sail.png" alt="" aria-hidden="true"><span>מבט המורה</span></div>
-      <h2 class="tg-title">הרשמה למבט המורה של מנור</h2>
+      <div class="tg-brand"><img src="../assets/menor-sail.png" alt="" aria-hidden="true"><span>מנור</span></div>
+      <h2 class="tg-title">הרשמה למבט המורה</h2>
       <p class="tg-sub">נרשמים פעם אחת, בערך דקה. מכאן והלאה הדף ייפתח ישירות במכשיר הזה — עם ההדרכה הבאה שלך, רישום הנוכחות, והחומרים מהמדריכ/ה.</p>
       <ol class="tg-steps" aria-label="שלבי ההרשמה">
-        <li class="on" id="tg-st1"><b>1</b>הפרטים שלי</li>
-        <li id="tg-st2"><b>2</b>אימות המייל</li>
+        <li class="on" id="tg-st1"><b>1</b>פרטים</li>
+        <li id="tg-st2"><b>2</b>אימות מייל</li>
         <li id="tg-st3"><b>3</b>השתלמות</li>
-        <li id="tg-st4"><b>4</b>סיור קצר</li>
+        <li id="tg-st4"><b>4</b>סיור בדף</li>
       </ol>
 
       <div id="tg-step1">

@@ -164,6 +164,9 @@ function gateMsg(text, ok) {
 async function showGate(prefillId) {
   $g('teacher-gate').hidden = false;
   $g('teacher-body').hidden = true;
+  /* רשימת השמות נטענת כבר עכשיו, במקביל לבחירת בית הספר (28.9.26) —
+     עד היום הטעינה התחילה רק אחרי הבחירה ונמשכה עד 36 שניות */
+  rosterPromise = TS.api('teachers.roster', {}).catch(() => null);
   const res = await TS.api('schools.list', {});
   const list = (res && res.data ? res.data : [])
     .filter(s => s.name)
@@ -214,6 +217,7 @@ function gateStep(n) {
 /* סינון מקצוע (24.9.26): בבית ספר גדול רשימת השמות הייתה ארוכה מדי.
    בוחרים בית ספר → מקצוע → שם. מורה שמלמד/ת שני מקצועות מופיע/ה בשניהם. */
 let gateSchoolRows = [];
+let rosterPromise = null;
 
 async function onGateSchool() {
   const id = $g('tg-school').value;
@@ -228,8 +232,11 @@ async function onGateSchool() {
     return;
   }
   subjSel.disabled = true;
-  subjSel.innerHTML = '<option value="">טוען את רשימת המורים…</option>';
-  const res = await TS.api('teachers.list', { school: id });
+  subjSel.innerHTML = '<option value="">טוען את המקצועות…</option>';
+  /* teachers.roster: שמות בלבד לכל בתי הספר, נטען מראש. אם השרת עוד לא
+     מכיר אותה או שנכשלה — חוזרים ל-teachers.list של בית הספר */
+  let res = rosterPromise ? await rosterPromise : null;
+  if (!res || !res.ok) { rosterPromise = null; res = await TS.api('teachers.list', { school: id }); }
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
   /* תקלה בטעינה (24.9.26): עד היום תשובה שנכשלה הוצגה כ"בבית הספר הזה עוד לא
@@ -283,11 +290,16 @@ function onGateSubject() {
   nameSel.disabled = !gateTeachers.length;
   nameSel.innerHTML = '<option value="">בחרו את שמכם</option>' +
     gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
-  // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב
+  // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב.
+  // מחליפים שם → המייל שמולא אוטומטית מתחלף (או מתרוקן); מייל שהוקלד ביד נשאר.
   nameSel.onchange = () => {
     const t = gateTeachers.find(x => String(x.id) === nameSel.value);
     const mail = $g('tg-email');
-    if (t && t.email && String(t.email).indexOf('@') > 0 && !mail.value) mail.value = t.email;
+    const auto = mail.dataset.auto || '';
+    if (mail.value && mail.value !== auto) return;
+    const next = t && t.email && String(t.email).indexOf('@') > 0 ? String(t.email) : '';
+    mail.value = next;
+    mail.dataset.auto = next;
   };
 }
 
