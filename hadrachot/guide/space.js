@@ -326,7 +326,6 @@
      שניהם באותו מאגר. תיקיית הדרייב הקיימת של המדריכ/ה (guides.js → drive) מוצגת בראש.
      ================================================================ */
   const GENERAL = 'כללי';
-  const NEW_FOLDER = '__new__';
   let libSearch = '';
   let libOpen = null;        // תיקיות פתוחות — שורד ציור מחדש
 
@@ -356,25 +355,36 @@
     return { topics: topics, meetings: pf };
   }
 
-  function fillFolderSelect() {
-    const sel = document.getElementById('lib-folder');
-    if (!sel) return;
-    const keep = sel.value;
+  /* העלאה (מיטל 28.9.26): בוחרים קבצים → "לאיזו תיקייה?" — התיקיות הקיימות (כמו בדרייב),
+     המפגש הקרוב, כללי, או פתיחת תיקייה חדשה. מכפתור "העלאה לכאן" בתיקייה — בלי שאלה. */
+  let pendingFiles = null;
+  const ICON_DIR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg>';
+  function askFolder(files) {
+    pendingFiles = files;
     const F = allFolders();
-    const opt = (v, label) => `<option value="${esc(v)}">${esc(label || v)}</option>`;
-    sel.innerHTML =
-      (F.topics.length ? `<optgroup label="תיקיות נושא">${F.topics.map(f => opt(f)).join('')}</optgroup>` : '') +
-      (F.meetings.length ? `<optgroup label="לפי מפגש">${F.meetings.map(f => opt(f)).join('')}</optgroup>` : '') +
-      opt(GENERAL) + opt(NEW_FOLDER, '+ תיקייה חדשה…');
-    const all = [...F.topics, ...F.meetings, GENERAL, NEW_FOLDER];
-    sel.value = all.indexOf(keep) >= 0 ? keep : currentMeetingFolder();
-    if (!sel.value) sel.value = GENERAL;
-    document.getElementById('lib-newfolder').hidden = sel.value !== NEW_FOLDER;
+    const next = currentMeetingFolder();
+    const topLevel = Array.from(new Set(F.topics.map(f => f.split(' / ')[0])));
+    const btn = f => `<button type="button" data-pick="${esc(f)}">${ICON_DIR}<span>${esc(f)}</span></button>`;
+    document.getElementById('lib-ask-q').textContent = files.length === 1
+      ? 'לאיזו תיקייה להעלות את "' + files[0].name + '"?' : 'לאיזו תיקייה להעלות את ' + files.length + ' הקבצים?';
+    document.getElementById('lib-ask-list').innerHTML =
+      F.topics.map(btn).join('') + btn(GENERAL) +
+      (next && next !== GENERAL ? '<div class="sub-h">או לתיקיית המפגש הקרוב</div>' + btn(next) : '');
+    const box = document.getElementById('lib-ask');
+    box.hidden = false;
+    box.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => doUpload(b.dataset.pick === GENERAL ? '' : b.dataset.pick)));
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    void topLevel;
   }
-  function chosenFolder() {
-    const sel = document.getElementById('lib-folder');
-    if (sel.value === NEW_FOLDER) return document.getElementById('lib-newfolder').value.trim();
-    return sel.value === GENERAL ? '' : sel.value;
+  function closeAsk() {
+    pendingFiles = null;
+    document.getElementById('lib-ask').hidden = true;
+    document.getElementById('lib-newfolder').value = '';
+  }
+  function doUpload(folder) {
+    const files = pendingFiles;
+    closeAsk();
+    if (files && files.length) uploadFiles(files, folder);
   }
 
   function renderDriveCard() {
@@ -398,6 +408,9 @@
   }
   function countTree(n) { return n.files.length + Object.keys(n.kids).reduce((s, k) => s + countTree(n.kids[k]), 0); }
 
+  // "גרפים 371.pdf" מוצג בעברית כ-"pdf.371 גרפים" — הסיומת יורדת לשורת הפרטים
+  function extOf(n) { const m = /\.([A-Za-z0-9]{2,5})$/.exec(String(n || '')); return m ? m[1] : ''; }
+  function baseName(n) { return extOf(n) ? String(n).replace(/\.[A-Za-z0-9]{2,5}$/, '') : String(n || ''); }
   function fileRowHtml(f, folders) {
     const fromInsp = f.uploaderRole === 'inspector';
     const isLink = f.kind === 'link';
@@ -410,9 +423,9 @@
       <div class="file-row">
         <span class="fr-icon">${ICON_FILE}</span>
         <div class="fr-body">
-          <a class="fr-name" href="${esc(safeUrl(f.fileUrl))}" target="_blank" rel="noopener">${esc(f.fileName)}</a>
+          <a class="fr-name" href="${esc(safeUrl(f.fileUrl))}" target="_blank" rel="noopener">${esc(baseName(f.fileName))}</a>
           ${fromInsp ? '<span class="from-insp">מהמפקח.ת · רק לך</span>' : ''}
-          <div class="fr-meta">${meta} · ${fmtWhen(f.createdAt)}</div>
+          <div class="fr-meta">${extOf(f.fileName) ? '<bdi dir="ltr">' + esc(extOf(f.fileName).toUpperCase()) + '</bdi> · ' : ''}${meta} · ${fmtWhen(f.createdAt)}</div>
         </div>
         ${move}
         ${fromInsp ? '' : `<button type="button" class="row-del" data-del-file="${esc(f.id)}" title="מחיקה">מחיקה</button>`}
@@ -427,7 +440,7 @@
     return `
       <details class="lib-folder" data-folder="${esc(full)}"${open ? ' open' : ''}>
         <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          <span>${esc(node.name)}</span>${isMeeting && depth === 0 ? '<span class="auto">מפגש</span>' : ''}<span class="c">${countTree(node)}</span></summary>
+          <span>${esc(node.name)}</span>${isMeeting && depth === 0 ? '<span class="auto">מפגש</span>' : ''}<span class="c">${countTree(node)}</span><button type="button" class="up" data-up="${esc(full === GENERAL ? '' : full)}">+ העלאה לכאן</button></summary>
         <div class="lib-body">
           ${kids.map(k => folderHtml(node.kids[k], full, folders, depth + 1)).join('')}
           ${node.files.sort((a, b) => String(a.fileName).localeCompare(String(b.fileName), 'he', { numeric: true })).map(f => fileRowHtml(f, folders)).join('')}
@@ -438,7 +451,6 @@
   function renderFiles() {
     const el = document.getElementById('gfiles-list');
     const badge = document.getElementById('lib-count');
-    fillFolderSelect();
     renderDriveCard();
     if (loadFailed) { el.innerHTML = failBox(); bindRetry(el); return; }
     if (badge) { badge.textContent = data.files.length; badge.classList.toggle('zero', !data.files.length); }
@@ -465,6 +477,11 @@
       e.stopPropagation();
       if (d.open) libOpen.add(d.dataset.folder); else libOpen.delete(d.dataset.folder);
     }));
+    el.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      upTarget = b.dataset.up;
+      document.getElementById('gfile-input').click();
+    }));
     el.querySelectorAll('[data-del-file]').forEach(b => b.addEventListener('click', async () => {
       if (!confirm('למחוק את הקובץ מהמאגר? הוא ייעלם גם מהמורים.')) return;
       b.disabled = true;
@@ -483,28 +500,37 @@
     }));
   }
 
+  let upTarget = null;       // תיקייה שנבחרה מכפתור "העלאה לכאן" (null = לשאול)
+  function takeFiles(list) {
+    const files = Array.from(list || []);
+    if (!files.length) return;
+    if (upTarget !== null) { const f = upTarget; upTarget = null; uploadFiles(files, f); }
+    else askFolder(files);
+  }
   function initUpload() {
     const dz = document.getElementById('gdrop-zone');
     const input = document.getElementById('gfile-input');
-    dz.addEventListener('click', () => input.click());
-    input.addEventListener('change', () => { uploadFiles(input.files); input.value = ''; });
+    // השדה יושב בתוך האזור — הלחיצה שלו מבעבעת לכאן ואסור שתאפס את התיקייה שנבחרה
+    dz.addEventListener('click', e => { if (e.target === input) return; upTarget = null; input.click(); });
+    input.addEventListener('change', () => { takeFiles(input.files); input.value = ''; });
     ['dragenter', 'dragover'].forEach(ev => dz.addEventListener(ev, e => {
       e.preventDefault(); dz.classList.add('over');
     }));
     ['dragleave', 'drop'].forEach(ev => dz.addEventListener(ev, e => {
       e.preventDefault(); dz.classList.remove('over');
     }));
-    dz.addEventListener('drop', e => uploadFiles(e.dataTransfer.files));
-    const sel = document.getElementById('lib-folder');
-    sel.addEventListener('change', () => {
-      const nf = document.getElementById('lib-newfolder');
-      nf.hidden = sel.value !== NEW_FOLDER;
-      if (!nf.hidden) nf.focus();
-    });
+    dz.addEventListener('drop', e => { upTarget = null; takeFiles(e.dataTransfer.files); });
+    document.getElementById('lib-ask-cancel').addEventListener('click', closeAsk);
+    const go = () => {
+      const name = document.getElementById('lib-newfolder').value.trim();
+      if (!name) { document.getElementById('lib-newfolder').focus(); return; }
+      doUpload(name);
+    };
+    document.getElementById('lib-newfolder-go').addEventListener('click', go);
+    document.getElementById('lib-newfolder').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
     const search = document.getElementById('lib-search');
     search.addEventListener('input', () => { libSearch = search.value; renderFiles(); });
     document.getElementById('lib-link-add').addEventListener('click', addLink);
-    fillFolderSelect();
     renderDriveCard();
   }
 
@@ -515,8 +541,14 @@
     if (!/^https:\/\//.test(url)) { status.textContent = 'הקישור צריך להתחיל ב-https://'; return; }
     const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
     if (!(auth.k || auth.ge)) { status.textContent = 'הוספת קישור דורשת כניסה מהקישור האישי.'; return; }
-    if (document.getElementById('lib-folder').value === NEW_FOLDER && !chosenFolder()) { status.textContent = 'חסר שם לתיקייה החדשה.'; return; }
-    const folder = chosenFolder();
+    const tops = allFolders().topics;
+    const ans = window.prompt('לאיזו תיקייה להוסיף את הקישור?\n' + tops.concat([GENERAL]).map((f, i) => (i + 1) + '. ' + f).join('\n') +
+      '\n\nאפשר להקליד מספר, או שם של תיקייה חדשה:', '');
+    if (ans === null) return;
+    const n = Number(ans.trim());
+    if (/^\d+$/.test(ans.trim()) && !(n >= 1 && n <= tops.length + 1)) { status.textContent = 'אין תיקייה במספר הזה.'; return; }
+    const pick = /^\d+$/.test(ans.trim()) ? tops.concat([GENERAL])[n - 1] : ans.trim();
+    const folder = !pick || pick === GENERAL ? '' : pick;
     status.textContent = 'מוסיפה…';
     const res = await TS.apiPost('guide.file.link', Object.assign({}, auth, {
       guideName: GUIDE_CFG.name || '', fileName: name || url, fileUrl: url, folder: folder,
@@ -534,16 +566,11 @@
     }
   }
 
-  async function uploadFiles(fileList) {
+  async function uploadFiles(fileList, folder) {
     const files = Array.from(fileList || []);
     if (!files.length) return;
+    folder = folder || '';
     const status = document.getElementById('gfiles-status');
-    if (document.getElementById('lib-folder').value === NEW_FOLDER && !chosenFolder()) {
-      status.textContent = 'חסר שם לתיקייה החדשה.';
-      document.getElementById('lib-newfolder').focus();
-      return;
-    }
-    const folder = chosenFolder();
     const problems = [];
     let done = 0;
     const unsure = [];   // התשובה נפלה — אולי הקובץ עלה בכל זאת
@@ -582,9 +609,7 @@
       else problems.push(`העלאת "${name}" לא הושלמה — נסי שוב`);
     });
     if (libOpen) libOpen.add(folder || GENERAL);
-    document.getElementById('lib-newfolder').value = '';
     renderFiles();
-    if (folder) document.getElementById('lib-folder').value = folder;
     status.textContent = problems.join(' · ');
     if (done) TS.toast((done === 1 ? 'הקובץ נכנס' : done + ' קבצים נכנסו') + ' ל' + (folder || GENERAL));
   }

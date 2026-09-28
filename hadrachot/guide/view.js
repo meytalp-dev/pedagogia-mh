@@ -4,10 +4,10 @@ window.MENOR_VIEW = {
   view: 'guide',
   nav: [
     { sel: '#sec-month', label: 'החודש', icon: 'calendar' },
+    { sel: '#sec-library', label: 'מאגר החומרים', icon: 'folder' },
     { sel: '#sec-months', label: 'נוכחות לפי חודשים', icon: 'check' },
     // התוכנית השנתית (מיטל, 24.9.26) — יושבת מקופלת ב"כלים נוספים"; dashboard.js פותח אותה בלחיצה
     { sel: '#sec-tools', label: 'התוכנית השנתית', icon: 'calendar', open: 'tool-plan' },
-    { sel: '#sec-library', label: 'מאגר החומרים', icon: 'folder' },
     { sel: '#sec-space', label: 'הודעות לקבוצה', icon: 'chat' },
     { sel: '#sec-questions', label: 'שאלות מהמורים', icon: 'chat' },
     { sel: '#sec-teachers', label: 'המורים שלי', icon: 'users' },
