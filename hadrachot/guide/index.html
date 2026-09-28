@@ -741,8 +741,12 @@
     </section>
 
     <!-- 3. הודעות לקבוצה — נשמרות בעמוד הקבוצה ונשלחות במייל (space.js, 28.9.26: מייל במקום וואטסאפ) -->
-    <section class="gsec" id="sec-space">
-      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span>הודעות לקבוצה</span></h2><span class="n zero" id="space-count">0</span></div>
+    <!-- מתקפל (מיטל 28.9.26) — נפתח מ"אלפון המורים" או בלחיצה -->
+    <details class="gsec gfold" id="sec-space">
+      <summary>
+        <svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span>הודעות לקבוצה</span></h2><span class="n zero" id="space-count">0</span>
+        <span class="gfold-sub">הודעה במייל לכל המורים · רשימת התפוצה · אלפון</span>
+      </summary>
 
       <div class="space-grid">
         <section class="space-card">
@@ -768,7 +772,7 @@
           </div>
         </section>
       </div>
-    </section>
+    </details>
 
       </div>
     </section>
@@ -1130,7 +1134,7 @@
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="dashboard.js?v=20260928a"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20260928d"></script>
+<script src="space.js?v=20260928e"></script>
 <script src="meetings.js?v=20260928a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>

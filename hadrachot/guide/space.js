@@ -37,6 +37,8 @@
     if (alph) alph.addEventListener('click', e => {
       e.preventDefault();
       const d = document.getElementById('ml-alphon');
+      const sec = document.getElementById('sec-space');
+      if (sec) sec.open = true;
       if (d) d.open = true;
       document.getElementById('mail-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
