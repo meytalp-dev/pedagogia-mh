@@ -5396,10 +5396,21 @@ function guideFileLink(p) {
   if (!/^https:\/\/[^\s"'<>]+$/.test(url) || url.length > 1000) return { ok: false, error: 'bad_url' };
   const name = safeFileName_(p.fileName);
   ensureTab_('guide_files');
-  const dup = readAll('guide_files').find(f => String(f.guideSlug) === slug && String(f.fileUrl) === url);
-  if (dup) return { ok: true, data: { id: dup.id, duplicate: true } };
   const m = /drive\.google\.com|docs\.google\.com/.test(url)
     ? (/\/d\/([A-Za-z0-9_-]{20,})/.exec(url) || /[?&]id=([A-Za-z0-9_-]{20,})/.exec(url)) : null;
+  // קובץ שבבעלות המערכת (נגרר ידנית לתיקיית המדריכ/ה) — נפתח לצפייה בקישור, כמו כל העלאה.
+  // קובץ של מישהו אחר לא נוגעים בו (setSharing נכשל, וזה בסדר).
+  if (m) {
+    try {
+      const f = DriveApp.getFileById(m[1]);
+      if (f.getOwner() && f.getOwner().getEmail() === Session.getEffectiveUser().getEmail()) {
+        f.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      }
+    } catch (e) { /* אין גישה — הקישור נשמר כמו שהוא */ }
+  }
+  // כפילות — אחרי פתיחת הצפייה, כדי ששליחה חוזרת תתקן גם קובץ שנשאר פרטי
+  const dup = readAll('guide_files').find(f => String(f.guideSlug) === slug && String(f.fileUrl) === url);
+  if (dup) return { ok: true, data: { id: dup.id, duplicate: true } };
   const obj = {
     id: newId('gf'), guideSlug: slug, guideName: String(p.guideName || '').slice(0, 80),
     fileName: name, fileUrl: url, fileId: m ? m[1] : '',
