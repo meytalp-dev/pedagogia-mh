@@ -110,6 +110,7 @@
     border-radius: 9px; padding: 9px 12px; font-family: inherit; font-size: 13px;
     font-weight: 600; cursor: pointer; min-height: 40px; white-space: nowrap;
   }
+  .sm-view { border-style: solid; text-decoration: none; display: inline-flex; align-items: center; color: var(--text-1, inherit); }
   .sm-reset { background: none; border: none; color: var(--text-3); font-family: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
 
   @media (max-width: 560px) {
@@ -407,11 +408,14 @@ function inspectorMessage(ins, url) {
 }
 
 /* ---- כרטיס ---- */
+/* פתיחה ממני (28.9.26) — by=admin כדי שהכניסה שלי לא תיספר כ"נפתח בפועל" */
+function adminUrl(url) { return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'by=admin'; }
+
 function actionsHtml(kind, slug, url, contact) {
   const wa = waPhone(contact.phone);
   return `
     <div class="g-actions">
-      <a class="copy-mini secondary" href="${esc(url)}" target="_blank" rel="noopener">פתיחת המבט</a>
+      <a class="copy-mini secondary" href="${esc(adminUrl(url))}" target="_blank" rel="noopener">פתיחת המבט</a>
       <button type="button" class="copy-mini secondary" onclick="copyLink(this, '${esc(url)}')">העתקת קישור</button>
       <button type="button" class="copy-mini" onclick="copyMessage(this, '${kind}', '${slug}')">העתקת הודעה</button>
       ${wa
@@ -818,6 +822,10 @@ function renderSendList() {
           <div class="m">${esc(r.meta)}${r.email ? ' · <span dir="ltr">' + esc(r.email) + '</span>' : ' · אין מייל'}</div>
         </div>
         <div class="sm-actions">
+          ${LINKS[r.kind + ':' + r.slug]
+            ? `<a class="sm-addphone sm-view" href="${esc(adminUrl(LINKS[r.kind + ':' + r.slug].url))}"
+                  target="_blank" rel="noopener" title="פתיחת המבט שלה/ו בלשונית חדשה">מבט</a>`
+            : ''}
           ${action}
           <button type="button" class="sm-check ${isDone ? 'on' : ''}"
                   title="${isDone ? 'סימון כלא נשלח' : 'סימון כנשלח'}"

@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
    בלי await ובתוך try: כשל כאן לא ייראה למפקח.ת ולא יעכב את הדף. */
 function reportSeen() {
   if (!INSP || !INSP.slug) return;
+  // מיטל נכנסת מדף האדמין — לא פתיחה של המפקח.ת
+  if (new URLSearchParams(location.search).get('by') === 'admin') return;
   // כניסת מטה (staff.js, 24.9.26) — צפייה של מיטל/רויטל אינה פתיחה של הקישור
   try { if (((window.TS_staff && TS_staff.get()) || {}).roles.some(r => r.role === 'ministry')) return; } catch (e) {}
   try {
