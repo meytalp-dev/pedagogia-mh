@@ -36,6 +36,13 @@
   @media (max-width: 640px) { .lib-linkform { grid-template-columns: 1fr; } }
   .lib-drive { display:flex; align-items:center; gap:10px; background:#EEF6F3; border:1px solid #CFE5DC; border-radius:12px; padding:10px 14px; margin-bottom:12px; font-size:13.5px; }
   .lib-drive a { font-weight:700; }
+  .lib-drive-edit { margin-inline-start:auto; background:none; border:none; color:var(--text-muted); font-family:inherit; font-size:12.5px; text-decoration:underline; cursor:pointer; }
+  .lib-drive-ask { flex-direction:column; align-items:stretch; gap:8px; }
+  .lib-drive-q { display:flex; gap:10px; align-items:flex-start; line-height:1.55; }
+  .lib-drive-q svg { width:18px; height:18px; flex:none; margin-top:2px; }
+  .lib-drive-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .lib-drive-row .input { flex:1; min-width:220px; }
+  .lib-drive-status { font-size:12.5px; color:var(--coral,#b3413a); min-height:1em; }
   .lib-folder { border:1px solid var(--border); border-radius:12px; margin-bottom:8px; background:var(--surface); }
   .lib-folder > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:8px; padding:11px 14px; font-weight:700; font-size:14.5px; }
   .lib-folder > summary::-webkit-details-marker { display:none; }
@@ -134,6 +141,6 @@
 <script src="../assets/app.js?v=20260924h"></script>
 <script src="../assets/guides.js?v=20260928a"></script>
 <script src="../assets/plans.js?v=20260924s"></script>
-<script src="library.js?v=20260928c"></script>
+<script src="library.js?v=20260928d"></script>
 </body>
 </html>

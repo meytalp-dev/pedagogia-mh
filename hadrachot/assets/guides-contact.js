@@ -17,7 +17,7 @@ window.TS_CONTACTS = {
     sivan:    { phone: '052-8285022', email: 'sivann66@gmail.com' },      /* אנגלית */
     moria:    { phone: '054-3168002', email: 'moriah.flint@gmail.com' },  /* עברית */
     nira:     { phone: '054-4642841', email: 'nira23101969@gmail.com' },  /* ספרות */
-    dana:     { phone: '050-3149106', email: '' },                        /* היסטוריה — אין מייל */
+    dana:     { phone: '050-3149106', email: 'Danabarzuri@gmail.com' },  /* היסטוריה — המייל ממיטל 28.9.26 */
     tali:     { phone: '050-2219000', email: 'Tali.lu.aharon@gmail.com' },/* תנ"ך */
 
     /* ---------- החברה היהודית · המגזר החרדי ----------
@@ -35,7 +35,7 @@ window.TS_CONTACTS = {
     abed:     { phone: '052-2618595', email: 'habayiba@yahoo.com' },      /* היסטוריה — המייל ממיטל 14.9.26 */
     khaled:   { phone: '052-5618070', email: 'gabarinkhalid@gmail.com' }, /* אזרחות */
     moshe:    { phone: '052-2978071', email: 'Moshassor@gmail.com' },     /* מתמטיקה */
-    muzna:    { phone: '052-7789995', email: '' }                         /* מורשת דרוזית — אין מייל */
+    muzna:    { phone: '052-7789995', email: 'mizna.sal@gmail.com' }      /* מורשת דרוזית — המייל ממיטל 28.9.26 */
   },
 
   /* המיילים מגיעים מגיליון ההרשאות של מרחב הפיקוח (harshaot.csv) —

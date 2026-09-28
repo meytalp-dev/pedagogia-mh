@@ -33,7 +33,9 @@ const SCHEMA = {
                'units','students','phone','email','moeApproval','moeFile',
                'pdActive','pdFile','pdYear','createdAt','schoolName','notes',
                // שאלת ההשתלמות בהרשמה למבט המורה (28.9.26): passed · registered · none
-               'trainingStatus','trainingFile','trainingFileName','trainingAt'],
+               'trainingStatus','trainingFile','trainingFileName','trainingAt',
+               // יח"ל שהמורה סימן/ה בהרשמה (28.9.26) — מתמטיקה: 3,4,5,gemer · אנגלית: 3,4,5
+               'unitsSelf'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -208,6 +210,8 @@ const AUTH_ENFORCED = false;
 const PUBLIC_ACTIONS = new Set([
   // צ'ק-אין QR חייב להישאר פתוח — מורות לא מחוברות
   'qr.training', 'qr.checkin',
+  // רשימת השמות לטופס ההרשמה של מבט המורה — רק מזהה, שם, מקצוע ובית ספר (28.9.26)
+  'teachers.roster',
   // התחברות וקביעת סיסמה — חייבים להיות פתוחים
   'auth.status', 'auth.login', 'auth.setPassword', 'auth.changePassword', 'auth.verify',
   // הרשמה עצמית של רשתות עם קוד הזמנה — הקוד עצמו הוא ההרשאה
@@ -265,7 +269,9 @@ const STRICT_AUTH_ACTIONS = new Set([
   // מי פתח את הקישור האישי ומתי — קריאה לאדמין ארצי בלבד
   'link.views',
   // שינוי שם בית ספר בכל הלשוניות (23.9.26) — כתיבה המונית, אדמין ארצי בלבד
-  'schools.rename'
+  'schools.rename',
+  // רשימת התפוצה של עדכוני מנור (28.9.26) — שליחה בשם בעלת הסקריפט + קישורים עם מפתחות
+  'updates.send'
 ]);
 
 function getActiveUserEmail_() {
@@ -900,6 +906,44 @@ function listTeachersCached_(p, user) {
   return fresh;
 }
 
+// ---- רשימת השמות להרשמה (28.9.26) ----
+// טופס ההרשמה של מבט המורה חיכה ל-teachers.list, שהמטמון שלו מתאפס בכל כתיבה
+// במערכת (נוכחות, הערות, קודי כניסה). בפועל כמעט כל מורה קיבל/ה קריאה קרה של
+// כל הגיליון: נמדד 36 שניות. כאן: רשימה אחת לכל בתי הספר, בלי שום פרט קשר,
+// ששומרת 30 דקות ומתאפסת רק בכתיבה שמשנה מורים או בתי ספר. הלקוח טוען אותה
+// כבר בפתיחת הטופס, במקביל לבחירת בית הספר.
+const ROSTER_CACHE_TTL_ = 1800;
+const ROSTER_WRITE_RE_ = /^(teachers\.|schools?\.|admin\.)/;
+
+function rosterGen_() {
+  const cache = CacheService.getScriptCache();
+  let gen = cache.get('rosterGen');
+  if (!gen) { gen = String(Date.now()); cache.put('rosterGen', gen, 21600); }
+  return gen;
+}
+
+function bumpRosterGen_() {
+  try {
+    CacheService.getScriptCache().put('rosterGen', Date.now() + '_' + Math.floor(Math.random() * 1e6), 21600);
+  } catch (e) { /* מטמון לא זמין — הקריאה הבאה תקרא מהגיליון */ }
+}
+
+function teachersRoster() {
+  let cache, key;
+  try {
+    cache = CacheService.getScriptCache();
+    key = 'roster|' + rosterGen_();
+    const hit = readCacheChunked_(cache, key);
+    if (hit) return hit;
+  } catch (e) { cache = null; }
+  const data = readAll('teachers')
+    .filter(t => String(t.name || '').trim() && t.school)
+    .map(t => ({ id: t.id, name: String(t.name).trim(), subject: String(t.subject || '').trim(), school: t.school }));
+  const fresh = { ok: true, data: data };
+  if (cache) writeCacheChunked_(cache, key, fresh, ROSTER_CACHE_TTL_);
+  return fresh;
+}
+
 function handleRequest(params) {
   const action = params.action || '';
   let userEmail = '';
@@ -918,6 +962,7 @@ function handleRequest(params) {
       case 'admin.reset':         result = adminReset(params); break;
 
       case 'teachers.list':       result = listTeachersCached_(params, user); break;
+      case 'teachers.roster':     result = teachersRoster(); break;
       case 'teacher.get':         result = getTeacher(params.id, user); break;
       case 'teachers.create':     result = createTeacher(params); break;
       case 'teachers.createMany': result = createTeachersBatch(params); break;
@@ -1035,6 +1080,7 @@ function handleRequest(params) {
       // השלמת מייל עצמית של מורים (28.9.26)
       case 'emails.roster':       result = emailsRoster(params); break;
       case 'emails.submit':       result = emailsSubmit(params); break;
+      case 'updates.send':        result = updatesSend(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -1054,6 +1100,7 @@ function handleRequest(params) {
     } else {
       auditLog_(userEmail, action, 'endpoint', '', result && result.ok ? 'ok' : 'error', '');
       bumpTeachersGen_();   // כל כתיבה מבטלת את מטמון רשימות המורים
+      if (ROSTER_WRITE_RE_.test(action)) bumpRosterGen_();
     }
     return jsonOut(result);
   } catch (err) {
@@ -2997,7 +3044,7 @@ function guideGroup(p) {
   const mine = r => String(r.guideSlug || '') === slug;
 
   const files = readAll('guide_files')
-    .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector')
+    .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector' && String(f.source || '') !== 'drive-folder')
     .map(f => ({
       fileName: f.fileName || '', fileUrl: f.fileUrl || '', mimeType: f.mimeType || '',
       size: Number(f.size) || 0, createdAt: toIso_(f.createdAt),
@@ -4768,7 +4815,8 @@ function teacherSelf(p) {
     moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive),
     email: t.email, phone: t.phone,
     trainingStatus: String(t.trainingStatus || ''), trainingFile: String(t.trainingFile || ''),
-    trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt)
+    trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt),
+    unitsSelf: String(t.unitsSelf || '').replace(/^'/, '')
   } };
 }
 
@@ -4808,8 +4856,24 @@ function trainingSiblings_(t) {
      String(x.subject || '').trim() === subj));
 }
 
-/* teacher.training — { k, status?, data?, fileName?, mimeType? }
-   status חובה בפעם הראשונה; אחר כך אפשר לשלוח קובץ בלבד (השלמה מדף הבית). */
+/* יח"ל שהמורה מסמן/ת בהרשמה (28.9.26, מיטל) — במתמטיקה ובאנגלית, בחירה מרובה.
+   נשמר כמו שנבחר ב-unitsSelf ("3,5,gemer"). השדה הקיים units (3 · 4-5 · 3+4-5)
+   הוא שקובע לאיזו מדריכה המורה משויך/ת, ולכן הוא נגזר מכאן **רק כשהוא ריק** —
+   סימון של מדריכ/ה לא נדרס. gemer לא נכנס ל-units (בגמר אין יח"ל). */
+const UNITS_SELF = { 'מתמטיקה': ['3', '4', '5', 'gemer'], 'אנגלית': ['3', '4', '5'] };
+function unitsSelfAllowed_(subject) {
+  const s = String(subject || '');
+  const k = Object.keys(UNITS_SELF).find(x => s.indexOf(x) >= 0);
+  return k ? UNITS_SELF[k] : null;
+}
+function unitsFromSelf_(list) {
+  const has3 = list.indexOf('3') >= 0, has45 = list.indexOf('4') >= 0 || list.indexOf('5') >= 0;
+  return has3 && has45 ? '3+4-5' : has3 ? '3' : has45 ? '4-5' : '';
+}
+
+/* teacher.training — { k, status?, data?, fileName?, mimeType?, units? }
+   status חובה בפעם הראשונה; אחר כך אפשר לשלוח קובץ בלבד (השלמה מדף הבית).
+   units — "3,4,gemer", רק במקצועות שב-UNITS_SELF. */
 function teacherTraining(p) {
   const t = teacherByKey_(p.k);
   if (!t) return { ok: false, error: 'bad_key' };
@@ -4817,6 +4881,14 @@ function teacherTraining(p) {
   const status = String(p.status || t.trainingStatus || '');
   if (TRAINING_STATUSES.indexOf(status) < 0) return { ok: false, error: 'bad_status' };
   const fields = { trainingStatus: status, trainingAt: new Date().toISOString() };
+  let unitsList = null;
+  if (p.units !== undefined && p.units !== '') {
+    const allowed = unitsSelfAllowed_(t.subject);
+    unitsList = String(p.units).split(',').map(x => x.trim()).filter(Boolean);
+    if (!allowed || !unitsList.length || unitsList.some(x => allowed.indexOf(x) < 0)) return { ok: false, error: 'bad_units' };
+    unitsList = allowed.filter(x => unitsList.indexOf(x) >= 0);
+    fields.unitsSelf = "'" + unitsList.join(',');   // גרש: שהגיליון לא יהפוך "3,4" למספר
+  }
   if (p.data) {
     if (status === 'none') return { ok: false, error: 'bad_status' };
     const b64 = String(p.data).replace(/^data:[^;]*;base64,/, '');
@@ -4836,11 +4908,23 @@ function teacherTraining(p) {
   } else if (status === 'none') {
     fields.trainingFile = ''; fields.trainingFileName = '';
   }
-  trainingSiblings_(t).forEach(x => updateRowById('teachers', x.id, fields));
+  const derived = unitsList ? unitsFromSelf_(unitsList) : '';
+  trainingSiblings_(t).forEach(x => {
+    const f = Object.assign({}, fields);
+    if (derived && x.type !== 'gemer' && !TS_unitsKnown_(x.units)) f.units = "'" + derived;
+    updateRowById('teachers', x.id, f);
+  });
   return { ok: true, data: { trainingStatus: status,
+    unitsSelf: unitsList ? unitsList.join(',') : String(t.unitsSelf || '').replace(/^'/, ''),
     trainingFile: fields.trainingFile !== undefined ? fields.trainingFile : String(t.trainingFile || ''),
     trainingFileName: fields.trainingFileName !== undefined ? fields.trainingFileName : String(t.trainingFileName || ''),
     trainingAt: fields.trainingAt } };
+}
+
+// units שכבר סומן (3 · 4-5 · 3+4-5) — כמו TS.unitsSet בצד הלקוח
+function TS_unitsKnown_(v) {
+  const s = String(v || '').replace(/^'/, '').trim();
+  return ['3', '4-5', '3+4-5'].indexOf(s) >= 0;
 }
 
 /* training.files — הקישורים לאישורים, רק למי שמזוהה/ה:
@@ -5524,6 +5608,14 @@ function guideFileLink(p) {
     } catch (e) { /* אין גישה — הקישור נשמר כמו שהוא */ }
   }
   // כפילות — אחרי פתיחת הצפייה, כדי ששליחה חוזרת תתקן גם קובץ שנשאר פרטי
+  // תיקיית הדרייב של המדריכ/ה (28.9.26) — אחת לכל מדריכ/ה: קישור חדש מחליף את הקודם
+  if (p.source === 'drive-folder') {
+    const prev = readAll('guide_files').find(f => String(f.guideSlug) === slug && String(f.source) === 'drive-folder');
+    if (prev) {
+      updateRowById('guide_files', prev.id, { fileUrl: url, fileId: m ? m[1] : '', createdAt: new Date().toISOString() });
+      return { ok: true, data: { id: prev.id, replaced: true } };
+    }
+  }
   const dup = readAll('guide_files').find(f => String(f.guideSlug) === slug && String(f.fileUrl) === url);
   if (dup) return { ok: true, data: { id: dup.id, duplicate: true } };
   const obj = {
@@ -5533,7 +5625,7 @@ function guideFileLink(p) {
     note: String(p.note || '').slice(0, 300), uploadedBy: String(p.byName || '').slice(0, 80),
     createdAt: new Date().toISOString(), uploaderRole: 'guide',
     folder: guideFolderCell_(p.folder), kind: 'link',
-    source: p.source === 'drive-import' ? 'drive-import' : 'link'
+    source: (p.source === 'drive-import' || p.source === 'drive-folder') ? p.source : 'link'
   };
   appendRow('guide_files', obj);
   return { ok: true, data: { id: obj.id } };
@@ -5895,3 +5987,159 @@ function emailsSubmit(p) {
     return { ok: true, status: empty.length ? 'applied' : 'same', rows: empty.length };
   });
 }
+
+
+// =====================================================================
+// עדכוני מנור — רשימת התפוצה של המדריכים והמפקחים (28.9.26)
+// מיטל: "כל פעם שנשדרג או נוסיף נשלח מייל". כל אחד מקבל את הקישור האישי שלו
+// (מדריכ/ה: guide/?g=&guide=&k= · מפקח/ת: mabat/?i=), ומי שאין לנו את תיקיית
+// הדרייב שלו/ה מקבל/ת גם כפתור שפותח את מאגר החומרים ישר על הדבקת הקישור.
+// עדכון חדש = עורכים את MENOR_UPDATE (id חדש!), פורסים, ושולחים מ-admin-idkunim.html.
+// כל נמען מסומן אחרי שליחה (upd_<id>_<kind>:<slug>) — לחיצה חוזרת לא שולחת פעמיים.
+// =====================================================================
+const MENOR_UPDATE = {
+  id: '2026-09-28',
+  subject: 'מה חדש במנור: מאגר חומרים בתיקיות, מייל לקבוצה ואלפון מורים',
+  intro: 'כדי שתהיו תמיד מעודכנים, מעכשיו נשלח מייל קצר בכל פעם שנוסיף משהו למנור או נשפר אותו. הנה החידושים מהימים האחרונים:',
+  items: [
+    { title: 'מאגר החומרים — עמוד נפרד ומסודר בתיקיות',
+      text: 'כפתור "מאגר החומרים" בראש המבט של המדריכ/ה פותח עמוד משלו.\n' +
+            'החומרים מסודרים בתיקיות: תיקייה לכל מפגש לפי התוכנית השנתית, ואפשר לפתוח גם תיקיות לפי נושא.\n' +
+            'בכל העלאה המערכת שואלת לאיזו תיקייה להכניס את הקובץ. אפשר גם לפתוח תיקייה חדשה, או ללחוץ "העלאה לכאן" מתוך התיקייה עצמה.\n' +
+            'אפשר להוסיף גם קישור, לא רק קובץ. המורים רואים את החומרים באותו סידור תיקיות.' },
+    { title: 'מייל לקבוצה במקום וואטסאפ',
+      text: 'מתוך המבט אפשר לשלוח מייל לכל מורי הקבוצה.\nכשמורה עונה על המייל, התשובה מגיעה ישר אל המדריכ/ה.' },
+    { title: 'אלפון המורים',
+      text: 'כפתור "אלפון המורים" בראש המבט מציג את המייל והטלפון של כל מורה בקבוצה. הודעות לקבוצה נפתחות מאותו מקום.' },
+    // 28.9.26, מיטל: רישום אחד לכל המורים — טופס המייל הנפרד (tfasim/mail-morim) הוסר,
+    // ו"מי עוד לא השלים" לא שייך למייל הזה.
+    { title: 'רישום המורים — קישור אחד לכולם',
+      text: 'כל מורה, בכל מקצוע, נכנס/ת בפעם הראשונה דרך אותו רישום: בית ספר, מקצוע, שם ומייל עם קוד אימות, ואחריהם שאלת ההשתלמות המקצועית. במתמטיקה ובאנגלית המורה מסמן/ת גם אילו יחידות לימוד הוא/היא מלמד/ת. גם מורים שהמייל שלהם כבר אצלנו עוברים את הרישום. הדף האישי נפתח רק אחרי שהרישום הושלם.\n' +
+            'מי שעוד לא צירף/ה אישור השתלמות או אישור הרשמה להשתלמות יקבל/תקבל תזכורת בכל כניסה, עד שהאישור מצורף.\n' +
+            'את הקישור מיטל שולחת למורים בקהילות הוואטסאפ — אין צורך להפיץ אותו.\n{MAIL_LINKS}' },
+    { title: 'חלוקת מתמטיקה לפי רמות',
+      text: 'אילנה ממו מדריכה את מורי 4–5 יח"ל, ושירה סיבוני את מורי 3 יח"ל.',
+      only: ['guide:shira', 'guide:ilana', 'inspector:revital'] }
+  ]
+};
+
+const UPD_FORM = REMIND_SITE + 'teacher/';
+
+function updWin_() {
+  const win = remindWin_();
+  try {
+    const r = UrlFetchApp.fetch(REMIND_SITE + 'assets/guides-contact.js?t=' + Date.now(), { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) new Function('window', r.getContentText('UTF-8'))(win);
+  } catch (e) { /* רשת ביטחון בלבד — המקור הוא טאב contacts */ }
+  return win;
+}
+
+// כל הנמענים: מדריכים ואז מפקחים, עם מייל (גיליון contacts, ואם אין — guides-contact.js)
+function updRecipients_(win) {
+  const sheet = {};
+  try { readAll('contacts').forEach(r => { sheet[String(r.id)] = r; }); } catch (e) {}
+  const drives = {};
+  readAll('guide_files').forEach(f => { if (String(f.source) === 'drive-folder') drives[String(f.guideSlug)] = true; });
+  const emailOf = (kind, slug) => {
+    const c = sheet[kind + ':' + slug];
+    const e1 = c ? String(c.email || '').trim() : '';
+    if (guideMailOk_(e1)) return e1;
+    const st = win.TS_contactOf ? win.TS_contactOf(kind === 'guide' ? 'guides' : 'inspectors', slug) : null;
+    const e2 = st ? String(st.email || '').trim() : '';
+    return guideMailOk_(e2) ? e2 : '';
+  };
+  const out = [];
+  Object.keys(win.TS_GUIDES || {}).forEach(slug => {
+    const g = win.TS_GUIDES[slug];
+    out.push({ kind: 'guide', slug: slug, name: g.name || slug, email: emailOf('guide', slug),
+      subjects: win.TS_guideSubjects ? win.TS_guideSubjects(g) : [g.subject],
+      hasDrive: /^https:\/\//.test(g.drive || '') || !!drives[slug] });
+  });
+  Object.keys(win.TS_INSPECTORS || {}).forEach(slug => {
+    const ins = win.TS_INSPECTORS[slug];
+    out.push({ kind: 'inspector', slug: slug, name: ins.name || slug, email: emailOf('inspector', slug),
+      subjects: ins.subjects || [], hasDrive: true });
+  });
+  return out;
+}
+
+function updLinks_(r) {
+  if (r.kind === 'inspector') return { view: REMIND_SITE + 'mabat/?i=' + r.slug, drive: '' };
+  const q = '?g=' + r.slug + (r.email ? '&guide=' + encodeURIComponent(r.email) : '') + '&k=' + meetGuideKey_(r.slug);
+  return { view: REMIND_SITE + 'guide/' + q, drive: REMIND_SITE + 'guide/maagar.html' + q + '&drive=1' };
+}
+
+function updMailLinksHtml_(r) {
+  return 'לעיון, הקישור שהמורים מקבלים: <a href="' + UPD_FORM + '">' + remindEsc_(UPD_FORM) + '</a>';
+}
+
+function updBuild_(r) {
+  const U = MENOR_UPDATE;
+  const L = updLinks_(r);
+  const btn = (u, t, bg) => '<a href="' + u + '" style="background:' + (bg || '#1A5365') + ';color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">' + remindEsc_(t) + '</a>';
+  const items = U.items.filter(it => !it.only || it.only.indexOf(r.kind + ':' + r.slug) >= 0);
+  let body = '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
+  items.forEach((it, i) => {
+    const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r));
+    body += '<p style="margin:0 0 4px;font-weight:bold">' + (i + 1) + '. ' + remindEsc_(it.title) + '</p>' +
+      '<p style="margin:0 0 14px">' + html + '</p>';
+  });
+  body += '<p style="margin:18px 0 8px">' + btn(L.view, 'המבט שלי במנור') + '</p>' +
+    '<p style="margin:0 0 14px;font-size:12px;color:#5C7182">זה הקישור האישי שלך — הוא מראה רק את מה שבאחריותך. כדאי לשמור אותו.</p>';
+  if (r.kind === 'guide' && !r.hasDrive) {
+    body += '<div style="background:#EEF6F3;border:1px solid #CFE5DC;border-radius:10px;padding:12px 14px;margin:0 0 14px">' +
+      '<p style="margin:0 0 8px"><b>עוד אין לנו את תיקיית הדרייב שלך.</b> אם החומרים שלך נמצאים בתיקייה בדרייב, ' +
+      'אפשר להדביק כאן את הקישור אליה, והיא תופיע בראש מאגר החומרים שלך במנור.</p>' +
+      btn(L.drive, 'צירוף קישור לתיקיית הדרייב', '#1f7a5c') + '</div>';
+  }
+  body += '<p style="margin:0">שאלה, תקלה או רעיון לשיפור? אפשר פשוט להשיב למייל הזה.</p>';
+  const html = guideMailHtml_('שלום ' + r.name + ',', body, '', '', MONTHLY_SIGN);
+  const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|div)>/g, '\n')
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>([^<]*)<\/a>/g, '$2: $1')
+    .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
+  return { subject: U.subject, html: html, text: text };
+}
+
+function updSentKey_(r) { return 'upd_' + MENOR_UPDATE.id + '_' + r.kind + ':' + r.slug; }
+
+/* updates.send — { mode: 'list' | 'preview' | 'send', only: 'guide:shira,inspector:liat' }
+   list    → מי ברשימה, למי אין מייל, מי כבר קיבל, ואיך ייראה המייל אצל כל אחד (html)
+   preview → כל המיילים נשלחים למיטל בלבד (REMIND_TO), עם שורת "במצב חי יישלח אל"
+   send    → לכל מי שעוד לא קיבל את העדכון הזה (או רק ל-only) */
+function updatesSend(p) {
+  const mode = String(p.mode || 'list');
+  const win = updWin_();
+  const props = PropertiesService.getScriptProperties();
+  const only = String(p.only || '').split(',').map(s => s.trim()).filter(Boolean);
+  const all = updRecipients_(win).map(r => Object.assign(r, { sent: props.getProperty(updSentKey_(r)) || '' }));
+  const pick = all.filter(r => !only.length || only.indexOf(r.kind + ':' + r.slug) >= 0);
+  if (mode === 'list') {
+    return { ok: true, data: { id: MENOR_UPDATE.id, subject: MENOR_UPDATE.subject, quota: MailApp.getRemainingDailyQuota(),
+      rows: pick.map(r => ({ kind: r.kind, slug: r.slug, name: r.name, email: r.email, hasDrive: r.hasDrive,
+        sent: r.sent, html: updBuild_(r).html })) } };
+  }
+  if (mode !== 'preview' && mode !== 'send') return { ok: false, error: 'bad_mode' };
+  const live = mode === 'send';
+  const list = pick.filter(r => r.email && (!live || !r.sent));
+  if (!list.length) return { ok: true, data: { sent: 0, failed: [], missing: pick.filter(r => !r.email).map(r => r.name) } };
+  if (MailApp.getRemainingDailyQuota() - list.length < GUIDE_MAIL_QUOTA_FLOOR) return { ok: false, error: 'quota' };
+  let sent = 0;
+  const failed = [];
+  list.forEach(r => {
+    const m = updBuild_(r);
+    const opt = { to: live ? r.email : REMIND_TO, subject: (live ? '' : '[תצוגה מקדימה] ') + m.subject,
+      htmlBody: (live ? '' : monthlyPreviewBanner_(r.name + ' <' + r.email + '>')) + m.html,
+      body: m.text, name: 'מנור · משרד העבודה' };
+    try {
+      MailApp.sendEmail(opt);
+      sent++;
+      if (live) props.setProperty(updSentKey_(r), new Date().toISOString());
+    } catch (e) { failed.push(r.name); }
+  });
+  auditLog_('', 'updates.send', 'update', MENOR_UPDATE.id, 'ok', mode + ' sent=' + sent + ' failed=' + failed.length);
+  return { ok: true, data: { sent: sent, failed: failed, missing: pick.filter(r => !r.email).map(r => r.name) } };
+}
+
+// מהעורך: כל המיילים של העדכון הנוכחי נשלחים אלייך בלבד
+function updatesPreview() { console.log(JSON.stringify(updatesSend({ mode: 'preview' }).data)); }

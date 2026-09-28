@@ -14,7 +14,10 @@
   const MAX_FILE_BYTES = 8 * 1024 * 1024;
   const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
   let data = { files: [] };
+  let driveFile = null;      // תיקיית הדרייב שהמדריכ/ה צירף/ה בעצמו/ה (28.9.26)
+  let driveSig = null;       // הכרטיס נצייר מחדש רק כשהמצב משתנה — שלא יימחק מה שמוקלד
   let loadFailed = false;
+  let loaded = false;
 
   let KEY = '';
   try { KEY = TS.urlParam('k', '') || localStorage.getItem('ts.meet.k.' + SLUG) || ''; } catch (e) { KEY = TS.urlParam('k', ''); }
@@ -44,9 +47,15 @@
     const res = await TS.api('guide.workspace', { guides: SLUG }, { cache: 'no' });
     if (res && res.ok && res.data) {
       loadFailed = false;
-      data = { files: (res.data.files && res.data.files[SLUG]) || [] };
+      const all = (res.data.files && res.data.files[SLUG]) || [];
+      // קישור תיקיית הדרייב (source='drive-folder') מוצג בכרטיס שבראש המאגר, לא כקובץ בתיקייה
+      driveFile = all.find(f => f.source === 'drive-folder') || null;
+      data = { files: all.filter(f => f.source !== 'drive-folder') };
     } else loadFailed = true;
+    const first = !loaded;
+    loaded = true;
     renderFiles();
+    if (first) focusDriveFromMail();
   }
 
   /* ================================================================
@@ -123,9 +132,70 @@
   function renderDriveCard() {
     const box = document.getElementById('lib-drive');
     if (!box) return;
-    const url = /^https:\/\//.test(GUIDE_CFG.drive || '') ? GUIDE_CFG.drive : '';
-    box.innerHTML = url ? `<div class="lib-drive">${ICON_FILE}<span>תיקיית החומרים הקיימת שלך בדרייב</span>
-      <a href="${esc(url)}" target="_blank" rel="noopener">פתיחה</a></div>` : '';
+    const fixed = /^https:\/\//.test(GUIDE_CFG.drive || '') ? GUIDE_CFG.drive : '';
+    const own = driveFile && /^https:\/\//.test(driveFile.fileUrl || '') ? driveFile.fileUrl : '';
+    const url = fixed || own;
+    if (!loaded && !fixed) return;   // לא מציגים "אין לנו" לפני שהמאגר נטען
+    const sig = (loadFailed ? 'x' : '') + url;
+    if (sig === driveSig) return;
+    driveSig = sig;
+    if (loadFailed && !fixed) { box.innerHTML = ''; return; }
+    if (url) {
+      box.innerHTML = `<div class="lib-drive">${ICON_FILE}<span>תיקיית החומרים שלך בדרייב</span>
+        <a href="${esc(url)}" target="_blank" rel="noopener">פתיחה</a>
+        ${!fixed ? '<button type="button" class="lib-drive-edit" id="lib-drive-edit">החלפת הקישור</button>' : ''}</div>`;
+      const ed = document.getElementById('lib-drive-edit');
+      if (ed) ed.addEventListener('click', () => { driveSig = 'edit'; box.innerHTML = driveFormHtml(url); bindDriveForm(); });
+      return;
+    }
+    box.innerHTML = driveFormHtml('');
+    bindDriveForm();
+  }
+  // "עוד אין לנו את תיקיית הדרייב שלך" — מגיעים לכאן גם ישר מהמייל (&drive=1)
+  function driveFormHtml(cur) {
+    return `<div class="lib-drive lib-drive-ask" id="lib-drive-ask">
+      <div class="lib-drive-q">${ICON_FILE}<span><b>${cur ? 'החלפת הקישור לתיקיית הדרייב' : 'עוד אין לנו את תיקיית הדרייב שלך'}</b> —
+        הדביקו כאן את הקישור לתיקייה שבה נמצאים החומרים שלך, והיא תופיע כאן בראש המאגר.</span></div>
+      <div class="lib-drive-row">
+        <input class="input" id="lib-drive-url" type="url" dir="ltr" placeholder="https://drive.google.com/drive/folders/..." value="${esc(cur)}">
+        <button type="button" class="btn btn-primary" id="lib-drive-save">שמירה</button>
+      </div>
+      <div class="lib-drive-status" id="lib-drive-status" aria-live="polite"></div>
+    </div>`;
+  }
+  function bindDriveForm() {
+    const input = document.getElementById('lib-drive-url');
+    const save = document.getElementById('lib-drive-save');
+    if (!input || !save) return;
+    const go = () => saveDrive(input.value.trim());
+    save.addEventListener('click', go);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  }
+  async function saveDrive(url) {
+    const status = document.getElementById('lib-drive-status');
+    const say = t => { if (status) status.textContent = t; };
+    if (!/^https:\/\/(drive|docs)\.google\.com\//.test(url)) { say('צריך קישור לדרייב — מתחיל ב-https://drive.google.com'); return; }
+    const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    if (!(auth.k || auth.ge)) { say('השמירה דורשת כניסה מהקישור האישי שקיבלת במייל.'); return; }
+    const btn = document.getElementById('lib-drive-save');
+    if (btn) btn.disabled = true;
+    say('שומרת…');
+    const res = await TS.apiPost('guide.file.link', Object.assign({}, auth, {
+      guideName: GUIDE_CFG.name || '', fileName: 'תיקיית הדרייב שלי', fileUrl: url, folder: '',
+      mimeType: 'text/uri-list', byName: GUIDE_CFG.name || '', source: 'drive-folder'
+    }));
+    await loadSpace();
+    if (!(driveFile && driveFile.fileUrl === url)) {
+      if (btn) btn.disabled = false;
+      say((res && res.error === 'bad_key') ? 'הקישור האישי לא תקף. פתחו את המאגר מהקישור שבמייל.' : 'לא נשמר. נסו שוב בעוד רגע.');
+    }
+  }
+  function focusDriveFromMail() {
+    if (TS.urlParam('drive', '') !== '1') return;
+    const box = document.getElementById('lib-drive');
+    if (box) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const input = document.getElementById('lib-drive-url');
+    if (input) setTimeout(() => input.focus(), 400);
   }
 
   // עץ: { name, files: [], kids: {name: node} }

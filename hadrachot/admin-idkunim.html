@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עדכוני מנור — רשימת התפוצה</title>
+<link rel="stylesheet" href="assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
+<style>
+  .upd-head { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin:18px 0; }
+  .upd-head .subj { font-weight:800; font-size:17px; }
+  .upd-head .meta { color:var(--text-2); font-size:13px; margin-top:4px; }
+  .upd-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .upd-status { margin-top:10px; font-size:14px; font-weight:600; min-height:1.2em; }
+  .upd-layout { display:grid; grid-template-columns: minmax(280px, 1fr) 1.5fr; gap:16px; align-items:start; }
+  @media (max-width: 860px) { .upd-layout { grid-template-columns: 1fr; } }
+  .upd-group { font-weight:800; font-size:14px; color:var(--text-2); margin:14px 0 6px; }
+  .upd-row { display:flex; align-items:center; gap:10px; width:100%; text-align:right; background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:9px 12px; margin-bottom:6px; font-family:inherit; font-size:14px; cursor:pointer; color:var(--text); }
+  .upd-row:hover, .upd-row.on { border-color:var(--primary,#1A5365); }
+  .upd-row .nm { font-weight:700; }
+  .upd-row .em { font-size:12px; color:var(--text-muted); direction:ltr; }
+  .upd-row .tags { margin-inline-start:auto; display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
+  .tag { font-size:11px; font-weight:700; border-radius:99px; padding:2px 8px; white-space:nowrap; }
+  .tag.sent { background:#EEF6F3; color:#1f7a5c; }
+  .tag.nomail { background:#FBECEC; color:#7a2020; }
+  .tag.nodrive { background:#FFF6DB; color:#7a5a00; }
+  .upd-preview { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; position:sticky; top:12px; min-height:200px; }
+  .upd-preview .to { font-size:12.5px; color:var(--text-muted); margin-bottom:10px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="admin.html" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="חזרה">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">עדכוני מנור · מדריכים ומפקחים</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 style="margin:24px 0 8px;">מייל "מה חדש במנור"</h1>
+    <p style="color:var(--text-2);">
+      כל מדריכ/ה ומפקח/ת מקבל/ת מייל אישי עם <b>הקישור למבט שלו/ה</b>. מי שאין לנו את תיקיית הדרייב שלו/ה
+      מקבל/ת גם כפתור שפותח את מאגר החומרים ישר על הדבקת הקישור. לוחצים על שם כדי לראות את המייל בדיוק כפי שיגיע.
+      קודם "תצוגה מקדימה" — הכול מגיע רק אלייך. מי שכבר קיבל מסומן, ולחיצה חוזרת על "שליחה" לא תשלח לו שוב.
+    </p>
+
+    <div class="upd-head" id="upd-head"><div class="empty">טוען את הרשימה…</div></div>
+    <div class="upd-layout">
+      <div id="upd-list"></div>
+      <div class="upd-preview" id="upd-preview"><div class="empty">בחרי שם מהרשימה</div></div>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:32px 16px; color:var(--text-3); font-size:13px;">
+    דף אדמין · עדכוני מנור · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js?v=20260924h"></script>
+<script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script>
+/* עדכוני מנור (28.9.26) — התוכן עצמו ב-MENOR_UPDATE בשרת (code.gs), וכך גם הקישורים
+   האישיים: מפתח המדריכ/ה לא יוצא לדפדפן אלא בתוך המייל שהשרת בונה. */
+let ROWS = [];
+let CUR = '';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const idOf = r => r.kind + ':' + r.slug;
+
+async function load() {
+  const res = await TS.apiPost('updates.send', { mode: 'list' });
+  const head = document.getElementById('upd-head');
+  if (!res || !res.ok) {
+    head.innerHTML = '<div class="empty">הרשימה לא נטענה: ' + esc((res && res.error) || 'אין תשובה') +
+      (/unauth|forbidden/.test((res && res.error) || '') ? ' — צריך להתחבר (login.html) ולרענן.' : ' — רענני בעוד רגע.') + '</div>';
+    return;
+  }
+  const d = res.data;
+  ROWS = d.rows || [];
+  const withMail = ROWS.filter(r => r.email);
+  const waiting = withMail.filter(r => !r.sent);
+  const noMail = ROWS.filter(r => !r.email);
+  head.innerHTML = `
+    <div class="subj">${esc(d.subject)}</div>
+    <div class="meta">עדכון ${esc(d.id)} · ${withMail.length} נמענים עם מייל · ${waiting.length} טרם קיבלו
+      ${noMail.length ? ' · <b style="color:var(--coral)">בלי מייל: ' + noMail.map(r => esc(r.name)).join(', ') + '</b>' : ''}
+      · מכסת מיילים להיום: ${esc(d.quota)}</div>
+    <div class="upd-actions">
+      <button type="button" class="btn" id="btn-preview">תצוגה מקדימה — הכול אליי (${withMail.length})</button>
+      <button type="button" class="btn btn-primary" id="btn-send" ${waiting.length ? '' : 'disabled'}>שליחה ל-${waiting.length} שטרם קיבלו</button>
+      <button type="button" class="btn" id="btn-drafts" title="קובץ עם כל המיילים האישיים — Claude הופך אותו לטיוטות ב-Gmail">הורדת המיילים לטיוטות (${withMail.length})</button>
+    </div>
+    <div class="upd-status" id="upd-status" aria-live="polite"></div>`;
+  document.getElementById('btn-preview').addEventListener('click', () => run('preview'));
+  // 28.9.26, מיטל: מייל נפרד לכל אחד/ת, כטיוטות. הקובץ נשמר בהורדות ו-Claude יוצר ממנו טיוטה לכל נמען.
+  document.getElementById('btn-drafts').addEventListener('click', () => {
+    const out = { id: d.id, subject: d.subject, rows: withMail.map(r => ({ kind: r.kind, slug: r.slug, name: r.name, email: r.email, html: r.html })) };
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' }));
+    a.download = 'menor-update-' + d.id + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    document.getElementById('upd-status').textContent = 'הקובץ נשמר בהורדות. אמרי ל-Claude "הקובץ ירד" והטיוטות ייווצרו.';
+  });
+  document.getElementById('btn-send').addEventListener('click', () => {
+    if (!confirm('לשלוח עכשיו את העדכון ל-' + waiting.length + ' מדריכים ומפקחים?')) return;
+    run('send');
+  });
+  const group = (t, kind) => {
+    const rs = ROWS.filter(r => r.kind === kind);
+    return '<div class="upd-group">' + t + ' (' + rs.length + ')</div>' + rs.map(r => `
+      <button type="button" class="upd-row${idOf(r) === CUR ? ' on' : ''}" data-id="${esc(idOf(r))}">
+        <span><span class="nm">${esc(r.name)}</span><br><span class="em">${esc(r.email || '—')}</span></span>
+        <span class="tags">
+          ${r.sent ? '<span class="tag sent">נשלח ' + esc(new Date(r.sent).toLocaleDateString('he-IL')) + '</span>' : ''}
+          ${!r.email ? '<span class="tag nomail">אין מייל</span>' : ''}
+          ${r.kind === 'guide' && !r.hasDrive ? '<span class="tag nodrive">בלי תיקיית דרייב</span>' : ''}
+        </span>
+      </button>`).join('');
+  };
+  const list = document.getElementById('upd-list');
+  list.innerHTML = group('מדריכים', 'guide') + group('מפקחים', 'inspector');
+  list.querySelectorAll('.upd-row').forEach(b => b.addEventListener('click', () => show(b.dataset.id)));
+  show(CUR || (ROWS[0] && idOf(ROWS[0])));
+}
+
+function show(id) {
+  const r = ROWS.find(x => idOf(x) === id);
+  if (!r) return;
+  CUR = id;
+  document.querySelectorAll('.upd-row').forEach(b => b.classList.toggle('on', b.dataset.id === id));
+  document.getElementById('upd-preview').innerHTML =
+    '<div class="to">אל: ' + esc(r.name) + (r.email ? ' &lt;' + esc(r.email) + '&gt;' : ' — <b>אין מייל, לא יישלח</b>') + '</div>' + r.html;
+}
+
+async function run(mode) {
+  const st = document.getElementById('upd-status');
+  document.querySelectorAll('.upd-actions button').forEach(b => { b.disabled = true; });
+  st.textContent = mode === 'send' ? 'שולחת…' : 'שולחת תצוגה מקדימה אלייך…';
+  const res = await TS.apiPost('updates.send', { mode: mode });
+  if (res && res.ok) {
+    const d = res.data;
+    st.textContent = (mode === 'send' ? 'נשלח ל-' : 'נשלחו אלייך ') + d.sent + (mode === 'send' ? ' נמענים' : ' מיילים לבדיקה') +
+      (d.failed && d.failed.length ? ' · נכשל: ' + d.failed.join(', ') : '') + ' ✓';
+  } else {
+    /* שליחה שהתשובה שלה נפלה אולי כבר יצאה — טוענים מחדש ורואים מי מסומן, לא שולחים שוב */
+    st.textContent = 'לא התקבלה תשובה ברורה (' + ((res && res.error) || '—') + '). הרשימה נטענת מחדש — מי שקיבל יסומן "נשלח".';
+  }
+  const keep = st.textContent;
+  await load();
+  const st2 = document.getElementById('upd-status');
+  if (st2) st2.textContent = keep;
+}
+
+document.addEventListener('DOMContentLoaded', load);
+</script>
+</body>
+</html>
