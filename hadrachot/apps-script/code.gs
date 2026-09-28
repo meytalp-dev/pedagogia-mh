@@ -78,7 +78,11 @@ const SCHEMA = {
   // מי פתח את הקישור האישי שלו (16.9.26) — התשובה ל"שלחנו לכולם?".
   // סימון "נשלח" ב-admin-guides נשמר בדפדפן ומעיד רק על לחיצה; זה מעיד על
   // פתיחה בפועל. אין כאן IP ואין user-agent — רק מי, מתי, וכמה פעמים.
-  link_views:         ['id','kind','slug','name','firstSeenAt','lastSeenAt','views']
+  link_views:         ['id','kind','slug','name','firstSeenAt','lastSeenAt','views'],
+  // השלמת מייל עצמית של מורים (28.9.26) — כל שליחה מהטופס הציבורי נרשמת כאן,
+  // גם כשלא נכתב כלום (מורה שלא ברשימה, מייל אחר כבר רשום) — כדי שיהיה מה לבדוק.
+  // status: applied · same · conflict · not_listed · not_found
+  email_signups:      ['id','createdAt','school','schoolName','name','subject','email','status','teacherIds','note']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -225,7 +229,9 @@ const PUBLIC_ACTIONS = new Set([
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete',
   // מאגר החומרים ומייל לקבוצה (28.9.26) — דורשים מפתח מדריכ/ה (meetAuthGuide_) בפנים
-  'guide.file.link', 'guide.file.move', 'guide.mail.send', 'guide.contacts'
+  'guide.file.link', 'guide.file.move', 'guide.mail.send', 'guide.contacts',
+  // השלמת מייל עצמית של מורים (28.9.26) — הרשימה בלי כתובות, והכתיבה רק למי שאין לו מייל
+  'emails.roster', 'emails.submit'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -857,7 +863,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster)$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1020,6 +1026,9 @@ function handleRequest(params) {
       case 'notes.delete':        result = notesDelete(params); break;
       case 'notes.file':          result = notesFile(params); break;
       case 'notes.fileDelete':    result = notesFileDelete(params); break;
+      // השלמת מייל עצמית של מורים (28.9.26)
+      case 'emails.roster':       result = emailsRoster(params); break;
+      case 'emails.submit':       result = emailsSubmit(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
 
@@ -5685,4 +5694,98 @@ function guideContacts(p) {
     subject: String(t.subject || ''), type: String(t.type || ''),
     email: String(t.email || '').trim(), phone: String(t.phone || '').trim()
   })) };
+}
+
+
+// ============================================================
+// השלמת מייל עצמית של מורים (28.9.26)
+// ============================================================
+// טופס ציבורי ב-tfasim.pedagogiamh.co.il/mail-morim.html שהמדריכים מפיצים
+// בקבוצות הוואטסאפ: מקצוע → בית ספר → השם שלי → המייל. מורה בלי מייל לא מקבל
+// את מייל תחילת המפגש ולא יכול להיכנס למבט המורה.
+// הרשימה: שם · בית ספר · מקצועות + דגל "יש מייל" — בלי שום כתובת (כמו teachers.list
+// הפתוח). הכתיבה: רק לשורות שהמייל שלהן ריק. מייל קיים לא נדרס לעולם — אם נשלח
+// מייל אחר, השורה נרשמת ב-email_signups כ-conflict ומיטל מכריעה.
+function emailsNorm_(s) {
+  return String(s == null ? '' : s).replace(/[‎‏]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function emailsRoster(p) {
+  let cache, key;
+  try {
+    cache = CacheService.getScriptCache();
+    key = 'er|' + teachersGen_();
+    const hit = readCacheChunked_(cache, key);
+    if (hit) return hit;
+  } catch (e) { cache = null; }
+
+  const schools = {};
+  readAll('schools').forEach(s => { if (s.id) schools[String(s.id)] = String(s.name || ''); });
+  const people = {};
+  readAll('teachers').forEach(t => {
+    const school = String(t.school || '').trim();
+    const name = emailsNorm_(t.name);
+    // שם שהוא בעצם כתובת מייל (טעות הזנה) — לא נחשף ברשימה הציבורית
+    if (!school || !name || !schools[school] || name.indexOf('@') >= 0) return;
+    const k = school + '|' + name;
+    const e = people[k] || (people[k] = { s: school, n: name, sub: [], e: false });
+    const subj = String(t.subject || '').trim();
+    if (subj && e.sub.indexOf(subj) < 0) e.sub.push(subj);
+    if (String(t.email || '').trim()) e.e = true;
+  });
+  const out = { ok: true, data: { schools: schools, people: Object.keys(people).map(k => people[k]) } };
+  if (cache) writeCacheChunked_(cache, key, out, TEACHERS_CACHE_TTL_);
+  return out;
+}
+
+function emailsSubmit(p) {
+  const school = String(p.school || '').trim();
+  const name = emailsNorm_(p.name).slice(0, 60);
+  const subject = emailsNorm_(p.subject).slice(0, 40);
+  const email = String(p.email || '').trim().toLowerCase();
+  const notListed = String(p.notListed || '') === '1';
+  if (email.length > 120 || isMasked_(email) || !/^[^\s@<>"']+@[^\s@<>"']+\.[a-z]{2,}$/.test(email)) {
+    return { ok: false, error: 'bad_email' };
+  }
+  if (!school || name.length < 2) return { ok: false, error: 'missing_fields' };
+  const sch = readAll('schools').find(s => String(s.id) === school);
+  if (!sch) return { ok: false, error: 'bad_school' };
+
+  // תקרה יומית — הטופס פתוח לכל מי שיש לו את הקישור
+  const cache = CacheService.getScriptCache();
+  const dayKey = 'es|' + Utilities.formatDate(new Date(), 'Asia/Jerusalem', 'yyyyMMdd');
+  const count = Number(cache.get(dayKey) || 0);
+  if (count >= 400) return { ok: false, error: 'busy' };
+  cache.put(dayKey, String(count + 1), 86400);
+
+  return meetWithLock_(() => {
+    ensureTab_('email_signups');
+    const log = (status, ids, note) => appendRow('email_signups', {
+      id: newId('es'), createdAt: new Date().toISOString(), school: school, schoolName: String(sch.name || ''),
+      name: name, subject: subject, email: email, status: status, teacherIds: ids.join(','), note: note || ''
+    });
+
+    const s = sheet('teachers');
+    const range = s.getDataRange().getValues();
+    const h = range[0];
+    const cId = h.indexOf('id'), cSchool = h.indexOf('school'), cName = h.indexOf('name'), cEmail = h.indexOf('email');
+    const rows = [];
+    for (let i = 1; i < range.length; i++) {
+      if (String(range[i][cSchool]).trim() === school && emailsNorm_(range[i][cName]) === name) rows.push(i);
+    }
+    if (!rows.length) {
+      log(notListed ? 'not_listed' : 'not_found', [], '');
+      return { ok: true, status: 'not_listed' };
+    }
+    const ids = rows.map(i => String(range[i][cId]));
+    const existing = rows.map(i => String(range[i][cEmail] || '').trim().toLowerCase()).filter(Boolean);
+    if (existing.some(x => x !== email)) {
+      log('conflict', ids, 'רשום כבר: ' + existing.filter((x, j, a) => a.indexOf(x) === j).join(' , '));
+      return { ok: true, status: 'conflict' };
+    }
+    const empty = rows.filter(i => !String(range[i][cEmail] || '').trim());
+    empty.forEach(i => s.getRange(i + 1, cEmail + 1).setValue(email));
+    log(empty.length ? 'applied' : 'same', ids, '');
+    return { ok: true, status: empty.length ? 'applied' : 'same', rows: empty.length };
+  });
 }
