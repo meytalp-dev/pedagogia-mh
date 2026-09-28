@@ -157,6 +157,15 @@ textarea{min-height:96px;resize:vertical;line-height:1.55}
   transition:background .16s var(--ease)}
 .addbtn:hover{background:#dcedf8}
 .addbtn svg{width:16px;height:16px}
+.rfoot.more{justify-content:flex-start}
+.addmore{appearance:none;display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--sky);
+  background:#fff;color:var(--navy);border-radius:10px;padding:6px 14px;
+  font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.addmore:hover{background:var(--sky-soft)}
+.addmore svg{width:14px;height:14px}
+.role.vacant .rfoot.more{display:none}
+.role.extra{margin-top:-6px;border-style:dashed}
+.role.extra .rhead .rt b::before{content:"+ ";color:var(--sky)}
 .subnote{font-size:14.5px;color:var(--muted);margin:-4px 0 14px}
 
 /* ===== בחירת 4 תפקידי 6% ===== */
@@ -400,7 +409,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       <div><h3>בעלי התפקידים</h3><small>לכל תפקיד: שם, שעות, תפקידים נוספים, משרה כוללת, ותק ופרטי התקשרות</small></div>
     </div>
 
-    <p class="subnote">תפקיד שטרם אויש — סמנו <b>״טרם אויש״</b> ואפשר להמשיך. תפקיד שלא רלוונטי לבית הספר — גם כן ״טרם אויש״, ואפשר לציין זאת בהערות בסוף.</p>
+    <p class="subnote">תפקיד שטרם אויש — סמנו <b>״טרם אויש״</b> ואפשר להמשיך. תפקיד שלא רלוונטי לבית הספר — גם כן ״טרם אויש״, ואפשר לציין זאת בהערות בסוף. <b>תפקיד שממלאים אצלכם יותר מאדם אחד</b> — לחצו ״בעל.ת תפקיד נוסף״ בתחתית הכרטיס.</p>
 
     <div id="coreRoles"></div>
 
@@ -462,6 +471,21 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     <button type="button" class="addbtn" data-add="chonech">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       הוספת מורה חונך.ת
+    </button>
+
+    <!-- תפקידים שאינם ברשימה -->
+    <div class="sec">
+      <div class="sico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>
+        </svg>
+      </div>
+      <div><h3>תפקיד נוסף שאינו ברשימה</h3><small>רק אם יש בבית הספר בעל.ת תפקיד שאין לו כרטיס למעלה</small></div>
+    </div>
+    <div id="acherList"></div>
+    <button type="button" class="addbtn" data-add="acher">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      הוספת תפקיד
     </button>
 
     <!-- ===================== 4 תפקידי 6% ===================== -->
@@ -578,7 +602,8 @@ var SCHOOLS = [["אבו סנאן","ליאת צבר","סכנין"],["אום אל 
 /* ---------- התפקידים הקבועים בנספח ----------
    key · שם התפקיד · תזכורת השעות והגמול מתוך ההנחיות */
 var CORE = [
-  ["pedagogi",   "רכז.ת פדגוגי.ת · סגן.ית מנהל.ת", "0.5 ש״ש לכיתה + 4/5 ש״ש · גמול 8% לרכז.ת פדגוגי.ת, 25.4% לסגן.ית מנהל.ת לפי גודל בית הספר"],
+  ["pedagogi",   "רכז.ת פדגוגי.ת · סגן.ית מנהל.ת", "0.5 ש״ש לכיתה + 4/5 ש״ש · גמול 8% לרכז.ת פדגוגי.ת, 25.4% לסגן.ית מנהל.ת לפי גודל בית הספר",
+                 ["רכז.ת פדגוגי.ת", "סגן.ית מנהל.ת", "שני התפקידים"]],
   ["chevrati",   "רכז.ת חינוך חברתי יוצר",         "0.5 ש״ש לכיתה + 4/5 ש״ש · גמול 10% + תוספת לפי גודל בית הספר"],
   ["tzevet",     "רכז.ת צוות צעיר",                "ריכוז והובלת תחום בני ובנות השירות בבית הספר"],
   ["chanichut",  "רכז.ת חניכות",                   "5.5 ש״ש לכיתות יא׳–יב׳ · מינימום 4 שעות הוראה מוצמדות לתפקיד · התשלום כולל הוצאות רכב נלוות"],
@@ -595,8 +620,10 @@ var REPEAT = {
   megama:  {list:"megamaList",  title:"רכז.ת מגמה",   detail:"שם המגמה",   hint:"2 ש״ש לכל מגמה · הובלת המגמה המקצועית, קשר עם מפקח המקצוע, פרויקטים ומבחני גמר"},
   miktzoa: {list:"miktzoaList", title:"רכז.ת מקצוע",  detail:"שם המקצוע",  hint:"1 ש״ש לכל מקצוע · גמול 9% · מתמטיקה ואנגלית"},
   shichva: {list:"shichvaList", title:"רכז.ת שכבה",   detail:"השכבה",      hint:"1 ש״ש לכל כיתה + 0.5 שעת תפקיד מהפרטניות"},
-  chonech: {list:"chonechList", title:"מורה חונך.ת",  detail:"שם המורה החדש.ה המלווה", hint:"גמול 2.4% · טעון אישור מפקח והעברת האישור לרשת"}
+  chonech: {list:"chonechList", title:"מורה חונך.ת",  detail:"שם המורה החדש.ה המלווה", hint:"גמול 2.4% · טעון אישור מפקח והעברת האישור לרשת"},
+  acher:   {list:"acherList",   title:"תפקיד אחר",    detail:"שם התפקיד",  hint:"תפקיד שאין לו כרטיס בנספח"}
 };
+var REPEAT_LISTS = Object.keys(REPEAT).map(function(k){ return REPEAT[k].list; });
 
 /* ששת התפקידים שמהם בוחרים 4 בגמול 6% —
    inCore: תפקיד שכבר מופיע ככרטיס קבוע למעלה (לא נפתח לו כרטיס נוסף) */
@@ -620,13 +647,15 @@ var uid = 0;
 
 /* ---------- בניית כרטיס בעל תפקיד ---------- */
 function roleCard(opts){
-  /* opts: key, title, hint, detailLabel (אופציונלי), removable, vacantable */
+  /* opts: key, title, hint, detailLabel / detailOptions (אופציונלי), removable, vacantable,
+           addMore (כפתור ״בעל.ת תפקיד נוסף״), extra (כרטיס של אדם נוסף באותו תפקיד) */
   var id = opts.key + "_" + (++uid);
   var el = document.createElement("div");
-  el.className = "role";
+  el.className = "role" + (opts.extra ? " extra" : "");
   el.dataset.key = opts.key;
   el.dataset.role = opts.title;
   el.dataset.id = id;
+  if (opts.extra) el.dataset.extra = "1";
 
   var head = '<div class="rhead"><div class="rt"><b>' + opts.title + '</b>' +
              (opts.hint ? '<small>' + opts.hint + '</small>' : '') + '</div>';
@@ -638,8 +667,12 @@ function roleCard(opts){
   head += '</div>';
 
   var body = '<div class="rbody">';
-  if (opts.detailLabel){
-    body += '<div class="w"><label>' + opts.detailLabel + '</label>' +
+  if (opts.detailOptions){
+    body += '<div class="w"><label>התפקיד בפועל</label><select data-f="detail">' +
+            opts.detailOptions.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join("") +
+            '</select></div>';
+  } else if (opts.detailLabel){
+    body +='<div class="w"><label>' + opts.detailLabel + '</label>' +
             '<input type="text" data-f="detail" placeholder="' + opts.detailLabel + '"></div>';
   }
   body += '<div class="w"><label>שם בעל.ת התפקיד</label><input type="text" data-f="name" autocomplete="off" placeholder="שם פרטי ומשפחה"></div>' +
@@ -653,8 +686,20 @@ function roleCard(opts){
 
   var foot = opts.removable
     ? '<div class="rfoot"><button type="button" class="rdel">הסרת השורה</button></div>' : '';
+  if (opts.addMore){
+    foot += '<div class="rfoot more"><button type="button" class="addmore">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
+      'בעל.ת תפקיד נוסף</button></div>';
+  }
 
   el.innerHTML = head + body + foot;
+
+  var more = el.querySelector(".addmore");
+  if (more) more.addEventListener("click", function(){
+    var x = addExtra(el);
+    var n = x.querySelector('[data-f="name"]');
+    if (n) n.focus();
+  });
 
   var vac = el.querySelector("[data-vac]");
   if (vac){
@@ -670,7 +715,24 @@ function roleCard(opts){
   var del = el.querySelector(".rdel");
   if (del) del.addEventListener("click", function(){ el.remove(); });
 
+  el._opts = opts;
   paint(el);
+  return el;
+}
+
+/* אדם נוסף באותו תפקיד — כרטיס נפרד מתחת לכרטיס התפקיד (ולתוספות שכבר נוספו לו) */
+function addExtra(base, data){
+  var o = base._opts;
+  var el = roleCard({key:o.key, title:o.title, hint:o.hint, detailOptions:o.detailOptions,
+                     removable:true, vacantable:false, extra:true});
+  var after = base;
+  while (after.nextElementSibling && after.nextElementSibling.dataset &&
+         after.nextElementSibling.dataset.extra === "1" &&
+         after.nextElementSibling.dataset.key === o.key){
+    after = after.nextElementSibling;
+  }
+  after.parentNode.insertBefore(el, after.nextSibling);
+  if (data) fillCard(el, data);
   return el;
 }
 
@@ -726,7 +788,8 @@ function fillCard(el, d){
 
   var core = $("coreRoles");
   CORE.forEach(function(r){
-    core.appendChild(roleCard({key:r[0], title:r[1], hint:r[2], vacantable:true}));
+    core.appendChild(roleCard({key:r[0], title:r[1], hint:r[2], detailOptions:r[3],
+                               vacantable:true, addMore:true}));
   });
 
   var errRoles = document.createElement("div");
@@ -778,12 +841,15 @@ function syncSix(){
   var want = {};
   sel.forEach(function(s){ if (!s[2]) want[s[0]] = s[1]; });
 
+  /* תפקיד שבוטלה בחירתו יורד יחד עם התוספות שלו */
+  var have = {};
   Array.prototype.slice.call(host.children).forEach(function(el){
     if (!want[el.dataset.key]) el.remove();
-    else delete want[el.dataset.key];
+    else have[el.dataset.key] = true;
   });
   Object.keys(want).forEach(function(k){
-    host.appendChild(roleCard({key:k, title:want[k], hint:SIX_HINT[k] || "", vacantable:true}));
+    if (have[k]) return;
+    host.appendChild(roleCard({key:k, title:want[k], hint:SIX_HINT[k] || "", vacantable:true, addMore:true}));
   });
 }
 
@@ -806,7 +872,8 @@ $("inspector").addEventListener("input", function(){ $("inspector").dataset.auto
 /* ---------- איסוף וולידציה ---------- */
 function allCards(){
   return Array.prototype.slice.call(
-    document.querySelectorAll("#coreRoles .role, #megamaList .role, #miktzoaList .role, #shichvaList .role, #chonechList .role, #sixRoles .role")
+    document.querySelectorAll(["#coreRoles .role", "#sixRoles .role"].concat(
+      REPEAT_LISTS.map(function(l){ return "#" + l + " .role"; })).join(", "))
   );
 }
 
@@ -838,7 +905,7 @@ function validate(d){
 
   /* כל כרטיס קבוע — שם או "טרם אויש" */
   var missing = false;
-  document.querySelectorAll("#coreRoles .role, #sixRoles .role").forEach(function(el){
+  document.querySelectorAll("#coreRoles .role:not([data-extra]), #sixRoles .role:not([data-extra])").forEach(function(el){
     var c = readCard(el);
     var bad = !c.vacant && !c.name;
     el.classList.toggle("bad", bad);
@@ -849,14 +916,15 @@ function validate(d){
 
   /* שורות שנוספו — שם או פירוט ריקים לגמרי נזרקות; שורה חלקית נחסמת */
   var partial = false;
-  ["megamaList","miktzoaList","shichvaList","chonechList"].forEach(function(listId){
-    document.querySelectorAll("#" + listId + " .role").forEach(function(el){
-      var c = readCard(el);
-      var any = c.detail || c.name || c.hours || c.scope || c.seniority || c.other || c.email || c.phone;
-      var bad = any && !c.name;
-      el.classList.toggle("bad", !!bad);
-      if (bad) partial = true;
-    });
+  var partialSel = REPEAT_LISTS.map(function(l){ return "#" + l + " .role"; })
+    .concat(["#coreRoles .role[data-extra]", "#sixRoles .role[data-extra]"]).join(", ");
+  document.querySelectorAll(partialSel).forEach(function(el){
+    var c = readCard(el);
+    /* בכרטיס אדם נוסף ״התפקיד בפועל״ הוא בחירה עם ערך ברירת מחדל — לא נחשב מילוי */
+    var any = (el.dataset.extra ? "" : c.detail) || c.name || c.hours || c.scope || c.seniority || c.other || c.email || c.phone;
+    var bad = any && !c.name;
+    el.classList.toggle("bad", !!bad);
+    if (bad) partial = true;
   });
   if (partial){
     $("e_roles").textContent = "בשורות שהוספתם יש למלא את שם בעל.ת התפקיד, או להסיר את השורה";
@@ -883,10 +951,8 @@ function validate(d){
 function payload(d){
   var out = JSON.parse(JSON.stringify(d));
   /* שורות ריקות לגמרי לא נשלחות */
-  out.roles = out.roles.filter(function(r){
-    if (r.vacant) return true;
-    return r.name || r.detail || r.hours || r.scope || r.seniority || r.other || r.email || r.phone;
-  });
+  /* (הוולידציה כבר חוסמת שורה חלקית בלי שם, והשרת ממילא שומר רק שורה עם שם או ״טרם אויש״) */
+  out.roles = out.roles.filter(function(r){ return r.vacant || r.name; });
   return out;
 }
 
@@ -982,10 +1048,14 @@ $("retryBtn").addEventListener("click", submit);
   });
   syncSix();
 
+  /* השורה הראשונה של כל תפקיד ממלאת את הכרטיס, והבאות נפתחות ככרטיסי ״בעל.ת תפקיד נוסף״ */
+  var used = {};
   (d.roles || []).forEach(function(r){
     if (REPEAT[r.key]){ addRepeat(r.key, r); return; }
-    var el = document.querySelector('#coreRoles .role[data-key="' + r.key + '"], #sixRoles .role[data-key="' + r.key + '"]');
-    if (el) fillCard(el, r);
+    var el = document.querySelector('#coreRoles .role[data-key="' + r.key + '"]:not([data-extra]), #sixRoles .role[data-key="' + r.key + '"]:not([data-extra])');
+    if (!el) return;
+    if (used[r.key]) addExtra(el, r);
+    else { fillCard(el, r); used[r.key] = true; }
   });
 
   $("badText").textContent = "שחזרנו נספח שמילאתם קודם ולא אומת שנשלח. אפשר לבדוק ולשלוח שוב.";
