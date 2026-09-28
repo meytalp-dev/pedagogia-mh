@@ -106,6 +106,7 @@ if (DEMO_) {
     }
     if (action === 'notes.delete' || action === 'notes.fileDelete') return res({ ok: true, data: {} });
     if (action === 'teacher.training') return res({ ok: true, data: { trainingStatus: body.status || SELF.trainingStatus,
+      unitsSelf: body.units || SELF.unitsSelf || '',
       trainingFile: body.data ? '#' : '', trainingFileName: body.fileName || '', trainingAt: new Date().toISOString() } });
     if (action === 'checkin.submit') {
       res(String(body.code) === '1234' ? { ok: true, data: { duplicate: false } } : { ok: false, error: 'bad_code' });
@@ -427,7 +428,8 @@ async function load() {
      הקודמת מסומנת. רק מי שהשלים/ה הכול, כולל אישור, נכנס/ת ישר לדף. */
   if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_) {
     const reminder = trainingIncomplete() && !remindedThisVisit();
-    if (!teacher.trainingStatus || reminder) {
+    // במתמטיקה ובאנגלית גם יח"ל — חובה, גם למי שכבר ענה/תה על ההשתלמות לפני שנוספה השאלה
+    if (!teacher.trainingStatus || needsUnits() || reminder) {
       showLoading(false);
       await askTraining(!!teacher.trainingStatus);
       showLoading(true);
@@ -965,7 +967,8 @@ const TRAINING_LABEL = {
 const TRAINING_ERRORS = {
   file_too_large: 'הקובץ גדול מדי (עד 8MB). אפשר לצלם שוב או לשמור כ-PDF קטן יותר.',
   bad_key: 'פג תוקף הכניסה. רעננו את הדף והיכנסו שוב.',
-  bad_status: 'בחרו תשובה.'
+  bad_status: 'בחרו תשובה.',
+  bad_units: 'סמנו אילו יחידות לימוד את/ה מלמד/ת.'
 };
 /* הערה למורי מתמטיקה שלא צירפו אישור (28.9.26, נוסח מיטל) */
 const TRAINING_MATH_NOTE = '<b>שימו לב:</b> במתמטיקה, על פי הנחיית המפמ"ר, ההשתלמות היא חובה. ' +
@@ -985,9 +988,10 @@ function readFileB64(file) {
   });
 }
 
-async function sendTraining(status, file) {
+async function sendTraining(status, file, units) {
   const body = { k: teacherKey };
   if (status) body.status = status;
+  if (units) body.units = units;
   if (file) {
     if (file.size > 8 * 1024 * 1024) return { ok: false, error: 'file_too_large' };
     body.data = await readFileB64(file);
@@ -1006,6 +1010,21 @@ function trainingStatusFromForm() {
   if (passed === 'no' && reg === 'yes') return 'registered';
   if (passed === 'no' && reg === 'no') return 'none';
   return '';
+}
+
+/* יחידות לימוד (28.9.26, מיטל) — מתמטיקה: 3 · 4 · 5 · גמר · אנגלית: 3 · 4 · 5.
+   בחירה מרובה, חובה. נשמר ב-unitsSelf דרך teacher.training; השרת גוזר ממנו את
+   units (3 · 4-5 · 3+4-5) רק כשהוא ריק — כדי לא לדרוס שיוך שמדריכ/ה קבע/ה. */
+const UNITS_Q = { 'מתמטיקה': ['3', '4', '5', 'gemer'], 'אנגלית': ['3', '4', '5'] };
+const UNITS_Q_LABEL = { '3': '3 יח"ל', '4': '4 יח"ל', '5': '5 יח"ל', gemer: 'גמר' };
+function unitsOptions() {
+  const s = String((teacher && teacher.subject) || '');
+  const k = Object.keys(UNITS_Q).find(x => s.indexOf(x) >= 0);
+  return k ? UNITS_Q[k] : null;
+}
+function needsUnits() { return !!unitsOptions() && !String(teacher.unitsSelf || ''); }
+function unitsFromForm() {
+  return [...document.querySelectorAll('#tq-units input:checked')].map(el => el.value).join(',');
 }
 
 /* התשובה ניתנה אבל חסר אישור, או "לא עברתי ולא נרשמתי" */
@@ -1030,7 +1049,18 @@ function askTraining(reminder) {
     ['tg-step1', 'tg-step2', 'tg-enter'].forEach(x => { $g(x).hidden = true; });
     const sub = document.querySelector('#teacher-gate .tg-sub');
     const prev = String(teacher.trainingStatus || '');
-    if (sub) sub.textContent = !reminder
+    const uOpts = unitsOptions();
+    const prevUnits = String(teacher.unitsSelf || '');
+    const unitsOnly = reminder && needsUnits() && !trainingIncomplete();
+    $g('tq-units-set').hidden = !uOpts;
+    if (uOpts) {
+      const on = prevUnits.split(',');
+      $g('tq-units').innerHTML = uOpts.map(u => '<label class="tq-opt"><input type="checkbox" value="' + u + '"' +
+        (on.indexOf(u) >= 0 ? ' checked' : '') + '><span>' + UNITS_Q_LABEL[u] + '</span></label>').join('');
+    }
+    if (sub) sub.textContent = unitsOnly
+      ? 'עוד שאלה אחת לפני שהדף נפתח: אילו יחידות לימוד את/ה מלמד/ת? כך נדע לאיזו קבוצת הדרכה לשייך אותך.'
+      : !reminder
       ? 'עוד שאלה אחת לפני שהדף נפתח. התשובה מגיעה למדריכ/ה ולמנהל/ת, כדי שנדע מי צריך/ה עזרה בהרשמה להשתלמות.'
       : prev === 'none'
         ? 'בכניסה הקודמת ציינת שלא עברת השתלמות ולא נרשמת השנה. נרשמת בינתיים? עדכנו כאן וצרפו את האישור.'
@@ -1050,7 +1080,8 @@ function askTraining(reminder) {
       $g('teacher-body').hidden = false;
       resolve();
     };
-    if (later) { later.hidden = !reminder; later.onclick = done; }
+    // "אשלים בהמשך" רק כשחסר אישור בלבד — יח"ל ותשובת ההשתלמות הן חובה
+    if (later) { later.hidden = !reminder || needsUnits(); later.onclick = done; }
     gateMsg('');
     gateStep(3);
     $g('tg-step3').hidden = false;
@@ -1073,6 +1104,8 @@ function askTraining(reminder) {
 
     $g('tq-save').onclick = async () => {
       const st = trainingStatusFromForm();
+      const units = uOpts ? unitsFromForm() : '';
+      if (uOpts && !units) return gateMsg('סמנו אילו יחידות לימוד את/ה מלמד/ת.');
       if (!st) {
         const passed = (document.querySelector('input[name="tq-passed"]:checked') || {}).value;
         return gateMsg(passed === 'no' ? 'ענו גם על השאלה אם נרשמת להשתלמות השנה.' : 'ענו על השאלה כדי להמשיך.');
@@ -1080,13 +1113,13 @@ function askTraining(reminder) {
       const input = $g('tq-file');
       const file = (st !== 'none' && input.files && input.files[0]) || null;
       // תזכורת בלי שינוי ובלי קובץ — אין מה לשמור, נכנסים לדף
-      if (reminder && st === prev && !file) return done();
+      if (reminder && st === prev && !file && units === prevUnits) return done();
       const btn = $g('tq-save');
       btn.disabled = true;
       const label = btn.textContent;
       btn.textContent = file ? 'מעלה את האישור…' : 'שומר…';
       let r = null;
-      try { r = await sendTraining(st, file); } catch (e) { r = null; }
+      try { r = await sendTraining(st, file, units !== prevUnits ? units : ''); } catch (e) { r = null; }
       btn.disabled = false;
       btn.textContent = label;
       if (!r || !r.ok) return gateMsg(TRAINING_ERRORS[r && r.error] || 'השמירה לא הצליחה. נסו שוב בעוד רגע.');

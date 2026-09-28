@@ -241,6 +241,7 @@ async function loadData(opts) {
         units: (t.units || '').toString().trim(),
         sector: t.sector || 'kelali',
         trainingStatus: String(t.trainingStatus || ''),
+        unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
         attendance: d ? d.attendance : {},
         stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 },
         legacyAttendance: d ? d.attendance : {},
@@ -548,6 +549,15 @@ function unitsControl(t) {
             onchange='setUnitsById(${JSON.stringify(String(t.id))}, this.value, this)'>${opts.join('')}</select>`;
 }
 
+// מה שהמורה סימן/ה בעצמו/ה בהרשמה למבט המורה (28.9.26) — מתמטיקה/אנגלית
+function unitsSelfChip(t) {
+  const v = String(t.unitsSelf || '');
+  if (!v) return '';
+  const L = { '3': '3', '4': '4', '5': '5', gemer: 'גמר' };
+  const txt = v.split(',').map(x => L[x] || x).join(' · ');
+  return `<span class="badge neutral" title="יחידות הלימוד שהמורה סימן/ה בהרשמה">המורה: ${txt}</span>`;
+}
+
 // שמירת הרמה. עדכון אופטימי — הבורר לא ננעל, ובכישלון חוזרים לערך הקודם.
 async function setUnitsById(id, units, el) {
   const t = state.teachers.find(x => String(x.id) === String(id));
@@ -672,6 +682,7 @@ function renderTeachers() {
             <span class="te-name-text">${escapeHtml(t.name)}</span>
             <span class="track-chip ${t.type === 'gemer' ? 'gemer' : 'bagrut'}">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</span>
             ${unitsControl(t)}
+            ${unitsSelfChip(t)}
             ${window.TS_training ? `<span class="te-train">${TS_training.chip(t, teTrainFiles)}</span>` : ''}
             <span class="te-actions">
               <button class="te-icon" title="עריכת מורה" onclick='editTeacherById(${JSON.stringify(String(t.id))})'>

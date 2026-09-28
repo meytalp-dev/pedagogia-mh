@@ -369,7 +369,13 @@
            מוצג אחרי אימות המייל, וגם לכל מי שנכנס/ה בקישור מהמייל ועוד לא ענה/תה
            (load() בודק trainingStatus). האישור רשות — אפשר להשלים אחר כך מדף הבית. -->
       <div id="tg-step3" hidden>
-        <fieldset class="tq-set">
+        <!-- יח"ל (28.9.26, מיטל) — במתמטיקה (3/4/5/גמר) ובאנגלית (3/4/5), בחירה מרובה, חובה.
+             האפשרויות נבנות ב-dashboard.js (UNITS_Q) לפי המקצוע של המורה -->
+        <fieldset class="tq-set" id="tq-units-set" hidden>
+          <legend class="tq-q">אילו יחידות לימוד את/ה מלמד/ת? אפשר לסמן יותר מאחת. <span class="tq-req">חובה</span></legend>
+          <div id="tq-units"></div>
+        </fieldset>
+        <fieldset class="tq-set" id="tq-passed-set">
           <legend class="tq-q">האם עברת השתלמות מקצועית ב-3 השנים האחרונות ברמת הלימוד שאת/ה מלמד/ת (הגבוהה מביניהן)? <span class="tq-req">חובה</span></legend>
           <label class="tq-opt"><input type="radio" name="tq-passed" value="yes"><span>כן, עברתי השתלמות</span></label>
           <label class="tq-opt"><input type="radio" name="tq-passed" value="no"><span>לא</span></label>
