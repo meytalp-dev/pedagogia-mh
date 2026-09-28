@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>השתלמות מקצועית — מבט המדריכ/ה · מנור</title>
+<script src="../assets/staff.js?v=20260924" data-view="guide"></script>
+<link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
+<style>
+  [hidden] { display: none !important; }
+  .lead-note { background:var(--sand-soft,#F7F0E3); border:1px solid var(--sand,#E6D3AE); border-radius:12px; padding:12px 16px; font-size:.84rem; color:var(--text-2); line-height:1.8; margin-bottom:16px; }
+  .tr-back { font-size:13px; font-weight:600; color:var(--primary,#1A5365); }
+  .tr-warn { background:#FBECE8; color:#8f2f1c; border-radius:10px; padding:10px 14px; font-size:13px; margin-bottom:14px; }
+</style>
+</head>
+<body data-role="guide" data-look="menor">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <img class="compass-icon" src="../assets/menor-sail.png" alt="" aria-hidden="true">
+        <div class="command-bar-text">
+          <span class="unit"><img class="menor-word" src="../assets/menor-word.png" alt="מנור"></span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>מבט המדריכ/ה</span>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט המדריכ/ה · השתלמות מקצועית</div>
+        <h1 id="tr-title">השתלמות מקצועית של המורים</h1>
+        <p class="page-header-sub" id="tr-sub">טוען…</p>
+        <a class="tr-back" id="tr-back" href="index.html">← חזרה לדשבורד</a>
+      </div>
+    </section>
+
+    <div class="lead-note">
+      <b>מאיפה הנתונים:</b> כל מורה עונה בהרשמה למבט המורה — האם עבר/ה השתלמות מקצועית ב-3 השנים האחרונות ברמת הלימוד שמלמד/ת (הגבוהה מביניהן), ואם לא — האם נרשם/ה השנה. צירוף האישור רשות, ואפשר להשלים אותו גם אחר כך. מורה שמלמד/ת את אותו מקצוע בבגרות ובגמר מופיע/ה פעם אחת.
+    </div>
+    <div class="tr-warn" id="tr-warn" hidden></div>
+    <div id="tr-root"><div class="empty" style="padding:32px;">טוען את רשימת המורים… (עד חצי דקה)</div></div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מנור · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260924h"></script>
+<script src="../assets/guides.js?v=20260928a"></script>
+<script src="../assets/training.js?v=20260928"></script>
+<script src="../assets/training-report.js?v=20260928"></script>
+<script>
+(async function () {
+  /* דף ההשתלמות של המדריכ/ה (28.9.26) — אותם מורים כמו ב"המורים שלי" בדשבורד */
+  function warnFiles() {
+    if (!TS_training.filesOk) {
+      var w = document.getElementById('tr-warn');
+      w.hidden = false;
+      w.textContent = 'לא ניתן היה לטעון את האישורים שצורפו (הכניסה לא זוהתה או שהשרת עמוס). החלוקה "צירף / לא צירף אישור" אינה מדויקת — רעננו את הדף.';
+    }
+  }
+  var qs = new URLSearchParams(location.search);
+  var g = window.TS_resolveGuide ? TS_resolveGuide(qs.get('g') || '', qs.get('guide') || '') : null;
+  var root = document.getElementById('tr-root');
+  var back = document.getElementById('tr-back');
+  back.href = 'index.html' + location.search;
+  if (!g) { root.innerHTML = '<div class="empty" style="padding:32px;">לא זוהה/תה מדריכ/ה בקישור.</div>'; return; }
+  document.getElementById('tr-title').textContent = 'השתלמות מקצועית — המורים של ' + g.name;
+  var subs = TS_guideSubjects(g);
+  var [res, files] = await Promise.all([
+    TS.api('teachers.list', subs.length === 1 ? { subject: subs[0] } : {}),
+    TS_training.files()
+  ]);
+  if (!res || !res.ok) { root.innerHTML = '<div class="empty" style="padding:32px;">הטעינה נכשלה — רעננו את הדף.</div>'; return; }
+  var rows = (res.data || []).filter(function (t) { return TS_trainingReport.guideCovers(g, t); });
+  document.getElementById('tr-sub').textContent = subs.join(' · ') + ' — ' + rows.length + ' שורות מורים';
+  warnFiles();
+  TS_trainingReport.render(root, { rows: rows, files: files });
+})();
+</script>
+</body>
+</html>

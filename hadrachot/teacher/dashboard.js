@@ -54,7 +54,10 @@ if (DEMO_) {
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
   const mid = 'mt_moria_' + today.replace(/-/g, '');
   const SELF = { id: 'demo_t', name: 'מורה לדוגמה', subject: 'עברית', type: 'bagrut', sector: 'kelali',
-    school: 'demo_s', schoolName: 'בית ספר לדוגמה' };
+    school: 'demo_s', schoolName: 'בית ספר לדוגמה',
+    // ?demo=1&tq=1 — הדגמת שאלת ההשתלמות (28.9.26); &subj=מתמטיקה להערת המפמ"ר
+    trainingStatus: TS.urlParam('tq', '') === '1' ? '' : 'passed' };
+  if (TS.urlParam('subj', '')) SELF.subject = TS.urlParam('subj', '');
   const SCOPE = { today: today, rows: [
       { meetingId: 'mt_moria_20260915', guideSlug: 'moria', date: '2026-09-15', teacherId: 'demo_t', status: 'present' }],
     hours: [], meetings: [
@@ -100,6 +103,8 @@ if (DEMO_) {
       return res({ ok: true, data: f });
     }
     if (action === 'notes.delete' || action === 'notes.fileDelete') return res({ ok: true, data: {} });
+    if (action === 'teacher.training') return res({ ok: true, data: { trainingStatus: body.status || SELF.trainingStatus,
+      trainingFile: body.data ? '#' : '', trainingFileName: body.fileName || '', trainingAt: new Date().toISOString() } });
     if (action === 'checkin.submit') {
       res(String(body.code) === '1234' ? { ok: true, data: { duplicate: false } } : { ok: false, error: 'bad_code' });
     } else res({ ok: false, error: 'demo' });
@@ -200,7 +205,7 @@ function updateHelpLink() {
 }
 
 function gateStep(n) {
-  [1, 2, 3].forEach(i => {
+  [1, 2, 3, 4].forEach(i => {
     const li = $g('tg-st' + i);
     if (li) { li.classList.toggle('on', i === n); li.classList.toggle('done', i < n); }
   });
@@ -343,7 +348,7 @@ async function onGateVerify() {
   teacherKey = r.data.key;
   teacherId = r.data.id;
   gateStep(3);
-  // שלב 3: סיור קצר בדף — מתחיל כשהנתונים נטענו (tour.js)
+  // שלב 3 (שאלת ההשתלמות) נשאל ב-load() אם עוד לא נענה; שלב 4: סיור קצר — tour.js
   try { localStorage.setItem('ts.teacher.tour', 'pending'); } catch (e) { /* לא חוסם */ }
   $g('teacher-gate').hidden = true;
   $g('teacher-body').hidden = false;
@@ -400,6 +405,13 @@ async function load() {
     if (ADMIN_KEY_) { alert('המורה לא נמצא/ה (אולי נמחק/ה או אוחד/ה).'); return; }
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
     if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
+  }
+  /* שאלת ההשתלמות (28.9.26) — חובה, פעם אחת. גם מי שנכנס/ה בקישור מהמייל (?tk=)
+     ולא עבר/ה בטופס ההרשמה נשאל/ת כאן לפני שהדף נפתח. */
+  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_ && !teacher.trainingStatus) {
+    showLoading(false);
+    await askTraining();
+    showLoading(true);
   }
   render();
   // כפתורי הניווט מיד — לא מחכים להדרכות (השרת עונה לאט; מתעדכנים שוב בסוף)
@@ -871,10 +883,8 @@ function render() {
 
   renderAttendance();
 
-  // PD badge
-  document.getElementById('pd-status').innerHTML = teacher.pdActive
-    ? '<span class="badge ok">בהשתלמות פעילה</span>'
-    : '<span class="badge neutral">לא בהשתלמות</span>';
+  // ההשתלמות המקצועית (28.9.26) — במקום תג pdActive הישן, שאיש לא מילא
+  renderTraining();
 
   document.getElementById('moe-status').innerHTML = teacher.moeApproval
     ? '<span class="badge info">מודרך גם במשרד החינוך</span>'
@@ -917,4 +927,174 @@ async function submitQuestion(e) {
   } else {
     TS.toast('שגיאה');
   }
+}
+
+/* ==========================================================================
+   שאלת ההשתלמות המקצועית (28.9.26, בקשת מיטל)
+   "האם עברת השתלמות מקצועית ב-3 השנים האחרונות ברמת הלימוד שאת/ה מלמד/ת
+   (הגבוהה מביניהן)?"  כן → אפשר לצרף אישור · לא → "האם נרשמת השנה?"
+   כן → אפשר לצרף אישור · לא → פנייה למדריכ/ה בפרטי (נוסח מוכן ב"שאלה למדריכ/ה").
+   התשובה חובה; האישור רשות ואפשר להשלים מדף הבית (pd-sec).
+   שרת: teacher.training { k, status, data?, fileName?, mimeType? }.
+   ========================================================================== */
+const TRAINING_LABEL = {
+  passed: 'עברתי השתלמות מקצועית ב-3 השנים האחרונות',
+  registered: 'נרשמתי להשתלמות השנה',
+  none: 'לא עברתי השתלמות ולא נרשמתי השנה'
+};
+const TRAINING_ERRORS = {
+  file_too_large: 'הקובץ גדול מדי (עד 8MB). אפשר לצלם שוב או לשמור כ-PDF קטן יותר.',
+  bad_key: 'פג תוקף הכניסה. רעננו את הדף והיכנסו שוב.',
+  bad_status: 'בחרו תשובה.'
+};
+/* הערה למורי מתמטיקה שלא צירפו אישור (28.9.26, נוסח מיטל) */
+const TRAINING_MATH_NOTE = '<b>שימו לב:</b> במתמטיקה, על פי הנחיית המפמ"ר, ההשתלמות היא חובה. ' +
+  'מכיוון שנכנסה תוכנית לימודים חדשה, כל מורה נדרש/ת לעבור השתלמות מקצועית בשלוש השנים האחרונות. ' +
+  'ההשתלמות לתוכנית החדשה היא חלק מאחריות המורה ומחויבותו/ה לפיתוח מקצועי. ' +
+  'על פי חוזר מנכ"ל, מורים המלמדים 5 יח"ל מחויבים לעבור השתלמות של 5 יח"ל. ' +
+  '<b>אנא דאגו להעלות את האישורים המתאימים.</b>';
+const isMathTeacher = () => /מתמטיקה/.test(String((teacher && teacher.subject) || ''));
+const TRAINING_NONE_Q = 'שלום, לא עברתי השתלמות מקצועית ב-3 השנים האחרונות ועדיין לא נרשמתי להשתלמות השנה. אשמח לתאם איתך.';
+
+function readFileB64(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result || ''));
+    fr.onerror = () => reject(fr.error);
+    fr.readAsDataURL(file);
+  });
+}
+
+async function sendTraining(status, file) {
+  const body = { k: teacherKey };
+  if (status) body.status = status;
+  if (file) {
+    if (file.size > 8 * 1024 * 1024) return { ok: false, error: 'file_too_large' };
+    body.data = await readFileB64(file);
+    body.fileName = file.name;
+    body.mimeType = file.type || 'application/octet-stream';
+  }
+  const r = await TS.apiPost('teacher.training', body);
+  if (r && r.ok && r.data && teacher) Object.assign(teacher, r.data);
+  return r;
+}
+
+function trainingStatusFromForm() {
+  const passed = (document.querySelector('input[name="tq-passed"]:checked') || {}).value;
+  const reg = (document.querySelector('input[name="tq-reg"]:checked') || {}).value;
+  if (passed === 'yes') return 'passed';
+  if (passed === 'no' && reg === 'yes') return 'registered';
+  if (passed === 'no' && reg === 'no') return 'none';
+  return '';
+}
+
+function askTraining() {
+  return new Promise(resolve => {
+    $g('teacher-gate').hidden = false;
+    $g('teacher-body').hidden = true;
+    ['tg-step1', 'tg-step2', 'tg-enter'].forEach(x => { $g(x).hidden = true; });
+    const sub = document.querySelector('#teacher-gate .tg-sub');
+    if (sub) sub.textContent = 'עוד שאלה אחת לפני שהדף נפתח. התשובה מגיעה למדריכ/ה ולמנהל/ת, כדי שנדע מי צריך/ה עזרה בהרשמה להשתלמות.';
+    gateMsg('');
+    gateStep(3);
+    $g('tg-step3').hidden = false;
+
+    const sync = () => {
+      const passed = (document.querySelector('input[name="tq-passed"]:checked') || {}).value;
+      $g('tq-reg-set').hidden = passed !== 'no';
+      const st = trainingStatusFromForm();
+      $g('tq-file-box').hidden = !(st === 'passed' || st === 'registered');
+      $g('tq-file-label').textContent = st === 'registered' ? 'אישור ההרשמה להשתלמות' : 'אישור ההשתלמות';
+      $g('tq-none').hidden = st !== 'none';
+      const noFile = !($g('tq-file').files && $g('tq-file').files[0]);
+      $g('tq-math').innerHTML = TRAINING_MATH_NOTE;
+      $g('tq-math').hidden = !(isMathTeacher() && st && (st === 'none' || noFile));
+      gateMsg('');
+    };
+    document.querySelectorAll('#tg-step3 input[type=radio]').forEach(el => el.addEventListener('change', sync));
+    $g('tq-file').addEventListener('change', sync);
+
+    $g('tq-save').onclick = async () => {
+      const st = trainingStatusFromForm();
+      if (!st) {
+        const passed = (document.querySelector('input[name="tq-passed"]:checked') || {}).value;
+        return gateMsg(passed === 'no' ? 'ענו גם על השאלה אם נרשמת להשתלמות השנה.' : 'ענו על השאלה כדי להמשיך.');
+      }
+      const input = $g('tq-file');
+      const file = (st !== 'none' && input.files && input.files[0]) || null;
+      const btn = $g('tq-save');
+      btn.disabled = true;
+      const label = btn.textContent;
+      btn.textContent = file ? 'מעלה את האישור…' : 'שומר…';
+      let r = null;
+      try { r = await sendTraining(st, file); } catch (e) { r = null; }
+      btn.disabled = false;
+      btn.textContent = label;
+      if (!r || !r.ok) return gateMsg(TRAINING_ERRORS[r && r.error] || 'השמירה לא הצליחה. נסו שוב בעוד רגע.');
+      if (st === 'none') { const q = $g('q-text'); if (q && !q.value) q.value = TRAINING_NONE_Q; }
+      $g('tg-step3').hidden = true;
+      gateStep(4);
+      $g('teacher-gate').hidden = true;
+      $g('teacher-body').hidden = false;
+      resolve();
+    };
+  });
+}
+
+/* דף הבית: תזכורת רק כשיש מה לעשות (מקטע ריק לא מוצג), ושורה ב"הפרטים שלי" */
+function renderTraining() {
+  const st = String(teacher.trainingStatus || '');
+  const file = String(teacher.trainingFile || '');
+  const badge = document.getElementById('pd-status');
+  if (badge) {
+    badge.innerHTML = !st ? '<span class="badge neutral">השתלמות: טרם נענה</span>'
+      : '<span class="badge ' + (st === 'none' ? 'warn' : 'ok') + '">' + esc(TRAINING_LABEL[st]) + '</span>' +
+        (file ? ' <a class="badge info" href="' + esc(file) + '" target="_blank" rel="noopener">האישור שצירפתי</a>' : '');
+  }
+  const sec = document.getElementById('pd-sec');
+  if (!sec || ADMIN_KEY_) return;
+  const text = document.getElementById('pd-text');
+  const actions = document.getElementById('pd-actions');
+  const input = document.getElementById('pd-file');
+  if (st === 'none') {
+    text.innerHTML = '<b>השתלמות מקצועית:</b> ציינת שלא עברת השתלמות ולא נרשמת השנה. ' +
+      'כדאי לפנות למדריכ/ה המקצועי/ת שלך בהודעה פרטית כדי לתאם.';
+    actions.innerHTML = '<a class="btn btn-primary" href="#q-sec" id="pd-ask">פנייה למדריכ/ה</a>' +
+      '<button type="button" class="btn btn-secondary" id="pd-reg">נרשמתי — צירוף אישור</button>';
+    sec.hidden = false;
+    document.getElementById('pd-ask').onclick = () => {
+      const q = document.getElementById('q-text');
+      if (q && !q.value) q.value = TRAINING_NONE_Q;
+      setTimeout(() => q && q.focus(), 400);
+    };
+    document.getElementById('pd-reg').onclick = () => { input.dataset.status = 'registered'; input.click(); };
+  } else if ((st === 'passed' || st === 'registered') && !file) {
+    text.innerHTML = '<b>השתלמות מקצועית:</b> ' + esc(TRAINING_LABEL[st]) + '. ' +
+      'עוד לא צירפת ' + (st === 'registered' ? 'אישור הרשמה' : 'אישור השתלמות') + ' — אפשר עכשיו, PDF או תמונה.';
+    actions.innerHTML = '<button type="button" class="btn btn-primary" id="pd-up">צירוף אישור</button>';
+    sec.hidden = false;
+    document.getElementById('pd-up').onclick = () => { input.dataset.status = ''; input.click(); };
+  } else {
+    sec.hidden = true;
+    return;
+  }
+  if (isMathTeacher()) text.insertAdjacentHTML('afterend', '<div class="tq-math">' + TRAINING_MATH_NOTE + '</div>');
+  sec.querySelectorAll('.tq-math').forEach((el, i, all) => { if (i < all.length - 1) el.remove(); });
+  input.onchange = async () => {
+    const f = input.files && input.files[0];
+    if (!f) return;
+    const status = input.dataset.status || '';
+    actions.innerHTML = '<span class="pd-msg">מעלה את האישור…</span>';
+    let r = null;
+    try { r = await sendTraining(status, f); } catch (e) { r = null; }
+    input.value = '';
+    if (!r || !r.ok) {
+      renderTraining();
+      document.getElementById('pd-actions').insertAdjacentHTML('beforeend',
+        '<span class="pd-msg" style="color:#8f2f1c">' + esc(TRAINING_ERRORS[r && r.error] || 'ההעלאה לא הצליחה. נסו שוב.') + '</span>');
+      return;
+    }
+    renderTraining();
+    buildNav();
+  };
 }

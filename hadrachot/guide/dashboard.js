@@ -240,6 +240,7 @@ async function loadData(opts) {
         type: t.type === 'gemer' ? 'gemer' : 'bagrut',
         units: (t.units || '').toString().trim(),
         sector: t.sector || 'kelali',
+        trainingStatus: String(t.trainingStatus || ''),
         attendance: d ? d.attendance : {},
         stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 },
         legacyAttendance: d ? d.attendance : {},
@@ -596,15 +597,33 @@ function renderUnitsPills() {
 }
 
 const teOpenSchools = new Set();   // בתי ספר שהמדריכ/ה פתחה ברשימה
+/* שאלת ההשתלמות (28.9.26) — תג לכל מורה + ספירה בראש הרשימה, ולחיצה על
+   "לא נרשמו" / "טרם ענו" מסננת כדי לפנות אליהם. הקישורים לאישורים נטענים בנפרד
+   (training.files, מפתח המדריכ/ה) ואז הרשימה מצוירת שוב. */
+let teTrainFilter = '';
+let teTrainFiles = null;
+function teLoadTrainFiles() {
+  if (teTrainFiles || !window.TS_training) return;
+  teTrainFiles = {};
+  TS_training.files().then(map => { teTrainFiles = map; if (Object.keys(map).length) renderTeachers(); });
+}
+function teSetTrainFilter(v) { teTrainFilter = teTrainFilter === v ? '' : v; renderTeachers(); }
+
 function renderTeachers() {
   renderTrackPills();
   renderUnitsPills();
+  teLoadTrainFiles();
   const search = (document.getElementById('teacher-search').value || '').trim().toLowerCase();
   const inTrack = t => inScope(t) &&
     (!currentTrack || (t.type === 'gemer' ? 'gemer' : 'bagrut') === currentTrack);
   const schoolSel = renderSchoolSelect(state.teachers.filter(inTrack));
+  const trainOf = t => t.trainingStatus || 'missing';
+  const preTrain = state.teachers.filter(t => inTrack(t) &&
+    (!schoolSel || (t.schoolName || '— ללא שיוך —') === schoolSel));
+  const tc = window.TS_training ? TS_training.counts(preTrain) : null;
   const filtered = state.teachers.filter(t =>
     inTrack(t) &&
+    (!teTrainFilter || trainOf(t) === teTrainFilter) &&
     (!schoolSel || (t.schoolName || '— ללא שיוך —') === schoolSel) &&
     (!search || (t.name || '').toLowerCase().includes(search) ||
                 (t.schoolName || '').toLowerCase().includes(search))
@@ -619,8 +638,18 @@ function renderTeachers() {
   });
 
   const container = document.getElementById('teachers-container');
+  const trainBar = tc ? `
+    <div class="te-trainbar">
+      <b>השתלמות מקצועית:</b>
+      <span class="badge ok">${tc.passed} עברו</span>
+      <span class="badge info">${tc.registered} נרשמו השנה</span>
+      <button type="button" class="badge err${teTrainFilter === 'none' ? ' on' : ''}" onclick="teSetTrainFilter('none')" title="הצגת מי שלא נרשם/ה — כדי לפנות אליהם בפרטי">${tc.none} לא נרשמו</button>
+      <button type="button" class="badge neutral${teTrainFilter === 'missing' ? ' on' : ''}" onclick="teSetTrainFilter('missing')" title="מי שעוד לא נרשם/ה למבט המורה">${tc.missing} טרם ענו</button>
+      ${teTrainFilter ? '<button type="button" class="te-trainclear" onclick="teSetTrainFilter(\'\')">הצגת כולם</button>' : ''}
+      <a class="te-trainlink" href="hishtalmut.html${location.search}">לדף ההשתלמות המלא ←</a>
+    </div>` : '';
   if (!Object.keys(bySchool).length) {
-    container.innerHTML = '<div class="empty" style="padding:32px;">לא נמצאו מורים</div>';
+    container.innerHTML = trainBar + '<div class="empty" style="padding:32px;">לא נמצאו מורים</div>';
     return;
   }
 
@@ -630,7 +659,7 @@ function renderTeachers() {
   const groups = Object.values(bySchool).sort((a, b) => a.name.localeCompare(b.name, 'he'));
   const forceOpen = !!(search || schoolSel || groups.length === 1);
   const allOpen = forceOpen || groups.every(g => teOpenSchools.has(g.name));
-  container.innerHTML = `
+  container.innerHTML = trainBar + `
     <div class="te-foldbar">
       <span><b>${filtered.length}</b> מורים ב-<b>${groups.length}</b> בתי ספר${forceOpen ? '' : ' · לוחצים על בית ספר כדי לראות את המורים'}</span>
       ${forceOpen ? '' : `<button type="button" class="btn btn-secondary" id="te-fold-all" style="padding:6px 12px; font-size:13px;">${allOpen ? 'קיפול כל בתי הספר' : 'פתיחת כל בתי הספר'}</button>`}
@@ -643,6 +672,7 @@ function renderTeachers() {
             <span class="te-name-text">${escapeHtml(t.name)}</span>
             <span class="track-chip ${t.type === 'gemer' ? 'gemer' : 'bagrut'}">${t.type === 'gemer' ? 'גמר' : 'בגרות'}</span>
             ${unitsControl(t)}
+            ${window.TS_training ? `<span class="te-train">${TS_training.chip(t, teTrainFiles)}</span>` : ''}
             <span class="te-actions">
               <button class="te-icon" title="עריכת מורה" onclick='editTeacherById(${JSON.stringify(String(t.id))})'>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>

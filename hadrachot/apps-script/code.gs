@@ -31,7 +31,9 @@ const SCHEMA = {
   schools:    ['id','name','network','principalName','principalEmail','principalPhone','attendanceTarget'],
   teachers:   ['id','school','network','name','subject','subjectId','type','sector','seniority',
                'units','students','phone','email','moeApproval','moeFile',
-               'pdActive','pdFile','pdYear','createdAt','schoolName','notes'],
+               'pdActive','pdFile','pdYear','createdAt','schoolName','notes',
+               // שאלת ההשתלמות בהרשמה למבט המורה (28.9.26): passed · registered · none
+               'trainingStatus','trainingFile','trainingFileName','trainingAt'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -220,6 +222,8 @@ const PUBLIC_ACTIONS = new Set([
   // מבט המורה — ההרשאה בפנים: קוד במייל (codeSend/codeVerify) או מפתח חתום (k).
   // בלי זה הדף היה נסגר ברגע שתידלק AUTH_ENFORCED.
   'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
+  // שאלת ההשתלמות (28.9.26) — מפתח המורה (k) · הקישורים: מפתח בעל תפקיד/מדריכ/ה בפנים
+  'teacher.training', 'training.files',
   // כניסת בעלי התפקידים (24.9.26) — קוד במייל או מפתח חתום; ההרשאה בפנים
   'staff.codeSend', 'staff.codeVerify', 'staff.self', 'staff.directory',
   // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
@@ -863,7 +867,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files)$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1013,6 +1017,8 @@ function handleRequest(params) {
       case 'teacher.codeVerify':  result = teacherCodeVerify(params); break;
       case 'teacher.self':        result = teacherSelf(params); break;
       case 'teacher.here':        result = teacherHere(params); break;
+      case 'teacher.training':    result = teacherTraining(params); break;
+      case 'training.files':      result = trainingFiles(params); break;
       // כניסת בעלי התפקידים — מייל → קוד → המבט של כל אחד (24.9.26)
       case 'staff.codeSend':      result = staffCodeSend(params); break;
       case 'staff.codeVerify':    result = staffCodeVerify(params); break;
@@ -1255,7 +1261,9 @@ function maskContact_(t) {
   const digits = (t.phone || '').toString().replace(/\D/g, '');
   return Object.assign({}, t, {
     phone: digits ? '•••' + digits.slice(-3) : '',
-    email: ''
+    email: '',
+    // אישור ההשתלמות הוא מסמך אישי — הסטטוס נשאר, הקישור רק דרך training.files
+    trainingFile: '', trainingFileName: ''
   });
 }
 
@@ -4758,8 +4766,106 @@ function teacherSelf(p) {
     school: t.school, schoolName: t.schoolName, network: t.network,
     seniority: t.seniority, units: t.units, students: t.students,
     moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive),
-    email: t.email, phone: t.phone
+    email: t.email, phone: t.phone,
+    trainingStatus: String(t.trainingStatus || ''), trainingFile: String(t.trainingFile || ''),
+    trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt)
   } };
+}
+
+/* ============================================================
+   שאלת ההשתלמות המקצועית (28.9.26, בקשת מיטל)
+   "האם עברת השתלמות מקצועית ב-3 השנים האחרונות ברמת הלימוד שאת/ה מלמד/ת
+   (הגבוהה מביניהן)?" — חובה בהרשמה למבט המורה, אחרי אימות המייל.
+     passed     — עבר/ה · אפשר לצרף אישור
+     registered — לא עבר/ה, נרשם/ה השנה · אפשר לצרף אישור
+     none       — לא עבר/ה ולא נרשם/ה · הפנייה למדריכ/ה בפרטי
+   האישור רשות (החלטת מיטל) ואפשר להשלים אחר כך מדף הבית.
+   התשובה היא למקצוע, ולכן נכתבת לכל שורות אותו אדם באותו מקצוע ובית ספר
+   (בגרות וגמר הן שתי שורות של אדם אחד).
+   הקובץ בדרייב, "כל מי שיש לו הקישור" כמו קבצי המחברת — אבל הקישור לא יוצא
+   ב-teachers.list הפתוח (maskContact_), רק ב-training.files למי שמזוהה/ה.
+   ============================================================ */
+const TRAINING_ROOT_NAME = 'מנור — אישורי השתלמות';
+const TRAINING_STATUSES = ['passed', 'registered', 'none'];
+
+function trainingFolder_(teacher) {
+  const props = PropertiesService.getScriptProperties();
+  let root = null;
+  const rootId = props.getProperty('trainingRootId');
+  if (rootId) { try { root = DriveApp.getFolderById(rootId); } catch (e) { root = null; } }
+  if (!root) {
+    const it = DriveApp.getFoldersByName(TRAINING_ROOT_NAME);
+    root = it.hasNext() ? it.next() : DriveApp.createFolder(TRAINING_ROOT_NAME);
+    props.setProperty('trainingRootId', root.getId());
+  }
+  return root;
+}
+
+function trainingSiblings_(t) {
+  const name = String(t.name || '').trim(), subj = String(t.subject || '').trim();
+  return readAll('teachers').filter(x => String(x.id) === String(t.id) ||
+    (String(x.school) === String(t.school) && String(x.name || '').trim() === name &&
+     String(x.subject || '').trim() === subj));
+}
+
+/* teacher.training — { k, status?, data?, fileName?, mimeType? }
+   status חובה בפעם הראשונה; אחר כך אפשר לשלוח קובץ בלבד (השלמה מדף הבית). */
+function teacherTraining(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  ensureTab_('teachers');   // העמודות החדשות — updateRowById מדלג בשקט על עמודה שאין
+  const status = String(p.status || t.trainingStatus || '');
+  if (TRAINING_STATUSES.indexOf(status) < 0) return { ok: false, error: 'bad_status' };
+  const fields = { trainingStatus: status, trainingAt: new Date().toISOString() };
+  if (p.data) {
+    if (status === 'none') return { ok: false, error: 'bad_status' };
+    const b64 = String(p.data).replace(/^data:[^;]*;base64,/, '');
+    let bytes;
+    try { bytes = Utilities.base64Decode(b64); } catch (e) { return { ok: false, error: 'bad_encoding' }; }
+    if (bytes.length > MAX_GUIDE_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+    const name = safeFileName_(String(t.name || '').trim() + ' · ' + String(t.subject || '').trim() +
+      ' · ' + safeFileName_(p.fileName));
+    const file = trainingFolder_(t).createFile(Utilities.newBlob(bytes, p.mimeType || 'application/octet-stream', name));
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    try { file.setDescription(String(t.id) + ' · ' + String(t.schoolName || '')); } catch (e) {}
+    // אישור קודם מוחלף — לפח ולא מחיקה, שטעות תהיה הפיכה
+    const old = String(t.trainingFile || '').match(/\/d\/([\w-]+)/);
+    if (old) { try { DriveApp.getFileById(old[1]).setTrashed(true); } catch (e) {} }
+    fields.trainingFile = file.getUrl();
+    fields.trainingFileName = safeFileName_(p.fileName);
+  } else if (status === 'none') {
+    fields.trainingFile = ''; fields.trainingFileName = '';
+  }
+  trainingSiblings_(t).forEach(x => updateRowById('teachers', x.id, fields));
+  return { ok: true, data: { trainingStatus: status,
+    trainingFile: fields.trainingFile !== undefined ? fields.trainingFile : String(t.trainingFile || ''),
+    trainingFileName: fields.trainingFileName !== undefined ? fields.trainingFileName : String(t.trainingFileName || ''),
+    trainingAt: fields.trainingAt } };
+}
+
+/* training.files — הקישורים לאישורים, רק למי שמזוהה/ה:
+   מפתח בעל תפקיד (sk) או מפתח מדריכ/ה (g + gk). מנהל/ת רואה רק את בתי הספר שלו/ה;
+   מדריכ/ה, מפקח/ת, רשת ומטה — את כולם (הסינון למקצוע נעשה במסך, כמו בשאר הנתונים). */
+function trainingFiles(p) {
+  let schools = null;   // null = הכול
+  if (p.g && p.gk) {
+    const slug = meetSlug_(p.g);
+    if (!slug || !meetSafeEqual_(String(p.gk), meetGuideKey_(slug))) return { ok: false, error: 'forbidden' };
+  } else {
+    const email = staffEmailByKey_(p.sk);
+    if (!email) return { ok: false, error: 'forbidden' };
+    const roles = staffRolesFor_(email).roles;
+    if (!roles.length) return { ok: false, error: 'forbidden' };
+    const wide = roles.some(r => r.role !== 'principal');
+    if (!wide) schools = roles.map(r => String(r.school || ''));
+  }
+  const out = {};
+  readAll('teachers').forEach(t => {
+    if (!t.trainingFile) return;
+    if (schools && schools.indexOf(String(t.school)) < 0) return;
+    out[String(t.id)] = { url: String(t.trainingFile), name: String(t.trainingFileName || '') };
+  });
+  return { ok: true, data: out };
 }
 
 /* teacher.here — "אני כאן" מתוך מבט המורה (21.9.26).

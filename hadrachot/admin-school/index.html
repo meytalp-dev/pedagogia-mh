@@ -175,6 +175,7 @@
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="meet">נוכחות בהדרכות</button>
       <button class="tab-btn" data-tab="teachers">המורים שלי</button>
+      <button class="tab-btn" data-tab="training">השתלמות מקצועית</button>
       <button class="tab-btn" data-tab="trainings">ההדרכות הישנות</button>
     </div>
 
@@ -208,6 +209,14 @@
       </div>
     </div>
 
+    <!-- שאלת ההשתלמות המקצועית (28.9.26) — מהרשמת המורים למבט המורה -->
+    <div class="tab-pane" id="tab-training">
+      <div class="card" style="padding:16px 18px;">
+        <h3 style="margin:0 0 10px; font-size:17px;">השתלמות מקצועית של המורים</h3>
+        <div id="training-container"><div class="empty" style="padding:24px;">טוען…</div></div>
+      </div>
+    </div>
+
     <div class="tab-pane" id="tab-trainings">
       <div class="card" style="padding:0;">
         <div id="trainings-list">
@@ -225,6 +234,26 @@
 <script src="../assets/meet-view.js?v=20260920b"></script>
 <script src="dashboard.js?v=20260920"></script>
 <script src="meet.js?v=20260924a"></script>
+<script src="../assets/training.js?v=20260928"></script>
+<script>
+  /* השתלמות מקצועית (28.9.26) — נטען בפתיחת הלשונית, לא מעכב את הנוכחות */
+  (function () {
+    var loaded = false;
+    var btn = document.querySelector('.tab-btn[data-tab="training"]');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      if (loaded) return;
+      var sid = TS.urlParam('school', '');
+      if (!sid) return;
+      loaded = true;
+      TS.api('teachers.list', { school: sid }).then(function (r) {
+        var el = document.getElementById('training-container');
+        if (!r || !r.ok) { loaded = false; el.innerHTML = '<div class="empty" style="padding:24px;">הטעינה נכשלה — פתחו שוב את הלשונית.</div>'; return; }
+        TS_training.mount(el, r.data || [], { bySchool: false });
+      });
+    });
+  })();
+</script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
 <script src="view.js?v=20260924f"></script>

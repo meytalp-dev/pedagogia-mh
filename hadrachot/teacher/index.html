@@ -59,6 +59,29 @@
   .th-msg.err { color: #8f2f1c; }
   .tg-code { width: 100%; box-sizing: border-box; text-align: center; font-size: 26px;
              letter-spacing: 9px; font-weight: 700; padding: 10px; }
+  /* שאלת ההשתלמות (28.9.26) */
+  .tq-set { border: 0; padding: 0; margin: 0 0 14px; }
+  .tq-set[hidden], #tq-file-box[hidden], .tq-none[hidden] { display: none; }
+  .tq-q { font-size: 14.5px; font-weight: 700; line-height: 1.55; margin-bottom: 9px; padding: 0; color: var(--text); }
+  .tq-req { font-size: 11px; font-weight: 700; color: #8f2f1c; background: #FBECE8; border-radius: 999px;
+            padding: 1px 8px; margin-inline-start: 4px; vertical-align: middle; }
+  .tq-opt { display: flex; align-items: center; gap: 10px; padding: 11px 13px; margin-bottom: 7px; cursor: pointer;
+            border: 1.5px solid var(--border); border-radius: 10px; font-size: 14.5px; background: var(--surface); }
+  .tq-opt:has(input:checked) { border-color: #4E6B4D; background: #EEF3EC; font-weight: 700; }
+  .tq-opt input { width: 18px; height: 18px; accent-color: #4E6B4D; margin: 0; }
+  .tq-file input[type=file] { width: 100%; font-family: inherit; font-size: 13px; }
+  .tq-none { font-size: 13.5px; line-height: 1.65; border-radius: 9px; padding: 10px 12px;
+             background: #FFF6E5; color: #6b4a0f; border: 1px solid #F0DDB5; }
+  .pd-card { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;
+             border-right: 4px solid #C9A227; }
+  .pd-card[hidden], #teacher-gate [hidden] { display: none !important; }
+  .pd-text { flex: 1; min-width: 220px; font-size: 14px; line-height: 1.6; }
+  .pd-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pd-msg { font-size: 13px; margin-top: 4px; }
+  .tq-math { margin-top: 12px; font-size: 13px; line-height: 1.65; border-radius: 9px; padding: 10px 12px;
+             background: #FFF6E5; color: #6b4a0f; border: 1px solid #F0DDB5; }
+  .tq-math[hidden] { display: none; }
+  .pd-card .tq-math { flex-basis: 100%; margin-top: 0; }
   .tg-exit { margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
              font-family: inherit; font-size: 12.5px; color: var(--text-muted);
              text-decoration: underline; }
@@ -300,14 +323,15 @@
          האימות: קוד בן 6 ספרות במייל + מפתח חתום (פרוס @37).
          ========================================================== -->
     <section class="card tg-card" id="teacher-gate" hidden>
-      <!-- הרשמה ראשונית (24.9.26): שלושה שלבים — פרטים → אימות מייל → סיור קצר בדף -->
+      <!-- הרשמה ראשונית (24.9.26): פרטים → אימות מייל → השתלמות מקצועית (28.9.26) → סיור קצר בדף -->
       <div class="tg-brand"><img src="../assets/menor-sail.png" alt="" aria-hidden="true"><span>מבט המורה</span></div>
       <h2 class="tg-title">הרשמה למבט המורה של מנור</h2>
       <p class="tg-sub">נרשמים פעם אחת, בערך דקה. מכאן והלאה הדף ייפתח ישירות במכשיר הזה — עם ההדרכה הבאה שלך, רישום הנוכחות, והחומרים מהמדריכ/ה.</p>
       <ol class="tg-steps" aria-label="שלבי ההרשמה">
         <li class="on" id="tg-st1"><b>1</b>הפרטים שלי</li>
         <li id="tg-st2"><b>2</b>אימות המייל</li>
-        <li id="tg-st3"><b>3</b>סיור קצר</li>
+        <li id="tg-st3"><b>3</b>השתלמות</li>
+        <li id="tg-st4"><b>4</b>סיור קצר</li>
       </ol>
 
       <div id="tg-step1">
@@ -337,6 +361,33 @@
         <div class="tg-why">לא מוצאים? כדאי לבדוק גם בתיקיית הספאם / קידומי מכירות.</div>
         <button type="button" class="btn btn-primary tg-btn" id="tg-verify">סיום ההרשמה</button>
         <button type="button" class="tg-exit" id="tg-resend">לא הגיע? חזרה ושליחה חוזרת</button>
+      </div>
+
+      <!-- שלב 3 (28.9.26, בקשת מיטל): שאלת ההשתלמות המקצועית — חובה.
+           מוצג אחרי אימות המייל, וגם לכל מי שנכנס/ה בקישור מהמייל ועוד לא ענה/תה
+           (load() בודק trainingStatus). האישור רשות — אפשר להשלים אחר כך מדף הבית. -->
+      <div id="tg-step3" hidden>
+        <fieldset class="tq-set">
+          <legend class="tq-q">האם עברת השתלמות מקצועית ב-3 השנים האחרונות ברמת הלימוד שאת/ה מלמד/ת (הגבוהה מביניהן)? <span class="tq-req">חובה</span></legend>
+          <label class="tq-opt"><input type="radio" name="tq-passed" value="yes"><span>כן, עברתי השתלמות</span></label>
+          <label class="tq-opt"><input type="radio" name="tq-passed" value="no"><span>לא</span></label>
+        </fieldset>
+        <fieldset class="tq-set" id="tq-reg-set" hidden>
+          <legend class="tq-q">האם נרשמת להשתלמות השנה? <span class="tq-req">חובה</span></legend>
+          <label class="tq-opt"><input type="radio" name="tq-reg" value="yes"><span>כן, נרשמתי</span></label>
+          <label class="tq-opt"><input type="radio" name="tq-reg" value="no"><span>לא נרשמתי</span></label>
+        </fieldset>
+        <div class="tq-file" id="tq-file-box" hidden>
+          <label class="tg-label" for="tq-file" id="tq-file-label">אישור ההשתלמות</label>
+          <input type="file" id="tq-file" accept="application/pdf,image/*">
+        </div>
+        <!-- הערת מתמטיקה (28.9.26, נוסח מיטל) — כשלא מצורף אישור -->
+        <div class="tq-math" id="tq-math" hidden></div>
+        <div class="tq-none" id="tq-none" hidden>
+          <b>יש לפנות למדריכ/ה המקצועי/ת שלך בהודעה פרטית</b> כדי לתאם השתלמות.
+          אחרי ההרשמה, בתחתית הדף שלך יש "שאלה למדריכ/ה" — ההודעה מגיעה רק אליו/ה, והכנו לך בה נוסח מוכן.
+        </div>
+        <button type="button" class="btn btn-primary tg-btn" id="tq-save">שמירה והמשך</button>
       </div>
 
       <!-- שאלות או קושי (24.9.26) — פנייה ישירה למיטל, כמו בכל טפסי משרד העבודה -->
@@ -386,6 +437,14 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
       <div>הנוכחות בהדרכות מדווחת למנהל/ת ולמפקח.ת. <b>כאן אפשר לוודא שהנוכחות שלך נרשמה נכון</b> — וביום ההדרכה לרשום אותה בעצמך עם הקוד שמוצג במפגש.</div>
     </div>
+
+    <!-- ▸ ההשתלמות המקצועית שלי (28.9.26) — מוצג רק כשיש מה לעשות:
+         חסר אישור (עבר/ה או נרשם/ה) או לא נרשם/ה (פנייה למדריכ/ה). -->
+    <section class="card pd-card" id="pd-sec" hidden>
+      <div class="pd-text" id="pd-text"></div>
+      <div class="pd-actions" id="pd-actions"></div>
+      <input type="file" id="pd-file" accept="application/pdf,image/*" hidden>
+    </section>
 
     <!-- ▸ טוען (24.9.26): השרת עונה לאט, ובלי זה המורה רואה דף ריק -->
     <div class="home-loading" id="home-loading" role="status" aria-live="polite" hidden>
@@ -619,7 +678,7 @@
 <script src="../assets/guides.js?v=20260928a"></script>
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
-<script src="dashboard.js?v=20260928a"></script>
+<script src="dashboard.js?v=20260928t"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>

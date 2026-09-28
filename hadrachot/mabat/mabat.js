@@ -81,7 +81,8 @@ async function loadData() {
         sector: sector,
         // לחישוב הנוכחות: שיוך לקבוצת המדריכ/ה לפי יח"ל (שירה/גל), כמו בדשבורד המדריכ/ה
         units: (t.units || '').toString().trim(),
-        school: t.school || ''
+        school: t.school || '',
+        trainingStatus: String(t.trainingStatus || '')
       });
     });
 
@@ -92,6 +93,12 @@ async function loadData() {
     });
     state.teachers = teachers;
     renderAll();
+    // שאלת ההשתלמות המקצועית (28.9.26) — מקטע מקופל מתחת למדריכות
+    const trn = document.getElementById('training-card');
+    if (trn && window.TS_training) {
+      trn.hidden = false;
+      TS_training.mount(document.getElementById('training-container'), teachers);
+    }
   }
 
   // מרחב המדריכה והנוכחות — לא חוסמים את הטבלה. עד שהם מגיעים הכרטיסים

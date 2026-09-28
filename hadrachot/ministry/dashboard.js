@@ -81,6 +81,12 @@ async function loadSubjectAttendance() {
       subjectAtt = { failed: true }; meetStats = { failed: true };
       renderMeetParts(); return;
     }
+    // שאלת ההשתלמות המקצועית (28.9.26) — מקטע מקופל, כל המורים בארץ
+    const trn = document.getElementById('training-card');
+    if (trn && window.TS_training) {
+      trn.hidden = false;
+      TS_training.mount(document.getElementById('training-container'), tl.data || []);
+    }
     const hours = (ws && ws.ok && ws.data && ws.data.hours) || null;
     const guides = slugs.map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));
     const stats = window.TS_meetStats({
