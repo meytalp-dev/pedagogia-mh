@@ -56,7 +56,9 @@ if (DEMO_) {
   const SELF = { id: 'demo_t', name: 'מורה לדוגמה', subject: 'עברית', type: 'bagrut', sector: 'kelali',
     school: 'demo_s', schoolName: 'בית ספר לדוגמה',
     // ?demo=1&tq=1 — הדגמת שאלת ההשתלמות (28.9.26); &subj=מתמטיקה להערת המפמ"ר
-    trainingStatus: TS.urlParam('tq', '') === '1' ? '' : 'passed' };
+    // &tq=2 — התזכורת בכניסה חוזרת: ענה/תה "עברתי" ועוד לא צירף/ה אישור
+    trainingStatus: TS.urlParam('tq', '') === '1' ? '' : 'passed',
+    trainingFile: /^[12]$/.test(TS.urlParam('tq', '')) ? '' : '#' };
   if (TS.urlParam('subj', '')) SELF.subject = TS.urlParam('subj', '');
   const SCOPE = { today: today, rows: [
       { meetingId: 'mt_moria_20260915', guideSlug: 'moria', date: '2026-09-15', teacherId: 'demo_t', status: 'present' }],
@@ -418,12 +420,18 @@ async function load() {
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
     if (!TS.urlParam('id', '')) { teacherId = ''; await showGate(); return; }
   }
-  /* שאלת ההשתלמות (28.9.26) — חובה, פעם אחת. גם מי שנכנס/ה בקישור מהמייל (?tk=)
-     ולא עבר/ה בטופס ההרשמה נשאל/ת כאן לפני שהדף נפתח. */
-  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_ && !teacher.trainingStatus) {
-    showLoading(false);
-    await askTraining();
-    showLoading(true);
+  /* שאלת ההשתלמות (28.9.26) — חלק מהרישום הראשוני, חובה. גם מי שנכנס/ה בקישור
+     מהמייל (?tk=) ולא עבר/ה בטופס ההרשמה נשאל/ת כאן לפני שהדף נפתח.
+     החלטת מיטל (28.9.26): מי שעוד לא צירף/ה אישור — או ענה/תה "לא נרשמתי" —
+     רואה את המסך שוב בכל כניסה (פעם אחת לכל פתיחה של הדפדפן), עם התשובה
+     הקודמת מסומנת. רק מי שהשלים/ה הכול, כולל אישור, נכנס/ת ישר לדף. */
+  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_) {
+    const reminder = trainingIncomplete() && !remindedThisVisit();
+    if (!teacher.trainingStatus || reminder) {
+      showLoading(false);
+      await askTraining(!!teacher.trainingStatus);
+      showLoading(true);
+    }
   }
   render();
   // כפתורי הניווט מיד — לא מחכים להדרכות (השרת עונה לאט; מתעדכנים שוב בסוף)
@@ -1000,13 +1008,49 @@ function trainingStatusFromForm() {
   return '';
 }
 
-function askTraining() {
+/* התשובה ניתנה אבל חסר אישור, או "לא עברתי ולא נרשמתי" */
+function trainingIncomplete() {
+  const st = String((teacher && teacher.trainingStatus) || '');
+  if (!st) return false;
+  return st === 'none' || !String(teacher.trainingFile || '');
+}
+/* פעם אחת לכל פתיחה של הדפדפן — לא בכל רענון */
+const TQ_SS = 'ts.teacher.tqReminded';
+function remindedThisVisit() {
+  try { return sessionStorage.getItem(TQ_SS) === String(teacherId || '1'); } catch (e) { return false; }
+}
+function markReminded() {
+  try { sessionStorage.setItem(TQ_SS, String(teacherId || '1')); } catch (e) { /* לא חוסם */ }
+}
+
+function askTraining(reminder) {
   return new Promise(resolve => {
     $g('teacher-gate').hidden = false;
     $g('teacher-body').hidden = true;
     ['tg-step1', 'tg-step2', 'tg-enter'].forEach(x => { $g(x).hidden = true; });
     const sub = document.querySelector('#teacher-gate .tg-sub');
-    if (sub) sub.textContent = 'עוד שאלה אחת לפני שהדף נפתח. התשובה מגיעה למדריכ/ה ולמנהל/ת, כדי שנדע מי צריך/ה עזרה בהרשמה להשתלמות.';
+    const prev = String(teacher.trainingStatus || '');
+    if (sub) sub.textContent = !reminder
+      ? 'עוד שאלה אחת לפני שהדף נפתח. התשובה מגיעה למדריכ/ה ולמנהל/ת, כדי שנדע מי צריך/ה עזרה בהרשמה להשתלמות.'
+      : prev === 'none'
+        ? 'בכניסה הקודמת ציינת שלא עברת השתלמות ולא נרשמת השנה. נרשמת בינתיים? עדכנו כאן וצרפו את האישור.'
+        : 'עוד לא צירפת ' + (prev === 'registered' ? 'אישור הרשמה להשתלמות' : 'אישור השתלמות') +
+          '. אפשר לצרף עכשיו (PDF או תמונה) — עד שהאישור מצורף, ההודעה הזו תופיע בכל כניסה.';
+    const pick = (name, val) => { const el = document.querySelector('input[name="' + name + '"][value="' + val + '"]'); if (el) el.checked = true; };
+    if (reminder) {
+      markReminded();
+      if (prev === 'passed') pick('tq-passed', 'yes');
+      else { pick('tq-passed', 'no'); pick('tq-reg', prev === 'registered' ? 'yes' : 'no'); }
+    }
+    const later = $g('tq-later');
+    const done = () => {
+      $g('tg-step3').hidden = true;
+      gateStep(4);
+      $g('teacher-gate').hidden = true;
+      $g('teacher-body').hidden = false;
+      resolve();
+    };
+    if (later) { later.hidden = !reminder; later.onclick = done; }
     gateMsg('');
     gateStep(3);
     $g('tg-step3').hidden = false;
@@ -1025,6 +1069,7 @@ function askTraining() {
     };
     document.querySelectorAll('#tg-step3 input[type=radio]').forEach(el => el.addEventListener('change', sync));
     $g('tq-file').addEventListener('change', sync);
+    sync();
 
     $g('tq-save').onclick = async () => {
       const st = trainingStatusFromForm();
@@ -1034,6 +1079,8 @@ function askTraining() {
       }
       const input = $g('tq-file');
       const file = (st !== 'none' && input.files && input.files[0]) || null;
+      // תזכורת בלי שינוי ובלי קובץ — אין מה לשמור, נכנסים לדף
+      if (reminder && st === prev && !file) return done();
       const btn = $g('tq-save');
       btn.disabled = true;
       const label = btn.textContent;
@@ -1044,11 +1091,7 @@ function askTraining() {
       btn.textContent = label;
       if (!r || !r.ok) return gateMsg(TRAINING_ERRORS[r && r.error] || 'השמירה לא הצליחה. נסו שוב בעוד רגע.');
       if (st === 'none') { const q = $g('q-text'); if (q && !q.value) q.value = TRAINING_NONE_Q; }
-      $g('tg-step3').hidden = true;
-      gateStep(4);
-      $g('teacher-gate').hidden = true;
-      $g('teacher-body').hidden = false;
-      resolve();
+      done();
     };
   });
 }
