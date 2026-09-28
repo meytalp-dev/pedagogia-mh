@@ -13,7 +13,7 @@ window.TS_CONTACTS = {
   guides: {
     /* ---------- החברה היהודית · המגזר הכללי ---------- */
     shira:    { phone: '050-9040252', email: 'Shirasib@gmail.com' },      /* מתמטיקה 3 יח"ל */
-    ilana:    { phone: '050-8711141', email: '' },                        /* מתמטיקה 4-5 יח"ל — נוספה 28.9.26, מייל טרם התקבל */
+    ilana:    { phone: '050-8711141', email: 'ilanamamou@gmail.com' },    /* מתמטיקה 4-5 יח"ל — נוספה 28.9.26 */
     sivan:    { phone: '052-8285022', email: 'sivann66@gmail.com' },      /* אנגלית */
     moria:    { phone: '054-3168002', email: 'moriah.flint@gmail.com' },  /* עברית */
     nira:     { phone: '054-4642841', email: 'nira23101969@gmail.com' },  /* ספרות */

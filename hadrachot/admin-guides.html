@@ -192,7 +192,7 @@
 <script src="assets/app.js?v=20260924h"></script>
 <script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="assets/guides.js?v=20260928a"></script>
-<script src="assets/guides-contact.js?v=20260928a"></script>
+<script src="assets/guides-contact.js?v=20260928b"></script>
 <script>
 const BASE_URL = location.origin + location.pathname.replace(/\/admin-guides\.html$/, '');
 
@@ -455,7 +455,31 @@ function setServerNote(html, tone) {
 
 /* העלאה חד-פעמית של פרטי הקשר מהקובץ הסטטי אל הגיליון.
    אחרי שהיא רצה — הקובץ מתרוקן מהמספרים, והשרת הוא המקור היחיד. */
-async function seedContactsToServer(btn) {
+function missingContactItems() {
+  const out = [];
+  const src = window.TS_CONTACTS || {};
+  ['guides', 'inspectors'].forEach(bucket => {
+    Object.keys(src[bucket] || {}).forEach(slug => {
+      const c = src[bucket][slug] || {};
+      const srv = SERVER_CONTACTS[kindKey(bucket) + ':' + slug] || {};
+      if ((c.email && !srv.email) || (c.phone && !srv.phone)) {
+        out.push({ kind: kindKey(bucket), slug: slug, name: nameOf(kindKey(bucket), slug),
+                   phone: c.phone || srv.phone || '', email: c.email || srv.email || '' });
+      }
+    });
+  });
+  return out;
+}
+async function seedContactsToServer(btn, onlyMissing) {
+  if (onlyMissing) {
+    const items = missingContactItems();
+    if (!items.length) return;
+    btn.disabled = true; btn.textContent = 'מעלה…';
+    const res = await TS.api('contacts.upsert', { items: JSON.stringify(items) }, { cache: 'no' });
+    if (res && res.ok) { await loadContacts(); build(); }
+    else { btn.disabled = false; btn.textContent = 'ניסיון נוסף'; alert('ההעלאה נכשלה: ' + ((res && res.error) || 'אין תשובה מהשרת')); }
+    return;
+  }
   const items = [];
   const src = window.TS_CONTACTS || {};
   ['guides', 'inspectors'].forEach(bucket => {
@@ -728,7 +752,12 @@ function renderServerNote() {
     return;
   }
   if (CONTACTS_STATE === 'ok') {
-    setServerNote('פרטי הקשר נטענים מהגיליון (<b>' + count + '</b> רשומות) — לא מהקוד.');
+    // 28.9.26: מדריכ/ה חדש/ה בקובץ (אילנה) — כפתור שמעלה רק מה שחסר בגיליון
+    const miss = missingContactItems();
+    setServerNote('פרטי הקשר נטענים מהגיליון (<b>' + count + '</b> רשומות) — לא מהקוד.' +
+      (miss.length ? '<div style="margin-top:10px;"><b>בקובץ יש ' + miss.length + ' שעוד לא בגיליון:</b> ' +
+        miss.map(x => esc(x.name || x.slug)).join(', ') +
+        ' <button type="button" class="copy-mini" onclick="seedContactsToServer(this, true)">העלאה לגיליון</button></div>' : ''));
   }
 }
 

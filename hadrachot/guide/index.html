@@ -690,7 +690,8 @@
         <!-- פעולות מהירות בראש הדף (מיטל, 24.9.26): הדרכה, מורה, שעה פרטנית ודוח למונדיי —
              כל כפתור פותח את הכלי שלו (שנשאר גם ב"כלים נוספים") וגולל אליו -->
         <div class="gq-acts" role="group" aria-label="פעולות מהירות">
-          <a class="btn btn-primary gq" href="#sec-library" id="go-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></a>
+          <a class="btn btn-primary gq" href="maagar.html" id="go-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></a>
+          <a class="btn btn-secondary gq" href="#mail-card" id="go-alphon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>אלפון המורים</span></a>
           <button type="button" class="btn btn-secondary gq" data-tool="tool-adhoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הדרכה חדשה</span></button>
           <button type="button" class="btn btn-secondary gq" data-add-teacher><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הוספת מורה</span></button>
           <button type="button" class="btn btn-secondary gq" data-tool="tool-hours"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>שעה פרטנית</span></button>
@@ -732,39 +733,6 @@
     </section>
 
     <!-- 2. נוכחות לפי חודשים — מי השתתף, מי לא, מי קיבל הדרכה פרטנית (meetings.js) -->
-    <!-- 2. מאגר החומרים (מיטל 28.9.26: למעלה, תיקיות כמו בדרייב, שאלה לאיזו תיקייה) — כל קובץ שהמדריכ/ה מעלה נכנס לכאן, לפי תיקיות (library.js, 28.9.26) -->
-    <section class="gsec" id="sec-library">
-      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></h2><span class="n zero" id="lib-count">0</span></div>
-      <div id="lib-drive"></div>
-      <div class="lib-upload">
-        <div class="drop-zone" id="gdrop-zone">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-          <div class="dz-main">העלאת חומר חדש — גררי לכאן או לחצי לבחירה</div>
-          <div class="dz-sub">אחרי הבחירה נשאל לאיזו תיקייה · עד 8MB לקובץ · בלי שמות תלמידים או ציונים</div>
-          <input type="file" id="gfile-input" multiple hidden>
-        </div>
-        <div class="lib-ask" id="lib-ask" hidden>
-          <div class="lib-ask-q" id="lib-ask-q">לאיזו תיקייה להעלות?</div>
-          <div class="lib-ask-list" id="lib-ask-list"></div>
-          <div class="lib-ask-new">
-            <input class="input" id="lib-newfolder" placeholder="אין תיקייה מתאימה? שם לתיקייה חדשה" maxlength="60">
-            <button type="button" class="btn btn-primary" id="lib-newfolder-go">פתיחת התיקייה והעלאה</button>
-          </div>
-          <button type="button" class="lib-ask-cancel" id="lib-ask-cancel">ביטול</button>
-        </div>
-        <details class="lib-addlink">
-          <summary>הוספת קישור (דרייב, יוטיוב, אתר)</summary>
-          <div class="lib-linkform">
-            <input class="input" id="lib-link-url" dir="ltr" placeholder="https://">
-            <input class="input" id="lib-link-name" placeholder="שם שיוצג">
-            <button type="button" class="btn btn-secondary" id="lib-link-add">הוספה</button>
-          </div>
-        </details>
-        <div class="ws-status" id="gfiles-status"></div>
-      </div>
-      <input type="search" class="input" id="lib-search" placeholder="חיפוש במאגר…" style="margin:4px 0 10px;">
-      <div id="gfiles-list"></div>
-    </section>
 
     <section class="gsec" id="sec-months">
       <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>נוכחות לפי חודשים</span></h2></div>
@@ -1162,11 +1130,11 @@
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="dashboard.js?v=20260928a"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20260928b"></script>
+<script src="space.js?v=20260928d"></script>
 <script src="meetings.js?v=20260928a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260928b"></script>
+<script src="view.js?v=20260928c"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>
