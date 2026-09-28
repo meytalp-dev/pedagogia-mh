@@ -102,17 +102,22 @@
 
   function renderFiles(rows) {
     $('g-files-n').textContent = rows.length ? '(' + rows.length + ')' : '';
-    $('g-files').innerHTML = rows.length
-      ? rows.map(f => `
+    const row = f => `
         <a class="file-row" href="${esc(safeUrl(f.fileUrl))}" target="_blank" rel="noopener">
           <span class="fr-icon">${ICON_FILE}</span>
           <span class="fr-body">
             <span class="fr-name">${esc(f.fileName)}</span>
-            <span class="fr-meta" style="display:block;"><bdi dir="ltr">${fmtSize(f.size)}</bdi> · ${fmtWhen(f.createdAt)}</span>
+            <span class="fr-meta" style="display:block;">${f.size ? '<bdi dir="ltr">' + fmtSize(f.size) + '</bdi> · ' : ''}${fmtWhen(f.createdAt)}</span>
           </span>
           <span class="fr-open">פתיחה</span>
-        </a>`).join('')
-      : '<div class="empty" style="padding:20px;">עדיין אין חומרים בקבוצה.</div>';
+        </a>`;
+    // מאגר החומרים לפי תיקיות (28.9.26)
+    const groups = {};
+    rows.forEach(f => { (groups[f.folder || 'כללי'] = groups[f.folder || 'כללי'] || []).push(f); });
+    const names = Object.keys(groups).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
+    $('g-files').innerHTML = !rows.length ? '<div class="empty" style="padding:20px;">עדיין אין חומרים בקבוצה.</div>'
+      : names.length === 1 ? groups[names[0]].map(row).join('')
+      : names.map(n => `<details class="mat-folder" style="margin-bottom:8px;"><summary style="cursor:pointer;padding:8px 0;font-weight:700;">${esc(n)} <span style="color:var(--text-muted);font-weight:500;">(${groups[n].length})</span></summary>${groups[n].map(row).join('')}</details>`).join('');
   }
 
   function setBoth(html) {

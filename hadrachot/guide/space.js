@@ -29,6 +29,7 @@
     const mondayBtn = document.getElementById('tab-btn-monday');
     if (!SLUG) { [tabBtn, hoursBtn, mondayBtn].forEach(b => { if (b) b.hidden = true; }); return; }
     initLinkCard();
+    loadContacts();
     document.getElementById('gmsg-send').addEventListener('click', sendMessage);
     initUpload();
     initHours();
@@ -45,22 +46,10 @@
     const subs = window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : [];
     return subs.filter(Boolean).join(' ו') || GUIDE_CFG.subject || '';
   }
-  // wa.me בלי מספר — הוואטסאפ פותח בחירת צ'אט, והמדריכה בוחרת את הקבוצה.
-  // שליחה אחת לקבוצה, לא הפצה המונית.
-  function waLink(text) { return 'https://wa.me/?text=' + encodeURIComponent(text); }
-  function withGroupLink(text) {
-    return text + '\n\nכל החומרים וההודעות של הקבוצה:\n' + groupUrl();
-  }
-
   function initLinkCard() {
     const url = groupUrl();
-    const subj = subjectsLabel();
     document.getElementById('group-url').textContent = url;
     document.getElementById('group-open').href = url;
-    document.getElementById('group-wa').href = waLink(
-      'שלום לכולם,\n' +
-      'כאן יופיעו החומרים וההודעות של קבוצת ההדרכה' + (subj ? ' ב' + subj : '') + ':\n' +
-      url + '\n\nכדאי לשמור את הקישור.\n' + (GUIDE_CFG.name || ''));
     const copyBtn = document.getElementById('group-copy');
     copyBtn.addEventListener('click', () => copyText(url, copyBtn));
   }
@@ -70,7 +59,7 @@
     const orig = label ? label.textContent : '';
     const done = () => {
       btn.classList.add('done');
-      if (label) label.textContent = 'הקישור הועתק ✓';
+      if (label) label.textContent = 'הועתק ✓';
       setTimeout(() => { btn.classList.remove('done'); if (label) label.textContent = orig; }, 2200);
     };
     const manual = () => window.prompt('העתיקי את הקישור:', text);
@@ -102,10 +91,11 @@
 
   function render() {
     const badge = document.getElementById('space-count');
-    const n = data.files.length + data.messages.length;
+    const n = data.messages.filter(m => m.authorRole !== 'inspector').length;
     badge.textContent = n;
     badge.classList.toggle('zero', !n);
     renderMessages();
+    renderMail();
     renderFiles();
     renderHours();
     renderActivities();
@@ -142,7 +132,6 @@
           </div>
           <div class="msg-text">${linkify(m.text)}</div>
           <div class="msg-actions">
-            <a href="${esc(waLink(withGroupLink(m.text)))}" target="_blank" rel="noopener">שליחה לוואטסאפ</a>
             <button type="button" class="row-del" data-del-msg="${esc(m.id)}">מחיקה</button>
           </div>
         </div>`).join('')
@@ -168,10 +157,21 @@
       : '';
   }
 
+  /* 28.9.26 (מיטל): במקום וואטסאפ — ההודעה נשמרת בעמוד הקבוצה ונשלחת במייל
+     אישי לכל מורה (guide.mail.send). השרת בונה את רשימת הנמענים בעצמו. */
   async function sendMessage() {
     const box = document.getElementById('gmsg-text');
+    const subjBox = document.getElementById('gmsg-subject');
     const text = box.value.trim();
     if (!text) { box.focus(); return; }
+    const withMail = document.getElementById('gmsg-mail').checked;
+    const subject = subjBox.value.trim() || ('הודעה מ' + (GUIDE_CFG.name || 'המדריך/ה') + (subjectsLabel() ? ' · הדרכה ב' + subjectsLabel() : ''));
+    const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    if (withMail && !(auth.k || auth.ge)) {
+      TS.toast('שליחה במייל דורשת כניסה מהקישור האישי — ההודעה תפורסם רק בעמוד הקבוצה');
+    }
+    const n = mailInfo().withEmail.length;
+    if (withMail && (auth.k || auth.ge) && !confirm('לשלוח את ההודעה במייל ל-' + n + ' מורים?')) return;
     const btn = document.getElementById('gmsg-send');
     const status = document.getElementById('gmsg-status');
     btn.disabled = true;
@@ -189,43 +189,296 @@
     await loadSpace();
     const landed = (res && res.ok) ||
       data.messages.some(m => m.authorRole !== 'inspector' && String(m.text).trim() === text);
-    btn.disabled = false;
-    if (landed) {
-      box.value = '';
-      status.innerHTML = 'פורסם בעמוד הקבוצה ✓ · <a href="' + esc(waLink(withGroupLink(text))) +
-        '" target="_blank" rel="noopener">לשלוח גם לקבוצת הוואטסאפ</a>';
-    } else {
+    if (!landed) {
+      btn.disabled = false;
       status.textContent = 'ההודעה לא פורסמה. נסי שוב בעוד רגע.';
+      return;
+    }
+    box.value = '';
+    if (!withMail || !(auth.k || auth.ge)) {
+      btn.disabled = false;
+      status.textContent = 'פורסם בעמוד הקבוצה ✓';
+      return;
+    }
+    status.textContent = 'פורסם בעמוד הקבוצה ✓ · שולחת במייל... (זה לוקח כדקה)';
+    const res2 = await TS.apiPost('guide.mail.send', Object.assign({}, auth, {
+      subject: subject, text: text + '\n\nכל החומרים וההודעות של הקבוצה: ' + groupUrl()
+    }));
+    btn.disabled = false;
+    const MAIL_ERR = {
+      daily_limit: 'היום כבר נשלחו 3 מיילים לקבוצה — אפשר שוב מחר.',
+      quota: 'מכסת המיילים היומית של המערכת כמעט נגמרה — לנסות מחר.',
+      no_recipients: 'לאף מורה בקבוצה אין עדיין מייל.',
+      bad_key: 'אין הרשאת שליחה מהקישור הזה.'
+    };
+    if (res2 && res2.ok) {
+      subjBox.value = '';
+      const d = res2.data || {};
+      status.textContent = 'פורסם ✓ · נשלח במייל ל-' + (d.sent || 0) + ' מורים' +
+        (d.missing && d.missing.length ? ' · ל-' + d.missing.length + ' אין מייל (ברשימת התפוצה)' : '');
+    } else {
+      status.textContent = 'פורסם בעמוד הקבוצה ✓ · המייל לא נשלח: ' + (MAIL_ERR[res2 && res2.error] || 'תקלה רגעית — ייתכן שחלק נשלחו. לא לשלוח שוב לפני שבודקים.');
     }
   }
 
-  // ---------- קבצים ----------
-  function renderFiles() {
-    const el = document.getElementById('gfiles-list');
-    if (loadFailed) { el.innerHTML = failBox(); bindRetry(el); return; }
-    if (!data.files.length) {
-      el.innerHTML = '<div class="empty" style="padding:18px;">עדיין לא הועלו קבצים</div>';
+  /* ---------- רשימת התפוצה + אלפון המורים (28.9.26) ----------
+     מחושבת מרשימת הקבוצה שכבר בדף (dashboard.js) — אותו כלל כמו בשרת:
+     אדם אחד לשם + בית ספר, מייל אחד לאדם. */
+  /* פרטי הקשר המלאים — guide.contacts (רק עם מפתח המדריכ/ה). רשימת הקבוצה
+     שבדף ממוסכת (teachers.list לא מחזיר מייל למי שאין לו חשבון). */
+  let CONTACTS = null;       // id → { email, phone }; null = עוד לא נטען
+  let contactsFailed = false;
+  async function loadContacts() {
+    const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    if (!(auth.k || auth.ge)) return;
+    const r = await TS.api('guide.contacts', auth, { cache: 'no' });
+    if (r && r.ok && Array.isArray(r.data)) {
+      CONTACTS = {};
+      r.data.forEach(t => { CONTACTS[String(t.id)] = t; });
+      contactsFailed = false;
+    } else contactsFailed = true;
+    renderMail();
+  }
+  window.SPACE_onAuth = loadContacts;
+  function mailInfo() {
+    const base = (typeof myTeachers === 'function') ? myTeachers() : myRoster();
+    const all = CONTACTS ? base.map(t => Object.assign({}, t, { email: (CONTACTS[String(t.id)] || {}).email || '', phone: (CONTACTS[String(t.id)] || {}).phone || '' })) : base;
+    const okMail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim());
+    const people = {}, list = [];
+    all.forEach(t => {
+      const k = String(t.name || '').replace(/\s+/g, ' ').trim().toLowerCase() + '|' + String(t.schoolName || '').trim().toLowerCase();
+      let p = people[k];
+      if (!p) { p = people[k] = { name: t.name || '', school: t.schoolName || '', email: '', phone: '', tracks: [] }; list.push(p); }
+      if (!p.email && okMail(t.email)) p.email = String(t.email).trim().toLowerCase();
+      if (!p.phone && t.phone) p.phone = String(t.phone).trim();
+      const tr = t.type === 'gemer' ? 'גמר' : 'בגרות';
+      if (p.tracks.indexOf(tr) < 0) p.tracks.push(tr);
+    });
+    list.sort((a, b) => String(a.school).localeCompare(String(b.school), 'he') || String(a.name).localeCompare(String(b.name), 'he'));
+    const seen = {};
+    const withEmail = list.filter(p => p.email && !seen[p.email] && (seen[p.email] = 1));
+    return { all: list, withEmail: withEmail, missing: list.filter(p => !p.email) };
+  }
+  window.SPACE_onRoster = function () { renderMail(); };
+  function renderMail() {
+    const root = document.getElementById('mail-root');
+    if (!root) return;
+    const info = mailInfo();
+    const nEl = document.getElementById('gmsg-mail-n');
+    if (nEl) nEl.textContent = info.all.length ? '(' + info.withEmail.length + ')' : '';
+    if (!info.all.length || !CONTACTS) {
+      root.innerHTML = `<div class="empty" style="padding:18px;">${contactsFailed ? 'פרטי הקשר לא נטענו — תקלה רגעית. <button type="button" class="gl-btn" id="ml-retry"><span>לנסות שוב</span></button>'
+        : (window.GUIDE_AUTH && (window.GUIDE_AUTH().k || window.GUIDE_AUTH().ge)) || CONTACTS === null ? 'טוען את רשימת התפוצה…' : 'רשימת התפוצה נפתחת מהקישור האישי.'}</div>`;
+      const rb = document.getElementById('ml-retry');
+      if (rb) rb.addEventListener('click', () => { contactsFailed = false; renderMail(); loadContacts(); });
       return;
     }
-    el.innerHTML = data.files.map(f => {
-      const fromInsp = f.uploaderRole === 'inspector';
-      return `
+    const missMsg = 'שלום,\nכדי שהמורים יקבלו את ההודעות והתזכורות של ההדרכה במייל, חסרה לנו כתובת מייל של:\n\n' +
+      info.missing.map(p => '• ' + p.name + (p.school ? ' — ' + p.school : '')).join('\n') +
+      '\n\nאפשר להשיב לי עם הכתובות. תודה!\n' + (GUIDE_CFG.name || '');
+    root.innerHTML = `
+      <div class="ml-kpis">
+        <div><b>${info.all.length - info.missing.length}</b><span>עם מייל</span></div>
+        <div class="${info.missing.length ? 'warn' : ''}"><b>${info.missing.length}</b><span>חסר מייל</span></div>
+        <div><b>${info.all.length}</b><span>מורים בקבוצה</span></div>
+      </div>
+      <div class="ml-actions">
+        <button type="button" class="gl-btn" id="ml-copy-mails"><span>העתקת כל המיילים</span></button>
+        <button type="button" class="gl-btn" id="ml-csv"><span>הורדת האלפון לאקסל</span></button>
+      </div>
+      ${info.missing.length ? `
+      <details class="ml-miss">
+        <summary>חסר מייל ל-${info.missing.length} מורים — הודעה מוכנה</summary>
+        <ul>${info.missing.map(p => `<li>${esc(p.name)} <span>· ${esc(p.school)}</span></li>`).join('')}</ul>
+        <button type="button" class="gl-btn" id="ml-copy-miss" style="margin-bottom:10px;"><span>העתקת הודעה עם הרשימה</span></button>
+      </details>` : '<div class="space-hint" style="margin:0;">לכל המורים בקבוצה יש מייל.</div>'}
+      <details class="ml-miss" style="border-color:var(--border);background:var(--surface);">
+        <summary style="color:var(--text);">אלפון המורים (${info.all.length})</summary>
+        <div class="rep-wrap" style="max-height:340px;overflow:auto;margin-bottom:10px;">
+          <table class="rep-table"><tbody>
+            <tr><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th></tr>
+            ${info.all.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.school)}</td><td dir="ltr">${p.phone ? `<a href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">${esc(p.phone)}</a>` : '—'}</td><td dir="ltr">${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : '—'}</td></tr>`).join('')}
+          </tbody></table>
+        </div>
+      </details>`;
+    const copy = (text, b) => copyText(text, b);
+    document.getElementById('ml-copy-mails').addEventListener('click', e => copy(info.withEmail.map(p => p.email).join(', '), e.currentTarget));
+    const miss = document.getElementById('ml-copy-miss');
+    if (miss) miss.addEventListener('click', e => copy(missMsg, e.currentTarget));
+    document.getElementById('ml-csv').addEventListener('click', () => {
+      const q = v => '"' + String(v || '').replace(/"/g, '""') + '"';
+      const csv = '﻿' + ['שם,בית ספר,מסלול,טלפון,מייל'].concat(info.all.map(p =>
+        [p.name, p.school, p.tracks.join(' + '), p.phone, p.email].map(q).join(','))).join('\r\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = 'אלפון-מורים-' + (GUIDE_CFG.name || SLUG) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  }
+
+  /* ================================================================
+     מאגר החומרים (28.9.26, מיטל: "כפתור בנפרד למאגר חומרים, כל קובץ שהמדריכים
+     מעלים ייכנס אליו, לוגיקה לפי תיקיות — שילוב").
+     שני סוגי תיקיות:
+       · תיקייה לכל מפגש — נגזרת מ-plans.js ("מפגש 18.10 — <נושא>"), לא נשמרת.
+       · תיקיות נושא — שם חופשי שהמדריכ/ה יוצר/ת בהעלאה, עד 3 רמות ("371 / פונקציות").
+     כל קובץ נושא folder בגיליון; ריק = "כללי". קובץ או קישור (kind='link') —
+     שניהם באותו מאגר. תיקיית הדרייב הקיימת של המדריכ/ה (guides.js → drive) מוצגת בראש.
+     ================================================================ */
+  const GENERAL = 'כללי';
+  const NEW_FOLDER = '__new__';
+  let libSearch = '';
+  let libOpen = null;        // תיקיות פתוחות — שורד ציור מחדש
+
+  function planFolders() {
+    const plan = window.TS_planFor ? window.TS_planFor(SLUG) : null;
+    return ((plan && plan.meetings) || []).map(m => {
+      const p = String(m.date || '').split('-');
+      return 'מפגש ' + Number(p[2]) + '.' + Number(p[1]) + (m.topic ? ' — ' + String(m.topic).replace(/\//g, '-').slice(0, 45) : '');
+    });
+  }
+  // התיקייה שמוצעת בהעלאה: המפגש הקרוב (או של היום)
+  function currentMeetingFolder() {
+    const plan = window.TS_planFor ? window.TS_planFor(SLUG) : null;
+    const ms = (plan && plan.meetings) || [];
+    const today = todayStr();
+    const idx = ms.findIndex(m => (m.date2 || m.date) >= today);
+    const pf = planFolders();
+    return idx >= 0 ? pf[idx] : (pf[pf.length - 1] || GENERAL);
+  }
+  function fileFolders() {
+    return Array.from(new Set(data.files.map(f => f.folder || GENERAL)));
+  }
+  // כל התיקיות לבורר: קיימות (נושא) → מפגשים → כללי
+  function allFolders() {
+    const pf = planFolders();
+    const topics = fileFolders().filter(f => f !== GENERAL && pf.indexOf(f) < 0).sort((a, b) => a.localeCompare(b, 'he'));
+    return { topics: topics, meetings: pf };
+  }
+
+  function fillFolderSelect() {
+    const sel = document.getElementById('lib-folder');
+    if (!sel) return;
+    const keep = sel.value;
+    const F = allFolders();
+    const opt = (v, label) => `<option value="${esc(v)}">${esc(label || v)}</option>`;
+    sel.innerHTML =
+      (F.topics.length ? `<optgroup label="תיקיות נושא">${F.topics.map(f => opt(f)).join('')}</optgroup>` : '') +
+      (F.meetings.length ? `<optgroup label="לפי מפגש">${F.meetings.map(f => opt(f)).join('')}</optgroup>` : '') +
+      opt(GENERAL) + opt(NEW_FOLDER, '+ תיקייה חדשה…');
+    const all = [...F.topics, ...F.meetings, GENERAL, NEW_FOLDER];
+    sel.value = all.indexOf(keep) >= 0 ? keep : currentMeetingFolder();
+    if (!sel.value) sel.value = GENERAL;
+    document.getElementById('lib-newfolder').hidden = sel.value !== NEW_FOLDER;
+  }
+  function chosenFolder() {
+    const sel = document.getElementById('lib-folder');
+    if (sel.value === NEW_FOLDER) return document.getElementById('lib-newfolder').value.trim();
+    return sel.value === GENERAL ? '' : sel.value;
+  }
+
+  function renderDriveCard() {
+    const box = document.getElementById('lib-drive');
+    if (!box) return;
+    const url = /^https:\/\//.test(GUIDE_CFG.drive || '') ? GUIDE_CFG.drive : '';
+    box.innerHTML = url ? `<div class="lib-drive">${ICON_FILE}<span>תיקיית החומרים הקיימת שלך בדרייב</span>
+      <a href="${esc(url)}" target="_blank" rel="noopener">פתיחה</a></div>` : '';
+  }
+
+  // עץ: { name, files: [], kids: {name: node} }
+  function buildTree(files) {
+    const root = { name: '', files: [], kids: {} };
+    files.forEach(f => {
+      const parts = (f.folder || GENERAL).split(' / ');
+      let node = root;
+      parts.forEach(p => { node = node.kids[p] = node.kids[p] || { name: p, files: [], kids: {} }; });
+      node.files.push(f);
+    });
+    return root;
+  }
+  function countTree(n) { return n.files.length + Object.keys(n.kids).reduce((s, k) => s + countTree(n.kids[k]), 0); }
+
+  function fileRowHtml(f, folders) {
+    const fromInsp = f.uploaderRole === 'inspector';
+    const isLink = f.kind === 'link';
+    const meta = isLink ? (/drive\.google|docs\.google/.test(f.fileUrl) ? 'קישור לדרייב' : 'קישור')
+      : '<bdi dir="ltr">' + fmtSize(f.size) + '</bdi>';
+    const cur = f.folder || GENERAL;
+    const move = fromInsp ? '' : `<select class="fr-move" data-move="${esc(f.id)}" title="העברה לתיקייה" aria-label="העברה לתיקייה">
+      <option value="">העברה…</option>${folders.filter(x => x !== cur).map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select>`;
+    return `
       <div class="file-row">
         <span class="fr-icon">${ICON_FILE}</span>
         <div class="fr-body">
           <a class="fr-name" href="${esc(safeUrl(f.fileUrl))}" target="_blank" rel="noopener">${esc(f.fileName)}</a>
           ${fromInsp ? '<span class="from-insp">מהמפקח.ת · רק לך</span>' : ''}
-          <div class="fr-meta"><bdi dir="ltr">${fmtSize(f.size)}</bdi> · ${fmtWhen(f.createdAt)}</div>
+          <div class="fr-meta">${meta} · ${fmtWhen(f.createdAt)}</div>
         </div>
+        ${move}
         ${fromInsp ? '' : `<button type="button" class="row-del" data-del-file="${esc(f.id)}" title="מחיקה">מחיקה</button>`}
       </div>`;
-    }).join('');
+  }
 
+  function folderHtml(node, path, folders, depth) {
+    const full = path ? path + ' / ' + node.name : node.name;
+    const kids = Object.keys(node.kids).sort((a, b) => a.localeCompare(b, 'he', { numeric: true }));
+    const isMeeting = /^מפגש \d/.test(node.name);
+    const open = libSearch || (libOpen && libOpen.has(full));
+    return `
+      <details class="lib-folder" data-folder="${esc(full)}"${open ? ' open' : ''}>
+        <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <span>${esc(node.name)}</span>${isMeeting && depth === 0 ? '<span class="auto">מפגש</span>' : ''}<span class="c">${countTree(node)}</span></summary>
+        <div class="lib-body">
+          ${kids.map(k => folderHtml(node.kids[k], full, folders, depth + 1)).join('')}
+          ${node.files.sort((a, b) => String(a.fileName).localeCompare(String(b.fileName), 'he', { numeric: true })).map(f => fileRowHtml(f, folders)).join('')}
+        </div>
+      </details>`;
+  }
+
+  function renderFiles() {
+    const el = document.getElementById('gfiles-list');
+    const badge = document.getElementById('lib-count');
+    fillFolderSelect();
+    renderDriveCard();
+    if (loadFailed) { el.innerHTML = failBox(); bindRetry(el); return; }
+    if (badge) { badge.textContent = data.files.length; badge.classList.toggle('zero', !data.files.length); }
+    if (!libOpen) libOpen = new Set();
+    const q = libSearch.trim().toLowerCase();
+    const files = q ? data.files.filter(f => (String(f.fileName) + ' ' + (f.folder || '')).toLowerCase().indexOf(q) >= 0) : data.files;
+    if (!files.length) {
+      el.innerHTML = `<div class="empty" style="padding:18px;">${q ? 'לא נמצא במאגר' : 'המאגר עדיין ריק. מעלים קובץ למעלה — הוא נכנס לתיקייה שבחרת.'}</div>`;
+      return;
+    }
+    const tree = buildTree(files);
+    const F = allFolders();
+    const folders = [...F.topics, ...fileFolders().filter(f => F.topics.indexOf(f) < 0 && f !== GENERAL), GENERAL]
+      .filter((v, i, a) => a.indexOf(v) === i);
+    // סדר: תיקיות נושא (א-ב) → מפגשים (לפי התוכנית) → כללי
+    const pf = planFolders();
+    const names = Object.keys(tree.kids).sort((a, b) => {
+      const rank = n => n === GENERAL ? 2 : pf.indexOf(n) >= 0 ? 1 : 0;
+      return rank(a) - rank(b) || (rank(a) === 1 ? pf.indexOf(a) - pf.indexOf(b) : a.localeCompare(b, 'he', { numeric: true }));
+    });
+    el.innerHTML = names.map(n => folderHtml(tree.kids[n], '', folders, 0)).join('');
+
+    el.querySelectorAll('details.lib-folder').forEach(d => d.addEventListener('toggle', e => {
+      e.stopPropagation();
+      if (d.open) libOpen.add(d.dataset.folder); else libOpen.delete(d.dataset.folder);
+    }));
     el.querySelectorAll('[data-del-file]').forEach(b => b.addEventListener('click', async () => {
-      if (!confirm('למחוק את הקובץ? הוא ייעלם מעמוד הקבוצה ויעבור לסל המיחזור בדרייב.')) return;
+      if (!confirm('למחוק את הקובץ מהמאגר? הוא ייעלם גם מהמורים.')) return;
       b.disabled = true;
       const res = await TS.apiPost('guide.file.delete', { id: b.dataset.delFile });
       if (res && res.ok) TS.toast('הקובץ נמחק');
+      await loadSpace();
+    }));
+    el.querySelectorAll('[data-move]').forEach(s => s.addEventListener('change', async () => {
+      if (!s.value) return;
+      const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+      s.disabled = true;
+      const res = await TS.apiPost('guide.file.move', Object.assign({}, auth, { id: s.dataset.move, folder: s.value === GENERAL ? '' : s.value }));
+      if (res && res.ok) { TS.toast('הועבר ל' + s.value); libOpen.add(s.value); }
+      else TS.toast(res && res.error === 'bad_key' ? 'אין הרשאה מהקישור הזה' : 'ההעברה לא הצליחה — לנסות שוב');
       await loadSpace();
     }));
   }
@@ -242,22 +495,65 @@
       e.preventDefault(); dz.classList.remove('over');
     }));
     dz.addEventListener('drop', e => uploadFiles(e.dataTransfer.files));
+    const sel = document.getElementById('lib-folder');
+    sel.addEventListener('change', () => {
+      const nf = document.getElementById('lib-newfolder');
+      nf.hidden = sel.value !== NEW_FOLDER;
+      if (!nf.hidden) nf.focus();
+    });
+    const search = document.getElementById('lib-search');
+    search.addEventListener('input', () => { libSearch = search.value; renderFiles(); });
+    document.getElementById('lib-link-add').addEventListener('click', addLink);
+    fillFolderSelect();
+    renderDriveCard();
+  }
+
+  async function addLink() {
+    const url = document.getElementById('lib-link-url').value.trim();
+    const name = document.getElementById('lib-link-name').value.trim();
+    const status = document.getElementById('gfiles-status');
+    if (!/^https:\/\//.test(url)) { status.textContent = 'הקישור צריך להתחיל ב-https://'; return; }
+    const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    if (!(auth.k || auth.ge)) { status.textContent = 'הוספת קישור דורשת כניסה מהקישור האישי.'; return; }
+    if (document.getElementById('lib-folder').value === NEW_FOLDER && !chosenFolder()) { status.textContent = 'חסר שם לתיקייה החדשה.'; return; }
+    const folder = chosenFolder();
+    status.textContent = 'מוסיפה…';
+    const res = await TS.apiPost('guide.file.link', Object.assign({}, auth, {
+      guideName: GUIDE_CFG.name || '', fileName: name || url, fileUrl: url, folder: folder,
+      mimeType: 'text/uri-list', byName: GUIDE_CFG.name || ''
+    }));
+    await loadSpace();
+    if ((res && res.ok) || data.files.some(f => f.fileUrl === url)) {
+      document.getElementById('lib-link-url').value = '';
+      document.getElementById('lib-link-name').value = '';
+      status.textContent = 'הקישור נוסף ל' + (folder || GENERAL) + ' ✓';
+      libOpen.add(folder || GENERAL);
+      renderFiles();
+    } else {
+      status.textContent = 'הקישור לא נוסף. נסי שוב בעוד רגע.';
+    }
   }
 
   async function uploadFiles(fileList) {
     const files = Array.from(fileList || []);
     if (!files.length) return;
     const status = document.getElementById('gfiles-status');
+    if (document.getElementById('lib-folder').value === NEW_FOLDER && !chosenFolder()) {
+      status.textContent = 'חסר שם לתיקייה החדשה.';
+      document.getElementById('lib-newfolder').focus();
+      return;
+    }
+    const folder = chosenFolder();
     const problems = [];
     let done = 0;
     const unsure = [];   // התשובה נפלה — אולי הקובץ עלה בכל זאת
 
     for (const file of files) {
       if (file.size > MAX_FILE_BYTES) {
-        problems.push(`"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 8MB לקובץ`);
+        problems.push(`"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 8MB לקובץ. קובץ גדול: להעלות לדרייב ולהוסיף כקישור`);
         continue;
       }
-      status.textContent = `מעלה את "${file.name}" (${done + unsure.length + 1} מתוך ${files.length})...`;
+      status.textContent = `מעלה את "${file.name}" ל${folder || GENERAL} (${done + unsure.length + 1} מתוך ${files.length})...`;
       let b64;
       try { b64 = await fileToBase64(file); }
       catch (e) { problems.push(`קריאת "${file.name}" נכשלה`); continue; }
@@ -268,6 +564,7 @@
         fileName: file.name,
         mimeType: file.type || 'application/octet-stream',
         data: b64,
+        folder: folder,
         byName: GUIDE_CFG.name || '',
         byRole: 'guide'
       });
@@ -280,14 +577,16 @@
     }
 
     await loadSpace();
-    // קובץ שהתשובה עליו נפלה אבל הוא כבר ברשימה — עלה
     unsure.forEach(name => {
       if (data.files.some(f => f.fileName === name)) done++;
       else problems.push(`העלאת "${name}" לא הושלמה — נסי שוב`);
     });
-
+    if (libOpen) libOpen.add(folder || GENERAL);
+    document.getElementById('lib-newfolder').value = '';
+    renderFiles();
+    if (folder) document.getElementById('lib-folder').value = folder;
     status.textContent = problems.join(' · ');
-    if (done) TS.toast(done === 1 ? 'הקובץ הועלה' : done + ' קבצים הועלו');
+    if (done) TS.toast((done === 1 ? 'הקובץ נכנס' : done + ' קבצים נכנסו') + ' ל' + (folder || GENERAL));
   }
 
   function fileToBase64(file) {

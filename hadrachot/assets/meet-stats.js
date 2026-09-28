@@ -41,7 +41,12 @@
   window.TS_meetMonthLabel = monthLabel;
 
   function unitsOf(v) {
-    return (window.TS && TS.unitsSet) ? TS.unitsSet(v) : (String(v || '').trim() ? [String(v).trim()] : []);
+    if (window.TS && TS.unitsSet) return TS.unitsSet(v);
+    // בשרת (בלי app.js) — אותו כלל כמו TS.unitsSet; עד 28.9.26 "3+4-5" נשאר מחרוזת אחת
+    // והמורה לא נספר/ה אצל אף מדריכה בתזכורות ובדוחות שבשרת
+    const s = String(v == null ? '' : v).replace(/^'/, '').trim();
+    if (!s) return [];
+    return s === '3+4-5' ? ['3', '4-5'] : [s];
   }
 
   // האם המורה בקבוצה של המדריכ/ה — זהה ל-isMine + סינון המגזר/מסלול ב-guide/dashboard.js
@@ -55,6 +60,8 @@
     if (Array.isArray(g.units) && g.units.length && track !== 'gemer') {
       const u = unitsOf(t.units);
       if (u.length && !u.some(x => g.units.indexOf(x) >= 0)) return false;
+      // unmarked:false — מורה שטרם סומן לו יח"ל לא עובר/ת אליה (אילנה, 28.9.26: נשארים אצל שירה)
+      if (!u.length && g.unmarked === false) return false;
     }
     return true;
   };

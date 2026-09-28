@@ -38,8 +38,11 @@ const savedForOther_ = urlTeacherId_ && String((savedIdentity() || {}).id || '')
    (staff.teacherKey, רק למטה · אדמין). לא נשמר במכשיר, לא נוגע בזיהוי השמור,
    ו"המחברת שלי" לא נפתחת — היא פרטית למורה. */
 const ADMIN_KEY_ = /^[a-f0-9]{24}$/.test(TS.urlParam('ak', '')) ? TS.urlParam('ak', '') : '';
-let teacherKey = ADMIN_KEY_ || (savedForOther_ ? '' : ((savedIdentity() || {}).k || ''));
-let teacherId = ADMIN_KEY_ ? '' : teacherKey ? (savedIdentity() || {}).id
+/* קישור אישי מהמייל (28.9.26): teacher/?tk=<מפתח> — התזכורת והמיילים מהמדריכ/ה
+   נשלחים לתיבה של המורה, ולכן הקישור בהם הוא הכניסה עצמה. נשמר במכשיר כמו כניסה בקוד. */
+const MAIL_KEY_ = !ADMIN_KEY_ && /^[a-f0-9]{24}$/.test(TS.urlParam('tk', '')) ? TS.urlParam('tk', '') : '';
+let teacherKey = ADMIN_KEY_ || MAIL_KEY_ || (savedForOther_ ? '' : ((savedIdentity() || {}).k || ''));
+let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? '' : teacherKey ? (savedIdentity() || {}).id
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
 
@@ -387,6 +390,10 @@ async function load() {
     : await TS.api('teacher.get', { id: teacherId });
   teacher = teacherRes && teacherRes.data;
   if (teacher && teacher.id) teacherId = teacher.id;
+  if (teacher && MAIL_KEY_) {
+    rememberIdentity({ k: MAIL_KEY_, id: teacher.id, name: teacher.name || '', school: teacher.school || '', at: new Date().toISOString() });
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* לא חוסם */ }
+  }
   // מורה שנמחק או אוחד — הזיהוי השמור כבר לא תקף, חוזרים לטופס
   if (!teacher) {
     showLoading(false);
@@ -669,13 +676,19 @@ function renderGroup(g) {
     return /^\d{4}-\d{2}-\d{2}$/.test(d) ? dateLbl(d) : '';
   };
   if (files.length) {
-    document.getElementById('mat-list').innerHTML = files.map(f => `
+    // מאגר החומרים לפי תיקיות (28.9.26) — כל תיקייה מתקפלת; "כללי" בסוף
+    const item = f => `
       <div class="h-item">${ICON_FILE}
         <div class="t">${f.fileUrl
           ? `<a href="${esc(f.fileUrl)}" target="_blank" rel="noopener">${esc(f.fileName || 'קובץ')}</a>`
           : esc(f.fileName)}${f.note ? `<div>${esc(f.note)}</div>` : ''}</div>
         <div class="d">${esc(when(f.createdAt))}</div>
-      </div>`).join('');
+      </div>`;
+    const groups = {};
+    files.forEach(f => { (groups[f.folder || 'כללי'] = groups[f.folder || 'כללי'] || []).push(f); });
+    const names = Object.keys(groups).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
+    document.getElementById('mat-list').innerHTML = names.length === 1 ? groups[names[0]].map(item).join('')
+      : names.map(n => `<details class="mat-folder"><summary><b>${esc(n)}</b> <span class="d">(${groups[n].length})</span></summary>${groups[n].map(item).join('')}</details>`).join('');
     document.getElementById('mat-sec').hidden = false;
   }
   if (msgs.length) {

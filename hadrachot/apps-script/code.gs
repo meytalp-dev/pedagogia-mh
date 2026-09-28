@@ -50,7 +50,9 @@ const SCHEMA = {
   contacts:   ['id','kind','slug','name','phone','email','updatedAt','updatedBy'],
   // מרחב המדריכה (9.9.26) — נפתח מתוך "מבט מקצועי", כרטיס לכל מדריכה.
   // guideSlug הוא המפתח מתוך assets/guides.js ולא מזהה פנימי חדש.
-  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole'],
+  // folder/kind/source — מאגר החומרים (28.9.26): תיקייה (רמות מופרדות ב-" / "),
+  // 'file' = הועלה לדרייב של המערכת · 'link' = קישור לקובץ דרייב קיים בלי העתקה
+  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
   // פעילות אחרת של המדריכה (23.9.26) — מה שאינו הדרכה קבוצתית/פרטנית אבל מדווח
@@ -221,7 +223,9 @@ const PUBLIC_ACTIONS = new Set([
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
   'diag.timing',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
-  'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete'
+  'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete',
+  // מאגר החומרים ומייל לקבוצה (28.9.26) — דורשים מפתח מדריכ/ה (meetAuthGuide_) בפנים
+  'guide.file.link', 'guide.file.move', 'guide.mail.send', 'guide.contacts'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -853,7 +857,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing)$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -975,6 +979,10 @@ function handleRequest(params) {
       case 'guide.group':         result = guideGroup(params); break;
       case 'guide.file.add':      result = guideFileAdd(params); break;
       case 'guide.file.delete':   result = guideFileDelete(params); break;
+      case 'guide.file.link':     result = guideFileLink(params); break;
+      case 'guide.file.move':     result = guideFileMove(params); break;
+      case 'guide.mail.send':     result = guideMailSend(params); break;
+      case 'guide.contacts':      result = guideContacts(params); break;
       case 'guide.message.add':   result = guideMessageAdd(params); break;
       case 'guide.message.delete':result = guideMessageDelete(params); break;
       case 'guide.hours.add':     result = guideHoursAdd(params); break;
@@ -2938,7 +2946,8 @@ function guideWorkspace(p) {
     id: f.id, fileName: f.fileName, fileUrl: f.fileUrl, mimeType: f.mimeType,
     size: Number(f.size) || 0, note: f.note || '',
     uploadedBy: f.uploadedBy || '', uploaderRole: f.uploaderRole || '',
-    createdAt: toIso_(f.createdAt)
+    createdAt: toIso_(f.createdAt),
+    folder: guideFolderName_(f.folder), kind: f.kind || 'file', source: f.source || ''
   }));
   messages.forEach(m => out.messages[m.guideSlug].push({
     id: m.id, authorName: m.authorName || '', authorRole: m.authorRole || '',
@@ -2974,7 +2983,8 @@ function guideGroup(p) {
     .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector')
     .map(f => ({
       fileName: f.fileName || '', fileUrl: f.fileUrl || '', mimeType: f.mimeType || '',
-      size: Number(f.size) || 0, createdAt: toIso_(f.createdAt)
+      size: Number(f.size) || 0, createdAt: toIso_(f.createdAt),
+      folder: guideFolderName_(f.folder)
     }))
     .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
 
@@ -3020,7 +3030,10 @@ function guideFileAdd(p) {
     uploadedBy: p.byName || '',
     createdAt: new Date().toISOString(),
     // 'guide' = חומר לקבוצה (מופיע בעמוד הקבוצה) · 'inspector' = למדריכה בלבד
-    uploaderRole: p.byRole === 'inspector' ? 'inspector' : 'guide'
+    uploaderRole: p.byRole === 'inspector' ? 'inspector' : 'guide',
+    folder: guideFolderCell_(p.folder),
+    kind: 'file',
+    source: p.source === 'drive-import' ? 'drive-import' : 'upload'
   };
   appendRow('guide_files', obj);
   return { ok: true, data: obj };
@@ -3850,15 +3863,7 @@ function remindLoad_() {
   const cache = CacheService.getScriptCache();
   const hit = cache.get('remind_data_v2');
   if (hit) return JSON.parse(hit);
-  const ts = Date.now();
-  const get = f => {
-    const r = UrlFetchApp.fetch(REMIND_SITE + 'assets/' + f + '?t=' + ts, { muteHttpExceptions: true });
-    if (r.getResponseCode() !== 200) throw new Error(f + ' HTTP ' + r.getResponseCode());
-    return r.getContentText('UTF-8');
-  };
-  const win = {};
-  // הקבצים כותבים רק ל-window.* — מריצים אותם עם window מקומי
-  new Function('window', get('guides.js') + '\n;\n' + get('plans.js') + '\n;\n' + get('meet-stats.js'))(win);
+  const win = remindWin_();
   const data = { slots: [], guides: {}, roster: {} };
   Object.keys(win.TS_GUIDES || {}).forEach(k => {
     const g = win.TS_GUIDES[k];
@@ -3897,6 +3902,20 @@ function remindLoad_() {
   return data;
 }
 
+// guides.js + plans.js + meet-stats.js מהאתר, מורצים עם window מקומי
+// (הקבצים כותבים רק ל-window.*). מחזיר את ה-window עם TS_GUIDES, TS_PLANS וכו'.
+function remindWin_() {
+  const ts = Date.now();
+  const get = f => {
+    const r = UrlFetchApp.fetch(REMIND_SITE + 'assets/' + f + '?t=' + ts, { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) throw new Error(f + ' HTTP ' + r.getResponseCode());
+    return r.getContentText('UTF-8');
+  };
+  const win = {};
+  new Function('window', get('guides.js') + '\n;\n' + get('plans.js') + '\n;\n' + get('meet-stats.js'))(win);
+  return win;
+}
+
 // כל המועדים, עם at = דקות לפי שעון ישראל
 function remindSlots_(data) {
   return data.slots.map(s => Object.assign({ at: remindMinutes_(s.date, s.start) }, s));
@@ -3919,6 +3938,8 @@ function meetRemindTick() {
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
   try { monthlyTick_(data); }
   catch (e) { console.error('meetRemindTick: monthly failed ' + e); }
+  try { teacherRemindTick_(data); }
+  catch (e) { console.error('meetRemindTick: teacher reminders failed ' + e); }
   const now = remindNowMinutes_();
   const slots = remindSlots_(data);
   const due = slots.filter(s =>
@@ -5335,4 +5356,322 @@ function diagTiming() {
     try { readAll(n); reads[n] = Date.now() - a; } catch (e) { reads[n] = 'err'; }
   });
   return { ok: true, data: { openMs: tOpen, totalMs: Date.now() - t0, tabs: tabs, readAllMs: reads } };
+}
+
+// ============================================================
+// מאגר החומרים · מייל לקבוצה · תזכורת למורים יום לפני המפגש (28.9.26, בקשת מיטל)
+// ------------------------------------------------------------
+// מאגר: כל קובץ ב-guide_files נושא folder (רמות מופרדות ב-" / "; ריק = כללי).
+//   guide.file.add מקבל folder · guide.file.link מוסיף קישור (קובץ דרייב קיים בלי
+//   העתקה, או קישור חיצוני כמו יוטיוב) — kind='link' · guide.file.move מעביר קובץ
+//   לתיקייה. התיקיות האוטומטיות לפי מפגש מחושבות בדפדפן מ-plans.js — לא נשמרות.
+// מייל לקבוצה (guide.mail.send): "שליחה לכל המורים" מתוך מבט המדריכ/ה, במקום
+//   וואטסאפ. מייל אישי לכל מורה עם הקישור האישי שלו/ה. דורש מפתח מדריכ/ה —
+//   אחרת זו תיבת ריליי פתוחה בשם בעלת הסקריפט.
+// תזכורת למורים: מ-17:00 ביום שלפני כל יום מפגש (בתוך meetRemindTick). מדלגת על
+//   מי שכבר נכח/ה במועד קודם של אותו חודש. **ברירת מחדל: תצוגה מקדימה** — מייל
+//   אחד למיטל לכל מדריכ/ה ויום. הדלקה: teacherRemindEnableLive · כיבוי:
+//   teacherRemindDisableLive · תצוגה מקדימה עכשיו: teacherRemindPreviewNext.
+// ============================================================
+
+const TEACHER_REMIND_HOUR = 17;
+const GUIDE_MAIL_DAILY_SENDS = 3;       // שליחות לקבוצה ליום לכל מדריכ/ה
+const GUIDE_MAIL_QUOTA_FLOOR = 40;      // שומרים מכסה לקודי כניסה ולדוחות
+const GUIDE_MAIL_MAX = 400;
+
+function guideFolderName_(v) {
+  return String(v == null ? '' : v).replace(/^'/, '').split('/')
+    .map(s => s.replace(/\s+/g, ' ').trim().slice(0, 60)).filter(Boolean).slice(0, 3).join(' / ');
+}
+// גרש מוביל — "371" או "10/2" נשמרים כטקסט ולא כמספר/תאריך
+function guideFolderCell_(v) {
+  const f = guideFolderName_(v);
+  return f ? "'" + f : '';
+}
+
+function guideFileLink(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const url = String(p.fileUrl || '').trim();
+  if (!/^https:\/\/[^\s"'<>]+$/.test(url) || url.length > 1000) return { ok: false, error: 'bad_url' };
+  const name = safeFileName_(p.fileName);
+  ensureTab_('guide_files');
+  const dup = readAll('guide_files').find(f => String(f.guideSlug) === slug && String(f.fileUrl) === url);
+  if (dup) return { ok: true, data: { id: dup.id, duplicate: true } };
+  const m = /drive\.google\.com|docs\.google\.com/.test(url)
+    ? (/\/d\/([A-Za-z0-9_-]{20,})/.exec(url) || /[?&]id=([A-Za-z0-9_-]{20,})/.exec(url)) : null;
+  const obj = {
+    id: newId('gf'), guideSlug: slug, guideName: String(p.guideName || '').slice(0, 80),
+    fileName: name, fileUrl: url, fileId: m ? m[1] : '',
+    mimeType: String(p.mimeType || '').slice(0, 120), size: Number(p.size) || 0,
+    note: String(p.note || '').slice(0, 300), uploadedBy: String(p.byName || '').slice(0, 80),
+    createdAt: new Date().toISOString(), uploaderRole: 'guide',
+    folder: guideFolderCell_(p.folder), kind: 'link',
+    source: p.source === 'drive-import' ? 'drive-import' : 'link'
+  };
+  appendRow('guide_files', obj);
+  return { ok: true, data: { id: obj.id } };
+}
+
+function guideFileMove(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const row = readAll('guide_files').find(f => String(f.id) === String(p.id));
+  if (!row || String(row.guideSlug) !== slug) return { ok: false, error: 'not_found' };
+  ensureTab_('guide_files');
+  updateRowById('guide_files', row.id, { folder: guideFolderCell_(p.folder) });
+  return { ok: true, data: { id: row.id, folder: guideFolderName_(p.folder) } };
+}
+
+// מורי הקבוצה לפי אותו כלל של הדשבורדים (TS_guideHasTeacher מ-meet-stats.js)
+function guideRoster_(win, slug, subject) {
+  const g = Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug] || {});
+  if (!g.name) return [];
+  return readAll('teachers').filter(t => win.TS_guideHasTeacher(g, t) && (!subject || t.subject === subject));
+}
+
+function guideMailOk_(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim()); }
+
+// { withEmail: [{ id, name, email, school }], missing: [{ name, school }] } — אדם אחד לכל מייל
+function guideRecipients_(teachers) {
+  const norm = x => String(x || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const byMail = {}, people = {}, out = { withEmail: [], missing: [] };
+  teachers.forEach(t => {
+    const k = norm(t.name) + '|' + norm(t.schoolName);
+    const e = String(t.email || '').trim().toLowerCase();
+    if (!people[k]) people[k] = { name: String(t.name || ''), school: String(t.schoolName || ''), email: '' };
+    if (guideMailOk_(e) && !people[k].email) {
+      people[k].email = e;
+      if (!byMail[e]) { byMail[e] = 1; out.withEmail.push({ id: String(t.id), name: String(t.name || ''), email: e, school: String(t.schoolName || '') }); }
+    }
+  });
+  Object.keys(people).forEach(k => { if (!people[k].email) out.missing.push({ name: people[k].name, school: people[k].school }); });
+  out.missing.sort((a, b) => a.school.localeCompare(b.school, 'he') || a.name.localeCompare(b.name, 'he'));
+  return out;
+}
+
+// קישור אישי במייל — נכנס ישר לבית של המורה (teacher/dashboard.js שומר את המפתח במכשיר)
+function guideTeacherLink_(id) {
+  return REMIND_SITE + 'teacher/?tk=' + teacherKey_(id);
+}
+
+function guideMailHtml_(hello, bodyHtml, link, linkLabel, foot) {
+  return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C">' +
+    '<p style="margin:0 0 12px">' + remindEsc_(hello) + '</p>' + bodyHtml +
+    (link ? '<p style="margin:18px 0"><a href="' + link + '" style="background:#1A5365;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">' + remindEsc_(linkLabel) + '</a></p>' : '') +
+    '<p style="margin:16px 0 0;font-size:12px;color:#5C7182">' + foot + '</p></div>';
+}
+
+function guideTextHtml_(text) {
+  return remindEsc_(text).split('\n').join('<br>')
+    .replace(/https?:\/\/[^\s<]+/g, u => '<a href="' + u + '">' + u + '</a>');
+}
+
+function guideReplyTo_(slug) {
+  try {
+    const c = readAll('contacts').find(r => String(r.id) === 'guide:' + slug);
+    const e = c ? String(c.email || '').trim() : '';
+    return guideMailOk_(e) ? e : '';
+  } catch (e) { return ''; }
+}
+
+/* guide.mail.send — { guide, k|ge, subject, text, dryRun } */
+function guideMailSend(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const subject = String(p.subject || '').replace(/\s+/g, ' ').trim().slice(0, 150);
+  const text = String(p.text || '').trim().slice(0, 4000);
+  const dry = String(p.dryRun) === '1' || p.dryRun === true;
+  if (!dry && (!subject || !text)) return { ok: false, error: 'missing_text' };
+
+  const win = remindWin_();
+  const g = (win.TS_GUIDES || {})[slug] || {};
+  const rec = guideRecipients_(guideRoster_(win, slug, ''));
+  const info = { recipients: rec.withEmail.length, missing: rec.missing };
+  if (dry) return { ok: true, data: Object.assign({ dryRun: true, quota: MailApp.getRemainingDailyQuota() }, info) };
+
+  const props = PropertiesService.getScriptProperties();
+  const dayKey = 'gmail_' + slug + '_' + meetToday_();
+  const used = Number(props.getProperty(dayKey) || 0);
+  if (used >= GUIDE_MAIL_DAILY_SENDS) return { ok: false, error: 'daily_limit' };
+  const list = rec.withEmail.slice(0, GUIDE_MAIL_MAX);
+  if (!list.length) return { ok: false, error: 'no_recipients' };
+  if (MailApp.getRemainingDailyQuota() - list.length < GUIDE_MAIL_QUOTA_FLOOR) return { ok: false, error: 'quota' };
+  props.setProperty(dayKey, String(used + 1));
+
+  const replyTo = guideReplyTo_(slug);
+  const from = (g.name || 'המדריך/ה') + ' · מנור';
+  let sent = 0;
+  const failed = [];
+  list.forEach(r => {
+    const link = guideTeacherLink_(r.id);
+    const hello = 'שלום ' + r.name + ',';
+    const html = guideMailHtml_(hello, '<div>' + guideTextHtml_(text) + '</div>', link, 'הבית שלי במנור — חומרים והודעות',
+      'נשלח מ' + remindEsc_(g.name || '') + (g.subject ? ' · הדרכה ב' + remindEsc_(g.subject) : '') + ' · ' + MONTHLY_SIGN +
+      (replyTo ? '<br>אפשר להשיב למייל הזה — התשובה תגיע ל' + remindEsc_(g.name || 'מדריך/ה') + '.' : ''));
+    const opt = { to: r.email, subject: subject, htmlBody: html, name: from,
+      body: hello + '\n\n' + text + '\n\nהבית שלי במנור: ' + link + '\n\n' + MONTHLY_SIGN };
+    if (replyTo) opt.replyTo = replyTo;
+    try { MailApp.sendEmail(opt); sent++; } catch (e) { failed.push(r.name); }
+  });
+  auditLog_('', 'guide.mail.send', 'guide', slug, 'ok', 'sent=' + sent + ' failed=' + failed.length);
+  return { ok: true, data: Object.assign({ sent: sent, failed: failed }, info) };
+}
+
+// ---------- תזכורת למורים יום לפני ----------
+function teacherRemindIsLive_() {
+  return PropertiesService.getScriptProperties().getProperty('TEACHER_REMIND_LIVE') === '1';
+}
+function teacherRemindEnableLive() {
+  PropertiesService.getScriptProperties().setProperty('TEACHER_REMIND_LIVE', '1');
+  console.log('תזכורות המורים דלוקות — יישלחו למורים עצמם מ-17:00 ביום שלפני כל מפגש.');
+}
+function teacherRemindDisableLive() {
+  PropertiesService.getScriptProperties().deleteProperty('TEACHER_REMIND_LIVE');
+  console.log('תזכורות המורים במצב תצוגה מקדימה — רק למיטל.');
+}
+
+function remindAddDays_(iso, n) {
+  const d = iso.split('-').map(Number);
+  const t = new Date(Date.UTC(d[0], d[1] - 1, d[2] + n));
+  return t.getUTCFullYear() + '-' + String(t.getUTCMonth() + 1).padStart(2, '0') + '-' + String(t.getUTCDate()).padStart(2, '0');
+}
+
+// { slug|date: [slots] } לתאריך אחד
+function teacherRemindDays_(data, date) {
+  const out = {};
+  data.slots.forEach(s => {
+    if (s.date !== date) return;
+    (out[s.slug + '|' + s.date] = out[s.slug + '|' + s.date] || []).push(s);
+  });
+  return out;
+}
+
+function teacherRemindTick_(data) {
+  const nowS = Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd HH').split(' ');
+  if (Number(nowS[1]) < TEACHER_REMIND_HOUR) return;
+  const tomorrow = remindAddDays_(nowS[0], 1);
+  const days = teacherRemindDays_(data, tomorrow);
+  const keys = Object.keys(days);
+  if (!keys.length) return;
+  const props = PropertiesService.getScriptProperties();
+  let win = null;
+  keys.forEach(k => {
+    const slots = days[k];
+    const key = 'remind_t_' + slots[0].slug + '_' + tomorrow + '_1700';
+    if (props.getProperty(key)) return;
+    props.setProperty(key, String(Date.now()));   // קודם מסמנים — כשל לא יציף
+    try {
+      if (!win) win = remindWin_();
+      teacherRemindSend_(win, data, slots, teacherRemindIsLive_());
+    } catch (e) { console.error('teacherRemindTick_: ' + key + ' ' + e); }
+  });
+}
+
+function teacherRemindSend_(win, data, slots, live) {
+  const s0 = slots[0];
+  const slug = s0.slug, date = s0.date;
+  const g = data.guides[slug] || {};
+  const subject = s0.subject || g.subject || '';
+  const dm = d => +d.slice(8, 10) + '.' + +d.slice(5, 7);
+  const DAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+  const dd = date.split('-').map(Number);
+  const dayName = DAYS[new Date(Date.UTC(dd[0], dd[1] - 1, dd[2])).getUTCDay()];
+  const times = slots.slice().sort((a, b) => a.start.localeCompare(b.start))
+    .map(x => x.start + (x.part ? ' (' + x.part + ')' : '')).join(' · ');
+  const laterOthers = Array.from(new Set(data.slots.filter(x => x.slug === slug && x.mdate === s0.mdate && x.date > date)
+    .map(x => x.date))).sort();
+
+  // מי שכבר נכח/ה במועד קודם של אותו מפגש החודש — לא צריך תזכורת
+  const norm = x => String(x || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const monthIds = {};
+  readAll('meetings').forEach(m => {
+    if (String(m.guideSlug) === slug && String(meetDate_(m.date)).slice(0, 7) === date.slice(0, 7)) monthIds[String(m.id)] = 1;
+  });
+  const presentIds = {};
+  readAll('meeting_attendance').forEach(r => { if (monthIds[String(r.meetingId)] && r.status === 'present') presentIds[String(r.teacherId)] = 1; });
+  const roster = guideRoster_(win, slug, s0.subject || '');
+  const doneKeys = {};
+  roster.forEach(t => { if (presentIds[String(t.id)]) doneKeys[norm(t.name) + '|' + norm(t.schoolName)] = 1; });
+  const rec = guideRecipients_(roster.filter(t => !doneKeys[norm(t.name) + '|' + norm(t.schoolName)]));
+  const skippedPresent = Object.keys(doneKeys).length;
+
+  const title = 'תזכורת: מחר הדרכה ב' + subject + (s0.topic ? ' — ' + s0.topic : '');
+  const facts = [
+    ['מתי', 'מחר, יום ' + dayName + ' ' + dm(date) + (times ? ' · ' + times : '')],
+    ['נושא', s0.topic],
+    ['מדריך/ה', g.name || ''],
+    ['מועד נוסף לבחירה', laterOthers.length ? laterOthers.map(dm).join(', ') + ' — משתתפים באחד המועדים' : '']
+  ].filter(f => f[1]);
+  const factsHtml = '<table style="border-collapse:collapse;margin:4px 0 8px">' + facts.map(f =>
+    '<tr><td style="padding:3px 0 3px 16px;color:#5C7182;white-space:nowrap;vertical-align:top">' + remindEsc_(f[0]) +
+    '</td><td style="padding:3px 0">' + remindEsc_(f[1]) + '</td></tr>').join('') + '</table>' +
+    '<p style="margin:8px 0 0">בזמן המפגש נרשמים לנוכחות בדף האישי שלך. שם גם החומרים וההודעות מהמדריך/ה.</p>';
+  const foot = 'תזכורת אוטומטית ממנור · ' + MONTHLY_SIGN;
+  const build = r => {
+    const link = guideTeacherLink_(r.id);
+    const hello = 'שלום ' + r.name + ',';
+    return {
+      html: guideMailHtml_(hello, factsHtml, link, 'הבית שלי במנור', foot),
+      text: hello + '\n\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nהבית שלי במנור (שם גם נרשמים לנוכחות): ' + link + '\n\n' + MONTHLY_SIGN
+    };
+  };
+  const replyTo = guideReplyTo_(slug);
+
+  if (!live) {
+    const sample = rec.withEmail[0] ? build(rec.withEmail[0]) : null;
+    const missingList = rec.missing.slice(0, 60).map(m => remindEsc_(m.name) + ' <span style="color:#8a97a6">· ' + remindEsc_(m.school) + '</span>').join('<br>');
+    const html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#143E4C">' +
+      '<p style="margin:0 0 10px;padding:8px 12px;background:#FFF6E0;border-radius:8px"><b>תצוגה מקדימה</b> — התזכורת לא נשלחה למורים. ' +
+      'במצב חי היא הייתה יוצאת עכשיו ל-<b>' + rec.withEmail.length + '</b> מורים של ' + remindEsc_(g.name || slug) +
+      (skippedPresent ? ' (דילגנו על ' + skippedPresent + ' שכבר השתתפו החודש)' : '') + '. ' +
+      '<b>' + rec.missing.length + '</b> בלי מייל. להדלקה: teacherRemindEnableLive בעורך Apps Script.</p>' +
+      (sample ? '<p style="margin:12px 0 4px;color:#5C7182">כך ייראה המייל (לדוגמה, ל' + remindEsc_(rec.withEmail[0].name) + '). הקישור בדוגמה הוא של המורה הזה — לא ללחוץ:</p>' +
+        '<div style="border:1px solid #D5E2EA;border-radius:10px;padding:14px">' + sample.html + '</div>' : '') +
+      (rec.missing.length ? '<p style="margin:14px 0 4px;font-weight:bold">בלי מייל (' + rec.missing.length + ')</p><div style="font-size:13px">' + missingList +
+        (rec.missing.length > 60 ? '<br>ועוד ' + (rec.missing.length - 60) + '…' : '') + '</div>' : '') + '</div>';
+    MailApp.sendEmail({ to: REMIND_TO, subject: '[תצוגה מקדימה] ' + title + ' · ' + (g.name || slug), htmlBody: html,
+      body: 'תצוגה מקדימה: ' + rec.withEmail.length + ' נמענים, ' + rec.missing.length + ' בלי מייל.', name: 'מנור' });
+    return { preview: true, recipients: rec.withEmail.length, missing: rec.missing.length };
+  }
+
+  if (MailApp.getRemainingDailyQuota() - rec.withEmail.length < GUIDE_MAIL_QUOTA_FLOOR) {
+    MailApp.sendEmail({ to: REMIND_TO, subject: 'תזכורות מורים לא נשלחו — אין מספיק מכסת מייל', name: 'מנור',
+      body: (g.name || slug) + ' ' + date + ': ' + rec.withEmail.length + ' נמענים, מכסה ' + MailApp.getRemainingDailyQuota() });
+    return { error: 'quota' };
+  }
+  let sent = 0;
+  rec.withEmail.forEach(r => {
+    const m = build(r);
+    const opt = { to: r.email, subject: title, htmlBody: m.html, body: m.text, name: (g.name || 'מנור') + ' · מנור' };
+    if (replyTo) opt.replyTo = replyTo;
+    try { MailApp.sendEmail(opt); sent++; } catch (e) { console.error('teacherRemind: ' + r.email + ' ' + e); }
+  });
+  auditLog_('', 'teacher.remind', 'guide', slug, 'ok', date + ' sent=' + sent);
+  return { sent: sent, missing: rec.missing.length };
+}
+
+// תצוגה מקדימה עכשיו — ליום המפגש הקרוב (לא מסמן "נשלח", תמיד למיטל בלבד)
+function teacherRemindPreviewNext() {
+  const data = remindLoad_();
+  const today = meetToday_();
+  const next = data.slots.map(s => s.date).filter(d => d > today).sort()[0];
+  if (!next) { console.log('אין מפגשים קרובים'); return; }
+  const days = teacherRemindDays_(data, next);
+  const win = remindWin_();
+  Object.keys(days).forEach(k => console.log(k + ' → ' + JSON.stringify(teacherRemindSend_(win, data, days[k], false))));
+}
+
+/* guide.contacts — { guide, k|ge } → אלפון מורי הקבוצה עם מייל וטלפון (28.9.26).
+   teachers.list ממסך פרטי קשר למי שאין לו חשבון, ולמדריכות אין — לכן כאן,
+   רק למחזיק/ת מפתח המדריכ/ה, ורק המורים של הקבוצה שלה. */
+function guideContacts(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const win = remindWin_();
+  return { ok: true, data: guideRoster_(win, slug, '').map(t => ({
+    id: String(t.id), name: String(t.name || ''), schoolName: String(t.schoolName || ''),
+    subject: String(t.subject || ''), type: String(t.type || ''),
+    email: String(t.email || '').trim(), phone: String(t.phone || '').trim()
+  })) };
 }

@@ -36,7 +36,21 @@
 
   // המייל שכבר בקישור האישי (&guide=) — מספיק לזיהוי בשרת, בלי מפתח
   const GE = (typeof guideEmail !== "undefined" && guideEmail) ? String(guideEmail) : "";
-  const CAN = !!(KEY || GE);
+  let CAN = !!(KEY || GE);
+  // ההרשאה של הדף — גם space.js (מאגר החומרים, מייל לקבוצה) שולח אותה לשרת
+  window.GUIDE_AUTH = () => ({ guide: SLUG, k: KEY, ge: GE });
+
+  /* מטה · אדמין שנכנס/ה בקוד (28.9.26): עד היום הדף הציג "צריך לבקש את הקישור
+     המעודכן" — כי במבט של מטה אין מפתח מדריכ/ה בכתובת. השרת נותן אותו למטה בלבד
+     (staff.guideKeys), והוא לא נשמר במכשיר. */
+  async function adminKey() {
+    const st = window.TS_staff && window.TS_staff.get ? window.TS_staff.get() : null;
+    if (!st || !st.k || !(st.roles || []).some(r => r.role === 'ministry')) return '';
+    try {
+      const r = await TS.api('staff.guideKeys', { k: st.k, slugs: SLUG }, { cache: 'no' });
+      return (r && r.ok && r.data && r.data[SLUG]) || '';
+    } catch (e) { return ''; }
+  }
 
   const PLAN = window.TS_planFor ? window.TS_planFor(SLUG) : null;
 
@@ -69,12 +83,16 @@
     alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('tab-btn-meet');
+  document.addEventListener('DOMContentLoaded', async () => {
     // בלי slug (קישור ישן עם ?guide= בלבד) אין תוכנית ואין רישום — המקטעים מוסתרים
     if (!SLUG) { ['sec-month', 'sec-months', 'tool-adhoc', 'tool-year'].forEach(id => { const el = document.getElementById(id); if (el) el.hidden = true; }); return; }
     renderShell();
     renderNextMeet();
+    if (!CAN) {
+      KEY = await adminKey();
+      CAN = !!KEY;
+      if (CAN && typeof window.SPACE_onAuth === 'function') window.SPACE_onAuth();
+    }
     if (!CAN) { renderNoKey(); return; }
     renderMonths();
     load();
@@ -490,10 +508,12 @@
     return { att: att.sort(byName), not: not.sort(byName), ind: ind.sort(byName), total: groups.length, indLoaded: !!indAll, current: k === monthOf(S.today) };
   }
   // המועדים של מקטע 1: החודש הנוכחי, ואם אין בו מפגשים — החודש הבא שיש בו
+  // 28.9.26 (מיטל: "צריך להיות שם מועדי המפגשים של החודש") — כשכל מועדי החודש כבר
+  // עברו, המקטע עובר לחודש של המפגש הבא; המועדים שעברו נשארים ב"נוכחות לפי חודשים".
   function focusMonth(list) {
     if (!list.length) return '';
     const cur = monthOf(S.today);
-    if (list.some(s => monthOf(s.date) === cur)) return cur;
+    if (list.some(s => monthOf(s.date) === cur && s.date >= S.today)) return cur;
     const nx = list.find(s => s.date >= S.today);
     return nx ? monthOf(nx.date) : monthOf(list[list.length - 1].date);
   }
@@ -633,10 +653,10 @@
       ? s.slots.map(x => `<li><bdi dir="ltr" class="ss-hour">${esc(x.start)}</bdi>${x.part ? `<span class="ss-part"><bdi>${esc(x.part)}</bdi></span>` : ''}${x.topic ? `<span class="ss-ttl">${esc(x.topic)}</span>` : ''}</li>`).join('')
       : (s.time ? `<li><span class="ss-ttl">${esc(s.time)}</span></li>` : '');
 
-    let status;
+    // 28.9.26 (מיטל: "בלי מלל מיותר") — למפגש עתידי אין שורת מצב; רק תאריך, שעה, נושא וכפתור
+    let status = '';
     if (future) {
-      const n = daysUntil(s.date);
-      status = `<span class="ss-st fut">${n === 1 ? 'מחר' : 'בעוד ' + n + ' ימים'}</span>`;
+      status = '';
     } else if (c.present + c.absent + c.pending) {
       status = `<span class="ss-st ok">נוכחים <b>${c.present}</b>${total ? ' מתוך ' + total : ''}</span>` +
         (c.pending ? `<span class="ss-st pend">${c.pending} ממתינים לאישור</span>` : '');
@@ -647,12 +667,11 @@
     const acts = [];
     /* "פתיחת הרישום" ליד כל מפגש (מיטל, 24.9.26). השרת פותח רישום רק ביום המפגש —
        בכוונה, כדי שלא יירשמו מראש או בדיעבד — ולכן בשאר הימים הכפתור מוצג אפור עם הסבר. */
-    const openBtnOff = t => `<button type="button" class="btn btn-secondary ss-btn ss-off" disabled title="${esc(t)}">${ICON.screen}<span>פתיחת הרישום</span></button><span class="ss-later">${esc(t)}</span>`;
+    const openBtnOff = t => `<button type="button" class="btn btn-secondary ss-btn ss-off" disabled title="${esc(t)}">${ICON.screen}<span>פתיחת הרישום</span></button>`;
     if (future) {
-      acts.push(openBtnOff('ייפתח ביום המפגש, ' + shortLabel(s.date)));
+      acts.push(openBtnOff('נפתח ביום המפגש, ' + shortLabel(s.date)));
     } else {
       if (isToday && !open) acts.push(`<button type="button" class="btn btn-primary ss-btn" data-open="${esc(s.date)}">${ICON.screen}<span>פתיחת הרישום</span></button>`);
-      if (!isToday) acts.push(openBtnOff('המפגש עבר — מסמנים ידנית'));
       if (open) acts.push(`<button type="button" class="btn btn-secondary ss-btn ss-close" data-close="${esc(s.date)}">סגירת הרישום</button>`);
       acts.push(`<button type="button" class="btn ${isSel ? 'btn-secondary' : (!isToday && (c.pending || !(c.present + c.absent)) ? 'btn-primary' : 'btn-secondary')} ss-btn" data-panel="${esc(s.date)}" aria-expanded="${isSel}">
         ${isSel ? 'סגירת הסימון' : c.pending ? ICON.check + '<span>אישור וסימון נוכחות</span>' : ICON.check + '<span>סימון נוכחות ידני</span>'}</button>`);
@@ -665,7 +684,7 @@
           <div class="ss-tx">
             <div class="ss-topic">${esc(s.topic || 'מפגש הדרכה')}${s.source === 'adhoc' ? ' <span class="mb unlisted">לא בתוכנית</span>' : ''}</div>
             ${slots ? `<ul class="ss-slots">${slots}</ul>` : ''}
-            <div class="ss-status">${status}</div>
+            ${status ? `<div class="ss-status">${status}</div>` : ''}
           </div>
           <div class="ss-act">${acts.join('')}</div>
         </div>

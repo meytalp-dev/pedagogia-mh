@@ -40,7 +40,8 @@ function isMine(t) {
   if (!mine) return true;
   if (t.type === 'gemer') return true;   // כבר סונן קודם לפי GUIDE_CFG.tracks
   const u = TS.unitsSet(t.units);
-  return u.length ? u.some(x => mine.indexOf(x) >= 0) : true;   // טרם סומן = אצל שתיהן
+  // טרם סומן = אצל המדריכה הראשית (שירה); מדריכה עם unmarked:false (אילנה) לא מקבלת אותם
+  return u.length ? u.some(x => mine.indexOf(x) >= 0) : GUIDE_CFG.unmarked !== false;
 }
 // הסט שנחשב "הקבוצה שלי" לצורך ה-KPI בראש הדף
 function myTeachers() {
@@ -512,6 +513,7 @@ function renderAll() {
   renderQuestions();
   // לשונית "נוכחות במפגשים" (meetings.js) בונה את הרשימה מאותה קבוצה
   if (typeof window.MEET_onRoster === 'function') window.MEET_onRoster();
+  if (typeof window.SPACE_onRoster === 'function') window.SPACE_onRoster();   // רשימת התפוצה במייל
 }
 
 function renderTrackPills() {
@@ -1026,11 +1028,7 @@ function renderResources() {
       <span class="ic zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l5-3v10l-5-3v-4z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg></span>
       <span class="tx"><strong>הזום הקבוע</strong><span>כניסה למפגש</span></span></a>`);
   }
-  if (GUIDE_CFG.drive) {
-    items.push(`<button type="button" class="resource-link" onclick="sendMaterials(this)">
-      <span class="ic send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
-      <span class="tx"><strong>שליחת חומרים למורים</strong><span>העתקת הודעה מוכנה לוואטסאפ</span></span></button>`);
-  }
+  // "שליחת חומרים בוואטסאפ" הוסר 28.9.26 — שולחים במייל מ"הודעות לקבוצה", ותיקיית הדרייב מוצגת במאגר החומרים
   const tool = document.getElementById('tool-links');
   if (!items.length) { card.hidden = true; if (tool) tool.hidden = true; return; }
   grid.innerHTML = items.join('');

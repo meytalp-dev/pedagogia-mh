@@ -191,6 +191,43 @@
   .gl-btn.wa { background:#1f7a5c; border-color:#1f7a5c; color:#fff; }
   .gl-btn.wa:hover { background:#18654b; color:#fff; }
   .gl-btn.done { border-color:var(--ok,#16a34a); color:var(--ok,#16a34a); }
+  /* הודעות במייל + רשימת התפוצה (28.9.26) */
+  .gm-check { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:13.5px; cursor:pointer; }
+  .gm-check input { width:17px; height:17px; accent-color:var(--primary,#1A5365); }
+  #gmsg-mail-n { color:var(--text-muted); }
+  .gl-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border); }
+  .gl-row .gl-url { flex:1 1 100%; font-size:12px; color:var(--text-muted); direction:ltr; text-align:right; word-break:break-all; }
+  .ml-kpis { display:flex; gap:10px; margin-bottom:10px; }
+  .ml-kpis div { flex:1; background:var(--surface-soft); border-radius:10px; padding:10px; text-align:center; }
+  .ml-kpis b { display:block; font-size:22px; color:var(--primary,#1A5365); }
+  .ml-kpis .warn b { color:#a4442f; }
+  .ml-kpis span { font-size:12px; color:var(--text-muted); }
+  .ml-miss { border:1px solid #F1D9D2; background:#FDF7F5; border-radius:10px; padding:0 12px; margin-top:8px; }
+  .ml-miss summary { cursor:pointer; padding:10px 0; font-weight:700; font-size:13.5px; color:#8f2f1c; }
+  .ml-miss ul { margin:0 0 8px; padding:0 18px 0 0; font-size:13px; line-height:1.8; max-height:260px; overflow:auto; }
+  .ml-miss ul span { color:var(--text-muted); }
+  .ml-actions { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 12px; }
+  /* מאגר החומרים (28.9.26) */
+  .lib-upload { background:var(--surface-soft); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .lib-to { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .lib-to .select { flex:1; max-width:420px; }
+  #lib-newfolder { margin-bottom:8px; }
+  .lib-addlink { margin-top:8px; font-size:13px; }
+  .lib-addlink summary { cursor:pointer; color:var(--primary,#1A5365); font-weight:600; }
+  .lib-linkform { display:grid; grid-template-columns: 2fr 1.4fr auto; gap:8px; margin-top:8px; }
+  @media (max-width: 640px) { .lib-linkform { grid-template-columns: 1fr; } }
+  .lib-drive { display:flex; align-items:center; gap:10px; background:#EEF6F3; border:1px solid #CFE5DC; border-radius:12px; padding:10px 14px; margin-bottom:12px; font-size:13.5px; }
+  .lib-drive a { font-weight:700; }
+  .lib-folder { border:1px solid var(--border); border-radius:12px; margin-bottom:8px; background:var(--surface); }
+  .lib-folder > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:8px; padding:11px 14px; font-weight:700; font-size:14.5px; }
+  .lib-folder > summary::-webkit-details-marker { display:none; }
+  .lib-folder > summary .mm-chev { width:16px; height:16px; transition:transform .15s; flex:none; }
+  .lib-folder[open] > summary .mm-chev { transform:rotate(180deg); }
+  .lib-folder > summary .c { margin-inline-start:auto; font-size:12px; font-weight:600; color:var(--text-muted); background:var(--surface-soft); border-radius:99px; padding:2px 9px; }
+  .lib-folder > summary .auto { font-size:11px; font-weight:600; color:#1f7a5c; background:#EEF6F3; border-radius:99px; padding:1px 8px; }
+  .lib-folder .lib-body { padding:0 14px 8px; }
+  .lib-folder .lib-folder { margin:6px 0; }
+  .file-row .fr-move { font-size:12px; border:1px solid var(--border); border-radius:8px; padding:3px 6px; background:var(--surface); max-width:150px; font-family:inherit; }
 
   .drop-zone { border:2px dashed var(--border); border-radius:12px; padding:22px 16px; text-align:center; cursor:pointer; background:var(--surface-soft); transition:border-color .15s, background .15s; }
   .drop-zone:hover, .drop-zone.over { border-color:var(--primary,#1A5365); background:#EDF4F7; }
@@ -679,7 +716,6 @@
         <h2 id="sec-month-title"><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>החודש</span></h2>
         <span class="mm-chip pend" id="meet-count" hidden></span>
       </div>
-      <p class="gsec-hint" id="sec-month-sub">ביום המפגש לוחצים <b>"פתיחת הרישום"</b> ומקרינים את הקוד. אחרי המפגש — <b>"סימון נוכחות"</b>.</p>
       <div id="meet-root"><div class="empty" style="padding:24px;">טוען…</div></div>
     </section>
 
@@ -690,57 +726,64 @@
       <div id="meet-history"></div>
     </section>
 
-    <!-- 3. חומרים והודעות לקבוצה — המורים רואים אותם בעמוד הקבוצה (space.js) -->
+    <!-- 3. הודעות לקבוצה — נשמרות בעמוד הקבוצה ונשלחות במייל (space.js, 28.9.26: מייל במקום וואטסאפ) -->
     <section class="gsec" id="sec-space">
-      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>חומרים והודעות לקבוצה</span></h2><span class="n zero" id="space-count">0</span></div>
-      <div class="group-link-card">
-        <span class="gl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-        <div class="gl-tx">
-          <strong>עמוד הקבוצה שלך</strong>
-          <span>כל קובץ והודעה שתפרסמי כאן מופיעים שם מיד. שולחים את הקישור פעם אחת לקבוצת הוואטסאפ של המורים — ומאז הם תמיד רואים את העדכני.</span>
-          <span class="gl-url" id="group-url">—</span>
-        </div>
-        <div class="gl-actions">
-          <button type="button" class="gl-btn" id="group-copy">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span>העתקת הקישור</span>
-          </button>
-          <a class="gl-btn wa" id="group-wa" href="#" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>
-            שליחה לקבוצה בוואטסאפ
-          </a>
-          <a class="gl-btn" id="group-open" href="#" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
-            איך זה נראה למורים
-          </a>
-        </div>
-      </div>
+      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span>הודעות לקבוצה</span></h2><span class="n zero" id="space-count">0</span></div>
 
       <div class="space-grid">
         <section class="space-card">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.9-.9L3 21l1.9-5a8.4 8.4 0 0 1-.9-3.9 8.4 8.4 0 0 1 8.4-9 8.4 8.4 0 0 1 8.6 8.4z"/></svg>הודעה לקבוצה</h2>
-          <div class="space-hint">ההודעה נשמרת בעמוד הקבוצה. אחרי הפרסום אפשר לשלוח אותה גם לקבוצת הוואטסאפ בלחיצה אחת.</div>
-          <textarea class="textarea" id="gmsg-text" placeholder="למשל: המפגש הבא יתקיים ביום שלישי ב-16:00 בזום. מצגת ההכנה נמצאת בחומרים." style="min-height:96px;"></textarea>
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>הודעה חדשה</h2>
+          <input class="input" id="gmsg-subject" maxlength="150" placeholder="נושא המייל — למשל: חומרים למפגש של אוקטובר">
+          <textarea class="textarea" id="gmsg-text" placeholder="למשל: המפגש הבא יתקיים ביום ראשון ב-10:00 בזום. מצגת ההכנה במאגר החומרים." style="min-height:96px; margin-top:8px;"></textarea>
+          <label class="gm-check"><input type="checkbox" id="gmsg-mail" checked> <span>לשלוח גם במייל לכל המורים <span id="gmsg-mail-n"></span></span></label>
           <div class="btn-row" style="margin-top:8px;">
-            <button type="button" class="btn btn-primary" id="gmsg-send">פרסום לקבוצה</button>
+            <button type="button" class="btn btn-primary" id="gmsg-send">פרסום ושליחה</button>
           </div>
           <div class="ws-status" id="gmsg-status"></div>
           <div id="gmsg-list"></div>
           <div id="insp-msgs"></div>
         </section>
 
-        <section class="space-card">
-          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>קבצים לקבוצה</h2>
-          <div class="space-hint">מצגות, דפי עבודה, מבחנים לדוגמה. כל מי שיש לו את קישור הקבוצה יכול לפתוח — <b>לא להעלות קבצים עם שמות תלמידים, ציונים או פרטים אישיים.</b></div>
-          <div class="drop-zone" id="gdrop-zone">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-            <div class="dz-main">גררי קבצים לכאן או לחצי לבחירה</div>
-            <div class="dz-sub">עד 8MB לקובץ</div>
-            <input type="file" id="gfile-input" multiple hidden>
+        <section class="space-card" id="mail-card">
+          <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>רשימת התפוצה</h2>
+          <div id="mail-root"><div class="empty" style="padding:18px;">טוען…</div></div>
+          <div class="gl-row">
+            <span class="gl-url" id="group-url">—</span>
+            <button type="button" class="gl-btn" id="group-copy"><span>העתקת קישור עמוד הקבוצה</span></button>
+            <a class="gl-btn" id="group-open" href="#" target="_blank" rel="noopener">איך זה נראה למורים</a>
           </div>
-          <div class="ws-status" id="gfiles-status"></div>
-          <div id="gfiles-list" style="margin-top:6px;"></div>
         </section>
+      </div>
+    </section>
+
+    <!-- 4. מאגר החומרים — כל קובץ שהמדריכ/ה מעלה נכנס לכאן, לפי תיקיות (library.js, 28.9.26) -->
+    <section class="gsec" id="sec-library">
+      <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></h2><span class="n zero" id="lib-count">0</span></div>
+      <div id="lib-drive"></div>
+      <div class="lib-upload">
+        <label class="lib-to"><span>לתיקייה</span>
+          <select class="select" id="lib-folder"></select>
+        </label>
+        <input class="input" id="lib-newfolder" placeholder="שם התיקייה החדשה" maxlength="60" hidden>
+        <div class="drop-zone" id="gdrop-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+          <div class="dz-main">גררי קבצים לכאן או לחצי לבחירה</div>
+          <div class="dz-sub">עד 8MB לקובץ · בלי שמות תלמידים, ציונים או פרטים אישיים</div>
+          <input type="file" id="gfile-input" multiple hidden>
+        </div>
+        <details class="lib-addlink">
+          <summary>הוספת קישור (דרייב, יוטיוב, אתר)</summary>
+          <div class="lib-linkform">
+            <input class="input" id="lib-link-url" dir="ltr" placeholder="https://">
+            <input class="input" id="lib-link-name" placeholder="שם שיוצג">
+            <button type="button" class="btn btn-secondary" id="lib-link-add">הוספה</button>
+          </div>
+        </details>
+        <div class="ws-status" id="gfiles-status"></div>
+      </div>
+      <input type="search" class="input" id="lib-search" placeholder="חיפוש במאגר…" style="margin:4px 0 10px;">
+      <div id="gfiles-list"></div>
+    </section>
       </div>
     </section>
 
@@ -1096,16 +1139,16 @@
 </div>
 
 <script src="../assets/app.js?v=20260924h"></script>
-<script src="../assets/guides.js?v=20260924g"></script>
+<script src="../assets/guides.js?v=20260928a"></script>
 <script src="../assets/plans.js?v=20260924s"></script>
-<script src="../assets/meet-stats.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260924r4"></script>
+<script src="../assets/meet-stats.js?v=20260928a"></script>
+<script src="dashboard.js?v=20260928a"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20260924r3"></script>
-<script src="meetings.js?v=20260924r4"></script>
+<script src="space.js?v=20260928a"></script>
+<script src="meetings.js?v=20260928a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260924r4"></script>
+<script src="view.js?v=20260928a"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>
