@@ -51,6 +51,12 @@
   .mf-ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; }
   .mf-ic svg { width: 32px; height: 32px; }
   .mf-ic.ok { background: #E4F3EA; color: #1f7a5c; }
+  /* אישור ברור אחרי רישום (29.9.26) — מורים לא ידעו אם הרישום נקלט */
+  #st-done { background: #E4F3EA; border: 2px solid #1f7a5c; border-radius: 16px; padding: 22px 16px 18px; }
+  #st-done .mf-ic.ok { width: 72px; height: 72px; background: #1f7a5c; color: #fff; }
+  #st-done h2 { color: #14563f; font-size: 24px; }
+  #st-done .done-when { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 999px;
+    background: #fff; color: #14563f; font-size: 13.5px; font-weight: 700; }
   .mf-ic.wait { background: #EAF2F7; color: var(--primary, #1A5365); }
   .mf-state h2 { font-size: 21px; margin: 0 0 6px; line-height: 1.35; }
   .mf-state p { font-size: 14.5px; color: var(--text-2); line-height: 1.7; margin: 0; }
@@ -133,6 +139,7 @@
         <div class="mf-ic ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
         <h2 id="done-h"></h2>
         <p id="done-p"></p>
+        <span class="done-when" id="done-when" dir="rtl"></span>
       </div>
     </section>
   </main>
@@ -144,6 +151,6 @@
 
 <script src="../assets/app.js?v=20260924h"></script>
 <script src="../assets/guides.js?v=20260928a"></script>
-<script src="mifgash.js?v=20260929a"></script>
+<script src="mifgash.js?v=20260929b"></script>
 </body>
 </html>

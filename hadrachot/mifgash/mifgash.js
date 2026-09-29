@@ -20,6 +20,7 @@
   const G = (window.TS_resolveGuide ? window.TS_resolveGuide(SLUG, '') : null) || null;
   const ARAB = !!(G && G.sectors && G.sectors.indexOf('arab') >= 0);
   const TEACHER_KEY = 'ts.teacher.v1';   // הזיהוי של מבט המורה (teacher/dashboard.js)
+  const DONE_KEY = 'ts.mifgash.done.' + SLUG;   // נרשמתי היום — פתיחה חוזרת מראה את האישור ולא שוב קוד
   const RETRY_MS = 20000;
 
   let roster = [];
@@ -46,6 +47,29 @@
       return v && v.k && v.id ? { teacherId: String(v.id), name: v.name || '', schoolName: v.school || '' } : null;
     } catch (e) { return null; }
   }
+  function today() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function loadDone() {
+    try {
+      const v = JSON.parse(localStorage.getItem(DONE_KEY) || 'null');
+      return v && v.day === today() && String(v.id) === String(me.teacherId) ? v : null;
+    } catch (e) { return null; }
+  }
+  function saveDone(at) {
+    try { localStorage.setItem(DONE_KEY, JSON.stringify({ day: today(), id: me.teacherId, at: at })); } catch (e) {}
+  }
+  function showDone(dup, at) {
+    $('done-h').innerHTML = dup ? t('כבר נרשמת למפגש של היום', 'لقد سجّلت للقاء اليوم')
+      : t('נרשמת! הנוכחות שלך עודכנה', 'تم التسجيل! تم تحديث حضورك');
+    $('done-p').innerHTML = '<b>' + esc(me.name) + '</b>' + (me.schoolName ? ' · ' + esc(me.schoolName) : '') + '<br>' +
+      t('הנוכחות שלך נקלטה במערכת. אין צורך לעשות שום דבר נוסף — אפשר לסגור את הדף.',
+        'تم استلام حضورك في النظام. لا حاجة لأي خطوة أخرى — يمكن إغلاق الصفحة.');
+    $('done-when').textContent = at ? ('✓ ' + at) : '';
+    $('done-when').hidden = !at;
+    show('done');
+  }
   function toRegistration(forget) {
     if (forget) { try { localStorage.removeItem(TEACHER_KEY); } catch (e) {} }
     location.replace('../teacher/?next=mifgash&g=' + encodeURIComponent(SLUG));
@@ -55,10 +79,12 @@
     if (!G || !G.slug) { show('invalid'); return; }
     me = loadMe();
     if (!me) { toRegistration(false); return; }   // עוד לא נרשם/ה — קודם הרישום הראשוני
+    const prevDone = loadDone();
+    if (prevDone) { showDone(true, prevDone.at); return; }
     const subjects = (window.TS_guideSubjects ? window.TS_guideSubjects(G) : [G.subject]).filter(Boolean);
     $('mf-title').innerHTML = t('רישום נוכחות למפגש', 'تسجيل الحضور للقاء');
     $('mf-sub').innerHTML = esc([subjects.join(' · '), G.name].filter(Boolean).join(' · '));
-    $('foot-note').innerHTML = t('הנוכחות נספרת אחרי אישור בסיום המפגש.', 'يُحتسب الحضور بعد التأكيد في نهاية اللقاء.');
+    $('foot-note').innerHTML = t('הרישום מגיע מיד למדריכ/ה.', 'يصل التسجيل فورًا إلى المرشد/ة.');
 
     // טקסטים קבועים
     $('q-name').innerHTML = t('מה השם שלך?', 'ما اسمك؟');
@@ -191,15 +217,17 @@
     const payload = { g: G.slug, code: code };
     if (me.teacherId) payload.teacherId = me.teacherId;
     else { payload.teacherName = me.name; payload.schoolName = me.schoolName; }
-    const res = await TS.apiPost('checkin.submit', payload);
+    let res = await TS.apiPost('checkin.submit', payload);
+    // תשובה שנפלה בדרך (Apps Script מחזיר לפעמים דף HTML) — ניסיון שקט נוסף; אם עבר, יחזור "כבר נרשמת"
+    if (res && !res.ok && (res.transient || res.error === 'timeout')) res = await TS.apiPost('checkin.submit', payload);
     sending = false;
     $('btn-submit').innerHTML = t('רישום נוכחות', 'تسجيل الحضور');
 
     if (res && res.ok) {
-      const dup = res.data && res.data.duplicate;
-      $('done-h').innerHTML = dup ? t('כבר נרשמת למפגש הזה', 'لقد سجّلت لهذا اللقاء مسبقًا') : t('נרשמת בהצלחה', 'تم تسجيلك بنجاح');
-      $('done-p').innerHTML = esc(me.name) + '<br>' + t('הנוכחות תאושר בסיום המפגש. אפשר לסגור את הדף.', 'سيتم تأكيد الحضور في نهاية اللقاء. يمكن إغلاق الصفحة.');
-      show('done');
+      const d = new Date();
+      const at = 'נקלט ב-' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      saveDone(at);
+      showDone(!!(res.data && res.data.duplicate), at);
       return;
     }
     const err = res && res.error;

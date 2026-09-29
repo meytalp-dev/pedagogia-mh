@@ -35,7 +35,9 @@ const SCHEMA = {
                // שאלת ההשתלמות בהרשמה למבט המורה (28.9.26): passed · registered · none
                'trainingStatus','trainingFile','trainingFileName','trainingAt',
                // יח"ל שהמורה סימן/ה בהרשמה (28.9.26) — מתמטיקה: 3,4,5,gemer · אנגלית: 3,4,5
-               'unitsSelf'],
+               'unitsSelf',
+               // רישום עצמי (29.9.26): מורה שלא היה/ה ברשימה · מייל שעודכן בהרשמה
+               'selfAdded','emailPrev','emailChangedAt'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -70,7 +72,9 @@ const SCHEMA = {
                        'summary','takeaway','hours'],
   // כניסת המורה המאומתת (21.9.26) — קוד חד-פעמי במייל. codeHash ולא הקוד
   // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
-  teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt'],
+  teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt',
+                       // 29.9.26: מורה חדש/ה (נוצר/ת רק אחרי אימות) · החלפת מייל שהמורה ביקש/ה
+                       'newName','newSchool','newSubject','emailChange'],
   // כניסת בעלי התפקידים (24.9.26) — אותו מנגנון, לפי מייל ולא לפי מזהה מורה
   staff_codes:        ['id','email','codeHash','tries','usedAt','expiresAt','createdAt'],
   // מחברת הידע של המורה (24.9.26) — פרטית למורה; files = JSON של [{fileId,name,url,mimeType,size}]
@@ -4711,14 +4715,40 @@ function teacherNormMail_(v) { return String(v || '').trim().toLowerCase(); }
    מורה שכבר רשום לו מייל חייב להזין אותו, ומי שאין לו — הכתובת שהזין
    נשמרת רק אחרי אימות מוצלח, כדי שלא יהיה אפשר לשבץ מייל זר. */
 function teacherCodeSend(p) {
-  const id = String(p.id || '').trim();
+  let id = String(p.id || '').trim();
   const email = teacherNormMail_(p.email);
-  if (!id || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_input' };
-  const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'bad_input' };
+
+  /* ▸ "השם שלי לא ברשימה" (29.9.26, מיטל): { newName, school, subject, email }.
+     הרשומה נוצרת רק אחרי אימות הקוד (teacherCodeVerify) — כך לא נוצרות שורות
+     ממיילים שלא אומתו. אם כבר קיים/ת מורה באותו שם, מקצוע ובית ספר — ממשיכים אליו/ה. */
+  let fresh = null;
+  if (!id && p.newName) {
+    const nm = String(p.newName || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    const sc = String(p.school || '').trim();
+    const sj = String(p.subject || '').trim().slice(0, 60);
+    if (nm.length < 3 || !sc || !sj) return { ok: false, error: 'bad_input' };
+    if (!readAll('schools').some(function (x) { return String(x.id) === sc; })) return { ok: false, error: 'bad_input' };
+    const dup = existingTeachersMap_(sc)[teacherIdentityKey_(sc, nm, sj, 'bagrut')];
+    if (dup) id = String(dup.id);
+    else {
+      fresh = { name: nm, school: sc, subject: sj };
+      id = 'new_' + meetHmacHex_('newteacher:' + sc + '|' + nm + '|' + sj).slice(0, 16);
+    }
+  }
+  if (!id) return { ok: false, error: 'bad_input' };
+  const t = fresh ? { id: id, name: fresh.name, email: '' }
+    : readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
   if (!t) return { ok: false, error: 'not_found' };
 
+  /* מייל שונה מהרשום (29.9.26, מיטל): במקום לחסום — רמז לכתובת הרשומה, והמורה
+     יכול/ה לבקש לעדכן (changeEmail=1). הקוד נשלח לכתובת החדשה, המייל מתעדכן רק
+     אחרי אימות, והכתובת הקודמת מקבלת הודעה על השינוי. */
   const known = teacherNormMail_(t.email);
-  if (known && known !== email) return { ok: false, error: 'email_mismatch' };
+  const changing = !!(known && known !== email);
+  if (changing && String(p.changeEmail || '') !== '1') {
+    return { ok: false, error: 'email_mismatch', data: { hint: teacherMaskMail_(known) } };
+  }
 
   ensureTab_('teacher_codes');
   const now = Date.now();
@@ -4743,7 +4773,9 @@ function teacherCodeSend(p) {
     codeHash: meetHmacHex_('tcode:' + id + ':' + code),
     tries: 0, usedAt: '',
     expiresAt: new Date(now + TEACHER_CODE_TTL_MIN * 60000).toISOString(),
-    createdAt: new Date(now).toISOString()
+    createdAt: new Date(now).toISOString(),
+    newName: fresh ? fresh.name : '', newSchool: fresh ? fresh.school : '', newSubject: fresh ? fresh.subject : '',
+    emailChange: changing ? '1' : ''
   });
 
   const name = String(t.name || '').trim();
@@ -4762,7 +4794,14 @@ function teacherCodeSend(p) {
       'אם לא ביקשת להיכנס — אפשר להתעלם מההודעה.<br><br>' +
       '<span style="color:#5C7182;font-size:13px">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span></div>'
   });
-  return { ok: true, data: { sent: true, ttlMin: TEACHER_CODE_TTL_MIN } };
+  return { ok: true, data: { sent: true, ttlMin: TEACHER_CODE_TTL_MIN, id: id } };
+}
+
+// so***@gmail.com — רמז לכתובת הרשומה בלי לחשוף אותה
+function teacherMaskMail_(m) {
+  const parts = String(m || '').split('@');
+  if (parts.length !== 2) return '';
+  return parts[0].slice(0, 2) + '***@' + parts[1];
 }
 
 /* teacher.codeVerify — { id, code } → מפתח הכניסה. רק כאן נשמר המייל
@@ -4795,12 +4834,62 @@ function teacherCodeVerify(p) {
   }
   sheet.getRange(rowNum, headers.indexOf('usedAt') + 1).setValue(new Date().toISOString());
 
+  // מורה חדש/ה (29.9.26) — נוצר/ת רק עכשיו, אחרי שהמייל הוכח
+  if (id.indexOf('new_') === 0) {
+    if (!row.newName || !row.newSchool || !row.newSubject) return { ok: false, error: 'not_found' };
+    ensureTab_('teachers');
+    const cr = createTeacher({
+      school: row.newSchool, name: row.newName, subject: row.newSubject,
+      sector: teacherSchoolSector_(row.newSchool), email: row.email,
+      notes: 'נרשם/ה בעצמו/ה במבט המורה'
+    });
+    if (!cr || !cr.ok || !cr.data) return { ok: false, error: (cr && cr.error) || 'busy_try_again' };
+    const nid = String(cr.data.id);
+    updateRowById('teachers', nid, { selfAdded: new Date().toISOString() });
+    if (cr.existed && !teacherNormMail_(cr.data.email)) updateTeacher({ id: nid, email: row.email });
+    return { ok: true, data: { key: teacherKey_(nid), id: nid, name: row.newName, selfAdded: true } };
+  }
+
   const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
   if (!t) return { ok: false, error: 'not_found' };
-  if (teacherNormMail_(t.email) !== teacherNormMail_(row.email)) {
+  const prev = teacherNormMail_(t.email);
+  if (prev !== teacherNormMail_(row.email)) {
     updateTeacher({ id: id, email: row.email });
+    if (prev) {
+      ensureTab_('teachers');
+      updateRowById('teachers', id, { emailPrev: prev, emailChangedAt: new Date().toISOString() });
+      teacherNotifyEmailChange_(prev, String(t.name || '').trim(), row.email);
+    }
   }
   return { ok: true, data: { key: teacherKey_(id), id: id, name: t.name || '' } };
+}
+
+/* המגזר של מורה חדש/ה — כמו רוב המורים באותו בית ספר (השיוך למדריכ/ה תלוי בזה) */
+function teacherSchoolSector_(schoolId) {
+  const cnt = {};
+  readAll('teachers').forEach(function (x) {
+    if (String(x.school) === String(schoolId) && x.sector) cnt[x.sector] = (cnt[x.sector] || 0) + 1;
+  });
+  const top = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; })[0];
+  return top || 'kelali';
+}
+
+/* הודעה לכתובת הקודמת כשמורה עדכן/ה מייל בהרשמה — אם לא הוא/היא ביקש/ה, יש למי לפנות */
+function teacherNotifyEmailChange_(oldMail, name, newMail) {
+  try {
+    if (MailApp.getRemainingDailyQuota() <= TEACHER_QUOTA_FLOOR) return;
+    MailApp.sendEmail({
+      to: oldMail,
+      subject: 'כתובת המייל שלך במנור עודכנה',
+      name: 'מנור · משרד העבודה',
+      body: 'שלום ' + name + ',\n\nכתובת המייל שלך במבט המורה של מנור עודכנה ל-' + newMail + '.' +
+        '\nאם לא ביקשת את השינוי — יש לפנות למדריכ/ה שלך.\n\nיחידת הפיקוח על הדרכות מורים · משרד העבודה',
+      htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#1b2a3a">' +
+        'שלום ' + remindEsc_(name) + ',<br><br>כתובת המייל שלך במבט המורה של מנור עודכנה ל-<b dir="ltr">' +
+        remindEsc_(newMail) + '</b>.<br>אם לא ביקשת את השינוי — יש לפנות למדריכ/ה שלך.<br><br>' +
+        '<span style="color:#5C7182;font-size:13px">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span></div>'
+    });
+  } catch (e) { /* לא חוסם את ההרשמה */ }
 }
 
 /* teacher.self — { k } → הפרטים של המורה, בלי מזהה גלוי בכתובת.

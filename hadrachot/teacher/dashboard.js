@@ -227,7 +227,11 @@ function gateStep(n) {
 /* סינון מקצוע (24.9.26): בבית ספר גדול רשימת השמות הייתה ארוכה מדי.
    בוחרים בית ספר → מקצוע → שם. מורה שמלמד/ת שני מקצועות מופיע/ה בשניהם. */
 let gateSchoolRows = [];
+let gateAllRows = [];       // כל המורים בכל בתי הספר — בשביל "מקצוע אחר"
 let rosterPromise = null;
+let gatePendingId = '';     // המזהה שהשרת החזיר בשליחת הקוד (גם למורה חדש/ה)
+let gateChangeEmail = false;
+const NEW_NAME_ = '__new';
 
 async function onGateSchool() {
   const id = $g('tg-school').value;
@@ -262,18 +266,21 @@ async function onGateSchool() {
     return;
   }
   gateMsg('');
+  gateAllRows = (res && res.data ? res.data : []);
   // רק מורי בית הספר שנבחר — גם אם השרת או מטמון ישן החזירו יותר
-  gateSchoolRows = (res && res.data ? res.data : []).filter(t =>
+  gateSchoolRows = gateAllRows.filter(t =>
     String(t.school || '') === String(id) && String(t.name || '').trim());
   const subjects = [...new Set(gateSchoolRows.map(t => String(t.subject || '').trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'he'));
-  if (!gateSchoolRows.length) {
-    subjSel.innerHTML = '<option value="">בבית הספר הזה עוד לא הוזנו מורים</option>';
-    return;
-  }
+  /* מורה חדש/ה (29.9.26) יכול/ה ללמד מקצוע שעוד אין לו מורים בבית הספר —
+     שאר המקצועות מופיעים בקבוצה נפרדת, באותו כתיב כמו בכל המערכת */
+  const others = [...new Set(gateAllRows.map(t => String(t.subject || '').trim()).filter(Boolean))]
+    .filter(x => subjects.indexOf(x) < 0).sort((a, b) => a.localeCompare(b, 'he'));
   subjSel.disabled = false;
   subjSel.innerHTML = '<option value="">בחרו מקצוע</option>' +
-    subjects.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    subjects.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('') +
+    (others.length ? '<optgroup label="מקצוע אחר">' +
+      others.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('') + '</optgroup>' : '');
   subjSel.onchange = onGateSubject;
   if (subjects.length === 1) { subjSel.value = subjects[0]; onGateSubject(); }
 }
@@ -281,6 +288,7 @@ async function onGateSchool() {
 function onGateSubject() {
   const subj = $g('tg-subject').value;
   const nameSel = $g('tg-name');
+  showNewName(false);
   if (!subj) {
     gateTeachers = [];
     nameSel.disabled = true;
@@ -297,12 +305,15 @@ function onGateSubject() {
     seen[k] = 1;
     return true;
   }).sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
-  nameSel.disabled = !gateTeachers.length;
-  nameSel.innerHTML = '<option value="">בחרו את שמכם</option>' +
-    gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+  nameSel.disabled = false;
+  nameSel.innerHTML = '<option value="">' + (gateTeachers.length ? 'בחרו את שמכם' : 'אין עוד מורים במקצוע הזה') + '</option>' +
+    gateTeachers.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('') +
+    `<option value="${NEW_NAME_}">השם שלי לא ברשימה — הוספה</option>`;
   // מייל שכבר רשום במערכת — ממלאים מראש לאישור, לא מבקשים להקליד שוב.
   // מחליפים שם → המייל שמולא אוטומטית מתחלף (או מתרוקן); מייל שהוקלד ביד נשאר.
   nameSel.onchange = () => {
+    showNewName(nameSel.value === NEW_NAME_);
+    gateChangeEmail = false;
     const t = gateTeachers.find(x => String(x.id) === nameSel.value);
     const mail = $g('tg-email');
     const auto = mail.dataset.auto || '';
@@ -316,7 +327,7 @@ function onGateSubject() {
 /* שלב 1 — שליחת הקוד. המייל אינו נשמר כאן: הוא נשמר בשרת רק אחרי אימות
    מוצלח, כך שהכתובת שנאספת היא תמיד כזו שהוכחה גישה אליה. */
 const GATE_ERRORS = {
-  email_mismatch: 'המייל אינו תואם לכתובת הרשומה במערכת. פנו למדריכ/ה שלכם.',
+  email_mismatch: 'המייל אינו תואם לכתובת הרשומה במערכת.',
   cooldown: 'נשלח קוד ממש עכשיו. המתינו דקה ונסו שוב.',
   quota: 'לא ניתן לשלוח קוד כרגע. נסו שוב מחר, או פנו למדריכ/ה שלכם.',
   not_found: 'לא נמצאה רשומה מתאימה. פנו למדריכ/ה שלכם.',
@@ -327,34 +338,65 @@ const GATE_ERRORS = {
 };
 const gateErr = r => GATE_ERRORS[r && r.error] || 'תקלה רגעית. נסו שוב בעוד רגע.';
 
+function showNewName(on) {
+  const box = $g('tg-new');
+  if (!box) return;
+  box.hidden = !on;
+  if (on) setTimeout(() => $g('tg-newname').focus(), 0);
+}
+
 async function onGateEnter() {
   const btn = $g('tg-enter');
   const id = $g('tg-name').value;
+  const isNew = id === NEW_NAME_;
+  const newName = String(($g('tg-newname') || {}).value || '').replace(/\s+/g, ' ').trim();
   const email = String($g('tg-email').value || '').trim();
-  if (!id) return gateMsg('בחרו את השם שלכם מהרשימה.');
+  if (!id) return gateMsg('בחרו את השם שלכם מהרשימה — או "השם שלי לא ברשימה".');
+  if (isNew && newName.split(' ').length < 2) { $g('tg-newname').focus(); return gateMsg('כתבו שם פרטי ושם משפחה.'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateMsg('כתובת המייל אינה תקינה.');
 
   btn.disabled = true;
   const label = btn.textContent;
   btn.textContent = 'שולח…';
   gateMsg('');
-  const r = await TS.apiPost('teacher.codeSend', { id: id, email: email });
+  const body = isNew
+    ? { newName: newName, school: $g('tg-school').value, subject: $g('tg-subject').value, email: email }
+    : { id: id, email: email };
+  if (gateChangeEmail) body.changeEmail = '1';
+  const r = await TS.apiPost('teacher.codeSend', body);
   btn.disabled = false;
   btn.textContent = label;
-  if (!r || !r.ok) return gateMsg(gateErr(r));
+  if (!r || !r.ok) {
+    /* מייל שונה מהרשום (29.9.26): כנראה הכתובת אצלנו ישנה — מציעים לעדכן */
+    if (r && r.error === 'email_mismatch') return offerEmailChange(r.data && r.data.hint);
+    return gateMsg(gateErr(r));
+  }
+  gatePendingId = String((r.data && r.data.id) || (isNew ? '' : id));
 
   $g('tg-step2').hidden = false;
   gateStep(2);
-  ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = true; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname'].forEach(x => { if ($g(x)) $g(x).disabled = true; });
   btn.hidden = true;
-  gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.', true);
+  gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.' +
+    (gateChangeEmail ? ' אחרי האימות זו תהיה הכתובת שלך במערכת.' : ''), true);
   $g('tg-code').focus();
+}
+
+function offerEmailChange(hint) {
+  gateMsg('המייל שרשום אצלנו שונה' + (hint ? ' (' + hint + ')' : '') + '. ' +
+    'אם יש לך גישה אליו — כתבו אותו. אם המייל שלך השתנה, אפשר לעדכן:');
+  const m = $g('tg-msg');
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'tg-change';
+  b.textContent = 'המייל שלי השתנה — שליחת קוד לכתובת שכתבתי';
+  b.onclick = () => { gateChangeEmail = true; onGateEnter(); };
+  m.appendChild(b);
 }
 
 // שלב 2 — אימות הקוד. רק כאן נפתחת הדלת.
 async function onGateVerify() {
   const btn = $g('tg-verify');
-  const id = $g('tg-name').value;
+  const id = gatePendingId || $g('tg-name').value;
   const code = String($g('tg-code').value || '').replace(/\D/g, '');
   if (code.length !== 6) return gateMsg('הקוד הוא 6 ספרות.');
   btn.disabled = true;
@@ -382,7 +424,8 @@ async function onGateVerify() {
 async function onGateResend() {
   $g('tg-step2').hidden = true;
   gateStep(1);
-  ['tg-school', 'tg-subject', 'tg-name', 'tg-email'].forEach(x => { $g(x).disabled = false; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname'].forEach(x => { if ($g(x)) $g(x).disabled = false; });
+  gatePendingId = ''; gateChangeEmail = false;
   $g('tg-enter').hidden = false;
   $g('tg-code').value = '';
   gateMsg('');
@@ -770,7 +813,7 @@ function isSessionDay(scope, guideSlug) {
 }
 function rowText(row) {
   return row.status === 'present' ? 'הנוכחות שלך אושרה ✓'
-    : row.status === 'pending' ? 'נרשמת ✓ ממתין לאישור המדריכ/ה.'
+    : row.status === 'pending' ? 'נרשמת! הנוכחות שלך עודכנה ✓'
     : 'המדריכ/ה סימנה אותך במפגש הזה.';
 }
 
@@ -804,7 +847,7 @@ function renderHere(scope, guideSlug) {
     sending = false; btn.textContent = 'רישום נוכחות';
     if (r && r.ok) {
       renderSessionDone();
-      return hereDone(r.data && r.data.duplicate ? 'כבר נרשמת להדרכה הזו ✓' : 'נרשמת ✓ הנוכחות תאושר בסיום ההדרכה.');
+      return hereDone(r.data && r.data.duplicate ? 'כבר נרשמת להדרכה הזו ✓ הנוכחות שלך עודכנה.' : 'נרשמת! הנוכחות שלך עודכנה ✓');
     }
     const err = r && r.error;
     say(err === 'closed' ? 'הרישום עוד לא נפתח או כבר נסגר. הקוד מוצג במפגש כשהמדריכ/ה פותח/ת את הרישום.'
