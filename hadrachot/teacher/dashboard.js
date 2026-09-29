@@ -190,6 +190,8 @@ async function showGate(prefillId) {
   $g('tg-resend').addEventListener('click', onGateResend);
   $g('tg-code').addEventListener('keydown', e => { if (e.key === 'Enter') onGateVerify(); });
   ['tg-school', 'tg-subject', 'tg-name'].forEach(x => $g(x).addEventListener('change', updateHelpLink));
+  if ($g('tg-newname')) $g('tg-newname').addEventListener('input', () => { resetPick(); showFix(false); });
+  if ($g('tg-fix-link')) $g('tg-fix-link').addEventListener('click', () => showFix(true, ''));
   updateHelpLink();
   if (prefillId) await prefillGate(prefillId);
 }
@@ -232,12 +234,31 @@ let rosterPromise = null;
 let gatePendingId = '';     // המזהה שהשרת החזיר בשליחת הקוד (גם למורה חדש/ה)
 let gateChangeEmail = false;
 const NEW_NAME_ = '__new';
+/* "האם זה/זו את/ה?" (29.9.26): לפני שנוצר כרטיס חדש מחפשים שם דומה בבית הספר.
+   gatePick — כרטיס קיים שנבחר (אותו מקצוע) · gatePickName — אותו אדם במקצוע אחר:
+   כרטיס חדש במקצוע שנבחר, בכתיב שכבר רשום (כך השם אחיד בכל המערכת). */
+let gatePick = null;
+let gatePickName = '';
+let gateNewConfirmed = false;
+function resetPick() {
+  gatePick = null; gatePickName = ''; gateNewConfirmed = false;
+  const box = $g('tg-sugg'); if (box) { box.hidden = true; box.innerHTML = ''; }
+}
+function showFix(on, prefill) {
+  const f = $g('tg-fix'), l = $g('tg-fix-link');
+  if (!f) return;
+  f.hidden = !on;
+  if (l) l.hidden = on || !$g('tg-name').value || $g('tg-name').value === NEW_NAME_;
+  if (on && prefill != null) $g('tg-namefix').value = prefill;
+  if (!on) $g('tg-namefix').value = '';
+}
 
 async function onGateSchool() {
   const id = $g('tg-school').value;
   const subjSel = $g('tg-subject');
   const nameSel = $g('tg-name');
   gateTeachers = []; gateSchoolRows = [];
+  resetPick(); showNewName(false);
   nameSel.disabled = true;
   nameSel.innerHTML = '<option value="">קודם בוחרים מקצוע</option>';
   if (!id) {
@@ -289,6 +310,7 @@ function onGateSubject() {
   const subj = $g('tg-subject').value;
   const nameSel = $g('tg-name');
   showNewName(false);
+  resetPick(); showFix(false);
   if (!subj) {
     gateTeachers = [];
     nameSel.disabled = true;
@@ -314,6 +336,7 @@ function onGateSubject() {
   nameSel.onchange = () => {
     showNewName(nameSel.value === NEW_NAME_);
     gateChangeEmail = false;
+    resetPick(); showFix(false);
     const t = gateTeachers.find(x => String(x.id) === nameSel.value);
     const mail = $g('tg-email');
     const auto = mail.dataset.auto || '';
@@ -345,6 +368,30 @@ function showNewName(on) {
   if (on) setTimeout(() => $g('tg-newname').focus(), 0);
 }
 
+function renderSuggestions(list, typed) {
+  const box = $g('tg-sugg');
+  const subj = $g('tg-subject').value;
+  box.innerHTML = '<h4>מצאנו שמות דומים בבית הספר. האם זה/זו את/ה?</h4>' +
+    list.map((x, i) => '<button type="button" data-i="' + i + '"><div><b>' + esc(x.row.name) + '</b>' +
+      '<small>' + esc(x.row.subject || '') + (String(x.row.subject || '').trim() !== subj ? ' · נוסיף גם ' + esc(subj) : '') +
+      '</small></div><span>כן, זה/זו אני</span></button>').join('') +
+    '<button type="button" class="none" data-i="-1">אף אחד מאלה — להוסיף אותי כחדש/ה</button>';
+  box.hidden = false;
+  gateMsg('');
+  box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    const i = Number(b.dataset.i);
+    box.hidden = true;
+    if (i < 0) { gateNewConfirmed = true; return onGateEnter(); }
+    const c = list[i].row;
+    if (String(c.subject || '').trim() === subj) gatePick = c;
+    else gatePickName = String(c.name).trim();
+    // הכתיב שהמורה הקליד/ה — מוצע כתיקון (לא משנה מיד, עובר לאישור)
+    const differs = typed.replace(/\s+/g, ' ').trim() !== String(c.name).replace(/\s+/g, ' ').trim();
+    showFix(differs, differs ? typed : '');
+    gateMsg('נבחר/ה: ' + c.name + '. אם השם כתוב אחרת — תקנו בשדה "איך השם שלך נכתב נכון", ולחצו "שליחת קוד למייל".', true);
+  }));
+}
+
 async function onGateEnter() {
   const btn = $g('tg-enter');
   const id = $g('tg-name').value;
@@ -354,15 +401,22 @@ async function onGateEnter() {
   if (!id) return gateMsg('בחרו את השם שלכם מהרשימה — או "השם שלי לא ברשימה".');
   if (isNew && newName.split(' ').length < 2) { $g('tg-newname').focus(); return gateMsg('כתבו שם פרטי ושם משפחה.'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateMsg('כתובת המייל אינה תקינה.');
+  // מורה "חדש/ה" — קודם בודקים אם זה/זו בעצם מישהו/י שכבר ברשימה בכתיב אחר
+  if (isNew && !gatePick && !gatePickName && !gateNewConfirmed && window.TS_nameMatch) {
+    const list = TS_nameMatch.suggest(newName, gateSchoolRows, { min: 0.75, max: 4 });
+    if (list.length) return renderSuggestions(list, newName);
+  }
 
   btn.disabled = true;
   const label = btn.textContent;
   btn.textContent = 'שולח…';
   gateMsg('');
-  const body = isNew
-    ? { newName: newName, school: $g('tg-school').value, subject: $g('tg-subject').value, email: email }
+  const body = gatePick ? { id: String(gatePick.id), email: email }
+    : isNew ? { newName: gatePickName || newName, school: $g('tg-school').value, subject: $g('tg-subject').value, email: email }
     : { id: id, email: email };
   if (gateChangeEmail) body.changeEmail = '1';
+  const fix = String(($g('tg-namefix') || {}).value || '').replace(/\s+/g, ' ').trim();
+  if (!$g('tg-fix').hidden && fix.length >= 3) body.nameFix = fix;
   const r = await TS.apiPost('teacher.codeSend', body);
   btn.disabled = false;
   btn.textContent = label;
@@ -371,11 +425,12 @@ async function onGateEnter() {
     if (r && r.error === 'email_mismatch') return offerEmailChange(r.data && r.data.hint);
     return gateMsg(gateErr(r));
   }
-  gatePendingId = String((r.data && r.data.id) || (isNew ? '' : id));
+  gatePendingId = String((r.data && r.data.id) || (gatePick ? gatePick.id : isNew ? '' : id));
 
   $g('tg-step2').hidden = false;
   gateStep(2);
-  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname'].forEach(x => { if ($g(x)) $g(x).disabled = true; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = true; });
+  if ($g('tg-fix-link')) $g('tg-fix-link').hidden = true;
   btn.hidden = true;
   gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.' +
     (gateChangeEmail ? ' אחרי האימות זו תהיה הכתובת שלך במערכת.' : ''), true);
@@ -424,8 +479,9 @@ async function onGateVerify() {
 async function onGateResend() {
   $g('tg-step2').hidden = true;
   gateStep(1);
-  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname'].forEach(x => { if ($g(x)) $g(x).disabled = false; });
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = false; });
   gatePendingId = ''; gateChangeEmail = false;
+  showFix(!$g('tg-fix').hidden);
   $g('tg-enter').hidden = false;
   $g('tg-code').value = '';
   gateMsg('');

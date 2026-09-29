@@ -37,7 +37,9 @@ const SCHEMA = {
                // יח"ל שהמורה סימן/ה בהרשמה (28.9.26) — מתמטיקה: 3,4,5,gemer · אנגלית: 3,4,5
                'unitsSelf',
                // רישום עצמי (29.9.26): מורה שלא היה/ה ברשימה · מייל שעודכן בהרשמה
-               'selfAdded','emailPrev','emailChangedAt'],
+               'selfAdded','emailPrev','emailChangedAt',
+               // תיקון כתיב שהמורה ביקש/ה — לא משנה את השם עד אישור המטה (admin-cleanup)
+               'nameFix','nameFixAt'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -74,7 +76,7 @@ const SCHEMA = {
   // עצמו, כדי שמי שרואה את הגיליון לא יוכל להתחזות.
   teacher_codes:      ['id','teacherId','email','codeHash','tries','usedAt','expiresAt','createdAt',
                        // 29.9.26: מורה חדש/ה (נוצר/ת רק אחרי אימות) · החלפת מייל שהמורה ביקש/ה
-                       'newName','newSchool','newSubject','emailChange'],
+                       'newName','newSchool','newSubject','emailChange','nameFix'],
   // כניסת בעלי התפקידים (24.9.26) — אותו מנגנון, לפי מייל ולא לפי מזהה מורה
   staff_codes:        ['id','email','codeHash','tries','usedAt','expiresAt','createdAt'],
   // מחברת הידע של המורה (24.9.26) — פרטית למורה; files = JSON של [{fileId,name,url,mimeType,size}]
@@ -243,7 +245,9 @@ const PUBLIC_ACTIONS = new Set([
   // מאגר החומרים ומייל לקבוצה (28.9.26) — דורשים מפתח מדריכ/ה (meetAuthGuide_) בפנים
   'guide.file.link', 'guide.file.move', 'guide.mail.send', 'guide.contacts',
   // השלמת מייל עצמית של מורים (28.9.26) — הרשימה בלי כתובות, והכתיבה רק למי שאין לו מייל
-  'emails.roster', 'emails.submit'
+  'emails.roster', 'emails.submit',
+  // כפילויות ותיקוני שם (29.9.26) — ההרשאה בפנים: מפתח staff עם תפקיד ministry
+  'teachers.nameFixes', 'teachers.nameFixApply', 'teachers.merge'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -1067,6 +1071,9 @@ function handleRequest(params) {
       case 'teacher.self':        result = teacherSelf(params); break;
       case 'teacher.here':        result = teacherHere(params); break;
       case 'teacher.training':    result = teacherTraining(params); break;
+      case 'teachers.nameFixes':  result = teachersNameFixes(params); break;
+      case 'teachers.nameFixApply': result = teachersNameFixApply(params); break;
+      case 'teachers.merge':      result = teachersMerge(params); break;
       case 'training.files':      result = trainingFiles(params); break;
       // כניסת בעלי התפקידים — מייל → קוד → המבט של כל אחד (24.9.26)
       case 'staff.codeSend':      result = staffCodeSend(params); break;
@@ -4775,7 +4782,8 @@ function teacherCodeSend(p) {
     expiresAt: new Date(now + TEACHER_CODE_TTL_MIN * 60000).toISOString(),
     createdAt: new Date(now).toISOString(),
     newName: fresh ? fresh.name : '', newSchool: fresh ? fresh.school : '', newSubject: fresh ? fresh.subject : '',
-    emailChange: changing ? '1' : ''
+    emailChange: changing ? '1' : '',
+    nameFix: String(p.nameFix || '').replace(/\s+/g, ' ').trim().slice(0, 80)
   });
 
   const name = String(t.name || '').trim();
@@ -4845,13 +4853,21 @@ function teacherCodeVerify(p) {
     });
     if (!cr || !cr.ok || !cr.data) return { ok: false, error: (cr && cr.error) || 'busy_try_again' };
     const nid = String(cr.data.id);
-    updateRowById('teachers', nid, { selfAdded: new Date().toISOString() });
+    const extra = { selfAdded: new Date().toISOString() };
+    if (row.nameFix && String(row.nameFix).trim() !== String(row.newName).trim()) {
+      extra.nameFix = String(row.nameFix).trim(); extra.nameFixAt = new Date().toISOString();
+    }
+    updateRowById('teachers', nid, extra);
     if (cr.existed && !teacherNormMail_(cr.data.email)) updateTeacher({ id: nid, email: row.email });
     return { ok: true, data: { key: teacherKey_(nid), id: nid, name: row.newName, selfAdded: true } };
   }
 
   const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
   if (!t) return { ok: false, error: 'not_found' };
+  if (row.nameFix && String(row.nameFix).trim() !== String(t.name || '').trim()) {
+    ensureTab_('teachers');
+    updateRowById('teachers', id, { nameFix: String(row.nameFix).trim(), nameFixAt: new Date().toISOString() });
+  }
   const prev = teacherNormMail_(t.email);
   if (prev !== teacherNormMail_(row.email)) {
     updateTeacher({ id: id, email: row.email });
@@ -4862,6 +4878,113 @@ function teacherCodeVerify(p) {
     }
   }
   return { ok: true, data: { key: teacherKey_(id), id: id, name: t.name || '' } };
+}
+
+/* ============================================================
+   תיקוני שם וכפילויות (29.9.26, מיטל) — admin-cleanup.html, רק מטה (staff k).
+   ============================================================ */
+function teachersNameFixes(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  const list = readAll('teachers').filter(t => String(t.nameFix || '').trim())
+    .map(t => ({ id: t.id, name: t.name, nameFix: t.nameFix, nameFixAt: toIso_(t.nameFixAt),
+      subject: t.subject, school: t.school, schoolName: t.schoolName }));
+  return { ok: true, data: list };
+}
+
+/* אישור: השם מתעדכן בכל השורות של אותו אדם באותו בית ספר (בגרות/גמר, כמה מקצועות)
+   ובשם שנשמר בשורות הנוכחות. דחייה: רק מוחקים את הבקשה. */
+function teachersNameFixApply(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  const id = String(p.id || '').trim();
+  const approve = String(p.approve || '') === '1';
+  const rows = readAll('teachers');
+  const t = rows.find(x => String(x.id) === id);
+  if (!t) return { ok: false, error: 'not_found' };
+  const to = String(p.name || t.nameFix || '').replace(/\s+/g, ' ').trim();
+  const from = String(t.name || '').trim();
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return { ok: false, error: 'busy' };
+  let n = 0;
+  try {
+    const same = approve && to.length >= 3
+      ? rows.filter(x => String(x.school) === String(t.school) && String(x.name || '').trim() === from)
+      : [t];
+    same.forEach(x => {
+      const u = { nameFix: '', nameFixAt: '' };
+      if (approve && to.length >= 3) u.name = to;
+      updateRowById('teachers', x.id, u);
+      n++;
+    });
+    if (approve && to.length >= 3) {
+      const ids = {}; same.forEach(x => { ids[String(x.id)] = 1; });
+      meetRewriteTeacherRefs_(function (tab, r) {
+        return tab === 'meeting_attendance' && ids[String(r.teacherId)] ? { teacherName: to } : null;
+      });
+    }
+  } finally { lock.releaseLock(); }
+  return { ok: true, data: { updated: n, name: approve ? to : from } };
+}
+
+/* איחוד: drop נמחק, וכל מה שנרשם עליו עובר ל-keep — נוכחות, שאלות, מחברת, השתלמות.
+   שדה ריק ב-keep מתמלא מ-drop (מייל, טלפון, השתלמות, יח"ל). מפגש שבו שניהם נרשמו —
+   נשארת שורה אחת (של keep), כדי שהנוכחות לא תיספר פעמיים. */
+function teachersMerge(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  const keepId = String(p.keep || '').trim(), dropId = String(p.drop || '').trim();
+  if (!keepId || !dropId || keepId === dropId) return { ok: false, error: 'bad_input' };
+  const rows = readAll('teachers');
+  const keep = rows.find(x => String(x.id) === keepId), drop = rows.find(x => String(x.id) === dropId);
+  if (!keep || !drop) return { ok: false, error: 'not_found' };
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return { ok: false, error: 'busy' };
+  const moved = {};
+  try {
+    const fill = {};
+    ['email', 'phone', 'trainingStatus', 'trainingFile', 'trainingFileName', 'trainingAt', 'unitsSelf', 'units', 'seniority', 'students']
+      .forEach(k => { if (!String(keep[k] || '').trim() && String(drop[k] || '').trim()) fill[k] = drop[k]; });
+    if (Object.keys(fill).length) { ensureTab_('teachers'); updateRowById('teachers', keepId, fill); }
+    // מפגשים שבהם keep כבר רשום — השורה של drop נמחקת במקום לעבור
+    const keepMeet = {};
+    readAll('meeting_attendance').forEach(r => { if (String(r.teacherId) === keepId) keepMeet[String(r.meetingId)] = 1; });
+    ['meeting_attendance', 'questions', 'teacher_notes', 'attendance', 'pd', 'feedback', 'teacher_codes'].forEach(tab => {
+      const sh = sheet(tab);
+      if (!sh) return;
+      const data = sh.getDataRange().getValues();
+      if (data.length < 2) return;
+      const h = data[0], tc = h.indexOf('teacherId');
+      if (tc < 0) return;
+      const nameCol = h.indexOf('teacherName'), mCol = h.indexOf('meetingId');
+      let c = 0;
+      for (let i = data.length - 1; i >= 1; i--) {
+        if (String(data[i][tc]) !== dropId) continue;
+        if (tab === 'meeting_attendance' && mCol >= 0 && keepMeet[String(data[i][mCol])]) { sh.deleteRow(i + 1); c++; continue; }
+        sh.getRange(i + 1, tc + 1).setValue(keepId);
+        if (nameCol >= 0) sh.getRange(i + 1, nameCol + 1).setValue(String(keep.name || ''));
+        c++;
+      }
+      if (c) moved[tab] = c;
+    });
+    deleteRowById_('teachers', dropId);
+  } finally { lock.releaseLock(); }
+  try { CacheService.getScriptCache().removeAll(['tk:' + teacherKey_(dropId)]); } catch (e) { /* לא חוסם */ }
+  return { ok: true, data: { keep: keepId, moved: moved } };
+}
+
+// עדכון שדות בשורות שמפנות למורה (כרגע: השם השמור בנוכחות אחרי תיקון שם)
+function meetRewriteTeacherRefs_(pick) {
+  ['meeting_attendance'].forEach(tab => {
+    const sh = sheet(tab);
+    if (!sh) return;
+    const data = sh.getDataRange().getValues();
+    if (data.length < 2) return;
+    const h = data[0];
+    for (let i = 1; i < data.length; i++) {
+      const r = {}; h.forEach((k, j) => { r[k] = data[i][j]; });
+      const u = pick(tab, r);
+      if (!u) continue;
+      Object.keys(u).forEach(k => { const c = h.indexOf(k); if (c >= 0) sh.getRange(i + 1, c + 1).setValue(u[k]); });
+    }
+  });
 }
 
 /* המגזר של מורה חדש/ה — כמו רוב המורים באותו בית ספר (השיוך למדריכ/ה תלוי בזה) */

@@ -33,6 +33,16 @@
   .tg-msg { margin-top: 12px; font-size: 13px; line-height: 1.55; border-radius: 9px;
             padding: 9px 11px; background: #FBECE8; color: #8f2f1c; }
   .tg-msg.ok { background: #E4F2EB; color: #1f6b52; }
+  .tg-sugg { margin-top: 12px; padding: 12px; border: 1px solid #86C3EF; border-radius: 12px; background: #F1F8FD; }
+  .tg-sugg h4 { margin: 0 0 8px; font-size: 14px; color: #143E4C; }
+  .tg-sugg button { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%;
+    margin-top: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid #C9DCE6; background: #fff;
+    font-family: inherit; font-size: 14px; color: #143E4C; cursor: pointer; text-align: start; }
+  .tg-sugg button span { font-size: 12.5px; color: #1A5365; font-weight: 700; white-space: nowrap; }
+  .tg-sugg button small { display: block; color: #5C7182; font-size: 12px; }
+  .tg-sugg button.none { justify-content: center; background: transparent; border-style: dashed; color: #5C7182; }
+  .tg-fix-link { margin-top: 6px; padding: 0; border: 0; background: none; color: #1A5365; font-size: 12.5px;
+    text-decoration: underline; cursor: pointer; font-family: inherit; }
   .tg-change { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; border-radius: 10px;
     border: 1px solid #1A5365; background: #fff; color: #1A5365; font-weight: 700; font-size: 14px;
     cursor: pointer; font-family: inherit; }
@@ -353,6 +363,15 @@
           <label class="tg-label" for="tg-newname">שם מלא (שם פרטי ושם משפחה)</label>
           <input class="input" id="tg-newname" maxlength="80" autocomplete="name">
           <div class="tg-why">נוסיף אותך לרשימה של בית הספר ושל המדריכ/ה אחרי אימות המייל.</div>
+          <!-- "האם זה/זו את/ה?" (29.9.26) — שמות דומים בבית הספר, לפני שנוצר כרטיס חדש -->
+          <div id="tg-sugg" class="tg-sugg" hidden></div>
+        </div>
+        <!-- תיקון כתיב השם (29.9.26) — לא משנה מיד; עובר לאישור המטה -->
+        <button type="button" class="tg-fix-link" id="tg-fix-link" hidden>השם שלי כתוב לא נכון?</button>
+        <div id="tg-fix" hidden>
+          <label class="tg-label" for="tg-namefix">איך השם שלך נכתב נכון?</label>
+          <input class="input" id="tg-namefix" maxlength="80">
+          <div class="tg-why">נעדכן את הכתיב אחרי בדיקה. בינתיים ממשיכים עם הכרטיס הקיים — הנוכחות נזקפת לזכותך.</div>
         </div>
 
         <label class="tg-label" for="tg-email">המייל האישי שלי</label>
@@ -698,7 +717,8 @@
 <script src="../assets/guides.js?v=20260928a"></script>
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
-<script src="dashboard.js?v=20260929b"></script>
+<script src="../assets/name-match.js?v=20260929"></script>
+<script src="dashboard.js?v=20260929c"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>
