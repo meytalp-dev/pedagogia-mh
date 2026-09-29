@@ -409,7 +409,7 @@ async function onGateEnter() {
 
   btn.disabled = true;
   const label = btn.textContent;
-  btn.textContent = 'שולח…';
+  btn.textContent = 'שולח… (עד דקה — אנא המתינו)';
   gateMsg('');
   const body = gatePick ? { id: String(gatePick.id), email: email }
     : isNew ? { newName: gatePickName || newName, school: $g('tg-school').value, subject: $g('tg-subject').value, email: email }
@@ -456,7 +456,7 @@ async function onGateVerify() {
   if (code.length !== 6) return gateMsg('הקוד הוא 6 ספרות.');
   btn.disabled = true;
   const label = btn.textContent;
-  btn.textContent = 'נכנס…';
+  btn.textContent = 'נכנס… (עד דקה או שתיים — אנא המתינו)';
   const r = await TS.apiPost('teacher.codeVerify', { id: id, code: code });
   if (!r || !r.ok) {
     btn.disabled = false; btn.textContent = label;
@@ -1227,7 +1227,7 @@ function askTraining(reminder) {
       const btn = $g('tq-save');
       btn.disabled = true;
       const label = btn.textContent;
-      btn.textContent = file ? 'מעלה את האישור…' : 'שומר…';
+      btn.textContent = (file ? 'מעלה את האישור…' : 'שומר…') + ' (עד דקה — אנא המתינו)';
       let r = null;
       try { r = await sendTraining(st, file, units !== prevUnits ? units : ''); } catch (e) { r = null; }
       btn.disabled = false;

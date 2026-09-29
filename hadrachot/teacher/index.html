@@ -47,6 +47,8 @@
     border: 1px solid #1A5365; background: #fff; color: #1A5365; font-weight: 700; font-size: 14px;
     cursor: pointer; font-family: inherit; }
   .tg-btn { width: 100%; margin-top: 16px; }
+  .tg-wait { margin: -8px 0 16px; font-size: 13px; line-height: 1.6; color: #6b4a0f;
+             background: #FFF6E5; border: 1px solid #F0DDB5; border-radius: 9px; padding: 8px 11px; }
   .th-card { margin: 0 0 20px; padding: 20px 22px; text-align: center;
              border: 2px solid var(--mint, #8CA68B); }
   .next-soon[hidden], .next-meta[hidden] { display: none; }
@@ -342,6 +344,8 @@
       <div class="tg-brand"><img src="../assets/menor-sail.png" alt="" aria-hidden="true"><span>מנור</span></div>
       <h2 class="tg-title">הרשמה למבט המורה</h2>
       <p class="tg-sub">נרשמים פעם אחת, בערך דקה. מכאן והלאה הדף ייפתח ישירות במכשיר הזה — עם ההדרכה הבאה שלך, רישום הנוכחות, והחומרים מהמדריכ/ה.</p>
+      <!-- 29.9.26 (מיטל): הכניסה הראשונה נמדדה 30–60 שניות — מבקשים סבלנות מראש -->
+      <p class="tg-wait"><b>שימו לב:</b> לפעמים הטעינה לוקחת דקה או שתיים. יש להמתין בסבלנות, בלי לרענן את הדף ובלי ללחוץ שוב.</p>
       <ol class="tg-steps" aria-label="שלבי ההרשמה">
         <li class="on" id="tg-st1"><b>1</b>פרטים</li>
         <li id="tg-st2"><b>2</b>אימות מייל</li>
@@ -488,7 +492,7 @@
     <!-- ▸ טוען (24.9.26): השרת עונה לאט, ובלי זה המורה רואה דף ריק -->
     <div class="home-loading" id="home-loading" role="status" aria-live="polite" hidden>
       <span class="spinner" aria-hidden="true"></span>
-      <span>טוענים את ההדרכות שלך — ההדרכה הבאה, המסע שלך השנה והחומרים מהמדריכ/ה…</span>
+      <span>טוענים את ההדרכות שלך — ההדרכה הבאה, המסע שלך השנה והחומרים מהמדריכ/ה…<br><b>לפעמים הטעינה לוקחת דקה או שתיים — אנא המתינו בסבלנות ואל תרעננו את הדף.</b></span>
     </div>
 
     <!-- ▸ ההדרכה הבאה — מהתוכנית השנתית (plans.js) של המדריכ/ה של המורה -->
@@ -718,7 +722,7 @@
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20260929c"></script>
+<script src="dashboard.js?v=20260929d"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>
