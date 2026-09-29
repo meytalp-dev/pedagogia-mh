@@ -9,12 +9,17 @@
    שמות המורים מגיעים מ-checkin.roster רק בזמן שהרישום פתוח.
    הבחירה נשמרת במכשיר — במפגש הבא נשאר רק להקליד קוד.
    צד השרת: checkin.roster / checkin.submit בסוף apps-script/code.gs.
+
+   רישום אחד (29.9.26, מיטל): זה הקישור היחיד שהמורים מקבלים. מי שעוד לא
+   נרשם/ה ב"מבט המורה" (אין זיהוי חתום במכשיר — ts.teacher.v1) מועבר/ת
+   ל-teacher/?next=mifgash&g=<slug>: מייל + קוד + השתלמות + יח"ל, ומשם חוזר/ת
+   לכאן. מהפעם השנייה נשאר רק הקוד. בחירת שם מרשימה / שם חופשי כבר לא בשימוש.
    ============================================================ */
 (function () {
   const SLUG = TS.urlParam('g', '');
   const G = (window.TS_resolveGuide ? window.TS_resolveGuide(SLUG, '') : null) || null;
   const ARAB = !!(G && G.sectors && G.sectors.indexOf('arab') >= 0);
-  const ME_KEY = 'ts.mifgash.me.' + SLUG;
+  const TEACHER_KEY = 'ts.teacher.v1';   // הזיהוי של מבט המורה (teacher/dashboard.js)
   const RETRY_MS = 20000;
 
   let roster = [];
@@ -36,12 +41,20 @@
     ['loading', 'invalid', 'closed', 'who', 'code', 'done'].forEach(s => { $('st-' + s).hidden = (s !== name); });
   }
   function loadMe() {
-    try { const v = JSON.parse(localStorage.getItem(ME_KEY) || 'null'); return v && v.name ? v : null; } catch (e) { return null; }
+    try {
+      const v = JSON.parse(localStorage.getItem(TEACHER_KEY) || 'null');
+      return v && v.k && v.id ? { teacherId: String(v.id), name: v.name || '', schoolName: v.school || '' } : null;
+    } catch (e) { return null; }
   }
-  function saveMe(v) { try { localStorage.setItem(ME_KEY, JSON.stringify(v)); } catch (e) {} }
+  function toRegistration(forget) {
+    if (forget) { try { localStorage.removeItem(TEACHER_KEY); } catch (e) {} }
+    location.replace('../teacher/?next=mifgash&g=' + encodeURIComponent(SLUG));
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
     if (!G || !G.slug) { show('invalid'); return; }
+    me = loadMe();
+    if (!me) { toRegistration(false); return; }   // עוד לא נרשם/ה — קודם הרישום הראשוני
     const subjects = (window.TS_guideSubjects ? window.TS_guideSubjects(G) : [G.subject]).filter(Boolean);
     $('mf-title').innerHTML = t('רישום נוכחות למפגש', 'تسجيل الحضور للقاء');
     $('mf-sub').innerHTML = esc([subjects.join(' · '), G.name].filter(Boolean).join(' · '));
@@ -59,7 +72,7 @@
     $('q-me').innerHTML = t('נרשמת כבר מהמכשיר הזה:', 'سجّلت سابقًا من هذا الجهاز:');
     $('btn-its-me').innerHTML = t('זה אני — המשך', 'هذا أنا — متابعة');
     $('btn-not-me').innerHTML = t('לא אני', 'ليس أنا');
-    $('btn-change').innerHTML = t('החלפה', 'تغيير');
+    $('btn-change').innerHTML = t('לא אני', 'ليس أنا');
     $('q-code').innerHTML = t('מה הקוד שמופיע עכשיו על המסך?', 'ما الرمز الظاهر الآن على الشاشة؟');
     $('btn-submit').innerHTML = t('רישום נוכחות', 'تسجيل الحضور');
     $('btn-retry').innerHTML = t('בדיקה שוב', 'تحقق مرة أخرى');
@@ -76,7 +89,7 @@
     });
     $('btn-its-me').addEventListener('click', () => choose(me));
     $('btn-not-me').addEventListener('click', () => { me = null; $('me-saved').hidden = true; $('who-pick').hidden = false; $('who-search').focus(); });
-    $('btn-change').addEventListener('click', () => { me = null; showWho(false); });
+    $('btn-change').addEventListener('click', () => toRegistration(true));
     $('code-input').addEventListener('input', e => {
       const v = e.target.value.replace(/\D/g, '').slice(0, 4);
       if (e.target.value !== v) e.target.value = v;
@@ -86,7 +99,6 @@
     });
     $('btn-submit').addEventListener('click', submit);
 
-    me = loadMe();
     loadRoster();
   });
 
@@ -113,9 +125,7 @@
     }
     roster = res.data.roster || [];
     if (res.data.topic) $('mf-sub').innerHTML += ' · ' + esc(res.data.topic);
-    // מי שנשמר במכשיר — מוודאים שעדיין ברשימה (או שנרשם כשם חופשי)
-    if (me && !me.free && !roster.some(r => r.id === me.teacherId)) me = null;
-    showWho(!!me);
+    choose(me);
   }
 
   function showClosed(h, p) {
@@ -163,7 +173,6 @@
 
   function choose(v) {
     me = v;
-    saveMe(v);
     $('code-name').textContent = v.name;
     $('code-school').textContent = v.schoolName || '';
     $('code-input').value = '';
@@ -194,6 +203,7 @@
       return;
     }
     const err = res && res.error;
+    if (err === 'unknown_teacher') { toRegistration(true); return; }   // הרשומה נמחקה/אוחדה — נרשמים מחדש
     if (err === 'closed') {
       showClosed(t('הרישום נסגר', 'تم إغلاق التسجيل'), t('אפשר לפנות למדריך/ה בצ\'אט של המפגש.', 'يمكن التوجه للمرشد في دردشة اللقاء.'));
       return;

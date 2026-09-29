@@ -46,6 +46,12 @@ let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? '' : teacherKey ? (savedIdentity() |
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
 
+/* ▸ רישום אחד (29.9.26, מיטל): הקישור שהמדריכ/ה מדביק/ה בצ'אט הוא mifgash/?g=<slug>.
+   מי שעוד לא נרשם/ה מגיע/ה לכאן עם ?next=mifgash&g=<slug> — עובר/ת רישום מלא
+   (מייל + קוד + השתלמות + יח"ל) ואז חוזר/ת לבד לרישום הנוכחות. */
+const NEXT_MIFGASH_ = TS.urlParam('next', '') === 'mifgash' && /^[a-z0-9_-]{1,40}$/i.test(TS.urlParam('g', ''))
+  ? TS.urlParam('g', '') : '';
+
 /* ▸ הדמיה של רישום הנוכחות (24.9.26): teacher/?demo=1
    מורה לדוגמה, "היום" יש הדרכה והרישום פתוח. הקוד הנכון בהדמיה: 1234.
    שום בקשה לא יוצאת לשרת — TS.api/TS.apiPost מוחלפים בתשובות מקומיות. */
@@ -133,7 +139,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const exit = document.getElementById('tg-exit');
   if (exit) exit.addEventListener('click', () => {
     try { localStorage.removeItem(LS_KEY); } catch (e) { /* לא חוסם */ }
-    location.href = location.pathname;      // בלי ?id= — חוזר לטופס
+    location.href = location.pathname +     // בלי ?id= — חוזר לטופס
+      (NEXT_MIFGASH_ ? '?next=mifgash&g=' + encodeURIComponent(NEXT_MIFGASH_) : '');
   });
   /* כל כניסה בלי מפתח חתום עוברת בהרשמה (24.9.26, החלטת מיטל): המורה מקליד/ה מייל
      ומאמת/ת בקוד, וכך המייל נאסף לכרטיס. קישור ישן עם ?id= רק ממלא מראש את הטופס. */
@@ -434,6 +441,10 @@ async function load() {
       await askTraining(!!teacher.trainingStatus);
       showLoading(true);
     }
+  }
+  if (NEXT_MIFGASH_ && teacher && teacherKey && !ADMIN_KEY_ && !DEMO_) {
+    location.replace('../mifgash/?g=' + encodeURIComponent(NEXT_MIFGASH_));
+    return;
   }
   render();
   // כפתורי הניווט מיד — לא מחכים להדרכות (השרת עונה לאט; מתעדכנים שוב בסוף)
