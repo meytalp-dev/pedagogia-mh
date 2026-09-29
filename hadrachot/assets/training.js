@@ -43,7 +43,9 @@
     var st = String((t && t.trainingStatus) || '');
     if (!st) return '<span class="badge neutral" title="המורה עוד לא נרשם/ה למבט המורה">טרם ענה/תה</span>';
     var f = fileMap && fileMap[String(t.id)];
-    return '<span class="badge ' + CLS[st] + '">' + LABEL[st] + '</span>' +
+    var note = f && f.note ? ' <span class="badge neutral" title="' + esc(f.note) + '">הערה</span>' : '';
+    if (f && !f.url) f = null;
+    return '<span class="badge ' + CLS[st] + '">' + LABEL[st] + '</span>' + note +
       (f ? ' <a class="badge neutral" href="' + esc(f.url) + '" target="_blank" rel="noopener" title="' +
         esc(f.name || 'אישור') + '">אישור</a>' : '');
   }

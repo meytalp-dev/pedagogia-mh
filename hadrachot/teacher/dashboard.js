@@ -1098,10 +1098,11 @@ function readFileB64(file) {
   });
 }
 
-async function sendTraining(status, file, units) {
+async function sendTraining(status, file, units, note) {
   const body = { k: teacherKey };
   if (status) body.status = status;
   if (units) body.units = units;
+  if (note !== undefined) body.note = note;
   if (file) {
     if (file.size > 8 * 1024 * 1024) return { ok: false, error: 'file_too_large' };
     body.data = await readFileB64(file);
@@ -1161,6 +1162,8 @@ function askTraining(reminder) {
     const prev = String(teacher.trainingStatus || '');
     const uOpts = unitsOptions();
     const prevUnits = String(teacher.unitsSelf || '');
+    const prevNote = String(teacher.trainingNote || '');
+    if ($g('tq-note')) $g('tq-note').value = prevNote;
     const unitsOnly = reminder && needsUnits() && !trainingIncomplete();
     $g('tq-units-set').hidden = !uOpts;
     if (uOpts) {
@@ -1223,13 +1226,15 @@ function askTraining(reminder) {
       const input = $g('tq-file');
       const file = (st !== 'none' && input.files && input.files[0]) || null;
       // תזכורת בלי שינוי ובלי קובץ — אין מה לשמור, נכנסים לדף
-      if (reminder && st === prev && !file && units === prevUnits) return done();
+      const noteEl = $g('tq-note');
+      const note = noteEl && (st === 'passed' || st === 'registered') ? String(noteEl.value || '').replace(/\s+/g, ' ').trim() : prevNote;
+      if (reminder && st === prev && !file && units === prevUnits && note === prevNote) return done();
       const btn = $g('tq-save');
       btn.disabled = true;
       const label = btn.textContent;
       btn.textContent = (file ? 'מעלה את האישור…' : 'שומר…') + ' (עד דקה — אנא המתינו)';
       let r = null;
-      try { r = await sendTraining(st, file, units !== prevUnits ? units : ''); } catch (e) { r = null; }
+      try { r = await sendTraining(st, file, units !== prevUnits ? units : '', note !== prevNote ? note : undefined); } catch (e) { r = null; }
       btn.disabled = false;
       btn.textContent = label;
       if (!r || !r.ok) return gateMsg(TRAINING_ERRORS[r && r.error] || 'השמירה לא הצליחה. נסו שוב בעוד רגע.');

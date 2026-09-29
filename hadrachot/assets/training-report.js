@@ -62,11 +62,16 @@
     var st = String(t.trainingStatus || '');
     if (!st) return 'missing';
     if (st === 'none') return 'none';
-    var f = t.ids.some(function (id) { return files[id]; });
+    // מ-29.9.26 files מחזיר גם מורים עם הערה בלי קובץ — קובץ = url לא ריק
+    var f = t.ids.some(function (id) { return files[id] && files[id].url; });
     return st + (f ? '-file' : '-nofile');
   }
+  function noteOf(t, files) {
+    for (var i = 0; i < t.ids.length; i++) if (files[t.ids[i]] && files[t.ids[i]].note) return files[t.ids[i]].note;
+    return '';
+  }
   function fileOf(t, files) {
-    for (var i = 0; i < t.ids.length; i++) if (files[t.ids[i]]) return files[t.ids[i]];
+    for (var i = 0; i < t.ids.length; i++) if (files[t.ids[i]] && files[t.ids[i]].url) return files[t.ids[i]];
     return null;
   }
 
@@ -145,12 +150,13 @@
           '<summary><span class="badge ' + g.cls + ' tr-n">' + list.length + '</span><h2>' + g.title + (g.sub ? '<small>' + g.sub + '</small>' : '') + '</h2>' +
           (list.length ? '<button type="button" class="tr-copy" data-copy="' + g.key + '">העתקת הרשימה</button>' : '') + '</summary>' +
           (list.length ? '<div class="tr-wrap"><table class="tr-t"><thead><tr>' + cols +
-            (g.key.indexOf('-file') > 0 ? '<th>אישור</th>' : '') + '</tr></thead><tbody>' +
+            (g.key.indexOf('-file') > 0 ? '<th>אישור</th>' : '') + (g.key.indexOf('nofile') > 0 ? '<th>הערת המורה</th>' : '') + '</tr></thead><tbody>' +
             list.map(function (t) {
               var fl = fileOf(t, files);
               return '<tr><td>' + esc(t.name) + '</td><td>' + esc(t.schoolName) + '</td><td>' + esc(t.subject) + '</td><td>' + esc(t.tracks.join(' + ')) + '</td>' +
                 (guides ? '<td>' + esc(t._guides.join(', ') || '—') + '</td>' : '') +
-                (g.key.indexOf('-file') > 0 ? '<td>' + (fl ? '<a href="' + esc(fl.url) + '" target="_blank" rel="noopener">פתיחה</a>' : '') + '</td>' : '') + '</tr>';
+                (g.key.indexOf('-file') > 0 ? '<td>' + (fl ? '<a href="' + esc(fl.url) + '" target="_blank" rel="noopener">פתיחה</a>' : '') + '</td>' : '') +
+                (g.key.indexOf('nofile') > 0 ? '<td>' + esc(noteOf(t, files)) + '</td>' : '') + '</tr>';
             }).join('') + '</tbody></table></div>'
             : '<div class="tr-empty">אין מורים בקבוצה הזו.</div>') +
         '</details>';

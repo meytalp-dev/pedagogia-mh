@@ -39,7 +39,9 @@ const SCHEMA = {
                // רישום עצמי (29.9.26): מורה שלא היה/ה ברשימה · מייל שעודכן בהרשמה
                'selfAdded','emailPrev','emailChangedAt',
                // תיקון כתיב שהמורה ביקש/ה — לא משנה את השם עד אישור המטה (admin-cleanup)
-               'nameFix','nameFixAt'],
+               'nameFix','nameFixAt',
+               // הערה של המורה על האישור (29.9.26) — למשל "עדיין לא קיבלתי את האישור"
+               'trainingNote'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -1325,7 +1327,7 @@ function maskContact_(t) {
     phone: digits ? '•••' + digits.slice(-3) : '',
     email: '',
     // אישור ההשתלמות הוא מסמך אישי — הסטטוס נשאר, הקישור רק דרך training.files
-    trainingFile: '', trainingFileName: ''
+    trainingFile: '', trainingFileName: '', trainingNote: ''
   });
 }
 
@@ -5099,6 +5101,7 @@ function teacherSelf(p) {
     email: t.email, phone: t.phone,
     trainingStatus: String(t.trainingStatus || ''), trainingFile: String(t.trainingFile || ''),
     trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt),
+    trainingNote: String(t.trainingNote || ''),
     unitsSelf: String(t.unitsSelf || '').replace(/^'/, '')
   } };
 }
@@ -5164,6 +5167,8 @@ function teacherTraining(p) {
   const status = String(p.status || t.trainingStatus || '');
   if (TRAINING_STATUSES.indexOf(status) < 0) return { ok: false, error: 'bad_status' };
   const fields = { trainingStatus: status, trainingAt: new Date().toISOString() };
+  // הערה על האישור (29.9.26, מיטל) — רשות; נשלחת רק כשהמורה כתב/ה או שינה/תה אותה
+  if (p.note !== undefined) fields.trainingNote = String(p.note || '').replace(/\s+/g, ' ').trim().slice(0, 500);
   let unitsList = null;
   if (p.units !== undefined && p.units !== '') {
     const allowed = unitsSelfAllowed_(t.subject);
@@ -5201,6 +5206,7 @@ function teacherTraining(p) {
     unitsSelf: unitsList ? unitsList.join(',') : String(t.unitsSelf || '').replace(/^'/, ''),
     trainingFile: fields.trainingFile !== undefined ? fields.trainingFile : String(t.trainingFile || ''),
     trainingFileName: fields.trainingFileName !== undefined ? fields.trainingFileName : String(t.trainingFileName || ''),
+    trainingNote: fields.trainingNote !== undefined ? fields.trainingNote : String(t.trainingNote || ''),
     trainingAt: fields.trainingAt } };
 }
 
@@ -5228,9 +5234,11 @@ function trainingFiles(p) {
   }
   const out = {};
   readAll('teachers').forEach(t => {
-    if (!t.trainingFile) return;
+    if (!t.trainingFile && !t.trainingNote) return;
     if (schools && schools.indexOf(String(t.school)) < 0) return;
-    out[String(t.id)] = { url: String(t.trainingFile), name: String(t.trainingFileName || '') };
+    // note (29.9.26): הערת המורה על האישור — גם כשאין קובץ. url ריק = אין קובץ.
+    out[String(t.id)] = { url: String(t.trainingFile || ''), name: String(t.trainingFileName || ''),
+      note: String(t.trainingNote || '') };
   });
   return { ok: true, data: out };
 }
@@ -5870,6 +5878,7 @@ function registrationData_() {
       state: state, missing: missing, verifiedAt: ver, sentAt: snt,
       trainingStatus: trainingStatus, unitsSelf: unitsSelf,
       noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile'),
+      trainingNote: String(pick('trainingNote') || ''),
       selfAdded: !!pick('selfAdded')
     };
   });

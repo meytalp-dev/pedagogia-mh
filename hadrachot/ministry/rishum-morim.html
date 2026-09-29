@@ -84,7 +84,7 @@
 <script src="../assets/app.js?v=20260924h"></script>
 <script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
 <script src="../assets/guides.js?v=20260928a"></script>
-<script src="../assets/training-report.js?v=20260928"></script>
+<script src="../assets/training-report.js?v=20260929"></script>
 <script>
 /* מעקב הרשמת המורים (29.9.26, בקשת מיטל): מי נרשם · מי סיים · מה חסר למי · מי לא נכנס.
    נתונים: registration.status (מפתח staff של מטה — שמות). פילוח לפי בית ספר ולפי מדריכ/ה,
@@ -173,7 +173,7 @@
     h += group('partial', 'warn', 'נרשמו — חסר שלב חובה', 'אימתו מייל אבל לא סיימו. בכניסה הבאה הם יישאלו שוב אוטומטית', by.partial,
       '<th>מה חסר</th>', function (t) { return '<td>' + t.missing.map(function (m) { return '<span class="chip miss">' + esc(m) + '</span>'; }).join('') + '</td>'; }, true);
     h += group('nofile', 'warn', 'סיימו — בלי אישור השתלמות', 'ענו שעברו או שנרשמו להשתלמות, ולא צירפו אישור (רשות)', noFile,
-      '<th>השתלמות</th>', function (t) { var x = TR[t.trainingStatus] || ['neu', '—']; return '<td><span class="chip ' + x[0] + '">' + x[1] + '</span></td>'; }, false);
+      '<th>השתלמות</th><th>הערת המורה</th>', function (t) { var x = TR[t.trainingStatus] || ['neu', '—']; return '<td><span class="chip ' + x[0] + '">' + x[1] + '</span></td><td>' + esc(t.trainingNote || '') + '</td>'; }, true);
     h += group('done', 'ok', 'סיימו את כל השלבים', '', by.done,
       '<th>השתלמות</th><th>יח"ל</th><th>נרשם/ה</th>', function (t) {
         var x = TR[t.trainingStatus] || ['neu', '—'];
