@@ -192,6 +192,7 @@ function setupSchema() {
 // ============================================================
 
 function doGet(e) {
+  if (e.parameter && e.parameter.action === 'rpc.result') return rpcResult_(e.parameter.rid);
   return handleRequest(e.parameter);
 }
 
@@ -199,7 +200,32 @@ function doPost(e) {
   let body = {};
   try { body = JSON.parse(e.postData.contents); }
   catch (err) { body = e.parameter || {}; }
-  return handleRequest(body);
+  const out = handleRequest(body);
+  rpcRemember_(body.rid, out);
+  return out;
+}
+
+/* תשובה שאבדה בדרך (29.9.26, "תקלה זמנית ברישום למנור"): Apps Script מבצע את
+   ה-POST ורק אז מפנה (302) לכתובת תוכן זמנית — ומדי פעם זו מחזירה "הדף לא נמצא"
+   או הפניה חוזרת, והדפדפן לא מקבל את התשובה (נמדד: 2–5 מתוך 10). הפעולה עצמה
+   כבר בוצעה: הקוד נשלח/נוצל, ולכן ניסיון חוזר נתקע ב-cooldown או ב-expired.
+   הלקוח שולח rid אקראי (128 ביט) ואם התשובה אבדה — שולף אותה ב-GET, שיש לו
+   ניסיונות חוזרים. רק מי שמחזיק ב-rid יכול לשלוף, והיא נשמרת 10 דקות. */
+function rpcRemember_(rid, out) {
+  if (!/^[a-f0-9]{32}$/.test(String(rid || ''))) return;
+  try {
+    const text = out.getContent();
+    if (text.length < 90000) CacheService.getScriptCache().put('rid:' + rid, text, 600);
+  } catch (e) { /* לא חוסם — במקרה הגרוע חוזרים להתנהגות הקודמת */ }
+}
+function rpcResult_(rid) {
+  let text = null;
+  if (/^[a-f0-9]{32}$/.test(String(rid || ''))) {
+    try { text = CacheService.getScriptCache().get('rid:' + rid); } catch (e) { text = null; }
+  }
+  return text
+    ? ContentService.createTextOutput(text).setMimeType(ContentService.MimeType.JSON)
+    : jsonOut({ ok: false, error: 'rid_pending' });
 }
 
 // ============================================================

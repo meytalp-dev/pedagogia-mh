@@ -216,28 +216,63 @@ const TS = (() => {
     return Object.assign({ transient: true }, last);
   }
 
+  /* תשובה שאבדה בדרך (29.9.26): השרת כבר ביצע את ה-POST, אבל ההפניה של גוגל
+     החזירה "הדף לא נמצא" או הפניה חוזרת ל-/exec ("unknown_action: "). נמדד 2–5
+     מתוך 10. ברישום למנור זה נראה כ"תקלה רגעית", וניסיון חוזר נתקע ב"נשלח קוד
+     ממש עכשיו" / "הקוד פג תוקף" — כי הקוד כבר נשלח או נוצל. לכן כל POST נושא
+     rid אקראי, השרת שומר את התשובה 10 דקות (rpcRemember_), וכאן שולפים אותה. */
+  const RID_WAITS_MS = [1500, 3000, 6000, 10000];
+  function newRid_() {
+    try {
+      const a = new Uint8Array(16);
+      crypto.getRandomValues(a);
+      return Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) { return ''; }
+  }
+  async function recoverPost_(rid) {
+    if (!rid || (typeof navigator !== 'undefined' && navigator.onLine === false)) return null;
+    for (const ms of RID_WAITS_MS) {
+      await sleep_(ms);
+      const r = await fetchFromApi('rpc.result', { rid });
+      if (r && r.error === 'rid_pending') continue;          // עוד רץ, או לא הגיע לשרת
+      if (r && /^unknown_action/.test(String(r.error || ''))) return null; // שרת ישן
+      if (r && !r.transient) return r;
+    }
+    return null;
+  }
+
   async function apiPost(action, body) {
     if (!APPS_SCRIPT_URL) return { ok: false, error: 'no_url' };
+    const rid = newRid_();
+    let lost;
     try {
       const res = await fetchWithTimeout(APPS_SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action, ...withAuth_(body) }),
+        body: JSON.stringify({ action, ...withAuth_(body), rid }),
         headers: { 'Content-Type': 'text/plain' }
       }, POST_TIMEOUT_MS);
       // אותה תקלה רגעית כמו ב-GET: ההפניה מחזירה לפעמים דף HTML של "הדף לא נמצא".
       // בלי זה המשתמש ראה "Unexpected token '<' ... is not valid JSON" (דנה, 17.9.26).
-      // הכתיבה עצמה בדרך כלל כבר בוצעה — העמוד מחליט אם לבדוק מחדש או לנסות שוב.
       const text = await res.text();
-      let json;
-      try { json = JSON.parse(text); }
-      catch (e) { return { ok: false, error: 'bad_response', transient: true }; }
-      // הזרמת cache אחרי POST שמשנה נתונים
-      if (json && json.ok) cacheInvalidate();
-      return json;
+      let json = null;
+      try { json = JSON.parse(text); } catch (e) { /* תשובה שאבדה */ }
+      // הפניה חוזרת ל-/exec מגיעה כ-GET בלי פעולה — גם זו תשובה שאבדה
+      if (json && !/^unknown_action:\s*$/.test(String(json.error || ''))) {
+        // הזרמת cache אחרי POST שמשנה נתונים
+        if (json.ok) cacheInvalidate();
+        return json;
+      }
+      lost = { ok: false, error: 'bad_response', transient: true };
     } catch (e) {
       console.error('API error', e);
-      return { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message };
+      lost = { ok: false, error: e.name === 'AbortError' ? 'timeout' : e.message, transient: true };
     }
+    const got = await recoverPost_(rid);
+    if (got) {
+      if (got.ok) cacheInvalidate();
+      return got;
+    }
+    return lost;
   }
 
   function netById(id) {
