@@ -4684,36 +4684,103 @@ function teacherByKey_(key) {
   if (!/^[a-f0-9]{24}$/.test(k)) return null;
   /* מהירות (24.9.26): עד היום חושב HMAC לכל ~870 המורים בכל בקשה — teacher.self
      ו-notes.list נמדדו ב-17 עד 30 שניות. עכשיו המיפוי מפתח→מזהה נשמר במטמון
-     (6 שעות); בהחטאה (מורה חדש) מחשבים פעם אחת לכולם ושומרים. */
+     (6 שעות); בהחטאה (מורה חדש) מחשבים פעם אחת לכולם ושומרים.
+     29.9.26: הכניסה הראשונה אחרי אימות נמדדה 30–60 שניות — המטמון פג כל 6 שעות,
+     ומי שהגיע/ה ראשון/ה אחרי זה שילם/ה על החישוב המלא. עכשיו: (1) המפתח נרשם כבר
+     באימות (teacherKeyRemember_), (2) המיפוי נשמר גם ב-Script Properties, שלא פג,
+     (3) מפתח לא מוכר כשמספר המורים לא השתנה — "לא נמצא" מיד, בלי חישוב מלא. */
   let cache = null;
   try { cache = CacheService.getScriptCache(); } catch (e) { cache = null; }
   const rows = readAll('teachers');
   const byId = id => rows.find(r => String(r.id) === String(id)) || null;
+  const good = id => { const t = byId(id); return t && meetSafeEqual_(teacherKey_(t.id), k) ? t : null; };
   if (cache) {
     const hitId = cache.get('tk:' + k);
-    if (hitId) {
-      const t = byId(hitId);
-      if (t && meetSafeEqual_(teacherKey_(t.id), k)) return t;
-    }
+    const t = hitId ? good(hitId) : null;
+    if (t) return t;
   }
+  const stored = tkPropsLoad_();
+  if (stored.map[k]) {
+    const t = good(stored.map[k]);
+    if (t) { if (cache) { try { cache.put('tk:' + k, String(t.id), 21600); } catch (e) {} } return t; }
+  }
+  const fresh = stored.at && (Date.now() - stored.at) < 24 * 3600000;
+  if (fresh && stored.n === rows.length && !stored.map[k]) return null;
+
   let found = null;
   const map = {};
   for (let i = 0; i < rows.length; i++) {
     const kk = teacherKey_(rows[i].id);
-    map['tk:' + kk] = String(rows[i].id);
+    map[kk] = String(rows[i].id);
     if (!found && meetSafeEqual_(kk, k)) found = rows[i];
   }
+  tkPropsSave_(map, rows.length);
   if (cache) {
     try {
       const keys = Object.keys(map);
       for (let i = 0; i < keys.length; i += 500) {
         const part = {};
-        keys.slice(i, i + 500).forEach(x => { part[x] = map[x]; });
+        keys.slice(i, i + 500).forEach(x => { part['tk:' + x] = map[x]; });
         cache.putAll(part, 21600);
       }
-    } catch (e) { /* מטמון לא זמין — בפעם הבאה שוב חישוב מלא */ }
+    } catch (e) { /* מטמון לא זמין — יש עדיין את ה-Properties */ }
   }
   return found;
+}
+
+/* מיפוי מפתח→מזהה ב-Script Properties (29.9.26) — בחלקים של עד 8,000 תווים
+   (מגבלת ערך יחיד 9KB). ~870 מורים ≈ 7 חלקים. */
+const TK_PROPS_ = 'tkmap_';
+function tkPropsLoad_() {
+  const out = { map: {}, n: -1, at: 0 };
+  try {
+    const all = PropertiesService.getScriptProperties().getProperties();
+    const meta = all[TK_PROPS_ + 'meta'] ? JSON.parse(all[TK_PROPS_ + 'meta']) : null;
+    if (!meta) return out;
+    out.n = Number(meta.n); out.at = Number(meta.at);
+    for (let i = 0; i < Number(meta.parts || 0); i++) {
+      const part = all[TK_PROPS_ + i];
+      if (part) Object.assign(out.map, JSON.parse(part));
+    }
+  } catch (e) { /* פגום — חישוב מלא יבנה מחדש */ }
+  return out;
+}
+function tkPropsSave_(map, n) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const parts = [];
+    let cur = {}, len = 2;
+    Object.keys(map).forEach(key => {
+      const add = key.length + String(map[key]).length + 6;
+      if (len + add > 8000) { parts.push(JSON.stringify(cur)); cur = {}; len = 2; }
+      cur[key] = map[key]; len += add;
+    });
+    parts.push(JSON.stringify(cur));
+    const old = props.getProperties();
+    const set = {};
+    parts.forEach((x, i) => { set[TK_PROPS_ + i] = x; });
+    set[TK_PROPS_ + 'meta'] = JSON.stringify({ n: n, at: Date.now(), parts: parts.length });
+    props.setProperties(set);
+    Object.keys(old).forEach(key => {
+      const m = key.match(/^tkmap_(\d+)$/);
+      if (m && Number(m[1]) >= parts.length) props.deleteProperty(key);
+    });
+  } catch (e) { /* לא חוסם — נשאר המטמון */ }
+}
+
+/* מפתח הכניסה של מורה + רישום מיידי במטמון ובמיפוי הקבוע — כך הכניסה
+   הראשונה אחרי האימות לא מחכה לחישוב של כל המורים. */
+function teacherKeyRemember_(id) {
+  const key = teacherKey_(id);
+  try { CacheService.getScriptCache().put('tk:' + key, String(id), 21600); } catch (e) {}
+  try {
+    const stored = tkPropsLoad_();
+    if (stored.n >= 0 && stored.map[key] !== String(id)) {
+      stored.map[key] = String(id);
+      tkPropsSave_(stored.map, readAll('teachers').length);
+    }
+  } catch (e) {}
+  return key;
 }
 
 function teacherNormMail_(v) { return String(v || '').trim().toLowerCase(); }
@@ -4859,7 +4926,7 @@ function teacherCodeVerify(p) {
     }
     updateRowById('teachers', nid, extra);
     if (cr.existed && !teacherNormMail_(cr.data.email)) updateTeacher({ id: nid, email: row.email });
-    return { ok: true, data: { key: teacherKey_(nid), id: nid, name: row.newName, selfAdded: true } };
+    return { ok: true, data: { key: teacherKeyRemember_(nid), id: nid, name: row.newName, selfAdded: true } };
   }
 
   const t = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
@@ -4877,7 +4944,7 @@ function teacherCodeVerify(p) {
       teacherNotifyEmailChange_(prev, String(t.name || '').trim(), row.email);
     }
   }
-  return { ok: true, data: { key: teacherKey_(id), id: id, name: t.name || '' } };
+  return { ok: true, data: { key: teacherKeyRemember_(id), id: id, name: t.name || '' } };
 }
 
 /* ============================================================
