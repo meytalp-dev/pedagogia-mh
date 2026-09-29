@@ -267,7 +267,7 @@ const PUBLIC_ACTIONS = new Set([
   // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
   'staff.teacherKey', 'staff.guideKeys',
   // מעקב הרשמת המורים (29.9.26) — status: מפתח staff של מטה בפנים · count: מספרים בלבד
-  'registration.status', 'registration.count',
+  'registration.status', 'registration.count', 'registration.errors',
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
   'diag.timing',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
@@ -911,7 +911,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count))$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count|errors))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1113,6 +1113,7 @@ function handleRequest(params) {
       case 'staff.teacherKey':    result = staffTeacherKey(params); break;
       case 'registration.status': result = registrationStatus(params); break;
       case 'registration.count':  result = registrationCount(); break;
+      case 'registration.errors': result = registrationErrors(params); break;
       case 'diag.timing':         result = diagTiming(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
       case 'notes.list':          result = notesList(params); break;
@@ -1137,17 +1138,24 @@ function handleRequest(params) {
 
       default: result = { ok: false, error: 'unknown_action: ' + action };
     }
+    /* קוד השגיאה ביומן (29.9.26): עד היום נרשם רק "error" — ואחרי דיווח על
+       "תקלה רגעית" אי אפשר היה לדעת אם זה busy, cooldown, quota או משהו אחר.
+       בפעולות מורה נרשם גם המזהה (tch_…/new_…, בלי שם ובלי מייל). */
+    const errNote = result && !result.ok ? String(result.error || 'unknown').slice(0, 200) : '';
+    const tgt = /^(teacher|notes)\./.test(action) ? String(params.id || '').slice(0, 60) : '';
     if (READ_ONLY_RE_.test(action)) {
       // קריאה מוצלחת לא נרשמת ביומן; קריאה שנכשלה כן
-      if (!(result && result.ok)) auditLog_(userEmail, action, 'endpoint', '', 'error', '');
+      if (!(result && result.ok)) auditLog_(userEmail, action, 'endpoint', tgt, 'error', errNote);
     } else {
-      auditLog_(userEmail, action, 'endpoint', '', result && result.ok ? 'ok' : 'error', '');
+      auditLog_(userEmail, action, 'endpoint', tgt, result && result.ok ? 'ok' : 'error', errNote);
       bumpTeachersGen_();   // כל כתיבה מבטלת את מטמון רשימות המורים
       if (ROSTER_WRITE_RE_.test(action)) bumpRosterGen_();
     }
     return jsonOut(result);
   } catch (err) {
-    auditLog_(userEmail, action, 'endpoint', '', 'error', err.message);
+    auditLog_(userEmail, action, 'endpoint',
+      /^(teacher|notes)\./.test(action) ? String(params.id || '').slice(0, 60) : '',
+      'error', 'exception: ' + String(err.message).slice(0, 300));
     return jsonOut({ ok: false, error: err.message, stack: err.stack });
   }
 }
@@ -5920,6 +5928,31 @@ function registrationData_() {
 function registrationStatus(p) {
   if (!staffIsHq_(p.sk)) return { ok: false, error: 'forbidden' };
   return { ok: true, data: registrationData_() };
+}
+
+/* registration.errors (29.9.26) — תקלות הכניסה של מורים מ-3 הימים האחרונים, מתוך
+   audit_log (שמעכשיו שומר את קוד השגיאה). רק מטה. תקלה שלא הגיעה לשרת (אין
+   אינטרנט אצל המורה) לא תופיע כאן — היא נראית רק אצל המורה. */
+function registrationErrors(p) {
+  if (!staffIsHq_(p.sk)) return { ok: false, error: 'forbidden' };
+  const since = Date.now() - 3 * 86400000;
+  const log = readAll('audit_log');
+  const byId = {};
+  readAll('teachers').forEach(t => { byId[String(t.id)] = t; });
+  const out = [];
+  for (let i = log.length - 1; i >= 0 && out.length < 150; i--) {
+    const r = log[i];
+    const at = toIso_(r.timestamp);
+    const ms = new Date(at).getTime();
+    if (ms && ms < since) break;
+    if (String(r.status) !== 'error' || !/^teacher\./.test(String(r.action))) continue;
+    const id = String(r.targetId || '');
+    const t = byId[id];
+    out.push({ at: at, action: String(r.action), error: String(r.notes || ''), id: id,
+      name: t ? String(t.name || '') : (id.indexOf('new_') === 0 ? '(מורה חדש/ה — טרם נוצר/ה)' : ''),
+      schoolName: t ? String(t.schoolName || '') : '' });
+  }
+  return { ok: true, data: out };
 }
 
 function registrationCount() {

@@ -357,9 +357,30 @@ const GATE_ERRORS = {
   expired: 'הקוד פג תוקף. בקשו קוד חדש.',
   wrong_code: 'הקוד שגוי. בדקו ונסו שוב.',
   too_many: 'יותר מדי ניסיונות. בקשו קוד חדש.',
-  bad_input: 'הפרטים אינם תקינים.'
+  bad_input: 'הפרטים אינם תקינים.',
+  /* הודעות ברורות במקום "תקלה רגעית" (29.9.26) */
+  busy: 'המערכת עמוסה כרגע — הרבה מורים נרשמים יחד. נסו שוב בעוד דקה.',
+  busy_try_again: 'המערכת עמוסה כרגע — הרבה מורים נרשמים יחד. נסו שוב בעוד דקה.',
+  timeout: 'השרת לא הספיק לענות. נסו שוב בעוד דקה.',
+  bad_response: 'החיבור לשרת נקטע באמצע. נסו שוב בעוד דקה.'
 };
-const gateErr = r => GATE_ERRORS[r && r.error] || 'תקלה רגעית. נסו שוב בעוד רגע.';
+const gateErr = (r, sending) => {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return 'אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.';
+  }
+  const e = String((r && r.error) || '');
+  // בשליחת קוד ייתכן שהקוד יצא לפני שהחיבור נקטע
+  if (sending && (e === 'timeout' || e === 'bad_response')) {
+    return 'החיבור לשרת נקטע באמצע. ייתכן שהקוד כבר נשלח — בדקו את המייל (גם בספאם). אם לא הגיע, נסו שוב בעוד דקה.';
+  }
+  if (GATE_ERRORS[e]) return GATE_ERRORS[e];
+  if (/Failed to fetch|NetworkError|Load failed|network/i.test(e)) {
+    return 'החיבור לשרת נכשל. בדקו את החיבור לאינטרנט ונסו שוב.';
+  }
+  // מכסת המיילים של גוגל נגמרה (חריגה בשרת, לא quota שלנו)
+  if (/too many times|Service invoked/i.test(e)) return GATE_ERRORS.quota;
+  return 'תקלה רגעית. נסו שוב בעוד רגע.';
+};
 
 function showNewName(on) {
   const box = $g('tg-new');
@@ -423,7 +444,7 @@ async function onGateEnter() {
   if (!r || !r.ok) {
     /* מייל שונה מהרשום (29.9.26): כנראה הכתובת אצלנו ישנה — מציעים לעדכן */
     if (r && r.error === 'email_mismatch') return offerEmailChange(r.data && r.data.hint);
-    return gateMsg(gateErr(r));
+    return gateMsg(gateErr(r, true));
   }
   gatePendingId = String((r.data && r.data.id) || (gatePick ? gatePick.id : isNew ? '' : id));
 

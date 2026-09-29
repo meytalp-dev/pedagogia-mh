@@ -74,6 +74,7 @@
       <b>מה נחשב:</b> <b>נרשם/ה</b> = אימת/ה את המייל בקוד. <b>סיים/ה</b> = אימת/ה וענה/תה על כל שאלות החובה — שאלת ההשתלמות, ויח"ל במתמטיקה ובאנגלית. צירוף אישור ההשתלמות הוא רשות, ומסומן בנפרד. מורה שמלמד/ת את אותו מקצוע בבגרות ובגמר נספר/ת פעם אחת. <b>אימות אחד מספיק לאדם</b> — גם אם הוא/היא מלמד/ת שני מקצועות.
     </div>
     <div id="rg-root"><div class="empty" style="padding:32px;">טוען את נתוני ההרשמה…</div></div>
+    <div id="rg-errs"></div>
   </main>
 
   <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
@@ -226,6 +227,34 @@
     });
   }
   render();
+
+  /* תקלות רישום (29.9.26) — מה קרה אצל מורה שדיווח/ה על תקלה. מקור: audit_log,
+     3 ימים אחרונים. תקלה שלא הגיעה לשרת (אין אינטרנט אצל המורה) לא תופיע. */
+  var ERR_HE = {
+    busy: ['warn', 'השרת היה עמוס'], busy_try_again: ['warn', 'השרת היה עמוס'],
+    cooldown: ['neu', 'ביקש/ה קוד שוב תוך דקה'], quota: ['miss', 'מכסת המיילים היומית'],
+    wrong_code: ['neu', 'קוד שגוי'], expired: ['neu', 'קוד פג תוקף / כבר נוצל'], too_many: ['warn', 'יותר מדי ניסיונות'],
+    email_mismatch: ['info', 'מייל שונה מהרשום'], not_found: ['miss', 'הרשומה לא נמצאה'], bad_input: ['neu', 'פרטים לא תקינים'],
+    bad_key: ['neu', 'מפתח כניסה פג']
+  };
+  var ACT_HE = { 'teacher.codeSend': 'שליחת קוד', 'teacher.codeVerify': 'אימות קוד', 'teacher.training': 'שאלת ההשתלמות', 'teacher.self': 'כניסה' };
+  var box = document.getElementById('rg-errs');
+  var er = await TS.api('registration.errors', { sk: sk }, { cache: 'no' });
+  if (!er || !er.ok) {
+    box.innerHTML = '<h2 class="rg-h2">תקלות רישום — 3 ימים אחרונים</h2><div class="rg-err">לא הצלחתי לטעון את התקלות. רענני את הדף בעוד רגע.</div>';
+    return;
+  }
+  var list = er.data || [];
+  var sys = list.filter(function (x) { var k = ERR_HE[x.error]; return !k || k[0] === 'warn' || k[0] === 'miss'; });
+  box.innerHTML = '<h2 class="rg-h2">תקלות רישום — 3 ימים אחרונים</h2>' +
+    '<p style="margin:0 0 10px;color:var(--text-2);font-size:14px;">' + list.length + ' שגיאות, מתוכן <b>' + sys.length +
+    '</b> תקלות מערכת (עומס, מכסה, שגיאת שרת). השאר הן טעויות רגילות של המשתמש/ת, כמו קוד שגוי. אם מורה לא הגיע/ה לשרת בכלל (אין אינטרנט), זה לא יופיע כאן.</p>' +
+    (list.length ? '<div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>מתי</th><th>מורה</th><th>בית ספר</th><th>שלב</th><th>מה קרה</th></tr></thead><tbody>' +
+      list.map(function (x) {
+        var k = ERR_HE[x.error] || ['miss', x.error ? 'שגיאת שרת: ' + x.error.replace(/^exception:\s*/, '') : 'שגיאה (לא נרשם פירוט)'];
+        return '<tr><td class="num">' + fmt(x.at) + '</td><td>' + esc(x.name || x.id || '—') + '</td><td>' + esc(x.schoolName) + '</td><td>' +
+          esc(ACT_HE[x.action] || x.action) + '</td><td><span class="chip ' + k[0] + '">' + esc(k[1]) + '</span></td></tr>';
+      }).join('') + '</tbody></table></div></div>' : '<div class="empty" style="padding:18px;">אין תקלות רשומות.</div>');
 })();
 </script>
 </body>
