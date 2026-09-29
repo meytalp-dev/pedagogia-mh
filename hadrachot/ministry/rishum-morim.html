@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>מעקב הרשמת המורים — מבט ארצי · מנור</title>
+<link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
+<style>
+  [hidden] { display: none !important; }
+  .lead-note { background:var(--sand-soft,#F7F0E3); border:1px solid var(--sand,#E6D3AE); border-radius:12px; padding:12px 16px; font-size:.84rem; color:var(--text-2); line-height:1.8; margin-bottom:16px; }
+  .rg-kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:18px; }
+  @media (max-width:860px) { .rg-kpis { grid-template-columns:repeat(2,1fr); } }
+  .rg-kpi { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; }
+  .rg-kpi .l { font-size:12px; color:var(--text-muted); font-weight:600; }
+  .rg-kpi .v { font-size:28px; font-weight:800; line-height:1.15; font-variant-numeric:tabular-nums; color:var(--primary-dark,#143E4C); }
+  .rg-kpi .s { font-size:11.5px; color:var(--text-muted); }
+  .rg-kpi.red { border-color:#E7C0B5; background:#FDF4F1; } .rg-kpi.red .v { color:#a4442f; }
+  .rg-kpi.amber { border-color:#F0DDB5; background:#FFF8EA; } .rg-kpi.amber .v { color:#9a6400; }
+  .rg-kpi.green { border-color:#CFE3D4; background:#F1F8F3; } .rg-kpi.green .v { color:#1f6b52; }
+  .rg-bar { height:10px; border-radius:99px; background:#EEF2F4; overflow:hidden; display:flex; margin:-6px 0 18px; }
+  .rg-bar span { display:block; height:100%; }
+  .rg-flt { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 12px; position:sticky; top:0; z-index:5; }
+  .rg-flt select, .rg-flt input { padding:8px 12px; border:1px solid var(--border); border-radius:9px; background:var(--surface); font:inherit; font-size:.84rem; color:var(--text); }
+  .rg-flt input { flex:1; min-width:160px; }
+  .rg-h2 { margin:26px 0 10px; font-size:19px; }
+  .rg-grp { margin-bottom:14px; border:1px solid var(--border); border-radius:12px; background:var(--surface); overflow:hidden; }
+  .rg-grp > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; padding:12px 14px; flex-wrap:wrap; }
+  .rg-grp > summary::-webkit-details-marker { display:none; }
+  .rg-grp h3 { margin:0; font-size:16px; flex:1; min-width:200px; }
+  .rg-grp h3 small { display:block; font-size:12px; font-weight:500; color:var(--text-muted); margin-top:2px; }
+  .rg-n { font-size:15px; font-weight:800; min-width:38px; text-align:center; }
+  .rg-copy { font-family:inherit; font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:9px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; }
+  .rg-wrap { overflow-x:auto; border-top:1px solid var(--border); }
+  table.rg-t { width:100%; border-collapse:collapse; font-size:13px; }
+  table.rg-t th { background:var(--surface-soft); font-size:11.5px; font-weight:700; color:var(--text-muted); text-align:right; padding:8px 10px; white-space:nowrap; }
+  table.rg-t td { padding:7px 10px; border-top:1px solid var(--border-soft,#E8EEF0); vertical-align:middle; }
+  table.rg-t td.num { font-variant-numeric:tabular-nums; }
+  .chip { display:inline-block; font-size:11.5px; font-weight:700; border-radius:99px; padding:2px 9px; margin:1px 2px; }
+  .chip.miss { background:#FDF1EE; color:#a4442f; } .chip.warn { background:#FFF3DC; color:#8a5a00; }
+  .chip.ok { background:#E6F3EC; color:#1f6b52; } .chip.info { background:#E7F0F8; color:#1d5a86; } .chip.neu { background:#EEF2F4; color:#4b5b66; }
+  .rg-empty { padding:12px 14px; font-size:13px; color:var(--text-muted); }
+  .rg-err { background:#FBECE8; color:#8f2f1c; border-radius:10px; padding:12px 16px; font-size:14px; }
+  .pct { font-weight:700; }
+</style>
+</head>
+<body data-role="ministry" data-look="menor">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="../" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <img class="compass-icon" src="../assets/menor-sail.png" alt="" aria-hidden="true">
+        <div class="command-bar-text">
+          <span class="unit"><img class="menor-word" src="../assets/menor-word.png" alt="מנור"></span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status"><span class="status-dot" aria-hidden="true"></span><span>מבט ארצי</span></div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מבט ארצי · מעקב הרשמה</div>
+        <h1>הרשמת המורים למבט המורה</h1>
+        <p class="page-header-sub" id="rg-sub">טוען… (עד חצי דקה)</p>
+      </div>
+    </section>
+
+    <div class="lead-note">
+      <b>מה נחשב:</b> <b>נרשם/ה</b> = אימת/ה את המייל בקוד. <b>סיים/ה</b> = אימת/ה וענה/תה על כל שאלות החובה — שאלת ההשתלמות, ויח"ל במתמטיקה ובאנגלית. צירוף אישור ההשתלמות הוא רשות, ומסומן בנפרד. מורה שמלמד/ת את אותו מקצוע בבגרות ובגמר נספר/ת פעם אחת. <b>אימות אחד מספיק לאדם</b> — גם אם הוא/היא מלמד/ת שני מקצועות.
+    </div>
+    <div id="rg-root"><div class="empty" style="padding:32px;">טוען את נתוני ההרשמה…</div></div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מנור · הפיקוח על החינוך הטכנולוגי · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260924h"></script>
+<script src="../assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script src="../assets/guides.js?v=20260928a"></script>
+<script src="../assets/training-report.js?v=20260928"></script>
+<script>
+/* מעקב הרשמת המורים (29.9.26, בקשת מיטל): מי נרשם · מי סיים · מה חסר למי · מי לא נכנס.
+   נתונים: registration.status (מפתח staff של מטה — שמות). פילוח לפי בית ספר ולפי מדריכ/ה,
+   ובכל קבוצה כפתור העתקה — כדי לשלוח למנהל/ת או למדריכ/ה את החסרים שלהם. */
+(async function () {
+  var root = document.getElementById('rg-root');
+  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+  var sk = '';
+  try { var st = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); sk = (st && st.k) || ''; } catch (e) {}
+  var res = await TS.api('registration.status', { sk: sk }, { cache: 'no' });
+  if (!res || !res.ok) {
+    root.innerHTML = '<div class="rg-err">' + (res && res.error === 'forbidden'
+      ? 'הדף פתוח רק לכניסת מטה. היכנסי דרך דף הבית של מנור ונסי שוב.'
+      : 'הטעינה נכשלה (השרת עמוס). רענני את הדף בעוד רגע.') + '</div>';
+    document.getElementById('rg-sub').textContent = '';
+    return;
+  }
+  var all = res.data || [];
+  var guides = Object.keys(window.TS_GUIDES || {}).map(function (k) { return Object.assign({ slug: k }, TS_GUIDES[k]); });
+  all.forEach(function (t) {
+    t._g = guides.filter(function (g) {
+      return TS_trainingReport.guideCovers(g, { subject: t.subject, sector: t.sector, units: t.units, type: (t.tracks || [])[0] });
+    }).map(function (g) { return g.name; });
+  });
+  var f = { school: '', subject: '', guide: '', q: '' };
+  var uniq = function (a) { return a.filter(function (x, i) { return x && a.indexOf(x) === i; }).sort(function (a, b) { return a.localeCompare(b, 'he'); }); };
+  var TR = { passed: ['ok', 'עבר/ה השתלמות'], registered: ['info', 'נרשם/ה להשתלמות'], none: ['miss', 'לא נרשם/ה להשתלמות'] };
+  var fmt = function (iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
+
+  function copyBtn(key) { return '<button type="button" class="rg-copy" data-copy="' + key + '">העתקת הרשימה</button>'; }
+  var copyLists = {};
+
+  function render() {
+    var rows = all.filter(function (t) {
+      if (f.school && t.schoolName !== f.school) return false;
+      if (f.subject && t.subject !== f.subject) return false;
+      if (f.guide && t._g.indexOf(f.guide) < 0) return false;
+      if (f.q && (t.name + ' ' + t.schoolName).indexOf(f.q) < 0) return false;
+      return true;
+    });
+    var by = { none: [], started: [], partial: [], done: [] };
+    rows.forEach(function (t) { by[t.state].push(t); });
+    var noFile = by.done.filter(function (t) { return t.noFile; });
+    var n = rows.length || 1, reg = by.partial.length + by.done.length;
+    document.getElementById('rg-sub').textContent = rows.length + ' מורים · ' + reg + ' נרשמו (' + Math.round(reg * 100 / n) + '%) · ' + by.done.length + ' סיימו את כל השלבים';
+    copyLists = {};
+
+    var h = '<div class="rg-kpis">' +
+      '<div class="rg-kpi red"><div class="l">לא נכנסו</div><div class="v">' + by.none.length + '</div><div class="s">לא ביקשו קוד אף פעם</div></div>' +
+      '<div class="rg-kpi amber"><div class="l">התחילו ולא אימתו</div><div class="v">' + by.started.length + '</div><div class="s">קיבלו קוד במייל ולא הזינו</div></div>' +
+      '<div class="rg-kpi amber"><div class="l">נרשמו — חסר שלב</div><div class="v">' + by.partial.length + '</div><div class="s">אימתו, לא ענו על שאלת חובה</div></div>' +
+      '<div class="rg-kpi green"><div class="l">סיימו</div><div class="v">' + by.done.length + '</div><div class="s">' + noFile.length + ' מהם בלי אישור השתלמות</div></div>' +
+      '<div class="rg-kpi"><div class="l">סה"כ מורים</div><div class="v">' + rows.length + '</div><div class="s">' + Math.round(reg * 100 / n) + '% נרשמו</div></div>' +
+    '</div>' +
+    '<div class="rg-bar" title="לא נכנסו · התחילו · חסר שלב · סיימו">' +
+      [['none', '#E3A596'], ['started', '#F0C878'], ['partial', '#F5DDA8'], ['done', '#7DBB95']].map(function (x) {
+        return '<span style="width:' + (by[x[0]].length * 100 / n) + '%;background:' + x[1] + '"></span>';
+      }).join('') + '</div>';
+
+    var sel = function (id, label, list, val) {
+      return '<select id="' + id + '"><option value="">' + label + '</option>' + list.map(function (x) {
+        return '<option' + (x === val ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join('') + '</select>';
+    };
+    h += '<div class="rg-flt">' + sel('f-school', 'כל בתי הספר', uniq(all.map(function (t) { return t.schoolName; })), f.school) +
+      sel('f-subject', 'כל המקצועות', uniq(all.map(function (t) { return t.subject; })), f.subject) +
+      sel('f-guide', 'כל המדריכים', uniq(guides.map(function (g) { return g.name; })), f.guide) +
+      '<input type="search" id="f-q" placeholder="חיפוש מורה / בית ספר" value="' + esc(f.q) + '"></div>';
+
+    // ▸ הקבוצות — קודם מי שחסר (כלל: דף מעקב = כלי לרדוף אחרי החסרים)
+    var cols = '<th>שם</th><th>בית ספר</th><th>מקצוע</th><th>מדריכ/ה</th>';
+    var line = function (t) { return [t.name, t.subject, t.schoolName].join(' · '); };
+    var group = function (key, cls, title, sub, list, extraHead, extraCell, open) {
+      copyLists[key] = list.map(line).join('\n');
+      return '<details class="rg-grp"' + (open && list.length ? ' open' : '') + '><summary><span class="chip ' + cls + ' rg-n">' + list.length + '</span>' +
+        '<h3>' + title + '<small>' + sub + '</small></h3>' + (list.length ? copyBtn(key) : '') + '</summary>' +
+        (list.length ? '<div class="rg-wrap"><table class="rg-t"><thead><tr>' + cols + extraHead + '</tr></thead><tbody>' +
+          list.map(function (t) {
+            return '<tr><td>' + esc(t.name) + (t.newTeacher ? ' <span class="chip neu">מורה חדש/ה</span>' : '') +
+              (t.selfAdded ? ' <span class="chip neu">הוסיף/ה את עצמו/ה</span>' : '') + '</td><td>' + esc(t.schoolName) + '</td><td>' + esc(t.subject) +
+              '</td><td>' + esc((t._g || []).join(', ') || '—') + '</td>' + extraCell(t) + '</tr>';
+          }).join('') + '</tbody></table></div>' : '<div class="rg-empty">אין מורים בקבוצה הזו.</div>') + '</details>';
+    };
+    h += '<h2 class="rg-h2">לפי מצב</h2>';
+    h += group('started', 'warn', 'התחילו ולא אימתו את המייל', 'קיבלו קוד ולא הזינו אותו — כדאי להזכיר לבדוק בספאם ולנסות שוב', by.started,
+      '<th>קוד נשלח</th>', function (t) { return '<td class="num">' + fmt(t.sentAt) + '</td>'; }, true);
+    h += group('partial', 'warn', 'נרשמו — חסר שלב חובה', 'אימתו מייל אבל לא סיימו. בכניסה הבאה הם יישאלו שוב אוטומטית', by.partial,
+      '<th>מה חסר</th>', function (t) { return '<td>' + t.missing.map(function (m) { return '<span class="chip miss">' + esc(m) + '</span>'; }).join('') + '</td>'; }, true);
+    h += group('nofile', 'warn', 'סיימו — בלי אישור השתלמות', 'ענו שעברו או שנרשמו להשתלמות, ולא צירפו אישור (רשות)', noFile,
+      '<th>השתלמות</th>', function (t) { var x = TR[t.trainingStatus] || ['neu', '—']; return '<td><span class="chip ' + x[0] + '">' + x[1] + '</span></td>'; }, false);
+    h += group('done', 'ok', 'סיימו את כל השלבים', '', by.done,
+      '<th>השתלמות</th><th>יח"ל</th><th>נרשם/ה</th>', function (t) {
+        var x = TR[t.trainingStatus] || ['neu', '—'];
+        return '<td><span class="chip ' + x[0] + '">' + x[1] + '</span>' + (t.noFile ? '<span class="chip warn">בלי אישור</span>' : '') + '</td>' +
+          '<td>' + esc(String(t.unitsSelf || '').replace('gemer', 'גמר')) + '</td><td class="num">' + fmt(t.verifiedAt) + '</td>'; }, false);
+    h += group('none', 'miss', 'לא נכנסו', 'לא ביקשו קוד אף פעם', by.none, '', function () { return ''; }, false);
+
+    // ▸ לפי בית ספר — כמה לא נכנסו, והעתקה של החסרים של כל בית ספר (לשליחה למנהל/ת)
+    var sch = {};
+    rows.forEach(function (t) {
+      var s = sch[t.schoolName] || (sch[t.schoolName] = { name: t.schoolName, n: 0, reg: 0, done: 0, miss: [] });
+      s.n++; if (t.state === 'partial' || t.state === 'done') s.reg++; if (t.state === 'done') s.done++;
+      if (t.state === 'none' || t.state === 'started') s.miss.push(t);
+    });
+    var schList = Object.keys(sch).map(function (k) { return sch[k]; }).sort(function (a, b) { return (a.reg / a.n) - (b.reg / b.n) || b.n - a.n; });
+    h += '<h2 class="rg-h2">לפי בית ספר</h2><div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>בית ספר</th><th>מורים</th><th>נרשמו</th><th>סיימו</th><th>טרם נרשמו</th><th></th></tr></thead><tbody>' +
+      schList.map(function (s, i) {
+        copyLists['s' + i] = s.name + ' — טרם נרשמו למנור (' + s.miss.length + '):\n' + s.miss.map(function (t) { return t.name + ' · ' + t.subject; }).join('\n');
+        return '<tr><td>' + esc(s.name) + '</td><td class="num">' + s.n + '</td><td class="num"><span class="pct">' + Math.round(s.reg * 100 / s.n) + '%</span> (' + s.reg + ')</td><td class="num">' + s.done +
+          '</td><td class="num">' + s.miss.length + '</td><td>' + (s.miss.length ? copyBtn('s' + i) : '') + '</td></tr>';
+      }).join('') + '</tbody></table></div></div>';
+
+    // ▸ לפי מדריכ/ה
+    var gl = guides.map(function (g) {
+      var mine = rows.filter(function (t) { return t._g.indexOf(g.name) >= 0; });
+      var miss = mine.filter(function (t) { return t.state === 'none' || t.state === 'started'; });
+      var reg = mine.filter(function (t) { return t.state === 'partial' || t.state === 'done'; }).length;
+      return { name: g.name, subject: (TS_guideSubjects(g) || []).join(', '), n: mine.length, reg: reg, miss: miss };
+    }).filter(function (g) { return g.n; }).sort(function (a, b) { return (a.reg / a.n) - (b.reg / b.n); });
+    h += '<h2 class="rg-h2">לפי מדריכ/ה</h2><div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>מדריכ/ה</th><th>מקצוע</th><th>מורים</th><th>נרשמו</th><th>טרם נרשמו</th><th></th></tr></thead><tbody>' +
+      gl.map(function (g, i) {
+        copyLists['g' + i] = 'טרם נרשמו למנור — הקבוצה של ' + g.name + ' (' + g.miss.length + '):\n' + g.miss.map(function (t) { return t.name + ' · ' + t.schoolName; }).join('\n');
+        return '<tr><td>' + esc(g.name) + '</td><td>' + esc(g.subject) + '</td><td class="num">' + g.n + '</td><td class="num"><span class="pct">' + Math.round(g.reg * 100 / g.n) + '%</span> (' + g.reg + ')</td><td class="num">' +
+          g.miss.length + '</td><td>' + (g.miss.length ? copyBtn('g' + i) : '') + '</td></tr>';
+      }).join('') + '</tbody></table></div></div>';
+
+    root.innerHTML = h;
+    [['f-school', 'school'], ['f-subject', 'subject'], ['f-guide', 'guide']].forEach(function (p) {
+      var s = document.getElementById(p[0]); s.onchange = function () { f[p[1]] = s.value; render(); };
+    });
+    var q = document.getElementById('f-q'), tm = null;
+    q.oninput = function () { clearTimeout(tm); tm = setTimeout(function () { f.q = q.value.trim(); render(); var e = document.getElementById('f-q'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); }, 300); };
+    root.querySelectorAll('[data-copy]').forEach(function (b) {
+      b.onclick = function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var txt = copyLists[b.dataset.copy] || '';
+        var done = function () { b.textContent = 'הועתק ✓'; setTimeout(function () { b.textContent = 'העתקת הרשימה'; }, 1600); };
+        try { navigator.clipboard.writeText(txt).then(done, function () { window.prompt('העתיקו:', txt); }); } catch (err) { window.prompt('העתיקו:', txt); }
+      };
+    });
+  }
+  render();
+})();
+</script>
+</body>
+</html>

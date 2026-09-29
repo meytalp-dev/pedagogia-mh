@@ -238,6 +238,8 @@ const PUBLIC_ACTIONS = new Set([
   'staff.codeSend', 'staff.codeVerify', 'staff.self', 'staff.directory',
   // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
   'staff.teacherKey', 'staff.guideKeys',
+  // מעקב הרשמת המורים (29.9.26) — status: מפתח staff של מטה בפנים · count: מספרים בלבד
+  'registration.status', 'registration.count',
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
   'diag.timing',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
@@ -881,7 +883,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1081,6 +1083,8 @@ function handleRequest(params) {
       case 'staff.self':          result = staffSelf(params); break;
       case 'staff.directory':     result = staffDirectory(params); break;
       case 'staff.teacherKey':    result = staffTeacherKey(params); break;
+      case 'registration.status': result = registrationStatus(params); break;
+      case 'registration.count':  result = registrationCount(); break;
       case 'diag.timing':         result = diagTiming(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
       case 'notes.list':          result = notesList(params); break;
@@ -5794,6 +5798,102 @@ function staffMask_(email) {
    וכל המדריכים, ומהדף עצמו קישורים") ----
    רק מי שנכנס/ה בקוד ויש לו/ה תפקיד ministry מקבל/ת מפתחות צפייה:
    מורה (teacher/?ak=) ומדריכים (guide/?g=&k=). */
+/* ============================================================
+   מעקב הרשמת המורים למבט המורה (29.9.26, בקשת מיטל)
+   "מי נרשם · מי סיים את התהליך · מה עוד חסר למי · ומי לא נכנס"
+   מקורות: טאב teachers (תשובות ההשתלמות ויח"ל) + teacher_codes (שליחת קוד ואימות).
+   יחידה = אדם במקצוע בבית ספר (בגרות וגמר = שורה אחת). "נרשם/ה" = אימת/ה מייל
+   לפחות פעם אחת באחת השורות של אותו אדם באותו בית ספר.
+   מצבים:
+     none     — לא נכנס/ה (לא נשלח קוד מעולם)
+     started  — קיבל/ה קוד ולא אימת/ה
+     partial  — אימת/ה, חסר שלב חובה (שאלת ההשתלמות / יח"ל)
+     done     — סיים/ה את כל שלבי החובה (האישור רשות — מסומן בנפרד)
+   registration.status — שמות, רק למפתח staff של מטה. registration.count — מספרים בלבד, ציבורי.
+   ============================================================ */
+function registrationData_() {
+  const teachers = readAll('teachers');
+  let codes = [];
+  try { codes = readAll('teacher_codes'); } catch (e) { codes = []; }
+  const sent = {}, verified = {};
+  const pendingNew = {};
+  codes.forEach(c => {
+    const id = String(c.teacherId || '');
+    const created = toIso_(c.createdAt), used = c.usedAt ? toIso_(c.usedAt) : '';
+    if (id.indexOf('new_') === 0) {
+      if (!used) {
+        const p = pendingNew[id] || (pendingNew[id] = { name: String(c.newName || ''), school: String(c.newSchool || ''),
+          subject: String(c.newSubject || ''), sentAt: '' });
+        if (created > p.sentAt) p.sentAt = created;
+      } else delete pendingNew[id];
+      return;
+    }
+    if (created && (!sent[id] || created > sent[id])) sent[id] = created;
+    if (used && (!verified[id] || used > verified[id])) verified[id] = used;
+  });
+  // אימות של אדם אחד תקף לכל השורות שלו באותו בית ספר
+  const personKey = t => String(t.school) + '|' + String(t.name || '').replace(/\s+/g, ' ').trim();
+  const personVer = {}, personSent = {};
+  teachers.forEach(t => {
+    const k = personKey(t), id = String(t.id);
+    if (verified[id] && (!personVer[k] || verified[id] > personVer[k])) personVer[k] = verified[id];
+    if (sent[id] && (!personSent[k] || sent[id] > personSent[k])) personSent[k] = sent[id];
+  });
+  const schoolName = {};
+  readAll('schools').forEach(s => { schoolName[String(s.id)] = String(s.name || ''); });
+  const groups = {};
+  teachers.forEach(t => {
+    if (!String(t.name || '').trim()) return;
+    const k = personKey(t) + '|' + String(t.subject || '').trim();
+    const g = groups[k] || (groups[k] = { ids: [], rows: [] });
+    g.ids.push(String(t.id)); g.rows.push(t);
+  });
+  const out = Object.keys(groups).map(k => {
+    const rows = groups[k].rows, t = rows[0];
+    const pk = personKey(t);
+    const pick = f => { for (let i = 0; i < rows.length; i++) if (rows[i][f]) return rows[i][f]; return ''; };
+    const trainingStatus = String(pick('trainingStatus') || '');
+    const unitsSelf = String(pick('unitsSelf') || '');
+    const needsUnits = !!unitsSelfAllowed_(t.subject);
+    const ver = personVer[pk] || '', snt = personSent[pk] || '';
+    const missing = [];
+    if (ver) {
+      if (!trainingStatus) missing.push('שאלת ההשתלמות');
+      if (needsUnits && !unitsSelf) missing.push('יח"ל');
+    }
+    const state = !ver ? (snt ? 'started' : 'none') : (missing.length ? 'partial' : 'done');
+    return {
+      id: String(t.id), name: String(t.name || '').trim(), school: String(t.school || ''),
+      schoolName: String(t.schoolName || schoolName[String(t.school)] || ''), subject: String(t.subject || '').trim(),
+      sector: String(t.sector || 'kelali'), units: String(t.units || ''),
+      tracks: rows.map(r => r.type === 'gemer' ? 'gemer' : 'bagrut'),
+      state: state, missing: missing, verifiedAt: ver, sentAt: snt,
+      trainingStatus: trainingStatus, unitsSelf: unitsSelf,
+      noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile'),
+      selfAdded: !!pick('selfAdded')
+    };
+  });
+  const pending = Object.keys(pendingNew).map(id => {
+    const p = pendingNew[id];
+    return { id: id, name: p.name, school: p.school, schoolName: schoolName[p.school] || '', subject: p.subject,
+      state: 'started', missing: [], sentAt: p.sentAt, newTeacher: true, tracks: ['bagrut'] };
+  });
+  return out.concat(pending);
+}
+
+function registrationStatus(p) {
+  if (!staffIsHq_(p.sk)) return { ok: false, error: 'forbidden' };
+  return { ok: true, data: registrationData_() };
+}
+
+function registrationCount() {
+  const rows = registrationData_();
+  const c = { total: 0, none: 0, started: 0, partial: 0, done: 0 };
+  rows.forEach(r => { c.total++; c[r.state]++; });
+  c.registered = c.partial + c.done;
+  return Object.assign({ ok: true }, c);
+}
+
 function staffIsHq_(k) {
   const email = staffEmailByKey_(k);
   if (!email) return false;
