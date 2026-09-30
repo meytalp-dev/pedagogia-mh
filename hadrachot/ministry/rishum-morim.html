@@ -187,7 +187,12 @@
       (extra ? '<p>' + extra + '</p>' : '') +
       '<p>אם משהו עדיין לא מסתדר — פשוט להשיב למייל הזה, ונעזור.</p>' +
       '<p>בברכה,<br>צוות מנור · המנהל להכשרה מקצועית · משרד העבודה</p></div>';
-    return { to: mail, subject: 'ההרשמה שלך למנור — מה קרה ואיך ממשיכים', html: html };
+    var strip = function (x) { return String(x).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"'); };
+    var text = 'שלום ' + first + ',\n\n' + strip(what) + '\n\nמה לעשות:\n' +
+      steps.map(function (x, i) { return (i + 1) + '. ' + strip(x); }).join('\n') + '\n\n' +
+      (extra ? strip(extra) + '\n\n' : '') +
+      'אם משהו עדיין לא מסתדר — פשוט להשיב למייל הזה, ונעזור.\n\nבברכה,\nצוות מנור · המנהל להכשרה מקצועית · משרד העבודה';
+    return { to: mail, subject: 'ההרשמה שלך למנור — מה קרה ואיך ממשיכים', html: html, text: text };
   }
   function helpMailLink(t, err, ctx) {
     var m = String(t.email || t.sentMail || '');
@@ -211,6 +216,17 @@
     e.preventDefault(); e.stopPropagation();
     var h = HELP[Number(b.dataset.help)];
     if (!h) return;
+    /* בנייד (30.9.26): כתובת הכתיבה של Gmail נפתחת כאתר מוזר ולא כטיוטה, וההעתקה
+       המעוצבת לא עובדת. mailto פותח את אפליקציית המייל עם נמען, נושא ונוסח מלא;
+       אפליקציית Gmail מיישרת עברית לימין לבד. */
+    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+      (window.matchMedia && matchMedia('(pointer:coarse)').matches && innerWidth < 900);
+    if (mobile) {
+      location.href = 'mailto:' + encodeURIComponent(h.to).replace(/%40/g, '@') +
+        '?subject=' + encodeURIComponent(h.subject) + '&body=' + encodeURIComponent(h.text);
+      helpToast('נפתחת אפליקציית המייל עם הנוסח המוכן. ודאי שהשליחה מהחשבון mlypeleg@gmail.com.');
+      return;
+    }
     // העתקה מעוצבת (ימין לשמאל) — execCommand סינכרוני, לפני שחלון Gmail לוקח את הפוקוס
     var box = document.createElement('div');
     box.contentEditable = 'true'; box.innerHTML = h.html;
@@ -222,7 +238,7 @@
     var copied = false;
     try { copied = document.execCommand('copy'); } catch (err) { copied = false; }
     sel.removeAllRanges(); box.remove();
-    window.open(TS.gmailCompose({ to: h.to, subject: h.subject, body: copied ? '' : plain }), '_blank', 'noopener');
+    window.open(TS.gmailCompose({ to: h.to, subject: h.subject, body: copied ? '' : h.text }), '_blank', 'noopener');
     helpToast(copied
       ? '✓ הנוסח הועתק. בחלון Gmail שנפתח — לחצי בגוף המייל ואז <b>Ctrl+V</b>. הוא יודבק מיושר לימין.'
       : 'לא הצלחתי להעתיק מעוצב — הנוסח הוכנס לטיוטה כטקסט רגיל.');
