@@ -121,6 +121,32 @@
   var TR = { passed: ['ok', 'עבר/ה השתלמות'], registered: ['info', 'נרשם/ה להשתלמות'], none: ['miss', 'לא נרשם/ה להשתלמות'] };
   var fmt = function (iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
 
+  /* מייל עזרה למורה (30.9.26) — טיוטה מוכנה ב-Gmail מ-mlypeleg@gmail.com (לא מאורט:
+     אין SPF ו-hotmail חוסם). הנוסח לפי הבעיה; מיטל קוראת ולוחצת "שלח". */
+  var TEACHER_URL = 'https://pedagogiamh.co.il/hadrachot/teacher/';
+  var HELP_STEPS = {
+    email_mismatch: 'במערכת רשומה עבורך כתובת מייל אחרת, שבית הספר מסר. כשמופיעה ההודעה "בית הספר רשם עבורך כתובת מייל אחרת", לחצו על הכפתור "הכתובת שכתבתי היא הנכונה — שלחו אליה את הקוד". הקוד יישלח לכתובת שכתבתם, והיא תישמר כמייל שלכם.',
+    wrong_code: 'הקוד שהוזן לא התאים. אם ביקשתם קוד כמה פעמים — אפשר להזין כל אחד מהקודים שהגיעו ב-20 הדקות האחרונות (תיקנו את זה היום). אם עברו יותר מ-20 דקות, בקשו קוד חדש פעם אחת בלבד והזינו את הקוד מהמייל החדש.',
+    expired: 'הקוד פג תוקף — כל קוד תקף ל-20 דקות. בקשו קוד חדש פעם אחת והזינו אותו מיד כשהוא מגיע.',
+    used: 'הקוד כבר שימש לכניסה. בקשו קוד חדש פעם אחת והזינו אותו.',
+    too_many: 'היו יותר מדי ניסיונות עם אותו קוד. בקשו קוד חדש והזינו אותו בזהירות.',
+    cooldown: 'נשלח קוד ממש לפני כן. חכו דקה, ואם הקוד לא הגיע — בקשו שוב.',
+    nocode: 'המייל עם הקוד נשלח מ"מנור · משרד העבודה" עם הכותרת "קוד הכניסה שלך — מנור". חפשו "מנור" בתיבת המייל, ובדקו גם בספאם / דואר זבל ובלשונית "קידומי מכירות". בכתובות hotmail / outlook המייל נחסם לפעמים — אם לא מצאתם, הירשמו עם כתובת אחרת, למשל Gmail.'
+  };
+  function helpMailLink(t, err) {
+    var m = String(t.email || t.sentMail || '');
+    if (!/@/.test(m)) return '';
+    var first = String(t.name || '').trim().split(/\s+/)[0] || '';
+    var step = HELP_STEPS[err] || HELP_STEPS.nocode;
+    var body = 'שלום ' + first + ',\n\n' +
+      'ראינו שנתקלת בקושי בהרשמה למנור, ורצינו לעזור.\n\n' + step + '\n\n' +
+      'הקישור להרשמה: ' + TEACHER_URL + '\n' +
+      'השרת איטי לפעמים — אחרי כל לחיצה כדאי לחכות בסבלנות עד דקה, ולא ללחוץ שוב.\n\n' +
+      'צריכים עוד עזרה? השיבו למייל הזה ונחזור אליכם.\n\n' +
+      'בברכה,\nצוות מנור · המנהל להכשרה מקצועית · משרד העבודה';
+    return '<a class="rg-copy" target="_blank" rel="noopener" href="' + esc(TS.gmailCompose({ to: m, subject: 'עזרה בהרשמה למנור', body: body })) + '">מייל עזרה</a>';
+  }
+
   function copyBtn(key) { return '<button type="button" class="rg-copy" data-copy="' + key + '">העתקת הרשימה</button>'; }
   var copyLists = {};
 
@@ -179,7 +205,7 @@
     };
     h += '<h2 class="rg-h2">לפי מצב</h2>';
     h += group('started', 'warn', 'התחילו ולא אימתו את המייל', 'קיבלו קוד ולא הזינו אותו — כדאי להזכיר לבדוק בספאם ולנסות שוב', by.started,
-      '<th>קוד נשלח</th><th>נשלח לכתובת</th><th>קודים</th>', function (t) {
+      '<th>קוד נשלח</th><th>נשלח לכתובת</th><th>קודים</th><th></th>', function (t) {
         /* לאן נשלח הקוד (30.9.26) — hotmail/outlook חוסמים לפעמים; כתובת עם טעות הקלדה
            נראית כאן מיד. כמה קודים = כמה פעמים ניסה/תה. */
         var m = String(t.sentMail || '');
@@ -188,7 +214,7 @@
         return '<td class="num">' + fmt(t.sentAt) + '</td><td dir="ltr" style="text-align:right">' + esc(m || '—') +
           (ms ? ' <span class="chip warn">hotmail/outlook — ייתכן שנחסם</span>' : '') +
           (typo ? ' <span class="chip miss">נראה כמו טעות הקלדה</span>' : '') +
-          '</td><td class="num">' + (t.sentCount || '') + '</td>';
+          '</td><td class="num">' + (t.sentCount || '') + '</td><td>' + helpMailLink(t, 'nocode') + '</td>';
       }, true);
     h += group('partial', 'warn', 'נרשמו — חסר שלב חובה', 'אימתו מייל אבל לא סיימו. בכניסה הבאה הם יישאלו שוב אוטומטית', by.partial,
       '<th>מה חסר</th>', function (t) { return '<td>' + t.missing.map(function (m) { return '<span class="chip miss">' + esc(m) + '</span>'; }).join('') + '</td>'; }, true);
@@ -272,11 +298,12 @@
   box.innerHTML = '<h2 class="rg-h2">תקלות רישום — 3 ימים אחרונים</h2>' +
     '<p style="margin:0 0 10px;color:var(--text-2);font-size:14px;">' + list.length + ' שגיאות, מתוכן <b>' + sys.length +
     '</b> תקלות מערכת (עומס, מכסה, שגיאת שרת). השאר הן טעויות רגילות של המשתמש/ת, כמו קוד שגוי. אם מורה לא הגיע/ה לשרת בכלל (אין אינטרנט), זה לא יופיע כאן.</p>' +
-    (list.length ? '<div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>מתי</th><th>מורה</th><th>בית ספר</th><th>שלב</th><th>מה קרה</th></tr></thead><tbody>' +
+    (list.length ? '<div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>מתי</th><th>מורה</th><th>בית ספר</th><th>שלב</th><th>מה קרה</th><th></th></tr></thead><tbody>' +
       list.map(function (x) {
         var k = ERR_HE[x.error] || ['miss', x.error ? 'שגיאת שרת: ' + x.error.replace(/^exception:\s*/, '') : 'שגיאה (לא נרשם פירוט)'];
         return '<tr><td class="num">' + fmt(x.at) + '</td><td>' + esc(x.name || x.id || '—') + '</td><td>' + esc(x.schoolName) + '</td><td>' +
-          esc(ACT_HE[x.action] || x.action) + '</td><td><span class="chip ' + k[0] + '">' + esc(k[1]) + '</span></td></tr>';
+          esc(ACT_HE[x.action] || x.action) + '</td><td><span class="chip ' + k[0] + '">' + esc(k[1]) + '</span></td><td>' +
+          (x.error === 'bad_input' ? '' : helpMailLink(x, x.error)) + '</td></tr>';
       }).join('') + '</tbody></table></div></div>' : '<div class="empty" style="padding:18px;">אין תקלות רשומות.</div>');
 })();
 </script>

@@ -5986,6 +5986,9 @@ function registrationErrors(p) {
   const log = readAll('audit_log');
   const byId = {};
   readAll('teachers').forEach(t => { byId[String(t.id)] = t; });
+  /* המייל שאליו נשלח הקוד האחרון (30.9.26) — לכפתור "מייל עזרה" בדף המעקב, רק למטה */
+  const lastMail = {};
+  try { readAll('teacher_codes').forEach(c => { if (c.email) lastMail[String(c.teacherId)] = String(c.email); }); } catch (e) {}
   const out = [];
   for (let i = log.length - 1; i >= 0 && out.length < 150; i--) {
     const r = log[i];
@@ -5997,7 +6000,8 @@ function registrationErrors(p) {
     const t = byId[id];
     out.push({ at: at, action: String(r.action), error: String(r.notes || ''), id: id,
       name: t ? String(t.name || '') : (id.indexOf('new_') === 0 ? '(מורה חדש/ה — טרם נוצר/ה)' : ''),
-      schoolName: t ? String(t.schoolName || '') : '' });
+      schoolName: t ? String(t.schoolName || '') : '',
+      email: lastMail[id] || (t ? String(t.email || '') : '') });
   }
   return { ok: true, data: out };
 }
