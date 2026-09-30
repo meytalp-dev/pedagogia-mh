@@ -370,7 +370,8 @@ const GATE_ERRORS = {
   cooldown: 'נשלח קוד ממש עכשיו. המתינו דקה ונסו שוב.',
   quota: 'לא ניתן לשלוח קוד כרגע. נסו שוב מחר, או פנו למדריכ/ה שלכם.',
   not_found: 'לא נמצאה רשומה מתאימה. פנו למדריכ/ה שלכם.',
-  expired: 'הקוד פג תוקף. בקשו קוד חדש.',
+  expired: 'הקוד פג תוקף (הוא תקף ל-20 דקות). בקשו קוד חדש.',
+  used: 'הקוד הזה כבר שימש לכניסה. בקשו קוד חדש.',
   wrong_code: 'הקוד שגוי. בדקו ונסו שוב.',
   too_many: 'יותר מדי ניסיונות. בקשו קוד חדש.',
   bad_input: 'הפרטים אינם תקינים.',
@@ -469,20 +470,33 @@ async function onGateEnter() {
   ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = true; });
   if ($g('tg-fix-link')) $g('tg-fix-link').hidden = true;
   btn.hidden = true;
+  // hotmail/outlook חוסמים לעיתים את המיילים שלנו (אין SPF לדומיין השולח) — מזהירים מראש
+  const ms = /@(hotmail|outlook|live|msn)\./i.test(email);
+  const warn = $g('tg-mswarn');
+  if (warn) {
+    warn.hidden = !ms;
+    warn.textContent = ms ? 'שימו לב: כתובות hotmail / outlook חוסמות לפעמים את המיילים שלנו. אם הקוד לא הגיע תוך 5 דקות (גם בדואר הזבל), לחצו "לא הגיע? חזרה ושליחה חוזרת" והירשמו עם כתובת אחרת, למשל Gmail.' : '';
+  }
   gateMsg('שלחנו קוד בן 6 ספרות ל-' + email + '. הוא תקף ל-20 דקות.' +
     (gateChangeEmail ? ' אחרי האימות זו תהיה הכתובת שלך במערכת.' : ''), true);
   $g('tg-code').focus();
 }
 
+/* מייל שונה מהרשום (30.9.26): בטבלת התקלות מורים ניסו שוב ושוב עם אותה כתובת —
+   לא הבינו את ההודעה ולא ראו את הכפתור. עכשיו: הסבר קצר ושני כפתורים ברורים. */
 function offerEmailChange(hint) {
-  gateMsg('המייל שרשום אצלנו שונה' + (hint ? ' (' + hint + ')' : '') + '. ' +
-    'אם יש לך גישה אליו — כתבו אותו. אם המייל שלך השתנה, אפשר לעדכן:');
+  gateMsg('בית הספר רשם עבורך כתובת מייל אחרת' + (hint ? ': ' + hint : '') + '. מה עושים?');
   const m = $g('tg-msg');
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'tg-change';
-  b.textContent = 'המייל שלי השתנה — שליחת קוד לכתובת שכתבתי';
+  b.textContent = 'הכתובת שכתבתי היא הנכונה — שלחו אליה את הקוד';
   b.onclick = () => { gateChangeEmail = true; onGateEnter(); };
   m.appendChild(b);
+  const a = document.createElement('button');
+  a.type = 'button'; a.className = 'tg-change alt';
+  a.textContent = 'יש לי גישה לכתובת הרשומה — אכתוב אותה';
+  a.onclick = () => { gateMsg(''); const e = $g('tg-email'); e.value = ''; e.focus(); };
+  m.appendChild(a);
 }
 
 // שלב 2 — אימות הקוד. רק כאן נפתחת הדלת.
@@ -518,6 +532,7 @@ async function onGateResend() {
   gateStep(1);
   ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = false; });
   gatePendingId = ''; gateChangeEmail = false;
+  if ($g('tg-mswarn')) $g('tg-mswarn').hidden = true;
   showFix(!$g('tg-fix').hidden);
   $g('tg-enter').hidden = false;
   $g('tg-code').value = '';

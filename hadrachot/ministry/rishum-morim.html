@@ -176,7 +176,17 @@
     };
     h += '<h2 class="rg-h2">לפי מצב</h2>';
     h += group('started', 'warn', 'התחילו ולא אימתו את המייל', 'קיבלו קוד ולא הזינו אותו — כדאי להזכיר לבדוק בספאם ולנסות שוב', by.started,
-      '<th>קוד נשלח</th>', function (t) { return '<td class="num">' + fmt(t.sentAt) + '</td>'; }, true);
+      '<th>קוד נשלח</th><th>נשלח לכתובת</th><th>קודים</th>', function (t) {
+        /* לאן נשלח הקוד (30.9.26) — hotmail/outlook חוסמים לפעמים; כתובת עם טעות הקלדה
+           נראית כאן מיד. כמה קודים = כמה פעמים ניסה/תה. */
+        var m = String(t.sentMail || '');
+        var ms = /@(hotmail|outlook|live|msn)\./i.test(m);
+        var typo = /@(gmial|gamil|gmai|gmal|gnail|gmail\.co$|gmail\.con|hotmial|hotmal)/i.test(m);
+        return '<td class="num">' + fmt(t.sentAt) + '</td><td dir="ltr" style="text-align:right">' + esc(m || '—') +
+          (ms ? ' <span class="chip warn">hotmail/outlook — ייתכן שנחסם</span>' : '') +
+          (typo ? ' <span class="chip miss">נראה כמו טעות הקלדה</span>' : '') +
+          '</td><td class="num">' + (t.sentCount || '') + '</td>';
+      }, true);
     h += group('partial', 'warn', 'נרשמו — חסר שלב חובה', 'אימתו מייל אבל לא סיימו. בכניסה הבאה הם יישאלו שוב אוטומטית', by.partial,
       '<th>מה חסר</th>', function (t) { return '<td>' + t.missing.map(function (m) { return '<span class="chip miss">' + esc(m) + '</span>'; }).join('') + '</td>'; }, true);
     h += group('nofile', 'warn', 'סיימו — בלי אישור השתלמות', 'ענו שעברו או שנרשמו להשתלמות, ולא צירפו אישור (רשות)', noFile,
@@ -241,6 +251,7 @@
     cooldown: ['neu', 'ביקש/ה קוד שוב תוך דקה'], quota: ['miss', 'מכסת המיילים היומית'],
     wrong_code: ['neu', 'קוד שגוי'], expired: ['neu', 'קוד פג תוקף / כבר נוצל'], too_many: ['warn', 'יותר מדי ניסיונות'],
     email_mismatch: ['info', 'מייל שונה מהרשום'], not_found: ['miss', 'הרשומה לא נמצאה'], bad_input: ['neu', 'פרטים לא תקינים'],
+    used: ['neu', 'הקוד כבר שימש'],
     bad_key: ['neu', 'מפתח כניסה פג']
   };
   var ACT_HE = { 'teacher.codeSend': 'שליחת קוד', 'teacher.codeVerify': 'אימות קוד', 'teacher.training': 'שאלת ההשתלמות', 'teacher.self': 'כניסה' };

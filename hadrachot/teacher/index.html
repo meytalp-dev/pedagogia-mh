@@ -43,9 +43,12 @@
   .tg-sugg button.none { justify-content: center; background: transparent; border-style: dashed; color: #5C7182; }
   .tg-fix-link { margin-top: 6px; padding: 0; border: 0; background: none; color: #1A5365; font-size: 12.5px;
     text-decoration: underline; cursor: pointer; font-family: inherit; }
-  .tg-change { display: block; width: 100%; margin-top: 10px; padding: 10px 14px; border-radius: 10px;
-    border: 1px solid #1A5365; background: #fff; color: #1A5365; font-weight: 700; font-size: 14px;
+  .tg-change { display: block; width: 100%; margin-top: 10px; padding: 12px 14px; border-radius: 10px;
+    border: 0; background: #1A5365; color: #fff; font-weight: 700; font-size: 15px;
     cursor: pointer; font-family: inherit; }
+  .tg-change.alt { background: #fff; color: #1A5365; border: 1px solid #1A5365; font-size: 14px; }
+  .tg-warn { margin-top: 10px; font-size: 13px; line-height: 1.6; border-radius: 9px; padding: 9px 11px;
+    background: #FFF3DC; color: #7a4f00; border: 1px solid #F0C878; }
   .tg-btn { width: 100%; margin-top: 16px; }
   .tq-note { width: 100%; box-sizing: border-box; resize: vertical; min-height: 58px; font-family: inherit; font-size: 14px; line-height: 1.5; }
   .tg-wait { margin: -8px 0 16px; font-size: 13px; line-height: 1.6; color: #6b4a0f;
@@ -393,7 +396,8 @@
         <label class="tg-label" for="tg-code">הקוד בן 6 הספרות שקיבלת במייל</label>
         <input class="input tg-code" id="tg-code" inputmode="numeric" maxlength="6"
                autocomplete="one-time-code" placeholder="000000">
-        <div class="tg-why">לא מוצאים? כדאי לבדוק גם בתיקיית הספאם / קידומי מכירות.</div>
+        <div class="tg-why" id="tg-mailhint"><b>לא מוצאים את המייל?</b> הוא נשלח מ<b>"מנור · משרד העבודה"</b> עם הכותרת <b>"קוד הכניסה שלך — מנור"</b>. חפשו את המילה "מנור" בתיבה, ובדקו גם בספאם / דואר זבל ובלשונית "קידומי מכירות". לפעמים לוקח לו כמה דקות להגיע.</div>
+        <div class="tg-warn" id="tg-mswarn" hidden></div>
         <button type="button" class="btn btn-primary tg-btn" id="tg-verify">סיום ההרשמה</button>
         <button type="button" class="tg-exit" id="tg-resend">לא הגיע? חזרה ושליחה חוזרת</button>
       </div>
@@ -727,7 +731,7 @@
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20260929f"></script>
+<script src="dashboard.js?v=20260930a"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>

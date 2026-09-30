@@ -4938,7 +4938,24 @@ function teacherCodeVerify(p) {
     if (new Date(r.expiresAt).getTime() < now) continue;
     hit = i; break;
   }
-  if (hit < 0) return { ok: false, error: 'expired' };
+  if (hit < 0) {
+    /* קוד שכבר נוצל (30.9.26): בטבלת התקלות הופיעו מורים עם "קוד פג תוקף" — ייתכן
+       שהקוד כבר אומת (לחיצה שנייה, או תשובה שאבדה בדרך). אם אותו קוד נכון נוצל
+       ב-15 הדקות האחרונות על ידי אותה רשומה — מכניסים שוב במקום שגיאה. מורה חדש/ה
+       (new_) לא נכלל/ת: הרשומה כבר נוצרה במזהה אחר. */
+    let last = null;
+    for (let i = rows.length - 1; i >= 0; i--) {
+      if (String(rows[i].teacherId) === id) { last = rows[i]; break; }
+    }
+    const u = last && last.usedAt;
+    const usedMs = !u ? 0 : Object.prototype.toString.call(u) === '[object Date]' ? u.getTime() : new Date(String(u)).getTime();
+    if (usedMs && id.indexOf('new_') !== 0 && now - usedMs < 15 * 60000 &&
+        meetSafeEqual_(last.codeHash, meetHmacHex_('tcode:' + id + ':' + code))) {
+      const t0 = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
+      if (t0) return { ok: true, data: { key: teacherKeyRemember_(id), id: id, name: t0.name || '', again: true } };
+    }
+    return { ok: false, error: usedMs ? 'used' : 'expired' };
+  }
   const row = rows[hit];
   if (Number(row.tries || 0) >= TEACHER_CODE_MAX_TRIES) return { ok: false, error: 'too_many' };
 
@@ -5859,6 +5876,9 @@ function registrationData_() {
   let codes = [];
   try { codes = readAll('teacher_codes'); } catch (e) { codes = []; }
   const sent = {}, verified = {};
+  /* לאן נשלח הקוד האחרון וכמה קודים (30.9.26) — כדי לזהות מי תקוע/ה: hotmail
+     שחוסם, טעות הקלדה בכתובת, או כמה בקשות חוזרות. רק ל-registration.status (מטה). */
+  const sentMail = {}, sentN = {};
   const pendingNew = {};
   codes.forEach(c => {
     const id = String(c.teacherId || '');
@@ -5866,21 +5886,24 @@ function registrationData_() {
     if (id.indexOf('new_') === 0) {
       if (!used) {
         const p = pendingNew[id] || (pendingNew[id] = { name: String(c.newName || ''), school: String(c.newSchool || ''),
-          subject: String(c.newSubject || ''), sentAt: '' });
-        if (created > p.sentAt) p.sentAt = created;
+          subject: String(c.newSubject || ''), sentAt: '', sentMail: '', sentCount: 0 });
+        if (created > p.sentAt) { p.sentAt = created; p.sentMail = String(c.email || ''); }
+        p.sentCount++;
       } else delete pendingNew[id];
       return;
     }
-    if (created && (!sent[id] || created > sent[id])) sent[id] = created;
+    if (created && (!sent[id] || created > sent[id])) { sent[id] = created; sentMail[id] = String(c.email || ''); }
+    if (created) sentN[id] = (sentN[id] || 0) + 1;
     if (used && (!verified[id] || used > verified[id])) verified[id] = used;
   });
   // אימות של אדם אחד תקף לכל השורות שלו באותו בית ספר
   const personKey = t => String(t.school) + '|' + String(t.name || '').replace(/\s+/g, ' ').trim();
-  const personVer = {}, personSent = {};
+  const personVer = {}, personSent = {}, personMail = {}, personN = {};
   teachers.forEach(t => {
     const k = personKey(t), id = String(t.id);
     if (verified[id] && (!personVer[k] || verified[id] > personVer[k])) personVer[k] = verified[id];
-    if (sent[id] && (!personSent[k] || sent[id] > personSent[k])) personSent[k] = sent[id];
+    if (sent[id] && (!personSent[k] || sent[id] > personSent[k])) { personSent[k] = sent[id]; personMail[k] = sentMail[id]; }
+    if (sentN[id]) personN[k] = (personN[k] || 0) + sentN[id];
   });
   const schoolName = {};
   readAll('schools').forEach(s => { schoolName[String(s.id)] = String(s.name || ''); });
@@ -5911,6 +5934,7 @@ function registrationData_() {
       sector: String(t.sector || 'kelali'), units: String(t.units || ''),
       tracks: rows.map(r => r.type === 'gemer' ? 'gemer' : 'bagrut'),
       state: state, missing: missing, verifiedAt: ver, sentAt: snt,
+      sentMail: state === 'started' ? (personMail[pk] || '') : '', sentCount: state === 'started' ? (personN[pk] || 0) : 0,
       trainingStatus: trainingStatus, unitsSelf: unitsSelf,
       noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile'),
       trainingNote: String(pick('trainingNote') || ''),
@@ -5920,7 +5944,8 @@ function registrationData_() {
   const pending = Object.keys(pendingNew).map(id => {
     const p = pendingNew[id];
     return { id: id, name: p.name, school: p.school, schoolName: schoolName[p.school] || '', subject: p.subject,
-      state: 'started', missing: [], sentAt: p.sentAt, newTeacher: true, tracks: ['bagrut'] };
+      state: 'started', missing: [], sentAt: p.sentAt, sentMail: p.sentMail, sentCount: p.sentCount,
+      newTeacher: true, tracks: ['bagrut'] };
   });
   return out.concat(pending);
 }
