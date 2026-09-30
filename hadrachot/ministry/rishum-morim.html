@@ -194,10 +194,21 @@
       'אם משהו עדיין לא מסתדר — פשוט להשיב למייל הזה, ונעזור.\n\nבברכה,\nצוות מנור · המנהל להכשרה מקצועית · משרד העבודה';
     return { to: mail, subject: 'ההרשמה שלך למנור — מה קרה ואיך ממשיכים', html: html, text: text };
   }
+  /* בנייד (30.9.26): קישור הכתיבה של Gmail נפתח כאתר ולא כטיוטה, וגם location.href
+     ל-mailto מתוך סקריפט לא נפתח בכל דפדפן. לכן בנייד הכפתור הוא קישור mailto רגיל —
+     הטלפון פותח את אפליקציית המייל עם נמען, נושא ונוסח מלא. */
+  var MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    !!(window.matchMedia && matchMedia('(pointer:coarse)').matches && innerWidth < 900);
+  function mailtoHref(h) {
+    return 'mailto:' + encodeURIComponent(h.to).replace(/%40/g, '@') +
+      '?subject=' + encodeURIComponent(h.subject) + '&body=' + encodeURIComponent(h.text);
+  }
   function helpMailLink(t, err, ctx) {
     var m = String(t.email || t.sentMail || '');
     if (!/@/.test(m)) return '';
-    HELP.push(helpContent(t, err, ctx));
+    var h = helpContent(t, err, ctx);
+    if (MOBILE) return '<a class="rg-copy" style="text-decoration:none;display:inline-block" href="' + esc(mailtoHref(h)) + '">מייל עזרה</a>';
+    HELP.push(h);
     return '<button type="button" class="rg-copy" data-help="' + (HELP.length - 1) + '">מייל עזרה</button>';
   }
   function helpToast(text) {
@@ -216,17 +227,6 @@
     e.preventDefault(); e.stopPropagation();
     var h = HELP[Number(b.dataset.help)];
     if (!h) return;
-    /* בנייד (30.9.26): כתובת הכתיבה של Gmail נפתחת כאתר מוזר ולא כטיוטה, וההעתקה
-       המעוצבת לא עובדת. mailto פותח את אפליקציית המייל עם נמען, נושא ונוסח מלא;
-       אפליקציית Gmail מיישרת עברית לימין לבד. */
-    var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
-      (window.matchMedia && matchMedia('(pointer:coarse)').matches && innerWidth < 900);
-    if (mobile) {
-      location.href = 'mailto:' + encodeURIComponent(h.to).replace(/%40/g, '@') +
-        '?subject=' + encodeURIComponent(h.subject) + '&body=' + encodeURIComponent(h.text);
-      helpToast('נפתחת אפליקציית המייל עם הנוסח המוכן. ודאי שהשליחה מהחשבון mlypeleg@gmail.com.');
-      return;
-    }
     // העתקה מעוצבת (ימין לשמאל) — execCommand סינכרוני, לפני שחלון Gmail לוקח את הפוקוס
     var box = document.createElement('div');
     box.contentEditable = 'true'; box.innerHTML = h.html;
