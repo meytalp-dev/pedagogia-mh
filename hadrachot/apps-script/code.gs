@@ -4931,6 +4931,20 @@ function teacherCodeVerify(p) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('teacher_codes');
   const rows = readAll('teacher_codes');
   const now = Date.now();
+  /* כניסה חוזרת: אותו קוד נכון שכבר נוצל ב-15 הדקות האחרונות (לא למורה חדש/ה) */
+  const usedMs_ = u => !u ? 0 : Object.prototype.toString.call(u) === '[object Date]' ? u.getTime() : new Date(String(u)).getTime();
+  const reenter_ = function () {
+    if (id.indexOf('new_') === 0) return null;
+    const h = meetHmacHex_('tcode:' + id + ':' + code);
+    for (let i = rows.length - 1; i >= 0; i--) {
+      const r = rows[i], ms = usedMs_(r.usedAt);
+      if (String(r.teacherId) !== id || !ms || now - ms >= 15 * 60000) continue;
+      if (!meetSafeEqual_(r.codeHash, h)) continue;
+      const t0 = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
+      return t0 ? { ok: true, data: { key: teacherKeyRemember_(id), id: id, name: t0.name || '', again: true } } : null;
+    }
+    return null;
+  };
   let hit = -1;
   for (let i = rows.length - 1; i >= 0; i--) {
     const r = rows[i];
@@ -4943,28 +4957,36 @@ function teacherCodeVerify(p) {
        שהקוד כבר אומת (לחיצה שנייה, או תשובה שאבדה בדרך). אם אותו קוד נכון נוצל
        ב-15 הדקות האחרונות על ידי אותה רשומה — מכניסים שוב במקום שגיאה. מורה חדש/ה
        (new_) לא נכלל/ת: הרשומה כבר נוצרה במזהה אחר. */
+    const again = reenter_();
+    if (again) return again;
     let last = null;
     for (let i = rows.length - 1; i >= 0; i--) {
       if (String(rows[i].teacherId) === id) { last = rows[i]; break; }
     }
-    const u = last && last.usedAt;
-    const usedMs = !u ? 0 : Object.prototype.toString.call(u) === '[object Date]' ? u.getTime() : new Date(String(u)).getTime();
-    if (usedMs && id.indexOf('new_') !== 0 && now - usedMs < 15 * 60000 &&
-        meetSafeEqual_(last.codeHash, meetHmacHex_('tcode:' + id + ':' + code))) {
-      const t0 = readAll('teachers').filter(function (x) { return String(x.id) === id; })[0];
-      if (t0) return { ok: true, data: { key: teacherKeyRemember_(id), id: id, name: t0.name || '', again: true } };
-    }
-    return { ok: false, error: usedMs ? 'used' : 'expired' };
+    return { ok: false, error: last && last.usedAt ? 'used' : 'expired' };
   }
-  const row = rows[hit];
-  if (Number(row.tries || 0) >= TEACHER_CODE_MAX_TRIES) return { ok: false, error: 'too_many' };
+  if (Number(rows[hit].tries || 0) >= TEACHER_CODE_MAX_TRIES) return { ok: false, error: 'too_many' };
 
+  /* כל קוד בתוקף מתקבל (30.9.26): כשהשרת איטי מורים לוחצים "שליחת קוד" פעמיים, מקבלים
+     שני מיילים ומזינים את הקוד מהראשון — ועד היום רק הקוד האחרון נבדק, כך שקוד אמיתי
+     נדחה כ"קוד שגוי" (אחמד עבד אלרחים, שפרעם). הניסיונות נספרים על הקוד האחרון. */
+  const want = meetHmacHex_('tcode:' + id + ':' + code);
+  let match = -1;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const r = rows[i];
+    if (String(r.teacherId) !== id || r.usedAt) continue;
+    if (new Date(r.expiresAt).getTime() < now) continue;
+    if (meetSafeEqual_(r.codeHash, want)) { match = i; break; }
+  }
   const headers = SCHEMA['teacher_codes'];
-  const rowNum = hit + 2;   // שורה 1 = כותרות
-  if (!meetSafeEqual_(row.codeHash, meetHmacHex_('tcode:' + id + ':' + code))) {
-    sheet.getRange(rowNum, headers.indexOf('tries') + 1).setValue(Number(row.tries || 0) + 1);
+  if (match < 0) {
+    const again = reenter_();
+    if (again) return again;
+    sheet.getRange(hit + 2, headers.indexOf('tries') + 1).setValue(Number(rows[hit].tries || 0) + 1);
     return { ok: false, error: 'wrong_code' };
   }
+  const row = rows[match];
+  const rowNum = match + 2;   // שורה 1 = כותרות
   sheet.getRange(rowNum, headers.indexOf('usedAt') + 1).setValue(new Date().toISOString());
 
   // מורה חדש/ה (29.9.26) — נוצר/ת רק עכשיו, אחרי שהמייל הוכח
