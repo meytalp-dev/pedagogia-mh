@@ -1141,7 +1141,10 @@ function handleRequest(params) {
     /* קוד השגיאה ביומן (29.9.26): עד היום נרשם רק "error" — ואחרי דיווח על
        "תקלה רגעית" אי אפשר היה לדעת אם זה busy, cooldown, quota או משהו אחר.
        בפעולות מורה נרשם גם המזהה (tch_…/new_…, בלי שם ובלי מייל). */
-    const errNote = result && !result.ok ? String(result.error || 'unknown').slice(0, 200) : '';
+    let errNote = result && !result.ok ? String(result.error || 'unknown').slice(0, 200) : '';
+    /* בשליחת קוד שנכשלה נשמרת גם הכתובת שהוקלדה (30.9.26) — כך "מייל עזרה" יוצא
+       לכתובת שהמורה באמת משתמש/ת בה, ולא לכתובת הישנה שבית הספר מסר */
+    if (errNote && action === 'teacher.codeSend' && params.email) errNote += ' | ' + String(params.email).trim().slice(0, 120);
     const tgt = /^(teacher|notes)\./.test(action) ? String(params.id || '').slice(0, 60) : '';
     if (READ_ONLY_RE_.test(action)) {
       // קריאה מוצלחת לא נרשמת ביומן; קריאה שנכשלה כן
@@ -5998,10 +6001,12 @@ function registrationErrors(p) {
     if (String(r.status) !== 'error' || !/^teacher\./.test(String(r.action))) continue;
     const id = String(r.targetId || '');
     const t = byId[id];
-    out.push({ at: at, action: String(r.action), error: String(r.notes || ''), id: id,
+    const parts = String(r.notes || '').split(' | ');
+    out.push({ at: at, action: String(r.action), error: parts[0], tried: parts[1] || '', id: id,
       name: t ? String(t.name || '') : (id.indexOf('new_') === 0 ? '(מורה חדש/ה — טרם נוצר/ה)' : ''),
       schoolName: t ? String(t.schoolName || '') : '',
-      email: lastMail[id] || (t ? String(t.email || '') : '') });
+      email: parts[1] || lastMail[id] || (t ? String(t.email || '') : ''),
+      schoolMail: parts[1] && t && t.email && String(t.email).toLowerCase() !== parts[1].toLowerCase() ? teacherMaskMail_(String(t.email)) : '' });
   }
   return { ok: true, data: out };
 }
