@@ -41,8 +41,15 @@ const ADMIN_KEY_ = /^[a-f0-9]{24}$/.test(TS.urlParam('ak', '')) ? TS.urlParam('a
 /* קישור אישי מהמייל (28.9.26): teacher/?tk=<מפתח> — התזכורת והמיילים מהמדריכ/ה
    נשלחים לתיבה של המורה, ולכן הקישור בהם הוא הכניסה עצמה. נשמר במכשיר כמו כניסה בקוד. */
 const MAIL_KEY_ = !ADMIN_KEY_ && /^[a-f0-9]{24}$/.test(TS.urlParam('tk', '')) ? TS.urlParam('tk', '') : '';
-let teacherKey = ADMIN_KEY_ || MAIL_KEY_ || (savedForOther_ ? '' : ((savedIdentity() || {}).k || ''));
-let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? '' : teacherKey ? (savedIdentity() || {}).id
+/* 30.9.26 (החלטת מיטל): גם קישור מהמייל עובר קוד במייל בפעם הראשונה במכשיר.
+   המפתח שבקישור פותח את הדף ישירות רק אם המכשיר כבר אומת עם אותו מפתח; אחרת
+   הוא רק ממלא מראש את טופס ההרשמה (בית ספר · מקצוע · שם), ומשם מייל → קוד →
+   השתלמות, כמו כל מורה. */
+const MAIL_KEY_VERIFIED_ = !!MAIL_KEY_ && String((savedIdentity() || {}).k || '') === MAIL_KEY_;
+let teacherKey = ADMIN_KEY_ || (MAIL_KEY_ ? (MAIL_KEY_VERIFIED_ ? MAIL_KEY_ : '')
+  : (savedForOther_ ? '' : ((savedIdentity() || {}).k || '')));
+let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? (MAIL_KEY_VERIFIED_ ? (savedIdentity() || {}).id || '' : '')
+  : teacherKey ? (savedIdentity() || {}).id
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
 
@@ -143,8 +150,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       (NEXT_MIFGASH_ ? '?next=mifgash&g=' + encodeURIComponent(NEXT_MIFGASH_) : '');
   });
   /* כל כניסה בלי מפתח חתום עוברת בהרשמה (24.9.26, החלטת מיטל): המורה מקליד/ה מייל
-     ומאמת/ת בקוד, וכך המייל נאסף לכרטיס. קישור ישן עם ?id= רק ממלא מראש את הטופס. */
-  if (!teacherKey && !DEMO_) { await showGate(urlTeacherId_ || teacherId); return; }
+     ומאמת/ת בקוד, וכך המייל נאסף לכרטיס. קישור ישן עם ?id= רק ממלא מראש את הטופס,
+     וכך גם קישור מהמייל (?tk=) במכשיר שעוד לא אומת (30.9.26). */
+  if (!teacherKey && !DEMO_) {
+    let pre = urlTeacherId_ || teacherId;
+    if (MAIL_KEY_ && !pre) {
+      try { const r = await TS.api('teacher.self', { k: MAIL_KEY_ }, { cache: 'no' }); pre = (r && r.ok && r.data) || ''; }
+      catch (e) { pre = ''; }
+      try { history.replaceState(null, '', location.pathname); } catch (e) { /* לא חוסם */ }
+    }
+    await showGate(pre);
+    return;
+  }
   if (savedIdentity() && exit && !DEMO_ && !ADMIN_KEY_) exit.hidden = false;
   if (ADMIN_KEY_) {
     const bar = document.createElement('div');
@@ -193,10 +210,13 @@ async function showGate(prefillId) {
   if (prefillId) await prefillGate(prefillId);
 }
 
-/* קישור ישן עם ?id= — בוחרים מראש בית ספר, מקצוע ושם; המייל והקוד עדיין נדרשים */
+/* קישור ישן עם ?id= (או רשומת המורה מקישור המייל) — בוחרים מראש בית ספר, מקצוע
+   ושם; המייל והקוד עדיין נדרשים */
 async function prefillGate(id) {
-  let t = null;
-  try { const r = await TS.api('teacher.get', { id: id }, { cache: 'no' }); t = r && r.data; } catch (e) { t = null; }
+  let t = typeof id === 'object' ? id : null;
+  if (!t) {
+    try { const r = await TS.api('teacher.get', { id: id }, { cache: 'no' }); t = r && r.data; } catch (e) { t = null; }
+  }
   if (!t || !t.school) return;
   $g('tg-school').value = t.school;
   await onGateSchool();
