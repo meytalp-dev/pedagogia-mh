@@ -95,12 +95,18 @@
   var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
   var sk = '';
   try { var st = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); sk = (st && st.k) || ''; } catch (e) {}
+  /* תקלות הרישום נטענות במקביל (30.9.26) — השרת איטי, ובלי זה הקטע הופיע רק
+     אחרי שכל הדף נטען, ועד אז לא נראה כלום בתחתית */
+  var errBox = document.getElementById('rg-errs');
+  errBox.innerHTML = '<h2 class="rg-h2">תקלות רישום — 3 ימים אחרונים</h2><div class="empty" style="padding:18px;">טוען את התקלות… (השרת איטי כרגע — עד דקה או שתיים)</div>';
+  var errPromise = TS.api('registration.errors', { sk: sk }, { cache: 'no' });
   var res = await TS.api('registration.status', { sk: sk }, { cache: 'no' });
   if (!res || !res.ok) {
     root.innerHTML = '<div class="rg-err">' + (res && res.error === 'forbidden'
       ? 'הדף פתוח רק לכניסת מטה. היכנסי דרך דף הבית של מנור ונסי שוב.'
       : 'הטעינה נכשלה (השרת עמוס). רענני את הדף בעוד רגע.') + '</div>';
     document.getElementById('rg-sub').textContent = '';
+    errBox.innerHTML = '';
     return;
   }
   var all = res.data || [];
@@ -239,7 +245,7 @@
   };
   var ACT_HE = { 'teacher.codeSend': 'שליחת קוד', 'teacher.codeVerify': 'אימות קוד', 'teacher.training': 'שאלת ההשתלמות', 'teacher.self': 'כניסה' };
   var box = document.getElementById('rg-errs');
-  var er = await TS.api('registration.errors', { sk: sk }, { cache: 'no' });
+  var er = await errPromise;
   if (!er || !er.ok) {
     box.innerHTML = '<h2 class="rg-h2">תקלות רישום — 3 ימים אחרונים</h2><div class="rg-err">לא הצלחתי לטעון את התקלות. רענני את הדף בעוד רגע.</div>';
     return;
