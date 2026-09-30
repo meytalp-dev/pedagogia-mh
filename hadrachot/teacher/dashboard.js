@@ -174,9 +174,6 @@ function gateMsg(text, ok) {
 async function showGate(prefillId) {
   $g('teacher-gate').hidden = false;
   $g('teacher-body').hidden = true;
-  /* רשימת השמות נטענת כבר עכשיו, במקביל לבחירת בית הספר (28.9.26) —
-     עד היום הטעינה התחילה רק אחרי הבחירה ונמשכה עד 36 שניות */
-  rosterPromise = TS.api('teachers.roster', {}).catch(() => null);
   const res = await TS.api('schools.list', {});
   const list = (res && res.data ? res.data : [])
     .filter(s => s.name)
@@ -230,7 +227,6 @@ function gateStep(n) {
    בוחרים בית ספר → מקצוע → שם. מורה שמלמד/ת שני מקצועות מופיע/ה בשניהם. */
 let gateSchoolRows = [];
 let gateAllRows = [];       // כל המורים בכל בתי הספר — בשביל "מקצוע אחר"
-let rosterPromise = null;
 let gatePendingId = '';     // המזהה שהשרת החזיר בשליחת הקוד (גם למורה חדש/ה)
 let gateChangeEmail = false;
 const NEW_NAME_ = '__new';
@@ -268,10 +264,10 @@ async function onGateSchool() {
   }
   subjSel.disabled = true;
   subjSel.innerHTML = '<option value="">טוען את המקצועות…</option>';
-  /* teachers.roster: שמות בלבד לכל בתי הספר, נטען מראש. אם השרת עוד לא
-     מכיר אותה או שנכשלה — חוזרים ל-teachers.list של בית הספר */
-  let res = rosterPromise ? await rosterPromise : null;
-  if (!res || !res.ok) { rosterPromise = null; res = await TS.api('teachers.list', { school: id }); }
+  /* רק בית הספר שנבחר (30.9.26): ניסיון לטעון מראש את כל בתי הספר (teachers.roster,
+     91KB) היה איטי יותר — גוגל מעבירה תשובה גדולה ב-5–38 שניות ולפעמים בדף שגיאה,
+     ורשימה של בית ספר אחד חוזרת בכ-2 שניות */
+  const res = await TS.api('teachers.list', { school: id });
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
   /* תקלה בטעינה (24.9.26): עד היום תשובה שנכשלה הוצגה כ"בבית הספר הזה עוד לא
