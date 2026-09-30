@@ -165,7 +165,10 @@
     var line = function (t) { return [t.name, t.subject, t.schoolName].join(' · '); };
     var group = function (key, cls, title, sub, list, extraHead, extraCell, open) {
       copyLists[key] = list.map(line).join('\n');
-      return '<details class="rg-grp"' + (open && list.length ? ' open' : '') + '><summary><span class="chip ' + cls + ' rg-n">' + list.length + '</span>' +
+      /* כשמסננים (בית ספר / מקצוע / מדריכ/ה / חיפוש) כל הקבוצות נפתחות — אחרת מורה
+         ב"סיימו" (סגורה כברירת מחדל) לא נראה/ית (30.9.26, בית הערבה) */
+      var filtered = f.school || f.subject || f.guide || f.q;
+      return '<details class="rg-grp"' + ((open || filtered) && list.length ? ' open' : '') + '><summary><span class="chip ' + cls + ' rg-n">' + list.length + '</span>' +
         '<h3>' + title + '<small>' + sub + '</small></h3>' + (list.length ? copyBtn(key) : '') + '</summary>' +
         (list.length ? '<div class="rg-wrap"><table class="rg-t"><thead><tr>' + cols + extraHead + '</tr></thead><tbody>' +
           list.map(function (t) {
@@ -209,7 +212,7 @@
     h += '<h2 class="rg-h2">לפי בית ספר</h2><div class="rg-grp"><div class="rg-wrap" style="border-top:0"><table class="rg-t"><thead><tr><th>בית ספר</th><th>מורים</th><th>נרשמו</th><th>סיימו</th><th>טרם נרשמו</th><th></th></tr></thead><tbody>' +
       schList.map(function (s, i) {
         copyLists['s' + i] = s.name + ' — טרם נרשמו למנור (' + s.miss.length + '):\n' + s.miss.map(function (t) { return t.name + ' · ' + t.subject; }).join('\n');
-        return '<tr><td>' + esc(s.name) + '</td><td class="num">' + s.n + '</td><td class="num"><span class="pct">' + Math.round(s.reg * 100 / s.n) + '%</span> (' + s.reg + ')</td><td class="num">' + s.done +
+        return '<tr><td><a href="#" class="rg-sch" data-sch="' + esc(s.name) + '" title="הצגת המורים של בית הספר לפי מצב">' + esc(s.name) + '</a></td><td class="num">' + s.n + '</td><td class="num"><span class="pct">' + Math.round(s.reg * 100 / s.n) + '%</span> (' + s.reg + ')</td><td class="num">' + s.done +
           '</td><td class="num">' + s.miss.length + '</td><td>' + (s.miss.length ? copyBtn('s' + i) : '') + '</td></tr>';
       }).join('') + '</tbody></table></div></div>';
 
@@ -230,6 +233,9 @@
     root.innerHTML = h;
     [['f-school', 'school'], ['f-subject', 'subject'], ['f-guide', 'guide']].forEach(function (p) {
       var s = document.getElementById(p[0]); s.onchange = function () { f[p[1]] = s.value; render(); };
+    });
+    root.querySelectorAll('.rg-sch').forEach(function (a) {
+      a.onclick = function (e) { e.preventDefault(); f.school = a.dataset.sch; render(); window.scrollTo({ top: root.offsetTop - 10, behavior: 'smooth' }); };
     });
     var q = document.getElementById('f-q'), tm = null;
     q.oninput = function () { clearTimeout(tm); tm = setTimeout(function () { f.q = q.value.trim(); render(); var e = document.getElementById('f-q'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); }, 300); };
