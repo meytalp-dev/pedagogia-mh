@@ -68,7 +68,7 @@ async function loadData() {
     (res.data || []).forEach(t => {
       const sector = t.sector || 'kelali';
       /* הצלבה של subjects×sectors לא מספיקה מאז 9.9.26: יששכר הוא תנ"ך ארצי
-         ובנוסף כל המקצועות במגזר החרדי, וליאת ארצית באנגלית ובספרות אבל לא
+         ובנוסף רבי המלל במגזר החרדי בלבד, וליאת ארצית באנגלית ובספרות אבל לא
          בעברית לדוברי ערבית. TS_inspectorCovers היא הבדיקה היחידה הנכונה. */
       if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
       const netKey = (t.network || '').toString().replace(/^net_/, '');
