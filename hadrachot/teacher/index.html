@@ -302,6 +302,23 @@
   .ti-note { margin-top: 10px; font-size: 12px; color: var(--text-muted); }
   .quick-links { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 4px; }
   .quick-links[hidden] { display: none; }
+  /* המקצועות שלי (4.10.26) */
+  .subj-bar { margin: 12px 0 4px; }
+  .subj-bar[hidden], .subj-add[hidden], .subj-msg[hidden] { display: none; }
+  .subj-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .subj-label { font-size: 13.5px; font-weight: 700; color: var(--text-2); }
+  #subj-chips { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+  .subj-chip { font-family: inherit; font-size: 13.5px; font-weight: 700; padding: 6px 14px; border-radius: 999px;
+    border: 1.5px solid #8CA68B; background: #fff; color: #2F4A2E; cursor: pointer; }
+  .subj-chip.on { background: #4E6B4D; border-color: #4E6B4D; color: #fff; cursor: default; }
+  .subj-chip:disabled:not(.on) { opacity: .6; cursor: wait; }
+  .subj-add-link { background: none; border: 0; padding: 6px 2px; font-family: inherit; font-size: 13.5px;
+    font-weight: 700; color: #4E6B4D; text-decoration: underline; cursor: pointer; }
+  .subj-add { margin-top: 10px; padding: 14px; border: 1px solid #D5E0D2; border-radius: 12px; background: #F7FAF6; max-width: 520px; }
+  .subj-add-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0; }
+  .subj-add-row .select { flex: 1 1 180px; min-width: 0; }
+  .subj-msg { margin-top: 8px; font-size: 13.5px; font-weight: 700; color: #A4452C; }
+  .subj-msg.ok { color: #2F4A2E; }
   .ql { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
     font-size: 14px; font-weight: 700; text-decoration: none; border: 1.5px solid transparent; }
   .ql svg { width: 18px; height: 18px; flex: none; }
@@ -472,6 +489,24 @@
         <!-- מכשיר משותף חייב דרך החוצה (21.9.26) -->
         <!-- קישורים מהירים (24.9.26): תוכנית הלימודים + קהילת הווטסאפ של המקצוע — quicklinks.js -->
         <div class="quick-links" id="quick-links" hidden></div>
+        <!-- המקצועות שלי (4.10.26): מתג בין המקצועות + "אני מלמד/ת גם…" — dashboard.js renderSubjects -->
+        <div class="subj-bar" id="subj-bar" hidden>
+          <div class="subj-row">
+            <span class="subj-label">המקצועות שלי:</span>
+            <span id="subj-chips"></span>
+            <button type="button" class="subj-add-link" id="subj-add-open">+ אני מלמד/ת גם מקצוע נוסף</button>
+          </div>
+          <div class="subj-add" id="subj-add" hidden>
+            <label class="tg-label" for="subj-add-sel">איזה מקצוע נוסף את/ה מלמד/ת בבית הספר?</label>
+            <div class="subj-add-row">
+              <select class="select" id="subj-add-sel"></select>
+              <button type="button" class="btn btn-primary" id="subj-add-go">הוספה</button>
+              <button type="button" class="btn btn-secondary" id="subj-add-cancel">ביטול</button>
+            </div>
+            <div class="tg-why">תופיע/י גם אצל המדריכ/ה של המקצוע הזה, עם אותו מייל. אחרי ההוספה נשאל על ההשתלמות במקצוע החדש.</div>
+            <div class="subj-msg" id="subj-msg" hidden></div>
+          </div>
+        </div>
         <button type="button" class="tour-start" data-tour-start>סיור בדף</button>
         <button type="button" class="tg-exit" id="tg-exit" hidden>זה לא אני — יציאה</button>
       </div>
@@ -731,7 +766,7 @@
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20260930a"></script>
+<script src="dashboard.js?v=20261004a"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>

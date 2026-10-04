@@ -262,6 +262,8 @@ const PUBLIC_ACTIONS = new Set([
   'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
   // שאלת ההשתלמות (28.9.26) — מפתח המורה (k) · הקישורים: מפתח בעל תפקיד/מדריכ/ה בפנים
   'teacher.training', 'training.files',
+  // מורה בשני מקצועות (4.10.26) — מפתח המורה (k) בפנים
+  'teacher.addSubject', 'teacher.subjectKey',
   // כניסת בעלי התפקידים (24.9.26) — קוד במייל או מפתח חתום; ההרשאה בפנים
   'staff.codeSend', 'staff.codeVerify', 'staff.self', 'staff.directory',
   // לוח המבטים של מטה · אדמין — ההרשאה בפנים: מפתח staff עם תפקיד ministry
@@ -911,7 +913,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.self|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count|errors))$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count|errors))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -951,7 +953,7 @@ function listTeachersCached_(p, user) {
 // ששומרת 30 דקות ומתאפסת רק בכתיבה שמשנה מורים או בתי ספר. הלקוח טוען אותה
 // כבר בפתיחת הטופס, במקביל לבחירת בית הספר.
 const ROSTER_CACHE_TTL_ = 1800;
-const ROSTER_WRITE_RE_ = /^(teachers\.|schools?\.|admin\.)/;
+const ROSTER_WRITE_RE_ = /^(teachers\.|schools?\.|admin\.|teacher\.addSubject$)/;
 
 function rosterGen_() {
   const cache = CacheService.getScriptCache();
@@ -1101,6 +1103,8 @@ function handleRequest(params) {
       case 'teacher.self':        result = teacherSelf(params); break;
       case 'teacher.here':        result = teacherHere(params); break;
       case 'teacher.training':    result = teacherTraining(params); break;
+      case 'teacher.addSubject':  result = teacherAddSubject(params); break;
+      case 'teacher.subjectKey':  result = teacherSubjectKey(params); break;
       case 'teachers.nameFixes':  result = teachersNameFixes(params); break;
       case 'teachers.nameFixApply': result = teachersNameFixApply(params); break;
       case 'teachers.merge':      result = teachersMerge(params); break;
@@ -5179,8 +5183,59 @@ function teacherSelf(p) {
     trainingStatus: String(t.trainingStatus || ''), trainingFile: String(t.trainingFile || ''),
     trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt),
     trainingNote: String(t.trainingNote || ''),
-    unitsSelf: String(t.unitsSelf || '').replace(/^'/, '')
+    unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
+    subjects: teacherSubjects_(t)
   } };
+}
+
+/* ============================================================
+   מורה בשני מקצועות (4.10.26, מיטל) — נועה יעיש, עמל עפולה: אזרחות + היסטוריה.
+   כל מקצוע הוא שורה משלו ב-teachers (כמו בהזנת בית הספר), עם מפתח משלו.
+   teacher.self מחזיר את כל השורות של אותו אדם באותו בית ספר, והדף מציג מתג
+   מקצועות. teacher.addSubject — המורה מוסיף/ה לעצמו/ה מקצוע מתוך הדף: נוצרת
+   שורה חדשה עם אותו שם, בית ספר, מגזר, מייל וטלפון. בגרות כברירת מחדל.
+   ============================================================ */
+const TEACHER_SUBJECTS_ = ['מתמטיקה', 'אנגלית', 'עברית', 'ספרות', 'היסטוריה', 'אזרחות',
+  'תנ"ך', 'ערבית', 'מורשת אסלאמית', 'מורשת דרוזית'];
+
+function teacherSubjects_(t, rows) {
+  const name = String(t.name || '').replace(/\s+/g, ' ').trim();
+  if (!name) return [];
+  const all = rows || readAll('teachers');
+  const seen = {};
+  return all.filter(x => String(x.school) === String(t.school) &&
+      String(x.name || '').replace(/\s+/g, ' ').trim() === name)
+    .map(x => ({ id: String(x.id), subject: String(x.subject || '').trim(), type: String(x.type || 'bagrut') }))
+    .filter(x => x.subject && !seen[x.subject + '|' + x.type] && (seen[x.subject + '|' + x.type] = true));
+}
+
+/* teacher.subjectKey — { k, id } → מפתח של שורה אחרת של אותו אדם (מתג המקצועות).
+   המפתח לא יוצא ב-teacher.self כדי שלא ייחשף לשווא; רק בלחיצה. */
+function teacherSubjectKey(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const id = String(p.id || '').trim();
+  if (!teacherSubjects_(t).some(x => x.id === id)) return { ok: false, error: 'not_found' };
+  return { ok: true, data: { key: teacherKeyRemember_(id), id: id } };
+}
+
+function teacherAddSubject(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const subject = String(p.subject || '').trim();
+  if (TEACHER_SUBJECTS_.indexOf(subject) < 0) return { ok: false, error: 'bad_subject' };
+  ensureTab_('teachers');
+  const cr = createTeacher({
+    school: t.school, schoolName: t.schoolName, network: t.network,
+    name: String(t.name || '').replace(/\s+/g, ' ').trim(), subject: subject, type: 'bagrut',
+    sector: t.sector || teacherSchoolSector_(t.school), email: t.email, phone: t.phone,
+    seniority: t.seniority,
+    notes: 'מקצוע נוסף — נוסף/ה בעצמו/ה במבט המורה'
+  });
+  if (!cr || !cr.ok || !cr.data) return { ok: false, error: (cr && cr.error) || 'busy_try_again' };
+  const nid = String(cr.data.id);
+  if (!cr.existed) updateRowById('teachers', nid, { selfAdded: new Date().toISOString() });
+  return { ok: true, data: { key: teacherKeyRemember_(nid), id: nid, subject: subject, existed: !!cr.existed } };
 }
 
 /* ============================================================

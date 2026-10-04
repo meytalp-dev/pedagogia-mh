@@ -73,6 +73,9 @@ if (DEMO_) {
     trainingStatus: TS.urlParam('tq', '') === '1' ? '' : 'passed',
     trainingFile: /^[12]$/.test(TS.urlParam('tq', '')) ? '' : '#' };
   if (TS.urlParam('subj', '')) SELF.subject = TS.urlParam('subj', '');
+  // &two=1 — מורה בשני מקצועות (4.10.26): מתג "המקצועות שלי"
+  if (TS.urlParam('two', '') === '1') SELF.subjects = [{ id: 'demo_t', subject: SELF.subject, type: 'bagrut' },
+    { id: 'demo_t2', subject: 'היסטוריה', type: 'bagrut' }];
   const SCOPE = { today: today, rows: [
       { meetingId: 'mt_moria_20260915', guideSlug: 'moria', date: '2026-09-15', teacherId: 'demo_t', status: 'present' }],
     hours: [], meetings: [
@@ -310,9 +313,11 @@ async function onGateSchool() {
   const subjects = [...new Set(gateSchoolRows.map(t => String(t.subject || '').trim()).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'he'));
   /* מורה חדש/ה (29.9.26) יכול/ה ללמד מקצוע שעוד אין לו מורים בבית הספר —
-     שאר המקצועות מופיעים בקבוצה נפרדת, באותו כתיב כמו בכל המערכת */
-  const others = [...new Set(gateAllRows.map(t => String(t.subject || '').trim()).filter(Boolean))]
-    .filter(x => subjects.indexOf(x) < 0).sort((a, b) => a.localeCompare(b, 'he'));
+     שאר המקצועות מופיעים בקבוצה נפרדת, באותו כתיב כמו בכל המערכת.
+     4.10.26: מאז שהטופס טוען רק את בית הספר שנבחר (30.9) הקבוצה נבנתה מאותה
+     רשימה ולכן הייתה תמיד ריקה — נועה יעיש (עמל עפולה) לא מצאה היסטוריה.
+     עכשיו מהרשימה הקבועה TS.SUBJECTS. */
+  const others = (TS.SUBJECTS || []).filter(x => subjects.indexOf(x) < 0);
   subjSel.disabled = false;
   subjSel.innerHTML = '<option value="">בחרו מקצוע</option>' +
     subjects.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('') +
@@ -1074,8 +1079,101 @@ function render() {
     ? '<span class="badge info">מודרך גם במשרד החינוך</span>'
     : '<span class="badge neutral">לא מודרך במשה"ח</span>';
 
+  renderSubjects();
+
   // Questions
   renderQuestions();
+}
+
+/* ▸ המקצועות שלי (4.10.26, מיטל) — מורה שמלמד/ת שני מקצועות (נועה יעיש: אזרחות +
+   היסטוריה). כל מקצוע הוא כרטיס נפרד בשרת עם מפתח משלו; teacher.self מחזיר את
+   רשימת הכרטיסים של אותו אדם באותו בית ספר. לחיצה על מקצוע אחר מחליפה את המפתח
+   השמור במכשיר וטוענת את הדף מחדש. "אני מלמד/ת גם…" יוצר כרטיס חדש
+   (teacher.addSubject) ועובר אליו — ושם נשאלת שאלת ההשתלמות של המקצוע החדש.
+   בצפייה של מטה (?ak=) — המתג מוצג לקריאה בלבד, בלי הוספה. */
+function renderSubjects() {
+  const bar = document.getElementById('subj-bar');
+  if (!bar || !teacher) return;
+  if (!teacherKey && !DEMO_) { bar.hidden = true; return; }
+  const list = (teacher.subjects && teacher.subjects.length) ? teacher.subjects
+    : [{ id: String(teacher.id), subject: teacher.subject, type: teacher.type }];
+  const many = list.length > 1;
+  const typeLbl = t => t === 'gemer' ? ' · גמר' : '';
+  const dupSubj = s => list.filter(x => x.subject === s).length > 1;
+  document.getElementById('subj-chips').innerHTML = list.map(x =>
+    `<button type="button" class="subj-chip${String(x.id) === String(teacher.id) ? ' on' : ''}" data-id="${esc(x.id)}">` +
+    `${esc(x.subject)}${dupSubj(x.subject) ? typeLbl(x.type) || ' · בגרות' : ''}</button>`).join('');
+  document.querySelectorAll('#subj-chips .subj-chip').forEach(b => b.addEventListener('click', () => {
+    if (b.classList.contains('on')) return;
+    switchSubject(b.dataset.id, b);
+  }));
+  const addOpen = document.getElementById('subj-add-open');
+  addOpen.hidden = !!ADMIN_KEY_;
+  bar.hidden = !many && !!ADMIN_KEY_;
+  const have = list.map(x => x.subject);
+  const sel = document.getElementById('subj-add-sel');
+  const free = (TS.SUBJECTS || []).filter(s => have.indexOf(s) < 0);
+  sel.innerHTML = '<option value="">בחרו מקצוע</option>' +
+    free.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  addOpen.onclick = () => {
+    const box = document.getElementById('subj-add');
+    box.hidden = !box.hidden;
+    subjMsg('');
+    if (!box.hidden) sel.focus();
+  };
+  document.getElementById('subj-add-cancel').onclick = () => { document.getElementById('subj-add').hidden = true; subjMsg(''); };
+  document.getElementById('subj-add-go').onclick = addSubject;
+}
+
+function subjMsg(text, ok) {
+  const m = document.getElementById('subj-msg');
+  if (!m) return;
+  m.textContent = text || '';
+  m.classList.toggle('ok', !!ok);
+  m.hidden = !text;
+}
+
+function goToTeacherCard(key, id) {
+  if (ADMIN_KEY_) {
+    location.href = location.pathname + '?ak=' + encodeURIComponent(key) + '&s=' + encodeURIComponent(teacher.school || '');
+    return;
+  }
+  const saved = savedIdentity() || {};
+  rememberIdentity({ k: key, id: id, name: teacher.name || saved.name || '',
+    school: teacher.school || saved.school || '', at: new Date().toISOString() });
+  location.replace(location.pathname);
+}
+
+async function switchSubject(id, btn) {
+  if (DEMO_) return alert('בהדמיה: כאן עוברים לכרטיס של המקצוע השני.');
+  document.querySelectorAll('#subj-chips .subj-chip').forEach(b => { b.disabled = true; });
+  if (btn) btn.textContent = 'עובר… (עד דקה)';
+  const r = await TS.api('teacher.subjectKey', { k: teacherKey, id: id }, { cache: 'no' });
+  if (!r || !r.ok || !r.data || !r.data.key) {
+    renderSubjects();
+    return alert('המעבר לא הצליח (השרת עמוס). נסו שוב בעוד רגע.');
+  }
+  goToTeacherCard(r.data.key, r.data.id);
+}
+
+async function addSubject() {
+  const sel = document.getElementById('subj-add-sel');
+  const go = document.getElementById('subj-add-go');
+  const subject = sel.value;
+  if (!subject) { sel.focus(); return subjMsg('בחרו את המקצוע הנוסף.'); }
+  if (DEMO_) return subjMsg('בהדמיה: כאן נוצר כרטיס ב' + subject + ' והדף עובר אליו.', true);
+  go.disabled = true; sel.disabled = true;
+  const label = go.textContent;
+  go.textContent = 'מוסיף… (עד דקה)';
+  subjMsg('');
+  const r = await TS.apiPost('teacher.addSubject', { k: teacherKey, subject: subject });
+  if (!r || !r.ok || !r.data || !r.data.key) {
+    go.disabled = false; sel.disabled = false; go.textContent = label;
+    return subjMsg(r && r.error === 'bad_subject' ? 'המקצוע הזה לא מוכר במערכת.'
+      : 'ההוספה לא הצליחה (השרת עמוס). נסו שוב בעוד רגע — לא תיווצר כפילות.');
+  }
+  subjMsg('נוסף ' + subject + ' ✓ עוברים לכרטיס החדש…', true);
+  goToTeacherCard(r.data.key, r.data.id);
 }
 
 function renderQuestions() {
