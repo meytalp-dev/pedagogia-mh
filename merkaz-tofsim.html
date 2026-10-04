@@ -409,7 +409,7 @@ var ACTIVE = [
             base:0, lbl:"רישומים להשתלמויות",
             extra:function(j){
               if (!j || !j.ok || !j.workshops) return "";
-              var w = j.workshops, L = {social:"חברתיים", matal:"מת״ליות", honchim:"חונכים", ped:"פדגוגיים", sherut:"שירות לאומי"}, p = [];
+              var w = j.workshops, L = {social:"חברתיים", matal:"מת״ליות", hachala:"הכלה ושילוב", honchim:"חונכים", ped:"פדגוגיים", sherut:"שירות לאומי"}, p = [];
               Object.keys(L).forEach(function(k){ if (w[k] && w[k].n) p.push(w[k].n + " " + L[k]); });
               return p.join(" · ");
             }}],
