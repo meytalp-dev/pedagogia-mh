@@ -39,6 +39,7 @@
   --g-tikshuvA-bg:#D7EEF7; --g-tikshuvA-bd:#9FD3E8; --g-tikshuvA-tx:#12617F;
   --g-tikshuvB-bg:#DFE3F7; --g-tikshuvB-bd:#B2BAE6; --g-tikshuvB-tx:#3A4694;
   --g-honchim-bg:#F5E4F3; --g-honchim-bd:#E0B6DB; --g-honchim-tx:#7C3B72;
+  --g-career-bg:#DDF4EC; --g-career-bd:#9FDCC8; --g-career-tx:#14634D;
 }
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
 .legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
@@ -69,6 +70,7 @@
 .t-tikshuvA{background:var(--g-tikshuvA-bg);border-color:var(--g-tikshuvA-bd);color:var(--g-tikshuvA-tx)}
 .t-tikshuvB{background:var(--g-tikshuvB-bg);border-color:var(--g-tikshuvB-bd);color:var(--g-tikshuvB-tx)}
 .t-honchim{background:var(--g-honchim-bg);border-color:var(--g-honchim-bd);color:var(--g-honchim-tx)}
+.t-career{background:var(--g-career-bg);border-color:var(--g-career-bd);color:var(--g-career-tx)}
 /* למי המפגש מיועד — שורה שנייה בכל צ׳יפ ובכל שורת אג׳נדה */
 .chip .aud{display:block;font-style:normal;font-size:.68rem;font-weight:600;opacity:.72;margin-top:2px}
 .ev .aud{font-weight:700;opacity:.85}
@@ -380,7 +382,7 @@
 /* ===== נתוני הלוח =====
    להוספת אירוע: מוסיפים שורה למערך EVENTS —
    {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
-   מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / yeutzi / menahal / sherut / exam / national / holiday
+   מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / career / yeutzi / menahal / sherut / exam / national / holiday
    שדה aud במסלול = למי המפגשים מיועדים (מוצג בכל צ׳יפ ובכל שורה ב״מהלך השנה״).
    שדה a באירוע דורס את aud של המסלול — למפגש שמיועד לקהל אחר.
    שדה u (לא חובה) הופך את הצ'יפ לקישור.                                     */
@@ -392,6 +394,7 @@ const TRACKS = {
   tikshuvA:{name:'תקשוב · מסלול כלים', sub:'ימי שני · 13:45–16:00', aud:'רכזי תקשוב · מסלול כלים'},
   tikshuvB:{name:'תקשוב · מסלול הובלה', sub:'ימי רביעי · 13:45–16:00', aud:'רכזי תקשוב · מסלול הובלה'},
   honchim: {name:'מורים חונכים', sub:'קורס מקוון · מכללת הרצוג', aud:'מורים חונכים של מתמחים'},
+  career:  {name:'נתיבים לקריירה', sub:'נירית ראובני · ימי רביעי בערב', aud:'מובילי תוכנית נתיבים לחניכות וקריירה'},
   yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי', aud:'יועצים ויועצות'},
   menahal: {name:'מנהלים ופיקוח', sub:'מפקח ומנהליו · מנהלי האזור', aud:'מנהלים ומפקחים'},
   sherut:  {name:'בני ובנות שירות', sub:'הכשרה שנתית', aud:'בני ובנות שירות לאומי'},
@@ -509,6 +512,17 @@ const EVENTS = [
  {t:'honchim', d:'2027-01-24', n:'יחידה 7 · תקשורת בין-אישית + פתיחת מטלת הסיום', s:'מקוון · למידה עצמית', u:'hishtalmuyot.html#honchim'},
  {t:'honchim', d:'2027-02-01', d2:'2027-02-03', n:'ימי החונכות הארציים', s:'זום · 16:00–21:00 · חובה להשתתף בלפחות יחידה אחת', u:'hishtalmuyot.html#honchim'},
  {t:'honchim', d:'2027-02-04', n:'מועד אחרון להגשת עבודת הסיום והמטלות', s:'הגשה', u:'hishtalmuyot.html#honchim'},
+
+ {t:'career', d:'2026-10-21', n:'מפגש 1 · העובד החדש ועולם העבודה', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2026-11-04', n:'מפגש 2 · תעודת הזהות התעסוקתית', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2026-11-18', n:'מפגש 3 · מקורות מידע, פנייה יזומה ומותג אישי', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2026-12-02', n:'מפגש 4 · קורות חיים והצגה עצמית', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2026-12-16', n:'מפגש 5 · ראיונות, שפת גוף וסימולציות', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2026-12-30', n:'מפגש 6 · יחסי עובד־מעסיק ואתיקה', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2027-01-13', n:'מפגש 7 · אוריינות כלכלית ותכנון קריירה', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2027-01-27', n:'מפגש 8 · זכויות עובדים, בטיחות ומוגנות', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2027-02-10', n:'מפגש 9 · חוסן וקונפליקטים', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
+ {t:'career', d:'2027-02-24', n:'מפגש 10 · נטוורקינג, פרויקט סיום וסגירת מעגל', s:'סינכרוני · 18:45–21:00', u:'hishtalmuyot.html#netivim-kariera'},
 
  {t:'sherut', d:'2026-10-12', n:'מפגש הכשרה', s:'פנים אל פנים'},
  {t:'sherut', d:'2026-12-16', n:'מפגש משותף', s:'רכזות העמותה ובית הספר'},
