@@ -4941,10 +4941,15 @@ function relaySend_(opts) {
   cache.put('relay_' + id, JSON.stringify({
     to: String(opts.to).trim(), subject: opts.subject, body: opts.body, html: opts.htmlBody, name: opts.name
   }), 120);
+  /* "הדף לא נמצא" רגעי של Apps Script (נמדד 5.10.26: עד 4 מתוך 5 ברצף) — עד שלושה ניסיונות.
+     רק כשאין תשובה קריאה; תשובה מפורשת (nomail/domain/quota) לא חוזרת. המחיר: אם אבדה
+     התשובה אחרי שהממסר כבר שלח, אותו קוד יגיע פעמיים — עדיף על קוד שלא מגיע. */
   let o = null;
-  try {
-    o = JSON.parse(UrlFetchApp.fetch(RELAY_URL + '?src=menor&id=' + id, { muteHttpExceptions: true }).getContentText());
-  } catch (e) { o = null; }
+  for (let i = 0; i < 3 && !o; i++) {
+    try {
+      o = JSON.parse(UrlFetchApp.fetch(RELAY_URL + '?src=menor&id=' + id, { muteHttpExceptions: true }).getContentText());
+    } catch (e) { o = null; Utilities.sleep(500); }
+  }
   cache.remove('relay_' + id);
   if (o && o.ok) return true;
   console.error('ממסר ג\'ימייל נכשל, נשלח מאורט: ' + (o ? o.error : 'fetch'));
