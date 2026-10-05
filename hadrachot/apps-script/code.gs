@@ -193,6 +193,7 @@ function setupSchema() {
 
 function doGet(e) {
   if (e.parameter && e.parameter.action === 'rpc.result') return rpcResult_(e.parameter.rid);
+  if (e.parameter && e.parameter.mode === 'relay') return relayPull_(e.parameter.id);
   return handleRequest(e.parameter);
 }
 
@@ -4902,7 +4903,7 @@ function teacherCodeSend(p) {
   });
 
   const name = String(t.name || '').trim();
-  MailApp.sendEmail({
+  codeMail_({
     to: email,
     subject: 'קוד הכניסה שלך — מנור',
     name: 'מנור · משרד העבודה',
@@ -4918,6 +4919,46 @@ function teacherCodeSend(p) {
       '<span style="color:#5C7182;font-size:13px">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span></div>'
   });
   return { ok: true, data: { sent: true, ttlMin: TEACHER_CODE_TTL_MIN, id: id } };
+}
+
+/* ממסר הג'ימייל לקודי כניסה (5.10.26). ל-bethaarava.ort.org.il אין SPF, ומיקרוסופט
+   (hotmail/outlook/live ובתי ספר על Exchange) דוחה ממנו מיילים — מורים עם hotmail לא קיבלו קוד.
+   לכתובות האלה הקוד יוצא מ-mlypeleg@gmail.com דרך הממסר של אדווה (רויטל\mipui-mail-gas\Relay.js,
+   src=menor). אין סוד משותף: המייל נשמר כאן שתי דקות תחת מזהה אקראי, הממסר מקבל רק את המזהה
+   ומושך את המייל ב-mode=relay. נכשל → נשלח מאורט כמו קודם.
+   הרשימה זהה ל-RELAY_TO_RE בממסר: שינוי = בשני המקומות. */
+const RELAY_URL = 'https://script.google.com/macros/s/AKfycbwt_0GIb31bC-JgEGDFXeTTQPulF9mx6rhc84BQYBiCiRNCuTlDv2BBldzzTg_kJDI-/exec';
+const MS_MAIL_RE = /@(hotmail|outlook|live|msn)\.[a-z.]+$|@(atid\.org\.il|beschool\.co\.il|snir-hermon\.co\.il|rimonimcollege\.co\.il)$/i;
+
+function codeMail_(opts) {
+  if (MS_MAIL_RE.test(String(opts.to || '').trim()) && relaySend_(opts)) return;
+  MailApp.sendEmail(opts);
+}
+
+function relaySend_(opts) {
+  const id = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
+  const cache = CacheService.getScriptCache();
+  cache.put('relay_' + id, JSON.stringify({
+    to: String(opts.to).trim(), subject: opts.subject, body: opts.body, html: opts.htmlBody, name: opts.name
+  }), 120);
+  let o = null;
+  try {
+    o = JSON.parse(UrlFetchApp.fetch(RELAY_URL + '?src=menor&id=' + id, { muteHttpExceptions: true }).getContentText());
+  } catch (e) { o = null; }
+  cache.remove('relay_' + id);
+  if (o && o.ok) return true;
+  console.error('ממסר ג\'ימייל נכשל, נשלח מאורט: ' + (o ? o.error : 'fetch'));
+  return false;
+}
+
+/* GET ?mode=relay&id= — הממסר מושך את המייל. לא נמחק במשיכה כדי שהממסר יוכל לנסות שוב
+   כשגוגל מאבד תשובה; relaySend_ מוחק אותו מיד כשהממסר עונה, ובכל מקרה הוא פג אחרי שתי דקות. */
+function relayPull_(id) {
+  id = String(id || '');
+  if (!/^[A-Za-z0-9_-]{20,64}$/.test(id)) return jsonOut({ ok: false, error: 'badid' });
+  const v = CacheService.getScriptCache().get('relay_' + id);
+  if (!v) return jsonOut({ ok: false, error: 'nomail' });
+  return jsonOut({ ok: true, mail: JSON.parse(v) });
 }
 
 // so***@gmail.com — רמז לכתובת הרשומה בלי לחשוף אותה
@@ -5765,7 +5806,7 @@ function staffCodeSend(p) {
   });
 
   const hello = who.name ? 'שלום ' + who.name + ',' : 'שלום,';
-  MailApp.sendEmail({
+  codeMail_({
     to: email,
     subject: 'קוד הכניסה שלך — מנור',
     name: 'מנור · משרד העבודה',
