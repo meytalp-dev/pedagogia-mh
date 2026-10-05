@@ -36,10 +36,12 @@ sys.stdout.reconfigure(encoding='utf-8')
 DL   = r'C:/Users/meyta/Downloads'
 SITE = os.path.join(DL, 'pedagogia-mh')
 OUT  = os.path.join(SITE, 'prisat-pikuah.html')
-X_PRISA  = os.path.join(DL, 'פריסת פיקוח 30.08.2026.xlsx')
+X_PRISA  = os.path.join(DL, 'פריסת פיקוח 05.10.2026.xlsx')
 X_SCHOOL = os.path.join(DL, 'בתי ספר תשפז מעודכן 30.08.2026.xlsx')
 X_NETS   = os.path.join(DL, 'אנשי קשר עמותות ורשתות תשפז מעודכן 10.9.2026.xlsx')
-UPDATED  = 'מעודכן ל-30.8.2026 · הנהלות הרשתות: 10.9.2026'
+UPDATED  = 'מעודכן ל-5.10.2026 · הנהלות הרשתות: 10.9.2026'
+# סמל שהשתנה בפריסה ועדיין לא ברשימת בתי הספר: סמל חדש ← סמל ישן (פרטים נלקחים מהישן)
+SEMEL_OLD = {'64101': '64104'}   # צור באהר, פריסה 5.10.2026
 
 # שם בקובץ החדש ← השם הקנוני בעמוד (ראו schools-64-canonical)
 ALIAS = {'צור באהר': 'סור באהר'}
@@ -164,7 +166,7 @@ for semel, p in prisa.items():
     if rec['name'] in used:
         sys.exit('שני מוסדות מופו לאותו שם: ' + rec['name'])
     used.add(rec['name'])
-    dt = details.get(semel)
+    dt = details.get(semel) or details.get(SEMEL_OLD.get(semel, ''))
     if not dt:
         sys.exit('סמל %s (%s) חסר ברשימת בתי הספר' % (semel, rec['name']))
     if set(dt['sups']) != set(p['sups']) or dt['ther'] != p['ther']:
