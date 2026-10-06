@@ -1117,7 +1117,7 @@ function handleRequest(params) {
       case 'staff.directory':     result = staffDirectory(params); break;
       case 'staff.teacherKey':    result = staffTeacherKey(params); break;
       case 'registration.status': result = registrationStatus(params); break;
-      case 'registration.count':  result = registrationCount(); break;
+      case 'registration.count':  result = registrationCount(params); break;
       case 'registration.errors': result = registrationErrors(params); break;
       case 'diag.timing':         result = diagTiming(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
@@ -6112,11 +6112,23 @@ function registrationErrors(p) {
   return { ok: true, data: out };
 }
 
-function registrationCount() {
+/* by=school (6.10.26) — לצ'ק ליסט המנהלים: אותם מספרים לכל בית ספר (t=סה"כ, r=נרשמו, d=סיימו).
+   מספרים בלבד, בלי שמות — ולכן נשאר ציבורי. */
+function registrationCount(p) {
   const rows = registrationData_();
   const c = { total: 0, none: 0, started: 0, partial: 0, done: 0 };
-  rows.forEach(r => { c.total++; c[r.state]++; });
+  const by = {};
+  rows.forEach(r => {
+    c.total++; c[r.state]++;
+    const s = r.schoolName || r.school;
+    if (!s) return;
+    const b = by[s] || (by[s] = { t: 0, r: 0, d: 0 });
+    b.t++;
+    if (r.state === 'partial' || r.state === 'done') b.r++;
+    if (r.state === 'done') b.d++;
+  });
   c.registered = c.partial + c.done;
+  if (p && p.by === 'school') c.bySchool = by;
   return Object.assign({ ok: true }, c);
 }
 
