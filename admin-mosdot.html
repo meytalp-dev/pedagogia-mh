@@ -263,6 +263,10 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5a3 3 0 100-6 3 3 0 000 6z"/><path d="M15.5 19v-1.6a3.5 3.5 0 00-3.5-3.4H6a3.5 3.5 0 00-3.5 3.4V19"/><path d="M21.5 19v-1.6a3.5 3.5 0 00-2.6-3.3M15.5 5.9a3 3 0 010 5.7"/></svg>
       בעלי תפקידים <span class="n" id="n-roles">—</span>
     </button>
+    <button class="tab" role="tab" id="t-sherut" aria-selected="false" data-panel="p-sherut">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.2"/><path d="M5.5 20.5v-1.2A5.3 5.3 0 0110.8 14h2.4a5.3 5.3 0 015.3 5.3v1.2"/><path d="M12 14l-1.2 2.6L12 18l1.2-1.4z"/></svg>
+      בנות שירות <span class="n" id="n-sherut">—</span>
+    </button>
     <button class="tab" role="tab" id="t-contacts" aria-selected="false" data-panel="p-contacts">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><circle cx="9" cy="11" r="2.2"/><path d="M5.5 16.5c.6-1.6 2-2.4 3.5-2.4s2.9.8 3.5 2.4"/><path d="M15 9.5h3M15 13h3"/></svg>
       אנשי קשר <span class="n" id="n-contacts">—</span>
@@ -320,6 +324,11 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   <!-- ============ טאב 4 — בעלי תפקידים ============ -->
   <section class="panel" id="p-roles" role="tabpanel" hidden>
     <div id="roles-body"><div class="loading">טוען…</div></div>
+  </section>
+
+  <!-- ============ טאב — בנות שירות ============ -->
+  <section class="panel" id="p-sherut" role="tabpanel" hidden>
+    <div id="sherut-body"><div class="loading">טוען את בנות השירות מהגיליון…</div></div>
   </section>
 
   <!-- ============ טאב 3 — אנשי קשר ============ -->
@@ -493,6 +502,8 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
   var ICT_ROSTER = null;
   var ROLE_ROWS = null;   /* בעלי התפקידים מהנספח — שם, נייד, מייל */
   var roleFilter = "";    /* סינון הטבלה לפי תפקיד */
+  var SHERUT = null;      /* בנות השירות — מהגיליון המוגן admin-sherut */
+  var sherutSchool = "";  /* סינון טבלת בנות השירות לפי בית ספר */
 
   /* ===== התאמת שם מדווח לשם שבפריסה ===== */
   var NORM_INDEX = null, ALIAS_INDEX = null;
@@ -857,6 +868,91 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         ROLE_ROWS = (r && r.ok && Array.isArray(r.data)) ? dedupeRoles(r.data) : [];
         renderRoles();
       });
+      window.PMH_AUTH.load("admin-sherut").then(function (r) {
+        SHERUT = (r && r.ok && Array.isArray(r.data)) ? r.data : [];
+        renderSherut();
+        $("n-sherut").textContent = SHERUT.length || "—";
+      });
+    });
+  }
+
+  /* ===== בנות שירות ===== */
+  /* הגיליון מחזיר תאריך כ-"2026-09-01 00:00:00" — מציגים 1.9.26 */
+  function shortDate(s) {
+    var m = String(s || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? (+m[3]) + "." + (+m[2]) + "." + m[1].slice(2) : String(s || "");
+  }
+  function sherutContact(r) {
+    return { "שם": r["שם"], "טלפון": r["נייד"], "e164": r["e164"], "מייל": "" };
+  }
+  function sherutWhen(r) {
+    if (r["תחילת שירות"]) return shortDate(r["תחילת שירות"]) + "–" + shortDate(r["סיום שירות"]);
+    return r["סטטוס"] || "";
+  }
+  function sherutBySchool(name) {
+    return (SHERUT || []).filter(function (r) { return r["בית ספר"] === name; });
+  }
+
+  function renderSherut() {
+    var box = $("sherut-body");
+    if (!box || !DATA) return;
+    if (SHERUT === null) { box.innerHTML = '<div class="loading">טוען את בנות השירות מהגיליון…</div>'; return; }
+    if (!SHERUT.length) {
+      box.innerHTML = '<div class="notice"><b>רשימת בנות השירות לא נטענה.</b> ' +
+        'המפתח <code>admin-sherut</code> בשער ההרשאות לא החזיר נתונים.</div>';
+      return;
+    }
+
+    var q = norm(state.q);
+    var list = SHERUT.filter(function (r) {
+      if (sherutSchool && r["בית ספר"] !== sherutSchool) return false;
+      if (!q) return true;
+      return norm([r["שם"], r["בית ספר"], r["רכזת"], r["מנהלת"], r["נייד"], r["עיר"]].join(" ")).indexOf(q) >= 0;
+    });
+
+    var counts = {};
+    SHERUT.forEach(function (r) { counts[r["בית ספר"]] = (counts[r["בית ספר"]] || 0) + 1; });
+    var names = Object.keys(counts).sort(function (a, b) { return a.localeCompare(b, "he"); });
+
+    box.innerHTML =
+      '<div class="notice"><b>' + SHERUT.length + ' בנות שירות ב-' + names.length + ' מתוך ' +
+        DATA.schools.length + ' בתי ספר.</b> ' +
+        'מקור: קובצי השיבוץ "מקצועי 4.10.26" ו"חזי", בלי תעודות זהות. ' +
+        'עריכה — בגיליון "בנות שירות — אדמין המוסדות" בדרייב.</div>' +
+      '<div class="filters">' +
+        '<select id="f-sherut-school"><option value="">כל בתי הספר</option>' +
+          names.map(function (n) {
+            return '<option value="' + esc(n) + '"' + (n === sherutSchool ? ' selected' : '') + '>' +
+                   esc(n) + ' (' + counts[n] + ')</option>';
+          }).join("") +
+        '</select>' +
+        '<button class="btn" id="copySherutPhones">העתקת הניידים שמוצגים</button>' +
+        '<span class="count"><b>' + list.length + '</b> בנות שירות</span>' +
+      '</div>' +
+      '<div class="tablewrap"><table><thead><tr>' +
+        '<th>שם</th><th>בית הספר</th><th>נייד</th><th>רכזת</th><th>שירות</th><th></th>' +
+      '</tr></thead><tbody>' +
+      (list.map(function (r) {
+        var c = sherutContact(r);
+        return '<tr><td><span class="sname">' + esc(r["שם"]) + '</span>' +
+            (r["עיר"] ? ' <span class="code" style="color:var(--muted)">· ' + esc(r["עיר"]) + '</span>' : "") + '</td>' +
+          '<td><button class="chip" data-open="' + esc(r["בית ספר"]) + '">' + esc(r["בית ספר"]) + '</button></td>' +
+          '<td class="semel" dir="ltr">' + (r["נייד"] ? esc(r["נייד"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+          '<td style="font-size:14px">' + esc(r["רכזת"]) +
+            (r["מנהלת"] ? ' <span class="code" style="color:var(--muted)">· מנהלת ' + esc(r["מנהלת"]) + '</span>' : "") + '</td>' +
+          '<td style="font-size:14px">' + esc(sherutWhen(r)) + '</td>' +
+          '<td>' + actionsHtml(c) + '</td></tr>';
+      }).join("") || '<tr><td colspan="6"><div class="empty">אין תוצאה</div></td></tr>') +
+      '</tbody></table></div>';
+
+    $("f-sherut-school").addEventListener("change", function (e) {
+      sherutSchool = e.target.value; renderSherut();
+    });
+    $("copySherutPhones").addEventListener("click", function () {
+      var lines = list.filter(function (r) { return r["נייד"]; })
+        .map(function (r) { return r["שם"] + " · " + r["בית ספר"] + " · " + r["נייד"]; });
+      if (!lines.length) { toast("אין ניידים ברשימה המוצגת"); return; }
+      copyText(lines.join("\n"), lines.length + " ניידים הועתקו");
     });
   }
 
@@ -1099,6 +1195,21 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
           '</div>'
         : "") +
 
+      (sherutBySchool(x.name).length
+        ? '<div class="dsec">' +
+            '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.2"/><path d="M5.5 20.5v-1.2A5.3 5.3 0 0110.8 14h2.4a5.3 5.3 0 015.3 5.3v1.2"/></svg>' +
+            'בנות שירות <span class="rl">' + sherutBySchool(x.name).length + '</span></h4>' +
+            sherutBySchool(x.name).map(function (r) {
+              var c = sherutContact(r);
+              return '<div class="person"><div><div class="nm">' + esc(r["שם"]) + '</div>' +
+                '<div class="rl">רכזת ' + esc(r["רכזת"]) +
+                (r["נייד"] ? ' · <span dir="ltr">' + esc(r["נייד"]) + '</span>' : "") +
+                (sherutWhen(r) ? ' · ' + esc(sherutWhen(r)) : "") + '</div></div>' +
+                actionsHtml(c) + '</div>';
+            }).join("") +
+          '</div>'
+        : "") +
+
       '<div class="dsec">' +
         '<h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>מגמות ופיקוח מקצועי</h4>' +
         megs +
@@ -1160,6 +1271,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     renderPikuah();
     renderStatus();
     renderRoles();
+    renderSherut();
     renderContacts();
     renderSources();
     $("n-schools").textContent = DATA.schools.length;
@@ -1352,7 +1464,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     clearTimeout(qT);
     qT = setTimeout(function () {
       if (!DATA) return;
-      renderSchools(); renderPikuah(); renderStatus(); renderRoles(); renderContacts();
+      renderSchools(); renderPikuah(); renderStatus(); renderRoles(); renderSherut(); renderContacts();
     }, 140);
   });
 
