@@ -6028,6 +6028,10 @@ function registrationData_() {
   teachers.forEach(t => {
     const k = personKey(t), id = String(t.id);
     if (verified[id] && (!personVer[k] || verified[id] > personVer[k])) personVer[k] = verified[id];
+    /* מורה שהוסיף/ה את עצמו/ה (6.10.26): הקוד נשמר על new_… ולא על המזהה שנוצר, ולכן
+       האימות לא נמצא ב-verified. selfAdded נכתב רק אחרי אימות מייל — הוא האימות. */
+    const selfAt = t.selfAdded ? toIso_(t.selfAdded) : '';
+    if (selfAt && (!personVer[k] || selfAt > personVer[k])) personVer[k] = selfAt;
     if (sent[id] && (!personSent[k] || sent[id] > personSent[k])) { personSent[k] = sent[id]; personMail[k] = sentMail[id]; }
     if (sentN[id]) personN[k] = (personN[k] || 0) + sentN[id];
   });
