@@ -3984,14 +3984,16 @@ const REMIND_SUMMARY_AFTER_MIN = 120;
 // { slots: [{ slug, mdate, date, start, part, topic, subject }], guides: { slug: { name, subject, insp } } }
 function remindLoad_() {
   const cache = CacheService.getScriptCache();
-  const hit = cache.get('remind_data_v2');
+  const hit = cache.get('remind_data_v3');
   if (hit) return JSON.parse(hit);
   const win = remindWin_();
   const data = { slots: [], guides: {}, roster: {} };
   Object.keys(win.TS_GUIDES || {}).forEach(k => {
     const g = win.TS_GUIDES[k];
     data.guides[k] = { name: g.name || k, subject: g.subject || (g.subjects || []).join(' + '),
-                       insp: ((win.TS_INSPECTORS || {})[g.inspector] || {}).name || '' };
+                       insp: ((win.TS_INSPECTORS || {})[g.inspector] || {}).name || '',
+                       // הזום הקבוע של המדריכ/ה (guides.js) — נכנס לתזכורת למורים
+                       zoom: /^https:\/\/[\w.-]*zoom\.us\/[\w\/?=&.-]+$/.test(String(g.zoom || '')) ? String(g.zoom) : '' };
   });
   Object.keys(win.TS_PLANS || {}).forEach(slug => {
     (win.TS_PLANS[slug].meetings || []).forEach(m => {
@@ -4021,7 +4023,7 @@ function remindLoad_() {
     });
   } catch (e) { console.error('remindLoad_: roster ' + e); }
   const json = JSON.stringify(data);
-  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v2', json, 3600);
+  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v3', json, 3600);
   return data;
 }
 
@@ -6445,6 +6447,7 @@ function teacherRemindSend_(win, data, slots, live) {
   const factsHtml = '<table style="border-collapse:collapse;margin:4px 0 8px">' + facts.map(f =>
     '<tr><td style="padding:3px 0 3px 16px;color:#5C7182;white-space:nowrap;vertical-align:top">' + remindEsc_(f[0]) +
     '</td><td style="padding:3px 0">' + remindEsc_(f[1]) + '</td></tr>').join('') + '</table>' +
+    (g.zoom ? '<p style="margin:8px 0 0">הכניסה למפגש בזום: <a href="' + remindEsc_(g.zoom) + '" dir="ltr">' + remindEsc_(g.zoom) + '</a></p>' : '') +
     '<p style="margin:8px 0 0">בזמן המפגש נרשמים לנוכחות בדף האישי שלך. שם גם החומרים וההודעות מהמדריך/ה.</p>';
   const foot = 'תזכורת אוטומטית ממנור · ' + MONTHLY_SIGN;
   const build = r => {
@@ -6452,7 +6455,8 @@ function teacherRemindSend_(win, data, slots, live) {
     const hello = 'שלום ' + r.name + ',';
     return {
       html: guideMailHtml_(hello, factsHtml, link, 'הבית שלי במנור', foot),
-      text: hello + '\n\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nהבית שלי במנור (שם גם נרשמים לנוכחות): ' + link + '\n\n' + MONTHLY_SIGN
+      text: hello + '\n\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') +
+        (g.zoom ? '\n\nהכניסה למפגש בזום: ' + g.zoom : '') + '\n\nהבית שלי במנור (שם גם נרשמים לנוכחות): ' + link + '\n\n' + MONTHLY_SIGN
     };
   };
   const replyTo = guideReplyTo_(slug);

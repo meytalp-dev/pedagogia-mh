@@ -115,8 +115,11 @@ window.TS_GUIDES = {
     subjects: ['היסטוריה', 'אזרחות'],
     sectors: ['haredi'],
     inspector: 'yisachar',
+    /* מבט נפרד לכל מקצוע (מיטל, 7.10.26): guide/?g=rivka&s=hist · &s=ezr —
+       רק מורי המקצוע ורק מפגשי המקצוע. בלי &s= נשאר המבט המשותף. */
+    views: { hist: 'היסטוריה', ezr: 'אזרחות' },
     drive: '',
-    zoom: ''
+    zoom: 'https://edu-il.zoom.us/j/9087091369'   /* הזום הקבוע של רבקה (מיטל, 7.10.26) */
   },
   sarah: {
     /* נוספה 10.9.26 — המדריכה החרדית הראשונה שנרשמת בנפרד מהמדריכה הכללית.
@@ -214,6 +217,26 @@ window.TS_GUIDES = {
       : (g.subject ? [g.subject] : []);
     g.subject = g.subjects[0] || '';
   });
+})();
+
+/* מבט של מקצוע אחד אצל מדריכ/ה בכמה מקצועות (רבקה, 7.10.26).
+   ?g=<slug>&s=<מפתח מתוך views> → TS_GUIDE_VIEW = { slug, key, subject },
+   והמדריכ/ה מצומצמ/ת כאן במקום לרשימה של המקצוע הזה בלבד — כך כל קוד בדף
+   (רשימת המורים, KPI, נוכחות) רואה מקצוע אחד בלי לדעת על המבטים.
+   המפגשים מסוננים ב-TS_planFor / TS_scopeMeetings (plans.js).
+   בשרת (remindWin_) אין location — שם אין מבט, והכול נשאר מלא. */
+window.TS_GUIDE_VIEW = (function () {
+  try {
+    if (typeof location === 'undefined' || !location.search) return null;
+    const qs = new URLSearchParams(location.search);
+    const slug = qs.get('g') || '', key = qs.get('s') || '';
+    const g = (window.TS_GUIDES || {})[slug];
+    if (!g || !g.views || !g.views[key]) return null;
+    const subject = g.views[key];
+    g.subjects = [subject];
+    g.subject = subject;
+    return { slug: slug, key: key, subject: subject };
+  } catch (e) { return null; }
 })();
 
 /* המקצועות של מדריכ/ה — תמיד מערך */

@@ -365,6 +365,8 @@
     });
   }
 
+  // מפגשי השרת אחרי סינון המבט (TS_scopeMeetings ב-plans.js) — בלי מבט: כמו שהם
+  function scoped(list) { list = list || []; return window.TS_scopeMeetings ? window.TS_scopeMeetings(SLUG, list) : list; }
   // מועד שנרשם בשרת — לפי התאריך שלו (meetId_ = slug + תאריך)
   function serverMeeting(date) { return S.meetings.find(m => m.date === date) || null; }
   function isLiveDay() { return !!todaySession() || S.meetings.some(m => m.open); }
@@ -377,7 +379,7 @@
     const res = await TS.api('meet.state', params, { cache: 'no' });
     if (res && res.ok && res.data) {
       publishAll(res.data);
-      S.meetings = res.data.meetings || [];
+      S.meetings = scoped(res.data.meetings);
       S.loaded = true; S.failed = false; S.badKey = false;
       if (sel && sel.date === date) { S.rows = res.data.rows || []; S.rowsDate = date; }
       const sm = serverMeeting(S.today);
@@ -400,6 +402,9 @@
   let allSig = '';
   function publishAll(d) {
     if (!d || !Array.isArray(d.allRows)) return;
+    // מבט של מקצוע אחד (רבקה) — רק המפגשים של המקצוע והרישומים שלהם
+    const ms = scoped(d.meetings), ids = new Set(ms.map(m => String(m.id)));
+    d = Object.assign({}, d, { meetings: ms, allRows: d.allRows.filter(r => ids.has(String(r.meetingId))) });
     const sig = JSON.stringify([d.meetings, d.allRows.map(r => [r.meetingId, r.teacherId, r.status])]);
     if (sig === allSig) return;
     allSig = sig;

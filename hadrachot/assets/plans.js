@@ -705,12 +705,25 @@ window.TS_PLANS = {
 
 /* התוכנית של מדריכ/ה לפי slug — או null אם אין */
 window.TS_planFor = function (slug) {
-  return (window.TS_PLANS && window.TS_PLANS[slug]) || null;
+  const plan = (window.TS_PLANS && window.TS_PLANS[slug]) || null;
+  // מבט של מקצוע אחד (guide/?g=rivka&s=hist) — רק המפגשים של המקצוע הזה
+  const v = window.TS_GUIDE_VIEW;
+  if (!plan || !v || v.slug !== slug || !plan.meetings) return plan;
+  return Object.assign({}, plan, { meetings: plan.meetings.filter(m => !m.subject || m.subject === v.subject) });
 };
 
-/* מקצוע המפגש שחל בתאריך הזה (רבקה) — או '' כשהמפגש לכל מורי המדריכ/ה */
+/* מפגשים שהגיעו מהשרת (meet.state) — במבט של מקצוע אחד מורידים את מפגשי
+   המקצוע האחר. מפגש בלי מקצוע (לא מהתוכנית) נשאר בשני המבטים. */
+window.TS_scopeMeetings = function (slug, list) {
+  const v = window.TS_GUIDE_VIEW;
+  if (!v || v.slug !== slug || !Array.isArray(list)) return list;
+  return list.filter(m => { const s = window.TS_meetingSubject(slug, m.date); return !s || s === v.subject; });
+};
+
+/* מקצוע המפגש שחל בתאריך הזה (רבקה) — או '' כשהמפגש לכל מורי המדריכ/ה.
+   קורא את התוכנית המלאה, לא המסוננת — אחרת מפגש של המקצוע האחר היה נראה "לכולם". */
 window.TS_meetingSubject = function (slug, date) {
-  const plan = window.TS_planFor(slug);
+  const plan = (window.TS_PLANS && window.TS_PLANS[slug]) || null;
   if (!plan || !plan.meetings) return '';
   const m = plan.meetings.find(x => (x.dates || [x.date, x.date2]).indexOf(date) !== -1);
   return (m && m.subject) || '';

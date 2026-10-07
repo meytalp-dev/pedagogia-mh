@@ -48,7 +48,39 @@ function myTeachers() {
   return state.teachers.filter(isMine);
 }
 
+// מדריכ/ה עם מבט נפרד לכל מקצוע (רבקה, 7.10.26) — מעבר בין המבטים בראש הדף.
+// בלי זה מי שנכנס/ה מדף הבית מגיע/ה למבט המשותף ולא יודע/ת שיש מבטים נפרדים.
+function renderViewSwitch() {
+  const views = GUIDE_CFG.views;
+  const sub = document.getElementById('page-subtitle');
+  if (!views || !sub) return;
+  const cur = (window.TS_GUIDE_VIEW && window.TS_GUIDE_VIEW.key) || '';
+  const linkTo = key => {
+    const qs = new URLSearchParams(location.search);
+    if (key) qs.set('s', key); else qs.delete('s');
+    return location.pathname + '?' + qs.toString();
+  };
+  const nav = document.createElement('nav');
+  nav.className = 'gview-switch';
+  nav.setAttribute('aria-label', 'מבט לפי מקצוע');
+  Object.keys(views).concat(['']).forEach(key => {
+    const a = document.createElement('a');
+    a.href = linkTo(key);
+    a.textContent = key ? views[key] : 'שני המקצועות';
+    if (key === cur) a.setAttribute('aria-current', 'page');
+    nav.appendChild(a);
+  });
+  const css = document.createElement('style');
+  css.textContent = '.gview-switch{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}' +
+    '.gview-switch a{padding:5px 14px;border-radius:999px;border:1px solid var(--border,#D5E2EA);' +
+    'color:var(--text,#143E4C);text-decoration:none;font-size:14px;font-weight:600;background:var(--surface,#fff)}' +
+    '.gview-switch a[aria-current]{background:var(--primary,#1A5365);border-color:var(--primary,#1A5365);color:#fff}';
+  document.head.appendChild(css);
+  sub.insertAdjacentElement('afterend', nav);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  renderViewSwitch();
   bindTabs();
   document.getElementById('btn-new-training').addEventListener('click', openNewTraining);
   // פעולות מהירות בראש הדף — פותחות את הכלי המקופל שלו וגוללות אליו
