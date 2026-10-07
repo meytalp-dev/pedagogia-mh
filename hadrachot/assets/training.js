@@ -41,6 +41,7 @@
 
   function chip(t, fileMap) {
     var st = String((t && t.trainingStatus) || '');
+    if (t && String(t.onLeave || '').trim()) return '<span class="badge neutral" title="' + esc(t.onLeave) + '">בחופשה</span>';
     if (!st) return '<span class="badge neutral" title="המורה עוד לא נרשם/ה למבט המורה">טרם ענה/תה</span>';
     var f = fileMap && fileMap[String(t.id)];
     var note = f && f.note ? ' <span class="badge neutral" title="' + esc(f.note) + '">הערה</span>' : '';
@@ -53,6 +54,7 @@
   function counts(rows) {
     var c = { passed: 0, registered: 0, none: 0, missing: 0, total: 0 };
     (rows || []).forEach(function (t) {
+      if (String(t.onLeave || '').trim()) return;   // בחופשה (7.10.26) — מחוץ לספירה
       c.total++;
       var st = String(t.trainingStatus || '');
       if (c[st] !== undefined && st !== 'missing' && st !== 'total') c[st]++; else c.missing++;
@@ -78,6 +80,7 @@
     var seen = {}, out = [];
     (rows || []).forEach(function (t) {
       if (!String(t.name || '').trim()) return;
+      if (String(t.onLeave || '').trim()) return;   // בחופשה (7.10.26) — לא במעקב ההשתלמות
       var k = [t.school, String(t.name).trim(), String(t.subject || '').trim()].join('|');
       if (seen[k]) {
         // השורה עם תשובה גוברת על שורה בלי

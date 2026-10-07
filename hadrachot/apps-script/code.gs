@@ -41,7 +41,10 @@ const SCHEMA = {
                // תיקון כתיב שהמורה ביקש/ה — לא משנה את השם עד אישור המטה (admin-cleanup)
                'nameFix','nameFixAt',
                // הערה של המורה על האישור (29.9.26) — למשל "עדיין לא קיבלתי את האישור"
-               'trainingNote'],
+               'trainingNote',
+               // בחופשה (7.10.26, מיטל) — חל"ד וכד'. נשאר/ת ברשימה, יוצא/ת מ"טרם נרשמו",
+               // מהמונים ומהתזכורות. ריק = פעיל/ה
+               'onLeave'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -1603,6 +1606,11 @@ function updateTeacher(p) {
   // שולחים שדות ריקים), ולכן מחיקה דורשת דגל — אחרת אי אפשר לתקן ערך שגוי.
   if (String(p.clearPhone || '') === '1') updates.phone = '';
   if (String(p.clearEmail || '') === '1') updates.email = '';
+  // בחופשה (7.10.26) — טקסט חופשי ("חל"ד"); "0" מחזיר/ה לפעיל/ה. העמודה נוצרת בפעם הראשונה
+  if (p.onLeave !== undefined && p.onLeave !== '') {
+    ensureTab_('teachers');
+    updates.onLeave = String(p.onLeave) === '0' ? '' : String(p.onLeave).trim();
+  }
   // network — מנרמלים (ללא קידומת net_) כדי לתאום את תצוגת הצ'יפ
   if (p.network !== undefined && p.network !== '') updates.network = p.network.toString().replace(/^net_/, '');
   // שיוך לבית ספר (17.9.26) — המדריכה בוחרת מהרשימה הסגורה. בלי זה תיקון שם בית
@@ -6062,7 +6070,9 @@ function registrationData_() {
       if (!trainingStatus) missing.push('שאלת ההשתלמות');
       if (needsUnits && !unitsSelf) missing.push('יח"ל');
     }
-    const state = !ver ? (snt ? 'started' : 'none') : (missing.length ? 'partial' : 'done');
+    const onLeave = String(pick('onLeave') || '');
+    // בחופשה (7.10.26) — מצב משלו: לא נספר/ת ב"טרם נרשמו" ולא בסה"כ
+    const state = onLeave ? 'leave' : !ver ? (snt ? 'started' : 'none') : (missing.length ? 'partial' : 'done');
     return {
       id: String(t.id), name: String(t.name || '').trim(), school: String(t.school || ''),
       schoolName: String(t.schoolName || schoolName[String(t.school)] || ''), subject: String(t.subject || '').trim(),
@@ -6073,7 +6083,7 @@ function registrationData_() {
       trainingStatus: trainingStatus, unitsSelf: unitsSelf,
       noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile'),
       trainingNote: String(pick('trainingNote') || ''),
-      selfAdded: !!pick('selfAdded')
+      selfAdded: !!pick('selfAdded'), onLeave: onLeave
     };
   });
   const pending = Object.keys(pendingNew).map(id => {
@@ -6125,9 +6135,10 @@ function registrationErrors(p) {
    מספרים בלבד, בלי שמות — ולכן נשאר ציבורי. */
 function registrationCount(p) {
   const rows = registrationData_();
-  const c = { total: 0, none: 0, started: 0, partial: 0, done: 0 };
+  const c = { total: 0, none: 0, started: 0, partial: 0, done: 0, leave: 0 };
   const by = {};
   rows.forEach(r => {
+    if (r.state === 'leave') { c.leave++; return; }   // בחופשה — מחוץ למונים
     c.total++; c[r.state]++;
     const s = r.schoolName || r.school;
     if (!s) return;
@@ -6271,7 +6282,9 @@ function guideFileMove(p) {
 function guideRoster_(win, slug, subject) {
   const g = Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug] || {});
   if (!g.name) return [];
-  return readAll('teachers').filter(t => win.TS_guideHasTeacher(g, t) && (!subject || t.subject === subject));
+  // בחופשה (7.10.26) — לא מקבלים תזכורות ומיילים לקבוצה
+  return readAll('teachers').filter(t => !String(t.onLeave || '').trim() &&
+    win.TS_guideHasTeacher(g, t) && (!subject || t.subject === subject));
 }
 
 function guideMailOk_(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim()); }

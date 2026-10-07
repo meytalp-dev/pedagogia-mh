@@ -273,6 +273,7 @@ async function loadData(opts) {
         units: (t.units || '').toString().trim(),
         sector: t.sector || 'kelali',
         trainingStatus: String(t.trainingStatus || ''),
+        onLeave: String(t.onLeave || ''),
         unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
         attendance: d ? d.attendance : {},
         stats: d ? d.stats : { present: 0, partial: 0, total: trainings.length, rate: 0 },
@@ -659,7 +660,7 @@ function renderTeachers() {
   const inTrack = t => inScope(t) &&
     (!currentTrack || (t.type === 'gemer' ? 'gemer' : 'bagrut') === currentTrack);
   const schoolSel = renderSchoolSelect(state.teachers.filter(inTrack));
-  const trainOf = t => t.trainingStatus || 'missing';
+  const trainOf = t => t.onLeave ? 'leave' : (t.trainingStatus || 'missing');
   const preTrain = state.teachers.filter(t => inTrack(t) &&
     (!schoolSel || (t.schoolName || '— ללא שיוך —') === schoolSel));
   const tc = window.TS_training ? TS_training.counts(preTrain) : null;

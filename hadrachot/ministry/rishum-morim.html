@@ -248,13 +248,16 @@
   var copyLists = {};
 
   function render() {
-    var rows = all.filter(function (t) {
+    var shown = all.filter(function (t) {
       if (f.school && t.schoolName !== f.school) return false;
       if (f.subject && t.subject !== f.subject) return false;
       if (f.guide && t._g.indexOf(f.guide) < 0) return false;
       if (f.q && (t.name + ' ' + t.schoolName).indexOf(f.q) < 0) return false;
       return true;
     });
+    /* בחופשה (7.10.26) — חל"ד וכד'. מחוץ לכל המונים, בקבוצה משלה בסוף */
+    var leave = shown.filter(function (t) { return t.state === 'leave'; });
+    var rows = shown.filter(function (t) { return t.state !== 'leave'; });
     var by = { none: [], started: [], partial: [], done: [] };
     rows.forEach(function (t) { by[t.state].push(t); });
     var noFile = by.done.filter(function (t) { return t.noFile; });
@@ -323,6 +326,8 @@
         return '<td><span class="chip ' + x[0] + '">' + x[1] + '</span>' + (t.noFile ? '<span class="chip warn">בלי אישור</span>' : '') + '</td>' +
           '<td>' + esc(String(t.unitsSelf || '').replace('gemer', 'גמר')) + '</td><td class="num">' + fmt(t.verifiedAt) + '</td>'; }, false);
     h += group('none', 'miss', 'לא נכנסו', 'לא ביקשו קוד אף פעם', by.none, '', function () { return ''; }, false);
+    if (leave.length) h += group('leave', 'neu', 'בחופשה', 'חל"ד וכד׳ — לא נספרים ולא מקבלים תזכורות', leave,
+      '<th>סיבה</th>', function (t) { return '<td>' + esc(t.onLeave || '') + '</td>'; }, false);
 
     // ▸ לפי בית ספר — כמה לא נכנסו, והעתקה של החסרים של כל בית ספר (לשליחה למנהל/ת)
     var sch = {};

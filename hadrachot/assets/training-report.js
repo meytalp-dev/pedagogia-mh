@@ -35,6 +35,7 @@
     var seen = {}, out = [];
     rows.forEach(function (t) {
       if (!String(t.name || '').trim()) return;
+      if (String(t.onLeave || '').trim()) return;   // בחופשה (7.10.26) — לא במעקב ההשתלמות
       var k = [t.school, String(t.name).trim(), String(t.subject || '').trim()].join('|');
       var prev = seen[k];
       if (prev) {

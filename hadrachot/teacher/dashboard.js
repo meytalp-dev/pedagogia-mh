@@ -26,8 +26,17 @@ function savedIdentity() {
     return (o && o.id) ? o : null;
   } catch (e) { return null; }   // דפדפן פרטי / אחסון חסום — פשוט טופס
 }
+/* ks (7.10.26) — כל המפתחות של אותו אדם שאומתו במכשיר הזה. מורה בשני מקצועות
+   (שושי אסולין, אסתי שלנגר — הדר) עברה למקצוע השני, והמכשיר "שכח" את הראשון:
+   קישור מהמייל של המקצוע הראשון החזיר אותה להרשמה ולקוד. אותו אדם = אותו בית
+   ספר ואותו שם; אדם אחר במכשיר מתחיל רשימה חדשה. */
 function rememberIdentity(o) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) { /* לא חוסם כניסה */ }
+  const prev = savedIdentity();
+  const nm = x => String(x || '').replace(/\s+/g, ' ').trim();
+  const same = prev && String(prev.school || '') === String(o.school || '') && nm(prev.name) === nm(o.name);
+  const ks = [o.k].concat(o.ks || [], same ? (prev.ks || [prev.k]) : [])
+    .filter((k, i, a) => k && a.indexOf(k) === i).slice(0, 10);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(Object.assign({}, o, { ks: ks }))); } catch (e) { /* לא חוסם כניסה */ }
 }
 
 /* קישור עם ?id= של מורה אחר/ת גובר על הזיהוי השמור בדפדפן (24.9.26) —
@@ -45,10 +54,14 @@ const MAIL_KEY_ = !ADMIN_KEY_ && /^[a-f0-9]{24}$/.test(TS.urlParam('tk', '')) ? 
    המפתח שבקישור פותח את הדף ישירות רק אם המכשיר כבר אומת עם אותו מפתח; אחרת
    הוא רק ממלא מראש את טופס ההרשמה (בית ספר · מקצוע · שם), ומשם מייל → קוד →
    השתלמות, כמו כל מורה. */
-const MAIL_KEY_VERIFIED_ = !!MAIL_KEY_ && String((savedIdentity() || {}).k || '') === MAIL_KEY_;
+/* 7.10.26: מאומת = המפתח הנוכחי במכשיר, או אחד מהמקצועות האחרים של אותו אדם (ks) */
+const MAIL_KEY_CURRENT_ = !!MAIL_KEY_ && String((savedIdentity() || {}).k || '') === MAIL_KEY_;
+const MAIL_KEY_VERIFIED_ = MAIL_KEY_CURRENT_ ||
+  (!!MAIL_KEY_ && ((savedIdentity() || {}).ks || []).indexOf(MAIL_KEY_) >= 0);
 let teacherKey = ADMIN_KEY_ || (MAIL_KEY_ ? (MAIL_KEY_VERIFIED_ ? MAIL_KEY_ : '')
   : (savedForOther_ ? '' : ((savedIdentity() || {}).k || '')));
-let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? (MAIL_KEY_VERIFIED_ ? (savedIdentity() || {}).id || '' : '')
+// מפתח של מקצוע אחר — המזהה יגיע מ-teacher.self
+let teacherId = (ADMIN_KEY_ || MAIL_KEY_) ? (MAIL_KEY_CURRENT_ ? (savedIdentity() || {}).id || '' : '')
   : teacherKey ? (savedIdentity() || {}).id
   : (urlTeacherId_ || (savedIdentity() || {}).id || '');
 let teacher = null;
@@ -1066,7 +1079,8 @@ function render() {
   document.getElementById('p-subject').textContent = teacher.subject;
   document.getElementById('p-type').innerHTML = TS.typeChip(teacher.type);
   document.getElementById('p-sector').innerHTML = TS.secChip(teacher.sector);
-  document.getElementById('p-seniority').textContent = (teacher.seniority || 0) + ' שנים';
+  // ותק ריק = בית הספר לא מילא, לא "0 שנים" (7.10.26, אסתי שלנגר)
+  document.getElementById('p-seniority').textContent = Number(teacher.seniority) > 0 ? teacher.seniority + ' שנים' : '—';
   document.getElementById('p-units').textContent = teacher.units || '—';
   document.getElementById('p-students').textContent = teacher.students || '—';
 
@@ -1140,7 +1154,8 @@ function goToTeacherCard(key, id) {
   }
   const saved = savedIdentity() || {};
   rememberIdentity({ k: key, id: id, name: teacher.name || saved.name || '',
-    school: teacher.school || saved.school || '', at: new Date().toISOString() });
+    school: teacher.school || saved.school || '', at: new Date().toISOString(),
+    ks: [teacherKey].concat(saved.ks || []) });   // המקצוע שעוזבים נשאר מאומת במכשיר
   location.replace(location.pathname);
 }
 
