@@ -273,6 +273,8 @@ const PUBLIC_ACTIONS = new Set([
   'registration.status', 'registration.count', 'registration.errors',
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
   'diag.timing',
+  // מצב תזכורות המורים (7.10.26) — דלוק/כבוי + תאריך·מדריך·כמה נשלחו, בלי שמות ובלי מיילים
+  'remind.status',
   // מחברת הידע (24.9.26) — כל פעולה דורשת את המפתח החתום של המורה
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete',
   // מאגר החומרים ומייל לקבוצה (28.9.26) — דורשים מפתח מדריכ/ה (meetAuthGuide_) בפנים
@@ -914,7 +916,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|emails\.roster|training\.files|registration\.(status|count|errors))$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|remind\.status|emails\.roster|training\.files|registration\.(status|count|errors))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1120,6 +1122,7 @@ function handleRequest(params) {
       case 'registration.count':  result = registrationCount(params); break;
       case 'registration.errors': result = registrationErrors(params); break;
       case 'diag.timing':         result = diagTiming(); break;
+      case 'remind.status':       result = remindStatus(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
       case 'notes.list':          result = notesList(params); break;
       case 'notes.save':          result = notesSave(params); break;
@@ -6363,6 +6366,22 @@ function guideMailSend(p) {
 function teacherRemindIsLive_() {
   return PropertiesService.getScriptProperties().getProperty('TEACHER_REMIND_LIVE') === '1';
 }
+/* remind.status (7.10.26) — האם תזכורות המורים דלוקות ומה נשלח בפועל.
+   מספרים בלבד: תאריך המפגש, slug של המדריך/ה וכמה מיילים יצאו (מתוך audit_log). */
+function remindStatus() {
+  const log = readAll('audit_log');
+  const sends = [];
+  for (let i = log.length - 1; i >= 0 && sends.length < 15; i--) {
+    const r = log[i];
+    if (String(r.action) !== 'teacher.remind') continue;
+    sends.push({ at: toIso_(r.timestamp), guide: String(r.targetId || ''), notes: String(r.notes || '').slice(0, 40) });
+  }
+  const props = PropertiesService.getScriptProperties().getProperties();
+  const marks = Object.keys(props).filter(k => k.indexOf('remind_t_') === 0).sort().slice(-15);
+  return { ok: true, data: { live: teacherRemindIsLive_(), hour: TEACHER_REMIND_HOUR,
+    lastSends: sends, lastTicks: marks, auditRows: log.length } };
+}
+
 function teacherRemindEnableLive() {
   PropertiesService.getScriptProperties().setProperty('TEACHER_REMIND_LIVE', '1');
   console.log('תזכורות המורים דלוקות — יישלחו למורים עצמם מ-17:00 ביום שלפני כל מפגש.');
