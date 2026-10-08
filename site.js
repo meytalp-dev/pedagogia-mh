@@ -138,6 +138,95 @@
   });
 })();
 
+/* ===== קטגוריות בנייד =====
+   מתחת ל-720 הפס העליון נעלם, וכל הקטגוריות היו קבורות בהמבורגר.
+   כאן נבנית שורת "צ'יפים" גלילה מתחת למותג, מאותם פריטים בדיוק של
+   הפס העליון והפס הממשלתי (כך שאין רשימה שנייה לתחזק).
+   לחיצה על קטגוריה פותחת מתחתיה חלונית עם אותם קישורים כמו בתפריט
+   הנפתח במחשב; קטגוריה בלי תת־תפריט היא קישור רגיל.
+   בדסקטופ השורה מוסתרת ב-CSS. */
+(function mobileCats(){
+  var nav=document.querySelector('.nav');
+  if(!nav||nav.querySelector('.mcats')) return;
+  var items=[].slice.call(nav.querySelectorAll(':scope > .navitem'))
+    .concat([].slice.call(document.querySelectorAll('.govbar .gov-mid > .navitem')));
+  /* הגאנט נשאר אחרון, אחרי הפיקוח והמנהלים */
+  items.sort(function(a,b){ return (a.querySelector('.sub')?0:1)-(b.querySelector('.sub')?0:1); });
+  if(!items.length) return;
+
+  var row=document.createElement('div');
+  row.className='mcats';
+  row.setAttribute('role','navigation');
+  row.setAttribute('aria-label','קטגוריות האתר');
+  var sheet=document.createElement('div');
+  sheet.className='mcats-sheet';
+  sheet.id='mcats-sheet';
+  sheet.hidden=true;
+  var current=null;
+
+  function close(){
+    sheet.hidden=true;
+    if(current) current.setAttribute('aria-expanded','false');
+    current=null;
+  }
+  function openFor(btn,sub){
+    sheet.innerHTML='';
+    var h=document.createElement('a');
+    h.className='mcats-gate';
+    h.href=btn.getAttribute('data-href');
+    h.textContent='לשער: '+btn.textContent;
+    sheet.appendChild(h);
+    [].slice.call(sub.children).forEach(function(el){
+      if(el.classList.contains('gatelink')&&el.getAttribute('href')===h.getAttribute('href')) return;
+      sheet.appendChild(el.cloneNode(true));
+    });
+    if(current) current.setAttribute('aria-expanded','false');
+    current=btn;
+    btn.setAttribute('aria-expanded','true');
+    sheet.hidden=false;
+  }
+
+  items.forEach(function(it){
+    var lnk=it.querySelector('.lnk'); if(!lnk) return;
+    var sub=it.querySelector('.sub');
+    var label=lnk.firstChild&&lnk.firstChild.nodeType===3?lnk.firstChild.textContent.trim():lnk.textContent.replace('▼','').trim();
+    var el;
+    if(sub){
+      el=document.createElement('button');
+      el.type='button';
+      el.setAttribute('aria-expanded','false');
+      el.setAttribute('aria-controls','mcats-sheet');
+      el.setAttribute('data-href',lnk.getAttribute('href'));
+      el.textContent=label;
+      el.addEventListener('click',function(){
+        if(current===el) close(); else openFor(el,sub);
+      });
+    } else {
+      el=document.createElement('a');
+      el.href=lnk.getAttribute('href');
+      el.textContent=label;
+    }
+    el.className='mcat'+(lnk.classList.contains('active')?' active':'');
+    row.appendChild(el);
+  });
+  var all=document.createElement('button');
+  all.type='button';
+  all.className='mcat mcat-all';
+  all.setAttribute('aria-controls','site-drawer');
+  all.textContent='כל האתר';
+  all.addEventListener('click',function(){ close(); window.toggleMenu(true); });
+  row.appendChild(all);
+
+  nav.appendChild(row);
+  nav.appendChild(sheet);
+  document.addEventListener('click',function(e){
+    if(current&&!nav.contains(e.target)) close();
+  });
+  document.addEventListener('keydown',function(e){
+    if(current&&(e.key==='Escape'||e.key==='Esc')){ var b=current; close(); b.focus(); }
+  });
+})();
+
 (function animateCounters(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.querySelectorAll('.num-count').forEach(el=>{
