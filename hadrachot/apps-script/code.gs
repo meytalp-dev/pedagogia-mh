@@ -2041,7 +2041,7 @@ function verifyMailSend(p, user) {
         body: body,
         name: 'מנור · משרד העבודה'
       };
-      if (replyTo) opts.replyTo = replyTo;
+      opts.replyTo = replyTo || MAIL_REPLY_TO;
       MailApp.sendEmail(opts);
       sent.push({ school: s.name, email: email, teachers: rows.length });
     } catch (e) {
@@ -2076,7 +2076,7 @@ function monthlyEmailReports() {
       ``,
       rpt.missedTeachers.length ? `מורים שפספסו:\n${rpt.missedTeachers.map(t => '- ' + t.name + ' (' + t.subject + ')').join('\n')}` : '',
     ].filter(Boolean).join('\n');
-    MailApp.sendEmail(s.principalEmail, `דוח הדרכות חודשי — ${s.name}`, body);
+    MailApp.sendEmail(s.principalEmail, `דוח הדרכות חודשי — ${s.name}`, body, { replyTo: MAIL_REPLY_TO });
   });
 }
 
@@ -3986,6 +3986,9 @@ function meetNormName_(v) {
 // ============================================================
 
 const REMIND_TO = 'meytalp@bethaarava.ort.org.il';
+/* תשובות לכל מייל שיוצא בשם מיטל מגיעות לתיבה אחת (8.10.26). השליחה נשארת מאורט — מכסה גדולה.
+   תזכורות המורים לא כאן: התשובה שלהן הולכת למדריך/ה (guideReplyTo_). */
+const MAIL_REPLY_TO = 'mlypeleg@gmail.com';
 const REMIND_SITE = 'https://pedagogiamh.co.il/hadrachot/';
 const REMIND_WINDOW_MIN = 15;     // מועד שהתחיל עד לפני 15 דק׳ עדיין נשלח (הטריגר רץ כל 5)
 const REMIND_EARLY_MIN = 0;       // כמה דקות לפני תחילת המפגש לשלוח
@@ -4628,7 +4631,7 @@ function monthlyMail_(to, subject, html, cc) {
   const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
     .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
     .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
-  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה' };
+  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה', replyTo: MAIL_REPLY_TO };
   if (cc) opts.cc = cc;
   MailApp.sendEmail(opts);
 }
@@ -5218,6 +5221,7 @@ function teacherNotifyEmailChange_(oldMail, name, newMail) {
       to: oldMail,
       subject: 'כתובת המייל שלך במנור עודכנה',
       name: 'מנור · משרד העבודה',
+      replyTo: MAIL_REPLY_TO,
       body: 'שלום ' + name + ',\n\nכתובת המייל שלך במבט המורה של מנור עודכנה ל-' + newMail + '.' +
         '\nאם לא ביקשת את השינוי — יש לפנות למדריכ/ה שלך.\n\nיחידת הפיקוח על הדרכות מורים · משרד העבודה',
       htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#1b2a3a">' +
@@ -6368,7 +6372,7 @@ function guideMailSend(p) {
       (replyTo ? '<br>אפשר להשיב למייל הזה — התשובה תגיע ל' + remindEsc_(g.name || 'מדריך/ה') + '.' : ''));
     const opt = { to: r.email, subject: subject, htmlBody: html, name: from,
       body: hello + '\n\n' + text + '\n\nהבית שלי במנור: ' + link + '\n\n' + MONTHLY_SIGN };
-    if (replyTo) opt.replyTo = replyTo;
+    opt.replyTo = replyTo || MAIL_REPLY_TO;
     try { MailApp.sendEmail(opt); sent++; } catch (e) { failed.push(r.name); }
   });
   auditLog_('', 'guide.mail.send', 'guide', slug, 'ok', 'sent=' + sent + ' failed=' + failed.length);
@@ -6519,7 +6523,7 @@ function teacherRemindSend_(win, data, slots, live) {
   rec.withEmail.forEach(r => {
     const m = build(r);
     const opt = { to: r.email, subject: title, htmlBody: m.html, body: m.text, name: (g.name || 'מנור') + ' · מנור' };
-    if (replyTo) opt.replyTo = replyTo;
+    opt.replyTo = replyTo || MAIL_REPLY_TO;
     try { MailApp.sendEmail(opt); sent++; } catch (e) { console.error('teacherRemind: ' + r.email + ' ' + e); }
   });
   auditLog_('', 'teacher.remind', 'guide', slug, 'ok', date + ' sent=' + sent);
@@ -6787,7 +6791,7 @@ function updatesSend(p) {
     const m = updBuild_(r);
     const opt = { to: live ? r.email : REMIND_TO, subject: (live ? '' : '[תצוגה מקדימה] ') + m.subject,
       htmlBody: (live ? '' : monthlyPreviewBanner_(r.name + ' <' + r.email + '>')) + m.html,
-      body: m.text, name: 'מנור · משרד העבודה' };
+      body: m.text, name: 'מנור · משרד העבודה', replyTo: MAIL_REPLY_TO };
     try {
       MailApp.sendEmail(opt);
       sent++;
