@@ -4848,7 +4848,10 @@ function teacherKeyRemember_(id) {
   return key;
 }
 
-function teacherNormMail_(v) { return String(v || '').trim().toLowerCase(); }
+/* תווי כיוון ותווים בלתי נראים (8.10.26): מקלדת עברית/ערבית בנייד מוסיפה U+200F לפני המייל —
+   המייל "שונה מהרשום" והקוד נשלח לכתובת פגומה (סומיה עבאס, ג'וליס). במייל אין רווחים, אז מוחקים הכל. */
+const MAIL_JUNK_RE = /[\s\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g;
+function teacherNormMail_(v) { return String(v || '').replace(MAIL_JUNK_RE, '').toLowerCase(); }
 
 /* teacher.codeSend — { id, email } → שולח קוד. לא מגלה אם המייל "נכון":
    מורה שכבר רשום לו מייל חייב להזין אותו, ומי שאין לו — הכתובת שהזין
@@ -5702,7 +5705,7 @@ const STAFF_CODE_MAX_TRIES = 5;
 const STAFF_CODE_COOLDOWN_SEC = 60;
 const STAFF_CODE_DAILY_CAP = 40;
 
-function staffNormMail_(v) { return String(v || '').trim().toLowerCase(); }
+function staffNormMail_(v) { return String(v || '').replace(MAIL_JUNK_RE, '').toLowerCase(); }
 
 function staffB64_(s) {
   return Utilities.base64EncodeWebSafe(String(s), Utilities.Charset.UTF_8).replace(/=+$/, '');

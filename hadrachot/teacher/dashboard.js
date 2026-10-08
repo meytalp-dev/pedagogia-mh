@@ -453,7 +453,8 @@ async function onGateEnter() {
   const id = $g('tg-name').value;
   const isNew = id === NEW_NAME_;
   const newName = String(($g('tg-newname') || {}).value || '').replace(/\s+/g, ' ').trim();
-  const email = String($g('tg-email').value || '').trim();
+  // תווי כיוון בלתי נראים ממקלדת עברית/ערבית בנייד — אחרת המייל "שונה מהרשום"
+  const email = String($g('tg-email').value || '').replace(/[\s\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, '');
   if (!id) return gateMsg('בחרו את השם שלכם מהרשימה — או "השם שלי לא ברשימה".');
   if (isNew && newName.split(' ').length < 2) { $g('tg-newname').focus(); return gateMsg('כתבו שם פרטי ושם משפחה.'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateMsg('כתובת המייל אינה תקינה.');

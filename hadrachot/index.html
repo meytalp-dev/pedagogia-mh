@@ -586,7 +586,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const btn = $('mg-send');
     let body;
     if (byMail) {
-      email = $('mg-email').value.trim().toLowerCase();
+      email = $('mg-email').value.replace(/[\s\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, '').toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg(ERR.bad_input); return; }
       who = ''; body = { email: email };
     } else {
