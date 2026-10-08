@@ -643,13 +643,12 @@ window.TS_PLANS = {
         time: 'בוקר 27.9 · 10:00 · אחה"צ 28.9 · 18:00',
         topic: 'מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית',
         goal: 'Updates / Mikud · The 3 point Bagrut · Handbook' },
-      /* בסילבוס המקורי נרשם לאוקטובר "8/10/2026 ראשון" ו-"9/10/27 חמישי" — אבל 8.10.26 הוא יום ה׳
-         ו-9.10.26 יום ו׳. נרשמו התאריכים כפי שנכתבו, עם ימות השבוע האמיתיים; לאימות מול המדריכה. */
-      { date: '2026-10-08', date2: '2026-10-09', label: '8.10 / 9.10.26', day: 'ה׳ / ו׳', month: 'אוקטובר',
-        time: 'בוקר 8.10 · 10:00 · אחה"צ 9.10 · 18:00',
+      /* אוקטובר עודכן 8.10.26 לפי מיטל: אחה"צ ה׳ 15.10 18:00, בוקר ש׳ 17.10 10:15 (מועד אחה"צ קודם). */
+      { date: '2026-10-15', date2: '2026-10-17', label: '15.10 / 17.10.26', day: 'ה׳ / ש׳', month: 'אוקטובר',
+        time: 'אחה"צ 15.10 · 18:00 · בוקר 17.10 · 10:15',
         topic: 'Boost Exam — AI / Digital tools · Practical practice tips · Digital Learning for independent learners',
         goal: '1) Boost Exam — AI / Digital tools · 2) Practical practice tips (challenges and strategies) · 3) Digital Learning for independent learners (Dig into Digital)',
-        note: 'בסילבוס נרשמו הימים "ראשון" ו"חמישי", שאינם תואמים לתאריכים 8.10 ו-9.10 — המועד לאימות מול המדריכה' },
+        note: 'החודש מועד אחה"צ (ה׳ 15.10) קודם למועד הבוקר (ש׳ 17.10, 10:15)' },
       { date: '2026-11-01', date2: '2026-11-05', label: '1.11 / 5.11.26', day: 'א׳ / ה׳', month: 'נובמבר',
         time: 'בוקר 1.11 · 10:00 · אחה"צ 5.11 · 18:00',
         topic: 'Aligned Literature Program for 3 points' },
