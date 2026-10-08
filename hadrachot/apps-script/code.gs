@@ -3725,6 +3725,71 @@ function meetWrap(p) {
   });
 }
 
+/* ---------- נוכחות שנקבעה מראש (8.10.26, החלטת מיטל) ----------
+   מורה שלא יכול/ה להשתתף (מילואים), ומיטל מחליטה לסמן לו/ה נוכחות בכל זאת.
+   meetMark לא מתיר מפגש עתידי בכוונה: מפגש שיש בו סימון נחשב "התקיים",
+   וסימון מראש היה מציג מפגשים שעוד לא היו. לכן הסימון נכתב רק אחרי
+   שהמדריכ/ה סימנ/ה מישהו אחר באותו מפגש, מתוך meetRemindTick (כל 5 דקות).
+   "לא נכח/ה" של המדריכ/ה מוחלף ב"נכח/ה". כל מפגש מטופל פעם אחת (standing_*),
+   ותיקון ידני של המדריכ/ה אחרי זה נשאר. dates = התאריך של המפגש כמו ב-plans.js. */
+const MEET_STANDING = [
+  { teacherId: 'tch_1786299294455_153', guideSlug: 'sivan', teacherName: 'חן אביטל', schoolName: 'כפר זיתים',
+    reason: 'מילואים', dates: ['2026-09-23', '2026-10-20', '2026-11-17', '2026-12-15'] },
+  { teacherId: 'tch_1786299394365_391', guideSlug: 'rivka', teacherName: 'חן אביטל', schoolName: 'כפר זיתים',
+    reason: 'מילואים', dates: ['2026-09-23', '2026-10-05', '2026-10-19', '2026-11-01', '2026-11-15', '2026-12-01', '2026-12-28'] }
+];
+
+function meetStandingTick_() {
+  const today = meetToday_();
+  const props = PropertiesService.getScriptProperties();
+  const todo = [];
+  MEET_STANDING.forEach(st => st.dates.forEach(d => {
+    const key = 'standing_' + st.teacherId + '_' + d;
+    if (d > today || props.getProperty(key)) return;
+    todo.push({ st: st, date: d, key: key, id: meetId_(st.guideSlug, d) });
+  }));
+  if (!todo.length) return;
+  meetWithLock_(() => {
+    const s = ensureTab_('meeting_attendance');
+    const values = s.getDataRange().getValues();
+    const headers = values[0].map(String);
+    const col = {};
+    headers.forEach((h, i) => { col[h] = i; });
+    const nowIso = new Date().toISOString();
+    todo.forEach(t => {
+      let held = false, idx = -1;
+      for (let i = 1; i < values.length; i++) {
+        if (String(values[i][col.meetingId]) !== t.id) continue;
+        if (String(values[i][col.teacherId]) === t.st.teacherId) idx = i;
+        else if (values[i][col.guideStatus]) held = true;
+      }
+      if (!held) return;   // המדריכ/ה עוד לא סימנ/ה — המפגש לא התקיים או לא הוזן
+      if (idx > 0) {
+        const row = values[idx].slice();
+        if (row[col.status] !== 'present' || row[col.guideStatus] !== 'present') {
+          row[col.status] = 'present'; row[col.guideStatus] = 'present';
+          row[col.markedAt] = nowIso; row[col.updatedAt] = nowIso;
+          if (col.markedVia !== undefined) row[col.markedVia] = 'standing';
+          if (col.zoomMinutes !== undefined) row[col.zoomMinutes] = '';
+          row[col.date] = "'" + meetDate_(row[col.date]);
+          s.getRange(idx + 1, 1, 1, headers.length).setValues([row]);
+        }
+      } else {
+        const obj = {
+          id: newId('ma'), meetingId: t.id, guideSlug: t.st.guideSlug, date: "'" + t.date,
+          teacherId: t.st.teacherId, teacherName: t.st.teacherName, schoolName: t.st.schoolName,
+          status: 'present', guideStatus: 'present', selfCheckinAt: '', markedAt: nowIso,
+          source: 'standing', updatedAt: nowIso, markedVia: 'standing', zoomMinutes: ''
+        };
+        s.appendRow(headers.map(h => obj[h] === undefined ? '' : obj[h]));
+      }
+      props.setProperty(t.key, nowIso);
+      console.log('meetStandingTick_: ' + t.st.teacherName + ' · ' + t.id + ' (' + t.st.reason + ')');
+    });
+    return { ok: true };
+  });
+}
+
 // ---------- מיטל: מפתחות המדריכות לקישורים האישיים ----------
 function meetGuideKeys(p) {
   const slugs = String(p.slugs || '').split(',').map(meetSlug_).filter(Boolean);
@@ -4079,6 +4144,8 @@ function meetRemindTick() {
   catch (e) { console.error('meetRemindTick: monthly failed ' + e); }
   try { teacherRemindTick_(data); }
   catch (e) { console.error('meetRemindTick: teacher reminders failed ' + e); }
+  try { meetStandingTick_(); }
+  catch (e) { console.error('meetRemindTick: standing marks failed ' + e); }
   const now = remindNowMinutes_();
   const slots = remindSlots_(data);
   const due = slots.filter(s =>
