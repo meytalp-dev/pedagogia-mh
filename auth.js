@@ -26,7 +26,8 @@
     menahalim: 'מרחב המנהלים',
     netunim:   'תוכניות עבודה ומצבת תלמידים',
     tikshuv:   'מעקב קהילת התקשוב',
-    mosdot:    'אדמין המוסדות'
+    mosdot:    'אדמין המוסדות',
+    bikurim:   'עדכון ביקורי הפיקוח'
   };
 
   /* המרחב הנדרש בעמוד הזה */
@@ -222,7 +223,7 @@
     var schoolSel = $('pmh-school'), nameSel = $('pmh-name'), mail = $('pmh-mail');
     var go = $('pmh-go'), ok = $('pmh-ok'), codeIn = $('pmh-code'), sub = $('pmh-sub');
     var people = [];
-    var role = (need.indexOf('pikuah') > -1 || need.indexOf('netunim') > -1) &&
+    var role = (need.indexOf('pikuah') > -1 || need.indexOf('netunim') > -1 || need.indexOf('bikurim') > -1) &&
                need.indexOf('menahalim') < 0 ? 'pikuah' : 'menahalim';
     var byMail = false, who = null;   /* who = {id} או {email} — למי נשלח הקוד */
 
