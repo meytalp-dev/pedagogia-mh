@@ -58,6 +58,19 @@ async function loadData() {
     }
   }, 6000);
 
+  /* מפקח.ת פדגוגי.ת בלי מקצוע (bySchool, 8.10.26): המורים של בתי הספר שבפיקוחו.ה,
+     לפי פריסת הפיקוח באתר — לפי מזהה בית הספר, ולגיבוי לפי השם */
+  let mySchools = null;
+  if (INSP.bySchool) {
+    try {
+      const m = await (await fetch('../_data/inspector-map-2027.json', { cache: 'no-cache' })).json();
+      mySchools = { ids: {}, names: {} };
+      (m.schools || []).filter(s => s.inspector === INSP.name).forEach(s => {
+        mySchools.ids[s.id] = 1; mySchools.names[String(s.name || '').trim()] = 1;
+      });
+    } catch (e) { clearTimeout(hint); renderApiError(); return; }
+  }
+
   const res = await TS.api('teachers.list', {});
   clearTimeout(hint);
 
@@ -67,10 +80,13 @@ async function loadData() {
     const teachers = [];
     (res.data || []).forEach(t => {
       const sector = t.sector || 'kelali';
+      if (mySchools) {
+        if (!mySchools.ids[t.school] && !mySchools.names[String(t.schoolName || '').trim()]) return;
+      }
       /* הצלבה של subjects×sectors לא מספיקה מאז 9.9.26: יששכר הוא תנ"ך ארצי
          ובנוסף רבי המלל במגזר החרדי בלבד, וליאת ארצית באנגלית ובספרות אבל לא
          בעברית לדוברי ערבית. TS_inspectorCovers היא הבדיקה היחידה הנכונה. */
-      if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
+      else if (!window.TS_inspectorCovers(INSP, t.subject, sector)) return;
       const netKey = (t.network || '').toString().replace(/^net_/, '');
       teachers.push({
         id: t.id,
@@ -94,6 +110,13 @@ async function loadData() {
       return a.name.localeCompare(b.name, 'he');
     });
     state.teachers = teachers;
+    if (mySchools) {
+      /* המקצועות והמדריכים נגזרים מהמורים שבבתי הספר */
+      INSP.subjects = Array.from(new Set(teachers.map(t => t.subject))).sort((a, b) => a.localeCompare(b, 'he'));
+      const all = window.TS_GUIDES || {};
+      state.guides = Object.keys(all).map(k => Object.assign({ slug: k }, all[k])).filter(g =>
+        teachers.some(t => window.TS_guideTeaches(g, t.subject) && (!(g.sectors || []).length || g.sectors.indexOf(t.sector) >= 0)));
+    }
     renderAll();
     // שאלת ההשתלמות המקצועית (28.9.26) — מקטע מקופל מתחת למדריכות
     const trn = document.getElementById('training-card');
@@ -150,7 +173,7 @@ function renderNoInspector() {
 
 function renderApiError() {
   document.getElementById('page-title').textContent = INSP.name;
-  document.getElementById('page-subtitle').textContent = INSP.subjects.join(' · ') + ' · ' + INSP.society;
+  document.getElementById('page-subtitle').textContent = (INSP.bySchool ? '' : INSP.subjects.join(' · ') + ' · ') + INSP.society;
   document.getElementById('user-name').textContent = INSP.name;
   document.getElementById('teachers-container').innerHTML = `
     <div class="empty" style="padding:40px; text-align:center;">
@@ -176,7 +199,7 @@ function renderAll() {
   document.getElementById('user-name').textContent = INSP.name;
   document.getElementById('page-title').textContent = INSP.name;
   document.getElementById('page-subtitle').textContent =
-    INSP.subjects.join(' · ') + ' · ' + INSP.society + ' — ' +
+    (INSP.bySchool ? '' : INSP.subjects.join(' · ') + ' · ') + INSP.society + ' — ' +
     state.teachers.length + ' מורים (' + bagrutN + ' בגרות · ' + gemerN + ' גמר) ב-' + schools + ' בתי ספר';
 
   document.getElementById('stat-teachers').textContent = state.teachers.length;

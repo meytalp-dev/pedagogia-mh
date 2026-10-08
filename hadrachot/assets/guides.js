@@ -48,6 +48,10 @@ window.TS_GUIDES = {
     units: ['4-5'],
     tracks: ['bagrut'],
     unmarked: false,
+    /* 8.10.26 (מיטל): אילנה אחראית על ההשתלמויות במתמטיקה — בדף ההשתלמות בלבד
+       (guide/hishtalmut.html) היא רואה את כל מורי המתמטיקה בכללי ובחרדי:
+       בגרות וגמר, כל היחידות. שאר המבט נשאר 4–5 יח"ל. */
+    trainingScope: 'subject',
     drive: '',
     zoom: ''
   },
@@ -320,6 +324,21 @@ window.TS_INSPECTORS = {
       { subject: 'מורשת אסלאמית',  sectors: ['arab'] },
       { subject: 'מורשת דרוזית',   sectors: ['arab'] }
     ]
+  },
+  /* 8.10.26 (מיטל): מפקחים פדגוגיים בלי מקצוע — המבט שלהם לפי בתי הספר
+     שבפיקוחם (bySchool), מתוך _data/inspector-map-2027.json. אין coverage,
+     ולכן הם לא נכנסים למבטים שנחתכים לפי מקצוע. */
+  raviv: {
+    name: 'רביב שורץ',
+    society: 'בתי הספר שבפיקוחי',
+    bySchool: true,
+    coverage: []
+  },
+  sharona: {
+    name: 'שרונה בלוך',
+    society: 'בתי הספר שבפיקוחי',
+    bySchool: true,
+    coverage: []
   }
 };
 
