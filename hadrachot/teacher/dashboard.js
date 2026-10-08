@@ -223,6 +223,7 @@ async function showGate(prefillId) {
   if ($g('tg-newname')) $g('tg-newname').addEventListener('input', () => { resetPick(); showFix(false); });
   if ($g('tg-fix-link')) $g('tg-fix-link').addEventListener('click', () => showFix(true, ''));
   updateHelpLink();
+  if (await resumePending()) { updateHelpLink(); return; }
   if (prefillId) await prefillGate(prefillId);
 }
 
@@ -388,7 +389,7 @@ const GATE_ERRORS = {
   cooldown: 'נשלח קוד ממש עכשיו. המתינו דקה ונסו שוב.',
   quota: 'לא ניתן לשלוח קוד כרגע. נסו שוב מחר, או פנו למדריכ/ה שלכם.',
   not_found: 'לא נמצאה רשומה מתאימה. פנו למדריכ/ה שלכם.',
-  expired: 'הקוד פג תוקף (הוא תקף ל-20 דקות). בקשו קוד חדש.',
+  expired: 'הקוד הזה פג תוקף (קוד תקף 20 דקות). אם ביקשתם קוד נוסף — הקלידו את הקוד מהמייל האחרון; אחרת בקשו קוד חדש.',
   used: 'הקוד הזה כבר שימש לכניסה. בקשו קוד חדש.',
   wrong_code: 'הקוד שגוי. בדקו ונסו שוב.',
   too_many: 'יותר מדי ניסיונות. בקשו קוד חדש.',
@@ -458,6 +459,8 @@ async function onGateEnter() {
   if (!id) return gateMsg('בחרו את השם שלכם מהרשימה — או "השם שלי לא ברשימה".');
   if (isNew && newName.split(' ').length < 2) { $g('tg-newname').focus(); return gateMsg('כתבו שם פרטי ושם משפחה.'); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return gateMsg('כתובת המייל אינה תקינה.');
+  const typo = mailTypoFix(email);
+  if (typo && gateMailChecked !== email) return offerMailFix(email, typo);
   // מורה "חדש/ה" — קודם בודקים אם זה/זו בעצם מישהו/י שכבר ברשימה בכתיב אחר
   if (isNew && !gatePick && !gatePickName && !gateNewConfirmed && window.TS_nameMatch) {
     const list = TS_nameMatch.suggest(newName, gateSchoolRows, { min: 0.75, max: 4 });
@@ -483,6 +486,8 @@ async function onGateEnter() {
     return gateMsg(gateErr(r, true));
   }
   gatePendingId = String((r.data && r.data.id) || (gatePick ? gatePick.id : isNew ? '' : id));
+  savePending({ id: gatePendingId, email: email, school: $g('tg-school').value,
+    subject: $g('tg-subject').value, nameSel: id });
 
   $g('tg-step2').hidden = false;
   gateStep(2);
@@ -518,11 +523,95 @@ function offerEmailChange(hint) {
   m.appendChild(a);
 }
 
+/* הקוד כפי שהוקלד/הודבק (8.10.26): השדה היה maxlength=6, והדבקה מהמייל בנייד שמביאה
+   רווח או תו כיוון בהתחלה נחתכה ל-5 ספרות — "הקוד הוא 6 ספרות" בלי שהבקשה יצאה לשרת.
+   ספרות של מקלדת ערבית (٠-٩ / ۰-۹) מומרות, אחרת \D מחק אותן. */
+function gateCodeDigits(v) {
+  const s = String(v || '')
+    .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0));
+  const run = s.match(/\d{6}/);
+  return run && s.replace(/\D/g, '').length !== 6 ? run[0] : s.replace(/\D/g, '');
+}
+
+/* "נשלח קוד" נשמר במכשיר (8.10.26): בנייד המורה עובר/ת לאפליקציית המייל, הדפדפן
+   טוען את הדף מחדש בחזרה — ושדה הקוד נעלם. המורה ביקש/ה קוד שוב ושוב ונתקע/ה
+   ב"נשלח קוד ממש עכשיו". עכשיו הדף חוזר ישר לשדה הקוד, כל עוד הקוד בתוקף. */
+const PENDING_LS = 'ts.teacher.pending.v1';
+const PENDING_MS = 20 * 60000;
+function savePending(p) {
+  try { localStorage.setItem(PENDING_LS, JSON.stringify(Object.assign({ at: Date.now() }, p))); } catch (e) { /* לא חוסם */ }
+}
+function clearPending() {
+  try { localStorage.removeItem(PENDING_LS); } catch (e) { /* לא חוסם */ }
+}
+function loadPending() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PENDING_LS) || 'null');
+    if (p && p.id && Date.now() - Number(p.at || 0) < PENDING_MS) return p;
+  } catch (e) { /* לא חוסם */ }
+  clearPending();
+  return null;
+}
+async function resumePending() {
+  const p = loadPending();
+  if (!p) return false;
+  gatePendingId = String(p.id);
+  if (p.school) {
+    $g('tg-school').value = p.school;
+    await onGateSchool();
+    if (p.subject) { $g('tg-subject').value = p.subject; onGateSubject(); }
+    if (p.nameSel && [...$g('tg-name').options].some(o => o.value === p.nameSel)) $g('tg-name').value = p.nameSel;
+  }
+  if (p.email) $g('tg-email').value = p.email;
+  $g('tg-step2').hidden = false;
+  gateStep(2);
+  ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = true; });
+  if ($g('tg-fix-link')) $g('tg-fix-link').hidden = true;
+  $g('tg-enter').hidden = true;
+  gateMsg('כבר שלחנו קוד' + (p.email ? ' ל-' + p.email : '') + '. הקלידו כאן את הקוד מהמייל האחרון שקיבלתם.', true);
+  return true;
+}
+
+/* טעויות הקלדה בכתובת (8.10.26): בטבלת הקודים — gmail.con, gmai.com, wlla.co.il,
+   gmail.comcom. הקוד יצא לכתובת שלא קיימת ולא הגיע לעולם. */
+const MAIL_TYPOS_ = {
+  'gmail.con': 'gmail.com', 'gmail.co': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.om': 'gmail.com',
+  'gmai.com': 'gmail.com', 'gmial.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmal.com': 'gmail.com',
+  'gmil.com': 'gmail.com', 'gnail.com': 'gmail.com', 'gmaill.com': 'gmail.com', 'gmail.comcom': 'gmail.com',
+  'gmail.co.il': 'gmail.com', 'wlla.co.il': 'walla.co.il', 'wala.co.il': 'walla.co.il', 'walla.co.ill': 'walla.co.il',
+  'walla.con': 'walla.com', 'hotmial.com': 'hotmail.com', 'hotmail.con': 'hotmail.com', 'hotmai.com': 'hotmail.com',
+  'yahoo.con': 'yahoo.com', 'yaho.com': 'yahoo.com'
+};
+function mailTypoFix(email) {
+  const at = email.lastIndexOf('@');
+  if (at < 1) return '';
+  const dom = email.slice(at + 1).toLowerCase();
+  if (MAIL_TYPOS_[dom]) return email.slice(0, at + 1) + MAIL_TYPOS_[dom];
+  if (/\.com(com|con)$/.test(dom)) return email.slice(0, at + 1) + dom.replace(/(com|con)$/, '');
+  return '';
+}
+let gateMailChecked = '';
+function offerMailFix(email, fixed) {
+  gateMsg('ייתכן שיש טעות הקלדה בכתובת: ' + email + '. האם התכוונת ל-' + fixed + '?');
+  const m = $g('tg-msg');
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'tg-change';
+  b.textContent = 'כן, לתקן ל-' + fixed + ' ולשלוח';
+  b.onclick = () => { $g('tg-email').value = fixed; gateMailChecked = fixed; onGateEnter(); };
+  m.appendChild(b);
+  const a = document.createElement('button');
+  a.type = 'button'; a.className = 'tg-change alt';
+  a.textContent = 'לא, הכתובת שכתבתי נכונה';
+  a.onclick = () => { gateMailChecked = email; onGateEnter(); };
+  m.appendChild(a);
+}
+
 // שלב 2 — אימות הקוד. רק כאן נפתחת הדלת.
 async function onGateVerify() {
   const btn = $g('tg-verify');
   const id = gatePendingId || $g('tg-name').value;
-  const code = String($g('tg-code').value || '').replace(/\D/g, '');
+  const code = gateCodeDigits($g('tg-code').value);
   if (code.length !== 6) return gateMsg('הקוד הוא 6 ספרות.');
   btn.disabled = true;
   const label = btn.textContent;
@@ -532,6 +621,7 @@ async function onGateVerify() {
     btn.disabled = false; btn.textContent = label;
     return gateMsg(gateErr(r));
   }
+  clearPending();
   rememberIdentity({ k: r.data.key, id: r.data.id, name: r.data.name || '',
     school: $g('tg-school').value || '', at: new Date().toISOString() });
   teacherKey = r.data.key;
@@ -550,7 +640,8 @@ async function onGateResend() {
   $g('tg-step2').hidden = true;
   gateStep(1);
   ['tg-school', 'tg-subject', 'tg-name', 'tg-email', 'tg-newname', 'tg-namefix'].forEach(x => { if ($g(x)) $g(x).disabled = false; });
-  gatePendingId = ''; gateChangeEmail = false;
+  gatePendingId = ''; gateChangeEmail = false; gateMailChecked = '';
+  clearPending();
   if ($g('tg-mswarn')) $g('tg-mswarn').hidden = true;
   showFix(!$g('tg-fix').hidden);
   $g('tg-enter').hidden = false;

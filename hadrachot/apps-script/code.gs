@@ -5054,6 +5054,12 @@ function teacherCodeVerify(p) {
   if (match < 0) {
     const again = reenter_();
     if (again) return again;
+    /* קוד ממייל ישן שפג (8.10.26): מורה ביקש/ה קוד שני והקליד/ה את הראשון אחרי 20 דקות —
+       קיבל/ה "קוד שגוי" והתחיל/ה לחשוד בקוד. עכשיו: "פג תוקף", בלי לספור ניסיון. */
+    for (let i = rows.length - 1; i >= 0; i--) {
+      const r = rows[i];
+      if (String(r.teacherId) === id && !r.usedAt && meetSafeEqual_(r.codeHash, want)) return { ok: false, error: 'expired' };
+    }
     sheet.getRange(hit + 2, headers.indexOf('tries') + 1).setValue(Number(rows[hit].tries || 0) + 1);
     return { ok: false, error: 'wrong_code' };
   }
