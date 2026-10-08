@@ -1,0 +1,61 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:תנ״ך — החברה היהודית · הדרכות תש
+ פ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:8b3c48a@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261012
+DTEND;VALUE=DATE:20261013
+SUMMARY:תנ״ך · הוראת תנ״ך לתלמידים מתקשים
+DESCRIPTION:תנ״ך — החברה היהודית · הדרכה בתח
+ ומי הדעת\nhttps://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-d
+ aat
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-daat
+END:VEVENT
+BEGIN:VEVENT
+UID:33a8c28@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261102T190000
+DTEND;TZID=Asia/Jerusalem:20261102T190000
+SUMMARY:תנ״ך · מפגש לימוד משותף
+DESCRIPTION:תנ״ך — החברה היהודית · הדרכה בתח
+ ומי הדעת\nhttps://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-d
+ aat
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-daat
+END:VEVENT
+BEGIN:VEVENT
+UID:bb765839@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261202T190000
+DTEND;TZID=Asia/Jerusalem:20261202T190000
+SUMMARY:תנ״ך · מפגש הכנה לבגרות חורף
+DESCRIPTION:תנ״ך — החברה היהודית · הדרכה בתח
+ ומי הדעת\nhttps://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-d
+ aat
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#hadrachot-daat
+END:VEVENT
+END:VCALENDAR

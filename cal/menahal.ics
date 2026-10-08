@@ -1,0 +1,153 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:מנהלים ופיקוח · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:bf2b2c14@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20260917T130000
+DTEND;TZID=Asia/Jerusalem:20260917T150000
+SUMMARY:מפקח ומנהליו · פתיחת שנה · מנהלים ו
+ פיקוח
+DESCRIPTION:מנהלים ומפקחים · זום · 13:00–15:00\nhttp
+ s://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:5a77987c@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261029T083000
+DTEND;TZID=Asia/Jerusalem:20261029T103000
+SUMMARY:מפגש מנהלי האזור · מנהלים ופיקוח
+DESCRIPTION:מנהלי האזור ובעלי התפקידים הרלוו
+ נטיים · 8:30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#
+ menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:a54969f9@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:כנס מנהלים · מנהלים ופיקוח
+DESCRIPTION:מנהלים ומפקחים · המועד טרם סופי\nh
+ ttps://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:d08a25d9@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261214T090000
+DTEND;TZID=Asia/Jerusalem:20261214T150000
+SUMMARY:מפקח ומנהליו · מנהלים ופיקוח
+DESCRIPTION:מנהלים ומפקחים · פיזי · 9:00–15:00\nhtt
+ ps://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:2c720147@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261231T083000
+DTEND;TZID=Asia/Jerusalem:20261231T103000
+SUMMARY:מפגש מנהלי האזור · מנהלים ופיקוח
+DESCRIPTION:מנהלי האזור ובעלי התפקידים הרלוו
+ נטיים · 8:30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#
+ menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:31247318@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270114T090000
+DTEND;TZID=Asia/Jerusalem:20270114T150000
+SUMMARY:מפקח ומנהליו · מנהלים ופיקוח
+DESCRIPTION:מנהלים ומפקחים · פיזי · 9:00–15:00\nhtt
+ ps://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:56cc7942@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270225T083000
+DTEND;TZID=Asia/Jerusalem:20270225T103000
+SUMMARY:מפגש מנהלי האזור · מנהלים ופיקוח
+DESCRIPTION:מנהלי האזור ובעלי התפקידים הרלוו
+ נטיים · 8:30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#
+ menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:69dd62f7@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270317T090000
+DTEND;TZID=Asia/Jerusalem:20270317T150000
+SUMMARY:מפקח ומנהליו · מנהלים ופיקוח
+DESCRIPTION:מנהלים ומפקחים · פיזי · 9:00–15:00\nhtt
+ ps://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:acd4e717@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270412
+DTEND;VALUE=DATE:20270413
+SUMMARY:הרמת כוסית ארצית · מנהלים ופיקוח
+DESCRIPTION:כלל המנהלים והמפקחים\nhttps://pedagogiamh.
+ co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:b36a5862@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270506T083000
+DTEND;TZID=Asia/Jerusalem:20270506T103000
+SUMMARY:מפגש מנהלי האזור · מנהלים ופיקוח
+DESCRIPTION:מנהלי האזור ובעלי התפקידים הרלוו
+ נטיים · 8:30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#
+ menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:29f4a11d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270701
+DTEND;VALUE=DATE:20270702
+SUMMARY:סיכום שנה והערכות · מנהלים ופיקוח
+DESCRIPTION:מנהלים ומפקחים · זום ארצי\nhttps://peda
+ gogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+BEGIN:VEVENT
+UID:cfabf06@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270715T083000
+DTEND;TZID=Asia/Jerusalem:20270715T103000
+SUMMARY:מפגש מנהלי האזור · מנהלים ופיקוח
+DESCRIPTION:מנהלי האזור ובעלי התפקידים הרלוו
+ נטיים · 8:30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#
+ menahalim-mifgashim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#menahalim-mifgashim
+END:VEVENT
+END:VCALENDAR

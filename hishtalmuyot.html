@@ -349,7 +349,7 @@
   <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <h1>השתלמויות ופיתוח מקצועי · תשפ״ז</h1>
   </div>
-  <p class="rv d2 lead" style="max-width:720px">מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים, השתלמות רכזי ההכלה והשילוב, נתיבים לקריירה, התחום הייעוצי-טיפולי, הכשרת הרכזים הפדגוגיים, שגרירי החדשנות לרכזי התקשוב, קורס המורים החונכים, מפגשי המנהלים והפיקוח, הכשרת בני ובנות השירות ומפגשי ההדרכה בתחומי הדעת. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט.</p>
+  <p class="rv d2 lead" style="max-width:720px">מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים, נתיבים לקריירה, התחום הייעוצי-טיפולי, הכשרת הרכזים הפדגוגיים, שגרירי החדשנות לרכזי התקשוב, קורס המורים החונכים, מפגשי המנהלים והפיקוח, הכשרת בני ובנות השירות ומפגשי ההדרכה בתחומי הדעת. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט.</p>
   <div class="rv d2" style="margin-top:16px">
     <a class="btn primary" href="gantt.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg>ללוח הגאנט השנתי</a>
   </div>
@@ -461,6 +461,12 @@
   </section>
 
 
+  <!-- ===== טבלאות המועדים = המקור היחיד לתאריכים =====
+       מהן נבנים לוח הגאנט ויומני המנוי (cal/*.ics) — tools/build-cal.mjs, באקשן בכל push.
+       משנים מועד רק כאן, בתא td.dt. data-track בטבלה = המסלול בגאנט; data-g בשורה = שם המפגש
+       בגאנט וביומן; data-gs = שורת הפרטים בגאנט; data-ga = למי (אם שונה מהמסלול).
+       data-cal בטבלה = יומן מנוי בלבד, בלי גאנט. שורה חדשה בטבלת מסלול חייבת data-g. -->
+
   <!-- ===== רכזים חברתיים ===== -->
   <section class="prog p-green rv" id="rakazim">
     <div class="ph">
@@ -475,21 +481,21 @@
     </div>
     <div class="pb">
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="rakaz">
         <tr><th>#</th><th>תאריך</th><th>תוכן</th><th>מסגרת ושעות</th></tr>
-        <tr><td>1</td><td class="dt">14.10.26</td><td>ליווי בוגרים</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>2</td><td class="dt">21.10.26</td><td><b>כנס פיזי פתיחת שנה</b> — רכזים ומפקחים פדגוגיים</td><td>פיזי · 9:00–15:00</td></tr>
-        <tr><td>3</td><td class="dt">4.11.26</td><td>ליווי בוגרים</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>4</td><td class="dt">18.11.26</td><td>מפגש תמונת עתיד</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>5</td><td class="dt">23.12.26</td><td>תמונת עתיד — מפגש לפי ייחודיות אוכלוסייה (כללי, חרדי וערבי)</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>6</td><td class="dt">13.1.27</td><td>מעורבות תלמידים</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td rowspan="3">7</td><td class="dt">20.1.27</td><td>סיור חברה ערבית — תמונת עתיד ותוכניות הכוון</td><td rowspan="3">סיור · 9:30–15:00</td></tr>
-        <tr><td class="dt">10.2.27</td><td>סיור חברה חרדית</td></tr>
-        <tr><td class="dt">17.2.27</td><td>סיור חברה כללית</td></tr>
-        <tr><td>8</td><td class="dt">3.3.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>9</td><td class="dt">17.3.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>10</td><td class="dt">5.5.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
-        <tr><td>11</td><td class="dt">2.6.27</td><td><b>זום משותף סיום שנה</b></td><td>זום · 8:30–11:30</td></tr>
+        <tr data-g="ליווי בוגרים" data-gs="זום · 8:30–10:30"><td>1</td><td class="dt">14.10.26</td><td>ליווי בוגרים</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="כנס פיזי פתיחת שנה" data-gs="9:00–15:00" data-ga="רכזים חברתיים ומפקחים פדגוגיים"><td>2</td><td class="dt">21.10.26</td><td><b>כנס פיזי פתיחת שנה</b> — רכזים ומפקחים פדגוגיים</td><td>פיזי · 9:00–15:00</td></tr>
+        <tr data-g="ליווי בוגרים" data-gs="זום · 8:30–10:30"><td>3</td><td class="dt">4.11.26</td><td>ליווי בוגרים</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="מפגש תמונת עתיד" data-gs="זום · 8:30–10:30"><td>4</td><td class="dt">18.11.26</td><td>מפגש תמונת עתיד</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="תמונת עתיד לפי אוכלוסייה" data-gs="כללי, חרדי וערבי · זום · 8:30–10:30"><td>5</td><td class="dt">23.12.26</td><td>תמונת עתיד — מפגש לפי ייחודיות אוכלוסייה (כללי, חרדי וערבי)</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="מעורבות תלמידים" data-gs="זום · 8:30–10:30"><td>6</td><td class="dt">13.1.27</td><td>מעורבות תלמידים</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="סיור חברה ערבית" data-gs="תמונת עתיד והכוון · 9:30–15:00"><td rowspan="3">7</td><td class="dt">20.1.27</td><td>סיור חברה ערבית — תמונת עתיד ותוכניות הכוון</td><td rowspan="3">סיור · 9:30–15:00</td></tr>
+        <tr data-g="סיור חברה חרדית" data-gs="תמונת עתיד והכוון · 9:30–15:00"><td class="dt">10.2.27</td><td>סיור חברה חרדית</td></tr>
+        <tr data-g="סיור חברה כללית" data-gs="תמונת עתיד והכוון · 9:30–15:00"><td class="dt">17.2.27</td><td>סיור חברה כללית</td></tr>
+        <tr data-g="נושא לפי בחירה" data-gs="זום · 8:30–10:30"><td>8</td><td class="dt">3.3.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="נושא לפי בחירה" data-gs="זום · 8:30–10:30"><td>9</td><td class="dt">17.3.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="נושא לפי בחירה" data-gs="זום · 8:30–10:30"><td>10</td><td class="dt">5.5.27</td><td>נושא לפי בחירה</td><td>זום · 8:30–10:30</td></tr>
+        <tr data-g="זום משותף סיום שנה" data-gs="8:30–11:30"><td>11</td><td class="dt">2.6.27</td><td><b>זום משותף סיום שנה</b></td><td>זום · 8:30–11:30</td></tr>
       </table>
       </div>
       <div class="note-box"><b>הסיורים:</b> ההשתתפות באחד מהסיורים הינה חובה.</div>
@@ -515,15 +521,15 @@
     </div>
     <div class="pb">
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="rakazPed">
         <tr><th>#</th><th>תאריך</th><th>מסגרת</th><th>שעות</th></tr>
-        <tr><td>1</td><td class="dt">7.9.26</td><td>זום</td><td>14:00–15:30</td></tr>
-        <tr><td>2</td><td class="dt">26.10.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
-        <tr><td>3</td><td class="dt">17.12.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
-        <tr><td>4</td><td class="dt">26.1.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
-        <tr><td>5</td><td class="dt">16.2.27</td><td>זום</td><td>9:00–14:00</td></tr>
-        <tr><td>6</td><td class="dt">23.5.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
-        <tr><td>7</td><td class="dt">27.6.27</td><td>זום · סיום שנה</td><td>9:00–11:00</td></tr>
+        <tr data-g="מפגש פתיחה" data-gs="זום · 14:00–15:30"><td>1</td><td class="dt">7.9.26</td><td>זום</td><td>14:00–15:30</td></tr>
+        <tr data-g="מפגש פיזי" data-gs="קמפוס בני ברק · 9:00–15:00"><td>2</td><td class="dt">26.10.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr data-g="מפגש פיזי" data-gs="קמפוס בני ברק · 9:00–15:00"><td>3</td><td class="dt">17.12.26</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr data-g="מפגש פיזי" data-gs="קמפוס בני ברק · 9:00–15:00"><td>4</td><td class="dt">26.1.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr data-g="מפגש בזום" data-gs="9:00–14:00"><td>5</td><td class="dt">16.2.27</td><td>זום</td><td>9:00–14:00</td></tr>
+        <tr data-g="מפגש פיזי" data-gs="קמפוס בני ברק · 9:00–15:00"><td>6</td><td class="dt">23.5.27</td><td>פיזי · קמפוס בני ברק</td><td>9:00–15:00</td></tr>
+        <tr data-g="סיום שנה" data-gs="זום · 9:00–11:00"><td>7</td><td class="dt">27.6.27</td><td>זום · סיום שנה</td><td>9:00–11:00</td></tr>
       </table>
       </div>
       <div class="dl-row">
@@ -548,37 +554,37 @@
     <div class="pb">
       <div class="two-col">
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="matalA">
           <tr><th colspan="2">קבוצת ימי א׳ · 14:00–15:30</th></tr>
-          <tr><td class="dt">15.11.26</td><td>ממיפוי לבניית תוכנית עבודה — שימוש בכלי AI</td></tr>
-          <tr><td class="dt">22.11.26</td><td>השאלה כמעניקה · חלק א׳ — פיצוח שאלות מורכבות</td></tr>
-          <tr><td class="dt">13.12.26</td><td>השאלה כמעניקה · חלק ב׳ — סדנה לניתוח שאלות</td></tr>
-          <tr><td class="dt">20.12.26</td><td>מנוע הדמיון המנטאלי · חלק א׳ — היצגים חזותיים</td></tr>
-          <tr><td class="dt">10.1.27</td><td>מנוע הדמיון המנטאלי · חלק ב׳</td></tr>
-          <tr><td class="dt">27.1.27</td><td><b>נוירופדגוגיה — מפגש פנים אל פנים</b> · 9:00–14:00</td></tr>
-          <tr><td class="dt">14.2.27</td><td>נוירופדגוגיה — איך נקדם מוטיבציה?</td></tr>
-          <tr><td class="dt">28.2.27</td><td>להבין את הבנת הנקרא · חלק א׳</td></tr>
-          <tr><td class="dt">14.3.27</td><td>להבין את הבנת הנקרא · חלק ב׳</td></tr>
-          <tr><td class="dt">4.4.27</td><td>כתיבה — מלכתחילה ובדיעבד · הרחבת תשובה</td></tr>
-          <tr><td class="dt">11.4.27</td><td>קשב ותפקודים ניהוליים — מיפוי תלמיד · מטלה</td></tr>
-          <tr><td class="dt">30.5.27</td><td>קשב — "תפירת החליפה": התאמת מענים</td></tr>
+          <tr data-g="ממיפוי לתוכנית עבודה" data-gs="שימוש בכלי AI · סינכרוני"><td class="dt">15.11.26</td><td>ממיפוי לבניית תוכנית עבודה — שימוש בכלי AI</td></tr>
+          <tr data-g="השאלה כמעניקה · א'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">22.11.26</td><td>השאלה כמעניקה · חלק א׳ — פיצוח שאלות מורכבות</td></tr>
+          <tr data-g="השאלה כמעניקה · ב'" data-gs="סדנה לניתוח שאלות · סינכרוני"><td class="dt">13.12.26</td><td>השאלה כמעניקה · חלק ב׳ — סדנה לניתוח שאלות</td></tr>
+          <tr data-g="הדמיון המנטאלי · א'" data-gs="ניתוח היצגים חזותיים · סינכרוני"><td class="dt">20.12.26</td><td>מנוע הדמיון המנטאלי · חלק א׳ — היצגים חזותיים</td></tr>
+          <tr data-g="הדמיון המנטאלי · ב'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">10.1.27</td><td>מנוע הדמיון המנטאלי · חלק ב׳</td></tr>
+          <tr data-g="נוירופדגוגיה · פא״פ" data-gs="מפגש פנים אל פנים · 9:00–14:00"><td class="dt">27.1.27</td><td><b>נוירופדגוגיה — מפגש פנים אל פנים</b> · 9:00–14:00</td></tr>
+          <tr data-g="נוירופדגוגיה ומוטיבציה" data-gs="סינכרוני"><td class="dt">14.2.27</td><td>נוירופדגוגיה — איך נקדם מוטיבציה?</td></tr>
+          <tr data-g="להבין את הבנת הנקרא · א'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">28.2.27</td><td>להבין את הבנת הנקרא · חלק א׳</td></tr>
+          <tr data-g="להבין את הבנת הנקרא · ב'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">14.3.27</td><td>להבין את הבנת הנקרא · חלק ב׳</td></tr>
+          <tr data-g="כתיבה — מלכתחילה ובדיעבד" data-gs="הרחבת תשובה · סינכרוני"><td class="dt">4.4.27</td><td>כתיבה — מלכתחילה ובדיעבד · הרחבת תשובה</td></tr>
+          <tr data-g="קשב ותפקודים ניהוליים" data-gs="מיפוי תלמיד · מטלה · סינכרוני"><td class="dt">11.4.27</td><td>קשב ותפקודים ניהוליים — מיפוי תלמיד · מטלה</td></tr>
+          <tr data-g="קשב · &quot;תפירת החליפה&quot;" data-gs="התאמת מענים · סינכרוני"><td class="dt">30.5.27</td><td>קשב — "תפירת החליפה": התאמת מענים</td></tr>
         </table>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="matalB">
           <tr><th colspan="2">קבוצת ימי ב׳ · 14:30–16:00</th></tr>
-          <tr><td class="dt">16.11.26</td><td>ממיפוי לבניית תוכנית עבודה — שימוש בכלי AI (מרי)</td></tr>
-          <tr><td class="dt">30.11.26</td><td>השאלה כמעניקה · חלק א׳ — פיצוח שאלות מורכבות</td></tr>
-          <tr><td class="dt">14.12.26</td><td>השאלה כמעניקה · חלק ב׳ — סדנה לניתוח שאלות</td></tr>
-          <tr><td class="dt">21.12.26</td><td>מנוע הדמיון המנטאלי · חלק א׳ — היצגים חזותיים</td></tr>
-          <tr><td class="dt">11.1.27</td><td>מנוע הדמיון המנטאלי · חלק ב׳</td></tr>
-          <tr><td class="dt">27.1.27</td><td><b>נוירופדגוגיה — מפגש פנים אל פנים</b> · 9:00–14:00</td></tr>
-          <tr><td class="dt">15.2.27</td><td>נוירופדגוגיה — איך נקדם מוטיבציה?</td></tr>
-          <tr><td class="dt">1.3.27</td><td>להבין את הבנת הנקרא · חלק א׳</td></tr>
-          <tr><td class="dt">15.3.27</td><td>להבין את הבנת הנקרא · חלק ב׳</td></tr>
-          <tr><td class="dt">5.4.27</td><td>כתיבה — מלכתחילה ובדיעבד · הרחבת תשובה</td></tr>
-          <tr><td class="dt">12.4.27</td><td>קשב ותפקודים ניהוליים — מיפוי תלמיד · מטלה</td></tr>
-          <tr><td class="dt">31.5.27</td><td>קשב — "תפירת החליפה": התאמת מענים</td></tr>
+          <tr data-g="ממיפוי לתוכנית עבודה" data-gs="שימוש בכלי AI (מרי) · סינכרוני"><td class="dt">16.11.26</td><td>ממיפוי לבניית תוכנית עבודה — שימוש בכלי AI (מרי)</td></tr>
+          <tr data-g="השאלה כמעניקה · א'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">30.11.26</td><td>השאלה כמעניקה · חלק א׳ — פיצוח שאלות מורכבות</td></tr>
+          <tr data-g="השאלה כמעניקה · ב'" data-gs="סדנה לניתוח שאלות · סינכרוני"><td class="dt">14.12.26</td><td>השאלה כמעניקה · חלק ב׳ — סדנה לניתוח שאלות</td></tr>
+          <tr data-g="הדמיון המנטאלי · א'" data-gs="ניתוח היצגים חזותיים · סינכרוני"><td class="dt">21.12.26</td><td>מנוע הדמיון המנטאלי · חלק א׳ — היצגים חזותיים</td></tr>
+          <tr data-g="הדמיון המנטאלי · ב'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">11.1.27</td><td>מנוע הדמיון המנטאלי · חלק ב׳</td></tr>
+          <tr data-g="נוירופדגוגיה · פא״פ" data-gs="מפגש פנים אל פנים · 9:00–14:00"><td class="dt">27.1.27</td><td><b>נוירופדגוגיה — מפגש פנים אל פנים</b> · 9:00–14:00</td></tr>
+          <tr data-g="נוירופדגוגיה ומוטיבציה" data-gs="סינכרוני"><td class="dt">15.2.27</td><td>נוירופדגוגיה — איך נקדם מוטיבציה?</td></tr>
+          <tr data-g="להבין את הבנת הנקרא · א'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">1.3.27</td><td>להבין את הבנת הנקרא · חלק א׳</td></tr>
+          <tr data-g="להבין את הבנת הנקרא · ב'" data-gs="תוכנית משיקים · סינכרוני"><td class="dt">15.3.27</td><td>להבין את הבנת הנקרא · חלק ב׳</td></tr>
+          <tr data-g="כתיבה — מלכתחילה ובדיעבד" data-gs="הרחבת תשובה · סינכרוני"><td class="dt">5.4.27</td><td>כתיבה — מלכתחילה ובדיעבד · הרחבת תשובה</td></tr>
+          <tr data-g="קשב ותפקודים ניהוליים" data-gs="מיפוי תלמיד · מטלה · סינכרוני"><td class="dt">12.4.27</td><td>קשב ותפקודים ניהוליים — מיפוי תלמיד · מטלה</td></tr>
+          <tr data-g="קשב · &quot;תפירת החליפה&quot;" data-gs="התאמת מענים · סינכרוני"><td class="dt">31.5.27</td><td>קשב — "תפירת החליפה": התאמת מענים</td></tr>
         </table>
         </div>
       </div>
@@ -588,40 +594,6 @@
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/silabus-matal-yom-a.docx" download>סילבוס ימי א׳ (Word) ⬇</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/silabus-matal-yom-b.docx" download>סילבוס ימי ב׳ (Word) ⬇</a>
         <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="gantt.html">בלוח הגאנט<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-start:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== רכזי הכלה ושילוב ===== -->
-  <section class="prog p-sand rv" id="hachala-shiluv">
-    <div class="ph">
-      <span class="stripe"></span>
-      <div>
-        <h2>רכזי הכלה ושילוב <small>· ההשתלמות השנתית</small></h2>
-        <p>השתלמות נפרדת לרכזות ולרכזי ההכלה והשילוב, בימי שני אחר הצהריים.</p>
-        <div class="meta">
-          <span>9 מפגשים</span><span>ימי שני · 13:00–15:30</span><span>מקוון + מפגש פיזי</span>
-        </div>
-      </div>
-    </div>
-    <div class="pb">
-      <div class="sched-wrap">
-      <table class="sched">
-        <tr><th>#</th><th>תאריך</th><th>מסגרת ושעות</th></tr>
-        <tr><td>1</td><td class="dt">16.11.26</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>2</td><td class="dt">30.11.26</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>3</td><td class="dt">14.12.26</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>4</td><td class="dt">21.12.26</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>5</td><td class="dt">11.1.27</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>6</td><td class="dt">25.1.27</td><td>מקוון · 13:00–15:30</td></tr>
-        <tr><td>7</td><td class="dt">15.2.27</td><td>א־סנכרוני</td></tr>
-        <tr><td>8</td><td class="dt">15.3.27</td><td><b>פיזי (כפול)</b> · 8:30–15:30</td></tr>
-        <tr><td>9</td><td class="dt">3.5.27</td><td>מקוון · 13:00–15:30</td></tr>
-      </table>
-      </div>
-      <div class="dl-row">
-        <a class="btn primary" href="#rishum" data-rg="hachala">להרשמה להשתלמות</a>
-        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="docs/luach-hachala-shiluv.docx" download>לוח המפגשים (Word) ⬇</a>
       </div>
     </div>
   </section>
@@ -640,18 +612,18 @@
     </div>
     <div class="pb">
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="career" data-gu="hishtalmuyot.html#netivim-kariera">
         <tr><th>#</th><th>תאריך</th><th>נושא המפגש</th></tr>
-        <tr><td>1</td><td class="dt">21.10.26</td><td>מפצחים את הקוד: העובד החדש ועולם העבודה כיום ובעתיד<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>2</td><td class="dt">4.11.26</td><td>תעודת הזהות התעסוקתית שלי: זהות, חוזקות ומצפן אישי<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>3</td><td class="dt">18.11.26</td><td>ציידי ההזדמנויות: מקורות מידע, פנייה יזומה ומותג אישי<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>4</td><td class="dt">2.12.26</td><td>כרטיס הכניסה שלכם: קורות חיים והצגה עצמית מנצחת<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>5</td><td class="dt">16.12.26</td><td>לעבור את המשוכה: טכניקות ראיון, שפת גוף וסימולציות<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>6</td><td class="dt">30.12.26</td><td>קוד המצוינות: מיומנויות זהב, יחסי עובד־מעסיק ואתיקה<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>7</td><td class="dt">13.1.27</td><td>הכסף הראשון שלי: אוריינות כלכלית ותכנון קריירה<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>8</td><td class="dt">27.1.27</td><td>שומרים על הזכויות: זכויות עובדים, בטיחות ומוגנות<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>9</td><td class="dt">10.2.27</td><td>להשתלב, להצליח ולצמוח: חוסן וקונפליקטים<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
-        <tr><td>10</td><td class="dt">24.2.27</td><td>רשת הקשרים שלי והצעד הבא: נטוורקינג, פרויקט סיום וסגירת מעגל<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 1 · העובד החדש ועולם העבודה" data-gs="סינכרוני · 18:45–21:00"><td>1</td><td class="dt">21.10.26</td><td>מפצחים את הקוד: העובד החדש ועולם העבודה כיום ובעתיד<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 2 · תעודת הזהות התעסוקתית" data-gs="סינכרוני · 18:45–21:00"><td>2</td><td class="dt">4.11.26</td><td>תעודת הזהות התעסוקתית שלי: זהות, חוזקות ומצפן אישי<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 3 · מקורות מידע, פנייה יזומה ומותג אישי" data-gs="סינכרוני · 18:45–21:00"><td>3</td><td class="dt">18.11.26</td><td>ציידי ההזדמנויות: מקורות מידע, פנייה יזומה ומותג אישי<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 4 · קורות חיים והצגה עצמית" data-gs="סינכרוני · 18:45–21:00"><td>4</td><td class="dt">2.12.26</td><td>כרטיס הכניסה שלכם: קורות חיים והצגה עצמית מנצחת<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 5 · ראיונות, שפת גוף וסימולציות" data-gs="סינכרוני · 18:45–21:00"><td>5</td><td class="dt">16.12.26</td><td>לעבור את המשוכה: טכניקות ראיון, שפת גוף וסימולציות<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 6 · יחסי עובד־מעסיק ואתיקה" data-gs="סינכרוני · 18:45–21:00"><td>6</td><td class="dt">30.12.26</td><td>קוד המצוינות: מיומנויות זהב, יחסי עובד־מעסיק ואתיקה<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 7 · אוריינות כלכלית ותכנון קריירה" data-gs="סינכרוני · 18:45–21:00"><td>7</td><td class="dt">13.1.27</td><td>הכסף הראשון שלי: אוריינות כלכלית ותכנון קריירה<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 8 · זכויות עובדים, בטיחות ומוגנות" data-gs="סינכרוני · 18:45–21:00"><td>8</td><td class="dt">27.1.27</td><td>שומרים על הזכויות: זכויות עובדים, בטיחות ומוגנות<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 9 · חוסן וקונפליקטים" data-gs="סינכרוני · 18:45–21:00"><td>9</td><td class="dt">10.2.27</td><td>להשתלב, להצליח ולצמוח: חוסן וקונפליקטים<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
+        <tr data-g="מפגש 10 · נטוורקינג, פרויקט סיום וסגירת מעגל" data-gs="סינכרוני · 18:45–21:00"><td>10</td><td class="dt">24.2.27</td><td>רשת הקשרים שלי והצעד הבא: נטוורקינג, פרויקט סיום וסגירת מעגל<span class="sm"><span hidden>· </span><bdi dir="ltr">18:45–21:00</bdi></span></td></tr>
       </table>
       </div>
       <h3 style="font-size:var(--fs-lg);margin:20px 0 10px">הנושאים המרכזיים</h3>
@@ -684,12 +656,12 @@
     <div class="pb">
       <h3 style="font-size:var(--fs-lg);margin-bottom:10px">ימי עיון ומפגשים ארציים</h3>
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="yeutzi">
         <tr><th>תאריך</th><th>אירוע</th><th>למי</th></tr>
-        <tr><td class="dt">14.10.26</td><td>יום עיון לפתיחת שנה</td><td>מחוזות דרום, ירושלים ומרכז</td></tr>
-        <tr><td class="dt">21.10.26</td><td>יום עיון לפתיחת שנה</td><td>מחוז חיפה והצפון</td></tr>
+        <tr data-g="יום עיון לפתיחת שנה" data-ga="יועצים · מחוזות דרום, ירושלים ומרכז"><td class="dt">14.10.26</td><td>יום עיון לפתיחת שנה</td><td>מחוזות דרום, ירושלים ומרכז</td></tr>
+        <tr data-g="יום עיון לפתיחת שנה" data-ga="יועצים · מחוז חיפה והצפון"><td class="dt">21.10.26</td><td>יום עיון לפתיחת שנה</td><td>מחוז חיפה והצפון</td></tr>
         <tr><td class="dt">—</td><td>יום עיון לפתיחת שנה · ישיבות חרדיות</td><td>טרם נקבע</td></tr>
-        <tr><td class="dt">13.1.27</td><td>יום עיון פיזי של ההדרכות</td><td>כלל היועצים</td></tr>
+        <tr data-g="יום עיון פיזי של ההדרכות"><td class="dt">13.1.27</td><td>יום עיון פיזי של ההדרכות</td><td>כלל היועצים</td></tr>
         <tr><td class="dt">—</td><td>יום עיון ארצי לסיכום שנה</td><td>יפורסם בהמשך</td></tr>
         <tr><td class="dt">—</td><td>3 מפגשים פיזיים להדרכה קבוצתית, חשיבה ולמידת עמיתים — בהנחיית המפקחות</td><td>מועדים יפורסמו</td></tr>
       </table>
@@ -725,35 +697,35 @@
     <div class="pb">
       <div class="two-col">
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="tikshuvA" data-gu="hishtalmut-tikshuv.html#maslul-klim">
           <tr><th colspan="2">מסלול כלים · ימי שני</th></tr>
-          <tr><td class="dt">5.10.26</td><td>נקודת הפתיחה שלי · סינכרוני</td></tr>
-          <tr><td class="dt">19.10.26</td><td>AI למורה — סדנת יסוד · סינכרוני</td></tr>
-          <tr><td class="dt">2.11–16.11.26</td><td>ארגז הכלים הדיגיטלי · א-סינכרוני</td></tr>
-          <tr><td class="dt">16.11.26</td><td>הערכה ומדידה דיגיטלית · סינכרוני</td></tr>
-          <tr><td class="dt">30.11–14.12.26</td><td>יצירת תוכן דיגיטלי · א-סינכרוני</td></tr>
-          <tr><td class="dt">14.12.26</td><td>שימוש בטוח ומושכל · סינכרוני</td></tr>
-          <tr><td class="dt">28.12–11.1</td><td>סדר בענן ועזרה ראשונה · א-סינכרוני</td></tr>
-          <tr><td class="dt">11.1.27</td><td>AI ככלי עבודה יומי · סינכרוני</td></tr>
-          <tr><td class="dt">25.1.27</td><td>מיקרו-הדרכה לצוות · סינכרוני</td></tr>
-          <tr><td class="dt">8.2.27</td><td><b>הצגת ארגז הכלים · סיום</b></td></tr>
-          <tr><td class="dt">22.2.27</td><td>הגשת ארגז הכלים האישי — מטלה מסכמת</td></tr>
+          <tr data-g="נקודת הפתיחה שלי" data-gs="סינכרוני · 13:45–16:00"><td class="dt">5.10.26</td><td>נקודת הפתיחה שלי · סינכרוני</td></tr>
+          <tr data-g="AI למורה · סדנת יסוד" data-gs="סינכרוני · 13:45–16:00"><td class="dt">19.10.26</td><td>AI למורה — סדנת יסוד · סינכרוני</td></tr>
+          <tr data-g="ארגז הכלים הדיגיטלי" data-gs="א-סינכרוני · הגשה עד 16.11"><td class="dt">2.11–16.11.26</td><td>ארגז הכלים הדיגיטלי · א-סינכרוני</td></tr>
+          <tr data-g="הערכה ומדידה דיגיטלית" data-gs="סינכרוני · 13:45–16:00"><td class="dt">16.11.26</td><td>הערכה ומדידה דיגיטלית · סינכרוני</td></tr>
+          <tr data-g="יצירת תוכן דיגיטלי" data-gs="א-סינכרוני · הגשה עד 14.12"><td class="dt">30.11–14.12.26</td><td>יצירת תוכן דיגיטלי · א-סינכרוני</td></tr>
+          <tr data-g="שימוש בטוח ומושכל" data-gs="סינכרוני · 13:45–16:00"><td class="dt">14.12.26</td><td>שימוש בטוח ומושכל · סינכרוני</td></tr>
+          <tr data-g="סדר בענן ועזרה ראשונה" data-gs="א-סינכרוני · הגשה עד 11.1"><td class="dt">28.12–11.1</td><td>סדר בענן ועזרה ראשונה · א-סינכרוני</td></tr>
+          <tr data-g="AI ככלי עבודה יומי" data-gs="סינכרוני · 13:45–16:00"><td class="dt">11.1.27</td><td>AI ככלי עבודה יומי · סינכרוני</td></tr>
+          <tr data-g="מיקרו-הדרכה לצוות" data-gs="סינכרוני · 13:45–16:00"><td class="dt">25.1.27</td><td>מיקרו-הדרכה לצוות · סינכרוני</td></tr>
+          <tr data-g="הצגת ארגז הכלים · סיום" data-gs="סינכרוני · 13:45–16:00"><td class="dt">8.2.27</td><td><b>הצגת ארגז הכלים · סיום</b></td></tr>
+          <tr data-g="הגשת ארגז הכלים האישי" data-gs="מטלה מסכמת · מועד אחרון"><td class="dt">22.2.27</td><td>הגשת ארגז הכלים האישי — מטלה מסכמת</td></tr>
         </table>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="tikshuvB" data-gu="hishtalmut-tikshuv.html#maslul-hovala">
           <tr><th colspan="2">מסלול הובלה · ימי רביעי</th></tr>
-          <tr><td class="dt">7.10.26</td><td>מהרכז הטכני לשגריר חדשנות · סינכרוני</td></tr>
-          <tr><td class="dt">21.10.26</td><td>להדריך מבוגרים — סדנת העברת הדרכה · סינכרוני</td></tr>
-          <tr><td class="dt">4.11–18.11.26</td><td>מיפוי צרכי הצוות · א-סינכרוני</td></tr>
-          <tr><td class="dt">18.11.26</td><td>מדיניות AI, אתיקה ואבטחת מידע · סינכרוני</td></tr>
-          <tr><td class="dt">2.12–16.12.26</td><td>נתונים, מעקב ובקרה · א-סינכרוני</td></tr>
-          <tr><td class="dt">16.12.26</td><td>ניהול שינוי ושיווק פנים-ארגוני · סינכרוני</td></tr>
-          <tr><td class="dt">30.12–13.1</td><td>התנהלות דיגיטלית וניהול ידע · א-סינכרוני</td></tr>
-          <tr><td class="dt">13.1.27</td><td>משאבים ובקשת הצטיידות · סינכרוני</td></tr>
-          <tr><td class="dt">27.1.27</td><td>מעבדת עמיתים — הדרכות מהשטח · סינכרוני</td></tr>
-          <tr><td class="dt">10.2.27</td><td><b>הצגת תיק החדשנות · סיום</b></td></tr>
-          <tr><td class="dt">24.2.27</td><td>הגשת תיק החדשנות הבית-ספרי — מטלה מסכמת</td></tr>
+          <tr data-g="מהרכז הטכני לשגריר חדשנות" data-gs="סינכרוני · 13:45–16:00"><td class="dt">7.10.26</td><td>מהרכז הטכני לשגריר חדשנות · סינכרוני</td></tr>
+          <tr data-g="להדריך מבוגרים · סדנה" data-gs="סינכרוני · 13:45–16:00"><td class="dt">21.10.26</td><td>להדריך מבוגרים — סדנת העברת הדרכה · סינכרוני</td></tr>
+          <tr data-g="מיפוי צרכי הצוות" data-gs="א-סינכרוני · הגשה עד 18.11"><td class="dt">4.11–18.11.26</td><td>מיפוי צרכי הצוות · א-סינכרוני</td></tr>
+          <tr data-g="מדיניות AI ואבטחת מידע" data-gs="סינכרוני · 13:45–16:00"><td class="dt">18.11.26</td><td>מדיניות AI, אתיקה ואבטחת מידע · סינכרוני</td></tr>
+          <tr data-g="נתונים, מעקב ובקרה" data-gs="א-סינכרוני · הגשה עד 16.12"><td class="dt">2.12–16.12.26</td><td>נתונים, מעקב ובקרה · א-סינכרוני</td></tr>
+          <tr data-g="ניהול שינוי ושיווק פנים-ארגוני" data-gs="סינכרוני · 13:45–16:00"><td class="dt">16.12.26</td><td>ניהול שינוי ושיווק פנים-ארגוני · סינכרוני</td></tr>
+          <tr data-g="התנהלות דיגיטלית וניהול ידע" data-gs="א-סינכרוני · הגשה עד 13.1"><td class="dt">30.12–13.1</td><td>התנהלות דיגיטלית וניהול ידע · א-סינכרוני</td></tr>
+          <tr data-g="משאבים ובקשת הצטיידות" data-gs="סינכרוני · 13:45–16:00"><td class="dt">13.1.27</td><td>משאבים ובקשת הצטיידות · סינכרוני</td></tr>
+          <tr data-g="מעבדת עמיתים · הדרכות מהשטח" data-gs="סינכרוני · 13:45–16:00"><td class="dt">27.1.27</td><td>מעבדת עמיתים — הדרכות מהשטח · סינכרוני</td></tr>
+          <tr data-g="הצגת תיק החדשנות · סיום" data-gs="סינכרוני · 13:45–16:00"><td class="dt">10.2.27</td><td><b>הצגת תיק החדשנות · סיום</b></td></tr>
+          <tr data-g="הגשת תיק החדשנות הבית-ספרי" data-gs="מטלה מסכמת · מועד אחרון"><td class="dt">24.2.27</td><td>הגשת תיק החדשנות הבית-ספרי — מטלה מסכמת</td></tr>
         </table>
         </div>
       </div>
@@ -780,19 +752,19 @@
     </div>
     <div class="pb">
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="honchim" data-gu="hishtalmuyot.html#honchim">
         <tr><th>תאריך פתיחת היחידה</th><th>תוכן היחידה</th><th>מסגרת ושעות</th><th>ש״ש</th></tr>
-        <tr><td class="dt">22.10.26</td><td><b>מפגש פתיחה בזום</b></td><td>זום · 18:00–19:30</td><td>2</td></tr>
-        <tr><td class="dt">22.10.26</td><td>יחידות 0–1: היכרות עם שנת החונכות</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">8.11.26</td><td>יחידה 2: ממורה לחונך — שיח מברר ושאילת שאלות</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">22.11.26</td><td>יחידה 3: אתגרים מרכזיים וייחודיים, אתגרים ארגוניים</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">13.12.26</td><td>יחידה 4: היבטים רגשיים בכניסה להוראה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">27.12.26</td><td>יחידה 5: היבטים מקצועיים של ההוראה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">10.1.27</td><td>יחידה 6: צפייה ושיח מקדם למידה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">24.1.27</td><td>יחידה 7: מיומנויות תקשורת בין-אישית בתהליך החונכות <span style="color:var(--text2)">+ פתיחת מטלת הסיום</span></td><td>מקוון · למידה עצמית</td><td>3</td></tr>
-        <tr><td class="dt">4.1.27</td><td><b>מפגש סיום בזום</b></td><td>זום · 18:00–19:30</td><td>2</td></tr>
-        <tr><td class="dt">1–3.2.27</td><td><b>ימי החונכות הארציים</b> (זום) והגשת מטלה בעקבות הכנס — יש להשתתף לפחות ביחידה אחת. התוכנית המפורטת תפורסם בהמשך.</td><td>זום · 16:00–21:00</td><td>2</td></tr>
-        <tr><td class="dt">4.2.27</td><td><b>מועד אחרון להגשת עבודת הסיום והמטלות</b></td><td>הגשה</td><td>3</td></tr>
+        <tr data-g="מפגש פתיחה בזום" data-gs="זום · 18:00–19:30"><td class="dt">22.10.26</td><td><b>מפגש פתיחה בזום</b></td><td>זום · 18:00–19:30</td><td>2</td></tr>
+        <tr data-g="יחידות 0–1 · היכרות עם שנת החונכות" data-gs="מקוון · למידה עצמית"><td class="dt">22.10.26</td><td>יחידות 0–1: היכרות עם שנת החונכות</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 2 · ממורה לחונך" data-gs="שיח מברר ושאילת שאלות · מקוון"><td class="dt">8.11.26</td><td>יחידה 2: ממורה לחונך — שיח מברר ושאילת שאלות</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 3 · אתגרים מרכזיים וארגוניים" data-gs="מקוון · למידה עצמית"><td class="dt">22.11.26</td><td>יחידה 3: אתגרים מרכזיים וייחודיים, אתגרים ארגוניים</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 4 · היבטים רגשיים בכניסה להוראה" data-gs="מקוון · למידה עצמית"><td class="dt">13.12.26</td><td>יחידה 4: היבטים רגשיים בכניסה להוראה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 5 · היבטים מקצועיים של ההוראה" data-gs="מקוון · למידה עצמית"><td class="dt">27.12.26</td><td>יחידה 5: היבטים מקצועיים של ההוראה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 6 · צפייה ושיח מקדם למידה" data-gs="מקוון · למידה עצמית"><td class="dt">10.1.27</td><td>יחידה 6: צפייה ושיח מקדם למידה</td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="יחידה 7 · תקשורת בין-אישית + פתיחת מטלת הסיום" data-gs="מקוון · למידה עצמית"><td class="dt">24.1.27</td><td>יחידה 7: מיומנויות תקשורת בין-אישית בתהליך החונכות <span style="color:var(--text2)">+ פתיחת מטלת הסיום</span></td><td>מקוון · למידה עצמית</td><td>3</td></tr>
+        <tr data-g="מפגש סיום בזום" data-gs="זום · 18:00–19:30 · המועד כפי שמופיע בלוח הזמנים"><td class="dt">4.1.27</td><td><b>מפגש סיום בזום</b></td><td>זום · 18:00–19:30</td><td>2</td></tr>
+        <tr data-g="ימי החונכות הארציים" data-gs="זום · 16:00–21:00 · חובה להשתתף בלפחות יחידה אחת"><td class="dt">1–3.2.27</td><td><b>ימי החונכות הארציים</b> (זום) והגשת מטלה בעקבות הכנס — יש להשתתף לפחות ביחידה אחת. התוכנית המפורטת תפורסם בהמשך.</td><td>זום · 16:00–21:00</td><td>2</td></tr>
+        <tr data-g="מועד אחרון להגשת עבודת הסיום והמטלות" data-gs="הגשה"><td class="dt">4.2.27</td><td><b>מועד אחרון להגשת עבודת הסיום והמטלות</b></td><td>הגשה</td><td>3</td></tr>
       </table>
       </div>
       <div class="note-box"><b>חובות הקורס:</b> השתתפות בלפחות <b>80%</b> מהמפגשים והמטלות, ובסיום — הגשת מטלת סיום.</div>
@@ -821,25 +793,25 @@
     <div class="pb">
       <div class="two-col">
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="menahal">
           <tr><th colspan="3">מפגשי מפקח ומנהליו</th></tr>
-          <tr><td class="dt">17.9.26</td><td>מפגש פתיחת שנה</td><td>זום · 13:00–15:00</td></tr>
-          <tr><td class="dt">23.11.26</td><td><b>כנס מנהלים</b> · המועד טרם סופי</td><td>יפורסם</td></tr>
-          <tr><td class="dt">14.12.26</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
-          <tr><td class="dt">14.1.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
-          <tr><td class="dt">17.3.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
-          <tr><td class="dt">12.4.27</td><td><b>הרמת כוסית ארצית</b></td><td>יפורסם</td></tr>
-          <tr><td class="dt">1.7.27</td><td><b>סיכום שנה והערכות</b></td><td>זום ארצי</td></tr>
+          <tr data-g="מפקח ומנהליו · פתיחת שנה" data-gs="זום · 13:00–15:00"><td class="dt">17.9.26</td><td>מפגש פתיחת שנה</td><td>זום · 13:00–15:00</td></tr>
+          <tr data-g="כנס מנהלים" data-gs="המועד טרם סופי"><td class="dt">23.11.26</td><td><b>כנס מנהלים</b> · המועד טרם סופי</td><td>יפורסם</td></tr>
+          <tr data-g="מפקח ומנהליו" data-gs="פיזי · 9:00–15:00"><td class="dt">14.12.26</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr data-g="מפקח ומנהליו" data-gs="פיזי · 9:00–15:00"><td class="dt">14.1.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr data-g="מפקח ומנהליו" data-gs="פיזי · 9:00–15:00"><td class="dt">17.3.27</td><td>מפגש מפקח ומנהליו</td><td>פיזי · 9:00–15:00</td></tr>
+          <tr data-g="הרמת כוסית ארצית" data-ga="כלל המנהלים והמפקחים"><td class="dt">12.4.27</td><td><b>הרמת כוסית ארצית</b></td><td>יפורסם</td></tr>
+          <tr data-g="סיכום שנה והערכות" data-gs="זום ארצי"><td class="dt">1.7.27</td><td><b>סיכום שנה והערכות</b></td><td>זום ארצי</td></tr>
         </table>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-track="menahal">
           <tr><th colspan="2">מפגשי מנהלי האזור</th></tr>
-          <tr><td class="dt">29.10.26</td><td>8:30–10:30</td></tr>
-          <tr><td class="dt">31.12.26</td><td>8:30–10:30</td></tr>
-          <tr><td class="dt">25.2.27</td><td>8:30–10:30</td></tr>
-          <tr><td class="dt">6.5.27</td><td>8:30–10:30</td></tr>
-          <tr><td class="dt">15.7.27</td><td>8:30–10:30</td></tr>
+          <tr data-g="מפגש מנהלי האזור" data-gs="8:30–10:30" data-ga="מנהלי האזור ובעלי התפקידים הרלוונטיים"><td class="dt">29.10.26</td><td>8:30–10:30</td></tr>
+          <tr data-g="מפגש מנהלי האזור" data-gs="8:30–10:30" data-ga="מנהלי האזור ובעלי התפקידים הרלוונטיים"><td class="dt">31.12.26</td><td>8:30–10:30</td></tr>
+          <tr data-g="מפגש מנהלי האזור" data-gs="8:30–10:30" data-ga="מנהלי האזור ובעלי התפקידים הרלוונטיים"><td class="dt">25.2.27</td><td>8:30–10:30</td></tr>
+          <tr data-g="מפגש מנהלי האזור" data-gs="8:30–10:30" data-ga="מנהלי האזור ובעלי התפקידים הרלוונטיים"><td class="dt">6.5.27</td><td>8:30–10:30</td></tr>
+          <tr data-g="מפגש מנהלי האזור" data-gs="8:30–10:30" data-ga="מנהלי האזור ובעלי התפקידים הרלוונטיים"><td class="dt">15.7.27</td><td>8:30–10:30</td></tr>
         </table>
         </div>
       </div>
@@ -864,11 +836,11 @@
     </div>
     <div class="pb">
       <div class="sched-wrap">
-      <table class="sched">
+      <table class="sched" data-track="sherut">
         <tr><th>#</th><th>תאריך</th><th>המפגש</th></tr>
-        <tr><td>1</td><td class="dt">12.10.26</td><td>מפגש הכשרה</td></tr>
-        <tr><td>2</td><td class="dt">16.12.26</td><td>מפגש בשיתוף רכזות העמותה ובית הספר</td></tr>
-        <tr><td>3</td><td class="dt">19.5.27</td><td><b>מפגש סיום שנה</b></td></tr>
+        <tr data-g="מפגש הכשרה" data-gs="פנים אל פנים"><td>1</td><td class="dt">12.10.26</td><td>מפגש הכשרה</td></tr>
+        <tr data-g="מפגש משותף" data-gs="רכזות העמותה ובית הספר"><td>2</td><td class="dt">16.12.26</td><td>מפגש בשיתוף רכזות העמותה ובית הספר</td></tr>
+        <tr data-g="מפגש סיום שנה"><td>3</td><td class="dt">19.5.27</td><td><b>מפגש סיום שנה</b></td></tr>
       </table>
       </div>
       <div class="dl-row">
@@ -900,7 +872,7 @@
           <span>מדריכה: שירה סיבוני · מפקחת: רויטל אמיר · 10 מפגשים · תשפ״ז</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-math">
           <tr><th>#</th><th>תאריך</th><th>נושא המפגש</th><th>יום, מועד ושעה</th></tr>
           <tr><td>1</td><td class="dt">22.9.26</td><td><b>פתיחת שנה, היכרות ואבחון "מאיפה התלמיד מתחיל?"</b><span class="sm">היכרות ושיחת פתיחה, נהלי ודרכי עבודה השנה · דרישות משרד העבודה ונהלי עבודה (הדרכה, השתלמויות ומפגשים כלליים) · שיח על מבחני הגמר וצורת ההיבחנות בתשפ"ז · יצירת מפת דרכים למורים ולתלמידים, אבחון פערים עדין ובניית האמון והמסוגלות להצלחה · פדגוגיה: הוראת מתקשים ובניית מסוגלות</span></td><td>ג׳ · בוקר<span class="sm"><bdi dir="ltr">14:00–15:30</bdi></span></td></tr>
           <tr><td>1</td><td class="dt">23.9.26</td><td>פתיחת שנה, היכרות ואבחון "מאיפה התלמיד מתחיל?"<span class="sm">מועד הערב של מפגש 1</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
@@ -933,7 +905,7 @@
           <span>מדריכה: סיון נחליאל · מפקחת: ליאת צבר · 9 מפגשים</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-english">
           <tr><th>#</th><th>תאריך</th><th>יום</th><th>נושא המפגש</th><th>שעות</th></tr>
           <tr><td>1</td><td class="dt">23.9.26</td><td>ד׳</td><td><b>פתיחת שנה</b><span class="sm">מנהלות · בעיות, שאלות ורעיונות · השתלמות מורים · קהילה לומדת</span></td><td>11:00 / 18:00</td></tr>
           <tr><td>2</td><td class="dt">20.10.26</td><td>ג׳</td><td>עדכוני ספרות, חיבור ו-bands<span class="sm">לפי עדכוני משרד החינוך, והחלטה על נושאים לחידוד וללימוד במפגשים הבאים על פי דרישה מהשטח</span></td><td>11:00 / 18:00</td></tr>
@@ -955,7 +927,7 @@
           <span>מדריכה: רוזין מטר דאו · מפקחת: ליאת צבר · 10 מפגשים חודשיים · שנה״ל 2026–2027</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-english-arab">
           <tr><th>#</th><th>תאריך</th><th>נושא המפגש</th><th>יום, מועד ושעה</th></tr>
           <tr><td>1</td><td class="dt">27.9.26</td><td><b>מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית</b><span class="sm">Updates / Mikud · The 3 point Bagrut · Handbook</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
           <tr><td>1</td><td class="dt">28.9.26</td><td>מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית<span class="sm">מועד אחה״צ של מפגש 1</span></td><td>ב׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
@@ -988,7 +960,7 @@
           <span>מדריכה: טלי אהרון זיו · מפקח: יששכר חפץ · המועדים הקרובים · תשפ״ז</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-tanakh">
           <tr><th>#</th><th>תאריך</th><th>יום</th><th>נושא המפגש</th><th>שעה</th></tr>
           <tr><td>1</td><td class="dt">12.10.26</td><td>ב׳</td><td><b>הוראת תנ״ך לתלמידים מתקשים</b></td><td>השעה תפורסם</td></tr>
           <tr><td>2</td><td class="dt">2.11.26</td><td>ב׳</td><td>מפגש לימוד משותף</td><td>19:00</td></tr>
@@ -1004,7 +976,7 @@
           <span>מדריך: ד״ר עבד אלוהאב חבאיב · מפקחת: יסמין אמון · 10 מפגשים · שנה״ל 2026–2027</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-history-arab">
           <tr><th>חודש</th><th>תאריך</th><th>נושא המפגש ומטרותיו</th><th>דוגמאות מבחינות בגרות</th><th>מועדי המפגש</th></tr>
           <tr><td>ספטמבר</td><td class="dt">16.9.26</td><td>מפגש היכרות ותיאום ציפיות<span class="sm">הכרת צוות המורים</span></td><td>—</td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
           <tr><td>אוקטובר</td><td class="dt">14.10.26</td><td>סקירת תכנית הלימודים וחוקי המענה לבגרות<span class="sm">הכרת תכנית הלימודים</span></td><td>חוזר מפמ״ר היסטוריה</td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
@@ -1027,7 +999,7 @@
           <span>מדריכה: מוריה פלינט · מפקחת: ליאת צבר · 10 מפגשים חודשיים · תשפ״ז</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-hebrew">
           <tr><th>תאריך</th><th>מפגש ונושאים לפי תוכנית</th><th>יום ושעות התחלה</th><th>חודש</th></tr>
           <tr><td class="dt">15.9.26</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז (לקחי בגרות תשפ"ו) · <b>30% פנימי</b> 17:00 — מבנה ההערכה החלופית ואפשרויות ההערכה · <b>בחינת הגמר</b> 18:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ד׳ תשרי</span></td><td>ספטמבר</td></tr>
           <tr><td class="dt">17.9.26</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז (לקחי בגרות תשפ"ו) · <b>30% פנימי</b> 11:00 — מבנה ההערכה החלופית ואפשרויות ההערכה · <b>בחינת הגמר</b> 13:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">ו׳ תשרי</span></td><td>ספטמבר</td></tr>
@@ -1064,7 +1036,7 @@
           <span>מדריכה: שרה ברדה · מפקח: יששכר חפץ · 20 מפגשים (ערב ולפני הצהריים בכל חודש) · תשפ״ז</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-literature-haredi">
           <tr><th>תאריך</th><th>מפגש</th><th>יום ושעות</th><th>חודש</th></tr>
           <tr><td class="dt">11.10.26</td><td><b>הציר ההיסטורי של הכתיבה הספרותית · סוגות בספרות</b><span class="sm">מועד ערב · ר״ח חשוון · מפיוטי הקודש סמוך לחורבן בית שני ועד לשירה ופרוזה בתקופה החדשה · סוגות (ז׳אנרים): מאפיינים ודוגמאות, על פי תוכנית הבגרות</span></td><td>א׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>אוקטובר</td></tr>
           <tr><td class="dt">18.10.26</td><td><b>היכרות עם הפורטל</b><span class="sm">מועד לפנה"צ · ז׳ חשוון · הדגמות להעשרה ולשאיבת מידע</span></td><td>א׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>אוקטובר</td></tr>
@@ -1097,7 +1069,7 @@
           <span>מדריכה: רבקה נחום · מפקח: יששכר חפץ · 38 מפגשים (19 לכל מקצוע) · תשפ״ז</span>
         </div>
         <div class="sched-wrap">
-        <table class="sched">
+        <table class="sched" data-cal="daat-history-civics-haredi">
           <tr><th>תאריך</th><th>מקצוע</th><th>יום ושעות</th><th>חודש</th></tr>
           <tr><td class="dt">22.9.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>ספטמבר</td></tr>
           <tr><td class="dt">23.9.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ד׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>ספטמבר</td></tr>
@@ -1185,7 +1157,6 @@ var WS = [
   {k:"social",  t:"רכזים חברתיים",               s:"11 מפגשים · ימי רביעי בבוקר",        c:"#A9DDBB"},
   {k:"matal",   t:"מת״ליות", s:"12 מפגשים · ימי א׳ או ב׳ · עדי ספיבק", c:"#A9CDF3",
     g:[["sun","ימי ראשון · ⁦14:00–15:30⁩"],["mon","ימי שני · ⁦14:30–16:00⁩"]]},
-  {k:"hachala", t:"רכזי הכלה ושילוב",             s:"9 מפגשים · ימי שני · 13:00–15:30",   c:"#E3CDA4"},
   {k:"career",  t:"נתיבים לקריירה",               s:"10 מפגשים · ימי רביעי · ⁦18:45–21:00⁩", c:"#9FDCC8"},
   {k:"honchim", t:"מורים חונכים",                 s:"קורס מקוון · מכללת הרצוג",           c:"#C7BCEA",
     x:'חשוב: הקורס מתנהל במכללת הרצוג, ולכן יש להשלים גם את <a href="https://rashim3.herzog.ac.il/Portals/ex/registration/chonchimfree" target="_blank" rel="noopener">ההרשמה בפורטל של המכללה ↗</a>.'},

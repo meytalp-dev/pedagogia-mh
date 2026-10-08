@@ -1,0 +1,162 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:רכזים חברתיים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:8b3d5e1e@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261014T083000
+DTEND;TZID=Asia/Jerusalem:20261014T103000
+SUMMARY:ליווי בוגרים · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:186add70@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261021T090000
+DTEND;TZID=Asia/Jerusalem:20261021T150000
+SUMMARY:כנס פיזי פתיחת שנה · רכזים חברתיים
+DESCRIPTION:רכזים חברתיים ומפקחים פדגוגיים ·
+  9:00–15:00\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:dbfb625e@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261104T083000
+DTEND;TZID=Asia/Jerusalem:20261104T103000
+SUMMARY:ליווי בוגרים · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:f2af30f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261118T083000
+DTEND;TZID=Asia/Jerusalem:20261118T103000
+SUMMARY:מפגש תמונת עתיד · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:69a08e9@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261223T083000
+DTEND;TZID=Asia/Jerusalem:20261223T103000
+SUMMARY:תמונת עתיד לפי אוכלוסייה · רכזים חב
+ רתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · כללי\, 
+ חרדי וערבי · זום · 8:30–10:30\nhttps://pedagogiamh.co.il
+ /hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:8c5d2075@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270113T083000
+DTEND;TZID=Asia/Jerusalem:20270113T103000
+SUMMARY:מעורבות תלמידים · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:14daa849@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270120T093000
+DTEND;TZID=Asia/Jerusalem:20270120T150000
+SUMMARY:סיור חברה ערבית · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · תמונת 
+ עתיד והכוון · 9:30–15:00\nhttps://pedagogiamh.co.il/hishtal
+ muyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:49477232@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270210T093000
+DTEND;TZID=Asia/Jerusalem:20270210T150000
+SUMMARY:סיור חברה חרדית · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · תמונת 
+ עתיד והכוון · 9:30–15:00\nhttps://pedagogiamh.co.il/hishtal
+ muyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:573fe8d2@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270217T093000
+DTEND;TZID=Asia/Jerusalem:20270217T150000
+SUMMARY:סיור חברה כללית · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · תמונת 
+ עתיד והכוון · 9:30–15:00\nhttps://pedagogiamh.co.il/hishtal
+ muyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:bf4a8a11@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270303T083000
+DTEND;TZID=Asia/Jerusalem:20270303T103000
+SUMMARY:נושא לפי בחירה · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:6fe14c34@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270317T083000
+DTEND;TZID=Asia/Jerusalem:20270317T103000
+SUMMARY:נושא לפי בחירה · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:103bf2d1@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270505T083000
+DTEND;TZID=Asia/Jerusalem:20270505T103000
+SUMMARY:נושא לפי בחירה · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · זום · 8
+ :30–10:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+BEGIN:VEVENT
+UID:9e49ee51@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270602T083000
+DTEND;TZID=Asia/Jerusalem:20270602T113000
+SUMMARY:זום משותף סיום שנה · רכזים חברתיים
+DESCRIPTION:רכזי החינוך החברתי היוצר · 8:30–11:3
+ 0\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakazim
+END:VEVENT
+END:VCALENDAR

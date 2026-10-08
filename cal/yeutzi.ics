@@ -1,0 +1,71 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:התחום הייעוצי-טיפולי · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:fefb75e9@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261014
+DTEND;VALUE=DATE:20261015
+SUMMARY:יום עיון לפתיחת שנה · התחום הייעוצי
+ -טיפולי
+DESCRIPTION:יועצים · מחוזות דרום\, ירושלים ומ
+ רכז\nhttps://pedagogiamh.co.il/hishtalmuyot.html#yeutzi
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#yeutzi
+END:VEVENT
+BEGIN:VEVENT
+UID:570e13bf@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261021
+DTEND;VALUE=DATE:20261022
+SUMMARY:יום עיון לפתיחת שנה · התחום הייעוצי
+ -טיפולי
+DESCRIPTION:יועצים · מחוז חיפה והצפון\nhttps://peda
+ gogiamh.co.il/hishtalmuyot.html#yeutzi
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#yeutzi
+END:VEVENT
+BEGIN:VEVENT
+UID:e8d81905@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261104
+DTEND;VALUE=DATE:20261105
+SUMMARY:תחילת השתלמויות ימי רביעי · התחום ה
+ ייעוצי-טיפולי
+DESCRIPTION:יועצים ויועצות · מועד מדויק לכל ה
+ שתלמות — בסילבוס\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:276ac3e2@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270113
+DTEND;VALUE=DATE:20270114
+SUMMARY:יום עיון פיזי של ההדרכות · התחום הי
+ יעוצי-טיפולי
+DESCRIPTION:יועצים ויועצות\nhttps://pedagogiamh.co.il/hisht
+ almuyot.html#yeutzi
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#yeutzi
+END:VEVENT
+END:VCALENDAR

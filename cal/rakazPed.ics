@@ -1,0 +1,97 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:רכזים פדגוגיים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:bdde1e64@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20260907T140000
+DTEND;TZID=Asia/Jerusalem:20260907T153000
+SUMMARY:מפגש פתיחה · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · זום · 14:00–15:30\nhttp
+ s://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:317cfe75@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261026T090000
+DTEND;TZID=Asia/Jerusalem:20261026T150000
+SUMMARY:מפגש פיזי · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · קמפוס בני ברק · 9
+ :00–15:00\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:d530f715@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261217T090000
+DTEND;TZID=Asia/Jerusalem:20261217T150000
+SUMMARY:מפגש פיזי · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · קמפוס בני ברק · 9
+ :00–15:00\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:d672e814@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270126T090000
+DTEND;TZID=Asia/Jerusalem:20270126T150000
+SUMMARY:מפגש פיזי · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · קמפוס בני ברק · 9
+ :00–15:00\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:99fdd974@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270216T090000
+DTEND;TZID=Asia/Jerusalem:20270216T140000
+SUMMARY:מפגש בזום · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · 9:00–14:00\nhttps://pedagog
+ iamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:4bd5040d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270523T090000
+DTEND;TZID=Asia/Jerusalem:20270523T150000
+SUMMARY:מפגש פיזי · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · קמפוס בני ברק · 9
+ :00–15:00\nhttps://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+BEGIN:VEVENT
+UID:fc9cf29f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270627T090000
+DTEND;TZID=Asia/Jerusalem:20270627T110000
+SUMMARY:סיום שנה · רכזים פדגוגיים
+DESCRIPTION:רכזים פדגוגיים · זום · 9:00–11:00\nhttps
+ ://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#rakaz-ped
+END:VEVENT
+END:VCALENDAR

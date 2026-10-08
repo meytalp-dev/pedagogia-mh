@@ -1,0 +1,146 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:חגים וחופשות · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:92f9512@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260911
+DTEND;VALUE=DATE:20260914
+SUMMARY:ראש השנה תשפ״ז
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:47ddbf2d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260920
+DTEND;VALUE=DATE:20260922
+SUMMARY:יום הכיפורים
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:89e60b58@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260925
+DTEND;VALUE=DATE:20261004
+SUMMARY:סוכות ושמחת תורה
+DESCRIPTION:חופשת החג\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:c8e1cccd@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261204
+DTEND;VALUE=DATE:20261213
+SUMMARY:חנוכה
+DESCRIPTION:הדלקה ראשונה בערב 4.12\nhttps://pedagogiamh.c
+ o.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:9f2f2a15@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261225
+DTEND;VALUE=DATE:20261226
+SUMMARY:חג המולד
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:d041b73f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270123
+DTEND;VALUE=DATE:20270124
+SUMMARY:ט״ו בשבט
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:d5a82cb@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270209
+SUMMARY:תחילת רמדאן
+DESCRIPTION:מועד משוער\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f44edb5d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270310
+DTEND;VALUE=DATE:20270313
+SUMMARY:עיד אל-פיטר
+DESCRIPTION:מועד משוער\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:1d5eb32@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270323
+DTEND;VALUE=DATE:20270325
+SUMMARY:פורים ושושן פורים
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f7883c64@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270421
+DTEND;VALUE=DATE:20270429
+SUMMARY:פסח
+DESCRIPTION:ליל הסדר 21.4 · שביעי של פסח 28.4\nhttps:/
+ /pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f6627f78@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270519
+SUMMARY:עיד אל-אדחא
+DESCRIPTION:מועד משוער\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:2665b9ed@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270525
+DTEND;VALUE=DATE:20270526
+SUMMARY:ל״ג בעומר
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:294c150d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270610
+DTEND;VALUE=DATE:20270612
+SUMMARY:שבועות
+DESCRIPTION:ערב חג 10.6\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+END:VCALENDAR

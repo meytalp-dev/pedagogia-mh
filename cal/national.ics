@@ -1,0 +1,122 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:אירועים לאומיים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:a722b370@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260901
+DTEND;VALUE=DATE:20260902
+SUMMARY:פתיחת שנה״ל תשפ״ז
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:b7f1bfee@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261022
+DTEND;VALUE=DATE:20261023
+SUMMARY:יום הזיכרון ליצחק רבין
+DESCRIPTION:י״ב בחשוון חל בשישי 23.10 — הטקסים 
+ בבתיה״ס ביום חמישי\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4d46ad5@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261110
+SUMMARY:חג הסיגד
+DESCRIPTION:כ״ט בחשוון · מורשת יהדות אתיופיה\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:ad9a25f3@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261220
+DTEND;VALUE=DATE:20261221
+SUMMARY:עשרה בטבת
+DESCRIPTION:יום הקדיש הכללי\nhttps://pedagogiamh.co.il/gant
+ t.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:c39639b1@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270127
+DTEND;VALUE=DATE:20270128
+SUMMARY:היום הבינלאומי לזכר השואה
+DESCRIPTION:https://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:76812d98@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270504
+DTEND;VALUE=DATE:20270505
+SUMMARY:יום הזיכרון לשואה ולגבורה
+DESCRIPTION:כ״ז בניסן · טקסים בבתי הספר\nhttps://p
+ edagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:9bc19acd@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270511
+DTEND;VALUE=DATE:20270512
+SUMMARY:יום הזיכרון לחללי מערכות ישראל
+DESCRIPTION:ד' באייר · טקסים בבתי הספר\nhttps://peda
+ gogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:61dcebbf@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270512
+DTEND;VALUE=DATE:20270513
+SUMMARY:יום העצמאות
+DESCRIPTION:ה' באייר\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4c751f44@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270604
+DTEND;VALUE=DATE:20270605
+SUMMARY:יום ירושלים
+DESCRIPTION:כ״ח באייר\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:499ddfad@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270620
+DTEND;VALUE=DATE:20270621
+SUMMARY:סיום שנה״ל תשפ״ז
+DESCRIPTION:על-יסודי\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,153 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:מורים חונכים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:e3c1c2f4@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20261022T180000
+DTEND;TZID=Asia/Jerusalem:20261022T193000
+SUMMARY:מפגש פתיחה בזום · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · זום · 18:00
+ –19:30\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honchim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:559f1402@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261022
+DTEND;VALUE=DATE:20261023
+SUMMARY:יחידות 0–1 · היכרות עם שנת החונכות ·
+  מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:a293bb74@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261108
+DTEND;VALUE=DATE:20261109
+SUMMARY:יחידה 2 · ממורה לחונך · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · שיח מברר
+  ושאילת שאלות · מקוון\nhttps://pedagogiamh.co.il/hishta
+ lmuyot.html#honchim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:b2a4d909@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261122
+DTEND;VALUE=DATE:20261123
+SUMMARY:יחידה 3 · אתגרים מרכזיים וארגוניים 
+ · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:e2cfa661@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261213
+DTEND;VALUE=DATE:20261214
+SUMMARY:יחידה 4 · היבטים רגשיים בכניסה להור
+ אה · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:fe849b7d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261227
+DTEND;VALUE=DATE:20261228
+SUMMARY:יחידה 5 · היבטים מקצועיים של ההוראה 
+ · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:19f0c718@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;TZID=Asia/Jerusalem:20270104T180000
+DTEND;TZID=Asia/Jerusalem:20270104T193000
+SUMMARY:מפגש סיום בזום · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · זום · 18:00
+ –19:30 · המועד כפי שמופיע בלוח הזמנים\nhttps:
+ //pedagogiamh.co.il/hishtalmuyot.html#honchim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:ee02a379@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270110
+DTEND;VALUE=DATE:20270111
+SUMMARY:יחידה 6 · צפייה ושיח מקדם למידה · מו
+ רים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:ea72e87f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270124
+DTEND;VALUE=DATE:20270125
+SUMMARY:יחידה 7 · תקשורת בין-אישית + פתיחת מט
+ לת הסיום · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · מקוון · 
+ למידה עצמית\nhttps://pedagogiamh.co.il/hishtalmuyot.html#honch
+ im
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:996c4892@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270201
+DTEND;VALUE=DATE:20270204
+SUMMARY:ימי החונכות הארציים · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · זום · 16:00
+ –21:00 · חובה להשתתף בלפחות יחידה אחת\nhttps:
+ //pedagogiamh.co.il/hishtalmuyot.html#honchim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+BEGIN:VEVENT
+UID:668890f1@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270204
+DTEND;VALUE=DATE:20270205
+SUMMARY:מועד אחרון להגשת עבודת הסיום והמטל
+ ות · מורים חונכים
+DESCRIPTION:מורים חונכים של מתמחים · הגשה\nhttps
+ ://pedagogiamh.co.il/hishtalmuyot.html#honchim
+URL:https://pedagogiamh.co.il/hishtalmuyot.html#honchim
+END:VEVENT
+END:VCALENDAR

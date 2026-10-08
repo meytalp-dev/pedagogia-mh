@@ -6,7 +6,7 @@ name: build-knowledge
 on:
   push:
     branches: [main]
-    paths: ["**.html", "templates/**", "ogdan-data.js", "role-defs.js", "tools/build-nav.mjs", "tools/check-rules.mjs", "tools/build-knowledge.mjs", "tools/build-search.mjs", "tools/build-sitemap.mjs"]
+    paths: ["**.html", "templates/**", "ogdan-data.js", "role-defs.js", "calendar.js", "tools/build-cal.mjs", "tools/build-nav.mjs", "tools/check-rules.mjs", "tools/build-knowledge.mjs", "tools/build-search.mjs", "tools/build-sitemap.mjs"]
   workflow_dispatch:
 
 # שני push רצופים יצרו שתי ריצות מקבילות — השנייה נכשלה ב-push כי הראשונה
@@ -28,6 +28,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # מקור אחד לתאריכי ההשתלמויות: הטבלאות ב-hishtalmuyot.html. מהן נבנים
+      # מפגשי ההשתלמויות בלוח הגאנט ויומני המנוי cal/*.ics ("הוספת כל המפגשים ליומן").
+      # שורה בטבלת מסלול בלי data-g מכשילה כאן את הבנייה — עדיף מגאנט שגוי בשקט.
+      - name: build gantt + calendar feeds from hishtalmuyot
+        run: node tools/build-cal.mjs
       # התפריט והפוטר מתחדשים מ-templates/ בכל עמוד שמסומן — כך עמוד
       # שנערך ידנית או נוצר מעטפת ישנה מקבל תמיד את התפריט העדכני.
       - name: refresh nav + footer from templates
@@ -50,10 +55,11 @@ jobs:
         run: node tools/check-rules.mjs
       - name: commit if changed
         run: |
-          if ! git diff --quiet -- knowledge.json search-index.json sitemap.xml '*.html'; then
+          if [ -n "$(git status --porcelain -- knowledge.json search-index.json sitemap.xml '*.html' cal)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add knowledge.json search-index.json sitemap.xml '*.html'
+            git add -A cal
             git commit -m "עדכון אוטומטי של knowledge.json והאינדקס של החיפוש"
             git pull --rebase origin main
             git push
