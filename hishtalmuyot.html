@@ -118,7 +118,7 @@
 <body data-pn-drawer="on">
 <a class="skip" href="#main">דילוג לתוכן הראשי</a>
 
-<!-- nav:start section="procedures" -->
+<!-- nav:start section="hishtalmuyot" -->
 <div class="scrim" onclick="toggleMenu(false)"></div>
 <aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
   <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
@@ -302,7 +302,7 @@
       <a href="career.html#lessons">מערכי שיעור · ט׳–י״ב</a>
     </div>
   </span>
-  <span class="navitem"><a class="lnk active" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
+  <span class="navitem"><a class="lnk" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
     <div class="sub">
       <a class="gatelink" href="procedures.html">שער הנהלים · ארבע הקטגוריות</a>
       <a href="nehalim-minhal.html">נהלי מינהל</a>
@@ -335,6 +335,8 @@
     </div>
   </span>
   <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
+  <span class="navitem"><a class="lnk active" href="hishtalmuyot.html">השתלמויות לבעלי תפקידים</a></span>
+  <span class="navitem"><a class="lnk" href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a></span>
   <div class="tools">
     <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
@@ -349,9 +351,10 @@
   <div class="rv d1" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <h1>השתלמויות ופיתוח מקצועי · תשפ״ז</h1>
   </div>
-  <p class="rv d2 lead" style="max-width:720px">מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים, נתיבים לקריירה, התחום הייעוצי-טיפולי, הכשרת הרכזים הפדגוגיים, שגרירי החדשנות לרכזי התקשוב, קורס המורים החונכים, מפגשי המנהלים והפיקוח, הכשרת בני ובנות השירות ומפגשי ההדרכה בתחומי הדעת. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט.</p>
-  <div class="rv d2" style="margin-top:16px">
+  <p class="rv d2 lead" style="max-width:720px">מסלולי הפיתוח המקצועי של המינהל לשנת תשפ״ז — רכזי החינוך החברתי היוצר, הכשרת המת״לים, נתיבים לקריירה, התחום הייעוצי-טיפולי, הכשרת הרכזים הפדגוגיים, שגרירי החדשנות לרכזי התקשוב, קורס המורים החונכים, מפגשי המנהלים והפיקוח, והכשרת בני ובנות השירות. כל המועדים, הסילבוסים והמנחים בעמוד אחד, וכולם גם על ציר הזמן בלוח הגאנט. מפגשי ההדרכה בתחומי הדעת נמצאים בעמוד נפרד — הדרכות מקצועיות.</p>
+  <div class="rv d2" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
     <a class="btn primary" href="gantt.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M8 2.8v4M16 2.8v4M3.5 10h17"/></svg>ללוח הגאנט השנתי</a>
+    <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="hadrachot-miktzoiot.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><path d="M4 19.5V5a1.5 1.5 0 0 1 1.5-1.5H20v15H5.5A1.5 1.5 0 0 0 4 20a1.5 1.5 0 0 0 1.5 1.5H20"/><path d="M8 8h8M8 11.5h5"/></svg>להדרכות המקצועיות</a>
   </div>
 </div>
 
@@ -465,7 +468,8 @@
        מהן נבנים לוח הגאנט ויומני המנוי (cal/*.ics) — tools/build-cal.mjs, באקשן בכל push.
        משנים מועד רק כאן, בתא td.dt. data-track בטבלה = המסלול בגאנט; data-g בשורה = שם המפגש
        בגאנט וביומן; data-gs = שורת הפרטים בגאנט; data-ga = למי (אם שונה מהמסלול).
-       data-cal בטבלה = יומן מנוי בלבד, בלי גאנט. שורה חדשה בטבלת מסלול חייבת data-g. -->
+       שורה חדשה בטבלת מסלול חייבת data-g.
+       מועדי ההדרכה בתחומי הדעת (data-cal) עברו ל-hadrachot-miktzoiot.html (8.10.26). -->
 
   <!-- ===== רכזים חברתיים ===== -->
   <section class="prog p-green rv" id="rakazim">
@@ -852,275 +856,6 @@
     </div>
   </section>
 
-  <!-- ===== הדרכה בתחומי הדעת ===== -->
-  <section class="prog p-sand rv" id="hadrachot-daat">
-    <div class="ph">
-      <span class="stripe"></span>
-      <div>
-        <h2>הדרכה בתחומי הדעת <small>· מועדי מפגשי ההדרכה</small></h2>
-        <p>לצד ההשתלמויות הרוחביות, כל תחום דעת מקיים <b>מפגשי הדרכה שוטפים למורי המקצוע</b> בהובלת המדריך.ה המקצועי.ת. המועדים שלהלן הם התוכניות השנתיות שהתקבלו עד כה — הן מתעדכנות במהלך השנה, ומופיעות גם בדשבורד האישי של כל מדריכ.ה במנור.</p>
-        <div class="meta">
-          <span>מתמטיקה · החברה היהודית</span><span>אנגלית · החברה היהודית</span><span>אנגלית · החברה הערבית</span><span>תנ״ך · החברה היהודית</span><span>היסטוריה · החברה הערבית</span><span>עברית · החברה היהודית</span><span>ספרות · המגזר החרדי</span><span>היסטוריה ואזרחות · המגזר החרדי</span><span>המועדים מתעדכנים במהלך השנה</span>
-        </div>
-      </div>
-    </div>
-    <div class="pb">
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>מתמטיקה — 3 יח״ל וגמר</h3>
-          <span>מדריכה: שירה סיבוני · מפקחת: רויטל אמיר · 10 מפגשים · תשפ״ז</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-math">
-          <tr><th>#</th><th>תאריך</th><th>נושא המפגש</th><th>יום, מועד ושעה</th></tr>
-          <tr><td>1</td><td class="dt">22.9.26</td><td><b>פתיחת שנה, היכרות ואבחון "מאיפה התלמיד מתחיל?"</b><span class="sm">היכרות ושיחת פתיחה, נהלי ודרכי עבודה השנה · דרישות משרד העבודה ונהלי עבודה (הדרכה, השתלמויות ומפגשים כלליים) · שיח על מבחני הגמר וצורת ההיבחנות בתשפ"ז · יצירת מפת דרכים למורים ולתלמידים, אבחון פערים עדין ובניית האמון והמסוגלות להצלחה · פדגוגיה: הוראת מתקשים ובניית מסוגלות</span></td><td>ג׳ · בוקר<span class="sm"><bdi dir="ltr">14:00–15:30</bdi></span></td></tr>
-          <tr><td>1</td><td class="dt">23.9.26</td><td>פתיחת שנה, היכרות ואבחון "מאיפה התלמיד מתחיל?"<span class="sm">מועד הערב של מפגש 1</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>2</td><td class="dt">18.10.26</td><td><b>בניית תשתית אלגברית והוראה מדורגת</b><span class="sm">פירוק תהליכים מורכבים לצעדים קטנים ומבניים · פדגוגיה והוראת מתקשים: הוראת משוואות, ביטויים אלגבריים ושינוי נושא נוסחה תוך שימוש בעזרים ויזואליים · בניית מסוגלות: "כרטיסיות ניווט" וכלים נוספים — מבנה פתרון קבוע שנועד להפחית עומס קוגניטיבי אצל תלמידים מתקשים · כלים תקשוביים לפעילויות אינטגרטיביות עם תלמידים</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>2</td><td class="dt">21.10.26</td><td>בניית תשתית אלגברית והוראה מדורגת<span class="sm">מועד הערב של מפגש 2</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>3</td><td class="dt">15.11.26</td><td><b>התמודדות עם בעיות מילוליות, גרפים, הבנת הנקרא המתמטית, מילון מושגים ואסטרטגיות למידה</b><span class="sm">גישור בין השפה המדוברת לשפה המתמטית והתמודדות עם אוריינות מתמטית · טכניקת מרקור ותרגום טקסט מילולי (בעיות קנייה/מכירה, אחוזים, יחס) לטבלאות ומשוואות · בניית מיומנויות פתרון של שאלות בגרות אמיתיות משנים קודמות (שאלון 372 — דגש על מודל ליניארי כדוגמה) · אסטרטגיות הוראה לתלמידים עם פערים: עבודה מבוססת ייצוגים ומעבר בין ייצוגים (חזותי, מילולי, סמלי), עבודה עם כלים תקשוביים · שיח של פדגוגיה טיפולית עם תלמידים — עידוד מוטיבציה וחיזוק רגשי</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>3</td><td class="dt">18.11.26</td><td>התמודדות עם בעיות מילוליות, גרפים, הבנת הנקרא המתמטית, מילון מושגים ואסטרטגיות למידה<span class="sm">מועד הערב של מפגש 3</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>4</td><td class="dt">20.12.26</td><td><b>תשתית הוראתית</b><span class="sm">היכרות עומק עם נושאים מ-3 יח"ל שעולים כצורך לדיון והעמקה מהמבנה החדש והדרישות · המשך הטמעה והיכרות עם התוכנית החדשה והמבנה של שאלון 35372 · זיהוי "שאלות עוגן" בכל שאלון, שבהן תלמיד מתקשה יכול לצבור נקודות בביטחון · בניית מסוגלות: שיח על ניהול ציפיות, נהלי עבודה והתמודדות עם שגרת ההוראה ברשת — כלים, סביבות למידה, מטלות מתוקשבות · דיוק התוכנית השנתית לפי הספקים, הגשה לבגרות חורף וצרכי הקבוצות</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>4</td><td class="dt">23.12.26</td><td>תשתית הוראתית<span class="sm">מועד הערב של מפגש 4</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>5</td><td class="dt">3.1.27</td><td><b>יישום מושגים, למידה דיפרנציאלית, סימולציות והכנה לבגרות חורף</b><span class="sm">נושא מרכזי: הוראה דיפרנציאלית, אסטרטגיות פתרון וניהול זמן בבחינה · סימולציות קצרות עם משוב מיידי; טיפים להפחתת חרדת בחינות בזמן אמת · תרגול מעבר מדורג משאלה לשאלה ברמות שונות · כלי מתוקשב: ClassPoint או Liveworksheets ליצירת דפי עבודה אינטראקטיביים עם מעקב אחר קצב התלמיד</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>5</td><td class="dt">6.1.27</td><td>יישום מושגים, למידה דיפרנציאלית, סימולציות והכנה לבגרות חורף<span class="sm">מועד הערב של מפגש 5</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>6</td><td class="dt">14.2.27</td><td><b>פדגוגיה עמוקה של ייצוגים, הוראה דיאגנוסטית ופיצוח מכשולי למידה בפונקציות וגרפים</b><span class="sm">הוראה מבוססת אבחון טעויות, מעברים מורכבים בין ייצוגים (גיאומטריה אנליטית וגרפים) ופיתוח חשיבה מטא-קוגניטיבית · ניתוח תפיסות מוטעות שכיחות והצגת טעויות ללמידה בכיתה — שיח מעצים ומעודד מוטיבציה · כלי מתוקשב: Desmos ו-GeoGebra לחקירה ויזואלית דינמית של גרפים ושיפועים · בניית הדרגתיות ברמה גבוהה: פירוק שאלת בגרות ל-3 תת-רמות — חילוץ נתונים חזותי, תרגום מילולי, הסקת מסקנות ונימוק · מכשולים רגשיים מול ייצוג גרפי: בידוד גירויים ומרקור סלקטיבי · איך לגשת לשאלה "תקועה"? פרוטוקול לעזרה עצמית</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>6</td><td class="dt">17.2.27</td><td>פדגוגיה עמוקה של ייצוגים, הוראה דיאגנוסטית ופיצוח מכשולי למידה בפונקציות וגרפים<span class="sm">מועד הערב של מפגש 6</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>7</td><td class="dt">14.3.27</td><td><b>אוריינות נתונים עמוקה, ניתוח טעויות שכיחות ובניית מאגר דיאגנוסטי רשתי</b><span class="sm">דגש: סטטיסטיקה, הסתברות, חקר נתונים ועיבוד ייצוגים מורכבים · פיצוח כשלים קוגניטיביים בסטטיסטיקה והסתברות (3 יח"ל/גמר): ממוצע מול חציון ושכיח, מעבר מדיאגרמת עץ לטבלה דו-ממדית · הערכה מעצבת מבוססת נתונים: ניתוח מבחני המחצית, זיהוי נושאים רוחביים שבהם תלמידים איבדו נקודות "מיותרות" ומענה פדגוגי ממוקד · בניית ביטחון בניתוח טבלאות ותרשימים: "סריקה ראשונית" — חוק 3 השניות (מה הכותרת? מה היחידות? מה הערך הגבוה/הנמוך?) · בניית מאגר שיתופי של חומרים: דפי תמיכה חזותיים, מבחנים מותאמים, חוברות מפורטות ושיתוף בין המורים</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>7</td><td class="dt">17.3.27</td><td>אוריינות נתונים עמוקה, ניתוח טעויות שכיחות ובניית מאגר דיאגנוסטי רשתי<span class="sm">מועד הערב של מפגש 7</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>8</td><td class="dt">4.4.27</td><td><b>הוראה מבוססת בעיות (PBL), הנגשת גיאומטריה במרחב וחיזוק רוחבי לקראת סוף שנה</b><span class="sm">דגש: נוסחאות שטח ונפח, יחס, למידה מבוססת בעיות מעשיות וטיפול בפערים שעלו בהדרכות הפרטניות · הנגשת גיאומטריה במרחב: המעבר מ-2D ל-3D אצל תלמידים מתקשים, פריסות של גוף, נפח ושטח פנים · אסטרטגיית צביעה מקבילה · PBL: מיקרו-פרויקטים סביב יחס, אחוזים, נפחים ושטחים מהעולם המקצועי של תלמידי משרד העבודה (כמויות חומר, עלויות ייצור, תכנון מכולות/אחסון) · הדרכת המורים לכמה דרכי פתרון ומתן חופש בחירה לתלמיד</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>8</td><td class="dt">7.4.27</td><td>הוראה מבוססת בעיות (PBL), הנגשת גיאומטריה במרחב וחיזוק רוחבי לקראת סוף שנה<span class="sm">מועד הערב של מפגש 8</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>9</td><td class="dt">2.5.27</td><td><b>אסטרטגיות מרתון ופיצוח ניקוד במבחני גמר/בגרות</b><span class="sm">ליווי בבחינות הגמר והבגרות — ציוני הגשה, בניית מתכונות, מרתוני למידה, חלוקת עבודה · מתודולוגיית "חילוץ ניקוד מקסימלי" מהשאלה והבחינה · תכנון ההמשך — חיזוק נושאים שלא נבחנו (י"ב אחרי הבגרות) · מרתון למידה בכיתה הטרוגנית ועבודה בתחנות ממוקדות · מבחני גמר ו-172 בכיתה י׳: ציוני הגשה שנתיים, מתכונות מאוזנות, התייחסות לעלייה או לירידה חדה בציונים · הכנה מנטלית: ניהול חרדת בחינות, טכניקת 5 הדקות הראשונות · שיחת שיקוף עם התלמיד סביב ציון ההגשה והמתכונת · Jamboard / Miro / Google Slides: פתרון מרתוני שיתופי בלייב וניתוח טעויות בזמן אמת</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>9</td><td class="dt">5.5.27</td><td>אסטרטגיות מרתון ופיצוח ניקוד במבחני גמר/בגרות<span class="sm">מועד הערב של מפגש 9</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-          <tr><td>10</td><td class="dt">6.6.27</td><td><b>מסכמים ומתכוננים להמשך</b><span class="sm">סיכום שנתי עם המורים — מה עבד, מה פחות · ניתוח תוצאות מבחני הגמר והבגרויות: פערים בין ציון ההגשה לציון הבחינה, נושאים שהצליחו ונושאים שנכשלו · הפקת לקחים, תכנון מועדי ב׳ ורצף ט׳–י״ב לתשפ"ח; דיון מונחה ורפלקציה אישית של המורים · הוראה מתקנת קצרת טווח למועד ב׳ (3–4 שבועות): התמקדות ב-2 הנושאים שחסרו לתלמיד "לעובר" · תכנון הרצף הרב-שנתי: ט׳ (יסודות אלגבריים ומסוגלות), י׳ (שאלון 172 וחלוקה ראשונית לבגרות וגמר), י״א–י״ב (שאלון 372 ותעודת גמר) · ריכוז התוצרים: Padlet / Google Sites לסיכום ותיעוד רוחבי</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00–11:30</bdi></span></td></tr>
-          <tr><td>10</td><td class="dt">9.6.27</td><td>מסכמים ומתכוננים להמשך<span class="sm">מועד הערב של מפגש 10</span></td><td>ד׳ · ערב<span class="sm"><bdi dir="ltr">20:00–21:30</bdi></span></td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מועדים לכל מפגש, בימים שונים:</b> מועד בוקר (בדרך כלל ביום א׳) ומועד ערב (ביום ד׳ שאחריו). משתתפים באחד מהם. <b>שימו לב:</b> מועד הבוקר של מפגש הפתיחה ביום ג׳ 22.9 בשעה 14:00.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>אנגלית — תוכנית מדריכה ארצית</h3>
-          <span>מדריכה: סיון נחליאל · מפקחת: ליאת צבר · 9 מפגשים</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-english">
-          <tr><th>#</th><th>תאריך</th><th>יום</th><th>נושא המפגש</th><th>שעות</th></tr>
-          <tr><td>1</td><td class="dt">23.9.26</td><td>ד׳</td><td><b>פתיחת שנה</b><span class="sm">מנהלות · בעיות, שאלות ורעיונות · השתלמות מורים · קהילה לומדת</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>2</td><td class="dt">20.10.26</td><td>ג׳</td><td>עדכוני ספרות, חיבור ו-bands<span class="sm">לפי עדכוני משרד החינוך, והחלטה על נושאים לחידוד וללימוד במפגשים הבאים על פי דרישה מהשטח</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>3</td><td class="dt">17.11.26</td><td>ג׳</td><td>לקראת בחינות הבגרות באנגלית<span class="sm">דגשים, הסברים ושאלות מהשטח · מפגש שאהרונה מצטרפת אליו</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>4</td><td class="dt">15.12.26</td><td>ג׳</td><td>גמר<span class="sm">רציונל · אסטרטגיות להוראה · רעיונות מהשטח</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>5</td><td class="dt">12.1.27</td><td>ג׳</td><td>רגע לפני בגרות באנגלית<span class="sm">מענה לשאלות אחרונות מהשטח · <b>18.1–19.1 בגרות חורף באנגלית</b></span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>6</td><td class="dt">16.2.27</td><td>ג׳</td><td>המשך מפגשי גמר<span class="sm">תלמידים מתקשים</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>7</td><td class="dt">16.3.27</td><td>ג׳</td><td>הכנה — שאלות, בעיות ומנהלות<span class="sm">ספרות · cobe / boost · חיבור</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>8</td><td class="dt">6.4.27</td><td>ג׳</td><td>גמר<span class="sm">מבנה הבחינה, מנהלות ובעיות</span></td><td>11:00 / 18:00</td></tr>
-          <tr><td>9</td><td class="dt">4.5.27</td><td>ג׳</td><td>לקראת בגרות קיץ<span class="sm"><b>1.6.27 בגרות קיץ באנגלית</b></span></td><td>11:00 / 18:00</td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מועדים לכל מפגש:</b> כל מפגש מתקיים פעמיים באותו יום — 11:00 ו-18:00 — כדי לאפשר לכל מורה לבחור את המועד הנוח. <b>בנוסף:</b> בתהליך מול ציונה ואהרונה לפתיחת השתלמות ייעודית למורי משרד העבודה, ונבדקת האפשרות לשלב תלמידים מתקשים בתוכנית 720 של משרד החינוך (לתלמידי חטיבת הביניים).</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>אנגלית — החברה הערבית</h3>
-          <span>מדריכה: רוזין מטר דאו · מפקחת: ליאת צבר · 10 מפגשים חודשיים · שנה״ל 2026–2027</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-english-arab">
-          <tr><th>#</th><th>תאריך</th><th>נושא המפגש</th><th>יום, מועד ושעה</th></tr>
-          <tr><td>1</td><td class="dt">27.9.26</td><td><b>מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית</b><span class="sm">Updates / Mikud · The 3 point Bagrut · Handbook</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>1</td><td class="dt">28.9.26</td><td>מפגש פתיחה — יעדים וציפיות · היכרות עם פורטל האנגלית<span class="sm">מועד אחה״צ של מפגש 1</span></td><td>ב׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>2</td><td class="dt">15.10.26</td><td><b>Boost Exam — AI / Digital tools · Practical practice tips · Digital Learning for independent learners</b><span class="sm">1) Boost Exam — AI / Digital tools · 2) Practical practice tips (challenges and strategies) · 3) Digital Learning for independent learners (Dig into Digital) · החודש מועד אחה״צ קודם למועד הבוקר</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>2</td><td class="dt">17.10.26</td><td>Boost Exam · Practical practice tips · Digital Learning<span class="sm">מועד הבוקר של מפגש 2</span></td><td>ש׳ · בוקר<span class="sm"><bdi dir="ltr">10:15</bdi></span></td></tr>
-          <tr><td>3</td><td class="dt">1.11.26</td><td><b>Aligned Literature Program for 3 points</b></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>3</td><td class="dt">5.11.26</td><td>Aligned Literature Program for 3 points<span class="sm">מועד אחה״צ של מפגש 3</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>4</td><td class="dt">13.12.26</td><td><b>Writing for Module C</b><span class="sm">Building a paragraph step by step — sentence frames and writing scaffolds · Moving from basic to better vocabulary · Common writing difficulties and solutions</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>4</td><td class="dt">14.12.26</td><td>Writing for Module C<span class="sm">מועד אחה״צ של מפגש 4</span></td><td>ב׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>5</td><td class="dt">21.1.27</td><td><b>Curriculum 2020 — from Terminology to classroom practice</b><span class="sm">Connecting curriculum goals to lesson planning · החודש מועד אחה״צ קודם למועד הבוקר</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>5</td><td class="dt">24.1.27</td><td>Curriculum 2020 — from Terminology to classroom practice<span class="sm">מועד הבוקר של מפגש 5</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>6</td><td class="dt">4.2.27</td><td><b>English for the Real World — Making Learning Meaningful</b><span class="sm">החודש מועד אחה״צ קודם למועד הבוקר</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>6</td><td class="dt">7.2.27</td><td>English for the Real World — Making Learning Meaningful<span class="sm">מועד הבוקר של מפגש 6</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>7</td><td class="dt">14.3.27</td><td><b>Teaching Vocabulary for Communication</b><span class="sm">1) Teaching Vocabulary for Communication · 2) The Rational for Learning Vocabulary (teaching and learning styles for teaching vocabulary)</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>7</td><td class="dt">18.3.27</td><td>Teaching Vocabulary for Communication<span class="sm">מועד אחה״צ של מפגש 7</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>8</td><td class="dt">25.4.27</td><td><b>Closing Gaps &amp; supporting struggling students</b></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>8</td><td class="dt">29.4.27</td><td>Closing Gaps &amp; supporting struggling students<span class="sm">מועד אחה״צ של מפגש 8</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>9</td><td class="dt">9.5.27</td><td><b>Reading Comprehension Strategies</b></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>9</td><td class="dt">11.5.27</td><td>Reading Comprehension Strategies<span class="sm">מועד אחה״צ של מפגש 9</span></td><td>ג׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-          <tr><td>10</td><td class="dt">13.6.27</td><td><b>Looking Back &amp; Planning ahead</b><span class="sm">Reflecting on what worked · Sharing successful classroom practices · Identifying needs for next year</span></td><td>א׳ · בוקר<span class="sm"><bdi dir="ltr">10:00</bdi></span></td></tr>
-          <tr><td>10</td><td class="dt">17.6.27</td><td>Looking Back &amp; Planning ahead<span class="sm">מועד אחה״צ של מפגש 10</span></td><td>ה׳ · אחה״צ<span class="sm"><bdi dir="ltr">18:00</bdi></span></td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מועדים לכל מפגש, בימים שונים:</b> מועד בוקר ביום א׳ בשעה 10:00, ומועד אחר הצהריים בשעה 18:00 ביום אחר באותו שבוע (בדרך כלל יום ה׳). משתתפים באחד מהם. <b>ייתכנו שינויים</b> בתכנים ובלוחות הזמנים בהתאם לצרכים.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>תנ״ך — החברה היהודית</h3>
-          <span>מדריכה: טלי אהרון זיו · מפקח: יששכר חפץ · המועדים הקרובים · תשפ״ז</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-tanakh">
-          <tr><th>#</th><th>תאריך</th><th>יום</th><th>נושא המפגש</th><th>שעה</th></tr>
-          <tr><td>1</td><td class="dt">12.10.26</td><td>ב׳</td><td><b>הוראת תנ״ך לתלמידים מתקשים</b></td><td>השעה תפורסם</td></tr>
-          <tr><td>2</td><td class="dt">2.11.26</td><td>ב׳</td><td>מפגש לימוד משותף</td><td>19:00</td></tr>
-          <tr><td>3</td><td class="dt">2.12.26</td><td>ד׳</td><td>מפגש הכנה לבגרות חורף</td><td>19:00</td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>הנוכחות במפגשים היא חובה</b> וחלק בלתי נפרד מהעבודה השוטפת; היא מדווחת במנור. מי שמתקשה להגיע לאחד המפגשים — מעדכן.ת מראש. מועדים נוספים יתווספו במהלך השנה.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>היסטוריה לדוברי ערבית</h3>
-          <span>מדריך: ד״ר עבד אלוהאב חבאיב · מפקחת: יסמין אמון · 10 מפגשים · שנה״ל 2026–2027</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-history-arab">
-          <tr><th>חודש</th><th>תאריך</th><th>נושא המפגש ומטרותיו</th><th>דוגמאות מבחינות בגרות</th><th>מועדי המפגש</th></tr>
-          <tr><td>ספטמבר</td><td class="dt">16.9.26</td><td>מפגש היכרות ותיאום ציפיות<span class="sm">הכרת צוות המורים</span></td><td>—</td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
-          <tr><td>אוקטובר</td><td class="dt">14.10.26</td><td>סקירת תכנית הלימודים וחוקי המענה לבגרות<span class="sm">הכרת תכנית הלימודים</span></td><td>חוזר מפמ״ר היסטוריה</td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
-          <tr><td>נובמבר</td><td class="dt">11.11.26</td><td>חידושים בבחינות הבגרות<span class="sm">הכרת החידושים</span></td><td>בגרות קיץ 2026</td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
-          <tr><td>דצמבר</td><td class="dt">9.12.26</td><td>פרק ראשון בתכנית הלימודים: הח׳ליפות · הוזיר · החברה האסלאמית<span class="sm">הדגשת מיומנות אוריינות לשונית בטקסטים היסטוריים</span></td><td>קיץ 2026 ש׳ 4<span class="sm">קיץ 2024 ש׳ 6</span></td><td>9:00–10:00<span class="sm">17:00–18:00</span></td></tr>
-          <tr><td>ינואר</td><td class="dt">13.1.27</td><td>פרק שני בתכנית הלימודים: השאלה המזרחית · מוחמד עלי פאשא · הסכמים ובריתות · ארצות ערב תחת המנדט הבריטי והצרפתי<span class="sm">הבנת מדיניות המעצמות והאינטרסים שלהן · מיומנות: קריאת מפה</span></td><td>חורף 2025 ש׳ 8<span class="sm">חורף 2024 ש׳ 14</span></td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-          <tr><td>פברואר</td><td class="dt">3.2.27</td><td>פרק שלישי בתכנית הלימודים: היסטוריה של עם ישראל · האנטישמיות · העלייה הראשונה · הצהרת בלפור 1917<span class="sm">הכרת מעמד היהודים כמיעוט ויחס הרוב כלפיהם · מיומנות: היחס לאחר</span></td><td>קיץ 2022 ש׳ 10<span class="sm">קיץ 2020 ש׳ 11</span></td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-          <tr><td>מרץ</td><td class="dt">17.3.27</td><td>פרק רביעי בתכנית הלימודים: היהודים בגרמניה הנאצית · השואה · הפתרון הסופי<span class="sm">הכרת מושג השואה · מיומנות: רגישות חברתית ותרבותית</span></td><td>קיץ 2020 ש׳ 13<span class="sm">חורף 2022 ש׳ 14</span></td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-          <tr><td>אפריל</td><td class="dt">21.4.27</td><td>קריאת נתונים וניתוח נתונים</td><td>קיץ 2026 ש׳ 13<span class="sm">חורף 2026 ש׳ 8</span></td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-          <tr><td>מאי</td><td class="dt">13.5.27</td><td>דגשים על פרקי בחינת הבגרות · שימוש בקריקטורה ככלי הוראה<span class="sm">הכרת מבנה הבגרות · ניתוח קריקטורה</span></td><td>כל בחינות הבגרות</td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-          <tr><td>יוני</td><td class="dt">9.6.27</td><td><b>סיכום שנה</b><span class="sm">סיכום ומסקנות · מידת העמידה ביעדים ובמטרות</span></td><td>—</td><td>9:00–10:00<span class="sm">16:30–17:30</span></td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מועדים לכל מפגש:</b> כל מפגש חודשי מתקיים פעמיים באותו יום — מועד בוקר ומועד אחר הצהריים.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>עברית — מפגשי למידה למורי העברית</h3>
-          <span>מדריכה: מוריה פלינט · מפקחת: ליאת צבר · 10 מפגשים חודשיים · תשפ״ז</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-hebrew">
-          <tr><th>תאריך</th><th>מפגש ונושאים לפי תוכנית</th><th>יום ושעות התחלה</th><th>חודש</th></tr>
-          <tr><td class="dt">15.9.26</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז (לקחי בגרות תשפ"ו) · <b>30% פנימי</b> 17:00 — מבנה ההערכה החלופית ואפשרויות ההערכה · <b>בחינת הגמר</b> 18:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ד׳ תשרי</span></td><td>ספטמבר</td></tr>
-          <tr><td class="dt">17.9.26</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז (לקחי בגרות תשפ"ו) · <b>30% פנימי</b> 11:00 — מבנה ההערכה החלופית ואפשרויות ההערכה · <b>בחינת הגמר</b> 13:00 — מפרט ההיבחנות ודגשים לשנה"ל תשפ"ז</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">ו׳ תשרי</span></td><td>ספטמבר</td></tr>
-          <tr><td class="dt">13.10.26</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — אסטרטגיות וכלים להתמודדות עם טקסטים ארוכים ומורכבים · <b>30% פנימי</b> 17:00 — תהליך הכתיבה — מהתאוריה אל המעשה · <b>בחינת הגמר</b> 18:00 — המפגש עם הטקסט וסוגות טקסטים — אסטרטגיות וכלים</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ב׳ מרחשוון</span></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">18.10.26</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 13:00 — אסטרטגיות וכלים להתמודדות עם טקסטים ארוכים ומורכבים · <b>30% פנימי</b> 14:00 — תהליך הכתיבה — מהתאוריה אל המעשה</span></td><td>א׳ · <bdi dir="ltr">13:00 / 14:00</bdi><span class="sm">ז׳ מרחשוון</span></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">22.10.26</td><td>עברית — מפגש בוקר<span class="sm"><b>בחינת הגמר</b> 13:00 — המפגש עם הטקסט וסוגות טקסטים — אסטרטגיות וכלים</span></td><td>ה׳ · <bdi dir="ltr">13:00</bdi><span class="sm">י״א מרחשוון</span></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">17.11.26</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — המיזוג — מהתאוריה אל המעשה · <b>30% פנימי</b> 17:00 — המשוב המקדם — קווים לדמותו · <b>בחינת הגמר</b> 18:00 — ממדי ההבנה והשאלה כטקסט — כלי לקידום ההבנה וההבעה</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ז׳ כסלו</span></td><td>נובמבר</td></tr>
-          <tr><td class="dt">19.11.26</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — המיזוג — מהתאוריה אל המעשה · <b>30% פנימי</b> 11:00 — המשוב המקדם — קווים לדמותו · <b>בחינת הגמר</b> 13:00 — ממדי ההבנה והשאלה כטקסט — כלי לקידום ההבנה וההבעה</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">ט׳ כסלו</span></td><td>נובמבר</td></tr>
-          <tr><td class="dt">22.12.26</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — הערכת הסקירה הממזגת ומתן משוב מקדם · <b>30% פנימי</b> 17:00 — הערכת כתיבה בעידן של בינה מלאכותית · <b>בחינת הגמר</b> 18:00 — הוראת הטיעון והערכתו — חלק א</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">י״ב טבת</span></td><td>דצמבר</td></tr>
-          <tr><td class="dt">24.12.26</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — הערכת הסקירה הממזגת ומתן משוב מקדם · <b>30% פנימי</b> 11:00 — הערכת כתיבה בעידן של בינה מלאכותית</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00</bdi><span class="sm">י״ד טבת</span></td><td>דצמבר</td></tr>
-          <tr><td class="dt">27.12.26</td><td>עברית — מפגש בוקר<span class="sm"><b>בחינת הגמר</b> 13:00 — הוראת הטיעון והערכתו — חלק א</span></td><td>א׳ · <bdi dir="ltr">13:00</bdi><span class="sm">י״ז טבת</span></td><td>דצמבר</td></tr>
-          <tr><td class="dt">10.1.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 13:00 — הוראת מערכת הצורות במבט רוחב · <b>30% פנימי</b> 14:00 — הבעה בעל פה — למורה ולתלמידים</span></td><td>א׳ · <bdi dir="ltr">13:00 / 14:00</bdi><span class="sm">ב׳ שבט</span></td><td>ינואר</td></tr>
-          <tr><td class="dt">12.1.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — הוראת מערכת הצורות במבט רוחב · <b>30% פנימי</b> 17:00 — הבעה בעל פה — למורה ולתלמידים · <b>בחינת הגמר</b> 18:00 — הוראת הטיעון והערכתו — חלק ב</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ד׳ שבט</span></td><td>ינואר</td></tr>
-          <tr><td class="dt">14.1.27</td><td>עברית — מפגש בוקר<span class="sm"><b>בחינת הגמר</b> 10:00 — הוראת הטיעון והערכתו — חלק ב</span></td><td>ה׳ · <bdi dir="ltr">10:00</bdi><span class="sm">ו׳ שבט</span></td><td>ינואר</td></tr>
-          <tr><td class="dt">16.2.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — הוראת התחביר במבט רוחב · <b>30% פנימי</b> 17:00 — הערכה חלופית בתחומים הלשוניים — עקרונות ורעיונות לביצוע: תחביר · <b>בחינת הגמר</b> 18:00 — הוראת הסיכום והערכתו — חלק א</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">ט׳ אדר א׳</span></td><td>פברואר</td></tr>
-          <tr><td class="dt">18.2.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — הוראת התחביר במבט רוחב · <b>30% פנימי</b> 11:00 — הערכה חלופית בתחומים הלשוניים — עקרונות ורעיונות לביצוע: תחביר · <b>בחינת הגמר</b> 13:00 — הוראת הסיכום והערכתו — חלק א</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">י״א אדר א׳</span></td><td>פברואר</td></tr>
-          <tr><td class="dt">2.3.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — בניית מתכונות וציוני הגשה · <b>30% פנימי</b> 17:00 — הערכה חלופית בתחומים הלשוניים — עקרונות ורעיונות לביצוע: צורות · <b>בחינת הגמר</b> 18:00 — הוראת הסיכום והערכתו — חלק ב</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">כ״ג אדר א׳</span></td><td>מרץ</td></tr>
-          <tr><td class="dt">4.3.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — בניית מתכונות וציוני הגשה · <b>30% פנימי</b> 11:00 — הערכה חלופית בתחומים הלשוניים — עקרונות ורעיונות לביצוע: צורות · <b>בחינת הגמר</b> 13:00 — הוראת הסיכום והערכתו — חלק ב</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">כ״ה אדר א׳</span></td><td>מרץ</td></tr>
-          <tr><td class="dt">4.4.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — מיפוי תלמידים ותרגול ממוקד בעזרת כלי בינה מלאכותית · <b>30% פנימי</b> 17:00 — מיפוי התלמידים והכנתם לקראת מסלולי ההמשך: בגרות חיצונית 70% או בחינת גמר · <b>בחינת הגמר</b> 18:00 — הלשון בשירות ההבנה וההבעה</span></td><td>א׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">כ״ו אדר ב׳</span></td><td>אפריל</td></tr>
-          <tr><td class="dt">8.4.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — מיפוי תלמידים ותרגול ממוקד בעזרת כלי בינה מלאכותית · <b>30% פנימי</b> 11:00 — מיפוי התלמידים והכנתם לקראת מסלולי ההמשך: בגרות חיצונית 70% או בחינת גמר · <b>בחינת הגמר</b> 13:00 — הלשון בשירות ההבנה וההבעה</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">א׳ ניסן</span></td><td>אפריל</td></tr>
-          <tr><td class="dt">13.5.27</td><td>עברית — מפגש בוקר<span class="sm"><b>בחינת הגמר</b> 10:00 — דגשים לקראת בחינת הגמר תשפ"ז</span></td><td>ה׳ · <bdi dir="ltr">10:00</bdi><span class="sm">ו׳ אייר</span></td><td>מאי</td></tr>
-          <tr><td class="dt">18.5.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — דגשים לקראת בחינת הבגרות מועד קיץ תשפ"ז והכנה לקראת מועד ב · <b>30% פנימי</b> 17:00 — מיפוי התלמידים והכנתם לקראת מסלולי ההמשך: בגרות חיצונית 70% או בחינת גמר · <b>בחינת הגמר</b> 18:00 — דגשים לקראת בחינת הגמר תשפ"ז</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">י״א אייר</span></td><td>מאי</td></tr>
-          <tr><td class="dt">20.5.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — דגשים לקראת בחינת הבגרות מועד קיץ תשפ"ז והכנה לקראת מועד ב · <b>30% פנימי</b> 11:00 — מיפוי התלמידים והכנתם לקראת מסלולי ההמשך: בגרות חיצונית 70% או בחינת גמר</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00</bdi><span class="sm">י״ג אייר</span></td><td>מאי</td></tr>
-          <tr><td class="dt">1.6.27</td><td>עברית — מפגש אחה"צ<span class="sm"><b>70% חיצוני</b> 16:00 — הכנה לשנה"ל תשפ"ח · <b>30% פנימי</b> 17:00 — הכנה לשנה"ל תשפ"ח · <b>בחינת הגמר</b> 18:00 — הכנה לשנה"ל תשפ"ח</span></td><td>ג׳ · <bdi dir="ltr">16:00 / 17:00 / 18:00</bdi><span class="sm">כ״ה אייר</span></td><td>יוני</td></tr>
-          <tr><td class="dt">3.6.27</td><td>עברית — מפגש בוקר<span class="sm"><b>70% חיצוני</b> 10:00 — הכנה לשנה"ל תשפ"ח · <b>30% פנימי</b> 11:00 — הכנה לשנה"ל תשפ"ח · <b>בחינת הגמר</b> 13:00 — הכנה לשנה"ל תשפ"ח</span></td><td>ה׳ · <bdi dir="ltr">10:00 / 11:00 / 13:00</bdi><span class="sm">כ״ז אייר</span></td><td>יוני</td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שלוש תוכניות, מפגש אחד בחודש:</b> כל מורה משתתף מדי חודש במפגש אחד בתוכנית שבה הוא מלמד (70% חיצוני, 30% פנימי או בחינת הגמר), במועד הנוח לו — אחה״צ או בוקר. <b>בנוסף:</b> מפגש פרטני חובה פעם אחת במחצית, במועדים שיפורסמו בקהילת המורים. ייתכנו שינויים בתכנים ובמועדים — הודעה מראש בקהילה.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>ספרות — המגזר החרדי</h3>
-          <span>מדריכה: שרה ברדה · מפקח: יששכר חפץ · 20 מפגשים (ערב ולפני הצהריים בכל חודש) · תשפ״ז</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-literature-haredi">
-          <tr><th>תאריך</th><th>מפגש</th><th>יום ושעות</th><th>חודש</th></tr>
-          <tr><td class="dt">11.10.26</td><td><b>הציר ההיסטורי של הכתיבה הספרותית · סוגות בספרות</b><span class="sm">מועד ערב · ר״ח חשוון · מפיוטי הקודש סמוך לחורבן בית שני ועד לשירה ופרוזה בתקופה החדשה · סוגות (ז׳אנרים): מאפיינים ודוגמאות, על פי תוכנית הבגרות</span></td><td>א׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">18.10.26</td><td><b>היכרות עם הפורטל</b><span class="sm">מועד לפנה"צ · ז׳ חשוון · הדגמות להעשרה ולשאיבת מידע</span></td><td>א׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">16.11.26</td><td><b>שיטות דידקטיות בהוראת הספרות</b><span class="sm">מועד ערב · ז׳ כסלו · מבנה שיעור · הקניית ידע · דרכים להעשרה ולהעמקת החוויה</span></td><td>ב׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">25.11.26</td><td><b>ניתוחי יצירות</b><span class="sm">מועד לפנה"צ · העמקה בתוכן (חשיבה קוגניטיבית ומטא-קוגניטיבית) · מקורות השראה · מאפיינים צורניים ותרומתם</span></td><td>ד׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">13.12.26</td><td><b>שאלוני בגרות — היכרות עם המבנה והדרישות</b><span class="sm">מועד ערב · ג׳ טבת · דוגמאות למחוון · תשובות מדויקות וראויות</span></td><td>א׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">23.12.26</td><td><b>הסיפור הקצר</b><span class="sm">מועד לפנה"צ · י״ג טבת · מאפיינים, דרכי ניתוח, הדגמת שיעור</span></td><td>ד׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">11.1.27</td><td><b>פיוט קדום / שירת ימי הביניים / שירה חדשה</b><span class="sm">מועד ערב · ג׳ שבט · סקירה, היכרות והבדלים</span></td><td>ב׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">27.1.27</td><td><b>שיר שלא נלמד</b><span class="sm">מועד לפנה"צ · י״ט שבט · תרגיל ניתוח, דוגמאות לשאלות וקשת תשובות</span></td><td>ד׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">14.2.27</td><td><b>מחזה — הגדרה ודוגמאות</b><span class="sm">מועד ערב · ז׳ אדר א׳ · "לישרים תהילה" — מחזה אלגורי, פתשגן</span></td><td>א׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">28.2.27</td><td><b>הדמויות במחזה</b><span class="sm">מועד לפנה"צ · כ״א אדר א׳ · סמליהן · שיח אלגורי בין הדמויות</span></td><td>א׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">15.3.27</td><td><b>תשובות לשאלוני בגרות בנושא המחזה</b><span class="sm">מועד ערב · ו׳ אדר ב׳</span></td><td>ב׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">28.3.27</td><td><b>נובלה</b><span class="sm">מועד לפנה"צ · י״ט אדר ב׳ · מאפיינים, ההבדל בינה לבין הסיפור הקצר · הדגמת נובלה מתוכנית הבגרות וניתוחה</span></td><td>א׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">7.4.27</td><td><b>משלים, רשימות ויצירות קצרות</b><span class="sm">מועד ערב · כ״ט אדר ב׳ · מבנה שיעור והעשרה</span></td><td>ד׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">19.4.27</td><td><b>פיתוח מיומנויות</b><span class="sm">מועד לפנה"צ · י״ב ניסן · בהדגמת יצירות מתוך הבגרות: איתור מידע ושימוש בו · חשיבה יצירתית · אנלוגיות · שימוש בידע קודם · ניסוח מתאים</span></td><td>ב׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">16.5.27</td><td><b>הסיפור החסידי</b><span class="sm">מועד ערב · ט׳ אייר · מאפייני הז׳אנר, ניתוח ושאלות מבחינת הבגרות</span></td><td>א׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">26.5.27</td><td><b>הסיפור המתורגם</b><span class="sm">מועד לפנה"צ · י״ט אייר · אופני ניתוח, סוגי תשאול</span></td><td>ד׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">16.6.27</td><td><b>פאנל שאלות והתמודדויות מן השטח</b><span class="sm">מועד ערב · י״א סיוון</span></td><td>ד׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>יוני</td></tr>
-          <tr><td class="dt">23.6.27</td><td><b>המשך פאנל שאלות והתמודדויות מן השטח</b><span class="sm">מועד לפנה"צ · י״ח סיוון</span></td><td>ד׳ · <bdi dir="ltr">11:00–12:00</bdi></td><td>יוני</td></tr>
-          <tr><td class="dt">7.7.27</td><td><b>רפלקציה</b><span class="sm">מועד ערב · ב׳ תמוז · דוגמאות לשיעורים, תובנות והצעות לשיפור</span></td><td>ד׳ · <bdi dir="ltr">21:00–22:00</bdi></td><td>יולי</td></tr>
-          <tr><td class="dt">21.7.27</td><td><b>עיון בבחינת הבגרות הנוכחית לשנה זו</b><span class="sm">מועד לפנה"צ · ט״ז תמוז · קשיים והצלחות, לקחים ומסקנות</span></td><td>ד׳ · <bdi dir="ltr">12:00–13:00</bdi></td><td>יולי</td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מפגשים בכל חודש, כל אחד בנושא משלו:</b> מפגש ערב (21:00–22:00) ומפגש לפני הצהריים (12:00–13:00). <b>שימו לב:</b> ביוני מפגש לפני הצהריים בשעה 11:00–12:00.</div>
-      </div>
-
-      <div class="subgrp">
-        <div class="subgrp-h">
-          <h3>היסטוריה ואזרחות — המגזר החרדי</h3>
-          <span>מדריכה: רבקה נחום · מפקח: יששכר חפץ · 38 מפגשים (19 לכל מקצוע) · תשפ״ז</span>
-        </div>
-        <div class="sched-wrap">
-        <table class="sched" data-cal="daat-history-civics-haredi">
-          <tr><th>תאריך</th><th>מקצוע</th><th>יום ושעות</th><th>חודש</th></tr>
-          <tr><td class="dt">22.9.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>ספטמבר</td></tr>
-          <tr><td class="dt">23.9.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ד׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>ספטמבר</td></tr>
-          <tr><td class="dt">5.10.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ב׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">6.10.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">18.10.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">19.10.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ב׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>אוקטובר</td></tr>
-          <tr><td class="dt">1.11.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">3.11.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">15.11.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">17.11.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>נובמבר</td></tr>
-          <tr><td class="dt">1.12.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">2.12.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ד׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">28.12.26</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ב׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">29.12.26</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>דצמבר</td></tr>
-          <tr><td class="dt">3.1.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">5.1.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">17.1.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">19.1.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>ינואר</td></tr>
-          <tr><td class="dt">1.2.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ב׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">3.2.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ד׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">14.2.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">16.2.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>פברואר</td></tr>
-          <tr><td class="dt">7.3.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">9.3.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">28.3.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">30.3.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>מרץ</td></tr>
-          <tr><td class="dt">4.4.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">6.4.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">11.4.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">13.4.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>אפריל</td></tr>
-          <tr><td class="dt">2.5.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">4.5.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">16.5.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">18.5.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>מאי</td></tr>
-          <tr><td class="dt">6.6.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>א׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>יוני</td></tr>
-          <tr><td class="dt">8.6.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>ג׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>יוני</td></tr>
-          <tr><td class="dt">13.6.27</td><td>היסטוריה — מפגש זום קבוצתי<span class="sm">מפגש בוקר</span></td><td>א׳ · <bdi dir="ltr">10:30–11:30</bdi></td><td>יוני</td></tr>
-          <tr><td class="dt">15.6.27</td><td>אזרחות — מפגש זום קבוצתי<span class="sm">מפגש ערב</span></td><td>ג׳ · <bdi dir="ltr">20:30–21:30</bdi></td><td>יוני</td></tr>
-        </table>
-        </div>
-        <div class="note-box"><b>שני מפגשים בחודש לכל מקצוע:</b> מפגש בוקר (10:30–11:30) ומפגש ערב (20:30–21:30). כל מפגש מיועד למורי המקצוע שלו — היסטוריה או אזרחות.</div>
-      </div>
-
-      <div class="dl-row">
-        <a class="btn primary" href="/hadrachot/" target="_blank" rel="noopener">למנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
-        <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="kvutzot-hadracha.html">כל קבוצות ההדרכה והמדריכים</a>
-      </div>
-    </div>
-  </section>
-
   <!-- ===== עוד בפיתוח מקצועי ===== -->
   <h2 class="rv" style="font-size:1.25rem;margin:6px 0 14px">עוד בפיתוח מקצועי</h2>
   <div class="grid c3 rv" style="padding:0 0 10px">
@@ -1128,9 +863,9 @@
       <h3 style="font-size:var(--fs-base);margin-bottom:4px">השתלמויות לגמול</h3>
       <p style="font-size:var(--fs-sm);color:var(--text2)">הנחיות למנחים, תנאים ותהליך ההכרה בהשתלמות מוכרת לגמול.</p>
     </a>
-    <a class="card" href="kvutzot-hadracha.html" style="padding:20px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:4px">קבוצות הדרכה למורים מקצועיים</h3>
-      <p style="font-size:var(--fs-sm);color:var(--text2)">מפגשי הדרכה לפי תחומי דעת — פרטים והצטרפות.</p>
+    <a class="card" href="hadrachot-miktzoiot.html" style="padding:20px">
+      <h3 style="font-size:var(--fs-base);margin-bottom:4px">הדרכות מקצועיות בתחומי הדעת</h3>
+      <p style="font-size:var(--fs-sm);color:var(--text2)">מפגשי ההדרכה לפי מגזר ומקצוע — מדריכים, מועדים, תוכנית שנתית והוספה ליומן.</p>
     </a>
     <a class="card" href="/hadrachot/" target="_blank" rel="noopener" style="padding:20px">
       <h3 style="font-size:var(--fs-base);margin-bottom:4px">מנור — ההדרכות הפדגוגיות</h3>

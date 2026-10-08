@@ -1,16 +1,19 @@
-/* בונה מטבלאות המועדים בעמוד ההשתלמויות (hishtalmuyot.html):
-     1. את מפגשי ההשתלמויות בלוח הגאנט — gantt.html, בין הסימונים cal:gen
+/* בונה מטבלאות המועדים בעמוד ההשתלמויות (hishtalmuyot.html) ובעמוד
+   ההדרכות המקצועיות (hadrachot-miktzoiot.html):
+     1. את המפגשים בלוח הגאנט — gantt.html, בין הסימונים cal:gen
      2. את יומני המנוי cal/<מזהה>.ics — אחד לכל מסלול בגאנט ואחד לכל טבלת
         הדרכה בתחומי הדעת. כפתור "הוספת כל המפגשים ליומן" (calendar.js)
         מפנה אליהם, והיומן של מי שנרשם מתעדכן מהם לבד.
 
-   כך יש מקור אחד לתאריכים: משנים מועד רק בטבלה בעמוד ההשתלמויות, והגאנט
+   כך יש מקור אחד לתאריכים: משנים מועד רק בטבלה בעמוד שלו, והגאנט
    והיומנים נבנים ממנו. רץ מהאקשן build-knowledge בכל push.
 
    סימון הטבלאות:
      <table class="sched" data-track="rakaz">     מסלול בגאנט (מפתח ב-TRACKS)
        data-gu="..."                               קישור לכל מפגשי המסלול בגאנט (לא חובה)
-     <table class="sched" data-cal="daat-math">   יומן בלבד, בלי גאנט
+     <table class="sched" data-cal="daat-math">   הדרכה בתחומי הדעת — יומן משלה, ובגאנט
+                                                  שורה בקבוצה המתקפלת "הדרכות מקצועיות"
+                                                  (t:'daat', r = מזהה הטבלה)
      <tr data-g="שם קצר" data-gs="פרטים" data-ga="למי">
        data-g חובה בטבלת מסלול — השם שמופיע בגאנט וביומן.
        data-gs — שורת הפרטים בגאנט (שעה/מקום). data-ga — דורס את "למי" של המסלול.
@@ -69,8 +72,10 @@ function rowTitle(cells, dt) {
 }
 
 /* ---------- 1. קריאת הטבלאות ---------- */
-const H = readFileSync(join(ROOT, 'hishtalmuyot.html'), 'utf8');
+const PAGES = ['hishtalmuyot.html', 'hadrachot-miktzoiot.html'];
 const tables = [];
+for (const page of PAGES) {
+const H = readFileSync(join(ROOT, page), 'utf8');
 for (const [, secId, body] of H.matchAll(/<section class="prog[^"]*" id="([^"]+)"([\s\S]*?)<\/section>/g)) {
   for (const tm of body.matchAll(/<table class="sched"([^>]*)>([\s\S]*?)<\/table>/g)) {
     const ta = attrs(tm[1]);
@@ -94,10 +99,14 @@ for (const [, secId, body] of H.matchAll(/<section class="prog[^"]*" id="([^"]+)
       if (!short) lastHours = hoursFrom(rowTxt);
       rows.push({ ra, p, h, title: ra['data-g'] || rowTitle(cells, dt) || heading });
     }
-    tables.push({ secId, ta, heading, rows });
+    // שורת המשנה בכותרת הקבוצה ("מדריכה: … · מפקחת: …") — רק החלק הראשון, לתווית בגאנט
+    const subs = [...body.slice(0, tm.index).matchAll(/<div class="subgrp-h">[\s\S]*?<span>([\s\S]*?)<\/span>/g)];
+    const who = subs.length ? text(subs.at(-1)[1]).split(' · ')[0] : '';
+    tables.push({ page, secId, ta, heading, who, rows });
   }
 }
-if (!tables.length) fail('לא נמצאה אף טבלה מסומנת ב-hishtalmuyot.html');
+}
+if (!tables.length) fail('לא נמצאה אף טבלה מסומנת ב-' + PAGES.join(' / '));
 
 /* ---------- 2. הגאנט ---------- */
 const gPath = join(ROOT, 'gantt.html');
@@ -120,8 +129,8 @@ for (const t of tables) {
   }
 }
 const NL = G0.includes('\r\n') ? '\r\n' : '\n'; // שומרים על סופי השורה של הקובץ
-let block = START + ' — נבנה אוטומטית מטבלאות המועדים ב-hishtalmuyot.html (tools/build-cal.mjs).' + NL +
-  '    לא עורכים כאן: משנים בטבלה בעמוד ההשתלמויות. */' + NL;
+let block = START + ' — נבנה אוטומטית מטבלאות המועדים ב-hishtalmuyot.html וב-hadrachot-miktzoiot.html (tools/build-cal.mjs).' + NL +
+  '    לא עורכים כאן: משנים בטבלה בעמוד המקור. */' + NL;
 for (const [tk, list] of groups) {
   block += ` /* --- ${TRACKS[tk].name} --- */` + NL;
   list.sort((a, b) => a.r.p.date.localeCompare(b.r.p.date)); // יציב — שומר סדר באותו יום
@@ -132,6 +141,27 @@ for (const [tk, list] of groups) {
     if (r.ra['data-ga']) o += `, a:${q(r.ra['data-ga'])}`;
     if (t.ta['data-gu']) o += `, u:${q(t.ta['data-gu'])}`;
     block += ` ${o}},` + NL;
+  }
+}
+/* הדרכות בתחומי הדעת — שורה לכל טבלת data-cal בקבוצה המתקפלת "הדרכות מקצועיות".
+   r = מזהה השורה; rn (שם השורה) ו-rw (המדריכ.ה) רק במפגש הראשון של כל שורה. */
+const daat = tables.filter(t => t.ta['data-cal']);
+if (daat.length) {
+  if (!TRACKS.daat) fail('המסלול daat חסר ב-TRACKS שבגאנט');
+  block += ' /* --- הדרכות מקצועיות · מתוך hadrachot-miktzoiot.html --- */' + NL;
+  const cut = s => s.length > 42 ? s.slice(0, 40).replace(/\s+\S*$/, '') + '…' : s;
+  for (const t of daat) {
+    const id = t.ta['data-cal'], subject = t.heading.split(' — ')[0];
+    const rows = [...t.rows].sort((a, b) => a.p.date.localeCompare(b.p.date));
+    rows.forEach((r, i) => {
+      let o = `{t:'daat', r:${q(id)}`;
+      if (!i) o += `, rn:${q(t.heading)}, rw:${q(t.who)}`;
+      o += `, d:${q(r.p.date)}`;
+      if (r.p.endDate) o += `, d2:${q(r.p.endDate)}`;
+      const hrs = r.h.start ? r.h.start + (r.h.end ? '–' + r.h.end : '') : '';
+      o += `, n:${q(cut(r.title))}, s:${q(hrs)}, a:${q('מורי ' + subject)}, u:${q(t.page + '#' + t.secId)}`;
+      block += ` ${o}},` + NL;
+    });
   }
 }
 block += ' ' + END;
@@ -148,7 +178,7 @@ for (const [tk, list] of groups) {
   for (const { t, r } of list) {
     evs.push({ title: r.ra['data-g'] + ' · ' + TRACKS[tk].name, date: r.p.date, endDate: r.p.endDate || null,
       start: r.h.start, end: r.h.end, desc: [aud(tk, r.ra['data-ga']), r.ra['data-gs']].filter(Boolean).join(' · '),
-      url: SITE + (t.ta['data-gu'] || 'hishtalmuyot.html#' + t.secId) });
+      url: SITE + (t.ta['data-gu'] || t.page + '#' + t.secId) });
   }
 }
 for (const e of MANUAL) { // ידני בגאנט: חגים, אירועים לאומיים, בחינות, הודעות
@@ -167,7 +197,7 @@ for (const t of tables) {
   for (const r of t.rows) {
     evs.push({ title: r.title.startsWith(subject) ? r.title : subject + ' · ' + r.title, date: r.p.date, endDate: r.p.endDate || null,
       start: r.h.start, end: r.h.end, desc: t.heading + ' · הדרכה בתחומי הדעת',
-      url: SITE + 'hishtalmuyot.html#' + t.secId });
+      url: SITE + t.page + '#' + t.secId });
   }
 }
 const out = new Map();

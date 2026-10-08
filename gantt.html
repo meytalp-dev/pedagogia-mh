@@ -40,6 +40,7 @@
   --g-tikshuvB-bg:#DFE3F7; --g-tikshuvB-bd:#B2BAE6; --g-tikshuvB-tx:#3A4694;
   --g-honchim-bg:#F5E4F3; --g-honchim-bd:#E0B6DB; --g-honchim-tx:#7C3B72;
   --g-career-bg:#DDF4EC; --g-career-bd:#9FDCC8; --g-career-tx:#14634D;
+  --g-daat-bg:#F7EBD6; --g-daat-bd:#E3CDA4; --g-daat-tx:#7A5A16;
 }
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
 .legend button{font-family:'Assistant',sans-serif;font-size:.85rem;font-weight:700;border-radius:999px;padding:7px 16px;border:1.5px solid;cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;gap:7px}
@@ -71,6 +72,21 @@
 .t-tikshuvB{background:var(--g-tikshuvB-bg);border-color:var(--g-tikshuvB-bd);color:var(--g-tikshuvB-tx)}
 .t-honchim{background:var(--g-honchim-bg);border-color:var(--g-honchim-bd);color:var(--g-honchim-tx)}
 .t-career{background:var(--g-career-bg);border-color:var(--g-career-bd);color:var(--g-career-tx)}
+.t-daat{background:var(--g-daat-bg);border-color:var(--g-daat-bd);color:var(--g-daat-tx)}
+/* הדרכות מקצועיות — קבוצה מתקפלת: שורת כותרת עם מונה לכל חודש, ושורה לכל מקצוע */
+.gantt .rh.grp{padding:0;background:var(--g-daat-bg)}
+.grp-btn{all:unset;box-sizing:border-box;width:100%;height:100%;padding:12px;cursor:pointer;display:flex;align-items:flex-start;gap:8px;font-weight:800;font-size:.85rem;line-height:1.35;color:var(--g-daat-tx)}
+.grp-btn:hover{background:#F2E1C4}
+.grp-btn:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.grp-btn .car{flex:none;width:18px;height:18px;margin-top:1px;transition:transform .2s var(--ease)}
+.grp-btn[aria-expanded="true"] .car{transform:rotate(-90deg)}
+.grp-btn small{display:block;font-weight:600;font-size:.72rem;color:var(--text2);margin-top:3px}
+.gantt .cell.grp{background:#FCF6EC;justify-content:center;align-items:center}
+.grp-n{font-size:.74rem;font-weight:700;color:var(--g-daat-tx);background:#fff;border:1px solid var(--g-daat-bd);border-radius:999px;padding:2px 10px}
+.gantt .rh.sub{padding-inline-start:22px;background:#FFFCF7}
+.gantt.daat-closed .daat-row{display:none}
+.gantt.daat-open .cell.grp .grp-n{opacity:.55}
+.agenda.daat-closed .ev[data-track="daat"]{display:none}
 /* למי המפגש מיועד — שורה שנייה בכל צ׳יפ ובכל שורת אג׳נדה */
 .chip .aud{display:block;font-style:normal;font-size:.68rem;font-weight:600;opacity:.72;margin-top:2px}
 .ev .aud{font-weight:700;opacity:.85}
@@ -315,6 +331,8 @@
     </div>
   </span>
   <span class="navitem"><a class="lnk active" href="gantt.html">לוח גאנט</a></span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות לבעלי תפקידים</a></span>
+  <span class="navitem"><a class="lnk" href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a></span>
   <div class="tools">
     <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
   </div>
@@ -330,7 +348,11 @@
     <h1>לוח גאנט · צוותי תשפ״ז</h1>
     <span class="tag" style="background:var(--navy);color:#fff;font-size:var(--fs-xs)">ספטמבר 2026 – יוני 2027</span>
   </div>
-  <p class="rv d2 lead" style="max-width:700px">כל מועדי ההשתלמויות, ימי העיון והמפגשים של צוותי המינהל — רכזים חברתיים, פדגוגיים ורכזי תקשוב, מת״לים — מעריכים ומקדמים תפקודי למידה — התחום הייעוצי, מפגשי המנהלים עם הפיקוח והכשרת בני ובנות השירות — לצד ימי הזיכרון, האירועים הלאומיים, החגים והחופשות. בכל מפגש רשום למי הוא מיועד, ולחיצה על מסלול במקרא מסננת את הלוח.</p>
+  <p class="rv d2 lead" style="max-width:700px">כל מועדי ההשתלמויות, ימי העיון והמפגשים של צוותי המינהל — רכזים חברתיים, פדגוגיים ורכזי תקשוב, מת״לים — מעריכים ומקדמים תפקודי למידה — התחום הייעוצי, מפגשי המנהלים עם הפיקוח והכשרת בני ובנות השירות — לצד ימי הזיכרון, האירועים הלאומיים, החגים והחופשות. בכל מפגש רשום למי הוא מיועד, ולחיצה על מסלול במקרא מסננת את הלוח. מפגשי ההדרכה בתחומי הדעת מקופלים בשורה "הדרכות מקצועיות" — לחיצה עליה פותחת שורה לכל מקצוע.</p>
+  <div class="rv d2" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+    <a class="btn primary" href="hishtalmuyot.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><path d="M2.5 8.5 12 4.5l9.5 4-9.5 4z"/><path d="M6.5 10.7V15c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.3"/></svg>השתלמויות</a>
+    <a class="btn" style="border:1.5px solid var(--border-strong);color:var(--navy)" href="hadrachot-miktzoiot.html"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-inline-end:7px"><path d="M4 19.5V5a1.5 1.5 0 0 1 1.5-1.5H20v15H5.5A1.5 1.5 0 0 0 4 20a1.5 1.5 0 0 0 1.5 1.5H20"/><path d="M8 8h8M8 11.5h5"/></svg>הדרכות מקצועיות</a>
+  </div>
 </div>
 
 <div style="padding:6px var(--px) 44px">
@@ -385,6 +407,7 @@
    להוספת אירוע ידני: מוסיפים שורה למערך EVENTS, מחוץ לסימונים —
    {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
    מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / career / yeutzi / menahal / sherut / exam / national / holiday
+   (daat — הדרכות מקצועיות — נבנה כולו אוטומטית מ-hadrachot-miktzoiot.html, לא מוסיפים לו ידנית)
    שדה aud במסלול = למי המפגשים מיועדים (מוצג בכל צ׳יפ ובכל שורה ב״מהלך השנה״).
    שדה a באירוע דורס את aud של המסלול — למפגש שמיועד לקהל אחר.
    שדה u (לא חובה) הופך את הצ'יפ לקישור.                                     */
@@ -400,13 +423,15 @@ const TRACKS = {
   yeutzi:  {name:'התחום הייעוצי-טיפולי', sub:'ימי רביעי', aud:'יועצים ויועצות'},
   menahal: {name:'מנהלים ופיקוח', sub:'מפקח ומנהליו · מנהלי האזור', aud:'מנהלים ומפקחים'},
   sherut:  {name:'בני ובנות שירות', sub:'הכשרה שנתית', aud:'בני ובנות שירות לאומי'},
+  /* daat = קבוצה מתקפלת: שורה לכל מקצוע (שדה r באירוע). נבנה מטבלאות hadrachot-miktzoiot.html */
+  daat:    {name:'הדרכות מקצועיות', sub:'מפגשי ההדרכה בתחומי הדעת', aud:'מורי המקצוע'},
   exam:    {name:'מועדי בחינות · בגרות', sub:'משרד החינוך · טיוטה 12.7.26', aud:''},
   national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון', aud:''},
   holiday: {name:'חגים וחופשות', sub:'', aud:''}
 };
 const EVENTS = [
- /* cal:gen:start — נבנה אוטומטית מטבלאות המועדים ב-hishtalmuyot.html (tools/build-cal.mjs).
-    לא עורכים כאן: משנים בטבלה בעמוד ההשתלמויות. */
+ /* cal:gen:start — נבנה אוטומטית מטבלאות המועדים ב-hishtalmuyot.html וב-hadrachot-miktzoiot.html (tools/build-cal.mjs).
+    לא עורכים כאן: משנים בטבלה בעמוד המקור. */
  /* --- רכזים חברתיים --- */
  {t:'rakaz', d:'2026-10-14', n:'ליווי בוגרים', s:'זום · 8:30–10:30'},
  {t:'rakaz', d:'2026-10-21', n:'כנס פיזי פתיחת שנה', s:'9:00–15:00', a:'רכזים חברתיים ומפקחים פדגוגיים'},
@@ -523,6 +548,151 @@ const EVENTS = [
  {t:'sherut', d:'2026-10-12', n:'מפגש הכשרה', s:'פנים אל פנים'},
  {t:'sherut', d:'2026-12-16', n:'מפגש משותף', s:'רכזות העמותה ובית הספר'},
  {t:'sherut', d:'2027-05-19', n:'מפגש סיום שנה', s:''},
+ /* --- הדרכות מקצועיות · מתוך hadrachot-miktzoiot.html --- */
+ {t:'daat', r:'daat-math', rn:'מתמטיקה — 3 יח״ל וגמר', rw:'מדריכה: שירה סיבוני', d:'2026-09-22', n:'פתיחת שנה, היכרות ואבחון "מאיפה התלמיד…', s:'14:00–15:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-09-23', n:'פתיחת שנה, היכרות ואבחון "מאיפה התלמיד…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-10-18', n:'בניית תשתית אלגברית והוראה מדורגת', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-10-21', n:'בניית תשתית אלגברית והוראה מדורגת', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-11-15', n:'התמודדות עם בעיות מילוליות, גרפים, הבנת…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-11-18', n:'התמודדות עם בעיות מילוליות, גרפים, הבנת…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-12-20', n:'תשתית הוראתית', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2026-12-23', n:'תשתית הוראתית', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-01-03', n:'יישום מושגים, למידה דיפרנציאלית,…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-01-06', n:'יישום מושגים, למידה דיפרנציאלית,…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-02-14', n:'פדגוגיה עמוקה של ייצוגים, הוראה…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-02-17', n:'פדגוגיה עמוקה של ייצוגים, הוראה…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-03-14', n:'אוריינות נתונים עמוקה, ניתוח טעויות…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-03-17', n:'אוריינות נתונים עמוקה, ניתוח טעויות…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-04-04', n:'הוראה מבוססת בעיות (PBL), הנגשת…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-04-07', n:'הוראה מבוססת בעיות (PBL), הנגשת…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-05-02', n:'אסטרטגיות מרתון ופיצוח ניקוד במבחני…', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-05-05', n:'אסטרטגיות מרתון ופיצוח ניקוד במבחני…', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-06-06', n:'מסכמים ומתכוננים להמשך', s:'10:00–11:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-math', d:'2027-06-09', n:'מסכמים ומתכוננים להמשך', s:'20:00–21:30', a:'מורי מתמטיקה', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', rn:'אנגלית — תוכנית מדריכה ארצית', rw:'מדריכה: סיון נחליאל', d:'2026-09-23', n:'פתיחת שנה', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2026-10-20', n:'עדכוני ספרות, חיבור ו-bands', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2026-11-17', n:'לקראת בחינות הבגרות באנגלית', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2026-12-15', n:'גמר', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2027-01-12', n:'רגע לפני בגרות באנגלית', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2027-02-16', n:'המשך מפגשי גמר', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2027-03-16', n:'הכנה — שאלות, בעיות ומנהלות', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2027-04-06', n:'גמר', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english', d:'2027-05-04', n:'לקראת בגרות קיץ', s:'11:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', rn:'אנגלית — החברה הערבית', rw:'מדריכה: רוזין מטר דאו', d:'2026-09-27', n:'מפגש פתיחה — יעדים וציפיות · היכרות עם…', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-09-28', n:'מפגש פתיחה — יעדים וציפיות · היכרות עם…', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-10-15', n:'Boost Exam — AI / Digital tools ·…', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-10-17', n:'Boost Exam · Practical practice tips ·…', s:'10:15', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-11-01', n:'Aligned Literature Program for 3 points', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-11-05', n:'Aligned Literature Program for 3 points', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-12-13', n:'Writing for Module C', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2026-12-14', n:'Writing for Module C', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-01-21', n:'Curriculum 2020 — from Terminology to…', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-01-24', n:'Curriculum 2020 — from Terminology to…', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-02-04', n:'English for the Real World — Making…', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-02-07', n:'English for the Real World — Making…', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-03-14', n:'Teaching Vocabulary for Communication', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-03-18', n:'Teaching Vocabulary for Communication', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-04-25', n:'Closing Gaps & supporting struggling…', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-04-29', n:'Closing Gaps & supporting struggling…', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-05-09', n:'Reading Comprehension Strategies', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-05-11', n:'Reading Comprehension Strategies', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-06-13', n:'Looking Back & Planning ahead', s:'10:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-english-arab', d:'2027-06-17', n:'Looking Back & Planning ahead', s:'18:00', a:'מורי אנגלית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-tanakh', rn:'תנ״ך — החברה היהודית', rw:'מדריכה: טלי אהרון זיו', d:'2026-10-12', n:'הוראת תנ״ך לתלמידים מתקשים', s:'', a:'מורי תנ״ך', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-tanakh', d:'2026-11-02', n:'מפגש לימוד משותף', s:'19:00', a:'מורי תנ״ך', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-tanakh', d:'2026-12-02', n:'מפגש הכנה לבגרות חורף', s:'19:00', a:'מורי תנ״ך', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', rn:'היסטוריה לדוברי ערבית', rw:'מדריך: ד״ר עבד אלוהאב חבאיב', d:'2026-09-16', n:'מפגש היכרות ותיאום ציפיות', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2026-10-14', n:'סקירת תכנית הלימודים וחוקי המענה לבגרות', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2026-11-11', n:'חידושים בבחינות הבגרות', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2026-12-09', n:'פרק ראשון בתכנית הלימודים: הח׳ליפות ·…', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-01-13', n:'פרק שני בתכנית הלימודים: השאלה המזרחית…', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-02-03', n:'פרק שלישי בתכנית הלימודים: היסטוריה של…', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-03-17', n:'פרק רביעי בתכנית הלימודים: היהודים…', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-04-21', n:'קריאת נתונים וניתוח נתונים', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-05-13', n:'דגשים על פרקי בחינת הבגרות · שימוש…', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-arab', d:'2027-06-09', n:'סיכום שנה', s:'9:00–10:00', a:'מורי היסטוריה לדוברי ערבית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', rn:'עברית — מפגשי למידה למורי העברית', rw:'מדריכה: מוריה פלינט', d:'2026-09-15', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-09-17', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-10-13', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-10-18', n:'עברית — מפגש בוקר', s:'13:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-10-22', n:'עברית — מפגש בוקר', s:'13:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-11-17', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-11-19', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-12-22', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-12-24', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2026-12-27', n:'עברית — מפגש בוקר', s:'13:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-01-10', n:'עברית — מפגש בוקר', s:'13:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-01-12', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-01-14', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-02-16', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-02-18', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-03-02', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-03-04', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-04-04', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-04-08', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-05-13', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-05-18', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-05-20', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-06-01', n:'עברית — מפגש אחה"צ', s:'16:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-hebrew', d:'2027-06-03', n:'עברית — מפגש בוקר', s:'10:00', a:'מורי עברית', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', rn:'ספרות — המגזר החרדי', rw:'מדריכה: שרה ברדה', d:'2026-10-11', n:'הציר ההיסטורי של הכתיבה הספרותית ·…', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2026-10-18', n:'היכרות עם הפורטל', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2026-11-16', n:'שיטות דידקטיות בהוראת הספרות', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2026-11-25', n:'ניתוחי יצירות', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2026-12-13', n:'שאלוני בגרות — היכרות עם המבנה והדרישות', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2026-12-23', n:'הסיפור הקצר', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-01-11', n:'פיוט קדום / שירת ימי הביניים / שירה חדשה', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-01-27', n:'שיר שלא נלמד', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-02-14', n:'מחזה — הגדרה ודוגמאות', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-02-28', n:'הדמויות במחזה', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-03-15', n:'תשובות לשאלוני בגרות בנושא המחזה', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-03-28', n:'נובלה', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-04-07', n:'משלים, רשימות ויצירות קצרות', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-04-19', n:'פיתוח מיומנויות', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-05-16', n:'הסיפור החסידי', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-05-26', n:'הסיפור המתורגם', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-06-16', n:'פאנל שאלות והתמודדויות מן השטח', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-06-23', n:'המשך פאנל שאלות והתמודדויות מן השטח', s:'11:00–12:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-07-07', n:'רפלקציה', s:'21:00–22:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-literature-haredi', d:'2027-07-21', n:'עיון בבחינת הבגרות הנוכחית לשנה זו', s:'12:00–13:00', a:'מורי ספרות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', rn:'היסטוריה ואזרחות — המגזר החרדי', rw:'מדריכה: רבקה נחום', d:'2026-09-22', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-09-23', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-10-05', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-10-06', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-10-18', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-10-19', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-11-01', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-11-03', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-11-15', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-11-17', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-12-01', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-12-02', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-12-28', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2026-12-29', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-01-03', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-01-05', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-01-17', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-01-19', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-02-01', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-02-03', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-02-14', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-02-16', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-03-07', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-03-09', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-03-28', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-03-30', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-04-04', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-04-06', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-04-11', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-04-13', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-05-02', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-05-04', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-05-16', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-05-18', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-06-06', n:'היסטוריה — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-06-08', n:'אזרחות — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-06-13', n:'היסטוריה — מפגש זום קבוצתי', s:'10:30–11:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
+ {t:'daat', r:'daat-history-civics-haredi', d:'2027-06-15', n:'אזרחות — מפגש זום קבוצתי', s:'20:30–21:30', a:'מורי היסטוריה ואזרחות', u:'hadrachot-miktzoiot.html#hadrachot-daat'},
  /* cal:gen:end */
 
  /* ===== ידני — מועדים שאין להם שורה בטבלאות של hishtalmuyot.html ===== */
@@ -620,8 +790,41 @@ MONTHS.forEach(mo=>{
   const isNow = now.getFullYear()===mo.y && now.getMonth()+1===mo.m;
   html += `<div class="mh${isNow?' now':''}">${HEB_MON[mo.m]} ${String(mo.y).slice(2)}׳</div>`;
 });
+const inMonth = (e, mo) => { const [y,m] = e.d.split('-').map(Number); return y===mo.y && m===mo.m; };
+/* שורות הקבוצה המתקפלת "הדרכות מקצועיות" — אחת לכל מקצוע (r), שם מ-rn ומדריכ.ה מ-rw */
+const DAAT_ROWS = [];
+EVENTS.forEach(e=>{ if (e.t==='daat' && e.rn) DAAT_ROWS.push({r:e.r, name:e.rn, sub:e.rw||''}); });
+const rowHtml = (tk, label, sub, match, extra) => {
+  let h = `<div class="rh${extra?' '+extra:''}" data-track="${tk}"><span><span class="rdot t-${tk}" style="border:1px solid"></span>${label}</span>${sub?`<small>${sub}</small>`:''}</div>`;
+  MONTHS.forEach(mo=>{
+    const evs = EVENTS.filter(e=>e.t===tk && match(e) && inMonth(e, mo));
+    h += `<div class="cell${extra?' '+extra:''}">` + evs.map(chip).join('') + `</div>`;
+  });
+  return h;
+};
+const chip = e=>{
+  const au = aud(e);
+  const tt = [e.n, au && ('למי: '+au), e.s].filter(Boolean).join(' — ').replace(/"/g,'&quot;');
+  const inner = `<b>${fmtDay(e)}</b>${e.n}${au?`<i class="aud">${au}</i>`:''}`;
+  return e.u
+    ? `<a class="chip t-${e.t} lnkchip" data-track="${e.t}" href="${e.u}" title="${tt}">${inner}</a>`
+    : `<div class="chip t-${e.t}" data-track="${e.t}" title="${tt}">${inner}</div>`;
+};
 Object.keys(TRACKS).forEach(tk=>{
   const t = TRACKS[tk];
+  if (tk==='daat'){
+    if (!DAAT_ROWS.length) return;
+    const total = EVENTS.filter(e=>e.t==='daat').length;
+    html += `<div class="rh grp" data-track="daat"><button type="button" class="grp-btn" id="daat-toggle" aria-expanded="false" aria-controls="gantt">`
+      + `<svg class="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>`
+      + `<span>${t.name}<small>${DAAT_ROWS.length} מקצועות · ${total} מפגשים · לחיצה לפתיחה</small></span></button></div>`;
+    MONTHS.forEach(mo=>{
+      const n = EVENTS.filter(e=>e.t==='daat' && inMonth(e, mo)).length;
+      html += `<div class="cell grp">${n?`<span class="grp-n">${n} מפגשים</span>`:''}</div>`;
+    });
+    DAAT_ROWS.forEach(row=>{ html += rowHtml('daat', row.name, row.sub, e=>e.r===row.r, 'sub daat-row'); });
+    return;
+  }
   html += `<div class="rh" data-track="${tk}"><span><span class="rdot t-${tk}" style="border:1px solid"></span>${t.name}</span>${t.sub?`<small>${t.sub}</small>`:''}</div>`;
   MONTHS.forEach(mo=>{
     const evs = EVENTS.filter(e=>{
@@ -654,13 +857,31 @@ MONTHS.forEach(mo=>{
   ).join('') + `</div>`;
 });
 aEl.innerHTML = ahtml;
-/* ל-calendar.js — הוספה ליומן */
-window.PMH_GANTT = { EVENTS: EVENTS, TRACKS: TRACKS };
 
-/* מקרא + סינון */
+/* הדרכות מקצועיות — סגור כברירת מחדל; #hadrachot בכתובת פותח */
+const daatBtn = document.getElementById('daat-toggle');
+const setDaat = open => {
+  [gEl, aEl].forEach(el=>{ el.classList.toggle('daat-open', open); el.classList.toggle('daat-closed', !open); });
+  if (daatBtn){
+    daatBtn.setAttribute('aria-expanded', open);
+    const s = daatBtn.querySelector('small');
+    s.textContent = s.textContent.replace(/לחיצה ל(פתיחה|סגירה)/, 'לחיצה ל' + (open?'סגירה':'פתיחה'));
+  }
+};
+setDaat(location.hash==='#hadrachot');
+if (daatBtn){
+  daatBtn.addEventListener('click', ()=>setDaat(daatBtn.getAttribute('aria-expanded')!=='true'));
+  if (location.hash==='#hadrachot') setTimeout(()=>daatBtn.scrollIntoView({block:'center'}), 300);
+}
+
+/* ל-calendar.js — הוספה ליומן. בלי daat: למפגשי ההדרכה יש יומן לכל מקצוע (cal/daat-*.ics) ולא יומן אחד */
+const CAL_TRACKS = Object.fromEntries(Object.entries(TRACKS).filter(([tk])=>tk!=='daat'));
+window.PMH_GANTT = { EVENTS: EVENTS, TRACKS: CAL_TRACKS };
+
+/* מקרא + סינון (הדרכות מקצועיות נפתחות מהשורה שלהן בלוח, לא מהמקרא) */
 const legendEl = document.getElementById('legend');
 const state = {};
-legendEl.innerHTML = Object.keys(TRACKS).map(tk=>{
+legendEl.innerHTML = Object.keys(CAL_TRACKS).map(tk=>{
   state[tk]=true;
   return `<button class="t-${tk}" data-track="${tk}"><span class="dot" style="background:currentColor"></span>${TRACKS[tk].name}</button>`;
 }).join('');

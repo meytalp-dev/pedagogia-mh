@@ -209,13 +209,7 @@
     el.className='mcat'+(lnk.classList.contains('active')?' active':'');
     row.appendChild(el);
   });
-  var all=document.createElement('button');
-  all.type='button';
-  all.className='mcat mcat-all';
-  all.setAttribute('aria-controls','site-drawer');
-  all.textContent='כל האתר';
-  all.addEventListener('click',function(){ close(); window.toggleMenu(true); });
-  row.appendChild(all);
+  /* צ'יפ "כל האתר" הוסר ב-8.10.26 לבקשת מיטל — מיותר, כל הקטגוריות כבר גלויות בשורה */
 
   nav.appendChild(row);
   nav.appendChild(sheet);
