@@ -174,6 +174,7 @@
 
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="meet">נוכחות בהדרכות</button>
+      <button class="tab-btn" data-tab="reg">טרם נרשמו למנור <span id="reg-count"></span></button>
       <button class="tab-btn" data-tab="teachers">המורים שלי</button>
       <button class="tab-btn" data-tab="training">השתלמות מקצועית</button>
       <button class="tab-btn" data-tab="trainings">ההדרכות הישנות</button>
@@ -209,6 +210,14 @@
       </div>
     </div>
 
+    <!-- טרם נרשמו למנור (8.10.26) — למנהל/ת ולרכז/ת הפדגוגי/ת -->
+    <div class="tab-pane" id="tab-reg">
+      <div class="card" style="padding:16px 18px;">
+        <h3 style="margin:0 0 6px; font-size:17px;">מורים שטרם נרשמו למנור</h3>
+        <div id="reg-container"><div class="empty" style="padding:24px;">טוען…</div></div>
+      </div>
+    </div>
+
     <!-- שאלת ההשתלמות המקצועית (28.9.26) — מהרשמת המורים למבט המורה -->
     <div class="tab-pane" id="tab-training">
       <div class="card" style="padding:16px 18px;">
@@ -232,9 +241,10 @@
 <script src="../assets/plans.js?v=20260928a"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/meet-view.js?v=20260920b"></script>
-<script src="dashboard.js?v=20260920"></script>
+<script src="dashboard.js?v=20261008"></script>
 <script src="meet.js?v=20260924a"></script>
 <script src="../assets/training.js?v=20260929"></script>
+<script src="reg.js?v=20261008"></script>
 <script>
   /* השתלמות מקצועית (28.9.26) — נטען בפתיחת הלשונית, לא מעכב את הנוכחות */
   (function () {
@@ -256,7 +266,7 @@
 </script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
-<script src="view.js?v=20260924f"></script>
+<script src="view.js?v=20261008"></script>
 <script src="../assets/menor-view.js?v=20260924f"></script>
 </body>
 </html>

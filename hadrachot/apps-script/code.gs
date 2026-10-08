@@ -274,6 +274,8 @@ const PUBLIC_ACTIONS = new Set([
   'staff.teacherKey', 'staff.guideKeys',
   // מעקב הרשמת המורים (29.9.26) — status: מפתח staff של מטה בפנים · count: מספרים בלבד
   'registration.status', 'registration.count', 'registration.errors',
+  // "טרם נרשמו למנור" במבט בית הספר (8.10.26) — מפתח staff של מנהל/ת או רכז/ת אותו בית ספר, בפנים
+  'registration.school',
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
   'diag.timing',
   // מצב תזכורות המורים (7.10.26) — דלוק/כבוי + תאריך·מדריך·כמה נשלחו, בלי שמות ובלי מיילים
@@ -1123,6 +1125,7 @@ function handleRequest(params) {
       case 'staff.teacherKey':    result = staffTeacherKey(params); break;
       case 'registration.status': result = registrationStatus(params); break;
       case 'registration.count':  result = registrationCount(params); break;
+      case 'registration.school': result = registrationSchool(params); break;
       case 'registration.errors': result = registrationErrors(params); break;
       case 'diag.timing':         result = diagTiming(); break;
       case 'remind.status':       result = remindStatus(); break;
@@ -5856,6 +5859,11 @@ function staffRolesFor_(email) {
       if (staffNormMail_(ins[n]) === e) add({ role: 'inspector', name: n, person: n });
     });
   }
+  // רכזים פדגוגיים (8.10.26, מנספח בעלי התפקידים — רכזים.js): מבט בית הספר שלהם בלבד
+  const PC = (typeof PEDAGOGIC_COORDINATORS !== 'undefined') ? PEDAGOGIC_COORDINATORS : {};
+  Object.keys(PC).forEach(sid => (PC[sid] || []).forEach(c => {
+    if (staffNormMail_(c.email) === e) add({ role: 'principal', school: sid, coordinator: true, person: String(c.name || '') });
+  }));
   const schools = readAll('schools');
   schools.forEach(s => {
     if (staffNormMail_(s.principalEmail) === e)
@@ -6027,6 +6035,16 @@ function staffDirectory_() {
     if (!seenSchool[s.id]) add('principal:' + s.id, 'principal', s.principalName, s.name, s.principalEmail);
   });
 
+  // רכזים פדגוגיים (8.10.26) — שם אחד לכל אדם בבית ספר, גם כשרשומים לו/ה שני מיילים
+  const PC = (typeof PEDAGOGIC_COORDINATORS !== 'undefined') ? PEDAGOGIC_COORDINATORS : {};
+  const coordSeen = {};
+  Object.keys(PC).forEach(sid => (PC[sid] || []).forEach((c, i) => {
+    const k = sid + '|' + String(c.name || '').trim();
+    if (coordSeen[k]) return;
+    coordSeen[k] = 1;
+    add('coord:' + sid + ':' + i, 'coordinator', c.name, schoolName[sid] || sid, c.email);
+  }));
+
   // מטה · אדמין (24.9.26, מיטל: "במטה אני ורויטל") — ministry_admin ב-users + מקבלי המבט הכולל.
   // רשומת האדמין של מיטל נקראת בגיליון "אדמין ראשי" — מוצגת בשמה. מייל שכבר ברשימה לא חוזר.
   const hqSeen = {};
@@ -6178,6 +6196,32 @@ function registrationData_() {
 function registrationStatus(p) {
   if (!staffIsHq_(p.sk)) return { ok: false, error: 'forbidden' };
   return { ok: true, data: registrationData_() };
+}
+
+/* registration.school (8.10.26, בקשת מיטל) — "טרם נרשמו למנור" במבט בית הספר.
+   מותר: מנהל/ת או רכז/ת של אותו בית ספר, מנהל/ת הרשת שלו, ומטה. שמות ומקצועות בלבד —
+   בלי מיילים. מורים חדשים שעוד לא סיימו הרשמה עצמית (new_) לא נכללים: בית הספר שלהם
+   נבחר בטופס, ולפעמים בטעות (חן אביטל, 7.10.26). */
+const REG_SCHOOL_EXCLUDE_ = {
+  'תיכון החממה|אנגלית': 1,   // אין מורה לאנגלית (מיטל 8.10.26)
+  'נחלים|תנ"ך': 1             // התנ"ך בנחלים בהדרכה אחרת (מיטל 5.10.26)
+};
+function registrationSchool(p) {
+  const sid = String(p.school || '').trim();
+  const email = staffEmailByKey_(p.sk);
+  if (!sid || !email) return { ok: false, error: 'forbidden' };
+  const roles = staffRolesFor_(email).roles;
+  let ok = roles.some(r => r.role === 'ministry' || (r.role === 'principal' && r.school === sid));
+  const nets = roles.filter(r => r.role === 'network').map(r => r.network);
+  if (!ok && nets.length) {
+    const s = readAll('schools').filter(x => String(x.id) === sid)[0];
+    ok = !!s && nets.indexOf(String(s.network || '').replace(/^net_/, '')) >= 0;
+  }
+  if (!ok) return { ok: false, error: 'forbidden' };
+  const rows = registrationData_()
+    .filter(r => r.school === sid && !r.newTeacher && !REG_SCHOOL_EXCLUDE_[r.schoolName + '|' + r.subject])
+    .map(r => ({ name: r.name, subject: r.subject, state: r.state, missing: r.missing || [] }));
+  return { ok: true, data: rows };
 }
 
 /* registration.errors (29.9.26) — תקלות הכניסה של מורים מ-3 הימים האחרונים, מתוך

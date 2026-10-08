@@ -106,7 +106,12 @@ function renderAll() {
   if (!state.school) return;
   const s = state.school;
   const isCoordinator = !!subjectParam;
-  document.getElementById('role-label').textContent = isCoordinator ? ('רכז פדגוגי · ' + subjectParam) : 'מנהל בית ספר';
+  // רכז/ת פדגוגי/ת שנכנס/ה בקוד (8.10.26) — לא מנהל/ת
+  const st = (window.TS_staff && TS_staff.get()) || {};
+  const asCoord = (st.roles || []).some(r => r.coordinator && r.school === schoolId) &&
+    !(st.roles || []).some(r => r.role === 'principal' && !r.coordinator && r.school === schoolId);
+  document.getElementById('role-label').textContent = isCoordinator ? ('רכז פדגוגי · ' + subjectParam)
+    : asCoord ? 'רכז/ת פדגוגי/ת' : 'מנהל בית ספר';
   document.getElementById('user-name').textContent = s.principalName || '—';
   document.getElementById('user-school').textContent = s.name + ' · רשת ' + (s.networkName || '');
 

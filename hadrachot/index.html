@@ -143,6 +143,7 @@
                   <option value="guide">מדריכ/ה</option>
                   <option value="inspector">מפקח.ת</option>
                   <option value="principal">מנהל/ת בית ספר</option>
+                  <option value="coordinator">רכז/ת פדגוגי/ת</option>
                   <option value="network" hidden>מנהל/ת רשת</option>
                   <option value="hq">מטה · אדמין</option>
                 </select>
@@ -544,7 +545,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       const g = (window.TS_GUIDES || {})[x.sub] || {};
       return x.name + (g.subject ? ' · ' + g.subject : '');
     }
-    if (x.kind === 'principal') return (x.sub ? x.sub + ' · ' : '') + x.name;
+    if (x.kind === 'principal' || x.kind === 'coordinator') return (x.sub ? x.sub + ' · ' : '') + x.name;
     if (x.kind === 'network') return x.name + (x.sub ? ' · רשת ' + x.sub : '');
     return x.name;
   }
