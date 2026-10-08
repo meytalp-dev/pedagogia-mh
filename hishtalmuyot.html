@@ -451,7 +451,7 @@
       <div class="rg-done" id="rg-done" hidden tabindex="-1">
         <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="m7.8 12.3 2.9 2.9 5.6-6"/></svg>
         <div>
-          <b id="rg-done-title">הרישום התקבל</b>
+          <b id="rg-done-title">נרשמת בהצלחה, הכל עבר</b>
           <p id="rg-done-text"></p>
           <p id="rg-done-extra" hidden></p>
           <button class="btn line" type="button" id="rg-again">רישום נוסף</button>
@@ -1323,8 +1323,10 @@ $("rg-form").addEventListener("submit", function(ev){
       }
       var gl = "";
       if (cur.g && d.group) cur.g.forEach(function(x){ if (x[0] === d.group) gl = " · " + x[1]; });
-      $("rg-done-title").textContent = r.updated ? "הרישום עודכן" : "הרישום התקבל";
-      $("rg-done-text").textContent = "תודה, " + d.first + ". נרשמת ל" + cur.t + gl + ". מועדי המפגשים מופיעים בעמוד הזה ובלוח הגאנט.";
+      $("rg-done-title").textContent = r.updated ? "הרישום עודכן בהצלחה" : "נרשמת בהצלחה, הכל עבר";
+      $("rg-done-text").textContent = "תודה, " + d.first + ". הרישום ל" + cur.t + gl + " נקלט במערכת, ואין צורך לעשות דבר נוסף. " +
+        (r.mailed ? "אישור נשלח גם למייל ⁦" + d.email + "⁩ (אם הוא לא מופיע, כדאי לבדוק בתיקיית הספאם). " : "") +
+        "מועדי המפגשים מופיעים בעמוד הזה ובלוח הגאנט.";
       var ex = $("rg-done-extra");
       ex.hidden = !cur.x; ex.innerHTML = cur.x || "";
       $("rg-form").hidden = true; $("rg-done").hidden = false; $("rg-done").focus();
