@@ -883,7 +883,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     return m ? (+m[3]) + "." + (+m[2]) + "." + m[1].slice(2) : String(s || "");
   }
   function sherutContact(r) {
-    return { "שם": r["שם"], "טלפון": r["נייד"], "e164": r["e164"], "מייל": "" };
+    return { "שם": r["שם"], "טלפון": r["נייד"], "e164": r["e164"], "מייל": r["מייל"] || "" };
   }
   function sherutWhen(r) {
     if (r["תחילת שירות"]) return shortDate(r["תחילת שירות"]) + "–" + shortDate(r["סיום שירות"]);
@@ -907,9 +907,10 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
     var list = SHERUT.filter(function (r) {
       if (sherutSchool && r["בית ספר"] !== sherutSchool) return false;
       if (!q) return true;
-      return norm([r["שם"], r["בית ספר"], r["רכזת"], r["מנהלת"], r["נייד"], r["עיר"]].join(" ")).indexOf(q) >= 0;
+      return norm([r["שם"], r["בית ספר"], r["רכזת"], r["מנהלת"], r["נייד"], r["מייל"], r["עיר"]].join(" ")).indexOf(q) >= 0;
     });
 
+    var noMail = list.filter(function (r) { return !r["מייל"]; }).length;
     var counts = {};
     SHERUT.forEach(function (r) { counts[r["בית ספר"]] = (counts[r["בית ספר"]] || 0) + 1; });
     var names = Object.keys(counts).sort(function (a, b) { return a.localeCompare(b, "he"); });
@@ -927,10 +928,12 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
           }).join("") +
         '</select>' +
         '<button class="btn" id="copySherutPhones">העתקת הניידים שמוצגים</button>' +
+        '<button class="btn" id="copySherutMails">העתקת המיילים שמוצגים</button>' +
+        '<button class="btn" id="copySherutNoMail">מי חסרה מייל (' + noMail + ')</button>' +
         '<span class="count"><b>' + list.length + '</b> בנות שירות</span>' +
       '</div>' +
       '<div class="tablewrap"><table><thead><tr>' +
-        '<th>שם</th><th>בית הספר</th><th>נייד</th><th>רכזת</th><th>שירות</th><th></th>' +
+        '<th>שם</th><th>בית הספר</th><th>נייד</th><th>מייל</th><th>רכזת</th><th>שירות</th><th></th>' +
       '</tr></thead><tbody>' +
       (list.map(function (r) {
         var c = sherutContact(r);
@@ -938,11 +941,12 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
             (r["עיר"] ? ' <span class="code" style="color:var(--muted)">· ' + esc(r["עיר"]) + '</span>' : "") + '</td>' +
           '<td><button class="chip" data-open="' + esc(r["בית ספר"]) + '">' + esc(r["בית ספר"]) + '</button></td>' +
           '<td class="semel" dir="ltr">' + (r["נייד"] ? esc(r["נייד"]) : '<span class="pill warn">חסר</span>') + '</td>' +
+          '<td dir="ltr" style="font-size:14px">' + (r["מייל"] ? esc(r["מייל"]) : '<span class="pill warn" dir="rtl">חסר</span>') + '</td>' +
           '<td style="font-size:14px">' + esc(r["רכזת"]) +
             (r["מנהלת"] ? ' <span class="code" style="color:var(--muted)">· מנהלת ' + esc(r["מנהלת"]) + '</span>' : "") + '</td>' +
           '<td style="font-size:14px">' + esc(sherutWhen(r)) + '</td>' +
           '<td>' + actionsHtml(c) + '</td></tr>';
-      }).join("") || '<tr><td colspan="6"><div class="empty">אין תוצאה</div></td></tr>') +
+      }).join("") || '<tr><td colspan="7"><div class="empty">אין תוצאה</div></td></tr>') +
       '</tbody></table></div>';
 
     $("f-sherut-school").addEventListener("change", function (e) {
@@ -953,6 +957,17 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
         .map(function (r) { return r["שם"] + " · " + r["בית ספר"] + " · " + r["נייד"]; });
       if (!lines.length) { toast("אין ניידים ברשימה המוצגת"); return; }
       copyText(lines.join("\n"), lines.length + " ניידים הועתקו");
+    });
+    $("copySherutMails").addEventListener("click", function () {
+      var mails = list.map(function (r) { return r["מייל"]; }).filter(Boolean);
+      if (!mails.length) { toast("אין מיילים ברשימה המוצגת"); return; }
+      copyText(mails.join(", "), mails.length + " מיילים הועתקו");
+    });
+    $("copySherutNoMail").addEventListener("click", function () {
+      var lines = list.filter(function (r) { return !r["מייל"]; })
+        .map(function (r) { return r["שם"] + " · " + r["בית ספר"] + " · " + (r["נייד"] || "אין נייד"); });
+      if (!lines.length) { toast("לכל מי שמוצגת יש מייל"); return; }
+      copyText(lines.join("\n"), lines.length + " בלי מייל הועתקו");
     });
   }
 
@@ -1204,6 +1219,7 @@ footer .credit{margin-top:10px;font-size:13px;opacity:.9}
               return '<div class="person"><div><div class="nm">' + esc(r["שם"]) + '</div>' +
                 '<div class="rl">רכזת ' + esc(r["רכזת"]) +
                 (r["נייד"] ? ' · <span dir="ltr">' + esc(r["נייד"]) + '</span>' : "") +
+                (r["מייל"] ? ' · <span dir="ltr">' + esc(r["מייל"]) + '</span>' : "") +
                 (sherutWhen(r) ? ' · ' + esc(sherutWhen(r)) : "") + '</div></div>' +
                 actionsHtml(c) + '</div>';
             }).join("") +
