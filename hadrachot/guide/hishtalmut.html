@@ -57,7 +57,7 @@
   </footer>
 
 <script src="../assets/app.js?v=20260929r"></script>
-<script src="../assets/guides.js?v=20261007a"></script>
+<script src="../assets/guides.js?v=20261008a"></script>
 <script src="../assets/training.js?v=20260929"></script>
 <script src="../assets/training-report.js?v=20260929"></script>
 <script>
@@ -76,17 +76,28 @@
   var back = document.getElementById('tr-back');
   back.href = 'index.html' + location.search;
   if (!g) { root.innerHTML = '<div class="empty" style="padding:32px;">לא זוהה/תה מדריכ/ה בקישור.</div>'; return; }
-  document.getElementById('tr-title').textContent = 'השתלמות מקצועית — המורים של ' + g.name;
   var subs = TS_guideSubjects(g);
+  /* trainingScope:'subject' (אילנה, 8.10.26) — כל מורי המקצוע במגזרים שלה, בלי חלוקת יח"ל/מסלול */
+  var wide = g.trainingScope === 'subject';
+  var scope = wide ? { subjects: subs, sectors: g.sectors } : g;
+  var SECT = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
+  document.getElementById('tr-title').textContent = wide
+    ? 'השתלמות מקצועית — כל מורי ה' + subs.join(' וה') + ' (' + (g.sectors || []).map(function (s) { return SECT[s] || s; }).join(' ו') + ')'
+    : 'השתלמות מקצועית — המורים של ' + g.name;
   var [res, files] = await Promise.all([
     TS.api('teachers.list', subs.length === 1 ? { subject: subs[0] } : {}),
     TS_training.files()
   ]);
   if (!res || !res.ok) { root.innerHTML = '<div class="empty" style="padding:32px;">הטעינה נכשלה — רעננו את הדף.</div>'; return; }
-  var rows = (res.data || []).filter(function (t) { return TS_trainingReport.guideCovers(g, t); });
-  document.getElementById('tr-sub').textContent = subs.join(' · ') + ' — ' + rows.length + ' שורות מורים';
+  var rows = (res.data || []).filter(function (t) { return TS_trainingReport.guideCovers(scope, t); });
+  document.getElementById('tr-sub').textContent = subs.join(' · ') + (wide ? ' · בגרות וגמר, כל היחידות' : '') + ' — ' + rows.length + ' שורות מורים';
   warnFiles();
-  TS_trainingReport.render(root, { rows: rows, files: files });
+  /* בתצוגה הרחבה — עמודה ומסנן "מדריכ/ה" (שירה / אילנה), לפי כללי השיוך של כל אחת */
+  var peers = wide ? Object.keys(window.TS_GUIDES || {}).map(function (k) { return TS_GUIDES[k]; }).filter(function (o) {
+    return o && TS_guideSubjects(o).some(function (s) { return subs.indexOf(s) >= 0; }) &&
+      (o.sectors || []).some(function (s) { return (g.sectors || []).indexOf(s) >= 0; });
+  }) : null;
+  TS_trainingReport.render(root, { rows: rows, files: files, guides: peers });
 })();
 </script>
 </body>
