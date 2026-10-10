@@ -21,6 +21,7 @@
     copy:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
     print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>',
     mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+    ok:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
     edit:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>'
   };
 
@@ -93,10 +94,22 @@
     }).join('') + '<p class="kr-note">קרן רואה רק את בית הספר שלך, ותוכניות שהיא בונה נשמרות ב"התוכניות שלי".</p>';
   }
   function onBodyClick(e) {
-    var b = e.target.closest('[data-kind],[data-open],[data-copyans]');
+    var b = e.target.closest('[data-kind],[data-open],[data-copyans],[data-add],[data-addall],[data-gock],[data-go]');
     if (!b) return;
     if (b.hasAttribute('data-open')) { close(); T.go('p', b.getAttribute('data-open')); return; }
-    if (b.hasAttribute('data-copyans')) { copyRich(answerHtml(b.closest('.kr-a').getAttribute('data-raw')), b.closest('.kr-a').getAttribute('data-raw')); return; }
+    if (b.hasAttribute('data-go')) { close(); return; }   /* המעבר עצמו — ב-app.js */
+    if (b.hasAttribute('data-gock')) { close(); T.go('c'); return; }
+    var bub = b.closest('.kr-a');
+    if (b.hasAttribute('data-copyans')) { var rr = bub._r; copyRich(rr && rr.groups ? answerDoc(rr) : answerHtml(bub.getAttribute('data-raw')), bub.getAttribute('data-raw')); return; }
+    if (b.hasAttribute('data-add')) {
+      var ix = b.getAttribute('data-add').split('.');
+      addTasks(bub, [bub._r.groups[+ix[0]].items[+ix[1]]], [b]); return;
+    }
+    if (b.hasAttribute('data-addall')) {
+      var btns = [].slice.call(bub.querySelectorAll('.kr-add:not(.on)'));
+      if (!btns.length) return;
+      addTasks(bub, btns.map(function (x) { var i = x.getAttribute('data-add').split('.'); return bub._r.groups[+i[0]].items[+i[1]]; }), btns.concat([b])); return;
+    }
     var kind = b.getAttribute('data-kind'), q = b.getAttribute('data-q');
     if (kind === 'fill') { $('krQ').value = q; $('krQ').focus(); return; }
     send(q, kind);
@@ -123,9 +136,13 @@
           '<button type="button" class="kr-go" data-open="' + esc(r.plan.id) + '">לפתיחת התוכנית</button>', 'kr-b');
         HIST.push({ role: 'user', content: q }, { role: 'assistant', content: 'בניתי תוכנית: ' + r.plan.title });
       } else {
-        var d = bubble(answerHtml(r.answer) + (r.sources && r.sources.length ? '<div class="kr-src">' + r.sources.map(esc).join(' · ') + '</div>' : '') +
-          (r.limited ? '' : '<div class="kr-acts"><button type="button" data-copyans="1">' + IC.copy + 'העתקה</button></div>'), 'kr-b kr-a');
+        var acts = (r.groups || []).reduce(function (n, g) { return n + (g.items || []).filter(isTask).length; }, 0);
+        var d = bubble((r.groups ? answerView(r) : answerHtml(r.answer)) +
+          (r.sources && r.sources.length ? '<div class="kr-src">' + r.sources.map(esc).join(' · ') + '</div>' : '') +
+          (r.limited ? '' : '<div class="kr-acts">' + (acts > 1 && tasksOn() ? '<button type="button" class="kr-all" data-addall="1">' + IC.plus + 'הוספת כל ' + acts + ' המשימות לצ\'ק ליסט</button>' : '') +
+            '<button type="button" data-copyans="1">' + IC.copy + 'העתקה</button></div>'), 'kr-b kr-a');
         d.setAttribute('data-raw', r.answer);
+        d._r = r;
         if (!r.limited) HIST.push({ role: 'user', content: q }, { role: 'assistant', content: r.answer });
       }
     }).catch(function (e) {
@@ -133,7 +150,45 @@
       bubble(esc(errText(String(e.message))), 'kr-b kr-err');
     }).then(function () { BUSY = false; });
   }
-  /* תשובה: "- " = נקודה, שורה שמסתיימת בנקודתיים = כותרת. השורה הראשונה מודגשת */
+  /* ===== תשובה במבנה (11.10.26): שורה תחתונה, קבוצות, ולכל פריט מי · עד מתי · מקור, כפתור לטופס, והוספה לצ'ק ליסט ===== */
+  function tasksOn() { return !!(window.TZTASKS && TZTASKS.enabled()); }
+  function isTask(x) { return !!(x && (x.who || x.due || x.link)); }
+  function answerView(r) {
+    var TT = window.TZTASKS;
+    return '<p class="kr-lead">' + esc(r.lead) + '</p>' + (r.groups || []).map(function (g, gi) {
+      return '<div class="kr-g"><h4>' + esc(g.title) + '</h4>' + (g.items || []).map(function (x, ii) {
+        var meta = [x.who ? esc(x.who) : '', x.due && TT ? 'עד ' + TT.heDate(x.due) : ''].filter(Boolean).join(' · ');
+        var btn = TT && x.link ? TT.linkBtn(x.link, 'kr-lb') : '';
+        var add = isTask(x) && tasksOn() ? '<button type="button" class="kr-add" data-add="' + gi + '.' + ii + '" aria-label="הוספה לצ\'ק ליסט">' + IC.plus + 'לצ\'ק ליסט</button>' : '';
+        return '<div class="kr-it"><div class="kr-itx">' + esc(x.text) + '</div>' +
+          (meta || x.src ? '<div class="kr-im">' + meta + (x.src ? '<span class="kr-sc">' + esc(x.src) + '</span>' : '') + '</div>' : '') +
+          (btn || add ? '<div class="kr-ia">' + btn + add + '</div>' : '') + '</div>';
+      }).join('') + '</div>';
+    }).join('') + (r.tail ? '<p class="kr-tail">' + esc(r.tail) + '</p>' : '');
+  }
+  /* להעתקה ולמייל — HTML פשוט */
+  function answerDoc(r) {
+    return '<p><b>' + esc(r.lead) + '</b></p>' + (r.groups || []).map(function (g) {
+      return '<h4>' + esc(g.title) + '</h4><ul>' + (g.items || []).map(function (x) {
+        var m = [x.who, x.due && window.TZTASKS ? 'עד ' + TZTASKS.heDate(x.due) : ''].filter(Boolean).join(' · ');
+        return '<li>' + esc(x.text) + (m ? ' — ' + esc(m) : '') + (x.src ? ' <small>(' + esc(x.src) + ')</small>' : '') + '</li>';
+      }).join('') + '</ul>';
+    }).join('') + (r.tail ? '<p>' + esc(r.tail) + '</p>' : '');
+  }
+  function addTasks(bub, list, btns) {
+    btns.forEach(function (b) { b.disabled = true; });
+    TZTASKS.add(list.map(function (x) { return { text: x.text, who: x.who, due: x.due || TZTASKS.nextSunday(), link: x.link, src: x.src }; }), 'keren').then(function () {
+      btns.forEach(function (b) { b.classList.add('on'); b.innerHTML = IC.ok + 'בצ\'ק ליסט'; });
+      var all = bub.querySelector('[data-addall]');
+      if (all && !bub.querySelector('.kr-add:not(.on)')) { all.disabled = true; all.classList.add('on'); all.innerHTML = IC.ok + 'הכול בצ\'ק ליסט'; }
+      if (!bub.querySelector('.kr-gock')) {
+        var g = document.createElement('button'); g.type = 'button'; g.className = 'kr-gock'; g.setAttribute('data-gock', '1'); g.textContent = 'לצ\'ק ליסט האישי ←';
+        bub.querySelector('.kr-acts').appendChild(g);
+      }
+      T.toast(list.length > 1 ? list.length + ' משימות נוספו לצ\'ק ליסט' : 'נוסף לצ\'ק ליסט');
+    }).catch(function () { btns.forEach(function (b) { b.disabled = false; }); T.toast('ההוספה נכשלה. נסו שוב.'); });
+  }
+  /* תשובה ישנה (טקסט): "- " = נקודה, שורה שמסתיימת בנקודתיים = כותרת. השורה הראשונה מודגשת */
   function answerHtml(t) {
     var lines = String(t || '').split('\n'), out = '', ul = false;
     lines.forEach(function (l, i) {
@@ -301,7 +356,7 @@
     };
   }
 
-  window.KEREN = { open: open, mountPlans: mountPlans, enabled: function () { return !!KEREN_EXEC; },
+  window.KEREN = { open: open, mountPlans: mountPlans, enabled: function () { return !!KEREN_EXEC; }, call: call,   /* call — גם לצ'ק ליסט (tasks.js) */
                    _setExec: function (u) { KEREN_EXEC = u; } };   /* _setExec — לבדיקות בלבד */
   function boot() { if (KEREN_EXEC && !document.querySelector('.kr-fab')) build(); }
   document.addEventListener('tzohar:ready', boot);

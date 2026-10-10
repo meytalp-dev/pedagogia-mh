@@ -48,6 +48,10 @@ button{font:inherit}
 .nav button[aria-current=true] svg{color:#fff}
 .nav .n{margin-inline-start:auto;font-size:12px;background:var(--bad-soft);color:var(--bad);border-radius:99px;padding:1px 9px}
 .nav button[aria-current=true] .n{background:#fff}
+.nav .n.soft{background:var(--blue-soft);color:var(--navy)}
+.nav-g{display:flex;align-items:center;gap:10px;padding:10px 12px 2px;font-weight:700;font-size:15px;color:var(--ink)}
+.nav-g svg{width:19px;height:19px;color:var(--blue)}
+.nav-sub button{padding-inline-start:41px;min-height:40px;font-weight:600}
 .nav .pilot{margin-inline-start:auto;font-size:11.5px;background:var(--amber-soft);color:#8a5300;border-radius:99px;padding:1px 9px}
 
 /* כרטיסים */
@@ -77,20 +81,62 @@ h2.pt{font:700 20px Rubik,sans-serif;color:var(--navy);margin:22px 0 10px}
 .chip.warn{background:var(--warn-soft);color:var(--warn)}
 .chip.mute{background:var(--paper);color:var(--muted)}
 
-/* "מה חסר" — כרטיס לכל תחום, צבע לכל תחום (אותם צבעים כמו בתובה) */
-.k-nispach{--kc:#c43c47;--ks:#fdecee}
-.k-bs{--kc:#8a5a2b;--ks:#f6ece2}
-.k-rg{--kc:#b8620b;--ks:#fff1df}
-.k-menor{--kc:#1659d6;--ks:#e6efff}
-.k-sal{--kc:#7a3fa0;--ks:#f3eafa}
-.gaps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.gap{background:#fff;border:1px solid var(--line);border-inline-start:5px solid var(--kc);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
-.gap h3{margin:0;font:700 16px Rubik,sans-serif;color:var(--kc);display:flex;align-items:center;gap:8px}
-.gap h3 .chip{margin-inline-start:auto;font-size:12px}
-.gap p{margin:0;font-size:14.5px}
-.gap.done{border-inline-start-color:var(--ok)}
-.gap.done h3{color:var(--ok)}
-.gap .acts{margin-top:auto}
+/* צ'ק ליסט (11.10.26) — רשימה במקום כרטיסים: עיגול סטטוס, כותרת, שורת פירוט, כפתורים; יומן ומייל נפתחים מתחת לשורה */
+.ck-tabs{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin:0 0 10px}
+.ck-tabs button{border:0;background:none;border-radius:10px;padding:8px 18px;min-height:40px;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.ck-tabs button[aria-selected=true]{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ck-tabs .n{font-size:12px;background:var(--bad-soft);color:var(--bad);border-radius:99px;padding:0 8px}
+.ck-lead{margin:0 0 10px}
+.ck-card{padding:6px 20px}
+ul.ck{list-style:none;margin:0;padding:0}
+.ck-i{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line)}
+ul.ck>.ck-i:first-child{border-top:0}
+.ck-box,.ck-st{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;margin-top:1px}
+.ck-box{border:2px solid #b9c7c9;background:#fff;cursor:pointer;padding:0;color:#fff}
+.ck-box:hover{border-color:var(--blue)}
+.ck-box[aria-checked=true]{background:var(--ok);border-color:var(--ok)}
+.ck-box:disabled{cursor:default;opacity:.7}
+.ck-box svg,.ck-st svg{width:15px;height:15px}
+.ck-st.gap{border:2px solid var(--bad)}
+.ck-st.ok{background:var(--ok);color:#fff}
+.ck-st.wait{background:var(--warn-soft);color:var(--warn)}
+.ck-st.wait svg{width:18px;height:18px}
+.ck-st.mute{border:2px dashed #c9d3d4}
+.ck-tx{flex:1;min-width:0}
+.ck-t{font:700 16.5px/1.35 Rubik,sans-serif;color:var(--navy)}
+.ck-d{font-size:14.5px;color:var(--ink);margin-top:3px}
+.ck-m{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);margin-top:4px}
+.ck-m .late{color:var(--bad);font-weight:700}
+.ck-src{background:var(--paper);border-radius:99px;padding:0 9px}
+.ck-tag{background:#f4f1fa;color:#5b4f8f;border-radius:99px;padding:0 9px;font-weight:700}
+.ck-a{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.ck-tool{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--blue);font-weight:700;font-size:13.5px;cursor:pointer;padding:6px 8px;border-radius:10px;min-height:36px}
+.ck-tool:hover,.ck-tool[aria-expanded=true]{background:var(--blue-soft)}
+.ck-tool svg{width:16px;height:16px}
+.ck-del{color:var(--muted);margin-inline-start:auto}
+.ck-del:hover{color:var(--bad);background:var(--bad-soft)}
+.ck-i.done .ck-t{color:var(--muted)}
+.ck-i.done .ck-d{color:var(--muted)}
+.ck-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ck-chips .chip{text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600}
+.ck-chips .chip svg{width:13px;height:13px}
+.ck-d .meter{max-width:340px;margin:6px 0 0}
+.ck-p{margin-top:10px;background:var(--paper);border-radius:14px;padding:12px 14px}
+.ck-pt{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--navy);font-size:14.5px;margin-bottom:4px}
+.ck-pt svg{width:17px;height:17px}
+.ck-p .fld{margin-top:6px;max-width:420px}
+.ck-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ck-date{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.ck-date .fld{width:auto;margin-top:0}
+.ck-prev{margin-top:8px;font-size:13.5px}
+.ck-prev summary{cursor:pointer;color:var(--muted)}
+.ck-prev .pre{background:#fff;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:14px}
+.ck-done{border-top:1px solid var(--line);padding:10px 0}
+.ck-done>summary{cursor:pointer;color:var(--muted);font-weight:700;font-size:14px;min-height:36px;display:flex;align-items:center}
+.ck-add .eyebrow{margin-bottom:0}
+.ck-add .ck-row{margin-top:8px}
+.ck-add .ck-row .fld{margin-top:0}
+.ck-add select.fld{flex:1;min-width:200px;width:auto}
 .allok{display:flex;align-items:center;gap:10px;background:var(--ok-soft);color:var(--ok);border-radius:14px;padding:12px 16px;font-weight:700;margin-bottom:12px}
 
 /* כפתורים */
@@ -208,4 +254,9 @@ footer a{color:var(--muted)}
   .sec>summary{padding:12px 14px} .sec .sb{padding:12px 14px 14px} .sec .sum{margin-inline-start:0;width:100%}
   .card{padding:16px}
   .akv{min-width:110px}
+  .ck-card{padding:4px 14px}
+  .ck-i{gap:10px}
+  .ck-tabs{display:flex}
+  .ck-tabs button{flex:1;justify-content:center}
+  .ck-p .fld,.ck-add select.fld{max-width:none;width:100%}
 }
