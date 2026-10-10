@@ -151,6 +151,9 @@
       PAGE = fromHash();
       side(); render();
       loadPublic();
+      READY = true;
+      document.dispatchEvent(new Event('tzohar:ready'));   /* קרן (keren.js) נדלקת כאן */
+      side();
       try { if (!localStorage.getItem('tzohar.tour') && !IS_ADMIN) { localStorage.setItem('tzohar.tour', '1'); tour(0); } } catch (e) {}
     }).catch(function () {
       $('main').innerHTML = '<div class="card"><b>לא הצלחנו לטעון את הנתונים של בית הספר.</b><div class="acts" style="margin-top:10px"><button class="btn primary" id="retry">לנסות שוב</button></div></div>';
@@ -271,6 +274,7 @@
     if (!isRakaz()) P.push(['g', I.weave, 'מארג']);
     P.push(['k', I.book, 'הידע ' + (isRakaz() ? 'לרכז/ת' : 'למנהל/ת')]);
     if (isRakaz()) P.push(['t', I.tools, 'ארגז הכלים']);
+    if (window.KEREN && KEREN.enabled()) P.push(['p', I.doc, 'התוכניות שלי']);   /* התוכניות שקרן בנתה (10.10.26) */
     P.push(['tour', I.tour, 'סיור בצוהר']);
     return P;
   }
@@ -286,24 +290,29 @@
       return '<li><button type="button" data-page="' + p[0] + '"' + (PAGE === p[0] ? ' aria-current="true"' : '') + '>' + p[1] + esc(p[2]) + extra + '</button></li>';
     }).join('');
   }
-  function go(p) {
+  var PLANID = '';   /* תוכנית לפתיחה בעמוד "התוכניות שלי" (מקרן) */
+  function go(p, id) {
     if (p === 'tour') { document.body.classList.remove('drawer'); return tour(0); }
-    PAGE = p;
+    PAGE = p; PLANID = id || '';
     var keep = location.search;
     history.replaceState(null, '', location.pathname + keep + (p === 'home' ? '' : '#' + p));
     document.body.classList.remove('drawer');
-    side(); render(); window.scrollTo(0, 0);
+    side(); render(true); window.scrollTo(0, 0);
   }
 
   /* ===== ציור ===== */
-  function render() {
+  function render(force) {
     if (!D || !D.school) return;
+    /* "התוכניות שלי" מנוהל ע"י keren.js — נתון ציבורי שנטען ברקע לא מצייר אותו מחדש (ולא מוחק עריכה) */
+    if (PAGE === 'p' && !force && $('kerenPlans')) return;
     var h = '';
     if (IS_ADMIN) h += '<div class="asbar">תצוגת אדמין: <b>' + esc(D.school.name) + '</b> · כמו ש' + (isRakaz() ? 'הרכז/ת' : 'המנהל/ת') + ' רואה' +
       ' · <a href="?as=' + esc(D.school.semel) + (isRakaz() ? '' : '&r=rakaz') + location.hash + '">' + (isRakaz() ? 'לתצוגת מנהל/ת' : 'לתצוגת רכז/ת') + '</a>' +
       ' · <a href="./">בית ספר אחר</a></div>';
-    h += ({ home: home, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage }[PAGE] || home)();
+    h += ({ home: home, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage,
+            p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || home)();
     $('main').innerHTML = h;
+    if (PAGE === 'p' && window.KEREN) KEREN.mountPlans($('kerenPlans'), PLANID);
     if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
@@ -423,11 +432,54 @@
     /* אקלים */
     h += aklimSec();
 
+    /* ועדה מלווה (מיטל, 10.10.26): המנהל/ת — הכול + המסמכים; הרכז/ת — החלקים הפדגוגיים */
+    h += vaadSec();
+
     /* יעדים */
     var y = D.yaadim;
     h += sec('yaad', I.flag, 'היעדים מהוועדה המלווה האחרונה', y === null || y === undefined ? 'לא נטען' : y ? 'יש יעדים' : 'אין',
       y === null || y === undefined ? failed() : y ? '<div class="pre">' + esc(y) + '</div>' : '<div class="empty">אין יעדים מהוועדה המלווה האחרונה בקובץ.</div>');
     return h + '</div>';
+  }
+
+  var VAAD_SECS = [['topics', 'נושאים מרכזיים'], ['strengths', 'חוזקות'], ['gaps', 'פערים ואתגרים'], ['decisions', 'החלטות וצעדים להמשך'], ['facts', 'נתונים']];
+  function vaadSec() {
+    var rows = D.vaadot, rk = isRakaz(), title = 'ועדה מלווה תשפ״ו' + (rk ? ' · החלקים הפדגוגיים' : '');
+    if (!rows) return sec('vaad', I.flag, title, 'לא נטען', failed());
+    if (!rows.length) return sec('vaad', I.flag, title, 'אין', '<div class="empty">לא התקבל בצוהר מסמך של ועדה מלווה מתשפ״ו.</div>');
+    var by = {}, order = [];
+    rows.forEach(function (x) { var st = x.stage || 'ועדה מלווה'; if (!by[st]) { by[st] = []; order.push(st); } by[st].push(x); });
+    function dateOf(st) { return by[st].map(function (x) { return x.date; }).sort().pop() || ''; }
+    order.sort(function (a, b) { return dateOf(b).localeCompare(dateOf(a)); });
+    var body = order.map(function (st, i) {
+      var J = {}, docs = by[st];
+      docs.forEach(function (x) {
+        var j = null; try { j = JSON.parse(rk ? x.ped : x.summary); } catch (e) { j = null; }
+        if (!j) return;
+        VAAD_SECS.forEach(function (k) { (j[k[0]] || []).forEach(function (t) { J[k[0]] = J[k[0]] || []; if (J[k[0]].indexOf(t) < 0) J[k[0]].push(t); }); });
+      });
+      var inner = VAAD_SECS.map(function (k) {
+        var L = J[k[0]] || [];
+        return L.length ? '<h4 style="margin:10px 0 4px">' + esc(k[1]) + '</h4><ul class="lvl">' + L.map(function (t) { return '<li><span>' + esc(t) + '</span></li>'; }).join('') + '</ul>' : '';
+      }).join('') || '<div class="empty">' + (rk ? 'אין במסמך הזה חלקים פדגוגיים.' : 'אין תקציר למסמך הזה.') + '</div>';
+      var btns = rk ? '' : docs.filter(function (x) { return x.fid; }).map(function (x) {
+        return '<button type="button" class="btn sm" data-vdoc="' + esc(x.fid) + '">' + I.doc + 'פתיחה: ' + esc(x.kind || 'מסמך') + '</button>';
+      }).join('');
+      return '<div' + (i ? ' style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)"' : '') + '><b>' + esc(st === 'ועדה מלווה' ? 'תשפ״ו' : st) + '</b>' +
+        (dateOf(st) ? ' <span class="small">· ' + fmtDate(dateOf(st)) + '</span>' : '') + (btns ? '<div class="acts" style="margin-top:6px">' + btns + '</div>' : '') + inner + '</div>';
+    }).join('');
+    return sec('vaad', I.flag, title, order.length === 1 ? 'ועדה אחת' : order.length + ' ועדות', body);
+  }
+  function openVaada(fid) {
+    var w = window.open('', '_blank');
+    if (w) w.document.write('<p dir="rtl" style="font-family:Arial,sans-serif;padding:24px">טוען את המסמך…</p>');
+    gate({ action: 'vaadaDoc', semel: D.school.semel, fid: fid }, 120000).then(function (d) {
+      if (!d || !d.ok) throw new Error(d && d.error);
+      var bin = atob(d.b64), arr = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      var url = URL.createObjectURL(new Blob([arr], { type: d.mime || 'application/pdf' }));
+      if (w) w.location.href = url; else location.href = url;
+    }).catch(function () { if (w) w.close(); toast('לא הצלחנו לפתוח את המסמך. נסו שוב בעוד רגע.'); });
   }
 
   var AKL_AUD = ['מורים', 'תלמידים', 'פדגוגיה'];
@@ -690,6 +742,13 @@
     if (!isRakaz()) S.push({ go: 'g', sel: '.mareg', title: 'מארג', text: by['מארג'] });
     S.push({ go: 'k', sel: '#main .tiles', title: 'הידע', text: by['הידע'] });
     if (isRakaz()) S.push({ go: 't', sel: '#main .tiles', title: 'ארגז הכלים', text: by['ארגז הכלים'] });
+    if (window.KEREN && KEREN.enabled()) {
+      S.push({ go: 'home', sel: '.kr-fab', title: 'קרן — העוזרת שלך',
+        text: 'קרן מכירה את הנתונים של בית הספר שלך ואת הידע של המינהל. אפשר לשאול אותה כל שאלה, ולבקש ממנה לבנות ' +
+          (isRakaz() ? 'תוכנית עבודה פדגוגית' : 'תוכנית עבודה — למשל למחנכים וליועצים לפי שאלוני האקלים') + '. עונה גם בערבית.' });
+      S.push({ go: 'p', sel: '#kerenPlans', title: 'התוכניות שלי',
+        text: 'כל תוכנית שקרן בונה נשמרת כאן. אפשר לערוך, להדפיס ולשלוח לצוות. התוכניות פרטיות לבית הספר' + (isRakaz() ? ', והמנהל/ת רואה אותן.' : ', כולל התוכניות הפדגוגיות של הרכז/ת.') });
+    }
     S.push({ go: 'home', sel: '#nav [data-page="tour"]', drawer: true, title: 'אפשר לחזור לסיור', text: 'הסיור נמצא תמיד כאן בתפריט. בהצלחה!' });
     return S;
   }
@@ -770,7 +829,7 @@
 
   /* ===== אירועים ===== */
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-gmail],[data-saldoc],[data-tip],#tpGo');
+    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-gmail],[data-saldoc],[data-vdoc],[data-tip],#tpGo');
     if (!t) return;
     if (t.hasAttribute('data-page')) go(t.getAttribute('data-page'));
     else if (t.hasAttribute('data-go')) go(t.getAttribute('data-go'));
@@ -778,6 +837,7 @@
     else if (t.hasAttribute('data-gmail')) gmailOpen(Number(t.getAttribute('data-gmail')));
     else if (t.hasAttribute('data-saldoc')) openSal();
     else if (t.hasAttribute('data-tip')) tipToggle(Number(t.getAttribute('data-tip')), t.getAttribute('data-op'));
+    else if (t.hasAttribute('data-vdoc')) openVaada(t.getAttribute('data-vdoc'));
     else if (t.id === 'tpGo') tipSave();
   });
   document.addEventListener('toggle', function (e) {
@@ -787,6 +847,27 @@
   $('burger').onclick = function () { document.body.classList.toggle('drawer'); };
   $('scrim').onclick = function () { document.body.classList.remove('drawer'); };
   $('out').onclick = function () { if (window.PMH_AUTH) PMH_AUTH.logout(); };
+
+  /* ===== מה שקרן (keren.js) צריכה מהדף ===== */
+  var READY = false;
+  /* snap = מה שהמשתמש/ת רואה ממילא בצוהר ושמחושב כאן (מקורות ציבוריים). השרת של קרן מקצר כל שדה */
+  function snap() {
+    if (!D || !D.school) return {};
+    var m = R.mosdot;
+    return {
+      students: R.matz || '', network: m ? m.network : '', district: m ? m.district : '',
+      megamot: m ? (m.megamot || []).filter(function (x) { return x.name; }).map(function (x) { return x.name + (x.grades ? ' (' + x.grades + ')' : ''); }) : [],
+      gaps: items().filter(function (x) { return x.st === 'gap' || x.st === 'wait'; }).map(function (x) { return x.t + ': ' + x.d; }),
+      menor: R.menor && R.menor.t ? 'נרשמו ' + R.menor.r + ' מתוך ' + R.menor.t + ' מורים' : '',
+      bs: R.bs ? '"' + R.bs.name + '" · ' + R.bs.status : (ST.bs === 'ok' ? 'לא הוגשה' : ''),
+      rg: ST.rg === 'ok' ? WS.map(function (w) { return w[1] + ' ' + (Number(R.rg && R.rg[w[0]]) || 0); }).join(', ') : ''
+    };
+  }
+  window.TZOHAR = {
+    token: token, snap: snap, toast: toast,
+    role: function () { return role(); }, me: function () { return ME; }, school: function () { return D && D.school; },
+    as: function () { return AS; }, ready: function () { return READY; }, go: go
+  };
 
   function boot() { if (window.PMH_AUTH && PMH_AUTH.allowed()) start(); }
   if (document.documentElement.classList.contains('pmh-in')) boot();
