@@ -183,15 +183,17 @@ textarea.fld{min-height:90px;resize:vertical}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:20px 16px 30px}
 footer a{color:var(--muted)}
 
-/* סיור */
-.tourbox{position:fixed;inset:0;z-index:95;background:rgba(23,63,71,.55);display:grid;place-items:center;padding:16px}
-.tourbox .in{background:#fff;border-radius:20px;max-width:440px;width:100%;padding:22px 22px 18px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
-.tourbox h3{margin:0 0 6px;font:700 19px Rubik,sans-serif;color:var(--navy);display:flex;gap:8px;align-items:center}
-.tourbox h3 svg{width:22px;height:22px;color:var(--blue)}
-.tourbox p{margin:0 0 14px}
-.tourbox .dots{display:flex;gap:6px;margin-bottom:12px}
-.tourbox .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
-.tourbox .dots i.on{background:var(--amber)}
+/* סיור — כמו בתובה: עובר לעמוד, מאיר את מה שמסבירים עליו, והבועה לידו (בטלפון — בתחתית) */
+.tour-hole{position:fixed;z-index:98;border-radius:14px;pointer-events:none;box-shadow:0 0 0 9999px rgba(20,40,48,.58);outline:3px solid var(--amber);transition:top .3s ease,left .3s ease,width .3s ease,height .3s ease}
+.tour-box{position:fixed;z-index:99;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 18px 40px rgba(0,0,0,.28);border-top:4px solid var(--amber);transition:top .3s ease,left .3s ease}
+.tour-box h3{margin:2px 0 6px;font:700 17px Rubik,sans-serif;color:var(--navy)}
+.tour-box p{margin:0 0 12px;font-size:14.5px;line-height:1.6;color:var(--ink)}
+.tour-count{font-size:12px;font-weight:700;color:var(--muted)}
+.tour-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tour-actions button{font:inherit;font-size:14px;font-weight:700;cursor:pointer;border-radius:999px;padding:8px 18px;min-height:42px}
+.tour-next{background:var(--blue);color:#fff;border:1px solid var(--blue)}
+.tour-prev{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.tour-skip{background:none;border:0!important;color:var(--muted);text-decoration:underline;margin-inline-start:auto;padding:8px 4px!important}
 
 .scrim{display:none}
 @media (max-width:960px){
@@ -200,6 +202,8 @@ footer a{color:var(--muted)}
   .side{position:fixed;top:0;bottom:0;right:0;width:min(300px,86vw);z-index:60;border-radius:0;transform:translateX(105%);transition:transform .25s;overflow-y:auto}
   body.drawer .side{transform:none}
   body.drawer .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:55}
+  body.touring .scrim{display:none}
+  .brand .wide{display:none}
   .head h1{font-size:22px}
   .sec>summary{padding:12px 14px} .sec .sb{padding:12px 14px 14px} .sec .sum{margin-inline-start:0;width:100%}
   .card{padding:16px}

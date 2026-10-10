@@ -304,6 +304,7 @@
       ' · <a href="./">בית ספר אחר</a></div>';
     h += ({ home: home, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage }[PAGE] || home)();
     $('main').innerHTML = h;
+    if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
   function headCard(sub) {
@@ -363,7 +364,7 @@
         cB += person('מפקח/ת פדגוגי/ת', n, c && c.phone, c && c.email);
       });
     }
-    h += sec('contacts', I.phone, 'אנשי קשר והמפקח/ת', cS, cB);
+    h += '<div id="secs">' + sec('contacts', I.phone, 'אנשי קשר והמפקח/ת', cS, cB);
 
     /* מגמות */
     var m = R.mosdot, megs = m ? (m.megamot || []).filter(function (x) { return x.name; }) : [];
@@ -426,7 +427,7 @@
     var y = D.yaadim;
     h += sec('yaad', I.flag, 'היעדים מהוועדה המלווה האחרונה', y === null || y === undefined ? 'לא נטען' : y ? 'יש יעדים' : 'אין',
       y === null || y === undefined ? failed() : y ? '<div class="pre">' + esc(y) + '</div>' : '<div class="empty">אין יעדים מהוועדה המלווה האחרונה בקובץ.</div>');
-    return h;
+    return h + '</div>';
   }
 
   var AKL_AUD = ['מורים', 'תלמידים', 'פדגוגיה'];
@@ -468,17 +469,17 @@
   }
   function menorPage() {
     var h = '<div class="card head"><h1>מנור · רישום המורים</h1><div class="meta">מנור מרכז את ההדרכות וההשתלמויות של המורים. כל מורה נרשם/ת פעם אחת.</div></div>';
-    if (ST.menor !== 'ok') return h + '<div class="card">' + failed(ST.menor) + '</div>';
     var t = R.menor && R.menor.t, r = R.menor ? R.menor.r : 0, pc = t ? Math.round(100 * r / t) : 0;
+    /* המספרים תלויים במנור; הכפתור וההודעה למורים מוצגים גם כשהמספרים עוד נטענים */
     h += '<div class="card"><p class="eyebrow">' + I.chart + 'המצב היום</p>' +
-      (t ? '<div class="meter"><div class="b"><i class="' + (pc < 50 ? 'low' : pc < 100 ? 'mid' : '') + '" style="width:' + pc + '%"></i></div><span>' + pc + '%</span></div>' +
+      (ST.menor !== 'ok' ? failed(ST.menor) : t ?'<div class="meter"><div class="b"><i class="' + (pc < 50 ? 'low' : pc < 100 ? 'mid' : '') + '" style="width:' + pc + '%"></i></div><span>' + pc + '%</span></div>' +
         '<div>נרשמו <b>' + r + '</b> מתוך <b>' + t + '</b> מורים' + (t > r ? ' · <b>' + (t - r) + '</b> עוד לא נרשמו' : ' · כולם נרשמו') + '</div>'
         : '<div class="empty">אין עדיין מורים רשומים במנור לבית הספר.</div>') + '</div>';
     h += '<div class="card"><p class="eyebrow">' + I.users + 'מי עוד לא נרשם/ה</p>' +
       '<p style="margin:0 0 10px">את הרשימה המלאה, עם השמות והמקצועות, רואים במבט של בית הספר במנור, בלשונית "טרם נרשמו".</p>' +
       '<div class="acts"><a class="btn primary" href="' + LINK.menor + '" target="_blank" rel="noopener">למבט של בית הספר במנור' + I.ext + '</a></div>' +
       '<div class="small" style="margin-top:8px">מנור מבקש כניסה משלו בפעם הראשונה (קוד במייל).</div></div>';
-    h += '<div class="card"><p class="eyebrow">' + I.mail + 'הודעה מוכנה למורים</p><div class="pre note">' + esc(menorMsg()) + '</div>' +
+    h += '<div class="card" id="menorMsg"><p class="eyebrow">' + I.mail + 'הודעה מוכנה למורים</p><div class="pre note">' + esc(menorMsg()) + '</div>' +
       '<div class="acts"><button type="button" class="btn" data-copy="menor">' + I.copy + 'העתקת ההודעה</button>' +
       '<button type="button" class="btn" data-copy="link">' + I.copy + 'העתקת קישור ההרשמה בלבד</button></div></div>';
     return h;
@@ -501,6 +502,7 @@
     var mm = maregMail();
     return '<div class="card mareg"><span class="badge">פיילוט · תשפ״ז</span><h1>מארג · תוכנית העבודה של בית הספר</h1>' +
       '<p style="margin:0 0 6px">מארג אורג את התוכניות האישיות של בעלי התפקידים לתוכנית בית ספרית אחת: מטרות, יעדים ומדדים, לוח אירועים, ותזכורות לאחראים על כל משימה.</p>' +
+      '<p style="margin:0 0 6px"><b>בתי הספר בפיילוט יוכלו להתאים את המערכת לבית הספר שלהם — לצרכים ולטעם שלהם.</b></p>' +
       '<p style="margin:0 0 12px" class="small">אנחנו מתחילים בפיילוט עם כמה בתי ספר, והמפקח/ת רואה את התוכנית מהיום הראשון.</p>' +
       '<div class="acts">' + mailBtns(mm.sub, mm.text, 'אני רוצה את מארג בבית הספר שלי', true) + '</div></div>' +
       '<h2 class="pt">איך זה נראה</h2><p class="small" style="margin-top:-4px">המסכים מבית ספר לדוגמה. הנתונים בדויים.</p>' +
@@ -667,27 +669,103 @@
       [I.school, 'בית הספר שלי', 'אנשי הקשר והמפקח/ת, המגמות, בעלי התפקידים, ההשתלמויות, סל התוכניות, סקר האקלים והיעדים מהוועדה המלווה. הכול מקופל — לוחצים על כותרת כדי לפתוח.'],
       [I.chart, 'מנור', 'כמה מהמורים כבר נרשמו, קישור למבט של בית הספר במנור, והודעה מוכנה לשלוח למורים.']
     ];
-    if (!isRakaz()) S.push([I.weave, 'מארג', 'תוכנית העבודה הבית ספרית החדשה. אפשר להציץ במסכים ולבקש להצטרף לפיילוט.']);
+    if (!isRakaz()) S.push([I.weave, 'מארג', 'תוכנית העבודה הבית ספרית החדשה. אפשר להציץ במסכים ולבקש להצטרף לפיילוט — ומי שבפיילוט מתאים/ה את המערכת לבית הספר, לצרכים ולטעם שלו.']);
     S.push([I.book, 'הידע', 'הנהלים, בעלי התפקידים והמסמכים הארציים במקום אחד.']);
     if (isRakaz()) S.push([I.tools, 'ארגז הכלים', 'הכלים של הרכז/ת הפדגוגי/ת וטיפים לעבודה עם הצוות, שמתעדכנים במהלך השנה.']);
     return S;
   }
-  function tour(i) {
-    var S = tourSteps(), old = document.querySelector('.tourbox');
-    if (old) old.remove();
-    if (i >= S.length) return;
-    var x = S[i], b = document.createElement('div');
-    b.className = 'tourbox';
-    b.innerHTML = '<div class="in" role="dialog" aria-modal="true" aria-label="סיור בצוהר"><div class="dots">' + S.map(function (z, j) { return '<i' + (j === i ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
-      '<h3>' + x[0] + esc(x[1]) + '</h3><p>' + esc(x[2]) + '</p><div class="acts">' +
-      '<button type="button" class="btn primary" data-t="next">' + (i === S.length - 1 ? 'סיום' : 'הבא') + '</button>' +
-      (i < S.length - 1 ? '<button type="button" class="btn" data-t="end">דילוג</button>' : '') + '</div></div>';
-    b.addEventListener('click', function (e) {
-      var t = e.target.closest('[data-t]');
-      if (e.target === b || (t && t.getAttribute('data-t') === 'end')) b.remove();
-      else if (t) tour(i + 1);
-    });
-    document.body.appendChild(b);
+  /* כל תחנה: עמוד (go) + מה מאירים (sel). כמו הסיור של תובה */
+  function tourStops() {
+    var T = tourSteps(), by = {};
+    T.forEach(function (x) { by[x[1]] = x[2]; });
+    var S = [
+      { go: 'home', sel: '#main .card.head', title: 'ברוכים הבאים לצוהר',
+        text: 'צוהר הוא החלון שלך לבית הספר: מה כבר הושלם ומה עוד חסר, הנתונים של בית הספר, והידע שצריך — במקום אחד, בלי לחפש בין טפסים.' },
+      { go: 'home', sel: '.side', drawer: true, title: 'התפריט',
+        text: 'כאן עוברים בין החלקים של צוהר. בטלפון התפריט נפתח מהכפתור שבפינה למעלה.' },
+      { go: 'home', sel: '.gaps', title: 'מה חסר', text: by['מה חסר'] },
+      { go: 's', sel: '#secs', title: 'בית הספר שלי', text: by['בית הספר שלי'] },
+      { go: 'm', sel: '#menorMsg', title: 'מנור', text: by['מנור'] }
+    ];
+    if (!isRakaz()) S.push({ go: 'g', sel: '.mareg', title: 'מארג', text: by['מארג'] });
+    S.push({ go: 'k', sel: '#main .tiles', title: 'הידע', text: by['הידע'] });
+    if (isRakaz()) S.push({ go: 't', sel: '#main .tiles', title: 'ארגז הכלים', text: by['ארגז הכלים'] });
+    S.push({ go: 'home', sel: '#nav [data-page="tour"]', drawer: true, title: 'אפשר לחזור לסיור', text: 'הסיור נמצא תמיד כאן בתפריט. בהצלחה!' });
+    return S;
+  }
+  var TS = [], TI = 0, tBox = null, tHole = null;
+  function tPick(sel) {
+    var list = document.querySelectorAll(sel);
+    for (var k = 0; k < list.length; k++) {
+      var el = list[k], r = el.getBoundingClientRect();
+      if (el.getClientRects().length && r.height > 0 && r.right > 0 && r.left < innerWidth) return el;
+    }
+    return null;
+  }
+  function tPlace() {
+    if (!tBox || !TS[TI]) return;
+    var el = tPick(TS[TI].sel); if (!el) return;
+    var r = el.getBoundingClientRect(), pad = 8;
+    var top = Math.max(r.top, 8), bottom = Math.min(r.bottom, innerHeight - 8);
+    tHole.style.top = (top - pad) + 'px'; tHole.style.left = (r.left - pad) + 'px';
+    tHole.style.width = (r.width + pad * 2) + 'px'; tHole.style.height = Math.max(0, bottom - top + pad * 2) + 'px';
+    var bw = Math.min(380, innerWidth - 24);
+    tBox.style.width = bw + 'px';
+    var bt, left;
+    if (innerWidth < 700) {   /* טלפון: בועה בתחתית המסך, הרכיב המואר למעלה */
+      bt = innerHeight - tBox.offsetHeight - 12; left = (innerWidth - bw) / 2;
+    } else {
+      var below = bottom + 14 + tBox.offsetHeight < innerHeight;
+      bt = below ? bottom + 14 : Math.max(12, top - 14 - tBox.offsetHeight);
+      if (!below && top - 14 - tBox.offsetHeight < 12) bt = innerHeight - tBox.offsetHeight - 12;
+      left = Math.max(12, Math.min(r.left + r.width - bw, innerWidth - bw - 12));   /* RTL: מיושר לקצה הימני */
+    }
+    tBox.style.top = bt + 'px'; tBox.style.left = left + 'px';
+  }
+  function tShow() {
+    var s = TS[TI];
+    if (PAGE !== s.go) { PAGE = s.go; side(); render(); }
+    var mob = innerWidth < 960;
+    document.body.classList.toggle('drawer', !!s.drawer && mob);
+    setTimeout(function () {
+      var el = tPick(s.sel);
+      if (!el) return tStep(1);   /* העמוד לא הציג את הרכיב — ממשיכים */
+      if (!s.drawer) {
+        var r = el.getBoundingClientRect();
+        /* בטלפון הבועה בתחתית — הרכיב נגלל לחלק העליון של המסך */
+        window.scrollTo({ top: Math.max(0, scrollY + r.top - (innerWidth < 700 ? 70 : Math.max(80, (innerHeight - r.height) / 2))), behavior: 'smooth' });
+      }
+      tBox.innerHTML = '<div class="tour-count">' + (TI + 1) + ' מתוך ' + TS.length + '</div><h3>' + esc(s.title) + '</h3><p>' + esc(s.text) + '</p>' +
+        '<div class="tour-actions"><button type="button" class="tour-next">' + (TI === TS.length - 1 ? 'סיום' : 'הבא') + '</button>' +
+        (TI ? '<button type="button" class="tour-prev">הקודם</button>' : '') + '<button type="button" class="tour-skip">יציאה מהסיור</button></div>';
+      tBox.querySelector('.tour-next').onclick = function () { tStep(1); };
+      var pv = tBox.querySelector('.tour-prev'); if (pv) pv.onclick = function () { tStep(-1); };
+      tBox.querySelector('.tour-skip').onclick = tEnd;
+      tPlace(); setTimeout(tPlace, 450);
+      tBox.querySelector('.tour-next').focus({ preventScroll: true });
+    }, 280);
+  }
+  function tStep(d) { var n = TI + d; if (n >= TS.length) return tEnd(); if (n < 0) return; TI = n; tShow(); }
+  function tKey(e) { if (e.key === 'Escape') tEnd(); else if (e.key === 'ArrowLeft') tStep(1); else if (e.key === 'ArrowRight') tStep(-1); }
+  function tEnd() {
+    document.removeEventListener('keydown', tKey);
+    removeEventListener('resize', tPlace); removeEventListener('scroll', tPlace);
+    if (tBox) tBox.remove(); if (tHole) tHole.remove();
+    tBox = tHole = null;
+    document.body.classList.remove('drawer', 'touring');
+    go('home');
+  }
+  function tour() {
+    if (tBox) return;
+    TS = tourStops(); TI = 0;
+    tHole = document.createElement('div'); tHole.className = 'tour-hole';
+    tBox = document.createElement('div'); tBox.className = 'tour-box';
+    tBox.setAttribute('role', 'dialog'); tBox.setAttribute('aria-label', 'סיור בצוהר');
+    document.body.appendChild(tHole); document.body.appendChild(tBox);
+    document.body.classList.add('touring');
+    document.addEventListener('keydown', tKey);
+    addEventListener('resize', tPlace); addEventListener('scroll', tPlace, { passive: true });
+    tShow();
   }
 
   /* ===== אירועים ===== */
