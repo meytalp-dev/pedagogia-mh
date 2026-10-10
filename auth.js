@@ -27,7 +27,8 @@
     netunim:   'תוכניות עבודה ומצבת תלמידים',
     tikshuv:   'מעקב קהילת התקשוב',
     mosdot:    'אדמין המוסדות',
-    bikurim:   'עדכון ביקורי הפיקוח'
+    bikurim:   'עדכון ביקורי הפיקוח',
+    rakaz:     'צוהר · רכזים פדגוגיים'
   };
 
   /* המרחב הנדרש בעמוד הזה */
@@ -35,6 +36,8 @@
   var need = ((me && me.getAttribute('data-space')) || '').split(',')
                .map(function (s) { return s.trim(); }).filter(Boolean);
   if (!need.length) need = ['pikuah'];
+  /* כל המרחבים של העמוד — מספיק אחד מהם (השער מקבל רשימה בפסיקים מ-10.10.26) */
+  var SPACE = need.join(',');
 
   /* data-optional: העמוד עצמו פתוח לכולם, ורק חלק ממנו דורש כניסה.
      אין הסתרה ואין מסך כניסה עד שהעמוד קורא ל-PMH_AUTH.login().
@@ -192,6 +195,8 @@
         '<div id="pmh-s1">' +
           '<div class="pmh-tabs" role="tablist">' +
             '<button type="button" class="pmh-tab" data-role="menahalim">מנהל/ת בית ספר</button>' +
+            /* רכז/ת פדגוגי/ת — רק בעמוד שמבקש את המרחב rakaz (צוהר, 10.10.26) */
+            (need.indexOf('rakaz') > -1 ? '<button type="button" class="pmh-tab" data-role="rakaz">רכז/ת פדגוגי/ת</button>' : '') +
             '<button type="button" class="pmh-tab" data-role="pikuah">מפקח/ת · מטה</button>' +
           '</div>' +
           '<select id="pmh-school" class="pmh-in" aria-label="בית הספר"></select>' +
@@ -226,6 +231,8 @@
     var role = (need.indexOf('pikuah') > -1 || need.indexOf('netunim') > -1 || need.indexOf('bikurim') > -1) &&
                need.indexOf('menahalim') < 0 ? 'pikuah' : 'menahalim';
     var byMail = false, who = null;   /* who = {id} או {email} — למי נשלח הקוד */
+    /* תפקידים שבוחרים בהם קודם בית ספר */
+    function bySchool() { return role === 'menahalim' || role === 'rakaz'; }
 
     function msg(t, good) {
       var e = $('pmh-err');
@@ -258,8 +265,8 @@
         b.setAttribute('aria-selected', b.getAttribute('data-role') === role ? 'true' : 'false');
       });
       var list = people.filter(function (p) { return p.role === role; });
-      schoolSel.hidden = byMail || role !== 'menahalim';
-      if (role === 'menahalim') {
+      schoolSel.hidden = byMail || !bySchool();
+      if (bySchool()) {
         /* תמיד 64 בתי הספר מפריסת הפיקוח (school-names.js) — גם כשאין
            לבית הספר מנהל/ת רשום/ה בגיליון. שם שאינו מה-64 (רשת) — בסוף. */
         var cur = schoolSel.value, seen = {}, schools = [], other = [];
@@ -277,9 +284,9 @@
       }
       list.sort(function (a, b) { return cmp(a.name, b.name); });
       nameSel.innerHTML = '';
-      var noOne = role === 'menahalim' && schoolSel.value && !list.length;
-      nameSel.appendChild(opt('', noOne ? 'אין עדיין מנהל/ת רשום/ה לבית הספר' :
-                                  role === 'menahalim' && !schoolSel.value ? 'השם שלי' : 'בחרו את שמכם'));
+      var noOne = bySchool() && schoolSel.value && !list.length;
+      nameSel.appendChild(opt('', noOne ? (role === 'rakaz' ? 'אין עדיין רכז/ת רשום/ה לבית הספר' : 'אין עדיין מנהל/ת רשום/ה לבית הספר') :
+                                  bySchool() && !schoolSel.value ? 'השם שלי' : 'בחרו את שמכם'));
       list.forEach(function (p) { nameSel.appendChild(opt(p.id, p.name + '  ·  ' + p.hint)); });
       nameSel.disabled = !list.length;
       if (list.length === 1) nameSel.value = list[0].id;
@@ -371,12 +378,12 @@
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) { mail.focus(); return msg('כתובת המייל אינה תקינה.'); }
         who = { email: m };
       } else {
-        if (role === 'menahalim' && !schoolSel.value) { schoolSel.focus(); return msg('בחרו את בית הספר.'); }
+        if (bySchool() && !schoolSel.value) { schoolSel.focus(); return msg('בחרו את בית הספר.'); }
         if (!nameSel.value) { nameSel.focus(); return msg('בחרו את שמכם מהרשימה.'); }
         who = { id: nameSel.value };
       }
       go.disabled = true; go.textContent = 'שולח…'; msg('');
-      api({ action: 'codeSend', id: who.id, email: who.email, space: need[0] }).then(function (r) {
+      api({ action: 'codeSend', id: who.id, email: who.email, space: SPACE }).then(function (r) {
         go.disabled = false; go.textContent = 'שליחת קוד למייל';
         if (!r || !r.ok) return msg(errText(r));
         if (who.id) { try { store().setItem(LAST, JSON.stringify({ id: who.id })); } catch (e) {} }
@@ -399,7 +406,7 @@
       var c = String(codeIn.value || '').replace(/\D/g, '');
       if (c.length !== 6) { codeIn.focus(); return msg('הקוד הוא 6 ספרות.'); }
       verifying = true; ok.disabled = true; ok.textContent = 'נכנס…'; msg('');
-      api({ action: 'codeVerify', id: who.id, email: who.email, code: c, space: need[0] }).then(function (r) {
+      api({ action: 'codeVerify', id: who.id, email: who.email, code: c, space: SPACE }).then(function (r) {
         verifying = false; ok.disabled = false; ok.textContent = 'כניסה';
         if (!r || !r.ok) return msg(errText(r));
         try {
@@ -495,7 +502,7 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', reveal);
     } else { reveal(); }
-    api({ action: 'verify', token: cur.token, space: need[0] }).then(function (r) {
+    api({ action: 'verify', token: cur.token, space: SPACE }).then(function (r) {
       if (r && r.ok === false && r.error !== 'network' && r.error !== 'unconfigured') logout();
     });
   } else if (optional) {
