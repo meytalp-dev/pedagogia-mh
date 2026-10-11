@@ -203,6 +203,28 @@ html.lang-ar body{top:0!important}
 .nav a.lnk:hover{color:var(--navy);background-size:100% 2.5px}
 .nav a.lnk.active{color:var(--navy);background-size:100% 2.5px}
 .nav .tools{margin-inline-start:auto;display:flex;align-items:center;gap:12px}
+/* תובה וצוהר — קבועים ובולטים בראש כל עמוד, בנפרד מהקטגוריות (11.10.26).
+   במחשב בפס העליון (.sys-d, במקום "מרחב פיקוח"), בנייד בפס הדביק מעל הצ'יפים (.sys-m). */
+.sys{display:flex;gap:8px}
+.sys-m{display:none}
+a.sys-btn{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 5px;border-radius:999px;
+  text-decoration:none;color:var(--navy);border:1.5px solid;white-space:nowrap;line-height:1.15;
+  transition:box-shadow .2s var(--ease),transform .2s var(--ease)}
+.sys-btn img{width:28px;height:28px;flex:none;border-radius:8px}
+.sys-btn b{display:block;font-size:.92rem;font-weight:800}
+.sys-btn small{display:block;font-size:var(--fs-2xs);color:var(--text2);font-weight:600}
+a.sys-btn.tuva{border-color:#9f95c6;background:linear-gradient(135deg,#fff 40%,#eeeafb)}
+a.sys-btn.tzohar{border-color:#e7c77d;background:linear-gradient(135deg,#fff 40%,#fef3d9)}
+a.sys-btn:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
+@media(max-width:1180px){.sys-d .sys-btn small{display:none}}
+@media(max-width:720px){
+  .govbar .sys-d{display:none}
+  /* מתחת לשורת הלוגו ומעל צ'יפי הקטגוריות */
+  .nav .sys-m{display:flex;order:1;flex-basis:100%}
+  .nav .mcats{order:2}.nav .mcats-sheet{order:3}
+  .sys-m .sys-btn{flex:1;justify-content:center;padding:7px 10px;border-radius:14px}
+  .sys-m .sys-btn img{width:32px;height:32px}
+}
 .nav .ogen-btn{background:var(--grad);color:#fff;border-radius:999px;padding:9px 22px;font-size:var(--fs-md);font-weight:700;cursor:pointer;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;white-space:nowrap}
 .nav .ogen-btn:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
 .burger{width:42px;height:42px;border-radius:11px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .18s;flex-shrink:0}
