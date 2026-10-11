@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var GATE = 'https://script.google.com/macros/s/AKfycbynKp-eTNj7pY5lTaSD5_S_qhBH2RgEeLWOPW5ZeF2dTQ5hifL3Q7Lb4KDdQYJ_4Vz9/exec';
-  var NAMES = { home: "צ'ק ליסט · משרדי", c: "צ'ק ליסט · אישי", s: 'בית הספר שלי', m: 'מנור', g: 'מארג',
+  var NAMES = { home: 'דשבורד', o: "צ'ק ליסט · משרדי", c: "צ'ק ליסט · אישי", s: 'בית הספר שלי', m: 'מנור', g: 'מארג',
     k: 'הידע', t: 'ארגז הכלים', p: 'התוכניות שלי' };
   var AS = /[?&]as=/.test(location.search) ? 1 : 0, last = '';
 

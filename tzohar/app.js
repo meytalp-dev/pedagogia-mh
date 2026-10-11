@@ -32,6 +32,7 @@
             ['honchim', 'מורים חונכים'], ['ped', 'רכזים פדגוגיים'], ['sherut', 'שירות לאומי']];
 
   var I = {
+    grid:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>',
     home:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 7-7"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg>',
     school:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/></svg>',
     chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16V9M13 16V6M18 16v-4"/></svg>',
@@ -288,7 +289,8 @@
   /* ===== ניווט ===== */
   function hasMine() { return !!(window.KEREN && KEREN.enabled() && window.TZTASKS); }
   function pages() {
-    var P = [['home', I.home, 'משרדי', 'ck']];
+    /* 11.10.26 (מיטל): הבית = דשבורד — סיכום + כרטיסי התפריט. הצ'ק ליסט המשרדי עבר לעמוד משלו (o) */
+    var P = [['home', I.grid, 'דשבורד'],['o', I.check, 'משרדי', 'ck']];
     if (hasMine()) P.push(['c', I.check, 'אישי', 'ck']);
     P.push(['s', I.school, 'בית הספר שלי'], ['m', I.chart, 'מנור']);
     if (!isRakaz()) P.push(['g', I.weave, 'מארג']);
@@ -306,7 +308,7 @@
     if (!D || !D.school) return;
     var n = openGaps(), nm = window.TZTASKS ? TZTASKS.openCount() : 0, grp = false;
     $('nav').innerHTML = pages().map(function (p) {
-      var extra = p[0] === 'home' && n ? '<span class="n">' + n + '</span>' : p[0] === 'c' && nm ? '<span class="n soft">' + nm + '</span>' : (p[0] === 'g' ? '<span class="pilot">פיילוט</span>' : '');
+      var extra = p[0] === 'o' && n ? '<span class="n">' + n + '</span>' : p[0] === 'c' && nm ? '<span class="n soft">' + nm + '</span>' : (p[0] === 'g' ? '<span class="pilot">פיילוט</span>' : '');
       var head = p[3] === 'ck' && !grp ? (grp = true, '<li class="nav-g">' + I.check + 'צ\'ק ליסט</li>') : '';
       return head + '<li' + (p[3] ? ' class="nav-sub"' : '') + '><button type="button" data-page="' + p[0] + '"' + (PAGE === p[0] ? ' aria-current="true"' : '') + '>' +
         (p[3] ? '' : p[1]) + esc(p[2]) + extra + '</button></li>';
@@ -328,12 +330,12 @@
     /* "התוכניות שלי" מנוהל ע"י keren.js — נתון ציבורי שנטען ברקע לא מצייר אותו מחדש (ולא מוחק עריכה) */
     if (PAGE === 'p' && !force && $('kerenPlans')) return;
     /* הצ'ק ליסט: נתון שנטען ברקע לא סוגר חלונית יומן/מייל פתוחה או שדה שמקלידים בו */
-    if ((PAGE === 'home' || PAGE === 'c') && !force && document.querySelector('#main .ck-p:not([hidden]), #main .ck-add input:focus, #ckText:not(:placeholder-shown)')) return;
+    if ((PAGE === 'o' || PAGE === 'c') && !force && document.querySelector('#main .ck-p:not([hidden]), #main .ck-add input:focus, #ckText:not(:placeholder-shown)')) return;
     var h = '';
     if (IS_ADMIN) h += '<div class="asbar">תצוגת אדמין: <b>' + esc(D.school.name) + '</b> · כמו ש' + (isRakaz() ? 'הרכז/ת' : 'המנהל/ת') + ' רואה' +
       ' · <a href="?as=' + esc(D.school.semel) + (isRakaz() ? '' : '&r=rakaz') + location.hash + '">' + (isRakaz() ? 'לתצוגת מנהל/ת' : 'לתצוגת רכז/ת') + '</a>' +
       ' · <a href="./">בית ספר אחר</a></div>';
-    h += ({ home: home, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage, c: minePage,
+    h += ({ home: home, o: officePage, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage, c: minePage,
             p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || home)();
     $('main').innerHTML = h;
     if (PAGE === 'p' && window.KEREN) KEREN.mountPlans($('kerenPlans'), PLANID);
@@ -362,18 +364,38 @@
   function ckTabs() {
     if (!hasMine()) return '';
     var n = openGaps(), nm = TZTASKS.openCount();
-    return '<div class="ck-tabs" role="tablist">' + [['home', 'משרדי', n], ['c', 'אישי', nm]].map(function (t) {
+    return '<div class="ck-tabs" role="tablist">' + [['o', 'משרדי', n], ['c', 'אישי', nm]].map(function (t) {
       return '<button type="button" role="tab" data-page="' + t[0] + '" aria-selected="' + (PAGE === t[0]) + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + '</span>' : '') + '</button>';
     }).join('') + '</div>';
   }
+  /* הבית = דשבורד: הכרטיס של בית הספר (הסיכום) + כרטיס לכל חלק בצוהר. בלי שום דבר נוסף — "כדי לא ליצור רעש ועומס" (מיטל, 11.10.26) */
   function home() {
-    var all = items(), open = all.filter(function (x) { return x.st === 'gap'; });
     var first = String(ME.name || '').trim().split(/\s+/)[0];
-    var hello = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. כאן רואים במבט אחד מה כבר הושלם ומה עוד מחכה, וכל כפתור מוביל ישר לטופס.</p>';
+    var hello = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. כאן רואים במבט אחד את בית הספר, ומכל כרטיס נכנסים לחלק שלו.</p>';
+    var all = items(), n = all.length, open = all.filter(function (x) { return x.st === 'gap'; }).length;
+    var nm = hasMine() ? TZTASKS.openCount() : 0;
+    var p = R.menor && R.menor.t ? Math.round(100 * R.menor.r / R.menor.t) : null;
+    var sub = {
+      o: open ? open + ' פתוחות מתוך ' + n : 'הכול הושלם',
+      c: nm ? nm + ' משימות פתוחות' : 'המשימות שלך',
+      s: 'נתונים, אנשי קשר וועדה מלווה',
+      m: p === null ? (ST.menor === 'load' ? '…' : 'רישום המורים') : p + '% מהמורים נרשמו',
+      g: 'פיילוט',
+      k: 'נהלים, בעלי תפקידים ומסמכים',
+      t: 'כלים וטיפים לעבודה עם הצוות',
+      p: 'התוכניות שקרן בנתה'
+    };
+    var hot = { o: open, c: nm };
+    return headCard(hello) + '<div class="dtiles" id="dashTiles">' + pages().filter(function (x) { return sub[x[0]]; }).map(function (x) {
+      return '<button type="button" class="dtile' + (hot[x[0]] ? ' hot' : '') + '" data-page="' + x[0] + '"><span class="ic">' + (x[0] === 'c' ? I.check : x[1]) + '</span>' +
+        '<span class="tx"><b>' + esc(x[0] === 'o' ? 'צ\'ק ליסט משרדי' : x[0] === 'c' ? 'צ\'ק ליסט אישי' : x[2]) + '</b><small>' + esc(sub[x[0]]) + '</small></span></button>';
+    }).join('') + '</div>';
+  }
+  function officePage() {
+    var all = items(), open = all.filter(function (x) { return x.st === 'gap'; });
     var order = { gap: 0, wait: 1, load: 2, err: 2, done: 3 };
     all.sort(function (a, b) { return order[a.st] - order[b.st]; });
-    return headCard(hello) +
-      '<h2 class="pt">צ\'ק ליסט</h2>' + ckTabs() +
+    return '<div class="card head"><h1>צ\'ק ליסט משרדי</h1><div class="meta">' + esc(D.school.name) + '</div></div>' + ckTabs() +
       '<p class="small ck-lead">המשימות של בית הספר מול המינהל. משימה שהמערכת רואה כגמורה מסומנת לבד; את השאר מסמנים כאן.</p>' +
       (!open.length && all.every(function (x) { return x.st === 'done' || x.st === 'wait'; }) ? '<div class="allok">' + I.ok + 'הכול הושלם. תודה!</div>' : '') +
       '<div class="card ck-card" id="ckOffice">' + (window.TZTASKS ? TZTASKS.officeHtml(all) : '') + '</div>';
@@ -774,7 +796,8 @@
         text: 'צוהר הוא החלון שלך לבית הספר: מה כבר הושלם ומה עוד חסר, הנתונים של בית הספר, והידע שצריך — במקום אחד, בלי לחפש בין טפסים.' },
       { go: 'home', sel: '.side', drawer: true, title: 'התפריט',
         text: 'כאן עוברים בין החלקים של צוהר. בטלפון התפריט נפתח מהכפתור שבפינה למעלה.' },
-      { go: 'home', sel: '#ckOffice', title: 'צ\'ק ליסט משרדי', text: by['צ\'ק ליסט'] },
+      { go: 'home', sel: '#dashTiles', title: 'כל החלקים של צוהר', text: 'מתחת לסיכום — כרטיס לכל חלק, עם מה שחשוב בו כרגע. לחיצה פותחת אותו. אותם חלקים נמצאים גם בתפריט.' },
+      { go: 'o', sel: '#ckOffice', title: 'צ\'ק ליסט משרדי', text: by['צ\'ק ליסט'] },
       { go: 's', sel: '#secs', title: 'בית הספר שלי', text: by['בית הספר שלי'] },
       { go: 'm', sel: '#menorMsg', title: 'מנור', text: by['מנור'] }
     ];
@@ -926,7 +949,7 @@
     as: function () { return AS; }, ready: function () { return READY; }, go: go,
     people: people, links: function () { return LINK; },
     /* רק עמודי הצ'ק ליסט מצוירים מחדש — בעמוד אחר (למשל עריכת תוכנית) מתעדכן רק המונה בתפריט */
-    refresh: function (force) { if (D && D.school) { side(); if (PAGE === 'home' || PAGE === 'c') render(force); } }
+    refresh: function (force) { if (D && D.school) { side(); if (PAGE === 'home' || PAGE === 'o' || PAGE === 'c') render(force); } }
   };
 
   function boot() { if (window.PMH_AUTH && PMH_AUTH.allowed()) start(); }

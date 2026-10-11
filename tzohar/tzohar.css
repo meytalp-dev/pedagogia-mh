@@ -260,3 +260,23 @@ footer a{color:var(--muted)}
   .ck-tabs button{flex:1;justify-content:center}
   .ck-p .fld,.ck-add select.fld{max-width:none;width:100%}
 }
+
+/* ===== דשבורד (11.10.26, מיטל): הכרטיס של בית הספר + כרטיס לכל חלק — בלי שום דבר נוסף ===== */
+.dtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.dtile{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;font:inherit;text-align:right;cursor:pointer;color:inherit;min-height:72px;transition:border-color .15s,background .15s}
+.dtile:hover{border-color:var(--brand-purple);background:var(--paper)}
+.dtile .ic{width:40px;height:40px;flex:none;border-radius:12px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center}
+.dtile .ic svg{width:21px;height:21px}
+.dtile .tx{min-width:0}
+.dtile b{display:block;font:600 16px/1.25 Rubik,sans-serif;color:var(--navy)}
+.dtile small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.dtile.hot .ic{background:var(--amber-soft);color:var(--warn)}
+.dtile.hot small{color:var(--warn);font-weight:700}
+@media (max-width:960px){
+  .dtiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .dtile{gap:9px;padding:10px;min-height:0;border-radius:14px}
+  .dtile .ic{width:34px;height:34px;border-radius:10px}
+  .dtile .ic svg{width:18px;height:18px}
+  .dtile b{font-size:14.5px}
+  .dtile small{font-size:12px;line-height:1.3}
+}
