@@ -469,7 +469,50 @@
     var hero=document.querySelector('section.hero');
     if(hero) hero.insertAdjacentElement('afterend',inner);
     else { var m=document.querySelector('main'); if(!m) return; m.insertBefore(inner,m.firstChild); }
+    box.id='pcards';
     document.documentElement.classList.add('has-pcards');
+    backLinks(items);
+    topButton(box);
+  }
+  var UP='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';
+
+  /* "חזרה לכרטיסיות" בסוף כל פרק — לפני הפרק הבא, ובסוף האחרון */
+  function backLinks(items){
+    var heads=items.map(function(it){
+      var t=document.getElementById(decodeURIComponent((it.href||'').replace(/^#/,'')));
+      return t&&(/^H[1-6]$/.test(t.tagName)?t:t.querySelector('h2,h3'))||t;
+    }).filter(Boolean);
+    function make(){
+      var a=document.createElement('a');
+      a.className='pc-back'; a.href='#pcards';
+      a.innerHTML=UP+'<span>חזרה לכרטיסיות</span>';
+      return a;
+    }
+    for(var i=1;i<heads.length;i++){
+      var prev=heads[i-1], cur=heads[i], blk=cur;
+      /* עולים עד האב המשותף עם הפרק הקודם, כדי לא להיכנס לתוך כותרת הפרק הבא */
+      while(blk.parentElement&&!blk.parentElement.contains(prev)) blk=blk.parentElement;
+      blk.parentElement&&blk.parentElement.insertBefore(make(),blk);
+    }
+    var last=heads[heads.length-1];
+    if(last){
+      var cont=last.closest('.article')||last.parentElement;
+      var pr=cont.querySelector(':scope > .pagerow');
+      if(pr) cont.insertBefore(make(),pr); else cont.appendChild(make());
+    }
+  }
+
+  /* כפתור "לכרטיסיות" בשורת הכפתורים העליונה — רק אחרי שגוללים מתחת לכרטיסיות */
+  function topButton(box){
+    var bar=document.querySelector('.pm-bar'); if(!bar) return;
+    var b=document.createElement('a');
+    b.className='pm-hb pm-top'; b.href='#pcards'; b.hidden=true;
+    b.setAttribute('aria-label','חזרה לכרטיסיות');
+    b.innerHTML=UP+'<span>לכרטיסיות</span>';
+    bar.insertBefore(b,bar.firstChild);
+    function upd(){ b.hidden=box.getBoundingClientRect().bottom>0; }
+    addEventListener('scroll',upd,{passive:true});
+    upd();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(build,0); });
   else setTimeout(build,0);
