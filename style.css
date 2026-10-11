@@ -1111,3 +1111,8 @@ body.pm-open{overflow:hidden}
 .pc-ic svg,.pm-top svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .pm-top{text-decoration:none}
 @media print{.pc-nav{display:none}}
+
+/* עמודים פנימיים (11.10.26): פחות רעש לפני הכרטיסיות — שורת "דקות קריאה" יורדת בכל
+   עמוד פנימי, ובטלפון גם תמונת הכותרת (.headshot) שדחפה את הכרטיסים מתחת למסך */
+.pmh-inner .readmeta{display:none}
+@media(max-width:720px){.pmh-inner .headshot{display:none}}

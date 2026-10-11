@@ -65,7 +65,9 @@ ul.ed>li::before{content:"";position:absolute;right:2px;top:17px;width:11px;heig
 ul.ed.tight>li{padding-top:4px;padding-bottom:4px}
 
 /* ---------- טבלאות ---------- */
-.tbl-scroll{overflow-x:auto;margin:16px 0;border-radius:14px}
+/* position:relative — טקסט נסתר לקורא מסך (.sr-only, absolute) בתוך קישורי הטבלה ברח החוצה
+   ודחף את כל העמוד הצידה בטלפון (8 עמודים, 11.10.26) */
+.tbl-scroll{overflow-x:auto;margin:16px 0;border-radius:14px;position:relative}
 table.doc{
   width:100%;border-collapse:collapse;font-size:var(--fs-md);background:var(--surface);
   border:1px solid var(--border);min-width:540px;box-shadow:var(--sh-sm);
