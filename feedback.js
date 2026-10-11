@@ -8,7 +8,7 @@
 
   /* ---- כתובת ה-Apps Script (אחרי פריסה — להדביק כאן את כתובת ה-/exec) ---- */
   var FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbxVqzxpbZ4TceYHsG-Wots36fffixkrSnddYM9UjM6G8lYYLp_IK6xQDO7-6ErjQhNW6A/exec";
-  var FALLBACK_MAIL = "meytalp@bethaarava.ort.org.il";
+  var FALLBACK_MAIL = "merhav@pedagogiamh.co.il";
   var DRAFT_KEY = "site-feedback-draft";
 
   /* בדיקה בלי לגעת בקובץ:  כל-עמוד.html?fb=<כתובת ה-exec> */

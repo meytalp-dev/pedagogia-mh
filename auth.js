@@ -235,7 +235,7 @@
         '</div>' +
         '<div id="pmh-err" role="alert"></div>' +
         '<div id="pmh-note">אין לך גישה ואת.ה סבור.ה שהיא מגיעה לך?<br>' +
-          '<a href="mailto:meytalp@bethaarava.ort.org.il?subject=' +
+          '<a href="mailto:merhav@pedagogiamh.co.il?subject=' +
           encodeURIComponent('בקשת הרשאה — ' + label) + '">פנייה לקבלת הרשאה</a></div>' +
         (optional ? CANCEL : '') +
       '</div>';

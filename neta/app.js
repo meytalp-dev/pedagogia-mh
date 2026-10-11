@@ -30,7 +30,7 @@
     teacher: SITE + 'hadrachot/teacher/',
     menor:   SITE + 'hadrachot/admin-school/'
   };
-  var MAREG_TO = 'mlypeleg@gmail.com';   /* כתובת מיטל לכפתורי המייל */
+  var MAREG_TO = 'merhav@pedagogiamh.co.il';   /* כתובת מיטל לכפתורי המייל */
   var WS = [['social', 'רכזים חברתיים'], ['matal', 'מת״ליות'], ['career', 'נתיבים לקריירה'],
             ['honchim', 'מורים חונכים'], ['ped', 'רכזים פדגוגיים'], ['sherut', 'שירות לאומי']];
 
