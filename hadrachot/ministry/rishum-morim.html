@@ -121,7 +121,7 @@
   var TR = { passed: ['ok', 'עבר/ה השתלמות'], registered: ['info', 'נרשם/ה להשתלמות'], none: ['miss', 'לא נרשם/ה להשתלמות'] };
   var fmt = function (iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' }) + ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }); };
 
-  /* מייל עזרה למורה (30.9.26) — מ-mlypeleg@gmail.com (לא מאורט: אין SPF ו-hotmail חוסם).
+  /* מייל עזרה למורה (30.9.26) — מ-merhav@pedagogiamh.co.il (לא מאורט: אין SPF ו-hotmail חוסם; לא מהג'ימייל הפרטי).
      Gmail לא מקבל כיוון טקסט דרך הקישור, ולכן הנוסח מועתק כ-HTML מימין לשמאל ומודבק
      (Ctrl+V) בטיוטה שנפתחת עם הנמען והנושא. הנוסח אישי: מה בדיוק קרה אצל המורה. */
   var TEACHER_URL = 'https://pedagogiamh.co.il/hadrachot/teacher/';

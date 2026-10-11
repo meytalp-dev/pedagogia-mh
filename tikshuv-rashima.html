@@ -78,7 +78,7 @@ footer a{color:var(--muted)}
 </table></div>
 
 <div class="note">
-<b>איך משתמשים:</b> הכפתור <span class="tag" style="background:var(--blue);color:#fff">תזכורת</span> ליד מי שטרם אישר/ה פותח את נוסח התזכורת והקישור האישי, עם כפתור שליחה שנפתח ב-mlypeleg@gmail.com — ולוחצים "שליחה".
+<b>איך משתמשים:</b> הכפתור <span class="tag" style="background:var(--blue);color:#fff">תזכורת</span> ליד מי שטרם אישר/ה פותח את נוסח התזכורת והקישור האישי, עם כפתור שליחה שנפתח ב-merhav@pedagogiamh.co.il — ולוחצים "שליחה".
 שליחה מכאן לא נרשמת בגיליון, אבל ברגע שהרכז/ת מאשר/ת השורה הופכת לירוקה (הדף מתרענן לבד).<br>
 <b>הערה:</b> באורט בית הערבה האישור רשום על שם רמי בנימין, אבל הרכז הוא שי בגלר. מי שלא מופיע/ה בלשונית "שליחות" בגיליון מסומן/ת "נשלח מהג'ימייל" — ב-14.9 נשלחו משם כל מיילי השיבוץ החסרים.
 </div>
@@ -122,7 +122,7 @@ function reminder(p){
     (f ? 'תבקשי' : 'תבקש') + ' להחליף מסלול — עד יום חמישי, 17.9:\n' + link + '\n\n' +
     'אחרי המועד הזה נשלח את הזימונים לכולם לפי השיבוץ הקיים.\n\nתודה, ולכל שאלה — אני כאן.\n' + SIG;
   return { su: su, body: body, link: link,
-    url: 'https://mail.google.com/mail/?authuser=' + encodeURIComponent('mlypeleg@gmail.com') + '&view=cm&fs=1&to=' +
+    url: 'https://mail.google.com/mail/?authuser=' + encodeURIComponent('merhav@pedagogiamh.co.il') + '&view=cm&fs=1&to=' +
          encodeURIComponent(p.mail) + '&su=' + encodeURIComponent(su) + '&body=' + encodeURIComponent(body) };
 }
 async function loadAll(first){
@@ -201,7 +201,7 @@ function msgRow(r){
     '<pre>'+esc(r.body)+'</pre>'+
     '<div><div class="small">הקישור לאישור השיבוץ:</div><div class="lnk">'+esc(r.link)+'</div></div>'+
     '<div class="acts">'+
-      '<a target="_blank" href="'+esc(r.url)+'" data-sent="'+r.k+'">שליחת תזכורת במייל (mlypeleg@gmail.com)</a>'+
+      '<a target="_blank" href="'+esc(r.url)+'" data-sent="'+r.k+'">שליחת תזכורת במייל (merhav@pedagogiamh.co.il)</a>'+
       '<button data-copy="'+r.k+'">העתקת הנוסח</button>'+
       '<button data-copylink="'+r.k+'">העתקת הקישור בלבד</button>'+
       (sent?'<span class="sent-ok">נפתח לשליחה '+esc(sent)+'</span>':'')+

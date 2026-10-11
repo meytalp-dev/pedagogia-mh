@@ -331,10 +331,10 @@ const TS = (() => {
   }
 
   // Gmail compose
-  // authuser: כל מייל שיוצא בשם מיטל נשלח מהג'ימייל ולא מחשבון אורט — לדומיין
-  // bethaarava.ort.org.il אין רשומת SPF, ושרתי מיקרוסופט דוחים ממנו (3 מתוך 32
-  // נחסמו כך בסבב לרכזי התקשוב). אם נפתח חשבון אחר — מחליפים חשבון בפינה.
-  const MAIL_FROM = 'mlypeleg@gmail.com';
+  // authuser: כל מייל שיוצא בשם המרחב נשלח מ-merhav@pedagogiamh.co.il (Google Workspace,
+  // עם SPF ו-DKIM) — לא מחשבון אורט, שלדומיין שלו אין SPF ומיקרוסופט דוחים ממנו,
+  // ולא מהג'ימייל הפרטי (11.10.26). אם נפתח חשבון אחר — מחליפים חשבון בפינה.
+  const MAIL_FROM = 'merhav@pedagogiamh.co.il';
   function gmailCompose({to='', subject='', body='', cc='', authuser=MAIL_FROM} = {}) {
     const u = new URL('https://mail.google.com/mail/');
     if (authuser) u.searchParams.set('authuser', authuser);
