@@ -939,7 +939,7 @@ const ROLE_DEFS = {
       secs +
       '<div class="src">' + (d.srcMeta || 'מסמך רשמי · מינהל הכשרה מקצועית, משרד העבודה · תוקף ההנחיות: החל משנת תשפ״ו') +
       '<br>הודפס מ-' + esc(roleUrl(id)) + ' · ' + today + '</div>' +
-      '<div class="cred">האתר נבנה על ידי impactos · impact-os.app</div>' +
+      '<div class="cred">האתר נבנה על ידי impactos · impactos.co.il</div>' +
       '</body></html>'
     );
     w.document.close();
