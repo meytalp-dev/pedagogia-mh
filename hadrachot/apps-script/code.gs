@@ -6255,7 +6255,9 @@ function registrationData_() {
     if (!ck) return;
     const v = personVer[personKey(t)];
     if (v && (!crossVer[ck] || v > crossVer[ck])) crossVer[ck] = v;
-    if (t.trainingStatus && !crossTraining[ck]) crossTraining[ck] = String(t.trainingStatus);
+    // שאלת ההשתלמות נשאלת לכל מקצוע בנפרד — מעתיקים רק לאותו מקצוע בבית הספר השני
+    const tk = ck + '|' + String(t.subject || '').trim();
+    if (t.trainingStatus && !crossTraining[tk]) crossTraining[tk] = String(t.trainingStatus);
   });
   const schoolName = {};
   readAll('schools').forEach(s => { schoolName[String(s.id)] = String(s.name || ''); });
@@ -6271,7 +6273,7 @@ function registrationData_() {
     const pk = personKey(t);
     const pick = f => { for (let i = 0; i < rows.length; i++) if (rows[i][f]) return rows[i][f]; return ''; };
     const ck = crossKey(t);
-    const trainingStatus = String(pick('trainingStatus') || (ck && crossTraining[ck]) || '');
+    const trainingStatus = String(pick('trainingStatus') || (ck && crossTraining[ck + '|' + String(t.subject || '').trim()]) || '');
     const unitsSelf = String(pick('unitsSelf') || '');
     const needsUnits = !!unitsSelfAllowed_(t.subject);
     const ver = personVer[pk] || (ck && crossVer[ck]) || '', snt = personSent[pk] || '';
