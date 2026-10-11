@@ -93,3 +93,49 @@ body.touring .kr-fab{z-index:97}
 .kr-acts .kr-all.on{background:var(--ok-soft);border-color:var(--ok-soft);color:var(--ok)}
 .kr-gock{border:0;background:none;color:var(--blue);font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;min-height:32px}
 .kr-tail{font-size:13px;color:var(--muted);margin:8px 0 0}
+
+/* ===== ליד התוכנית (11.10.26): העוזרת פתוחה לצד התוכנית ובונה חומרי עבודה =====
+   מחשב רחב: עמודה קבועה משמאל והתוכנית מצטמצמת. מתחת ל-1100px: חצי מסך תחתון, והתוכנית גלויה מעליה */
+.kr-ctx{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--blue-soft);border-bottom:1px solid var(--line);font-size:13.5px;color:var(--navy)}
+.kr-ctx[hidden]{display:none}
+.kr-ctx span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kr-ctx button{border:0;background:none;width:32px;height:32px;border-radius:10px;cursor:pointer;color:var(--muted);display:grid;place-items:center;flex:none}
+.kr-ctx button svg{width:16px;height:16px}
+.kr-work{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:10px 0 4px}
+.kr-work .btn svg{width:17px;height:17px}
+.kr-mt{display:flex;align-items:center;gap:6px;font:700 16px/1.3 Rubik,sans-serif;color:var(--navy);margin:0 0 4px}
+.kr-mt svg,.kr-xh svg{width:18px;height:18px;color:#c98a1b;flex:none}
+.kr-mat h4{margin:12px 0 4px}
+.kr-mat p{margin:0 0 6px}
+.kr-mat ul{margin:0 0 6px;padding-inline-start:18px}
+.kr-tw{overflow-x:auto;margin:6px 0 8px}
+.kr-tw .kr-t{min-width:100%;font-size:13.5px}
+.kr-tw .kr-t th{white-space:normal}
+.kr-blank{display:inline-block;min-height:18px}
+.kr-xh{display:flex;align-items:center;gap:8px}
+.kr-x{border:1px solid var(--line);border-radius:14px;margin-top:8px;background:#fff}
+.kr-x summary{cursor:pointer;padding:11px 14px;display:flex;flex-direction:column;gap:2px;list-style:none}
+.kr-x summary::-webkit-details-marker{display:none}
+.kr-x summary small{color:var(--muted);font-size:13px}
+.kr-x[open] summary{border-bottom:1px solid var(--line)}
+.kr-xb{padding:6px 14px 12px}
+.kr-xb h4{margin:12px 0 4px}
+.kr-xb ul{margin:0 0 6px;padding-inline-start:18px}
+@media (min-width:1100px){
+  body.kr-dock .kr-panel{top:76px;bottom:14px;left:14px;height:auto;width:400px}
+  body.kr-dock .wrap{padding-left:430px;max-width:none}
+}
+@media (max-width:1099px){
+  body.kr-dock .kr-panel{left:0;right:0;bottom:0;width:100%;height:55vh;border-radius:20px 20px 0 0}
+  body.kr-dock .main{padding-bottom:57vh}
+  body.kr-dock .kr-head{padding:8px 12px}
+  body.kr-dock .kr-head img{width:32px;height:32px}
+  body.kr-dock .kr-head b{font-size:16px}
+  body.kr-dock .kr-head small{display:none}
+  body.kr-dock .kr-ctx{padding:4px 12px}
+}
+@media (max-width:700px){
+  .kr-tw .kr-t,.kr-tw .kr-t tbody,.kr-tw .kr-t tr,.kr-tw .kr-t td,.kr-tw .kr-t th{display:revert;width:auto}
+  .kr-tw .kr-t tr:first-child:has(th+th){display:revert}
+  .kr-tw .kr-t th,.kr-tw .kr-t td{border:1px solid var(--line)}
+}

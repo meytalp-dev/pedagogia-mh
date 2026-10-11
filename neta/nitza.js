@@ -23,6 +23,8 @@
     print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>',
     mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
     ok:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
     edit:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>'
   };
 
@@ -68,6 +70,7 @@
     p.innerHTML = '<div class="kr-head"><img src="brand/ozeret.png" alt=""><div><b>היי, אני ניצה</b><small>העוזרת שלך בנטע</small></div>' +
       '<button type="button" class="kr-ib" id="krNew" title="שיחה חדשה" aria-label="שיחה חדשה">' + IC.plus + '</button>' +
       '<button type="button" class="kr-ib" id="krX" aria-label="סגירה">' + IC.x + '</button></div>' +
+      '<div class="kr-ctx" id="krCtx" hidden></div>' +
       '<div class="kr-body" id="krBody"></div>' +
       '<form class="kr-in" id="krForm"><textarea id="krQ" rows="1" placeholder="אפשר לשאול כל דבר… · يمكن السؤال بالعربية" aria-label="שאלה לניצה"></textarea>' +
       '<button type="submit" aria-label="שליחה">' + IC.send + '</button></form>';
@@ -75,7 +78,8 @@
     fab.onclick = function () { open(); };
     $('krX').onclick = close;
     $('krNew').onclick = function () { HIST = []; start(); };
-    $('krForm').onsubmit = function (e) { e.preventDefault(); var q = $('krQ').value.trim(); if (q) send(q, looksLikePlan(q) ? 'plan' : 'ask'); };
+    $('krCtx').onclick = function (e) { if (e.target.closest('[data-unplan]')) { unplan(); HIST = []; start(); } };
+    $('krForm').onsubmit = function (e) { e.preventDefault(); var q = $('krQ').value.trim(); if (q) send(q, PCTX ? 'help' : looksLikePlan(q) ? 'plan' : 'ask'); };
     $('krQ').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('krForm').requestSubmit(); } });
     $('krQ').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
     $('krBody').addEventListener('click', onBodyClick);
@@ -86,21 +90,70 @@
     if (prefill) { $('krQ').value = prefill; }
     setTimeout(function () { $('krQ').focus(); }, 50);
   }
-  function close() { $('krPanel').hidden = true; document.body.classList.remove('kr-on'); }
+  function close() { $('krPanel').hidden = true; document.body.classList.remove('kr-on', 'kr-dock'); }
+
+  /* ===== ליד התוכנית (11.10.26, מיטל): העוזרת פתוחה לצד התוכנית שקוראים — עונה עליה ובונה חומרי עבודה
+     (מערך לישיבת צוות, כלי מיפוי, הנחיה לצוות). חומר שאושר נוסף לתוכנית (plan.extras) ונשמר. ===== */
+  var PCTX = null;   /* { p: התוכנית, el: המקום שבו היא מוצגת } */
+  function suggest(j) {
+    var out = [], seen = {};
+    function put(t) { t = t.replace(/\s+/g, ' ').trim(); if (t && !seen[t] && out.length < 5) { seen[t] = 1; out.push(t); } }
+    (j.tracks || []).forEach(function (t) {
+      (t.actions || []).forEach(function (a) {
+        var w = String(a.what || '').replace(/[.]$/, '');
+        var cut = w.length > 70 ? w.slice(0, 70).replace(/\s+\S*$/, '') + '…' : w;
+        if (out.length >= 2) return;
+        if (/ישיב|מפגש|השתלמות|סדנ|הדרכ/.test(w)) put('מערך מוכן ל: ' + cut);
+        else if (/מיפוי|מפה|סקר|שאלון/.test(w)) put('כלי מוכן ל: ' + cut);
+      });
+    });
+    put('כלי מיפוי לתלמידי הכלה ושילוב');
+    put('הנחיה קצרה לצוות: מה התוכנית מבקשת מכל אחד');
+    put('מדדי הצלחה ודרך מעקב לכל מטרה');
+    return out;
+  }
+  function planMode(p, el) {
+    PCTX = { p: p, el: el }; HIST = [];
+    $('krCtx').hidden = false;
+    $('krCtx').innerHTML = '<span>עובדת איתך על: <b>' + esc((p.plan && p.plan.title) || p.title || 'התוכנית') + '</b></span>' +
+      '<button type="button" data-unplan="1" aria-label="חזרה לשיחה כללית">' + IC.x + '</button>';
+    start(); open();
+    document.body.classList.add('kr-dock');
+  }
+  function unplan() {
+    if (!PCTX) return;
+    PCTX = null; $('krCtx').hidden = true; $('krCtx').innerHTML = '';
+    document.body.classList.remove('kr-dock');
+  }
+  /* יציאה מהתוכנית (מעבר עמוד, חזרה לרשימה) — העוזרת נסגרת וחוזרת לשיחה הכללית */
+  document.addEventListener('click', function (e) {
+    if (!PCTX) return;
+    if (e.target.closest('[data-page],[data-go],[data-kp="back"]') && !e.target.closest('#krPanel')) { unplan(); close(); HIST = []; start(); }
+  }, true);
   function start() {
     var first = String((T.me() || {}).name || '').trim().split(/\s+/)[0];
+    if (PCTX) {
+      $('krBody').innerHTML = '<p class="kr-hi">' + (first ? esc(first) + ', ' : '') + 'מה להכין לתוכנית?</p>' +
+        '<div class="kr-cat kr-c0"><div class="kr-ct">' + IC.spark + '<b>חומרי עבודה מתוך התוכנית</b></div>' +
+        suggest(PCTX.p.plan || {}).map(function (q) { return '<button type="button" class="kr-q" data-kind="help" data-q="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
+        '<p class="kr-note">אפשר גם לכתוב בקשה משלך, למשל "תני לי מערך לישיבת צוות על…", או לשאול על התוכנית. ' +
+        'בכלי מיפוי ניצה בונה את המסגרת, ואת הפרטים על התלמידים בית הספר ממלא אצלו.</p>';
+      return;
+    }
     $('krBody').innerHTML = '<p class="kr-hi">' + (first ? esc(first) + ', ' : '') + 'במה נתחיל?</p>' + cats().map(function (c, i) {
       return '<div class="kr-cat kr-c' + i + '"><div class="kr-ct">' + IC[c[0]] + '<b>' + esc(c[1]) + '</b></div>' +
         c[2].map(function (q) { return '<button type="button" class="kr-q" data-kind="' + q[0] + '" data-q="' + esc(q[1]) + '">' + esc(q[1].trim()) + (q[0] === 'fill' ? '…' : '') + '</button>'; }).join('') + '</div>';
     }).join('') + '<p class="kr-note">ניצה רואה רק את בית הספר שלך, ותוכניות שהיא בונה נשמרות ב"התוכניות שלי".</p>';
   }
   function onBodyClick(e) {
-    var b = e.target.closest('[data-kind],[data-open],[data-copyans],[data-add],[data-addall],[data-gock],[data-go]');
+    var b = e.target.closest('[data-kind],[data-open],[data-copyans],[data-add],[data-addall],[data-gock],[data-go],[data-attach],[data-copymat]');
     if (!b) return;
     if (b.hasAttribute('data-open')) { close(); T.go('p', b.getAttribute('data-open')); return; }
     if (b.hasAttribute('data-go')) { close(); return; }   /* המעבר עצמו — ב-app.js */
     if (b.hasAttribute('data-gock')) { close(); T.go('c'); return; }
     var bub = b.closest('.kr-a');
+    if (b.hasAttribute('data-copymat')) { copyRich(matDoc(bub._m), bub._m.answer || ''); return; }
+    if (b.hasAttribute('data-attach')) { attach(bub._m, b); return; }
     if (b.hasAttribute('data-copyans')) { var rr = bub._r; copyRich(rr && rr.groups ? answerDoc(rr) : answerHtml(bub.getAttribute('data-raw')), bub.getAttribute('data-raw')); return; }
     if (b.hasAttribute('data-add')) {
       var ix = b.getAttribute('data-add').split('.');
@@ -125,12 +178,21 @@
     if (BUSY) return;
     BUSY = true; $('krQ').value = ''; $('krQ').style.height = 'auto';
     bubble(esc(q), 'kr-u');
-    var wait = bubble('<span class="kr-dots"><i></i><i></i><i></i></span> ' + (kind === 'plan' ? 'ניצה בונה את התוכנית — זה לוקח כדקה…' : 'ניצה חושבת…'), 'kr-b kr-wait');
-    var body = kind === 'plan' ? { action: 'plan', request: q } : { action: 'ask', question: q, history: HIST.slice(-6) };
-    call(body, kind === 'plan' ? 180000 : 90000).then(function (r) {
+    if (kind === 'help' && !PCTX) kind = 'ask';
+    var wait = bubble('<span class="kr-dots"><i></i><i></i><i></i></span> ' + (kind === 'help' ? 'ניצה מכינה — זה לוקח כחצי דקה…' : kind === 'plan' ? 'ניצה בונה את התוכנית — זה לוקח כדקה…' : 'ניצה חושבת…'), 'kr-b kr-wait');
+    var body = kind === 'help' ? { action: 'planHelp', id: PCTX.p.id, request: q, history: HIST.slice(-4) } :
+               kind === 'plan' ? { action: 'plan', request: q } : { action: 'ask', question: q, history: HIST.slice(-6) };
+    call(body, kind === 'plan' ? 180000 : 150000).then(function (r) {
       wait.remove();
       if (!r || !r.ok) throw new Error(r && r.error || 'x');
-      if (kind === 'plan') {
+      if (kind === 'help') {
+        if (r.limited) return bubble(esc(r.message), 'kr-b');
+        var hd = bubble(matView(r) + (r.sources && r.sources.length ? '<div class="kr-src">' + r.sources.map(esc).join(' · ') + '</div>' : '') +
+          '<div class="kr-acts">' + (r.kind === 'material' && PCTX && PCTX.p.mine ? '<button type="button" class="kr-all" data-attach="1">' + IC.plus + 'הוספה לתוכנית</button>' : '') +
+          '<button type="button" data-copymat="1">' + IC.copy + 'העתקה</button></div>', 'kr-b kr-a kr-mat');
+        hd._m = r;
+        HIST.push({ role: 'user', content: q }, { role: 'assistant', content: String(r.answer || '').slice(0, 2500) });
+      } else if (kind === 'plan') {
         if (r.limited) return bubble(esc(r.message), 'kr-b');
         PLANS = null;
         bubble('<b>התוכנית מוכנה: ' + esc(r.plan.title) + '</b><div class="kr-s">נשמרה ב"התוכניות שלי". אפשר לערוך, להדפיס ולשלוח לצוות.</div>' +
@@ -167,6 +229,43 @@
       }).join('') + '</div>';
     }).join('') + (r.tail ? '<p class="kr-tail">' + esc(r.tail) + '</p>' : '');
   }
+  /* חומר עבודה: שורה תחתונה, ואז חלקים — פסקה, פריטים וטבלה (בכלי מיפוי: עמודות ושורות ריקות למילוי) */
+  function matSections(m, doc) {
+    return (m.sections || []).map(function (s) {
+      var t = (s.cols || []).length ? '<div class="kr-tw"><table class="kr-t"><tr>' + s.cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr>' +
+        (s.rows || []).map(function (row) { return '<tr>' + row.map(function (c) { return '<td>' + (c ? esc(c) : (doc ? '&nbsp;' : '<span class="kr-blank"></span>')) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table></div>' : '';
+      return '<h4>' + esc(s.heading) + '</h4>' + (s.text ? '<p>' + esc(s.text) + '</p>' : '') +
+        ((s.items || []).length ? '<ul>' + s.items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') + t;
+    }).join('');
+  }
+  function matView(m) {
+    return (m.kind === 'material' && m.title ? '<p class="kr-mt">' + IC.spark + esc(m.title) + '</p>' : '') +
+      (m.lead ? '<p class="kr-lead">' + esc(m.lead) + '</p>' : '') + matSections(m) + (m.tail ? '<p class="kr-tail">' + esc(m.tail) + '</p>' : '');
+  }
+  function matDoc(m) {
+    return (m.title ? '<h3>' + esc(m.title) + '</h3>' : '') + (m.lead ? '<p><b>' + esc(m.lead) + '</b></p>' : '') +
+      matSections(m, true).replace(/<div class="kr-tw">|<\/table><\/div>/g, function (x) { return x.indexOf('div class') > -1 ? '' : '</table>'; })
+        .replace(/<table class="kr-t">/g, '<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">') + (m.tail ? '<p>' + esc(m.tail) + '</p>' : '');
+  }
+  function attach(m, btn) {
+    if (!PCTX) return;
+    var p = PCTX.p, j = JSON.parse(JSON.stringify(p.plan || {}));
+    j.extras = (j.extras || []).concat([{ id: Math.random().toString(36).slice(2, 10), title: m.title || 'חומר לתוכנית', forPart: m.forPart || '', lead: m.lead || '',
+      sections: m.sections || [], created: new Date().toISOString().slice(0, 10) }]);
+    btn.disabled = true;
+    call({ action: 'planSave', id: p.id, plan: j }, 60000).then(function (r) {
+      if (!r || !r.ok) throw new Error(r && r.error || 'x');
+      p.plan = j; p.updated = r.updated;
+      btn.classList.add('on'); btn.innerHTML = IC.ok + 'נוסף לתוכנית';
+      if (PCTX && PCTX.el && document.body.contains(PCTX.el)) {
+        mountPlans(PCTX.el);
+        var x = document.getElementById('krx-' + j.extras[j.extras.length - 1].id);
+        if (x) { x.open = true; x.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      }
+      T.toast('נוסף לתוכנית');
+    }).catch(function (e) { btn.disabled = false; T.toast(String(e.message) === 'toolong' ? 'התוכנית מלאה מדי. אפשר להסיר חומר ישן ולנסות שוב.' : 'ההוספה נכשלה. נסו שוב.'); });
+  }
+
   /* להעתקה ולמייל — HTML פשוט */
   function answerDoc(r) {
     return '<p><b>' + esc(r.lead) + '</b></p>' + (r.groups || []).map(function (g) {
@@ -239,6 +338,7 @@
       return;
     }
     var p = OPENID && PLANS.filter(function (x) { return x.id === OPENID; })[0];
+    if (!p && PCTX) unplan();
     el.innerHTML = p ? planPage(p) : listPage();
     wire(el, p);
   }
@@ -276,10 +376,24 @@
         return '<tr><th>' + esc(m.period) + '</th><td><ul>' + (m.items || []).map(function (x, xi) { return '<li>' + e('months.' + mi + '.items.' + xi, x) + '</li>'; }).join('') + '</ul></td></tr>';
       }).join('') + '</table>' +
       ((j.first || []).length ? '<h3>הצעדים הראשונים</h3><ol>' + j.first.map(function (x, i) { return '<li>' + e('first.' + i, x) + '</li>'; }).join('') + '</ol>' : '') +
-      (j.missing && !forDoc ? '<p class="small">מה היה עוזר לתוכנית מדויקת יותר: ' + esc(j.missing) + '</p>' : '');
+      (j.missing && !forDoc ? '<p class="small">מה היה עוזר לתוכנית מדויקת יותר: ' + esc(j.missing) + '</p>' : '') +
+      extrasHtml(j, forDoc);
+  }
+  var PLANMINE = false;
+  function extrasHtml(j, forDoc) {
+    var X = j.extras || [];
+    if (!X.length) return '';
+    if (forDoc) return '<h3>חומרים לתוכנית</h3>' + X.map(function (x) { return matDoc(x); }).join('');
+    return '<h3 class="kr-xh">' + IC.spark + 'חומרים לתוכנית</h3>' + X.map(function (x) {
+      return '<details class="kr-x" id="krx-' + esc(x.id) + '"><summary><b>' + esc(x.title) + '</b>' + (x.forPart ? '<small>' + esc(x.forPart) + '</small>' : '') + '</summary>' +
+        '<div class="kr-xb">' + (x.lead ? '<p class="kr-lead">' + esc(x.lead) + '</p>' : '') + matSections(x) +
+        '<div class="acts"><button type="button" class="btn sm" data-kp="xcopy" data-x="' + esc(x.id) + '">' + IC.copy + 'העתקה</button>' +
+        (EDIT || !PLANMINE ? '' : '<button type="button" class="btn sm" data-kp="xdel" data-x="' + esc(x.id) + '" style="color:var(--bad)">' + IC.trash + 'הסרה מהתוכנית</button>') + '</div></div></details>';
+    }).join('');
   }
   function planPage(p) {
     var j = p.plan || {}, mine = p.mine;
+    PLANMINE = !!mine;
     var mailA = '';
     if (isMobile()) mailA = '<a class="btn" href="mailto:?subject=' + encodeURIComponent(j.title || 'תוכנית עבודה') + '&body=' + encodeURIComponent(planPlain(j)) + '">' + IC.mail + 'מייל</a>';
     else mailA = '<button type="button" class="btn" data-kp="gmail">' + IC.mail + 'מייל (Gmail)</button><a class="btn sm" href="mailto:?subject=' + encodeURIComponent(j.title || 'תוכנית עבודה') + '" data-kp="outlook">בתוכנת המייל (Outlook)</a>';
@@ -287,6 +401,8 @@
       '<div class="card kr-plan" id="krPlan"><p class="eyebrow">' + esc(roleLbl(p)) + ' · עודכנה ' + esc(fmt(p.updated)) + '</p>' +
       '<h1>' + ce('title', j.title || 'תוכנית עבודה') + '</h1>' +
       '<p class="small">הבקשה: ' + esc(p.request) + '</p>' +
+      (EDIT ? '' : '<div class="kr-work"><button type="button" class="btn amber" data-kp="work">' + IC.spark + 'עבודה על התוכנית עם ניצה</button>' +
+        '<span class="small">מערך לישיבת צוות, כלי מיפוי, הנחיה לצוות — מתוך מה שכתוב כאן</span></div>') +
       (EDIT ? '<div class="note">מצב עריכה: לוחצים על כל טקסט ומשנים. בסוף — "שמירה".</div>' : '') +
       planBody(j) + '</div>' +
       '<div class="acts" style="margin-top:12px">' +
@@ -321,6 +437,17 @@
       if (k === 'new') { open(cats()[2][2][0][1]); }
       else if (k === 'open') { OPENID = b.getAttribute('data-id'); EDIT = false; mountPlans(el); scrollTo(0, 0); }
       else if (k === 'back') { OPENID = ''; EDIT = false; mountPlans(el); }
+      else if (k === 'work') { planMode(p, el); }
+      else if (k === 'xcopy') { var xx = (p.plan.extras || []).filter(function (x) { return x.id === b.getAttribute('data-x'); })[0]; if (xx) copyRich(matDoc(xx), xx.title); }
+      else if (k === 'xdel') {
+        var xid = b.getAttribute('data-x'), x0 = (p.plan.extras || []).filter(function (x) { return x.id === xid; })[0];
+        if (!x0 || !confirm('להסיר מהתוכנית את "' + x0.title + '"?')) return;
+        var j2 = JSON.parse(JSON.stringify(p.plan)); j2.extras = (j2.extras || []).filter(function (x) { return x.id !== xid; });
+        call({ action: 'planSave', id: p.id, plan: j2 }, 60000).then(function (r) {
+          if (!r || !r.ok) throw new Error();
+          p.plan = j2; p.updated = r.updated; mountPlans(el); T.toast('הוסר');
+        }).catch(function () { T.toast('ההסרה נכשלה'); });
+      }
       else if (k === 'edit') { EDIT = true; mountPlans(el); }
       else if (k === 'cancel') { EDIT = false; mountPlans(el); }
       else if (k === 'save') {
