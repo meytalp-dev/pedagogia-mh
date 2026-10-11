@@ -258,36 +258,55 @@
   }
   function clock(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   /* קטע שהסתיים → תור תמלול (אחד אחרי השני, כדי שהסדר יישמר) */
-  var QUEUE = [], QBUSY = false, PARTS = [];
+  var QUEUE = [], QBUSY = false, PARTS = [], FAILED = [], WT = null;
+  /* 11.10.26 (מיטל: "הקלטתי וזה לא תמלל"): התמלול הצליח בשרת, אבל הדף לא הראה שהוא עובד.
+     עכשיו: שעון "מתמלל… 0:12" שזז, הכפתורים אפורים בזמן העבודה, וקטע שנכשל נשמר בדף — "לנסות שוב" בלי להקליט מחדש */
   function sendSeg(blob, mime, secs, idx) {
     QUEUE.push({ blob: blob, mime: mime, secs: secs, idx: idx });
     pump();
+  }
+  function waitTick() {
+    var el = $('ttWait');
+    if (!QBUSY) { clearInterval(WT); WT = null; return; }
+    if (el) el.textContent = clock((Date.now() - MT.t0) / 1000);
   }
   function pump() {
     if (QBUSY || !QUEUE.length) return;
     QBUSY = true;
     var q = QUEUE.shift(), fr = new FileReader();
-    MT.msg = 'מתמלל קטע ' + (q.idx + 1) + '…'; redraw();
+    var many = QUEUE.length || q.idx > 0;
+    MT.msg = 'מתמלל' + (many ? ' קטע ' + (q.idx + 1) : '') + '… בדרך כלל עד חצי דקה'; MT.t0 = Date.now(); MT.err = '';
+    if (!WT) WT = setInterval(waitTick, 1000);
+    redraw();
     fr.onload = function () {
       var b64 = String(fr.result || '').replace(/^data:[^,]*,/, '');
-      api({ action: 'transcribe', audio: b64, mime: q.mime, secs: Math.round(q.secs) }, 240000).then(function (r) {
+      /* זמן המתנה לפי האורך: לפחות דקה וחצי; קטע של 20 דקות — עד כ-5 דקות */
+      api({ action: 'transcribe', audio: b64, mime: q.mime, secs: Math.round(q.secs) }, Math.max(90000, 60000 + q.secs * 200)).then(function (r) {
         if (!r || !r.ok) throw new Error(r && r.error || 'sttfail');
         PARTS[q.idx] = r.text;
-      }).catch(function (e) { MT.err = errText(e && e.message); PARTS[q.idx] = PARTS[q.idx] || ''; })
-        .then(function () {
-          QBUSY = false;
-          if (!QUEUE.length && REC.st !== 'rec') { MT.text = PARTS.filter(Boolean).join('\n\n'); MT.msg = ''; REC.st = ''; }
-          redraw(); pump();
-        });
+      }).catch(function (e) {
+        MT.err = errText(e && e.message) + ' ההקלטה נשמרה בדף — אפשר לנסות שוב.';
+        FAILED.push(q);
+      }).then(function () {
+        QBUSY = false;
+        if (!QUEUE.length && REC.st !== 'rec') { MT.text = PARTS.filter(Boolean).join('\n\n'); MT.msg = ''; REC.st = ''; }
+        redraw(); pump();
+      });
     };
     fr.readAsDataURL(q.blob);
+  }
+  function retry() {
+    if (!FAILED.length) return;
+    var L = FAILED; FAILED = []; MT.err = '';
+    L.forEach(function (q) { QUEUE.push(q); });
+    pump();
   }
   function recStart() {
     if (REC.st === 'rec') return;
     var mime = recMime();
     if (!mime || !navigator.mediaDevices) { T.toast('הדפדפן הזה לא מאפשר הקלטה. אפשר להעלות קובץ או להדביק טקסט.'); return; }
     if (MT.text && !confirm('יש כבר טקסט מהקלטה קודמת. להתחיל הקלטה חדשה (הטקסט הקודם יימחק)?')) return;
-    MT.text = ''; MT.err = ''; PARTS = [];
+    MT.text = ''; MT.err = ''; PARTS = []; FAILED = [];
     navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (stream) {
       REC = { st: 'rec', stream: stream, mime: mime, t0: Date.now(), seg: 0, segT0: Date.now() };
       function segment() {
@@ -333,7 +352,8 @@
             '<p class="small">השאירו את המסך דלוק ואת הדף פתוח. בישיבה ארוכה ההקלטה נשלחת בקטעים של 20 דקות.</p>'
           : (canRec ? '<button type="button" class="btn primary" data-tt="recstart"' + (busy ? ' disabled' : '') + '>' + IC.mic + 'התחלת הקלטה</button>' : '<span class="small">הדפדפן הזה לא מאפשר הקלטה.</span>') +
             '<label class="btn"' + (busy ? ' aria-disabled="true"' : '') + '>' + IC.up + 'העלאת קובץ הקלטה<input type="file" accept="audio/*" data-tt="file" hidden' + (busy ? ' disabled' : '') + '></label>') + '</div>' +
-        (MT.msg ? '<p class="small tt-busy">' + esc(MT.msg) + '</p>' : '') + (MT.err ? '<p class="tt-err">' + esc(MT.err) + '</p>' : '') +
+        (MT.msg ? '<p class="tt-busy"><span class="tt-spin" aria-hidden="true"></span>' + esc(MT.msg) + (QBUSY ? ' <b id="ttWait">' + clock((Date.now() - MT.t0) / 1000) + '</b>' : '') + '</p>' : '') +
+        (MT.err ? '<p class="tt-err">' + esc(MT.err) + (FAILED.length ? ' <button type="button" class="btn sm" data-tt="retry">לנסות שוב</button>' : '') + '</p>' : '') +
         '<label class="small" for="ttText" style="display:block;margin-top:12px">הטקסט של הישיבה — מהתמלול, או הדבקה של פרוטוקול</label>' +
         '<textarea class="fld" id="ttText" rows="8" placeholder="התמלול יופיע כאן. אפשר גם להדביק פרוטוקול שנכתב ביד.">' + esc(MT.text) + '</textarea>' +
         '<div class="tt-row"><label class="small">תאריך<input class="fld" type="date" id="ttDate" value="' + esc(MT.date || todayIso()) + '"></label>' +
@@ -490,6 +510,7 @@
     /* --- ישיבה --- */
     else if (k === 'recstart') recStart();
     else if (k === 'recstop') recStop();
+    else if (k === 'retry') retry();
     else if (k === 'msum') {
       MT.text = ($('ttText') || {}).value || ''; MT.date = ($('ttDate') || {}).value || ''; MT.topic = ($('ttTopic') || {}).value || '';
       if (MT.text.trim().length < 80) { T.toast('צריך טקסט של הישיבה — מהקלטה או הדבקה'); return; }
@@ -554,7 +575,7 @@
       var f = el.files[0], mime = String(f.type || '').split(';')[0];
       if (f.size > 10 * 1024 * 1024) { T.toast('הקובץ גדול מ-10MB. אפשר לפצל אותו או להקליט כאן.'); return; }
       if (!/^audio\//.test(mime)) { T.toast('צריך קובץ שמע'); return; }
-      MT.text = ''; MT.err = ''; PARTS = []; REC.st = 'send';
+      MT.text = ''; MT.err = ''; PARTS = []; FAILED = []; REC.st = 'send';
       var a = new Audio(), url = URL.createObjectURL(f);
       a.onloadedmetadata = function () { sendSeg(f, mime, isFinite(a.duration) ? a.duration : 600, 0); URL.revokeObjectURL(url); };
       a.onerror = function () { sendSeg(f, mime, 600, 0); URL.revokeObjectURL(url); };

@@ -376,3 +376,12 @@ footer a{color:var(--muted)}
   .tt-tasks li{flex-direction:column;align-items:flex-start}
   .tt-sacts{margin-right:0}
 }
+
+/* תמלול (11.10.26): רואים שהדף עובד, וכפתור נעול נראה נעול */
+.tt-busy{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--blue);font-weight:700;font-size:14.5px;margin:10px 0 0}
+.tt-busy b{font:700 15px Rubik,sans-serif;min-width:36px}
+.tt-spin{width:16px;height:16px;border-radius:50%;border:2.5px solid var(--blue-soft);border-top-color:var(--blue);animation:ttspin .8s linear infinite;flex:none}
+@keyframes ttspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.tt-spin{animation-duration:2.4s}}
+.btn[disabled],.btn[aria-disabled=true]{opacity:.45;cursor:not-allowed;pointer-events:none}
+.tt-err .btn{margin-inline-start:6px}
