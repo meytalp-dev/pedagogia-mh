@@ -317,3 +317,62 @@ footer a{color:var(--muted)}
   body.rail .nav-sub button{padding-inline-start:0}
   body.rail .nav-sub .subi{display:flex}
 }
+
+/* ===== כלים למנהל/ת (tools.js, 11.10.26): ועדה, ישיבה, מכתבים, אירוע חריג ===== */
+.tt-docs{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tt-doc{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:right;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;color:var(--ink)}
+.tt-doc:hover{border-color:var(--brand-purple)}
+.tt-doc small{color:var(--muted);font-size:12.5px}
+.tt-vdoc h2{font:700 17px Rubik,sans-serif;color:var(--navy);margin:18px 0 6px}
+.tt-vdoc h2:first-child{margin-top:4px}
+.tt-vdoc ul{margin:0;padding-inline-start:20px}
+.tt-vdoc li{margin:4px 0}
+.tt-ed{outline:none;border-radius:6px;padding:1px 3px;margin:0 -3px}
+.tt-ed:hover{background:var(--paper)}
+.tt-ed:focus{background:var(--amber-soft);box-shadow:0 0 0 2px var(--amber)}
+.tt-miss{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;margin-top:14px}
+.tt-err{color:var(--bad);font-weight:700;margin:8px 0 0}
+.tt-busy{color:var(--blue);font-weight:700}
+/* אירוע חריג */
+.tt-evtypes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tt-evtypes .btn{justify-content:flex-start;text-align:right;min-height:52px}
+.tt-evhead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;margin-bottom:10px}
+.tt-evhead b{font:700 18px Rubik,sans-serif;color:var(--navy)}
+.tt-steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tt-steps li{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.tt-steps li.ok{background:var(--ok-soft);border-color:#bfe6d4}
+.tt-steps label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.tt-steps input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--blue)}
+.tt-steps .w{flex:none;font-size:12px;font-weight:700;background:var(--bad-soft);color:var(--bad);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.tt-steps li.ok .tx{color:var(--muted)}
+.tt-sacts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 30px 0 0}
+.tt-links{margin:0;padding-inline-start:20px}
+.tt-links li{margin:4px 0}
+/* ישיבה */
+.tt-rec{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tt-rec p{flex-basis:100%;margin:2px 0 0}
+.tt-rec b{font:700 22px Rubik,sans-serif;color:var(--bad);min-width:64px}
+.tt-dot{width:14px;height:14px;border-radius:50%;background:var(--bad);animation:ttblink 1s infinite}
+@keyframes ttblink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.tt-dot{animation:none}}
+.tt-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.tt-row label{display:flex;flex-direction:column}
+.tt-tasks{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:8px}
+.tt-tasks li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.tt-tasks li small{display:block;color:var(--muted);font-size:12.5px}
+/* מכתבים */
+.tt-ltypes{display:grid;gap:8px}
+.tt-h{font:700 18px Rubik,sans-serif;color:var(--navy);margin:6px 0 4px}
+.tt-h3{font:700 16px Rubik,sans-serif;color:var(--navy);margin:16px 0 8px}
+.tt-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin-top:10px}
+.tt-form label:has(textarea){grid-column:1/-1}
+.tt-priv{font-size:11px;font-weight:700;background:var(--amber-soft);color:#8a5300;border-radius:99px;padding:0 7px;margin-inline-start:4px}
+.tt-letter{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff;line-height:1.75;font-size:15px}
+.tt-letter p{margin:6px 0}
+.tt-letter .fill{display:inline-block;min-width:110px;border-bottom:1px solid var(--muted)}
+.tt-letter .src{color:var(--muted);font-size:13px}
+@media (max-width:960px){
+  .tt-evtypes,.tt-form{grid-template-columns:1fr}
+  .tt-tasks li{flex-direction:column;align-items:flex-start}
+  .tt-sacts{margin-right:0}
+}

@@ -27,7 +27,7 @@
     teacher: SITE + 'hadrachot/teacher/',
     menor:   SITE + 'hadrachot/admin-school/'
   };
-  var MAREG_TO = 'mlypeleg@gmail.com';
+  var MAREG_TO = 'merhav@pedagogiamh.co.il';
   var WS = [['social', 'רכזים חברתיים'], ['matal', 'מת״ליות'], ['career', 'נתיבים לקריירה'],
             ['honchim', 'מורים חונכים'], ['ped', 'רכזים פדגוגיים'], ['sherut', 'שירות לאומי']];
 
@@ -297,6 +297,7 @@
     P.push(['k', I.book, 'הידע ' + (isRakaz() ? 'לרכז/ת' : 'למנהל/ת')]);
     if (isRakaz()) P.push(['t', I.tools, 'ארגז הכלים']);
     if (window.KEREN && KEREN.enabled()) P.push(['p', I.doc, 'התוכניות שלי']);   /* התוכניות שקרן בנתה (10.10.26) */
+    if (window.TZTOOLS) TZTOOLS.pages().forEach(function (t) { P.push([t[0], t[1], t[2]]); });   /* כלים למנהל/ת (tools.js, 11.10.26) */
     P.push(['tour', I.tour, 'סיור בצוהר']);
     return P;
   }
@@ -345,6 +346,8 @@
     if (cr) { cr.hidden = PAGE === 'home'; cr.innerHTML = PAGE === 'home' ? '' : '<button type="button" class="back" data-page="home">→ לדשבורד</button>'; }
     /* "התוכניות שלי" מנוהל ע"י keren.js — נתון ציבורי שנטען ברקע לא מצייר אותו מחדש (ולא מוחק עריכה) */
     if (PAGE === 'p' && !force && $('kerenPlans')) return;
+    /* כלים (tools.js): נתון שנטען ברקע לא מצייר מחדש — לא עוצר הקלטה ולא מוחק טקסט שמקלידים */
+    if (window.TZTOOLS && TZTOOLS.owns(PAGE) && !force && $('tzTool') && $('tzTool').getAttribute('data-p') === PAGE) return;
     /* הצ'ק ליסט: נתון שנטען ברקע לא סוגר חלונית יומן/מייל פתוחה או שדה שמקלידים בו */
     if ((PAGE === 'o' || PAGE === 'c') && !force && document.querySelector('#main .ck-p:not([hidden]), #main .ck-add input:focus, #ckText:not(:placeholder-shown)')) return;
     var h = '';
@@ -352,10 +355,11 @@
       ' · <a href="?as=' + esc(D.school.semel) + (isRakaz() ? '' : '&r=rakaz') + location.hash + '">' + (isRakaz() ? 'לתצוגת מנהל/ת' : 'לתצוגת רכז/ת') + '</a>' +
       ' · <a href="./">בית ספר אחר</a></div>';
     h += ({ home: home, o: officePage, s: schoolPage, m: menorPage, g: maregPage, k: knowPage, t: toolsPage, c: minePage,
-            p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || home)();
+            p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || (window.TZTOOLS && TZTOOLS.owns(PAGE) ? function () { return TZTOOLS.html(PAGE); } : home))();
     $('main').innerHTML = h;
     if (PAGE === 'p' && window.KEREN) KEREN.mountPlans($('kerenPlans'), PLANID);
     if (PAGE === 'c' && window.TZTASKS) TZTASKS.mountMine($('ckMine'));
+    if (window.TZTOOLS && TZTOOLS.owns(PAGE)) TZTOOLS.mount(PAGE);
     if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
@@ -401,6 +405,7 @@
       t: 'כלים וטיפים לעבודה עם הצוות',
       p: 'התוכניות שקרן בנתה'
     };
+    if (window.TZTOOLS) TZTOOLS.pages().forEach(function (t) { sub[t[0]] = t[3]; });
     var hot = { o: open, c: nm };
     return headCard(hello) + '<div class="dtiles" id="dashTiles">' + pages().filter(function (x) { return sub[x[0]]; }).map(function (x) {
       return '<button type="button" class="dtile' + (hot[x[0]] ? ' hot' : '') + '" data-page="' + x[0] + '"><span class="ic">' + (x[0] === 'c' ? I.check : x[1]) + '</span>' +
@@ -960,7 +965,7 @@
     return out;
   }
   window.TZOHAR = {
-    token: token, snap: snap, toast: toast,
+    token: token, snap: snap, toast: toast, data: function () { return D; }, icon: function (k) { return I[k] || ''; },
     role: function () { return role(); }, me: function () { return ME; }, school: function () { return D && D.school; },
     as: function () { return AS; }, ready: function () { return READY; }, go: go,
     people: people, links: function () { return LINK; },
