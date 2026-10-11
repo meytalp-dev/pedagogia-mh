@@ -47,11 +47,38 @@
 .lk-list li{font-size:var(--fs-sm);color:var(--text2);line-height:1.7;margin-bottom:5px}
 
 /* --- מצגת --- */
-.lk-slide{background:linear-gradient(135deg,#124D7A,#087B9C);color:#fff;border-radius:18px;padding:34px 34px 30px;min-height:290px;display:flex;flex-direction:column}
+/* עיצוב השקפים (11.10.26): יחס 16:9, שקף פתיחה כהה עם פס הצבעים של האתר,
+   שקפי תוכן לבנים עם פס צבע מתחלף ונקודות צבעוניות. ברירת המחדל (בלי מחלקת צבע) נשארת כהה. */
+.lk-slide{--sc:#2F74C0;position:relative;background:linear-gradient(135deg,#124D7A,#087B9C);color:#fff;border-radius:18px;padding:38px 44px 46px;aspect-ratio:16/9;min-height:290px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 44px rgba(13,59,102,.16)}
 .lk-slide h5{font-size:var(--fs-3xl);font-weight:800;margin:0 0 18px;line-height:1.25}
 .lk-slide ul{margin:0;padding-inline-start:22px;flex:1}
 .lk-slide li{font-size:var(--fs-lg);line-height:1.85;margin-bottom:9px;opacity:.96}
-.lk-slide .lk-num{font-size:var(--fs-2xs);opacity:.7;font-weight:700;margin-bottom:10px;letter-spacing:.04em}
+.lk-slide .lk-num{font-size:var(--fs-2xs);opacity:.7;font-weight:800;margin-bottom:10px;letter-spacing:.04em}
+.lk-slide .lk-sfoot{display:none}
+/* גודל הטקסט יחסי לרוחב השקף — כמו במצגת אמיתית, ולא קטן ונבלע בשקף גדול */
+.lk-slide{container-type:inline-size;justify-content:center}
+.lk-slide ul{flex:none}
+.lk-slide .lk-num{direction:ltr;unicode-bidi:isolate}
+.lk-slide h5{font-size:clamp(1.35rem,4.4cqw,3.1rem)}
+.lk-slide li{font-size:clamp(1rem,2.7cqw,1.95rem);line-height:1.6;margin-bottom:.55em}
+.lk-s-title h5{font-size:clamp(1.8rem,6.4cqw,4.4rem)}
+.lk-s-title li{font-size:clamp(1rem,2.5cqw,1.8rem)}
+.lk-s-title{justify-content:center;background:radial-gradient(120% 90% at 85% 10%,#1B5E8E 0,#0D3B66 55%,#0B2B4C 100%)}
+.lk-s-title::after{content:"";position:absolute;inset:auto 0 0 0;height:10px;background:linear-gradient(to left,#2F74C0 0 20%,#2F9F55 20% 40%,#F2B233 40% 60%,#EF5656 60% 80%,#8F7AC3 80%)}
+.lk-s-title h5{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:14px}
+.lk-s-title ul{flex:none;list-style:none;padding:0}
+.lk-s-title li{color:#A9DCF0;font-size:var(--fs-xl);margin:0}
+.lk-s-title .lk-num{position:absolute;top:22px;left:28px}
+.lk-s-c0,.lk-s-c1,.lk-s-c2,.lk-s-c3,.lk-s-c4,.lk-s-last{background:#fff;color:#102A43;border:1px solid #D8E6F2}
+.lk-s-c0{--sc:#2F74C0}.lk-s-c1{--sc:#2F9F55}.lk-s-c2{--sc:#D99A12}.lk-s-c3{--sc:#EF5656}.lk-s-c4{--sc:#8F7AC3}
+.lk-s-last{--sc:#0A7799;background:linear-gradient(160deg,#F2F7FC,#E7F9FE)}
+.lk-s-c0::before,.lk-s-c1::before,.lk-s-c2::before,.lk-s-c3::before,.lk-s-c4::before,.lk-s-last::before{content:"";position:absolute;inset:0 0 0 auto;width:12px;background:var(--sc)}
+.lk-s-c0 h5,.lk-s-c1 h5,.lk-s-c2 h5,.lk-s-c3 h5,.lk-s-c4 h5,.lk-s-last h5{color:#0D3B66;padding-bottom:12px;background:linear-gradient(var(--sc),var(--sc)) right bottom/72px 4px no-repeat}
+.lk-s-c0 .lk-num,.lk-s-c1 .lk-num,.lk-s-c2 .lk-num,.lk-s-c3 .lk-num,.lk-s-c4 .lk-num,.lk-s-last .lk-num{position:absolute;top:20px;left:26px;color:var(--sc);opacity:1;font-size:var(--fs-sm)}
+.lk-slide:not(.lk-s-title) ul{list-style:none;padding:0}
+.lk-slide:not(.lk-s-title) li{position:relative;padding-inline-start:26px;opacity:1}
+.lk-slide:not(.lk-s-title) li::before{content:"";position:absolute;inset-inline-start:2px;top:.72em;width:11px;height:11px;border-radius:50%;background:var(--sc)}
+.lk-s-c0 .lk-sfoot,.lk-s-c1 .lk-sfoot,.lk-s-c2 .lk-sfoot,.lk-s-c3 .lk-sfoot,.lk-s-c4 .lk-sfoot,.lk-s-last .lk-sfoot{display:block;position:absolute;bottom:14px;right:44px;left:26px;font-size:var(--fs-2xs);color:#5C7285;font-weight:600}
 .lk-note{background:#FFF8E6;border:1.5px solid #F5D98B;border-radius:13px;padding:12px 16px;margin-top:12px;font-size:var(--fs-sm);color:#6B4E00;line-height:1.6}
 .lk-note b{color:#3F2E00}
 .lk-nav{display:flex;align-items:center;gap:12px;margin-top:14px}
@@ -137,7 +164,7 @@
 @media(max-width:820px){
   .lk-meta{grid-template-columns:1fr}
   .lk-match{grid-template-columns:1fr}
-  .lk-slide{padding:24px 22px}
+  .lk-slide{padding:44px 26px 40px;aspect-ratio:auto;min-height:240px}
   .lk-slide h5{font-size:var(--fs-2xl)}
   .lk-slide li{font-size:var(--fs-base)}
 }
@@ -193,3 +220,154 @@
   .lk-slide{background:#fff !important;color:#000 !important;border:1px solid #ccc;break-inside:avoid;page-break-after:always}
   .lk-slide h5{color:#0D3B66 !important}
 }
+
+/* =====================================================================
+   תוצרים מהמחולל (11.10.26): משחק בנגן, 8 סוגי פתיחה, מצגת לפי סוג שקף, דף דיפרנציאלי
+   ===================================================================== */
+
+/* --- משחק בנגן המשחקים --- */
+.lk-g2head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:10px}
+.lk-g2head b{font-size:var(--fs-xl);color:var(--navy)}
+.lk-g2head span{font-size:var(--fs-sm);color:var(--muted)}
+.lk-gframe{display:block;width:100%;height:min(78vh,760px);border:1.5px solid var(--border);border-radius:18px;background:#fff}
+.lk-stage .lk-gframe{height:82vh}
+
+/* --- פעילות פתיחה --- */
+.lk-op2{display:grid;gap:14px;margin:14px 0}
+.lk-bigq{font-size:clamp(1.25rem,2.6vw,1.8rem);font-weight:800;color:var(--navy);line-height:1.4;padding:22px 24px;border-radius:18px;background:linear-gradient(135deg,var(--blue-bg),var(--cyan-100));border:1px solid var(--border)}
+.lk-story{font-size:var(--fs-lg);line-height:1.8;padding:18px 22px;border-radius:16px;background:#FFFBF2;border:1px solid #F1E3C2}
+.lk-op2 .lk-btn{justify-self:start}
+.lk-timer{font-variant-numeric:tabular-nums;font-size:var(--fs-lg);padding:10px 22px}
+.lk-rv{display:none;margin-top:8px;padding:12px 16px;border-radius:12px;background:var(--soft-bg);font-size:var(--fs-md);line-height:1.6}
+.lk-rv.on{display:block;animation:lkIn .3s ease}
+.lk-hints{margin:0;padding-inline-start:22px;display:grid;gap:8px;font-size:var(--fs-lg)}
+.lk-hints li{animation:lkIn .35s ease}
+.lk-flips{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lk-flip{position:relative;display:grid;text-align:start;font:inherit;font-size:var(--fs-md);line-height:1.55;color:var(--text);background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:18px;min-height:120px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.lk-flip:hover{transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.lk-flip .f,.lk-flip .b{grid-area:1/1}
+.lk-flip .b{display:none}
+.lk-flip.on .f{visibility:hidden}
+.lk-flip.on .b{display:block;animation:lkIn .3s ease}
+.lk-flip .b b{display:block;font-size:var(--fs-lg);margin-bottom:4px}
+.lk-flip .b.t b{color:#1F7A42}.lk-flip .b.x b{color:#C42B2B}
+.lk-flip.on{background:var(--soft-bg)}
+.lk-tt{cursor:default}
+.lk-tt.lie{border-color:#EF5656;background:#FFF1F1}.lk-tt.lie::after{content:"השקר";position:absolute;top:8px;left:10px;font-size:var(--fs-xs);font-weight:800;color:#C42B2B}
+.lk-tt.truth{border-color:#9FD4B0;background:#F1FBF4}
+.lk-guess{display:flex;gap:10px;flex-wrap:wrap}
+.lk-guess input{font:inherit;font-size:var(--fs-lg);padding:10px 14px;border:1.5px solid var(--border);border-radius:12px;width:220px;max-width:100%}
+.lk-votes{display:grid;gap:8px}
+.lk-vote{display:grid;grid-template-columns:auto 1fr 1.2fr auto;gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--border);border-radius:14px;background:#fff;font-size:var(--fs-md)}
+.lk-vote .bar{height:12px;border-radius:99px;background:var(--soft-bg);overflow:hidden}
+.lk-vote .bar i{display:block;height:100%;background:var(--grad);transition:width .3s}
+.lk-vote b{min-width:2ch;text-align:center;color:var(--navy)}
+@keyframes lkIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:640px){.lk-vote{grid-template-columns:auto 1fr auto}.lk-vote .bar{grid-column:1/-1}}
+
+/* --- פתיחה חיה מהטלפונים: הצבעה וענן מילים (11.10.26) --- */
+.lk-vote.nb{grid-template-columns:1fr 1.2fr auto}
+.lk-vote.mine{border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,119,153,.14)}
+.lk-cnt{margin-top:10px;font-size:var(--fs-sm);font-weight:700;color:var(--navy);min-height:1.2em}
+.lk-golive{margin-top:14px}
+.lk-livebox{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px;border-radius:16px;background:var(--soft-bg);border:1px dashed var(--border-strong)}
+.lk-lqr img,.lk-lqr canvas{display:block;background:#fff;padding:8px;border-radius:12px;border:1.5px solid var(--border)}
+.lk-ltx{flex:1;min-width:200px}
+.lk-ltx b{display:block;color:var(--navy);font-size:var(--fs-md);margin-bottom:8px}
+.lk-ltx .lk-url{margin-bottom:0}
+.lk-cloud-eg{margin:-4px 0 12px;font-size:var(--fs-sm);color:var(--text2)}
+.lk-cloud{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 16px;min-height:120px;margin-top:14px;padding:20px;border-radius:18px;background:#fff;border:1px solid var(--border);font-size:var(--fs-lg);line-height:1.25}
+.lk-cloud span{font-weight:800;animation:lkIn .4s var(--ease,ease)}
+.lk-cloud .c0{color:var(--m-blue-ink,#2A66AA)}.lk-cloud .c1{color:var(--m-green-ink,#1F7A42)}.lk-cloud .c2{color:#B4531F}
+.lk-cloud .c3{color:#7A5BB5}.lk-cloud .c4{color:#13817C}
+.lk-cloud .lk-cloud-empty{font-weight:600;color:var(--muted);font-size:var(--fs-sm)}
+.lk-stage .lk-cloud{font-size:1.6rem}
+
+/* --- דף עבודה מקוון בעמוד התלמיד --- */
+textarea.lk-ans{display:block;width:100%;font:inherit;font-size:var(--fs-md);line-height:1.6;padding:10px 13px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text);resize:vertical;margin-top:4px}
+textarea.lk-ans:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,119,153,.12)}
+.lk-submit{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.lk-submit>span{font-size:var(--fs-xs);color:var(--text2)}
+.lk-submit .lk-sent{flex-basis:100%;margin-top:0}
+.lk-sent{font-weight:700;color:var(--m-green-ink,#1F7A42);background:#F1FBF4}
+.lk-sent.bad{color:#9A2B2B;background:#FFF1F1}
+.lk-sent .lk-btn{margin-inline-start:8px}
+
+/* --- דף עבודה דיפרנציאלי --- */
+.lk-diag{margin:6px 0 18px;padding:16px;border-radius:16px;background:var(--soft-bg);border:1px solid var(--border)}
+.lk-diag-h{display:block;color:var(--navy);margin-bottom:10px}
+.lk-a.sel{border-color:var(--navy);background:var(--blue-bg)}
+.lk-route{margin-top:10px;font-size:var(--fs-sm);color:var(--text2)}
+.lk-routed{margin-top:12px}
+.lk-set{margin-top:16px;padding:16px;border:1.5px solid var(--border);border-radius:16px}
+.lk-set-h{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.lk-set-h b{color:var(--navy);font-size:var(--fs-lg)}
+.lk-set-h span{font-size:var(--fs-sm);color:var(--text2)}
+.lk-diff.routed .lk-set{opacity:.35}
+.lk-diff.routed .lk-set.on{opacity:1;border-color:var(--accent);box-shadow:0 0 0 3px rgba(10,119,153,.12)}
+.lk-student .lk-diff .lk-set{display:none}
+.lk-student .lk-diff .lk-set.on{display:block;opacity:1}
+
+/* --- מצגת לפי סוג שקף (מבנה; העיצוב בבלוק הנושא למטה) --- */
+.lk-deck2 .sl{position:relative;aspect-ratio:16/9;overflow:hidden;container-type:inline-size;display:flex;flex-direction:column;justify-content:center;padding:6cqw 7cqw;border-radius:16px;margin-bottom:6px}
+.lk-deck2 .sl .num{position:absolute;top:3.4cqw;left:4cqw;font-size:1.8cqw;font-weight:700}
+.lk-deck2 .sl .kick{display:flex;align-items:center;gap:1cqw;font-size:1.5cqw;font-weight:800;letter-spacing:.04em;margin-bottom:1.6cqw}
+.lk-deck2 .sl .kick svg{width:2.6cqw;height:2.6cqw}
+.lk-deck2 .sl h2{font-size:4.6cqw;line-height:1.1;margin:0 0 2.4cqw;padding:0;border:0}
+.lk-deck2 .sl h2::before{display:none}
+.lk-deck2 .sl .sfoot{position:absolute;bottom:2.6cqw;right:7cqw;font-size:1.2cqw;opacity:.6}
+.lk-deck2 .pts{list-style:none;display:grid;gap:1.4cqw;margin:0;padding:0}
+.lk-deck2 .pts li{font-size:2.6cqw;line-height:1.35;position:relative;padding-inline-start:3cqw}
+.lk-deck2 .pts li::before{content:"";position:absolute;inset-inline-start:0;top:.55em;width:1.3cqw;height:1.3cqw;border-radius:50%;background:var(--d2acc)}
+.lk-deck2 .split{display:grid;grid-template-columns:1.35fr 1fr;gap:4cqw;align-items:center}
+.lk-deck2 .steps{list-style:none;display:grid;gap:1.4cqw;margin:0;padding:0}
+.lk-deck2 .steps li{display:flex;gap:1.6cqw;align-items:baseline;font-size:2.4cqw;line-height:1.35}
+.lk-deck2 .steps .i{flex:none;width:3.4cqw;height:3.4cqw;border-radius:50%;display:grid;place-items:center;font-size:1.6cqw}
+.lk-deck2 .bigbox{display:grid;place-items:center;aspect-ratio:1;border-radius:var(--d2r)}
+.lk-deck2 .big{font-size:8.5cqw;font-weight:800;line-height:1;white-space:nowrap}
+.lk-deck2 blockquote{font-size:4.4cqw;line-height:1.25;max-width:85%;margin:.5cqw 0 0}
+.lk-deck2 .hint{margin-top:3cqw;font-size:2cqw;opacity:.75}
+.lk-deck2 .cols{display:grid;grid-template-columns:1fr auto 1fr;gap:2.4cqw;align-items:stretch}
+.lk-deck2 .col{border-radius:var(--d2r);padding:3cqw}
+.lk-deck2 .col b{display:block;font-size:3.2cqw;margin-bottom:1.4cqw}
+.lk-deck2 .col ul{list-style:none;display:grid;gap:1cqw;margin:0;padding:0}
+.lk-deck2 .col li{font-size:2.3cqw}
+.lk-deck2 .vs{align-self:center;font-size:2.4cqw;font-weight:800;opacity:.6}
+.lk-deck2 .cards{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:2.2cqw;margin:0;padding:0}
+.lk-deck2 .cards li{border-radius:var(--d2r);padding:2.6cqw;display:flex;flex-direction:column;gap:1.4cqw;font-size:2.2cqw;line-height:1.35;min-height:16cqw}
+.lk-deck2 .cards b{font-size:4.4cqw;line-height:1}
+.lk-deck2 .t-title h1{font-size:8cqw;line-height:1.02;margin:1.6cqw 0 2cqw}
+.lk-deck2 .t-title .eyebrow{font-size:1.6cqw;font-weight:800;letter-spacing:.06em}
+.lk-deck2 .t-title .sub{font-size:2.4cqw;margin:.6cqw 0 0}
+.lk-deck2 .t-title .bar{display:flex;gap:.6cqw;margin-top:4cqw}
+.lk-deck2 .t-title .bar i{width:5cqw;height:.9cqw;border-radius:9px}
+.lk-deck2 .t-title .bar i:nth-child(1){background:#2F74C0}.lk-deck2 .t-title .bar i:nth-child(2){background:#2F9F55}.lk-deck2 .t-title .bar i:nth-child(3){background:#F2B233}.lk-deck2 .t-title .bar i:nth-child(4){background:#EF5656}.lk-deck2 .t-title .bar i:nth-child(5){background:#8F7AC3}
+.lk-stage .lk-deck2 .sl{max-height:80vh;margin:0 auto}
+@media(max-width:640px){.lk-deck2 .split{grid-template-columns:1fr 1fr;gap:3cqw}}
+
+/* @@DECK-THEME@@ — כיוון 3 "בלוקים צבעוניים" (בחירת מיטל 11.10.26): לבן נקי, בלוק צבע בצד לפי סוג השקף, Heebo שמן */
+.lk-deck2{--d2acc:#0B1B2B;--d2r:0px;font-family:'Heebo','Assistant',sans-serif}
+.lk-deck2 .sl{background:#fff;color:#0B1B2B;box-shadow:0 10px 30px rgba(11,27,43,.1);padding-left:30cqw;border-radius:6px}
+.lk-deck2 .sl::before{content:"";position:absolute;top:0;bottom:0;left:0;width:24cqw;background:var(--blk,#2F74C0)}
+.lk-deck2 .t-goal{--blk:#2F9F55}.lk-deck2 .t-question{--blk:#EF5656}.lk-deck2 .t-concept{--blk:#2F74C0}.lk-deck2 .t-example{--blk:#E0A21F}
+.lk-deck2 .t-compare{--blk:#8F7AC3}.lk-deck2 .t-task{--blk:#1FA6A0}.lk-deck2 .t-summary{--blk:#0B1B2B}.lk-deck2 .t-exit{--blk:#EF5656}
+.lk-deck2 .sl .num{left:auto;right:7cqw;top:3cqw;color:var(--blk);font-weight:900}
+.lk-deck2 .sl .kick{position:absolute;left:0;top:0;width:24cqw;height:100%;flex-direction:column;justify-content:center;color:#fff;font-size:2.1cqw;margin:0;z-index:1}
+.lk-deck2 .sl .kick svg{width:9cqw;height:9cqw;stroke-width:1.3}
+.lk-deck2 .sl h2{font-weight:900;font-size:5.8cqw;color:#0B1B2B}
+.lk-deck2 .pts li{font-size:3.2cqw}.lk-deck2 .steps li{font-size:3cqw}.lk-deck2 .steps .i{width:4cqw;height:4cqw;font-size:2cqw}.lk-deck2 .col li{font-size:2.8cqw}.lk-deck2 .cards li{font-size:2.8cqw}
+.lk-deck2 .pts li::before{border-radius:0;background:var(--blk)}
+.lk-deck2 .steps .i{background:var(--blk);color:#fff;border-radius:0;font-weight:900}
+.lk-deck2 .split{grid-template-columns:1fr;gap:1.5cqw}
+.lk-deck2 .bigbox{aspect-ratio:auto;place-items:start;margin-top:1cqw}
+.lk-deck2 .big{color:var(--blk);font-size:10cqw;font-weight:900}
+.lk-deck2 blockquote{font-weight:900;font-size:4cqw;color:#0B1B2B}
+.lk-deck2 .col.a{background:#EFEAF8}.lk-deck2 .col.b{background:#F3F5F8}
+.lk-deck2 .col b{font-weight:900}
+.lk-deck2 .cards{grid-template-columns:1fr;gap:1.4cqw}
+.lk-deck2 .cards li{flex-direction:row;align-items:center;min-height:0;background:#F3F5F8;padding:1.6cqw 2cqw}
+.lk-deck2 .cards b{color:var(--blk);font-size:3.4cqw;font-weight:900}
+.lk-deck2 .t-title{padding-left:7cqw;background:#0B1B2B;color:#fff}
+.lk-deck2 .t-title::before{display:none}
+.lk-deck2 .t-title h1{font-weight:900}
+.lk-deck2 .t-title .eyebrow{color:#27C6F3}

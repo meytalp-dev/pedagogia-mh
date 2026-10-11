@@ -340,13 +340,14 @@ const gameTypeIcons = {
 const nameInput = document.getElementById('studentName');
 const classInput = document.getElementById('studentClass');
 const startBtn = document.getElementById('startBtn');
-function checkInputs() { startBtn.disabled = !(nameInput.value.trim() && classInput.value); }
+function checkInputs() { startBtn.disabled = !(nameInput.value.trim() && document.getElementById('studentClass').value.trim()); }
 nameInput.addEventListener('input', checkInputs);
 classInput.addEventListener('change', checkInputs);
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if (id === 'scoreScreen' && GP) { clearInterval(GP.tm); gpSend(true); }
 }
 
 function shuffle(arr) {
@@ -375,8 +376,68 @@ function animateCard() {
 }
 
 // ===== LOAD GAME FROM GOOGLE SHEETS =====
+/* משחק שנבנה במחולל השיעורים (11.10.26): ?lid=<32 תווים> — נטען מהשרת "מחולל - מוח".
+   התוצאה נשלחת לשרת של המחולל (לא לגיליון של נגן המשחקים), ולכן כפתור "שלחו תוצאות למורה" מוסתר:
+   הציון נשלח לבד — כל כמה שניות בזמן המשחק (בשביל הלוח החי של המורה) ובסוף.
+   השם והכיתה — מה שהתלמיד/ה כבר כתב/ה בעמוד השיעור (pmh.student), כיתה בטקסט חופשי.
+   &t=1 = התצוגה אצל המורה במחולל: בלי שם ובלי שליחה. */
+const MECHOLEL_API = 'https://script.google.com/macros/s/AKfycby743c3fzNYup3WE13jGYdXzfEq6A5jJvGGcXKf6jm5rqUaaZW46fSk2putJwXmAkGdAg/exec';
+let GP = null;
+function gpLS(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+function gpSid() {
+  let s = gpLS('pmh.sid');
+  if (s && /^[a-f0-9]{16}$/.test(s)) return s;
+  const a = new Uint8Array(8); crypto.getRandomValues(a);
+  s = Array.from(a, b => ('0' + b.toString(16)).slice(-2)).join('');
+  try { localStorage.setItem('pmh.sid', JSON.stringify(s)); } catch (e) {}
+  return s;
+}
+function gpSend(done) {
+  if (!GP || GP.teacher || !studentName) return;
+  const m = Math.max(1, totalItems || 1), s = Math.min(m, Math.max(0, Math.round(correctItems)));
+  const key = s + '/' + m + '/' + done;
+  if (key === GP.last) return;
+  GP.last = key;
+  const st = document.getElementById('sendStatus');
+  fetch(MECHOLEL_API, { method: 'POST', body: JSON.stringify({ action: 'submit', lid: GP.lid, kind: 'game', sid: gpSid(),
+    name: studentName, cls: studentClass, score: s, max: m, done: done }) })
+    .then(r => r.json()).then(d => { if (done && st) { st.className = 'send-status ' + (d && d.ok ? 'success' : 'error'); st.textContent = d && d.ok ? 'התוצאה נשלחה למורה ✓' : 'התוצאה לא נשלחה. נסו לשחק שוב כשיש חיבור.'; } })
+    .catch(() => { GP.last = ''; if (done && st) { st.className = 'send-status error'; st.textContent = 'התוצאה לא נשלחה. נסו לשחק שוב כשיש חיבור.'; } });
+}
+/* בזמן המשחק — עדכון כל 3 שניות, רק כשהציון השתנה */
+function gpStart() {
+  if (!GP || GP.teacher) return;
+  clearInterval(GP.tm); GP.last = '';
+  setTimeout(() => gpSend(false), 400);   /* אחרי שהמשחק אתחל את מספר הפריטים */
+  GP.tm = setInterval(() => gpSend(false), 3000);
+}
+function loadGeneratedGame(lid, teacher) {
+  fetch(MECHOLEL_API + '?lesson=' + lid).then(r => r.json()).then(d => {
+    const g = d && d.ok && d.data && d.data.game;
+    if (!g || !g.gameType) { showError('המשחק לא נמצא', 'ייתכן שהקישור שגוי או שהמשחק עוד נבנה. נסו שוב בעוד רגע.'); return; }
+    gameMeta = { name: d.data.topic || '', subject: d.data.subject || '', grade: String(d.data.grade || '').replace(/[׳״'"]/g, ''), noSend: true };
+    gameConfig = g;
+    GP = { lid: lid, teacher: !!teacher, last: '', tm: 0 };
+    document.querySelectorAll('[onclick="sendResults()"]').forEach(b => { b.style.display = 'none'; });
+    /* כיתה בטקסט חופשי במקום רשימה קבועה */
+    const sel = document.getElementById('studentClass'), inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'studentClass'; inp.maxLength = 20; inp.placeholder = 'למשל: י׳2';
+    sel.parentNode.replaceChild(inp, sel);
+    inp.addEventListener('input', checkInputs);
+    const me = gpLS('pmh.student') || {};
+    if (teacher) {
+      nameInput.value = 'מורה'; inp.value = '-';
+      document.querySelectorAll('#introScreen .input-group').forEach(x => { x.style.display = 'none'; });
+    } else { nameInput.value = me.name || ''; inp.value = me.cls || ''; }
+    setupIntro();
+    checkInputs();
+  }).catch(() => showError('שגיאה בחיבור', 'לא ניתן להתחבר לשרת. בדקו את החיבור לאינטרנט.'));
+}
+
 function loadGame() {
   const params = new URLSearchParams(window.location.search);
+  const lid = params.get('lid');
+  if (/^[a-f0-9]{32}$/.test(lid || '')) { loadGeneratedGame(lid, params.get('t') === '1'); return; }
   const gameId = params.get('id');
 
   if (!gameId) {
@@ -441,7 +502,7 @@ function setupIntro() {
   };
   const classes = gradeMap[gameMeta.grade] || ['א','ב','ג','ד'];
   const sel = document.getElementById('studentClass');
-  classes.forEach(c => {
+  if (sel.tagName === 'SELECT') classes.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c; opt.textContent = c;
     sel.appendChild(opt);
@@ -453,9 +514,10 @@ function setupIntro() {
 // ===== START GAME =====
 function startGame() {
   studentName = nameInput.value.trim();
-  studentClass = classInput.value;
+  studentClass = document.getElementById('studentClass').value.trim();
   score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
   showScreen('gameScreen');
+  gpStart();
 
   const initFn = {
     trivia: initTrivia, matching: initMatching, ordering: initOrdering,
@@ -472,6 +534,7 @@ function retryGame() {
   document.getElementById('sendStatus').textContent = '';
   score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
   showScreen('gameScreen');
+  gpStart();
 
   const initFn = {
     trivia: initTrivia, matching: initMatching, ordering: initOrdering,

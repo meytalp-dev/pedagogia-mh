@@ -20,7 +20,7 @@
 <meta name="theme-color" content="#0D3B66">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="/track.js"></script>
 <link rel="stylesheet" href="/pagenav.css">
@@ -261,306 +261,374 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 
 <main id="main">
 
-<div class="pagehead">
-  <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ מחולל שיעורים</div>
-  <h1 class="rv d1">מחולל שיעורים</h1>
-  <p class="rv d2 lead" style="max-width:680px">ממלאים את הפרטים, מסמנים מה צריך — ומקבלים מערך שיעור, מצגת, דף עבודה, פעילות פתיחה, משחק או בוחן. התוצר נבנה כאן בעמוד, מוכן להעתקה, להורדה ולהדפסה.</p>
-</div>
-
 <style>
-/* ===== מחולל שיעורים — מייצר מערך, מצגת ודף עבודה בתוך העמוד ===== */
-.gen{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:24px 26px;box-shadow:var(--sh-sm)}
-.gen .gen-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:6px}
-.gen .gen-head>svg{flex:none;width:26px;height:26px;color:var(--navy);margin-top:2px}
-.gen .gen-head h2{font-size:1.14rem;margin-bottom:3px}
-.gen .gen-head p{font-size:.88rem;color:var(--text2);line-height:1.65;max-width:76ch}
-.gen .step{display:flex;align-items:center;gap:10px;margin:22px 0 12px;font-size:.86rem;font-weight:800;color:var(--navy)}
-.gen .step i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--blue-bg);color:var(--navy);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.76rem;font-weight:800}
-.gen .step s{flex:1;height:1px;background:var(--border);text-decoration:none}
-.gen .step em{font-style:normal;font-weight:600;color:var(--muted);font-size:.8rem}
-.gen .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
-.gen label{display:flex;flex-direction:column;gap:5px;font-size:.83rem;font-weight:700;color:var(--navy)}
-.gen input,.gen select,.gen textarea{font-family:'Assistant',sans-serif;font-size:.92rem;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;background:#fff;color:var(--text);width:100%}
-.gen textarea{min-height:78px;resize:vertical;line-height:1.6}
-.gen input[type=file]{padding:8px 11px;font-size:.85rem}
-.gen input:focus,.gen select:focus,.gen textarea:focus{outline:none;border-color:var(--cyan)}
-.gen .wide{grid-column:1/-1}
-.gen .sub{font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.5}
-.gen .filebox{grid-column:1/-1;border:1.5px dashed var(--border-strong);border-radius:14px;padding:15px 17px;background:var(--soft-bg);display:grid;grid-template-columns:1fr 1fr;gap:13px 16px}
-.gen .filebox .wide{grid-column:1/-1}
-.gen .fname{display:none;align-items:center;gap:8px;font-size:.84rem;font-weight:700;color:var(--navy);background:#fff;border:1px solid var(--border);border-radius:11px;padding:9px 13px}
-.gen .fname.on{display:flex}
-.gen .fname svg{width:16px;height:16px;flex:none;color:var(--muted)}
-.gen .fname span{font-weight:500;color:var(--muted);font-size:.78rem}
-.gen .fname button{margin-inline-start:auto;background:none;border:0;color:var(--muted);cursor:pointer;font:inherit;font-size:.95rem;padding:0 4px;width:auto}
+/* ===== מחולל שיעורים — אשף בשלושה צעדים (11.10.26) ===== */
+.mg{--c-civ:var(--m-blue);--c-heb:var(--m-purple);--c-math:var(--m-green);--c-eng:var(--m-red);--c-his:var(--m-yellow);--c-lit:var(--m-turq);--c-tan:var(--accent)}
+.mg-hero{padding:34px var(--px) 8px;position:relative}
+.mg-hero .crumb{margin-bottom:10px}
+.mg-hero h1{font-size:clamp(1.9rem,4.4vw,2.7rem);line-height:1.12;margin:0 0 8px;color:var(--navy)}
+.mg-hero h1 em{font-style:normal;background:var(--m-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mg-hero p{font-size:var(--fs-lg);color:var(--text2);max-width:640px;margin:0;line-height:1.6}
+.mg-wrap{padding:18px var(--px) 40px}
+.mg-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;box-shadow:var(--sh-md);overflow:hidden}
 
-.gen .picks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.gen .pick{position:relative;border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;background:#fff;cursor:pointer;transition:border-color .2s,background .2s}
-.gen .pick:hover{border-color:var(--cyan)}
-.gen .pick.on{border-color:var(--cyan);background:var(--cyan-100)}
-.gen .pick>input{position:absolute;inset-inline-start:12px;top:14px;width:1px;height:1px;opacity:0;margin:0;padding:0}
-.gen .pick>input:focus-visible+.pk-h{outline:2px solid var(--cyan);outline-offset:4px;border-radius:6px}
-.gen .pick .pk-h{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy);font-size:.95rem}
-.gen .pick .pk-h>svg{width:19px;height:19px;flex:none}
-.gen .pick .box{margin-inline-start:auto;width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border-strong);flex:none;display:flex;align-items:center;justify-content:center;background:#fff}
-.gen .pick .box svg{width:11px;height:11px;color:#fff;opacity:0}
-.gen .pick.on .box{background:var(--navy);border-color:var(--navy)}
-.gen .pick.on .box svg{opacity:1}
-.gen .pick p{font-size:.8rem;color:var(--text2);line-height:1.55;margin-top:7px}
-.gen .pick .lvl{margin-top:11px;display:none}
-.gen .pick.on .lvl{display:block}
-.gen .pick .lvl select{font-size:.84rem;padding:8px 11px}
+/* פס הצעדים */
+.mg-steps{display:flex;gap:6px;padding:16px 22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff,var(--soft-bg))}
+.mg-steps button{flex:1;display:flex;align-items:center;gap:9px;background:none;border:0;padding:8px 10px;border-radius:12px;font:inherit;font-size:var(--fs-sm);font-weight:700;color:var(--muted);cursor:pointer;text-align:start}
+.mg-steps button i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;background:var(--blue-bg);color:var(--navy);transition:all .3s var(--ease)}
+.mg-steps button.on{color:var(--navy)}
+.mg-steps button.on i{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(13,59,102,.25);transform:scale(1.08)}
+.mg-steps button.done i{background:var(--m-green);color:#fff}
+.mg-steps button[disabled]{cursor:default;opacity:.55}
+.mg-steps .bar{display:none}
 
-.gen .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center}
-.gen .hint{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.65}
-.gen .btn svg{width:17px;height:17px}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.gen .stat{display:none;margin-top:14px;font-size:.86rem;color:var(--text2);background:var(--soft-bg);border-radius:11px;padding:11px 15px;line-height:1.6}
-.gen .stat.on{display:block}
+.mg-panel{display:none;padding:26px 28px 24px;animation:mgIn .35s var(--ease)}
+.mg-panel.on{display:block}
+@keyframes mgIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.mg-q{font-size:var(--fs-2xl);font-weight:800;color:var(--navy);margin:0 0 4px}
+.mg-hint{font-size:var(--fs-sm);color:var(--text2);margin:0 0 16px;line-height:1.6}
 
-/* התוצרים */
-.res{display:none;margin-top:8px}
-.res.on{display:block}
-.doc{border:1.5px solid var(--border);border-radius:18px;background:#fff;margin-top:16px;overflow:hidden;box-shadow:var(--sh-sm)}
-.doc .dh{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--soft-bg);border-bottom:1px solid var(--border)}
-.doc .dh h3{font-size:1rem;display:flex;align-items:center;gap:9px}
-.doc .dh h3 svg{width:18px;height:18px;flex:none;color:var(--navy)}
-.doc .dtools{display:flex;flex-wrap:wrap;gap:7px}
-.doc .dtools .btn{padding:7px 15px;font-size:.81rem;gap:6px}
-.doc .dtools .btn svg{width:14px;height:14px}
-.doc .body{padding:18px 22px;font-size:.92rem;line-height:1.75;color:var(--text);max-height:680px;overflow:auto}
-.doc .body h4{font-size:1rem;color:var(--navy);margin:16px 0 7px;font-weight:800}
-.doc .body h5{font-size:.92rem;color:var(--navy-800);margin:13px 0 5px;font-weight:800}
-.doc .body>:first-child{margin-top:0}
-.doc .body p{margin:0 0 9px}
-.doc .body ul,.doc .body ol{margin:0 0 11px;padding-inline-start:22px}
-.doc .body li{margin-bottom:5px}
-.doc .body hr{border:0;border-top:1px solid var(--border);margin:16px 0}
-.doc .body code{background:var(--soft-bg);border-radius:5px;padding:1px 6px;font-size:.86em}
-.doc .tblwrap{overflow-x:auto;margin:0 0 12px}
-.doc .body table{border-collapse:collapse;width:100%;font-size:.87rem}
-.doc .body th,.doc .body td{border:1px solid var(--border);padding:8px 11px;text-align:start;vertical-align:top}
-.doc .body th{background:var(--blue-bg);color:var(--navy);font-weight:800}
-.doc .slides{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
-.doc .slide{border:1px solid var(--border);border-radius:13px;padding:13px 15px;background:var(--soft-bg)}
-.doc .slide .n{font-size:.71rem;font-weight:800;color:var(--muted);letter-spacing:.04em}
-.doc .slide h5{color:var(--navy);font-size:.93rem;margin:4px 0 7px;font-weight:800}
-.doc .slide ul{margin:0;padding-inline-start:18px;font-size:.83rem;color:var(--text2);line-height:1.6}
-.doc .slide .note{margin-top:8px;font-size:.76rem;color:var(--muted);border-top:1px dashed var(--border-strong);padding-top:6px;line-height:1.5}
+/* תחומי דעת */
+.mg-subj{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
+.mg-subj button{--c:var(--navy);display:flex;align-items:center;gap:10px;padding:14px 14px;border:1.5px solid var(--border);border-radius:16px;background:#fff;font:inherit;font-weight:700;font-size:var(--fs-md);color:var(--text);cursor:pointer;transition:all .2s var(--ease);text-align:start}
+.mg-subj button svg{flex:none;width:26px;height:26px;padding:5px;border-radius:9px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff)}
+.mg-subj button:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.mg-subj button.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 9%,#fff);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent)}
+.mg-subj button.on svg{background:var(--c);color:#fff}
 
-/* מצב ביניים — הפרומפט הבנוי */
-.fb{display:none;margin-top:18px;border:1.5px dashed var(--border-strong);border-radius:16px;padding:17px 20px;background:var(--blue-bg)}
-.fb.on{display:block}
-.fb h4{font-size:.97rem;color:var(--navy);margin-bottom:5px}
-.fb .why{font-size:.84rem;color:var(--text2);line-height:1.65;margin-bottom:12px;max-width:78ch}
-.fb .pbox{background:#fff;border:1px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:11px}
-.fb .pbox .ph{display:flex;flex-wrap:wrap;gap:9px;align-items:center;justify-content:space-between;margin-bottom:8px}
-.fb .pbox .ph b{color:var(--navy);font-size:.9rem}
-.fb pre{white-space:pre-wrap;font-family:'Assistant',sans-serif;font-size:.84rem;line-height:1.65;color:var(--text);background:var(--soft-bg);border-radius:10px;padding:12px 14px;max-height:260px;overflow:auto;margin:0}
-.fb .ailinks{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
-.btn.sm{padding:9px 20px;font-size:.86rem}
-@media(max-width:860px){.gen .picks{grid-template-columns:1fr}}
-@media(max-width:760px){.gen .fields,.gen .filebox{grid-template-columns:1fr}}
-@media print{.nav,.govbar,.drawer,.scrim,.foot,.trackbar,.gen .fields,.gen .picks,.gen .acts,.gen .step,.gen .gen-head,.fb,.doc .dtools{display:none!important}}
+.mg-topic{position:relative}
+.mg-topic input{width:100%;font:inherit;font-size:var(--fs-xl);font-weight:600;padding:16px 18px;border:2px solid var(--border);border-radius:16px;background:#fff;color:var(--text);transition:border-color .2s}
+.mg-topic input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,119,153,.12)}
+.mg-sugg{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.mg-sugg.on{padding:14px 16px;border-radius:16px;background:color-mix(in srgb,var(--sc,var(--accent)) 7%,#fff);border:1.5px solid color-mix(in srgb,var(--sc,var(--accent)) 30%,#fff);animation:mgIn .3s var(--ease)}
+.mg-sugg .lbl{flex-basis:100%;font-size:var(--fs-sm)!important;color:var(--navy)!important;font-weight:800;margin-bottom:2px}
+.mg-sugg span{font-size:var(--fs-xs);color:var(--muted);font-weight:700;align-self:center}
+.mg-sugg button{font:inherit;font-size:var(--fs-sm);font-weight:700;padding:8px 15px;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--sc,var(--accent)) 35%,#fff);background:#fff;color:var(--navy);cursor:pointer;transition:all .2s}
+.mg-sugg button:hover{border-color:var(--sc,var(--accent));background:var(--sc,var(--accent));color:#fff;transform:translateY(-1px)}
+
+.mg-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.mg-opt b{display:block;font-size:var(--fs-xs);color:var(--muted);margin-bottom:6px}
+.mg-seg{display:flex;flex-wrap:wrap;gap:6px}
+.mg-seg button{font:inherit;font-size:var(--fs-sm);font-weight:700;padding:8px 13px;border-radius:11px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer}
+.mg-seg button.on{border-color:var(--navy);background:var(--navy);color:#fff}
+
+/* חומר */
+.mg-two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mg-big{display:flex;gap:14px;align-items:flex-start;padding:20px;border:2px solid var(--border);border-radius:20px;background:#fff;font:inherit;text-align:start;cursor:pointer;transition:all .2s var(--ease);color:var(--text)}
+.mg-big svg{flex:none;width:44px;height:44px;padding:10px;border-radius:14px;background:var(--blue-bg);color:var(--navy)}
+.mg-big b{display:block;font-size:var(--fs-lg);color:var(--navy);margin-bottom:4px}
+.mg-big span{font-size:var(--fs-sm);color:var(--text2);line-height:1.55}
+.mg-big:hover{transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.mg-big.on{border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,119,153,.12)}
+.mg-big.on svg{background:var(--grad);color:#fff}
+.mg-mat{display:none;margin-top:16px;padding:18px;border-radius:18px;background:var(--soft-bg);border:1px dashed var(--border-strong)}
+.mg-mat.on{display:grid;grid-template-columns:1fr 1fr;gap:14px;animation:mgIn .3s var(--ease)}
+.mg-mat label{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);font-weight:700;color:var(--navy)}
+.mg-mat .wide{grid-column:1/-1}
+.mg-mat input,.mg-mat textarea{font:inherit;font-size:var(--fs-md);padding:10px 13px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text);width:100%}
+.mg-mat textarea{min-height:96px;resize:vertical;line-height:1.6}
+.mg-mat small{font-weight:500;color:var(--muted);font-size:var(--fs-xs);line-height:1.5}
+.mg-fname{display:none;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--text2)}
+.mg-fname.on{display:flex}
+.mg-fname button{border:0;background:none;cursor:pointer;color:var(--muted);padding:2px}
+
+/* מה לבנות */
+.mg-kit{display:flex;gap:18px;align-items:center;width:100%;padding:22px;border:2px solid var(--border);border-radius:22px;background:#fff;font:inherit;text-align:start;cursor:pointer;color:var(--text);transition:all .2s var(--ease);position:relative;overflow:hidden}
+.mg-kit::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--m-grad);opacity:.35;transition:opacity .2s}
+.mg-kit.on{border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,119,153,.12)}
+.mg-kit.on::before{opacity:1}
+.mg-kit .ic6{display:grid;grid-template-columns:repeat(3,30px);gap:6px;flex:none}
+.mg-kit .ic6 svg{width:30px;height:30px;padding:6px;border-radius:9px;background:var(--blue-bg);color:var(--navy)}
+.mg-kit.on .ic6 svg{background:var(--grad);color:#fff}
+.mg-kit b{display:block;font-size:var(--fs-xl);color:var(--navy)}
+.mg-kit span{font-size:var(--fs-sm);color:var(--text2)}
+.mg-kit .tag{position:absolute;top:14px;left:14px;font-size:var(--fs-2xs);font-weight:800;padding:3px 10px;border-radius:999px;background:var(--m-green);color:#fff}
+.mg-or{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:var(--fs-xs);color:var(--muted);font-weight:700}
+.mg-or::before,.mg-or::after{content:"";flex:1;height:1px;background:var(--border)}
+.mg-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mg-pick{display:flex;flex-direction:column;gap:4px;padding:14px;border:1.5px solid var(--border);border-radius:16px;background:#fff;font:inherit;text-align:start;cursor:pointer;color:var(--text);transition:all .2s var(--ease)}
+.mg-pick .h{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--navy);font-size:var(--fs-md)}
+.mg-pick .h svg{width:22px;height:22px;flex:none}
+.mg-pick .h .ck{margin-inline-start:auto;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border-strong);display:grid;place-items:center;color:transparent}
+.mg-pick small{font-size:var(--fs-xs);color:var(--text2);line-height:1.5}
+.mg-pick.on{border-color:var(--accent);background:var(--cyan-100)}
+.mg-pick.on .ck{background:var(--accent);border-color:var(--accent);color:#fff}
+.mg-sub{margin-top:14px;padding:14px 16px;border-radius:16px;background:var(--soft-bg);border:1px solid var(--border)}
+.mg-sub>b{display:block;font-size:var(--fs-sm);color:var(--navy);margin-bottom:8px}
+.mg-chips{display:flex;flex-wrap:wrap;gap:7px}
+.mg-chips button{font:inherit;font-size:var(--fs-sm);font-weight:700;padding:7px 13px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
+.mg-chips button:hover{border-color:var(--accent);color:var(--navy)}
+.mg-chips button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mg-chips button.sur{border-style:dashed}
+.mg-chips button.sur.on{background:var(--grad);border-style:solid}
+.mg-level{display:none;margin-top:14px;align-items:center;gap:10px;flex-wrap:wrap;font-size:var(--fs-sm);font-weight:700;color:var(--navy)}
+.mg-level.on{display:flex}
+
+.mg-login{display:flex;gap:14px;align-items:center;margin-top:20px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,var(--blue-bg),var(--cyan-100));border:1px solid var(--border);transition:box-shadow .3s}
+.mg-login>svg{flex:none;width:34px;height:34px;padding:7px;border-radius:50%;background:#fff;color:var(--navy)}
+.mg-login b{display:block;color:var(--navy);font-size:var(--fs-md)}
+.mg-login span{font-size:var(--fs-xs);color:var(--text2);line-height:1.55}
+.mg-login .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.mg-login.in{padding:10px 18px}
+.mg-login.ping{box-shadow:0 0 0 5px rgba(239,86,86,.25)}
+
+.mg-nav{display:flex;align-items:center;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--border)}
+.mg-nav .sp{flex:1}
+.mg-go{display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:var(--fs-lg);font-weight:800;padding:14px 28px;border:0;border-radius:999px;background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 10px 26px rgba(13,59,102,.25);transition:transform .2s var(--ease),box-shadow .2s}
+.mg-go:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(13,59,102,.3)}
+.mg-go svg{width:20px;height:20px}
+.mg-go[disabled]{opacity:.6;cursor:wait;transform:none}
+.mg-back{font:inherit;font-weight:700;font-size:var(--fs-sm);background:none;border:0;color:var(--text2);cursor:pointer;padding:10px}
+.mg-msg{display:none;margin-top:14px;padding:12px 16px;border-radius:12px;background:#FFF4E5;color:#7A4B00;font-size:var(--fs-sm);line-height:1.6}
+.mg-msg.on{display:block}
+
+/* מסך הבנייה */
+.mg-build{display:none;padding:28px}
+.mg-build.on{display:block;animation:mgIn .35s var(--ease)}
+.mg-bh{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mg-orb{flex:none;width:58px;height:58px;border-radius:50%;background:conic-gradient(var(--m-blue),var(--m-green),var(--m-yellow),var(--m-red),var(--m-purple),var(--m-blue));animation:mgSpin 2.4s linear infinite;display:grid;place-items:center}
+.mg-orb::after{content:"";width:44px;height:44px;border-radius:50%;background:#fff}
+.mg-build.done .mg-orb{animation:none;background:var(--m-green)}
+@keyframes mgSpin{to{transform:rotate(360deg)}}
+.mg-bh h2{font-size:var(--fs-2xl);color:var(--navy);margin:0}
+.mg-bh p{margin:2px 0 0;color:var(--text2);font-size:var(--fs-sm)}
+.mg-clock{margin-inline-start:auto;font-variant-numeric:tabular-nums;font-weight:800;color:var(--navy);font-size:var(--fs-xl);background:var(--soft-bg);padding:6px 14px;border-radius:12px}
+.mg-tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:22px 0 6px}
+.mg-it{position:relative;display:flex;align-items:center;gap:10px;padding:14px;border:1.5px solid var(--border);border-radius:16px;background:#fff;font:inherit;text-align:start;color:var(--text);overflow:hidden}
+.mg-it svg.k{flex:none;width:34px;height:34px;padding:7px;border-radius:11px;background:var(--blue-bg);color:var(--navy)}
+.mg-it b{display:block;font-size:var(--fs-md);color:var(--navy)}
+.mg-it small{font-size:var(--fs-xs);color:var(--muted);font-weight:700}
+.mg-it::after{content:"";position:absolute;bottom:0;right:0;height:3px;width:0;background:var(--m-grad)}
+.mg-it.wait::after{animation:mgBar 60s cubic-bezier(.1,.6,.3,1) forwards}
+@keyframes mgBar{to{width:92%}}
+.mg-it.ok{border-color:color-mix(in srgb,var(--m-green) 45%,#fff);cursor:pointer}
+.mg-it.ok svg.k{background:var(--m-green);color:#fff}
+.mg-it.ok small{color:var(--m-green-ink)}
+.mg-it.ok::after{width:100%;background:var(--m-green)}
+.mg-it.fail{border-color:#F2B8B0}
+.mg-it.fail small{color:var(--m-red-ink)}
+.mg-it .rt{margin-inline-start:auto;font:inherit;font-size:var(--fs-xs);font-weight:800;padding:5px 11px;border-radius:999px;border:1.5px solid var(--m-red);background:#fff;color:var(--m-red-ink);cursor:pointer}
+.mg-tip{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:var(--fs-sm);color:var(--text2);min-height:24px}
+.mg-tip svg{flex:none;width:18px;height:18px;color:var(--m-yellow-ink)}
+.mg-tip span{transition:opacity .4s}
+.mg-bacts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.mg-res{margin-top:22px}
+.mg-note{font-size:var(--fs-sm);color:var(--text2);background:var(--soft-bg);border-radius:14px;padding:12px 16px;margin-bottom:14px;line-height:1.6}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--navy);font-weight:800;text-decoration:underline;cursor:pointer}
+.mg-last{margin-top:14px;font-size:var(--fs-sm);color:var(--text2)}
+
+@media(max-width:760px){
+  .mg-panel,.mg-build{padding:20px 16px}
+  .mg-steps{padding:10px 12px}
+  .mg-steps button{flex-direction:column;gap:4px;font-size:var(--fs-2xs);text-align:center;padding:6px 2px}
+  .mg-opts,.mg-two,.mg-mat.on{grid-template-columns:1fr}
+  .mg-picks{grid-template-columns:1fr 1fr}
+  .mg-kit{flex-direction:column;align-items:flex-start;gap:12px}
+  .mg-nav{flex-wrap:wrap}
+  .mg-go{flex:1;justify-content:center}
+  .mg-clock{margin-inline-start:0}
+  .mg-tl{grid-template-columns:1fr 1fr}
+}
+@media print{.nav,.govbar,.drawer,.scrim,.foot,.mg-hero,.mg-steps,.mg-panel,.mg-bh,.mg-tl,.mg-tip,.mg-bacts,.mg-note,.mg-fb{display:none!important}.mg-card{box-shadow:none;border:0}}
+
+/* ===== תוצאות התלמידים (11.10.26) ===== */
+.mg-rhead{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.mg-rhead h3{margin:0;color:var(--navy);font-size:var(--fs-xl)}
+.mg-rhead p{margin:2px 0 0;font-size:var(--fs-xs);color:var(--text2)}
+.mg-racts{display:flex;flex-wrap:wrap;gap:8px}
+.mg-rsum{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.mg-rsum div{padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:#fff}
+.mg-rsum b{display:block;color:var(--navy);font-size:var(--fs-sm)}
+.mg-rsum strong{display:block;font-size:var(--fs-2xl);color:var(--navy);line-height:1.2;font-variant-numeric:tabular-nums}
+.mg-rsum span{font-size:var(--fs-xs);color:var(--text2)}
+.mg-rsec{margin:18px 0 8px;font-size:var(--fs-lg);color:var(--navy)}
+.mg-rtab{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+.mg-rtab th{background:var(--soft-bg);color:var(--navy);text-align:start;padding:9px 10px;border-bottom:1px solid var(--border);font-weight:800}
+.mg-rtab td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.mg-rtab .mid{color:var(--muted);font-size:var(--fs-xs)}
+.mg-rtab .sug{color:var(--m-yellow-ink)}
+.mg-hard{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.mg-hard li{padding:11px 14px;border-radius:12px;background:#FFF6EC;border:1px solid #F5D9B8;font-size:var(--fs-sm);line-height:1.55}
+.mg-hard small{display:block;color:var(--text2);margin-top:3px}
+.mg-sheetr{border:1px solid var(--border);border-radius:14px;margin-bottom:8px;background:#fff}
+.mg-sheetr summary{cursor:pointer;padding:11px 14px;font-size:var(--fs-sm);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.mg-sheetr summary b{color:var(--navy)}
+.mg-sheetr .in{padding:4px 14px 14px;border-top:1px solid var(--border)}
+.mg-ans{margin:10px 0 0;font-size:var(--fs-sm);line-height:1.6}
+.mg-ans p{margin:2px 0;white-space:pre-wrap;background:var(--soft-bg);border-radius:10px;padding:8px 11px}
+.mg-ans .note{display:block;color:var(--text2);font-size:var(--fs-xs);margin-top:3px}
+.mg-grade{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;font-size:var(--fs-sm);font-weight:700;color:var(--navy)}
+.mg-grade input{width:84px;font:inherit;padding:7px 10px;border:1.5px solid var(--border);border-radius:10px}
+.mg-rmsg{font-size:var(--fs-sm);color:var(--text2);margin:8px 0}
+.mg-rmsg.bad{color:var(--m-red-ink)}
+.mg-empty{padding:18px;border-radius:16px;background:var(--soft-bg);font-size:var(--fs-sm);color:var(--text2);line-height:1.7}
+@media(max-width:640px){
+  .mg-rtab thead{display:none}
+  .mg-rtab tr{display:block;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:6px 4px;background:#fff}
+  .mg-rtab td{display:flex;justify-content:space-between;gap:10px;border:0;padding:5px 10px}
+  .mg-rtab td::before{content:attr(data-l);font-weight:800;color:var(--navy)}
+}
+
+/* לוח חי להקרנה */
+.mg-live{position:fixed;inset:0;z-index:9999;background:#0B2B4C;color:#fff;display:flex;flex-direction:column;padding:22px clamp(16px,3vw,40px);overflow:auto;font-family:Heebo,Assistant,sans-serif}
+.mg-live .top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.mg-live h2{margin:0;font-size:clamp(1.3rem,2.6vw,2rem);font-weight:900;flex:1;min-width:200px;color:#fff}
+.mg-live .seg button,.mg-live .x{font:inherit;font-weight:800;font-size:var(--fs-sm);padding:8px 14px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);background:transparent;color:#fff;cursor:pointer}
+.mg-live .seg button.on{background:#fff;color:#0B2B4C}
+.mg-live .grid{display:grid;grid-template-columns:260px 1fr;gap:24px;margin-top:20px;flex:1}
+.mg-live .side{display:flex;flex-direction:column;gap:14px}
+.mg-live .qr{background:#fff;border-radius:18px;padding:12px;align-self:flex-start}
+.mg-live .qr img,.mg-live .qr canvas{display:block}
+.mg-live .url{font-size:var(--fs-xs);opacity:.75;word-break:break-all}
+.mg-live .big{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.mg-live .lbl{font-size:var(--fs-sm);opacity:.8}
+.mg-live ol.board{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mg-live ol.board li{display:grid;grid-template-columns:2.2em 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-radius:14px;background:rgba(255,255,255,.08);font-size:clamp(1rem,1.7vw,1.35rem);font-weight:700;animation:mgIn .3s var(--ease)}
+.mg-live ol.board li:nth-child(1){background:linear-gradient(90deg,rgba(242,178,51,.35),rgba(255,255,255,.08))}
+.mg-live ol.board i{font-style:normal;font-weight:900;opacity:.8}
+.mg-live ol.board small{opacity:.7;font-weight:600}
+.mg-live .dist{display:grid;gap:14px;margin-top:22px}
+.mg-live .dq{background:rgba(255,255,255,.06);border-radius:14px;padding:12px 16px}
+.mg-live .dq b{display:block;margin-bottom:8px;font-size:var(--fs-md)}
+.mg-live .dr{display:grid;grid-template-columns:minmax(120px,1fr) 2fr 2.5em;gap:10px;align-items:center;font-size:var(--fs-sm);margin-top:5px}
+.mg-live .dr .bar{height:12px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.mg-live .dr .bar i{display:block;height:100%;background:#7FC8F8;transition:width .4s}
+.mg-live .dr.ok .bar i{background:#5FD38D}
+.mg-live .dr.ok span:first-child::after{content:" ✓"}
+.mg-live .foot{margin-top:16px;font-size:var(--fs-xs);opacity:.6}
+@media(max-width:760px){.mg-live .grid{grid-template-columns:1fr}}
+
+/* משוב קצר אחרי הבנייה */
+.mg-fb{margin-top:16px;padding:16px 18px;border-radius:18px;border:1.5px solid var(--border);background:linear-gradient(135deg,#fff,var(--soft-bg))}
+.mg-fb b{display:block;color:var(--navy);font-size:var(--fs-md);margin-bottom:8px}
+.mg-fb .row{display:flex;flex-wrap:wrap;gap:8px}
+.mg-fb .row button{font:inherit;font-weight:800;font-size:var(--fs-sm);padding:8px 16px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--navy);cursor:pointer}
+.mg-fb .row button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mg-fb textarea{display:block;width:100%;margin-top:10px;font:inherit;font-size:var(--fs-sm);padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;min-height:70px;resize:vertical}
+.mg-fb .send{margin-top:8px}
 </style>
 
-<div class="rv d1" style="padding:20px var(--px) 0" id="mecholel-shiur">
-<div class="gen">
-  <div class="gen-head">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 5.5A1.5 1.5 0 0 1 4.5 4H9a3 3 0 0 1 3 3v12a2.5 2.5 0 0 0-2.5-2.5H3z"/>
-      <path d="M21 5.5A1.5 1.5 0 0 0 19.5 4H15a3 3 0 0 0-3 3v12a2.5 2.5 0 0 1 2.5-2.5H21z"/>
-    </svg>
-    <div>
-      <span class="tag cyn">כלי AI</span>
-      <h2 class="sub-sec" id="sec-mecholel" style="margin-top:8px">מחולל שיעורים · מערך, מצגת ודף עבודה</h2>
-      <p>ממלאים את הפרטים, מעלים את החומר שאתם כבר עובדים איתו, מסמנים מה צריך — והתוצר נבנה כאן בעמוד, מוכן להעתקה, להורדה ולהדפסה. אפשר לסמן יותר מתוצר אחד.</p>
-    </div>
+<div class="mg">
+<div class="mg-hero">
+  <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ מחולל שיעורים</div>
+  <h1 class="rv d1">מחולל <em>שיעורים</em></h1>
+  <p class="rv d2">שלושה צעדים קצרים, ושיעור שלם מוכן לכיתה: מערך, פתיחה, מצגת, משחק, דף עבודה ובוחן. הכול נבנה כאן בעמוד, עם הצגה לכיתה, הדפסה והורדה.</p>
+</div>
+
+<div class="mg-wrap" id="mecholel-shiur">
+<div class="mg-card">
+
+  <div class="mg-steps" id="mg-steps" role="tablist" aria-label="שלבי המחולל">
+    <button type="button" data-step="1" class="on"><i>1</i>על מה השיעור</button>
+    <button type="button" data-step="2" disabled><i>2</i>חומר</button>
+    <button type="button" data-step="3" disabled><i>3</i>מה לבנות</button>
   </div>
 
-  <div class="step"><i>1</i> מה מלמדים <s></s></div>
+  <!-- צעד 1 -->
+  <section class="mg-panel on" data-panel="1" aria-labelledby="mg-q1">
+    <h2 class="mg-q" id="mg-q1">באיזה תחום דעת?</h2>
+    <p class="mg-hint">בוחרים תחום, וכותבים את נושא השיעור במילים שלכם.</p>
+    <div class="mg-subj" id="mg-subj"></div>
 
-  <div class="fields">
-    <label for="g-subj">תחום דעת
-      <select id="g-subj">
-        <option value="">בחרו תחום דעת…</option>
-        <option>אזרחות</option>
-        <option>עברית והבעה</option>
-        <option>מתמטיקה</option>
-        <option>אנגלית</option>
-        <option>היסטוריה</option>
-        <option>ספרות</option>
-        <option>תנ״ך</option>
-      </select>
-    </label>
-    <label for="g-grade">שכבת גיל
-      <select id="g-grade">
-        <option>כיתה י׳</option>
-        <option>כיתה י״א</option>
-        <option>כיתה י״ב</option>
-      </select>
-    </label>
-    <label class="wide" for="g-topic">נושא השיעור
-      <input id="g-topic" type="text" placeholder="למשל: מיצג טיעון בכתיבה טיעונית · פונקציה קווית · העלייה הרביעית">
-    </label>
-    <label for="g-len">משך השיעור
-      <select id="g-len">
-        <option>45 דקות</option>
-        <option>90 דקות</option>
-      </select>
-    </label>
-    <label for="g-track">נתיב
-      <select id="g-track">
-        <option>נתיב הגמר · תעודת גמר</option>
-        <option>נתיב הבגרות</option>
-        <option>מסלול מותאם · חלופות הערכה</option>
-      </select>
-    </label>
+    <h2 class="mg-q" style="font-size:var(--fs-xl)">על מה השיעור?</h2>
+    <div class="mg-topic"><input id="mg-topic" type="text" autocomplete="off" placeholder="למשל: אחוזים בתלוש השכר · כתיבת מכתב רשמי · הפרדת רשויות" aria-label="נושא השיעור"></div>
+    <div class="mg-sugg" id="mg-sugg"></div>
 
-    <div class="filebox">
-      <div class="wide" style="font-size:.83rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:17px;height:17px;flex:none"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/></svg>
-        החומר שלכם — המחולל בונה סביבו
-        <span class="sub" style="font-weight:500">אופציונלי</span>
+    <div class="mg-opts">
+      <div class="mg-opt"><b>שכבה</b><div class="mg-seg" data-seg="grade"><button type="button">כיתה ט׳</button><button type="button" class="on">כיתה י׳</button><button type="button">כיתה י״א</button><button type="button">כיתה י״ב</button></div></div>
+      <div class="mg-opt"><b>משך השיעור</b><div class="mg-seg" data-seg="len"><button type="button" class="on" data-v="45">45 דקות</button><button type="button" data-v="90">90 דקות</button></div></div>
+      <div class="mg-opt"><b>נתיב</b><div class="mg-seg" data-seg="track"><button type="button" class="on" data-v="נתיב הגמר · תעודת גמר">גמר</button><button type="button" data-v="נתיב הבגרות">בגרות</button><button type="button" data-v="מסלול מותאם · חלופות הערכה">מותאם</button></div></div>
+    </div>
+
+    <div class="mg-msg" id="mg-msg1"></div>
+    <div class="mg-nav"><span class="sp"></span><button type="button" class="mg-go" data-next="2">המשך<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button></div>
+  </section>
+
+  <!-- צעד 2 -->
+  <section class="mg-panel" data-panel="2" aria-labelledby="mg-q2">
+    <h2 class="mg-q" id="mg-q2">יש לכם חומר שהשיעור צריך להיבנות סביבו?</h2>
+    <p class="mg-hint">לא חובה. בלי חומר — המחולל מציע שיעור שלם על הנושא שבחרתם.</p>
+    <div class="mg-two">
+      <button type="button" class="mg-big on" data-mat="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.8 1.8 5.4 5.4 1.8-5.4 1.8L12 18.2l-1.8-5.4L4.8 11l5.4-1.8z"/><path d="M18.6 3.6v2.8M17.2 5h2.8"/></svg>
+        <div><b>אין לי חומר — תציעו לי שיעור</b><span>השיעור נבנה מאפס על הנושא, מותאם לשכבה, לנתיב ולתלמידי הכשרה מקצועית.</span></div>
+      </button>
+      <button type="button" class="mg-big" data-mat="1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/></svg>
+        <div><b>יש לי חומר לבנות סביבו</b><span>קובץ PDF, תמונה, קטע טקסט או קישור — והשיעור נשען עליו.</span></div>
+      </button>
+    </div>
+    <div class="mg-mat" id="mg-mat">
+      <label>קובץ מהמחשב
+        <input id="mg-file" type="file" accept=".pdf,.txt,.md,.rtf,.csv,.png,.jpg,.jpeg,.webp,.html">
+        <small>PDF, תמונה או קובץ טקסט. ממסמך Word או מצגת — שמרו כ-PDF, או הדביקו את הקטע המרכזי.</small>
+        <span class="mg-fname" id="mg-fname"><b id="mg-fname-t"></b><span id="mg-fname-s"></span><button type="button" id="mg-fclear" aria-label="הסרת הקובץ"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></span>
+      </label>
+      <label>או קישור לחומר
+        <input id="mg-link" type="url" placeholder="https://…" dir="ltr">
+        <small>הקישור נשמר לידיעה. כדי שהשיעור ייבנה על התוכן — הדביקו גם קטע ממנו למטה.</small>
+      </label>
+      <label class="wide">או הדביקו כאן קטע מהחומר
+        <textarea id="mg-paste" placeholder="קטע מהמאמר, שאלה מהשאלון, פסקה מהתוכנית — כל טקסט שהשיעור צריך להיבנות סביבו."></textarea>
+      </label>
+    </div>
+    <div class="mg-nav"><button type="button" class="mg-back" data-next="1">→ חזרה</button><span class="sp"></span><button type="button" class="mg-go" data-next="3">המשך<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button></div>
+  </section>
+
+  <!-- צעד 3 -->
+  <section class="mg-panel" data-panel="3" aria-labelledby="mg-q3">
+    <h2 class="mg-q" id="mg-q3">מה לבנות?</h2>
+    <p class="mg-hint">ערכה מלאה בלחיצה אחת — או רק מה שאתם צריכים.</p>
+    <button type="button" class="mg-kit on" id="mg-kit"><span class="tag">מומלץ</span><span class="ic6" id="mg-ic6"></span>
+      <div><b>ערכה מלאה</b><span>מערך שיעור · פעילות פתיחה · מצגת · משחק · דף עבודה · בוחן — כולם על אותו שלד, מדברים זה עם זה.</span></div></button>
+    <div class="mg-or">או לבחור בעצמי</div>
+    <div class="mg-picks" id="mg-picks"></div>
+    <div class="mg-sub" id="mg-gtype" hidden><b>איזה משחק?</b><div class="mg-chips" data-chips="gameType"></div></div>
+    <div class="mg-sub" id="mg-otype" hidden><b>איזו פעילות פתיחה?</b><div class="mg-chips" data-chips="openerType"></div></div>
+    <div class="mg-level" id="mg-level">רמת דף העבודה:
+      <div class="mg-seg" data-seg="level"><button type="button" class="on">רגיל</button><button type="button">מותאם</button><button type="button">מונגש</button><button type="button" title="2 שאלות מאבחנות, ואז ערכת משימות לפי הרמה">דיפרנציאלי</button></div>
+    </div>
+
+    <div class="mg-login" id="mg-login">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-3.9 3.4-6.4 7.5-6.4s7.5 2.5 7.5 6.4"/></svg>
+      <div id="mg-login-out">
+        <b>נכנסים פעם אחת עם הרישום שלכם במנור</b>
+        <span>הכניסה נפתחת בלשונית חדשה. אחרי שנכנסתם, חזרו לכאן — העמוד יזהה אתכם לבד.</span>
+        <div class="acts">
+          <a class="btn primary sm" href="hadrachot/teacher/" target="_blank" rel="noopener">כניסה למורים</a>
+          <a class="btn line sm" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים</a>
+        </div>
       </div>
-      <label for="g-file">קובץ מהמחשב
-        <input id="g-file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.md,.rtf,.csv,.png,.jpg,.jpeg,.webp,.html">
-        <span class="sub">PDF, Word, מצגת, תמונה או טקסט</span>
-      </label>
-      <label for="g-link">או קישור לחומר
-        <input id="g-link" type="url" placeholder="https://…  (דרייב, אתר, שאלון)" dir="ltr">
-        <span class="sub">קישור פתוח לצפייה</span>
-      </label>
-      <div class="fname wide" id="g-fname">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/></svg>
-        <b id="g-fname-t"></b><span id="g-fname-s"></span>
-        <button type="button" id="g-fclear" aria-label="הסרת הקובץ"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button>
-      </div>
-      <label class="wide" for="g-paste">או הדביקו כאן קטע מהחומר
-        <textarea id="g-paste" placeholder="קטע מהמאמר, שאלה מהשאלון, פסקה מהתוכנית — כל טקסט שהשיעור צריך להיבנות סביבו."></textarea>
-        <span class="sub">קבצי טקסט נקראים אוטומטית. מקובץ PDF, Word או מצגת — הדבקת הקטע המרכזי כאן נותנת את התוצר המדויק ביותר.</span>
-      </label>
-    </div>
-  </div>
-
-  <div class="step"><i>2</i> מה לייצר <em>אפשר לסמן יותר מאחד</em><s></s></div>
-
-  <div class="picks" id="g-picks">
-    <div class="pick on" data-kind="lesson">
-      <input type="checkbox" id="g-d-lesson" checked>
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        מערך שיעור
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>פתיחה, גוף וסיכום עם זמנים מדויקים, שאלות מנחות, חומרי עזר וכרטיס יציאה.</p>
+      <div id="mg-login-in" hidden><b>מחובר/ת דרך מנור: <span id="mg-who"></span></b><span id="mg-left"></span></div>
     </div>
 
-    <div class="pick" data-kind="opener">
-      <input type="checkbox" id="g-d-opener">
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        פעילות פתיחה
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>חמש עד עשר דקות שפותחות את השיעור — משימה קצרה שמעלה את הנושא ומייצרת סקרנות, עם הערות למורה.</p>
+    <div class="mg-msg" id="mg-msg3"></div>
+    <div class="mg-nav"><button type="button" class="mg-back" data-next="2">→ חזרה</button><span class="sp"></span>
+      <button type="button" class="mg-go" id="mg-run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3.8 1.8 5.4 5.4 1.8-5.4 1.8L12 18.2l-1.8-5.4L4.8 11l5.4-1.8z"/><path d="M18.6 3.6v2.8M17.2 5h2.8"/></svg>בנו לי את השיעור</button></div>
+    <p class="mg-last" id="mg-last" hidden></p>
+  </section>
+
+  <!-- הבנייה והתוצאה -->
+  <section class="mg-build" id="mg-build" aria-live="polite">
+    <div class="mg-bh">
+      <div class="mg-orb" aria-hidden="true"></div>
+      <div><h2 id="mg-btitle">בונים את השיעור…</h2><p id="mg-bsub"></p></div>
+      <div class="mg-clock" id="mg-clock">0:00</div>
     </div>
-
-    <div class="pick" data-kind="deck">
-      <input type="checkbox" id="g-d-deck">
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/></svg>
-        מצגת
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>סדרת שקפים עם כותרת ותוכן לכל שקף. אפשר להוריד מצגת HTML שנפתחת בדפדפן, או להעתיק לכלי המצגות שלכם.</p>
+    <div class="mg-tl" id="mg-tl"></div>
+    <div class="mg-tip" id="mg-tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span></span></div>
+    <div class="mg-msg" id="mg-msgb"></div>
+    <div class="mg-bacts">
+      <button type="button" class="btn line sm" id="mg-edit">→ חזרה לעריכה</button>
+      <button type="button" class="btn line sm" id="mg-new">שיעור חדש</button>
     </div>
-
-    <div class="pick" data-kind="game">
-      <input type="checkbox" id="g-d-game">
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 15h.01"/></svg>
-        משחק
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>שאלות מהירות, משחק התאמה ומשפטי נכון/לא נכון — משוחקים על המסך בכיתה, עם הסבר אחרי כל תשובה.</p>
+    <div class="mg-res" id="mg-res" hidden>
+      <div class="mg-note" id="mg-note"></div>
+      <div id="mg-kitview"></div>
     </div>
+  </section>
 
-    <div class="pick" data-kind="sheet">
-      <input type="checkbox" id="g-d-sheet">
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/></svg>
-        דף עבודה
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>דף לתלמיד עם מקום לתשובות, בפורמט להדפסה — ברמת ההתאמה שתבחרו.</p>
-      <label class="lvl" for="g-level">רמת התאמה
-        <select id="g-level">
-          <option>רגיל</option>
-          <option>מותאם</option>
-          <option>מונגש</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="pick" data-kind="quiz">
-      <input type="checkbox" id="g-d-quiz">
-      <span class="pk-h">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4"/><path d="m9 13 2 2 4-4"/></svg>
-        בוחן
-        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
-      </span>
-      <p>בוחן דיפרנציאלי בשלוש רמות — קל, בינוני ומאתגר. אפשר להריץ על המסך או להדפיס עם התשובות למורה.</p>
-    </div>
-  </div>
-
-  <div class="acts">
-    <button class="btn primary" id="g-run" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M4.9 6.3l2.9 2.9M16.2 14.8l2.9 2.9M3 12h4M17 12h4M4.9 17.7l2.9-2.9M16.2 9.2l2.9-2.9"/></svg>
-      בנו לי את החומרים
-    </button>
-    <button class="btn line sm" id="g-reset" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/></svg>
-      ניקוי
-    </button>
-  </div>
-
-  <div class="stat" id="g-stat"></div>
-
-  <p class="hint">התוצר נבנה על הפדגוגיה של המינהל: תמיד מותאם לנתיב שנבחר, תמיד מסתיים בכרטיס יציאה, ותמיד כתוב לתלמידי הכשרה מקצועית. עברו עליו והתאימו — הוא טיוטה טובה, לא תחליף לשיקול דעת שלכם.</p>
-
-  <!-- תוצרים מוכנים מבנק השיעורים — מרונדרים בעמוד, בלי מעבר לכלי חיצוני -->
-  <div id="g-bank" hidden>
-    <div class="lk-empty" id="g-bank-note" style="margin-bottom:4px"></div>
-    <div id="g-kit"></div>
-  </div>
-
-  <div class="res" id="g-res"></div>
-
-  <div class="fb" id="g-fb">
-    <h3>ההנחיה שלכם מוכנה — הדביקו אותה בכלי ה-AI</h3>
-    <p class="why">הייצור החי בתוך העמוד עדיין לא הופעל, ולכן במקום להשאיר אתכם בלי כלום — בנינו את ההנחיה המלאה, על כל הפרטים שמילאתם ועל החומר שצירפתם. העתיקו אותה, הדביקו ב-ChatGPT, ב-Claude או ב-Gemini, ותקבלו בדיוק את התוצר שביקשתם. <b>זהו מצב ביניים בלבד</b> — כשהשרת יופעל, התוצר יופיע כאן בעמוד עצמו, בלי העתקה ובלי מעבר לכלי חיצוני.</p>
-    <div id="g-fb-list"></div>
-    <div class="ailinks">
-      <button class="btn line sm" type="button" data-ai="https://chatgpt.com/">העתיקו ופתחו ב-ChatGPT</button>
-      <button class="btn line sm" type="button" data-ai="https://claude.ai/new">העתיקו ופתחו ב-Claude</button>
-      <button class="btn line sm" type="button" data-ai="https://gemini.google.com/app">העתיקו ופתחו ב-Gemini</button>
-    </div>
-
-    <!-- החזרה מהכלי החיצוני. בלי השדה הזה המורה נשארת עם טקסט בלוח ובלי שום מקום לשים אותו. -->
-    <div style="margin-top:20px;border-top:1.5px solid var(--border);padding-top:18px">
-      <h3 style="font-size:var(--fs-base);margin-bottom:4px">קיבלתם תשובה? הדביקו אותה כאן</h3>
-      <p class="why" style="margin-bottom:10px">הדביקו את מה שהכלי החזיר, והתוצר יוצג כאן מסודר — מוכן להדפסה, להורדה ולהעברה בכיתה. הטקסט נשאר בדפדפן שלכם בלבד ואינו נשלח לשום מקום.</p>
-      <textarea id="g-back" placeholder="הדביקו כאן את מערך השיעור שקיבלתם…" style="font-family:'Assistant',sans-serif;font-size:.92rem;padding:11px 14px;border:1.5px solid var(--border);border-radius:11px;width:100%;min-height:130px;line-height:1.65;resize:vertical"></textarea>
-      <div class="ailinks" style="margin-top:10px">
-        <button class="btn primary sm" id="g-back-show" type="button">הציגו את התוצר</button>
-        <button class="btn line sm" id="g-back-print" type="button">הדפסה</button>
-        <button class="btn line sm" id="g-back-down" type="button">הורדה כקובץ</button>
-      </div>
-      <div id="g-back-out" class="lk" style="margin-top:16px"></div>
-    </div>
-  </div>
+</div>
 </div>
 </div>
 
@@ -571,661 +639,851 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 <!-- foot:end -->
 
 <script>
-/* ===== מחולל שיעורים =====
-   אותו מנגנון בדיוק כמו ב-emergency.html: כשעוגן תיפרס עם מצב lesson —
-   מדביקים כאן את כתובת ה-exec (ואת אותה כתובת גם ב-emergency.html),
-   והמחולל יעבור אוטומטית לייצור התוצר בתוך העמוד. שינוי של שורה אחת בלבד.
-   עד אז הוא מציג את ההנחיה הבנויה במלואה, מוכנה להדבקה בכלי AI. */
-var LESSON_BACKEND = "";
+/* ===== מחולל שיעורים (11.10.26) =====
+   מוצר אחד: השיעור נבנה כאן בעמוד, בלי ChatGPT/Gemini בחוץ. אשף בשלושה צעדים.
+   1. נושא שיש לו שיעור מוכן בבנק — נפתח מיד, בלי כניסה ובלי עלות.
+   2. כל נושא אחר — נבנה בשרת "מחולל - מוח" (Claude), רק למי שרשום/ה במנור.
+      הכניסה עצמה נעשית במנור (מורים: /hadrachot/teacher/, בעלי תפקידים: /hadrachot/);
+      העמוד הזה רק קורא את המפתח שמנור שמר בדפדפן (אותו אתר), והשרת מאמת אותו מול מנור.
+   התוצרים חוזרים במבנה של lessons/*.json, ולכן lesson-kit.js מציג אותם בדיוק כמו
+   שיעורי הבנק. השרת: רויטל/mecholel-gas/קוד.js
+   כל קריאה מוגבלת בזמן ונופלת לשחזור לפי rid — הכפתור לעולם לא נשאר "בונה…" לנצח. */
+var LESSON_BACKEND = "https://script.google.com/macros/s/AKfycby743c3fzNYup3WE13jGYdXzfEq6A5jJvGGcXKf6jm5rqUaaZW46fSk2putJwXmAkGdAg/exec";
 
 (function lessonGen(){
-var MAXCHARS = 12000;      /* כמה טקסט מהחומר של המורה נכנס להנחיה */
-var MAXB64   = 1500000;    /* עד גודל כזה הקובץ מצורף גם כ-base64 לבקשה */
-
-var MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
-var LAST = [];             /* התוצרים/ההנחיות מהריצה האחרונה */
+var MAXCHARS = 12000, MAXB64 = 1500000, LAST_KEY = "pmh.mecholel.last", HIST_KEY = "pmh.mecholel.hist";
+var QUIET = false;
+var CALL_MS = 240000;   /* תקרת זמן לקריאה אחת לפני שעוברים לשחזור (בנייה + בדיקה: עד כ-3 דקות לתוצר) */
 
 function el(id){ return document.getElementById(id); }
-function val(id){ var e = el(id); return e ? (e.value || "").trim() : ""; }
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
   return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]; }); }
+function svg(p, cls){ return '<svg' + (cls ? ' class="' + cls + '"' : "") + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + "</svg>"; }
+function msg(id, t){ var m = el(id); m.textContent = t || ""; m.classList.toggle("on", !!t); }
 
-/* ---------- בחירת התוצרים ---------- */
-function picks(){
-  var out = [];
-  document.querySelectorAll("#g-picks .pick").forEach(function(p){
-    if (p.querySelector("input").checked) out.push(p.dataset.kind);
-  });
-  return out;
-}
-document.querySelectorAll("#g-picks .pick").forEach(function(p){
-  var box = p.querySelector("input");
-  function sync(){ p.classList.toggle("on", box.checked); }
-  p.addEventListener("click", function(e){
-    if (e.target.closest("select") || e.target.closest("option") || e.target.closest("label.lvl")) return;
-    box.checked = !box.checked; sync();
-  });
-  box.addEventListener("change", sync);
-  sync();
-});
-
-/* ---------- קליטת החומר של המורה ---------- */
-var TEXTY = /\.(txt|md|markdown|csv|json|html?|rtf)$/i;
-function kb(n){ return n < 1024 ? n + " בייט" : (n < 1048576 ? Math.round(n/1024) + " KB" : (n/1048576).toFixed(1) + " MB"); }
-
-el("g-file").addEventListener("change", function(){
-  var f = this.files && this.files[0];
-  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
-  if (!f) { el("g-fname").classList.remove("on"); return; }
-  MATERIAL.name = f.name; MATERIAL.size = f.size; MATERIAL.type = f.type || "";
-  el("g-fname-t").textContent = f.name;
-  el("g-fname-s").textContent = kb(f.size) + " · נקרא…";
-  el("g-fname").classList.add("on");
-
-  if (TEXTY.test(f.name) || /^text\//.test(f.type)) {
-    var r1 = new FileReader();
-    r1.onload = function(){
-      MATERIAL.text = String(r1.result || "").slice(0, MAXCHARS);
-      el("g-fname-s").textContent = kb(f.size) + " · התוכן נקרא ומצורף להנחיה";
-    };
-    r1.onerror = function(){ el("g-fname-s").textContent = kb(f.size) + " · לא הצלחנו לקרוא — הדביקו קטע למטה"; };
-    r1.readAsText(f);
-    return;
-  }
-  if (f.size <= MAXB64) {
-    var r2 = new FileReader();
-    r2.onload = function(){
-      var s = String(r2.result || ""); var i = s.indexOf(",");
-      MATERIAL.b64 = i > -1 ? s.slice(i+1) : "";
-      el("g-fname-s").textContent = kb(f.size) + " · הקובץ יצורף לבקשה. להעמקה — הדביקו את הקטע המרכזי למטה";
-    };
-    r2.readAsDataURL(f);
-  } else {
-    el("g-fname-s").textContent = kb(f.size) + " · גדול מדי לצירוף — הדביקו את הקטע המרכזי למטה";
-  }
-});
-el("g-fclear").addEventListener("click", function(){
-  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" };
-  el("g-file").value = ""; el("g-fname").classList.remove("on");
-});
-
-function materialText(){ return (MATERIAL.text || "") || val("g-paste"); }
-function materialBlock(){
-  var rows = [], link = val("g-link"), t = materialText();
-  if (MATERIAL.name) rows.push("· קובץ שהמורה העלה: " + MATERIAL.name + (MATERIAL.text ? " (התוכן מצורף למטה)" : " (הקובץ עצמו מצורף לבקשה)"));
-  if (link) rows.push("· קישור לחומר של המורה: " + link + " — אם אתה יכול לפתוח אותו, בנה את התוצר על מה שכתוב בו.");
-  if (t) rows.push("· תוכן החומר של המורה:\n\"\"\"\n" + t.slice(0, MAXCHARS) + "\n\"\"\"");
-  if (!rows.length) return "";
-  return "\nהחומר של המורה — זה הבסיס לתוצר:\n" + rows.join("\n") +
-         "\nבנה את התוצר סביב החומר הזה. אל תמציא תוכן מקביל, ואל תתעלם ממנו. אם החומר חלקי — אמור במפורש מה חסר.\n";
-}
-
-/* ---------- ההנחיות ---------- */
-function ctx(){
-  return [
-    "הקשר:",
-    "· בית ספר מקצועי בפיקוח משרד העבודה — מינהל הכשרה מקצועית. תלמידים במגמות טכניות, בנתיבי גמר ובגרות.",
-    "· תחום דעת: " + (val("g-subj") || "—"),
-    "· שכבה: " + val("g-grade"),
-    "· נושא השיעור: " + (val("g-topic") || "—"),
-    "· משך: " + val("g-len"),
-    "· נתיב: " + val("g-track")
-  ].join("\n") + "\n" + materialBlock();
-}
-var RULES = [
-  "כללים:",
-  "· עברית פשוטה. בלי הקדמות, בלי הסברים על עצמך ובלי ז׳רגון אקדמי — התחל ישר בתוצר.",
-  "· התאמה מפורשת לנתיב שנבחר: בנתיב הגמר לקשור למפרט הבחינה ולמסלול המקצועי; בנתיב הבגרות לקשור לשאלון ולמיקוד; במסלול מותאם להציע חלופת הערכה במקום מבחן.",
-  "· לקשור לעולם התוכן המקצועי של התלמידים — דוגמה מהמגמה עדיפה על דוגמה כללית.",
-  "· פורמט: Markdown. כותרות ב-## ו-###, רשימות ב-, טבלאות בצינורות |."
-].join("\n");
-
-function pLesson(){
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. כתוב מערך שיעור אחד, מוכן להעברה מחר בבוקר.","",ctx(),
-    "מבנה המערך, בהתאמה יחסית למשך שנבחר:",
-    "· טבלה בראש: מטרת השיעור · המיומנות · מה להכין מראש.",
-    "1. פתיחה — עוגן קצר שמחבר לנושא, ואז הסבר אחד ממוקד בלבד.",
-    "2. גוף השיעור — משימה אחת ברורה עם דוגמה פתורה, בשתי רמות: בסיס והעמקה.",
-    "3. סיכום — חזרה משותפת קצרה וכרטיס יציאה.","",
-    "חובה לכלול תמיד, גם אם לא ביקשתי:",
-    "א. זמן מדויק בדקות לכל פעילות, שסכומם הוא בדיוק המשך שנבחר.",
-    "ב. שאלות מנחות למורה — לפחות שש, מדורגות.",
-    "ג. חומרי עזר: מה צריך בכיתה, ומה אפשר לשלוח לתלמידים.",
-    "ד. כרטיס יציאה — שלוש שאלות קצרות.",
-    "ה. מה עושים עם תלמיד שמתקשה, ומה עם תלמיד שסיים מוקדם.",
-    "ו. שלוש שורות סיום: מה לבדוק לפני השיעור הבא.","", RULES].join("\n");
-}
-function pDeck(){
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה מצגת כיתתית לשיעור.","",ctx(),
-    "בנה בין 8 ל-12 שקפים שמלווים את השיעור מתחילתו ועד כרטיס היציאה. שקף אחד = רעיון אחד.","",
-    "פורמט הפלט — חובה בדיוק כך, בלי שום טקסט נוסף לפני או אחרי:",
-    "### שקופית 1",
-    "כותרת: הכותרת של השקף",
-    "- שורת תוכן ראשונה",
-    "- שורת תוכן שנייה",
-    "הערת מרצה: מה המורה אומר על השקף הזה, במשפט או שניים.",
-    "### שקופית 2",
-    "…וכן הלאה.","",
-    "כללי המצגת:",
-    "· עד 5 שורות תוכן בשקף, כל שורה עד 12 מילים. בלי פסקאות.",
-    "· שקף שני — מטרת השיעור. שקף אחרון — כרטיס יציאה.",
-    "· לפחות שקף אחד עם דוגמה פתורה ולפחות שקף אחד עם שאלה לדיון בכיתה.",
-    "· לכל שקף חובה הערת מרצה.","",
-    "כללים:",
-    "· עברית פשוטה, בלי ז׳רגון אקדמי.",
-    "· התאמה מפורשת לנתיב שנבחר.",
-    "· לקשור לעולם התוכן המקצועי של התלמידים."].join("\n");
-}
-function pSheet(){
-  var lvl = val("g-level") || "רגיל";
-  var levels = {
-    "רגיל":  "רמה רגילה: ניסוח סטנדרטי, 6–8 משימות, שאלה מסכמת אחת פתוחה.",
-    "מותאם": "רמה מותאמת: משפטים קצרים, כל משימה מפורקת לשלבים, פחות משימות ויותר מקום לתשובה, לפני כל חלק דוגמה פתורה. בלי שאלות מרובות-שלבים.",
-    "מונגש": "רמה מונגשת: שפה פשוטה מאוד ומשפט אחד בכל הוראה, אוצר מילים בסיסי, בנק מילים בראש הדף, שאלות סגורות והשלמות, מקום כתיבה גדול, בלי מטאפורות ובלי שאלות כפולות. מתאים לתלמידים עם לקויות למידה ולדוברי עברית כשפה שנייה."
-  };
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. כתוב דף עבודה לתלמיד — לא למורה.","",ctx(),
-    "רמת ההתאמה שנבחרה: " + lvl,
-    levels[lvl] || levels["רגיל"],"",
-    "מבנה דף העבודה:",
-    "· כותרת הדף, ושורות ריקות לשם התלמיד ולתאריך.",
-    "· פסקת פתיחה קצרה: מה לומדים בדף הזה, בשתי שורות.",
-    "· המשימות, ממוספרות, מהקל לקשה. אחרי כל שאלה שורות ריקות לתשובה (סמן אותן בקווים תחתונים).",
-    "· לפחות משימה אחת מבוססת על החומר שצורף, אם צורף חומר.",
-    "· משימת בונוס אחת לתלמיד שסיים מוקדם.",
-    "· בסוף הדף: ריבוע ״בדקתי את עצמי״ עם שלוש שאלות כן/לא.","",
-    "אחרי דף העבודה, תחת הכותרת ״## מחוון למורה״ — התשובות הנכונות וניקוד מוצע לכל משימה.","",
-    "כללים:",
-    "· פנייה ישירה לתלמיד בגוף שני. בלי הוראות למורה בתוך הדף עצמו.",
-    "· התוצר מיועד להדפסה — בלי אלמנטים אינטראקטיביים ובלי הפניות למסך.",
-    "· התאמה מפורשת לנתיב שנבחר.",
-    "· פורמט: Markdown."].join("\n");
-}
-function pOpener(){
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה פעילות פתיחה אחת לשיעור.","",ctx(),
-    "פעילות פתיחה טובה נמשכת 5 עד 10 דקות, מעלה את הנושא בלי ללמד אותו, ומייצרת סקרנות אצל תלמיד שנכנס לכיתה בלי מוטיבציה.","",
-    "בנה אחת מהסוגים האלה — בחר את המתאים לנושא: הצבעה בין ניסוחים · חידה קצרה · תמונה או מקרה לדיון · שאלה אישית שכל אחד עונה עליה במשפט · מיון כרטיסים · ניחוש מספר ואז חשיפת הנתון האמיתי.","",
-    "חובה לכלול:",
-    "א. הוראות הפעלה למורה, צעד אחר צעד, עם זמן בדקות לכל שלב.",
-    "ב. את החומר עצמו — המשפטים, השאלות או הכרטיסים — מוכן להקרנה או להדפסה.",
-    "ג. לכל פריט: מה התשובה ומה ההסבר, כדי שהמורה תדע לאן להוביל.",
-    "ד. הערת מרצה: מה התלמידים צפויים לענות, ואיפה נמצאת הנקודה שכדאי לעצור בה.",
-    "ה. משפט הגשר — איך עוברים מהפעילות אל גוף השיעור.","",
-    "כללים:",
-    "· בלי הכנה מורכבת. מה שנדרש הוא לוח, מקרן או דף מודפס — לא יותר.",
-    "· לקשור לעולם התוכן והחיים של תלמידי הכשרה מקצועית.",
-    "· עברית פשוטה, פנייה למורה בגוף שני."].join("\n");
-}
-function pGame(){
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה שלושה משחקי תרגול קצרים לשיעור, לשימוש על מסך הכיתה.","",ctx(),
-    "בנה בדיוק שלושה חלקים:","",
-    "1. שאלות מהירות — שש שאלות אמריקאיות, ארבע אפשרויות לכל אחת. ציין את התשובה הנכונה, וכתוב הסבר קצר שמופיע אחרי המענה.",
-    "2. משחק התאמה — שישה זוגות של מושג מול ההגדרה שלו. המושגים קצרים, ההגדרות באורך שורה.",
-    "3. נכון או לא נכון — חמישה משפטים. לכל אחד: התשובה, והסבר במשפט אחד.","",
-    "חובה:",
-    "· לפחות שני מסיחים בכל שאלה אמריקאית שנשענים על טעות אמיתית שתלמידים עושים — לא מסיחים אקראיים.",
-    "· ההסבר חייב ללמד משהו, לא רק לומר ״נכון״ או ״לא נכון״.",
-    "· לפחות משפט אחד ב״נכון או לא נכון״ שנשמע נכון והוא שגוי.","",
-    "כללים:",
-    "· עברית פשוטה, פנייה לתלמיד.",
-    "· התאמה מפורשת לנתיב שנבחר.",
-    "· בלי שאלות שאפשר לענות עליהן בלי ללמוד את הנושא."].join("\n");
-}
-function pQuiz(){
-  return ["אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה בוחן דיפרנציאלי על הנושא.","",ctx(),
-    "הבוחן בנוי משלוש רמות, ומסומן במפורש איזו שאלה שייכת לאיזו רמה:",
-    "· קל — שלוש שאלות. ידע בסיסי שכל תלמיד שהיה בשיעור אמור לענות עליו.",
-    "· בינוני — שלוש שאלות. דורשות הבנה והסקה, לא רק שליפה.",
-    "· מאתגר — שתי שאלות ברמת בחינה: מקרה גבולי, זיהוי כשל, או יישום בהקשר חדש.","",
-    "לכל שאלה: ארבע אפשרויות, סימון התשובה הנכונה, והסבר שמלמד למה היא נכונה ולמה הנפוצה שבשגויות מפתה.","",
-    "חובה:",
-    "· לא לכלול את כל השאלות באותה רמה — התפלגות שלוש/שלוש/שתיים היא חובה.",
-    "· המסיחים חייבים לשקף טעויות אמיתיות של תלמידים.",
-    "· בסוף: טבלת מפתח תשובות למורה.","",
-    "כללים:",
-    "· עברית פשוטה, פנייה לתלמיד.",
-    "· התאמה מפורשת לנתיב שנבחר."].join("\n");
-}
-
-var KINDS = {
-  lesson: { title:"מערך שיעור", file:"מערך-שיעור", prompt:pLesson,
-            icon:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/>' },
-  deck:   { title:"מצגת", file:"מצגת", prompt:pDeck,
-            icon:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/>' },
-  sheet:  { title:"דף עבודה", file:"דף-עבודה", prompt:pSheet,
-            icon:'<path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/>' },
-  opener: { title:"פעילות פתיחה", file:"פעילות-פתיחה", prompt:pOpener,
-            icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
-  game:   { title:"משחק", file:"משחק", prompt:pGame,
-            icon:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 15h.01"/>' },
-  quiz:   { title:"בוחן", file:"בוחן", prompt:pQuiz,
-            icon:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4"/><path d="m9 13 2 2 4-4"/>' }
+/* ---------- תחומי הדעת ---------- */
+var SUBJ = [
+  { n:"אזרחות", c:"--c-civ", i:'<path d="M3 10h18M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18M12 3 3 8h18z"/>',
+    s:["הפרדת רשויות", "זכויות העובד", "מדינה יהודית ודמוקרטית", "זכויות אדם ואזרח", "רוב ומיעוט בדמוקרטיה", "שלטון החוק"] },
+  { n:"עברית והבעה", c:"--c-heb", i:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    s:["כתיבת מכתב רשמי", "סיכום טקסט מידעי", "טיעון ונימוק", "אמינות מקור ברשת", "מילות קישור", "כתיבת קורות חיים"] },
+  { n:"מתמטיקה", c:"--c-math", i:'<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h2M13.5 12h2M8.5 16h2M13.5 16h2"/>',
+    s:["אחוזים בתלוש השכר", "פונקציה קווית", "קריאת גרפים", "יחס ופרופורציה", "שטחים ונפחים", "סטטיסטיקה: ממוצע וחציון"] },
+  { n:"אנגלית", c:"--c-eng", i:'<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.3 3.4 8.5s-1.2 6.1-3.4 8.5c-2.2-2.4-3.4-5.3-3.4-8.5S9.8 5.9 12 3.5z"/>',
+    s:["Job interview vocabulary", "Present simple vs. present progressive", "Reading for the main idea", "Writing a short email", "Wh questions", "Workplace safety signs"] },
+  { n:"היסטוריה", c:"--c-his", i:'<path d="M5 5.5A1.5 1.5 0 0 1 6.5 4H18a1 1 0 0 1 1 1v13.5H6.5A1.5 1.5 0 0 0 5 20z"/><path d="M9 8.5h6M9 11.8h4"/>',
+    s:["העלייה הרביעית", "הכרזת העצמאות", "מקור ראשוני ומשני", "המהפכה התעשייתית", "הלאומיות המודרנית", "השואה"] },
+  { n:"ספרות", c:"--c-lit", i:'<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H5.5A1.5 1.5 0 0 1 4 15.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5z"/>',
+    s:["אפיון דמות", "הדובר בשיר לירי", "נקודת מבט בסיפור קצר", "קונפליקט ביצירה", "אמצעים אמנותיים בשיר", "הזמן בסיפור"] },
+  { n:"תנ״ך", c:"--c-tan", i:'<path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"/><path d="M6 18a2 2 0 0 1 2-2h10M10 8h4"/>',
+    s:["ביומו תתן שכרו", "יוסף ואחיו", "השבת כערך חברתי", "דוד וגלית", "נביאי הצדק החברתי", "ספר רות"] }
+];
+var KIND = {
+  lesson: { t:"מערך שיעור", d:"פתיחה, גוף וסיכום עם זמנים, שאלות מנחות וכרטיס יציאה.", i:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 19.5z"/><path d="M8 8h8M8 12h8M8 16h5"/>' },
+  opener: { t:"פעילות פתיחה", d:"5–10 דקות שמעוררות סקרנות, עם הערות למורה.", i:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
+  deck:   { t:"מצגת", d:"8–12 שקפים עם הערות מרצה, מוכנה למקרן.", i:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/>' },
+  game:   { t:"משחק", d:"שאלות מהירות, התאמה ונכון/לא נכון על המסך.", i:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 15h.01"/>' },
+  sheet:  { t:"דף עבודה", d:"דף לתלמיד להדפסה, עם מחוון למורה.", i:'<path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 12h6M9 16h6"/>' },
+  quiz:   { t:"בוחן", d:"8 שאלות בשלוש רמות, עם הסבר לכל תשובה.", i:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4"/><path d="m9 13 2 2 4-4"/>' }
+};
+var ORDER = ["lesson", "opener", "deck", "game", "sheet", "quiz"];
+/* סוגי המשחקים — אותם 12 של נגן המשחקים באתר; סוגי הפתיחה — 8 שעובדים על המקרן */
+var CHIPS = {
+  gameType: [["", "תפתיעו אותי"], ["millionaire", "סולם הפרסים"], ["wheel", "גלגל השאלות"], ["escape", "חדר בריחה"], ["trivia", "טריוויה"],
+    ["memory", "זיכרון"], ["matching", "התאמה"], ["groups", "מיון לקבוצות"], ["ordering", "סדר נכון"], ["truefalse", "נכון / לא נכון"],
+    ["fillblank", "השלמת חסר"], ["sentence", "סדר את המשפט"], ["hangman", "נחשו את המילה"]],
+  openerType: [["", "תפתיעו אותי"], ["question", "שאלה עם טיימר"], ["riddle", "חידה עם רמזים"], ["dilemma", "דילמה"], ["twotruths", "שתי אמיתות ושקר"],
+    ["truefalse", "נכון / לא נכון"], ["story", "סיפור מפתיע"], ["guessnumber", "נחשו את המספר"], ["vote", "הצבעה מהטלפונים"], ["wordcloud", "ענן מילים"]]
 };
 
-/* ===== בנק השיעורים המוכנים =====
-   שיעור בבנק הוא קובץ תוכן אחד ב-lessons/, וממנו נגזרים כל ששת התוצרים.
-   התאמה נעשית לפי תחום דעת + מילות מפתח בנושא שהמורה הקלידה.
-   אין התאמה? נופלים חזרה למסלול ההנחיות — בדיוק כמו קודם. */
+var S = { gameType:"", openerType:"", subj:"", grade:"כיתה י׳", len:45, track:"נתיב הגמר · תעודת גמר", level:"רגיל", mat:false, kit:true, picks:{ lesson:true } };
+var MATERIAL = { name:"", type:"", text:"", b64:"" };
+
+/* ---------- צעד 1 ---------- */
+el("mg-subj").innerHTML = SUBJ.map(function(s, n){
+  return '<button type="button" data-n="' + n + '" style="--c:var(' + s.c + ')">' + svg(s.i) + esc(s.n) + "</button>";
+}).join("");
+function paintSugg(){
+  var s = SUBJ.filter(function(x){ return x.n === S.subj; })[0];
+  var box = el("mg-sugg");
+  box.classList.toggle("on", !!s);
+  box.style.setProperty("--sc", s ? "var(" + s.c + ")" : "");
+  box.innerHTML = s ? '<span class="lbl">רעיונות לשיעור ב' + esc(s.n) + " — לחצו כדי לבחור, או כתבו נושא משלכם</span>" + s.s.map(function(t){
+    return '<button type="button"' + (/[a-z]/i.test(t) ? ' dir="ltr"' : "") + ">" + esc(t) + "</button>"; }).join("") : "";
+  el("mg-topic").placeholder = s ? "למשל: " + s.s[0] + " · " + s.s[3] : el("mg-topic").placeholder;
+}
+el("mg-subj").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  S.subj = SUBJ[+b.dataset.n].n;
+  Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+  paintSugg(); msg("mg-msg1", "");
+  el("mg-topic").focus();
+});
+el("mg-sugg").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  el("mg-topic").value = b.textContent; msg("mg-msg1", "");
+});
+document.querySelectorAll(".mg-seg").forEach(function(g){
+  g.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    Array.prototype.forEach.call(g.children, function(x){ x.classList.toggle("on", x === b); });
+    var v = b.dataset.v || b.textContent;
+    if (g.dataset.seg === "len") S.len = parseInt(v, 10); else S[g.dataset.seg] = v;
+  });
+});
+
+/* ---------- צעד 2: חומר ---------- */
+document.querySelectorAll(".mg-big").forEach(function(b){
+  b.addEventListener("click", function(){
+    S.mat = b.dataset.mat === "1";
+    document.querySelectorAll(".mg-big").forEach(function(x){ x.classList.toggle("on", x === b); });
+    el("mg-mat").classList.toggle("on", S.mat);
+  });
+});
+var TEXTY = /\.(txt|md|markdown|csv|json|html?|rtf)$/i, SENDABLE = /\.(pdf|png|jpe?g|webp|gif)$/i;
+function kb(n){ return n < 1048576 ? Math.max(1, Math.round(n/1024)) + " KB" : (n/1048576).toFixed(1) + " MB"; }
+el("mg-file").addEventListener("change", function(){
+  var f = this.files && this.files[0];
+  MATERIAL = { name:"", type:"", text:"", b64:"" };
+  if (!f) { el("mg-fname").classList.remove("on"); return; }
+  MATERIAL.name = f.name; MATERIAL.type = f.type || "";
+  el("mg-fname-t").textContent = f.name; el("mg-fname").classList.add("on");
+  var st = el("mg-fname-s");
+  st.textContent = " · " + kb(f.size) + " · נקרא…";
+  var r = new FileReader();
+  if (TEXTY.test(f.name) || /^text\//.test(f.type)) {
+    r.onload = function(){ MATERIAL.text = String(r.result || "").slice(0, MAXCHARS); st.textContent = " · " + kb(f.size) + " · נקרא ויצורף"; };
+    r.readAsText(f); return;
+  }
+  if (!SENDABLE.test(f.name)) { st.textContent = " · את הסוג הזה המחולל לא קורא — שמרו כ-PDF או הדביקו קטע"; return; }
+  if (f.size > MAXB64) { st.textContent = " · " + kb(f.size) + " · גדול מדי — הדביקו את הקטע המרכזי"; return; }
+  r.onload = function(){ var s = String(r.result || ""), i = s.indexOf(","); MATERIAL.b64 = i > -1 ? s.slice(i + 1) : ""; st.textContent = " · " + kb(f.size) + " · יצורף והמחולל יקרא אותו"; };
+  r.readAsDataURL(f);
+});
+el("mg-fclear").addEventListener("click", function(){
+  MATERIAL = { name:"", type:"", text:"", b64:"" }; el("mg-file").value = ""; el("mg-fname").classList.remove("on");
+});
+
+/* ---------- צעד 3: מה לבנות ---------- */
+el("mg-ic6").innerHTML = ORDER.map(function(k){ return svg(KIND[k].i); }).join("");
+el("mg-picks").innerHTML = ORDER.map(function(k){
+  return '<button type="button" class="mg-pick" data-k="' + k + '"><span class="h">' + svg(KIND[k].i) + esc(KIND[k].t) +
+    '<span class="ck">' + svg('<path d="M20 6 9 17l-5-5"/>') + "</span></span><small>" + esc(KIND[k].d) + "</small></button>";
+}).join("");
+function chosen(){ return S.kit ? ORDER.slice() : ORDER.filter(function(k){ return S.picks[k]; }); }
+document.querySelectorAll("[data-chips]").forEach(function(box){
+  var key = box.dataset.chips;
+  box.innerHTML = CHIPS[key].map(function(c){ return '<button type="button" data-v="' + c[0] + '"' + (c[0] ? "" : ' class="sur on"') + ">" + esc(c[1]) + "</button>"; }).join("");
+  box.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    S[key] = b.dataset.v;
+    Array.prototype.forEach.call(box.children, function(x){ x.classList.toggle("on", x === b); });
+  });
+});
+function paintPicks(){
+  var ch = chosen();
+  el("mg-gtype").hidden = ch.indexOf("game") < 0;
+  el("mg-otype").hidden = ch.indexOf("opener") < 0;
+  el("mg-kit").classList.toggle("on", S.kit);
+  document.querySelectorAll(".mg-pick").forEach(function(p){ p.classList.toggle("on", !S.kit && !!S.picks[p.dataset.k]); });
+  el("mg-level").classList.toggle("on", chosen().indexOf("sheet") > -1);
+}
+el("mg-kit").addEventListener("click", function(){ S.kit = true; paintPicks(); msg("mg-msg3", ""); });
+el("mg-picks").addEventListener("click", function(e){
+  var p = e.target.closest(".mg-pick"); if (!p) return;
+  if (S.kit) { S.kit = false; S.picks = {}; }
+  S.picks[p.dataset.k] = !S.picks[p.dataset.k];
+  if (!chosen().length) S.kit = true;
+  paintPicks(); msg("mg-msg3", "");
+});
+paintPicks();
+
+/* ---------- ניווט בין הצעדים ---------- */
+var STEP = 1;
+function check(n){
+  if (n >= 2) {
+    if (!S.subj) { msg("mg-msg1", "בוחרים קודם תחום דעת."); return 1; }
+    if (!el("mg-topic").value.trim()) { msg("mg-msg1", "כותבים את נושא השיעור — או לוחצים על אחד הרעיונות."); el("mg-topic").focus(); return 1; }
+  }
+  return n;
+}
+function go(n){
+  n = check(n);
+  STEP = n;
+  track("אשף", "צעד " + n);
+  document.querySelectorAll(".mg-panel").forEach(function(p){ p.classList.toggle("on", +p.dataset.panel === n); });
+  document.querySelectorAll("#mg-steps button").forEach(function(b){
+    var k = +b.dataset.step;
+    b.classList.toggle("on", k === n); b.classList.toggle("done", k < n);
+    b.disabled = k > n && check(k) !== k;
+  });
+  el("mg-build").classList.remove("on");
+  el("mg-steps").hidden = false;
+  if (window.innerWidth < 760) el("mecholel-shiur").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+document.querySelectorAll("[data-next]").forEach(function(b){ b.addEventListener("click", function(){ go(+b.dataset.next); }); });
+el("mg-steps").addEventListener("click", function(e){ var b = e.target.closest("button"); if (b && !b.disabled) go(+b.dataset.step); });
+el("mg-topic").addEventListener("keydown", function(e){ if (e.key === "Enter") go(2); });
+
+/* ===== בנק השיעורים המוכנים ===== */
 var BANK = [
-  { id:"hebrew-tiun", subject:"עברית והבעה", topic:"לבנות טיעון משכנע",
-    match:["טיעון","טיעונית","לטעון","שכנוע","לשכנע","נימוק","ביסוס","טענה","רטוריקה","הבעה"] },
-  { id:"civics-kavod-adam", subject:"אזרחות", topic:"כבוד האדם וחירותו",
-    match:["כבוד האדם","חירות","זכויות","זכות","חוק יסוד","חוק־יסוד","פסקת ההגבלה","הגבלה","שלטון החוק","פרטיות"] },
-  { id:"literature-hadmut", subject:"ספרות", topic:"איך נבנית דמות",
-    match:["דמות","דמויות","אפיון","גיבור","מספר","זהות","התבגרות","אמצעים אמנותיים"] },
-  { id:"tanakh-sachar-sachir", subject:"תנ״ך", topic:"ביומו תתן שכרו",
-    match:["שכר","שכיר","הלנת שכר","מוסר","מצפן","עובד","צדק חברתי","ויקרא","דברים","נבואה"] },
-  { id:"math-achuzim-kesef", subject:"מתמטיקה", topic:"אחוזים של כסף",
-    match:["אחוז","אחוזים","הנחה","מבצע","מע״מ","מעמ","כסף","תקציב","כדאיות","תשלומים","ריבית","שכר"] },
-  { id:"english-wh-questions", subject:"אנגלית", topic:"שאלות Wh",
-    match:["wh","Wh","WH","שאל","שאלות","question","משפט","דקדוק","תבנית","סדר מילים"] },
-  { id:"history-tahkir-makor", subject:"היסטוריה", topic:"תחקיר היסטורי",
-    match:["מקור","מקורות","תחקיר","ראשוני","משני","עדות","חקר","ארגז הכלים","אמינות","ביקורת"] }
+  { id:"hebrew-tiun", subject:"עברית והבעה", match:["טיעון","טיעונית","לטעון","שכנוע","לשכנע","נימוק","ביסוס","טענה","רטוריקה"] },
+  { id:"civics-kavod-adam", subject:"אזרחות", match:["כבוד האדם","חירות","חוק יסוד","חוק־יסוד","פסקת ההגבלה","שלטון החוק","פרטיות"] },
+  { id:"literature-hadmut", subject:"ספרות", match:["דמות","דמויות","אפיון","גיבור"] },
+  { id:"tanakh-sachar-sachir", subject:"תנ״ך", match:["שכר","שכיר","הלנת שכר","ביומו"] },
+  { id:"math-achuzim-kesef", subject:"מתמטיקה", match:["אחוז","הנחה","מבצע","מע״מ","מעמ","תשלומים","כדאיות"] },
+  { id:"english-wh-questions", subject:"אנגלית", match:["wh","Wh","WH","שאלות Wh","question words"] },
+  { id:"history-tahkir-makor", subject:"היסטוריה", match:["מקור ראשוני","מקורות","תחקיר","ראשוני","משני","עדות"] }
 ];
-
 function bankMatch(){
-  var subj = val("g-subj"), topic = (val("g-topic") || "").trim();
-  var pool = BANK.filter(function(b){ return b.subject === subj; });
-  if (!pool.length || !topic) return null;
-  var hit = pool.filter(function(b){
-    return b.match.some(function(w){ return topic.indexOf(w) !== -1; });
-  })[0];
-  return hit || null;
+  var t = el("mg-topic").value.trim();
+  if (S.mat) return null;   /* מי שצירף חומר — רוצה שיעור על החומר שלו */
+  return BANK.filter(function(b){ return b.subject === S.subj && b.match.some(function(w){ return t.indexOf(w) > -1; }); })[0] || null;
 }
 
-/* ---------- עזרים ---------- */
-function copyText(t){
-  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
-  var a = document.createElement("textarea");
-  a.value = t; document.body.appendChild(a); a.select();
-  try { document.execCommand("copy"); } catch(e){}
-  a.remove(); return Promise.resolve();
+/* ===== הכניסה — דרך מנור ===== */
+function readLS(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e){ return null; } }
+function me(){
+  var t = readLS("ts.teacher.v1"), s = readLS("ts.staff.v1");
+  if (t && t.k) return { t:"teacher", k:t.k, name:t.name || "" };
+  if (s && s.k) return { t:"staff", k:s.k, name:s.name || "" };
+  return null;
 }
-function flash(btn, txt){
-  if (btn.dataset.busy) return;
-  var o = btn.innerHTML; btn.dataset.busy = "1"; btn.textContent = txt;
-  setTimeout(function(){ btn.innerHTML = o; delete btn.dataset.busy; }, 1700);
-}
-function download(name, text, mime){
-  var b = new Blob(["\ufeff" + text], { type: (mime || "text/plain") + ";charset=utf-8" });
-  var u = URL.createObjectURL(b), a = document.createElement("a");
-  a.href = u; a.download = name; document.body.appendChild(a); a.click();
-  a.remove(); setTimeout(function(){ URL.revokeObjectURL(u); }, 4000);
-}
-function slug(){
-  var s = (val("g-subj") + "-" + val("g-topic")).replace(/[\\/:*?"<>|]/g, "").replace(/\s+/g, "-");
-  return s.replace(/^-+|-+$/g, "").slice(0, 60) || "שיעור";
-}
-function status(msg){
-  var s = el("g-stat");
-  if (!msg) { s.classList.remove("on"); s.textContent = ""; return; }
-  s.textContent = msg; s.classList.add("on");
-}
-
-/* ---------- הצגה מעוצבת של הפלט ---------- */
-function inline(s){
-  return esc(s)
-    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    .replace(/(^|\s)_([^_]+)_(?=\s|$)/g, "$1<i>$2</i>");
-}
-function md(src){
-  var lines = String(src || "").replace(/\r/g, "").split("\n");
-  var out = [], list = null, tbl = false, i;
-  function closeList(){ if (list) { out.push("</" + list + ">"); list = null; } }
-  function closeTbl(){ if (tbl) { out.push("</tbody></table></div>"); tbl = false; } }
-  for (i = 0; i < lines.length; i++) {
-    var L = lines[i], t = L.trim();
-    if (!t) { closeList(); closeTbl(); continue; }
-
-    if (/^\|.*\|$/.test(t)) {
-      var cells = t.replace(/^\||\|$/g, "").split("|").map(function(c){ return c.trim(); });
-      if (/^[\s|:-]+$/.test(t) && tbl) continue;
-      if (!tbl) {
-        closeList();
-        out.push('<div class="tblwrap"><table><thead><tr>' +
-          cells.map(function(c){ return "<th>" + inline(c) + "</th>"; }).join("") +
-          "</tr></thead><tbody>");
-        tbl = true;
-      } else {
-        out.push("<tr>" + cells.map(function(c){ return "<td>" + inline(c) + "</td>"; }).join("") + "</tr>");
-      }
-      continue;
-    }
-    closeTbl();
-
-    var h = t.match(/^(#{1,6})\s+(.*)$/);
-    if (h) { closeList(); out.push(h[1].length <= 2 ? "<h4>" + inline(h[2]) + "</h4>" : "<h5>" + inline(h[2]) + "</h5>"); continue; }
-    if (/^([-*_])\1{2,}$/.test(t)) { closeList(); out.push("<hr>"); continue; }
-
-    var b = t.match(/^[-*•·]\s+(.*)$/);
-    if (b) { if (list !== "ul") { closeList(); out.push("<ul>"); list = "ul"; } out.push("<li>" + inline(b[1]) + "</li>"); continue; }
-    var n = t.match(/^\d+[.)]\s+(.*)$/);
-    if (n) { if (list !== "ol") { closeList(); out.push("<ol>"); list = "ol"; } out.push("<li>" + inline(n[1]) + "</li>"); continue; }
-
-    closeList();
-    out.push("<p>" + inline(t) + "</p>");
+var LEFT = null;
+function paintLogin(){
+  var m = me();
+  el("mg-login").classList.toggle("in", !!m);
+  el("mg-login-out").hidden = !!m; el("mg-login-in").hidden = !m;
+  if (m) {
+    el("mg-who").textContent = m.name || (m.t === "teacher" ? "מורה" : "בעל/ת תפקיד");
+    el("mg-left").textContent = LEFT == null ? "" : "נשארו לך היום " + LEFT + " שיעורים חדשים.";
   }
-  closeList(); closeTbl();
-  return out.join("");
 }
+function refreshLeft(){
+  if (!me()) return;
+  post({ action:"whoami" }, 30000).then(function(d){ if (d && d.ok) { LEFT = d.left; paintLogin(); } });
+}
+window.addEventListener("storage", function(e){ if (e.key === "ts.teacher.v1" || e.key === "ts.staff.v1") { LEFT = null; paintLogin(); refreshLeft(); } });
+document.addEventListener("visibilitychange", function(){ if (!document.hidden) paintLogin(); });
 
-/* ---------- מצגת ---------- */
-function parseSlides(src){
-  var chunks = String(src || "").split(/^\s*(?:#{1,4}\s*)?(?:---\s*)?שקופית\s*\d+\s*(?:---)?\s*$/m);
-  var slides = [], i;
-  for (i = 1; i < chunks.length; i++) {
-    var title = "", bullets = [], note = "";
-    chunks[i].split("\n").forEach(function(L){
-      var t = L.trim(); if (!t) return;
-      var mT = t.match(/^\**\s*כותרת\s*\**\s*[:：]\s*(.*)$/);
-      if (mT) { title = mT[1].replace(/\*/g, "").trim(); return; }
-      var mN = t.match(/^\**\s*הער(?:ת מרצה|ה למורה|ות מרצה|ה)\s*\**\s*[:：]\s*(.*)$/);
-      if (mN) { note = mN[1].trim(); return; }
-      var mB = t.match(/^[-*•·]\s+(.*)$/);
-      if (mB) { bullets.push(mB[1].replace(/\*/g, "").trim()); return; }
-      if (!title) title = t.replace(/[#*]/g, "").trim(); else bullets.push(t.replace(/^[#*]+/, "").trim());
-    });
-    if (title || bullets.length) slides.push({ title: title || "שקף " + i, bullets: bullets, note: note });
+/* ===== הקריאה לשרת =====
+   כל בקשה נושאת rid. תשובה שאבדה, נתקעה או לא הגיעה בזמן — נשלפת מהשרת לפי ה-rid. */
+function rid(){
+  try { var a = new Uint8Array(16); crypto.getRandomValues(a);
+    return Array.prototype.map.call(a, function(b){ return ("0" + b.toString(16)).slice(-2); }).join(""); } catch(e){ return ""; }
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function recover(id, n){
+  if (!id || n >= 10) return Promise.resolve(null);
+  return sleep([2000, 4000, 6000, 8000, 10000, 12000, 15000, 15000, 20000, 20000][n]).then(function(){
+    return fetch(LESSON_BACKEND + "?rid=" + id).then(function(r){ return r.json(); })
+      .then(function(d){ return d && d.error === "rid_pending" ? recover(id, n + 1) : d; })
+      .catch(function(){ return recover(id, n + 1); });
+  });
+}
+function post(body, ms){
+  var m = me(), id = rid(), ctl = window.AbortController ? new AbortController() : null;
+  body.auth = m ? { t:m.t, k:m.k } : null; body.rid = id;
+  var timer = ctl ? setTimeout(function(){ ctl.abort(); }, ms || CALL_MS) : 0;
+  return fetch(LESSON_BACKEND, { method:"POST", body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return recover(id, 0); })
+    .then(function(d){ clearTimeout(timer); return d || { ok:false, error:"network" }; },
+          function(){ clearTimeout(timer); return { ok:false, error:"network" }; });
+}
+var ERR = {
+  nologin:  "כדי לבנות שיעור חדש נכנסים פעם אחת דרך מנור — הכפתורים בצעד 3.",
+  badlogin: "הכניסה למנור במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור ונסו שוב.",
+  menor:    "לא הצלחנו לאמת את הכניסה מול מנור. נסו שוב בעוד רגע.",
+  expired:  "עבר יותר משעה מאז שהשיעור התחיל להיבנות. בנו אותו מחדש.",
+  network:  "התשובה מהשרת לא הגיעה. בדקו את החיבור ונסו שוב.",
+  empty:    "חסרים פרטים: תחום דעת, נושא ולפחות תוצר אחד."
+};
+function errText(d){ return ERR[d && d.error] || "משהו השתבש בבנייה. אפשר לנסות שוב — ואם זה חוזר, כתבו לנו בכפתור ״נתקלתם בבעיה?״."; }
+
+/* ===== מסך הבנייה ===== */
+var TIPS = [
+  "כל התוצרים נבנים על אותו שלד — אותה מטרה, אותם רעיונות ואותה דוגמה מעולם העבודה.",
+  "כל תוצר עובר בודק לפני שהוא מגיע אליכם: עובדות, חישובים, התאמה לשכבה ולתלמידי ההכשרה.",
+  "כפתור ״הצגה לכיתה״ פותח כל תוצר במסך מלא על המקרן. מעבר בחצים, יציאה ב-Esc.",
+  "דף העבודה מגיע עם מחוון למורה — 100 נקודות, ועוד בונוס למי שמסיים מוקדם.",
+  "במשחק ההתאמה לוחצים על מושג ואז על ההגדרה שלו — עובד גם על לוח חכם.",
+  "הבוחן בנוי בשלוש רמות: קל, בינוני ומאתגר — עם הסבר אחרי כל תשובה.",
+  "השיעור נשמר בדפדפן הזה. גם אחרי רענון אפשר לפתוח אותו שוב.",
+  "זו טיוטה טובה, לא תחליף לשיקול הדעת שלכם — עברו עליה והתאימו לכיתה."
+];
+var RUN = null, CLOCK = 0, TIPT = 0;
+function startClock(){
+  var t0 = Date.now(), tip = 0, span = el("mg-tip").querySelector("span");
+  clearInterval(CLOCK); clearInterval(TIPT);
+  el("mg-clock").textContent = "0:00";
+  CLOCK = setInterval(function(){ var s = Math.round((Date.now() - t0) / 1000); el("mg-clock").textContent = Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); }, 1000);
+  span.textContent = TIPS[0];
+  TIPT = setInterval(function(){ span.style.opacity = 0; setTimeout(function(){ tip = (tip + 1) % TIPS.length; span.textContent = TIPS[tip]; span.style.opacity = 1; }, 400); }, 7000);
+}
+function stopClock(){ clearInterval(CLOCK); clearInterval(TIPT); }
+function showBuild(title, sub){
+  VIEW_LID = "";
+  var fb = document.querySelector(".mg-fb"); if (fb) fb.remove();
+  document.querySelectorAll(".mg-panel").forEach(function(p){ p.classList.remove("on"); });
+  el("mg-steps").hidden = true;
+  var b = el("mg-build"); b.classList.add("on"); b.classList.remove("done");
+  el("mg-btitle").textContent = title; el("mg-bsub").textContent = sub || "";
+  msg("mg-msgb", ""); el("mg-res").hidden = true; el("mg-kitview").innerHTML = "";
+  el("mg-tip").hidden = false; el("mg-clock").hidden = false;
+  b.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+function paintTL(){
+  if (!RUN) { el("mg-tl").innerHTML = ""; return; }
+  var rows = [{ k:"spine", t:"השלד של השיעור", i:'<path d="M12 3v18M5 7h14M7 12h10M9 17h6"/>' }].concat(RUN.kinds.map(function(k){ return { k:k, t:KIND[k].t, i:KIND[k].i }; }));
+  el("mg-tl").innerHTML = rows.map(function(r){
+    var s = RUN.state[r.k] || "idle";
+    var lab = { idle:"ממתין", wait: r.k === "spine" ? "נבנה…" : "נבנה ונבדק…", ok: r.k === "spine" ? "מוכן" : "מוכן · נבדק", fail:"לא נבנה" }[s];
+    return '<div class="mg-it ' + s + '" data-k="' + r.k + '">' + svg(r.i, "k") + "<div><b>" + esc(r.t) + "</b><small>" + lab + "</small></div>" +
+      (s === "fail" && r.k !== "spine" ? '<button type="button" class="rt" data-retry="' + r.k + '">שוב</button>' : "") + "</div>";
+  }).join("");
+}
+function mountKit(data, kinds, keepTab){
+  var host = el("mg-kitview"), on = keepTab && host.querySelector(".lk-tab.on"), onText = on ? on.textContent : "";
+  QUIET = true;   /* לחיצות של הקוד עצמו לא נספרות בניטור */
+  try {
+    LessonKit.mount(host, data, kinds);
+    addResultsTab(data);
+    if (onText) Array.prototype.forEach.call(host.querySelectorAll(".lk-tab"), function(t){ if (t.textContent === onText) t.click(); });
+    el("mg-res").hidden = false;
+    return true;
+  } catch (e) {
+    if (window.console) console.error("mecholel render", e);
+    return false;
+  } finally { QUIET = false; }
+}
+function saveLast(){
+  try { localStorage.setItem(LAST_KEY, JSON.stringify({ at: Date.now(), data: RUN.data,
+    kinds: ORDER.filter(function(k){ return RUN.state[k] === "ok"; }) })); } catch(e){}
+  /* רשימת השיעורים שנבנו — כדי שאפשר יהיה לחזור לתוצאות של שיעור קודם */
+  var h = (readLS(HIST_KEY) || []).filter(function(x){ return x && x.id !== RUN.data.id; });
+  h.unshift({ id: RUN.data.id, topic: RUN.data.topic, at: Date.now() });
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 8))); } catch(e){}
+}
+function doneKinds(){ return ORDER.filter(function(k){ return RUN.state[k] === "ok"; }); }
+function buildPart(k, retry){
+  RUN.state[k] = "wait"; paintTL();
+  var t0 = Date.now();
+  return post({ action:"part", lid: RUN.lid, kind: k, retry: !!retry }).then(function(d){
+    if (d && d.ok && d.part) {
+      RUN.data[k] = d.part; RUN.state[k] = "ok";
+      if (!mountKit(RUN.data, doneKinds(), true)) { delete RUN.data[k]; RUN.state[k] = "fail"; RUN.err = { error:"render" }; mountKit(RUN.data, doneKinds(), true); }
+      else saveLast();
+    } else { RUN.state[k] = "fail"; RUN.err = d; }
+    if (window.console) console.info("mecholel part", k, RUN.state[k], Math.round((Date.now() - t0) / 1000) + "s", d && d.error || "");
+    paintTL();
+  }, function(){ RUN.state[k] = "fail"; paintTL(); });
+}
+function finish(){
+  stopClock();
+  var bad = RUN.kinds.filter(function(k){ return RUN.state[k] !== "ok"; });
+  el("mg-build").classList.add("done");
+  el("mg-tip").hidden = true;
+  if (bad.length < RUN.kinds.length) feedbackCard(RUN.lid);
+  if (!bad.length) {
+    el("mg-btitle").textContent = "השיעור מוכן";
+    el("mg-bsub").textContent = "לחצו על כל תוצר כדי לפתוח אותו. אפשר להציג לכיתה, להדפיס ולהוריד.";
+  } else if (bad.length === RUN.kinds.length) {
+    el("mg-btitle").textContent = "השיעור לא נבנה"; msg("mg-msgb", errText(RUN.err));
+  } else {
+    el("mg-btitle").textContent = "כמעט מוכן";
+    el("mg-bsub").textContent = "חלק מהתוצרים לא נבנו — לחצו ״שוב״ ליד כל אחד.";
   }
-  return slides;
 }
-function slidesHTML(slides){
-  return '<div class="slides">' + slides.map(function(s, i){
-    return '<div class="slide"><div class="n">שקף ' + (i+1) + '</div><h5>' + esc(s.title) + "</h5>" +
-      (s.bullets.length ? "<ul>" + s.bullets.map(function(b){ return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>" : "") +
-      (s.note ? '<div class="note">הערת מרצה: ' + esc(s.note) + "</div>" : "") + "</div>";
-  }).join("") + "</div>";
-}
-function slidesText(slides){
-  return slides.map(function(s, i){
-    return "שקף " + (i+1) + ": " + s.title + "\n" +
-      s.bullets.map(function(b){ return "• " + b; }).join("\n") +
-      (s.note ? "\nהערת מרצה: " + s.note : "");
-  }).join("\n\n");
-}
-function deckFile(slides){
-  var head = esc(val("g-subj") + " · " + val("g-topic"));
-  var body = slides.map(function(s, i){
-    return '<section class="s"><div class="k">' + (i+1) + " / " + slides.length + "</div><h2>" + esc(s.title) + "</h2>" +
-      (s.bullets.length ? "<ul>" + s.bullets.map(function(b){ return "<li>" + esc(b) + "</li>"; }).join("") + "</ul>" : "") +
-      (s.note ? '<div class="nt">' + esc(s.note) + "</div>" : "") + "</section>";
-  }).join("\n");
-  var css = "*{box-sizing:border-box;margin:0;padding:0}" +
-    "body{font-family:Assistant,Arial,sans-serif;background:#0D3B66;color:#102A43;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}" +
-    ".s{display:none;background:#fff;border-radius:22px;padding:56px 60px;width:min(1000px,94vw);min-height:min(600px,80vh);box-shadow:0 20px 60px rgba(0,0,0,.35);flex-direction:column}" +
-    ".s.on{display:flex}" +
-    ".k{font-size:.8rem;font-weight:700;color:#60778A;letter-spacing:.05em;margin-bottom:14px}" +
-    "h2{font-size:2.05rem;color:#0D3B66;line-height:1.25;margin-bottom:26px}" +
-    "ul{padding-inline-start:26px;font-size:1.28rem;line-height:1.85;color:#102A43}" +
-    "li{margin-bottom:10px}" +
-    ".nt{margin-top:auto;padding-top:22px;border-top:1px dashed #BED4E7;font-size:.95rem;color:#52687A;line-height:1.6}" +
-    ".bar{position:fixed;inset-block-end:16px;inset-inline-start:0;inset-inline-end:0;display:flex;gap:10px;justify-content:center}" +
-    ".bar button{font-family:inherit;font-size:.9rem;font-weight:700;border:0;border-radius:999px;padding:9px 22px;background:rgba(255,255,255,.92);color:#0D3B66;cursor:pointer}" +
-    "@media print{body{background:#fff;display:block;padding:0}.s{display:flex!important;page-break-after:always;box-shadow:none;border-radius:0;width:100%;min-height:100vh}.bar{display:none}}";
-  var js = "var S=document.querySelectorAll('.s'),i=0;" +
-    "function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach(function(s,k){s.classList.toggle('on',k===i)});}" +
-    "document.addEventListener('keydown',function(e){" +
-    "if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown')go(i+1);" +
-    "if(e.key==='ArrowRight'||e.key==='PageUp')go(i-1);});go(0);";
-  return "<!DOCTYPE html>\n<html lang=\"he\" dir=\"rtl\"><head><meta charset=\"utf-8\">" +
-    "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
-    "<title>" + head + "</title><style>" + css + "<\/style></head><body>\n" + body +
-    "\n<div class=\"bar\"><button onclick=\"go(i-1)\">הקודם</button><button onclick=\"go(i+1)\">הבא</button>" +
-    "<button onclick=\"window.print()\">הדפסה</button></div>\n<script>" + js + "<\/script></body></html>";
-}
-
-/* ---------- הדפסה ----------
-   עוברת דרך ערכת השיעור: iframe מוסתר במקום window.open.
-   חוסם החלונות הקופצים חסם את החלון הקודם, ולמורה זה נראה כאילו
-   התוצר פשוט "לא נפתח". window.open נשמר רק כגיבוי אם הערכה לא נטענה. */
-function printDoc(title, innerHTML){
-  if (window.LessonKit) {
-    var box = document.createElement("div");
-    box.innerHTML = "<h1>" + esc(title) + '</h1><div class="meta">' +
-      esc([val("g-subj"), val("g-grade"), val("g-topic"), val("g-len"), val("g-track")].filter(Boolean).join(" · ")) +
-      "</div>" + innerHTML;
-    LessonKit.print(box, title);
+function generate(){
+  if (!me()) {
+    go(3); msg("mg-msg3", ERR.nologin);
+    var L = el("mg-login"); L.scrollIntoView({ behavior:"smooth", block:"center" });
+    L.classList.add("ping"); setTimeout(function(){ L.classList.remove("ping"); }, 1800);
     return;
   }
-  var w = window.open("", "_blank");
-  if (!w) { alert("החלון נחסם — אפשרו חלונות קופצים כדי להדפיס."); return; }
-  w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>' + esc(title) +
-    '</title><style>body{font-family:Assistant,Arial,sans-serif;line-height:1.75;padding:34px 44px;color:#102A43;font-size:14px}' +
-    'h1{font-size:19px;color:#0D3B66;margin:0 0 4px}.meta{font-size:12px;color:#60778A;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #D8E6F2}' +
-    'h4{font-size:16px;color:#0D3B66;margin:16px 0 6px}h5{font-size:14px;color:#124D7A;margin:12px 0 4px}' +
-    'p{margin:0 0 8px}ul,ol{padding-inline-start:22px;margin:0 0 10px}li{margin-bottom:4px}' +
-    'table{border-collapse:collapse;width:100%;font-size:13px;margin-bottom:12px}' +
-    'th,td{border:1px solid #BED4E7;padding:7px 10px;text-align:start;vertical-align:top}th{background:#EEF6FF;color:#0D3B66}' +
-    '.slide{border:1px solid #BED4E7;border-radius:10px;padding:12px 15px;margin-bottom:10px;page-break-inside:avoid}' +
-    '.slide .n{font-size:11px;color:#60778A;font-weight:700}.slide h5{margin:3px 0 6px}.slide .note{font-size:12px;color:#52687A;margin-top:7px;border-top:1px dashed #BED4E7;padding-top:5px}' +
-    'hr{border:0;border-top:1px solid #D8E6F2;margin:14px 0}' +
-    '</style></head><body><h1>' + esc(title) + '</h1><div class="meta">' +
-    esc([val("g-subj"), val("g-grade"), val("g-topic"), val("g-len"), val("g-track")].filter(Boolean).join(" · ")) +
-    '</div>' + innerHTML + "</body></html>");
-  w.document.close(); w.focus();
-  setTimeout(function(){ w.print(); }, 350);
-}
-
-/* ---------- בניית כרטיס תוצר ---------- */
-function renderDoc(kind, text){
-  var K = KINDS[kind], slides = (kind === "deck") ? parseSlides(text) : null;
-  var inner = (slides && slides.length) ? slidesHTML(slides) : md(text);
-  var box = document.createElement("div");
-  box.className = "doc";
-  box.innerHTML =
-    '<div class="dh"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + K.icon + "</svg>" + K.title +
-    (kind === "sheet" ? " · " + esc(val("g-level")) : "") + "</h3>" +
-    '<div class="dtools">' +
-      '<button class="btn line" type="button" data-a="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 5.5A1.5 1.5 0 0 0 13.5 4H6a2 2 0 0 0-2 2v7.5A1.5 1.5 0 0 0 5.5 15"/></svg>העתקה</button>' +
-      '<button class="btn line" type="button" data-a="dl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4 20h16"/></svg>' +
-        (slides && slides.length ? "הורדת מצגת HTML" : "הורדה") + "</button>" +
-      (slides && slides.length ? '<button class="btn line" type="button" data-a="dltxt">הורדת טקסט לכלי מצגות</button>' : "") +
-      '<button class="btn line" type="button" data-a="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M6 16h12v5H6z"/></svg>הדפסה</button>' +
-    "</div></div>" +
-    '<div class="body">' + inner + "</div>";
-
-  var plain = (slides && slides.length) ? slidesText(slides) : text;
-  box.querySelector('[data-a="copy"]').addEventListener("click", function(){ copyText(plain); flash(this, "הועתק ✓"); });
-  box.querySelector('[data-a="print"]').addEventListener("click", function(){ printDoc(K.title + " · " + (val("g-topic") || val("g-subj")), inner); });
-  box.querySelector('[data-a="dl"]').addEventListener("click", function(){
-    if (slides && slides.length) download(K.file + "-" + slug() + ".html", deckFile(slides), "text/html");
-    else download(K.file + "-" + slug() + ".txt", plain, "text/plain");
-  });
-  var t2 = box.querySelector('[data-a="dltxt"]');
-  if (t2) t2.addEventListener("click", function(){ download(K.file + "-" + slug() + ".txt", plain, "text/plain"); });
-  return box;
-}
-
-/* ---------- מצב הביניים: ההנחיה הבנויה ---------- */
-function renderFallback(items){
-  var list = el("g-fb-list");
-  list.innerHTML = "";
-  items.forEach(function(it){
-    var d = document.createElement("div");
-    d.className = "pbox";
-    d.innerHTML = '<div class="ph"><b>ההנחיה ל' + esc(KINDS[it.kind].title) + '</b>' +
-      '<button class="btn line sm" type="button">העתיקו את ההנחיה</button></div><pre>' + esc(it.prompt) + "</pre>";
-    d.querySelector("button").addEventListener("click", function(){ copyText(it.prompt); flash(this, "הועתק ✓"); });
-    list.appendChild(d);
-  });
-  el("g-fb").classList.add("on");
-  el("g-fb").scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-/* ---------- החזרה מהכלי החיצוני ----------
-   השלב שחסר עד היום: המורה קיבלה טקסט ולא היה לה איפה לשים אותו.
-   ההצגה היא Markdown קליל -> HTML, ומשם הדפסה והורדה דרך אותו מנגנון של ערכת השיעור. */
-function mdToHtml(src){
-  var out = [], lines = String(src || "").split(/\r?\n/), inList = false, inTable = false;
-  function closeList(){ if (inList) { out.push("</ul>"); inList = false; } }
-  function closeTable(){ if (inTable) { out.push("</tbody></table>"); inTable = false; } }
-  function inline(t){
-    return LessonKit.esc(t)
-      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
-      .replace(/(^|[\s(])\*([^*\n]+)\*/g, "$1<i>$2</i>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>");
-  }
-  lines.forEach(function(raw){
-    var l = raw.trim();
-    if (!l) { closeList(); closeTable(); return; }
-
-    var head = l.match(/^(#{1,6})\s+(.*)$/);
-    if (head) {
-      closeList(); closeTable();
-      var lvl = Math.min(head[1].length + 2, 6);
-      out.push("<h" + lvl + ">" + inline(head[2]) + "</h" + lvl + ">");
+  var kinds = chosen(), topic = el("mg-topic").value.trim(), run = el("mg-run");
+  var ctx = { subject:S.subj, grade:S.grade, topic:topic, duration:S.len, track:S.track, level:S.level,
+    text: S.mat ? ((MATERIAL.text || "") || el("mg-paste").value).slice(0, MAXCHARS) : "",
+    link: S.mat ? el("mg-link").value.trim() : "",
+    fileName: S.mat ? MATERIAL.name : "", fileType: S.mat ? MATERIAL.type : "", fileData: S.mat ? (MATERIAL.b64 || "") : "" };
+  run.disabled = true;
+  RUN = { kinds: kinds, state: { spine:"wait" }, data: null };
+  showBuild("בונים את השיעור על ״" + topic + "״", S.subj + " · " + S.grade + " · " + S.len + " דקות");
+  paintTL(); startClock();
+  post({ action:"spine", ctx: ctx, kinds: kinds, opts: { gameType: S.gameType, openerType: S.openerType } }).then(function(d){
+    if (!d || !d.ok || d.limited) {
+      RUN.state.spine = "fail"; paintTL(); stopClock();
+      el("mg-build").classList.add("done"); el("mg-tip").hidden = true;
+      el("mg-btitle").textContent = "השיעור לא נבנה";
+      msg("mg-msgb", d && d.limited ? d.message : errText(d));
+      if (d && d.error === "badlogin") paintLogin();
       return;
     }
-    if (/^\|(.+)\|$/.test(l)) {
-      var cells = l.slice(1, -1).split("|").map(function(c){ return c.trim(); });
-      if (/^[\s|:-]+$/.test(l)) return;               /* שורת המפריד של הטבלה */
-      closeList();
-      if (!inTable) { out.push("<table><tbody>"); inTable = true; }
-      out.push("<tr>" + cells.map(function(c){ return "<td>" + inline(c) + "</td>"; }).join("") + "</tr>");
-      return;
-    }
-    closeTable();
-    if (/^[-*·•]\s+/.test(l) || /^\d+[.)]\s+/.test(l)) {
-      if (!inList) { out.push("<ul>"); inList = true; }
-      out.push("<li>" + inline(l.replace(/^([-*·•]|\d+[.)])\s+/, "")) + "</li>");
-      return;
-    }
-    closeList();
-    out.push("<p>" + inline(l) + "</p>");
-  });
-  closeList(); closeTable();
-  return out.join("\n");
+    if (d.left != null) { LEFT = d.left; paintLogin(); }
+    var s = d.spine || {};
+    RUN.lid = d.lid; RUN.state.spine = "ok";
+    RUN.data = { id: d.lid, subject:S.subj, grade:S.grade, track:S.track, duration:S.len,
+      topic: s.topic || topic, module: s.module || "", goal: s.goal || "", skill: s.skill || "", prep: s.prep || "" };
+    el("mg-btitle").textContent = "בונים את " + (kinds.length > 1 ? "התוצרים" : "התוצר") + " על ״" + RUN.data.topic + "״";
+    el("mg-note").innerHTML = "<b>" + esc(RUN.data.topic) + "</b> · " + esc(RUN.data.goal) +
+      (s.missing ? '<br><span style="color:var(--m-red-ink)">' + esc(s.missing) + "</span>" : "");
+    return Promise.all(kinds.map(function(k){ return buildPart(k); })).then(finish);
+  }).then(function(){ run.disabled = false; }, function(){ run.disabled = false; stopClock(); msg("mg-msgb", ERR.network); });
 }
+el("mg-tl").addEventListener("click", function(e){
+  var r = e.target.closest("[data-retry]");
+  if (r && RUN && RUN.lid) {
+    track("שוב", r.getAttribute("data-retry"), RUN.lid);
+    el("mg-build").classList.remove("done"); el("mg-tip").hidden = false; startClock();
+    buildPart(r.getAttribute("data-retry"), true).then(finish); return;
+  }
+  var it = e.target.closest(".mg-it.ok");
+  if (it && it.dataset.k !== "spine") {
+    var t = Array.prototype.filter.call(el("mg-kitview").querySelectorAll(".lk-tab"), function(x){ return x.textContent === KIND[it.dataset.k].t; })[0];
+    if (t) { t.click(); el("mg-res").scrollIntoView({ behavior:"smooth", block:"start" }); }
+  }
+});
 
-(function backFlow(){
-  var ta = el("g-back"), out = el("g-back-out");
-  if (!ta || !out) return;
-  function title(){
-    var t = val("g-topic"); return t ? "מערך שיעור · " + t : "מערך שיעור";
+/* ---------- הכפתור הגדול ---------- */
+function openBank(hit){
+  track("שיעור מהבנק", hit.id);
+  RUN = null; showBuild("יש לנו שיעור מוכן!", "נבנה בידי צוות המינהל — נפתח מיד, בלי המתנה.");
+  el("mg-tip").hidden = true; el("mg-clock").hidden = true; el("mg-build").classList.add("done"); paintTL();
+  LessonKit.load(hit.id).then(function(data){
+    el("mg-btitle").textContent = "יש לנו שיעור מוכן: " + data.topic;
+    el("mg-note").innerHTML = "השיעור נבנה בידי צוות המינהל, וכולל את כל התוצרים שבחרתם. " +
+      '<button type="button" class="linkbtn" id="mg-fresh">לא מה שחיפשתם? בנו שיעור חדש על הנושא שלכם</button>';
+    mountKit(data, chosen());
+  }).catch(function(){ generate(); });
+}
+el("mg-run").addEventListener("click", function(){
+  if (check(2) !== 2) { go(1); return; }
+  if (!chosen().length) { msg("mg-msg3", "בוחרים לפחות תוצר אחד."); return; }
+  var hit = bankMatch();
+  if (hit && window.LessonKit) openBank(hit); else generate();
+});
+el("mg-build").addEventListener("click", function(e){ if (e.target.closest("#mg-fresh")) generate(); });
+el("mg-edit").addEventListener("click", function(){ stopClock(); go(3); });
+el("mg-new").addEventListener("click", function(){
+  stopClock(); RUN = null;
+  el("mg-topic").value = ""; el("mg-paste").value = ""; el("mg-link").value = "";
+  el("mg-fclear").click();
+  go(1); el("mg-topic").focus();
+});
+
+/* השיעורים שנבנו — האחרון נשמר כולו בדפדפן (גם מערך השיעור), הקודמים נטענים מהשרת עם התוצאות שלהם */
+(function(){
+  var last = readLS(LAST_KEY), hist = readLS(HIST_KEY) || [];
+  var hasLast = last && last.data && last.kinds && last.kinds.length;
+  if (!hasLast && !hist.length) return;
+  function openLast(){
+    track("שיעור קודם", "האחרון", last.data.id);
+    RUN = null; showBuild("השיעור האחרון שבניתם", last.data.subject + " · " + last.data.grade);
+    el("mg-tip").hidden = true; el("mg-clock").hidden = true; el("mg-build").classList.add("done"); paintTL();
+    el("mg-note").innerHTML = "<b>" + esc(last.data.topic) + "</b>" + (last.data.goal ? " · " + esc(last.data.goal) : "");
+    VIEW_LID = last.data.id || "";
+    mountKit(last.data, last.kinds);
   }
-  function build(){
-    var txt = (ta.value || "").trim();
-    if (!txt) { alert("הדביקו קודם את התשובה שקיבלתם"); ta.focus(); return null; }
-    out.innerHTML = '<div class="lk-card">' + mdToHtml(txt) + "</div>";
-    return out;
+  var items = [];
+  if (hasLast) items.push({ id: last.data.id, topic: last.data.topic, last: true });
+  hist.forEach(function(x){ if (x && x.id && !items.some(function(y){ return y.id === x.id; })) items.push(x); });
+  items = items.slice(0, 4);
+  var html = (items.length > 1 ? "השיעורים האחרונים שבניתם: " : "השיעור האחרון שבניתם: ") + items.map(function(x, i){
+    return '<button type="button" class="linkbtn" data-i="' + i + '">' + esc(x.topic) + "</button>"; }).join(" · ");
+  function wire(p){
+    p.innerHTML = html; p.hidden = false;
+    p.addEventListener("click", function(e){
+      var b = e.target.closest("[data-i]"); if (!b) return;
+      var x = items[+b.dataset.i];
+      if (x.last) openLast(); else { track("שיעור קודם", "מהשרת", x.id); openSaved(x.id, false); }
+    });
   }
-  el("g-back-show").addEventListener("click", function(){
-    if (build()) out.scrollIntoView({ behavior:"smooth", block:"nearest" });
-  });
-  el("g-back-print").addEventListener("click", function(){
-    if (build()) LessonKit.print(out, title());
-  });
-  el("g-back-down").addEventListener("click", function(){
-    if (build()) LessonKit.download(out, title(), title());
-  });
+  wire(el("mg-last"));
+  /* גם בצעד 1 — שלא יצטרכו לעבור את כל האשף כדי למצוא אותו */
+  var b = document.createElement("p"); b.className = "mg-last";
+  el("mg-msg1").parentNode.insertBefore(b, el("mg-msg1"));
+  wire(b);
 })();
 
-document.querySelectorAll("#g-fb [data-ai]").forEach(function(b){
-  b.addEventListener("click", function(){
-    if (!LAST.length) { alert("קודם מלאו את הפרטים ולחצו ״בנו לי את החומרים״"); return; }
-    copyText(LAST.map(function(it){ return it.prompt; }).join("\n\n=== ההנחיה הבאה ===\n\n")).then(function(){
-      window.open(b.dataset.ai, "_blank", "noopener");
-    });
-  });
+/* =====================================================================
+   ניטור (11.10.26) — מה עושים במחולל. נרשם בשרת, לא ב-Google Analytics.
+   ===================================================================== */
+var VIEW_LID = "";
+function devId(){
+  var d = readLS("pmh.dev");
+  if (d && /^[a-f0-9]{16}$/.test(d)) return d;
+  try { var a = new Uint8Array(8); crypto.getRandomValues(a); d = Array.prototype.map.call(a, function(b){ return ("0" + b.toString(16)).slice(-2); }).join(""); }
+  catch(e){ d = (Math.random().toString(16).slice(2) + "0000000000000000").slice(0, 16); }
+  try { localStorage.setItem("pmh.dev", JSON.stringify(d)); } catch(e){}
+  return d;
+}
+function curLid(){ return (RUN && RUN.lid) || VIEW_LID || ""; }
+function track(ev, d, lid){
+  try {
+    var m = me();
+    fetch(LESSON_BACKEND, { method:"POST", keepalive:true, body: JSON.stringify({ action:"track", ev:ev, d:d || "", lid: lid || curLid(), dev: devId(),
+      auth: m ? { t:m.t, k:m.k } : null }) }).catch(function(){});
+  } catch(e){}
+}
+/* lesson-kit.js נטען אחרי הסקריפט הזה — מחברים אותו כשהעמוד מוכן */
+document.addEventListener("DOMContentLoaded", function(){
+  if (window.LessonKit) LessonKit.on = function(ev, d){ if (!QUIET) track(ev, d); };
 });
 
-/* ---------- הרצה ---------- */
-function checkFields(){
-  if (!val("g-subj")) { alert("נא לבחור תחום דעת"); el("g-subj").focus(); return false; }
-  if (!val("g-topic")) { alert("נא למלא את נושא השיעור"); el("g-topic").focus(); return false; }
-  if (!picks().length) { alert("נא לסמן לפחות תוצר אחד"); return false; }
-  return true;
-}
-function payload(prompt){
-  var p = { mode: "lesson", question: prompt }, link = val("g-link");
-  if (MATERIAL.name) { p.fileName = MATERIAL.name; p.fileType = MATERIAL.type; if (MATERIAL.b64) p.fileData = MATERIAL.b64; }
-  if (link) p.link = link;
-  return p;
-}
-function callBackend(prompt){
-  return fetch(LESSON_BACKEND, { method: "POST", body: JSON.stringify(payload(prompt)) })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d && d.ok !== false && (d.lesson || d.summary)) return d.lesson || d.summary;
-      throw new Error("empty");
-    });
-}
-
-el("g-run").addEventListener("click", function(){
-  if (!checkFields()) return;
-  var btn = this, kinds = picks();
-  LAST = kinds.map(function(k){ return { kind: k, prompt: KINDS[k].prompt() }; });
-
-  el("g-res").innerHTML = ""; el("g-res").classList.remove("on");
-  el("g-fb").classList.remove("on");
-  el("g-bank").hidden = true;
-
-  /* הבנק קודם — שיעור מוכן נבנה בעמוד מיד, בלי המתנה, בלי עלות ובלי כלי חיצוני. */
-  var hit = bankMatch();
-  if (hit && window.LessonKit) {
-    status("פותח את השיעור המוכן…");
+/* "השיעור שימושי?" — פעם אחת לכל שיעור */
+function feedbackCard(lid){
+  if (!lid || readLS("pmh.fb." + lid) || document.querySelector(".mg-fb")) return;
+  var c = document.createElement("div"); c.className = "mg-fb";
+  c.innerHTML = "<b>השיעור שקיבלתם שימושי?</b>" +
+    '<div class="row" role="group" aria-label="דירוג"><button type="button">כן</button><button type="button">חלקית</button><button type="button">לא</button></div>' +
+    '<textarea aria-label="מה חסר?" placeholder="מה חסר, או מה היה עוזר לכם? (לא חובה)"></textarea>' +
+    '<button type="button" class="btn primary sm send">שליחה</button><div class="mg-rmsg" aria-live="polite"></div>';
+  var rating = "";
+  c.querySelector(".row").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    rating = b.textContent;
+    Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+  });
+  c.querySelector(".send").addEventListener("click", function(){
+    var text = c.querySelector("textarea").value.trim(), out = c.querySelector(".mg-rmsg"), btn = this;
+    if (!rating && !text) { out.textContent = "בוחרים כן / חלקית / לא, או כותבים מה חסר."; return; }
     btn.disabled = true;
-    LessonKit.load(hit.id).then(function(data){
-      el("g-bank-note").innerHTML =
-        "יש לנו שיעור מוכן על <b>" + LessonKit.esc(data.topic) + "</b> ב" + LessonKit.esc(data.subject) +
-        " — נבנה בידי צוות המינהל ולא בידי מודל. כל התוצרים שסימנתם למטה, מוכנים להדפסה, להורדה ולהעברה בכיתה.";
-      LessonKit.mount(el("g-kit"), data, kinds);
-      el("g-bank").hidden = false;
-      status("");
-      el("g-bank").scrollIntoView({ behavior:"smooth", block:"nearest" });
-    }).catch(function(){
-      /* קובץ התוכן לא נטען — ממשיכים למסלול ההנחיות במקום להשאיר את המורה בלי כלום */
-      status("");
-      copyText(LAST[0].prompt);
-      renderFallback(LAST);
-    }).then(function(){ btn.disabled = false; });
-    return;
-  }
-
-  /* מצב ביניים — כל עוד LESSON_BACKEND ריק. מילוי הכתובת למעלה מפעיל את הייצור בעמוד. */
-  if (!LESSON_BACKEND) {
-    status("");
-    copyText(LAST[0].prompt);
-    renderFallback(LAST);
-    return;
-  }
-
-  var orig = btn.innerHTML;
-  btn.innerHTML = '<span class="spin"></span> בונה…'; btn.disabled = true;
-  el("g-res").classList.add("on");
-  var done = 0, failed = [];
-  status("בונה " + LAST.length + " תוצרים…");
-
-  LAST.reduce(function(chain, it){
-    return chain.then(function(){
-      status("בונה " + KINDS[it.kind].title + "… (" + (done + 1) + " מתוך " + LAST.length + ")");
-      return callBackend(it.prompt).then(function(txt){
-        it.result = txt;
-        el("g-res").appendChild(renderDoc(it.kind, txt));
-        done++;
-      }).catch(function(){ failed.push(it); });
+    post({ action:"feedback", lid: lid, rating: rating, text: text }, 30000).then(function(d){
+      if (d && d.ok) {
+        try { localStorage.setItem("pmh.fb." + lid, "1"); } catch(e){}
+        c.innerHTML = "<b>תודה! זה עוזר לנו לשפר את המחולל.</b>";
+      } else { btn.disabled = false; out.textContent = "לא נשלח. נסו שוב בעוד רגע."; }
     });
-  }, Promise.resolve()).then(function(){
-    btn.innerHTML = orig; btn.disabled = false;
-    if (failed.length) {
-      status(done ? "חלק מהתוצרים לא נבנו — ההנחיות שלהם מוכנות למטה." : "");
-      renderFallback(failed);
-    } else {
-      status("");
-      el("g-res").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-    if (!done) el("g-res").classList.remove("on");
   });
+  var bacts = document.querySelector(".mg-bacts");
+  bacts.parentNode.insertBefore(c, bacts.nextSibling);
+}
+
+/* =====================================================================
+   תוצאות התלמידים (11.10.26) — לשונית "תוצאות" בשיעור, רק למורה שבנה/תה אותו.
+   הנתונים בשרת (לשונית "תוצאות" ביומן). שמות התלמידים מוצגים רק כאן, אחרי כניסה דרך מנור.
+   ===================================================================== */
+var RES = null;
+var RES_ERR = {
+  notyours: "התוצאות של השיעור הזה מוצגות רק למי שבנה/תה אותו, בכניסה עם אותו רישום במנור.",
+  nologin: "כדי לראות את התוצאות נכנסים פעם אחת דרך מנור.",
+  badlogin: "הכניסה למנור במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור.",
+  notfound: "השיעור לא נמצא בשרת.",
+  nomail: "לא מצאנו מייל ברישום שלכם במנור, ולכן אי אפשר לשלוח סיכום.",
+  quota: "מכסת המיילים היומית של המערכת הסתיימה. נסו שוב מחר.",
+  noresults: "עוד אין תוצאות לשלוח.",
+  rate: "כבר נשלחו כמה סיכומים לשיעור הזה בדקות האחרונות. נסו שוב בעוד כמה דקות.",
+  norubric: "לדף העבודה של השיעור הזה אין מחוון, ולכן אין למה להשוות.",
+  gradelimit: "הגעתם לתקרה היומית של בדיקת דפים. אפשר להמשיך מחר."
+};
+function resErr(d){ return RES_ERR[d && d.error] || ERR[d && d.error] || "משהו השתבש. נסו שוב בעוד רגע."; }
+var IC_RES = '<path d="M4 20V11M10 20V5M16 20v-6M2.5 20h19"/>';
+function addResultsTab(data){
+  if (!/^[a-f0-9]{32}$/.test(String(data && data.id || ""))) return;
+  var host = el("mg-kitview"), tabs = host.querySelector(".lk-tabs");
+  if (!tabs || tabs.querySelector(".mg-rtabbtn")) return;
+  var tab = document.createElement("button");
+  tab.type = "button"; tab.className = "lk-tab mg-rtabbtn"; tab.setAttribute("role", "tab"); tab.setAttribute("aria-selected", "false");
+  tab.innerHTML = svg(IC_RES) + "תוצאות";
+  var panel = document.createElement("div"); panel.className = "lk-panel"; panel.setAttribute("role", "tabpanel"); panel.id = "mg-results";
+  tabs.appendChild(tab); host.appendChild(panel);
+  tab.addEventListener("click", function(){
+    Array.prototype.forEach.call(tabs.children, function(t){ t.classList.remove("on"); t.setAttribute("aria-selected", "false"); });
+    tab.classList.add("on"); tab.setAttribute("aria-selected", "true");
+    Array.prototype.forEach.call(host.querySelectorAll(".lk-panel"), function(p){ p.classList.remove("on"); });
+    panel.classList.add("on");
+    if (!QUIET) track("תוצאות", "", data.id);
+    loadResults(data.id);
+  });
+}
+function loadResults(lid){
+  var P = el("mg-results"); if (!P) return;
+  if (!me()) {
+    P.innerHTML = '<div class="mg-empty">' + esc(RES_ERR.nologin) + ' <a class="linkbtn" href="hadrachot/teacher/" target="_blank" rel="noopener">כניסה למורים</a> · ' +
+      '<a class="linkbtn" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים</a></div>';
+    return;
+  }
+  if (!RES || RES.lid !== lid) P.innerHTML = '<div class="mg-rmsg">טוען את התוצאות…</div>';
+  post({ action:"results", lid: lid }, 60000).then(function(d){
+    if (!d || !d.ok) { P.innerHTML = '<div class="mg-empty">' + esc(resErr(d)) + "</div>"; return; }
+    RES = { lid: lid, lesson: d.lesson, rows: d.rows || [], open: d.open || [], at: new Date() };
+    paintResults();
+  });
+}
+function pctOf(s, m){ return m ? Math.round(100 * s / m) : ""; }
+function sheetScore(r){ return r.tg !== "" && r.tg != null ? { v: r.tg, final: true } : (r.ai ? { v: r.ai.total, final: false } : null); }
+function avgOf(list){ list = list.filter(function(x){ return x !== "" && x != null && !isNaN(x); }); return list.length ? Math.round(list.reduce(function(a, b){ return a + +b; }, 0) / list.length) : ""; }
+/* מפתחות המשימות — אותם מפתחות ששולח עמוד התלמיד */
+function sheetTasks(S, setName){
+  var out = [];
+  if (!S) return out;
+  if (S.diff) (S.sets || []).forEach(function(s, i){ if (setName && s.level !== setName) return; (s.tasks || []).forEach(function(t){ out.push({ key: "s" + i + "-" + t.n, label: s.level + " " + t.n, text: t.text }); }); });
+  else (S.tasks || []).forEach(function(t){ out.push({ key: String(t.n), label: String(t.n), text: t.text }); });
+  if (S.bonus) out.push({ key: "bonus", label: "בונוס", text: S.bonus });
+  return out;
+}
+function paintResults(){
+  var P = el("mg-results"); if (!P || !RES) return;
+  var L = RES.lesson || {}, rows = RES.rows, by = { quiz:[], game:[], sheet:[], vote:[], cloud:[] };
+  rows.forEach(function(r){ if (by[r.k]) by[r.k].push(r); });
+  var openBy = { quiz:[], game:[], sheet:[] };
+  RES.open.forEach(function(o){ if (openBy[o.k]) openBy[o.k].push(o); });
+  var hasQuiz = !!(L.quiz && L.quiz.length), hasGame = !!L.game, hasSheet = !!L.sheet, op = L.opener || {};
+  var url = LessonKit.shareURL(RES.lid);
+  var h = '<div class="mg-rhead"><div><h3>תוצאות התלמידים</h3><p>עודכן ' + RES.at.toLocaleTimeString("he-IL", { hour:"2-digit", minute:"2-digit" }) +
+    ' · <button type="button" class="linkbtn" data-r="reload">רענון</button></p></div><div class="mg-racts">' +
+    (hasQuiz || hasGame ? '<button type="button" class="btn primary sm" data-r="live">לוח חי להקרנה</button>' : "") +
+    '<button type="button" class="btn line sm" data-r="mail">שלחו לי סיכום במייל</button></div></div><div class="mg-rmsg" id="mg-rout" aria-live="polite"></div>';
+
+  /* מונים לכל תוצר */
+  var card = function(t, done, open, avg){ return "<div><b>" + t + "</b><strong>" + done + "</strong><span>הגישו" + (open ? " · " + open + " באמצע" : "") + (avg !== "" ? " · ממוצע " + avg : "") + "</span></div>"; };
+  h += '<div class="mg-rsum">' +
+    (hasQuiz ? card("בוחן", by.quiz.length, openBy.quiz.length, avgOf(by.quiz.map(function(r){ return pctOf(r.s, r.m); }))) : "") +
+    (hasGame ? card("משחק", by.game.length, openBy.game.length, avgOf(by.game.map(function(r){ return pctOf(r.s, r.m); }))) : "") +
+    (hasSheet ? card("דף עבודה", by.sheet.length, openBy.sheet.length, avgOf(by.sheet.map(function(r){ var s = sheetScore(r); return s ? s.v : ""; }))) : "") +
+    (op.otype === "vote" ? "<div><b>הצבעה</b><strong>" + by.vote.length + "</strong><span>הצביעו</span></div>" : "") +
+    (op.otype === "wordcloud" ? "<div><b>ענן מילים</b><strong>" + by.cloud.length + "</strong><span>שלחו מילים</span></div>" : "") + "</div>";
+
+  if (!rows.length && !RES.open.length) {
+    h += '<div class="mg-empty">עוד אין תוצאות. שולחים לתלמידים את הקישור לשיעור (כפתור "שליחה לכיתה" בכל תוצר), ' +
+      'הם כותבים שם וכיתה, והתוצאות מופיעות כאן.<div class="lk-url" dir="ltr" style="margin:10px 0 0">' + esc(url) + "</div></div>";
+    P.innerHTML = h; return;
+  }
+
+  /* טבלת התלמידים — שורה לכל תלמיד/ה (לפי שם + כיתה) */
+  var st = {};
+  function rec(n, c){ var k = (n + "|" + c).toLowerCase(); return st[k] || (st[k] = { n:n, c:c }); }
+  ["quiz", "game", "sheet"].forEach(function(k){
+    by[k].forEach(function(r){ rec(r.n, r.c)[k] = r; });
+    openBy[k].forEach(function(o){ var x = rec(o.n, o.c); if (!x[k]) x[k] = { open: true, s:o.s, m:o.m, x:o.x, f:o.f, set:o.set }; });
+  });
+  var list = Object.keys(st).map(function(k){ return st[k]; }).sort(function(a, b){ return (a.c + a.n).localeCompare(b.c + b.n, "he"); });
+  function cellQG(r){ if (!r) return "—"; if (r.open) return '<span class="mid">באמצע' + (r.x ? " (" + r.x + "/" + r.m + ")" : "") + "</span>"; return pctOf(r.s, r.m); }
+  function cellSheet(r){
+    if (!r) return "—";
+    if (r.open) return '<span class="mid">באמצע' + (r.set ? " · " + esc(r.set) : "") + "</span>";
+    var s = sheetScore(r);
+    return (s ? (s.final ? s.v : '<span class="sug">' + s.v + " (הצעה)</span>") : '<span class="mid">הוגש · לא נבדק</span>') + (r.set ? ' <span class="mid">· ' + esc(r.set) + "</span>" : "");
+  }
+  if (list.length) {
+    h += '<h4 class="mg-rsec">התלמידים</h4><table class="mg-rtab"><thead><tr><th>שם</th><th>כיתה</th>' + (hasQuiz ? "<th>בוחן</th>" : "") +
+      (hasGame ? "<th>משחק</th>" : "") + (hasSheet ? "<th>דף עבודה</th>" : "") + "</tr></thead><tbody>" +
+      list.map(function(s){
+        return '<tr><td data-l="שם"><b>' + esc(s.n) + '</b></td><td data-l="כיתה">' + esc(s.c) + "</td>" +
+          (hasQuiz ? '<td data-l="בוחן">' + cellQG(s.quiz) + "</td>" : "") + (hasGame ? '<td data-l="משחק">' + cellQG(s.game) + "</td>" : "") +
+          (hasSheet ? '<td data-l="דף עבודה">' + cellSheet(s.sheet) + "</td>" : "") + "</tr>";
+      }).join("") + "</tbody></table>";
+  }
+
+  /* שאלות שרוב הכיתה טעתה בהן — בבוחן ובשאלות הפתיחה של הדף הדיפרנציאלי */
+  var hard = [];
+  function scan(items, get, label){
+    (items || []).forEach(function(q, i){
+      var n = 0, wrong = 0, picks = {};
+      get().forEach(function(a){ var v = a[i]; if (v === null || v === undefined) return; n++; if (v !== q.correct) { wrong++; picks[v] = (picks[v] || 0) + 1; } });
+      if (n >= 3 && wrong * 2 >= n) {
+        var top = Object.keys(picks).sort(function(a, b){ return picks[b] - picks[a]; })[0];
+        hard.push({ label: label + " " + (i + 1), q: q.q, n: n, wrong: wrong, ok: (q.opts || [])[q.correct], top: top != null ? (q.opts || [])[top] : "" });
+      }
+    });
+  }
+  scan(L.quiz, function(){ return by.quiz.map(function(r){ return r.a || []; }); }, "בוחן · שאלה");
+  if (L.sheet && L.sheet.diff) scan(L.sheet.diagnostic, function(){ return by.sheet.map(function(r){ return (r.a && r.a.diag) || []; }); }, "דף עבודה · שאלת פתיחה");
+  if (hasQuiz || (L.sheet && L.sheet.diff)) {
+    h += '<h4 class="mg-rsec">שאלות שרוב הכיתה טעתה בהן</h4>' + (hard.length ? '<ul class="mg-hard">' + hard.map(function(x){
+      return "<li><b>" + esc(x.label) + ".</b> " + esc(x.q) + "<small>" + x.wrong + " מתוך " + x.n + " טעו · התשובה הנכונה: " + esc(x.ok) +
+        (x.top ? " · הטעות הנפוצה: " + esc(x.top) : "") + "</small></li>";
+    }).join("") + "</ul>" : '<p class="mg-rmsg">אין שאלה שרוב הכיתה טעתה בה (נבדק כשלפחות 3 ענו).</p>');
+  }
+
+  /* דף העבודה: תשובות, הצעת Claude ואישור המורה */
+  if (by.sheet.length) {
+    var ungraded = by.sheet.filter(function(r){ return !r.ai; }).length;
+    h += '<h4 class="mg-rsec">דף העבודה · תשובות וציונים</h4>' +
+      (ungraded ? '<p class="mg-rmsg">' + ungraded + ' דפים עוד לא נבדקו. Claude יכול להציע ציון לכל משימה לפי המחוון, ואתם מאשרים או משנים. ' +
+        '<button type="button" class="btn line sm" data-r="grade">הצעת ציונים (' + ungraded + ")</button></p>" : "") +
+      by.sheet.map(function(r){
+        var s = sheetScore(r), t = (r.a && r.a.t) || {}, notes = {};
+        ((r.ai && r.ai.tasks) || []).forEach(function(x){ notes[x.key] = x; });
+        var tasks = sheetTasks(L.sheet, L.sheet && L.sheet.diff ? r.set : "");
+        return '<details class="mg-sheetr"><summary><b>' + esc(r.n) + "</b><span>" + esc(r.c) + "</span>" + (r.set ? "<span>ערכה " + esc(r.set) + "</span>" : "") +
+          "<span>" + (s ? (s.final ? "ציון " + s.v : '<span class="sug">הצעה: ' + s.v + "</span>") : "לא נבדק") + '</span></summary><div class="in">' +
+          (r.ai && r.ai.summary ? '<p class="mg-rmsg">' + esc(r.ai.summary) + "</p>" : "") +
+          tasks.map(function(x){
+            var nt = notes[x.key];
+            return '<div class="mg-ans"><b>משימה ' + esc(x.label) + "</b><p>" + (t[x.key] ? esc(t[x.key]) : '<span class="mid">(ריק)</span>') + "</p>" +
+              (nt ? '<span class="note">' + nt.points + "/" + nt.max + " · " + esc(nt.note) + "</span>" : "") + "</div>";
+          }).join("") +
+          '<div class="mg-grade">ציון סופי <input type="number" min="0" max="150" inputmode="numeric" value="' + (s ? s.v : "") + '" aria-label="ציון סופי">' +
+          '<button type="button" class="btn primary sm" data-r="setgrade" data-sid="' + esc(r.sid) + '">' + (s && !s.final ? "אישור הציון" : "שמירה") + "</button>" +
+          (r.ai ? '<button type="button" class="linkbtn" data-r="regrade" data-sid="' + esc(r.sid) + '">לבדוק שוב</button>' : "") + "</div></div></details>";
+      }).join("");
+  }
+
+  /* הצבעה וענן */
+  if (op.otype === "vote" && by.vote.length) {
+    var vo = (op.data && op.data.options) || [], vc = vo.map(function(){ return 0; });
+    by.vote.forEach(function(r){ var i = (r.a || [])[0]; if (i >= 0 && i < vc.length) vc[i]++; });
+    h += '<h4 class="mg-rsec">ההצבעה בפתיחה</h4><ul class="mg-hard">' + vo.map(function(o, i){ return '<li style="background:#fff;border-color:var(--border)">' + esc(o) + " <small>" + vc[i] + " קולות</small></li>"; }).join("") + "</ul>";
+  }
+  if (op.otype === "wordcloud" && by.cloud.length) {
+    var f = {};
+    by.cloud.forEach(function(r){ (r.a || []).forEach(function(w){ f[w] = (f[w] || 0) + 1; }); });
+    h += '<h4 class="mg-rsec">ענן המילים</h4><p class="mg-rmsg">' + Object.keys(f).sort(function(a, b){ return f[b] - f[a]; }).slice(0, 40).map(function(w){ return esc(w) + (f[w] > 1 ? " (" + f[w] + ")" : ""); }).join(" · ") + "</p>";
+  }
+  P.innerHTML = h;
+}
+function rOut(t, bad){ var o = el("mg-rout"); if (o) { o.textContent = t || ""; o.classList.toggle("bad", !!bad); } }
+el("mg-kitview").addEventListener("click", function(e){
+  var b = e.target.closest("[data-r]"); if (!b || !RES) return;
+  var a = b.dataset.r, lid = RES.lid;
+  if (a === "reload") { loadResults(lid); return; }
+  if (a === "live") { openLive(); return; }
+  if (a === "mail") {
+    b.disabled = true; rOut("שולחים…");
+    post({ action:"mail", lid: lid }, 60000).then(function(d){
+      b.disabled = false;
+      if (d && d.ok) rOut("הסיכום נשלח אל " + d.to + ". אם הוא לא בתיבה בעוד כמה דקות — בדקו בקידומי מכירות או בספאם.");
+      else rOut(resErr(d), true);
+    });
+    return;
+  }
+  if (a === "grade" || a === "regrade") {
+    b.disabled = true;
+    var sid = a === "regrade" ? b.dataset.sid : "", rounds = 0;
+    (function step(){
+      rOut("Claude בודק את הדפים לפי המחוון… (כחצי דקה לכל 8 דפים)");
+      post({ action:"grade", lid: lid, sid: sid }, 240000).then(function(d){
+        rounds++;
+        if (!d || !d.ok) { b.disabled = false; rOut(resErr(d), true); return; }
+        if (d.left && !sid && rounds < 8) { step(); return; }
+        rOut("הציונים המוצעים מוכנים. עברו עליהם, ושנו או אשרו.");
+        loadResults(lid);
+      });
+    })();
+    return;
+  }
+  if (a === "setgrade") {
+    var inp = b.parentNode.querySelector("input"), v = inp.value.trim();
+    if (v !== "" && !(+v >= 0 && +v <= 150)) { rOut("ציון בין 0 ל-150.", true); return; }
+    b.disabled = true;
+    post({ action:"setgrade", lid: lid, sid: b.dataset.sid, score: v }, 30000).then(function(d){
+      b.disabled = false;
+      if (d && d.ok) {
+        RES.rows.forEach(function(r){ if (r.k === "sheet" && r.sid === b.dataset.sid) r.tg = d.score; });
+        b.textContent = "נשמר ✓";
+        var sidOpen = b.dataset.sid;
+        setTimeout(function(){
+          paintResults();
+          var again = document.querySelector('#mg-results [data-r="setgrade"][data-sid="' + sidOpen + '"]');
+          if (again) again.closest("details").open = true;
+        }, 900);
+      } else rOut(resErr(d), true);
+    });
+  }
 });
 
-el("g-reset").addEventListener("click", function(){
-  ["g-topic","g-link","g-paste"].forEach(function(id){ el(id).value = ""; });
-  el("g-subj").selectedIndex = 0;
-  el("g-file").value = ""; el("g-fname").classList.remove("on");
-  MATERIAL = { name:"", size:0, type:"", text:"", b64:"" }; LAST = [];
-  el("g-res").innerHTML = ""; el("g-res").classList.remove("on");
-  el("g-fb").classList.remove("on"); el("g-fb-list").innerHTML = "";
-  status("");
-});
+/* ===== לוח חי להקרנה: כמה ענו, טבלת מובילים, והתפלגות התשובות לכל שאלה (בבוחן) ===== */
+function openLive(){
+  if (!RES) return;
+  var L = RES.lesson || {}, kinds = [];
+  if (L.quiz && L.quiz.length) kinds.push(["quiz", "בוחן"]);
+  if (L.game) kinds.push(["game", "משחק"]);
+  if (!kinds.length) return;
+  track("לוח חי", "", RES.lid);
+  var kind = kinds[0][0], showAns = false, timer = 0, alive = true;
+  var box = document.createElement("div"); box.className = "mg-live"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "לוח חי");
+  box.innerHTML = '<div class="top"><h2>' + esc(L.topic || "") + "</h2>" +
+    (kinds.length > 1 ? '<div class="seg">' + kinds.map(function(k){ return '<button type="button" data-k="' + k[0] + '">' + k[1] + "</button>"; }).join(" ") + "</div>" : "") +
+    '<button type="button" class="x" data-a="ans">הצגת התשובה הנכונה</button><button type="button" class="x" data-a="close">סגירה (Esc)</button></div>' +
+    '<div class="grid"><div class="side"><div class="qr"></div><div class="url" dir="ltr"></div><div><div class="big" id="lv-n">0</div><div class="lbl" id="lv-nl">התחילו</div></div>' +
+    '<div><div class="big" id="lv-d">0</div><div class="lbl">סיימו</div></div></div>' +
+    '<div><ol class="board" id="lv-board"></ol><div class="dist" id="lv-dist"></div></div></div><div class="foot" id="lv-foot">מתעדכן כל 5 שניות</div>';
+  document.body.appendChild(box);
+  document.documentElement.style.overflow = "hidden";
+  try { if (box.requestFullscreen) box.requestFullscreen(); } catch(e){}
+  function setKind(k){
+    kind = k;
+    Array.prototype.forEach.call(box.querySelectorAll(".seg button"), function(b){ b.classList.toggle("on", b.dataset.k === k); });
+    var u = LessonKit.shareURL(RES.lid, k);
+    box.querySelector(".url").textContent = u;
+    LessonKit.qr(box.querySelector(".qr"), u, 200);
+    el("lv-board").innerHTML = ""; el("lv-dist").innerHTML = "";
+    tick(true);
+  }
+  function paint(d){
+    el("lv-n").textContent = d.n; el("lv-d").textContent = d.done;
+    el("lv-board").innerHTML = (d.board || []).map(function(b, i){
+      return "<li><i>" + (i + 1) + "</i><span>" + esc(b.n) + (b.c ? " <small>" + esc(b.c) + "</small>" : "") + "</span><span>" +
+        (kind === "quiz" ? b.s + "/" + (b.m || "") : pctOf(b.s, b.m)) + (b.d ? " ✓" : "") + "</span></li>";
+    }).join("") || '<li><span></span><span>מחכים לתלמידים הראשונים…</span><span></span></li>';
+    if (kind !== "quiz") { el("lv-dist").innerHTML = ""; return; }
+    el("lv-dist").innerHTML = (L.quiz || []).map(function(q, i){
+      var x = (d.dist || [])[i] || { n:0, c:[] }, tot = x.n || 1;
+      return '<div class="dq"><b>' + (i + 1) + ". " + esc(q.q) + " <small style=\"opacity:.7\">· " + x.n + " ענו</small></b>" + (q.opts || []).map(function(o, oi){
+        var c = (x.c || [])[oi] || 0;
+        return '<div class="dr' + (showAns && oi === q.correct ? " ok" : "") + '"><span>' + esc(o) + '</span><span class="bar"><i style="width:' + Math.round(100 * c / tot) + '%"></i></span><span>' + c + "</span></div>";
+      }).join("") + "</div>";
+    }).join("");
+  }
+  function tick(now){
+    clearTimeout(timer);
+    if (!alive) return;
+    var k = kind;
+    post({ action:"live", lid: RES.lid, kind: k }, 20000).then(function(d){
+      if (!alive || k !== kind) return;
+      if (d && d.ok) { paint(d); el("lv-foot").textContent = "מתעדכן כל 5 שניות · " + new Date().toLocaleTimeString("he-IL"); }
+      else el("lv-foot").textContent = resErr(d);
+      timer = setTimeout(tick, 5000);
+    });
+  }
+  function close(){
+    alive = false; clearTimeout(timer);
+    document.removeEventListener("keydown", onKey);
+    document.documentElement.style.overflow = "";
+    try { if (document.fullscreenElement) document.exitFullscreen(); } catch(e){}
+    box.remove();
+    loadResults(RES.lid);
+  }
+  function onKey(e){ if (e.key === "Escape") close(); }
+  document.addEventListener("keydown", onKey);
+  box.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.k) setKind(b.dataset.k);
+    else if (b.dataset.a === "close") close();
+    else if (b.dataset.a === "ans") { showAns = !showAns; b.textContent = showAns ? "הסתרת התשובה הנכונה" : "הצגת התשובה הנכונה"; tick(true); }
+  });
+  setKind(kind);
+}
+
+/* שיעור שנשמר בשרת (מהמייל: mecholel.html?r=<מזהה>, או מרשימת השיעורים הקודמים) —
+   נטען בגרסה בלי מערך השיעור, עם לשונית התוצאות */
+function openSaved(lid, toResults){
+  RUN = null; showBuild(toResults ? "תוצאות התלמידים" : "שיעור שבניתם", "");
+  el("mg-tip").hidden = true; el("mg-clock").hidden = true; el("mg-build").classList.add("done"); paintTL();
+  VIEW_LID = lid;
+  LessonKit.load(lid).then(function(data){
+    el("mg-btitle").textContent = data.topic;
+    el("mg-bsub").textContent = (data.subject || "") + " · " + (data.grade || "");
+    el("mg-note").innerHTML = "השיעור נטען מהשרת — בלי מערך השיעור ובלי המחוון, שנשמרו רק בדפדפן שבו נבנה.";
+    var kinds = ORDER.filter(function(k){ return k !== "lesson" && data[k]; });
+    mountKit(data, kinds);
+    if (toResults) { var t = document.querySelector(".mg-rtabbtn"); if (t) { QUIET = true; t.click(); QUIET = false; } }
+  }).catch(function(){
+    el("mg-btitle").textContent = "השיעור לא נמצא"; msg("mg-msgb", "ייתכן שהקישור הועתק חלקית.");
+  });
+}
+
+/* כניסה לעמוד */
+(function(){
+  var q = new URLSearchParams(location.search), r = q.get("r") || "";
+  track("כניסה לעמוד", /^[a-f0-9]{32}$/.test(r) ? "תוצאות מהמייל" : "");
+  if (/^[a-f0-9]{32}$/.test(r)) document.addEventListener("DOMContentLoaded", function(){ openSaved(r, true); });
+})();
+
+paintLogin();
+refreshLeft();
 })();
 </script>
 

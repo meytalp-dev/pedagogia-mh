@@ -84,7 +84,14 @@
   };
 
   /* ---------- טעינת תוכן ---------- */
+  /* שיעור שנבנה במחולל (11.10.26) — מזהה של 32 תווים, נשמר בשרת "מחולל - מוח".
+     השרת מחזיר גרסת תלמיד בלבד: בלי מערך השיעור ובלי המחוון. */
+  LK.GEN = "https://script.google.com/macros/s/AKfycby743c3fzNYup3WE13jGYdXzfEq6A5jJvGGcXKf6jm5rqUaaZW46fSk2putJwXmAkGdAg/exec";
   LK.load = function (id) {
+    if (/^[a-f0-9]{32}$/.test(String(id))) {
+      return fetch(LK.GEN + "?lesson=" + id).then(function (r) { return r.json(); })
+        .then(function (d) { if (!d || !d.ok || !d.data) throw new Error("lesson " + id); return d.data; });
+    }
     return fetch("lessons/" + encodeURIComponent(id) + ".json", { cache: "no-cache" })
       .then(function (r) {
         if (!r.ok) throw new Error("lesson " + id + " → " + r.status);
@@ -147,16 +154,125 @@
   };
 
   /* הורדה כקובץ HTML עצמאי */
-  LK.download = function (node, title, filename) {
-    var blob = new Blob(["﻿" + docHtml(title, node.innerHTML)], { type: "text/html;charset=utf-8" });
+  /* as="word" (11.10.26) — אותו מסמך כ-.doc: וורד ו-Google Docs פותחים אותו לעריכה מלאה */
+  LK.download = function (node, title, filename, as) {
+    var word = as === "word";
+    var html = docHtml(title, node.innerHTML);
+    if (word) html = html.replace("<html", '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"');
+    var blob = new Blob(["﻿" + html], { type: word ? "application/msword;charset=utf-8" : "text/html;charset=utf-8" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.href = url;
-    a.download = (filename || title || "תוצר") + ".html";
+    a.download = (filename || title || "תוצר") + (word ? ".doc" : ".html");
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  };
+
+  /* ---------- מצגת PowerPoint לעריכה (11.10.26) ----------
+     נבנית בדפדפן עם PptxGenJS (נטען רק כשלוחצים). 16:9, מימין לשמאל, Arial (יש בו עברית
+     בכל מחשב), הערות המרצה בהערות הדובר. נפתחת לעריכה ב-PowerPoint וב-Google Slides. */
+  var PPTX_SRC = "https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js";
+  var PAL = ["2F74C0", "2F9F55", "F2B233", "EF5656", "8F7AC3"];
+  function withPptx(cb) {
+    if (global.PptxGenJS) return cb(true);
+    var s = document.createElement("script");
+    s.src = PPTX_SRC;
+    s.onload = function () { cb(!!global.PptxGenJS); };
+    s.onerror = function () { cb(false); };
+    document.head.appendChild(s);
+  }
+  LK.pptx = function (d, filename, btn) {
+    var slides = d.deck || [];
+    if (!slides.length) return;
+    var label = btn ? btn.innerHTML : "";
+    if (btn) { btn.disabled = true; btn.textContent = "בונה מצגת…"; }
+    withPptx(function (ok) {
+      if (btn) { btn.disabled = false; btn.innerHTML = label; }
+      if (!ok) { alert("לא הצלחנו לטעון את בונה המצגות (אין חיבור?). אפשר להשתמש בכפתור ההדפסה בינתיים."); return; }
+      var P = new global.PptxGenJS();
+      P.layout = "LAYOUT_WIDE";   /* 13.33 × 7.5 אינץ׳ */
+      P.rtlMode = true;
+      P.title = d.topic || "מצגת";
+      var W = 13.33, H = 7.5, FONT = "Arial", NAVY = "0D3B66", foot = (d.subject || "") + (d.topic ? " · " + d.topic : "");
+      var T = { fontFace: FONT, rtlMode: true, align: "right" };
+      function stripe(s, y, h) {
+        PAL.forEach(function (c, n) { s.addShape(P.ShapeType.rect, { x: n * W / 5, y: y, w: W / 5, h: h, fill: { color: c }, line: { color: c } }); });
+      }
+      /* מצגת מהמחולל (שקפים לפי סוג) — כיוון 3 "בלוקים צבעוניים": בלוק צבע משמאל לפי סוג השקף */
+      if (slides[0].type) {
+        var BLK = { goal: "2F9F55", question: "EF5656", concept: "2F74C0", example: "E0A21F", compare: "8F7AC3", task: "1FA6A0", summary: "0B1B2B", exit: "EF5656" };
+        var X0 = W * 0.28, CW = W - X0 - 0.6, INK = "0B1B2B", HF = "Arial";
+        slides.forEach(function (sl, n) {
+          var s = P.addSlide(), k = sl.type || "summary", c = BLK[k] || "2F74C0", b = sl.bullets || [];
+          if (k === "title") {
+            s.background = { color: INK };
+            stripe(s, H - 0.22, 0.22);
+            s.addText("מחולל השיעורים · המרחב הפדגוגי", Object.assign({}, T, { x: 0.8, y: 1.6, w: W - 1.6, h: 0.5, fontSize: 16, bold: true, color: "27C6F3" }));
+            s.addText(sl.title || d.topic || "", Object.assign({}, T, { x: 0.8, y: 2.1, w: W - 1.6, h: 1.8, fontSize: 54, bold: true, color: "FFFFFF", fontFace: HF }));
+            s.addText(b.join("\n"), Object.assign({}, T, { x: 0.8, y: 4.0, w: W - 1.6, h: 1.4, fontSize: 22, color: "C9D6E3", valign: "top" }));
+          } else {
+            s.background = { color: "FFFFFF" };
+            s.addShape(P.ShapeType.rect, { x: 0, y: 0, w: W * 0.24, h: H, fill: { color: c }, line: { color: c } });
+            s.addText(SL_HE[k] || "", { x: 0, y: H / 2 - 0.4, w: W * 0.24, h: 0.8, fontFace: HF, fontSize: 22, bold: true, color: "FFFFFF", align: "center", rtlMode: true });
+            s.addText(("0" + (n + 1)).slice(-2), { x: W - 1.4, y: 0.35, w: 0.9, h: 0.5, fontFace: HF, fontSize: 16, bold: true, color: c, align: "right" });
+            s.addText(sl.title || "", Object.assign({}, T, { x: X0, y: 0.8, w: CW, h: 1.0, fontSize: 36, bold: true, color: INK }));
+            var y = 1.95;
+            if (k === "question") {
+              s.addText(sl.big || "", Object.assign({}, T, { x: X0, y: y, w: CW, h: 2.6, fontSize: 32, bold: true, color: INK, valign: "middle" }));
+              if (b.length) s.addText(b.join("\n"), Object.assign({}, T, { x: X0, y: 4.8, w: CW, h: 0.9, fontSize: 18, color: "5B6B7C" }));
+            } else if (k === "compare" && sl.left && sl.right) {
+              var half = (CW - 0.5) / 2;
+              [[sl.right, X0 + half + 0.5, "EFEAF8"], [sl.left, X0, "F3F5F8"]].forEach(function (cc) {
+                s.addShape(P.ShapeType.rect, { x: cc[1], y: y, w: half, h: 3.9, fill: { color: cc[2] }, line: { color: cc[2] } });
+                s.addText([{ text: cc[0].label || "", options: { bold: true, fontSize: 26, color: INK, breakLine: true } }].concat((cc[0].items || []).map(function (it) {
+                  return { text: it, options: { fontSize: 20, color: INK, breakLine: true, paraSpaceBefore: 8 } };
+                })), Object.assign({}, T, { x: cc[1] + 0.3, y: y + 0.25, w: half - 0.6, h: 3.4, valign: "top" }));
+              });
+            } else if (k === "exit") {
+              b.forEach(function (q, i) {
+                var yy = y + i * 1.25;
+                s.addShape(P.ShapeType.rect, { x: X0, y: yy, w: CW, h: 1.05, fill: { color: "F3F5F8" }, line: { color: "F3F5F8" } });
+                s.addText(String(i + 1), { x: X0 + CW - 0.8, y: yy, w: 0.6, h: 1.05, fontFace: HF, fontSize: 30, bold: true, color: c, align: "center", valign: "middle" });
+                s.addText(q, Object.assign({}, T, { x: X0 + 0.2, y: yy, w: CW - 1.1, h: 1.05, fontSize: 20, color: INK, valign: "middle" }));
+              });
+            } else {
+              var numbered = k === "concept" || k === "example" || k === "task";
+              s.addText(b.map(function (x, i) {
+                return { text: x, options: { bullet: numbered ? { type: "number" } : { code: "25A0" }, paraSpaceAfter: 12, breakLine: true } };
+              }), Object.assign({}, T, { x: X0, y: y, w: CW, h: sl.big ? 2.7 : 4.6, fontSize: 22, color: INK, valign: "top" }));
+              if (sl.big) s.addText(sl.big, { x: X0, y: 4.75, w: CW, h: 1.6, fontFace: HF, fontSize: 66, bold: true, color: c, align: "right", rtlMode: false });
+            }
+            s.addText(foot, Object.assign({}, T, { x: X0, y: H - 0.55, w: CW, h: 0.35, fontSize: 11, color: "8A97A6" }));
+          }
+          if (sl.note) s.addNotes(sl.note);
+        });
+        P.writeFile({ fileName: (filename || d.topic || "מצגת") + ".pptx" });
+        return;
+      }
+      slides.forEach(function (sl, n) {
+        var s = P.addSlide(), last = n === slides.length - 1, c = PAL[n % 5];
+        if (n === 0) {
+          s.background = { color: NAVY };
+          stripe(s, H - 0.22, 0.22);
+          s.addText(sl.title || d.topic || "", Object.assign({}, T, { x: 0.8, y: 2.0, w: W - 1.6, h: 1.6, fontSize: 46, bold: true, color: "FFFFFF", valign: "bottom" }));
+          s.addText((sl.bullets || []).join("\n"), Object.assign({}, T, { x: 0.8, y: 3.75, w: W - 1.6, h: 1.6, fontSize: 22, color: "A9DCF0", valign: "top" }));
+        } else {
+          s.background = { color: last ? "F2F7FC" : "FFFFFF" };
+          s.addShape(P.ShapeType.rect, { x: W - 0.28, y: 0, w: 0.28, h: H, fill: { color: c }, line: { color: c } });
+          s.addText(String(n + 1), { x: 0.5, y: 0.45, w: 0.9, h: 0.6, fontFace: FONT, fontSize: 16, bold: true, color: c, align: "left" });
+          s.addText(sl.title || "", Object.assign({}, T, { x: 0.8, y: 0.45, w: W - 1.7, h: 1.0, fontSize: 34, bold: true, color: NAVY }));
+          s.addShape(P.ShapeType.rect, { x: W - 2.6, y: 1.5, w: 1.6, h: 0.07, fill: { color: c }, line: { color: c } });
+          s.addText((sl.bullets || []).map(function (b) {
+            return { text: b, options: { bullet: { code: "25CF" }, paraSpaceAfter: 14, breakLine: true } };
+          }), Object.assign({}, T, { x: 0.8, y: 1.85, w: W - 1.7, h: H - 2.7, fontSize: 24, color: "102A43", valign: "top" }));
+          s.addText(foot, Object.assign({}, T, { x: 0.8, y: H - 0.6, w: W - 1.7, h: 0.35, fontSize: 11, color: "5C7285" }));
+        }
+        if (sl.note) s.addNotes(sl.note);
+      });
+      P.writeFile({ fileName: (filename || d.topic || "מצגת") + ".pptx" });
+    });
   };
 
   /* ---------- מצב הצגה לכיתה ----------
@@ -268,7 +384,9 @@
 
     box.querySelector(".lk-url").textContent = url;
     box.querySelector('[data-a="wa"]').href = "https://wa.me/?text=" + encodeURIComponent(msg);
+    box.querySelector('[data-a="wa"]').addEventListener("click", function () { emit("וואטסאפ", kind); });
     box.querySelector('[data-a="copy"]').addEventListener("click", function () {
+      emit("העתקת קישור", kind);
       var b = this;
       LK.copy(url).then(function () {
         var o = b.textContent; b.textContent = "הועתק ✓";
@@ -281,6 +399,7 @@
     box.querySelector('[data-a="qr"]').addEventListener("click", function () {
       if (!qrBox.hidden) { qrBox.hidden = true; return; }
       qrBox.hidden = false;
+      emit("QR", kind);
       if (qrBox.dataset.done) return;
       qrBox.textContent = "בונה קוד…";
       withQR(function (ok) {
@@ -296,6 +415,69 @@
     });
     return box;
   };
+
+  /* QR מוכן בתוך קופסה — לפתיחה החיה, להצבעה ולענן (mecholel משתמש בזה גם בלוח החי) */
+  LK.qr = function (box, url, size) {
+    box.textContent = "";
+    withQR(function (ok) {
+      if (!ok || typeof QRCode === "undefined") { box.innerHTML = '<p class="lk-shx" dir="ltr">' + esc(url) + "</p>"; return; }
+      new QRCode(box, { text: url, width: size || 170, height: size || 170, correctLevel: QRCode.CorrectLevel.M });
+    });
+  };
+
+  /* ---------- ניטור: המחולל מאזין למה שהמורה עושה עם התוצרים (11.10.26) ---------- */
+  LK.on = null;
+  function emit(ev, d) { try { if (LK.on) LK.on(ev, d); } catch (e) {} }
+
+  /* ---------- תוצאות התלמידים (11.10.26) ----------
+     רק בשיעור שנבנה במחולל (מזהה של 32 תווים) ורק בעמוד התלמיד: הבוחן, דף העבודה, ההצבעה והענן
+     שולחים לשרת. השם והכיתה נשמרים בדפדפן של התלמיד/ה (pmh.student), והמזהה האקראי של המכשיר
+     (pmh.sid) מאפשר לעדכן את אותה שורה בהגשה חוזרת. אצל המורה — שום דבר לא נשלח. */
+  var CUR = { student: false, live: false };
+  function isGen(id) { return /^[a-f0-9]{32}$/.test(String(id || "")); }
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  LK.student = function () { var s = lsGet("pmh.student"); return s && s.name ? s : null; };
+  LK.setStudent = function (name, cls) { lsSet("pmh.student", { name: String(name || "").trim().slice(0, 60), cls: String(cls || "").trim().slice(0, 20) }); };
+  function sid() {
+    var s = lsGet("pmh.sid");
+    if (s && /^[a-f0-9]{16}$/.test(s)) return s;
+    try { var a = new Uint8Array(8); crypto.getRandomValues(a); s = Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
+    catch (e) { s = (Math.random().toString(16).slice(2) + "0000000000000000").slice(0, 16); }
+    lsSet("pmh.sid", s);
+    return s;
+  }
+  LK.sid = sid;
+  /* שליחה לשרת. נכשל? ניסיון נוסף אחד אחרי 3 שניות — ואז הודעה למעלה */
+  LK.submit = function (lid, kind, body) {
+    var me = LK.student() || {};
+    var payload = JSON.stringify({ action: "submit", lid: lid, kind: kind, sid: sid(), name: me.name || "", cls: me.cls || "",
+      a: body.a, done: !!body.done, score: body.score, max: body.max });
+    function once() { return fetch(LK.GEN, { method: "POST", body: payload }).then(function (r) { return r.json(); }); }
+    return once().catch(function () { return new Promise(function (r) { setTimeout(r, 3000); }).then(once); })
+      .catch(function () { return { ok: false, error: "network" }; });
+  };
+  function sentNote(host, d, retry) {
+    var n = host.querySelector(".lk-sent") || host.appendChild(el("div", "lk-exp on lk-sent"));
+    var ok = d && d.ok;
+    n.innerHTML = ok ? "התשובות נשלחו למורה ✓" : "התשובות לא נשלחו. בדקו את החיבור לאינטרנט " +
+      (retry ? '<button type="button" class="lk-btn">שליחה שוב</button>' : "ונסו שוב.");
+    n.classList.toggle("bad", !ok);
+    var b = n.querySelector("button");
+    if (b) b.addEventListener("click", function () { b.disabled = true; b.textContent = "שולח…"; retry().then(function (r) { sentNote(host, r, retry); }); });
+  }
+  /* ספירות ההצבעה והענן — פתוחות, בלי שמות. סקר כל 4 שניות כל עוד הקופסה על המסך */
+  function pollPublic(lid, k, box, paint) {
+    var stopAt = Date.now() + 45 * 60000;
+    function tick() {
+      if (!box.isConnected || Date.now() > stopAt) return;
+      if (!document.hidden && box.offsetParent !== null) {
+        fetch(LK.GEN + "?live=" + lid + "&k=" + k).then(function (r) { return r.json(); }).then(function (d) { if (d && d.ok) paint(d); }).catch(function () {});
+      }
+      setTimeout(tick, 4000);
+    }
+    tick();
+  }
 
   LK.copy = function (text) {
     if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
@@ -367,6 +549,7 @@
 
   /* ---------- 2 · מצגת ---------- */
   function renderDeck(d) {
+    if (d.deck && d.deck.length && d.deck[0].type) return renderDeck2(d);
     var slides = d.deck || [];
     var wrap = el("div", "lk-body");
     if (!slides.length) return el("div", "lk-empty", "אין מצגת בקובץ התוכן הזה.");
@@ -380,12 +563,16 @@
     var pos = el("span", "lk-pos");
     var dots = el("div", "lk-dots");
 
+    /* עיצוב השקף (11.10.26): שקף פתיחה כהה, ושאר השקפים לבנים עם צבע מתחלף מפלטת האתר */
+    function slideClass(n) {
+      return "lk-slide " + (n === 0 ? "lk-s-title" : n === slides.length - 1 ? "lk-s-last" : "lk-s-c" + (n % 5));
+    }
     function paint() {
       var s = slides[i];
-      stage.innerHTML = '<div class="lk-slide"><div class="lk-num">שקף ' + (i + 1) + " מתוך " + slides.length + "</div>" +
+      stage.innerHTML = '<div class="' + slideClass(i) + '"><div class="lk-num">' + (i + 1) + " / " + slides.length + "</div>" +
         "<h5>" + bidi(s.title) + "</h5><ul>" +
         (s.bullets || []).map(function (b) { return "<li>" + bidi(b) + "</li>"; }).join("") +
-        "</ul></div>";
+        '</ul><div class="lk-sfoot">' + esc(d.subject || "") + (d.topic ? " · " + esc(d.topic) : "") + "</div></div>";
       note.innerHTML = s.note ? "<b>הערת מרצה:</b> " + esc(s.note) : "";
       note.style.display = s.note ? "" : "none";
       pos.textContent = i + 1 + " / " + slides.length;
@@ -430,6 +617,7 @@
 
   /* ---------- 3 · דף עבודה ---------- */
   function renderSheet(d) {
+    if (d.sheet && d.sheet.diff) return renderSheetDiff(d);
     var S = d.sheet || {};
     if (!S.tasks) return el("div", "lk-empty", "אין דף עבודה בקובץ התוכן הזה.");
     var h = '<div class="lk-sheet">';
@@ -440,11 +628,11 @@
     S.tasks.forEach(function (t) {
       h += '<div class="lk-task"><div class="lk-q"><b>' + esc(t.n) + ".</b> " + nlb(t.text) + "</div>";
       if (t.example) h += '<div class="lk-eg">' + nlb(t.example) + "</div>";
-      h += '<div class="lk-lines">' + new Array((t.lines || 3) + 1).join("<div></div>") + "</div></div>";
+      h += '<div class="lk-lines" data-k="' + esc(t.n) + '" data-n="' + (t.lines || 3) + '">' + new Array((t.lines || 3) + 1).join("<div></div>") + "</div></div>";
     });
     if (S.bonus) {
       h += '<div class="lk-task"><div class="lk-q"><b>בונוס.</b> ' + nl(S.bonus) + "</div>" +
-        '<div class="lk-lines">' + new Array(5).join("<div></div>") + "</div></div>";
+        '<div class="lk-lines" data-k="bonus" data-n="4">' + new Array(5).join("<div></div>") + "</div></div>";
     }
     if (S.selfCheck && S.selfCheck.length) {
       h += '<div class="lk-check"><b>בדקתי את עצמי</b>' +
@@ -461,11 +649,52 @@
           return "<tr><td>" + esc(r.task) + "</td><td>" + esc(r.answer) + "</td><td>" + esc(r.points) + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
-    return el("div", "lk-body", h);
+    var body = el("div", "lk-body", h);
+    wireSheet(body, d);
+    return body;
+  }
+
+  /* דף עבודה מקוון — בעמוד התלמיד בשיעור מהמחולל: הקווים לכתיבה הופכים לשדות תשובה,
+     הטיוטה נשמרת בדפדפן, ו"הגשה למורה" שולחת. אפשר להגיש שוב — ההגשה האחרונה נשמרת. */
+  function wireSheet(wrap, d) {
+    if (!(CUR.live && isGen(d.id))) return;
+    var key = "pmh.sheet." + d.id, draft = lsGet(key) || {};
+    wrap.querySelectorAll(".lk-lines[data-k]").forEach(function (L) {
+      var ta = el("textarea", "lk-ans");
+      ta.rows = Math.max(3, +L.getAttribute("data-n") || 3);
+      ta.setAttribute("data-k", L.getAttribute("data-k"));
+      ta.setAttribute("aria-label", "התשובה שלי");
+      ta.placeholder = "כתבו כאן את התשובה";
+      ta.value = draft[ta.getAttribute("data-k")] || "";
+      ta.addEventListener("input", function () { draft[ta.getAttribute("data-k")] = ta.value; lsSet(key, draft); });
+      L.parentNode.replaceChild(ta, L);
+    });
+    var foot = el("div", "lk-submit", '<button type="button" class="lk-btn primary">הגשה למורה</button><span>אפשר לתקן ולהגיש שוב — ההגשה האחרונה היא שנשמרת.</span>');
+    (wrap.querySelector(".lk-sheet") || wrap).appendChild(foot);
+    var btn = foot.querySelector("button");
+    btn.addEventListener("click", function () {
+      var diag = (d.sheet.diagnostic || []), picks = wrap.__diag || [];
+      if (d.sheet.diff && picks.filter(function (x) { return x != null; }).length < diag.length) {
+        sentNote(foot, { ok: false }); foot.querySelector(".lk-sent").textContent = "עונים קודם על שתי שאלות הפתיחה — הן קובעות את הערכה שלך.";
+        return;
+      }
+      var t = {}, n = 0;
+      wrap.querySelectorAll("textarea.lk-ans").forEach(function (ta) {
+        var set = ta.closest(".lk-set");
+        if (set && !set.classList.contains("on")) return;   /* בדיפרנציאלי — רק הערכה שנותבה */
+        t[ta.getAttribute("data-k")] = ta.value;
+        if (ta.value.trim()) n++;
+      });
+      if (!n) { sentNote(foot, { ok: false }); foot.querySelector(".lk-sent").textContent = "עוד לא כתבת תשובות."; return; }
+      btn.disabled = true; btn.textContent = "שולח…";
+      var send = function () { return LK.submit(d.id, "sheet", { a: { diag: picks, t: t }, done: true }); };
+      send().then(function (r) { btn.disabled = false; btn.textContent = "הגשה למורה"; sentNote(foot, r, send); });
+    });
   }
 
   /* ---------- 4 · פעילות פתיחה ---------- */
   function renderOpener(d) {
+    if (d.opener && d.opener.otype) return renderOpener2(d);
     var O = d.opener;
     if (!O) return el("div", "lk-empty", "אין פעילות פתיחה בקובץ התוכן הזה.");
     var wrap = el("div", "lk-body");
@@ -533,7 +762,7 @@
           });
           exp.innerHTML = bidi(q.explain || "");
           exp.classList.add("on");
-          if (onScore) onScore(right, answered, items.length);
+          if (onScore) onScore(right, answered, items.length, n, oi);
         });
         opts.appendChild(b);
       });
@@ -553,6 +782,7 @@
 
   /* ---------- 5 · משחק ---------- */
   function renderGame(d) {
+    if (d.game && d.game.gameType) return renderGame2(d);
     var G = d.game;
     if (!G) return el("div", "lk-empty", "אין משחק בקובץ התוכן הזה.");
     var wrap = el("div", "lk-body");
@@ -658,7 +888,15 @@
     wrap.appendChild(bar);
     var host = el("div");
     wrap.appendChild(host);
-    quizCards(Q, host, bar.update);
+    /* בעמוד התלמיד — כל תשובה נשלחת (בשביל הלוח החי), והאחרונה מסמנת הגשה */
+    var live = CUR.live && isGen(d.id), picks = Q.map(function () { return null; });
+    quizCards(Q, host, function (right, answered, total, n, oi) {
+      bar.update(right, answered, total);
+      if (!live) return;
+      picks[n] = oi;
+      var done = answered === total, send = function () { return LK.submit(d.id, "quiz", { a: picks.slice(), done: done }); };
+      send().then(function (r) { if (done) sentNote(wrap, r, send); });
+    });
 
     wrap.__printHTML = Q.map(function (q, n) {
       return '<div class="lk-qcard"><div class="lk-qt">' + (n + 1) + ". " + esc(q.q) +
@@ -666,6 +904,417 @@
         q.opts.map(function (o, i) { return '<div class="lk-a">' + (i === q.correct ? "✔ " : "○ ") + esc(o) + "</div>"; }).join("") +
         '<div class="lk-exp">' + esc(q.explain || "") + "</div></div>";
     }).join("");
+    return wrap;
+  }
+
+  /* =====================================================================
+     תוצרים מהמחולל (11.10.26) — פורמטים חדשים לצד הישנים של הבנק
+     ===================================================================== */
+
+  /* קישור יחסי לשורש האתר — עובד גם מ-mecholel.html וגם מ-shiur.html */
+  function siteBase() {
+    return /^https?:$/.test(location.protocol) ? location.origin + location.pathname.replace(/[^/]*$/, "") : LK.SITE;
+  }
+
+  /* ---------- משחק: נפתח בנגן המשחקים של האתר (12 סוגים) ---------- */
+  var GAME_HE = { millionaire: "סולם הפרסים", trivia: "טריוויה", wheel: "גלגל השאלות", escape: "חדר בריחה", memory: "משחק זיכרון",
+    matching: "התאמה", groups: "מיון לקבוצות", ordering: "סדר נכון", truefalse: "נכון / לא נכון", fillblank: "השלמת חסר",
+    sentence: "סדר את המשפט", hangman: "נחשו את המילה" };
+  function renderGame2(d) {
+    var G = d.game, wrap = el("div", "lk-body lk-game2");
+    var name = GAME_HE[G.gameType] || "משחק";
+    wrap.appendChild(el("div", "lk-g2head", "<b>" + esc(name) + "</b><span>" + (G.items || []).length + " פריטים · משחקים על המסך או בטלפון</span>"));
+    if (d.id) {
+      var fr = el("iframe", "lk-gframe");
+      /* אצל המורה (t=1) הנגן לא שולח תוצאות — רק תלמידים נספרים */
+      fr.src = siteBase() + "tools/game-player/index.html?lid=" + d.id + (CUR.student ? "" : "&t=1");
+      fr.title = name;
+      fr.setAttribute("allow", "fullscreen");
+      wrap.appendChild(fr);
+    } else {
+      wrap.appendChild(el("div", "lk-empty", "המשחק יוצג כאן ברגע שהשיעור יישמר."));
+    }
+    wrap.__printHTML = game2Print(G, true);
+    wrap.__printStudent = game2Print(G, false);
+    return wrap;
+  }
+  function game2Print(G, teacher) {
+    var it = G.items || [], t = G.gameType, h = "<h4>" + esc(GAME_HE[t] || "משחק") + "</h4>";
+    if (["millionaire", "trivia", "wheel"].indexOf(t) > -1) h += it.map(function (q, n) {
+      return '<div class="lk-qcard"><div class="lk-qt">' + (n + 1) + ". " + esc(q.text) + "</div>" +
+        (q.options || []).map(function (o, i) { return '<div class="lk-a">' + (teacher && i === q.correct ? "✔ " : "○ ") + esc(o) + "</div>"; }).join("") +
+        (teacher ? '<div class="lk-exp">' + esc(q.explanation || "") + "</div>" : "") + "</div>";
+    }).join("");
+    else if (t === "matching") h += "<table><tbody>" + it.map(function (p) { return "<tr><td>" + esc(p.right) + "</td><td>" + (teacher ? esc(p.left) : "") + "</td></tr>"; }).join("") + "</tbody></table>";
+    else if (t === "memory") h += "<table><tbody>" + it.map(function (p) { return "<tr><td>" + esc(p.front) + "</td><td>" + (teacher ? esc(p.back) : "") + "</td></tr>"; }).join("") + "</tbody></table>";
+    else if (t === "groups") h += it.map(function (g) { return "<p><b>" + esc(g.name) + ":</b> " + (teacher ? esc((g.items || []).join(" · ")) : "") + "</p>"; }).join("");
+    else if (t === "ordering") h += "<ol>" + it.slice().sort(function (a, b) { return a.position - b.position; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; }).join("") + "</ol>";
+    else if (t === "escape") h += it.map(function (r, n) { return "<p><b>" + (n + 1) + ". " + esc(r.title) + "</b><br>" + esc(r.story) + "<br>" + esc(r.riddle) + (teacher ? "<br>תשובה: " + esc(r.answer) : "") + "</p>"; }).join("");
+    else if (t === "truefalse") h += it.map(function (x, n) { return "<p>" + (n + 1) + ". " + esc(x.text) + (teacher ? " — <b>" + (x.correct ? "נכון" : "לא נכון") + "</b>. " + esc(x.explanation || "") : "") + "</p>"; }).join("");
+    else if (t === "fillblank") h += it.map(function (x, n) { return "<p>" + (n + 1) + ". " + esc(x.sentence) + (teacher ? " — <b>" + esc(x.answer) + "</b>" : "") + "</p>"; }).join("");
+    else if (t === "sentence") h += it.map(function (x, n) { return "<p>" + (n + 1) + ". " + esc(teacher ? x.sentence : shuffle(String(x.sentence).split(/\s+/)).join(" / ")) + "</p>"; }).join("");
+    else if (t === "hangman") h += it.map(function (x, n) { return "<p>" + (n + 1) + ". " + esc(x.hint) + (teacher ? " — <b>" + esc(x.word) + "</b>" : "") + "</p>"; }).join("");
+    return h;
+  }
+
+  /* ---------- פעילות פתיחה: 8 סוגים, כולם עובדים על המקרן ---------- */
+  function openerBody2(O, wrap, d) {
+    var D = O.data || {}, box = el("div", "lk-op2 lk-op-" + O.otype);
+    function reveal(label, html, cls) {
+      var b = el("button", "lk-btn lk-reveal" + (cls ? " " + cls : ""), label);
+      b.type = "button";
+      var r = el("div", "lk-rv", html);
+      b.addEventListener("click", function () { r.classList.toggle("on"); });
+      var w = el("div"); w.appendChild(b); w.appendChild(r); return w;
+    }
+    switch (O.otype) {
+      case "question":
+        box.appendChild(el("div", "lk-bigq", bidi(D.text)));
+        var sec = Math.max(15, D.timerSeconds || 60), left = sec, tm = null;
+        var clock = el("button", "lk-btn primary lk-timer", "⏱ " + sec + " שניות — התחלה");
+        clock.type = "button";
+        clock.addEventListener("click", function () {
+          if (tm) { clearInterval(tm); tm = null; left = sec; clock.textContent = "⏱ " + sec + " שניות — התחלה"; return; }
+          tm = setInterval(function () {
+            left--; clock.textContent = "⏱ " + left;
+            if (left <= 0) { clearInterval(tm); tm = null; clock.textContent = "הזמן נגמר!"; left = sec; }
+          }, 1000);
+        });
+        box.appendChild(clock);
+        if (D.hint) box.appendChild(reveal("רמז", bidi(D.hint)));
+        if (D.answer) box.appendChild(reveal("כיוון לתשובה", bidi(D.answer), "lk-teacherish"));
+        break;
+      case "story":
+        box.appendChild(el("div", "lk-story", nlb(D.text)));
+        box.appendChild(el("div", "lk-bigq", bidi(D.discussionQuestion)));
+        break;
+      case "riddle":
+        box.appendChild(el("div", "lk-bigq", bidi(D.question)));
+        var hl = el("ol", "lk-hints"), hi = 0, hints = D.hints || [];
+        var hb = el("button", "lk-btn primary", "רמז ראשון");
+        hb.type = "button";
+        hb.addEventListener("click", function () {
+          if (hi >= hints.length) return;
+          hl.appendChild(el("li", "", bidi(hints[hi++])));
+          hb.textContent = hi < hints.length ? "רמז נוסף (" + hi + "/" + hints.length + ")" : "כל הרמזים נחשפו";
+          hb.disabled = hi >= hints.length;
+        });
+        box.appendChild(hl); box.appendChild(hb);
+        box.appendChild(reveal("הפתרון", "<b>" + bidi(D.answer) + "</b>"));
+        break;
+      case "truefalse":
+        var grid = el("div", "lk-flips");
+        (D.statements || []).forEach(function (s, n) {
+          var c = el("button", "lk-flip", '<span class="f">' + (n + 1) + ". " + bidi(s.text) + "</span>" +
+            '<span class="b ' + (s.isTrue ? "t" : "x") + '"><b>' + (s.isTrue ? "נכון" : "לא נכון") + "</b>" + bidi(s.explanation || "") + "</span>");
+          c.type = "button";
+          c.addEventListener("click", function () { c.classList.toggle("on"); });
+          grid.appendChild(c);
+        });
+        box.appendChild(grid);
+        break;
+      case "dilemma":
+        box.appendChild(el("div", "lk-story", nlb(D.scenario)));
+        var ops = el("div", "lk-flips");
+        (D.options || []).forEach(function (o, n) {
+          var c = el("button", "lk-flip", '<span class="f"><b>' + "אבג"[n] + ".</b> " + bidi(o.text) + "</span>" +
+            '<span class="b"><b>מה קורה?</b>' + bidi(o.result) + "</span>");
+          c.type = "button";
+          c.addEventListener("click", function () { c.classList.toggle("on"); });
+          ops.appendChild(c);
+        });
+        box.appendChild(ops);
+        break;
+      case "twotruths":
+        var tw = el("div", "lk-flips");
+        var cards = (D.statements || []).map(function (s, n) {
+          var c = el("div", "lk-flip lk-tt", '<span class="f">' + (n + 1) + ". " + bidi(s.text) + "</span>");
+          c.dataset.lie = s.isLie ? "1" : "";
+          tw.appendChild(c); return c;
+        });
+        box.appendChild(tw);
+        var rv = el("button", "lk-btn primary", "חשיפה: מה השקר?");
+        rv.type = "button";
+        rv.addEventListener("click", function () {
+          cards.forEach(function (c) { c.classList.add(c.dataset.lie ? "lie" : "truth"); });
+          rv.disabled = true;
+          if (D.explanation) box.appendChild(el("div", "lk-exp on", bidi(D.explanation)));
+        });
+        box.appendChild(rv);
+        break;
+      case "guessnumber":
+        box.appendChild(el("div", "lk-bigq", bidi(D.question)));
+        var row = el("div", "lk-guess", '<input type="number" inputmode="decimal" aria-label="הניחוש של הכיתה" placeholder="הניחוש של הכיתה">');
+        var gb = el("button", "lk-btn primary", "בדיקה");
+        gb.type = "button";
+        var res = el("div", "lk-exp");
+        gb.addEventListener("click", function () {
+          var g = parseFloat(row.querySelector("input").value), a = Number(D.answer);
+          var dir = isNaN(g) ? "" : g === a ? "בול! " : g < a ? "גבוה יותר. " : "נמוך יותר. ";
+          res.innerHTML = dir + "התשובה: <b>" + esc(a.toLocaleString("he-IL")) + " " + esc(D.unit || "") + "</b>. " + bidi(D.explanation || "");
+          res.classList.add("on");
+        });
+        row.appendChild(gb); box.appendChild(row); box.appendChild(res);
+        break;
+      case "vote":
+        box.appendChild(el("div", "lk-bigq", bidi(D.question)));
+        /* שלושה מצבים: ידני (+1 על המקרן) · חי (המורה פתח/ה הצבעה מהטלפונים) · תלמיד/ה (מצביע/ה פעם אחת) */
+        var opts = D.options || [], votes = opts.map(function () { return 0; }), list = el("div", "lk-votes");
+        var gen = isGen(d && d.id), mode = CUR.live && gen ? "student" : "manual";
+        var vkey = gen ? "pmh.vote." + d.id : "", mine = vkey && lsGet(vkey) != null ? +lsGet(vkey) : -1;
+        var cnt = el("div", "lk-cnt");
+        var paintVotes = function () {
+          var tot = votes.reduce(function (a, b) { return a + b; }, 0) || 1;
+          var hide = mode === "student" && mine < 0;   /* לפני שהצביעו — בלי תוצאות, שלא ישפיע */
+          list.innerHTML = "";
+          opts.forEach(function (o, n) {
+            var btn = mode === "manual" ? '<button type="button" class="lk-btn" aria-label="קול נוסף">+1</button>'
+              : hide ? '<button type="button" class="lk-btn primary">בחירה</button>' : "";
+            var r = el("div", "lk-vote" + (n === mine ? " mine" : "") + (btn ? "" : " nb"), btn + '<span class="t">' + bidi(o) + "</span>" +
+              (hide ? "" : '<span class="bar"><i style="width:' + Math.round(votes[n] / tot * 100) + '%"></i></span><b>' + votes[n] + "</b>"));
+            var b = r.querySelector("button");
+            if (b) b.addEventListener("click", function () { if (mode === "manual") { votes[n]++; paintVotes(); } else cast(n); });
+            list.appendChild(r);
+          });
+        };
+        var follow = function () {
+          pollPublic(d.id, "vote", list, function (x) {
+            votes = opts.map(function (o, i) { return (x.counts || [])[i] || 0; });
+            cnt.textContent = x.n + (x.n === 1 ? " הצביע/ה" : " הצביעו");
+            paintVotes();
+          });
+        };
+        var cast = function (n) {
+          mine = n; paintVotes();
+          LK.submit(d.id, "vote", { a: [n], done: true }).then(function (r) {
+            if (r && r.ok) { lsSet(vkey, n); cnt.textContent = "ההצבעה נקלטה ✓"; follow(); }
+            else { mine = -1; paintVotes(); cnt.textContent = "ההצבעה לא נקלטה — בדקו את החיבור ונסו שוב."; }
+          });
+        };
+        paintVotes();
+        box.appendChild(list);
+        box.appendChild(cnt);
+        if (mode === "student" && mine > -1) follow();
+        if (!CUR.student && gen) box.appendChild(goLive("הצבעה מהטלפונים", "סורקים ומצביעים מהטלפון — הגרף מתמלא כאן", d, function (lbx) {
+          mode = "live"; votes = opts.map(function () { return 0; }); paintVotes(); lbx.appendChild(cnt); follow(); emit("הצבעה חיה", "vote");
+        }));
+        break;
+      case "wordcloud":
+        box.appendChild(el("div", "lk-bigq", bidi(D.prompt)));
+        if ((D.examples || []).length) box.appendChild(el("div", "lk-cloud-eg", "למשל: " + D.examples.map(bidi).join(" · ")));
+        var cloud = el("div", "lk-cloud"), ccnt = el("div", "lk-cnt"), cgen = isGen(d && d.id);
+        var paintCloud = function (x) {
+          var words = x.words || [], mx = words.length ? words[0][1] : 1;
+          if (!CUR.live) ccnt.textContent = x.n ? x.n + (x.n === 1 ? " שלח/ה מילים" : " שלחו מילים") : "";
+          cloud.innerHTML = words.length ? words.map(function (w, i) {
+            return '<span class="c' + (i % 5) + '" style="font-size:' + (1 + 1.7 * w[1] / mx).toFixed(2) + 'em">' + bidi(w[0]) + "</span>";
+          }).join("") : '<span class="lk-cloud-empty">המילים יופיעו כאן</span>';
+        };
+        if (CUR.live && cgen) {
+          var ckey = "pmh.cloud." + d.id, sent = lsGet(ckey) || [];
+          var form = el("div", "lk-guess", '<input type="text" maxlength="30" aria-label="המילה שלי" placeholder="מילה אחת עד שלוש">');
+          var sb = el("button", "lk-btn primary", "שליחה"); sb.type = "button";
+          var inp = form.querySelector("input");
+          var left = function () {
+            sb.disabled = inp.disabled = sent.length >= 3;
+            ccnt.textContent = sent.length ? "שלחת: " + sent.join(" · ") + (sent.length >= 3 ? " (אפשר עד 3)" : "") : "";
+          };
+          var showCloud = function () { if (!cloud.isConnected) { box.appendChild(cloud); paintCloud({ words: [] }); pollPublic(d.id, "cloud", cloud, paintCloud); } };
+          sb.addEventListener("click", function () {
+            var w = inp.value.trim();
+            if (!w || sent.length >= 3) return;
+            sb.disabled = true;
+            LK.submit(d.id, "cloud", { a: sent.concat([w]), done: true }).then(function (r) {
+              if (r && r.ok) { sent.push(w); lsSet(ckey, sent); inp.value = ""; left(); showCloud(); }
+              else { left(); ccnt.textContent = "לא נשלח — בדקו את החיבור ונסו שוב."; }
+            });
+          });
+          inp.addEventListener("keydown", function (e) { if (e.key === "Enter") sb.click(); });
+          form.appendChild(sb); box.appendChild(form); box.appendChild(ccnt); left();
+          if (sent.length) showCloud();
+        } else if (!CUR.student && cgen) {
+          box.appendChild(goLive("פתיחת הענן לטלפונים", "סורקים ושולחים מילה אחת עד שלוש — הענן נבנה כאן", d, function (lbx) {
+            lbx.appendChild(ccnt); box.appendChild(cloud); paintCloud({ words: [] }); pollPublic(d.id, "cloud", cloud, paintCloud); emit("הצבעה חיה", "wordcloud");
+          }));
+        }
+        break;
+    }
+    wrap.appendChild(box);
+  }
+  /* כפתור "חי" אצל המורה: QR לעמוד התלמיד של הפתיחה, ואז מתחילים לעקוב */
+  function goLive(label, hint, d, start) {
+    var w = el("div", "lk-golive");
+    var b = el("button", "lk-btn primary", label); b.type = "button";
+    w.appendChild(b);
+    b.addEventListener("click", function () {
+      var url = LK.shareURL(d.id, "opener");
+      var lb = el("div", "lk-livebox", '<div class="lk-lqr"></div><div class="lk-ltx"><b>' + esc(hint) + '</b><div class="lk-url" dir="ltr"></div></div>');
+      lb.querySelector(".lk-url").textContent = url;
+      LK.qr(lb.querySelector(".lk-lqr"), url, 150);
+      w.replaceChild(lb, b);
+      start(lb.querySelector(".lk-ltx"));
+    });
+    return w;
+  }
+  function renderOpener2(d) {
+    var O = d.opener, wrap = el("div", "lk-body");
+    wrap.appendChild(el("div", "lk-card", "<h4>" + bidi(O.title) + '<span class="lk-min">' + esc(O.duration) + " דק׳ · " + esc(O.type || "") + "</span></h4>"));
+    if (O.instructions) wrap.appendChild(el("div", "lk-card lk-teacher", '<h4>הפעלה — למורה</h4><p class="lk-q" style="margin:0">' + nl(O.instructions) + "</p>"));
+    openerBody2(O, wrap, d);
+    if (O.teacherNote) wrap.appendChild(el("div", "lk-note lk-teacher", "<b>הערת מרצה:</b> " + esc(O.teacherNote)));
+    if (O.bridge) wrap.appendChild(el("div", "lk-card lk-teacher", '<h4>הגשר לשיעור — למורה</h4><p class="lk-q" style="margin:0">' + esc(O.bridge) + "</p>"));
+    var D = O.data || {}, txt = function (x) { return esc(String(x == null ? "" : x)); };
+    var body = { question: "<p>" + txt(D.text) + "</p>", story: "<p>" + txt(D.text) + "</p><p><b>" + txt(D.discussionQuestion) + "</b></p>",
+      riddle: "<p>" + txt(D.question) + "</p><ol>" + (D.hints || []).map(function (h) { return "<li>" + txt(h) + "</li>"; }).join("") + "</ol>",
+      truefalse: "<ol>" + (D.statements || []).map(function (s) { return "<li>" + txt(s.text) + "</li>"; }).join("") + "</ol>",
+      dilemma: "<p>" + txt(D.scenario) + "</p><ol>" + (D.options || []).map(function (o) { return "<li>" + txt(o.text) + "</li>"; }).join("") + "</ol>",
+      twotruths: "<ol>" + (D.statements || []).map(function (s) { return "<li>" + txt(s.text) + "</li>"; }).join("") + "</ol>",
+      wordcloud: "<p>" + txt(D.prompt) + "</p>" + ((D.examples || []).length ? "<p>למשל: " + (D.examples || []).map(txt).join(" · ") + "</p>" : ""),
+      guessnumber: "<p>" + txt(D.question) + "</p>", vote: "<p>" + txt(D.question) + "</p><ol>" + (D.options || []).map(function (o) { return "<li>" + txt(o) + "</li>"; }).join("") + "</ol>" }[O.otype] || "";
+    var ans = { question: D.answer, riddle: D.answer, guessnumber: D.answer + " " + (D.unit || "") + " — " + (D.explanation || ""), twotruths: D.explanation,
+      truefalse: (D.statements || []).map(function (s, n) { return (n + 1) + ". " + (s.isTrue ? "נכון" : "לא נכון") + " — " + s.explanation; }).join(" · "),
+      dilemma: (D.options || []).map(function (o, n) { return "אבג"[n] + ". " + o.result; }).join(" · ") }[O.otype];
+    wrap.__printStudent = '<div class="lk-card"><h4>' + esc(O.title) + "</h4>" + body + "</div>";
+    wrap.__printHTML = wrap.__printStudent + (O.instructions ? "<p><b>הפעלה:</b> " + esc(O.instructions) + "</p>" : "") +
+      (ans ? "<p><b>תשובות:</b> " + esc(ans) + "</p>" : "") + (O.teacherNote ? "<p><b>הערת מרצה:</b> " + esc(O.teacherNote) + "</p>" : "") +
+      (O.bridge ? "<p><b>הגשר:</b> " + esc(O.bridge) + "</p>" : "");
+    return wrap;
+  }
+
+  /* ---------- מצגת: פריסה לפי סוג השקף ---------- */
+  var SL_ICON = {
+    goal: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+    question: '<path d="M9.1 9a3 3 0 1 1 4.2 2.8c-.8.4-1.3 1-1.3 1.9V15"/><circle cx="12" cy="18.5" r=".6"/><circle cx="12" cy="12" r="9.5"/>',
+    concept: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+    example: '<path d="M4 6h16M4 12h10M4 18h7"/><path d="m15 17 2 2 4-4"/>',
+    compare: '<path d="M12 3v18"/><path d="M4 7h5M4 12h5M15 7h5M15 12h5"/>',
+    task: '<rect x="4" y="4" width="16" height="17" rx="2"/><path d="M9 2.5v3M15 2.5v3M8 11h8M8 15h5"/>',
+    summary: '<path d="M4 6h16M4 12h16M4 18h10"/>',
+    exit: '<path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4M6 12h10"/>'
+  };
+  var SL_HE = { goal: "מטרה", question: "שאלה לדיון", concept: "מושג", example: "דוגמה פתורה", compare: "השוואה", task: "משימה", summary: "סיכום", exit: "כרטיס יציאה" };
+  /* נוסחה בתוך משפט עברי: רצף של ספרות וסימני חשבון מבודד משמאל לימין */
+  function mathBidi(s) {
+    return bidi(s).replace(/([0-9][0-9,.%₪ ×÷=+−\-()]*[0-9%₪)])/g, function (m) { return /[×÷=]/.test(m) ? '<bdi dir="ltr">' + m + "</bdi>" : m; });
+  }
+  function slide2(s, n, total, d) {
+    var k = s.type || "summary", b = s.bullets || [];
+    var foot = '<div class="sfoot">' + esc(d.subject || "") + (d.topic ? " · " + esc(d.topic) : "") + "</div>";
+    if (k === "title") {
+      return '<section class="sl t-title"><div class="eyebrow">מחולל השיעורים · המרחב הפדגוגי</div><h1>' + bidi(s.title) + "</h1>" +
+        b.map(function (x) { return '<p class="sub">' + bidi(x) + "</p>"; }).join("") + '<div class="bar"><i></i><i></i><i></i><i></i><i></i></div></section>';
+    }
+    var head = '<div class="num">' + ("0" + n).slice(-2) + '</div><div class="kick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      (SL_ICON[k] || "") + "</svg><span>" + (SL_HE[k] || "") + "</span></div>";
+    var body;
+    if (k === "question") {
+      body = "<h2>" + bidi(s.title) + "</h2><blockquote>" + mathBidi(s.big || "") + "</blockquote>" + b.map(function (x) { return '<p class="hint">' + bidi(x) + "</p>"; }).join("");
+    } else if ((k === "concept" || k === "example" || k === "task") && s.big) {
+      body = '<div class="split"><div class="txt"><h2>' + bidi(s.title) + '</h2><ol class="steps">' +
+        b.map(function (x, i) { return '<li><b class="i">' + (i + 1) + "</b><span>" + mathBidi(x) + "</span></li>"; }).join("") +
+        '</ol></div><div class="bigbox"><bdi dir="ltr" class="big">' + esc(s.big) + "</bdi></div></div>";
+    } else if (k === "compare" && s.left && s.right) {
+      var col = function (c, cls) { return '<div class="col ' + cls + '"><b>' + bidi(c.label) + "</b><ul>" + (c.items || []).map(function (x) { return "<li>" + mathBidi(x) + "</li>"; }).join("") + "</ul></div>"; };
+      body = "<h2>" + bidi(s.title) + '</h2><div class="cols">' + col(s.right, "a") + '<div class="vs">או</div>' + col(s.left, "b") + "</div>";
+    } else if (k === "exit") {
+      body = "<h2>" + bidi(s.title) + '</h2><ol class="cards">' + b.map(function (x, i) { return "<li><b>" + (i + 1) + "</b><span>" + mathBidi(x) + "</span></li>"; }).join("") + "</ol>";
+    } else {
+      body = "<h2>" + bidi(s.title) + '</h2><ul class="pts">' + b.map(function (x) { return "<li>" + mathBidi(x) + "</li>"; }).join("") + "</ul>";
+    }
+    return '<section class="sl t-' + esc(k) + '">' + head + '<div class="body">' + body + "</div>" + foot + "</section>";
+  }
+  function renderDeck2(d) {
+    var slides = d.deck, i = 0;
+    var wrap = el("div", "lk-body lk-deck2"), stage = el("div", "lk-d2stage");
+    var note = el("div", "lk-note lk-teacher"), nav = el("div", "lk-nav");
+    var prev = el("button", "lk-btn", "‹ הקודם"), next = el("button", "lk-btn", "הבא ›"), pos = el("span", "lk-pos"), dots = el("div", "lk-dots");
+    function paint() {
+      stage.innerHTML = slide2(slides[i], i + 1, slides.length, d);
+      var s = slides[i];
+      note.innerHTML = s.note ? "<b>הערת מרצה:</b> " + esc(s.note) : "";
+      note.style.display = s.note ? "" : "none";
+      pos.textContent = i + 1 + " / " + slides.length;
+      prev.disabled = i === 0; next.disabled = i === slides.length - 1;
+      Array.prototype.forEach.call(dots.children, function (b, n) { b.classList.toggle("on", n === i); });
+    }
+    slides.forEach(function (s, n) {
+      var b = el("button", "lk-dot"); b.type = "button"; b.setAttribute("aria-label", "שקף " + (n + 1));
+      b.addEventListener("click", function () { i = n; paint(); }); dots.appendChild(b);
+    });
+    prev.type = next.type = "button";
+    prev.addEventListener("click", function () { if (i > 0) { i--; paint(); } });
+    next.addEventListener("click", function () { if (i < slides.length - 1) { i++; paint(); } });
+    nav.appendChild(prev); nav.appendChild(next); nav.appendChild(pos); nav.appendChild(dots);
+    wrap.appendChild(stage); wrap.appendChild(note); wrap.appendChild(nav);
+    var all = function (notes) {
+      return '<div class="lk-deck2">' + slides.map(function (s, n) {
+        return slide2(s, n + 1, slides.length, d) + (notes && s.note ? '<div class="lk-note"><b>הערת מרצה:</b> ' + esc(s.note) + "</div>" : "");
+      }).join("") + "</div>";
+    };
+    wrap.__printHTML = all(true);
+    wrap.__printStudent = all(false);
+    paint();
+    return wrap;
+  }
+
+  /* ---------- דף עבודה דיפרנציאלי: 2 שאלות מאבחנות → אחת משלוש ערכות ---------- */
+  function renderSheetDiff(d) {
+    var S = d.sheet, wrap = el("div", "lk-body lk-diff");
+    var tasksHTML = function (tasks, si) {
+      return (tasks || []).map(function (t) {
+        return '<div class="lk-task"><div class="lk-q"><b>' + esc(t.n) + ".</b> " + nlb(t.text) + "</div>" +
+          (t.example ? '<div class="lk-eg">' + nlb(t.example) + "</div>" : "") +
+          '<div class="lk-lines" data-k="s' + si + "-" + esc(t.n) + '" data-n="' + (t.lines || 3) + '">' + new Array((t.lines || 3) + 1).join("<div></div>") + "</div></div>";
+      }).join("");
+    };
+    var head = '<div class="lk-sheet"><h5 style="font-size:var(--fs-xl);color:var(--navy);margin:0 0 4px">' + bidi(S.title || d.topic) + "</h5>" +
+      '<div class="lk-name"><span>שם: ________________</span><span>כיתה: ________</span><span>תאריך: __________</span></div>' +
+      (S.intro ? '<p class="lk-q" style="margin-bottom:14px">' + nlb(S.intro) + "</p>" : "");
+    wrap.innerHTML = head + '<div class="lk-diag"><b class="lk-diag-h">שלב 1 · שתי שאלות פתיחה</b><div class="lk-diag-q"></div>' +
+      '<div class="lk-route lk-teacher"><b>הניתוב:</b> 0 תשובות נכונות ← ערכת בסיס · 1 ← ביניים · 2 ← מתקדם</div></div>' +
+      '<div class="lk-sets">' + (S.sets || []).map(function (s, n) {
+        return '<div class="lk-set" data-set="' + n + '"><div class="lk-set-h"><b>ערכה ' + (n + 1) + " · " + esc(s.level) + "</b>" +
+          (s.intro ? "<span>" + bidi(s.intro) + "</span>" : "") + "</div>" + tasksHTML(s.tasks, n) + "</div>";
+      }).join("") + "</div>" +
+      (S.bonus ? '<div class="lk-task"><div class="lk-q"><b>אתגר.</b> ' + nl(S.bonus) + '</div><div class="lk-lines" data-k="bonus" data-n="4">' + new Array(5).join("<div></div>") + "</div></div>" : "") +
+      (S.selfCheck && S.selfCheck.length ? '<div class="lk-check"><b>בדקתי את עצמי</b>' + S.selfCheck.map(function (c) { return '<label><input type="checkbox"><span>' + esc(c) + "</span></label>"; }).join("") + "</div>" : "") +
+      "</div>" +
+      (S.rubric && S.rubric.length ? '<div class="lk-card lk-teacher"><h4>מחוון למורה</h4><table class="lk-rubric"><thead><tr><th>משימה</th><th>תשובה וקריטריון</th><th>ניקוד</th></tr></thead><tbody>' +
+        S.rubric.map(function (r) { return "<tr><td>" + esc(r.task) + "</td><td>" + esc(r.answer) + "</td><td>" + esc(r.points) + "</td></tr>"; }).join("") + "</tbody></table></div>" : "");
+    var qHost = wrap.querySelector(".lk-diag-q"), answered = 0, right = 0, diag = S.diagnostic || [];
+    diag.forEach(function (q, n) {
+      var card = el("div", "lk-qcard", '<div class="lk-qt">' + (n + 1) + ". " + bidi(q.q) + '</div><div class="lk-opts"></div>');
+      var opts = card.querySelector(".lk-opts");
+      (q.opts || []).forEach(function (o, oi) {
+        var b = el("button", "lk-a", bidi(o)); b.type = "button";
+        b.addEventListener("click", function () {
+          if (card.dataset.done) return;
+          card.dataset.done = "1"; answered++; if (oi === q.correct) right++;
+          (wrap.__diag = wrap.__diag || diag.map(function () { return null; }))[n] = oi;
+          Array.prototype.forEach.call(opts.children, function (x, bi) { x.disabled = true; if (bi === oi) x.classList.add("sel"); });
+          if (answered === diag.length) {
+            var lvl = Math.min(right, 2);
+            wrap.classList.add("routed");
+            wrap.querySelectorAll(".lk-set").forEach(function (s) { s.classList.toggle("on", +s.dataset.set === lvl); });
+            var msg = el("div", "lk-exp on lk-routed", "מעולה! הערכה שלך: <b>ערכה " + (lvl + 1) + " · " + esc((S.sets[lvl] || {}).level || "") + "</b>. ממשיכים למטה ↓");
+            qHost.parentNode.appendChild(msg);
+            /* בלוח של המורה — מי התחיל ולאיזו ערכה נותב/ה */
+            if (CUR.live && isGen(d.id)) LK.submit(d.id, "sheet", { a: { diag: wrap.__diag, t: {} }, done: false });
+          }
+        });
+        opts.appendChild(b);
+      });
+      qHost.appendChild(card);
+    });
+    var printSets = function () {
+      return head + "<p><b>שאלות הפתיחה:</b></p><ol>" + diag.map(function (q) { return "<li>" + esc(q.q) + "<br>" + (q.opts || []).map(function (o) { return "○ " + esc(o); }).join("<br>") + "</li>"; }).join("") + "</ol>" +
+        (S.sets || []).map(function (s, n) { return "<h4>ערכה " + (n + 1) + " · " + esc(s.level) + "</h4>" + tasksHTML(s.tasks, n); }).join("") + "</div>";
+    };
+    wrap.__printStudent = printSets();
+    wrap.__printHTML = printSets() + '<p><b>הניתוב:</b> 0 נכונות ← בסיס · 1 ← ביניים · 2 ← מתקדם. תשובות לשאלות הפתיחה: ' +
+      diag.map(function (q, n) { return (n + 1) + ". " + esc((q.opts || [])[q.correct] || ""); }).join(" · ") + "</p>" +
+      (S.rubric && S.rubric.length ? "<h4>מחוון</h4><table><tbody>" + S.rubric.map(function (r) { return "<tr><td>" + esc(r.task) + "</td><td>" + esc(r.answer) + "</td><td>" + esc(r.points) + "</td></tr>"; }).join("") + "</tbody></table>" : "");
+    wireSheet(wrap, d);
     return wrap;
   }
 
@@ -678,6 +1327,7 @@
   LK.mount = function (host, data, kinds, opts) {
     opts = opts || {};
     var student = !!opts.student;
+    CUR = { student: student, live: student && isGen(data.id) };
     host.innerHTML = "";
     host.className = "lk" + (student ? " lk-student" : "");
     kinds = (kinds && kinds.length ? kinds : Object.keys(LK.KINDS)).filter(function (k) {
@@ -726,8 +1376,10 @@
       }
       var bPrint = el("button", "lk-btn",
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>הדפסה');
+      /* מצגת → PowerPoint לעריכה · מערך ודף עבודה → Word לעריכה · השאר → קובץ שנפתח בדפדפן */
+      var downLabel = student ? "הורדה" : kind === "deck" ? "PowerPoint לעריכה" : (kind === "sheet" || kind === "lesson") ? "Word לעריכה" : "הורדה";
       var bDown = el("button", "lk-btn",
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M4 19h16"/></svg>הורדה');
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M4 19h16"/></svg>' + downLabel);
       bPrint.type = bDown.type = "button";
       acts.appendChild(bPrint);
       acts.appendChild(bDown);
@@ -761,15 +1413,23 @@
       }
       var fname = meta.file + " · " + data.topic;
       if (bShow) bShow.addEventListener("click", function () {
+        emit("הצגה לכיתה", kind);
         LK.present(body, meta.title + " · " + data.topic);
       });
       if (bSend) bSend.addEventListener("click", function () {
         var old = panel.querySelector(".lk-share");
         if (old) { old.remove(); return; }
+        emit("שליחה לכיתה", kind);
         panel.insertBefore(LK.share(data, kind, meta.title), body);
       });
-      bPrint.addEventListener("click", function () { LK.print(source(), fname); });
-      bDown.addEventListener("click", function () { LK.download(source(), fname, fname); });
+      bPrint.addEventListener("click", function () { emit("הדפסה", kind); LK.print(source(), fname); });
+      bDown.addEventListener("click", function () {
+        emit("הורדה", kind + (student ? "" : " · " + downLabel));
+        if (student) return LK.download(source(), fname, fname);
+        if (kind === "deck") return LK.pptx(data, fname, bDown);
+        if (kind === "sheet" || kind === "lesson") return LK.download(source(), fname, fname, "word");
+        LK.download(source(), fname, fname);
+      });
 
       tab.addEventListener("click", function () {
         Array.prototype.forEach.call(tabs.children, function (t) {
@@ -778,6 +1438,7 @@
         tab.classList.add("on"); tab.setAttribute("aria-selected", "true");
         Array.prototype.forEach.call(host.querySelectorAll(".lk-panel"), function (p) { p.classList.remove("on"); });
         panel.classList.add("on");
+        if (!student) emit("לשונית", kind);
       });
     });
   };
