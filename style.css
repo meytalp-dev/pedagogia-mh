@@ -993,7 +993,7 @@ h2 .hic,h3 .hic{width:21px;height:21px;vertical-align:-4px;color:var(--navy)}
 .pmh-inner .nav>.navitem,.pmh-inner .govbar .gov-mid>.navitem,.pmh-inner .nav .burger,
 .pmh-inner .mcats,.pmh-inner .mcats-sheet,.pmh-inner .secnav,.pmh-inner .pn{display:none !important}
 /* עוגן והמשוב הצפים — עברו לכותרת (pm-ogen / pm-fb), כדי שלא יכסו את הטקסט */
-.pmh-inner .ogenw-launcher,.pmh-inner .ogenw-launcher-label,.pmh-inner .fb-btn{display:none !important}
+.pmh-widgets .ogenw-launcher,.pmh-widgets .ogenw-launcher-label,.pmh-widgets .fb-btn{display:none !important}
 
 /* --- כפתורי הכותרת --- */
 .pmh-inner .nav .brand{flex:1 1 0;min-width:0}
@@ -1116,3 +1116,9 @@ body.pm-open{overflow:hidden}
    עמוד פנימי, ובטלפון גם תמונת הכותרת (.headshot) שדחפה את הכרטיסים מתחת למסך */
 .pmh-inner .readmeta{display:none}
 @media(max-width:720px){.pmh-inner .headshot{display:none}}
+
+/* עמוד הפתיחה: עוגן ומשוב בפס הממשלתי (מחשב) או בשורת המותג (טלפון) — site.js */
+.pm-bar-gov{gap:6px;margin-inline-end:8px}
+.pm-bar-gov .pm-hb{height:32px;padding:0 12px;font-size:var(--fs-xs)}
+.pm-bar-gov .pm-ogen img{width:22px;height:22px}
+@media(max-width:720px){.pmh-widgets .nav .brand{flex:1 1 0;min-width:0}.pmh-widgets .nav .brand b{max-width:none}}

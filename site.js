@@ -234,9 +234,11 @@
    הטקסט; הכפתורים הצפים המקוריים מוסתרים, ולחיצה כאן מפעילה אותם. */
 (function pageMenu(){
   var path=location.pathname.replace(/\/index\.html$/,'/');
-  if(path==='/') return;
+  /* בעמוד הפתיחה: רק עוגן ומשוב בשורה העליונה (כל הקטגוריות כבר גלויות שם, אין "תפריט") */
+  var isHome=path==='/';
   var nav=document.querySelector('.nav'); if(!nav) return;
-  document.documentElement.classList.add('pmh-inner');
+  document.documentElement.classList.add('pmh-widgets');
+  if(!isHome) document.documentElement.classList.add('pmh-inner');
   var here=(location.pathname.split('/').pop()||'').toLowerCase();
   var SVG=function(d){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>'; };
   var IC_MENU=SVG('M4 7h16M4 12h16M4 17h16');
@@ -269,7 +271,7 @@
   btn.setAttribute('aria-haspopup','dialog');
   btn.setAttribute('aria-expanded','false');
   btn.innerHTML=IC_MENU+'<span>תפריט</span>';
-  bar.appendChild(ogen); bar.appendChild(fb); bar.appendChild(btn);
+  bar.appendChild(ogen); bar.appendChild(fb); if(!isHome) bar.appendChild(btn);
   var anchor=nav.querySelector(':scope > .searchbtn')||nav.querySelector(':scope > .brand');
   if(anchor) anchor.insertAdjacentElement('afterend',bar); else nav.appendChild(bar);
   /* כפתור שלא נטען לו הווידג'ט (עמוד בלי עוגן/משוב) — לא מציגים */
@@ -277,6 +279,19 @@
     if(!document.querySelector('.ogenw-launcher')) ogen.hidden=true;
     if(!document.querySelector('.fb-btn')) fb.hidden=true;
   },1500);
+  if(isHome){
+    /* במחשב הפס הראשי של עמוד הפתיחה מלא בקטגוריות — עוגן ומשוב עוברים לפס הממשלתי
+       הדק שמעליו. בטלפון הם נשארים בשורה של המותג והחיפוש. */
+    var gov=document.querySelector('.govbar .left');
+    var mq=matchMedia('(min-width:721px)');
+    var place=function(){
+      if(mq.matches&&gov){ if(bar.parentElement!==gov){ bar.classList.add('pm-bar-gov'); gov.insertBefore(bar,gov.firstChild); } }
+      else if(bar.parentElement!==nav){ bar.classList.remove('pm-bar-gov'); if(anchor) anchor.insertAdjacentElement('afterend',bar); else nav.appendChild(bar); }
+    };
+    place();
+    if(mq.addEventListener) mq.addEventListener('change',place); else if(mq.addListener) mq.addListener(place);
+    return;
+  }
 
   /* --- החלונית --- */
   var scrim=el('div','pm-scrim');
