@@ -761,6 +761,11 @@ function buildNav() {
     if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
   }), { rootMargin: '-20% 0px -70% 0px' });
   shown.forEach(([id]) => navObs.observe(document.getElementById(id)));
+  // קישור מהמייל עם #q-sec — המקטע נבנה אחרי הטעינה, אז הדפדפן לא גולל אליו לבד
+  if (!buildNav.jumped && location.hash.length > 1) {
+    const target = document.getElementById(location.hash.slice(1));
+    if (target && !target.hidden) { buildNav.jumped = true; setTimeout(() => target.scrollIntoView({ block: 'start' }), 60); }
+  }
 }
 
 function showLoading(on) {
@@ -1309,9 +1314,10 @@ async function submitQuestion(e) {
   const text = document.getElementById('q-text').value.trim();
   if (!text) return;
 
-  const res = await TS.apiPost('questions.create', { teacherId, question: text });
+  // k — השרת מזהה את המורה לפי המפתח ושולח מייל למדריכ/ה (11.10.26)
+  const res = await TS.apiPost('questions.create', { teacherId, k: teacherKey, question: text });
   if (res.ok) {
-    TS.toast('השאלה נשלחה למדריכה');
+    TS.toast('השאלה נשלחה — המדריכ/ה יקבל/תקבל אותה גם במייל');
     document.getElementById('q-text').value = '';
     questions.push(res.data);
     renderQuestions();

@@ -1008,6 +1008,11 @@ function renderQuestions() {
         </div>`}
       </div>`;
   }).join('');
+  // קישור "לענות במנור" מהמייל (#sec-questions) — גוללים אחרי שהשאלות נטענו
+  if (!renderQuestions.jumped && location.hash === '#sec-questions') {
+    renderQuestions.jumped = true;
+    setTimeout(() => document.getElementById('sec-questions').scrollIntoView({ block: 'start' }), 60);
+  }
   box.querySelectorAll('[data-qa]').forEach(ta => ta.addEventListener('input', () => { qDrafts[ta.dataset.qa] = ta.value; }));
   box.querySelectorAll('[data-qsend]').forEach(b => b.addEventListener('click', async () => {
     const id = b.dataset.qsend;
@@ -1015,7 +1020,9 @@ function renderQuestions() {
     const answer = String(qDrafts[id] || '').replace(/[<>]/g, '').trim();
     if (!answer) { TS.toast('כותבים תשובה ואז שולחים'); return; }
     b.disabled = true; b.textContent = 'שולח…';
-    const res = await TS.apiPost('questions.answer', { id: id, answer: answer });
+    // אימות המדריכ/ה — השרת שולח את התשובה למורה במייל רק כשהוא תקין (11.10.26)
+    const auth = typeof window.GUIDE_AUTH === 'function' ? window.GUIDE_AUTH() : {};
+    const res = await TS.apiPost('questions.answer', Object.assign({}, auth, { id: id, answer: answer }));
     if (res && res.ok) {
       const q = questionsData.find(x => String(x.id) === String(id));
       if (q) { q.answer = answer; q.status = 'answered'; q.answeredAt = new Date().toISOString(); }

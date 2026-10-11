@@ -1817,27 +1817,100 @@ function listQuestions(p) {
   return { ok: true, data };
 }
 
+/* "שאלה למדריכ/ה" — התראות במייל (11.10.26, בקשת מיטל).
+   שאלה עם מפתח מורה תקין (k) → מייל לכל מדריכ/ה שהמורה בקבוצה שלו/ה.
+   תשובה עם אימות מדריכ/ה (guide + k|ge) → מייל למורה.
+   בלי אימות נשמר כמו קודם ובלי מייל — כך ה-/exec לא הופך לממסר מייל פתוח
+   (verify.html שולח questions.create בלי מפתח, ונשאר כמו שהוא). */
 function createQuestion(p) {
+  const t = p.k ? teacherByKey_(p.k) : null;
+  const question = String(p.question || '').trim();
+  if (t && !question) return { ok: false, error: 'missing_text' };
   const obj = {
     id: newId('q'),
-    teacherId: p.teacherId,
-    question: p.question,
+    teacherId: t ? String(t.id) : p.teacherId,
+    question: t ? question.slice(0, 4000) : p.question,
     answer: '',
     status: 'open',
     createdAt: new Date().toISOString(),
     answeredAt: ''
   };
   appendRow('questions', obj);
+  if (t) { try { questionNotifyGuides_(t, obj); } catch (e) { console.error('questionNotifyGuides_: ' + e); } }
   return { ok: true, data: obj };
 }
 
 function answerQuestion(p) {
+  const slug = (p.guide && (p.k || p.ge)) ? meetAuthGuide_(p) : '';
+  const row = slug ? readAll('questions').find(q => String(q.id) === String(p.id)) : null;
+  // עותק לפני העדכון — מייל רק בתשובה הראשונה, לא בכל שמירה חוזרת
+  const before = row ? Object.assign({}, row) : null;
   const ok = updateRowById('questions', p.id, {
     answer: p.answer,
     status: 'answered',
     answeredAt: new Date().toISOString()
   });
+  if (ok && before && String(before.status) !== 'answered') {
+    try { questionNotifyTeacher_(slug, before, String(p.answer || '')); } catch (e) { console.error('questionNotifyTeacher_: ' + e); }
+  }
   return { ok };
+}
+
+function questionQuoteHtml_(label, text) {
+  return '<p style="margin:12px 0 4px;color:#5C7182">' + remindEsc_(label) + '</p>' +
+    '<div style="background:#F1F6F8;border-right:3px solid #1A5365;border-radius:6px;padding:10px 14px">' + guideTextHtml_(text) + '</div>';
+}
+
+function questionNotifyGuides_(t, q) {
+  const win = remindWin_();
+  const guides = win.TS_GUIDES || {};
+  const who = String(t.name || 'מורה') + (t.schoolName ? ' מ' + t.schoolName : '');
+  const sent = {};
+  Object.keys(guides).forEach(slug => {
+    const g = Object.assign({ slug: slug }, guides[slug]);
+    if (!g.name || !win.TS_guideHasTeacher(g, t)) return;
+    const email = guideReplyTo_(slug);
+    if (!email || sent[email]) return;
+    sent[email] = 1;
+    const link = REMIND_SITE + 'guide/?g=' + slug + '&guide=' + encodeURIComponent(email) +
+      '&k=' + meetGuideKey_(slug) + '#sec-questions';
+    const hello = 'שלום ' + g.name + ',';
+    const teacherMail = guideMailOk_(t.email) ? String(t.email).trim() : '';
+    const html = guideMailHtml_(hello,
+      '<p style="margin:0">' + remindEsc_(who) + (t.subject ? ' (' + remindEsc_(t.subject) + ')' : '') + ' שאל/ה אותך שאלה במנור:</p>' +
+      questionQuoteHtml_('השאלה', q.question),
+      link, 'לענות במנור',
+      'התשובה שתכתבו במנור תישלח למורה במייל ותישמר בבית שלו/ה במנור.' +
+      (teacherMail ? '<br>אפשר גם להשיב למייל הזה — התשובה תגיע ישר למורה, אבל לא תישמר במנור.' : '') +
+      '<br>' + MONTHLY_SIGN);
+    merhavMail_({ to: email, subject: 'שאלה חדשה במנור מ' + who, htmlBody: html, name: 'מנור',
+      replyTo: teacherMail || MAIL_REPLY_TO,
+      body: hello + '\n\n' + who + ' שאל/ה אותך שאלה במנור:\n\n' + q.question + '\n\nלענות במנור: ' + link + '\n\n' + MONTHLY_SIGN });
+  });
+  auditLog_('', 'questions.notify', 'questions', String(q.id), 'ok', 'guides=' + Object.keys(sent).length);
+}
+
+function questionNotifyTeacher_(slug, q, answer) {
+  const tid = String(q.teacherId || '');
+  if (!tid || tid.indexOf('verify:') === 0) return;
+  const t = readAll('teachers').find(r => String(r.id) === tid);
+  if (!t || !guideMailOk_(t.email)) return;
+  const g = (remindWin_().TS_GUIDES || {})[slug] || {};
+  const gname = g.name || 'המדריך/ה';
+  const link = guideTeacherLink_(t.id) + '#q-sec';
+  const hello = 'שלום ' + String(t.name || '') + ',';
+  const replyTo = guideReplyTo_(slug);
+  const html = guideMailHtml_(hello,
+    '<p style="margin:0">' + remindEsc_(gname) + ' ענה/תה על השאלה ששאלת במנור.</p>' +
+    questionQuoteHtml_('השאלה שלך', String(q.question || '')) +
+    questionQuoteHtml_('התשובה', answer),
+    link, 'הבית שלי במנור',
+    (replyTo ? 'אפשר להשיב למייל הזה — התשובה תגיע ל' + remindEsc_(gname) + '.<br>' : '') + MONTHLY_SIGN);
+  merhavMail_({ to: String(t.email).trim(), subject: gname + ' ענה/תה על השאלה שלך במנור', htmlBody: html,
+    name: gname + ' · מנור', replyTo: replyTo || MAIL_REPLY_TO,
+    body: hello + '\n\n' + gname + ' ענה/תה על השאלה ששאלת במנור.\n\nהשאלה שלך:\n' + String(q.question || '') +
+      '\n\nהתשובה:\n' + answer + '\n\nהבית שלי במנור: ' + link + '\n\n' + MONTHLY_SIGN });
+  auditLog_('', 'questions.notify', 'questions', String(q.id), 'ok', 'teacher');
 }
 
 // ============================================================
@@ -5037,11 +5110,21 @@ function codeMail_(opts) {
   MailApp.sendEmail(opts);
 }
 
-function relaySend_(opts) {
+/* ממסר המרחב (11.10.26) — merhav@pedagogiamh.co.il (רויטל\merhav-relay-gas, src=menor).
+   אותו מנגנון משיכה כמו הממסר של ג'ימייל. נכשל → נשלח מאורט כמו כל מיילי מנור. */
+const MERHAV_RELAY_URL = 'https://script.google.com/macros/s/AKfycbxbudrzz-JSNpEeHwayjq6u8Xmz4dAsmV8FQGwHjZDeC3g028_I2uk2wX2Pi762ULZD1w/exec';
+
+function merhavMail_(opts) {
+  if (relaySend_(opts, MERHAV_RELAY_URL)) return;
+  MailApp.sendEmail(opts);
+}
+
+function relaySend_(opts, url) {
   const id = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8);
   const cache = CacheService.getScriptCache();
   cache.put('relay_' + id, JSON.stringify({
-    to: String(opts.to).trim(), subject: opts.subject, body: opts.body, html: opts.htmlBody, name: opts.name
+    to: String(opts.to).trim(), subject: opts.subject, body: opts.body, html: opts.htmlBody, name: opts.name,
+    replyTo: opts.replyTo || ''
   }), 120);
   /* "הדף לא נמצא" רגעי של Apps Script (נמדד 5.10.26: עד 4 מתוך 5 ברצף) — עד שלושה ניסיונות.
      רק כשאין תשובה קריאה; תשובה מפורשת (nomail/domain/quota) לא חוזרת. המחיר: אם אבדה
@@ -5049,12 +5132,12 @@ function relaySend_(opts) {
   let o = null;
   for (let i = 0; i < 3 && !o; i++) {
     try {
-      o = JSON.parse(UrlFetchApp.fetch(RELAY_URL + '?src=menor&id=' + id, { muteHttpExceptions: true }).getContentText());
+      o = JSON.parse(UrlFetchApp.fetch((url || RELAY_URL) + '?src=menor&id=' + id, { muteHttpExceptions: true }).getContentText());
     } catch (e) { o = null; Utilities.sleep(500); }
   }
   cache.remove('relay_' + id);
   if (o && o.ok) return true;
-  console.error('ממסר ג\'ימייל נכשל, נשלח מאורט: ' + (o ? o.error : 'fetch'));
+  console.error('ממסר נכשל, נשלח מאורט: ' + (o ? o.error : 'fetch'));
   return false;
 }
 
