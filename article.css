@@ -63,6 +63,45 @@ ul.ed{list-style:none;margin:12px 0}
 ul.ed>li{position:relative;padding:7px 24px 7px 0}
 ul.ed>li::before{content:"";position:absolute;right:2px;top:17px;width:11px;height:2.5px;border-radius:2px;background:var(--cyan)}
 ul.ed.tight>li{padding-top:4px;padding-bottom:4px}
+/* רשימה ארוכה (6 סעיפים ומעלה) ישירות בגוף המאמר — נפרסת לרוחב 1140 בשתי
+   עמודות כרטיסים. בטור של 68ch היא יצאה צרה וארוכה מאוד (עקרונות הקליטה,
+   אושר ע"י מיטל 11.10.26). כותרת המקטע שלפניה נפרסת איתה כדי שתתיישר.
+   בטלפון — עמודה אחת ברוחב הרגיל. רשימות בתוך כרטיס או הודעה לא נוגעים; מתקפלים — בכלל הבא. */
+.article>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6)),
+.article>:is(h2,h3).sub-sec:has(+:is(ol,ul).ed>li:nth-child(6)){
+  --gw:min(1140px,calc(100vw - 2*var(--px)));
+  width:var(--gw);max-width:none;margin-inline:calc((100% - var(--gw))/2);
+}
+.article>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6)){
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px;margin-bottom:26px;
+}
+.article>ol.ed:not(.wide):has(>li:nth-child(6))>li,
+.article>ul.ed:not(.wide):has(>li:nth-child(6))>li{
+  border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--sh-sm);
+  padding:15px 54px 15px 18px;
+}
+.article>ol.ed:not(.wide):has(>li:nth-child(6))>li::before{top:16px;right:16px}
+.article>ul.ed:not(.wide):has(>li:nth-child(6))>li{padding-right:40px}
+.article>ul.ed:not(.wide):has(>li:nth-child(6))>li::before{top:25px;right:18px}
+/* אותה רשימה בתוך מדור, מתקפל או לשונית — לא יוצאת מהמסגרת, רק משתמשת בכל רוחבה — במחשב בלבד;
+   בטלפון היא נשארת רשימה רגילה, כי כרטיס בתוך מסגרת צר מדי */
+@media(min-width:761px){
+  .article :is(.inner,.sec,.cat-panel)>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6)){
+    max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px;margin-bottom:22px;
+  }
+  .article :is(.inner,.sec,.cat-panel)>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6))>li{
+    border:1px solid var(--border);border-radius:14px;background:var(--surface);
+    padding:14px 52px 14px 16px;
+  }
+  .article :is(.inner,.sec,.cat-panel)>ol.ed:not(.wide):has(>li:nth-child(6))>li::before{top:15px;right:14px}
+  .article :is(.inner,.sec,.cat-panel)>ul.ed:not(.wide):has(>li:nth-child(6))>li{padding-right:38px}
+  .article :is(.inner,.sec,.cat-panel)>ul.ed:not(.wide):has(>li:nth-child(6))>li::before{top:24px;right:16px}
+}
+@media(max-width:760px){
+  .article>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6)),
+  .article>:is(h2,h3).sub-sec:has(+:is(ol,ul).ed>li:nth-child(6)){width:auto;margin-inline:0}
+  .article>:is(ol,ul).ed:not(.wide):has(>li:nth-child(6)){grid-template-columns:1fr;gap:10px}
+}
 
 /* ---------- טבלאות ---------- */
 /* position:relative — טקסט נסתר לקורא מסך (.sr-only, absolute) בתוך קישורי הטבלה ברח החוצה
@@ -387,6 +426,10 @@ details.dom ul>li,details.fold ul>li{position:relative;padding:4px 20px 4px 0}
 details.dom ul>li::before,details.fold ul>li::before{content:"";position:absolute;right:2px;top:14px;width:10px;height:2.5px;border-radius:2px;background:var(--cyan)}
 details.dom ol,details.fold ol{margin:4px 22px 4px 0}
 details.dom ol>li,details.fold ol>li{padding:3px 0}
+/* רשימה ממוספרת בעיצוב האתר (ol.ed) בתוך מתקפל — הכלל שלמעלה איפס לה את
+   המקום של המספר, והמספר עלה על הטקסט (תשפ"ז, 11.10.26) */
+details.dom ol.ed,details.fold ol.ed{margin-right:0}
+details.dom ol.ed>li,details.fold ol.ed>li{padding:7px 46px 7px 0}
 @media(max-width:560px){details.dom summary .hint,details.fold summary .hint{display:none}}
 
 /* חריג ל-.fold כשהוא עוטף מדורי מאמר שלמים: הטיפוגרפיה הפנימית
