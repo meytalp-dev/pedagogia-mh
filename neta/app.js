@@ -53,6 +53,7 @@
     ext:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
     ok:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7 5M3.5 12l1.5 1.5L7 11M3.5 18l1.5 1.5L7 17"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>',
     light: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>'
   };
 
@@ -381,6 +382,12 @@
       (hasMine() ? '<div id="ckMine"></div>' : '<div class="card"><div class="empty">הצ\'ק ליסט יפעל כשניצה תופעל.</div></div>');
   }
 
+  /* ניצה ליד הנתונים (11.10.26): הכפתור פותח אותה בהקשר — אקלים / ועדה / יעדים / כלי */
+  function helpOn() { return !!(window.KEREN && KEREN.helpWith && KEREN.enabled()); }
+  function helpBtn(type, title, label, id) {
+    return helpOn() ? '<div class="acts help-row"><button type="button" class="btn amber sm" data-help="' + type + '" data-ht="' + esc(title) + '"' + (id ? ' data-hid="' + esc(id) + '"' : '') + '>' +
+      I.spark + esc(label) + '</button></div>' : '';
+  }
   function sec(key, icon, title, sum, body) {
     return '<details class="card sec" data-sec="' + key + '"' + (OPEN[key] ? ' open' : '') + '><summary><span class="st">' + icon + esc(title) + '</span>' +
       '<span class="sum">' + (sum || '') + '</span>' + I.car + '</summary><div class="sb">' + body + '</div></details>';
@@ -474,7 +481,7 @@
     /* יעדים */
     var y = D.yaadim;
     h += sec('yaad', I.flag, 'היעדים מהוועדה המלווה האחרונה', y === null || y === undefined ? 'לא נטען' : y ? 'יש יעדים' : 'אין',
-      y === null || y === undefined ? failed() : y ? '<div class="pre">' + esc(y) + '</div>' : '<div class="empty">אין יעדים מהוועדה המלווה האחרונה בקובץ.</div>');
+      y === null || y === undefined ? failed() : y ? '<div class="pre">' + esc(y) + '</div>' + helpBtn('yaad', 'היעדים מהוועדה המלווה', 'עבודה על היעדים עם ניצה') : '<div class="empty">אין יעדים מהוועדה המלווה האחרונה בקובץ.</div>');
     return h + '</div>';
   }
 
@@ -504,7 +511,7 @@
       return '<div' + (i ? ' style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)"' : '') + '><b>' + esc(st === 'ועדה מלווה' ? 'תשפ״ו' : st) + '</b>' +
         (dateOf(st) ? ' <span class="small">· ' + fmtDate(dateOf(st)) + '</span>' : '') + (btns ? '<div class="acts" style="margin-top:6px">' + btns + '</div>' : '') + inner + '</div>';
     }).join('');
-    return sec('vaad', I.flag, title, order.length === 1 ? 'ועדה אחת' : order.length + ' ועדות', body);
+    return sec('vaad', I.flag, title, order.length === 1 ? 'ועדה אחת' : order.length + ' ועדות', body + helpBtn('vaad', 'הוועדה המלווה', 'הכנה לוועדה עם ניצה'));
   }
   function openVaada(fid) {
     var w = window.open('', '_blank');
@@ -547,7 +554,7 @@
         }).join('') + '</ul></details>' : '');
     }).join('');
     var got = AKL_AUD.filter(function (a) { return keys.some(function (k) { return k.split('|')[0] === a; }); });
-    return sec('akl', I.chart, 'שאלון אקלים תשפ״ו', 'התקבלו: ' + esc(got.join(' · ')), body);
+    return sec('akl', I.chart, 'שאלון אקלים תשפ״ו', 'התקבלו: ' + esc(got.join(' · ')), body + helpBtn('aklim', 'שאלון האקלים', 'עבודה על התוצאות עם ניצה'));
   }
 
   /* ===== מנור ===== */
@@ -671,9 +678,16 @@
       ['rakaz-pedagogi-klim.html', 'ארגז הכלים המלא באתר', 'כל הכלים ומסמכי היסוד']
     ]]
   ];
+  function toolTiles(list) {
+    if (!helpOn()) return tiles(list);
+    return '<div class="tiles">' + list.map(function (x) {
+      return '<div class="tile-w"><a class="tile" href="' + esc(href(x[0])) + '" target="_blank" rel="noopener"><b>' + esc(x[1]) + '</b><span>' + esc(x[2]) + '</span></a>' +
+        '<button type="button" class="tile-help" data-help="tool" data-ht="' + esc(x[1]) + '" data-hid="' + esc(x[0]) + '">' + I.spark + 'התאמה לבית הספר שלנו</button></div>';
+    }).join('') + '</div>';
+  }
   function toolsPage() {
     return '<div class="card head"><h1>ארגז הכלים לרכז/ת הפדגוגי/ת</h1><div class="meta">כלים לתכנון, להנחיית הצוות ולעבודה הפדגוגית, וטיפים שמתעדכנים במהלך השנה.</div></div>' +
-      tipsBlock('rakaz') + TOOLS.map(function (g) { return '<div class="grp-h">' + esc(g[0]) + '</div>' + tiles(g[1]); }).join('');
+      tipsBlock('rakaz') + TOOLS.map(function (g) { return '<div class="grp-h">' + esc(g[0]) + '</div>' + toolTiles(g[1]); }).join('');
   }
 
   /* טיפים מהגיליון — מיטל ורויטל מוסיפות. where: באיזה עמוד מוצגים (rakaz = ארגז הכלים, principal = הידע) */
@@ -826,7 +840,7 @@
 
   /* ===== אירועים ===== */
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-gmail],[data-saldoc],[data-vdoc],[data-tip],#tpGo');
+    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-gmail],[data-saldoc],[data-vdoc],[data-tip],[data-help],#tpGo');
     if (!t) return;
     if (t.hasAttribute('data-page')) go(t.getAttribute('data-page'));
     else if (t.hasAttribute('data-go')) go(t.getAttribute('data-go'));
@@ -836,6 +850,7 @@
     else if (t.hasAttribute('data-tip')) tipToggle(Number(t.getAttribute('data-tip')), t.getAttribute('data-op'));
     else if (t.hasAttribute('data-vdoc')) openVaada(t.getAttribute('data-vdoc'));
     else if (t.id === 'tpGo') tipSave();
+    else if (t.hasAttribute('data-help') && helpOn()) KEREN.helpWith({ type: t.getAttribute('data-help'), title: t.getAttribute('data-ht'), id: t.getAttribute('data-hid') || '' });
   });
   document.addEventListener('toggle', function (e) {
     var d = e.target; if (d && d.getAttribute && d.getAttribute('data-sec')) OPEN[d.getAttribute('data-sec')] = d.open;

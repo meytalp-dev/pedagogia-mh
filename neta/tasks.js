@@ -13,6 +13,7 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function isMobile() { return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (window.matchMedia && matchMedia('(pointer:coarse)').matches && innerWidth < 900); }
   var IC = {
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/></svg>',
     cal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
     mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
     ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
@@ -174,7 +175,9 @@
     if (R.due) meta.push('<span class="' + (late(R.due) && !done ? 'late' : '') + '">עד ' + heDate(R.due) + '</span>');
     if (R.src) meta.push('<span class="ck-src">' + esc(R.src) + '</span>');
     if (o.tag) meta.unshift(o.tag);
-    var tools = done ? '' : '<button type="button" class="ck-tool" data-ck="cal" aria-expanded="false">' + IC.cal + 'תזכורת ביומן</button>' +
+    /* "עזרה מ<העוזרת>" (11.10.26): העוזרת נפתחת ליד המשימה ומכינה את מה שהיא דורשת */
+    var help = window.KEREN && KEREN.helpWith && KEREN.enabled() ? '<button type="button" class="ck-tool ck-help" data-ck="help">' + IC.spark + 'עזרה מ' + KEREN.name + '</button>' : '';
+    var tools = done ? '' : help + '<button type="button" class="ck-tool" data-ck="cal" aria-expanded="false">' + IC.cal + 'תזכורת ביומן</button>' +
       '<button type="button" class="ck-tool" data-ck="mail" aria-expanded="false">' + IC.mail + 'מייל למטפל/ת</button>';
     var del = R.kind === 'mine' && !R.readOnly ? '<button type="button" class="ck-tool ck-del" data-ck="del" aria-label="מחיקת המשימה">' + IC.del + '</button>' : '';
     return '<li class="ck-i' + (done ? ' done' : '') + '" data-key="' + esc(R.key) + '">' + box +
@@ -283,6 +286,7 @@
     var x = rowOf(b); if (!x || !x.R) return;
     var k = b.getAttribute('data-ck'), R = x.R;
     if (k === 'cal' || k === 'mail') toggle(x, k);
+    else if (k === 'help') KEREN.helpWith({ type: R.kind === 'office' ? 'office' : 'task', id: R.id, title: R.title + (R.kind === 'office' && R.detail ? ' — ' + R.detail : '') });
     else if (k === 'toggle') {
       if (R.readOnly || !on()) { if (!on()) T.toast('הסימון יפעל כשניצה תופעל'); return; }
       var t = (TASKS || []).filter(function (y) { return y.id === R.id; })[0];

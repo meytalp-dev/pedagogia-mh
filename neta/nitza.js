@@ -112,13 +112,33 @@
     put('מדדי הצלחה ודרך מעקב לכל מטרה');
     return out;
   }
-  function planMode(p, el) {
-    PCTX = { p: p, el: el }; HIST = [];
+  /* PCTX: { type: plan|task|office|aklim|vaad|yaad|tool, id, label, sug: [הצעות], hi: שורת פתיחה, p + el (בתוכנית), mine } */
+  var CTX_SUG = {
+    task:   ['הכיני לי את מה שהמשימה הזו דורשת', 'נוסח הודעה למי שמטפל/ת במשימה', 'רשימת בדיקה: מה צריך כדי לסיים אותה'],
+    office: ['מה בדיוק צריך לעשות כדי לסגור את המשימה?', 'נוסח מייל למי שצריך לטפל בזה', 'רשימת בדיקה לסגירת המשימה'],
+    aklim:  ['מה עולה מהתוצאות, ומה עושים עם זה בצוות?', 'מערך לפגישת למידה עם הצוות על הממצאים', 'שלושה צעדים לממד החלש ביותר'],
+    vaad:   ['הכיני אותי לוועדה המלווה הבאה', 'תוכנית קצרה לפערים שעלו בוועדה', 'מה כדאי להציג בוועדה, ואיך'],
+    yaad:   ['פרקי את היעדים לצעדים ולמדדים', 'מה הצוות צריך לעשות החודש כדי להתקדם ביעדים?', 'איך מודדים התקדמות באמצע השנה?'],
+    tool:   ['התאימי את הכלי לבית הספר שלנו', 'דוגמה ממולאת לפי הנתונים שלנו', 'איך משתמשים בכלי בישיבת צוות?']
+  };
+  var CTX_HI = { plan: 'מה להכין לתוכנית?', task: 'איך לעזור במשימה?', office: 'איך לעזור במשימה?', aklim: 'מה לעשות עם תוצאות האקלים?',
+                 vaad: 'במה לעזור לקראת הוועדה?', yaad: 'איך להתקדם ביעדים?', tool: 'איך להתאים את הכלי?' };
+  function ctxMode(c) {
+    PCTX = c; HIST = [];
+    if (!c.sug) c.sug = CTX_SUG[c.type] || [];
     $('krCtx').hidden = false;
-    $('krCtx').innerHTML = '<span>עובדת איתך על: <b>' + esc((p.plan && p.plan.title) || p.title || 'התוכנית') + '</b></span>' +
+    $('krCtx').innerHTML = '<span>עובדת איתך על: <b>' + esc(c.label || '') + '</b></span>' +
       '<button type="button" data-unplan="1" aria-label="חזרה לשיחה כללית">' + IC.x + '</button>';
     start(); open();
     document.body.classList.add('kr-dock');
+  }
+  function planMode(p, el) {
+    ctxMode({ type: 'plan', id: p.id, label: (p.plan && p.plan.title) || p.title || 'התוכנית', p: p, el: el, mine: p.mine, sug: suggest(p.plan || {}) });
+  }
+  /* מבחוץ (app.js / tasks.js): KEREN.helpWith({ type, id, title }) */
+  function helpWith(o) {
+    if (!o || !CTX_HI[o.type]) return;
+    ctxMode({ type: o.type, id: String(o.id || ''), label: String(o.title || '').slice(0, 160), title: String(o.title || '').slice(0, 300) });
   }
   function unplan() {
     if (!PCTX) return;
@@ -133,10 +153,10 @@
   function start() {
     var first = String((T.me() || {}).name || '').trim().split(/\s+/)[0];
     if (PCTX) {
-      $('krBody').innerHTML = '<p class="kr-hi">' + (first ? esc(first) + ', ' : '') + 'מה להכין לתוכנית?</p>' +
-        '<div class="kr-cat kr-c0"><div class="kr-ct">' + IC.spark + '<b>חומרי עבודה מתוך התוכנית</b></div>' +
-        suggest(PCTX.p.plan || {}).map(function (q) { return '<button type="button" class="kr-q" data-kind="help" data-q="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
-        '<p class="kr-note">אפשר גם לכתוב בקשה משלך, למשל "תני לי מערך לישיבת צוות על…", או לשאול על התוכנית. ' +
+      $('krBody').innerHTML = '<p class="kr-hi">' + (first ? esc(first) + ', ' : '') + (CTX_HI[PCTX.type] || 'במה לעזור?') + '</p>' +
+        '<div class="kr-cat kr-c0"><div class="kr-ct">' + IC.spark + '<b>' + (PCTX.type === 'plan' ? 'חומרי עבודה מתוך התוכנית' : 'אפשר לבקש למשל') + '</b></div>' +
+        PCTX.sug.map(function (q) { return '<button type="button" class="kr-q" data-kind="help" data-q="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
+        '<p class="kr-note">אפשר גם לכתוב בקשה משלך' + (PCTX.type === 'plan' ? ', למשל "תני לי מערך לישיבת צוות על…", או לשאול על התוכנית' : '') + '. ' +
         'בכלי מיפוי ניצה בונה את המסגרת, ואת הפרטים על התלמידים בית הספר ממלא אצלו.</p>';
       return;
     }
@@ -180,7 +200,7 @@
     bubble(esc(q), 'kr-u');
     if (kind === 'help' && !PCTX) kind = 'ask';
     var wait = bubble('<span class="kr-dots"><i></i><i></i><i></i></span> ' + (kind === 'help' ? 'ניצה מכינה — זה לוקח כחצי דקה…' : kind === 'plan' ? 'ניצה בונה את התוכנית — זה לוקח כדקה…' : 'ניצה חושבת…'), 'kr-b kr-wait');
-    var body = kind === 'help' ? { action: 'planHelp', id: PCTX.p.id, request: q, history: HIST.slice(-4) } :
+    var body = kind === 'help' ? { action: 'planHelp', id: PCTX.type === 'plan' ? PCTX.id : '', ctx: { type: PCTX.type, id: PCTX.id, title: PCTX.title || PCTX.label }, request: q, history: HIST.slice(-4) } :
                kind === 'plan' ? { action: 'plan', request: q } : { action: 'ask', question: q, history: HIST.slice(-6) };
     call(body, kind === 'plan' ? 180000 : 150000).then(function (r) {
       wait.remove();
@@ -188,7 +208,7 @@
       if (kind === 'help') {
         if (r.limited) return bubble(esc(r.message), 'kr-b');
         var hd = bubble(matView(r) + (r.sources && r.sources.length ? '<div class="kr-src">' + r.sources.map(esc).join(' · ') + '</div>' : '') +
-          '<div class="kr-acts">' + (r.kind === 'material' && PCTX && PCTX.p.mine ? '<button type="button" class="kr-all" data-attach="1">' + IC.plus + 'הוספה לתוכנית</button>' : '') +
+          '<div class="kr-acts">' + (r.kind === 'material' && PCTX && PCTX.type === 'plan' && PCTX.mine ? '<button type="button" class="kr-all" data-attach="1">' + IC.plus + 'הוספה לתוכנית</button>' : '') +
           '<button type="button" data-copymat="1">' + IC.copy + 'העתקה</button></div>', 'kr-b kr-a kr-mat');
         hd._m = r;
         HIST.push({ role: 'user', content: q }, { role: 'assistant', content: String(r.answer || '').slice(0, 2500) });
@@ -484,7 +504,7 @@
     };
   }
 
-  window.KEREN = { open: open, mountPlans: mountPlans, enabled: function () { return !!KEREN_EXEC; }, call: call,   /* call — גם לצ'ק ליסט (tasks.js) */
+  window.KEREN = { open: open, mountPlans: mountPlans, enabled: function () { return !!KEREN_EXEC; }, call: call, helpWith: helpWith, name: 'ניצה',   /* call — גם לצ'ק ליסט (tasks.js) */
                    _setExec: function (u) { KEREN_EXEC = u; } };   /* _setExec — לבדיקות בלבד */
   function boot() { if (KEREN_EXEC && !document.querySelector('.kr-fab')) build(); }
   document.addEventListener('tzohar:ready', boot);

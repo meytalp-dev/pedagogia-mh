@@ -1,4 +1,4 @@
-/* נטע — מדידת שימוש (הועתק מצוהר, 11.10.26). עד שהשער יכיר app=neta — נספר תחת צוהר.
+/* נטע — מדידת שימוש (הועתק מצוהר, 11.10.26). נספר תחת נטע (השער מכיר app=neta מ-11.10.26).
    מדווח לשער על פתיחת צוהר, על כל עמוד בתפריט ועל כל מקטע מקופל שנפתח.
    השער שומר שורה אחת לאדם × מקטע בכל 20 דקות; מיטל ותצוגת אדמין (?as=) לא נספרות.
    הסיכום — בתובה, אצל האדמין: "שימוש · תובה וצוהר". קובץ נפרד כדי לא לגעת ב-app.js. */
@@ -21,7 +21,7 @@
     if (!t) return;
     try {
       fetch(GATE, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'track', token: t, app: 'tzohar', ev: ev, sec: sec || '', as: AS }) }).catch(function () {});
+        body: JSON.stringify({ action: 'track', token: t, app: 'neta', ev: ev, sec: sec || '', as: AS }) }).catch(function () {});
     } catch (e) {}
   }
   function page() { var h = location.hash.replace('#', ''); return NAMES[h] ? h : 'home'; }
