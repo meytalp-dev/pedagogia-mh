@@ -283,3 +283,139 @@ footer a{color:var(--muted)}
 .tile-help{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);border-top:0;background:var(--amber-soft);color:#5a3d00;
   font:inherit;font-size:13.5px;font-weight:700;padding:8px 10px;border-radius:0 0 16px 16px;cursor:pointer;min-height:40px}
 .tile-help:hover{background:#fde9bd}
+
+/* ===== כלים (11.10.26): ישיבת צוות (/tzohar/tools.js) — אותו עיצוב כמו בצוהר ===== */
+.tt-docs{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tt-doc{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:right;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;cursor:pointer;color:var(--ink)}
+.tt-doc:hover{border-color:var(--brand-purple)}
+.tt-doc small{color:var(--muted);font-size:12.5px}
+.tt-vdoc h2{font:700 17px Rubik,sans-serif;color:var(--navy);margin:18px 0 6px}
+.tt-vdoc h2:first-child{margin-top:4px}
+.tt-vdoc ul{margin:0;padding-inline-start:20px}
+.tt-vdoc li{margin:4px 0}
+.tt-ed{outline:none;border-radius:6px;padding:1px 3px;margin:0 -3px}
+.tt-ed:hover{background:var(--paper)}
+.tt-ed:focus{background:var(--amber-soft);box-shadow:0 0 0 2px var(--amber)}
+.tt-miss{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;margin-top:14px}
+.tt-err{color:var(--bad);font-weight:700;margin:8px 0 0}
+.tt-busy{color:var(--blue);font-weight:700}
+/* אירוע חריג */
+.tt-evtypes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tt-evtypes .btn{justify-content:flex-start;text-align:right;min-height:52px}
+.tt-evhead{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;margin-bottom:10px}
+.tt-evhead b{font:700 18px Rubik,sans-serif;color:var(--navy)}
+.tt-steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tt-steps li{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.tt-steps li.ok{background:var(--ok-soft);border-color:#bfe6d4}
+.tt-steps label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.tt-steps input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--blue)}
+.tt-steps .w{flex:none;font-size:12px;font-weight:700;background:var(--bad-soft);color:var(--bad);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.tt-steps li.ok .tx{color:var(--muted)}
+.tt-sacts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 30px 0 0}
+.tt-links{margin:0;padding-inline-start:20px}
+.tt-links li{margin:4px 0}
+/* ישיבה */
+.tt-rec{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.tt-rec p{flex-basis:100%;margin:2px 0 0}
+.tt-rec b{font:700 22px Rubik,sans-serif;color:var(--bad);min-width:64px}
+.tt-dot{width:14px;height:14px;border-radius:50%;background:var(--bad);animation:ttblink 1s infinite}
+@keyframes ttblink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.tt-dot{animation:none}}
+.tt-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.tt-row label{display:flex;flex-direction:column}
+.tt-tasks{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:8px}
+.tt-tasks li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.tt-tasks li small{display:block;color:var(--muted);font-size:12.5px}
+/* מכתבים */
+.tt-ltypes{display:grid;gap:8px}
+.tt-h{font:700 18px Rubik,sans-serif;color:var(--navy);margin:6px 0 4px}
+.tt-h3{font:700 16px Rubik,sans-serif;color:var(--navy);margin:16px 0 8px}
+.tt-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin-top:10px}
+.tt-form label:has(textarea){grid-column:1/-1}
+.tt-priv{font-size:11px;font-weight:700;background:var(--amber-soft);color:#8a5300;border-radius:99px;padding:0 7px;margin-inline-start:4px}
+.tt-letter{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff;line-height:1.75;font-size:15px}
+.tt-letter p{margin:6px 0}
+.tt-letter .fill{display:inline-block;min-width:110px;border-bottom:1px solid var(--muted)}
+.tt-letter .src{color:var(--muted);font-size:13px}
+@media (max-width:960px){
+  .tt-evtypes,.tt-form{grid-template-columns:1fr}
+  .tt-tasks li{flex-direction:column;align-items:flex-start}
+  .tt-sacts{margin-right:0}
+}
+
+/* ===== תצפיות, בחינות, לוח שנה (neta/tools.js, 11.10.26) ===== */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip.soft{background:var(--paper);color:var(--ink);border:1px solid var(--line);font-weight:600}
+.tt-roster{margin-top:10px}
+.tt-roster summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:14px}
+.fld.sm{padding:7px 10px;font-size:14px;margin-top:6px}
+.obs-a,.obs-b{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:q}
+.obs-a li,.obs-b li{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.obs-a li.own,.obs-b li.own{background:var(--paper);border-style:dashed}
+.obs-a .q b,.obs-b .q b{display:block;font-size:15px}
+.obs-a .q small,.obs-b .q small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.yn,.sc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.yn label,.sc label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:14px;background:#fff}
+.yn label:has(input:checked),.sc label:has(input:checked){background:var(--blue);border-color:var(--blue);color:#fff}
+.yn input,.sc input{position:absolute;opacity:0;pointer-events:none}
+.pre.note{white-space:pre-wrap;background:var(--paper);border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.6}
+.pic{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pic li{display:grid;grid-template-columns:minmax(0,1fr) 38% 42px;gap:10px;align-items:center;font-size:14px}
+.pic .bar{height:10px;border-radius:99px;background:var(--blue-soft);overflow:hidden}
+.pic .bar i{display:block;height:100%;background:var(--blue);border-radius:99px}
+.pic b{text-align:left;font-size:13px}
+.pic .stack{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--line)}
+.pic .stack i{display:block;height:100%}
+.pic-leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.pic-leg span{display:inline-flex;align-items:center;gap:5px}
+.pic-leg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.lv0{background:#e8c9a8}.lv1{background:#d9e4c8}.lv2{background:#8db678}.lv3{background:#3d6b3f}
+.tabs2{display:flex;gap:6px;margin:14px 0 4px;flex-wrap:wrap}
+.tabs2 button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer;color:var(--navy)}
+.tabs2 button[aria-selected=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.exl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.exl li{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#fff}
+.exl .dd{flex:none;width:46px;text-align:center;font-size:12px;color:var(--muted);line-height:1.1}
+.exl .dd b{display:block;font:700 19px Rubik,sans-serif;color:var(--navy)}
+.exl small{display:block;color:var(--muted);font-size:12.5px}
+.tbl{overflow-x:auto;margin-top:8px}
+table.pr{border-collapse:collapse;width:100%;font-size:14px}
+table.pr th,table.pr td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:right;vertical-align:middle}
+table.pr th{font-size:12.5px;color:var(--muted);font-weight:700}
+table.pr select{width:auto;min-width:72px;margin:0}
+.ychips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ychip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:13.5px;font-weight:700;cursor:pointer}
+.ytag{border-radius:99px;padding:0 7px;font-weight:700}
+.y-rakazPed{background:#ebf3e7;color:#3d6b3f}.y-exam{background:#fdecee;color:#c43c47}.y-national{background:#e6f1f3;color:#26505e}.y-holiday{background:#fef3d9;color:#8a5300}
+@media (max-width:960px){
+  .pic li{grid-template-columns:1fr 42px}
+  .pic li .bar,.pic li .stack{grid-column:1/-1;grid-row:2}
+  table.pr{font-size:13px}
+}
+
+/* ===== תפריט צד מצומצם במחשב (מיטל, 11.10.26: "התפריט עושה לי רעש" → "לצמצם") =====
+   ברירת מחדל: פס צר של אייקונים, השם קופץ כשעומדים על אייקון. הכפתור למעלה מרחיב/מצמצם (נשמר בדפדפן).
+   בנייד לא משתנה — שם התפריט ממילא מגירה. */
+.railtog{display:none}
+@media (min-width:961px){
+  .railtog{display:flex;align-items:center;gap:8px;width:100%;border:0;border-bottom:1px solid var(--line);background:#fff;color:var(--muted);
+    font:inherit;font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer;min-height:40px}
+  .railtog:hover{color:var(--navy);background:var(--paper)}
+  .railtog svg{width:18px;height:18px;flex:none;transition:transform .2s}
+  body.rail .wrap{grid-template-columns:64px minmax(0,1fr)}
+  body.rail .side{overflow:visible;max-height:none}
+  body.rail .me{display:none}
+  body.rail .railtog{justify-content:center;padding:9px 0;border-radius:var(--r) var(--r) 0 0}
+  body.rail .railtog span{display:none}
+  body.rail .railtog svg{transform:scaleX(-1)}
+  body.rail .nav{padding:6px;overflow:visible}
+  body.rail .nav .sep{margin:6px 4px}
+  body.rail .nav-g{display:none}
+  body.rail .nav button,body.rail .nav a{position:relative;justify-content:center;font-size:0;padding:10px 0;min-height:44px;gap:0}
+  body.rail .nav button svg,body.rail .nav a svg{width:20px;height:20px}
+  body.rail .nav a svg.ext{display:none}
+  body.rail .nav .n,body.rail .nav .pilot{position:absolute;top:7px;left:9px;width:8px;height:8px;padding:0;margin:0;border-radius:50%;font-size:0;background:var(--bad)}
+  body.rail .nav .pilot{background:var(--amber,#f3c867)}
+  body.rail .nav [data-tip]:hover::after,body.rail .nav [data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);
+    background:var(--navy);color:#fff;font-size:13.5px;font-weight:700;line-height:1.3;padding:6px 11px;border-radius:9px;white-space:nowrap;z-index:30;box-shadow:0 6px 18px rgba(0,0,0,.15);pointer-events:none}
+}

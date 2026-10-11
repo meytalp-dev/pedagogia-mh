@@ -20,6 +20,9 @@
   function todayIso() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function heDate(iso) { var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[3]) + '.' + (+m[2]) + '.' + m[1] : ''; }
   function D() { return T.data ? T.data() : null; }
+  /* נטע (רכז/ת): ישיבת צוות וניצה; צוהר (מנהל/ת): ישיבת הנהלה וקרן */
+  function RK() { return T.role() === 'rakaz'; }
+  function BOT() { return (window.KEREN && KEREN.name) || 'קרן'; }
 
   var IC = {
     vaad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20a5 5 0 0 1 10 0M11 20a5 5 0 0 1 10 0"/></svg>',
@@ -322,7 +325,7 @@
     if (m) return meetDoc(m);
     var rec = REC.st === 'rec', busy = REC.st === 'send' || QBUSY || MT.busy;
     var canRec = !!(window.MediaRecorder && navigator.mediaDevices && recMime());
-    return '<div class="card head"><h1>ישיבת הנהלה</h1><div class="meta">מקליטים את הישיבה, וקרן מחזירה סיכום, החלטות ומשימות לכל בעל/ת תפקיד. המשימות נכנסות לצ׳ק ליסט בלחיצה. ' +
+    return '<div class="card head"><h1>' + (RK() ? 'ישיבת צוות' : 'ישיבת הנהלה') + '</h1><div class="meta">מקליטים את הישיבה, ו' + BOT() + ' מחזירה סיכום, החלטות ומשימות לכל אחד/ת. המשימות נכנסות לצ׳ק ליסט בלחיצה. ' +
       'ההקלטה עצמה לא נשמרת בשום מקום — רק הסיכום.</div></div>' +
       '<div class="card">' + (!on() ? '<div class="empty">קרן עוד לא הופעלה.</div>' :
         '<div class="tt-rec">' + (rec
@@ -335,7 +338,7 @@
         '<textarea class="fld" id="ttText" rows="8" placeholder="התמלול יופיע כאן. אפשר גם להדביק פרוטוקול שנכתב ביד.">' + esc(MT.text) + '</textarea>' +
         '<div class="tt-row"><label class="small">תאריך<input class="fld" type="date" id="ttDate" value="' + esc(MT.date || todayIso()) + '"></label>' +
         '<label class="small" style="flex:1">נושא (לא חובה)<input class="fld" id="ttTopic" maxlength="120" value="' + esc(MT.topic) + '" placeholder="למשל: היערכות למחצית"></label></div>' +
-        '<div class="acts" style="margin-top:10px"><button type="button" class="btn primary" data-tt="msum"' + (busy || rec ? ' disabled' : '') + '>' + IC.spark + (MT.busy ? 'קרן מסכמת… (עד דקה)' : 'קרן, תסכמי את הישיבה') + '</button></div>') +
+        '<div class="acts" style="margin-top:10px"><button type="button" class="btn primary" data-tt="msum"' + (busy || rec ? ' disabled' : '') + '>' + IC.spark + (MT.busy ? BOT() + ' מסכמת… (עד דקה)' : BOT() + ', תסכמי את הישיבה') + '</button></div>') +
       '</div><h2 class="pt">ישיבות קודמות</h2><div class="card">' + docList('meet', 'עוד לא סוכמה ישיבה.') + '</div>';
   }
   function meetDoc(d) {
@@ -569,11 +572,11 @@
   window.TZTOOLS = {
     /* [מפתח, אייקון, שם בתפריט, תיאור לכרטיס] — רק למנהל/ת */
     pages: function () {
-      if (T.role() === 'rakaz') return [];
+      if (RK()) return [['h', IC.mic, 'ישיבת צוות', 'מקליטים את הישיבה, וניצה מחזירה סיכום, החלטות ומשימות לצ׳ק ליסט.']];
       return [['v', IC.vaad, 'הכנה לוועדה', 'קרן מכינה מסמך מהנתונים'], ['h', IC.mic, 'ישיבת הנהלה', 'הקלטה → סיכום ומשימות'],
               ['l', IC.letter, 'מכתבים', 'קב"ס, סיום לימודים, ומכתב חופשי'], ['e', IC.alert, 'אירוע חריג', 'מה עושים, צעד אחר צעד']];
     },
-    owns: function (p) { return /^[vehl]$/.test(p); },
+    owns: function (p) { return RK() ? p === 'h' : /^[vehl]$/.test(p); },
     html: function (p) { CUR = p; return '<div id="tzTool" data-p="' + p + '">' + ({ v: pageV, e: pageE, h: pageH, l: pageL }[p])() + '</div>'; },
     mount: function (p) { CUR = p; if (p === 'v') loadDocs('vaada'); if (p === 'h') loadDocs('meet'); },
     busy: function () { return REC.st === 'rec' || QBUSY; }

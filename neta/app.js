@@ -296,6 +296,8 @@
   /* ===== ניווט ===== */
   function hasMine() { return !!(window.KEREN && KEREN.enabled() && window.TZTASKS); }
   /* [מפתח, אייקון, שם, משפט לכרטיסייה בדף הבית] */
+  function TOOLMODS() { return [window.TZTOOLS, window.NTTOOLS].filter(Boolean); }
+  function toolOf(p) { return TOOLMODS().filter(function (m) { return m.owns(p); })[0]; }
   function pages() {
     var P = [['home', I.house, 'ראשי'],
              ['c', I.check, 'הצ\'ק ליסט שלי', 'המשימות שלך: לכתוב, לסמן, תזכורת ביומן ומייל למי שמטפל/ת.'],
@@ -304,6 +306,7 @@
              ['k', I.book, 'הידע לרכז/ת', 'הנהלים, בעלי התפקידים והמסמכים הארציים.'],
              ['t', I.tools, 'ארגז הכלים', 'כלים לתכנון ולהנחיית הצוות, וטיפים לרכזים.']];
     if (window.KEREN && KEREN.enabled()) P.push(['p', I.doc, 'התוכניות שלי', 'תוכניות העבודה שניצה בנתה איתך — לערוך, להדפיס ולשלוח.']);
+    TOOLMODS().forEach(function (m) { m.pages().forEach(function (t) { P.push(t); }); });   /* כלים: ישיבת צוות (/tzohar/tools.js), תצפיות, בחינות, לוח שנה (tools.js) — 11.10.26 */
     P.push(['tour', I.tour, 'סיור בנטע', 'שתי דקות על כל מה שיש כאן.']);
     return P;
   }
@@ -319,7 +322,19 @@
       return '<li><button type="button" data-page="' + p[0] + '"' + (PAGE === p[0] ? ' aria-current="true"' : '') + '>' +
         p[1] + esc(p[2]) + extra + '</button></li>';
     }).join('');
+    /* תפריט מצומצם במחשב (11.10.26, כמו בצוהר ובתובה): שם הפריט לתווית שקופצת מעל האייקון */
+    [].forEach.call($('nav').querySelectorAll('button'), function (b) {
+      var x = b.cloneNode(true);
+      [].forEach.call(x.querySelectorAll('.n'), function (y) { y.remove(); });
+      b.setAttribute('data-tip', x.textContent.trim());
+    });
   }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('#railTog')) return;
+    var on = document.body.classList.toggle('rail');
+    try { localStorage.setItem('neta.rail', on ? '1' : '0'); } catch (err) {}
+    $('railTog').querySelector('span').textContent = on ? 'הרחבת התפריט' : 'צמצום התפריט';
+  });
   var PLANID = '';   /* תוכנית לפתיחה בעמוד "התוכניות שלי" (מניצה) */
   function go(p, id) {
     if (p === 'tour') { document.body.classList.remove('drawer'); return tour(0); }
@@ -335,6 +350,9 @@
     if (!D || !D.school) return;
     /* "התוכניות שלי" מנוהל ע"י keren.js — נתון ציבורי שנטען ברקע לא מצייר אותו מחדש (ולא מוחק עריכה) */
     if (PAGE === 'p' && !force && $('kerenPlans')) return;
+    /* כלים: נתון שנטען ברקע לא מצייר מחדש — לא עוצר הקלטה ולא מוחק טופס תצפית באמצע */
+    var tool = toolOf(PAGE);
+    if (tool && !force && document.querySelector('#tzTool[data-p="' + PAGE + '"],#ntTool[data-p="' + PAGE + '"]')) return;
     /* הצ'ק ליסט: נתון שנטען ברקע לא סוגר חלונית יומן/מייל פתוחה או שדה שמקלידים בו */
     if (PAGE === 'c' && !force && document.querySelector('#main .ck-p:not([hidden]), #main .ck-add input:focus, #ckText:not(:placeholder-shown)')) return;
     var h = '';
@@ -342,10 +360,11 @@
       ' · <a href="/tzohar/?as=' + esc(D.school.semel) + '">לצוהר של בית הספר</a>' +
       ' · <a href="./">בית ספר אחר</a></div>';
     h += ({ home: home, c: minePage, s: schoolPage, m: menorPage, k: knowPage, t: toolsPage,
-            p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || home)();
+            p: function () { return '<div id="kerenPlans"></div>'; } }[PAGE] || (tool ? function () { return tool.html(PAGE); } : home))();
     $('main').innerHTML = h;
     if (PAGE === 'p' && window.KEREN) KEREN.mountPlans($('kerenPlans'), PLANID);
     if (PAGE === 'c' && window.TZTASKS && $('ckMine')) TZTASKS.mountMine($('ckMine'));
+    if (tool) tool.mount(PAGE);
     if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
@@ -574,6 +593,10 @@
       '<p style="margin:0 0 10px">את הרשימה המלאה, עם השמות והמקצועות, רואים במבט של בית הספר במנור, בלשונית "טרם נרשמו".</p>' +
       '<div class="acts"><a class="btn primary" href="' + LINK.menor + '" target="_blank" rel="noopener">למבט של בית הספר במנור' + I.ext + '</a></div>' +
       '<div class="small" style="margin-top:8px">מנור מבקש כניסה משלו בפעם הראשונה (קוד במייל).</div></div>';
+    /* השתתפות המורים בהדרכות ובהשתלמויות — כבר קיימת במבט של בית הספר במנור (לשוניות "נוכחות בהדרכות", "השתלמות מקצועית"), 11.10.26 */
+    h += '<div class="card"><p class="eyebrow">' + I.chart + 'המורים בהדרכות ובהשתלמויות</p>' +
+      '<p style="margin:0 0 10px">מי השתתף/ה, כמה שעות, ומי עוד לא השתתף/ה בשום הדרכה — במבט של בית הספר במנור, בלשוניות "נוכחות בהדרכות" ו"השתלמות מקצועית".</p>' +
+      '<div class="acts"><a class="btn" href="' + LINK.menor + '" target="_blank" rel="noopener">לנוכחות ולהשתלמויות במנור' + I.ext + '</a></div></div>';
     h += '<div class="card" id="menorMsg"><p class="eyebrow">' + I.mail + 'הודעה מוכנה למורים</p><div class="pre note">' + esc(menorMsg()) + '</div>' +
       '<div class="acts"><button type="button" class="btn" data-copy="menor">' + I.copy + 'העתקת ההודעה</button>' +
       '<button type="button" class="btn" data-copy="link">' + I.copy + 'העתקת קישור ההרשמה בלבד</button></div></div>';
@@ -892,7 +915,7 @@
     return out;
   }
   window.TZOHAR = {
-    token: token, snap: snap, toast: toast,
+    token: token, snap: snap, toast: toast, data: function () { return D; }, icon: function (k) { return I[k] || ''; },
     role: function () { return role(); }, me: function () { return ME; }, school: function () { return D && D.school; },
     as: function () { return AS; }, ready: function () { return READY; }, go: go,
     people: people, links: function () { return LINK; },

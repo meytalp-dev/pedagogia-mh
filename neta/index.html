@@ -13,10 +13,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neta.css?v=20261011c">
+<link rel="stylesheet" href="neta.css?v=20261011-rail">
 <link rel="stylesheet" href="nitza.css?v=20261011c">
 </head>
 <body>
+<script>try{if(localStorage.getItem('neta.rail')!=='0')document.body.classList.add('rail')}catch(e){document.body.classList.add('rail')}</script>
 <header class="top"><div class="top-in">
   <button type="button" class="burger" id="burger" aria-label="תפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   <img class="logo" src="brand/neta-symbol.png" alt="">
@@ -26,6 +27,7 @@
 
 <div class="wrap">
   <aside class="side" aria-label="תפריט">
+    <button type="button" class="railtog" id="railTog" aria-label="הרחבה או צמצום של התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l6 6-6 6"/><path d="M6 6l6 6-6 6"/></svg><span>צמצום התפריט</span></button>
     <div class="me"><b id="meName"></b><span id="meSchool"></span><span class="role" id="meRole" hidden></span></div>
     <ul class="nav" id="nav"></ul>
   </aside>
@@ -35,9 +37,11 @@
 <footer>המנהל להכשרה מקצועית · משרד העבודה · נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener">impactos · impactos.co.il</a></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="/school-names.js"></script>
-<script src="app.js?v=20261011c"></script>
+<script src="app.js?v=20261011-rail"></script>
 <script src="tasks.js?v=20261011c"></script>
+<script src="/tzohar/tools.js?v=20261011-neta"></script>
+<script src="tools.js?v=20261011-tools"></script>
 <script src="nitza.js?v=20261011c"></script>
-<script src="usage.js?v=20261011c"></script>
+<script src="usage.js?v=20261011-tools"></script>
 </body>
 </html>
