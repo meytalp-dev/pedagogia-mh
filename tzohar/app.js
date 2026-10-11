@@ -311,9 +311,22 @@
       var extra = p[0] === 'o' && n ? '<span class="n">' + n + '</span>' : p[0] === 'c' && nm ? '<span class="n soft">' + nm + '</span>' : (p[0] === 'g' ? '<span class="pilot">פיילוט</span>' : '');
       var head = p[3] === 'ck' && !grp ? (grp = true, '<li class="nav-g">' + I.check + 'צ\'ק ליסט</li>') : '';
       return head + '<li' + (p[3] ? ' class="nav-sub"' : '') + '><button type="button" data-page="' + p[0] + '"' + (PAGE === p[0] ? ' aria-current="true"' : '') + '>' +
-        (p[3] ? '' : p[1]) + esc(p[2]) + extra + '</button></li>';
+        (p[3] ? '<span class="subi">' + p[1] + '</span>' : p[1]) + esc(p[2]) + extra + '</button></li>';
     }).join('');
+    /* תפריט מצומצם במחשב (11.10.26): שם הפריט לתווית שקופצת מעל האייקון */
+    [].forEach.call($('nav').querySelectorAll('button'), function (b, i) {
+      var c = b.cloneNode(true);
+      [].forEach.call(c.querySelectorAll('.n,.pilot'), function (x) { x.remove(); });
+      var t = c.textContent.trim();
+      b.setAttribute('data-tip', b.parentNode.classList.contains('nav-sub') ? 'צ\'ק ליסט · ' + t : t);
+    });
   }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('#railTog')) return;
+    var on = document.body.classList.toggle('rail');
+    try { localStorage.setItem('tzohar.rail', on ? '1' : '0'); } catch (err) {}
+    $('railTog').querySelector('span').textContent = on ? 'הרחבת התפריט' : 'צמצום התפריט';
+  });
   var PLANID = '';   /* תוכנית לפתיחה בעמוד "התוכניות שלי" (מקרן) */
   function go(p, id) {
     if (p === 'tour') { document.body.classList.remove('drawer'); return tour(0); }
