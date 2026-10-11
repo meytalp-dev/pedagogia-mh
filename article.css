@@ -507,3 +507,29 @@ a.lvl:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:var(
 .lvl .st.live{background:var(--cyan-100);color:var(--accent)}
 .lvl .st.plus{background:var(--teal-100);color:#087565}
 @media (prefers-reduced-motion:reduce){a.lvl:hover{transform:none}}
+
+/* ===== עמוד שער של מדור — כרטיסיות במקום שורות ארוכות (11.10.26) =====
+   מיטל: "נכנסת לעמוד, רוצה לראות כרטיסיות עם התפריטים — בלי הרבה מלל ורעש".
+   <article class="body-sec gate">: בכל קבוצה רק הכותרת, ומתחתיה כרטיסיות —
+   מספר, שם העמוד ומשפט קצר. בלי המספר הענק, כותרת־העל ומשפט ההסבר. */
+.gate .sec{padding:clamp(18px,3vh,28px) 0 0}
+.gate .sec-head{margin-bottom:12px}
+.gate .sec-head .ghost,.gate .sec-head .over,.gate .sec-head .sub{display:none}
+.gate .sec-head h2{font-size:var(--fs-lg)}
+.gate .index-list{border-top:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.gate .row,.gate .row.featured{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin:0;
+  padding:16px 16px 18px;border:1px solid var(--border);border-radius:16px;background:var(--surface,#fff);box-shadow:var(--sh-sm);
+  transition:border-color .2s,box-shadow .2s,transform .2s}
+.gate .row::before{display:none}
+.gate a.row:hover{border-color:var(--cyan);box-shadow:var(--sh-md);transform:translateY(-2px)}
+.gate .row .idx{height:auto}
+.gate .row .idx .n{position:static;display:block;font-size:.8rem;color:var(--accent);transform:none;opacity:1}
+.gate .row .idx .a,.gate .row .dest{display:none}
+.gate .row h3,.gate .row.featured h3{font-size:var(--fs-md);line-height:1.3}
+.gate .row p{margin:0;font-size:var(--fs-sm);color:var(--text2);line-height:1.45}
+@media(max-width:640px){
+  .gate .index-list{grid-template-columns:1fr 1fr;gap:10px}
+  .gate .row,.gate .row.featured{padding:12px 12px 14px}
+  .gate .row h3,.gate .row.featured h3{font-size:var(--fs-sm)}
+  .gate .row p{font-size:.78rem}
+}

@@ -440,6 +440,41 @@
   });
 })();
 
+/* ===== כרטיסיות "בעמוד הזה" מיד מתחת לכותרת (11.10.26) =====
+   מיטל: "אני רוצה כרטיסיות מסודרות שרואים אותן מיד כשנכנסים לדפים —
+   הכותרת ואולי משפט קצר וברור על מה יש". נבנות מאותם פרקים של pagenav.js,
+   רק שם הפרק — משפט שנחלץ אוטומטית יצא לא אחיד. בשלב ראשון רק בחינוך החברתי. */
+(function pageCards(){
+  var here=(location.pathname.split('/').pop()||'').toLowerCase();
+  if(!/^chevrati-.+\.html$/.test(here)) return;
+  function build(){
+    var items=[].slice.call(document.querySelectorAll('.pn .pn-tab:not(.pn-off)')).map(function(t){
+      return {href:t.getAttribute('href'), title:t.title||t.textContent.replace(/^\d+/,'').trim()};
+    });
+    if(items.length<2) return;
+    var box=document.createElement('section');
+    box.className='pcards';
+    box.setAttribute('aria-label','בעמוד הזה');
+    var lbl=document.createElement('div'); lbl.className='pcards-lbl'; lbl.textContent='בעמוד הזה';
+    var grid=document.createElement('div'); grid.className='pcards-grid';
+    items.forEach(function(it,i){
+      var a=document.createElement('a'); a.className='pcard'; a.href=it.href;
+      var n=document.createElement('span'); n.className='pcard-n'; n.textContent=(i<9?'0':'')+(i+1);
+      var t=document.createElement('h3'); t.textContent=it.title;
+      a.appendChild(n); a.appendChild(t);
+      grid.appendChild(a);
+    });
+    box.appendChild(lbl); box.appendChild(grid);
+    var inner=document.createElement('div'); inner.className='article'; inner.appendChild(box);
+    var hero=document.querySelector('section.hero');
+    if(hero) hero.insertAdjacentElement('afterend',inner);
+    else { var m=document.querySelector('main'); if(!m) return; m.insertBefore(inner,m.firstChild); }
+    document.documentElement.classList.add('has-pcards');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(build,0); });
+  else setTimeout(build,0);
+})();
+
 /* ===== שורת "מקור:" בראש העמוד יורדת (11.10.26, מיטל: "המקור לא רלוונטי" — בכל האתר) ===== */
 (function hideSourceLines(){
   var RX=/^\s*(מקור|המקור|מתוך|المصدر)\s*:/;
