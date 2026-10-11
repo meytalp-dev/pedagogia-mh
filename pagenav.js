@@ -585,7 +585,8 @@
     function sizes() {
       var navH = mainNav ? Math.round(mainNav.getBoundingClientRect().height) : 0;
       document.documentElement.style.setProperty('--pn-nav', navH + 'px');
-      var barH = Math.round(bar.getBoundingClientRect().height);
+      /* בנייד הפס לא דביק (pagenav.css) — אז הוא לא מכסה את יעד העוגן */
+      var barH = getComputedStyle(bar).position === 'sticky' ? Math.round(bar.getBoundingClientRect().height) : 0;
       document.documentElement.style.setProperty('--pn-bar', barH + 'px');
       return navH + barH;
     }
@@ -638,6 +639,9 @@
       if (box.scrollWidth > box.clientWidth + 1) box.classList.remove('pn-tight');
       fades();
     }
+    /* בנייד הכרטיסיות עוטפות לכמה שורות — גובה הפס משתנה, ומודדים מחדש */
+    var fit0 = fit;
+    fit = function () { fit0(); offset = sizes(); };
     fit();
     var fitT;
     addEventListener('resize', function () { clearTimeout(fitT); fitT = setTimeout(fit, 120); }, { passive: true });
