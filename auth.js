@@ -147,6 +147,15 @@
     '#pmh-go{width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;background:#0D3B66;',
     'color:#fff;font:inherit;font-weight:700;font-size:.94rem;cursor:pointer;transition:background .15s}',
     '#pmh-go:hover{background:#0A2E52}#pmh-go:disabled{opacity:.55;cursor:default}',
+    '#pmh-res{list-style:none;margin:6px 0 0;padding:0;border:1.5px solid #DDE3EA;border-radius:10px;',
+    'max-height:236px;overflow-y:auto;text-align:right}#pmh-res[hidden]{display:none}',
+    '#pmh-res li+li{border-top:1px solid #EEF1F5}',
+    '#pmh-res button{display:block;width:100%;border:0;background:#fff;padding:9px 14px;font:inherit;',
+    'text-align:right;cursor:pointer;color:#1b2a3a}',
+    '#pmh-res button:hover,#pmh-res button[aria-selected=true]{background:#F2F5F8}',
+    '#pmh-res b{display:block;font-size:.94rem}#pmh-res small{display:block;font-size:.78rem;color:#5A6B80;margin-top:1px}',
+    '#pmh-res .none{padding:10px 14px;font-size:.84rem;color:#5A6B80;line-height:1.5}',
+    '#pmh-picked{margin-top:6px;font-size:.84rem;color:#1E7B4A;font-weight:600}#pmh-picked[hidden]{display:none}',
     '#pmh-err{margin-top:14px;font-size:.85rem;color:#C0392B;font-weight:600;min-height:20px;line-height:1.45}',
     '#pmh-note{margin-top:20px;padding-top:16px;border-top:1px solid #EEF1F5;',
     'font-size:.78rem;color:#8A97A6;line-height:1.6}',
@@ -177,7 +186,15 @@
      נשלח למייל הרשום בגיליון ההרשאות → המכשיר זוכר ל-30 יום.
      מי שאינו ברשימה (או מעדיף) — מקליד את כתובת המייל. */
   var LAST = 'pmh_last';   /* האדם האחרון שנבחר במכשיר — למילוי מראש */
-  var SUB1 = 'בחרו את שמכם — נשלח קוד כניסה למייל שלכם.<br>המכשיר יזכור אתכם ל-30 יום.';
+  /* צוהר (11.10.26): במקום לשוניות + 64 בתי ספר + שמות עם מיילים —
+     תיבת חיפוש אחת: מקלידים את השם, בוחרים "שם · תפקיד · בית ספר".
+     התפקיד ובית הספר נקבעים לבד לפי גיליון ההרשאות. */
+  /* data-search בתגית — נטע (11.10.26), ובהמשך צוהר. עד אז צוהר מזוהה לפי המרחב rakaz */
+  var SEARCH = !!(me && me.hasAttribute('data-search')) || need.indexOf('rakaz') > -1;
+  /* בחיפוש רואים רק את מי שהעמוד מיועד לו (מנהלים / רכזים) + מפקחים ומטה (אדמין) */
+  function forPage(p) { return p.role === 'pikuah' || need.indexOf(p.role) > -1; }
+  var SUB1 = SEARCH ? 'הקלידו את שמכם ובחרו מהרשימה — נשלח קוד כניסה למייל שלכם.<br>המכשיר יזכור אתכם ל-30 יום.' :
+                      'בחרו את שמכם — נשלח קוד כניסה למייל שלכם.<br>המכשיר יזכור אתכם ל-30 יום.';
 
   function gate() {
     injectStyle();
@@ -201,6 +218,10 @@
           '</div>' +
           '<select id="pmh-school" class="pmh-in" aria-label="בית הספר"></select>' +
           '<select id="pmh-name" class="pmh-in" aria-label="השם שלי"></select>' +
+          '<input id="pmh-q" class="pmh-in" type="search" autocomplete="off" placeholder="הקלידו את שמכם" ' +
+            'aria-label="השם שלי" aria-controls="pmh-res" hidden>' +
+          '<ul id="pmh-res" role="listbox" aria-label="תוצאות" hidden></ul>' +
+          '<div id="pmh-picked" hidden></div>' +
           '<input id="pmh-mail" class="pmh-in" type="email" dir="ltr" autocomplete="email" ' +
             'placeholder="כתובת המייל שלך" hidden>' +
           '<button id="pmh-go" type="button">שליחת קוד למייל</button>' +
@@ -260,7 +281,88 @@
     function cmp(a, b) { return String(a).localeCompare(String(b), 'he'); }
 
     /* ממלא את הבחירות לפי התפקיד שנבחר */
+    /* ===== חיפוש לפי שם (SEARCH) ===== */
+    var qIn = $('pmh-q'), resUl = $('pmh-res'), pickedEl = $('pmh-picked');
+    var picked = null, hits = [], cursor = -1;
+    var ROLE_HE = { menahalim: 'מנהל/ת', rakaz: 'רכז/ת פדגוגי/ת', pikuah: 'מפקח/ת · מטה' };
+    function norm(s) {
+      return String(s || '').replace(/[֑-ׇ]/g, '').replace(/["'׳״`\-–.,()]/g, ' ')
+        .replace(/\s+/g, ' ').trim().toLowerCase();
+    }
+    function whoLine(p) { return (ROLE_HE[p.role] || '') + (p.school ? ' · ' + p.school : ''); }
+    function pick(p) {
+      picked = p; hits = []; cursor = -1;
+      qIn.value = p.name;
+      resUl.hidden = true;
+      pickedEl.textContent = '✓ ' + whoLine(p);
+      pickedEl.hidden = false;
+      msg('');
+    }
+    function search() {
+      picked = null; pickedEl.hidden = true; cursor = -1;
+      var q = norm(qIn.value);
+      if (q.length < 2) { hits = []; resUl.hidden = true; return; }
+      var words = q.split(' ');
+      hits = people.filter(forPage).filter(function (p) {
+        var hay = ' ' + norm(p.name) + ' ' + norm(p.school) + ' ';
+        return words.every(function (w) { return hay.indexOf(w) > -1; });
+      });
+      /* קודם מי שהשם שלו מתחיל במה שהוקלד */
+      hits.sort(function (a, b) {
+        var sa = norm(a.name).indexOf(q) === 0 ? 0 : 1, sb = norm(b.name).indexOf(q) === 0 ? 0 : 1;
+        return sa - sb || cmp(a.name, b.name);
+      });
+      hits = hits.slice(0, 30);
+      drawHits();
+    }
+    function drawHits() {
+      resUl.innerHTML = '';
+      if (!hits.length) {
+        resUl.innerHTML = '<li class="none">לא מצאנו את השם. נסו חלק אחר מהשם, או כניסה עם כתובת מייל (למטה).</li>';
+      }
+      hits.forEach(function (p, i) {
+        var li = document.createElement('li'), b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('role', 'option');
+        b.setAttribute('aria-selected', i === cursor ? 'true' : 'false');
+        var nm = document.createElement('b'); nm.textContent = p.name;
+        var sm = document.createElement('small'); sm.textContent = whoLine(p);
+        b.appendChild(nm); b.appendChild(sm);
+        b.addEventListener('click', function () { pick(p); go.focus(); });
+        li.appendChild(b); resUl.appendChild(li);
+      });
+      resUl.hidden = false;
+      var cur = resUl.querySelector('[aria-selected=true]');
+      if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+    }
+    if (SEARCH) {
+      qIn.addEventListener('input', search);
+      qIn.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          if (!hits.length) return;
+          e.preventDefault();
+          cursor = (cursor + (e.key === 'ArrowDown' ? 1 : -1) + hits.length) % hits.length;
+          drawHits();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (picked) return send();
+          if (cursor > -1 && hits[cursor]) pick(hits[cursor]);
+          else if (hits.length === 1) pick(hits[0]);
+        } else if (e.key === 'Escape') { resUl.hidden = true; }
+      });
+    }
+
     function render() {
+      if (SEARCH) {
+        g.querySelector('.pmh-tabs').hidden = true;
+        schoolSel.hidden = true; nameSel.hidden = true;
+        qIn.hidden = byMail;
+        if (byMail) { resUl.hidden = true; pickedEl.hidden = true; }
+        else if (picked) { pickedEl.textContent = '✓ ' + whoLine(picked); pickedEl.hidden = false; }
+        qIn.disabled = !people.length;
+        if (!people.length) qIn.placeholder = 'טוען את הרשימה…';
+        else qIn.placeholder = 'הקלידו את שמכם';
+        return;
+      }
       Array.prototype.forEach.call(g.querySelectorAll('.pmh-tab'), function (b) {
         b.setAttribute('aria-selected', b.getAttribute('data-role') === role ? 'true' : 'false');
       });
@@ -352,6 +454,7 @@
       var last = null;
       try { last = JSON.parse(store().getItem(LAST) || 'null'); } catch (e) {}
       var p = last && people.filter(function (x) { return x.id === last.id; })[0];
+      if (SEARCH) { render(); if (p && forPage(p)) pick(p); else if (!byMail) qIn.focus(); return; }
       if (p) {
         role = p.role; render();
         if (p.school) { schoolSel.value = p.school; render(); }
@@ -377,6 +480,9 @@
         var m = String(mail.value || '').trim();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)) { mail.focus(); return msg('כתובת המייל אינה תקינה.'); }
         who = { email: m };
+      } else if (SEARCH) {
+        if (!picked) { qIn.focus(); return msg(qIn.value.trim() ? 'בחרו את השם שלכם מהרשימה שנפתחת.' : 'הקלידו את שמכם.'); }
+        who = { id: picked.id };
       } else {
         if (bySchool() && !schoolSel.value) { schoolSel.focus(); return msg('בחרו את בית הספר.'); }
         if (!nameSel.value) { nameSel.focus(); return msg('בחרו את שמכם מהרשימה.'); }
