@@ -597,6 +597,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
         <div class="acts">
           <a class="btn primary sm" href="hadrachot/teacher/" target="_blank" rel="noopener">כניסה למורים</a>
           <a class="btn line sm" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים</a>
+          <a class="btn line sm" href="https://tfasim.pedagogiamh.co.il/shagririm/" target="_blank" rel="noopener" title="בתפריט של אדווה: מחולל השיעורים">שגרירי חדשנות · דרך אדווה</a>
         </div>
       </div>
       <div id="mg-login-in" hidden><b>מחובר/ת דרך מנור: <span id="mg-who"></span></b><span id="mg-left"></span></div>
@@ -843,10 +844,19 @@ function bankMatch(){
 
 /* ===== הכניסה — דרך מנור ===== */
 function readLS(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e){ return null; } }
+/* 11.10.26: רכזי התקשוב (שגרירי החדשנות) נכנסים מאדווה. הכפתור שם פותח את העמוד עם
+   #adva=<מפתח>~<טוקן>~<מכשיר> — בסימן # ולא בכתובת, כדי שלא יישלח לשום שרת ולא יישמר בהיסטוריה. */
+(function(){
+  var m = /[#&]adva=([^&]+)/.exec(location.hash || "");
+  if (!m) return;
+  try { localStorage.setItem("pmh.adva.v1", JSON.stringify({ k: decodeURIComponent(m[1]), at: Date.now() })); } catch(e){}
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(e){ location.hash = ""; }
+})();
 function me(){
-  var t = readLS("ts.teacher.v1"), s = readLS("ts.staff.v1");
+  var t = readLS("ts.teacher.v1"), s = readLS("ts.staff.v1"), a = readLS("pmh.adva.v1");
   if (t && t.k) return { t:"teacher", k:t.k, name:t.name || "" };
   if (s && s.k) return { t:"staff", k:s.k, name:s.name || "" };
+  if (a && a.k) return { t:"adva", k:a.k, name:a.name || "" };
   return null;
 }
 var LEFT = null;
@@ -855,15 +865,26 @@ function paintLogin(){
   el("mg-login").classList.toggle("in", !!m);
   el("mg-login-out").hidden = !!m; el("mg-login-in").hidden = !m;
   if (m) {
-    el("mg-who").textContent = m.name || (m.t === "teacher" ? "מורה" : "בעל/ת תפקיד");
+    el("mg-who").textContent = m.name || (m.t === "teacher" ? "מורה" : m.t === "adva" ? "שגריר/ת חדשנות" : "בעל/ת תפקיד");
     el("mg-left").textContent = LEFT == null ? "" : "נשארו לך היום " + LEFT + " שיעורים חדשים.";
   }
 }
 function refreshLeft(){
   if (!me()) return;
-  post({ action:"whoami" }, 30000).then(function(d){ if (d && d.ok) { LEFT = d.left; paintLogin(); } });
+  post({ action:"whoami" }, 30000).then(function(d){
+    if (d && d.ok) {
+      LEFT = d.left;
+      /* באדווה השם לא נשמר בדפדפן (פרטיות) — מקבלים אותו מהשרת אחרי האימות */
+      var a = readLS("pmh.adva.v1");
+      if (me().t === "adva" && a && d.name) { a.name = d.name; try { localStorage.setItem("pmh.adva.v1", JSON.stringify(a)); } catch(e){} }
+      paintLogin();
+    } else if (d && d.error === "badlogin" && me() && me().t === "adva") {
+      try { localStorage.removeItem("pmh.adva.v1"); } catch(e){}
+      paintLogin();
+    }
+  });
 }
-window.addEventListener("storage", function(e){ if (e.key === "ts.teacher.v1" || e.key === "ts.staff.v1") { LEFT = null; paintLogin(); refreshLeft(); } });
+window.addEventListener("storage", function(e){ if (e.key === "ts.teacher.v1" || e.key === "ts.staff.v1" || e.key === "pmh.adva.v1") { LEFT = null; paintLogin(); refreshLeft(); } });
 document.addEventListener("visibilitychange", function(){ if (!document.hidden) paintLogin(); });
 
 /* ===== הקריאה לשרת =====
@@ -892,8 +913,8 @@ function post(body, ms){
           function(){ clearTimeout(timer); return { ok:false, error:"network" }; });
 }
 var ERR = {
-  nologin:  "כדי לבנות שיעור חדש נכנסים פעם אחת דרך מנור — הכפתורים בצעד 3.",
-  badlogin: "הכניסה למנור במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור ונסו שוב.",
+  nologin:  "כדי לבנות שיעור חדש נכנסים פעם אחת דרך מנור (או דרך אדווה, לשגרירי החדשנות) — הכפתורים בצעד 3.",
+  badlogin: "הכניסה במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור, או דרך אדווה לשגרירי החדשנות, ונסו שוב.",
   menor:    "לא הצלחנו לאמת את הכניסה מול מנור. נסו שוב בעוד רגע.",
   expired:  "עבר יותר משעה מאז שהשיעור התחיל להיבנות. בנו אותו מחדש.",
   network:  "התשובה מהשרת לא הגיעה. בדקו את החיבור ונסו שוב.",
@@ -1201,7 +1222,8 @@ function loadResults(lid){
   var P = el("mg-results"); if (!P) return;
   if (!me()) {
     P.innerHTML = '<div class="mg-empty">' + esc(RES_ERR.nologin) + ' <a class="linkbtn" href="hadrachot/teacher/" target="_blank" rel="noopener">כניסה למורים</a> · ' +
-      '<a class="linkbtn" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים</a></div>';
+      '<a class="linkbtn" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים</a> · ' +
+      '<a class="linkbtn" href="https://tfasim.pedagogiamh.co.il/shagririm/" target="_blank" rel="noopener">שגרירי חדשנות · דרך אדווה</a></div>';
     return;
   }
   if (!RES || RES.lid !== lid) P.innerHTML = '<div class="mg-rmsg">טוען את התוצאות…</div>';
