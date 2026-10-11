@@ -221,6 +221,239 @@
   });
 })();
 
+/* ===== עמוד פנימי: רק העמוד, והתפריט בחלונית — בשלבים (11.10.26) =====
+   מיטל: "אם אני בעמוד מסוים אני רוצה לראות רק אותו. צריך כפתור שמחזיר
+   לתפריט המלא". ואחר כך: "הגלילה עמוסה מדי" — לכן החלונית מציגה שלב אחד
+   בכל פעם, כמו בתפריטי טלפון מוכרים: ראשי ← קטגוריה ← הפרקים בעמוד,
+   עם "חזרה" למעלה. אף פעם לא יותר מרשימה אחת קצרה.
+   בכל עמוד חוץ מעמוד הפתיחה הקטגוריות, תפריט המדור (.secnav) ופס
+   "בעמוד" (.pn) יורדים (style.css), ובמקומם כפתור "תפריט" אחד. החלונית
+   נבנית מאותם מקורות בדיוק — הפס העליון, תפריט המדור ופס הפרקים — כך
+   שאין רשימה נוספת לתחזק.
+   עוגן והמשוב עוברים לכותרת העליונה (כפתורים נפרדים), כדי שלא יכסו את
+   הטקסט; הכפתורים הצפים המקוריים מוסתרים, ולחיצה כאן מפעילה אותם. */
+(function pageMenu(){
+  var path=location.pathname.replace(/\/index\.html$/,'/');
+  if(path==='/') return;
+  var nav=document.querySelector('.nav'); if(!nav) return;
+  document.documentElement.classList.add('pmh-inner');
+  var here=(location.pathname.split('/').pop()||'').toLowerCase();
+  var SVG=function(d){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+d+'"/></svg>'; };
+  var IC_MENU=SVG('M4 7h16M4 12h16M4 17h16');
+  var IC_X=SVG('M6 6l12 12M18 6L6 18');
+  var IC_NEXT=SVG('M15 6l-6 6 6 6');   /* קדימה ב-RTL = שמאלה */
+  var IC_BACK=SVG('M9 6l6 6-6 6');
+  var IC_TOC=SVG('M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01');
+  var IC_HOME=SVG('M4 11l8-7 8 7M6 10v10h12V10');
+  var IC_FB=SVG('M4 5h16v11H9l-5 4z');
+
+  function el(tag,cls,txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+  function link(href,txt,cls){ var a=el('a',cls,txt); a.href=href; return a; }
+  function label(lnk){
+    return (lnk.firstChild&&lnk.firstChild.nodeType===3?lnk.firstChild.textContent:lnk.textContent).replace('▼','').trim();
+  }
+  function file(href){ return (href||'').split('#')[0].split('?')[0].split('/').pop().toLowerCase(); }
+  function clean(t){ return (t||'').replace(/\s+/g,' ').trim(); }
+
+  /* --- כפתורי הכותרת: עוגן, משוב, תפריט --- */
+  var bar=el('div','pm-bar');
+  var ogen=el('button','pm-hb pm-ogen'); ogen.type='button';
+  ogen.innerHTML='<img src="https://meytalp-dev.github.io/ogen/assets/icons/icon-192.png" alt=""><span>שאל את עוגן</span>';
+  ogen.setAttribute('aria-label','שאל את עוגן');
+  ogen.addEventListener('click',function(){ var l=document.querySelector('.ogenw-launcher'); if(l) l.click(); });
+  var fb=el('button','pm-hb pm-fb'); fb.type='button';
+  fb.innerHTML=IC_FB+'<span>משוב</span>';
+  fb.setAttribute('aria-label','משוב על האתר');
+  fb.addEventListener('click',function(){ var b=document.querySelector('.fb-btn'); if(b) b.click(); });
+  var btn=el('button','pm-btn'); btn.type='button';
+  btn.setAttribute('aria-haspopup','dialog');
+  btn.setAttribute('aria-expanded','false');
+  btn.innerHTML=IC_MENU+'<span>תפריט</span>';
+  bar.appendChild(ogen); bar.appendChild(fb); bar.appendChild(btn);
+  var anchor=nav.querySelector(':scope > .searchbtn')||nav.querySelector(':scope > .brand');
+  if(anchor) anchor.insertAdjacentElement('afterend',bar); else nav.appendChild(bar);
+  /* כפתור שלא נטען לו הווידג'ט (עמוד בלי עוגן/משוב) — לא מציגים */
+  setTimeout(function(){
+    if(!document.querySelector('.ogenw-launcher')) ogen.hidden=true;
+    if(!document.querySelector('.fb-btn')) fb.hidden=true;
+  },1500);
+
+  /* --- החלונית --- */
+  var scrim=el('div','pm-scrim');
+  var panel=el('aside','pm');
+  panel.id='page-menu';
+  panel.setAttribute('role','dialog');
+  panel.setAttribute('aria-modal','true');
+  panel.setAttribute('aria-label','תפריט האתר');
+  panel.tabIndex=-1;
+  var head=el('div','pm-head');
+  var back=el('button','pm-back'); back.type='button'; back.innerHTML=IC_BACK+'<span>חזרה</span>';
+  var title=el('strong','pm-title','תפריט');
+  var x=el('button','pm-x'); x.type='button'; x.setAttribute('aria-label','סגירה'); x.innerHTML=IC_X;
+  head.appendChild(back); head.appendChild(title); head.appendChild(x);
+  var body=el('div','pm-body');
+  panel.appendChild(head); panel.appendChild(body);
+  document.body.appendChild(scrim);
+  document.body.appendChild(panel);
+
+  /* --- הנתונים: קטגוריות, המדור הנוכחי, הפרקים --- */
+  var cats=[].slice.call(nav.querySelectorAll(':scope > .navitem'))
+    .concat([].slice.call(document.querySelectorAll('.govbar .gov-mid > .navitem')))
+    .map(function(it){
+      var l=it.querySelector('.lnk'); if(!l) return null;
+      return {name:label(l), href:l.getAttribute('href'), sub:it.querySelector('.sub'), active:l.classList.contains('active')};
+    }).filter(Boolean);
+  var cur=cats.filter(function(c){ return c.active; })[0]||null;
+  var h1=document.querySelector('main h1, .hero h1, h1');
+  var pageTitle=h1?clean(h1.textContent):clean(document.title.split('·')[0]);
+
+  function chapters(){
+    return [].slice.call(document.querySelectorAll('.pn .pn-tab:not(.pn-off)')).map(function(t){
+      return {href:t.getAttribute('href'), txt:t.title||clean(t.textContent), on:t.classList.contains('on')};
+    });
+  }
+
+  /* --- שורות --- */
+  function row(opts){
+    var r=opts.go?el('button','pm-row'):link(opts.href,null,'pm-row');
+    if(opts.go){ r.type='button'; r.addEventListener('click',opts.go); }
+    if(opts.cls) r.className+=' '+opts.cls;
+    if(opts.icon) r.insertAdjacentHTML('beforeend',opts.icon);
+    if(opts.num){ r.appendChild(el('span','pm-n',opts.num)); }
+    var t=el('span','pm-t');
+    t.appendChild(el('span','pm-t1',opts.txt));
+    if(opts.sub) t.appendChild(el('span','pm-t2',opts.sub));
+    r.appendChild(t);
+    if(opts.badge) r.appendChild(el('span','pm-badge',opts.badge));
+    if(opts.go) r.insertAdjacentHTML('beforeend','<span class="pm-arw">'+IC_NEXT+'</span>');
+    if(opts.ext){ r.target='_blank'; r.rel='noopener'; }
+    if(opts.close) r.addEventListener('click',close);
+    return r;
+  }
+
+  var stack=[];
+  function show(view,dir){
+    body.innerHTML='';
+    title.textContent=view.title;
+    back.hidden=stack.length<2;
+    body.appendChild(view.render());
+    body.scrollTop=0;
+    body.classList.remove('pm-in-f','pm-in-b');
+    void body.offsetWidth;
+    body.classList.add(dir==='b'?'pm-in-b':'pm-in-f');
+  }
+  function push(view){ stack.push(view); show(view,'f'); }
+  function pop(){ if(stack.length<2) return; stack.pop(); show(stack[stack.length-1],'b'); }
+  back.addEventListener('click',pop);
+
+  /* שלב: הפרקים של העמוד */
+  function vChapters(){
+    return {title:'בעמוד הזה', render:function(){
+      var f=document.createDocumentFragment();
+      f.appendChild(el('div','pm-ctx',pageTitle));
+      chapters().forEach(function(c,i){
+        f.appendChild(row({href:c.href, txt:c.txt, num:String(i+1), cls:c.on?'on':'', close:true}));
+      });
+      return f;
+    }};
+  }
+
+  /* שלב: עמודי קטגוריה. לקטגוריה הנוכחית — תפריט המדור אם יש (עם מספור) */
+  function vCat(c){
+    return {title:c.name, render:function(){
+      var f=document.createDocumentFragment();
+      var sec=c===cur?document.querySelector('.secnav .sn-tabs'):null;
+      if(sec){
+        var gate=sec.querySelector('.home');
+        f.appendChild(row({href:gate&&gate.tagName==='A'?gate.getAttribute('href'):(c.href||'#'), txt:'שער המדור · כל החומרים', cls:'pm-gate'+(gate&&gate.classList.contains('on')?' on':'')}));
+        [].slice.call(sec.children).forEach(function(s){
+          if(s.classList.contains('home')) return;
+          var num=s.querySelector('.n');
+          var txt=clean([].slice.call(s.childNodes).filter(function(n){return n!==num;}).map(function(n){return n.textContent;}).join(' '));
+          var isOn=s.classList.contains('on');
+          if(isOn){
+            f.appendChild(row({txt:txt, num:num?num.textContent.trim():'', cls:'on', badge:'את/ה כאן',
+              go:chapters().length?function(){ push(vChapters()); }:null, href:'#'}));
+          } else {
+            f.appendChild(row({href:s.getAttribute('href'), txt:txt, num:num?num.textContent.trim():''}));
+          }
+        });
+        return f;
+      }
+      [].slice.call(c.sub.children).forEach(function(s){
+        if(s.classList.contains('sect')){ f.appendChild(el('div','pm-sect',clean(s.textContent))); return; }
+        if(s.classList.contains('dis')){ f.appendChild(el('div','pm-row pm-dis',clean(s.textContent))); return; }
+        if(s.tagName!=='A') return;
+        var h=s.getAttribute('href'), isHere=file(h)===here;
+        var opts={href:h, txt:clean(s.textContent), ext:s.target==='_blank'};
+        if(s.classList.contains('gatelink')) opts.cls='pm-gate';
+        if(s.classList.contains('nested')) opts.cls=(opts.cls?opts.cls+' ':'')+'pm-nested';
+        if(isHere){ opts.cls=(opts.cls?opts.cls+' ':'')+'on'; opts.badge='את/ה כאן';
+          if(chapters().length){ opts.go=function(){ push(vChapters()); }; } }
+        f.appendChild(row(opts));
+      });
+      return f;
+    }};
+  }
+
+  /* שלב ראשון: את/ה כאן + כל האתר */
+  function vRoot(){
+    return {title:'תפריט', render:function(){
+      var f=document.createDocumentFragment();
+      var hereBox=el('div','pm-here');
+      hereBox.appendChild(el('div','pm-lbl','את/ה כאן'));
+      hereBox.appendChild(el('div','pm-here-t',pageTitle));
+      if(chapters().length) hereBox.appendChild(row({txt:'בעמוד הזה', sub:chapters().length+' פרקים', icon:IC_TOC, go:function(){ push(vChapters()); }}));
+      if(cur&&cur.sub) hereBox.appendChild(row({txt:'עוד ב'+cur.name, sub:'כל העמודים במדור', icon:IC_MENU, go:function(){ push(vCat(cur)); }}));
+      if(hereBox.children.length>2||cur) f.appendChild(hereBox);
+      f.appendChild(el('div','pm-lbl pm-lbl-all','כל האתר'));
+      f.appendChild(row({href:'index.html', txt:'דף הבית', icon:IC_HOME}));
+      cats.forEach(function(c){
+        if(c.sub) f.appendChild(row({txt:c.name, cls:c===cur?'pm-cur':'', go:function(){ push(vCat(c)); }}));
+        else f.appendChild(row({href:c.href, txt:c.name, cls:file(c.href)===here?'on':''}));
+      });
+      return f;
+    }};
+  }
+
+  var lastFocus=null;
+  function open(){
+    stack=[];
+    lastFocus=document.activeElement;
+    push(vRoot());
+    document.body.classList.add('pm-open');
+    btn.setAttribute('aria-expanded','true');
+    panel.focus();
+  }
+  function close(){
+    if(!document.body.classList.contains('pm-open')) return;
+    document.body.classList.remove('pm-open');
+    btn.setAttribute('aria-expanded','false');
+    if(lastFocus&&lastFocus.focus) lastFocus.focus({preventScroll:true});
+  }
+  btn.addEventListener('click',open);
+  x.addEventListener('click',close);
+  scrim.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){
+    if(!document.body.classList.contains('pm-open')) return;
+    if(e.key==='Escape'||e.key==='Esc'){ if(stack.length>1) pop(); else close(); }
+  });
+})();
+
+/* ===== שורת "מקור:" בראש העמוד יורדת (11.10.26, מיטל: "המקור לא רלוונטי" — בכל האתר) ===== */
+(function hideSourceLines(){
+  var RX=/^\s*(מקור|המקור|מתוך|المصدر)\s*:/;
+  var CREDIT=/^\s*(מינהל הכשרה מקצועית|משרד העבודה)(\s*·\s*(מינהל הכשרה מקצועית|משרד העבודה))*\s*$/;
+  document.querySelectorAll('.meta-row').forEach(function(row){
+    var kids=[].slice.call(row.children), hid=0;
+    kids.forEach(function(k){
+      var t=k.textContent;
+      if(RX.test(t)||CREDIT.test(t)){ k.hidden=true; k.style.display='none'; hid++; }
+    });
+    if(hid&&hid===kids.length) row.style.display='none';
+  });
+})();
+
 (function animateCounters(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.querySelectorAll('.num-count').forEach(el=>{

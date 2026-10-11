@@ -35,7 +35,8 @@
 .cat-bar{position:sticky;top:var(--navh,66px);z-index:80;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
 .cat-bar-in{display:flex;align-items:center;gap:12px;padding:10px 0}
 .cb-label{font-size:.78rem;font-weight:800;letter-spacing:.1em;color:var(--muted);flex:0 0 auto}
-.cb-pills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+/* 11.10.26: הכפתורים עוטפים לכמה שורות במקום גלילה הצידה (כמו שאר פסי הניווט) */
+.cb-pills{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0}
 .cb-pills::-webkit-scrollbar{display:none}
 .cpill{font:inherit;font-size:var(--fs-sm);font-weight:700;white-space:nowrap;cursor:pointer;
   border:1px solid var(--border);background:#fff;color:var(--text2);border-radius:999px;padding:6px 16px;
@@ -65,6 +66,8 @@
   .cat-bar-in{gap:8px}
   .cb-label{display:none}
 }
+/* בנייד לא דביק — עם הכותרת הדביקה הוא בולע חצי מסך */
+@media(max-width:720px){.cat-bar{position:relative;top:auto}}
 @media print{
   .cat-hub,.cat-bar,.cat-next{display:none}
   .cat-panel[hidden]{display:block !important}
