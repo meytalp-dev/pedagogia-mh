@@ -75,3 +75,7 @@
 @media (prefers-reduced-motion: reduce){
   .catcard,.catcard .ci,.cat-panel.pop{transition:none;animation:none}
 }
+
+/* 11.10.26: פס הכפתורים הדביק כפול לכרטיסיות הקטגוריה שמעליו — יורד. מעבר בין
+   קטגוריות: הכרטיסיות למעלה, "הקטגוריה הבאה" בסוף כל אחת, ו"↑ לכרטיסיות" בשורה העליונה */
+.cat-bar{display:none !important}

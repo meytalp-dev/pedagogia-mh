@@ -48,14 +48,20 @@
     });
     cards.forEach(function(c){c.classList.toggle('on',c.dataset.cat===cat)});
 
-    try{
-      history.replaceState(null,'',cat==='all'?location.pathname:'#'+(target||cat));
-    }catch(e){}
+    /* רק אחרי בחירה של המשתמש: עוגן שנכתב בטעינה גרם לדפדפן לקפוץ אליו,
+       והעמוד נפתח באמצע במקום על הכרטיסיות (11.10.26) */
+    if(booted){
+      try{
+        history.replaceState(null,'',cat==='all'?location.pathname:'#'+(target||cat));
+      }catch(e){}
+    }
 
     if(scroll){
-      var anchor=(target&&document.getElementById(target))||bar;
+      /* פס הכפתורים מוסתר מ-11.10.26 (cats.css) — גוללים לתוכן הקטגוריה עצמה */
+      var shown=panels.filter(function(p){return !p.hidden})[0];
+      var anchor=(target&&document.getElementById(target))||shown||bar;
       if(anchor){
-        var y=anchor.getBoundingClientRect().top+scrollY-navH()-(anchor===bar?6:56);
+        var y=anchor.getBoundingClientRect().top+scrollY-navH()-(anchor===bar?6:anchor===shown?14:56);
         scrollTo({top:y,behavior:'smooth'});
       }
     }

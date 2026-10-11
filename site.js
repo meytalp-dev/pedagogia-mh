@@ -452,7 +452,21 @@
     var items=[].slice.call(document.querySelectorAll('.pn .pn-tab:not(.pn-off)')).map(function(t){
       return {href:t.getAttribute('href'), title:t.title||t.textContent.replace(/^\d+/,'').trim()};
     });
+    /* לא מכפילים: עמוד עם לוח קטגוריות משלו (cats.css), או שכבר מקשר בגוף העמוד
+       לרוב העמודים שהכרטיסיות היו מציגות (עמודי שער כמו נהלים ותקציבים) */
+    var hub=document.querySelector('.cat-hub');
+    if(hub){ if(!hub.id) hub.id='cathub'; document.documentElement.classList.add('has-pcards'); topButton(hub,'#'+hub.id); return; }
     if(items.length<2) return;
+    if(document.body.getAttribute('data-pcards')==='off') return;
+    var pageLinks=items.filter(function(it){ return it.href&&it.href.charAt(0)!=='#'; });
+    if(pageLinks.length===items.length){
+      var inBody=pageLinks.filter(function(it){
+        return [].some.call(document.querySelectorAll('main a[href]'),function(a){
+          return !a.closest('.pn,.pnd,.nav,.drawer')&&a.getAttribute('href')===it.href;
+        });
+      }).length;
+      if(inBody>=Math.ceil(items.length/2)) return;
+    }
     var box=document.createElement('section');
     box.className='pcards';
     box.setAttribute('aria-label','בעמוד הזה');
@@ -479,7 +493,7 @@
     box.id='pcards';
     document.documentElement.classList.add('has-pcards');
     backLinks(items);
-    topButton(box);
+    topButton(box,'#pcards');
   }
   var UP='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';
 
@@ -518,10 +532,10 @@
   }
 
   /* כפתור "לכרטיסיות" בשורת הכפתורים העליונה — רק אחרי שגוללים מתחת לכרטיסיות */
-  function topButton(box){
+  function topButton(box,href){
     var bar=document.querySelector('.pm-bar'); if(!bar) return;
     var b=document.createElement('a');
-    b.className='pm-hb pm-top'; b.href='#pcards'; b.hidden=true;
+    b.className='pm-hb pm-top'; b.href=href; b.hidden=true;
     b.setAttribute('aria-label','חזרה לכרטיסיות');
     b.innerHTML=UP+'<span>לכרטיסיות</span>';
     bar.insertBefore(b,bar.firstChild);
