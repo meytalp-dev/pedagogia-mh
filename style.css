@@ -215,6 +215,7 @@ a.sys-btn{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 5p
 .sys-btn small{display:block;font-size:var(--fs-2xs);color:var(--text2);font-weight:600}
 a.sys-btn.tuva{border-color:#9f95c6;background:linear-gradient(135deg,#fff 40%,#eeeafb)}
 a.sys-btn.tzohar{border-color:#e7c77d;background:linear-gradient(135deg,#fff 40%,#fef3d9)}
+a.sys-btn.neta{border-color:#8db678;background:linear-gradient(135deg,#fff 40%,#ebf3e7)}
 a.sys-btn:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
 @media(max-width:1180px){.sys-d .sys-btn small{display:none}}
 @media(max-width:720px){
@@ -224,6 +225,14 @@ a.sys-btn:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
   .nav .mcats{order:2}.nav .mcats-sheet{order:3}
   .sys-m .sys-btn{flex:1;justify-content:center;padding:7px 10px;border-radius:14px}
   .sys-m .sys-btn img{width:32px;height:32px}
+  /* שלוש מערכות בשורה (נטע, 11.10.26): בטלפון צר — אייקון מעל השם ומתחתיו למי זה */
+  .sys-m{gap:6px}
+}
+@media(max-width:480px){
+  .sys-m .sys-btn{flex-direction:column;gap:3px;padding:7px 4px;min-width:0}
+  .sys-m .sys-btn span{text-align:center}
+  .sys-m .sys-btn img{width:28px;height:28px}
+  .sys-m .sys-btn small{font-size:.7rem;white-space:normal}
 }
 .nav .ogen-btn{background:var(--grad);color:#fff;border-radius:999px;padding:9px 22px;font-size:var(--fs-md);font-weight:700;cursor:pointer;box-shadow:var(--sh-sm);transition:all .2s;text-decoration:none;white-space:nowrap}
 .nav .ogen-btn:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
