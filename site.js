@@ -457,9 +457,9 @@
     var hub=document.querySelector('.cat-hub');
     if(hub){ if(!hub.id) hub.id='cathub'; document.documentElement.classList.add('has-pcards'); topButton(hub,'#'+hub.id); return; }
     if(items.length<2) return;
-    if(document.body.getAttribute('data-pcards')==='off') return;
+    if(document.body.getAttribute('data-pcards')==='off'||document.querySelector('.gate')) return;
     var pageLinks=items.filter(function(it){ return it.href&&it.href.charAt(0)!=='#'; });
-    if(pageLinks.length===items.length){
+    if(pageLinks.length===items.length&&document.body.getAttribute('data-pcards')!=='on'){
       var inBody=pageLinks.filter(function(it){
         return [].some.call(document.querySelectorAll('main a[href]'),function(a){
           return !a.closest('.pn,.pnd,.nav,.drawer')&&a.getAttribute('href')===it.href;
