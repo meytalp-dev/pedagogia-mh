@@ -1101,11 +1101,12 @@ body.pm-open{overflow:hidden}
   .pcard p{font-size:.78rem}
 }
 @media print{.pcards{display:none}}
-/* "חזרה לכרטיסיות" — בסוף כל פרק, ובשורת הכפתורים העליונה אחרי שגוללים */
-.pc-back{display:inline-flex;align-items:center;gap:6px;margin:18px 0 6px;padding:7px 14px;border-radius:999px;
-  border:1px solid var(--border);background:var(--surface,#fff);color:var(--navy);font-size:var(--fs-sm);font-weight:700;
-  text-decoration:none;transition:border-color .2s,background .2s}
-.pc-back:hover{border-color:var(--cyan);background:var(--cyan-100)}
-.pc-back svg,.pm-top svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+/* ליד כותרת כל פרק: ↑ לכרטיסיות + בית (לשער המדור); וכפתור "לכרטיסיות" בשורה העליונה */
+.pc-nav{margin-inline-start:auto;display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;align-self:center;padding-inline-start:10px}
+.pc-ic{width:34px;height:34px;border-radius:50%;display:grid;place-content:center;border:1px solid var(--border);
+  background:var(--surface,#fff);color:var(--navy);text-decoration:none;transition:border-color .2s,background .2s}
+.pc-ic:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.pc-ic:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.pc-ic svg,.pm-top svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .pm-top{text-decoration:none}
-@media print{.pc-back{display:none}}
+@media print{.pc-nav{display:none}}

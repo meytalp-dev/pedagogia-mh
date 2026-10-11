@@ -476,30 +476,32 @@
   }
   var UP='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';
 
-  /* "חזרה לכרטיסיות" בסוף כל פרק — לפני הפרק הבא, ובסוף האחרון */
+  /* ליד כותרת כל פרק: ↑ לכרטיסיות, ובית — לשער המדור (מיטל: "ליד הכותרת של
+     כל מקטע — חץ למעלה וחזרה לבית") */
+  var HOME='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7M6 10v10h12V10"/></svg>';
   function backLinks(items){
-    var heads=items.map(function(it){
+    var g=document.querySelector('.secnav .home[href]')||document.querySelector('.nav .lnk.active');
+    var gate=g&&g.getAttribute('href');
+    var gateName=(document.querySelector('.secnav .sn-lbl')||{}).textContent||'';
+    items.forEach(function(it){
       var t=document.getElementById(decodeURIComponent((it.href||'').replace(/^#/,'')));
-      return t&&(/^H[1-6]$/.test(t.tagName)?t:t.querySelector('h2,h3'))||t;
-    }).filter(Boolean);
-    function make(){
-      var a=document.createElement('a');
-      a.className='pc-back'; a.href='#pcards';
-      a.innerHTML=UP+'<span>חזרה לכרטיסיות</span>';
-      return a;
-    }
-    for(var i=1;i<heads.length;i++){
-      var prev=heads[i-1], cur=heads[i], blk=cur;
-      /* עולים עד האב המשותף עם הפרק הקודם, כדי לא להיכנס לתוך כותרת הפרק הבא */
-      while(blk.parentElement&&!blk.parentElement.contains(prev)) blk=blk.parentElement;
-      blk.parentElement&&blk.parentElement.insertBefore(make(),blk);
-    }
-    var last=heads[heads.length-1];
-    if(last){
-      var cont=last.closest('.article')||last.parentElement;
-      var pr=cont.querySelector(':scope > .pagerow');
-      if(pr) cont.insertBefore(make(),pr); else cont.appendChild(make());
-    }
+      var h=t&&(/^H[1-6]$/.test(t.tagName)?t:t.querySelector('h2,h3'));
+      if(!h) return;
+      var box=document.createElement('span');
+      box.className='pc-nav';
+      var up=document.createElement('a');
+      up.className='pc-ic'; up.href='#pcards'; up.title='חזרה לכרטיסיות';
+      up.setAttribute('aria-label','חזרה לכרטיסיות'); up.innerHTML=UP;
+      box.appendChild(up);
+      if(gate){
+        var hm=document.createElement('a');
+        hm.className='pc-ic'; hm.href=gate;
+        var lbl='לשער המדור'+(gateName.trim()?' · '+gateName.trim():'');
+        hm.title=lbl; hm.setAttribute('aria-label',lbl); hm.innerHTML=HOME;
+        box.appendChild(hm);
+      }
+      h.appendChild(box);
+    });
   }
 
   /* כפתור "לכרטיסיות" בשורת הכפתורים העליונה — רק אחרי שגוללים מתחת לכרטיסיות */
