@@ -446,7 +446,8 @@
    רק שם הפרק — משפט שנחלץ אוטומטית יצא לא אחיד. בשלב ראשון רק בחינוך החברתי. */
 (function pageCards(){
   var here=(location.pathname.split('/').pop()||'').toLowerCase();
-  if(!/^chevrati-.+\.html$/.test(here)) return;
+  /* כל עמוד חוץ מעמוד הפתיחה (מ-11.10.26 בכל האתר — אחרי הפיילוט בחינוך החברתי) */
+  if(!here||here==='index.html') return;
   function build(){
     var items=[].slice.call(document.querySelectorAll('.pn .pn-tab:not(.pn-off)')).map(function(t){
       return {href:t.getAttribute('href'), title:t.title||t.textContent.replace(/^\d+/,'').trim()};
@@ -465,10 +466,16 @@
       grid.appendChild(a);
     });
     box.appendChild(lbl); box.appendChild(grid);
-    var inner=document.createElement('div'); inner.className='article'; inner.appendChild(box);
+    var inner=document.createElement('div'); inner.className='pcards-wrap'; inner.appendChild(box);
+    /* מיד אחרי בלוק הכותרת: section.hero, ואם אין — הבלוק העליון שמכיל את ה-h1 */
     var hero=document.querySelector('section.hero');
+    if(!hero){
+      var h1=document.querySelector('main h1')||document.querySelector('h1');
+      var m=document.querySelector('main');
+      if(h1){ hero=h1; while(hero.parentElement&&hero.parentElement!==m&&hero.parentElement!==document.body) hero=hero.parentElement; }
+    }
     if(hero) hero.insertAdjacentElement('afterend',inner);
-    else { var m=document.querySelector('main'); if(!m) return; m.insertBefore(inner,m.firstChild); }
+    else { var mm=document.querySelector('main'); if(!mm) return; mm.insertBefore(inner,mm.firstChild); }
     box.id='pcards';
     document.documentElement.classList.add('has-pcards');
     backLinks(items);
@@ -480,9 +487,15 @@
      כל מקטע — חץ למעלה וחזרה לבית") */
   var HOME='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7M6 10v10h12V10"/></svg>';
   function backLinks(items){
-    var g=document.querySelector('.secnav .home[href]')||document.querySelector('.nav .lnk.active');
-    var gate=g&&g.getAttribute('href');
-    var gateName=(document.querySelector('.secnav .sn-lbl')||{}).textContent||'';
+    /* הבית = ההורה הישיר של העמוד (data-back="עמוד|שם"), אחרת שער המדור/הקטגוריה */
+    var gate='', gateName='';
+    var db=(document.body.getAttribute('data-back')||'').split('|');
+    if(db[0]){ gate=db[0]; gateName=db[1]||''; }
+    else {
+      var g=document.querySelector('.secnav .home[href]')||document.querySelector('.nav .lnk.active');
+      if(g){ gate=g.getAttribute('href'); gateName=(document.querySelector('.secnav .sn-lbl')||{}).textContent||(g.firstChild&&g.firstChild.textContent)||''; }
+    }
+    if(gate&&gate.split('#')[0].split('/').pop().toLowerCase()===here) gate='';
     items.forEach(function(it){
       var t=document.getElementById(decodeURIComponent((it.href||'').replace(/^#/,'')));
       var h=t&&(/^H[1-6]$/.test(t.tagName)?t:t.querySelector('h2,h3'));
@@ -496,7 +509,7 @@
       if(gate){
         var hm=document.createElement('a');
         hm.className='pc-ic'; hm.href=gate;
-        var lbl='לשער המדור'+(gateName.trim()?' · '+gateName.trim():'');
+        var lbl='חזרה'+(gateName.trim()?' ל'+gateName.trim():'');
         hm.title=lbl; hm.setAttribute('aria-label',lbl); hm.innerHTML=HOME;
         box.appendChild(hm);
       }

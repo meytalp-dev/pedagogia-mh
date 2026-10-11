@@ -1083,6 +1083,7 @@ body.pm-open{overflow:hidden}
 /* ===== כרטיסיות "בעמוד הזה" מתחת לכותרת (site.js · pageCards, 11.10.26) =====
    כשהן קיימות — פסקת הפתיחה ושורת "דקות קריאה" יורדות: הכרטיסיות אומרות מה יש. */
 .has-pcards .hero .lead,.has-pcards .hero .readmeta{display:none}
+.pcards-wrap{max-width:900px;margin:0 auto;padding:0 var(--px)}
 .pcards{margin:clamp(14px,3vh,24px) 0 6px}
 .pcards-lbl{font-size:.72rem;font-weight:800;letter-spacing:.14em;color:var(--accent);margin-bottom:10px}
 .pcards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
