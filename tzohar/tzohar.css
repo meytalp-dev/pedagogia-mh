@@ -280,3 +280,8 @@ footer a{color:var(--muted)}
   .dtile b{font-size:14.5px}
   .dtile small{font-size:12px;line-height:1.3}
 }
+
+/* חזרה לדשבורד — מעל התוכן בכל עמוד (11.10.26) */
+.maincol{min-width:0}
+.crumb{margin:-4px 0 4px}
+.crumb .back{border:0;background:none;color:var(--blue);font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;padding:4px 2px 8px}

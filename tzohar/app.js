@@ -327,6 +327,9 @@
   /* ===== ציור ===== */
   function render(force) {
     if (!D || !D.school) return;
+    /* חזרה לדשבורד — פס מעל התוכן בכל עמוד שאינו הבית (מיטל, 11.10.26) */
+    var cr = $('crumb');
+    if (cr) { cr.hidden = PAGE === 'home'; cr.innerHTML = PAGE === 'home' ? '' : '<button type="button" class="back" data-page="home">→ לדשבורד</button>'; }
     /* "התוכניות שלי" מנוהל ע"י keren.js — נתון ציבורי שנטען ברקע לא מצייר אותו מחדש (ולא מוחק עריכה) */
     if (PAGE === 'p' && !force && $('kerenPlans')) return;
     /* הצ'ק ליסט: נתון שנטען ברקע לא סוגר חלונית יומן/מייל פתוחה או שדה שמקלידים בו */
