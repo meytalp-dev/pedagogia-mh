@@ -6242,6 +6242,21 @@ function registrationData_() {
     if (sent[id] && (!personSent[k] || sent[id] > personSent[k])) { personSent[k] = sent[id]; personMail[k] = sentMail[id]; }
     if (sentN[id]) personN[k] = (personN[k] || 0) + sentN[id];
   });
+  /* מורה בשני בתי ספר (11.10.26, מיטל — גזאל עותמאן, אום אל פחם + טורען): אותו שם ואותו
+     טלפון = אותו אדם. האימות ושאלת ההשתלמות שלה בבית ספר אחד חלים גם על השני.
+     בלי טלפון (9 ספרות לפחות) — לא מצליבים, כדי לא לחבר שני אנשים עם אותו שם. */
+  const crossKey = t => {
+    const ph = String(t.phone || '').replace(/\D/g, '');
+    return ph.length >= 9 ? String(t.name || '').replace(/\s+/g, ' ').trim() + '|' + ph.slice(-9) : '';
+  };
+  const crossVer = {}, crossTraining = {};
+  teachers.forEach(t => {
+    const ck = crossKey(t);
+    if (!ck) return;
+    const v = personVer[personKey(t)];
+    if (v && (!crossVer[ck] || v > crossVer[ck])) crossVer[ck] = v;
+    if (t.trainingStatus && !crossTraining[ck]) crossTraining[ck] = String(t.trainingStatus);
+  });
   const schoolName = {};
   readAll('schools').forEach(s => { schoolName[String(s.id)] = String(s.name || ''); });
   const groups = {};
@@ -6255,10 +6270,11 @@ function registrationData_() {
     const rows = groups[k].rows, t = rows[0];
     const pk = personKey(t);
     const pick = f => { for (let i = 0; i < rows.length; i++) if (rows[i][f]) return rows[i][f]; return ''; };
-    const trainingStatus = String(pick('trainingStatus') || '');
+    const ck = crossKey(t);
+    const trainingStatus = String(pick('trainingStatus') || (ck && crossTraining[ck]) || '');
     const unitsSelf = String(pick('unitsSelf') || '');
     const needsUnits = !!unitsSelfAllowed_(t.subject);
-    const ver = personVer[pk] || '', snt = personSent[pk] || '';
+    const ver = personVer[pk] || (ck && crossVer[ck]) || '', snt = personSent[pk] || '';
     const missing = [];
     if (ver) {
       if (!trainingStatus) missing.push('שאלת ההשתלמות');
