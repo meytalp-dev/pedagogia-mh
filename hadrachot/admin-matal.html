@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>המת"ליות של אביגיל — אדמין · מנור</title>
+<link rel="stylesheet" href="assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
+<style>
+  [hidden] { display: none !important; }
+  .mt-sec { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; margin-bottom: 18px; }
+  .mt-sec h3 { margin: 0 0 4px; font-size: 17px; }
+  .mt-sec p.d { color: var(--text-2); font-size: 13.5px; margin: 0 0 14px; line-height: 1.7; }
+  .mt-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  .mt-msg { font-size: 13.5px; margin-top: 10px; line-height: 1.7; }
+  .mt-msg.err { color: #8f2f1c; }
+  .mt-counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px; }
+  .mt-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+  .mt-table th, .mt-table td { text-align: right; padding: 7px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .mt-table th { font-size: 12px; color: var(--text-3); font-weight: 600; }
+  .mt-school { background: var(--sand-soft, #F7F0E3); font-weight: 700; }
+  .mt-link { direction: ltr; unicode-bidi: isolate; font-size: 11.5px; color: var(--text-3); word-break: break-all; }
+  .mt-copy { padding: 4px 12px; font-size: 12.5px; white-space: nowrap; }
+  .mt-guide { background: #EEF3EC; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.8; }
+  .table-wrap { overflow-x: auto; }
+  @media (max-width: 560px) { .mt-hide-sm { display: none; } }
+</style>
+</head>
+<body data-look="menor">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="./" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <img class="compass-icon" src="assets/menor-sail.png" alt="" aria-hidden="true">
+        <div class="command-bar-text">
+          <span class="unit"><img class="menor-word" src="assets/menor-word.png" alt="מנור"></span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status"><span class="status-dot" aria-hidden="true"></span><span>מטה · אדמין</span></div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מטה · אדמין</div>
+        <h1>המת"ליות של אביגיל בריל</h1>
+        <p class="page-header-sub">ההשתלמות של אביגיל במנור: הכנסת המת"ליות שנרשמו, והקישור האישי של כל אחת. שום דבר לא נשלח מהדף הזה.</p>
+      </div>
+    </section>
+
+    <div class="mt-sec" id="mt-nologin" hidden>
+      <h3>צריך להיכנס קודם</h3>
+      <p class="d">הדף פתוח רק למטה. נכנסים בדף הבית של מנור (מטה · אדמין) וחוזרים לכאן.</p>
+      <a class="btn btn-primary" href="./?next=admin-matal.html">לכניסה</a>
+    </div>
+
+    <div id="mt-main" hidden>
+      <div class="mt-sec">
+        <h3>1. הכנסת המת"ליות למנור</h3>
+        <p class="d">בוחרים את קובץ הנרשמות (matal-rows.json, מהרישום להשתלמויות) ← בדיקה יבשה ← רק אחרי שהדוח נראה נכון: ייבוא.
+          מת"לית שכבר קיימת (אותו בית ספר ואותו שם) לא נכתבת שוב. הן לא נספרות כמורים בדוחות, במונים ובמעקב ההרשמה.</p>
+        <input type="file" id="mt-file" accept=".json,application/json">
+        <div class="mt-actions">
+          <button type="button" class="btn btn-secondary" id="mt-dry" disabled>בדיקה יבשה</button>
+          <button type="button" class="btn btn-primary" id="mt-run" disabled>ייבוא בפועל</button>
+        </div>
+        <div class="mt-msg" id="mt-imsg"></div>
+        <div id="mt-report"></div>
+      </div>
+
+      <div class="mt-sec">
+        <h3>2. הקישורים האישיים</h3>
+        <p class="d">כל מת"לית נכנסת בקישור שלה ישר לבית שלה במנור: ההדרכה הבאה, רישום נוכחות עם קוד, חומרים ושאלה לאביגיל.
+          הקישורים מוצגים כאן בלבד — לא נשלחים.</p>
+        <div class="mt-actions">
+          <button type="button" class="btn btn-primary" id="mt-load">הצגת הקישורים</button>
+          <button type="button" class="btn btn-secondary" id="mt-copyall" hidden>העתקת כל הרשימה (לאקסל)</button>
+        </div>
+        <div class="mt-msg" id="mt-lmsg"></div>
+        <div id="mt-links"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מנור · המנהל להכשרה מקצועית · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impact-os.app" target="_blank" rel="noopener" style="color:inherit;">impactos · impact-os.app</a></div>
+  </footer>
+
+<script src="assets/app.js?v=20260929r"></script>
+<script>
+(function () {
+  /* המת"ליות של אביגיל (10.10.26) — teachers.matalSetup / teachers.matalLinks בשרת,
+     שתיהן דורשות מפתח staff של מטה (ts.staff.v1). הנתונים האישיים לא נשמרים בדף. */
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let staff = null;
+  try { staff = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); } catch (e) {}
+  const isHq = staff && staff.k && (staff.roles || []).some(r => r.role === 'ministry');
+  if (!isHq) { $('mt-nologin').hidden = false; return; }
+  $('mt-main').hidden = false;
+
+  const STATUS = { new: 'חדשה — תיכתב', exists: 'כבר במנור', unknown_school: 'בית הספר לא זוהה', duplicate: 'כפולה בקובץ', no_name: 'בלי שם' };
+  let rows = null, dryOk = false;
+
+  $('mt-file').addEventListener('change', async e => {
+    rows = null; dryOk = false; $('mt-run').disabled = true; $('mt-report').innerHTML = '';
+    const f = e.target.files[0];
+    if (!f) { $('mt-dry').disabled = true; return; }
+    try {
+      const j = JSON.parse(await f.text());
+      rows = Array.isArray(j) ? j : j.rows;
+      if (!Array.isArray(rows) || !rows.length) throw new Error('empty');
+      $('mt-imsg').className = 'mt-msg'; $('mt-imsg').textContent = 'בקובץ ' + rows.length + ' שורות. עכשיו: בדיקה יבשה.';
+      $('mt-dry').disabled = false;
+    } catch (err) {
+      $('mt-imsg').className = 'mt-msg err'; $('mt-imsg').textContent = 'הקובץ לא נקרא. צריך את matal-rows.json.';
+      $('mt-dry').disabled = true;
+    }
+  });
+
+  async function send(dryRun) {
+    const btn = dryRun ? $('mt-dry') : $('mt-run');
+    btn.disabled = true;
+    $('mt-imsg').className = 'mt-msg'; $('mt-imsg').textContent = dryRun ? 'בודקים… (עד חצי דקה)' : 'כותבים למנור…';
+    const r = await TS.apiPost('teachers.matalSetup', { k: staff.k, rows: rows, dryRun: dryRun });
+    btn.disabled = false;
+    if (!r || !r.ok) {
+      $('mt-imsg').className = 'mt-msg err';
+      $('mt-imsg').textContent = 'לא הצליח' + (r && r.error ? ' (' + r.error + ')' : '') + '. אפשר לנסות שוב.';
+      return;
+    }
+    const d = r.data;
+    dryOk = dryRun;
+    $('mt-run').disabled = !dryRun || !d.wouldCreate;
+    $('mt-imsg').textContent = dryRun
+      ? 'בדיקה יבשה — שום דבר לא נכתב. ' + (d.wouldCreate ? 'אם הדוח נראה נכון: "ייבוא בפועל".' : 'אין מה להוסיף.')
+      : 'נכתבו ' + d.created + ' מת"ליות למנור. עכשיו אפשר להציג את הקישורים למטה.';
+    const odd = d.rows.filter(x => x.status !== 'new' && x.status !== 'exists');
+    $('mt-report').innerHTML =
+      '<div class="mt-counts">' +
+        '<span class="badge ok">' + (dryRun ? d.wouldCreate + ' ייכתבו' : d.created + ' נכתבו') + '</span>' +
+        '<span class="badge info">' + d.exists + ' כבר במנור</span>' +
+        (d.unknownSchool ? '<span class="badge err">' + d.unknownSchool + ' בית ספר לא זוהה</span>' : '') +
+        (d.duplicate ? '<span class="badge warn">' + d.duplicate + ' כפולות בקובץ</span>' : '') +
+        (d.noName ? '<span class="badge warn">' + d.noName + ' בלי שם</span>' : '') +
+      '</div>' +
+      (odd.length ? '<div class="table-wrap"><table class="mt-table"><tr><th>שם</th><th>בית ספר</th><th>מה</th></tr>' +
+        odd.map(x => '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.school) + '</td><td>' + esc(STATUS[x.status] || x.status) + '</td></tr>').join('') +
+        '</table></div>' : '');
+  }
+  $('mt-dry').addEventListener('click', () => send(true));
+  $('mt-run').addEventListener('click', () => {
+    if (!dryOk) return;
+    if (!confirm('לכתוב את המת"ליות למנור? (שום מייל לא נשלח)')) return;
+    send(false);
+  });
+
+  let people = [], guideLink = '';
+  const groupOf = n => (String(n || '').split(' · ')[1] || '');
+  function copy(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      if (!btn) return TS.toast ? TS.toast('הועתק') : null;
+      const t = btn.textContent; btn.textContent = 'הועתק'; setTimeout(() => { btn.textContent = t; }, 1400);
+    });
+  }
+  $('mt-load').addEventListener('click', async () => {
+    $('mt-load').disabled = true; $('mt-lmsg').className = 'mt-msg'; $('mt-lmsg').textContent = 'טוענים… (עד חצי דקה)';
+    const r = await TS.api('teachers.matalLinks', { k: staff.k }, { cache: 'no' });
+    $('mt-load').disabled = false;
+    if (!r || !r.ok) {
+      $('mt-lmsg').className = 'mt-msg err';
+      $('mt-lmsg').textContent = 'לא נטען' + (r && r.error ? ' (' + r.error + ')' : '') + '. אפשר לנסות שוב.';
+      return;
+    }
+    people = r.data.people || []; guideLink = r.data.guide || '';
+    $('mt-lmsg').textContent = people.length ? people.length + ' מת"ליות.' : 'עדיין אין מת"ליות במנור — קודם שלב 1.';
+    $('mt-copyall').hidden = !people.length;
+    let last = '', html = '<div class="mt-guide"><b>הקישור של אביגיל</b> (המבט שלה כמדריכה): ' +
+      '<button type="button" class="btn btn-secondary mt-copy" data-c="g">העתקה</button>' +
+      '<div class="mt-link">' + esc(guideLink) + '</div></div>';
+    if (people.length) {
+      html += '<div class="table-wrap"><table class="mt-table"><tr><th>שם</th><th class="mt-hide-sm">קבוצה</th><th>קישור אישי</th></tr>';
+      people.forEach((p, i) => {
+        if (p.school !== last) { last = p.school; html += '<tr><td colspan="3" class="mt-school">' + esc(p.school) + '</td></tr>'; }
+        html += '<tr><td>' + esc(p.name) + (p.hasEmail ? '' : ' <span class="badge neutral">בלי מייל</span>') + '</td>' +
+          '<td class="mt-hide-sm">' + esc(groupOf(p.notes) || '—') + '</td>' +
+          '<td><button type="button" class="btn btn-secondary mt-copy" data-c="' + i + '">העתקה</button>' +
+          '<div class="mt-link">' + esc(p.link) + '</div></td></tr>';
+      });
+      html += '</table></div>';
+    }
+    $('mt-links').innerHTML = html;
+  });
+  $('mt-links').addEventListener('click', e => {
+    const b = e.target.closest('[data-c]');
+    if (!b) return;
+    copy(b.dataset.c === 'g' ? guideLink : people[Number(b.dataset.c)].link, b);
+  });
+  $('mt-copyall').addEventListener('click', e => {
+    const lines = ['בית ספר\tשם\tקבוצה\tקישור אישי']
+      .concat(people.map(p => [p.school, p.name, groupOf(p.notes), p.link].join('\t')));
+    copy(lines.join('\n'), e.target);
+  });
+})();
+</script>
+</body>
+</html>

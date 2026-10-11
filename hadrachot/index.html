@@ -203,6 +203,9 @@
                 <div class="mg-hub-pick"><select class="select" id="hub-net"></select>
                   <button type="button" class="btn btn-primary" data-open="net">פתיחה</button></div>
               </div>
+              <div class="mg-hub-row">
+                <a class="btn btn-secondary" href="admin-matal.html">המת"ליות של אביגיל — הכנסה וקישורים אישיים</a>
+              </div>
               <div class="mg-msg" id="hub-msg" hidden></div>
             </div>
             <button type="button" class="mg-link" id="mg-out">זה לא אני — יציאה</button>
@@ -504,7 +507,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       sel.disabled = true;
       if (!sid) { sel.innerHTML = opt('', 'קודם בוחרים בית ספר'); return; }
       sel.innerHTML = opt('', 'טוענים את המורים…');
-      const r = await TS.api('teachers.list', { school: sid });
+      const r = await TS.api('teachers.list', { school: sid, withMatal: 1 });
       if ($('hub-tschool').value !== sid) return;   // בינתיים נבחר בית ספר אחר
       const t = ((r && r.ok && r.data) || []).slice()
         .sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));

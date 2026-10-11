@@ -287,7 +287,9 @@ const PUBLIC_ACTIONS = new Set([
   // השלמת מייל עצמית של מורים (28.9.26) — הרשימה בלי כתובות, והכתיבה רק למי שאין לו מייל
   'emails.roster', 'emails.submit',
   // כפילויות ותיקוני שם (29.9.26) — ההרשאה בפנים: מפתח staff עם תפקיד ministry
-  'teachers.nameFixes', 'teachers.nameFixApply', 'teachers.merge'
+  'teachers.nameFixes', 'teachers.nameFixApply', 'teachers.merge',
+  // המת"ליות של אביגיל (10.10.26) — ההרשאה בפנים: מפתח staff של מטה (matalAuth_)
+  'teachers.matalSetup', 'teachers.matalLinks'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -942,7 +944,7 @@ function listTeachersCached_(p, user) {
   try {
     cache = CacheService.getScriptCache();
     const q = {};
-    ['school', 'network', 'subject', 'sector'].forEach(k => { if (p[k]) q[k] = p[k]; });
+    ['school', 'network', 'subject', 'sector', 'withMatal'].forEach(k => { if (p[k]) q[k] = p[k]; });
     // הזהות נכנסת למפתח: בלי משתמש ובלי בית ספר פרטי הקשר ממוסכים
     key = 'tl|' + teachersGen_() + '|' + (user ? user.email : '') + '|' + JSON.stringify(q);
     if (key.length > 240) key = 'tl|' + Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, key));
@@ -1130,6 +1132,8 @@ function handleRequest(params) {
       case 'diag.timing':         result = diagTiming(); break;
       case 'remind.status':       result = remindStatus(); break;
       case 'staff.guideKeys':     result = staffGuideKeys(params); break;
+      case 'teachers.matalSetup': result = teachersMatalSetup(params); break;
+      case 'teachers.matalLinks': result = teachersMatalLinks(params); break;
       case 'notes.list':          result = notesList(params); break;
       case 'notes.save':          result = notesSave(params); break;
       case 'notes.delete':        result = notesDelete(params); break;
@@ -1382,6 +1386,13 @@ function maskContact_(t) {
   });
 }
 
+/* מת"ליות (10.10.26) — ההשתלמות של אביגיל בריל במנור. הן נשמרות בטאב teachers
+   (מקצוע 'מת"ל') כדי לקבל בית מורה, קישור אישי ורישום נוכחות — אבל הן לא מורים:
+   לא נספרות בדוחות ובמונים, לא במעקב ההרשמה, לא ב"טרם נרשמו" של הרכזים ולא במייל החודשי. */
+const MATAL_SUBJECT = 'מת"ל';
+function isMatal_(t) { return String((t && t.subject) || '').trim() === MATAL_SUBJECT; }
+function teachersCore_() { return readAll('teachers').filter(t => !isMatal_(t)); }
+
 function listTeachers(p, user) {
   let data = readAll('teachers').map(t => ({...t, moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive)}));
   if (p.school)   data = data.filter(t => t.school === p.school);
@@ -1393,6 +1404,8 @@ function listTeachers(p, user) {
     data = data.filter(t => String(t.network || '').replace(/^net_/, '') === net_);
   }
   if (p.subject)  data = data.filter(t => t.subject === p.subject);
+  // מת"ליות רק כשמבקשים אותן במפורש (המבט של אביגיל שולח subject=מת"ל)
+  if (p.subject !== MATAL_SUBJECT && !p.withMatal) data = data.filter(t => !isMatal_(t));
   if (p.sector)   data = data.filter(t => t.sector === p.sector);
   // בלי משתמש מחובר — בלי פרטי קשר (24.9.26, החלטת מיטל). עד היום רשימה של בית
   // ספר יחיד (?school=) חזרה מלאה לכל מי שיודע את הכתובת; אימות המיילים אצל
@@ -1730,7 +1743,7 @@ function monthlyAttendance(p) {
   const attRecords = readAll('attendance').filter(a => trainingIds.has(a.trainingId));
 
   // Get relevant teachers
-  let teachers = readAll('teachers');
+  let teachers = teachersCore_();
   if (p.school)   teachers = teachers.filter(t => t.school === p.school);
   if (p.network)  teachers = teachers.filter(t => t.network === p.network);
 
@@ -1857,7 +1870,7 @@ function createKnowledge(p) {
 // ============================================================
 
 function schoolReport(p) {
-  const teachers = readAll('teachers').filter(t => t.school === p.school);
+  const teachers = teachersCore_().filter(t => t.school === p.school);
   const attRes = monthlyAttendance({ school: p.school, month: p.month });
   const attData = attRes.data;
   const present = teachers.filter(t => attData[t.id]?.thisMonth === 'present').length;
@@ -1876,7 +1889,7 @@ function schoolReport(p) {
 
 function networkReport(p) {
   const schools = readAll('schools').filter(s => s.network === p.network);
-  const teachers = readAll('teachers').filter(t => t.network === p.network);
+  const teachers = teachersCore_().filter(t => t.network === p.network);
   const attRes = monthlyAttendance({ network: p.network, month: p.month });
   const attData = attRes.data;
   const bySector = { haredi: 0, arab: 0, kelali: 0 };
@@ -1909,7 +1922,7 @@ function networkReport(p) {
 
 function ministryReport(p) {
   const networks = readAll('networks');
-  const teachers = readAll('teachers');
+  const teachers = teachersCore_();
   const attRes = monthlyAttendance({ month: p.month });
   const attData = attRes.data;
   return {
@@ -1979,7 +1992,7 @@ function verifyMailSend(p, user) {
   const schools = {};
   readAll('schools').forEach(function (s) { schools[s.id] = s; });
   const bySchool = {};
-  readAll('teachers').forEach(function (t) {
+  teachersCore_().forEach(function (t) {
     if (!t.school) return;
     if (!bySchool[t.school]) bySchool[t.school] = [];
     bySchool[t.school].push(t);
@@ -2217,7 +2230,7 @@ function trendReport(p) {
   const months = lastNMonths(p.months || 6);
   const allTrainings = readAll('trainings');
   const allAttendance = readAll('attendance');
-  let teachers = readAll('teachers');
+  let teachers = teachersCore_();
   if (p.network) teachers = teachers.filter(t => t.network === p.network);
   if (p.school)  teachers = teachers.filter(t => t.school === p.school);
   const teacherIds = new Set(teachers.map(t => t.id));
@@ -2257,7 +2270,7 @@ function lastNMonths(n) {
 
 function heatmapReport(p) {
   // מטריצה: רשת × מקצוע = אחוז נוכחות
-  const teachers = readAll('teachers');
+  const teachers = teachersCore_();
   const attendance = readAll('attendance');
   const trainings = readAll('trainings');
   const month = p.month || thisMonthKey();
@@ -2443,7 +2456,7 @@ function listAlerts(p) {
 
 function computeAlerts() {
   // לוגיקה: מורה שפספסה 2 חודשים ברציפות
-  const teachers = readAll('teachers');
+  const teachers = teachersCore_();
   const trainings = readAll('trainings');
   const attendance = readAll('attendance');
   const newAlerts = [];
@@ -2692,7 +2705,7 @@ function schoolDashboard(params) {
   const networks = {};
   readAll('networks').forEach(n => { networks[n.id] = n; });
 
-  let teachers = readAll('teachers').filter(t => t.school === schoolId);
+  let teachers = teachersCore_().filter(t => t.school === schoolId);
   if (subjectFilter) teachers = teachers.filter(t => t.subject === subjectFilter);
 
   // הדרכות בכל המקצועות של המורים הנ"ל
@@ -2782,7 +2795,7 @@ function networkDashboard(params) {
   const schools = readAll('schools').filter(s =>
     s.network === network.id || s.network === netParam
   );
-  let teachers = readAll('teachers').filter(t =>
+  let teachers = teachersCore_().filter(t =>
     t.network === network.id || t.network === netParam
   );
   if (subjectFilter) teachers = teachers.filter(t => t.subject === subjectFilter);
@@ -2864,7 +2877,7 @@ function ministryDashboard(params) {
 
   const networks = readAll('networks');
   const schools = readAll('schools');
-  let teachers = readAll('teachers');
+  let teachers = teachersCore_();
   let trainings = readAll('trainings');
 
   if (subjectFilter) {
@@ -4450,7 +4463,7 @@ function monthlyCompute_(month, today) {
 
   const end = monthlyLastDay_(month) < today ? monthlyLastDay_(month) : today;
   const rep = meetReport({}).data;
-  const teachers = readAll('teachers');
+  const teachers = teachersCore_();
   ensureTab_('guide_hours');
   const hours = readAll('guide_hours').map(h => ({
     guideSlug: String(h.guideSlug || ''), firstName: h.firstName, lastName: h.lastName,
@@ -5285,7 +5298,7 @@ function meetRewriteTeacherRefs_(pick) {
 /* המגזר של מורה חדש/ה — כמו רוב המורים באותו בית ספר (השיוך למדריכ/ה תלוי בזה) */
 function teacherSchoolSector_(schoolId) {
   const cnt = {};
-  readAll('teachers').forEach(function (x) {
+  teachersCore_().forEach(function (x) {
     if (String(x.school) === String(schoolId) && x.sector) cnt[x.sector] = (cnt[x.sector] || 0) + 1;
   });
   const top = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; })[0];
@@ -6109,7 +6122,7 @@ function staffMask_(email) {
    registration.status — שמות, רק למפתח staff של מטה. registration.count — מספרים בלבד, ציבורי.
    ============================================================ */
 function registrationData_() {
-  const teachers = readAll('teachers');
+  const teachers = teachersCore_();
   let codes = [];
   try { codes = readAll('teacher_codes'); } catch (e) { codes = []; }
   const sent = {}, verified = {};
@@ -6296,6 +6309,112 @@ function staffGuideKeys(p) {
   const out = {};
   slugs.forEach(s => { out[s] = meetGuideKey_(s); });
   return { ok: true, data: out };
+}
+
+/* ---- המת"ליות של אביגיל בריל (10.10.26) ----
+   teachers.matalSetup — ייבוא הנרשמות להשתלמות המת"ליות (מהרישום להשתלמויות) לטאב teachers,
+     מקצוע MATAL_SUBJECT. dryRun ברירת מחדל: רק דוח — מי חדשה, מי כבר קיימת, איזה בית ספר לא זוהה.
+     שורה קיימת (אותו בית ספר + שם) לא נכתבת שוב. בלי ת"ז.
+   teachers.matalLinks — הקישור האישי של כל מת"לית (teacher/?tk=) והקישור של אביגיל (guide/?g=avigail&k=).
+   הרשאה: מפתח staff של מטה (מיטל/רויטל) — מהדף admin-matal.html. */
+function matalAuth_(p) { return staffIsHq_(p.k); }
+function matalNorm_(s) {
+  return String(s || '').replace(/[״"׳'`]/g, '').replace(/[-–—]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function teachersMatalSetup(p) {
+  if (!matalAuth_(p)) return { ok: false, error: 'forbidden' };
+  let list = p.rows;
+  if (typeof list === 'string') {
+    try { list = JSON.parse(list); } catch (e) { return { ok: false, error: 'bad_rows_json' }; }
+  }
+  if (!Array.isArray(list) || !list.length) return { ok: false, error: 'no_rows' };
+  if (list.length > 200) return { ok: false, error: 'too_many_rows' };
+  const dryRun = !(p.dryRun === false || p.dryRun === 'false' || p.dryRun === 0 || p.dryRun === '0');
+
+  const bySchool = {};
+  readAll('schools').forEach(s => { if (s.id) bySchool[matalNorm_(s.name)] = s; });
+  const all = readAll('teachers');
+  // המגזר — כמו רוב המורים באותו בית ספר (כמו teacherSchoolSector_, בקריאה אחת)
+  const sectorCnt = {};
+  all.forEach(t => {
+    if (isMatal_(t) || !t.sector) return;
+    const c = sectorCnt[t.school] || (sectorCnt[t.school] = {});
+    c[t.sector] = (c[t.sector] || 0) + 1;
+  });
+  const sectorOf = id => {
+    const c = sectorCnt[id] || {};
+    return Object.keys(c).sort((a, b) => c[b] - c[a])[0] || 'kelali';
+  };
+
+  const lock = LockService.getScriptLock();
+  if (!dryRun && !lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
+  try {
+    const existing = {};
+    (dryRun ? all : readAll('teachers')).filter(isMatal_)
+      .forEach(t => { existing[String(t.school) + '|' + matalNorm_(t.name)] = t; });
+    const report = [], toWrite = [], seen = {};
+    const stamp = new Date().toISOString(), base = Date.now();
+    list.forEach((r, i) => {
+      r = r || {};
+      const name = String(r.name || '').replace(/\s+/g, ' ').trim();
+      const group = String(r.group || '').trim();
+      const row = { name: name, school: String(r.school || '').trim(), group: group };
+      const school = bySchool[matalNorm_(r.school)];
+      if (!name) { row.status = 'no_name'; report.push(row); return; }
+      if (!school) { row.status = 'unknown_school'; report.push(row); return; }
+      const key = school.id + '|' + matalNorm_(name);
+      if (existing[key]) { row.status = 'exists'; row.id = String(existing[key].id); report.push(row); return; }
+      if (seen[key]) { row.status = 'duplicate'; report.push(row); return; }
+      seen[key] = 1;
+      const email = String(r.email || '').trim().toLowerCase();
+      toWrite.push({
+        id: 'tch_' + base + '_m' + i + '_' + Math.floor(Math.random() * 1000),
+        school: school.id, schoolName: String(school.name || ''),
+        network: String(school.network || '').replace(/^net_/, ''),
+        name: name, subject: MATAL_SUBJECT, type: 'bagrut', sector: sectorOf(school.id),
+        seniority: 0, units: '', students: 0,
+        phone: String(r.phone || '').trim(), email: guideMailOk_(email) ? email : '',
+        notes: 'השתלמות המת"ליות של אביגיל' + (group ? ' · ' + group : ''),
+        moeApproval: false, moeFile: '', pdActive: false, pdFile: '', pdYear: '',
+        createdAt: stamp
+      });
+      row.status = 'new'; row.schoolId = school.id;
+      report.push(row);
+    });
+
+    if (!dryRun && toWrite.length) {
+      const s = sheet('teachers');
+      const headers = s.getRange(1, 1, 1, s.getLastColumn()).getValues()[0].filter(String);
+      const rows = toWrite.map(obj => headers.map(h => {
+        if (obj[h] === undefined) return '';
+        if (typeof obj[h] === 'boolean') return obj[h] ? 'TRUE' : 'FALSE';
+        return obj[h];
+      }));
+      s.getRange(s.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
+      SpreadsheetApp.flush();
+      bumpTeachersGen_();
+      bumpRosterGen_();
+    }
+    const count = st => report.filter(x => x.status === st).length;
+    return { ok: true, dryRun: dryRun, data: {
+      total: list.length, created: dryRun ? 0 : toWrite.length, wouldCreate: toWrite.length,
+      exists: count('exists'), unknownSchool: count('unknown_school'), duplicate: count('duplicate'),
+      noName: count('no_name'), rows: report } };
+  } finally {
+    if (!dryRun) lock.releaseLock();
+  }
+}
+
+function teachersMatalLinks(p) {
+  if (!matalAuth_(p)) return { ok: false, error: 'forbidden' };
+  const people = readAll('teachers').filter(isMatal_).map(t => ({
+    id: String(t.id), name: String(t.name || ''), school: String(t.schoolName || ''),
+    notes: String(t.notes || ''), hasEmail: guideMailOk_(t.email),
+    link: REMIND_SITE + 'teacher/?tk=' + teacherKey_(t.id)
+  }));
+  people.sort((a, b) => a.school.localeCompare(b.school, 'he') || a.name.localeCompare(b.name, 'he'));
+  return { ok: true, data: { guide: REMIND_SITE + 'guide/?g=avigail&k=' + meetGuideKey_('avigail'), people: people } };
 }
 
 /* ---- אבחון מהירות (24.9.26, "השרת איטי") — מחזיר רק מספרים: כמה שורות ועמודות
@@ -6701,7 +6820,7 @@ function emailsRoster(p) {
   const schools = {};
   readAll('schools').forEach(s => { if (s.id) schools[String(s.id)] = String(s.name || ''); });
   const people = {};
-  readAll('teachers').forEach(t => {
+  teachersCore_().forEach(t => {
     const school = String(t.school || '').trim();
     const name = emailsNorm_(t.name);
     // שם שהוא בעצם כתובת מייל (טעות הזנה) — לא נחשף ברשימה הציבורית

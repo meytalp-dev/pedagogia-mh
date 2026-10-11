@@ -304,7 +304,8 @@ async function onGateSchool() {
   /* רק בית הספר שנבחר (30.9.26): ניסיון לטעון מראש את כל בתי הספר (teachers.roster,
      91KB) היה איטי יותר — גוגל מעבירה תשובה גדולה ב-5–38 שניות ולפעמים בדף שגיאה,
      ורשימה של בית ספר אחד חוזרת בכ-2 שניות */
-  const res = await TS.api('teachers.list', { school: id });
+  // withMatal — גם המת"ליות של אביגיל נכנסות מכאן (10.10.26); בשאר המסכים הן לא נספרות כמורים
+  const res = await TS.api('teachers.list', { school: id, withMatal: 1 });
   // בינתיים נבחר בית ספר אחר — התשובה הזו כבר לא רלוונטית
   if ($g('tg-school').value !== id) return;
   /* תקלה בטעינה (24.9.26): עד היום תשובה שנכשלה הוצגה כ"בבית הספר הזה עוד לא
@@ -694,7 +695,8 @@ async function load() {
      החלטת מיטל (28.9.26): מי שעוד לא צירף/ה אישור — או ענה/תה "לא נרשמתי" —
      רואה את המסך שוב בכל כניסה (פעם אחת לכל פתיחה של הדפדפן), עם התשובה
      הקודמת מסומנת. רק מי שהשלים/ה הכול, כולל אישור, נכנס/ת ישר לדף. */
-  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_) {
+  // מת"ליות (10.10.26) — שאלת ההשתלמות של המורים לא חלה עליהן
+  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_ && !isMatalSelf()) {
     const reminder = trainingIncomplete() && !remindedThisVisit();
     // במתמטיקה ובאנגלית גם יח"ל — חובה, גם למי שכבר ענה/תה על ההשתלמות לפני שנוספה השאלה
     if (!teacher.trainingStatus || needsUnits() || reminder) {
@@ -1501,8 +1503,16 @@ function askTraining(reminder) {
   });
 }
 
+/* מת"לית בהשתלמות של אביגיל (10.10.26) — לא מורה, ולכן בלי שאלת ההשתלמות המקצועית */
+function isMatalSelf() { return !!teacher && String(teacher.subject || '').trim() === 'מת"ל'; }
+
 /* דף הבית: תזכורת רק כשיש מה לעשות (מקטע ריק לא מוצג), ושורה ב"הפרטים שלי" */
 function renderTraining() {
+  if (isMatalSelf()) {
+    const b = document.getElementById('pd-status');
+    if (b) b.innerHTML = '';
+    return;
+  }
   const st = String(teacher.trainingStatus || '');
   const file = String(teacher.trainingFile || '');
   const badge = document.getElementById('pd-status');

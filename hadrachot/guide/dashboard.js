@@ -663,7 +663,8 @@ function renderTeachers() {
   const trainOf = t => t.onLeave ? 'leave' : (t.trainingStatus || 'missing');
   const preTrain = state.teachers.filter(t => inTrack(t) &&
     (!schoolSel || (t.schoolName || '— ללא שיוך —') === schoolSel));
-  const tc = window.TS_training ? TS_training.counts(preTrain) : null;
+  // noTraining (אביגיל והמת"ליות, 10.10.26) — בלי פס ההשתלמות המקצועית
+  const tc = window.TS_training && !(GUIDE_CFG && GUIDE_CFG.noTraining) ? TS_training.counts(preTrain) : null;
   const filtered = state.teachers.filter(t =>
     inTrack(t) &&
     (!teTrainFilter || trainOf(t) === teTrainFilter) &&
