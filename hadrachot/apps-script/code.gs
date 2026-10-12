@@ -293,7 +293,9 @@ const PUBLIC_ACTIONS = new Set([
   // כפילויות ותיקוני שם (29.9.26) — ההרשאה בפנים: מפתח staff עם תפקיד ministry
   'teachers.nameFixes', 'teachers.nameFixApply', 'teachers.merge',
   // המת"ליות של אביגיל (10.10.26) — ההרשאה בפנים: מפתח staff של מטה (matalAuth_)
-  'teachers.matalSetup', 'teachers.matalLinks'
+  'teachers.matalSetup', 'teachers.matalLinks',
+  // "כבר עניתי בערוץ אחר" (12.10.26) — מפתח מדריכ/ה (meetAuthGuide_) + שאלה של מורה מהקבוצה, בפנים
+  'questions.close', 'questions.reopen'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -1038,6 +1040,8 @@ function handleRequest(params) {
       case 'questions.list':      result = listQuestions(params); break;
       case 'questions.create':    result = createQuestion(params); break;
       case 'questions.answer':    result = answerQuestion(params); break;
+      case 'questions.close':     result = questionClose(params); break;
+      case 'questions.reopen':    result = questionReopen(params); break;
 
       case 'knowledge.list':      result = listKnowledge(params); break;
       case 'knowledge.create':    result = createKnowledge(params); break;
@@ -1943,6 +1947,28 @@ function answerQuestion(p) {
   }
   return { ok };
 }
+
+/* "כבר עניתי בערוץ אחר" (12.10.26, החלטת מיטל) — questions.close / questions.reopen
+   { id, guide, k|ge }. רק מדריכ/ה מאומת/ת, ורק שאלה של מורה מהקבוצה שלו/ה.
+   status=closed: המורה רואה "נענתה בערוץ אחר", בלי מייל. reopen מחזיר ל-open (ביטול). */
+function questionSetClosed_(p, close) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const q = readAll('questions').find(r => String(r.id) === String(p.id));
+  if (!q) return { ok: false, error: 'not_found' };
+  if (String(q.status) !== (close ? 'open' : 'closed')) return { ok: false, error: 'bad_status' };
+  const t = readAll('teachers').find(r => String(r.id) === String(q.teacherId));
+  const win = remindWin_();
+  const g = Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug] || {});
+  if (!t || !g.name || !win.TS_guideHasTeacher(g, t)) return { ok: false, error: 'not_mine' };
+  const ok = updateRowById('questions', q.id, close
+    ? { status: 'closed', answeredAt: new Date().toISOString() }
+    : { status: 'open', answeredAt: '' });
+  auditLog_('', close ? 'questions.close' : 'questions.reopen', 'questions', String(q.id), ok ? 'ok' : 'fail', slug);
+  return { ok: ok };
+}
+function questionClose(p) { return questionSetClosed_(p, true); }
+function questionReopen(p) { return questionSetClosed_(p, false); }
 
 function questionQuoteHtml_(label, text) {
   return '<p style="margin:12px 0 4px;color:#5C7182">' + remindEsc_(label) + '</p>' +
@@ -7132,29 +7158,33 @@ function emailsSubmit(p) {
 // עדכון חדש = עורכים את MENOR_UPDATE (id חדש!), פורסים, ושולחים מ-admin-idkunim.html.
 // כל נמען מסומן אחרי שליחה (upd_<id>_<kind>:<slug>) — לחיצה חוזרת לא שולחת פעמיים.
 // =====================================================================
+// הקודם (28.9.26: מאגר חומרים בתיקיות, מייל לקבוצה, אלפון, רישום אחד, מתמטיקה לפי רמות) — בהיסטוריית git.
+// kinds — מי מקבל/ת. {OPEN_Q} בטקסט של פריט = פסקה אישית עם מספר השאלות הפתוחות (מדריכים בלבד).
 const MENOR_UPDATE = {
-  id: '2026-09-28',
-  subject: 'מה חדש במנור: מאגר חומרים בתיקיות, מייל לקבוצה ואלפון מורים',
-  intro: 'כדי שתהיו תמיד מעודכנים, מעכשיו נשלח מייל קצר בכל פעם שנוסיף משהו למנור או נשפר אותו. הנה החידושים מהימים האחרונים:',
+  id: '2026-10-12',
+  kinds: ['guide'],
+  subject: 'מה חדש במנור: שאלות המורים מגיעות אליך במייל',
+  intro: 'כמה חידושים במנור מאז העדכון האחרון, והכי חשוב — השאלות של המורים:',
   items: [
-    { title: 'מאגר החומרים — עמוד נפרד ומסודר בתיקיות',
-      text: 'כפתור "מאגר החומרים" בראש המבט של המדריכ/ה פותח עמוד משלו.\n' +
-            'החומרים מסודרים בתיקיות: תיקייה לכל מפגש לפי התוכנית השנתית, ואפשר לפתוח גם תיקיות לפי נושא.\n' +
-            'בכל העלאה המערכת שואלת לאיזו תיקייה להכניס את הקובץ. אפשר גם לפתוח תיקייה חדשה, או ללחוץ "העלאה לכאן" מתוך התיקייה עצמה.\n' +
-            'אפשר להוסיף גם קישור, לא רק קובץ. המורים רואים את החומרים באותו סידור תיקיות.' },
-    { title: 'מייל לקבוצה במקום וואטסאפ',
-      text: 'מתוך המבט אפשר לשלוח מייל לכל מורי הקבוצה.\nכשמורה עונה על המייל, התשובה מגיעה ישר אל המדריכ/ה.' },
-    { title: 'אלפון המורים',
-      text: 'כפתור "אלפון המורים" בראש המבט מציג את המייל והטלפון של כל מורה בקבוצה. הודעות לקבוצה נפתחות מאותו מקום.' },
-    // 28.9.26, מיטל: רישום אחד לכל המורים — טופס המייל הנפרד (tfasim/mail-morim) הוסר,
-    // ו"מי עוד לא השלים" לא שייך למייל הזה.
-    { title: 'רישום המורים — קישור אחד לכולם',
-      text: 'כל מורה, בכל מקצוע, נכנס/ת בפעם הראשונה דרך אותו רישום: בית ספר, מקצוע, שם ומייל עם קוד אימות, ואחריהם שאלת ההשתלמות המקצועית. במתמטיקה ובאנגלית המורה מסמן/ת גם אילו יחידות לימוד הוא/היא מלמד/ת. גם מורים שהמייל שלהם כבר אצלנו עוברים את הרישום. הדף האישי נפתח רק אחרי שהרישום הושלם.\n' +
-            'מי שעוד לא צירף/ה אישור השתלמות או אישור הרשמה להשתלמות יקבל/תקבל תזכורת בכל כניסה, עד שהאישור מצורף.\n' +
-            'את הקישור מיטל שולחת למורים בקהילות הוואטסאפ — אין צורך להפיץ אותו.\n{MAIL_LINKS}' },
-    { title: 'חלוקת מתמטיקה לפי רמות',
-      text: 'אילנה ממו מדריכה את מורי 4–5 יח"ל, ושירה סיבוני את מורי 3 יח"ל.',
-      only: ['guide:shira', 'guide:ilana', 'inspector:revital'] }
+    { title: 'השאלות שלך מהמורים',
+      text: '{OPEN_Q}' },
+    { title: 'שאלה חדשה מגיעה אליך במייל',
+      text: 'כשמורה שואל/ת ב"שאלה למדריכ/ה" במנור, מגיע אליך מייל עם השאלה וכפתור "לענות במנור".\n' +
+            'התשובה שתכתבו במנור נשלחת למורה במייל ונשמרת בבית שלו/ה במנור.' },
+    { title: 'כבר עניתם בוואטסאפ, בטלפון או במפגש?',
+      text: 'ליד כל שאלה פתוחה יש עכשיו כפתור "כבר עניתי בערוץ אחר". השאלה נסגרת ויוצאת מהמונה, ' +
+            'המורה רואה "נענתה בערוץ אחר", ולא נשלח מייל. אם סגרתם בטעות — אפשר לבטל.' },
+    { title: 'שאלות כפולות נוקו',
+      text: 'חלק מהשאלות הופיעו אצלכם כמה פעמים, כי מורים לחצו שוב כשהמערכת הייתה איטית. ' +
+            'העותקים הכפולים הוסרו, ומעכשיו אותה שאלה לא נשמרת פעמיים.' },
+    { title: 'תזכורת למורים יום לפני המפגש',
+      text: 'יום לפני כל מפגש, ב-17:00, כל מורה בקבוצה שלך מקבל/ת מייל עם המועד, הנושא והקישור לזום (אם יש זום קבוע). ' +
+            'מורה שכבר השתתף/ה החודש במועד קודם של אותו מפגש לא מקבל/ת תזכורת. כשמורה עונה לתזכורת — התשובה מגיעה אליך.' },
+    { title: 'מורה בחופשה',
+      text: 'מורה בחופשת לידה או בחופשה ארוכה מסומן/ת "בחופשה": לא נספר/ת במונים ולא מקבל/ת תזכורות ומיילים לקבוצה. ' +
+            'מורה שצריך לסמן — אפשר פשוט להשיב למייל הזה.' },
+    { title: 'מורה שמלמד/ת שני מקצועות',
+      text: 'מורה יכול/ה להוסיף בעצמו/ה מקצוע נוסף מהדף שלו/ה במנור, ומופיע/ה אצל המדריך/ה של כל מקצוע.' }
   ]
 };
 
@@ -7208,6 +7238,42 @@ function updMailLinksHtml_(r) {
   return 'לעיון, הקישור שהמורים מקבלים: <a href="' + UPD_FORM + '">' + remindEsc_(UPD_FORM) + '</a>';
 }
 
+/* {OPEN_Q} — כמה שאלות פתוחות יש למדריך/ה (12.10.26). אותו שיוך כמו המייל על שאלה חדשה
+   (TS_guideHasTeacher). מחושב פעם אחת לכל ריצה — updatesSend בונה מייל לכל נמען. */
+let updOpenQCache_ = null;
+function updOpenQ_() {
+  if (updOpenQCache_) return updOpenQCache_;
+  const win = remindWin_();
+  const byId = {};
+  readAll('teachers').forEach(t => { byId[String(t.id)] = t; });
+  const out = {};
+  readAll('questions').forEach(q => {
+    if (String(q.status) !== 'open') return;
+    const t = byId[String(q.teacherId)];
+    if (!t) return;
+    const at = meetDate_(q.createdAt);
+    Object.keys(win.TS_GUIDES || {}).forEach(slug => {
+      const g = Object.assign({ slug: slug }, win.TS_GUIDES[slug]);
+      if (!g.name || !win.TS_guideHasTeacher(g, t)) return;
+      const o = out[slug] = out[slug] || { n: 0, oldest: '' };
+      o.n++;
+      if (at && (!o.oldest || at < o.oldest)) o.oldest = at;
+    });
+  });
+  return (updOpenQCache_ = out);
+}
+
+function updOpenQHtml_(r, L, btn) {
+  if (r.kind !== 'guide') return '';
+  const o = updOpenQ_()[r.slug] || { n: 0, oldest: '' };
+  if (!o.n) return 'אין לך כרגע שאלות פתוחות מהמורים. כשתגיע שאלה חדשה — תקבלו עליה מייל.';
+  const dm = o.oldest ? +o.oldest.slice(8, 10) + '.' + +o.oldest.slice(5, 7) : '';
+  return '<b>יש לך כרגע ' + (o.n === 1 ? 'שאלה פתוחה אחת' : o.n + ' שאלות פתוחות') + ' מהמורים</b>' +
+    (dm && o.n > 1 ? ' (הוותיקה מ-' + dm + ')' : '') + '.<br>' +
+    'כדאי לעבור עליהן: לענות במנור, או לסגור את מה שכבר עניתם בערוץ אחר.<br><br>' +
+    btn(L.view + '#sec-questions', 'לשאלות שלי במנור');
+}
+
 function updBuild_(r) {
   const U = MENOR_UPDATE;
   const L = updLinks_(r);
@@ -7215,7 +7281,8 @@ function updBuild_(r) {
   const items = U.items.filter(it => !it.only || it.only.indexOf(r.kind + ':' + r.slug) >= 0);
   let body = '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
   items.forEach((it, i) => {
-    const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r));
+    const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r))
+      .replace('{OPEN_Q}', updOpenQHtml_(r, L, btn));
     body += '<p style="margin:0 0 4px;font-weight:bold">' + (i + 1) + '. ' + remindEsc_(it.title) + '</p>' +
       '<p style="margin:0 0 14px">' + html + '</p>';
   });
@@ -7248,7 +7315,8 @@ function updatesSend(p) {
   const props = PropertiesService.getScriptProperties();
   const only = String(p.only || '').split(',').map(s => s.trim()).filter(Boolean);
   const all = updRecipients_(win).map(r => Object.assign(r, { sent: props.getProperty(updSentKey_(r)) || '' }));
-  const pick = all.filter(r => !only.length || only.indexOf(r.kind + ':' + r.slug) >= 0);
+  const pick = all.filter(r => (!MENOR_UPDATE.kinds || MENOR_UPDATE.kinds.indexOf(r.kind) >= 0) &&
+    (!only.length || only.indexOf(r.kind + ':' + r.slug) >= 0));
   if (mode === 'list') {
     return { ok: true, data: { id: MENOR_UPDATE.id, subject: MENOR_UPDATE.subject, quota: MailApp.getRemainingDailyQuota(),
       rows: pick.map(r => ({ kind: r.kind, slug: r.slug, name: r.name, email: r.email, hasDrive: r.hasDrive,

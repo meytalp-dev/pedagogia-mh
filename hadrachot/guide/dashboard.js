@@ -979,10 +979,11 @@ function renderQuestions() {
   if (questionsData === null) { loadQuestions(); return; }
   const byId = {};
   state.teachers.forEach(t => { byId[String(t.id)] = t; });
+  // open · answered · closed ("כבר עניתי בערוץ אחר", 12.10.26). פתוחות למעלה.
   const mine = questionsData.filter(q => byId[String(q.teacherId)])
-    .sort((a, b) => (a.status === 'answered') - (b.status === 'answered') ||
+    .sort((a, b) => (a.status !== 'open') - (b.status !== 'open') ||
       String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-  const openN = mine.filter(q => q.status !== 'answered').length;
+  const openN = mine.filter(q => q.status === 'open').length;
   const badge = document.getElementById('q-count');
   if (badge) { badge.hidden = !openN; badge.textContent = openN + (openN === 1 ? ' שאלה מחכה לתשובה' : ' שאלות מחכות לתשובה'); }
   if (!mine.length) {
@@ -995,16 +996,18 @@ function renderQuestions() {
   }
   box.innerHTML = mine.map(q => {
     const t = byId[String(q.teacherId)];
-    const answered = q.status === 'answered';
+    const answered = q.status === 'answered', closed = q.status === 'closed';
     return `
-      <div class="q-item${answered ? '' : ' open'}" data-q="${escapeHtml(q.id)}">
+      <div class="q-item${answered || closed ? '' : ' open'}" data-q="${escapeHtml(q.id)}">
         <div class="q-meta"><span><b>${escapeHtml(t.name)}</b> · ${escapeHtml(t.schoolName || '')}</span>
-          <span>${q.createdAt ? TS.formatDate(q.createdAt) : ''} · ${answered ? 'נענתה' : 'מחכה לתשובה'}</span></div>
+          <span>${q.createdAt ? TS.formatDate(q.createdAt) : ''} · ${answered ? 'נענתה' : closed ? 'נענתה בערוץ אחר' : 'מחכה לתשובה'}</span></div>
         <div class="q-text">${escapeHtml(q.question || '')}</div>
-        ${answered ? `<div class="q-ans"><b>התשובה שלך:</b> ${escapeHtml(q.answer || '')}</div>` : `
+        ${answered ? `<div class="q-ans"><b>התשובה שלך:</b> ${escapeHtml(q.answer || '')}</div>`
+        : closed ? `<div class="q-ans">סגרת את השאלה — עניתם בערוץ אחר. <button type="button" class="mh-edit" data-qreopen="${escapeHtml(q.id)}">ביטול</button></div>` : `
         <div class="q-form">
-          <textarea class="textarea" data-qa="${escapeHtml(q.id)}" placeholder="התשובה תופיע למורה במבט המורה">${escapeHtml(qDrafts[q.id] || '')}</textarea>
+          <textarea class="textarea" data-qa="${escapeHtml(q.id)}" placeholder="התשובה תופיע למורה במבט המורה ותישלח אליו/ה במייל">${escapeHtml(qDrafts[q.id] || '')}</textarea>
           <button type="button" class="btn btn-primary" data-qsend="${escapeHtml(q.id)}">שליחת תשובה</button>
+          <button type="button" class="btn btn-secondary" data-qclose="${escapeHtml(q.id)}">כבר עניתי בערוץ אחר</button>
         </div>`}
       </div>`;
   }).join('');
@@ -1014,6 +1017,23 @@ function renderQuestions() {
     setTimeout(() => document.getElementById('sec-questions').scrollIntoView({ block: 'start' }), 60);
   }
   box.querySelectorAll('[data-qa]').forEach(ta => ta.addEventListener('input', () => { qDrafts[ta.dataset.qa] = ta.value; }));
+  // "כבר עניתי בערוץ אחר" / ביטול — בלי מייל למורה; המורה רואה "נענתה בערוץ אחר"
+  const setClosed = async (b, id, close) => {
+    b.disabled = true;
+    const auth = typeof window.GUIDE_AUTH === 'function' ? window.GUIDE_AUTH() : {};
+    const res = await TS.apiPost(close ? 'questions.close' : 'questions.reopen', Object.assign({}, auth, { id: id }));
+    const q = questionsData.find(x => String(x.id) === String(id));
+    if (res && res.ok) {
+      if (q) q.status = close ? 'closed' : 'open';
+      TS.toast(close ? 'השאלה נסגרה' : 'השאלה חזרה לפתוחות');
+      renderQuestions();
+    } else {
+      b.disabled = false;
+      TS.toast(res && res.error === 'bad_key' ? 'אין הרשאה — להיכנס מהקישור האישי' : 'לא נשמר — לנסות שוב');
+    }
+  };
+  box.querySelectorAll('[data-qclose]').forEach(b => b.addEventListener('click', () => setClosed(b, b.dataset.qclose, true)));
+  box.querySelectorAll('[data-qreopen]').forEach(b => b.addEventListener('click', () => setClosed(b, b.dataset.qreopen, false)));
   box.querySelectorAll('[data-qsend]').forEach(b => b.addEventListener('click', async () => {
     const id = b.dataset.qsend;
     // מבט המורה מציג את התשובה כ-HTML — שולחים טקסט נקי בלבד

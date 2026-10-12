@@ -1300,7 +1300,7 @@ function renderQuestions() {
     <div class="card" style="margin-bottom:12px; padding: 16px;">
       <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px;">
         <strong>שאלה</strong>
-        <span class="badge ${q.status==='answered'?'ok':'warn'}">${q.status==='answered' ? 'נענתה' : 'בהמתנה'}</span>
+        <span class="badge ${q.status==='answered'||q.status==='closed'?'ok':'warn'}">${q.status==='answered' ? 'נענתה' : q.status==='closed' ? 'נענתה בערוץ אחר' : 'בהמתנה'}</span>
       </div>
       <div style="margin-bottom:12px;">${q.question || ''}</div>
       ${q.answer ? `<div style="background:var(--info-soft); padding:12px; border-radius:8px;"><strong style="color:var(--info);">תשובה:</strong><br>${q.answer}</div>` : ''}
