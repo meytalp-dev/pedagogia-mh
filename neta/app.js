@@ -747,15 +747,15 @@
       ['rakaz-sheelon-talmidim.html', 'שאלון פדגוגיה · תלמידים', 'התמונה מנקודת המבט שלהם']
     ]],
     ['התפקיד', [
-      ['tafkidim.html#rakaz-pedagogi', 'הגדרת התפקיד', 'רכז/ת פדגוגי/ת יוצר/ת · סגן/ית מנהל/ת'],
-      ['rakaz-pedagogi-klim.html', 'ארגז הכלים המלא באתר', 'כל הכלים ומסמכי היסוד']
+      ['tafkidim.html#rakaz-pedagogi', 'הגדרת התפקיד', 'רכז/ת פדגוגי/ת יוצר/ת · סגן/ית מנהל/ת', 'nohelp'],   /* nohelp: אין מה להתאים (ניסוי 12.10.26) */
+      ['rakaz-pedagogi-klim.html', 'ארגז הכלים המלא באתר', 'כל הכלים ומסמכי היסוד', 'nohelp']
     ]]
   ];
   function toolTiles(list) {
     if (!helpOn()) return tiles(list);
     return '<div class="tiles">' + list.map(function (x) {
-      return '<div class="tile-w"><a class="tile" href="' + esc(href(x[0])) + '" target="_blank" rel="noopener"><b>' + esc(x[1]) + '</b><span>' + esc(x[2]) + '</span></a>' +
-        '<button type="button" class="tile-help" data-help="tool" data-ht="' + esc(x[1]) + '" data-hid="' + esc(x[0]) + '">' + I.spark + 'התאמה לבית הספר שלנו</button></div>';
+      return '<div class="tile-w"><a class="tile" href="' + esc(href(x[0])) + '" target="_blank" rel="noopener"><b>' + esc(x[1]) + '</b><span>' + esc(x[2]) + '</span></a>' + (x[3] === 'nohelp' ? '</div>' :
+        '<button type="button" class="tile-help" data-help="tool" data-ht="' + esc(x[1]) + '" data-hid="' + esc(x[0]) + '">' + I.spark + 'התאמה לבית הספר שלנו</button></div>');
     }).join('') + '</div>';
   }
   function toolsPage() {
