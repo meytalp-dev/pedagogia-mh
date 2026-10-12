@@ -881,7 +881,12 @@
   window.addEventListener('hashchange', function () { if (D && D.school) { PAGE = fromHash(); side(); render(); } });
   $('burger').onclick = function () { document.body.classList.toggle('drawer'); };
   $('scrim').onclick = function () { document.body.classList.remove('drawer'); };
-  $('out').onclick = function () { if (window.PMH_AUTH) PMH_AUTH.logout(); };
+  /* יציאה יזומה — מוחקים מהדפדפן את המשימות ואת סימוני האירוע החריג (מחשב משותף; סקירה 12.10.26).
+     יציאה אוטומטית אחרי badsession לא מוחקת, כדי לא לאבד סימונים באמצע אירוע */
+  $('out').onclick = function () {
+    try { Object.keys(localStorage).forEach(function (k) { if (/^(tzohar|neta)\.(tasks|event|obsdraft)/.test(k)) localStorage.removeItem(k); }); } catch (e) {}
+    if (window.PMH_AUTH) PMH_AUTH.logout();
+  };
 
   /* ===== מה שניצה (nitza.js) ו-tasks.js צריכות מהדף ===== */
   var READY = false;

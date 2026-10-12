@@ -142,6 +142,13 @@
     return j.title + '\n\n' + j.intro + '\n' + (j.sections || []).map(function (s) { return '\n' + s.h + '\n' + (s.points || []).map(function (p) { return '• ' + p; }).join('\n'); }).join('\n') +
       ((j.asks || []).length ? '\n\nמה נבקש מהוועדה\n' + j.asks.map(function (a) { return '• ' + a; }).join('\n') : '');
   }
+  /* לפני "הוספת כל המשימות" — רואים מה ייכנס, עם מי מטפל/ת ועד מתי (סקירה 12.10.26) */
+  function confirmTasks(list) {
+    return confirm('להוסיף לצ\'ק ליסט ' + list.length + ' משימות?\n\n' + list.map(function (t) {
+      return '• ' + t.text + (t.who || t.due ? ' (' + [t.who, t.due ? 'עד ' + heDate(t.due) : ''].filter(Boolean).join(', ') + ')' : '');
+    }).join('\n') + '\n\nמי מטפל/ת ועד מתי — הצעה. אפשר לתקן כל משימה בצ\'ק ליסט.');
+  }
+  window.TZCONFIRMTASKS = confirmTasks;
   function collectEdits(root, j) {
     [].forEach.call(root.querySelectorAll('[data-p]'), function (el) {
       var p = el.getAttribute('data-p').split('.'), o = j;
@@ -212,9 +219,10 @@
     ['בהמשך', 'תוכנית התערבות בשני חלקים: לפי מעגלי הפגיעות, ותוכנית מתמשכת שתמנע הישנות.', P_H],
     ['אחרי כמה ימים', 'ועדה בין־מקצועית להפקת לקחים; המסקנות לממונה המחוזי, למפקח/ת הכולל/ת, למפקחת על המערך הטיפולי ולרשת החינוך.', P_H]
   ];
-  var EVK = 'tzohar.event';
-  function evGet() { try { return JSON.parse(localStorage.getItem(EVK) || 'null'); } catch (e) { return null; } }
-  function evPut(x) { try { if (x) localStorage.setItem(EVK, JSON.stringify(x)); else localStorage.removeItem(EVK); } catch (e) {} }
+  /* המפתח לפי בית ספר ותפקיד — במחשב משותף לא רואים סימונים של מישהו אחר; היציאה מוחקת אותו (סקירה 12.10.26) */
+  function EVK() { var s = T.school(); return 'tzohar.event.' + (s ? s.semel : '') + '.' + T.role(); }
+  function evGet() { try { return JSON.parse(localStorage.getItem(EVK()) || 'null'); } catch (e) { return null; } }
+  function evPut(x) { try { if (x) localStorage.setItem(EVK(), JSON.stringify(x)); else localStorage.removeItem(EVK()); } catch (e) {} }
   function evSteps(type) {
     return EV_FIRST.concat(EV_TYPE_STEPS[type] || []).concat(type === 'removal' ? [] : EV_AFTER);
   }
@@ -238,6 +246,7 @@
     var text = 'שלום,\n\nמעדכנים על אירוע חריג בבית הספר ' + school + '.\n\nסוג האירוע: ' + name + '\nמועד: [תאריך ושעה]\nמה נעשה עד עכשיו: [פעולות ראשונות, למי דווח]\nמעורבים: [ראשי תיבות בלבד, גיל/כיתה]\n\nדו"ח משלים בטופס "דיווח על אירוע חריג" יישלח עד 48 שעות.\n\n' + principal() + '\n' + school;
     MAILTEXT[sub] = { text: text, html: rtlWrap(esc(text).replace(/\n/g, '<br>')) };
     return h + '<div class="card"><div class="tt-evhead"><b>' + esc(name) + '</b><span class="small">התחלתם ב-' + esc(ev.t) + ' · ' + n + ' מתוך ' + steps.length + ' צעדים</span></div>' +
+      '<p class="tt-note"><b>הסימון כאן הוא תזכורת אישית, לא דיווח.</b> הוא נשמר רק בדפדפן הזה ולא עובר למפקח/ת או למכשיר אחר. הדיווח עצמו — בטופס ובמייל לפיקוח.</p>' +
       '<ol class="tt-steps">' + steps.map(function (s, i) {
         return '<li class="' + (done[i] ? 'ok' : '') + '"><label><input type="checkbox" data-tt="evstep" data-i="' + i + '"' + (done[i] ? ' checked' : '') + '>' +
           '<span class="w">' + esc(s[0]) + '</span><span class="tx">' + esc(s[1]) + '</span></label>' +
@@ -246,7 +255,7 @@
       }).join('') + '</ol>' +
       '<div class="acts" style="margin-top:12px"><a class="btn" href="/docs/tofes-divuach-eruah-charig.docx" target="_blank" rel="noopener">טופס הדיווח (Word)</a>' +
       '<button type="button" class="btn" data-tt="evend">סיום · אירוע חדש</button></div>' +
-      '<p class="small" style="margin-top:10px">במייל ובטופס — מעורבים בראשי תיבות בלבד. הסימון נשמר רק בדפדפן הזה.</p></div>';
+      '<p class="small" style="margin-top:10px">במייל ובטופס — מעורבים בראשי תיבות בלבד.</p></div>';
   }
 
   /* ===================== h — ישיבת הנהלה בהקלטה ===================== */
@@ -361,17 +370,20 @@
         '<div class="acts" style="margin-top:10px"><button type="button" class="btn primary" data-tt="msum"' + (busy || rec ? ' disabled' : '') + '>' + IC.spark + (MT.busy ? BOT() + ' מסכמת… (עד דקה)' : BOT() + ', תסכמי את הישיבה') + '</button></div>') +
       '</div><h2 class="pt">ישיבות קודמות</h2><div class="card">' + docList('meet', 'עוד לא סוכמה ישיבה.') + '</div>';
   }
+  /* סיכום ישיבה — אפשר לתקן כל שורה (גם משימה ומי מטפל/ת) לפני שמעבירים לצ'ק ליסט (סקירה 12.10.26) */
   function meetDoc(d) {
-    var j = d.doc || {};
-    function ul(a) { return (a || []).length ? '<ul>' + a.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '<p class="small">אין.</p>'; }
-    return '<div class="card head"><h1>' + esc(j.title || d.title) + '</h1><div class="meta">' + (j.date ? 'הישיבה: ' + esc(heDate(j.date)) + ' · ' : '') + 'סוכם ' + esc(heDate(d.created)) + '</div></div>' +
-      '<div class="card tt-vdoc"><h2>מה נדון</h2>' + ul(j.summary) + '<h2>החלטות</h2>' + ul(j.decisions) +
+    var j = d.doc || {}, ed = d.mine;
+    function f(path, val, tag) { return ed ? '<' + tag + ' class="tt-ed" contenteditable="true" data-p="' + path + '">' + esc(val) + '</' + tag + '>' : '<' + tag + '>' + esc(val) + '</' + tag + '>'; }
+    function ul(a, key) { return (a || []).length ? '<ul>' + a.map(function (x, k) { return f(key + '.' + k, x, 'li'); }).join('') + '</ul>' : '<p class="small">אין.</p>'; }
+    return '<div class="card head">' + f('title', j.title || d.title, 'h1') + '<div class="meta">' + (j.date ? 'הישיבה: ' + esc(heDate(j.date)) + ' · ' : '') + 'סוכם ' + esc(heDate(d.created)) + '</div></div>' +
+      (ed ? '<p class="tt-note"><b>סיכום אוטומטי מהתמלול — כדאי לבדוק.</b> אפשר לתקן כל שורה ישירות בדף, גם את המשימות ומי מטפל/ת בהן, לפני ששומרים או מעבירים לצ\'ק ליסט.</p>' : '') +
+      '<div class="card tt-vdoc"><h2>מה נדון</h2>' + ul(j.summary, 'summary') + '<h2>החלטות</h2>' + ul(j.decisions, 'decisions') +
       '<h2>משימות</h2>' + ((j.tasks || []).length ? '<ul class="tt-tasks">' + j.tasks.map(function (t, i) {
-        return '<li><span><b>' + esc(t.text) + '</b>' + (t.who || t.due ? '<small>' + esc([t.who, t.due ? 'עד ' + heDate(t.due) : ''].filter(Boolean).join(' · ')) + '</small>' : '') + '</span>' +
+        return '<li><span>' + f('tasks.' + i + '.text', t.text, 'b') + '<small>' + (ed ? 'מטפל/ת: ' : '') + f('tasks.' + i + '.who', t.who || '', 'span') + (t.due ? ' · עד ' + esc(heDate(t.due)) : '') + '</small></span>' +
           (window.TZTASKS && TZTASKS.enabled() ? '<button type="button" class="btn sm" data-tt="tadd" data-i="' + i + '">לצ\'ק ליסט</button>' : '') + '</li>';
       }).join('') + '</ul>' + (window.TZTASKS && TZTASKS.enabled() && j.tasks.length > 1 ? '<button type="button" class="btn sm" data-tt="taddall">הוספת כל ' + j.tasks.length + ' המשימות לצ\'ק ליסט</button>' : '') : '<p class="small">לא עלו משימות.</p>') +
-      ((j.open || []).length ? '<h2>נשאר פתוח</h2>' + ul(j.open) : '') + '</div>' +
-      '<div class="acts" style="margin-top:12px"><button type="button" class="btn" data-tt="mprint">' + IC.print + 'הדפסה</button><button type="button" class="btn" data-tt="mcopy">' + IC.copy + 'העתקה</button>' +
+      ((j.open || []).length ? '<h2>נשאר פתוח</h2>' + ul(j.open, 'open') : '') + '</div>' +
+      '<div class="acts" style="margin-top:12px">' + (ed ? '<button type="button" class="btn primary" data-tt="msave">שמירה</button>' : '') + '<button type="button" class="btn" data-tt="mprint">' + IC.print + 'הדפסה</button><button type="button" class="btn" data-tt="mcopy">' + IC.copy + 'העתקה</button>' +
       '<button type="button" class="btn" data-tt="mback">לכל הישיבות</button>' + (d.mine ? '<button type="button" class="btn" data-tt="mdel">מחיקה</button>' : '') + '</div>';
   }
   function meetText(j) {
@@ -430,7 +442,7 @@
     return { date: heDate(todayIso()), school: T.school() ? T.school().name : '', yoetz: y.name, yoetzTel: y.phone, principal: principal() };
   }
   function pageL() {
-    var h = '<div class="card head"><h1>מכתבים</h1><div class="meta">פרטי בית הספר, המנהל/ת והיועץ/ת ממולאים לבד. פרטי התלמיד/ה ממלאים כאן לפני ההדפסה — <b>הם לא נשמרים בשום מקום</b>.</div></div>';
+    var h = '<div class="card head"><h1>מכתבים</h1><div class="meta">פרטי בית הספר, המנהל/ת והיועץ/ת ממולאים לבד. במכתבים המוכנים, פרטי התלמיד/ה ממלאים כאן לפני ההדפסה — <b>הם לא נשמרים ולא נשלחים לשום מקום</b>.</div></div>';
     if (LT && LETTERS[LT]) {
       var L = LETTERS[LT], a = autoFields();
       Object.keys(a).forEach(function (k) { if (LF[k] === undefined) LF[k] = a[k]; });
@@ -450,7 +462,8 @@
       return '<button type="button" class="dtile" data-tt="lopen" data-k="' + k + '"><span class="ic">' + IC.letter + '</span><span class="tx"><b>' + esc(LETTERS[k].name) + '</b><small>הנוסח מהנוהל · פרטי בית הספר ממולאים</small></span></button>';
     }).join('') + '</div></div>' +
       '<h2 class="pt">מכתב חופשי עם קרן</h2><div class="card">' + (!on() ? '<div class="empty">קרן עוד לא הופעלה.</div>' :
-        '<label class="small" for="lfReq">למי ועל מה? קרן תנסח, ואת/ה עורך/ת</label><textarea class="fld" id="lfReq" maxlength="1000" placeholder="למשל: מכתב להורי שכבת י׳ על ערב הורים ב-12.11 בשעה 18:00, עם בקשה לאשר הגעה">' + esc(LFREE.req) + '</textarea>' +
+        '<p class="tt-note">הבקשה נשלחת ל' + BOT() + ' (שירות בינה מלאכותית) כדי לנסח. <b>לא לכתוב כאן שם של תלמיד/ה או פרטים מזהים</b> — מוסיפים אותם במכתב אחרי הניסוח. הבקשה והמכתב לא נשמרים ביומן.</p>' +
+        '<label class="small" for="lfReq">למי ועל מה? ' + BOT() + ' תנסח, ואת/ה עורך/ת</label><textarea class="fld" id="lfReq" maxlength="1000" placeholder="למשל: מכתב להורי שכבת י׳ על ערב הורים ב-12.11 בשעה 18:00, עם בקשה לאשר הגעה">' + esc(LFREE.req) + '</textarea>' +
         '<div class="acts" style="margin-top:10px"><button type="button" class="btn primary" data-tt="lfree"' + (LFREE.busy ? ' disabled' : '') + '>' + IC.spark + (LFREE.busy ? 'קרן כותבת…' : 'קרן, תנסחי') + '</button></div>' +
         (LFREE.err ? '<p class="tt-err">' + esc(LFREE.err) + '</p>' : '') +
         (LFREE.res ? '<div class="tt-letter tt-free" style="margin-top:12px"><p>תאריך: ' + esc(heDate(todayIso())) + '</p>' +
@@ -527,8 +540,11 @@
       if (k === 'mprint') printHtml(dm.doc.title, meetHtml(dm.doc));
       else T.toast(copyHtml(rtlWrap(meetHtml(dm.doc)), meetText(dm.doc)) ? 'הועתק' : 'ההעתקה לא הצליחה');
     }
+    else if (k === 'msave') { var dm2 = docById('meet', MOPEN); collectEdits($('tzTool'), dm2.doc); dm2.title = dm2.doc.title; saveDoc('meet', dm2, b); }
     else if (k === 'tadd' || k === 'taddall') {
-      var dj = docById('meet', MOPEN).doc, list = k === 'tadd' ? [dj.tasks[+b.getAttribute('data-i')]] : dj.tasks;
+      var dm3 = docById('meet', MOPEN); if (dm3.mine) collectEdits($('tzTool'), dm3.doc);   /* מה שתוקן בדף — גם אם עוד לא נשמר */
+      var dj = dm3.doc, list = k === 'tadd' ? [dj.tasks[+b.getAttribute('data-i')]] : dj.tasks;
+      if (k === 'taddall' && !confirmTasks(list)) return;
       b.disabled = true;
       TZTASKS.add(list.map(function (t) { return { text: t.text, who: t.who, due: t.due, src: dj.title }; }), 'meet').then(function () {
         T.toast(list.length > 1 ? 'נוספו ' + list.length + ' משימות לצ\'ק ליסט האישי' : 'נוספה לצ\'ק ליסט האישי');

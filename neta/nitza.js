@@ -182,7 +182,9 @@
     if (b.hasAttribute('data-addall')) {
       var btns = [].slice.call(bub.querySelectorAll('.kr-add:not(.on)'));
       if (!btns.length) return;
-      addTasks(bub, btns.map(function (x) { var i = x.getAttribute('data-add').split('.'); return bub._r.groups[+i[0]].items[+i[1]]; }), btns.concat([b])); return;
+      var items = btns.map(function (x) { var i = x.getAttribute('data-add').split('.'); return bub._r.groups[+i[0]].items[+i[1]]; });
+      if (window.TZCONFIRMTASKS && !TZCONFIRMTASKS(items)) return;   /* רואים מה ייכנס לפני ההוספה (סקירה 12.10.26) */
+      addTasks(bub, items, btns.concat([b])); return;
     }
     var kind = b.getAttribute('data-kind'), q = b.getAttribute('data-q');
     if (kind === 'fill') { $('krQ').value = q; $('krQ').focus(); return; }

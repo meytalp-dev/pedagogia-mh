@@ -108,6 +108,11 @@
   ];
   var SCALE = ['במידה מועטה או בכלל לא', 'במידה בינונית', 'במידה רבה', 'במידה רבה מאוד'];
   var XV = 'list', XO = null, XID = '', XBUSY = false;   /* list | form | view */
+  /* טיוטת תצפית במכשיר — כל הקלדה נשמרת; מעבר עמוד, תשובה מאוחרת מהשרת או סגירת הדף לא מוחקים (סקירה 12.10.26).
+     נמחקת בשמירה, ב"יציאה בלי לשמור" וביציאה מהחשבון */
+  function XDK() { var s = T.school(); return 'neta.obsdraft.' + (s ? s.semel : ''); }
+  function draftGet() { try { return JSON.parse(localStorage.getItem(XDK()) || 'null'); } catch (e) { return null; } }
+  function draftPut() { try { if (XO) localStorage.setItem(XDK(), JSON.stringify({ id: XID, o: XO, t: Date.now() })); else localStorage.removeItem(XDK()); } catch (e) {} }
   function roster() { var r = (DOCS.roster || [])[0]; return r && r.doc && r.doc.names ? r.doc.names : []; }
   function obsList() { return (DOCS.obs || []).filter(function (d) { return d.doc; }); }
   function newObs(mode) {
@@ -119,13 +124,15 @@
   function pageX() {
     var head = '<div class="card head"><h1>תצפיות בשיעור</h1><div class="meta">תצפית מלאה לפי כלי תמ"ה, או תצפית קצרה לביקור מהיר. ' +
       'מטרת התצפית היא קודם כול תמונת מצב בית ספרית; משוב למורה — על בסיס אמון, ובידיעת המורה.</div></div>';
-    if (XV === 'form' && XO) return head + obsForm(XO);
+    if (XV === 'form' && XO) return head + '<p class="tt-note">הטיוטה נשמרת במכשיר בזמן ההקלדה — אפשר לעבור עמוד ולחזור. נשמרת בנטע רק בלחיצה על "שמירה".</p>' + obsForm(XO);
     if (XV === 'view') { var d = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0]; if (d) return head + obsView(d); }
     var L = obsList(), names = roster();
     var seenSet = {}; L.forEach(function (d) { seenSet[norm(d.doc.teacher)] = 1; });
     var notYet = names.filter(function (n) { return !seenSet[norm(n)]; });
     var tama = L.filter(function (d) { return d.doc.mode === 'tama'; });
-    return head +
+    var dr = draftGet();
+    return head + (dr && dr.o ? '<div class="tt-note">יש תצפית שלא נשמרה' + (dr.o.teacher ? ' (' + esc(dr.o.teacher) + ')' : '') + '. ' +
+        '<button type="button" class="btn sm primary" data-xt="draft">להמשיך</button> <button type="button" class="btn sm" data-xt="draftdel">למחוק את הטיוטה</button></div>' : '') +
       '<div class="card"><div class="acts"><button type="button" class="btn primary" data-xt="new" data-mode="tama">' + IC.eye + 'תצפית מלאה (תמ"ה)</button>' +
       '<button type="button" class="btn" data-xt="new" data-mode="short">תצפית קצרה</button></div>' +
       '<p class="small" style="margin:10px 0 0">כלי תמ"ה — "כלי למיפוי תמונת מצב בית ספרית של תהליכי הוראה ולמידה", <a href="' + TAMA_SRC + '" target="_blank" rel="noopener">מכון אבני ראשה</a>.</p></div>' +
@@ -492,6 +499,10 @@
   var CUR = '';
   function body(p) { return ({ n: pageN, x: pageX, b: pageB, y: pageY }[p])(); }
   function redraw() { var el = $('ntTool'); if (el && CUR) el.innerHTML = body(CUR); }
+  /* כל הקלדה בטופס התצפית — ישר למודל ולטיוטה, כדי שציור מחדש לא ימחק אותה */
+  function xLive(e) { var root = $('ntTool'); if (XV === 'form' && XO && root && root.contains(e.target) && e.target.closest('[data-xf],[data-xn],[data-xo],[data-xr]')) { readForm(); draftPut(); } }
+  document.addEventListener('input', xLive);
+  document.addEventListener('change', xLive);
   function readForm() {
     var root = $('ntTool'); if (!root || !XO) return;
     [].forEach.call(root.querySelectorAll('[data-xf]'), function (el) { XO[el.getAttribute('data-xf')] = el.value; });
@@ -535,8 +546,16 @@
       }
       return;
     }
-    if (k === 'new') { XO = newObs(b.getAttribute('data-mode')); XV = 'form'; XID = ''; redraw(); window.scrollTo(0, 0); }
-    else if (k === 'back') { XV = 'list'; XO = null; redraw(); }
+    if (k === 'new') {
+      if (draftGet() && !confirm('יש תצפית שלא נשמרה. להתחיל חדשה ולמחוק אותה?')) return;
+      XO = newObs(b.getAttribute('data-mode')); XV = 'form'; XID = ''; draftPut(); redraw(); window.scrollTo(0, 0);
+    }
+    else if (k === 'draft') { var dr = draftGet(); if (dr && dr.o) { XO = dr.o; XID = dr.id || ''; XV = 'form'; redraw(); window.scrollTo(0, 0); } }
+    else if (k === 'draftdel') { if (confirm('למחוק את הטיוטה?')) { XO = null; draftPut(); redraw(); } }
+    else if (k === 'back') {
+      if (XV === 'form' && XO) { readForm(); if (!confirm('לצאת בלי לשמור? מה שהוקלד יימחק.')) return; }
+      XV = 'list'; XO = null; draftPut(); redraw();
+    }
     else if (k === 'open') { XID = b.getAttribute('data-id'); XV = 'view'; redraw(); window.scrollTo(0, 0); }
     else if (k === 'edit') { var d0 = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0]; XO = JSON.parse(JSON.stringify(d0.doc)); XV = 'form'; redraw(); }
     else if (k === 'save') {
@@ -546,7 +565,7 @@
       XBUSY = true; redraw();
       var old = XID && (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0];
       (old ? (old.doc = XO, saveOld(old)) : saveNew('obs', XO)).then(function (d) {
-        XID = d.id; XV = 'view'; XO = null; T.toast('התצפית נשמרה');
+        XID = d.id; XV = 'view'; XO = null; draftPut(); T.toast('התצפית נשמרה');
       }).catch(function (er) { T.toast(errText(er && er.message)); }).then(function () { XBUSY = false; redraw(); window.scrollTo(0, 0); });
     }
     else if (k === 'del') {
