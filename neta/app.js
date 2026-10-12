@@ -974,6 +974,9 @@
     role: function () { return role(); }, me: function () { return ME; }, school: function () { return D && D.school; },
     as: function () { return AS; }, ready: function () { return READY; }, go: go,
     people: people, links: function () { return LINK; },
+    /* מצב דרישה של המטה (done/gap/wait/load/err) — לקישור משימה לדרישה: מה שאומת מהנתונים מסומן לבד (12.10.26) */
+    officeSt: function (k) { if (!D || !D.school) return ''; var x = items().filter(function (y) { return y.k === k; })[0]; return x ? x.st : ''; },
+    officeTitle: function (k) { if (!D || !D.school) return ''; var x = items().filter(function (y) { return y.k === k; })[0]; return x ? x.t : ''; },
     /* רק עמודי הצ'ק ליסט מצוירים מחדש — בעמוד אחר (למשל עריכת תוכנית) מתעדכן רק המונה בתפריט */
     refresh: function (force) { if (D && D.school) { side(); if (PAGE === 'home' || PAGE === 'c') render(force); } }
   };

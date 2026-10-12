@@ -81,6 +81,38 @@
   }
   function keep() { try { localStorage.setItem(cacheKey(), JSON.stringify(TASKS)); } catch (e) {} }
   function mine() { return (TASKS || []).filter(function (t) { return t.id.indexOf('o-') !== 0; }); }
+  /* ===== מקום אחד להשלמה (12.10.26, מיטל) =====
+     משימה עם קישור לדרישה של המטה נקשרת אליה: כשהדרישה מתעדכנת לבד מהנתונים — המשימה "אומת מהנתונים".
+     מצבים: פתוח · בטיפול (נפתחה טיוטת מייל / נקבעה תזכורת) · בוצע · אומת מהנתונים (מוסתר אחרי שבוע) */
+  var OFFICE_OF = { nispach: 'nispach', bs: 'bs', rg: 'rg', menor: 'menor', 'menor-msg': 'menor' };
+  function todayIso() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function linkedTo(k) { return mine().filter(function (t) { return t.mine && !t.done && OFFICE_OF[t.link] === k; }); }
+  function verify() {
+    if (!T.officeSt) return;
+    mine().forEach(function (t) {
+      var k = OFFICE_OF[t.link];
+      if (t.mine && !t.done && k && T.officeSt(k) === 'done') setTask(t.id, { done: true, state: 'verified' });
+    });
+  }
+  function stale(t) {   /* "אומת מהנתונים" לפני יותר משבוע — לא מציגים */
+    if (t.state !== 'verified' || !t.updated) return false;
+    var d = new Date(String(t.updated).replace(' ', 'T'));
+    return !isNaN(d) && Date.now() - d.getTime() > 7 * 864e5;
+  }
+  function touch(R, kind) {
+    if (!R || R.kind !== 'mine' || R.readOnly) return;
+    var t = (TASKS || []).filter(function (x) { return x.id === R.id; })[0];
+    if (!t || t.done) return;
+    setTask(R.id, { state: kind + '|' + todayIso() }); T.refresh(true);
+  }
+  function stateTag(t) {
+    var st = String(t.state || ''), m = st.split('|'), d = m[1] ? heDate(m[1]) : '';
+    if (st === 'verified') return '<span class="ck-ver">אומת מהנתונים</span>';
+    if (t.done) return '';
+    if (m[0] === 'mail' || m[0] === 'mail-wait') return '<span class="ck-wip">בטיפול · נפתחה טיוטת מייל' + (d ? ' ב-' + d : '') + '</span>';
+    if (m[0] === 'cal') return '<span class="ck-wip">בטיפול · נקבעה תזכורת' + (d ? ' ב-' + d : '') + '</span>';
+    return '';
+  }
   function openCount() { return mine().filter(function (t) { return t.mine && !t.done; }).length; }
   function officeDone(key) { var t = (TASKS || []).filter(function (x) { return x.id === 'o-' + key && x.mine; })[0]; return !!(t && t.done); }
 
@@ -205,7 +237,8 @@
     if (TASKS === null || (LOADING && !(TASKS || []).length)) { el.innerHTML = '<div class="card"><div class="empty">טוען את המשימות…</div></div>'; load(); return; }
     var rk = T.role() === 'rakaz', all = mine();
     var my = all.filter(function (t) { return t.mine; }), other = all.filter(function (t) { return !t.mine; });
-    var open = my.filter(function (t) { return !t.done; }), done = my.filter(function (t) { return t.done; });
+    verify();
+    var open = my.filter(function (t) { return !t.done; }), done = my.filter(function (t) { return t.done && !stale(t); });
     open.sort(function (a, b) { return (a.due || '9') < (b.due || '9') ? -1 : (a.due || '9') > (b.due || '9') ? 1 : 0; });
     var opts = '<option value="">מי מטפל/ת? (לא חובה)</option><option value="__me">אני</option>' + people().filter(function (p) { return p.email; }).map(function (p) {
       return '<option value="' + esc(p.email) + '">' + esc(p.name + (p.role ? ' · ' + p.role : '')) + '</option>';
@@ -239,8 +272,10 @@
     };
   }
   function mineRow(t, ro) {
+    var ask = !ro && t.mine && !t.done && String(t.state || '').indexOf('mail|') === 0
+      ? '<span class="ck-ask">שלחת את המייל? <button type="button" class="btn sm primary" data-ck="sent">כן, לסמן שבוצע</button> <button type="button" class="btn sm" data-ck="notyet">עוד לא</button></span>' : '';
     return row({ key: t.id, kind: 'mine', id: t.id, title: t.text, due: t.due, who: t.who, email: t.email, src: t.src ? 'מקור: ' + t.src : '', link: t.link, readOnly: !!ro || !t.mine },
-               { st: t.done ? 'done' : 'gap', box: 'check', acts: linkBtn(t.link, ''), tag: t.origin === 'keren' ? '<span class="ck-tag">מניצה</span>' : '' });
+               { st: t.done ? 'done' : 'gap', box: 'check', acts: ask + linkBtn(t.link, ''), tag: stateTag(t) + (t.origin === 'keren' ? '<span class="ck-tag">מניצה</span>' : '') });
   }
 
   /* ===== חלוניות יומן ומייל — מתחת לשורה, עם קישורים אמיתיים ===== */
@@ -272,6 +307,14 @@
     p.setAttribute('data-to', to);
   }
 
+  /* פעולה חיצונית על משימה (מייל / יומן) → "בטיפול", לא "בוצע" */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('.ck-p a'); if (!a) return;
+    var x = rowOf(a); if (!x) return;
+    var h = a.getAttribute('href') || '';
+    if (/^mailto:/.test(h)) touch(x.R, 'mail');
+    else if (/calendar\.google|^data:text\/calendar/.test(h)) touch(x.R, 'cal');
+  });
   function rowOf(el) { var li = el.closest('.ck-i'); return li ? { li: li, R: REG[li.getAttribute('data-key')], p: li.querySelector('.ck-p') } : null; }
   function toggle(x, kind) {
     var cur = x.p.getAttribute('data-kind');
@@ -302,7 +345,10 @@
         TASKS = TASKS.filter(function (y) { return y.id !== R.id; }); keep(); T.refresh(true); T.toast('נמחקה');
       }).catch(function () { T.toast('המחיקה נכשלה'); });
     }
+    else if (k === 'sent') { setTask(R.id, { done: true }); T.refresh(true); T.toast('סומן שבוצע'); }
+    else if (k === 'notyet') { setTask(R.id, { state: 'mail-wait|' + todayIso() }); T.refresh(true); }
     else if (k === 'gmail') {
+      touch(R, 'mail');
       var to = x.p.getAttribute('data-to'), m = mailContent(R, to), ok = copyHtml(m.html, m.text);
       window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) + '&su=' + encodeURIComponent(m.sub) + (ok ? '' : '&body=' + encodeURIComponent(m.text)), '_blank', 'noopener');
       T.toast(ok ? 'הנוסח הועתק. לחצו בגוף המייל ו-Ctrl+V' : 'נפתחה טיוטה');
@@ -334,7 +380,7 @@
     setTask(R.id, f);
   }
 
-  window.TZTASKS = { officeHtml: officeHtml, mountMine: mountMine, add: add, load: load, officeDone: officeDone, openCount: openCount,
+  window.TZTASKS = { officeHtml: officeHtml, mountMine: mountMine, add: add, load: load, officeDone: officeDone, openCount: openCount, linkedTo: linkedTo, verify: verify,
                      linkOf: linkOf, linkBtn: linkBtn, matchWho: matchWho, nextSunday: nextSunday, heDate: heDate, enabled: on };
   function boot() { if (on()) load(); }
   document.addEventListener('tzohar:ready', function () { setTimeout(boot, 0); });   /* אחרי ש-keren.js נדלקת */

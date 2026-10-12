@@ -108,6 +108,11 @@ ul.ck>.ck-i:first-child{border-top:0}
 .ck-m .late{color:var(--bad);font-weight:700}
 .ck-src{background:var(--paper);border-radius:99px;padding:0 9px}
 .ck-tag{background:#f4f1fa;color:#5b4f8f;border-radius:99px;padding:0 9px;font-weight:700}
+/* 12.10.26: מקום אחד להשלמה — בטיפול / אומת מהנתונים / משימה קשורה / שלחת? */
+.ck-wip{background:var(--amber-soft);color:#8a5300;border-radius:99px;padding:0 9px;font-weight:700}
+.ck-ver{background:var(--ok-soft);color:var(--ok);border-radius:99px;padding:0 9px;font-weight:700}
+.ck-link{background:var(--blue-soft);color:var(--navy);border-radius:99px;padding:0 9px}
+.ck-ask{display:flex;flex-wrap:wrap;align-items:center;gap:6px;width:100%;background:var(--amber-soft);border-radius:10px;padding:6px 10px;font-weight:700;color:#4a3b12}
 .ck-a{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
 .ck-tool{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--blue);font-weight:700;font-size:13.5px;cursor:pointer;padding:6px 8px;border-radius:10px;min-height:36px}
 .ck-tool:hover,.ck-tool[aria-expanded=true]{background:var(--blue-soft)}

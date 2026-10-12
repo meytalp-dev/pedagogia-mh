@@ -401,7 +401,11 @@
                 ['info', 'מידע על בית הספר', ['s', 'm', 'k']]];
   function nextStep() {
     var all = items(), gap = all.filter(function (x) { return x.st === 'gap'; })[0];
-    if (gap) return { t: gap.t, d: gap.plain || '', go: 'o', btn: 'לטיפול' };
+    if (gap) {
+      /* דרישה שיש לה משימה קשורה — רואים מי מטפל/ת, בלי כפילות (12.10.26) */
+      var lk = hasMine() && TZTASKS.linkedTo ? TZTASKS.linkedTo(gap.k)[0] : null;
+      return { t: gap.t, d: lk ? 'בטיפול' + (lk.who ? ' · ' + lk.who : '') + (lk.due ? ' · עד ' + TZTASKS.heDate(lk.due) : '') : (gap.plain || ''), go: 'o', btn: 'לטיפול' };
+    }
     var nm = hasMine() ? TZTASKS.openCount() : 0;
     if (nm) return { t: nm === 1 ? 'משימה אחת פתוחה ברשימה שלך' : nm + ' משימות פתוחות ברשימה שלך', d: '', go: 'c', btn: 'למשימות שלי' };
     return null;
@@ -587,8 +591,6 @@
   function vaadSec() {
     var rows = D.vaadot, rk = isRakaz(), title = 'ועדה מלווה תשפ״ו' + (rk ? ' · החלקים הפדגוגיים' : '');
     if (!rows) return sec('vaad', I.flag, title, 'לא נטען', failed());
-    /* בית ספר שלא היה קיים בתשפ״ו (אור דניאל, מיטל 12.10.26) — אין ועדה ואין חוסר */
-    if (!rows.length && String(D.school.semel) === '42925') return sec('vaad', I.flag, title, 'בית ספר חדש', '<div class="empty">בית ספר חדש — לא היה קיים בתשפ״ו, ולכן אין ועדה מלווה מתשפ״ו.</div>');
     /* בית ספר שלא היה קיים בתשפ״ו (אור דניאל, מיטל 12.10.26) — אין ועדה ואין חוסר */
     if (!rows.length && String(D.school.semel) === '42925') return sec('vaad', I.flag, title, 'בית ספר חדש', '<div class="empty">בית ספר חדש — לא היה קיים בתשפ״ו, ולכן אין ועדה מלווה מתשפ״ו.</div>');
     if (!rows.length) return sec('vaad', I.flag, title, 'אין', '<div class="empty">לא התקבל בצוהר מסמך של ועדה מלווה מתשפ״ו.</div>');
@@ -1037,6 +1039,9 @@
     role: function () { return role(); }, me: function () { return ME; }, school: function () { return D && D.school; },
     as: function () { return AS; }, ready: function () { return READY; }, go: go,
     people: people, links: function () { return LINK; },
+    /* מצב דרישה של המטה (done/gap/wait/load/err) — לקישור משימה לדרישה: מה שאומת מהנתונים מסומן לבד (12.10.26) */
+    officeSt: function (k) { if (!D || !D.school) return ''; var x = items().filter(function (y) { return y.k === k; })[0]; return x ? x.st : ''; },
+    officeTitle: function (k) { if (!D || !D.school) return ''; var x = items().filter(function (y) { return y.k === k; })[0]; return x ? x.t : ''; },
     /* רק עמודי הצ'ק ליסט מצוירים מחדש — בעמוד אחר (למשל עריכת תוכנית) מתעדכן רק המונה בתפריט */
     refresh: function (force) { if (D && D.school) { side(); if (PAGE === 'home' || PAGE === 'o' || PAGE === 'c') render(force); } }
   };
