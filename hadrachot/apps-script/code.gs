@@ -7417,8 +7417,17 @@ function emailsSubmit(p) {
 const MENOR_UPDATE = {
   id: '2026-10-12',
   kinds: ['guide'],
-  subject: 'מה חדש במנור: שאלות המורים מגיעות אליך במייל',
-  intro: 'כמה חידושים במנור מאז העדכון האחרון, והכי חשוב — השאלות של המורים:',
+  subject: 'מה חדש במנור: הרישום למפגשים השתנה — בלי קוד',
+  // lead — העדכון הראשי, בתיבה מודגשת בראש המייל (מיטל 12.10.26: "הכי חשוב ובולט")
+  lead: { title: 'הרישום למפגשים השתנה — פשוט יותר, בלי קוד',
+    text: 'בעקבות ההשתתפות של מיטל בהדרכות בשבועות האחרונים, ראינו כמה הרישום היה מסורבל: מורים נתקעו באמצע, ואתם נדרשתם להקרין קוד. ' +
+          'אנחנו רוצים שהרישום יהיה הכי פשוט וקל — ולכן שינינו אותו:\n\n' +
+          '• אין יותר קוד ואין הקרנה. הרישום נפתח לבד 15 דקות לפני כל מפגש שבתוכנית השנתית, ונסגר שעתיים אחרי תחילתו.\n' +
+          '• המורים לוחצים על הקישור של המפגש — אותו קישור שאתם מדביקים בצ\'אט — ואז "אני כאן". ' +
+          'מי שעוד לא נרשם/ה למנור נרשם/ת פעם אחת עם מייל וקוד, וחוזר/ת ישר למפגש. שאלת ההשתלמות נשאלת רק בכניסה הבאה, לא באמצע ההדרכה.\n' +
+          '• אצלכם במנור רואים רק את מי שנרשם עכשיו, וכפתור "אישור כולם". רשימת הקבוצה המלאה מקופלת, להוספה ידנית.\n' +
+          '• כשהרישום נסגר מגיע אליכם מייל עם "אישור כולם". מה שלא אושר — מאושר אוטומטית אחרי 3 ימים.' },
+  intro: 'ועוד כמה חידושים מאז העדכון האחרון:',
   items: [
     { title: 'השאלות שלך מהמורים',
       text: '{OPEN_Q}' },
@@ -7533,7 +7542,10 @@ function updBuild_(r) {
   const L = updLinks_(r);
   const btn = (u, t, bg) => '<a href="' + u + '" style="background:' + (bg || '#1A5365') + ';color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">' + remindEsc_(t) + '</a>';
   const items = U.items.filter(it => !it.only || it.only.indexOf(r.kind + ':' + r.slug) >= 0);
-  let body = '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
+  let body = U.lead ? '<div style="background:#FFF6E0;border:2px solid #E8B84A;border-radius:12px;padding:14px 16px;margin:0 0 18px">' +
+    '<p style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#143E4C">' + remindEsc_(U.lead.title) + '</p>' +
+    '<p style="margin:0">' + guideTextHtml_(U.lead.text) + '</p></div>' : '';
+  body += '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
   items.forEach((it, i) => {
     const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r))
       .replace('{OPEN_Q}', updOpenQHtml_(r, L, btn));
