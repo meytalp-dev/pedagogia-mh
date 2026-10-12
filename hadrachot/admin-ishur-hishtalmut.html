@@ -99,7 +99,7 @@
   const BEFORE = { passed: 'עבר/ה', registered: 'נרשם/ה', none: 'לא נרשם/ה', '': 'טרם ענה/תה' };
   let rows = [], dryOk = false;
 
-  function reset() { dryOk = false; $('ia-run').disabled = true; $('ia-report').innerHTML = ''; }
+  function reset() { dryOk = false; $('ia-report').innerHTML = ''; }
   function drawList() {
     const n = rows.filter(r => r.checked).length;
     $('ia-list').innerHTML = '<div class="ia-counts"><span class="badge ok">' + n + ' מסומנים</span>' +
@@ -109,6 +109,7 @@
         ' aria-label="' + esc(r.name) + '"></td><td>' + esc(r.name) + '</td><td>' + esc(r.school) + '</td>' +
         '<td class="ia-hide-sm ia-src">' + esc(r.source || '') + '</td></tr>').join('') + '</table></div>';
     $('ia-dry').disabled = !n;
+    $('ia-run').disabled = !n;
   }
   $('ia-list').addEventListener('change', e => {
     const c = e.target.closest('[data-i]');
@@ -121,7 +122,7 @@
   $('ia-file').addEventListener('change', async e => {
     reset(); rows = []; $('ia-list').innerHTML = '';
     const f = e.target.files[0];
-    if (!f) { $('ia-dry').disabled = true; return; }
+    if (!f) { $('ia-dry').disabled = true; $('ia-run').disabled = true; return; }
     try {
       const j = JSON.parse(await f.text());
       rows = (Array.isArray(j) ? j : j.rows || []).filter(r => r && r.id)
@@ -133,7 +134,7 @@
       drawList();
     } catch (err) {
       $('ia-msg').className = 'ia-msg err'; $('ia-msg').textContent = 'הקובץ לא נקרא. צריך קובץ JSON עם רשימת מורים (rows).';
-      $('ia-dry').disabled = true;
+      $('ia-dry').disabled = true; $('ia-run').disabled = true;
     }
   });
 
@@ -148,13 +149,13 @@
     if (!r || !r.ok) {
       $('ia-msg').className = 'ia-msg err';
       $('ia-msg').textContent = 'לא הצליח' + (r && r.error ? ' (' + r.error + ')' : '') + '. ' +
-        (dryRun ? 'אפשר לנסות שוב.' : 'לפני שמנסים שוב — בדיקה יבשה, כדי לראות מה כבר נכתב.');
+        (r && r.error === 'forbidden' ? 'צריך להיכנס שוב למנור כמטה ולחזור לכאן.' :
+          dryRun ? 'אפשר לנסות שוב.' : 'לפני שמנסים שוב — בדיקה יבשה, כדי לראות מה כבר נכתב.');
       if (!dryRun) reset();
-      return;
+      return null;
     }
     const d = r.data;
     dryOk = dryRun;
-    $('ia-run').disabled = !dryRun || !d.approve;
     $('ia-msg').textContent = dryRun
       ? 'בדיקה יבשה — שום דבר לא נכתב. ' + (d.approve ? 'אם הדוח נראה נכון: "אישור בפועל".' : 'אין מה לסמן.')
       : 'סומנו ' + d.approve + ' מורים "' + d.by + '". הם מופיעים עכשיו בדף ההשתלמות ב"עברו השתלמות — עם אישור".';
@@ -169,12 +170,18 @@
       d.rows.map(x => '<tr><td>' + esc(x.name || x.id) + '</td><td>' + esc(x.school || '') + '</td><td>' +
         esc(x.before === undefined ? '' : (BEFORE[x.before] || x.before) + (x.hadFile ? ' · יש קובץ' : '')) + '</td><td>' +
         esc(STATUS[x.status] || x.status) + '</td></tr>').join('') + '</table></div>';
+    return d;
   }
   $('ia-dry').addEventListener('click', () => send(true));
-  $('ia-run').addEventListener('click', () => {
-    if (!dryOk) return;
-    const n = rows.filter(r => r.checked).length;
-    if (!confirm('לסמן ' + n + ' מורים "' + ($('ia-by').value.trim() || 'באישור המדריכה') + '"? (שום מייל לא נשלח)')) return;
+  /* 12.10.26: הכפתור היה נעול עד בדיקה יבשה, ומיטל לא ידעה למה. עכשיו הוא תמיד
+     פתוח: מריץ בדיקה יבשה בעצמו, מציג את הדוח ושואל לפני שכותבים. */
+  $('ia-run').addEventListener('click', async () => {
+    const d = await send(true);
+    if (!d) return;
+    if (!d.approve) return;
+    const by = $('ia-by').value.trim() || 'באישור המדריכה';
+    if (!confirm('לסמן ' + d.approve + ' מורים "' + by + '"?' +
+      (d.already ? '\n(' + d.already + ' כבר מאושרים — לא ישתנו)' : '') + '\nשום מייל לא נשלח.')) return;
     send(false);
   });
 })();
