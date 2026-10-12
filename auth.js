@@ -366,7 +366,8 @@
       Array.prototype.forEach.call(g.querySelectorAll('.pmh-tab'), function (b) {
         b.setAttribute('aria-selected', b.getAttribute('data-role') === role ? 'true' : 'false');
       });
-      var list = people.filter(function (p) { return p.role === role; });
+      /* מי שאינו מנהל/ת, רכז/ת או מפקח/ת (למשל tikshuv — הגוף המפעיל) מופיע/ה בלשונית הראשונה רק בעמוד של המרחב שלו/ה (12.10.26) */
+      var list = people.filter(function (p) { return p.role === role || (role === 'menahalim' && need.indexOf(p.role) > -1); });
       schoolSel.hidden = byMail || !bySchool();
       if (bySchool()) {
         /* תמיד 64 בתי הספר מפריסת הפיקוח (school-names.js) — גם כשאין
