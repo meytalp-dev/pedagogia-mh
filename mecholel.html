@@ -506,6 +506,17 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 .mg-fb .row button.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .mg-fb textarea{display:block;width:100%;margin-top:10px;font:inherit;font-size:var(--fs-sm);padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;min-height:70px;resize:vertical}
 .mg-fb .send{margin-top:8px}
+/* שאלון קצר למשתמשים (?seker=) */
+.mg-sk h2{color:var(--navy);font-size:var(--fs-lg);margin:0 0 4px}
+.mg-sk>p{margin:0 0 14px;color:var(--muted,#555)}
+.mg-sk .q{margin:16px 0 0}
+.mg-sk .q b{display:block;color:var(--navy);margin-bottom:8px}
+.mg-sk .row{display:flex;flex-wrap:wrap;gap:8px}
+.mg-sk .row button{font:inherit;font-weight:800;font-size:var(--fs-sm);padding:9px 16px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;min-height:42px}
+.mg-sk .row button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mg-sk textarea{display:block;width:100%;font:inherit;font-size:var(--fs-sm);padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;min-height:90px;resize:vertical;box-sizing:border-box}
+.mg-sk .send{margin-top:16px}
+.mg-sk .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 </style>
 
 <div class="mg">
@@ -1497,7 +1508,69 @@ function openSaved(lid, toResults){
   });
 }
 
+/* =====================================================================
+   שאלון קצר למשתמשים (12.10.26) — mecholel.html?seker=<קוד אישי מהמייל>, או ?seker=1 אחרי כניסה.
+   מחליף את האשף בכרטיס של 5 שאלות. התשובות בשרת (אירוע "סקר") → תובה, שימוש → מחולל.
+   ===================================================================== */
+var SEKER_Q = [
+  { k:"used",  q:"השתמשת בשיעור בכיתה?",          a:["כן","חלקית","עוד לא"] },
+  { k:"best",  q:"איזה תוצר הכי עזר?",             a:["מערך שיעור","פתיחה","מצגת","משחק","דף עבודה","בוחן"] },
+  { k:"saved", q:"כמה זמן זה חסך לך?",             a:["כלום","קצת","הרבה"] },
+  { k:"ease",  q:"כמה קל היה להשתמש? (1 = קשה, 5 = קל מאוד)", a:["1","2","3","4","5"] }
+];
+function sekerCard(sk){
+  var card = document.querySelector(".mg-card"), c = document.createElement("div");
+  c.className = "mg-card mg-sk";
+  var ans = {};
+  function body(name){
+    c.innerHTML = "<h2>" + (name ? "שלום " + esc(name) + ", " : "") + "תודה שניסית את מחולל השיעורים</h2>" +
+      "<p>חמש שאלות קצרות, פחות משתי דקות. כל תשובה עוזרת לנו לשפר את המחולל.</p>" +
+      SEKER_Q.map(function(x){
+        return '<div class="q"><b id="sk-' + x.k + '">' + x.q + '</b><div class="row" role="group" aria-labelledby="sk-' + x.k + '" data-k="' + x.k + '">' +
+          x.a.map(function(a){ return '<button type="button">' + a + '</button>'; }).join("") + "</div></div>";
+      }).join("") +
+      '<div class="q"><b id="sk-text">מה הכי חסר, או מה היה מעצבן?</b><textarea aria-labelledby="sk-text" placeholder="כל מה שעולה — גם משפט אחד עוזר"></textarea></div>' +
+      (sk || me() ? "" : '<div class="mg-msg on">כדי שנדע מי ענה, נכנסים פעם אחת עם הרישום במנור או דרך אדווה, וחוזרים לכאן.' +
+        '<div class="acts"><a class="btn line sm" href="hadrachot/teacher/" target="_blank" rel="noopener">כניסה למורים</a>' +
+        '<a class="btn line sm" href="hadrachot/" target="_blank" rel="noopener">בעלי תפקידים</a>' +
+        '<a class="btn line sm" href="https://tfasim.pedagogiamh.co.il/shagririm/" target="_blank" rel="noopener">שגרירי חדשנות · אדווה</a></div></div>') +
+      '<button type="button" class="btn primary send">שליחה</button><div class="mg-rmsg" aria-live="polite"></div>';
+    Array.prototype.forEach.call(c.querySelectorAll(".row"), function(row){
+      row.addEventListener("click", function(e){
+        var b = e.target.closest("button"); if (!b) return;
+        ans[row.getAttribute("data-k")] = b.textContent;
+        Array.prototype.forEach.call(row.children, function(x){ x.classList.toggle("on", x === b); });
+      });
+    });
+    c.querySelector(".send").addEventListener("click", function(){
+      var out = c.querySelector(".mg-rmsg"), btn = this, req = { action:"seker", text: c.querySelector("textarea").value.trim() };
+      SEKER_Q.forEach(function(x){ req[x.k] = ans[x.k] || ""; });
+      if (!req.text && !SEKER_Q.some(function(x){ return req[x.k]; })) { out.textContent = "אפשר לבחור תשובה אחת לפחות, או לכתוב משפט."; return; }
+      if (sk) req.sk = sk;
+      else if (!me()) { out.textContent = "צריך להיכנס קודם (הכפתורים למעלה), ואז לשלוח."; return; }
+      btn.disabled = true; out.textContent = "שולחים…";
+      post(req, 30000).then(function(d){
+        if (d && d.ok) {
+          c.innerHTML = "<h2>תודה רבה!</h2><p>התשובות נשמרו. נחזור אליך אם נצטרך לשאול עוד משהו.</p>" +
+            '<button type="button" class="btn line sm" id="sk-back">למחולל השיעורים</button>';
+          el("sk-back").addEventListener("click", function(){ c.remove(); card.hidden = false; history.replaceState(null, "", location.pathname); });
+        } else { btn.disabled = false; out.textContent = d && /login/.test(d.error || "") ? ERR[d.error] : "לא נשלח. נסו שוב בעוד רגע."; }
+      });
+    });
+  }
+  card.hidden = true;
+  card.parentNode.insertBefore(c, card);
+  body("");
+  if (sk) fetch(LESSON_BACKEND + "?sk=" + sk).then(function(r){ return r.json(); }).then(function(d){
+    var h = c.querySelector("h2"); if (d && d.ok && d.name && h && !c.querySelector("textarea").value && !Object.keys(ans).length) body(d.name);
+  }).catch(function(){});
+}
+
 /* כניסה לעמוד */
+(function(){
+  var sk = new URLSearchParams(location.search).get("seker");
+  if (sk) document.addEventListener("DOMContentLoaded", function(){ sekerCard(/^[a-f0-9]{20}$/.test(sk) ? sk : ""); });
+})();
 (function(){
   var q = new URLSearchParams(location.search), r = q.get("r") || "";
   track("כניסה לעמוד", /^[a-f0-9]{32}$/.test(r) ? "תוצאות מהמייל" : "");
