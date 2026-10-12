@@ -1313,10 +1313,17 @@ async function submitQuestion(e) {
   e.preventDefault();
   const text = document.getElementById('q-text').value.trim();
   if (!text) return;
+  // נעילה עד שהשרת עונה — לחיצות חוזרות על שרת איטי יצרו 153 שאלות כפולות (12.10.26)
+  const btn = e.target.querySelector('button[type="submit"]');
+  if (btn) { if (btn.disabled) return; btn.disabled = true; }
 
   // k — השרת מזהה את המורה לפי המפתח ושולח מייל למדריכ/ה (11.10.26)
   const res = await TS.apiPost('questions.create', { teacherId, k: teacherKey, question: text });
-  if (res.ok) {
+  if (btn) btn.disabled = false;
+  if (res.ok && res.data && res.data.duplicate) {
+    TS.toast('השאלה הזו כבר נשלחה — המדריכ/ה קיבל/ה אותה');
+    document.getElementById('q-text').value = '';
+  } else if (res.ok) {
     TS.toast('השאלה נשלחה — המדריכ/ה יקבל/תקבל אותה גם במייל');
     document.getElementById('q-text').value = '';
     questions.push(res.data);

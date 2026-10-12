@@ -1831,16 +1831,33 @@ function createQuestion(p) {
   const t = p.k ? teacherByKey_(p.k) : null;
   const question = String(p.question || '').trim();
   if (t && !question) return { ok: false, error: 'missing_text' };
-  const obj = {
-    id: newId('q'),
-    teacherId: t ? String(t.id) : p.teacherId,
-    question: t ? question.slice(0, 4000) : p.question,
-    answer: '',
-    status: 'open',
-    createdAt: new Date().toISOString(),
-    answeredAt: ''
-  };
-  appendRow('questions', obj);
+  /* כפילויות (12.10.26): 153 מתוך 327 שאלות היו אותה שאלה מאותו מורה, שנשלחה שוב
+     כשהשרת היה איטי. אותה שאלה מאותו מורה בתוך 30 דקות — מחזירים את הקיימת, בלי מייל.
+     הנעילה — כי ארבע לחיצות הגיעו בתוך 8 שניות, וכולן היו עוברות את הבדיקה במקביל. */
+  const tid = t ? String(t.id) : String(p.teacherId || '');
+  const lock = LockService.getScriptLock();
+  try { lock.waitLock(15000); } catch (e) { return { ok: false, error: 'busy' }; }
+  let obj;
+  try {
+    if (tid && tid.indexOf('verify:') !== 0) {
+      const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+      const since = Date.now() - 30 * 60000;
+      const dup = readAll('questions').find(q => String(q.teacherId) === tid &&
+        norm(q.question) === norm(question || p.question) && new Date(toIso_(q.createdAt)).getTime() > since);
+      if (dup) return { ok: true, data: Object.assign({}, dup, { duplicate: true }) };
+    }
+    obj = {
+      id: newId('q'),
+      teacherId: t ? String(t.id) : p.teacherId,
+      question: t ? question.slice(0, 4000) : p.question,
+      answer: '',
+      status: 'open',
+      createdAt: new Date().toISOString(),
+      answeredAt: ''
+    };
+    appendRow('questions', obj);
+  } finally { lock.releaseLock(); }
+  // המייל אחרי שחרור הנעילה — שליחה איטית לא תעכב כתיבות אחרות
   if (t) { try { questionNotifyGuides_(t, obj); } catch (e) { console.error('questionNotifyGuides_: ' + e); } }
   return { ok: true, data: obj };
 }
