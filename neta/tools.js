@@ -253,6 +253,8 @@
       '<button type="button" class="btn" data-xt="print">' + IC.print + 'הדפסה</button>' + (d.mine ? '<button type="button" class="btn" data-xt="del">מחיקה</button>' : '') + '</div></div>';
     h += '<h2 class="pt">משוב למורה</h2><div class="card">';
     if (!f) h += on() && d.mine ? '<p class="small">ניצה מנסחת משוב מתוך התצפית: חוזקות, כיווני צמיחה וצעד משותף. עורכים לפני שמשתפים.</p>' +
+      /* 12.10.26 (סקירת קודקס): שם המורה מוסר לפני השליחה — אבל ההערות החופשיות נשלחות כמו שהן */
+      '<p class="tt-note">שם המורה לא נשלח לניצה. <b>מה שכתוב בהערות נשלח כמו שהוא</b> — אם כתבת שם של מורה או תלמיד/ה, כדאי לערוך ולמחוק לפני שמבקשים משוב.</p>' +
       '<button type="button" class="btn primary" data-xt="fb"' + (XBUSY ? ' disabled' : '') + '>' + IC.spark + (XBUSY ? 'ניצה כותבת…' : 'ניצה, נסחי משוב') + '</button>' : '<div class="empty">עוד אין משוב.</div>';
     else {
       var text = fbText(f), href = 'mailto:?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(text);
