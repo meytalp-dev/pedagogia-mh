@@ -589,6 +589,8 @@
     if (!rows) return sec('vaad', I.flag, title, 'לא נטען', failed());
     /* בית ספר שלא היה קיים בתשפ״ו (אור דניאל, מיטל 12.10.26) — אין ועדה ואין חוסר */
     if (!rows.length && String(D.school.semel) === '42925') return sec('vaad', I.flag, title, 'בית ספר חדש', '<div class="empty">בית ספר חדש — לא היה קיים בתשפ״ו, ולכן אין ועדה מלווה מתשפ״ו.</div>');
+    /* בית ספר שלא היה קיים בתשפ״ו (אור דניאל, מיטל 12.10.26) — אין ועדה ואין חוסר */
+    if (!rows.length && String(D.school.semel) === '42925') return sec('vaad', I.flag, title, 'בית ספר חדש', '<div class="empty">בית ספר חדש — לא היה קיים בתשפ״ו, ולכן אין ועדה מלווה מתשפ״ו.</div>');
     if (!rows.length) return sec('vaad', I.flag, title, 'אין', '<div class="empty">לא התקבל בצוהר מסמך של ועדה מלווה מתשפ״ו.</div>');
     var by = {}, order = [];
     rows.forEach(function (x) { var st = x.stage || 'ועדה מלווה'; if (!by[st]) { by[st] = []; order.push(st); } by[st].push(x); });
