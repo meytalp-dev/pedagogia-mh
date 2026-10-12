@@ -1819,7 +1819,73 @@ function listQuestions(p) {
   let data = readAll('questions');
   if (p.teacherId) data = data.filter(q => q.teacherId === p.teacherId);
   if (p.status)    data = data.filter(q => q.status === p.status);
+  // עותק כפול (questionsDedupeApply) — לא מוצג למדריכ/ה ולמורה. נשאר בגיליון, הפיך.
+  else             data = data.filter(q => q.status !== 'duplicate');
   return { ok: true, data };
+}
+
+/* ניקוי שאלות כפולות (12.10.26, אישור מיטל) — מריצים מהעורך:
+   questionsDedupeDryRun — רק סופר ומדפיס ללוג, לא משנה כלום
+   questionsDedupeApply  — מסמן status=duplicate
+   questionsDedupeUndo   — מחזיר כל duplicate ל-open (כולן היו open לפני הסימון)
+   כלל: אותו מורה + אותו טקסט. שאלה שנענתה לא נוגעים בה לעולם. בקבוצה עם תשובה —
+   כל העותקים הפתוחים מסומנים; בקבוצה בלי תשובה — נשאר העותק הראשון. */
+function questionsDedupePlan_() {
+  const s = sheet('questions');
+  const range = s.getDataRange().getValues();
+  const h = range[0];
+  const c = { id: h.indexOf('id'), tid: h.indexOf('teacherId'), q: h.indexOf('question'),
+              st: h.indexOf('status'), at: h.indexOf('createdAt') };
+  const norm = x => String(x || '').replace(/\s+/g, ' ').trim();
+  const groups = {};
+  for (let i = 1; i < range.length; i++) {
+    const tid = String(range[i][c.tid] || '');
+    if (!tid || tid.indexOf('verify:') === 0) continue;
+    const k = tid + '|' + norm(range[i][c.q]);
+    (groups[k] = groups[k] || []).push({ row: i, st: String(range[i][c.st]), at: String(toIso_(range[i][c.at]) || '') });
+  }
+  const rows = [];
+  Object.keys(groups).forEach(k => {
+    const a = groups[k];
+    if (a.length < 2) return;
+    a.sort((x, y) => x.at.localeCompare(y.at));
+    const keep = a.some(x => x.st === 'answered') ? null : a[0];
+    a.forEach(x => { if (x.st === 'open' && x !== keep) rows.push(x.row); });
+  });
+  return { s: s, range: range, stCol: c.st, rows: rows };
+}
+
+function questionsDedupeDryRun() {
+  const p = questionsDedupePlan_();
+  const tidCol = p.range[0].indexOf('teacherId');
+  const open = p.range.slice(1).filter(r => String(r[p.stCol]) === 'open' && String(r[tidCol]).indexOf('verify:') !== 0).length;
+  console.log('יסומנו ככפולות: ' + p.rows.length + ' · פתוחות עכשיו: ' + open + ' · פתוחות אחרי: ' + (open - p.rows.length));
+}
+
+function questionsDedupeApply() {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const p = questionsDedupePlan_();
+    // תא אחר תא, לא כל העמודה — כך תשובה שנשמרת באותן שניות לא נדרסת
+    p.rows.forEach(i => p.s.getRange(i + 1, p.stCol + 1).setValue('duplicate'));
+    auditLog_('', 'questions.dedupe', 'questions', '', 'ok', 'marked=' + p.rows.length);
+    console.log('סומנו ככפולות: ' + p.rows.length);
+  } finally { lock.releaseLock(); }
+}
+
+function questionsDedupeUndo() {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    const s = sheet('questions');
+    const range = s.getDataRange().getValues();
+    const st = range[0].indexOf('status');
+    let n = 0;
+    range.forEach((r, i) => { if (i && String(r[st]) === 'duplicate') { s.getRange(i + 1, st + 1).setValue('open'); n++; } });
+    auditLog_('', 'questions.dedupeUndo', 'questions', '', 'ok', 'restored=' + n);
+    console.log('הוחזרו לפתוחות: ' + n);
+  } finally { lock.releaseLock(); }
 }
 
 /* "שאלה למדריכ/ה" — התראות במייל (11.10.26, בקשת מיטל).
