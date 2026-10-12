@@ -823,6 +823,15 @@ function planMeetings(slug) {
   return (plan && plan.meetings) ? plan.meetings : [];
 }
 function planDays(m) { return (m.dates && m.dates.length) ? m.dates : [m.date, m.date2].filter(Boolean); }
+// הימים שלי במפגש — מת"לית של אביגיל רואה רק את יום הקבוצה שלה (groups, 12.10.26).
+// בלי קבוצה ידועה — כל הימים.
+function myPlanDays(m) {
+  const days = planDays(m);
+  const g = teacher && teacher.matalGroup;
+  if (!g || !Array.isArray(m.groups)) return days;
+  const mine = days.filter((d, i) => !m.groups[i] || m.groups[i] === g);
+  return mine.length ? mine : days;
+}
 // הנושא של מועד: מה שנשמר בשרת, ואם אין — מהתוכנית השנתית (87/87 מפגשים עם נושא)
 function planTopic(slug, date) {
   const m = planMeetings(slug).find(x => planDays(x).indexOf(date) >= 0);
@@ -924,9 +933,9 @@ function renderNext(scope, slug) {
   const today = String(scope.today || '').slice(0, 10);
   const mySubject = teacher && teacher.subject;
   const next = planMeetings(slug).find(m =>
-    (m.date2 || m.date) >= today && (!m.subject || !mySubject || m.subject === mySubject));
+    myPlanDays(m).some(d => d >= today) && (!m.subject || !mySubject || m.subject === mySubject));
   if (!next) return;                         // אין תוכנית — המקטע לא מוצב
-  const days = planDays(next);
+  const days = myPlanDays(next);
   const isToday = days.indexOf(today) >= 0;
   const first = days[0] || next.date;
   const dm = String(first).match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -1043,7 +1052,7 @@ function isSessionDay(scope, guideSlug) {
   const today = String(scope.today || '').slice(0, 10);
   if ((scope.meetings || []).some(m => String(m.guideSlug) === String(guideSlug) &&
       (m.open || String(m.date).slice(0, 10) === today))) return true;
-  return planMeetings(guideSlug).some(m => planDays(m).indexOf(today) >= 0);
+  return planMeetings(guideSlug).some(m => myPlanDays(m).indexOf(today) >= 0);
 }
 function rowText(row) {
   return row.status === 'present' ? 'הנוכחות שלך אושרה ✓'

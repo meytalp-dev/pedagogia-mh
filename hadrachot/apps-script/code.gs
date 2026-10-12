@@ -1405,6 +1405,13 @@ function maskContact_(t) {
    לא נספרות בדוחות ובמונים, לא במעקב ההרשמה, לא ב"טרם נרשמו" של הרכזים ולא במייל החודשי. */
 const MATAL_SUBJECT = 'מת"ל';
 function isMatal_(t) { return String((t && t.subject) || '').trim() === MATAL_SUBJECT; }
+// הקבוצה בהדרכה של אביגיל (12.10.26) — לפי היום שנבחר בהשתלמות של עדי, שנשמר בהערות
+// בייבוא (teachersMatalSetup). 'sun' = קבוצה א׳, 'mon' = קבוצה ב׳, '' = לא ידוע (רואה את שני הימים).
+function matalGroup_(t) {
+  if (!isMatal_(t)) return '';
+  const n = String(t.notes || '');
+  return /ימי ראשון/.test(n) ? 'sun' : /ימי שני/.test(n) ? 'mon' : '';
+}
 function teachersCore_() { return readAll('teachers').filter(t => !isMatal_(t)); }
 
 function listTeachers(p, user) {
@@ -5785,7 +5792,8 @@ function teacherSelf(p) {
     trainingNote: String(t.trainingNote || ''),
     trainingApprovedBy: String(t.trainingApprovedBy || ''),
     unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
-    subjects: teacherSubjects_(t)
+    subjects: teacherSubjects_(t),
+    matalGroup: matalGroup_(t)
   } };
 }
 

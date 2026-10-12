@@ -34,7 +34,7 @@
     const out = [];
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
     (plan || []).forEach(m => {
-      planDays(m).forEach(d => {
+      myPlanDays(m).forEach(d => {                     // מת"לית — רק יום הקבוצה שלה
         const t = sessionTimes(m, d);
         if (t === null) return;                        // מועד של מסלול אחר
         const list = t.length ? t : [{ time: '', label: '' }];
