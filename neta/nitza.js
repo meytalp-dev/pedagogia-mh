@@ -50,7 +50,7 @@
     return new Promise(function (res, rej) {
       var done = false, t = setTimeout(function () { if (!done) { done = true; rej(new Error('timeout')); } }, ms || 120000);
       fetch(KEREN_EXEC, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
-        .then(function (r) { return r.json(); }).then(function (j) { if (!done) { done = true; clearTimeout(t); res(j); } })
+        .then(function (r) { return r.json(); }).then(function (j) { if (!done) { done = true; clearTimeout(t); if (j && j.left) setLeft(j.left.kind, j.left.n); if (j && j.quota) { QUOTA = j.quota; showLeft(); } res(j); } })
         .catch(function (e) { if (!done) { done = true; clearTimeout(t); rej(e); } });
     });
   }
@@ -72,8 +72,8 @@
       '<button type="button" class="kr-ib" id="krX" aria-label="סגירה">' + IC.x + '</button></div>' +
       '<div class="kr-ctx" id="krCtx" hidden></div>' +
       '<div class="kr-body" id="krBody"></div>' +
-      '<form class="kr-in" id="krForm"><textarea id="krQ" rows="1" placeholder="אפשר לשאול כל דבר… · يمكن السؤال بالعربية" aria-label="שאלה לניצה"></textarea>' +
-      '<button type="submit" aria-label="שליחה">' + IC.send + '</button></form>';
+      '<form class="kr-in" id="krForm"><textarea id="krQ" rows="1" placeholder="שאלה על בית הספר, נוהל או תוכנית עבודה… · يمكن السؤال بالعربية" aria-label="שאלה לניצה"></textarea>' +
+      '<button type="submit" aria-label="שליחה">' + IC.send + '</button></form><div class="kr-left" id="krLeft" aria-live="polite"></div>';
     document.body.appendChild(fab); document.body.appendChild(p);
     fab.onclick = function () { open(); };
     $('krX').onclick = close;
@@ -85,8 +85,19 @@
     $('krBody').addEventListener('click', onBodyClick);
     start();
   }
+  /* 12.10.26 (סקירה): כמה שאלות ותוכניות נשארו היום — גלוי מתחת לתיבה. שאלה שנכשלה לא נספרת (בשרת) */
+  var QUOTA = null;
+  function setLeft(kind, n) { if (!QUOTA) QUOTA = {}; QUOTA[kind] = n; showLeft(); }
+  function showLeft() {
+    var el = $('krLeft'); if (!el || !QUOTA) return;
+    var a = QUOTA.ask, pl = QUOTA.plan, parts = [];
+    if (a !== undefined) parts.push(a === 1 ? 'שאלה אחת' : a + ' שאלות');
+    if (pl !== undefined) parts.push(pl === 1 ? 'תוכנית אחת' : pl + ' תוכניות');
+    el.textContent = parts.length ? 'נשארו היום: ' + parts.join(' · ') + ' · מתחדש בחצות' : '';
+  }
   function open(prefill) {
     $('krPanel').hidden = false; document.body.classList.add('kr-on');
+    if (!QUOTA) call({ action: 'quota' }, 30000).catch(function () {});
     if (prefill) { $('krQ').value = prefill; }
     setTimeout(function () { $('krQ').focus(); }, 50);
   }

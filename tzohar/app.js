@@ -290,14 +290,15 @@
   function hasMine() { return !!(window.KEREN && KEREN.enabled() && window.TZTASKS); }
   function pages() {
     /* 11.10.26 (מיטל): הבית = דשבורד — סיכום + כרטיסי התפריט. הצ'ק ליסט המשרדי עבר לעמוד משלו (o) */
-    var P = [['home', I.grid, 'דשבורד'],['o', I.check, 'משרדי', 'ck']];
-    if (hasMine()) P.push(['c', I.check, 'אישי', 'ck']);
+    /* 12.10.26 (סקירה): "משרדי/אישי" → "דרישות המטה / המשימות שלי"; מארג (פיילוט) עבר לסוף */
+    var P = [['home', I.grid, 'דף הבית'],['o', I.check, 'דרישות המטה', 'ck']];
+    if (hasMine()) P.push(['c', I.check, 'המשימות שלי', 'ck']);
     P.push(['s', I.school, 'בית הספר שלי'], ['m', I.chart, 'מנור']);
-    if (!isRakaz()) P.push(['g', I.weave, 'מארג']);
     P.push(['k', I.book, 'הידע ' + (isRakaz() ? 'לרכז/ת' : 'למנהל/ת')]);
     if (isRakaz()) P.push(['t', I.tools, 'ארגז הכלים']);
     if (window.KEREN && KEREN.enabled()) P.push(['p', I.doc, 'התוכניות שלי']);   /* התוכניות שקרן בנתה (10.10.26) */
     if (window.TZTOOLS) TZTOOLS.pages().forEach(function (t) { P.push([t[0], t[1], t[2]]); });   /* כלים למנהל/ת (tools.js, 11.10.26) */
+    if (!isRakaz()) P.push(['g', I.weave, 'מארג']);
     P.push(['tour', I.tour, 'סיור בצוהר']);
     return P;
   }
@@ -384,14 +385,55 @@
   function ckTabs() {
     if (!hasMine()) return '';
     var n = openGaps(), nm = TZTASKS.openCount();
-    return '<div class="ck-tabs" role="tablist">' + [['o', 'משרדי', n], ['c', 'אישי', nm]].map(function (t) {
+    return '<div class="ck-tabs" role="tablist">' + [['o', 'דרישות המטה', n], ['c', 'המשימות שלי', nm]].map(function (t) {
       return '<button type="button" role="tab" data-page="' + t[0] + '" aria-selected="' + (PAGE === t[0]) + '">' + t[1] + (t[2] ? '<span class="n">' + t[2] + '</span>' : '') + '</button>';
     }).join('') + '</div>';
   }
   /* הבית = דשבורד: הכרטיס של בית הספר (הסיכום) + כרטיס לכל חלק בצוהר. בלי שום דבר נוסף — "כדי לא ליצור רעש ועומס" (מיטל, 11.10.26) */
+  /* 12.10.26 (סקירת GPT, מיטל): דף הבית אומר מה המערכת עושה בשבילך, ומה הצעד הבא — פעולה אחת.
+     הכרטיסים בשלוש קבוצות; מארג והסיור בשורה קטנה בתחתית. בכניסה הראשונה — "שלוש הצלחות" (וגם הסיור) */
+  var GROUPS = [['work', 'מה דורש טיפול', ['o', 'c', 'p']],
+                ['tools', 'כלים שחוסכים זמן', ['v', 'h', 'l', 'e', 't']],
+                ['info', 'מידע על בית הספר', ['s', 'm', 'k']]];
+  function nextStep() {
+    var all = items(), gap = all.filter(function (x) { return x.st === 'gap'; })[0];
+    if (gap) return { t: gap.t, d: gap.plain || '', go: 'o', btn: 'לטיפול' };
+    var nm = hasMine() ? TZTASKS.openCount() : 0;
+    if (nm) return { t: nm === 1 ? 'משימה אחת פתוחה ברשימה שלך' : nm + ' משימות פתוחות ברשימה שלך', d: '', go: 'c', btn: 'למשימות שלי' };
+    return null;
+  }
+  var WINS = [['o', 'לראות מה חסר מול המטה', 'כל הדרישות במקום אחד — מה הושלם ומה עוד פתוח.'],
+              ['l', 'להכין מכתב קב"ס', 'הנוסח מהנוהל מוכן, פרטי בית הספר ממולאים. נשאר רק להשלים את התלמיד/ה.'],
+              ['ask', 'לשאול את קרן שאלה על בית הספר', 'למשל: "מה הכי דחוף לי השבוע?" — קרן עונה מהנתונים של בית הספר.']];
+  function winsGet() { try { return JSON.parse(localStorage.getItem('tzohar.wins') || '{}'); } catch (e) { return {}; } }
+  function winsPut(o) { try { localStorage.setItem('tzohar.wins', JSON.stringify(o)); } catch (e) {} }
+  function winsCard() {
+    var w = winsGet(); if (w.closed || IS_ADMIN) return '';
+    var list = WINS.filter(function (x) { return x[0] !== 'ask' || (window.KEREN && KEREN.enabled()); });
+    if (list.every(function (x) { return w[x[0]]; })) return '';
+    return '<div class="card wins" id="wins"><button type="button" class="wins-x" data-wins="close" aria-label="סגירה">×</button>' +
+      '<h2>להתחיל כאן — שלושה דברים של 3 דקות</h2><ol>' + list.map(function (x) {
+        return '<li class="' + (w[x[0]] ? 'ok' : '') + '"><button type="button" data-wins="' + x[0] + '">' + (w[x[0]] ? I.ok : '<span class="num"></span>') +
+          '<span><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span></button></li>';
+      }).join('') + '</ol></div>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-wins]'); if (!b) return;
+    var k = b.getAttribute('data-wins'), w = winsGet();
+    if (k === 'close') { w.closed = 1; winsPut(w); var c = $('wins'); if (c) c.remove(); return; }
+    w[k] = 1; winsPut(w);
+    if (k === 'ask') { if (window.KEREN) KEREN.open(); render(true); }
+    else go(k);
+  });
   function home() {
     var first = String(ME.name || '').trim().split(/\s+/)[0];
-    var hello = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. כאן רואים במבט אחד את בית הספר, ומכל כרטיס נכנסים לחלק שלו.</p>';
+    var ns = nextStep();
+    var hello = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. צוהר אוסף בשבילך מה חסר מכל הטפסים, ' +
+      'מכין טיוטות (ועדה, מכתבים, סיכום ישיבה) וזוכר את המשימות. את/ה רק בודק/ת ומחליט/ה.</p>';
+    hello += '<div class="next' + (ns ? '' : ' calm') + '"><span class="lbl">מה עושים עכשיו</span>' +
+      (ns ? '<span class="tx"><b>' + esc(ns.t) + '</b>' + (ns.d ? '<small>' + esc(ns.d) + '</small>' : '') + '</span>' +
+            '<button type="button" class="btn primary sm" data-page="' + ns.go + '">' + esc(ns.btn) + '</button>'
+          : '<span class="tx"><b>אין כרגע משהו פתוח מול המטה.</b><small>אפשר לנשום — או להיעזר באחד הכלים למטה.</small></span>') + '</div>';
     var all = items(), n = all.length, open = all.filter(function (x) { return x.st === 'gap'; }).length;
     var nm = hasMine() ? TZTASKS.openCount() : 0;
     var p = R.menor && R.menor.t ? Math.round(100 * R.menor.r / R.menor.t) : null;
@@ -407,23 +449,36 @@
     };
     if (window.TZTOOLS) TZTOOLS.pages().forEach(function (t) { sub[t[0]] = t[3]; });
     var hot = { o: open, c: nm };
-    return headCard(hello) + '<div class="dtiles" id="dashTiles">' + pages().filter(function (x) { return sub[x[0]]; }).map(function (x) {
+    var byKey = {}; pages().forEach(function (x) { if (sub[x[0]]) byKey[x[0]] = x; });
+    function tile(x) {
       return '<button type="button" class="dtile' + (hot[x[0]] ? ' hot' : '') + '" data-page="' + x[0] + '"><span class="ic">' + (x[0] === 'c' ? I.check : x[1]) + '</span>' +
-        '<span class="tx"><b>' + esc(x[0] === 'o' ? 'צ\'ק ליסט משרדי' : x[0] === 'c' ? 'צ\'ק ליסט אישי' : x[2]) + '</b><small>' + esc(sub[x[0]]) + '</small></span></button>';
-    }).join('') + '</div>';
+        '<span class="tx"><b>' + esc(x[2]) + '</b><small>' + esc(sub[x[0]]) + '</small></span></button>';
+    }
+    var used = {};
+    var groups = GROUPS.map(function (g) {
+      var t = g[2].filter(function (k) { return byKey[k]; }); t.forEach(function (k) { used[k] = 1; });
+      return t.length ? '<h2 class="dgrp">' + esc(g[1]) + '</h2><div class="dtiles">' + t.map(function (k) { return tile(byKey[k]); }).join('') + '</div>' : '';
+    }).join('');
+    /* מה שלא בקבוצה (כלי חדש) — לקבוצת הכלים, כדי שלא ייעלם */
+    var rest = Object.keys(byKey).filter(function (k) { return !used[k] && k !== 'g'; });
+    if (rest.length) groups += '<div class="dtiles">' + rest.map(function (k) { return tile(byKey[k]); }).join('') + '</div>';
+    var foot = [];
+    if (byKey.g) foot.push('<button type="button" data-page="g">' + I.weave + 'מארג <span class="pilot">פיילוט</span></button>');
+    foot.push('<button type="button" data-page="tour">' + I.tour + 'סיור של 2 דקות בצוהר</button>');
+    return headCard(hello) + winsCard() + '<div id="dashTiles">' + groups + '</div><div class="dfoot">' + foot.join('') + '</div>';
   }
   function officePage() {
     var all = items(), open = all.filter(function (x) { return x.st === 'gap'; });
     var order = { gap: 0, wait: 1, load: 2, err: 2, done: 3 };
     all.sort(function (a, b) { return order[a.st] - order[b.st]; });
-    return '<div class="card head"><h1>צ\'ק ליסט משרדי</h1><div class="meta">' + esc(D.school.name) + '</div></div>' + ckTabs() +
-      '<p class="small ck-lead">המשימות של בית הספר מול המינהל. משימה שהמערכת רואה כגמורה מסומנת לבד; את השאר מסמנים כאן.</p>' +
+    return '<div class="card head"><h1>דרישות המטה</h1><div class="meta">' + esc(D.school.name) + '</div></div>' + ckTabs() +
+      '<p class="small ck-lead">מה שהמינהל מצפה שבית הספר ישלים. חלק מהדרישות מתעדכנות לבד מהנתונים (טופס שהוגש, מורים שנרשמו); את השאר מסמנים כאן אחרי שעשיתם.</p>' +
       (!open.length && all.every(function (x) { return x.st === 'done' || x.st === 'wait'; }) ? '<div class="allok">' + I.ok + 'הכול הושלם. תודה!</div>' : '') +
       '<div class="card ck-card" id="ckOffice">' + (window.TZTASKS ? TZTASKS.officeHtml(all) : '') + '</div>';
   }
   function minePage() {
-    return '<div class="card head"><h1>הצ\'ק ליסט האישי</h1><div class="meta">המשימות שלך — שכתבת לבד או שהוספת מהתשובות של קרן. ' +
-      (isRakaz() ? 'פרטי לבית הספר; המנהל/ת רואה אותו.' : 'פרטי לבית הספר; המפקח/ת לא רואה אותו.') + '</div></div>' +
+    return '<div class="card head"><h1>המשימות שלי</h1><div class="meta">המשימות שלך — שכתבת לבד או שהוספת מהתשובות של קרן. ' +
+      (isRakaz() ? 'פרטי לבית הספר; המפקח/ת לא רואה אותו.' : 'רק את/ה רואה אותן — לא המפקח/ת ולא הרכז/ת.') + '</div></div>' +
       '<h2 class="pt">צ\'ק ליסט</h2>' + ckTabs() + '<div id="ckMine"></div>';
   }
 
@@ -817,8 +872,8 @@
         text: 'צוהר הוא החלון שלך לבית הספר: מה כבר הושלם ומה עוד חסר, הנתונים של בית הספר, והידע שצריך — במקום אחד, בלי לחפש בין טפסים.' },
       { go: 'home', sel: '.side', drawer: true, title: 'התפריט',
         text: 'כאן עוברים בין החלקים של צוהר. בטלפון התפריט נפתח מהכפתור שבפינה למעלה.' },
-      { go: 'home', sel: '#dashTiles', title: 'כל החלקים של צוהר', text: 'מתחת לסיכום — כרטיס לכל חלק, עם מה שחשוב בו כרגע. לחיצה פותחת אותו. אותם חלקים נמצאים גם בתפריט.' },
-      { go: 'o', sel: '#ckOffice', title: 'צ\'ק ליסט משרדי', text: by['צ\'ק ליסט'] },
+      { go: 'home', sel: '#dashTiles', title: 'כל החלקים של צוהר', text: 'מתחת לסיכום — הכרטיסים בשלוש קבוצות: מה דורש טיפול, כלים שחוסכים זמן, ומידע על בית הספר. לחיצה פותחת. אותם חלקים נמצאים גם בתפריט.' },
+      { go: 'o', sel: '#ckOffice', title: 'דרישות המטה', text: by['צ\'ק ליסט'] },
       { go: 's', sel: '#secs', title: 'בית הספר שלי', text: by['בית הספר שלי'] },
       { go: 'm', sel: '#menorMsg', title: 'מנור', text: by['מנור'] }
     ];
@@ -829,7 +884,7 @@
       S.push({ go: 'home', sel: '.kr-fab', title: 'קרן — העוזרת שלך',
         text: 'קרן מכירה את הנתונים של בית הספר שלך ואת הידע של המינהל. אפשר לשאול אותה כל שאלה, ולבקש ממנה לבנות ' +
           (isRakaz() ? 'תוכנית עבודה פדגוגית' : 'תוכנית עבודה — למשל למחנכים וליועצים לפי שאלוני האקלים') + '. עונה גם בערבית.' });
-      S.push({ go: 'c', sel: '#ckMine', title: 'צ\'ק ליסט אישי',
+      S.push({ go: 'c', sel: '#ckMine', title: 'המשימות שלי',
         text: 'המשימות שלך. כותבים משימה לבד, או מוסיפים מהתשובה של קרן — משימה אחת או את כולן. לכל משימה: תזכורת ביומן ומייל למי שמטפל/ת בה.' });
       S.push({ go: 'p', sel: '#kerenPlans', title: 'התוכניות שלי',
         text: 'כל תוכנית שקרן בונה נשמרת כאן. אפשר לערוך, להדפיס ולשלוח לצוות. התוכניות פרטיות לבית הספר' + (isRakaz() ? ', והמנהל/ת רואה אותן.' : ', כולל התוכניות הפדגוגיות של הרכז/ת.') });

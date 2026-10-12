@@ -300,7 +300,7 @@
   function toolOf(p) { return TOOLMODS().filter(function (m) { return m.owns(p); })[0]; }
   function pages() {
     var P = [['home', I.house, 'ראשי'],
-             ['c', I.check, 'הצ\'ק ליסט שלי', 'המשימות שלך: לכתוב, לסמן, תזכורת ביומן ומייל למי שמטפל/ת.'],
+             ['c', I.check, 'המשימות שלי', 'לכתוב, לסמן, תזכורת ביומן וטיוטת מייל לאחראי/ת.'],
              ['s', I.school, 'בית הספר שלי', 'אנשי קשר, מגמות, בעלי תפקידים, אקלים, הוועדה המלווה והיעדים.'],
              ['m', I.chart, 'מנור', 'כמה מורים נרשמו, מי עוד לא, והודעה מוכנה למורים.'],
              ['k', I.book, 'הידע לרכז/ת', 'הנהלים, בעלי התפקידים והמסמכים הארציים.'],
@@ -386,18 +386,64 @@
   }
 
   /* הבית (מיטל, 11.10.26 — כמו בשאר המערכות): סיכום בית הספר, ומתחתיו כרטיסייה לכל פריט בתפריט — במחשב ובנייד */
+  /* 12.10.26 (סקירת GPT, מיטל): כמו בצוהר — מה נטע עושה בשבילך, "מה עושים עכשיו", שלוש קבוצות, "שלוש הצלחות" */
+  var GROUPS = [['work', 'מה דורש טיפול', ['c', 'p', 'y']],
+                ['tools', 'כלים לעבודה עם הצוות', ['x', 'h', 'b', 't']],
+                ['info', 'מידע על בית הספר', ['s', 'm', 'k']]];
+  var WINS = [['x', 'להדביק את רשימת המורים', 'תוך דקה רואים מי עוד לא נצפה השנה.'],
+              ['ask', 'לבקש מניצה מערך לישיבת צוות', 'כותבים נושא — ומקבלים מערך מוכן לפי בית הספר שלך.'],
+              ['b', 'לראות את לוח הבחינות', 'כל מועדי הבגרות במקום אחד, ופריסת ההיבחנות של בית הספר.']];
+  function winsGet() { try { return JSON.parse(localStorage.getItem('neta.wins') || '{}'); } catch (e) { return {}; } }
+  function winsPut(o) { try { localStorage.setItem('neta.wins', JSON.stringify(o)); } catch (e) {} }
+  function winsCard() {
+    var w = winsGet(); if (w.closed || IS_ADMIN) return '';
+    var keys = {}; pages().forEach(function (p) { keys[p[0]] = 1; });
+    var list = WINS.filter(function (x) { return x[0] === 'ask' ? !!(window.KEREN && KEREN.enabled()) : keys[x[0]]; });
+    if (!list.length || list.every(function (x) { return w[x[0]]; })) return '';
+    return '<div class="card wins" id="wins"><button type="button" class="wins-x" data-wins="close" aria-label="סגירה">×</button>' +
+      '<h2>להתחיל כאן — שלושה דברים של 3 דקות</h2><ol>' + list.map(function (x) {
+        return '<li class="' + (w[x[0]] ? 'ok' : '') + '"><button type="button" data-wins="' + x[0] + '">' + (w[x[0]] ? I.ok : '<span class="num"></span>') +
+          '<span><b>' + esc(x[1]) + '</b><small>' + esc(x[2]) + '</small></span></button></li>';
+      }).join('') + '</ol></div>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-wins]'); if (!b) return;
+    var k = b.getAttribute('data-wins'), w = winsGet();
+    if (k === 'close') { w.closed = 1; winsPut(w); var c = $('wins'); if (c) c.remove(); return; }
+    w[k] = 1; winsPut(w);
+    if (k === 'ask') {
+      if (window.KEREN) KEREN.open('מערך לישיבת צוות על ');
+      render(true);
+    } else go(k);
+  });
   function home() {
     var first = String(ME.name || '').trim().split(/\s+/)[0];
-    var hello = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. כאן המשימות שלך, הנתונים הפדגוגיים של בית הספר והכלים לעבודה עם הצוות.</p>';
-    var nm = openMine();
-    return headCard(hello) + '<div class="hub" id="hub">' + pages().filter(function (p) { return p[0] !== 'home'; }).map(function (p) {
-      var cnt = p[0] === 'c' && nm ? '<span class="n">' + nm + (nm === 1 ? ' פתוחה' : ' פתוחות') + '</span>' : '';
-      return '<button type="button" class="hub-t' + (p[0] === 'tour' ? ' soft' : '') + '" data-page="' + p[0] + '">' +
-        '<span class="hub-i">' + p[1] + '</span><b>' + esc(p[2]) + cnt + '</b><span>' + esc(p[3] || '') + '</span></button>';
-    }).join('') + '</div>';
+    var nm0 = openMine();
+    var hello0 = IS_ADMIN ? '' : '<p class="lead" style="margin-top:8px">שלום' + (first ? ' ' + esc(first) : '') + '. נטע מרכזת בשבילך את הנתונים הפדגוגיים, ' +
+      'מכינה טיוטות (מערך לישיבה, סיכום, משוב תצפית) וזוכרת את המשימות. את/ה רק בודק/ת ומחליט/ה.</p>';
+    hello0 += '<div class="next' + (nm0 ? '' : ' calm') + '"><span class="lbl">מה עושים עכשיו</span>' +
+      (nm0 ? '<span class="tx"><b>' + (nm0 === 1 ? 'משימה אחת פתוחה ברשימה שלך' : nm0 + ' משימות פתוחות ברשימה שלך') + '</b></span>' +
+             '<button type="button" class="btn primary sm" data-page="c">למשימות שלי</button>'
+           : '<span class="tx"><b>אין משימות פתוחות.</b><small>אפשר להיעזר באחד הכלים למטה, או לבקש מניצה רעיון לשבוע.</small></span>') + '</div>';
+    var byKey = {}; pages().forEach(function (p) { if (p[0] !== 'home') byKey[p[0]] = p; });
+    function tileN(p) {
+      var cnt = p[0] === 'c' && nm0 ? '<span class="n">' + nm0 + (nm0 === 1 ? ' פתוחה' : ' פתוחות') + '</span>' : '';
+      return '<button type="button" class="hub-t" data-page="' + p[0] + '"><span class="hub-i">' + p[1] + '</span><b>' + esc(p[2]) + cnt + '</b><span>' + esc(p[3] || '') + '</span></button>';
+    }
+    var used = { n: 1, tour: 1 };
+    var groups = GROUPS.map(function (g) {
+      var t = g[2].filter(function (k) { return byKey[k]; }); t.forEach(function (k) { used[k] = 1; });
+      return t.length ? '<h2 class="dgrp">' + esc(g[1]) + '</h2><div class="hub">' + t.map(function (k) { return tileN(byKey[k]); }).join('') + '</div>' : '';
+    }).join('');
+    var rest = Object.keys(byKey).filter(function (k) { return !used[k]; });
+    if (rest.length) groups += '<div class="hub">' + rest.map(function (k) { return tileN(byKey[k]); }).join('') + '</div>';
+    var foot = [];
+    if (byKey.n) foot.push('<button type="button" data-page="n">' + byKey.n[1] + 'הכירו את ניצה — מה אפשר לבקש</button>');
+    foot.push('<button type="button" data-page="tour">' + I.tour + 'סיור של 2 דקות בנטע</button>');
+    return headCard(hello0) + winsCard() + '<div id="hub">' + groups + '</div><div class="dfoot">' + foot.join('') + '</div>';
   }
   function minePage() {
-    return '<div class="card head"><h1>הצ\'ק ליסט שלי</h1><div class="meta">משימות שכתבת לבד או שהוספת מהתשובות של ניצה. פרטי לבית הספר; המנהל/ת רואה אותו.</div></div>' +
+    return '<div class="card head"><h1>המשימות שלי</h1><div class="meta">משימות שכתבת לבד או שהוספת מהתשובות של ניצה. פרטי לבית הספר; המפקח/ת לא רואה אותן.</div></div>' +
       (hasMine() ? '<div id="ckMine"></div>' : '<div class="card"><div class="empty">הצ\'ק ליסט יפעל כשניצה תופעל.</div></div>');
   }
 
@@ -766,11 +812,11 @@
       { go: 'home', sel: '#main .card.head', title: 'ברוכים הבאים לנטע',
         text: 'נטע הוא המרחב שלך, הרכז/ת הפדגוגי/ת: המשימות שלך, הנתונים הפדגוגיים של בית הספר, והכלים לעבודה עם הצוות — במקום אחד.' },
       { go: 'home', sel: '#hub', title: 'מכאן לכל מקום',
-        text: 'בעמוד הראשי — כרטיסייה לכל חלק בנטע. לוחצים ועוברים.' },
+        text: 'בעמוד הראשי — הכרטיסים בשלוש קבוצות: מה דורש טיפול, כלים לעבודה עם הצוות, ומידע על בית הספר. לוחצים ועוברים.' },
       { go: 'home', sel: '.side', drawer: true, title: 'התפריט',
         text: 'כאן עוברים בין החלקים של נטע. בטלפון התפריט נפתח מהכפתור שבפינה למעלה.' },
-      { go: 'c', sel: '#ckMine', title: 'הצ\'ק ליסט שלי',
-        text: 'המשימות שלך. כותבים משימה לבד, או מוסיפים מהתשובה של ניצה — משימה אחת או את כולן. לכל משימה: תזכורת ביומן ומייל למי שמטפל/ת בה. המנהל/ת רואה את הרשימה.' },
+      { go: 'c', sel: '#ckMine', title: 'המשימות שלי',
+        text: 'המשימות שלך. כותבים משימה לבד, או מוסיפים מהתשובה של ניצה — משימה אחת או את כולן. לכל משימה: תזכורת ביומן וטיוטת מייל לאחראי/ת.' },
       { go: 's', sel: '#secs', title: 'בית הספר שלי',
         text: 'אנשי הקשר והמפקח/ת, המגמות, בעלי התפקידים, ההשתלמויות, שאלון האקלים, החלקים הפדגוגיים מהוועדה המלווה והיעדים. הכול מקופל — לוחצים על כותרת כדי לפתוח.' },
       { go: 'm', sel: '#menorMsg', title: 'מנור', text: 'כמה מהמורים כבר נרשמו, קישור למבט של בית הספר במנור, והודעה מוכנה לשלוח למורים.' },

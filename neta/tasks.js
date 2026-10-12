@@ -178,7 +178,7 @@
     /* "עזרה מ<העוזרת>" (11.10.26): העוזרת נפתחת ליד המשימה ומכינה את מה שהיא דורשת */
     var help = window.KEREN && KEREN.helpWith && KEREN.enabled() ? '<button type="button" class="ck-tool ck-help" data-ck="help">' + IC.spark + 'עזרה מ' + KEREN.name + '</button>' : '';
     var tools = done ? '' : help + '<button type="button" class="ck-tool" data-ck="cal" aria-expanded="false">' + IC.cal + 'תזכורת ביומן</button>' +
-      '<button type="button" class="ck-tool" data-ck="mail" aria-expanded="false">' + IC.mail + 'מייל למטפל/ת</button>';
+      '<button type="button" class="ck-tool" data-ck="mail" aria-expanded="false">' + IC.mail + 'טיוטת מייל לאחראי/ת</button>';
     var del = R.kind === 'mine' && !R.readOnly ? '<button type="button" class="ck-tool ck-del" data-ck="del" aria-label="מחיקת המשימה">' + IC.del + '</button>' : '';
     return '<li class="ck-i' + (done ? ' done' : '') + '" data-key="' + esc(R.key) + '">' + box +
       '<div class="ck-tx"><div class="ck-t">' + esc(R.title) + '</div>' +

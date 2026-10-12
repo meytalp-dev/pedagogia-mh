@@ -175,7 +175,7 @@
     if (R.src) meta.push('<span class="ck-src">' + esc(R.src) + '</span>');
     if (o.tag) meta.unshift(o.tag);
     var tools = done ? '' : '<button type="button" class="ck-tool" data-ck="cal" aria-expanded="false">' + IC.cal + 'תזכורת ביומן</button>' +
-      '<button type="button" class="ck-tool" data-ck="mail" aria-expanded="false">' + IC.mail + 'מייל למטפל/ת</button>';
+      '<button type="button" class="ck-tool" data-ck="mail" aria-expanded="false">' + IC.mail + 'טיוטת מייל לאחראי/ת</button>';
     var del = R.kind === 'mine' && !R.readOnly ? '<button type="button" class="ck-tool ck-del" data-ck="del" aria-label="מחיקת המשימה">' + IC.del + '</button>' : '';
     return '<li class="ck-i' + (done ? ' done' : '') + '" data-key="' + esc(R.key) + '">' + box +
       '<div class="ck-tx"><div class="ck-t">' + esc(R.title) + '</div>' +
@@ -190,7 +190,9 @@
     var open = items.filter(function (x) { return x.st !== 'done'; }), done = items.filter(function (x) { return x.st === 'done'; });
     var r = function (x) {
       return row({ key: 'o-' + x.k, kind: 'office', id: 'o-' + x.k, title: x.t, detail: x.plain || '', due: '', link: x.link || '' },
-                 { st: x.st, box: x.manual ? 'check' : 'auto', detail: x.html, acts: x.acts });
+                 { st: x.st, box: x.manual ? 'check' : 'auto', detail: x.html, acts: x.acts,
+                   /* 12.10.26 (סקירה): ברור מה נסגר לבד ומה מסמנים ביד */
+                   tag: '<span class="ck-how">' + (x.manual ? 'מסמנים כאן אחרי שעשיתם' : 'מתעדכן לבד מהנתונים') + '</span>' });
     };
     return '<ul class="ck">' + open.map(r).join('') + '</ul>' +
       (done.length ? '<details class="ck-done"><summary>הושלמו (' + done.length + ')</summary><ul class="ck">' + done.map(r).join('') + '</ul></details>' : '');
