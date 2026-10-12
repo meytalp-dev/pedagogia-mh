@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>אישור השתלמות בלי קובץ — אדמין · מנור</title>
+<link rel="stylesheet" href="assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
+<style>
+  [hidden] { display: none !important; }
+  .ia-sec { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; margin-bottom: 18px; }
+  .ia-sec h3 { margin: 0 0 4px; font-size: 17px; }
+  .ia-sec p.d { color: var(--text-2); font-size: 13.5px; margin: 0 0 14px; line-height: 1.7; }
+  .ia-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  .ia-by { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 4px; font-size: 14px; }
+  .ia-by input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 9px; font: inherit; min-width: 220px; }
+  .ia-msg { font-size: 13.5px; margin-top: 10px; line-height: 1.7; }
+  .ia-msg.err { color: #8f2f1c; }
+  .ia-counts { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px; }
+  .ia-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+  .ia-table th, .ia-table td { text-align: right; padding: 7px 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .ia-table th { font-size: 12px; color: var(--text-3); font-weight: 600; }
+  .ia-table tr.off td { color: var(--text-3); }
+  .ia-table input { width: 18px; height: 18px; }
+  .ia-src { font-size: 12px; color: var(--text-3); }
+  .table-wrap { overflow-x: auto; }
+  @media (max-width: 560px) { .ia-hide-sm { display: none; } }
+</style>
+</head>
+<body data-look="menor">
+
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <a href="./" style="display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;" title="חזרה לדף הבית">
+        <img class="compass-icon" src="assets/menor-sail.png" alt="" aria-hidden="true">
+        <div class="command-bar-text">
+          <span class="unit"><img class="menor-word" src="assets/menor-word.png" alt="מנור"></span>
+          <span class="sub">יחידת הפיקוח על הדרכות מורים · משרד העבודה</span>
+        </div>
+      </a>
+    </div>
+    <div class="command-bar-status"><span class="status-dot" aria-hidden="true"></span><span>מטה · אדמין</span></div>
+  </header>
+
+  <main class="dashboard-shell">
+    <section class="page-header">
+      <div>
+        <div class="page-header-eyebrow">מטה · אדמין</div>
+        <h1>אישור השתלמות בלי קובץ</h1>
+        <p class="page-header-sub">מורים שעברו השתלמות לפי רשימות הנוכחות, ואין להם קובץ אישור. הם מסומנים "עבר/ה השתלמות" עם הכיתוב שבוחרים כאן, ונספרים כ"עם אישור". שום מייל לא נשלח.</p>
+      </div>
+    </section>
+
+    <div class="ia-sec" id="ia-nologin" hidden>
+      <h3>צריך להיכנס קודם</h3>
+      <p class="d">הדף פתוח רק למטה. נכנסים בדף הבית של מנור (מטה · אדמין) וחוזרים לכאן.</p>
+      <a class="btn btn-primary" href="./?next=admin-ishur-hishtalmut.html">לכניסה</a>
+    </div>
+
+    <div class="ia-sec" id="ia-main" hidden>
+      <h3>הרשימה</h3>
+      <p class="d">בוחרים את קובץ הרשימה (למשל אישור-השתלמות-אנגלית.json מתיקיית רויטל) ← מסמנים מי מאושר/ת ← בדיקה יבשה ← רק אחרי שהדוח נראה נכון: אישור בפועל.</p>
+      <input type="file" id="ia-file" accept=".json,application/json">
+      <div class="ia-by" id="ia-bywrap" hidden>
+        <label for="ia-by">הכיתוב שיופיע ליד המורה:</label>
+        <input type="text" id="ia-by" maxlength="120" value="באישור המדריכה">
+      </div>
+      <div id="ia-list"></div>
+      <div class="ia-actions">
+        <button type="button" class="btn btn-secondary" id="ia-dry" disabled>בדיקה יבשה</button>
+        <button type="button" class="btn btn-primary" id="ia-run" disabled>אישור בפועל</button>
+      </div>
+      <div class="ia-msg" id="ia-msg"></div>
+      <div id="ia-report"></div>
+    </div>
+  </main>
+
+  <footer style="text-align:center; padding:26px 16px 32px; color:var(--text-3); font-size:13px;">
+    מנור · המנהל להכשרה מקצועית · משרד העבודה
+    <div style="margin-top:6px; font-size:.72rem; color:#8A97A6;">נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener" style="color:inherit;">impactos · impactos.co.il</a></div>
+  </footer>
+
+<script src="assets/app.js?v=20260929r"></script>
+<script>
+(function () {
+  /* אישור השתלמות בלי קובץ (12.10.26, מיטל) — training.approve בשרת, מפתח staff של מטה.
+     הרשימה (מזהים ושמות) נטענת מקובץ במחשב ולא נשמרת בדף. */
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let staff = null;
+  try { staff = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); } catch (e) {}
+  const isHq = staff && staff.k && (staff.roles || []).some(r => r.role === 'ministry');
+  if (!isHq) { $('ia-nologin').hidden = false; return; }
+  $('ia-main').hidden = false;
+
+  const STATUS = { approve: 'יסומן/תסומן', already: 'כבר מאושר/ת', not_found: 'לא נמצא/ה במנור', duplicate: 'כפול ברשימה' };
+  const BEFORE = { passed: 'עבר/ה', registered: 'נרשם/ה', none: 'לא נרשם/ה', '': 'טרם ענה/תה' };
+  let rows = [], dryOk = false;
+
+  function reset() { dryOk = false; $('ia-run').disabled = true; $('ia-report').innerHTML = ''; }
+  function drawList() {
+    const n = rows.filter(r => r.checked).length;
+    $('ia-list').innerHTML = '<div class="ia-counts"><span class="badge ok">' + n + ' מסומנים</span>' +
+      '<span class="badge neutral">' + (rows.length - n) + ' לא מסומנים</span></div>' +
+      '<div class="table-wrap"><table class="ia-table"><tr><th></th><th>שם</th><th>בית ספר</th><th class="ia-hide-sm">מקור</th></tr>' +
+      rows.map((r, i) => '<tr class="' + (r.checked ? '' : 'off') + '"><td><input type="checkbox" data-i="' + i + '"' + (r.checked ? ' checked' : '') +
+        ' aria-label="' + esc(r.name) + '"></td><td>' + esc(r.name) + '</td><td>' + esc(r.school) + '</td>' +
+        '<td class="ia-hide-sm ia-src">' + esc(r.source || '') + '</td></tr>').join('') + '</table></div>';
+    $('ia-dry').disabled = !n;
+  }
+  $('ia-list').addEventListener('change', e => {
+    const c = e.target.closest('[data-i]');
+    if (!c) return;
+    rows[Number(c.dataset.i)].checked = c.checked;
+    reset(); drawList();
+  });
+  $('ia-by').addEventListener('input', reset);
+
+  $('ia-file').addEventListener('change', async e => {
+    reset(); rows = []; $('ia-list').innerHTML = '';
+    const f = e.target.files[0];
+    if (!f) { $('ia-dry').disabled = true; return; }
+    try {
+      const j = JSON.parse(await f.text());
+      rows = (Array.isArray(j) ? j : j.rows || []).filter(r => r && r.id)
+        .map(r => ({ id: String(r.id), name: r.name || '', school: r.school || '', source: r.source || '', checked: r.checked !== false }));
+      if (!rows.length) throw new Error('empty');
+      if (j.by) $('ia-by').value = j.by;
+      $('ia-bywrap').hidden = false;
+      $('ia-msg').className = 'ia-msg'; $('ia-msg').textContent = 'בקובץ ' + rows.length + ' מורים. בודקים את הסימונים ← בדיקה יבשה.';
+      drawList();
+    } catch (err) {
+      $('ia-msg').className = 'ia-msg err'; $('ia-msg').textContent = 'הקובץ לא נקרא. צריך קובץ JSON עם רשימת מורים (rows).';
+      $('ia-dry').disabled = true;
+    }
+  });
+
+  async function send(dryRun) {
+    const ids = rows.filter(r => r.checked).map(r => r.id);
+    const by = $('ia-by').value.trim() || 'באישור המדריכה';
+    const btn = dryRun ? $('ia-dry') : $('ia-run');
+    btn.disabled = true;
+    $('ia-msg').className = 'ia-msg'; $('ia-msg').textContent = dryRun ? 'בודקים… (עד חצי דקה)' : 'כותבים למנור…';
+    const r = await TS.apiPost('training.approve', { k: staff.k, ids: ids, by: by, dryRun: dryRun });
+    btn.disabled = false;
+    if (!r || !r.ok) {
+      $('ia-msg').className = 'ia-msg err';
+      $('ia-msg').textContent = 'לא הצליח' + (r && r.error ? ' (' + r.error + ')' : '') + '. ' +
+        (dryRun ? 'אפשר לנסות שוב.' : 'לפני שמנסים שוב — בדיקה יבשה, כדי לראות מה כבר נכתב.');
+      if (!dryRun) reset();
+      return;
+    }
+    const d = r.data;
+    dryOk = dryRun;
+    $('ia-run').disabled = !dryRun || !d.approve;
+    $('ia-msg').textContent = dryRun
+      ? 'בדיקה יבשה — שום דבר לא נכתב. ' + (d.approve ? 'אם הדוח נראה נכון: "אישור בפועל".' : 'אין מה לסמן.')
+      : 'סומנו ' + d.approve + ' מורים "' + d.by + '". הם מופיעים עכשיו בדף ההשתלמות ב"עברו השתלמות — עם אישור".';
+    $('ia-report').innerHTML =
+      '<div class="ia-counts">' +
+        '<span class="badge ok">' + d.approve + (dryRun ? ' יסומנו' : ' סומנו') + '</span>' +
+        (d.already ? '<span class="badge info">' + d.already + ' כבר מאושרים</span>' : '') +
+        (d.notFound ? '<span class="badge err">' + d.notFound + ' לא נמצאו</span>' : '') +
+        (d.duplicate ? '<span class="badge warn">' + d.duplicate + ' כפולים</span>' : '') +
+      '</div>' +
+      '<div class="table-wrap"><table class="ia-table"><tr><th>שם</th><th>בית ספר</th><th>תשובת המורה עד עכשיו</th><th>מה</th></tr>' +
+      d.rows.map(x => '<tr><td>' + esc(x.name || x.id) + '</td><td>' + esc(x.school || '') + '</td><td>' +
+        esc(x.before === undefined ? '' : (BEFORE[x.before] || x.before) + (x.hadFile ? ' · יש קובץ' : '')) + '</td><td>' +
+        esc(STATUS[x.status] || x.status) + '</td></tr>').join('') + '</table></div>';
+  }
+  $('ia-dry').addEventListener('click', () => send(true));
+  $('ia-run').addEventListener('click', () => {
+    if (!dryOk) return;
+    const n = rows.filter(r => r.checked).length;
+    if (!confirm('לסמן ' + n + ' מורים "' + ($('ia-by').value.trim() || 'באישור המדריכה') + '"? (שום מייל לא נשלח)')) return;
+    send(false);
+  });
+})();
+</script>
+</body>
+</html>

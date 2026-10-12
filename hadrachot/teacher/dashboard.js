@@ -1407,7 +1407,8 @@ function unitsFromForm() {
 function trainingIncomplete() {
   const st = String((teacher && teacher.trainingStatus) || '');
   if (!st) return false;
-  return st === 'none' || !String(teacher.trainingFile || '');
+  // "באישור המדריכה" (12.10.26) — יש אישור, גם בלי קובץ
+  return st === 'none' || (!String(teacher.trainingFile || '') && !String(teacher.trainingApprovedBy || ''));
 }
 /* פעם אחת לכל פתיחה של הדפדפן — לא בכל רענון */
 const TQ_SS = 'ts.teacher.tqReminded';
@@ -1521,11 +1522,13 @@ function renderTraining() {
   }
   const st = String(teacher.trainingStatus || '');
   const file = String(teacher.trainingFile || '');
+  const approvedBy = st === 'none' ? '' : String(teacher.trainingApprovedBy || '');
   const badge = document.getElementById('pd-status');
   if (badge) {
     badge.innerHTML = !st ? '<span class="badge neutral">השתלמות: טרם נענה</span>'
       : '<span class="badge ' + (st === 'none' ? 'warn' : 'ok') + '">' + esc(TRAINING_LABEL[st]) + '</span>' +
-        (file ? ' <a class="badge info" href="' + esc(file) + '" target="_blank" rel="noopener">האישור שצירפתי</a>' : '');
+        (file ? ' <a class="badge info" href="' + esc(file) + '" target="_blank" rel="noopener">האישור שצירפתי</a>'
+          : approvedBy ? ' <span class="badge info">' + esc(approvedBy) + '</span>' : '');
   }
   const sec = document.getElementById('pd-sec');
   if (!sec || ADMIN_KEY_) return;
@@ -1544,7 +1547,7 @@ function renderTraining() {
       setTimeout(() => q && q.focus(), 400);
     };
     document.getElementById('pd-reg').onclick = () => { input.dataset.status = 'registered'; input.click(); };
-  } else if ((st === 'passed' || st === 'registered') && !file) {
+  } else if ((st === 'passed' || st === 'registered') && !file && !approvedBy) {
     text.innerHTML = '<b>השתלמות מקצועית:</b> ' + esc(TRAINING_LABEL[st]) + '. ' +
       'עוד לא צירפת ' + (st === 'registered' ? 'אישור הרשמה' : 'אישור השתלמות') + ' — אפשר עכשיו, PDF או תמונה.';
     actions.innerHTML = '<button type="button" class="btn btn-primary" id="pd-up">צירוף אישור</button>';

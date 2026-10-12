@@ -44,7 +44,9 @@ const SCHEMA = {
                'trainingNote',
                // בחופשה (7.10.26, מיטל) — חל"ד וכד'. נשאר/ת ברשימה, יוצא/ת מ"טרם נרשמו",
                // מהמונים ומהתזכורות. ריק = פעיל/ה
-               'onLeave'],
+               'onLeave',
+               // אישור השתלמות בלי קובץ (12.10.26, מיטל) — "באישור המדריכה". נספר/ת כ"עם אישור"
+               'trainingApprovedBy'],
   trainings:  ['id','date','subject','subjectId','guideName','guideEmail','network','sector','location','notes',
                'qrToken','materialsUrl','curriculumTopic','feedbackEnabled'],
   attendance: ['id','trainingId','teacherId','status','notes','timestamp','checkedInVia'],
@@ -266,6 +268,8 @@ const PUBLIC_ACTIONS = new Set([
   'teacher.codeSend', 'teacher.codeVerify', 'teacher.self', 'teacher.here',
   // שאלת ההשתלמות (28.9.26) — מפתח המורה (k) · הקישורים: מפתח בעל תפקיד/מדריכ/ה בפנים
   'teacher.training', 'training.files',
+  // אישור השתלמות בלי קובץ (12.10.26) — מפתח staff של מטה בפנים
+  'training.approve',
   // מורה בשני מקצועות (4.10.26) — מפתח המורה (k) בפנים
   'teacher.addSubject', 'teacher.subjectKey',
   // כניסת בעלי התפקידים (24.9.26) — קוד במייל או מפתח חתום; ההרשאה בפנים
@@ -1119,6 +1123,7 @@ function handleRequest(params) {
       case 'teachers.nameFixApply': result = teachersNameFixApply(params); break;
       case 'teachers.merge':      result = teachersMerge(params); break;
       case 'training.files':      result = trainingFiles(params); break;
+      case 'training.approve':    result = trainingApprove(params); break;
       // כניסת בעלי התפקידים — מייל → קוד → המבט של כל אחד (24.9.26)
       case 'staff.codeSend':      result = staffCodeSend(params); break;
       case 'staff.codeVerify':    result = staffCodeVerify(params); break;
@@ -5421,6 +5426,7 @@ function teacherSelf(p) {
     trainingStatus: String(t.trainingStatus || ''), trainingFile: String(t.trainingFile || ''),
     trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt),
     trainingNote: String(t.trainingNote || ''),
+    trainingApprovedBy: String(t.trainingApprovedBy || ''),
     unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
     subjects: teacherSubjects_(t)
   } };
@@ -5566,6 +5572,8 @@ function teacherTraining(p) {
   } else if (status === 'none') {
     fields.trainingFile = ''; fields.trainingFileName = '';
   }
+  // המורה ענה/תה בעצמו/ה "לא עברתי" — אישור המדריכה הקודם כבר לא תקף
+  if (status === 'none' && t.trainingApprovedBy) fields.trainingApprovedBy = '';
   const derived = unitsList ? unitsFromSelf_(unitsList) : '';
   trainingSiblings_(t).forEach(x => {
     const f = Object.assign({}, fields);
@@ -5611,6 +5619,49 @@ function trainingFiles(p) {
       note: String(t.trainingNote || '') };
   });
   return { ok: true, data: out };
+}
+
+/* training.approve — { k, ids: [...], by?, dryRun? } (12.10.26, מיטל)
+   מורים שעברו השתלמות (לפי רשימות הנוכחות של המדריכה) ואין להם קובץ אישור:
+   מסמנים "עבר/ה השתלמות" + trainingApprovedBy ("באישור המדריכה"). בלי קובץ.
+   נכתב לכל שורות אותו אדם באותו מקצוע ובית ספר, כמו teacher.training.
+   הרשאה: מפתח staff של מטה. dryRun כברירת מחדל — כותבים רק עם dryRun:false. */
+function trainingApprove(p) {
+  if (!staffIsHq_(p.k)) return { ok: false, error: 'forbidden' };
+  let ids = p.ids;
+  if (typeof ids === 'string') { try { ids = JSON.parse(ids); } catch (e) { ids = String(ids).split(','); } }
+  if (!Array.isArray(ids) || !ids.length) return { ok: false, error: 'no_ids' };
+  if (ids.length > 300) return { ok: false, error: 'too_many' };
+  const by = String(p.by || 'באישור המדריכה').replace(/\s+/g, ' ').trim().slice(0, 120);
+  const dryRun = !(p.dryRun === false || p.dryRun === 'false' || p.dryRun === 0 || p.dryRun === '0');
+  if (!dryRun) ensureTab_('teachers');   // העמודה החדשה — updateRowById מדלג בשקט על עמודה שאין
+  const all = readAll('teachers');
+  const byId = {};
+  all.forEach(t => { byId[String(t.id)] = t; });
+  const done = {}, rows = [];
+  const now = new Date().toISOString();
+  ids.map(x => String(x).trim()).filter(Boolean).forEach(id => {
+    const t = byId[id];
+    if (!t) { rows.push({ id: id, status: 'not_found' }); return; }
+    const name = String(t.name || '').trim(), subj = String(t.subject || '').trim();
+    const sibs = all.filter(x => String(x.id) === id ||
+      (String(x.school) === String(t.school) && String(x.name || '').trim() === name && String(x.subject || '').trim() === subj));
+    const row = { id: id, name: name, school: String(t.schoolName || ''), subject: subj,
+      before: String(t.trainingStatus || ''), hadFile: !!t.trainingFile, rows: sibs.length };
+    if (done[sibs.map(x => x.id).sort().join('|')]) { row.status = 'duplicate'; rows.push(row); return; }
+    done[sibs.map(x => x.id).sort().join('|')] = true;
+    row.status = String(t.trainingApprovedBy || '') === by && t.trainingStatus === 'passed' ? 'already' : 'approve';
+    if (!dryRun && row.status === 'approve') {
+      sibs.forEach(x => updateRowById('teachers', x.id, {
+        trainingStatus: 'passed', trainingApprovedBy: by,
+        trainingAt: x.trainingAt || now
+      }));
+    }
+    rows.push(row);
+  });
+  const n = s => rows.filter(r => r.status === s).length;
+  return { ok: true, data: { dryRun: dryRun, by: by, approve: n('approve'), already: n('already'),
+    notFound: n('not_found'), duplicate: n('duplicate'), rows: rows } };
 }
 
 /* teacher.here — "אני כאן" מתוך מבט המורה (21.9.26).
@@ -6293,7 +6344,7 @@ function registrationData_() {
       state: state, missing: missing, verifiedAt: ver, sentAt: snt,
       sentMail: state === 'started' ? (personMail[pk] || '') : '', sentCount: state === 'started' ? (personN[pk] || 0) : 0,
       trainingStatus: trainingStatus, unitsSelf: unitsSelf,
-      noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile'),
+      noFile: (trainingStatus === 'passed' || trainingStatus === 'registered') && !pick('trainingFile') && !pick('trainingApprovedBy'),
       trainingNote: String(pick('trainingNote') || ''),
       selfAdded: !!pick('selfAdded'), onLeave: onLeave
     };

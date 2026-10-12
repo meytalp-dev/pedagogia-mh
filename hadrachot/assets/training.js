@@ -46,9 +46,12 @@
     var f = fileMap && fileMap[String(t.id)];
     var note = f && f.note ? ' <span class="badge neutral" title="' + esc(f.note) + '">הערה</span>' : '';
     if (f && !f.url) f = null;
+    // אישור בלי קובץ (12.10.26) — "באישור המדריכה", נספר כמו אישור מצורף
+    var by = st !== 'none' && t && String(t.trainingApprovedBy || '').trim();
     return '<span class="badge ' + CLS[st] + '">' + LABEL[st] + '</span>' + note +
       (f ? ' <a class="badge neutral" href="' + esc(f.url) + '" target="_blank" rel="noopener" title="' +
-        esc(f.name || 'אישור') + '">אישור</a>' : '');
+        esc(f.name || 'אישור') + '">אישור</a>' : '') +
+      (!f && by ? ' <span class="badge neutral" title="' + esc(by) + '">' + esc(by) + '</span>' : '');
   }
 
   function counts(rows) {

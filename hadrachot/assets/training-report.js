@@ -42,6 +42,7 @@
         prev.tracks.push(t.type === 'gemer' ? 'גמר' : 'בגרות');
         prev.ids.push(String(t.id));
         if (!prev.trainingStatus && t.trainingStatus) prev.trainingStatus = t.trainingStatus;
+        if (!prev.trainingApprovedBy && t.trainingApprovedBy) prev.trainingApprovedBy = t.trainingApprovedBy;
         return;
       }
       var r = Object.assign({}, t, { tracks: [t.type === 'gemer' ? 'גמר' : 'בגרות'], ids: [String(t.id)] });
@@ -55,8 +56,8 @@
     { key: 'none', title: 'לא עברו השתלמות ולא נרשמו השנה', sub: 'צריך לפנות אליהם בפרטי', cls: 'err' },
     { key: 'passed-nofile', title: 'עברו השתלמות — לא צירפו אישור', sub: 'לבקש את האישור', cls: 'warn' },
     { key: 'registered-nofile', title: 'נרשמו השנה — לא צירפו אישור', sub: 'לבקש את אישור ההרשמה', cls: 'warn' },
-    { key: 'passed-file', title: 'עברו השתלמות וצירפו אישור', sub: '', cls: 'ok' },
-    { key: 'registered-file', title: 'נרשמו השנה וצירפו אישור', sub: '', cls: 'info' }
+    { key: 'passed-file', title: 'עברו השתלמות — עם אישור', sub: 'אישור שצירפו, או באישור המדריכה', cls: 'ok' },
+    { key: 'registered-file', title: 'נרשמו השנה — עם אישור', sub: 'אישור שצירפו, או באישור המדריכה', cls: 'info' }
   ];
 
   function groupOf(t, files) {
@@ -65,6 +66,8 @@
     if (st === 'none') return 'none';
     // מ-29.9.26 files מחזיר גם מורים עם הערה בלי קובץ — קובץ = url לא ריק
     var f = t.ids.some(function (id) { return files[id] && files[id].url; });
+    // אישור בלי קובץ (12.10.26, מיטל) — "באישור המדריכה" = עם אישור
+    if (String(t.trainingApprovedBy || '').trim()) f = true;
     return st + (f ? '-file' : '-nofile');
   }
   function noteOf(t, files) {
@@ -156,7 +159,8 @@
               var fl = fileOf(t, files);
               return '<tr><td>' + esc(t.name) + '</td><td>' + esc(t.schoolName) + '</td><td>' + esc(t.subject) + '</td><td>' + esc(t.tracks.join(' + ')) + '</td>' +
                 (guides ? '<td>' + esc(t._guides.join(', ') || '—') + '</td>' : '') +
-                (g.key.indexOf('-file') > 0 ? '<td>' + (fl ? '<a href="' + esc(fl.url) + '" target="_blank" rel="noopener">פתיחה</a>' : '') + '</td>' : '') +
+                (g.key.indexOf('-file') > 0 ? '<td>' + (fl ? '<a href="' + esc(fl.url) + '" target="_blank" rel="noopener">פתיחה</a>'
+                  : esc(t.trainingApprovedBy || '')) + '</td>' : '') +
                 (g.key.indexOf('nofile') > 0 ? '<td>' + esc(noteOf(t, files)) + '</td>' : '') + '</tr>';
             }).join('') + '</tbody></table></div>'
             : '<div class="tr-empty">אין מורים בקבוצה הזו.</div>') +
