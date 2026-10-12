@@ -121,14 +121,16 @@
   function vaadaDoc(d) {
     var j = d.doc || {}, ed = d.mine;
     function f(path, val, tag) { return ed ? '<' + tag + ' class="tt-ed" contenteditable="true" data-p="' + path + '">' + esc(val) + '</' + tag + '>' : '<' + tag + '>' + esc(val) + '</' + tag + '>'; }
+    /* 12.10.26 (סקירה): "טיוטה לבדיקה" + מה להשלים — למעלה, כדי שהמסמך לא ייצא לוועדה כאילו נבדק */
     return '<div class="card head">' + f('title', j.title || '', 'h1') + '<div class="meta">עודכן ' + esc(heDate(d.updated)) + (ed ? ' · אפשר לערוך כל שורה ישירות בדף' : '') + '</div></div>' +
+      '<p class="tt-note"><b>טיוטה לבדיקה.</b> ' + BOT() + ' הכינה אותה מהנתונים של בית הספר. כדאי לעבור על כל שורה, לתקן ולמחוק מה שלא מדויק לפני שמגישים לוועדה.' +
+        (j.missing ? '<br><b>להשלים לפני הוועדה:</b> ' + esc(j.missing) : '') + '</p>' +
       '<div class="card tt-vdoc">' + f('intro', j.intro || '', 'p') +
       (j.sections || []).map(function (s, i) {
         return '<h2>' + esc(s.h) + '</h2><ul>' + (s.points || []).map(function (p, k) { return f('sections.' + i + '.points.' + k, p, 'li'); }).join('') + '</ul>' +
           (s.src ? '<p class="small">מקור: ' + esc(s.src) + '</p>' : '');
       }).join('') +
-      ((j.asks || []).length ? '<h2>מה נבקש מהוועדה</h2><ul>' + j.asks.map(function (a, k) { return f('asks.' + k, a, 'li'); }).join('') + '</ul>' : '') +
-      (j.missing ? '<p class="small tt-miss">כדאי להשלים לפני הוועדה: ' + esc(j.missing) + '</p>' : '') + '</div>' +
+      ((j.asks || []).length ? '<h2>מה נבקש מהוועדה</h2><ul>' + j.asks.map(function (a, k) { return f('asks.' + k, a, 'li'); }).join('') + '</ul>' : '') + '</div>' +
       '<div class="acts" style="margin-top:12px">' + (ed ? '<button type="button" class="btn primary" data-tt="vsave">שמירה</button>' : '') +
       '<button type="button" class="btn" data-tt="vprint">' + IC.print + 'הדפסה</button><button type="button" class="btn" data-tt="vcopy">' + IC.copy + 'העתקה</button>' +
       '<button type="button" class="btn" data-tt="vback">לכל המסמכים</button>' + (ed ? '<button type="button" class="btn" data-tt="vdel">מחיקה</button>' : '') + '</div>';
@@ -240,19 +242,37 @@
         }).join('') + '</ul></div>';
     }
     var name = (EV_TYPES.filter(function (t) { return t[0] === ev.type; })[0] || ['', ''])[1];
-    var steps = evSteps(ev.type), done = ev.done || {}, n = steps.filter(function (s, i) { return done[i]; }).length;
+    var steps = evSteps(ev.type), done = ev.done || {};
+    /* 12.10.26 (סקירה): אותו נוסח, בקבוצות לפי הזמן. "חשוב" = כללים ואיסורים — בתיבה בלי סימון, לא משימה */
+    var EVG = [['עכשיו', ['מיד', 'עד 120 דקות']], ['לפי סוג האירוע', ['לפי הסוג']], ['דיווח ותיעוד', ['היום', 'עד 48 שעות', 'במקביל', 'תוך 3 ימים']], ['המשך טיפול', ['בהמשך', 'אחרי כמה ימים']]];
+    var rules = steps.filter(function (s) { return s[0] === 'חשוב'; });
+    var todo = steps.map(function (s, i) { return i; }).filter(function (i) { return steps[i][0] !== 'חשוב'; });
+    var n = todo.filter(function (i) { return done[i]; }).length;
+    function stepLi(i) {
+      var s = steps[i];
+      return '<li class="' + (done[i] ? 'ok' : '') + '"><label><input type="checkbox" data-tt="evstep" data-i="' + i + '"' + (done[i] ? ' checked' : '') + '>' +
+        '<span class="w">' + esc(s[0]) + '</span><span class="tx">' + esc(s[1]) + '</span></label>' +
+        '<div class="tt-sacts"><a class="small" href="/' + s[2] + '" target="_blank" rel="noopener">לנוהל</a>' +
+        (s[3] === 'mail' ? (sup.length ? ' · ' + mailBtns(sup, sub, text, 'טיוטת מייל לפיקוח') : ' · <span class="small">כתובת המפקח/ת לא נמצאה באנשי הקשר</span>') : '') + '</div></li>';
+    }
     var sup = supEmails(), school = T.school() ? T.school().name : '';
     var sub = 'עדכון על אירוע חריג · ' + school;
     var text = 'שלום,\n\nמעדכנים על אירוע חריג בבית הספר ' + school + '.\n\nסוג האירוע: ' + name + '\nמועד: [תאריך ושעה]\nמה נעשה עד עכשיו: [פעולות ראשונות, למי דווח]\nמעורבים: [ראשי תיבות בלבד, גיל/כיתה]\n\nדו"ח משלים בטופס "דיווח על אירוע חריג" יישלח עד 48 שעות.\n\n' + principal() + '\n' + school;
     MAILTEXT[sub] = { text: text, html: rtlWrap(esc(text).replace(/\n/g, '<br>')) };
-    return h + '<div class="card"><div class="tt-evhead"><b>' + esc(name) + '</b><span class="small">התחלתם ב-' + esc(ev.t) + ' · ' + n + ' מתוך ' + steps.length + ' צעדים</span></div>' +
+    return h + '<div class="card"><div class="tt-evhead"><b>' + esc(name) + '</b><span class="small">התחלתם ב-' + esc(ev.t) + ' · ' + n + ' מתוך ' + todo.length + ' צעדים</span></div>' +
       '<p class="tt-note"><b>הסימון כאן הוא תזכורת אישית, לא דיווח.</b> הוא נשמר רק בדפדפן הזה ולא עובר למפקח/ת או למכשיר אחר. הדיווח עצמו — בטופס ובמייל לפיקוח.</p>' +
-      '<ol class="tt-steps">' + steps.map(function (s, i) {
-        return '<li class="' + (done[i] ? 'ok' : '') + '"><label><input type="checkbox" data-tt="evstep" data-i="' + i + '"' + (done[i] ? ' checked' : '') + '>' +
-          '<span class="w">' + esc(s[0]) + '</span><span class="tx">' + esc(s[1]) + '</span></label>' +
-          '<div class="tt-sacts"><a class="small" href="/' + s[2] + '" target="_blank" rel="noopener">לנוהל</a>' +
-          (s[3] === 'mail' ? (sup.length ? ' · ' + mailBtns(sup, sub, text, 'טיוטת מייל לפיקוח') : ' · <span class="small">כתובת המפקח/ת לא נמצאה באנשי הקשר</span>') : '') + '</div></li>';
-      }).join('') + '</ol>' +
+      (rules.length ? '<div class="tt-rules"><b>חשוב לדעת</b><ul>' + rules.map(function (s) {
+        return '<li>' + esc(s[1]) + ' <a class="small" href="/' + s[2] + '" target="_blank" rel="noopener">לנוהל</a></li>';
+      }).join('') + '</ul></div>' : '') +
+      EVG.map(function (g) {
+        var ids = todo.filter(function (i) { return g[1].indexOf(steps[i][0]) > -1; });
+        return ids.length ? '<h3 class="tt-evg">' + esc(g[0]) + '</h3><ol class="tt-steps">' + ids.map(stepLi).join('') + '</ol>' : '';
+      }).join('') +
+      (function () {   /* מועד שלא בקבוצה — לא נעלם */
+        var known = [].concat.apply([], EVG.map(function (g) { return g[1]; }));
+        var rest = todo.filter(function (i) { return known.indexOf(steps[i][0]) < 0; });
+        return rest.length ? '<ol class="tt-steps">' + rest.map(stepLi).join('') + '</ol>' : '';
+      })() +
       '<div class="acts" style="margin-top:12px"><a class="btn" href="/docs/tofes-divuach-eruah-charig.docx" target="_blank" rel="noopener">טופס הדיווח (Word)</a>' +
       '<button type="button" class="btn" data-tt="evend">סיום · אירוע חדש</button></div>' +
       '<p class="small" style="margin-top:10px">במייל ובטופס — מעורבים בראשי תיבות בלבד.</p></div>';
@@ -355,6 +375,10 @@
     var canRec = !!(window.MediaRecorder && navigator.mediaDevices && recMime());
     return '<div class="card head"><h1>' + (RK() ? 'ישיבת צוות' : 'ישיבת הנהלה') + '</h1><div class="meta">מקליטים את הישיבה, ו' + BOT() + ' מחזירה סיכום, החלטות ומשימות לכל אחד/ת. המשימות נכנסות לצ׳ק ליסט בלחיצה. ' +
       'ההקלטה עצמה לא נשמרת בשום מקום — רק הסיכום.</div></div>' +
+      /* 12.10.26 (סקירה): מה קורה למידע ויידוע המשתתפים — לפני שמקליטים */
+      '<p class="tt-note"><b>לפני שמקליטים — לספר למשתתפים שהישיבה מוקלטת לצורך סיכום.</b> ' +
+        'ההקלטה נשלחת לתמלול אוטומטי ונמחקת מיד; הטקסט נשלח ל' + BOT() + ' לסיכום. נשמר רק הסיכום — כאן, ב"ישיבות קודמות" — ועותק שלו ביומן הניהול של המערכת. ' +
+        'כדאי לא לנקוב בשמות תלמידים בזמן ההקלטה.</p>' +
       '<div class="card">' + (!on() ? '<div class="empty">קרן עוד לא הופעלה.</div>' :
         '<div class="tt-rec">' + (rec
           ? '<span class="tt-dot"></span><b id="ttClock">' + clock((Date.now() - REC.t0) / 1000) + '</b><button type="button" class="btn primary" data-tt="recstop">' + IC.stop + 'סיום ההקלטה</button>' +
@@ -436,6 +460,24 @@
           '<p class="src">העתקים: קצין ביקור סדיר (קב"ס) · ממונה מחוז · מפקח פדגוגי כולל · מפקחת על הצוותים הטיפוליים · תיק אישי של התלמיד/ה</p>';
       } }
   };
+  var L_OPT = { other1: 1, other2: 1 };   /* שדות רשות — לא נספרים כחסרים */
+  function lField(f) {
+    var val = LF[f[0]] || '', cls = f[2] === 'student' ? ' tt-student' : '';
+    return '<label class="small' + cls + '">' + esc(f[1]) + (L_OPT[f[0]] ? ' <span class="small">(לא חובה)</span>' : '') +
+      (f[2] === 'long' ? '<textarea class="fld" data-lf="' + f[0] + '" rows="3">' + esc(val) + '</textarea>' : '<input class="fld" data-lf="' + f[0] + '" value="' + esc(val) + '">') + '</label>';
+  }
+  function lStep(L, type, title, fold) {
+    var fs = L.fields.filter(function (f) { return (f[2] || '') === type; });
+    if (!fs.length) return '';
+    var body = '<div class="tt-form">' + fs.map(lField).join('') + '</div>';
+    return fold ? '<details class="tt-lstep"><summary>' + esc(title) + '</summary>' + body + '</details>'
+                : '<h3 class="tt-h3">' + esc(title) + '</h3>' + body;
+  }
+  function lMissing(L) {
+    var miss = L.fields.filter(function (f) { return !L_OPT[f[0]] && !String(LF[f[0]] || '').trim(); }).map(function (f) { return f[1]; });
+    return miss.length ? '<p class="tt-note"><b>עוד חסר (' + miss.length + '):</b> ' + miss.map(esc).join(' · ') + '</p>'
+                       : '<p class="tt-note tt-okn"><b>הכול מולא.</b> אפשר לבדוק את המכתב ולהדפיס.</p>';
+  }
   function v(s, multi) { s = String(s || '').trim(); return s ? (multi ? esc(s).replace(/\n/g, '<br>') : esc(s)) : '<span class="fill">&nbsp;</span>'; }
   function autoFields() {
     var y = personByRole(/יועץ|ייעוץ/);
@@ -448,12 +490,11 @@
       Object.keys(a).forEach(function (k) { if (LF[k] === undefined) LF[k] = a[k]; });
       return h + '<div class="card"><button type="button" class="back" data-tt="lback">→ לכל המכתבים</button><h2 class="tt-h">' + esc(L.name) + '</h2>' +
         '<p class="small">' + esc(L.when) + ' <a href="/' + L.page + '" target="_blank" rel="noopener">לנוהל המלא</a></p>' +
-        '<div class="tt-form">' + L.fields.map(function (f) {
-          var val = LF[f[0]] || '', cls = f[2] === 'student' ? ' tt-student' : '';
-          return '<label class="small' + cls + '">' + esc(f[1]) + (f[2] === 'student' ? ' <span class="tt-priv">לא נשמר</span>' : '') +
-            (f[2] === 'long' ? '<textarea class="fld" data-lf="' + f[0] + '" rows="3">' + esc(val) + '</textarea>' : '<input class="fld" data-lf="' + f[0] + '" value="' + esc(val) + '">') + '</label>';
-        }).join('') + '</div>' +
-        '<h3 class="tt-h3">המכתב</h3><div class="tt-letter" id="ttLetter">' + L.body(LF) + '</div>' +
+        /* 12.10.26 (סקירה): הטופס בשלבים קצרים, ולפני ההדפסה — מה עוד חסר */
+        lStep(L, 'auto', '1 · פרטי בית הספר — מולאו לבד, אפשר לתקן', true) + lStep(L, '', '2 · למי ומי מטפל/ת') +
+        lStep(L, 'student', '3 · פרטי התלמיד/ה — לא נשמרים') + lStep(L, 'long', '4 · מה נעשה') +
+        '<h3 class="tt-h3">5 · בדיקה והפקה</h3><div id="lfMissing">' + lMissing(L) + '</div>' +
+        '<div class="tt-letter" id="ttLetter">' + L.body(LF) + '</div>' +
         (L.attach ? '<p class="small"><b>לצרף / לשלוח:</b> ' + L.attach.map(esc).join(' · ') + '</p>' : '') +
         '<div class="acts" style="margin-top:10px"><button type="button" class="btn primary" data-tt="lprint">' + IC.print + 'הדפסה</button>' +
         '<button type="button" class="btn" data-tt="lcopy">' + IC.copy + 'העתקה</button><button type="button" class="btn" data-tt="lclear">ניקוי פרטי התלמיד/ה</button></div></div>';
@@ -603,6 +644,7 @@
     if (!f || !LT) return;
     LF[f] = el.value;
     var out = $('ttLetter'); if (out) out.innerHTML = LETTERS[LT].body(LF);
+    var mi = $('lfMissing'); if (mi) mi.innerHTML = lMissing(LETTERS[LT]);
   });
 
   /* ===== הממשק לצוהר (app.js) ===== */

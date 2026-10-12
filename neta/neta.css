@@ -66,6 +66,7 @@ button{font:inherit}
 .fact span{display:block;font-size:12.5px;color:var(--muted)}
 .fact b{font:700 19px Rubik,sans-serif;color:var(--ink)}
 .fact b.bad{color:var(--bad)} .fact b.ok{color:var(--ok)}
+.fact b .fx{font:400 13px/1.4 Assistant,sans-serif;color:var(--muted)}
 h2.pt{font:700 20px Rubik,sans-serif;color:var(--navy);margin:22px 0 10px}
 .lead{color:var(--muted);margin:0 0 6px}
 .small{font-size:13.5px;color:var(--muted)}
@@ -388,6 +389,8 @@ footer a{color:var(--muted)}
 .yn label,.sc label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:14px;background:#fff}
 .yn label:has(input:checked),.sc label:has(input:checked){background:var(--blue);border-color:var(--blue);color:#fff}
 .yn input,.sc input{position:absolute;opacity:0;pointer-events:none}
+/* 12.10.26 (סקירה, נגישות): מי שעובר/ת במקלדת רואה איפה הוא/היא */
+.yn label:has(input:focus-visible),.sc label:has(input:focus-visible){outline:3px solid var(--amber);outline-offset:2px}
 .pre.note{white-space:pre-wrap;background:var(--paper);border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.6}
 .pic{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .pic li{display:grid;grid-template-columns:minmax(0,1fr) 38% 42px;gap:10px;align-items:center;font-size:14px}
@@ -422,6 +425,19 @@ table.pr select{width:auto;min-width:72px;margin:0}
   .pic li .bar,.pic li .stack{grid-column:1/-1;grid-row:2}
   table.pr{font-size:13px}
 }
+/* 12.10.26 (סקירה): פריסה בנייד — כרטיס לכל שאלון (מספר ושם למעלה, שכבה ומועד עם תווית) במקום 5 עמודות */
+@media (max-width:700px){
+  table.pr thead{display:none}
+  table.pr,table.pr tbody,table.pr tr,table.pr td{display:block;width:100%}
+  table.pr tr{border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:8px;background:#fff}
+  table.pr td{border:0;padding:3px 0}
+  table.pr td[data-l="שאלון"]{font-weight:700;color:var(--navy);text-align:right}
+  table.pr td[data-l="שכבה"],table.pr td[data-l="מועד"]{display:flex;align-items:center;gap:10px}
+  table.pr td[data-l="שכבה"]::before,table.pr td[data-l="מועד"]::before{content:attr(data-l);font-size:13px;color:var(--muted);min-width:44px}
+  table.pr select{flex:1;min-height:40px}
+}
+.pr-dirty{position:sticky;bottom:12px;z-index:30;display:flex;align-items:center;gap:12px;justify-content:space-between;background:#fff6e0;border:1px solid #f0d79a;border-radius:12px;padding:8px 12px;margin-top:12px;box-shadow:0 6px 18px rgba(38,80,94,.12);font-weight:700;color:#4a3b12}
+.pr-dirty[hidden]{display:none}
 
 /* ===== תפריט צד מצומצם במחשב (מיטל, 11.10.26: "התפריט עושה לי רעש" → "לצמצם") =====
    ברירת מחדל: פס צר של אייקונים, השם קופץ כשעומדים על אייקון. הכפתור למעלה מרחיב/מצמצם (נשמר בדפדפן).

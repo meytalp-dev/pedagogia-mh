@@ -364,6 +364,10 @@
     if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
+  /* 12.10.26 (סקירה): במקום מקף — טוען / לא נטען / אין נתון, כדי שיהיה ברור מה קרה */
+  function noVal(st) {
+    return '<small class="fx">' + (st === 'load' ? 'טוען…' : st === 'err' ? 'לא נטען — רענון הדף ינסה שוב' : 'אין נתון') + '</small>';
+  }
   function headCard(sub) {
     var s = D.school, m = R.mosdot;
     var megs = m ? (m.megamot || []).filter(function (x) { return x.name; }).length : null;
@@ -373,11 +377,11 @@
       (m ? esc(m.network) + ' · ' : '') + 'סמל <b>' + esc(s.semel) + '</b>' + (m ? ' · ' + esc(m.district) : '') +
       ' · מפקח/ת: <b>' + esc((s.sups || []).join(', ')) + '</b></div>' + (sub || '') +
       '<div class="facts">' +
-      '<div class="fact"><span>תלמידים</span><b>' + (R.matz || (ST.matz === 'load' ? '…' : '—')) + '</b></div>' +
-      '<div class="fact"><span>מגמות</span><b>' + (megs === null ? (ST.mosdot === 'load' ? '…' : '—') : megs) + '</b></div>' +
+      '<div class="fact"><span>תלמידים</span><b>' + (R.matz || noVal(ST.matz)) + '</b></div>' +
+      '<div class="fact"><span>מגמות</span><b>' + (megs === null ? noVal(ST.mosdot) : megs) + '</b></div>' +
       '<div class="fact"><span>משימות פתוחות</span><b class="' + (n ? 'bad' : 'ok') + '">' + n + '</b></div>' +
       '<div class="fact"><span>מורים שנרשמו למנור</span><b class="' + (p === null ? '' : p < 50 ? 'bad' : p < 100 ? '' : 'ok') + '">' +
-        (p === null ? (ST.menor === 'load' ? '…' : '—') : p + '%') + '</b></div>' +
+        (p === null ? noVal(ST.menor) : p + '%') + '</b></div>' +
       '</div></div>';
   }
 
@@ -583,6 +587,8 @@
   function vaadSec() {
     var rows = D.vaadot, rk = isRakaz(), title = 'ועדה מלווה תשפ״ו' + (rk ? ' · החלקים הפדגוגיים' : '');
     if (!rows) return sec('vaad', I.flag, title, 'לא נטען', failed());
+    /* בית ספר שלא היה קיים בתשפ״ו (אור דניאל, מיטל 12.10.26) — אין ועדה ואין חוסר */
+    if (!rows.length && String(D.school.semel) === '42925') return sec('vaad', I.flag, title, 'בית ספר חדש', '<div class="empty">בית ספר חדש — לא היה קיים בתשפ״ו, ולכן אין ועדה מלווה מתשפ״ו.</div>');
     if (!rows.length) return sec('vaad', I.flag, title, 'אין', '<div class="empty">לא התקבל בצוהר מסמך של ועדה מלווה מתשפ״ו.</div>');
     var by = {}, order = [];
     rows.forEach(function (x) { var st = x.stage || 'ועדה מלווה'; if (!by[st]) { by[st] = []; order.push(st); } by[st].push(x); });

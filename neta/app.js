@@ -368,6 +368,10 @@
     if (tBox) setTimeout(tPlace, 30);   /* נתון שנטען באמצע הסיור משנה את הפריסה */
   }
 
+  /* 12.10.26 (סקירה): במקום מקף — טוען / לא נטען / אין נתון, כדי שיהיה ברור מה קרה */
+  function noVal(st) {
+    return '<small class="fx">' + (st === 'load' ? 'טוען…' : st === 'err' ? 'לא נטען — רענון הדף ינסה שוב' : 'אין נתון') + '</small>';
+  }
   function headCard(sub) {
     var s = D.school, m = R.mosdot;
     var megs = m ? (m.megamot || []).filter(function (x) { return x.name; }).length : null;
@@ -377,11 +381,11 @@
       (m ? esc(m.network) + ' · ' : '') + 'סמל <b>' + esc(s.semel) + '</b>' + (m ? ' · ' + esc(m.district) : '') +
       ' · מפקח/ת: <b>' + esc((s.sups || []).join(', ')) + '</b></div>' + (sub || '') +
       '<div class="facts">' +
-      '<div class="fact"><span>תלמידים</span><b>' + (R.matz || (ST.matz === 'load' ? '…' : '—')) + '</b></div>' +
-      '<div class="fact"><span>מגמות</span><b>' + (megs === null ? (ST.mosdot === 'load' ? '…' : '—') : megs) + '</b></div>' +
+      '<div class="fact"><span>תלמידים</span><b>' + (R.matz || noVal(ST.matz)) + '</b></div>' +
+      '<div class="fact"><span>מגמות</span><b>' + (megs === null ? noVal(ST.mosdot) : megs) + '</b></div>' +
       '<div class="fact"><span>המשימות שלי</span><b class="' + (n ? '' : 'ok') + '">' + n + '</b></div>' +
       '<div class="fact"><span>מורים שנרשמו למנור</span><b class="' + (p === null ? '' : p < 50 ? 'bad' : p < 100 ? '' : 'ok') + '">' +
-        (p === null ? (ST.menor === 'load' ? '…' : '—') : p + '%') + '</b></div>' +
+        (p === null ? noVal(ST.menor) : p + '%') + '</b></div>' +
       '</div></div>';
   }
 

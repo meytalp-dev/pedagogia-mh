@@ -223,13 +223,13 @@
           '<ul id="pmh-res" role="listbox" aria-label="תוצאות" hidden></ul>' +
           '<div id="pmh-picked" hidden></div>' +
           '<input id="pmh-mail" class="pmh-in" type="email" dir="ltr" autocomplete="email" ' +
-            'placeholder="כתובת המייל שלך" hidden>' +
+            'placeholder="כתובת המייל שלך" aria-label="כתובת המייל שלך" hidden>' +
           '<button id="pmh-go" type="button">שליחת קוד למייל</button>' +
           '<button id="pmh-alt" class="pmh-link" type="button"></button>' +
         '</div>' +
         '<div id="pmh-s2" hidden>' +
           '<input id="pmh-code" class="pmh-in pmh-code" type="text" inputmode="numeric" ' +
-            'autocomplete="one-time-code" maxlength="6" placeholder="••••••" dir="ltr">' +
+            'autocomplete="one-time-code" maxlength="6" placeholder="••••••" aria-label="קוד הכניסה (6 ספרות)" dir="ltr">' +
           '<button id="pmh-ok" type="button">כניסה</button>' +
           '<button id="pmh-back" class="pmh-link" type="button">לא הגיע קוד? חזרה ושליחה מחדש</button>' +
         '</div>' +

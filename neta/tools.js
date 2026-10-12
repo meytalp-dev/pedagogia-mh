@@ -145,7 +145,7 @@
         '<details class="tt-roster"' + (names.length ? '' : ' open') + '><summary>רשימת המורים (' + names.length + ')</summary>' +
         '<textarea class="fld" id="xRoster" rows="6" placeholder="שם מלא בכל שורה">' + esc(names.join('\n')) + '</textarea>' +
         '<div class="acts" style="margin-top:8px"><button type="button" class="btn sm" data-xt="roster">שמירת הרשימה</button></div></details>') + '</div>' +
-      (tama.length ? '<h2 class="pt">התמונה הבית ספרית</h2>' + picture(tama) : '') +
+      (tama.length ? '<h2 class="pt">' + (tama.length < PIC_MIN ? 'ממצאים ראשוניים' : 'התמונה הבית ספרית') + '</h2>' + picture(tama) : '') +
       '<h2 class="pt">התצפיות</h2><div class="card">' +
       (DST.obs === 'load' && !L.length ? '<div class="empty">טוען…</div>' : !L.length ? '<div class="empty">עוד לא נשמרה תצפית.</div>' :
         '<ul class="tt-docs">' + L.map(function (d) {
@@ -155,12 +155,16 @@
         }).join('') + '</ul>') + '</div>';
   }
   /* התמונה הבית ספרית — כמו "טבלה משוקללת" בתמ"ה: חלק א' באחוזי "כן", חלק ב' בהתפלגות לפי ארבע הדרגות */
+  /* 12.10.26 (סקירה): מעט תצפיות = "ממצאים ראשוניים", לא תמונה של בית הספר; "לא נמדד" במקום מקף */
+  var PIC_MIN = 5;
   function picture(list) {
-    var n = list.length, h = '<div class="card"><p class="small">מתוך ' + n + ' תצפיות תמ"ה. ככל שיש יותר תצפיות, במקצועות ובכיתות שונים — התמונה מייצגת יותר.</p>';
+    var n = list.length;
+    var h = '<div class="card">' + (n < PIC_MIN ? '<p class="tt-note"><b>רק ' + (n === 1 ? 'תצפית אחת' : n + ' תצפיות') + ' — ממצאים ראשוניים.</b> עוד לא תמונה של בית הספר, וכדאי לא להסיק מהם מסקנות. מ-' + PIC_MIN + ' תצפיות, במקצועות ובכיתות שונים, התמונה מתחילה לייצג.</p>'
+      : '<p class="small"><b>מתוך ' + n + ' תצפיות תמ"ה.</b> ככל שיש יותר תצפיות, במקצועות ובכיתות שונים — התמונה מייצגת יותר.</p>');
     h += '<h3 class="tt-h3">חלק א׳ · כמה שיעורים</h3><ul class="pic">' + TAMA_A.map(function (it, i) {
       var yes = list.filter(function (d) { return (d.doc.a[i] || {}).v === 'כן'; }).length, ans = list.filter(function (d) { return (d.doc.a[i] || {}).v; }).length;
       var pc = ans ? Math.round(100 * yes / ans) : 0;
-      return '<li><span class="t">' + esc(it[0]) + '</span><span class="bar"><i style="width:' + pc + '%"></i></span><b>' + (ans ? pc + '%' : '—') + '</b></li>';
+      return '<li><span class="t">' + esc(it[0]) + '</span><span class="bar"><i style="width:' + pc + '%"></i></span><b>' + (ans ? pc + '%' : '<small>לא נמדד</small>') + '</b></li>';
     }).join('') + '</ul>';
     h += '<h3 class="tt-h3">חלק ב׳ · באיזו מידה</h3><div class="pic-leg">' + SCALE.map(function (s, k) { return '<span><i class="lv' + k + '"></i>' + esc(s) + '</span>'; }).join('') + '</div><ul class="pic b">' +
       TAMA_B.map(function (it, i) {
@@ -198,21 +202,21 @@
       '<div class="acts"><button type="button" class="btn primary" data-xt="save"' + (XBUSY ? ' disabled' : '') + '>' + (XBUSY ? 'שומר…' : 'שמירת התצפית') + '</button></div></div>';
   }
   function yesNo(part, i, v) {
-    return '<span class="yn">' + ['כן', 'לא'].map(function (x) {
+    return '<span class="yn" role="radiogroup"' + (i > -1 ? ' aria-labelledby="q' + part + i + '"' : ' aria-label="המאפיין שבחרת"') + '>' + ['כן', 'לא'].map(function (x) {
       return '<label><input type="radio" name="' + part + i + '" data-xr="' + part + '" data-i="' + i + '" value="' + x + '"' + (v === x ? ' checked' : '') + '>' + x + '</label>';
     }).join('') + '</span>';
   }
   function scale(part, i, v) {
-    return '<span class="sc">' + SCALE.map(function (x, k) {
+    return '<span class="sc" role="radiogroup"' + (i > -1 ? ' aria-labelledby="q' + part + i + '"' : ' aria-label="המרכיב שבחרת"') + '>' + SCALE.map(function (x, k) {
       return '<label title="' + esc(x) + '"><input type="radio" name="' + part + i + '" data-xr="' + part + '" data-i="' + i + '" value="' + esc(x) + '"' + (v === x ? ' checked' : '') + '><span>' + esc(x.replace('במידה ', '')) + '</span></label>';
     }).join('') + '</span>';
   }
   function rowA(part, i, t, hint, cur) {
-    return '<li><div class="q"><b>' + esc(t) + '</b>' + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' + yesNo(part, i, cur.v) +
+    return '<li><div class="q"><b id="q' + part + i + '">' + esc(t) + '</b>' + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' + yesNo(part, i, cur.v) +
       '<input class="fld sm" data-xn="a" data-i="' + i + '" placeholder="הערות ודוגמאות" value="' + esc(cur.n) + '"></li>';
   }
   function rowB(i, t, hint, cur) {
-    return '<li><div class="q"><b>' + esc(t) + '</b>' + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' + scale('b', i, cur.v) +
+    return '<li><div class="q"><b id="qb' + i + '">' + esc(t) + '</b>' + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' + scale('b', i, cur.v) +
       '<input class="fld sm" data-xn="b" data-i="' + i + '" placeholder="הערות ודוגמאות" value="' + esc(cur.n) + '"></li>';
   }
   function obsText(o) {
@@ -341,16 +345,22 @@
         (ed ? '<button type="button" class="btn sm" data-bt2="rm" data-si="' + si + '">הסרה</button>' : '') + '</div>' +
         (rows.length ? '<div class="tbl"><table class="pr"><thead><tr><th>שאלון</th><th>שם</th><th>אופן</th><th>שכבה</th><th>מועד</th></tr></thead><tbody>' + rows.map(function (r) {
           var v = s.rows[r.code] || {};
-          return '<tr><td dir="ltr">' + esc(r.code) + '</td><td>' + esc(r.name) + (r.units ? ' <small>(' + esc(String(r.units).replace('/', '')) + ' יח"ל)</small>' : '') + '</td><td><small>' + esc(r.how || r.ext) + (r.w ? ' · ' + Math.round(r.w * 100) + '%' : '') + '</small></td>' +
-            '<td>' + sel('g', si, r.code, GR, v.g, ed) + '</td><td>' + sel('m', si, r.code, MO, v.m, ed) + '</td></tr>';
+          /* 12.10.26 (סקירה): data-l = כותרת העמודה, לתצוגת כרטיס בנייד; לכל בחירה שם נגיש */
+          return '<tr><td data-l="שאלון" dir="ltr">' + esc(r.code) + '</td><td data-l="שם">' + esc(r.name) + (r.units ? ' <small>(' + esc(String(r.units).replace('/', '')) + ' יח"ל)</small>' : '') + '</td><td data-l="אופן"><small>' + esc(r.how || r.ext) + (r.w ? ' · ' + Math.round(r.w * 100) + '%' : '') + '</small></td>' +
+            '<td data-l="שכבה">' + sel('g', si, r.code, GR, v.g, ed, 'שכבה · ' + r.code + ' ' + r.name) + '</td><td data-l="מועד">' + sel('m', si, r.code, MO, v.m, ed, 'מועד · ' + r.code + ' ' + r.name) + '</td></tr>';
         }).join('') + '</tbody></table></div>' : '<div class="empty">לא נמצאו שאלונים למקצוע הזה בחוברת.</div>') + '</div>';
     });
     var any = P.doc.subjects.some(function (s) { return Object.keys(s.rows).some(function (k) { return s.rows[k].g; }); });
     return h + '<div class="acts">' + (ed ? '<button type="button" class="btn primary" data-bt2="save"' + (XBUSY ? ' disabled' : '') + '>' + (XBUSY ? 'שומר…' : 'שמירת הפריסה') + '</button>' : '') +
-      (any ? '<button type="button" class="btn" data-bt2="print">' + IC.print + 'הדפסה לפי שכבות</button>' : '') + '</div>';
+      (any ? '<button type="button" class="btn" data-bt2="print">' + IC.print + 'הדפסה לפי שכבות</button>' : '') + '</div>' +
+      /* שינויים שלא נשמרו — פס קבוע בתחתית המסך עם כפתור שמירה, גם כשהרשימה ארוכה (סקירה 12.10.26) */
+      (ed ? '<div class="pr-dirty" id="prDirty"' + (PDIRTY ? '' : ' hidden') + ' role="status"><span>יש שינויים שלא נשמרו</span>' +
+        '<button type="button" class="btn primary sm" data-bt2="save"' + (XBUSY ? ' disabled' : '') + '>' + (XBUSY ? 'שומר…' : 'שמירה') + '</button></div>' : '');
   }
-  function sel(k, si, code, opts, v, ed) {
-    return '<select class="fld sm" data-ps="' + k + '" data-si="' + si + '" data-code="' + esc(code) + '"' + (ed ? '' : ' disabled') + '>' +
+  var PDIRTY = false;
+  window.addEventListener('beforeunload', function (e) { if (PDIRTY) { e.preventDefault(); e.returnValue = ''; } });
+  function sel(k, si, code, opts, v, ed, label) {
+    return '<select class="fld sm" data-ps="' + k + '" data-si="' + si + '" data-code="' + esc(code) + '" aria-label="' + esc(label || '') + '"' + (ed ? '' : ' disabled') + '>' +
       opts.map(function (o) { return '<option value="' + esc(o) + '"' + ((v || '') === o ? ' selected' : '') + '>' + (o || '—') + '</option>'; }).join('') + '</select>';
   }
   function prisaPrint() {
@@ -533,15 +543,15 @@
       if (k2 === 'add') {
         var n = matchSubject(($('bAdd') || {}).value || '');
         if (!n) { T.toast('לא נמצא מקצוע כזה בחוברת השאלונים'); return; }
-        if (!P.doc.subjects.some(function (s) { return s.name === n; })) P.doc.subjects.push({ name: n, rows: {} });
+        if (!P.doc.subjects.some(function (s) { return s.name === n; })) { P.doc.subjects.push({ name: n, rows: {} }); PDIRTY = true; }
         redraw();
-      } else if (k2 === 'rm') { P.doc.subjects.splice(+b.getAttribute('data-si'), 1); redraw(); }
+      } else if (k2 === 'rm') { P.doc.subjects.splice(+b.getAttribute('data-si'), 1); PDIRTY = true; redraw(); }
       else if (k2 === 'print') prisaPrint();
       else if (k2 === 'save') {
         XBUSY = true; redraw();
         (P.id ? api({ action: 'docSave', id: P.id, doc: P.doc }, 60000).then(function (r) { if (!r || !r.ok) throw new Error(r && r.error); })
               : saveNew('prisa', P.doc).then(function (d) { P.id = d.id; }))
-          .then(function () { T.toast('הפריסה נשמרה'); }).catch(function (er) { T.toast(errText(er && er.message)); })
+          .then(function () { PDIRTY = false; T.toast('הפריסה נשמרה'); }).catch(function (er) { T.toast(errText(er && er.message)); })
           .then(function () { XBUSY = false; redraw(); });
       }
       return;
@@ -608,6 +618,7 @@
     if (el.hasAttribute('data-ps')) {
       var s = prisaDoc().doc.subjects[+el.getAttribute('data-si')], c = el.getAttribute('data-code');
       s.rows[c] = s.rows[c] || {}; s.rows[c][el.getAttribute('data-ps')] = el.value;
+      PDIRTY = true; var pd = $('prDirty'); if (pd) pd.hidden = false;
     }
     else if (el.hasAttribute('data-bcore')) { BCORE = el.checked; redraw(); }
     else if (el.hasAttribute('data-yf')) { YF[el.getAttribute('data-yf')] = el.checked ? 1 : 0; redraw(); }
