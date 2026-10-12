@@ -558,11 +558,9 @@
            והמדריכה פתחה את הרישום. הרישום ממתין לאישורה. -->
       <section class="card th-card" id="th-card" hidden>
         <div class="th-when" id="th-when"></div>
+        <!-- 12.10.26 — בלי קוד: לחיצה אחת (teacher.here עם המפתח החתום) -->
         <div class="th-form" id="th-form">
-          <label class="th-label" for="th-code">הקוד שמוצג עכשיו במפגש</label>
-          <input class="input th-code" id="th-code" inputmode="numeric" maxlength="4"
-                 autocomplete="off" placeholder="0000" aria-describedby="th-msg">
-          <button type="button" class="btn btn-primary th-btn" id="th-btn" disabled>רישום נוכחות</button>
+          <button type="button" class="btn btn-primary th-btn" id="th-btn" aria-describedby="th-msg">אני כאן במפגש</button>
         </div>
         <div class="th-msg" id="th-msg" hidden></div>
         <button type="button" class="th-notes" onclick="window.TS_notes && TS_notes.openToday()">פתיחת המחברת להדרכה של היום</button>
@@ -766,7 +764,7 @@
 <script src="../assets/plans.js?v=20260924s"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20261012s"></script>
+<script src="dashboard.js?v=20261012t"></script>
 <script src="plan-cal.js?v=20260924"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>

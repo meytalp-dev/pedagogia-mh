@@ -68,7 +68,7 @@ let teacher = null;
 
 /* ▸ רישום אחד (29.9.26, מיטל): הקישור שהמדריכ/ה מדביק/ה בצ'אט הוא mifgash/?g=<slug>.
    מי שעוד לא נרשם/ה מגיע/ה לכאן עם ?next=mifgash&g=<slug> — עובר/ת רישום מלא
-   (מייל + קוד + השתלמות + יח"ל) ואז חוזר/ת לבד לרישום הנוכחות. */
+   (מייל + קוד) ואז חוזר/ת לבד לרישום הנוכחות. השתלמות ויח"ל — בכניסה הבאה (12.10.26). */
 const NEXT_MIFGASH_ = TS.urlParam('next', '') === 'mifgash' && /^[a-z0-9_-]{1,40}$/i.test(TS.urlParam('g', ''))
   ? TS.urlParam('g', '') : '';
 
@@ -137,15 +137,15 @@ if (DEMO_) {
     if (action === 'teacher.training') return res({ ok: true, data: { trainingStatus: body.status || SELF.trainingStatus,
       unitsSelf: body.units || SELF.unitsSelf || '',
       trainingFile: body.data ? '#' : '', trainingFileName: body.fileName || '', trainingAt: new Date().toISOString() } });
-    if (action === 'checkin.submit') {
-      res(String(body.code) === '1234' ? { ok: true, data: { duplicate: false } } : { ok: false, error: 'bad_code' });
+    if (action === 'teacher.here') {
+      res({ ok: true, data: { status: 'pending', already: false } });
     } else res({ ok: false, error: 'demo' });
   }, 700));
   teacherKey = ''; teacherId = 'demo_t';
   document.addEventListener('DOMContentLoaded', () => {
     const bar = document.createElement('div');
     bar.className = 'demo-bar';
-    bar.innerHTML = '<b>הדמיה</b> — מורה לדוגמה, היום יש הדרכה והרישום פתוח. הקוד שהמדריכה "מציגה במפגש": <b dir="ltr">1234</b>. אפשר לנסות גם קוד שגוי. שום דבר לא נשמר.';
+    bar.innerHTML = '<b>הדמיה</b> — מורה לדוגמה, היום יש הדרכה והרישום פתוח. לוחצים "אני כאן במפגש". שום דבר לא נשמר.';
     document.body.insertBefore(bar, document.body.firstChild);
   });
 }
@@ -696,13 +696,22 @@ async function load() {
      רואה את המסך שוב בכל כניסה (פעם אחת לכל פתיחה של הדפדפן), עם התשובה
      הקודמת מסומנת. רק מי שהשלים/ה הכול, כולל אישור, נכנס/ת ישר לדף. */
   // מת"ליות (10.10.26) — שאלת ההשתלמות של המורים לא חלה עליהן
-  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_ && !isMatalSelf()) {
+  /* 12.10.26 (מיטל): מי שמגיע/ה מהקישור של המפגש (next=mifgash) חוזר/ת ישר לרישום —
+     בלי שאלת ההשתלמות ויח"ל באמצע ההדרכה. הן יישאלו בכניסה הבאה לבית של המורה. */
+  if (teacher && (teacherKey || DEMO_) && !ADMIN_KEY_ && !isMatalSelf() && !NEXT_MIFGASH_) {
     const reminder = trainingIncomplete() && !remindedThisVisit();
     // במתמטיקה ובאנגלית גם יח"ל — חובה, גם למי שכבר ענה/תה על ההשתלמות לפני שנוספה השאלה
     if (!teacher.trainingStatus || needsUnits() || reminder) {
       showLoading(false);
       await askTraining(!!teacher.trainingStatus);
       showLoading(true);
+    }
+  }
+  // שם בית הספר בזיהוי שבמכשיר — דף המפגש מציג אותו (school הוא מזהה, 12.10.26)
+  {
+    const sv = savedIdentity();
+    if (teacher && sv && sv.k && !ADMIN_KEY_ && teacher.schoolName && sv.schoolName !== teacher.schoolName && String(sv.id) === String(teacher.id)) {
+      rememberIdentity(Object.assign({}, sv, { schoolName: teacher.schoolName }));
     }
   }
   if (NEXT_MIFGASH_ && teacher && teacherKey && !ADMIN_KEY_ && !DEMO_) {
@@ -951,7 +960,7 @@ function renderNext(scope, slug) {
     const card = document.getElementById('th-card');
     if (!card) return;
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const inp = document.getElementById('th-code');
+    const inp = document.getElementById('th-btn');
     if (inp) setTimeout(() => inp.focus(), 350);
   });
   sec.hidden = false;
@@ -1053,34 +1062,28 @@ function renderHere(scope, guideSlug) {
   const row = myRowToday(scope, guideSlug);
   if (row) return hereDone(rowText(row));
 
-  const input = document.getElementById('th-code');
+  /* 12.10.26 (מיטל) — בלי קוד: הרישום נפתח לבד בזמן המפגש, והמורה לוחץ/ת "אני כאן".
+     teacher.here מזהה לפי המפתח החתום של המורה. */
   const btn = document.getElementById('th-btn');
   const msg = document.getElementById('th-msg');
   const say = (text, cls) => { msg.hidden = !text; msg.className = 'th-msg' + (cls ? ' ' + cls : ''); msg.textContent = text || ''; };
-  if (!mine.length) say('הרישום ייפתח כשהמדריכ/ה תתחיל את ההדרכה ותציג את הקוד.', '');
-  input.oninput = () => {
-    input.value = input.value.replace(/\D/g, '').slice(0, 4);
-    btn.disabled = input.value.length !== 4;
-  };
-  input.onkeydown = e => { if (e.key === 'Enter' && !btn.disabled) btn.click(); };
+  if (!mine.length) say('הרישום נפתח רבע שעה לפני תחילת המפגש.', '');
+  btn.disabled = !(teacherKey || DEMO_) || !!ADMIN_KEY_;
   let sending = false;
   btn.onclick = async () => {
-    const code = input.value.replace(/\D/g, '');
-    if (code.length !== 4 || sending) return;
+    if (sending) return;
     sending = true; btn.disabled = true; btn.textContent = 'רושם…';
-    const r = await TS.apiPost('checkin.submit', { g: guideSlug, teacherId: String(teacher.id), code: code });
-    sending = false; btn.textContent = 'רישום נוכחות';
+    const body = { k: teacherKey, g: guideSlug };
+    let r = await TS.apiPost('teacher.here', body);
+    if (r && !r.ok && (r.transient || ['timeout', 'bad_response', 'busy'].indexOf(r.error) >= 0)) r = await TS.apiPost('teacher.here', body);
+    sending = false; btn.textContent = 'אני כאן במפגש'; btn.disabled = false;
     if (r && r.ok) {
       renderSessionDone();
-      return hereDone(r.data && r.data.duplicate ? 'כבר נרשמת להדרכה הזו ✓ הנוכחות שלך עודכנה.' : 'נרשמת! הנוכחות שלך עודכנה ✓');
+      return hereDone(r.data && r.data.already ? 'כבר נרשמת להדרכה הזו ✓ הנוכחות שלך עודכנה.' : 'נרשמת! הנוכחות שלך עודכנה ✓');
     }
     const err = r && r.error;
-    say(err === 'closed' ? 'הרישום עוד לא נפתח או כבר נסגר. הקוד מוצג במפגש כשהמדריכ/ה פותח/ת את הרישום.'
-      : err === 'bad_code' ? 'הקוד לא נכון או שכבר התחלף. מקלידים את הקוד שמופיע עכשיו במפגש.'
-      : err === 'locked' ? 'יותר מדי ניסיונות. אפשר לנסות שוב בעוד 10 דקות, או לפנות למדריכ/ה בצ\'אט.'
-      : 'לא הצלחנו לרשום כרגע. אפשר לנסות שוב.', 'err');
-    if (err === 'bad_code') { input.value = ''; input.focus(); }
-    btn.disabled = input.value.length !== 4;
+    say(err === 'closed' ? 'הרישום עוד לא נפתח או כבר נסגר. הוא נפתח רבע שעה לפני תחילת המפגש.'
+      : 'לא הצלחנו לרשום כרגע. אפשר ללחוץ שוב.', 'err');
   };
 }
 

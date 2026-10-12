@@ -260,6 +260,8 @@ const PUBLIC_ACTIONS = new Set([
   // meet.* דורשות מפתח מדריכה (k), checkin.* דורשות מפגש פתוח עכשיו + קוד מתחלף
   'meet.state', 'meet.open', 'meet.close', 'meet.code', 'meet.mark',
   'checkin.roster', 'checkin.submit',
+  // רישום פשוט (12.10.26): checkin.status — פתוח/סגור בלבד · meet.approve* — טוקן חתום למפגש בקישור מהמייל
+  'checkin.status', 'meet.approveView', 'meet.approve',
   // תיעוד פתיחת הקישור האישי — נשלח מהדשבורד של המדריכה וממבט המפקח.ת,
   // ולשניהם אין חשבון. כותב רק לתוך link_views, ורק slug שקיים בסכימה.
   'link.seen',
@@ -929,7 +931,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope)|checkin\.roster|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|remind\.status|emails\.roster|training\.files|registration\.(status|count|errors))$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope|approveView)|checkin\.(roster|status)|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|remind\.status|emails\.roster|training\.files|registration\.(status|count|errors))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1154,6 +1156,9 @@ function handleRequest(params) {
       case 'updates.send':        result = updatesSend(params); break;
       case 'checkin.roster':      result = checkinRoster(params); break;
       case 'checkin.submit':      result = checkinSubmit(params); break;
+      case 'checkin.status':      result = checkinStatus(params); break;
+      case 'meet.approveView':    result = meetApproveView(params); break;
+      case 'meet.approve':        result = meetApprove(params); break;
 
       // פתיחת הקישור האישי (16.9.26)
       case 'link.seen':           result = linkSeen(params); break;
@@ -4349,8 +4354,14 @@ function meetRemindTick() {
   catch (e) { console.error('meetRemindTick: teacher reminders failed ' + e); }
   try { meetStandingTick_(); }
   catch (e) { console.error('meetRemindTick: standing marks failed ' + e); }
+  try { meetAutoApproveTick_(); }
+  catch (e) { console.error('meetRemindTick: auto approve failed ' + e); }
   const now = remindNowMinutes_();
   const slots = remindSlots_(data);
+  try { meetAutoOpenTick_(data, slots, now); }
+  catch (e) { console.error('meetRemindTick: auto open failed ' + e); }
+  try { meetGuideApproveTick_(data, slots, now); }
+  catch (e) { console.error('meetRemindTick: guide approve mail failed ' + e); }
   const due = slots.filter(s =>
     s.at - REMIND_EARLY_MIN <= now && now - s.at < REMIND_WINDOW_MIN);
   const sums = remindSummaries_(slots).filter(x => x.at <= now && now - x.at < REMIND_WINDOW_MIN);
@@ -4541,6 +4552,243 @@ function meetRemindTest() {
   const now = remindNowMinutes_();
   const s = remindSlots_(data).filter(x => x.at >= now).sort((a, b) => a.at - b.at)[0];
   if (s) remindSend_(data, s, true);
+}
+
+/* ============================================================
+   רישום פשוט למפגש (12.10.26, מיטל: "המדריכים מעבירים הדרכה — הם לא יכולים
+   להיות אחראים על הקרנת הקוד", ו"הרשימה של כל המורים לא רלוונטית בזמן ההדרכה").
+   1. פתיחה אוטומטית: 15 דק׳ לפני כל מועד בתוכנית ועד שעתיים אחרי תחילתו
+      (meetAutoOpenTick_). מדריכ/ה שסגר/ה ידנית אחרי שהמועד נפתח — לא נפתח שוב.
+   2. המורה נרשם/ת בלחיצה ("אני כאן") עם המפתח החתום שלו/ה — teacher.here, בלי קוד.
+   3. כשהרישום נסגר — מייל למדריכ/ה: מי נרשם + "אישור כולם" (דף ishur/, טוקן חתום
+      למפגש). האישור קורה רק בלחיצה בדף, לא בפתיחת הקישור — סורקי מייל פותחים
+      קישורים לבד. תזכורת אחרי 24 שעות אם נשאר מי שממתין.
+   4. רישום עצמי שלא טופל 3 ימים מאושר אוטומטית (markedVia='auto'). רק רישומים
+      מ-MEET_AUTO_FROM ואילך — הממתינים הישנים נשארים כמו שהם.
+   ============================================================ */
+const MEET_AUTO_EARLY_MIN = 15;
+const MEET_AUTO_OPEN_MIN = 120;
+const MEET_AUTO_APPROVE_H = 72;
+const MEET_AUTO_FROM = '2026-10-13';
+const MEET_APPROVE_REMIND_MIN = 24 * 60;
+
+function meetTimeMs_(v) {
+  if (!v) return 0;
+  const t = Object.prototype.toString.call(v) === '[object Date]' ? v.getTime() : new Date(String(v)).getTime();
+  return isNaN(t) ? 0 : t;
+}
+
+// slots/now — מ-meetRemindTick (דקות לפי שעון ישראל)
+function meetAutoOpenTick_(data, slots, now) {
+  const live = slots.filter(s => s.at - MEET_AUTO_EARLY_MIN <= now && now < s.at + MEET_AUTO_OPEN_MIN);
+  if (!live.length) return;
+  let changed = 0;
+  meetWithLock_(() => {
+    live.forEach(s => {
+      const nowMs = Date.now();
+      const untilMs = nowMs + (s.at + MEET_AUTO_OPEN_MIN - now) * 60000;
+      const fromMs = nowMs + (s.at - MEET_AUTO_EARLY_MIN - now) * 60000;
+      const g = data.guides[s.slug] || {};
+      const m = meetEnsure_(s.slug, s.date, { topic: s.topic, source: 'plan', guideName: g.name || '' });
+      if (meetTimeMs_(m.closedAt) >= fromMs) return;            // המדריכ/ה סגר/ה ידנית את המועד הזה
+      if (Number(m.openUntil) >= untilMs - 60000) return;       // כבר פתוח עד אז
+      const iso = new Date(nowMs).toISOString();
+      const upd = { openUntil: untilMs, updatedAt: iso };
+      if (!(Number(m.openUntil) > nowMs)) upd.openedAt = iso;
+      updateRowById('meetings', m.id, upd);
+      changed++;
+    });
+    return { ok: true };
+  });
+  if (changed) bumpTeachersGen_();
+}
+
+// ---------- המורה: האם הרישום פתוח עכשיו (בלי רשימת שמות) ----------
+function checkinStatus(p) {
+  const slug = meetSlug_(p.g);
+  if (!slug) return { ok: false, error: 'missing_guide' };
+  const m = meetOpenFor_(slug, Date.now());
+  if (!m) return { ok: true, data: { open: false } };
+  return { ok: true, data: { open: true, topic: m.topic || '', openUntil: Number(m.openUntil), date: meetDate_(m.date) } };
+}
+
+// ---------- אישור מהמייל ----------
+function meetApproveToken_(meetingId) {
+  return meetHmacHex_('approve:' + meetingId).slice(0, 20);
+}
+function meetApproveLink_(meetingId) {
+  return REMIND_SITE + 'ishur/?m=' + encodeURIComponent(meetingId) + '&t=' + meetApproveToken_(meetingId);
+}
+function meetApproveAuth_(p) {
+  const id = meetStr_(p.m, 80);
+  if (!/^mt_[a-z0-9_-]+_\d{8}$/i.test(id)) return null;
+  if (!meetSafeEqual_(String(p.t || ''), meetApproveToken_(id))) return null;
+  return meetFind_(id);
+}
+
+function meetApproveView(p) {
+  const m = meetApproveAuth_(p);
+  if (!m) return { ok: false, error: 'bad_link' };
+  ensureTab_('meeting_attendance');
+  const rows = readAll('meeting_attendance').filter(r => String(r.meetingId) === String(m.id));
+  return { ok: true, data: {
+    id: String(m.id), date: meetDate_(m.date), topic: String(m.topic || ''), guideName: String(m.guideName || ''),
+    open: Number(m.openUntil) > Date.now(), autoHours: MEET_AUTO_APPROVE_H,
+    rows: rows.map(r => ({ id: String(r.id), teacherName: String(r.teacherName || ''), schoolName: String(r.schoolName || ''),
+      status: String(r.status || ''), self: !!r.selfCheckinAt, via: String(r.markedVia || '') }))
+  } };
+}
+
+// absent = מזהי שורות (מופרדים בפסיק) שסומנו "לא נכח/ה"; כל שאר הממתינים — נוכחים
+function meetApprove(p) {
+  const m = meetApproveAuth_(p);
+  if (!m) return { ok: false, error: 'bad_link' };
+  const absent = {};
+  String(p.absent || '').split(',').map(x => x.trim()).filter(Boolean).forEach(x => { absent[x] = 1; });
+  return meetWithLock_(() => {
+    const s = ensureTab_('meeting_attendance');
+    const values = s.getDataRange().getValues();
+    const headers = values[0].map(String);
+    const col = {};
+    headers.forEach((h, i) => { col[h] = i; });
+    const nowIso = new Date().toISOString();
+    const n = { present: 0, absent: 0 };
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
+      if (String(row[col.meetingId]) !== String(m.id) || String(row[col.status]) !== 'pending') continue;
+      const st = absent[String(row[col.id])] ? 'absent' : 'present';
+      row[col.status] = st; row[col.guideStatus] = st;
+      row[col.markedAt] = nowIso; row[col.updatedAt] = nowIso;
+      if (col.markedVia !== undefined) row[col.markedVia] = 'mail';
+      row[col.date] = "'" + meetDate_(row[col.date]);
+      s.getRange(i + 1, 1, 1, headers.length).setValues([row]);
+      n[st]++;
+    }
+    updateRowById('meetings', m.id, { updatedAt: nowIso });
+    return { ok: true, data: n };
+  });
+}
+
+// ---------- מייל למדריכ/ה כשהרישום נסגר (ותזכורת אחרי 24 שעות) ----------
+function meetGuideApproveTick_(data, slots, now) {
+  const props = PropertiesService.getScriptProperties();
+  remindSummaries_(slots).forEach(x => {
+    [[0, 'gapr'], [MEET_APPROVE_REMIND_MIN, 'gaprem']].forEach(pair => {
+      const at = x.at + pair[0];
+      if (!(at <= now && now - at < REMIND_WINDOW_MIN)) return;
+      // אותה תבנית מפתח כמו שאר התזכורות — remindCleanup_ מוחק אחרי 3 ימים
+      const key = 'remind_' + pair[1] + '_' + x.slug + '_' + x.date + '_' + x.last.replace(':', '');
+      if (props.getProperty(key)) return;
+      props.setProperty(key, String(Date.now()));
+      try { meetSendGuideApprove_(data, x, pair[0] > 0, false); }
+      catch (e) { console.error('meetGuideApproveTick_: ' + key + ' ' + e); }
+    });
+  });
+}
+
+function meetSendGuideApprove_(data, x, isReminder, isTest) {
+  const row = meetFind_(meetId_(x.slug, x.date)) || meetFind_(meetId_(x.slug, x.mdate));
+  if (!row) return 'no_meeting';
+  const pending = readAll('meeting_attendance')
+    .filter(r => String(r.meetingId) === String(row.id) && String(r.status) === 'pending')
+    .sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') ||
+      String(a.teacherName).localeCompare(String(b.teacherName), 'he'));
+  if (!pending.length) return 'none_pending';
+  const to = isTest ? REMIND_TO : guideReplyTo_(x.slug);
+  if (!to) { console.log('meetSendGuideApprove_: אין מייל במערכת למדריכ/ה ' + x.slug); return 'no_email'; }
+
+  const g = data.guides[x.slug] || {};
+  const subject = x.subject || g.subject || '';
+  const dm = d => +d.slice(8, 10) + '.' + +d.slice(5, 7);
+  const link = meetApproveLink_(row.id);
+  const firstAt = Math.min.apply(null, pending.map(r => meetTimeMs_(r.selfCheckinAt) || Date.now()));
+  const autoDay = Utilities.formatDate(new Date(firstAt + MEET_AUTO_APPROVE_H * 3600000), MEET_TZ, 'd.M');
+  const n = pending.length;
+
+  const title = (isTest ? '[בדיקה] ' : '') + (isReminder ? 'תזכורת: ' : '') +
+    'אישור נוכחות · ' + subject + ' · ' + dm(x.date) + ' — ' + n + ' נרשמו';
+  const list = pending.map(r =>
+    '<tr><td style="padding:6px 0 6px 12px;border-bottom:1px solid #E3EBEF">' + remindEsc_(r.teacherName) +
+    ' <span style="color:#5C7182;font-size:13px">· ' + remindEsc_(r.schoolName) + '</span></td>' +
+    '<td style="padding:6px 0;border-bottom:1px solid #E3EBEF;text-align:left;white-space:nowrap">' +
+    '<a href="' + link + '&x=' + encodeURIComponent(String(r.id)) + '" style="color:#a4442f;font-size:13px">לא נכח/ה</a></td></tr>').join('');
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C">' +
+    '<p style="margin:0 0 10px">שלום ' + remindEsc_(g.name || '') + ',</p>' +
+    '<p style="margin:0 0 14px">' + (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'הרישום למפגש נסגר. ') +
+    '<b>' + n + '</b> מורים נרשמו להדרכה של ' + remindEsc_(dm(x.date)) + (x.topic ? ' (' + remindEsc_(x.topic) + ')' : '') + '.</p>' +
+    // כפתור בטבלה עם bgcolor — Gmail מוחק background שמוגדר רק ב-CSS
+    '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr><td bgcolor="#1f7a5c" style="background:#1f7a5c;border-radius:10px">' +
+    '<a href="' + link + '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:16px;display:inline-block">אישור כולם (' + n + ')</a></td></tr></table>' +
+    '<table style="border-collapse:collapse;width:100%;max-width:520px">' + list + '</table>' +
+    '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">מישהו נרשם ולא היה במפגש? לוחצים "לא נכח/ה" ליד השם, ובדף שנפתח מאשרים את השאר.<br>' +
+    'בלי אישור עד ' + remindEsc_(autoDay) + ' — הנוכחות תאושר אוטומטית.</p>' +
+    '<p style="margin:16px 0 0;font-size:12px;color:#8A97A6">מנור · המרחב הפדגוגי</p></div>';
+  const text = (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'הרישום למפגש נסגר. ') + n + ' מורים נרשמו להדרכה של ' + dm(x.date) + '.\n\n' +
+    pending.map(r => '· ' + r.teacherName + ' · ' + r.schoolName).join('\n') +
+    '\n\nאישור כולם: ' + link + '\n\nבלי אישור עד ' + autoDay + ' — הנוכחות תאושר אוטומטית.';
+  merhavMail_({ to: to, subject: title, body: text, htmlBody: html, name: 'מנור', replyTo: MAIL_REPLY_TO });
+  return 'sent';
+}
+
+// בדיקה מהעורך: מייל האישור על יום המפגש האחרון שיש בו ממתינים — אל מיטל, לא מסמן "נשלח"
+function meetGuideApproveTest() {
+  const data = remindLoad_();
+  const now = remindNowMinutes_();
+  const days = remindSummaries_(remindSlots_(data)).filter(d => d.lastAt <= now).sort((a, b) => b.lastAt - a.lastAt);
+  for (let i = 0; i < days.length && i < 40; i++) {
+    const r = meetSendGuideApprove_(data, days[i], false, true);
+    console.log(days[i].slug + ' ' + days[i].date + ': ' + r);
+    if (r === 'sent') return;
+  }
+}
+
+// ---------- אישור אוטומטי אחרי 3 ימים ----------
+function meetAutoApproveTick_() {
+  const props = PropertiesService.getScriptProperties();
+  const last = Number(props.getProperty('meet_auto_approve_at') || 0);
+  if (Date.now() - last < 60 * 60000) return;      // פעם בשעה מספיק
+  props.setProperty('meet_auto_approve_at', String(Date.now()));
+  const r = meetAutoApprove_(false);
+  if (r.n) console.log('אישור אוטומטי: ' + r.n + ' רישומים');
+}
+
+// dryRun=true — רק סופר (להרצה מהעורך: meetAutoApproveDryRun)
+function meetAutoApprove_(dryRun) {
+  const fromMs = new Date(MEET_AUTO_FROM + 'T00:00:00+03:00').getTime();
+  const cutoff = Date.now() - MEET_AUTO_APPROVE_H * 3600000;
+  const out = meetWithLock_(() => {
+    const s = ensureTab_('meeting_attendance');
+    const values = s.getDataRange().getValues();
+    const headers = values[0].map(String);
+    const col = {};
+    headers.forEach((h, i) => { col[h] = i; });
+    const nowIso = new Date().toISOString();
+    let n = 0, old = 0;
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
+      if (String(row[col.status]) !== 'pending' || String(row[col.guideStatus] || '')) continue;
+      const t = meetTimeMs_(row[col.selfCheckinAt]);
+      if (!t) continue;
+      if (t < fromMs) { old++; continue; }
+      if (t > cutoff) continue;
+      n++;
+      if (dryRun) continue;
+      row[col.status] = 'present'; row[col.guideStatus] = 'present';
+      row[col.markedAt] = nowIso; row[col.updatedAt] = nowIso;
+      if (col.markedVia !== undefined) row[col.markedVia] = 'auto';
+      row[col.date] = "'" + meetDate_(row[col.date]);
+      s.getRange(i + 1, 1, 1, headers.length).setValues([row]);
+    }
+    return { ok: true, n: n, old: old };
+  });
+  if (!dryRun && out.n) bumpTeachersGen_();
+  return out;
+}
+
+function meetAutoApproveDryRun() {
+  const r = meetAutoApprove_(true);
+  console.log('יאושרו עכשיו: ' + r.n + ' · ממתינים ישנים (לפני ' + MEET_AUTO_FROM + ', לא נוגעים): ' + r.old);
 }
 
 // ============================================================
@@ -5788,26 +6036,32 @@ function teacherHere(p) {
   const m = meetOpenFor_(slug, now);
   if (!m) return { ok: false, error: 'closed' };
 
-  ensureTab_('meeting_attendance');
-  const id = String(t.id);
-  const rows = readAll('meeting_attendance');
-  const exists = rows.filter(function (r) {
-    return String(r.meetingId) === String(m.id) && String(r.teacherId) === id;
-  })[0];
-  // כבר רשום/ה — לא יוצרים שורה שנייה, ולא דורסים סימון של המדריכה
-  if (exists) {
-    return { ok: true, data: { status: String(exists.status || 'pending'), already: true,
-      date: meetDate_(m.date) } };
-  }
-  const iso = new Date(now).toISOString();
-  appendRow('meeting_attendance', {
-    id: newId('mat'), meetingId: String(m.id), guideSlug: slug, date: meetDate_(m.date),
-    teacherId: id, teacherName: String(t.name || '').trim(),
-    schoolName: String(t.schoolName || '').trim(),
-    status: 'pending', guideStatus: '', selfCheckinAt: iso, markedAt: '',
-    source: 'teacher-self', updatedAt: iso, markedVia: 'self'
+  // 12.10.26 — זה הרישום הראשי עכשיו (mifgash/ בלי קוד): עשרות לחיצות באותה דקה,
+  // ולכן במנעול, כמו checkin.submit — אחרת לחיצה כפולה יוצרת שתי שורות
+  return meetWithLock_(() => {
+    ensureTab_('meeting_attendance');
+    const id = String(t.id);
+    const rows = readAll('meeting_attendance');
+    const exists = rows.filter(function (r) {
+      return String(r.meetingId) === String(m.id) && String(r.teacherId) === id;
+    })[0];
+    // כבר רשום/ה — לא יוצרים שורה שנייה, ולא דורסים סימון של המדריכה
+    if (exists) {
+      // סומן/ה מראש בידי המדריכה בלי רישום עצמי — מוסיפים את שעת הרישום בלבד
+      if (!exists.selfCheckinAt) updateRowById('meeting_attendance', exists.id, { selfCheckinAt: new Date(now).toISOString() });
+      return { ok: true, data: { status: String(exists.status || 'pending'), already: true,
+        date: meetDate_(m.date), topic: String(m.topic || '') } };
+    }
+    const iso = new Date(now).toISOString();
+    appendRow('meeting_attendance', {
+      id: newId('mat'), meetingId: String(m.id), guideSlug: slug, date: "'" + meetDate_(m.date),
+      teacherId: id, teacherName: String(t.name || '').trim(),
+      schoolName: String(t.schoolName || '').trim(),
+      status: 'pending', guideStatus: '', selfCheckinAt: iso, markedAt: '',
+      source: 'teacher-self', updatedAt: iso, markedVia: 'self'
+    });
+    return { ok: true, data: { status: 'pending', already: false, date: meetDate_(m.date), topic: String(m.topic || '') } };
   });
-  return { ok: true, data: { status: 'pending', already: false, date: meetDate_(m.date) } };
 }
 
 

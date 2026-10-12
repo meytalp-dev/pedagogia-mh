@@ -41,6 +41,7 @@
   .mf-btn { width: 100%; margin-top: 14px; min-height: 52px; font-size: 17px; font-weight: 700; border-radius: 14px; border: none; background: #1f7a5c; color: #fff; font-family: inherit; cursor: pointer; line-height: 1.3; }
   .mf-btn:disabled { opacity: .55; cursor: default; }
   .mf-btn .ar { color: #d7efe4; font-size: 13px; }
+  .mf-btn.big { min-height: 64px; font-size: 20px; margin-top: 16px; }
   .mf-btn.secondary { background: #fff; color: var(--text); border: 1px solid var(--border); }
   .mf-err { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #FBE9E5; color: #8f2f1c; font-size: 14px; font-weight: 600; line-height: 1.55; }
   .mf-err .ar { color: #a4503d; }
@@ -93,45 +94,14 @@
         <button type="button" class="mf-btn secondary" id="btn-retry"></button>
       </div>
 
-      <!-- בחירת שם -->
-      <div class="mf-step" id="st-who" hidden>
-        <div id="me-saved" hidden>
-          <div class="mf-q" id="q-me"></div>
-          <div class="mf-me">
-            <div><b id="me-name"></b><span id="me-school"></span></div>
-            <button type="button" class="mf-link" id="btn-not-me"></button>
-          </div>
-          <button type="button" class="mf-btn" id="btn-its-me"></button>
+      <!-- לחיצה אחת: "אני כאן" (12.10.26 — בלי קוד) -->
+      <div class="mf-step" id="st-here" hidden>
+        <div class="mf-me">
+          <div><b id="here-hello"></b><span id="here-school"></span></div>
+          <button type="button" class="mf-link" id="btn-not-me"></button>
         </div>
-
-        <div id="who-pick">
-          <div class="mf-q" id="q-name"></div>
-          <input type="search" class="input mf-input" id="who-search" autocomplete="off" enterkeyhint="search">
-          <div class="mf-list" id="who-list" role="list"></div>
-          <button type="button" class="mf-link" id="btn-unlisted"></button>
-        </div>
-
-        <div id="who-free" class="mf-free" hidden>
-          <div class="mf-q" id="q-free"></div>
-          <label for="free-name" id="lbl-free-name"></label>
-          <input type="text" class="input mf-input" id="free-name" maxlength="80" autocomplete="name">
-          <label for="free-school" id="lbl-free-school"></label>
-          <input type="text" class="input mf-input" id="free-school" maxlength="80">
-          <button type="button" class="mf-btn" id="btn-free-next"></button>
-          <button type="button" class="mf-link" id="btn-back-list"></button>
-        </div>
-      </div>
-
-      <!-- הקלדת הקוד -->
-      <div class="mf-step" id="st-code" hidden>
-        <div class="mf-me" style="margin-bottom:16px;">
-          <div><b id="code-name"></b><span id="code-school"></span></div>
-          <button type="button" class="mf-link" id="btn-change"></button>
-        </div>
-        <label class="mf-q" for="code-input" id="q-code" style="display:block;"></label>
-        <input type="text" class="mf-code" id="code-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" dir="ltr">
-        <div class="mf-err" id="code-err" hidden></div>
-        <button type="button" class="mf-btn" id="btn-submit" disabled></button>
+        <button type="button" class="mf-btn big" id="btn-here"></button>
+        <div class="mf-err" id="here-err" hidden></div>
       </div>
 
       <!-- נרשם -->
@@ -151,6 +121,7 @@
 
 <script src="../assets/app.js?v=20260929r"></script>
 <script src="../assets/guides.js?v=20261008m"></script>
-<script src="mifgash.js?v=20260929b"></script>
+<script src="../assets/plans.js?v=20261007a"></script>
+<script src="mifgash.js?v=20261012a"></script>
 </body>
 </html>

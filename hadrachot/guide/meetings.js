@@ -2,9 +2,15 @@
    נוכחות במפגשים — הצד של המדריכ/ה (14.9.26)
    -----------------------------------------------------------
    המפגשים בזום. המדריכ/ה מסמנ/ת נוכחות מתוך רשימת הקבוצה — זו הרשימה
-   הקובעת. גיבוי: בזמן המפגש פותחים "רישום עצמי", מקרינים קוד בן 4 ספרות
-   שמתחלף כל 5 דקות (גם הקוד הקודם מתקבל), והמורים נרשמים בעמוד mifgash/?g=<slug>. רישום עצמי מופיע
-   כאן כ"ממתין לאישור" ולא נספר עד שמאשרים.
+   הקובעת. המורים נרשמים בעצמם בעמוד mifgash/?g=<slug> בלחיצה ("אני כאן").
+   רישום עצמי מופיע כאן כ"ממתין לאישור" ולא נספר עד שמאשרים.
+
+   12.10.26 (מיטל): בלי קוד ובלי הקרנה — "המדריכים מעבירים הדרכה, הם לא יכולים
+   להיות אחראים על הקרנת הקוד". הרישום נפתח לבד בשרת 15 דק׳ לפני כל מועד בתוכנית
+   ועד שעתיים אחרי תחילתו; "פתיחת הרישום" כאן נשאר למפגש שלא בתוכנית. בזמן
+   המפגש רואים רק את מי שנרשם + "אישור כולם"; רשימת הקבוצה המלאה מקופלת
+   ("הוספה ידנית"). בסגירה יוצא למדריכ/ה מייל עם "אישור כולם", ואחרי 3 ימים
+   בלי טיפול הרישום מאושר לבד.
 
    הרשאה: מפתח k בקישור האישי (נוצר ב-admin-guides.html). נשמר במכשיר,
    כדי שקישור ישן שנפתח אחר כך מאותו מכשיר ימשיך לעבוד.
@@ -25,7 +31,6 @@
   const SLUG = (typeof GUIDE_CFG !== 'undefined' && GUIDE_CFG.slug) || '';
   const ARAB = !!(GUIDE_CFG && GUIDE_CFG.sectors && GUIDE_CFG.sectors.indexOf('arab') >= 0);
   const POLL_MS = 20000;
-  const CODE_REFRESH_MS = 100000;
 
   let KEY = '';
   try {
@@ -59,15 +64,14 @@
   let openMonths = null;    // חודשים פתוחים ('YYYY-MM'); null = ברירת המחדל (החודש הנוכחי)
   let monthsSig = '';
   let edits = {};           // entryKey → 'present' | 'absent' | 'clear'
-  let live = null;          // { codes, offset, openUntil }
   let filter = 'all';
   let search = '';
   let schoolF = '';         // סינון רשימת הקבוצה לפי בית ספר
   let saving = false;
-  let pollTimer = null, tickTimer = null, codeTimer = null;
+  let pollTimer = null;
   let adhocMeetings = [];
-  let codeFetching = false;
-  let lastCodeFetch = 0;
+  let rosterOpen = false;   // רשימת הקבוצה המלאה (הוספה ידנית) — מקופלת כברירת מחדל
+  let liveSaving = false;
   let zoom = null;          // חלון ייבוא דוח הזום — ראו "ייבוא דוח משתתפים"
   let zoomMeta = {};        // entryKey → { minutes } — סימונים שבאו מהדוח
   let wrapDraft = null;     // סיכום ההדרכה בעריכה — { summary, takeaway, hours }, שורד ציור מחדש
@@ -352,11 +356,11 @@
       <div class="nm-tx">
         <div class="nm-eyebrow">${isToday ? '<span class="live-dot"></span>' : ''}<span>${isToday ? 'המפגש היום' : 'המפגש הבא · ' + esc(when)}</span></div>
         <div class="nm-title">${esc(s.topic || 'מפגש הדרכה')}</div>
-        <div class="nm-sub">${tt ? '<bdi>' + esc(tt) + '</bdi>' : esc(s.label)}${isToday ? '' : ' · ביום המפגש פותחים מכאן את רישום הנוכחות'}</div>
+        <div class="nm-sub">${tt ? '<bdi>' + esc(tt) + '</bdi>' : esc(s.label)}${isToday ? ' · הרישום נפתח לבד רבע שעה לפני המפגש' : ''}</div>
       </div>
       <div class="nm-act">
         ${zoomUrl ? `<a class="nm-btn" href="${esc(zoomUrl)}" target="_blank" rel="noopener">${ICON.screen}<span>כניסה לזום</span></a>` : ''}
-        <button type="button" class="nm-btn primary" id="nm-go">${ICON.check}<span>${isToday ? 'לפתיחת רישום הנוכחות' : 'למועדים ולנוכחות'}</span></button>
+        <button type="button" class="nm-btn primary" id="nm-go">${ICON.check}<span>${isToday ? 'לרישום הנוכחות' : 'למועדים ולנוכחות'}</span></button>
       </div>`;
     box.hidden = false;
     document.getElementById('nm-go').addEventListener('click', () => {
@@ -382,9 +386,6 @@
       S.meetings = scoped(res.data.meetings);
       S.loaded = true; S.failed = false; S.badKey = false;
       if (sel && sel.date === date) { S.rows = res.data.rows || []; S.rowsDate = date; }
-      const sm = serverMeeting(S.today);
-      if (sm && sm.open) { if (!live) fetchCode(); }
-      else if (live) stopLive();
     } else if (res && res.error === 'bad_key') {
       S.badKey = true;
     } else {
@@ -583,7 +584,6 @@
         : keys.map(k => monthHtml(k, byMonth[k])).join('');
     }
     bindMonths();
-    if (live) tick();
     if (hadFocus) { const el = document.getElementById(hadFocus); if (el) el.focus(); }
   }
 
@@ -674,7 +674,7 @@
        בכוונה, כדי שלא יירשמו מראש או בדיעבד — ולכן בשאר הימים הכפתור מוצג אפור עם הסבר. */
     const openBtnOff = t => `<button type="button" class="btn btn-secondary ss-btn ss-off" disabled title="${esc(t)}">${ICON.screen}<span>פתיחת הרישום</span></button>`;
     if (future) {
-      acts.push(openBtnOff('נפתח ביום המפגש, ' + shortLabel(s.date)));
+      acts.push(openBtnOff('נפתח לבד רבע שעה לפני המפגש, ' + shortLabel(s.date)));
     } else {
       if (isToday && !open) acts.push(`<button type="button" class="btn btn-primary ss-btn" data-open="${esc(s.date)}">${ICON.screen}<span>פתיחת הרישום</span></button>`);
       if (open) acts.push(`<button type="button" class="btn btn-secondary ss-btn ss-close" data-close="${esc(s.date)}">סגירת הרישום</button>`);
@@ -901,6 +901,8 @@
     const monthLbl = window.TS_meetMonthLabel ? window.TS_meetMonthLabel(monthOf(sel.date)) : monthName(monthOf(sel.date));
     const gaps = list.filter(g => g.self && g.guide === 'absent');
     const pending = list.filter(g => g.state === 'pending');
+    const marked = list.filter(g => g.row && (g.state === 'present' || g.state === 'absent'))
+      .sort((a, b) => schoolOf(a).localeCompare(schoolOf(b), 'he') || String(a.name).localeCompare(String(b.name), 'he'));
     const dirtyN = Object.keys(edits).length;
 
     // שמירה על המיקוד בשדה החיפוש בזמן ציור מחדש
@@ -942,12 +944,20 @@
       ${pending.length ? `
       <section class="meet-card meet-pending">
         <h3>ממתינים לאישור <span class="n">${pending.length}</span></h3>
-        <div class="space-hint">נרשמו בעצמם עם הקוד שהוקרן. מאשרים רק את מי שבאמת השתתף.</div>
+        <div class="space-hint">נרשמו בעצמם בקישור. מי שלא היה — "לא נכח/ה"; את השאר מאשרים בלחיצה אחת. בלי אישור — מאושר לבד אחרי 3 ימים.</div>
         ${pending.map(g => rowHtml(g, true)).join('')}
-        ${pending.length > 1 ? '<button type="button" class="btn btn-secondary" id="meet-approve-all" style="margin-top:8px;">אישור כל הממתינים</button>' : ''}
+        <button type="button" class="btn btn-primary" id="meet-approve-all" style="margin-top:10px;"${saving ? ' disabled' : ''}>${ICON.check}<span>אישור כולם (${pending.length})</span></button>
       </section>` : ''}
 
+      ${marked.length ? `
       <section class="meet-card">
+        <h3>סומנו במפגש הזה <span class="n">${marked.length}</span></h3>
+        ${marked.map(g => rowHtml(g, false)).join('')}
+      </section>` : ''}
+
+      <details class="meet-card meet-roster" id="meet-roster"${rosterOpen || filter !== 'all' || search || schoolF ? ' open' : ''}>
+        <summary><b>כל הקבוצה — הוספה ידנית</b> <span class="n">${list.filter(g => g.listed).length}</span>
+          <span class="meet-roster-hint">למי שלא הצליח/ה להירשם בקישור</span></summary>
         <div class="meet-list-head">
           <h3>רשימת הקבוצה</h3>
           ${schoolSelectHtml(list)}
@@ -955,7 +965,7 @@
           ${filter !== 'all' ? '<button type="button" class="meet-clear-filter" data-filter="all">הצגת כולם</button>' : ''}
         </div>
         <div id="meet-list">${listHtml(list)}</div>
-      </section>
+      </details>
 
       ${wrapCardHtml()}`;
 
@@ -1129,7 +1139,7 @@
       });
     });
     document.querySelectorAll('#meet-body [data-filter]').forEach(b => {
-      b.addEventListener('click', () => { filter = (filter === b.dataset.filter) ? 'all' : b.dataset.filter; renderBody(); });
+      b.addEventListener('click', () => { filter = (filter === b.dataset.filter) ? 'all' : b.dataset.filter; if (filter !== 'all') rosterOpen = true; renderBody(); });
     });
     const s = document.getElementById('meet-search');
     s.addEventListener('input', () => {
@@ -1150,9 +1160,12 @@
     });
     const all = document.getElementById('meet-approve-all');
     if (all) all.addEventListener('click', () => {
+      // 12.10.26 — "אישור כולם" שומר מיד, בלי לחיצה נוספת על "שמירה"
       list.filter(g => g.state === 'pending').forEach(g => { edits[g.key] = 'present'; });
-      renderBody();
+      save();
     });
+    const det = document.getElementById('meet-roster');
+    if (det) det.addEventListener('toggle', () => { rosterOpen = det.open; });
     bindLive();
     bindZoom(list);
   }
@@ -1480,27 +1493,51 @@
     return Math.max(60, Math.min(180, end - Math.min(nowMin, mins[0])));
   }
 
+  // הרשומות של מועד מתוך כל הרישומים שכבר בדף (meet.state?all=1, מתרענן כל 20 שנ׳)
+  function liveRows(sm) {
+    const rows = (window.MEET_ALL && window.MEET_ALL.rows) || [];
+    return rows.filter(r => String(r.meetingId) === String(sm.id));
+  }
   function livePanelHtml(sm) {
+    const rows = liveRows(sm);
+    const pend = rows.filter(r => r.status === 'pending')
+      .sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') || String(a.teacherName).localeCompare(String(b.teacherName), 'he'));
+    const ok = rows.filter(r => r.status === 'present').length;
     return `
       <div class="ss-live meet-live open">
-        <div class="ml-code-wrap">
-          <div class="ml-label">הקוד עכשיו</div>
-          <div class="ml-code" id="meet-code" dir="ltr">····</div>
-          <div class="ml-bar"><span id="meet-bar"></span></div>
-          <div class="ml-count" id="meet-countdown"></div>
-        </div>
         <div class="ml-tx">
           <h3><span class="live-dot"></span><span>הרישום פתוח עד ${esc(hhmm(sm.openUntil))}</span></h3>
-          <p>משתפים מסך עם הקוד ומדביקים בצ'אט של הזום את הקישור. המורים נכנסים לקישור, בוחרים את השם ומקלידים את הקוד. הקוד מתחלף כל 5 דקות, וגם מי שהקליד רגע לפני ההחלפה נקלט.</p>
+          <p>מדביקים בצ'אט של הזום את הקישור. המורים נכנסים ולוחצים "אני כאן" — בלי קוד. בסיום יגיע אלייך מייל עם "אישור כולם".</p>
           <div class="ml-url" dir="ltr">${esc(mifgashUrl())}</div>
           <div class="gl-actions">
-            <button type="button" class="gl-btn wa" id="meet-project">${ICON.screen}<span>הקרנה במסך מלא</span></button>
             <button type="button" class="gl-btn" id="meet-copy">${ICON.copy}<span>העתקת הודעה לצ'אט</span></button>
             <button type="button" class="gl-btn" id="meet-extend">הארכה בשעה</button>
+          </div>
+          <div class="ml-reg">
+            <div class="ml-reg-h"><b>נרשמו עכשיו: ${pend.length + ok}</b>${ok ? ` <span>· ${ok} כבר אושרו</span>` : ''}</div>
+            ${pend.length ? `<ul class="ml-reg-list">${pend.map(r => `<li><span>${esc(r.teacherName)}<em>${esc(r.schoolName)}</em></span>
+              <button type="button" class="mr-btn no" data-live-absent="${esc(r.id)}">לא נכח/ה</button></li>`).join('')}</ul>
+            <button type="button" class="btn btn-primary" id="meet-live-approve"${liveSaving ? ' disabled' : ''}>${ICON.check}<span>${liveSaving ? 'שומר…' : 'אישור כולם (' + pend.length + ')'}</span></button>`
+            : '<div class="ml-reg-empty">עוד אין נרשמים. הרשימה מתעדכנת לבד.</div>'}
           </div>
           <div class="ws-status" id="meet-live-status"></div>
         </div>
       </div>`;
+  }
+
+  // "אישור כולם" / "לא נכח/ה" ישירות מהשורה של המפגש הפתוח
+  async function liveMark(sm, records) {
+    if (liveSaving || !records.length) return;
+    liveSaving = true;
+    renderMonths();
+    const s = sessionByDate(sm.date) || { date: sm.date, topic: sm.topic || '', source: 'adhoc' };
+    const res = await TS.apiPost('meet.mark', {
+      guide: SLUG, k: KEY, ge: GE, date: sm.date, topic: s.topic || '', source: s.source || 'adhoc',
+      guideName: GUIDE_CFG.name || '', records: JSON.stringify(records)
+    });
+    liveSaving = false;
+    await load();
+    TS.toast(res && res.ok ? 'נשמר' : errText(res && res.error));
   }
 
   async function openRegistration(s, btn, minutes) {
@@ -1524,7 +1561,6 @@
         if (i >= 0) S.meetings[i] = Object.assign({}, S.meetings[i], patch);
         else S.meetings.push(Object.assign({ counts: { present: 0, absent: 0, pending: 0, gaps: 0 } }, patch));
         renderMonths();
-        applyCodes(res.data);
       }
       await load();
       return;
@@ -1535,7 +1571,7 @@
   }
 
   async function closeRegistration(date, btn) {
-    if (!confirm('לסגור את הרישום? אחרי הסגירה המורים לא יוכלו להירשם עם הקוד.')) return;
+    if (!confirm('לסגור את הרישום? אחרי הסגירה המורים לא יוכלו להירשם בקישור.')) return;
     if (btn) { btn.disabled = true; btn.textContent = 'סוגר…'; }
     const res = await TS.apiPost('meet.close', { guide: SLUG, k: KEY, ge: GE, date: date });
     if (!(res && res.ok)) TS.toast(errText(res && res.error));
@@ -1544,136 +1580,45 @@
       if (i >= 0) S.meetings[i] = Object.assign({}, S.meetings[i], { open: false, openUntil: 0 });
       TS.toast('הרישום נסגר');
     }
-    stopLive();
     await load();
   }
 
+  // bindLive רץ גם מ-bindMonths וגם מ-bindBody — כפתור מקבל מאזין אחד בלבד
+  function once(el, fn) {
+    if (!el || el.dataset.bound) return;
+    el.dataset.bound = '1';
+    el.addEventListener('click', fn);
+  }
   function bindLive() {
     const copyBtn = document.getElementById('meet-copy');
-    if (copyBtn) copyBtn.addEventListener('click', () => {
+    once(copyBtn, () => {
       const text = 'רישום נוכחות למפגש' + (ARAB ? ' | تسجيل الحضور' : '') + ':\n' + mifgashUrl() +
-        '\nמקלידים את הקוד שמופיע על המסך' + (ARAB ? '\nاكتبوا الرمز الظاهر على الشاشة' : '');
+        '\nנכנסים ולוחצים "אני כאן"' + (ARAB ? '\nادخلوا واضغطوا "أنا هنا"' : '');
       const done = () => { const s = copyBtn.querySelector('span'); s.textContent = 'הועתק ✓'; setTimeout(() => { s.textContent = "העתקת הודעה לצ'אט"; }, 2200); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => window.prompt('להעתקה:', text));
       else window.prompt('להעתקה:', text);
     });
-    const projBtn = document.getElementById('meet-project');
-    if (projBtn) projBtn.addEventListener('click', openProjector);
+    const sm = serverMeeting(S.today);
+    const live = sm && sm.open ? sm : S.meetings.find(m => m.open);
+    const appr = document.getElementById('meet-live-approve');
+    if (live) once(appr, () => {
+      const recs = liveRows(live).filter(r => r.status === 'pending').map(r => r.teacherId
+        ? { teacherId: r.teacherId, teacherName: r.teacherName, schoolName: r.schoolName, status: 'present' }
+        : { rowId: r.id, status: 'present' });
+      liveMark(live, recs);
+    });
+    document.querySelectorAll('[data-live-absent]').forEach(b => once(b, () => {
+      if (!live) return;
+      const r = liveRows(live).find(x => String(x.id) === b.dataset.liveAbsent);
+      if (!r) return;
+      liveMark(live, [r.teacherId ? { teacherId: r.teacherId, teacherName: r.teacherName, schoolName: r.schoolName, status: 'absent' } : { rowId: r.id, status: 'absent' }]);
+    }));
     const extBtn = document.getElementById('meet-extend');
-    if (extBtn) extBtn.addEventListener('click', () => {
+    once(extBtn, () => {
       const sm = serverMeeting(S.today);
       const left = sm && sm.openUntil ? Math.max(0, Math.ceil((sm.openUntil - Date.now()) / 60000)) : 0;
       openRegistration(todaySession() || { date: S.today, topic: '', source: 'adhoc', slots: [] }, extBtn, Math.min(180, left + 60));
     });
   }
 
-  // הקוד של המועד שפתוח היום
-  async function fetchCode() {
-    if (codeFetching) return;
-    codeFetching = true;
-    clearTimeout(codeTimer);
-    const res = await TS.api('meet.code', { guide: SLUG, k: KEY, ge: GE, date: S.today, sessionDates: S.today }, { cache: 'no' });
-    codeFetching = false;
-    if (res && res.ok && res.data) { applyCodes(res.data); return; }
-    if (res && res.error === 'closed') { stopLive(); load(); return; }
-    codeTimer = setTimeout(fetchCode, 8000);   // תקלה רגעית — ניסיון חוזר קרוב
-  }
-  function applyCodes(d) {
-    if (!d || !d.codes) return;
-    live = { codes: d.codes, offset: (d.serverNow || Date.now()) - Date.now(), openUntil: d.openUntil, stepSec: d.stepSec || 300 };
-    clearInterval(tickTimer);
-    tickTimer = setInterval(tick, 1000);
-    clearTimeout(codeTimer);
-    codeTimer = setTimeout(fetchCode, CODE_REFRESH_MS);
-    tick();
-  }
-  function stopLive() {
-    live = null;
-    clearInterval(tickTimer); clearTimeout(codeTimer);
-    closeProjector();
-  }
-  function currentCode() {
-    if (!live) return null;
-    const t = Date.now() + live.offset;
-    if (live.openUntil && t >= live.openUntil) return { expired: true };
-    const c = live.codes.find(x => t >= x.from && t < x.to);
-    if (!c) return null;
-    return { code: c.code, left: Math.max(0, Math.ceil((c.to - t) / 1000)), frac: (c.to - t) / (c.to - c.from) };
-  }
-  function tick() {
-    const cur = currentCode();
-    if (cur && cur.expired) { stopLive(); load(); return; }
-    const txt = cur ? cur.code : '····';
-    const left = cur ? cur.left : 0;
-    const frac = cur ? cur.frac : 0;
-    if (!cur && live && Date.now() - lastCodeFetch > 8000) { lastCodeFetch = Date.now(); fetchCode(); }
-    [['meet-code', 'meet-bar', 'meet-countdown'], ['proj-code', 'proj-bar', 'proj-count']].forEach(([a, b, c]) => {
-      const el = document.getElementById(a);
-      if (!el) return;
-      if (el.textContent !== txt) el.textContent = txt;
-      const bar = document.getElementById(b);
-      if (bar) bar.style.width = Math.round(frac * 100) + '%';
-      const cnt = document.getElementById(c);
-      if (cnt) cnt.textContent = cur ? 'מתחלף בעוד ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0') : 'טוען קוד…';
-    });
-  }
-
-  // ---------- הקרנה ----------
-  function openProjector() {
-    closeProjector();
-    const url = mifgashUrl();
-    const short = url.replace(/^https?:\/\//, '');
-    const ov = document.createElement('div');
-    ov.className = 'meet-proj';
-    ov.id = 'meet-proj';
-    ov.innerHTML = `
-      <button type="button" class="proj-x" id="proj-x" aria-label="סגירה">×</button>
-      <div class="proj-grid">
-        <div class="proj-side">
-          <div class="proj-h">רישום נוכחות למפגש</div>
-          ${ARAB ? '<div class="proj-ar" lang="ar">تسجيل الحضور للقاء</div>' : ''}
-          <ol class="proj-steps">
-            <li>נכנסים לקישור מהצ'אט או סורקים${ARAB ? '<span lang="ar">ادخلوا الرابط من الدردشة أو امسحوا الرمز</span>' : ''}</li>
-            <li>בוחרים את השם${ARAB ? '<span lang="ar">اختاروا اسمكم</span>' : ''}</li>
-            <li>מקלידים את הקוד${ARAB ? '<span lang="ar">اكتبوا الرمز</span>' : ''}</li>
-          </ol>
-          <div class="proj-qr" id="proj-qr"></div>
-          <div class="proj-url" dir="ltr">${esc(short)}</div>
-        </div>
-        <div class="proj-main">
-          <div class="proj-label">הקוד${ARAB ? ' · <span lang="ar">الرمز</span>' : ''}</div>
-          <div class="proj-code" id="proj-code" dir="ltr">····</div>
-          <div class="proj-bar"><span id="proj-bar"></span></div>
-          <div class="proj-count" id="proj-count"></div>
-        </div>
-      </div>`;
-    document.body.appendChild(ov);
-    document.getElementById('proj-x').addEventListener('click', closeProjector);
-    document.addEventListener('keydown', escClose);
-    if (ov.requestFullscreen) ov.requestFullscreen().catch(() => {});
-    drawQr(url);
-    tick();
-  }
-  function escClose(e) { if (e.key === 'Escape') closeProjector(); }
-  function closeProjector() {
-    const ov = document.getElementById('meet-proj');
-    document.removeEventListener('keydown', escClose);
-    if (!ov) return;
-    if (document.fullscreenElement === ov && document.exitFullscreen) document.exitFullscreen().catch(() => {});
-    ov.remove();
-  }
-  function drawQr(url) {
-    const target = document.getElementById('proj-qr');
-    const draw = () => {
-      if (!window.QRCode || !target) return;
-      QRCode.toCanvas(url, { width: 220, margin: 1, color: { dark: '#143E4C', light: '#FFFFFF' } }, (err, canvas) => {
-        if (canvas && target.isConnected) { target.innerHTML = ''; target.appendChild(canvas); }
-      });
-    };
-    if (window.QRCode) { draw(); return; }
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js';
-    s.onload = draw;
-    document.head.appendChild(s);
-  }
 })();

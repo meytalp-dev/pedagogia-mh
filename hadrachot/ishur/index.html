@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>אישור נוכחות — מנור</title>
+<link rel="stylesheet" href="../assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="../assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="../assets/menor-mark.svg">
+<style>
+  /* נפתח מהמייל שהמדריכ/ה מקבל/ת כשהרישום למפגש נסגר (12.10.26).
+     בלי כניסה למבט: הקישור נושא טוקן חתום למפגש אחד. האישור קורה רק בלחיצה —
+     סורקי מייל פותחים קישורים לבד, ולכן פתיחת הדף לא משנה כלום. */
+  [hidden] { display: none !important; }
+  body { background: var(--bg, #F4F7F8); }
+  .ap-shell { max-width: 560px; margin: 0 auto; padding: 22px 16px 10px; }
+  .ap-card { background: var(--surface, #fff); border: 1px solid var(--border); border-radius: 18px; padding: 22px 20px; box-shadow: var(--shadow-card); }
+  .ap-eyebrow { font-size: 12px; font-weight: 700; color: #1f7a5c; margin-bottom: 4px; }
+  .ap-card h1 { font-family: 'Fredoka', 'Heebo', sans-serif; font-size: 23px; line-height: 1.3; margin: 0 0 4px; }
+  .ap-sub { font-size: 14px; color: var(--text-2); line-height: 1.6; margin: 0; }
+  .ap-hint { font-size: 13.5px; color: var(--text-2); line-height: 1.7; margin: 14px 0 10px; }
+  .ap-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .ap-list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: #fff; }
+  .ap-list li:last-child { border-bottom: none; }
+  .ap-list li.off { background: #FBEFEC; }
+  .ap-list li.off .ap-name { text-decoration: line-through; color: #8f2f1c; }
+  .ap-name { font-size: 15px; font-weight: 600; }
+  .ap-school { display: block; font-size: 12.5px; color: var(--text-muted); font-weight: 400; }
+  .ap-tog { font-family: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; min-height: 40px; border-radius: 9px; border: 1px solid var(--border); background: #fff; color: var(--text-2); cursor: pointer; white-space: nowrap; }
+  .ap-tog[aria-pressed="true"] { background: #c56b5c; border-color: #c56b5c; color: #fff; }
+  .ap-btn { width: 100%; margin-top: 16px; min-height: 56px; font-size: 18px; font-weight: 700; border-radius: 14px; border: none; background: #1f7a5c; color: #fff; font-family: inherit; cursor: pointer; }
+  .ap-btn:disabled { opacity: .55; cursor: default; }
+  .ap-err { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #FBE9E5; color: #8f2f1c; font-size: 14px; font-weight: 600; line-height: 1.55; }
+  .ap-state { text-align: center; padding: 12px 0 4px; }
+  .ap-ic { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 12px; background: #1f7a5c; color: #fff; }
+  .ap-ic svg { width: 34px; height: 34px; }
+  .ap-state h2 { font-size: 22px; margin: 0 0 6px; color: #14563f; }
+  .ap-state p { font-size: 14.5px; color: var(--text-2); line-height: 1.7; margin: 0; }
+  .ap-done-note { font-size: 13px; color: var(--text-muted); margin-top: 14px; }
+  .ap-foot { text-align: center; padding: 22px 16px 30px; color: var(--text-3); font-size: 12.5px; line-height: 1.7; }
+  .ap-foot .credit { margin-top: 4px; font-size: .72rem; color: #8A97A6; }
+  .ap-foot .credit a { color: inherit; }
+</style>
+</head>
+<body>
+  <main class="ap-shell">
+    <section class="ap-card">
+      <div class="ap-eyebrow">מנור · אישור נוכחות</div>
+      <h1 id="ap-title">אישור נוכחות במפגש</h1>
+      <p class="ap-sub" id="ap-sub"></p>
+
+      <div class="ap-state" id="st-loading"><p>טוען…</p></div>
+
+      <div class="ap-state" id="st-bad" hidden>
+        <h2 style="color:#8f2f1c">הקישור אינו תקין</h2>
+        <p>פותחים את הקישור מהמייל כמו שהוא. אם זה לא עוזר — אפשר לאשר במבט המדריכ/ה, בלשונית הנוכחות.</p>
+      </div>
+
+      <div id="st-list" hidden>
+        <p class="ap-hint" id="ap-hint"></p>
+        <ul class="ap-list" id="ap-list"></ul>
+        <button type="button" class="ap-btn" id="ap-go"></button>
+        <div class="ap-err" id="ap-err" hidden></div>
+      </div>
+
+      <div class="ap-state" id="st-done" hidden>
+        <div class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h2 id="done-h"></h2>
+        <p id="done-p"></p>
+        <p class="ap-done-note">אפשר לסגור את הדף. שינויים נוספים — בלשונית הנוכחות במבט שלך.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ap-foot">
+    מנור · המרחב הפדגוגי
+    <div class="credit">נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener">impactos · impactos.co.il</a></div>
+  </footer>
+
+<script src="../assets/app.js?v=20260929r"></script>
+<script>
+(function () {
+  const M = TS.urlParam('m', ''), T = TS.urlParam('t', ''), X = TS.urlParam('x', '');
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const dm = d => d ? (+d.slice(8, 10) + '.' + +d.slice(5, 7)) : '';
+  const absent = new Set(X ? [X] : []);
+  let pending = [], sending = false;
+
+  function show(name) { ['loading', 'bad', 'list', 'done'].forEach(s => { $('st-' + s).hidden = s !== name; }); }
+
+  function draw() {
+    const n = pending.length - pending.filter(r => absent.has(r.id)).length;
+    $('ap-list').innerHTML = pending.map(r => `
+      <li class="${absent.has(r.id) ? 'off' : ''}">
+        <span class="ap-name">${esc(r.teacherName)}<span class="ap-school">${esc(r.schoolName)}</span></span>
+        <button type="button" class="ap-tog" data-id="${esc(r.id)}" aria-pressed="${absent.has(r.id)}">${absent.has(r.id) ? 'לא נכח/ה ✕' : 'לא נכח/ה'}</button>
+      </li>`).join('');
+    $('ap-list').querySelectorAll('.ap-tog').forEach(b => b.addEventListener('click', () => {
+      const id = b.dataset.id;
+      if (absent.has(id)) absent.delete(id); else absent.add(id);
+      draw();
+    }));
+    const off = absent.size ? ' · ' + pending.filter(r => absent.has(r.id)).length + ' לא נכחו' : '';
+    $('ap-go').textContent = sending ? 'שומר…' : (n === pending.length ? 'אישור כולם (' + n + ')' : 'אישור ' + n + off);
+    $('ap-go').disabled = sending;
+  }
+
+  async function load() {
+    if (!/^mt_/.test(M) || !T) { show('bad'); return; }
+    const res = await TS.api('meet.approveView', { m: M, t: T }, { cache: 'no' });
+    if (!res || !res.ok) {
+      if (res && res.error === 'bad_link') { show('bad'); return; }
+      $('st-loading').innerHTML = '<p>אין חיבור כרגע. <a href="" onclick="location.reload();return false;">לנסות שוב</a></p>';
+      return;
+    }
+    const d = res.data;
+    $('ap-sub').textContent = [d.guideName, 'מפגש ' + dm(d.date), d.topic].filter(Boolean).join(' · ');
+    pending = d.rows.filter(r => r.status === 'pending')
+      .sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') || String(a.teacherName).localeCompare(String(b.teacherName), 'he'));
+    if (!pending.length) {
+      const ok = d.rows.filter(r => r.status === 'present').length;
+      $('done-h').textContent = 'הכול כבר אושר';
+      $('done-p').textContent = ok ? ok + ' נוכחים במפגש הזה.' : 'אין רישומים שממתינים לאישור.';
+      show('done');
+      return;
+    }
+    $('ap-hint').textContent = pending.length + ' מורים נרשמו בעצמם למפגש. מי שלא היה — לוחצים "לא נכח/ה" ליד השם, ואז מאשרים.';
+    draw();
+    show('list');
+  }
+
+  $('ap-go').addEventListener('click', async () => {
+    if (sending) return;
+    sending = true; draw(); $('ap-err').hidden = true;
+    const ids = pending.filter(r => absent.has(r.id)).map(r => r.id).join(',');
+    const res = await TS.apiPost('meet.approve', { m: M, t: T, absent: ids });
+    sending = false;
+    if (res && res.ok) {
+      const n = res.data || {};
+      $('done-h').textContent = 'הנוכחות אושרה, תודה!';
+      $('done-p').textContent = (n.present || 0) + ' נוכחים' + (n.absent ? ' · ' + n.absent + ' סומנו "לא נכח/ה"' : '') + '.';
+      show('done');
+      return;
+    }
+    // התשובה ל-POST נופלת לפעמים גם כשהשמירה עברה — בודקים מה המצב בשרת
+    const chk = await TS.api('meet.approveView', { m: M, t: T }, { cache: 'no' });
+    if (chk && chk.ok && !chk.data.rows.some(r => r.status === 'pending')) {
+      $('done-h').textContent = 'הנוכחות אושרה, תודה!';
+      $('done-p').textContent = '';
+      show('done');
+      return;
+    }
+    draw();
+    $('ap-err').textContent = 'לא הצלחנו לשמור כרגע. אפשר ללחוץ שוב.';
+    $('ap-err').hidden = false;
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

@@ -412,6 +412,22 @@
   .ml-bar span, .proj-bar span { display:block; height:100%; background:#1f7a5c; transition:width 1s linear; }
   .ml-count { font-size:11.5px; color:var(--text-muted); margin-top:5px; }
   .ml-url { font-size:12.5px; color:var(--text-2); word-break:break-all; background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px 10px; margin-bottom:10px; text-align:left; }
+  /* מי שנרשם עכשיו — בתוך שורת המפגש הפתוח (12.10.26, בלי קוד) */
+  .ml-reg { margin-top:12px; background:#fff; border:1px solid #BFDCCF; border-radius:12px; padding:12px 14px; }
+  .ml-reg-h { font-size:14px; margin-bottom:8px; }
+  .ml-reg-h span { color:var(--text-muted); font-size:13px; }
+  .ml-reg-list { list-style:none; margin:0 0 10px; padding:0; max-height:320px; overflow-y:auto; }
+  .ml-reg-list li { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #EEF3F1; font-size:14px; }
+  .ml-reg-list li:last-child { border-bottom:none; }
+  .ml-reg-list em { display:block; font-style:normal; color:var(--text-muted); font-size:12.5px; }
+  .ml-reg-list .mr-btn { white-space:nowrap; flex:none; }
+  .ml-reg-empty { font-size:13px; color:var(--text-muted); }
+  .meet-roster > summary { cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:15px; }
+  .meet-roster > summary::-webkit-details-marker { display:none; }
+  .meet-roster > summary::before { content:'›'; font-size:20px; line-height:1; transform:rotate(90deg); transition:transform .15s; color:var(--text-muted); }
+  .meet-roster[open] > summary::before { transform:rotate(-90deg); }
+  .meet-roster[open] > summary { margin-bottom:12px; }
+  .meet-roster-hint { font-size:12.5px; color:var(--text-muted); font-weight:400; }
   .live-dot { width:10px; height:10px; border-radius:50%; background:#1f9d6b; box-shadow:0 0 0 0 rgba(31,157,107,.5); animation:livePulse 1.8s infinite; flex:none; }
   @keyframes livePulse { 0% { box-shadow:0 0 0 0 rgba(31,157,107,.5); } 70% { box-shadow:0 0 0 9px rgba(31,157,107,0); } 100% { box-shadow:0 0 0 0 rgba(31,157,107,0); } }
   @media (prefers-reduced-motion: reduce) { .live-dot { animation:none; } .ml-bar span, .proj-bar span { transition:none; } }
@@ -1147,7 +1163,7 @@
 <script src="dashboard.js?v=20261012c"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
 <script src="space.js?v=20260928e"></script>
-<script src="meetings.js?v=20261007a"></script>
+<script src="meetings.js?v=20261012a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
 <script src="view.js?v=20260928c"></script>
