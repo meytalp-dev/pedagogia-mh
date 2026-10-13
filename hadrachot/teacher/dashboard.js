@@ -949,7 +949,7 @@ function renderNext(scope, slug) {
   document.getElementById('next-meta').textContent = meta.join(' · ');   // מוסתר (24.9.26) — התאריכים והשעות בשורות למטה
   const soon = document.getElementById('next-soon');
   const diff = Math.round((new Date(first) - new Date(today)) / 86400000);
-  if (isToday) { soon.hidden = false; soon.textContent = 'היום! רושמים נוכחות עם הקוד שמוצג במפגש'; }
+  if (isToday) { soon.hidden = false; soon.textContent = 'היום! במפגש לוחצים "אני כאן" ונרשמים'; }
   else if (diff > 0 && diff <= 7) { soon.hidden = false; soon.textContent = diff === 1 ? 'מחר' : 'בעוד ' + diff + ' ימים'; }
   // שורה לכל מועד, ולידה רישום הנוכחות — פעיל ביום ההדרכה עצמו
   const row = myRowToday(scope, slug);
