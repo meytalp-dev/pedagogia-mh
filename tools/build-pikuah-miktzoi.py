@@ -87,7 +87,7 @@ for s in json.loads(re.search(r'<script type="application/json" id="ppData">(.*?
     if s['semel'].isdigit():
         ped[s['semel']] = '|'.join(s['sups'])
 ALIAS = {'אור דניאל נתניה': 'אור דניאל', 'צור באהר': 'סור באהר',
-         'עתיד אור מנחם (קמפוס לשעבר)': 'הקמפוס התורני עתיד'}
+         'עתיד אור מנחם (קמפוס לשעבר)': 'ישיבת עתיד אור מנחם'}
 for sc in schools:
     key = sc['semel'] if sc['semel'] in ped else ALIAS.get(sc['name'], sc['name'])
     sc['ped'] = ped.get(key, '')
