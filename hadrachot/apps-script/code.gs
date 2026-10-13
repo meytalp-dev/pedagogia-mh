@@ -5806,6 +5806,7 @@ function teacherSelf(p) {
    ============================================================ */
 const TEACHER_SUBJECTS_ = ['מתמטיקה', 'אנגלית', 'עברית', 'ספרות', 'היסטוריה', 'אזרחות',
   'תנ"ך', 'ערבית', 'מורשת אסלאמית', 'מורשת דרוזית'];
+const TEACHER_NO_GMAR_ = ['אנגלית', 'היסטוריה'];   // אין בחינת גמר (9.9.26)
 
 function teacherSubjects_(t, rows) {
   const name = String(t.name || '').replace(/\s+/g, ' ').trim();
@@ -5833,18 +5834,21 @@ function teacherAddSubject(p) {
   if (!t) return { ok: false, error: 'bad_key' };
   const subject = String(p.subject || '').trim();
   if (TEACHER_SUBJECTS_.indexOf(subject) < 0) return { ok: false, error: 'bad_subject' };
+  // גמר (13.10.26, מיטל) — מורה שמלמד/ת גם גמר מוסיף/ה לעצמו/ה שורת גמר. באנגלית ובהיסטוריה אין גמר.
+  const type = String(p.type || '') === 'gemer' ? 'gemer' : 'bagrut';
+  if (type === 'gemer' && TEACHER_NO_GMAR_.indexOf(subject) >= 0) return { ok: false, error: 'no_gmar' };
   ensureTab_('teachers');
   const cr = createTeacher({
     school: t.school, schoolName: t.schoolName, network: t.network,
-    name: String(t.name || '').replace(/\s+/g, ' ').trim(), subject: subject, type: 'bagrut',
+    name: String(t.name || '').replace(/\s+/g, ' ').trim(), subject: subject, type: type,
     sector: t.sector || teacherSchoolSector_(t.school), email: t.email, phone: t.phone,
     seniority: t.seniority,
-    notes: 'מקצוע נוסף — נוסף/ה בעצמו/ה במבט המורה'
+    notes: (type === 'gemer' ? 'גמר' : 'מקצוע נוסף') + ' — נוסף/ה בעצמו/ה במבט המורה'
   });
   if (!cr || !cr.ok || !cr.data) return { ok: false, error: (cr && cr.error) || 'busy_try_again' };
   const nid = String(cr.data.id);
   if (!cr.existed) updateRowById('teachers', nid, { selfAdded: new Date().toISOString() });
-  return { ok: true, data: { key: teacherKeyRemember_(nid), id: nid, subject: subject, existed: !!cr.existed } };
+  return { ok: true, data: { key: teacherKeyRemember_(nid), id: nid, subject: subject, type: type, existed: !!cr.existed } };
 }
 
 /* ============================================================

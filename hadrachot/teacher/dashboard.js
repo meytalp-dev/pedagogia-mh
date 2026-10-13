@@ -1235,11 +1235,20 @@ function renderSubjects() {
   const addOpen = document.getElementById('subj-add-open');
   addOpen.hidden = !!ADMIN_KEY_;
   bar.hidden = !many && !!ADMIN_KEY_;
-  const have = list.map(x => x.subject);
+  // גמר (13.10.26) — כל מקצוע+מסלול הוא כרטיס; מציעים רק צירופים שעוד אין. באנגלית ובהיסטוריה אין גמר.
+  const has = (s, t) => list.some(x => x.subject === s && (x.type === 'gemer' ? 'gemer' : 'bagrut') === t);
+  const freeTypes = s => ['bagrut', 'gemer'].filter(t => !has(s, t) && !(t === 'gemer' && SUBJ_NO_GMAR.indexOf(s) >= 0));
   const sel = document.getElementById('subj-add-sel');
-  const free = (TS.SUBJECTS || []).filter(s => have.indexOf(s) < 0);
+  const typeSel = document.getElementById('subj-add-type');
+  const free = (TS.SUBJECTS || []).filter(s => freeTypes(s).length);
   sel.innerHTML = '<option value="">בחרו מקצוע</option>' +
     free.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  const fillTypes = () => {
+    const ts = sel.value ? freeTypes(sel.value) : ['bagrut', 'gemer'];
+    typeSel.innerHTML = ts.map(t => `<option value="${t}">${t === 'gemer' ? 'גמר' : 'בגרות'}</option>`).join('');
+  };
+  sel.onchange = fillTypes;
+  fillTypes();
   addOpen.onclick = () => {
     const box = document.getElementById('subj-add');
     box.hidden = !box.hidden;
@@ -1282,23 +1291,29 @@ async function switchSubject(id, btn) {
   goToTeacherCard(r.data.key, r.data.id);
 }
 
+const SUBJ_NO_GMAR = ['אנגלית', 'היסטוריה'];   // אין בחינת גמר — כמו TEACHER_NO_GMAR_ בשרת
+
 async function addSubject() {
   const sel = document.getElementById('subj-add-sel');
+  const typeSel = document.getElementById('subj-add-type');
   const go = document.getElementById('subj-add-go');
   const subject = sel.value;
+  const type = typeSel.value === 'gemer' ? 'gemer' : 'bagrut';
   if (!subject) { sel.focus(); return subjMsg('בחרו את המקצוע הנוסף.'); }
-  if (DEMO_) return subjMsg('בהדמיה: כאן נוצר כרטיס ב' + subject + ' והדף עובר אליו.', true);
-  go.disabled = true; sel.disabled = true;
+  const what = subject + (type === 'gemer' ? ' · גמר' : '');
+  if (DEMO_) return subjMsg('בהדמיה: כאן נוצר כרטיס ב' + what + ' והדף עובר אליו.', true);
+  go.disabled = true; sel.disabled = true; typeSel.disabled = true;
   const label = go.textContent;
   go.textContent = 'מוסיף… (עד דקה)';
   subjMsg('');
-  const r = await TS.apiPost('teacher.addSubject', { k: teacherKey, subject: subject });
+  const r = await TS.apiPost('teacher.addSubject', { k: teacherKey, subject: subject, type: type });
   if (!r || !r.ok || !r.data || !r.data.key) {
-    go.disabled = false; sel.disabled = false; go.textContent = label;
+    go.disabled = false; sel.disabled = false; typeSel.disabled = false; go.textContent = label;
     return subjMsg(r && r.error === 'bad_subject' ? 'המקצוע הזה לא מוכר במערכת.'
+      : r && r.error === 'no_gmar' ? 'ב' + subject + ' אין בחינת גמר.'
       : 'ההוספה לא הצליחה (השרת עמוס). נסו שוב בעוד רגע — לא תיווצר כפילות.');
   }
-  subjMsg('נוסף ' + subject + ' ✓ עוברים לכרטיס החדש…', true);
+  subjMsg('נוסף ' + what + ' ✓ עוברים לכרטיס החדש…', true);
   goToTeacherCard(r.data.key, r.data.id);
 }
 
@@ -1413,6 +1428,7 @@ function trainingStatusFromForm() {
 const UNITS_Q = { 'מתמטיקה': ['3', '4', '5', 'gemer'], 'אנגלית': ['3', '4', '5'] };
 const UNITS_Q_LABEL = { '3': '3 יח"ל', '4': '4 יח"ל', '5': '5 יח"ל', gemer: 'גמר' };
 function unitsOptions() {
+  if (teacher && teacher.type === 'gemer') return null;   // בכרטיס גמר אין יחידות לימוד
   const s = String((teacher && teacher.subject) || '');
   const k = Object.keys(UNITS_Q).find(x => s.indexOf(x) >= 0);
   return k ? UNITS_Q[k] : null;

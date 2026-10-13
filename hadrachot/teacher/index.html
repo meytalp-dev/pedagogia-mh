@@ -317,6 +317,7 @@
   .subj-add { margin-top: 10px; padding: 14px; border: 1px solid #D5E0D2; border-radius: 12px; background: #F7FAF6; max-width: 520px; }
   .subj-add-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0; }
   .subj-add-row .select { flex: 1 1 180px; min-width: 0; }
+  .subj-add-row #subj-add-type { flex: 0 1 110px; }
   .subj-msg { margin-top: 8px; font-size: 13.5px; font-weight: 700; color: #A4452C; }
   .subj-msg.ok { color: #2F4A2E; }
   .ql { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
@@ -494,16 +495,17 @@
           <div class="subj-row">
             <span class="subj-label">המקצועות שלי:</span>
             <span id="subj-chips"></span>
-            <button type="button" class="subj-add-link" id="subj-add-open">+ אני מלמד/ת גם מקצוע נוסף</button>
+            <button type="button" class="subj-add-link" id="subj-add-open">+ אני מלמד/ת גם מקצוע נוסף או גמר</button>
           </div>
           <div class="subj-add" id="subj-add" hidden>
-            <label class="tg-label" for="subj-add-sel">איזה מקצוע נוסף את/ה מלמד/ת בבית הספר?</label>
+            <label class="tg-label" for="subj-add-sel">מה עוד את/ה מלמד/ת בבית הספר?</label>
             <div class="subj-add-row">
-              <select class="select" id="subj-add-sel"></select>
+              <select class="select" id="subj-add-sel" aria-label="מקצוע"></select>
+              <select class="select" id="subj-add-type" aria-label="מסלול"></select>
               <button type="button" class="btn btn-primary" id="subj-add-go">הוספה</button>
               <button type="button" class="btn btn-secondary" id="subj-add-cancel">ביטול</button>
             </div>
-            <div class="tg-why">תופיע/י גם אצל המדריכ/ה של המקצוע הזה, עם אותו מייל. אחרי ההוספה נשאל על ההשתלמות במקצוע החדש.</div>
+            <div class="tg-why">מלמד/ת אותו מקצוע גם לבגרות וגם לגמר? בחרו את המקצוע ואז "גמר". תופיע/י גם אצל המדריכ/ה של המקצוע הזה, עם אותו מייל. אחרי ההוספה נשאל על ההשתלמות במקצוע החדש.</div>
             <div class="subj-msg" id="subj-msg" hidden></div>
           </div>
         </div>
