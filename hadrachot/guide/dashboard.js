@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (typeSel) typeSel.addEventListener('change', toggleUnitsRow);
   renderResources();
   renderPlan();
+  loadPlanChanges();   // שינויי מועד ישר מהשרת — הקובץ הסטטי מתעדכן רק כל חצי שעה
   loadSchools();   // רשימת בתי הספר מוכנה עוד לפני שנפתח חלון ההוספה
   // space.js / meetings.js מסתירים את הלשוניות שלהם ב-DOMContentLoaded משלהם
   setTimeout(syncQuickLinks, 0);
@@ -1087,6 +1088,7 @@ function renderPlan() {
   const rows = plan.meetings.map(m => {
     const isNext = next && m.date === next.date;
     const isPast = next ? m.date < next.date : true;
+    const slotsHtml = planSlotsHtml(m);
     return `
       <div class="plan-item ${isNext ? 'next' : ''} ${isPast ? 'past' : ''}">
         <div class="plan-when">
@@ -1101,6 +1103,7 @@ function renderPlan() {
           ${m.goal ? `<span class="goal">${escapeHtml(m.goal)}</span>` : ''}
           ${m.examples ? `<span class="ex">דוגמאות: ${escapeHtml(m.examples)}</span>` : ''}
           ${m.note ? `<span class="note">${ICON_FLAG}${escapeHtml(m.note)}</span>` : ''}
+          ${slotsHtml}
         </div>
       </div>`;
   }).join('');
@@ -1112,6 +1115,142 @@ function renderPlan() {
     : (plan.source ? `<div class="plan-notes" style="font-size:12px;opacity:.85">${escapeHtml(plan.source)}</div>` : '');
 
   box.innerHTML = head + '<div class="plan-list">' + rows + '</div>' + notes;
+}
+
+/* ============================================================
+   שינוי מועד בידי המדריכה (13.10.26, מיטל)
+   כפתור ליד כל מועד שעוד לא התחיל → חלונית: תאריך, שעה, סיבה.
+   השינוי מחליף את המועד הישן (plans.js → TS_applyPlanChanges), מיטל מקבלת
+   מייל מיד ומורי הקבוצה כעבור 5 דקות (code.gs → planMove).
+   ============================================================ */
+const PLAN_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+function planDm(iso) { return +iso.slice(8, 10) + '.' + +iso.slice(5, 7); }
+function planWd(iso) { const p = iso.split('-').map(Number); return PLAN_DAYS[new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay()]; }
+function planNowKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') +
+    ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+function planSlotsHtml(m) {
+  const slots = window.TS_meetingSlots ? window.TS_meetingSlots(m) : [];
+  if (!slots.length) return '';
+  const now = planNowKey();
+  const md = (m.__orig || m).date;
+  const ICON_MOVE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4M10 15h5M13 13l2 2-2 2"/></svg>';
+  const chips = slots.map(s => {
+    const future = (s.date + ' ' + s.start) > now;
+    const txt = (s.part ? s.part + ' · ' : '') + 'יום ' + planWd(s.date) + ' ' + planDm(s.date) + ' · ' + s.start;
+    const btn = future
+      ? `<button type="button" class="plan-move-btn" data-md="${escapeHtml(md)}" data-of="${escapeHtml(s.of || s.date)}" data-ofs="${escapeHtml(s.ofs || s.start)}"
+           data-cd="${escapeHtml(s.date)}" data-cs="${escapeHtml(s.start)}" data-part="${escapeHtml(s.part || '')}" data-topic="${escapeHtml(m.topic || '')}"
+           ${s.moved ? 'data-moved="1"' : ''}>${ICON_MOVE}שינוי מועד</button>`
+      : '';
+    return `<span class="plan-slot${s.moved ? ' moved' : ''}${future ? '' : ' done'}"><bdi>${escapeHtml(txt)}</bdi>${s.moved ? '<em>הוזז</em>' : ''}${btn}</span>`;
+  }).join('');
+  return `<div class="plan-slots">${chips}</div>`;
+}
+
+// שינויי המועד של המדריכה הזו ישר מהשרת; של האחרות — מהקובץ הסטטי
+async function loadPlanChanges() {
+  if (!guideSlug || !window.TS_applyPlanChanges || !window.TS_planFor || !window.TS_planFor(guideSlug)) return;
+  try {
+    const res = await TS.api('plan.changes', { guide: guideSlug }, { cache: 'no' });
+    if (res && res.ok && res.data && Array.isArray(res.data.changes)) setPlanChanges(res.data.changes);
+  } catch (e) { /* בלי שרת — נשארים עם הקובץ הסטטי */ }
+}
+function setPlanChanges(mine) {
+  const others = (window.TS_PLAN_CHANGES || []).filter(c => c.g !== guideSlug);
+  const list = others.concat(mine);
+  if (JSON.stringify(list) === JSON.stringify(window.TS_PLAN_CHANGES_APPLIED || [])) return;
+  window.TS_PLAN_CHANGES = list;
+  window.TS_applyPlanChanges(list);
+  renderPlan();
+  if (typeof window.MEET_onPlanChanged === 'function') window.MEET_onPlanChanged();
+}
+
+let planMoveCur = null;
+document.addEventListener('click', e => {
+  const b = e.target.closest('.plan-move-btn');
+  if (b) openPlanMove(b.dataset);
+});
+function openPlanMove(d) {
+  planMoveCur = Object.assign({}, d);
+  const box = document.getElementById('modal-plan-move');
+  if (!box) return;
+  document.getElementById('pm-what').textContent = (d.topic ? d.topic + ' · ' : '') + (d.part ? d.part + ' · ' : '') +
+    'המועד עכשיו: יום ' + planWd(d.cd) + ' ' + planDm(d.cd) + ' בשעה ' + d.cs;
+  const orig = document.getElementById('pm-orig');
+  orig.hidden = !d.moved;
+  orig.textContent = d.moved ? 'במקור בתוכנית: יום ' + planWd(d.of) + ' ' + planDm(d.of) + ' בשעה ' + d.ofs : '';
+  document.getElementById('pm-back').hidden = !d.moved;
+  document.getElementById('pm-date').value = d.cd;
+  document.getElementById('pm-date').min = planNowKey().slice(0, 10);
+  document.getElementById('pm-time').value = d.cs;
+  document.getElementById('pm-reason').value = '';
+  planMoveMsg('', '');
+  box.classList.add('open');
+  setTimeout(() => document.getElementById('pm-date').focus(), 30);
+}
+function closePlanMove() {
+  const box = document.getElementById('modal-plan-move');
+  if (box) box.classList.remove('open');
+  planMoveCur = null;
+}
+function planMoveMsg(text, kind) {
+  const el = document.getElementById('pm-msg');
+  el.textContent = text;
+  el.className = 'pm-msg' + (kind ? ' ' + kind : '');
+  el.hidden = !text;
+}
+const PLAN_MOVE_ERR = {
+  bad_key: 'הקישור הזה לא מאפשר שינויים. צריך להיכנס מהקישור האישי המלא שקיבלת.',
+  past: 'המועד הזה כבר התחיל או עבר, ולכן אי אפשר להזיז אותו.',
+  to_past: 'המועד החדש כבר עבר. צריך לבחור תאריך ושעה עתידיים.',
+  to_far: 'אפשר להזיז מועד עד סוף שנת הלימודים (31.8.27).',
+  bad_date: 'צריך לבחור תאריך ושעה.',
+  no_slot: 'המועד לא נמצא בתוכנית. כדאי לרענן את הדף ולנסות שוב.',
+  no_meeting: 'המועד לא נמצא בתוכנית. כדאי לרענן את הדף ולנסות שוב.',
+  busy: 'המערכת עמוסה כרגע. כדאי לנסות שוב בעוד רגע.'
+};
+async function submitPlanMove(back) {
+  const c = planMoveCur;
+  if (!c) return;
+  const date = document.getElementById('pm-date').value;
+  const time = document.getElementById('pm-time').value;
+  if (!back) {
+    if (!date || !time) { planMoveMsg(PLAN_MOVE_ERR.bad_date, 'err'); return; }
+    if ((date + ' ' + time) <= planNowKey()) { planMoveMsg(PLAN_MOVE_ERR.to_past, 'err'); return; }
+    if (date === c.cd && time === c.cs) { planMoveMsg('זה המועד הנוכחי. כדי להזיז, צריך לבחור תאריך או שעה אחרים.', 'err'); return; }
+  }
+  const auth = typeof window.GUIDE_AUTH === 'function' ? window.GUIDE_AUTH() : { guide: guideSlug };
+  const btns = document.querySelectorAll('#modal-plan-move button');
+  btns.forEach(x => { x.disabled = true; });
+  planMoveMsg('שמירה…', '');
+  let res = null;
+  try {
+    res = await TS.apiPost('plan.move', Object.assign({}, auth, {
+      mdate: c.md, from: c.of, fromStart: c.ofs,
+      to: back ? '' : date, toStart: back ? '' : time, cancel: back ? 1 : '',
+      reason: document.getElementById('pm-reason').value.trim()
+    }));
+  } catch (e) { res = null; }
+  btns.forEach(x => { x.disabled = false; });
+  if (!res || !res.ok) {
+    planMoveMsg(PLAN_MOVE_ERR[res && res.error] || 'השמירה לא הצליחה. כדאי לנסות שוב בעוד רגע.', 'err');
+    return;
+  }
+  if (res.data && Array.isArray(res.data.changes)) setPlanChanges(res.data.changes);
+  closePlanMove();
+  const t = document.getElementById('plan-saved');
+  if (t) {
+    t.textContent = res.data && res.data.unchanged ? 'לא היה מה לשנות — המועד נשאר כמו שהוא.'
+      : back ? 'המועד חזר למקור. מיטל קיבלה הודעה, ומורי הקבוצה יקבלו מייל בעוד כמה דקות.'
+      : 'המועד עודכן. מיטל קיבלה הודעה, ומורי הקבוצה יקבלו מייל על השינוי בעוד כמה דקות.';
+    t.hidden = false;
+    clearTimeout(t._h);
+    t._h = setTimeout(() => { t.hidden = true; }, 9000);
+  }
 }
 
 /* ===== חומרים וקישורים (Drive / זום / שליחת חומרים) ===== */

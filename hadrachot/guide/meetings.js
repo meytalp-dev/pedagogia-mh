@@ -57,7 +57,8 @@
     } catch (e) { return ''; }
   }
 
-  const PLAN = window.TS_planFor ? window.TS_planFor(SLUG) : null;
+  // פונקציה ולא קבוע: שינוי מועד (TS_applyPlanChanges) מחליף את אובייקטי המפגשים
+  const planNow = () => (window.TS_planFor ? window.TS_planFor(SLUG) : null);
 
   const S = { today: localToday(), meetings: [], rows: [], rowsDate: '', loaded: false, failed: false, badKey: false };
   let sel = null;           // המועד שהסימון הידני שלו פתוח — { date, topic, source, subject, label, slots }
@@ -109,6 +110,16 @@
   });
 
   // dashboard.js קורא לזה אחרי שרשימת המורים נטענה
+  // dashboard.js קורא לזה אחרי שינוי מועד — הכרטיס "המפגש הבא" והחודשים מתחשבים מחדש
+  window.MEET_onPlanChanged = function () {
+    sessCache = null;
+    renderNextMeet();
+    if (!CAN) return;
+    monthsSig = '';
+    renderMonths();
+    if (sel) renderBody();
+  };
+
   window.MEET_onRoster = function () {
     renderYear();
     if (!CAN) return;
@@ -277,9 +288,11 @@
   function shortLabel(iso) { const p = iso.split('-'); return Number(p[2]) + '.' + Number(p[1]); }
 
   function planMeetings() {
+    const PLAN = planNow();
     return (PLAN && PLAN.meetings ? PLAN.meetings : []).map(m => ({
       date: m.date, date2: m.date2 || '', dates: m.dates || null, subject: m.subject || '', topic: m.topic || '',
-      goal: m.goal || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || ''
+      goal: m.goal || '', source: 'plan', label: m.label || labelOf(m.date), time: m.time || '', day: m.day || '',
+      slots: Array.isArray(m.slots) ? m.slots : undefined   // מועד שהוזז — המועדים מחושבים
     }));
   }
   // כל ימי המפגש: dates (מוריה — עד 3 ימים בחודש), או date + date2

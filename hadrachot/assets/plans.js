@@ -783,12 +783,18 @@ window.TS_nextMeeting = function (plan) {
      · time בלי תאריך — כל שעת התחלה ביום date: "11:00 / 18:00", "9:00–10:00 · 17:00–18:00" */
 window.TS_meetingSlots = function (m) {
   if (!m || !m.date) return [];
+  // מפגש שמועד בו הוזז (TS_applyPlanChanges) — המועדים כבר מחושבים
+  if (Array.isArray(m.slots)) return m.slots.map(s => Object.assign({}, s));
   const days = (m.dates && m.dates.length) ? m.dates : [m.date, m.date2].filter(Boolean);
   const pad = t => (t.length === 4 ? '0' : '') + t;
   const isoOf = (d, mo) => days.find(x => +x.slice(8, 10) === +d && +x.slice(5, 7) === +mo) || '';
   const out = [];
-  const add = (date, start, part) => {
-    if (date && start && !out.some(s => s.date === date && s.start === pad(start))) out.push({ date: date, start: pad(start), part: part || '' });
+  const add = (date, start, part, end) => {
+    if (date && start && !out.some(s => s.date === date && s.start === pad(start))) {
+      const o = { date: date, start: pad(start), part: part || '' };
+      if (end) o.end = pad(end);   // שעת הסיום, כשכתובה — שינוי מועד שומר על משך המפגש
+      out.push(o);
+    }
   };
   const time = String(m.time || '');
   const goal = String(m.goal || '');
@@ -800,11 +806,91 @@ window.TS_meetingSlots = function (m) {
       while ((r = re.exec(seg))) add(isoOf(r[1], r[2]), r[3], track);
     });
   } else if (/\d{1,2}\.\d{1,2} · \d{1,2}:\d{2}/.test(time)) {
-    const re = /(בוקר|ערב|אחה"צ)?\s*(\d{1,2})\.(\d{1,2}) · (\d{1,2}:\d{2})/g;
-    while ((r = re.exec(time))) add(isoOf(r[2], r[3]), r[4], r[1]);
+    const re = /(בוקר|ערב|אחה"צ|קבוצה [א-ת]׳)?\s*(\d{1,2})\.(\d{1,2}) · (\d{1,2}:\d{2})(?:\s*[–-]\s*(\d{1,2}:\d{2}))?/g;
+    while ((r = re.exec(time))) add(isoOf(r[2], r[3]), r[4], r[1], r[5]);
   } else {
-    const re = /(^|[^–\-\d:])(\d{1,2}:\d{2})/g;
-    while ((r = re.exec(time))) add(m.date, r[2], '');
+    const re = /(^|[^–\-\d:])(\d{1,2}:\d{2})(?:\s*[–-]\s*(\d{1,2}:\d{2}))?/g;
+    while ((r = re.exec(time))) add(m.date, r[2], '', r[3]);
   }
   return out.sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+};
+
+/* ============================================================
+   שינויי מועד שהמדריכות עושות בעצמן (13.10.26, מיטל)
+   -----------------------------------------------------------
+   המדריכה מזיזה מועד בלשונית "תוכנית שנתית" → השרת שומר בטאב plan_changes.
+   השינוי מחליף את המועד הישן — לא נוסף לצדו. התוכנית בקובץ הזה נשארת המקור,
+   והשינויים מונחים עליה:
+     · בדפדפן — assets/plan-changes.js (נבנה אוטומטית מהשרת כל חצי שעה,
+       .github/workflows/sync-plan-changes.yml), ובדף המדריכה גם ישר מהשרת;
+     · בשרת — מהטאב עצמו (תזכורות, סיכומים, פתיחת רישום, תזכורות למורים).
+   שינוי: { g: slug, m: date המקורי של המפגש, f/fs: המועד המקורי (תאריך, שעה),
+            t/ts: המועד החדש }. מועד מזוהה תמיד לפי המקור, גם אחרי כמה הזזות.
+   שינוי שהמועד המקורי שלו כבר לא קיים בקובץ (מיטל ערכה ידנית) — לא חל.
+   ============================================================ */
+window.TS_applyPlanChanges = function (list) {
+  const plans = window.TS_PLANS || {};
+  const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
+  const dm = iso => +iso.slice(8, 10) + '.' + +iso.slice(5, 7);
+  const wd = iso => { const p = iso.split('-').map(Number); return DAYS[new Date(Date.UTC(p[0], p[1] - 1, p[2])).getUTCDay()]; };
+  const mins = t => { const p = String(t).split(':').map(Number); return p[0] * 60 + p[1]; };
+  const hhmm = n => String(Math.floor(n / 60) % 24).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+  const pad = t => (String(t).length === 4 ? '0' : '') + t;
+  const byMeeting = {};
+  (Array.isArray(list) ? list : []).forEach(c => {
+    if (!c || !plans[c.g] || !/^\d{4}-\d{2}-\d{2}$/.test(c.f) || !/^\d{4}-\d{2}-\d{2}$/.test(c.t) ||
+        !/^\d{1,2}:\d{2}$/.test(c.fs) || !/^\d{1,2}:\d{2}$/.test(c.ts)) return;
+    (byMeeting[c.g + '|' + c.m] = byMeeting[c.g + '|' + c.m] || []).push(c);
+  });
+  Object.keys(plans).forEach(slug => {
+    const plan = plans[slug];
+    if (!plan || !Array.isArray(plan.meetings)) return;
+    let touched = false;
+    plan.meetings.forEach((cur, i) => {
+      const orig = cur.__orig || cur;           // החלה חוזרת (דף המדריכה אחרי שמירה) — תמיד מהמקור
+      const ch = byMeeting[slug + '|' + orig.date];
+      if (!ch) { if (cur.__orig) { plan.meetings[i] = orig; touched = true; } return; }
+      const slots = window.TS_meetingSlots(orig);
+      const moved = [];
+      slots.forEach(s => {
+        s.of = s.date; s.ofs = s.start;
+        const c = ch.find(x => x.f === s.date && pad(x.fs) === s.start);
+        if (!c || (c.t === s.date && pad(c.ts) === s.start)) return;
+        if (s.end) s.end = hhmm(mins(s.end) - mins(s.start) + mins(c.ts));
+        s.date = c.t; s.start = pad(c.ts); s.moved = true;
+        moved.push({ from: s.of, fromStart: s.ofs, to: s.date, toStart: s.start, part: s.part });
+      });
+      if (!moved.length) { if (cur.__orig) { plan.meetings[i] = orig; touched = true; } return; }
+      slots.sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+      // ימי המפגש: יום שכל המועדים שלו הוזזו יורד, יום חדש נכנס; קבוצה (אביגיל) עוברת עם המועד
+      const oDays = (orig.dates && orig.dates.length) ? orig.dates : [orig.date, orig.date2].filter(Boolean);
+      const groupOf = {};
+      if (Array.isArray(orig.groups)) oDays.forEach((d, k) => { groupOf[d] = orig.groups[k]; });
+      const days = [];
+      oDays.forEach(d => {
+        const had = slots.some(s => s.of === d);
+        if (!had || slots.some(s => s.date === d)) days.push(d);
+      });
+      slots.forEach(s => {
+        if (days.indexOf(s.date) < 0) days.push(s.date);
+        if (s.date !== s.of && groupOf[s.of] !== undefined && groupOf[s.date] === undefined) groupOf[s.date] = groupOf[s.of];
+      });
+      days.sort();
+      const m = Object.assign({}, orig, { __orig: orig, slots: slots, moved: moved });
+      delete m.date2; delete m.dates; delete m.groups;
+      m.date = days[0];
+      if (days.length === 2) m.date2 = days[1];
+      if (days.length > 2) { m.dates = days; m.date2 = days[days.length - 1]; }
+      if (Array.isArray(orig.groups)) m.groups = days.map(d => groupOf[d]);
+      m.label = days.map(dm).join(' / ') + '.' + days[days.length - 1].slice(2, 4);
+      m.day = days.map(wd).join(' / ');
+      m.time = slots.map(s => (s.part ? s.part + ' ' : '') + dm(s.date) + ' · ' + s.start + (s.end ? '–' + s.end : '')).join(' · ');
+      const note = 'שינוי מועד: ' + moved.map(x => wd(x.from) + ' ' + dm(x.from) + ' ' + x.fromStart + ' ← ' + wd(x.to) + ' ' + dm(x.to) + ' ' + x.toStart).join(' · ');
+      m.note = orig.note ? note + ' · ' + orig.note : note;
+      plan.meetings[i] = m;
+      touched = true;
+    });
+    if (touched) plan.meetings.sort((a, b) => a.date.localeCompare(b.date));
+  });
+  window.TS_PLAN_CHANGES_APPLIED = list || [];
 };

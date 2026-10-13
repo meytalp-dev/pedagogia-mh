@@ -97,7 +97,9 @@ for (const [, secId, body] of H.matchAll(/<section class="prog[^"]*" id="([^"]+)
       const short = cells.length < full; full = Math.max(full, cells.length);
       const h = pickHours(rowTxt, gs, short ? lastHours : null, headHours);
       if (!short) lastHours = hoursFrom(rowTxt);
-      rows.push({ ra, p, h, title: ra['data-g'] || rowTitle(cells, dt) || heading });
+      rows.push({ ra, p, h, title: ra['data-g'] || rowTitle(cells, dt) || heading,
+        // טקסט השורה עם רווח במקום כל תגית — "9:00–10:00<span>17:00" לא יידבק לשעה אחת
+        txt: cells.map(c => decode(c.html.replace(/<[^>]+>/g, ' '))).join(' ').replace(/\s+/g, ' ') });
     }
     // שורת המשנה בכותרת הקבוצה ("מדריכה: … · מפקחת: …") — רק החלק הראשון, לתווית בגאנט
     const subs = [...body.slice(0, tm.index).matchAll(/<div class="subgrp-h">[\s\S]*?<span>([\s\S]*?)<\/span>/g)];
@@ -107,6 +109,36 @@ for (const [, secId, body] of H.matchAll(/<section class="prog[^"]*" id="([^"]+)
 }
 }
 if (!tables.length) fail('לא נמצאה אף טבלה מסומנת ב-' + PAGES.join(' / '));
+
+/* ---------- 1א. שינויי מועד של המדריכות (13.10.26) ----------
+   hadrachot/assets/plan-changes.js נבנה מהשרת של מנור (sync-plan-changes.yml). הטבלאות
+   בעמוד לא נערכות — השינוי מונח כאן ובדפדפן (hadrachot-miktzoiot.html), באותו כלל:
+   שורה עם שעה אחת זזה לתאריך ולשעה החדשים; שורה עם כמה שעות נשארת, ונוסף מפגש במועד החדש. */
+{
+  const pcPath = join(ROOT, 'hadrachot', 'assets', 'plan-changes.js');
+  const win = {};
+  if (existsSync(pcPath)) vm.runInNewContext(readFileSync(pcPath, 'utf8'), { window: win });
+  const changes = Array.isArray(win.TS_PLAN_CHANGES) ? win.TS_PLAN_CHANGES : [];
+  const mins = t => { const p = String(t).split(':').map(Number); return p[0] * 60 + p[1]; };
+  const hhmm = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+  const starts = s => (s.match(/(^|[^–\-\d:])\d{1,2}:\d{2}/g) || []).map(x => x.replace(/^[^\d]/, ''));
+  for (const c of changes) {
+    for (const t of tables) {
+      if (t.ta['data-guide'] !== c.g) continue;
+      const add = [];
+      for (const r of t.rows) {
+        if (r.p.date !== c.f || r.p.endDate) continue;
+        const st = starts(r.txt);
+        if (!st.some(x => mins(x) === mins(c.fs))) continue;
+        const dur = r.h.start && r.h.end && mins(r.h.start) === mins(c.fs) ? mins(r.h.end) - mins(r.h.start) : 0;
+        const h = { start: hhmm(mins(c.ts)), end: dur > 0 ? hhmm(mins(c.ts) + dur) : '' };
+        if (st.length === 1) { r.p = Object.assign({}, r.p, { date: c.t }); r.h = h; }
+        else add.push(Object.assign({}, r, { p: Object.assign({}, r.p, { date: c.t }), h }));
+      }
+      t.rows.push(...add);
+    }
+  }
+}
 
 /* ---------- 2. הגאנט ---------- */
 const gPath = join(ROOT, 'gantt.html');

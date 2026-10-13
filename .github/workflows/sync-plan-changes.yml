@@ -1,0 +1,42 @@
+# שינויי מועד שהמדריכות עושות בעצמן במנור (13.10.26) — מהשרת לאתר.
+# כל חצי שעה: מושך את השינויים לקובץ hadrachot/assets/plan-changes.js, ואם השתנה
+# משהו — בונה מחדש את הגאנט ואת יומני המנוי (build-cal.mjs) ומקמט. ריצה בלי שינוי
+# לא מקמטת כלום. דף המדריכה עצמה ותזכורות השרת לא מחכים לזה — הם קוראים מהשרת ישירות.
+name: sync-plan-changes
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+# קבוצה נפרדת: ריצה ממתינה באותה קבוצה מבטלת ריצה ממתינה אחרת, ולא רוצים לבטל
+# את build-knowledge. התנגשות על הגאנט נפתרת ב-pull --rebase לפני ה-push.
+concurrency:
+  group: sync-plan-changes
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: pull plan changes from Menor
+        run: node tools/sync-plan-changes.mjs
+      - name: rebuild gantt + calendar feeds and commit if changed
+        run: |
+          if [ -n "$(git status --porcelain -- hadrachot/assets/plan-changes.js)" ]; then
+            node tools/build-cal.mjs
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add hadrachot/assets/plan-changes.js gantt.html
+            git add -A cal
+            git commit -m "שינויי מועד של המדריכות — עדכון אוטומטי מהשרת של מנור"
+            git pull --rebase origin main
+            git push
+          fi
