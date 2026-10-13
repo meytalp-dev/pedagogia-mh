@@ -7,7 +7,7 @@
   "use strict";
 
   /* ---- כתובת ה-Apps Script (אחרי פריסה — להדביק כאן את כתובת ה-/exec) ---- */
-  var FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbxVqzxpbZ4TceYHsG-Wots36fffixkrSnddYM9UjM6G8lYYLp_IK6xQDO7-6ErjQhNW6A/exec";
+  var FEEDBACK_URL = "https://script.google.com/macros/s/AKfycbx0onWNPtFMYVY9NUlgtiACfGcpjMDFUsZtYnz8EEJKpmcF5E0BPDTr2GUNy1eAOo3D/exec";
   var FALLBACK_MAIL = "merhav@pedagogiamh.co.il";
   var DRAFT_KEY = "site-feedback-draft";
 

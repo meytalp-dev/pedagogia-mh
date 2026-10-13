@@ -1,147 +1,133 @@
-/* =============================================================================
-   משוב על האתר — Apps Script
-   שומר כל משוב בלשונית "משוב אתר" בגיליון, ושולח התראה למייל.
+/* ==========================================================================
+   משוב על האתר — pedagogiamh.co.il
+   מקבל את מה ש-feedback.js שולח, כותב לגיליון ושולח התראה למייל.
 
-   פריסה (פעם אחת):
-   1. בגיליון:  תוספים ← Apps Script
-   2. להדביק את כל הקובץ הזה בקובץ Code.gs (במקום מה שיש שם)
-   3. לעדכן למטה את NOTIFY (כתובת המייל שתקבל התראות)
-   4. פריסה ← פריסה חדשה ← סוג: אפליקציית אינטרנט
-        "הפעלה בתור":    אני
-        "מי יש לו גישה":  כל אחד            ← חשוב! אחרת השליחה מהאתר תיכשל
-   5. להעתיק את כתובת ה-/exec ולהדביק אותה ב-feedback.js בשורה FEEDBACK_URL
+   פריסה:
+   1. script.google.com  →  פרויקט חדש  →  להדביק את כל הקובץ הזה
+   2. Deploy → New deployment → Web app
+        Execute as:      Me
+        Who has access:  Anyone            ← חובה, אחרת הדפדפן ייחסם
+   3. להעתיק את כתובת ה-/exec ולהדביק ב-feedback.js בשורה FEEDBACK_URL
 
-   אחרי כל שינוי בקוד — פריסה ← ניהול פריסות ← עריכה (עיפרון) ← גרסה: חדשה ← פריסה.
-   *לא* "פריסה חדשה" — אחרת הכתובת משתנה והאתר ממשיך לדבר עם הגרסה הישנה.
-   ============================================================================= */
+   הגיליון נוצר לבד בהרצה הראשונה — אין צורך להכין כלום מראש.
+   ========================================================================== */
 
-var NOTIFY = "meytalp@bethaarava.ort.org.il";   // לאן נשלחת ההתראה. אפשר כמה, מופרד בפסיקים
-var SHEET  = "משוב אתר";
+var NOTIFY   = "merhav@pedagogiamh.co.il";   // לאן נשלחת ההתראה (עבר מ-bethaarava, 13.10.26)
+var SS_NAME  = "משוב על האתר — פדגוגיה מ״ה";
+var TAB      = "משוב אתר";
+var HEADERS  = ["חותמת זמן", "נושא", "המשוב", "שם", "אימייל", "עמוד", "כתובת", "דפדפן/מכשיר"];
 
-var HEADERS = ["תאריך", "קטגוריה", "המשוב", "עמוד", "כתובת", "שם", "אימייל", "מכשיר"];
+/* ------------------------- הגיליון (נוצר פעם אחת) ------------------------- */
+function sheet_() {
+  var props = PropertiesService.getScriptProperties();
+  var id    = props.getProperty("SS_ID");
+  var ss;
 
-
-/* ---------------------------- קליטת משוב ---------------------------- */
-function doPost(e) {
-  try {
-    var d = JSON.parse(e.postData.contents);
-    var text = String(d.text || "").trim();
-    if (!text) return json({ ok: false, error: "empty" });
-
-    var row = saveFeedback(d);
-    try { notify(d, row); } catch (mailErr) { /* המשוב כבר נשמר — לא מפילים בגלל מייל */ }
-    return json({ ok: true, row: row });
-
-  } catch (err) {
-    return json({ ok: false, error: String(err) });
+  if (id) {
+    try { ss = SpreadsheetApp.openById(id); } catch (e) { ss = null; }
   }
-}
-
-/* גישה ישירה לכתובת — בדיקה שהפריסה חיה, ו-?mode=count למונה */
-function doGet(e) {
-  var mode = e && e.parameter ? e.parameter.mode : "";
-  if (mode === "count") {
-    return json({ ok: true, count: Math.max(0, sheet().getLastRow() - 1) });
+  if (!ss) {
+    ss = SpreadsheetApp.create(SS_NAME);
+    props.setProperty("SS_ID", ss.getId());
   }
-  return json({ ok: true, service: "site-feedback", sheet: SHEET });
-}
 
-
-/* ---------------------------- שמירה בגיליון ---------------------------- */
-function sheet() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sh = ss.getSheetByName(SHEET);
+  var sh = ss.getSheetByName(TAB);
   if (!sh) {
-    sh = ss.insertSheet(SHEET);
+    sh = ss.insertSheet(TAB);
     sh.appendRow(HEADERS);
-    var head = sh.getRange(1, 1, 1, HEADERS.length);
-    head.setFontWeight("bold").setBackground("#0D3B66").setFontColor("#FFFFFF");
+    sh.getRange(1, 1, 1, HEADERS.length)
+      .setFontWeight("bold")
+      .setBackground("#0B2E4F")
+      .setFontColor("#FFFFFF");
     sh.setFrozenRows(1);
-    sh.setColumnWidth(1, 140);   // תאריך
-    sh.setColumnWidth(2, 120);   // קטגוריה
-    sh.setColumnWidth(3, 420);   // המשוב
-    sh.setColumnWidth(4, 200);   // עמוד
-    sh.setColumnWidth(5, 260);   // כתובת
-    sh.getRange("C:C").setWrap(true);
+    sh.setRightToLeft(true);
+    sh.setColumnWidth(3, 420);   // עמודת המשוב — רחבה
+    sh.setColumnWidth(7, 260);
   }
   return sh;
 }
 
-function saveFeedback(d) {
-  var sh = sheet();
-  sh.appendRow([
-    new Date(),
-    String(d.topic  || "כללי"),
-    String(d.text   || "").slice(0, 5000),
-    String(d.page   || ""),
-    String(d.url    || ""),
-    String(d.name   || ""),
-    String(d.email  || ""),
-    String(d.device || "").slice(0, 300)
-  ]);
-  return sh.getLastRow();
+/* --------------------------------- קליטה --------------------------------- */
+function doPost(e) {
+  try {
+    var d = JSON.parse(e.postData.contents);
+
+    var row = [
+      new Date(),
+      d.topic  || "כללי",
+      d.text   || "",
+      d.name   || "",
+      d.email  || "",
+      d.page   || "",
+      d.url    || "",
+      d.device || ""
+    ];
+
+    var sh = sheet_();
+    sh.appendRow(row);
+    sh.getRange(sh.getLastRow(), 3).setWrap(true);
+
+    notify_(d, sh.getParent().getUrl());
+
+    return json_({ ok: true });
+
+  } catch (err) {
+    // גם בכישלון מחזירים JSON תקין — כדי שהלקוח יציג נפילה מסודרת ולא יתקע
+    return json_({ ok: false, error: String(err) });
+  }
 }
 
+/* הרצה אחת מהעורך: יוצרת את הגיליון ומאשרת הרשאות גיליון + מייל */
+function setup() {
+  var url = sheet_().getParent().getUrl();
+  MailApp.getRemainingDailyQuota();
+  Logger.log("מוכן. הגיליון: " + url);
+}
 
-/* ---------------------------- התראה למייל ---------------------------- */
-function notify(d, row) {
+/* בדיקה מהירה מהדפדפן: פתיחת כתובת ה-exec צריכה להחזיר ok */
+function doGet() {
+  return json_({ ok: true, alive: true, sheet: sheet_().getParent().getUrl() });
+}
+
+/* ------------------------------- ההתראה --------------------------------- */
+function notify_(d, sheetUrl) {
   if (!NOTIFY) return;
 
-  var who  = d.name ? d.name : "מבקר/ת באתר";
-  var page = d.page || d.url || "האתר";
+  var subject = "משוב חדש על האתר — " + (d.topic || "כללי");
+  var who     = d.name || "אנונימי";
+  var body =
+      '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;color:#12263A">' +
+      '<p style="margin:0 0 14px"><b>' + esc_(who) + '</b> השאיר/ה משוב על האתר.</p>' +
+      '<table cellpadding="7" style="border-collapse:collapse;font-size:14px">' +
+      row_("נושא",   d.topic) +
+      row_("המשוב",  d.text) +
+      row_("עמוד",   d.page) +
+      row_("כתובת",  d.url) +
+      row_("אימייל", d.email) +
+      '</table>' +
+      '<p style="margin:16px 0 0"><a href="' + sheetUrl + '">פתיחת הגיליון המלא</a></p>' +
+      '</div>';
 
-  var html =
-    '<div style="font-family:Assistant,Arial,sans-serif;direction:rtl;text-align:right;max-width:560px">' +
-      '<div style="background:linear-gradient(135deg,#124D7A,#087B9C);color:#fff;padding:18px 22px;border-radius:14px 14px 0 0">' +
-        '<div style="font-size:13px;opacity:.85">משוב חדש מהאתר</div>' +
-        '<div style="font-size:19px;font-weight:800;margin-top:3px">' + esc(d.topic || "כללי") + '</div>' +
-      '</div>' +
-      '<div style="border:1px solid #D8E6F2;border-top:0;border-radius:0 0 14px 14px;padding:20px 22px;background:#fff">' +
-        '<div style="font-size:15px;line-height:1.7;color:#102A43;white-space:pre-wrap">' + esc(d.text || "") + '</div>' +
-        '<hr style="border:0;border-top:1px solid #E6EFF7;margin:18px 0">' +
-        '<table style="font-size:13px;color:#52687A;line-height:1.9">' +
-          rowHtml("מאת",    esc(who) + (d.email ? ' &lt;' + esc(d.email) + '&gt;' : "")) +
-          rowHtml("עמוד",   esc(page)) +
-          rowHtml("קישור",  '<a href="' + esc(d.url || "") + '" style="color:#0B7FA6">' + esc(d.url || "") + '</a>') +
-          rowHtml("שורה",   row) +
-        '</table>' +
-      '</div>' +
-    '</div>';
+  var opts = { htmlBody: body };
+  if (d.email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) opts.replyTo = d.email;
 
-  MailApp.sendEmail({
-    to:       NOTIFY,
-    subject:  "משוב על האתר — " + (d.topic || "כללי") + " · " + page,
-    htmlBody: html,
-    replyTo:  d.email && /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(d.email) ? d.email : undefined,
-    name:     "הבית של המנהיגות הפדגוגית היוצרת"
-  });
+  MailApp.sendEmail(Object.assign({ to: NOTIFY, subject: subject }, opts));
 }
 
-function rowHtml(k, v) {
-  return '<tr><td style="padding-left:14px;font-weight:700;color:#0D3B66;white-space:nowrap">' + k + '</td><td>' + v + '</td></tr>';
+function row_(label, val) {
+  if (!val) return "";
+  return '<tr>' +
+         '<td style="background:#F1F5F9;font-weight:bold;white-space:nowrap;vertical-align:top">' + label + '</td>' +
+         '<td>' + esc_(String(val)).replace(/\n/g, "<br>") + '</td>' +
+         '</tr>';
 }
 
-function esc(s) {
+function esc_(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function json(o) {
+function json_(o) {
   return ContentService.createTextOutput(JSON.stringify(o))
-    .setMimeType(ContentService.MimeType.JSON);
+                       .setMimeType(ContentService.MimeType.JSON);
 }
 
-
-/* ---------------------------- בדיקה מתוך העורך ----------------------------
-   להריץ פעם אחת (בחירת testFeedback ← Run) — כדי לאשר הרשאות ולוודא
-   שהלשונית נוצרת ושההתראה מגיעה. אחר כך למחוק את שורת הבדיקה מהגיליון.  */
-function testFeedback() {
-  doPost({ postData: { contents: JSON.stringify({
-    topic: "בדיקה",
-    text:  "בדיקת חיבור — אפשר למחוק את השורה הזו.",
-    name:  "בדיקה",
-    email: "",
-    page:  "בדיקה מתוך העורך",
-    url:   "https://pedagogiamh.co.il/",
-    device:"Apps Script editor"
-  }) } });
-}
