@@ -512,3 +512,13 @@ table.pr select{width:auto;min-width:72px;margin:0}
 }
 /* 12.10.26: התפריט פתוח כברירת מחדל — בגובה המסך עם גלילה משלו, כדי שהפריט האחרון לא יוסתר מאחורי תג "יציאה" שבפינה */
 @media (min-width:961px){body:not(.rail) .side{max-height:calc(100vh - 150px);overflow-y:auto;overscroll-behavior:contain}}
+/* 13.10.26 (מיטל): "מי?" — כל חוסר נפתח לרשימת השמות + העתקה */
+.who{margin:10px 0 0;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:0 12px}
+.who summary{list-style:none;cursor:pointer;font-weight:700;color:var(--navy);min-height:44px;display:flex;align-items:center;gap:6px}
+.who summary::-webkit-details-marker{display:none}
+.who summary .car{width:16px;height:16px;transition:transform .2s;margin-inline-start:auto}
+.who[open] summary .car{transform:rotate(180deg)}
+.who ol,.who-list{margin:0 0 10px;padding-inline-start:22px;line-height:1.7}
+.who li small,.who-list li small{color:var(--muted)}
+.who .btn{margin:0 0 12px}
+.who-wait{margin-top:8px}

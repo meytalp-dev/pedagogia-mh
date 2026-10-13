@@ -133,8 +133,8 @@
 
   /* ===== מצב ===== */
   var D = null;                                   /* tzohar-data */
-  var R = { mosdot: null, menor: null, matz: null, bs: null, rg: null };
-  var ST = { mosdot: 'load', menor: 'load', matz: 'load', bs: 'load', rg: 'load' };
+  var R = { mosdot: null, menor: null, matz: null, bs: null, rg: null, names: null };
+  var ST = { mosdot: 'load', menor: 'load', matz: 'load', bs: 'load', rg: 'load', names: 'load' };
   var PAGE = 'home';
   var OPEN = {};
   function role() { return D && D.me ? D.me.role : 'principal'; }
@@ -205,9 +205,10 @@
     }).catch(function () { loaded('mosdot', false); });
     fetchJson(SRC.menor, {}, 45000).then(function (d) {
       if (!d || !d.ok) throw new Error();
+      if (R.names) return loaded('menor', true);   /* הרשימה עם השמות כבר הגיעה — המספרים שלה קובעים */
       Object.keys(d.bySchool || {}).forEach(function (k) { if (canon(k) === name) R.menor = d.bySchool[k]; });
       loaded('menor', true);
-    }).catch(function () { loaded('menor', false); });
+    }).catch(function () { loaded('menor', !!R.names); });
     fetchJson(SRC.matz, {}, 30000).then(function (d) {
       (d.rows || []).forEach(function (row) { if (canon(row[1]) === name) R.matz = Number(row[2]) || 0; });
       loaded('matz', true);
@@ -224,6 +225,60 @@
       Object.keys(d.schools || {}).forEach(function (k) { if (canon(k) === name) R.rg = d.schools[k]; });
       loaded('rg', true);
     }).catch(function () { loaded('rg', false); });
+    /* מי עוד לא נרשם/ה למנור — שמות, דרך השער (13.10.26, כמו בצוהר). כשהרשימה מגיעה, גם המספרים נלקחים ממנה */
+    gate({ action: 'content', key: 'tzohar-menor', as: AS, asRole: ASROLE }, 90000).then(function (res) {
+      var rows = res && res.ok && res.data && res.data.rows;
+      if (!rows) throw new Error();
+      R.names = rows;
+      var reg = rows.filter(function (x) { return x.state === 'partial' || x.state === 'done'; }).length;
+      R.menor = { t: rows.length, r: reg };
+      ST.menor = 'ok';
+      loaded('names', true);
+    }).catch(function () { loaded('names', false); });
+  }
+
+  /* ===== "מי?" — כל חוסר נפתח בלחיצה לרשימת השמות + העתקה (13.10.26, מיטל; כמו בצוהר) ===== */
+  var WHO = {}, WHO_OPEN = {};
+  /* lines: [html, טקסט להעתקה] */
+  function whoBox(id, label, lines, copyHead, copyTail) {
+    WHO[id] = copyHead + '\n' + lines.map(function (l, i) { return (i + 1) + '. ' + l[1]; }).join('\n') + (copyTail ? '\n\n' + copyTail : '');
+    return '<details class="who" data-who="' + id + '"' + (WHO_OPEN[id] ? ' open' : '') + '><summary>' + esc(label) + I.car + '</summary>' +
+      '<ol>' + lines.map(function (l) { return '<li>' + l[0] + '</li>'; }).join('') + '</ol>' +
+      '<button type="button" class="btn sm" data-copywho="' + id + '">' + I.copy + 'העתקת הרשימה</button></details>';
+  }
+  function menorMissing() {
+    return (R.names || []).filter(function (x) { return x.state === 'none' || x.state === 'started'; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name, 'he'); })
+      .map(function (x) {
+        var t = x.name + (x.subject ? ' · ' + x.subject : '');
+        return [esc(t) + (x.state === 'started' ? ' <small>(התחיל/ה ולא סיים/ה)</small>' : ''), t];
+      });
+  }
+  function menorWho() {
+    if (ST.names === 'load') return '<div class="small who-wait">טוען את השמות…</div>';
+    if (ST.names !== 'ok') return '<div class="small who-wait">השמות לא נטענו כרגע — אפשר לראות אותם במבט של בית הספר במנור.</div>';
+    var L = menorMissing();
+    if (!L.length) return '';
+    return whoBox('menor', (L.length === 1 ? 'מורה אחד/ת עוד לא נרשם/ה' : L.length + ' מורים עוד לא נרשמו') + ' — מי?', L,
+      'מורים שעוד לא נרשמו למנור — ' + D.school.name + ':', 'קישור ההרשמה: ' + LINK.teacher);
+  }
+  var WS_ROLE = { social: /^רכז\.ת חינוך חברתי/, matal: /מת[״"]ל/, ped: /^רכז\.ת פדגוגי/, honchim: /^מורה חונכ?/ };
+  var WS_AUD = { social: 'רכז/ת חברתי/ת', matal: 'מת״לית', ped: 'רכז/ת פדגוגי/ת', honchim: 'מורים חונכים', sherut: 'בנות/בני השירות הלאומי', career: 'מוביל/ת נתיבים לקריירה' };
+  function rgWhoOf(k) {
+    if (k === 'sherut') return (D.sherut || []).map(function (b) { return b.name; }).filter(Boolean);
+    var re = WS_ROLE[k];
+    if (!re || !D.nispach || !D.nispach.people) return [];
+    return D.nispach.people.filter(function (p) { return re.test(String(p.role || '')); }).map(function (p) { return p.name; }).filter(Boolean);
+  }
+  function rgWho(no) {
+    if (!no.length) return '';
+    var L = no.map(function (w) {
+      var ppl = rgWhoOf(w[0]);
+      var t = ppl.length ? ppl.join(', ') : (WS_AUD[w[0]] || 'בעל/ת התפקיד') + (w[0] === 'career' ? ' — לא מופיע/ה בנספח' : ' — אין בנספח');
+      return ['<b>' + esc(w[1]) + ':</b> ' + (ppl.length ? esc(t) : '<small>' + esc(t) + '</small>'), w[1] + ': ' + t];
+    });
+    return whoBox('rg', 'מי צריך/ה להירשם? (' + no.length + ')', L,
+      'בעלי תפקידים שעוד לא נרשמו להשתלמויות — ' + D.school.name + ':', 'טופס הרישום: ' + LINK.rg);
   }
 
   /* ===== הצ'ק ליסט המשרדי — משימה לכל תחום: done / gap / wait / load / err (11.10.26: היה "מה חסר" בכרטיסים;
@@ -236,8 +291,13 @@
     /* נספח */
     if (!n) out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'err' });
     else if (!n.submitted) out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'gap', d: 'הנספח עוד לא הוגש.', acts: a(LINK.nispach, 'להגשת הנספח', 1), link: 'nispach' });
-    else if (n.missing.length) out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'gap',
-      d: 'הנספח הוגש ב-' + n.ts + '. חסרים: ' + n.missing.map(function (m) { return m.split(' — ')[0]; }).join(', ') + '.', acts: a(LINK.nispach, 'לעדכון הנספח', 1), link: 'nispach' });
+    else if (n.missing.length) {
+      var nm = n.missing.map(function (m) { return m.split(' — ')[0]; });
+      out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'gap',
+        d: 'הנספח הוגש ב-' + n.ts + '. חסרים: ' + nm.join(', ') + '.', acts: a(LINK.nispach, 'לעדכון הנספח', 1), link: 'nispach',
+        html: esc('הנספח הוגש ב-' + n.ts + '.') + whoBox('nispach', (nm.length === 1 ? 'חסר תפקיד אחד' : 'חסרים ' + nm.length + ' תפקידים') + ' — אילו?',
+          nm.map(function (m) { return [esc(m), m]; }), 'תפקידים שחסרים בנספח בעלי התפקידים — ' + D.school.name + ':', 'לעדכון הנספח: ' + LINK.nispach) });
+    }
     else out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'done', d: 'הוגש ב-' + n.ts + '. כל התפקידים מאוישים.' });
     /* השתלמות מוסדית */
     var BS = 'בחירת ההשתלמות המוסדית';
@@ -254,25 +314,25 @@
     var RG = 'רישום בעלי התפקידים להשתלמויות';
     if (ST.rg !== 'ok') out.push({ k: 'rg', t: RG, st: ST.rg, manual: true });
     else {
-      var no = WS.filter(function (w) { return !(Number(R.rg && R.rg[w[0]]) > 0); }).map(function (w) { return w[1]; });
+      var noW = WS.filter(function (w) { return !(Number(R.rg && R.rg[w[0]]) > 0); }), no = noW.map(function (w) { return w[1]; });
       var chips = '<div class="ck-chips">' + WS.map(function (w) {
         var c = Number(R.rg && R.rg[w[0]]) || 0;
         return '<a class="chip' + (c ? ' ok' : '') + '" href="' + SITE + 'hishtalmuyot.html#rg=' + w[0] + '" target="_blank" rel="noopener">' + (c ? I.ok : '') + esc(w[1]) + (c ? ' · ' + c : '') + '</a>';
       }).join('') + '</div>';
       var d = no.length === WS.length ? 'אף אחד מבית הספר עוד לא נרשם. כל בעל/ת תפקיד נרשם/ת בעצמו/ה בטופס אחד.' : no.length ? 'עוד לא נרשמו ל: ' + no.join(', ') + '.' : 'בעלי התפקידים נרשמו לכל ' + WS.length + ' ההשתלמויות.';
-      out.push({ k: 'rg', t: RG, st: !no.length || mdone('rg') ? 'done' : 'gap', manual: true, d: d, html: esc(d) + chips, link: 'rg',
+      out.push({ k: 'rg', t: RG, st: !no.length || mdone('rg') ? 'done' : 'gap', manual: true, d: d, html: esc(d) + chips + rgWho(noW), link: 'rg',
         acts: a(LINK.rg, 'לטופס הרישום', 1) + '<button type="button" class="btn sm" data-copy="rg">' + I.copy + 'העתקת הקישור לבעלי התפקידים</button>' });
     }
     /* מנור */
     var MN = 'רישום המורים במנור';
-    var macts = '<a class="btn primary sm" href="' + LINK.menor + '" target="_blank" rel="noopener">מי עוד לא נרשם' + I.ext + '</a>' +
+    var macts = '<a class="btn primary sm" href="' + LINK.menor + '" target="_blank" rel="noopener">הפירוט המלא במנור' + I.ext + '</a>' +
       '<button type="button" class="btn sm" data-copy="menor">' + I.copy + 'העתקת ההודעה למורים</button>';
     if (ST.menor !== 'ok') out.push({ k: 'menor', t: MN, st: ST.menor });
     else if (!R.menor || !R.menor.t) out.push({ k: 'menor', t: MN, st: 'gap', d: 'אין עדיין מורים רשומים במנור לבית הספר. כל מורה נרשם/ת פעם אחת בקישור הקבוע.', acts: macts, link: 'menor' });
     else if (R.menor.r < R.menor.t) {
       var pc = Math.round(100 * R.menor.r / R.menor.t), dm = 'נרשמו ' + R.menor.r + ' מתוך ' + R.menor.t + ' מורים. ' + (R.menor.t - R.menor.r) + ' עוד לא נרשמו.';
       out.push({ k: 'menor', t: MN, st: 'gap', d: dm, acts: macts, link: 'menor',
-        html: esc(dm) + '<div class="meter"><div class="b"><i class="' + (pc < 50 ? 'low' : 'mid') + '" style="width:' + pc + '%"></i></div><span>' + pc + '%</span></div>' });
+        html: esc(dm) + '<div class="meter"><div class="b"><i class="' + (pc < 50 ? 'low' : 'mid') + '" style="width:' + pc + '%"></i></div><span>' + pc + '%</span></div>' + menorWho() });
     }
     else out.push({ k: 'menor', t: MN, st: 'done', d: 'כל ' + R.menor.t + ' המורים נרשמו.' });
     /* סל תוכניות */
@@ -528,7 +588,8 @@
       hS.push(tot ? tot + ' נרשמו' : tag('', 'אין נרשמים'));
       hB += '<h4 style="margin:14px 0 4px">רישום בעלי התפקידים להשתלמויות</h4><ul class="megs">' + WS.map(function (w) {
         var c = Number(R.rg && R.rg[w[0]]) || 0;
-        return '<li>' + esc(w[1]) + '<small>' + (c ? c + ' נרשמו' : 'עוד אף אחד לא נרשם') + '</small></li>';
+        var ppl = c ? [] : rgWhoOf(w[0]);   /* מי צריך/ה להירשם — לפי הנספח (13.10.26) */
+        return '<li>' + esc(w[1]) + '<small>' + (c ? c + ' נרשמו' : 'עוד אף אחד לא נרשם' + (ppl.length ? ' · בעל/ת התפקיד: ' + esc(ppl.join(', ')) : '')) + '</small></li>';
       }).join('') + '</ul>';
     } else hB += failed(ST.rg);
     h += sec('hisht', I.book, 'השתלמויות', hS.join(' · ') || 'טוען…', hB);
@@ -639,10 +700,15 @@
       (ST.menor !== 'ok' ? failed(ST.menor) : t ?'<div class="meter"><div class="b"><i class="' + (pc < 50 ? 'low' : pc < 100 ? 'mid' : '') + '" style="width:' + pc + '%"></i></div><span>' + pc + '%</span></div>' +
         '<div>נרשמו <b>' + r + '</b> מתוך <b>' + t + '</b> מורים' + (t > r ? ' · <b>' + (t - r) + '</b> עוד לא נרשמו' : ' · כולם נרשמו') + '</div>'
         : '<div class="empty">אין עדיין מורים רשומים במנור לבית הספר.</div>') + '</div>';
+    /* 13.10.26 (מיטל): השמות כאן — לא רק קישור למנור */
+    var L = ST.names === 'ok' ? menorMissing() : null;
     h += '<div class="card"><p class="eyebrow">' + I.users + 'מי עוד לא נרשם/ה</p>' +
-      '<p style="margin:0 0 10px">את הרשימה המלאה, עם השמות והמקצועות, רואים במבט של בית הספר במנור, בלשונית "טרם נרשמו".</p>' +
-      '<div class="acts"><a class="btn primary" href="' + LINK.menor + '" target="_blank" rel="noopener">למבט של בית הספר במנור' + I.ext + '</a></div>' +
-      '<div class="small" style="margin-top:8px">מנור מבקש כניסה משלו בפעם הראשונה (קוד במייל).</div></div>';
+      (L === null ? '<p style="margin:0 0 10px">' + (ST.names === 'load' ? 'טוען את השמות…' : 'השמות לא נטענו כרגע. רענון הדף ינסה שוב, ואפשר לראות אותם גם במבט של בית הספר במנור.') + '</p>'
+       : !L.length ? '<div class="allok" style="margin:0 0 10px">' + I.ok + 'כל המורים נרשמו.</div>'
+       : '<ol class="who-list">' + L.map(function (l) { return '<li>' + l[0] + '</li>'; }).join('') + '</ol>' +
+         '<div class="acts" style="margin-bottom:10px"><button type="button" class="btn primary" data-copywho="menor">' + I.copy + 'העתקת הרשימה</button></div>') +
+      '<div class="small">כל הפרטים (גם מי נרשם/ה ומה עוד חסר לו/ה) — <a href="' + LINK.menor + '" target="_blank" rel="noopener">במבט של בית הספר במנור</a>. מנור מבקש כניסה משלו בפעם הראשונה (קוד במייל).</div></div>';
+    if (L && L.length) menorWho();   /* ממלא את טקסט ההעתקה */
     /* השתתפות המורים בהדרכות ובהשתלמויות — כבר קיימת במבט של בית הספר במנור (לשוניות "נוכחות בהדרכות", "השתלמות מקצועית"), 11.10.26 */
     h += '<div class="card"><p class="eyebrow">' + I.chart + 'המורים בהדרכות ובהשתלמויות</p>' +
       '<p style="margin:0 0 10px">מי השתתף/ה, כמה שעות, ומי עוד לא השתתף/ה בשום הדרכה — במבט של בית הספר במנור, בלשוניות "נוכחות בהדרכות" ו"השתלמות מקצועית".</p>' +
@@ -913,11 +979,12 @@
 
   /* ===== אירועים ===== */
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-gmail],[data-saldoc],[data-vdoc],[data-tip],[data-help],#tpGo');
+    var t = e.target.closest('[data-page],[data-go],[data-copy],[data-copywho],[data-gmail],[data-saldoc],[data-vdoc],[data-tip],[data-help],#tpGo');
     if (!t) return;
     if (t.hasAttribute('data-page')) go(t.getAttribute('data-page'));
     else if (t.hasAttribute('data-go')) go(t.getAttribute('data-go'));
     else if (t.hasAttribute('data-copy')) { var cp = t.getAttribute('data-copy'); copyText(cp === 'link' ? LINK.teacher : cp === 'rg' ? LINK.rg : menorMsg()); }
+    else if (t.hasAttribute('data-copywho')) { if (WHO[t.getAttribute('data-copywho')]) copyText(WHO[t.getAttribute('data-copywho')]); }
     else if (t.hasAttribute('data-gmail')) gmailOpen(Number(t.getAttribute('data-gmail')));
     else if (t.hasAttribute('data-saldoc')) openSal();
     else if (t.hasAttribute('data-tip')) tipToggle(Number(t.getAttribute('data-tip')), t.getAttribute('data-op'));
@@ -927,6 +994,7 @@
   });
   document.addEventListener('toggle', function (e) {
     var d = e.target; if (d && d.getAttribute && d.getAttribute('data-sec')) OPEN[d.getAttribute('data-sec')] = d.open;
+    if (d && d.getAttribute && d.getAttribute('data-who')) WHO_OPEN[d.getAttribute('data-who')] = d.open;
   }, true);
   window.addEventListener('hashchange', function () { if (D && D.school) { PAGE = fromHash(); side(); render(); } });
   $('burger').onclick = function () { document.body.classList.toggle('drawer'); };
