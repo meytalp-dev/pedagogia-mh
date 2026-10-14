@@ -69,7 +69,8 @@ window.TS_GUIDES = {
     sectors: ['kelali', 'haredi'],
     inspector: 'liat',
     drive: 'https://drive.google.com/drive/folders/1uQKR8AmWZCv8-s6mD29SI0ngefxRjx-E?usp=sharing',
-    zoom: '' /* קישור זום אישי קבוע הוסר מסיבות אבטחה (1.9.26) — לשתף קישור מפגש חד־פעמי בערוץ סגור */
+    /* 1.9.26 הוסר מסיבות אבטחה; 14.10.26 מיטל ביקשה להחזיר את הקישור הקבוע לתזכורות, בידיעה שהוא גלוי בקובץ */
+    zoom: 'https://edu-il.zoom.us/j/86900727328?pwd=1MwnLHVoVda4tI7ejHjiJjWWc72EMX.1'
   },
   nira: {
     /* המגזר החרדי ירד ממנה 10.9.26 — מורי הספרות החרדים עברו לשרה ברדה
