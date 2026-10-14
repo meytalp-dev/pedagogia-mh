@@ -248,7 +248,8 @@
       '<div class="ck-row"><select class="fld" id="ckWho" aria-label="מי מטפל/ת">' + opts + '</select>' +
       '<label class="ck-date"><span>עד</span><input class="fld" type="date" id="ckDue" value="' + nextSunday() + '"></label>' +
       '<button type="submit" class="btn primary">הוספה</button></div>' +
-      '<p class="small" style="margin:8px 0 0">אפשר גם להוסיף משימות ישר מהתשובות של ניצה.</p></form>';
+      '<p class="small" style="margin:8px 0 0">אפשר גם להוסיף משימות ישר מהתשובות של ניצה.</p></form>' +
+      pasteHtml();
     if (ERR && !my.length) h += '<div class="card"><div class="empty">לא הצלחנו לטעון את המשימות. רענון הדף ינסה שוב.</div></div>';
     else if (!my.length) h += '<div class="card"><div class="empty">עוד אין משימות. כתבו משימה למעלה, או שאלו את ניצה "מה הכי דחוף אצלנו השבוע?" והוסיפו מהתשובה.</div></div>';
     else {
@@ -260,7 +261,9 @@
       h += '<h2 class="pt">המשימות של הרכז/ת הפדגוגי/ת</h2><div class="card ck-card"><ul class="ck">' +
         other.map(function (t) { return mineRow(t, true); }).join('') + '</ul></div>';
     }
+    h += syncHtml();
     el.innerHTML = h;
+    bindPaste(); bindSync();
     $('ckAdd').onsubmit = function (e) {
       e.preventDefault();
       var text = $('ckText').value.trim(); if (!text) { $('ckText').focus(); return; }
@@ -271,6 +274,119 @@
         .catch(function () { b.disabled = false; T.toast('ההוספה נכשלה. נסו שוב.'); });
     };
   }
+  /* ===== הדבקת רשימה (13.10.26, מיטל) — כל שורה = משימה, בנוסח שלה.
+     תאריך בשורה (13.10 / 13.10.26 / 13/10/2026) → תאריך היעד, ויורד מהנוסח. שם של איש/ת צוות מאנשי הקשר → מי מטפל/ת.
+     שורה מאקסל (עמודות בטאב) → העמודות מתחברות ב-" · ". בלי תאריך → התאריך שבחלונית (אפשר לרוקן). */
+  var PASTE = { open: false, text: '', due: null };
+  function realDate(y, m, d) { var x = new Date(y, m - 1, d); return x.getFullYear() === y && x.getMonth() === m - 1 && x.getDate() === d ? iso(x) : ''; }
+  function findDate(s) {
+    var m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (m) { var v = realDate(+m[1], +m[2], +m[3]); if (v) return { due: v, raw: m[0] }; }
+    m = s.match(/(^|[^\d.\/])(\d{1,2})[.\/](\d{1,2})(?:[.\/](\d{4}|\d{2}))?(?![\d.\/])/);
+    if (!m) return null;
+    var y = m[4] ? (m[4].length === 2 ? 2000 + +m[4] : +m[4]) : new Date().getFullYear(), v2 = realDate(y, +m[3], +m[2]);
+    if (!v2) return null;
+    if (!m[4] && new Date(v2) < new Date(Date.now() - 60 * 864e5)) v2 = realDate(y + 1, +m[3], +m[2]) || v2;   /* בלי שנה ועבר מזמן → בשנה הבאה */
+    return { due: v2, raw: m[0].slice(m[1].length) };
+  }
+  function parseList(raw, defDue) {
+    var out = [];
+    String(raw || '').split(/\r?\n/).forEach(function (line) {
+      var cells = line.split('\t').map(function (c) { return c.trim(); }).filter(Boolean);
+      if (!cells.length) return;
+      var all = cells.join(' '), d = findDate(all), p = matchWho(all);
+      cells = cells.map(function (c) {
+        if (d) c = c.replace(new RegExp('(?:(?:עד|תאריך|תאריך יעד)\\s*:?\\s*)?' + d.raw.replace(/[.\/]/g, '\\$&')), '');
+        return c.replace(/^[\s\-–—,:|·]+|[\s\-–—,:|·]+$/g, '');
+      }).filter(function (c) { return c && !(p && c === p.name); });
+      if (cells.length) cells[0] = cells[0].replace(/^(?:[-–—•*●▪◦☐☑✓✔□■]+\s*|\(?\d{1,3}[.)\]]\s+)/, '');
+      var text = cells.filter(Boolean).join(' · ').replace(/\s+/g, ' ').trim();
+      if (p && text.length > p.name.length + 2 && text.slice(-p.name.length) === p.name) text = text.slice(0, -p.name.length).replace(/[\s\-–—,:|·]+$/, '');   /* השם בסוף השורה → רק ב"מי מטפל/ת" */
+      text = text.slice(0, 400);
+      if (!text) return;
+      out.push({ text: text, who: p ? p.name : '', email: p ? p.email : '', due: d ? d.due : (defDue || '') });
+    });
+    return out;
+  }
+  function pasteHtml() {
+    var due = PASTE.due === null ? nextSunday() : PASTE.due;
+    return '<details class="card ck-paste" id="ckPaste"' + (PASTE.open ? ' open' : '') + '><summary>' + IC.plus + 'הדבקת רשימה קיימת — כל שורה תהיה משימה</summary>' +
+      '<textarea class="fld" id="ckList" rows="6" maxlength="15000" placeholder="מדביקים כאן את הרשימה (מוורד, מאקסל, מהטלפון)…&#10;תאריך בשורה, למשל 20.10, ייקלט כתאריך היעד.&#10;שם של איש צוות מאנשי הקשר ייקלט כמי שמטפל/ת.">' + esc(PASTE.text) + '</textarea>' +
+      '<div class="ck-row" style="margin-top:8px"><label class="ck-date"><span>למשימות בלי תאריך</span><input class="fld" type="date" id="ckListDue" value="' + esc(due) + '"></label></div>' +
+      '<div id="ckListPrev"></div></details>';
+  }
+  function bindPaste() {
+    var box = $('ckPaste'); if (!box) return;
+    box.addEventListener('toggle', function () { PASTE.open = box.open; });
+    function prev() {
+      PASTE.text = $('ckList').value; PASTE.due = $('ckListDue').value;
+      var list = parseList(PASTE.text, PASTE.due), el = $('ckListPrev');
+      if (!list.length) { el.innerHTML = ''; return; }
+      el.innerHTML = '<div class="ck-pt" style="margin-top:12px">ייווספו ' + list.length + ' משימות:</div><ol class="ck-prevlist">' + list.map(function (t) {
+        var m = [t.who, t.due ? 'עד ' + heDate(t.due) : 'בלי תאריך'].filter(Boolean).join(' · ');
+        return '<li>' + esc(t.text) + ' <span class="small">— ' + esc(m) + '</span></li>';
+      }).join('') + '</ol><div class="acts"><button type="button" class="btn primary" id="ckListGo">הוספת ' + list.length + ' משימות לצ\'ק ליסט</button></div>';
+      $('ckListGo').onclick = function () { go(list, this); };
+    }
+    function go(list, b) {
+      b.disabled = true; b.textContent = 'מוסיף…';
+      var chunks = []; for (var i = 0; i < list.length; i += 30) chunks.push(list.slice(i, i + 30));   /* השרת מקבל עד 30 בכל פעם */
+      var done = 0;
+      chunks.reduce(function (pr, c) { return pr.then(function () { return add(c, 'manual').then(function () { done += c.length; }); }); }, Promise.resolve())
+        .then(function () { PASTE = { open: false, text: '', due: null }; T.refresh(true); T.toast(done + ' משימות נוספו לצ\'ק ליסט'); })
+        .catch(function (e) {
+          T.refresh(true);
+          T.toast(String(e && e.message) === 'toomany' ? 'הגעתם למספר המשימות המרבי (200). אפשר למחוק משימות שבוצעו.' : (done ? 'נוספו ' + done + ' משימות, והשאר נכשלו. נסו שוב.' : 'ההוספה נכשלה. נסו שוב.'));
+        });
+    }
+    $('ckList').addEventListener('input', prev);
+    $('ckListDue').addEventListener('change', prev);
+    prev();
+  }
+
+  /* ===== סנכרון ליומן (13.10.26, מיטל) — קישור מנוי אישי מהשרת. חד-כיווני: מהצ'ק ליסט ליומן ===== */
+  var CALURL = '';
+  function syncHtml() {
+    return '<details class="card ck-sync" id="ckSync"><summary>' + IC.cal + 'סנכרון הצ\'ק ליסט ליומן</summary>' +
+      '<p class="small">מחברים פעם אחת, ומאז המשימות הפתוחות שלך שיש להן תאריך יעד מופיעות ביומן ומתעדכנות לבד. משימה חדשה נוספת, תאריך שזז זז, ומשימה שבוצעה יורדת מהיומן. ' +
+      'גוגל מרענן יומן כזה כמה פעמים ביום, ולכן שינוי יכול להופיע ביומן רק אחרי כמה שעות. שינוי ביומן עצמו לא משנה את הצ\'ק ליסט.</p>' +
+      '<div id="ckCalOut">' + (CALURL ? calOut() : '<button type="button" class="btn primary sm" id="ckCalGet">' + IC.cal + 'לחיבור היומן</button>') + '</div></details>';
+  }
+  function calOut() {
+    var web = CALURL.replace(/^https:\/\//, 'webcal://');
+    return '<div class="acts">' +
+      '<a class="btn primary sm" target="_blank" rel="noopener" href="' + esc('https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(web)) + '">' + IC.cal + 'ליומן גוגל</a>' +
+      '<a class="btn sm" href="' + esc(web) + '">לאייפון / למק</a>' +
+      '<button type="button" class="btn sm" id="ckCalCopy">העתקת הקישור (לאאוטלוק)</button></div>' +
+      '<ul class="small ck-calhow">' +
+      '<li><b>יומן גוגל:</b> מהמחשב. נפתח חלון "להוסיף יומן?" ולוחצים "הוספה". אחרי זה היומן מופיע גם באפליקציה בטלפון.</li>' +
+      '<li><b>אייפון:</b> לוחצים מהטלפון ומאשרים "הרשמה".</li>' +
+      '<li><b>אאוטלוק:</b> מעתיקים את הקישור, ובאאוטלוק: הוספת יומן ← מהאינטרנט ← מדביקים.</li></ul>' +
+      '<p class="small">הקישור אישי: מי שמחזיק בו רואה את המשימות שלך. לא להעביר אותו הלאה. ' +
+      '<button type="button" class="ck-linkbtn" id="ckCalReset">החלפת הקישור</button> (הקישור הישן יפסיק לעבוד, וצריך לחבר מחדש).</p>';
+  }
+  function bindSync() {
+    function get(reset) {
+      return api({ action: 'calLink', reset: !!reset }).then(function (r) {
+        if (!r || !r.ok || !r.url) throw new Error(r && r.error || 'x');
+        CALURL = r.url; $('ckCalOut').innerHTML = calOut(); bindSync();
+      });
+    }
+    var g = $('ckCalGet');
+    if (g) g.onclick = function () { g.disabled = true; get().catch(function () { g.disabled = false; T.toast('לא הצלחנו ליצור את הקישור. נסו שוב.'); }); };
+    var c = $('ckCalCopy');
+    if (c) c.onclick = function () {
+      var done = function () { T.toast('הקישור הועתק'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(CALURL).then(done, function () { prompt('להעתקה:', CALURL); });
+      else prompt('להעתקה:', CALURL);
+    };
+    var r = $('ckCalReset');
+    if (r) r.onclick = function () {
+      if (!confirm('להחליף את הקישור? היומן שכבר מחובר יתרוקן, וצריך לחבר מחדש.')) return;
+      get(true).then(function () { T.toast('נוצר קישור חדש'); }).catch(function () { T.toast('ההחלפה נכשלה. נסו שוב.'); });
+    };
+  }
+
   function mineRow(t, ro) {
     var ask = !ro && t.mine && !t.done && String(t.state || '').indexOf('mail|') === 0
       ? '<span class="ck-ask">שלחת את המייל? <button type="button" class="btn sm primary" data-ck="sent">כן, לסמן שבוצע</button> <button type="button" class="btn sm" data-ck="notyet">עוד לא</button></span>' : '';
