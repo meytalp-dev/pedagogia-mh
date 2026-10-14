@@ -1424,7 +1424,12 @@ function matalGroup_(t) {
   const n = String(t.notes || '');
   return /ימי ראשון/.test(n) ? 'sun' : /ימי שני/.test(n) ? 'mon' : '';
 }
-function teachersCore_() { return readAll('teachers').filter(t => !isMatal_(t)); }
+/* רכזים חברתיים (13.10.26) — ההשתלמות של עידית שמעוני במנור, באותה דרך בדיוק כמו המת"ליות:
+   שורה בטאב teachers עם מקצוע SOCIAL_SUBJECT, ולא נספרים כמורים. */
+const SOCIAL_SUBJECT = 'רכז.ת חברתי.ת';
+const NON_TEACHER_SUBJECTS = [MATAL_SUBJECT, SOCIAL_SUBJECT];
+function isNonTeacher_(t) { return NON_TEACHER_SUBJECTS.indexOf(String((t && t.subject) || '').trim()) >= 0; }
+function teachersCore_() { return readAll('teachers').filter(t => !isNonTeacher_(t)); }
 
 function listTeachers(p, user) {
   let data = readAll('teachers').map(t => ({...t, moeApproval: toBool(t.moeApproval), pdActive: toBool(t.pdActive)}));
@@ -1437,8 +1442,8 @@ function listTeachers(p, user) {
     data = data.filter(t => String(t.network || '').replace(/^net_/, '') === net_);
   }
   if (p.subject)  data = data.filter(t => t.subject === p.subject);
-  // מת"ליות רק כשמבקשים אותן במפורש (המבט של אביגיל שולח subject=מת"ל)
-  if (p.subject !== MATAL_SUBJECT && !p.withMatal) data = data.filter(t => !isMatal_(t));
+  // מת"ליות ורכזים חברתיים רק כשמבקשים אותם במפורש (המבט של אביגיל/עידית שולח את המקצוע)
+  if (NON_TEACHER_SUBJECTS.indexOf(p.subject) < 0 && !p.withMatal) data = data.filter(t => !isNonTeacher_(t));
   if (p.sector)   data = data.filter(t => t.sector === p.sector);
   // בלי משתמש מחובר — בלי פרטי קשר (24.9.26, החלטת מיטל). עד היום רשימה של בית
   // ספר יחיד (?school=) חזרה מלאה לכל מי שיודע את הכתובת; אימות המיילים אצל
@@ -4290,7 +4295,7 @@ const REMIND_SUMMARY_AFTER_MIN = 120;
 // { slots: [{ slug, mdate, date, start, part, topic, subject }], guides: { slug: { name, subject, insp } } }
 function remindLoad_() {
   const cache = CacheService.getScriptCache();
-  const hit = cache.get('remind_data_v3');
+  const hit = cache.get('remind_data_v4');
   if (hit) return JSON.parse(hit);
   const win = remindWin_();
   const data = { slots: [], guides: {}, roster: {} };
@@ -4299,7 +4304,8 @@ function remindLoad_() {
     data.guides[k] = { name: g.name || k, subject: g.subject || (g.subjects || []).join(' + '),
                        insp: ((win.TS_INSPECTORS || {})[g.inspector] || {}).name || '',
                        // הזום הקבוע של המדריכ/ה (guides.js) — נכנס לתזכורת למורים
-                       zoom: /^https:\/\/[\w.-]*zoom\.us\/[\w\/?=&.-]+$/.test(String(g.zoom || '')) ? String(g.zoom) : '' };
+                       zoom: /^https:\/\/[\w.-]*zoom\.us\/[\w\/?=&.-]+$/.test(String(g.zoom || '')) ? String(g.zoom) : '',
+                       what: String(g.what || '') };
   });
   Object.keys(win.TS_PLANS || {}).forEach(slug => {
     (win.TS_PLANS[slug].meetings || []).forEach(m => {
@@ -4329,7 +4335,7 @@ function remindLoad_() {
     });
   } catch (e) { console.error('remindLoad_: roster ' + e); }
   const json = JSON.stringify(data);
-  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v3', json, 3600);
+  if (Utilities.newBlob(json).getBytes().length < 90000) cache.put('remind_data_v4', json, 3600);
   return data;
 }
 
@@ -6876,7 +6882,13 @@ function staffGuideKeys(p) {
      מקצוע MATAL_SUBJECT. dryRun ברירת מחדל: רק דוח — מי חדשה, מי כבר קיימת, איזה בית ספר לא זוהה.
      שורה קיימת (אותו בית ספר + שם) לא נכתבת שוב. בלי ת"ז.
    teachers.matalLinks — הקישור האישי של כל מת"לית (teacher/?tk=) והקישור של אביגיל (guide/?g=avigail&k=).
-   הרשאה: מפתח staff של מטה (מיטל/רויטל) — מהדף admin-matal.html. */
+   הרשאה: מפתח staff של מטה (מיטל/רויטל) — מהדף admin-matal.html.
+   kind=social (13.10.26) — אותו ייבוא ואותם קישורים לרכזים החברתיים של עידית שמעוני. */
+const SPECIAL_GROUPS_ = {
+  matal:  { subject: MATAL_SUBJECT,  guide: 'avigail', note: 'השתלמות המת"ליות של אביגיל' },
+  social: { subject: SOCIAL_SUBJECT, guide: 'idit',    note: 'השתלמות הרכזים החברתיים של עידית' }
+};
+function specialGroup_(p) { return SPECIAL_GROUPS_[p.kind === 'social' ? 'social' : 'matal']; }
 function matalAuth_(p) { return staffIsHq_(p.k); }
 function matalNorm_(s) {
   return String(s || '').replace(/[״"׳'`]/g, '').replace(/[-–—]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -6890,6 +6902,7 @@ function teachersMatalSetup(p) {
   }
   if (!Array.isArray(list) || !list.length) return { ok: false, error: 'no_rows' };
   if (list.length > 200) return { ok: false, error: 'too_many_rows' };
+  const grp = specialGroup_(p);
   const dryRun = !(p.dryRun === false || p.dryRun === 'false' || p.dryRun === 0 || p.dryRun === '0');
 
   const bySchool = {};
@@ -6898,7 +6911,7 @@ function teachersMatalSetup(p) {
   // המגזר — כמו רוב המורים באותו בית ספר (כמו teacherSchoolSector_, בקריאה אחת)
   const sectorCnt = {};
   all.forEach(t => {
-    if (isMatal_(t) || !t.sector) return;
+    if (isNonTeacher_(t) || !t.sector) return;
     const c = sectorCnt[t.school] || (sectorCnt[t.school] = {});
     c[t.sector] = (c[t.sector] || 0) + 1;
   });
@@ -6911,7 +6924,7 @@ function teachersMatalSetup(p) {
   if (!dryRun && !lock.tryLock(45000)) return { ok: false, error: 'busy_try_again' };
   try {
     const existing = {};
-    (dryRun ? all : readAll('teachers')).filter(isMatal_)
+    (dryRun ? all : readAll('teachers')).filter(t => String(t.subject || '').trim() === grp.subject)
       .forEach(t => { existing[String(t.school) + '|' + matalNorm_(t.name)] = t; });
     const report = [], toWrite = [], seen = {};
     const stamp = new Date().toISOString(), base = Date.now();
@@ -6932,10 +6945,10 @@ function teachersMatalSetup(p) {
         id: 'tch_' + base + '_m' + i + '_' + Math.floor(Math.random() * 1000),
         school: school.id, schoolName: String(school.name || ''),
         network: String(school.network || '').replace(/^net_/, ''),
-        name: name, subject: MATAL_SUBJECT, type: 'bagrut', sector: sectorOf(school.id),
+        name: name, subject: grp.subject, type: 'bagrut', sector: sectorOf(school.id),
         seniority: 0, units: '', students: 0,
         phone: String(r.phone || '').trim(), email: guideMailOk_(email) ? email : '',
-        notes: 'השתלמות המת"ליות של אביגיל' + (group ? ' · ' + group : ''),
+        notes: grp.note + (group ? ' · ' + group : ''),
         moeApproval: false, moeFile: '', pdActive: false, pdFile: '', pdYear: '',
         createdAt: stamp
       });
@@ -6968,13 +6981,14 @@ function teachersMatalSetup(p) {
 
 function teachersMatalLinks(p) {
   if (!matalAuth_(p)) return { ok: false, error: 'forbidden' };
-  const people = readAll('teachers').filter(isMatal_).map(t => ({
+  const grp = specialGroup_(p);
+  const people = readAll('teachers').filter(t => String(t.subject || '').trim() === grp.subject).map(t => ({
     id: String(t.id), name: String(t.name || ''), school: String(t.schoolName || ''),
     notes: String(t.notes || ''), hasEmail: guideMailOk_(t.email),
     link: REMIND_SITE + 'teacher/?tk=' + teacherKey_(t.id)
   }));
   people.sort((a, b) => a.school.localeCompare(b.school, 'he') || a.name.localeCompare(b.name, 'he'));
-  return { ok: true, data: { guide: REMIND_SITE + 'guide/?g=avigail&k=' + meetGuideKey_('avigail'), people: people } };
+  return { ok: true, data: { guide: REMIND_SITE + 'guide/?g=' + grp.guide + '&k=' + meetGuideKey_(grp.guide), people: people } };
 }
 
 /* ---- אבחון מהירות (24.9.26, "השרת איטי") — מחזיר רק מספרים: כמה שורות ועמודות
@@ -7167,7 +7181,7 @@ function guideMailSend(p) {
     const link = guideTeacherLink_(r.id);
     const hello = 'שלום ' + r.name + ',';
     const html = guideMailHtml_(hello, '<div>' + guideTextHtml_(text) + '</div>', link, 'הבית שלי במנור — חומרים והודעות',
-      'נשלח מ' + remindEsc_(g.name || '') + (g.subject ? ' · הדרכה ב' + remindEsc_(g.subject) : '') + ' · ' + MONTHLY_SIGN +
+      'נשלח מ' + remindEsc_(g.name || '') + (g.subject ? ' · ' + remindEsc_(guideWhat_(g, g.subject)) : '') + ' · ' + MONTHLY_SIGN +
       (replyTo ? '<br>אפשר להשיב למייל הזה — התשובה תגיע ל' + remindEsc_(g.name || 'מדריך/ה') + '.' : ''));
     const opt = { to: r.email, subject: subject, htmlBody: html, name: from,
       body: hello + '\n\n' + text + '\n\nהבית שלי במנור: ' + link + '\n\n' + MONTHLY_SIGN };
@@ -7179,6 +7193,10 @@ function guideMailSend(p) {
 }
 
 // ---------- תזכורת למורים יום לפני ----------
+/* מה המפגש נקרא במיילים — "הדרכה במתמטיקה", ואצל מי שיש לו/ה what ב-guides.js
+   (עידית: "השתלמות הרכזים החברתיים") — השם הזה, כי "הדרכה ברכז.ת חברתי.ת" לא קריא. */
+function guideWhat_(g, subject) { return (g && g.what) || ('הדרכה ב' + subject); }
+
 function teacherRemindIsLive_() {
   return PropertiesService.getScriptProperties().getProperty('TEACHER_REMIND_LIVE') === '1';
 }
@@ -7272,7 +7290,7 @@ function teacherRemindSend_(win, data, slots, live) {
   const rec = guideRecipients_(roster.filter(t => !doneKeys[norm(t.name) + '|' + norm(t.schoolName)]));
   const skippedPresent = Object.keys(doneKeys).length;
 
-  const title = 'תזכורת: מחר הדרכה ב' + subject + (s0.topic ? ' — ' + s0.topic : '');
+  const title = 'תזכורת: מחר ' + guideWhat_(g, subject) + (s0.topic ? ' — ' + s0.topic : '');
   const facts = [
     ['מתי', 'מחר, יום ' + dayName + ' ' + dm(date) + (times ? ' · ' + times : '')],
     ['נושא', s0.topic],
@@ -7761,7 +7779,7 @@ function planMove(p) {
   });
   if (!res.ok || res.data.unchanged) return res;
 
-  try { CacheService.getScriptCache().remove('remind_data_v3'); } catch (e) {}
+  try { CacheService.getScriptCache().remove('remind_data_v4'); } catch (e) {}
   try { planChangeMailAdmin_(raw, slug, pm, { date: from, start: fromStart }, res.data.prev, { date: to, start: toStart }, res.data.back, reason); }
   catch (e) { console.error('planMove: admin mail ' + e); }
   auditLog_('', 'plan.move', 'guide', slug, 'ok', from + ' ' + fromStart + ' → ' + to + ' ' + toStart);
@@ -7839,7 +7857,7 @@ function planChangeMailTeachers_(win, slug, mdate, told, cur, back) {
         '\n' + rec.withEmail.length + ' נמענים, מכסה ' + MailApp.getRemainingDailyQuota() });
     return 0;
   }
-  const title = 'שינוי מועד: הדרכה ב' + subject + ' — ' + planWhen_(cur.date, cur.start).replace(/^יום /, '');
+  const title = 'שינוי מועד: ' + guideWhat_(g, subject) + ' — ' + planWhen_(cur.date, cur.start).replace(/^יום /, '');
   const facts = [
     ['המועד הקודם', planWhen_(told.date, told.start)],
     ['המועד החדש', planWhen_(cur.date, cur.start) + (back ? ' (המועד המקורי)' : '')],

@@ -25,6 +25,9 @@
   .mt-copy { padding: 4px 12px; font-size: 12.5px; white-space: nowrap; }
   .mt-guide { background: #EEF3EC; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.8; }
   .table-wrap { overflow-x: auto; }
+  .mt-kinds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .mt-kinds a { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); font-size: 13.5px; text-decoration: none; color: var(--text-2); background: var(--surface); }
+  .mt-kinds a.on { background: var(--navy, #143E4C); border-color: var(--navy, #143E4C); color: #fff; font-weight: 600; }
   @media (max-width: 560px) { .mt-hide-sm { display: none; } }
 </style>
 </head>
@@ -47,8 +50,12 @@
     <section class="page-header">
       <div>
         <div class="page-header-eyebrow">מטה · אדמין</div>
-        <h1>המת"ליות של אביגיל בריל</h1>
-        <p class="page-header-sub">ההשתלמות של אביגיל במנור: הכנסת המת"ליות שנרשמו, והקישור האישי של כל אחת. שום דבר לא נשלח מהדף הזה.</p>
+        <h1 id="mt-h1">המת"ליות של אביגיל בריל</h1>
+        <p class="page-header-sub" id="mt-sub">ההשתלמות של אביגיל במנור: הכנסת המת"ליות שנרשמו, והקישור האישי של כל אחת. שום דבר לא נשלח מהדף הזה.</p>
+        <div class="mt-kinds" role="tablist">
+          <a href="admin-matal.html" data-k="matal">המת"ליות · אביגיל</a>
+          <a href="admin-matal.html?kind=social" data-k="social">הרכזים החברתיים · עידית</a>
+        </div>
       </div>
     </section>
 
@@ -60,8 +67,8 @@
 
     <div id="mt-main" hidden>
       <div class="mt-sec">
-        <h3>1. הכנסת המת"ליות למנור</h3>
-        <p class="d">בוחרים את קובץ הנרשמות (matal-rows.json, מהרישום להשתלמויות) ← בדיקה יבשה ← רק אחרי שהדוח נראה נכון: ייבוא.
+        <h3 id="mt-h-imp">1. הכנסת המת"ליות למנור</h3>
+        <p class="d" id="mt-d-imp">בוחרים את קובץ הנרשמות (matal-rows.json, מהרישום להשתלמויות) ← בדיקה יבשה ← רק אחרי שהדוח נראה נכון: ייבוא.
           מת"לית שכבר קיימת (אותו בית ספר ואותו שם) לא נכתבת שוב. הן לא נספרות כמורים בדוחות, במונים ובמעקב ההרשמה.</p>
         <input type="file" id="mt-file" accept=".json,application/json">
         <div class="mt-actions">
@@ -74,7 +81,7 @@
 
       <div class="mt-sec">
         <h3>2. הקישורים האישיים</h3>
-        <p class="d">כל מת"לית נכנסת בקישור שלה ישר לבית שלה במנור: ההדרכה הבאה, רישום נוכחות עם קוד, חומרים ושאלה לאביגיל.
+        <p class="d" id="mt-d-links">כל מת"לית נכנסת בקישור שלה ישר לבית שלה במנור: ההדרכה הבאה, רישום נוכחות עם קוד, חומרים ושאלה לאביגיל.
           הקישורים מוצגים כאן בלבד — לא נשלחים.</p>
         <div class="mt-actions">
           <button type="button" class="btn btn-primary" id="mt-load">הצגת הקישורים</button>
@@ -101,10 +108,31 @@
   let staff = null;
   try { staff = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); } catch (e) {}
   const isHq = staff && staff.k && (staff.roles || []).some(r => r.role === 'ministry');
+  /* ?kind=social (13.10.26) — אותו דף לרכזים החברתיים של עידית שמעוני. השרת מקבל kind
+     ושומר אותם עם מקצוע 'רכז.ת חברתי.ת'. */
+  const KIND = new URLSearchParams(location.search).get('kind') === 'social' ? 'social' : 'matal';
+  const K = KIND === 'social' ? {
+    h1: 'הרכזים החברתיים של עידית שמעוני',
+    sub: 'ההשתלמות של הרכזים החברתיים במנור: הכנסת מי שנרשמו, והקישור האישי של כל אחד ואחת. שום דבר לא נשלח מהדף הזה.',
+    hImp: '1. הכנסת הרכזים החברתיים למנור',
+    dImp: 'בוחרים את קובץ הנרשמים (social-rows.json, מהרישום להשתלמויות) ← בדיקה יבשה ← רק אחרי שהדוח נראה נכון: ייבוא. ' +
+      'מי שכבר קיים/ת (אותו בית ספר ואותו שם) לא נכתב/ת שוב. הם לא נספרים כמורים בדוחות, במונים ובמעקב ההרשמה.',
+    dLinks: 'כל רכז/ת נכנס/ת בקישור שלו/ה ישר לבית במנור: המפגש הבא, רישום נוכחות, חומרים ושאלה לעידית. הקישורים מוצגים כאן בלבד — לא נשלחים.',
+    file: 'social-rows.json', people: 'רכזים', who: 'עידית', guideTitle: 'הקישור של עידית', newRow: 'חדש/ה — ייכתב/תיכתב', dup: 'כפול/ה בקובץ'
+  } : {
+    file: 'matal-rows.json', people: 'מת"ליות', who: 'אביגיל', guideTitle: 'הקישור של אביגיל', newRow: 'חדשה — תיכתב', dup: 'כפולה בקובץ'
+  };
+  document.querySelectorAll('.mt-kinds a').forEach(a => a.classList.toggle('on', a.dataset.k === KIND));
+  if (K.h1) {
+    $('mt-h1').textContent = K.h1; $('mt-sub').textContent = K.sub;
+    $('mt-h-imp').textContent = K.hImp; $('mt-d-imp').textContent = K.dImp; $('mt-d-links').textContent = K.dLinks;
+    document.title = K.h1 + ' — אדמין · מנור';
+  }
+
   if (!isHq) { $('mt-nologin').hidden = false; return; }
   $('mt-main').hidden = false;
 
-  const STATUS = { new: 'חדשה — תיכתב', exists: 'כבר במנור', unknown_school: 'בית הספר לא זוהה', duplicate: 'כפולה בקובץ', no_name: 'בלי שם' };
+  const STATUS = { new: K.newRow, exists: 'כבר במנור', unknown_school: 'בית הספר לא זוהה', duplicate: K.dup, no_name: 'בלי שם' };
   let rows = null, dryOk = false;
 
   $('mt-file').addEventListener('change', async e => {
@@ -118,7 +146,7 @@
       $('mt-imsg').className = 'mt-msg'; $('mt-imsg').textContent = 'בקובץ ' + rows.length + ' שורות. עכשיו: בדיקה יבשה.';
       $('mt-dry').disabled = false;
     } catch (err) {
-      $('mt-imsg').className = 'mt-msg err'; $('mt-imsg').textContent = 'הקובץ לא נקרא. צריך את matal-rows.json.';
+      $('mt-imsg').className = 'mt-msg err'; $('mt-imsg').textContent = 'הקובץ לא נקרא. צריך את ' + K.file + '.';
       $('mt-dry').disabled = true;
     }
   });
@@ -127,7 +155,7 @@
     const btn = dryRun ? $('mt-dry') : $('mt-run');
     btn.disabled = true;
     $('mt-imsg').className = 'mt-msg'; $('mt-imsg').textContent = dryRun ? 'בודקים… (עד חצי דקה)' : 'כותבים למנור…';
-    const r = await TS.apiPost('teachers.matalSetup', { k: staff.k, rows: rows, dryRun: dryRun });
+    const r = await TS.apiPost('teachers.matalSetup', { k: staff.k, kind: KIND, rows: rows, dryRun: dryRun });
     btn.disabled = false;
     if (!r || !r.ok) {
       $('mt-imsg').className = 'mt-msg err';
@@ -139,7 +167,7 @@
     $('mt-run').disabled = !dryRun || !d.wouldCreate;
     $('mt-imsg').textContent = dryRun
       ? 'בדיקה יבשה — שום דבר לא נכתב. ' + (d.wouldCreate ? 'אם הדוח נראה נכון: "ייבוא בפועל".' : 'אין מה להוסיף.')
-      : 'נכתבו ' + d.created + ' מת"ליות למנור. עכשיו אפשר להציג את הקישורים למטה.';
+      : 'נכתבו ' + d.created + ' ' + K.people + ' למנור. עכשיו אפשר להציג את הקישורים למטה.';
     const odd = d.rows.filter(x => x.status !== 'new' && x.status !== 'exists');
     $('mt-report').innerHTML =
       '<div class="mt-counts">' +
@@ -156,7 +184,7 @@
   $('mt-dry').addEventListener('click', () => send(true));
   $('mt-run').addEventListener('click', () => {
     if (!dryOk) return;
-    if (!confirm('לכתוב את המת"ליות למנור? (שום מייל לא נשלח)')) return;
+    if (!confirm('לכתוב את ה' + K.people + ' למנור? (שום מייל לא נשלח)')) return;
     send(false);
   });
 
@@ -170,7 +198,7 @@
   }
   $('mt-load').addEventListener('click', async () => {
     $('mt-load').disabled = true; $('mt-lmsg').className = 'mt-msg'; $('mt-lmsg').textContent = 'טוענים… (עד חצי דקה)';
-    const r = await TS.api('teachers.matalLinks', { k: staff.k }, { cache: 'no' });
+    const r = await TS.api('teachers.matalLinks', { k: staff.k, kind: KIND }, { cache: 'no' });
     $('mt-load').disabled = false;
     if (!r || !r.ok) {
       $('mt-lmsg').className = 'mt-msg err';
@@ -178,9 +206,9 @@
       return;
     }
     people = r.data.people || []; guideLink = r.data.guide || '';
-    $('mt-lmsg').textContent = people.length ? people.length + ' מת"ליות.' : 'עדיין אין מת"ליות במנור — קודם שלב 1.';
+    $('mt-lmsg').textContent = people.length ? people.length + ' ' + K.people + '.' : 'עדיין אין ' + K.people + ' במנור — קודם שלב 1.';
     $('mt-copyall').hidden = !people.length;
-    let last = '', html = '<div class="mt-guide"><b>הקישור של אביגיל</b> (המבט שלה כמדריכה): ' +
+    let last = '', html = '<div class="mt-guide"><b>' + K.guideTitle + '</b> (המבט שלה כמדריכה): ' +
       '<button type="button" class="btn btn-secondary mt-copy" data-c="g">העתקה</button>' +
       '<div class="mt-link">' + esc(guideLink) + '</div></div>';
     if (people.length) {

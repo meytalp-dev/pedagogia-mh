@@ -1545,8 +1545,9 @@ function askTraining(reminder) {
   });
 }
 
-/* מת"לית בהשתלמות של אביגיל (10.10.26) — לא מורה, ולכן בלי שאלת ההשתלמות המקצועית */
-function isMatalSelf() { return !!teacher && String(teacher.subject || '').trim() === 'מת"ל'; }
+/* מת"לית בהשתלמות של אביגיל (10.10.26) או רכז/ת חברתי/ת של עידית (13.10.26) — לא מורה,
+   ולכן בלי שאלת ההשתלמות המקצועית */
+function isMatalSelf() { return !!teacher && ['מת"ל', 'רכז.ת חברתי.ת'].indexOf(String(teacher.subject || '').trim()) >= 0; }
 
 /* דף הבית: תזכורת רק כשיש מה לעשות (מקטע ריק לא מוצג), ושורה ב"הפרטים שלי" */
 function renderTraining() {
