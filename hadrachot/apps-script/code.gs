@@ -4942,7 +4942,9 @@ function monthlyCompute_(month, today) {
 
   const end = monthlyLastDay_(month) < today ? monthlyLastDay_(month) : today;
   const rep = meetReport({}).data;
-  const teachers = teachersCore_();
+  // הרכזים החברתיים נכנסים לחישוב (14.10.26, מיטל: גם השתלמות הרכזים בסיכום) —
+  // אבל נשמרים בנפרד ב-C.social ולא נספרים כמורים. המת"ליות עדיין בחוץ.
+  const teachers = readAll('teachers').filter(t => String(t.subject || '').trim() !== MATAL_SUBJECT);
   ensureTab_('guide_hours');
   const hours = readAll('guide_hours').map(h => ({
     guideSlug: String(h.guideSlug || ''), firstName: h.firstName, lastName: h.lastName,
@@ -4996,8 +4998,13 @@ function monthlyCompute_(month, today) {
       });
     });
   });
+  const all = Object.keys(merged).map(k => merged[k]);
+  const socialGuide = guideRows.filter(g => g.slug === 'idit')[0];
   return { month: month, end: end, partial: end < monthlyLastDay_(month),
-    entries: Object.keys(merged).map(k => merged[k]), guides: guideRows, map: map };
+    entries: all.filter(e => e.subject !== SOCIAL_SUBJECT),
+    social: all.filter(e => e.subject === SOCIAL_SUBJECT),
+    socialDates: socialGuide ? socialGuide.meetings.map(m => m.date).concat(socialGuide.unrecDates) : [],
+    guides: guideRows, map: map };
 }
 
 // "אוקטובר 2026", ובחודש שעוד לא נגמר "אוקטובר 2026 (עד 14.10)" — סיכום באמצע החודש (14.10.26)
@@ -5042,10 +5049,55 @@ function monthlyTh_(labels) {
 /* מייל למנהל/ת — תמציתי (בקשת מיטל 18.9.26): מספר אחד גדול, שורה לכל מקצוע
    עם אחוז, ורק **מי שלא השתתף/ה**. רשימת המשתתפים הוסרה — היא הכפילה את אורך
    המייל בלי להוסיף פעולה. הפירוט המלא, וכל החודשים, נמצאים במסך בית הספר. */
+/* השתלמות הרכזים החברתיים (14.10.26) — חלק נפרד במיילי המנהלים והמפקחים.
+   הרכזים אינם מורים: לא נכנסים לאחוז ההשתתפות של המורים, רק לחלק הזה. */
+function monthlySocialTitle_(C) {
+  const fmt = d => Number(d.slice(8, 10)) + '.' + Number(d.slice(5, 7));
+  const dates = (C.socialDates || []).slice().sort().map(fmt);
+  return 'השתלמות הרכזים החברתיים' + (dates.length ? ' — מפגש ' + dates.join(', ') : '');
+}
+
+function monthlySocialStatus_(e) {
+  return monthlyIsIn_(e) ? '<span style="color:#1f7a5c">השתתף/ה</span>'
+    : '<span style="color:#a4442f">לא השתתף/ה</span>' +
+      (e.status === 'pending' ? ' <span style="color:#8a97a6">(נרשם/ה, טרם אושר/ה)</span>' : '');
+}
+
+function monthlySocialPrincipal_(C, list) {
+  if (!list.length) return '';
+  return '<p style="margin:22px 0 6px;font-weight:bold">' + remindEsc_(monthlySocialTitle_(C)) + '</p>' +
+    '<table style="border-collapse:collapse;width:100%;font-size:14px">' + monthlyTh_(['רכז/ת חברתי/ת', 'השתתפות']) +
+    list.slice().sort((a, b) => a.name.localeCompare(b.name, 'he')).map(e =>
+      '<tr><td style="' + MONTHLY_CELL + '">' + remindEsc_(e.name) + '</td><td style="' + MONTHLY_CELL + '">' +
+        monthlySocialStatus_(e) + '</td></tr>').join('') + '</table>';
+}
+
+function monthlySocialInspector_(C, schools) {
+  const rows = schools.map(s => {
+    const ids = [s.id].concat(s.alias || []);
+    return { name: s.name, list: C.social.filter(e => ids.indexOf(e.school) >= 0) };
+  }).filter(r => r.list.length).sort((a, b) => a.name.localeCompare(b.name, 'he'));
+  if (!rows.length) return '';
+  const n = rows.reduce((t, r) => t + r.list.length, 0);
+  const yes = rows.reduce((t, r) => t + r.list.filter(monthlyIsIn_).length, 0);
+  return '<p style="margin:22px 0 4px;font-weight:bold">' + remindEsc_(monthlySocialTitle_(C)) + '</p>' +
+    '<p style="margin:0 0 8px;font-size:14px">השתתפו ' + yes + ' מתוך ' + n + ' רכזים רשומים</p>' +
+    '<table style="border-collapse:collapse;width:100%;font-size:14px">' + monthlyTh_(['בית ספר', 'השתתפו', 'לא השתתפו']) +
+    rows.map(r => {
+      const no = r.list.filter(e => !monthlyIsIn_(e)).sort((a, b) => a.name.localeCompare(b.name, 'he'));
+      return '<tr><td style="' + MONTHLY_CELL + '">' + remindEsc_(r.name) + '</td>' +
+        '<td style="' + MONTHLY_CELL + ';white-space:nowrap">' + (r.list.length - no.length) + ' / ' + r.list.length + '</td>' +
+        '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' + (no.length
+          ? no.map(e => remindEsc_(e.name) + (e.status === 'pending' ? ' <span style="color:#8a97a6">(טרם אושר/ה)</span>' : '')).join('<br>')
+          : '<span style="color:#1f7a5c">כולם השתתפו</span>') + '</td></tr>';
+    }).join('') + '</table>';
+}
+
 function monthlyPrincipalMail_(C, school, principalName) {
   const ids = [school.id].concat(school.alias || []);
   const entries = C.entries.filter(e => ids.indexOf(e.school) >= 0);
-  if (!entries.length) return null;
+  const social = (C.social || []).filter(e => ids.indexOf(e.school) >= 0);
+  if (!entries.length && !social.length) return null;
 
   const bySubj = {};
   entries.forEach(e => { (bySubj[e.subject] = bySubj[e.subject] || []).push(e); });
@@ -5060,6 +5112,9 @@ function monthlyPrincipalMail_(C, school, principalName) {
     return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) + '</td>' +
       '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(p) + '">' +
         p + '%<span style="font-weight:normal;color:#5b6b7b"> · ' + yes.length + '/' + list.length + '</span></td>' +
+      // מי השתתף/ה — חזר לבקשת רויטל (14.10.26; הוסר ב-18.9.26)
+      '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#1f7a5c">' +
+        (yes.length ? monthlyNameList_(yes) : '—') + '</td>' +
       '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' +
         (no.length ? monthlyNameList_(no) : '<span style="color:#1f7a5c">כולם השתתפו</span>') + '</td></tr>';
   }).join('');
@@ -5068,17 +5123,22 @@ function monthlyPrincipalMail_(C, school, principalName) {
   const link = MONTHLY_SITE + '/admin-school/?school=' + encodeURIComponent(school.id);
   const html = monthlyWrapHtml_(
     '<p style="margin:0 0 10px">שלום' + (principalName ? ' ' + remindEsc_(principalName) : '') + ',</p>' +
-    '<p style="margin:0 0 14px">השתתפות מורי <b>' + remindEsc_(school.name) + '</b> בהדרכה המקצועית בחודש ' +
-      remindEsc_(label) + '.</p>' +
-    '<p style="margin:0 0 4px;font-size:26px;font-weight:bold;color:' + monthlyPctColor_(pct) + '">' + pct + '%</p>' +
-    '<p style="margin:0 0 14px;font-size:15px">השתתפו ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
-    '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
-      monthlyTh_(['מקצוע', 'נוכחות', 'מי לא השתתף/ה']) + rows + '</table>' +
+    (entries.length
+      ? '<p style="margin:0 0 14px">השתתפות מורי <b>' + remindEsc_(school.name) + '</b> בהדרכה המקצועית בחודש ' +
+          remindEsc_(label) + '.</p>' +
+        '<p style="margin:0 0 4px;font-size:26px;font-weight:bold;color:' + monthlyPctColor_(pct) + '">' + pct + '%</p>' +
+        '<p style="margin:0 0 14px;font-size:15px">השתתפו ' + inN + ' מתוך ' + entries.length + ' מורים</p>' +
+        '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
+          monthlyTh_(['מקצוע', 'נוכחות', 'מי השתתף/ה', 'מי לא השתתף/ה']) + rows + '</table>'
+      : '<p style="margin:0 0 14px">סיכום ההשתתפות של <b>' + remindEsc_(school.name) + '</b> בחודש ' + remindEsc_(label) +
+          '. למורי בית הספר לא התקיים עדיין מפגש הדרכה החודש.</p>') +
+    monthlySocialPrincipal_(C, social) +
     '<p style="margin:16px 0 0"><a href="' + link + '" style="color:#256A8A;font-weight:bold">למסך בית הספר — כל החודשים, לפי מקצוע ומדריכ/ה</a></p>' +
     '<p style="margin:10px 0 0;font-size:12.5px;color:#5b6b7b">בכל חודש מתקיימת הדרכה אחת בשני מועדים, בוקר וערב — השתתפות באחד מהם נספרת כנוכחות. גם הדרכה פרטנית נספרת.' +
       (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>'
   );
-  return { subject: 'השתתפות המורים בהדרכות — ' + school.name + ' · ' + label, html: html, n: entries.length, inN: inN };
+  return { subject: 'השתתפות בהדרכות ובהשתלמויות — ' + school.name + ' · ' + label, html: html,
+    n: entries.length, inN: inN, social: social.length };
 }
 
 // מסאראת = ערערה (אותו בית ספר, שני מזהים) — שורה אחת ומייל אחד
@@ -5134,22 +5194,26 @@ function monthlyGuideWarnings_(C) {
 }
 
 function monthlyInspectorMail_(C, inspName, schools) {
-  const rows = schools.filter(s => s.inspector === inspName).map(s => monthlySchoolRow_(C, s))
+  const mySchools = schools.filter(s => s.inspector === inspName);
+  const rows = mySchools.map(s => monthlySchoolRow_(C, s))
     .sort((a, b) => (a.pct === null) - (b.pct === null) || (a.pct || 0) - (b.pct || 0) || a.name.localeCompare(b.name, 'he'));
   const n = rows.reduce((t, r) => t + r.n, 0), yes = rows.reduce((t, r) => t + r.yes, 0);
-  if (!n) return null;
+  const socialHtml = monthlySocialInspector_(C, mySchools);
+  if (!n && !socialHtml) return null;
   const label = monthlyPeriod_(C);
   const html = monthlyWrapHtml_(
     '<p style="margin:0 0 10px">שלום ' + remindEsc_(inspName) + ',</p>' +
     '<p style="margin:0 0 12px">סיכום השתתפות המורים במפגשי ההדרכה המקצועית בחודש ' + remindEsc_(label) +
       ' בבתי הספר שבפיקוחך. מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית.</p>' +
-    '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו: ' + yes + ' מתוך ' + n +
+    (n ? '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו: ' + yes + ' מתוך ' + n +
       ' מורים (' + monthlyPct_(yes, n) + '%)</p>' +
-    monthlySchoolTable_(rows, false, true) +
+      monthlySchoolTable_(rows, false, true)
+      : '<p style="margin:0 0 10px">למורי בתי הספר שבפיקוחך לא התקיים עדיין מפגש הדרכה החודש.</p>') +
+    socialHtml +
     '<p style="margin:14px 0 0;font-size:13px;color:#5b6b7b">כל מנהל/ת קיבל/ה מייל עם הפירוט של בית הספר שלו/ה.' +
       (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>'
   );
-  return { subject: 'השתתפות המורים בהדרכות — בתי הספר שבפיקוחך · ' + label, html: html, n: n, yes: yes };
+  return { subject: 'השתתפות בהדרכות ובהשתלמויות — בתי הספר שבפיקוחך · ' + label, html: html, n: n, yes: yes };
 }
 
 function monthlyOverviewMail_(C, schools, log) {
@@ -5194,6 +5258,7 @@ function monthlyOverviewMail_(C, schools, log) {
     monthlyGuideWarnings_(C) +
     '<p style="margin:18px 0 6px;font-weight:bold">לפי מקצוע ומדריך/ה</p>' + guideTable +
     '<p style="margin:18px 0 6px;font-weight:bold">לפי מפקח/ת</p>' + inspTable +
+    monthlySocialInspector_(C, schools) +
     '<p style="margin:18px 0 6px;font-weight:bold">לפי בית ספר (מהנמוך לגבוה)</p>' +
       (withMeet.length ? monthlySchoolTable_(withMeet, true, false) : '<p style="margin:0">אין עדיין נתוני נוכחות לחודש הזה.</p>') +
     (none.length ? '<p style="margin:10px 0 0;font-size:13px;color:#5b6b7b">בלי מורים במפגשי החודש: ' + remindEsc_(none.join(' · ')) + '</p>' : '') +
