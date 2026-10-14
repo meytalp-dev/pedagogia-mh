@@ -47,6 +47,34 @@
       '<script>setTimeout(function(){print()},250)<\/script></body></html>');
     w.document.close();
   }
+  /* מסמך מסודר (prot.css, 14.10.26 — מיטל: "לקחת את העיצוב המסודר גם לנטע ולצוהר"): הדפסה בחלון נקי עם הצבעים של המערכת */
+  /* prot.css כטקסט — מוטבע בחלון ההדפסה (קישור לקובץ מחלון ריק לא תמיד נטען) */
+  function protCss() {
+    var out = '';
+    [].forEach.call(document.styleSheets, function (s) {
+      if (!/prot\.css/.test(s.href || '')) return;
+      try { [].forEach.call(s.cssRules, function (r) { out += r.cssText + '\n'; }); } catch (e) {}
+    });
+    return out;
+  }
+  function pdPrint(title, html) {
+    var w = window.open('', '_blank');
+    if (!w) { T.toast('הדפדפן חסם חלון חדש. אפשר להעתיק ולהדביק במסמך.'); return; }
+    var cs = getComputedStyle(document.documentElement), vars = ['--navy', '--line', '--muted', '--paper', '--ink', '--ok', '--ok-soft', '--bad', '--bad-soft', '--warn', '--warn-soft'].map(function (v) {
+      return v + ':' + cs.getPropertyValue(v).trim();
+    }).filter(function (s) { return !/:$/.test(s); }).join(';');
+    w.document.write('<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + esc(title) + '</title>' +
+      '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@600;700&display=swap" rel="stylesheet">' +
+      '<style>' + protCss() + '</style>' +
+      '<style>:root{' + vars + '}body{margin:0;background:#fff;font-family:Assistant,Arial,sans-serif}.wrapp{max-width:860px;margin:24px auto;padding:0 16px}@page{margin:14mm}</style></head><body><div class="wrapp">' + html +
+      '</div><script>window.onload=function(){setTimeout(function(){window.focus();window.print()},250)}<\/script></body></html>');
+    w.document.close();
+  }
+  window.TZPDPRINT = pdPrint;
+  /* נקודה = { b: כותרת מודגשת, t: פירוט } (מ-14.10.26). מסמכים ישנים — מחרוזת */
+  function pt(x) { return x && typeof x === 'object' ? { b: x.b || '', t: x.t || '' } : { b: '', t: String(x || '') }; }
+  function ptLine(x) { var p = pt(x); return (p.b ? p.b + ': ' : '') + p.t; }
+  function ptLi(x) { var p = pt(x); return '<li>' + (p.b ? '<b>' + esc(p.b) + ':</b> ' : '') + esc(p.t) + '</li>'; }
   function copyHtml(html, text) {
     var ok = false;
     function onCopy(ev) { ev.clipboardData.setData('text/html', html); ev.clipboardData.setData('text/plain', text); ev.preventDefault(); }
@@ -118,30 +146,47 @@
         : '<div class="empty">קרן עוד לא הופעלה.</div>') + '</div>' +
       '<h2 class="pt">המסמכים שהוכנו</h2><div class="card">' + docList('vaada', 'עוד לא הוכן מסמך.') + '</div>';
   }
-  function vaadaDoc(d) {
-    var j = d.doc || {}, ed = d.mine;
-    function f(path, val, tag) { return ed ? '<' + tag + ' class="tt-ed" contenteditable="true" data-p="' + path + '">' + esc(val) + '</' + tag + '>' : '<' + tag + '>' + esc(val) + '</' + tag + '>'; }
-    /* 12.10.26 (סקירה): "טיוטה לבדיקה" + מה להשלים — למעלה, כדי שהמסמך לא ייצא לוועדה כאילו נבדק */
-    return '<div class="card head">' + f('title', j.title || '', 'h1') + '<div class="meta">עודכן ' + esc(heDate(d.updated)) + (ed ? ' · אפשר לערוך כל שורה ישירות בדף' : '') + '</div></div>' +
-      '<p class="tt-note"><b>טיוטה לבדיקה.</b> ' + BOT() + ' הכינה אותה מהנתונים של בית הספר. כדאי לעבור על כל שורה, לתקן ולמחוק מה שלא מדויק לפני שמגישים לוועדה.' +
-        (j.missing ? '<br><b>להשלים לפני הוועדה:</b> ' + esc(j.missing) : '') + '</p>' +
-      '<div class="card tt-vdoc">' + f('intro', j.intro || '', 'p') +
+  /* עורך בתוך המסמך: tag + מאפיינים, עם data-p לנתיב בתוך doc (collectEdits) */
+  function edf(ed, path, val, tag, at) {
+    return '<' + tag + (at ? ' ' + at : '') + (ed ? ' contenteditable="true" data-p="' + path + '"' : '') + '>' + esc(val) + '</' + tag + '>';
+  }
+  function ptEd(ed, path, x) {
+    if (!(x && typeof x === 'object')) return edf(ed, path, x, 'li');
+    return '<li>' + edf(ed, path + '.b', x.b || '', 'b') + ': ' + edf(ed, path + '.t', x.t || '', 'span') + '</li>';
+  }
+  function schoolName() { var s = T.school && T.school(); return (s && s.name) || ''; }
+  function vaadaPd(d, ed) {
+    var j = d.doc || {}, n = 0;
+    return '<article class="pd"><div class="pd-top"><div>' + edf(ed, 'title', j.title || '', 'h1') + '<p class="pd-sub">מסמך הכנה של בית הספר לקראת הוועדה המלווה</p></div><span class="pd-badge">ועדה מלווה</span></div>' +
+      '<div class="pd-meta"><div><small>בית הספר</small><b>' + esc(schoolName()) + '</b></div><div><small>מנהל.ת בית הספר</small><b>' + esc(principal() || '—') + '</b></div>' +
+      '<div><small>עודכן</small><b>' + esc(heDate(d.updated)) + '</b></div></div>' +
+      (j.intro ? '<h2 class="pd-h"><span class="n">' + (++n) + '</span>פתח דבר</h2>' + edf(ed, 'intro', j.intro, 'p', 'class="pd-p"') : '') +
       (j.sections || []).map(function (s, i) {
-        return '<h2>' + esc(s.h) + '</h2><ul>' + (s.points || []).map(function (p, k) { return f('sections.' + i + '.points.' + k, p, 'li'); }).join('') + '</ul>' +
-          (s.src ? '<p class="small">מקור: ' + esc(s.src) + '</p>' : '');
+        return '<h2 class="pd-h"><span class="n">' + (++n) + '</span>' + esc(s.h) + '</h2><section class="pd-card"><ul>' +
+          (s.points || []).map(function (p, k) { return ptEd(ed, 'sections.' + i + '.points.' + k, p); }).join('') + '</ul>' +
+          (s.src ? '<p class="pd-src">מקור: ' + esc(s.src) + '</p>' : '') + '</section>';
       }).join('') +
-      ((j.asks || []).length ? '<h2>מה נבקש מהוועדה</h2><ul>' + j.asks.map(function (a, k) { return f('asks.' + k, a, 'li'); }).join('') + '</ul>' : '') + '</div>' +
+      ((j.asks || []).length ? '<h2 class="pd-h"><span class="n">' + (++n) + '</span>מה נבקש מהוועדה</h2><section class="pd-card soft"><ol>' +
+        j.asks.map(function (a, k) { return edf(ed, 'asks.' + k, a, 'li'); }).join('') + '</ol></section>' : '') +
+      '<div class="pd-sign"><div><b>הנהלת בית הספר</b><small>' + esc(schoolName()) + '</small></div></div></article>';
+  }
+  function vaadaDoc(d) {
+    var ed = d.mine, j = d.doc || {};
+    /* 12.10.26 (סקירה): "טיוטה לבדיקה" + מה להשלים — למעלה, כדי שהמסמך לא ייצא לוועדה כאילו נבדק */
+    return '<p class="tt-note"><b>טיוטה לבדיקה.</b> ' + BOT() + ' הכינה אותה מהנתונים של בית הספר. כדאי לעבור על כל שורה, לתקן ולמחוק מה שלא מדויק לפני שמגישים לוועדה.' +
+        (j.missing ? '<br><b>להשלים לפני הוועדה:</b> ' + esc(j.missing) : '') + (ed ? '<br>אפשר לערוך כל שורה ישירות במסמך.' : '') + '</p>' +
+      vaadaPd(d, ed) +
       '<div class="acts" style="margin-top:12px">' + (ed ? '<button type="button" class="btn primary" data-tt="vsave">שמירה</button>' : '') +
-      '<button type="button" class="btn" data-tt="vprint">' + IC.print + 'הדפסה</button><button type="button" class="btn" data-tt="vcopy">' + IC.copy + 'העתקה</button>' +
+      '<button type="button" class="btn" data-tt="vprint">' + IC.print + 'הדפסה / PDF</button><button type="button" class="btn" data-tt="vcopy">' + IC.copy + 'העתקה</button>' +
       '<button type="button" class="btn" data-tt="vback">לכל המסמכים</button>' + (ed ? '<button type="button" class="btn" data-tt="vdel">מחיקה</button>' : '') + '</div>';
   }
   function vaadaHtml(j) {
     return '<h1>' + esc(j.title) + '</h1><p>' + esc(j.intro) + '</p>' + (j.sections || []).map(function (s) {
-      return '<h2>' + esc(s.h) + '</h2><ul>' + (s.points || []).map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>';
+      return '<h2>' + esc(s.h) + '</h2><ul>' + (s.points || []).map(ptLi).join('') + '</ul>';
     }).join('') + ((j.asks || []).length ? '<h2>מה נבקש מהוועדה</h2><ul>' + j.asks.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul>' : '');
   }
   function vaadaText(j) {
-    return j.title + '\n\n' + j.intro + '\n' + (j.sections || []).map(function (s) { return '\n' + s.h + '\n' + (s.points || []).map(function (p) { return '• ' + p; }).join('\n'); }).join('\n') +
+    return j.title + '\n\n' + j.intro + '\n' + (j.sections || []).map(function (s) { return '\n' + s.h + '\n' + (s.points || []).map(function (p) { return '• ' + ptLine(p); }).join('\n'); }).join('\n') +
       ((j.asks || []).length ? '\n\nמה נבקש מהוועדה\n' + j.asks.map(function (a) { return '• ' + a; }).join('\n') : '');
   }
   /* לפני "הוספת כל המשימות" — רואים מה ייכנס, עם מי מטפל/ת ועד מתי (סקירה 12.10.26) */
@@ -395,30 +440,43 @@
       '</div><h2 class="pt">ישיבות קודמות</h2><div class="card">' + docList('meet', 'עוד לא סוכמה ישיבה.') + '</div>';
   }
   /* סיכום ישיבה — אפשר לתקן כל שורה (גם משימה ומי מטפל/ת) לפני שמעבירים לצ'ק ליסט (סקירה 12.10.26) */
+  /* 14.10.26: מסמך מסודר — פרטים, מה נדון, החלטות, טבלת משימות (תחום/משימה/מטפל.ת/עד מתי), נשאר פתוח */
+  function meetPd(d, ed, btns) {
+    var j = d.doc || {}, n = 0, rk = d.role === 'rakaz' || (!d.role && RK());
+    function sec(h) { return '<h2 class="pd-h"><span class="n">' + (++n) + '</span>' + h + '</h2>'; }
+    var tasks = j.tasks || [], due = tasks.some(function (t) { return t.due; }), add = btns && window.TZTASKS && TZTASKS.enabled();
+    return '<article class="pd"><div class="pd-top"><div>' + edf(ed, 'title', j.title || d.title || '', 'h1') + '<p class="pd-sub">' + (j.topic ? esc(j.topic) : 'סיכום ישיבה') + '</p></div>' +
+      '<span class="pd-badge">' + (rk ? 'ישיבת צוות' : 'ישיבת הנהלה') + '</span></div>' +
+      '<div class="pd-meta"><div><small>בית הספר</small><b>' + esc(schoolName()) + '</b></div><div><small>תאריך הישיבה</small><b>' + esc(heDate(j.date) || '—') + '</b></div>' +
+      '<div><small>סוכם</small><b>' + esc(heDate(d.created)) + '</b></div></div>' +
+      sec('מה נדון') + '<section class="pd-card">' + ((j.summary || []).length ? '<ul>' + j.summary.map(function (x, k) { return ptEd(ed, 'summary.' + k, x); }).join('') + '</ul>' : '<p class="pd-p">—</p>') + '</section>' +
+      sec('החלטות') + '<section class="pd-card soft">' + ((j.decisions || []).length ? '<ol>' + j.decisions.map(function (x, k) { return edf(ed, 'decisions.' + k, x, 'li'); }).join('') + '</ol>' : '<p class="pd-p">לא התקבלו החלטות.</p>') + '</section>' +
+      sec('משימות') + (tasks.length ? '<div class="pd-tw"><table class="pd-tbl"><thead><tr><th>#</th><th>המשימה</th><th>מטפל.ת</th>' + (due ? '<th>עד מתי</th>' : '') + (add ? '<th></th>' : '') + '</tr></thead><tbody>' +
+        tasks.map(function (t, i) {
+          return '<tr><td class="c-n">' + (i + 1) + '</td>' + edf(ed, 'tasks.' + i + '.text', t.text || '', 'td', 'data-l="משימה"') + edf(ed, 'tasks.' + i + '.who', t.who || '', 'td', 'class="c-w" data-l="מטפל.ת"') +
+            (due ? '<td class="c-d' + (t.due ? '' : ' none') + '" data-l="עד">' + esc(t.due ? heDate(t.due) : '—') + '</td>' : '') +
+            (add ? '<td class="c-d"><button type="button" class="btn sm" data-tt="tadd" data-i="' + i + '">לצ\'ק ליסט</button></td>' : '') + '</tr>';
+        }).join('') + '</tbody></table></div>' +
+        (add && tasks.length > 1 ? '<div class="acts" style="margin-top:10px"><button type="button" class="btn sm" data-tt="taddall">הוספת כל ' + tasks.length + ' המשימות לצ\'ק ליסט</button></div>' : '') : '<p class="pd-p">לא עלו משימות.</p>') +
+      ((j.open || []).length ? sec('נשאר פתוח') + '<section class="pd-card"><ul>' + j.open.map(function (x, k) { return edf(ed, 'open.' + k, x, 'li'); }).join('') + '</ul></section>' : '') +
+      '</article>';
+  }
   function meetDoc(d) {
-    var j = d.doc || {}, ed = d.mine;
-    function f(path, val, tag) { return ed ? '<' + tag + ' class="tt-ed" contenteditable="true" data-p="' + path + '">' + esc(val) + '</' + tag + '>' : '<' + tag + '>' + esc(val) + '</' + tag + '>'; }
-    function ul(a, key) { return (a || []).length ? '<ul>' + a.map(function (x, k) { return f(key + '.' + k, x, 'li'); }).join('') + '</ul>' : '<p class="small">אין.</p>'; }
-    return '<div class="card head">' + f('title', j.title || d.title, 'h1') + '<div class="meta">' + (j.date ? 'הישיבה: ' + esc(heDate(j.date)) + ' · ' : '') + 'סוכם ' + esc(heDate(d.created)) + '</div></div>' +
-      (ed ? '<p class="tt-note"><b>סיכום אוטומטי מהתמלול — כדאי לבדוק.</b> אפשר לתקן כל שורה ישירות בדף, גם את המשימות ומי מטפל/ת בהן, לפני ששומרים או מעבירים לצ\'ק ליסט.</p>' : '') +
-      '<div class="card tt-vdoc"><h2>מה נדון</h2>' + ul(j.summary, 'summary') + '<h2>החלטות</h2>' + ul(j.decisions, 'decisions') +
-      '<h2>משימות</h2>' + ((j.tasks || []).length ? '<ul class="tt-tasks">' + j.tasks.map(function (t, i) {
-        return '<li><span>' + f('tasks.' + i + '.text', t.text, 'b') + '<small>' + (ed ? 'מטפל/ת: ' : '') + f('tasks.' + i + '.who', t.who || '', 'span') + (t.due ? ' · עד ' + esc(heDate(t.due)) : '') + '</small></span>' +
-          (window.TZTASKS && TZTASKS.enabled() ? '<button type="button" class="btn sm" data-tt="tadd" data-i="' + i + '">לצ\'ק ליסט</button>' : '') + '</li>';
-      }).join('') + '</ul>' + (window.TZTASKS && TZTASKS.enabled() && j.tasks.length > 1 ? '<button type="button" class="btn sm" data-tt="taddall">הוספת כל ' + j.tasks.length + ' המשימות לצ\'ק ליסט</button>' : '') : '<p class="small">לא עלו משימות.</p>') +
-      ((j.open || []).length ? '<h2>נשאר פתוח</h2>' + ul(j.open, 'open') : '') + '</div>' +
-      '<div class="acts" style="margin-top:12px">' + (ed ? '<button type="button" class="btn primary" data-tt="msave">שמירה</button>' : '') + '<button type="button" class="btn" data-tt="mprint">' + IC.print + 'הדפסה</button><button type="button" class="btn" data-tt="mcopy">' + IC.copy + 'העתקה</button>' +
+    var ed = d.mine;
+    return (ed ? '<p class="tt-note"><b>סיכום אוטומטי מהתמלול — כדאי לבדוק.</b> אפשר לתקן כל שורה ישירות במסמך, גם את המשימות ומי מטפל/ת בהן, לפני ששומרים או מעבירים לצ\'ק ליסט.</p>' : '') +
+      meetPd(d, ed, true) +
+      '<div class="acts" style="margin-top:12px">' + (ed ? '<button type="button" class="btn primary" data-tt="msave">שמירה</button>' : '') + '<button type="button" class="btn" data-tt="mprint">' + IC.print + 'הדפסה / PDF</button><button type="button" class="btn" data-tt="mcopy">' + IC.copy + 'העתקה</button>' +
       '<button type="button" class="btn" data-tt="mback">לכל הישיבות</button>' + (d.mine ? '<button type="button" class="btn" data-tt="mdel">מחיקה</button>' : '') + '</div>';
   }
   function meetText(j) {
     function L(a) { return (a || []).map(function (x) { return '• ' + x; }).join('\n'); }
-    return j.title + '\n\nמה נדון\n' + L(j.summary) + '\n\nהחלטות\n' + L(j.decisions) + '\n\nמשימות\n' +
+    return j.title + '\n\nמה נדון\n' + L((j.summary || []).map(ptLine)) + '\n\nהחלטות\n' + L(j.decisions) + '\n\nמשימות\n' +
       (j.tasks || []).map(function (t) { return '• ' + t.text + (t.who ? ' — ' + t.who : '') + (t.due ? ' (עד ' + heDate(t.due) + ')' : ''); }).join('\n') +
       ((j.open || []).length ? '\n\nנשאר פתוח\n' + L(j.open) : '');
   }
   function meetHtml(j) {
     function ul(a) { return '<ul>' + (a || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
-    return '<h1>' + esc(j.title) + '</h1><h2>מה נדון</h2>' + ul(j.summary) + '<h2>החלטות</h2>' + ul(j.decisions) + '<h2>משימות</h2>' +
+    return '<h1>' + esc(j.title) + '</h1><h2>מה נדון</h2><ul>' + (j.summary || []).map(ptLi).join('') + '</ul><h2>החלטות</h2>' + ul(j.decisions) + '<h2>משימות</h2>' +
       ul((j.tasks || []).map(function (t) { return t.text + (t.who ? ' — ' + t.who : '') + (t.due ? ' (עד ' + heDate(t.due) + ')' : ''); })) +
       ((j.open || []).length ? '<h2>נשאר פתוח</h2>' + ul(j.open) : '');
   }
@@ -541,7 +599,7 @@
     else if (k === 'vsave') { var d = docById('vaada', VOPEN); collectEdits($('tzTool'), d.doc); d.title = d.doc.title; saveDoc('vaada', d, b); }
     else if (k === 'vprint' || k === 'vcopy') {
       var dv = docById('vaada', VOPEN); if (dv.mine) collectEdits($('tzTool'), dv.doc);
-      if (k === 'vprint') printHtml(dv.doc.title, vaadaHtml(dv.doc));
+      if (k === 'vprint') pdPrint(dv.doc.title, vaadaPd(dv, false));
       else T.toast(copyHtml(rtlWrap(vaadaHtml(dv.doc)), vaadaText(dv.doc)) ? 'הועתק — אפשר להדביק במסמך או במייל' : 'ההעתקה לא הצליחה');
     }
     else if (k === 'vdel' || k === 'mdel') {
@@ -577,8 +635,8 @@
     }
     else if (k === 'mback') { MOPEN = ''; redraw(); }
     else if (k === 'mprint' || k === 'mcopy') {
-      var dm = docById('meet', MOPEN);
-      if (k === 'mprint') printHtml(dm.doc.title, meetHtml(dm.doc));
+      var dm = docById('meet', MOPEN); if (dm.mine) collectEdits($('tzTool'), dm.doc);
+      if (k === 'mprint') pdPrint(dm.doc.title, meetPd(dm, false, false));
       else T.toast(copyHtml(rtlWrap(meetHtml(dm.doc)), meetText(dm.doc)) ? 'הועתק' : 'ההעתקה לא הצליחה');
     }
     else if (k === 'msave') { var dm2 = docById('meet', MOPEN); collectEdits($('tzTool'), dm2.doc); dm2.title = dm2.doc.title; saveDoc('meet', dm2, b); }

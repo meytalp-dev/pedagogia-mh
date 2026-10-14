@@ -219,38 +219,62 @@
     return '<li><div class="q"><b id="qb' + i + '">' + esc(t) + '</b>' + (hint ? '<small>' + esc(hint) + '</small>' : '') + '</div>' + scale('b', i, cur.v) +
       '<input class="fld sm" data-xn="b" data-i="' + i + '" placeholder="הערות ודוגמאות" value="' + esc(cur.n) + '"></li>';
   }
-  function obsText(o) {
-    var L = [o.teacher + ' · ' + heDate(o.date) + (o.subject ? ' · ' + o.subject : '') + (o.kita ? ' · ' + o.kita : '')];
-    if (o.mode === 'tama') {
-      L.push('', 'חלק א׳');
-      TAMA_A.forEach(function (it, i) { if (o.a[i].v || o.a[i].n) L.push('• ' + it[0] + ': ' + (o.a[i].v || '—') + (o.a[i].n ? ' (' + o.a[i].n + ')' : '')); });
-      if (o.aOwn.t) L.push('• ' + o.aOwn.t + ': ' + (o.aOwn.v || '—'));
-      L.push('', 'חלק ב׳');
-      TAMA_B.forEach(function (it, i) { if (o.b[i].v || o.b[i].n) L.push('• ' + it[0] + ': ' + (o.b[i].v || '—') + (o.b[i].n ? ' (' + o.b[i].n + ')' : '')); });
-      if (o.bOwn.t) L.push('• ' + o.bOwn.t + ': ' + (o.bOwn.v || '—'));
-    } else {
-      if (o.seen) L.push('', 'מה ראיתי: ' + o.seen);
-      if (o.strengths) L.push('חוזקות: ' + o.strengths);
-      if (o.grow) L.push('נקודות לצמיחה: ' + o.grow);
-    }
-    return L.join('\n');
-  }
+  /* נקודה במשוב = { b: כותרת מודגשת, t: פירוט } (מ-14.10.26). משובים ישנים — מחרוזת */
+  function pt(x) { return x && typeof x === 'object' ? { b: x.b || '', t: x.t || '' } : { b: '', t: String(x || '') }; }
+  function ptLi(x) { var p = pt(x); return '<li>' + (p.b ? '<b>' + esc(p.b) + ':</b> ' : '') + esc(p.t) + '</li>'; }
   function fbText(f) {
-    return f.opening + '\n\n' + (f.strengths || []).map(function (x) { return '• ' + x; }).join('\n') + '\n\n' + (f.grow || []).map(function (x) { return '• ' + x; }).join('\n') + '\n\n' + f.next + '\n\n' + f.closing;
+    function L(a) { return (a || []).map(function (x) { var p = pt(x); return '• ' + (p.b ? p.b + ': ' : '') + p.t; }).join('\n'); }
+    return f.opening + '\n\n' + L(f.strengths) + '\n\n' + L(f.grow) + '\n\n' + f.next + '\n\n' + f.closing;
   }
   function fbHtml(f) {
-    return '<p>' + esc(f.opening) + '</p><p><b>מה ראיתי שעובד</b></p><ul>' + (f.strengths || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
-      '<p><b>כיווני צמיחה</b></p><ul>' + (f.grow || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><p>' + esc(f.next) + '</p><p>' + esc(f.closing) + '</p>';
+    return '<p>' + esc(f.opening) + '</p><p><b>מה ראיתי שעובד</b></p><ul>' + (f.strengths || []).map(ptLi).join('') + '</ul>' +
+      '<p><b>כיווני צמיחה</b></p><ul>' + (f.grow || []).map(ptLi).join('') + '</ul><p>' + esc(f.next) + '</p><p>' + esc(f.closing) + '</p>';
   }
+  /* ===== מסמך מסודר (prot.css, 14.10.26 — מיטל: "לקחת את העיצוב המסודר גם לנטע") ===== */
+  function obsMeta(o) {
+    return '<div class="pd-meta"><div><small>המורה</small><b>' + esc(o.teacher || '—') + '</b></div><div><small>תאריך</small><b>' + esc(heDate(o.date) || '—') + '</b></div>' +
+      '<div><small>כיתה</small><b>' + esc(o.kita || '—') + '</b></div><div><small>מקצוע</small><b>' + esc(o.subject || '—') + '</b></div>' +
+      (o.start || o.end ? '<div><small>שעות בפועל</small><b dir="ltr">' + esc((o.start || '?') + '–' + (o.end || '?')) + '</b></div>' : '') + '</div>';
+  }
+  function obsPd(o) {
+    var tama = o.mode === 'tama', n = 0, h = '<article class="pd"><div class="pd-top"><div><h1>תצפית בשיעור</h1><p class="pd-sub">' + esc([o.subject, o.kita].filter(Boolean).join(' · ') || 'תצפית') + '</p></div>' +
+      '<span class="pd-badge">' + (tama ? 'תצפית מלאה · תמ"ה' : 'תצפית קצרה') + '</span></div>' + obsMeta(o);
+    function rows(items, arr, own, cols) {
+      var r = items.map(function (it, i) { return [it[0], arr[i] || {}]; }).filter(function (x) { return x[1].v || x[1].n; });
+      if (own && own.t && (own.v || own.n)) r.push([own.t, own]);
+      if (!r.length) return '<p class="pd-p">לא מולא.</p>';
+      return '<div class="pd-tw"><table class="pd-tbl"><thead><tr><th>' + cols[0] + '</th><th>' + cols[1] + '</th><th>הערות ודוגמאות</th></tr></thead><tbody>' + r.map(function (x) {
+        return '<tr><td data-l="' + cols[0] + '">' + esc(x[0]) + '</td><td class="c-w" data-l="' + cols[1] + '">' + esc(x[1].v || '—') + '</td><td data-l="הערות">' + esc(x[1].n || '') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+    }
+    if (tama) {
+      h += '<h2 class="pd-h"><span class="n">' + (++n) + '</span>פרטים ומאפיינים כלליים</h2>' + rows(TAMA_A, o.a || [], o.aOwn, ['מאפיין', 'כן / לא']) +
+        '<h2 class="pd-h"><span class="n">' + (++n) + '</span>מאפייני השיעור</h2>' + rows(TAMA_B, o.b || [], o.bOwn, ['מרכיב', 'באיזו מידה']) +
+        '<p class="pd-src">מבוסס על כלי תמ"ה, מכון אבני ראשה</p>';
+    } else {
+      [['מה ראיתי', o.seen, ''], ['חוזקות', o.strengths, ' soft'], ['נקודות לצמיחה', o.grow, '']].forEach(function (x) {
+        if (x[1]) h += '<h2 class="pd-h"><span class="n">' + (++n) + '</span>' + x[0] + '</h2><section class="pd-card' + x[2] + '"><p class="pd-p" style="white-space:pre-wrap;margin:0">' + esc(x[1]) + '</p></section>';
+      });
+    }
+    return h + '</article>';
+  }
+  function fbPd(o, f) {
+    function card(h, st, lb, a) {
+      return '<section class="pd-card"><div class="pd-ch"><h3>' + h + '</h3><span class="pd-pill ' + st + '">' + lb + '</span></div><ul>' + (a || []).map(ptLi).join('') + '</ul></section>';
+    }
+    return '<article class="pd"><div class="pd-top"><div><h1>משוב מתצפית בשיעור</h1><p class="pd-sub">שיחת משוב · למידה ואמון</p></div><span class="pd-badge">משוב למורה</span></div>' + obsMeta(o) +
+      '<h2 class="pd-h"><span class="n">1</span>פתיחה</h2><p class="pd-p">' + esc(f.opening) + '</p>' +
+      '<h2 class="pd-h"><span class="n">2</span>מה ראינו בשיעור</h2>' + card('מה ראיתי שעובד', 'ok', 'חוזקות', f.strengths) + card('כיווני צמיחה', 'part', 'לשיעור הבא', f.grow) +
+      '<h2 class="pd-h"><span class="n">3</span>הצעד הבא</h2><section class="pd-card soft"><p class="pd-p" style="margin:0">' + esc(f.next) + '</p></section>' +
+      (f.closing ? '<p class="pd-p" style="margin-top:16px">' + esc(f.closing) + '</p>' : '') + '</article>';
+  }
+  function pdPrint(title, html) { if (window.TZPDPRINT) window.TZPDPRINT(title, html); else printHtml(title, html); }
   function obsView(d) {
     var o = d.doc, f = o.feedback;
     var sub = 'משוב מהתצפית · ' + heDate(o.date);
-    var h = '<div class="card"><button type="button" class="back" data-xt="back">→ לכל התצפיות</button>' +
-      '<h2 class="tt-h">' + esc(o.teacher) + ' · ' + esc(heDate(o.date)) + '</h2><p class="small">' + (o.mode === 'tama' ? 'תצפית מלאה (תמ"ה)' : 'תצפית קצרה') +
-      (o.subject ? ' · ' + esc(o.subject) : '') + (o.kita ? ' · ' + esc(o.kita) : '') + '</p>' +
-      '<div class="pre note">' + esc(obsText(o)) + '</div>' +
-      '<div class="acts" style="margin-top:10px">' + (d.mine ? '<button type="button" class="btn" data-xt="edit">עריכה</button>' : '') +
-      '<button type="button" class="btn" data-xt="print">' + IC.print + 'הדפסה</button>' + (d.mine ? '<button type="button" class="btn" data-xt="del">מחיקה</button>' : '') + '</div></div>';
+    var h = '<div class="card"><button type="button" class="back" data-xt="back">→ לכל התצפיות</button>' + obsPd(o) +
+      '<div class="acts" style="margin-top:12px">' + (d.mine ? '<button type="button" class="btn" data-xt="edit">עריכה</button>' : '') +
+      '<button type="button" class="btn" data-xt="print">' + IC.print + 'הדפסה / PDF</button>' + (d.mine ? '<button type="button" class="btn" data-xt="del">מחיקה</button>' : '') + '</div></div>';
     h += '<h2 class="pt">משוב למורה</h2><div class="card">';
     if (!f) h += on() && d.mine ? '<p class="small">ניצה מנסחת משוב מתוך התצפית: חוזקות, כיווני צמיחה וצעד משותף. עורכים לפני שמשתפים.</p>' +
       /* 12.10.26 (סקירת קודקס): שם המורה מוסר לפני השליחה — אבל ההערות החופשיות נשלחות כמו שהן */
@@ -258,8 +282,8 @@
       '<button type="button" class="btn primary" data-xt="fb"' + (XBUSY ? ' disabled' : '') + '>' + IC.spark + (XBUSY ? 'ניצה כותבת…' : 'ניצה, נסחי משוב') + '</button>' : '<div class="empty">עוד אין משוב.</div>';
     else {
       var text = fbText(f), href = 'mailto:?subject=' + encodeURIComponent(sub) + '&body=' + encodeURIComponent(text);
-      h += '<div class="tt-letter">' + fbHtml(f) + '</div>' +
-        '<div class="acts" style="margin-top:10px"><button type="button" class="btn" data-xt="fbcopy">' + IC.copy + 'העתקה</button>' +
+      h += fbPd(o, f) +
+        '<div class="acts" style="margin-top:12px"><button type="button" class="btn" data-xt="fbprint">' + IC.print + 'הדפסה / PDF</button><button type="button" class="btn" data-xt="fbcopy">' + IC.copy + 'העתקה</button>' +
         (isMobile() ? '<a class="btn" href="' + esc(href) + '">' + T.icon('mail') + 'במייל</a>' : '<button type="button" class="btn" data-xt="fbgmail" data-sub="' + esc(sub) + '">' + T.icon('mail') + 'טיוטה ב-Gmail</button>') +
         (d.mine && on() ? '<button type="button" class="btn sm" data-xt="fb">ניסוח מחדש</button>' : '') + '</div>';
     }
@@ -587,7 +611,8 @@
         DOCS.obs = DOCS.obs.filter(function (x) { return x.id !== XID; }); XV = 'list'; redraw(); T.toast('נמחקה');
       }).catch(function (er) { T.toast(errText(er && er.message)); });
     }
-    else if (k === 'print') { var dp = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0]; printHtml(dp.doc.title, '<h1>תצפית · ' + esc(dp.doc.title) + '</h1><pre style="white-space:pre-wrap;font:inherit">' + esc(obsText(dp.doc)) + '</pre>' + (dp.doc.mode === 'tama' ? '<p class="src">מבוסס על כלי תמ"ה, מכון אבני ראשה</p>' : '')); }
+    else if (k === 'print') { var dp = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0]; pdPrint('תצפית · ' + dp.doc.title, obsPd(dp.doc)); }
+    else if (k === 'fbprint') { var dq = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0]; if (dq && dq.doc.feedback) pdPrint('משוב · ' + dq.doc.title, fbPd(dq.doc, dq.doc.feedback)); }
     else if (k === 'fb') {
       var df = (DOCS.obs || []).filter(function (x) { return x.id === XID; })[0], o = JSON.parse(JSON.stringify(df.doc));
       delete o.feedback; delete o.teacher; delete o.title;   /* שם המורה לא נשלח — לא נחוץ לניסוח */
