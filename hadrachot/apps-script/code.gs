@@ -70,6 +70,8 @@ const SCHEMA = {
   guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
+  // נוכחות בהשתלמויות שלא במנור (שגרירי חדשנות, 15.10.26) — monthlyExtraTrainings_
+  training_extra: ['training','track','date','school','name','status','note'],
   // פעילות אחרת של המדריכה (23.9.26) — מה שאינו הדרכה קבוצתית/פרטנית אבל מדווח
   // במונדיי של מרמנט (השתלמות, ישיבה, הכנה). start/end כ-HH:MM, location = זום/טלפון/מחשב/פרונטלי.
   guide_activities: ['id','guideSlug','guideName','name','date','start','end','location','hours','notes','createdBy','createdAt'],
@@ -4959,7 +4961,8 @@ function monthlyTick_(data) {
 function monthlyMidOnce_(today, hour) {
   if (today !== '2026-10-15' || hour < 8) return;
   const props = PropertiesService.getScriptProperties();
-  const key = 'monthly_mid_20261015';
+  // הניסיון של 8:00 נפל על training_extra שלא היה ב-SCHEMA (לא נשלח אף מייל) — מפתח חדש (מיטל: "מיד תשלח")
+  const key = 'monthly_mid_20261015b';
   if (props.getProperty(key)) return;
   props.setProperty(key, String(Date.now()));   // קודם מסמנים — כשל לא יציף במיילים
   try { monthlySend_('2026-10', true, '2026-10-14', false); }
