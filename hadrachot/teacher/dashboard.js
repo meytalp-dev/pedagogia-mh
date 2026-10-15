@@ -105,7 +105,10 @@ if (DEMO_) {
     if (slug !== 'moria' || !plan) return plan;
     const parts = today.split('-');
     const dm = Number(parts[2]) + '.' + Number(parts[1]);
-    return Object.assign({}, plan, { meetings: [{ date: today, dates: [today], topic: 'אסטרטגיות לטקסטים ארוכים',
+    // מועד לפני 3 ימים בלי רישום — לכרטיס "נכחתי ולא הצלחתי להירשם" (15.10.26)
+    const past = new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2] - 3)).toISOString().slice(0, 10);
+    return Object.assign({}, plan, { meetings: [{ date: past, dates: [past], topic: 'קריאה מודרכת בטקסט עיוני', time: '17:00–18:30' },
+      { date: today, dates: [today], topic: 'אסטרטגיות לטקסטים ארוכים',
       goal: '70% חיצוני (' + dm + ' בשעה 16:00): טקסטים ארוכים · 30% פנימי (' + dm + ' בשעה 17:00): תהליך הכתיבה' }]
       .concat((plan.meetings || []).filter(x => (x.date2 || x.date) > today)) });
   };
@@ -137,7 +140,7 @@ if (DEMO_) {
     if (action === 'teacher.training') return res({ ok: true, data: { trainingStatus: body.status || SELF.trainingStatus,
       unitsSelf: body.units || SELF.unitsSelf || '',
       trainingFile: body.data ? '#' : '', trainingFileName: body.fileName || '', trainingAt: new Date().toISOString() } });
-    if (action === 'teacher.here') {
+    if (action === 'teacher.here' || action === 'teacher.claim') {
       res({ ok: true, data: { status: 'pending', already: false } });
     } else res({ ok: false, error: 'demo' });
   }, 700));
@@ -808,6 +811,7 @@ function applyScope(res) {
   guideSlug = p.guideSlug;
   renderAttendance();
   renderHere(d, p.guideSlug);
+  renderClaim(d, p.guideSlug);
   renderNext(d, p.guideSlug);
   if (window.TS_renderPlan) window.TS_renderPlan(p.guideSlug, ((window.TS_GUIDES || {})[p.guideSlug] || {}).name || '');
   renderIndividual(d, p.guideSlug);
@@ -1094,6 +1098,57 @@ function renderHere(scope, guideSlug) {
     say(err === 'closed' ? 'הרישום עוד לא נפתח או כבר נסגר. הוא נפתח רבע שעה לפני תחילת המפגש.'
       : 'לא הצלחנו לרשום כרגע. אפשר ללחוץ שוב.', 'err');
   };
+}
+
+/* "נכחתי ולא הצלחתי להירשם" (15.10.26, מיטל) — מועדים מהתוכנית בשבעת הימים האחרונים (לא היום),
+   שאין לי בהם שורת נוכחות. teacher.claim יוצר שורה ממתינה ושולח למדריכ/ה. */
+const CLAIM_DAYS = 7;
+function renderClaim(scope, slug) {
+  const card = document.getElementById('claim-card');
+  const list = document.getElementById('claim-list');
+  if (!card || !list || !slug) return;
+  const today = String(scope.today || '').slice(0, 10);
+  if (!today) return;
+  const p = today.split('-').map(Number);
+  const from = new Date(Date.UTC(p[0], p[1] - 1, p[2] - CLAIM_DAYS)).toISOString().slice(0, 10);
+  const mine = new Set((scope.rows || []).filter(r => String(r.teacherId) === String(teacher.id)).map(r => String(r.meetingId)));
+  const items = [];
+  planMeetings(slug).forEach(m => {
+    const id = 'mt_' + slug + '_' + String(m.date).replace(/-/g, '');
+    if (mine.has(id)) return;
+    myPlanDays(m).filter(d => d < today && d >= from).forEach(d => items.push({ m: m, day: d }));
+  });
+  // מפגש בשני ימים — מספיקה בקשה אחת; מציגים את היום האחרון שעבר
+  const byMeeting = {};
+  items.forEach(x => { if (!byMeeting[x.m.date] || x.day > byMeeting[x.m.date].day) byMeeting[x.m.date] = x; });
+  const rows = Object.keys(byMeeting).map(k => byMeeting[k]).sort((a, b) => b.day.localeCompare(a.day));
+  if (!rows.length) { card.hidden = true; return; }
+  const dm = d => +d.slice(8, 10) + '.' + +d.slice(5, 7);
+  list.innerHTML = rows.map(x => `
+    <div class="claim-row">
+      <div class="claim-when">ההדרכה של ${esc(dm(x.day))}${x.m.topic ? `<small>${esc(x.m.topic)}</small>` : ''}</div>
+      <button type="button" class="btn btn-secondary claim-btn" data-d="${esc(x.m.date)}" data-day="${esc(x.day)}">נכחתי ולא הצלחתי להירשם</button>
+    </div>`).join('');
+  card.hidden = false;
+  list.querySelectorAll('.claim-btn').forEach(btn => {
+    btn.disabled = !(teacherKey || DEMO_) || !!ADMIN_KEY_;
+    btn.onclick = async () => {
+      btn.disabled = true; btn.textContent = 'שולח…';
+      const body = { k: teacherKey, g: slug, d: btn.dataset.d, day: btn.dataset.day };
+      let r = await TS.apiPost('teacher.claim', body);
+      if (r && !r.ok && (r.transient || ['timeout', 'bad_response', 'busy'].indexOf(r.error) >= 0)) r = await TS.apiPost('teacher.claim', body);
+      if (r && r.ok) {
+        btn.outerHTML = '<span class="claim-ok">' + (r.data && r.data.already ? 'כבר רשום/ה בהדרכה הזו ✓' : 'נשלח למדריכ/ה לאישור ✓') + '</span>';
+        return;
+      }
+      btn.disabled = false; btn.textContent = 'נכחתי ולא הצלחתי להירשם';
+      const err = r && r.error;
+      const msg = document.createElement('span');
+      msg.className = 'claim-err';
+      msg.textContent = err === 'out_of_range' ? 'עבר יותר משבוע — אפשר לפנות למדריכ/ה.' : 'לא הצלחנו לשלוח כרגע. אפשר לנסות שוב.';
+      btn.after(msg);
+    };
+  });
 }
 
 function hereDone(text) {

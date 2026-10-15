@@ -76,6 +76,19 @@
   .th-msg { margin-top: 12px; font-size: 14px; line-height: 1.6; font-weight: 600; }
   .th-msg.ok { color: #1f6b52; }
   .th-msg.err { color: #8f2f1c; }
+  /* "נכחתי ולא הצלחתי להירשם" (15.10.26) */
+  .claim-card[hidden] { display: none; }
+  .claim-card { margin-top: 14px; }
+  .claim-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .claim-note { font-size: 13px; color: var(--text-2); margin: 0 0 10px; line-height: 1.6; }
+  .claim-list { display: flex; flex-direction: column; gap: 8px; }
+  .claim-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); }
+  .claim-when { font-size: 14px; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+  .claim-when small { display: block; font-weight: 400; color: var(--text-2); font-size: 12.5px; }
+  .claim-btn { font-size: 13px; padding: 7px 14px; }
+  .claim-ok { font-size: 13px; font-weight: 700; color: #1f6b52; }
+  .claim-err { font-size: 13px; font-weight: 600; color: #8f2f1c; }
   .tg-code { width: 100%; box-sizing: border-box; text-align: center; font-size: 26px;
              letter-spacing: 9px; font-weight: 700; padding: 10px; }
   /* שאלת ההשתלמות (28.9.26) */
@@ -568,6 +581,14 @@
         <button type="button" class="th-notes" onclick="window.TS_notes && TS_notes.openToday()">פתיחת המחברת להדרכה של היום</button>
       </section>
 
+      <!-- "נכחתי ולא הצלחתי להירשם" (15.10.26) — הדרכה מהשבוע האחרון בלי רישום שלי.
+           הבקשה נשלחת למדריכ/ה, ובלי תגובה מאושרת אוטומטית אחרי 3 ימים. -->
+      <section class="card claim-card" id="claim-card" hidden>
+        <div class="claim-title">השתתפת בהדרכה ולא הצלחת להירשם?</div>
+        <p class="claim-note">אפשר לבקש עד שבוע אחרי ההדרכה. הבקשה עוברת למדריכ/ה לאישור.</p>
+        <div class="claim-list" id="claim-list"></div>
+      </section>
+
     <!-- ▸ המסע שלי השנה -->
     <!-- ▸ התוכנית השנתית שלי + הוספה ליומן (24.9.26) — plan-cal.js -->
     <section class="home-sec" id="plan-sec" hidden>
@@ -767,7 +788,7 @@
 <script src="../assets/plan-changes.js"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20261013a"></script>
+<script src="dashboard.js?v=20261015a"></script>
 <script src="plan-cal.js?v=20261012av"></script>
 <script src="notes.js?v=20260924"></script>
 <script src="quicklinks.js?v=20260924"></script>

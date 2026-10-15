@@ -196,6 +196,51 @@
       : '<span>השרת של מנור לא ענה. הקישורים למדריכות נבנו בלי מפתח — לרענן בעוד רגע.</span>';
   }
 
+  /* ---------- העדכון השבועי (weekly.admin בטוקן אדמין; weekly.live מקישור עם טוקן במייל) ---------- */
+  function weeklyShow(live, note) {
+    $('hy-weekly-state').textContent = live ? 'פעיל — המיילים יוצאים לבד כל יום ראשון' : 'תצוגה מקדימה — המיילים מגיעים רק אלייך (merhav)';
+    $('hy-weekly-note').textContent = note || '';
+    const t = $('hy-weekly-toggle');
+    t.hidden = false;
+    t.textContent = live ? 'לעצור את השליחה' : 'להפעיל שליחה אמיתית';
+    t.className = 'hy-btn' + (live ? '' : ' primary');
+    t.dataset.live = live ? '1' : '0';
+  }
+  async function weeklyCall(on) {
+    const r = await TS.api('weekly.admin', on ? { on: on } : {}, { cache: 'no' });
+    if (r && r.ok && r.data) return r.data;
+    const err = (r && r.error) || '';
+    $('hy-weekly-state').textContent = /unauthenticated|forbidden/.test(err) ? 'צריך להתחבר כאדמין' : 'השרת לא ענה. לרענן בעוד רגע.';
+    return null;
+  }
+  async function initWeekly() {
+    const qs = new URLSearchParams(location.search);
+    const fromMail = qs.get('weekly'), tok = qs.get('t');
+    if (fromMail && tok) {
+      // קישור מהמייל — הפעלה בלחיצה על הכפתור במייל; מנקים את הטוקן מסרגל הכתובות
+      history.replaceState(null, '', location.pathname);
+      const r = await TS.api('weekly.live', { t: tok, on: fromMail === 'on' ? '1' : fromMail === 'off' ? '0' : '' }, { cache: 'no' });
+      if (r && r.ok && r.data) { weeklyShow(r.data.live, r.data.live ? 'הופעל ✓ מיום ראשון הקרוב המיילים יוצאים לבד.' : 'נעצר.'); return; }
+    }
+    const d = await weeklyCall('');
+    if (d) weeklyShow(d.live);
+    $('hy-weekly-preview').onclick = async e => {
+      const b = e.currentTarget; b.disabled = true; b.textContent = 'שולח…';
+      const r = await weeklyCall('preview');
+      b.disabled = false; b.textContent = 'תצוגה מקדימה עכשיו';
+      if (r) weeklyShow(r.live, 'נשלחה תצוגה מקדימה ל-merhav (' + ((r.preview && r.preview.sent) || 0) + ' מיילים בתוכה).');
+    };
+    $('hy-weekly-toggle').onclick = async e => {
+      const b = e.currentTarget;
+      const turnOn = b.dataset.live !== '1';
+      if (turnOn && !confirm('להפעיל? מיום ראשון הקרוב המיילים יישלחו למנהלים, לרכזים ולמפקחים.')) return;
+      b.disabled = true;
+      const r = await weeklyCall(turnOn ? '1' : '0');
+      b.disabled = false;
+      if (r) weeklyShow(r.live, r.live ? 'הופעל ✓' : 'נעצר.');
+    };
+  }
+
   function renderAll() { renderKeyWarn(); renderWeek(); renderGaps(); renderLinks(); renderMine(); renderGuides(); }
 
   async function load() {
@@ -249,6 +294,7 @@
       renderMine();
     });
     load();
+    initWeekly();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
