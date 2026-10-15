@@ -4865,6 +4865,7 @@ const MONTHLY_HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל',
 const MONTHLY_SIGN = 'יחידת הפיקוח על הדרכות מורים · משרד העבודה';
 // מיילי סיכום הנוכחות למנהלים/מפקחים/מדריכים (15.10.26, מיטל)
 const MONTHLY_SUMMARY_SIGN = 'המנהל להכשרה מקצועית · משרד העבודה';
+const MONTHLY_REPLY_TO = 'merhav@pedagogiamh.co.il';
 
 function monthlyIsLive_() {
   return PropertiesService.getScriptProperties().getProperty('MONTHLY_LIVE') === '1';
@@ -5402,7 +5403,8 @@ function monthlyMail_(to, subject, html, cc) {
   const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
     .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
     .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
-  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה', replyTo: MAIL_REPLY_TO };
+  // תשובות למיילי הסיכום — לתיבת המרחב, לא למייל הפרטי (15.10.26, מיטל)
+  const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה', replyTo: MONTHLY_REPLY_TO };
   if (cc) opts.cc = cc;
   MailApp.sendEmail(opts);
 }
