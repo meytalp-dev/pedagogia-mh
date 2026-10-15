@@ -55,7 +55,6 @@ const SKIP = new Set([
   "sikum-matzevet.html",
   "rishum-pticha.html",  // דיווח יום הפתיחה — טופס למנהלים, לא מקושר מהאתר
   "sikum-pticha.html",   // מעקב דיווחי יום הפתיחה — לרויטל, לא מקושר מהאתר
-  "nispach-baaley-tafkidim.html", // נספח בעלי התפקידים — טופס למנהלים, לא מקושר מהאתר
   "sikum-nispach-tafkidim.html",  // מעקב מילוי הנספח — לרויטל, לא מקושר מהאתר
   "merkaz-tofsim.html",  // מרכז הטפסים והמעקב — עמוד פנימי לרויטל ולמיטל
   "admin.html",   // פאנל ניהול — לבעלי הרשאה בלבד
@@ -118,6 +117,7 @@ const CAT_OF = {
   "work-plans.html": "menahalim",
   "tafkidim.html": "menahalim",
   "baaley-tafkidim.html": "menahalim",
+  "nispach-baaley-tafkidim.html": "menahalim",
   "ogdan-shaot.html": "menahalim",
   "drive-menahalim.html": "menahalim",
   "tashpaz.html": "menahalim",
@@ -165,6 +165,7 @@ const EXTRA_KEYS = {
   "ogdan-shaot.html": "תקן שעות תקציב גמולים",
   "prisat-pikuah.html": "מפקחים מפקחת חלוקת בתי ספר מערך טיפולי רשתות עמותות סמל מוסד",
   "work-plans.html": "תוכנית עבודה יעדים מדדים בעלי תפקידים",
+  "nispach-baaley-tafkidim.html": "נספח בעלי תפקידים טופס מילוי מקוון הגשה מפקח מינוי",
   "tofes-divuach-chodshi.html": "היעדרויות נוכחות דיווח חודשי",
   "michtav-kabas.html": "קב\"ס ביקור סדיר נשירה",
   "bikur-sadir.html": "קב\"ס נוכחות היעדרות נשירה",

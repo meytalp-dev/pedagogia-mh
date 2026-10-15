@@ -39,7 +39,7 @@ const MAX_LINKS = 10;          // קישורים חיצוניים לכל עמו�
 const SKIP = new Set(["_doc-template.html", "rishum-mekav.html", "sikum-rishum-hishtalmuyot.html", "ishur-tochnit.html", "ishur-tochniyot-dash.html", "chipus.html", "work-plans-app.html", "em-head.tmp.html", "bagmgr.html",
   "admin.html", "admin-mosdot.html", "sikum-matzevet.html", "matzevet-list.html", "talmidim.html",
   "matzpen.html", "matzpen-demo.html", "rishum-pticha.html", "sikum-pticha.html",
-  "nispach-baaley-tafkidim.html", "sikum-nispach-tafkidim.html", "merkaz-tofsim.html",
+  "sikum-nispach-tafkidim.html", "merkaz-tofsim.html",
   "tikshuv-map.html", "tikshuv-shealon.html", "tikshuv-shibutz.html", "tikshuv-ishur.html", "mosdot-kesher.html",
   "mishov-rakazim.html", "sikum-mishov-rakazim.html"]);
 
