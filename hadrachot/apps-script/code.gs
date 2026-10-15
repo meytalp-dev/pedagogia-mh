@@ -5059,7 +5059,7 @@ function weeklyRegInspectorMail_(name, schools) {
     'בבתי הספר האלה עוד חסרים מורים (המנהלים קיבלו היום את השמות):</p>' +
     '<table style="border-collapse:collapse;width:100%;max-width:560px;font-size:14px">' +
     '<tr><th style="' + td + '">בית ספר</th><th style="' + td + '">נרשמו</th><th style="' + td + '">חסרים</th></tr>' +
-    mine.map(s => '<tr><td style="' + td + '">' + remindEsc_(s.name) + '</td><td style="' + td + '">' + s.yes + ' / ' + s.n +
+    mine.map(s => '<tr><td style="' + td + '">' + remindEsc_(s.name) + '</td><td style="' + td + '">' + s.yes + ' מתוך ' + s.n +
       '</td><td style="' + td + ';font-weight:bold;color:#a4442f">' + (s.none.length + s.started.length) + '</td></tr>').join('') +
     '</table>' +
     '<p style="margin:14px 0 0;font-size:14px">השמות של כל בית ספר מופיעים בתובה, בעמוד בית הספר.</p>' +
@@ -5363,7 +5363,7 @@ function monthlyTrainingInspector_(tr, schools) {
       const no = r.list.filter(e => !monthlyIsIn_(e)).sort((a, b) => a.name.localeCompare(b.name, 'he'));
       const yesL = r.list.filter(monthlyIsIn_).sort((a, b) => a.name.localeCompare(b.name, 'he'));
       return '<tr><td style="' + MONTHLY_CELL + '">' + remindEsc_(r.name) + '</td>' +
-        '<td style="' + MONTHLY_CELL + ';white-space:nowrap">' + (r.list.length - no.length) + ' / ' + r.list.length + '</td>' +
+        '<td style="' + MONTHLY_CELL + ';white-space:nowrap">' + (r.list.length - no.length) + ' מתוך ' + r.list.length + '</td>' +
         '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#1f7a5c">' +
           (yesL.length ? yesL.map(e => remindEsc_(e.name) + monthlyTrack_(e)).join('<br>') : '—') + '</td>' +
         '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' + (no.length
@@ -5391,7 +5391,7 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
     const p = monthlyPct_(yes.length, list.length);
     return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) + '</td>' +
       '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(p) + '">' +
-        p + '%<span style="font-weight:normal;color:#5b6b7b"> · ' + yes.length + '/' + list.length + '</span></td>' +
+        p + '%<span style="font-weight:normal;color:#5b6b7b"> · ' + yes.length + ' מתוך ' + list.length + '</span></td>' +
       // מי השתתף/ה — חזר לבקשת רויטל (14.10.26; הוסר ב-18.9.26)
       '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#1f7a5c">' +
         (yes.length ? monthlyNameList_(yes) : '—') + '</td>' +
@@ -5463,7 +5463,8 @@ function monthlyPctColor_(p) {
 }
 
 function monthlyRatio_(yes, n) {
-  return n ? yes + ' / ' + n + ' · ' + monthlyPct_(yes, n) + '%' : '—';
+  // "מתוך" ולא "/" (16.10.26, מיטל): בנייד "0 / 4" התהפך ל-"4 / 0", ו-"1/7" זוהה כתאריך
+  return n ? yes + ' מתוך ' + n + ' · ' + monthlyPct_(yes, n) + '%' : '—';
 }
 
 function monthlySchoolTable_(rows, withInspector, withNames) {
@@ -5558,12 +5559,13 @@ function monthlyOverviewMail_(C, schools, log) {
     '<p style="margin:0 0 12px;font-size:13px;color:#5b6b7b">מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית. ' +
       'נספרים רק מפגשים שהמדריך/ה הזין/ה בהם נוכחות.' + (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>' +
     monthlyGuideWarnings_(C) +
-    '<p style="margin:18px 0 6px;font-weight:bold">לפי מקצוע ומדריך/ה</p>' + guideTable +
-    '<p style="margin:18px 0 6px;font-weight:bold">לפי מפקח/ת</p>' + inspTable +
-    monthlyTrainingsInspector_(C, schools) +
-    '<p style="margin:18px 0 6px;font-weight:bold">לפי בית ספר (מהנמוך לגבוה)</p>' +
+    // הדרכות מקצועיות קודם ובשלמותן, ההשתלמויות אחריהן (16.10.26, מיטל: תפן נראה 1/1 בהשתלמות ו-0% בהדרכות)
+    '<p style="margin:18px 0 6px;font-weight:bold">הדרכות מקצועיות — לפי מקצוע ומדריך/ה</p>' + guideTable +
+    '<p style="margin:18px 0 6px;font-weight:bold">הדרכות מקצועיות — לפי מפקח/ת</p>' + inspTable +
+    '<p style="margin:18px 0 6px;font-weight:bold">הדרכות מקצועיות — לפי בית ספר (מהנמוך לגבוה)</p>' +
       (withMeet.length ? monthlySchoolTable_(withMeet, true, false) : '<p style="margin:0">אין עדיין נתוני נוכחות לחודש הזה.</p>') +
     (none.length ? '<p style="margin:10px 0 0;font-size:13px;color:#5b6b7b">בלי מורים במפגשי החודש: ' + remindEsc_(none.join(' · ')) + '</p>' : '') +
+    monthlyTrainingsInspector_(C, schools) +
     (log ? '<div style="margin:18px 0 0;padding:10px 12px;background:#f1f5f9;border-radius:8px;font-size:13px">' + log + '</div>' : '')
   );
   return { subject: 'השתתפות בהדרכות — מבט כולל · ' + label, html: html };
@@ -5655,7 +5657,7 @@ function monthlySend_(month, live, today, withGuides) {
     const mail = monthlyPrincipalMail_(C, s, greet, names.length > 1);
     if (!mail) { skipped.push(s.name + ' — אין מורים במפגשי החודש'); return; }
     if (!p || !p.email) { skipped.push(s.name + ' — אין מייל מנהל/ת'); return; }
-    const line = s.name + ' (' + mail.inN + '/' + mail.n + ')' + (coords.length ? ' + ' + coords.length + ' רכז/ת' : '');
+    const line = s.name + ' (' + mail.inN + ' מתוך ' + mail.n + ')' + (coords.length ? ' + ' + coords.length + ' רכז/ת' : '');
     if (!live) {
       previewParts.push('<div style="margin:0 0 26px;padding:0 0 18px;border-bottom:3px solid #256A8A">' +
         '<p dir="rtl" style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#256A8A"><b>אל:</b> ' +
@@ -5685,7 +5687,7 @@ function monthlySend_(month, live, today, withGuides) {
       if (live) monthlyMail_(email, mail.subject, mail.html);
       else monthlyMail_(REMIND_TO, tag + 'מפקח/ת ' + ins.name + ' · ' + label,
         monthlyPreviewBanner_(ins.name + ' <' + email + '>') + mail.html);
-      sent.push('מפקח/ת ' + ins.name + ' (' + mail.yes + '/' + mail.n + ')');
+      sent.push('מפקח/ת ' + ins.name + ' (' + mail.yes + ' מתוך ' + mail.n + ')');
     } catch (e) { failed.push(ins.name + ': ' + e.message); }
   });
 
@@ -5699,7 +5701,7 @@ function monthlySend_(month, live, today, withGuides) {
       const mail = monthlyGuideMail_(C, gr, r ? updLinks_(r).view : '');
       if (!mail) { skipped.push('מדריך/ה ' + gr.name + ' — אין מפגש שהתקיים החודש'); return; }
       if (!r || !r.email) { skipped.push('מדריך/ה ' + gr.name + ' — אין מייל'); return; }
-      const line = 'מדריך/ה ' + gr.name + ' (' + gr.present + '/' + gr.n + ')';
+      const line = 'מדריך/ה ' + gr.name + ' (' + gr.present + ' מתוך ' + gr.n + ')';
       if (!live) {
         guideParts.push('<div style="margin:0 0 26px;padding:0 0 18px;border-bottom:3px solid #256A8A">' +
           '<p dir="rtl" style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#256A8A"><b>אל:</b> ' +
