@@ -5063,6 +5063,8 @@ const MONTHLY_PARTIAL_NOTE = 'החודש עוד לא הסתיים: נכללים 
 
 function monthlyWrapHtml_(inner) {
   return '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a3a;max-width:720px">' +
+    // הערה קטנה למעלה (15.10.26, מיטל)
+    '<p style="margin:0 0 12px;font-size:12px;color:#8a97a6">הודעה אוטומטית ממערכת מנור</p>' +
     inner + '<p style="margin:22px 0 0;font-size:12px;color:#8a97a6">' + remindEsc_(MONTHLY_SUMMARY_SIGN) + '</p></div>';
 }
 
