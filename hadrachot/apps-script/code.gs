@@ -4310,7 +4310,7 @@ function remindLoad_() {
   Object.keys(win.TS_PLANS || {}).forEach(slug => {
     (win.TS_PLANS[slug].meetings || []).forEach(m => {
       win.TS_meetingSlots(m).forEach(x => data.slots.push({
-        slug: slug, mdate: m.date, date: x.date, start: x.start, part: x.part,
+        slug: slug, mdate: m.date, date: x.date, start: x.start, part: x.part, end: x.end || '',
         topic: m.topic || '', subject: m.subject || ''
       }));
     });
@@ -4606,6 +4606,18 @@ const MEET_AUTO_FROM = '2026-10-13';
 // אישור חד-פעמי (14.10.26, מיטל): כל רישום עצמי שהמדריכ/ה לא אישר/ה עד היום מאושר פעם אחת,
 // כדי שסיכום אוקטובר יישלח על נתונים מלאים. רץ פעם אחת מתוך meetAutoApproveTick_ (דגל auto_once_20261014).
 const MEET_APPROVE_REMIND_MIN = 24 * 60;
+// מייל האישור יוצא 15 דק׳ לפני סיום ההדרכה, לא בסגירת הרישום (15.10.26, מיטל: "שעה אחרי זה לא טוב").
+// מועד בלי שעת סיום בתוכנית — משך ברירת מחדל של שעה וחצי.
+const MEET_APPROVE_BEFORE_END_MIN = 15;
+const MEET_DEFAULT_LEN_MIN = 90;
+
+// חותמת זמן → דקות לפי שעון ישראל (אותה סקאלה כמו remindMinutes_); 0 כשאין
+function meetIlMinutes_(v) {
+  const t = meetTimeMs_(v);
+  if (!t) return 0;
+  const s = Utilities.formatDate(new Date(t), MEET_TZ, 'yyyy-MM-dd HH:mm').split(' ');
+  return remindMinutes_(s[0], s[1]);
+}
 
 function meetTimeMs_(v) {
   if (!v) return 0;
@@ -4707,12 +4719,17 @@ function meetApprove(p) {
 // ---------- מייל למדריכ/ה כשהרישום נסגר (ותזכורת אחרי 24 שעות) ----------
 function meetGuideApproveTick_(data, slots, now) {
   const props = PropertiesService.getScriptProperties();
-  remindSummaries_(slots).forEach(x => {
+  // מייל לכל מועד בנפרד, גם כששני מועדים באותו יום (15.10.26, מיטל). התזכורת אחרי 24 שעות — אחת ליום.
+  slots.forEach(s => {
+    const end0 = s.end ? remindMinutes_(s.date, s.end) : 0;
+    const endAt = end0 > s.at ? end0 : s.at + MEET_DEFAULT_LEN_MIN;
+    const first = endAt - MEET_APPROVE_BEFORE_END_MIN;
+    const x = { slug: s.slug, mdate: s.mdate, date: s.date, topic: s.topic, subject: s.subject, last: s.start, startAt: s.at };
     [[0, 'gapr'], [MEET_APPROVE_REMIND_MIN, 'gaprem']].forEach(pair => {
-      const at = x.at + pair[0];
+      const at = first + pair[0];
       if (!(at <= now && now - at < REMIND_WINDOW_MIN)) return;
-      // אותה תבנית מפתח כמו שאר התזכורות — remindCleanup_ מוחק אחרי 3 ימים
-      const key = 'remind_' + pair[1] + '_' + x.slug + '_' + x.date + '_' + x.last.replace(':', '');
+      // אותה תבנית מפתח כמו שאר התזכורות (…_תאריך_HHMM) — remindCleanup_ מוחק אחרי 3 ימים
+      const key = 'remind_' + pair[1] + '_' + x.slug + '_' + x.date + '_' + (pair[0] > 0 ? '0000' : x.last.replace(':', ''));
       if (props.getProperty(key)) return;
       props.setProperty(key, String(Date.now()));
       try { meetSendGuideApprove_(data, x, pair[0] > 0, false); }
@@ -4724,24 +4741,46 @@ function meetGuideApproveTick_(data, slots, now) {
 function meetSendGuideApprove_(data, x, isReminder, isTest) {
   const row = meetFind_(meetId_(x.slug, x.date)) || meetFind_(meetId_(x.slug, x.mdate));
   if (!row) return 'no_meeting';
-  const pending = readAll('meeting_attendance')
-    .filter(r => String(r.meetingId) === String(row.id) && String(r.status) === 'pending')
+  const all = row ? readAll('meeting_attendance').filter(r => String(r.meetingId) === String(row.id)) : [];
+  const pending = all.filter(r => String(r.status) === 'pending')
     .sort((a, b) => String(a.schoolName).localeCompare(String(b.schoolName), 'he') ||
       String(a.teacherName).localeCompare(String(b.teacherName), 'he'));
-  if (!pending.length) return 'none_pending';
-  const to = isTest ? REMIND_TO : guideReplyTo_(x.slug);
-  if (!to) { console.log('meetSendGuideApprove_: אין מייל במערכת למדריכ/ה ' + x.slug); return 'no_email'; }
-
   const g = data.guides[x.slug] || {};
   const subject = x.subject || g.subject || '';
   const dm = d => +d.slice(8, 10) + '.' + +d.slice(5, 7);
+  if (!pending.length) {
+    // 15 דק׳ לפני הסוף ועוד אף שורה — שההדרכה לא תיגמר בלי נוכחות (15.10.26). רק במייל הראשון, לא בתזכורת.
+    // מועד שני באותו מפגש (startAt) — רק שורות מאז שהמועד הזה נפתח, לא של המועד הקודם.
+    const recent = x.startAt ? all.filter(r => meetIlMinutes_(r.selfCheckinAt || r.markedAt || r.updatedAt) >= x.startAt - MEET_AUTO_EARLY_MIN) : all;
+    if (recent.length || isReminder) return 'none_pending';
+    const to0 = isTest ? REMIND_TO : guideReplyTo_(x.slug);
+    if (!to0) return 'no_email';
+    const page = REMIND_SITE + 'guide/?g=' + encodeURIComponent(x.slug) + '&k=' + meetGuideKey_(x.slug);
+    const html0 =
+      '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C">' +
+      '<p style="margin:0 0 10px">שלום ' + remindEsc_(g.name || '') + ',</p>' +
+      '<p style="margin:0 0 10px">ההדרכה של ' + remindEsc_(dm(x.date)) + (x.topic ? ' (' + remindEsc_(x.topic) + ')' : '') +
+      ' מסתיימת בעוד כרבע שעה, ו<b>עדיין לא נרשם אף מורה</b>.</p>' +
+      '<p style="margin:0 0 14px"><b>בבקשה לסמן נוכחות — זה חשוב.</b> בלי נוכחות ההדרכה לא נספרת לאף מורה. ' +
+      'אפשר לבקש מהמורים ללחוץ עכשיו "אני כאן" בקישור הקבוע, או לסמן בדף האישי במנור.</p>' +
+      '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr><td bgcolor="#1f7a5c" style="background:#1f7a5c;border-radius:10px">' +
+      '<a href="' + page + '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:16px;display:inline-block">לסימון נוכחות</a></td></tr></table>' +
+      '<p style="margin:16px 0 0;font-size:12px;color:#8A97A6">מנור · המרחב הפדגוגי</p></div>';
+    const text0 = 'ההדרכה של ' + dm(x.date) + ' מסתיימת בעוד כרבע שעה, ועדיין לא נרשם אף מורה.\n' +
+      'בבקשה לסמן נוכחות — זה חשוב. בלי נוכחות ההדרכה לא נספרת לאף מורה.\n\nלסימון נוכחות: ' + page;
+    merhavMail_({ to: to0, subject: (isTest ? '[בדיקה] ' : '') + 'עדיין אין נוכחות · ' + subject + ' · ' + dm(x.date),
+      body: text0, htmlBody: html0, name: 'מנור', replyTo: MAIL_REPLY_TO });
+    return 'sent_empty';
+  }
+  const to = isTest ? REMIND_TO : guideReplyTo_(x.slug);
+  if (!to) { console.log('meetSendGuideApprove_: אין מייל במערכת למדריכ/ה ' + x.slug); return 'no_email'; }
   const link = meetApproveLink_(row.id);
   const firstAt = Math.min.apply(null, pending.map(r => meetTimeMs_(r.selfCheckinAt) || Date.now()));
   const autoDay = Utilities.formatDate(new Date(firstAt + MEET_AUTO_APPROVE_H * 3600000), MEET_TZ, 'd.M');
   const n = pending.length;
 
   const title = (isTest ? '[בדיקה] ' : '') + (isReminder ? 'תזכורת: ' : '') +
-    'אישור נוכחות · ' + subject + ' · ' + dm(x.date) + ' — ' + n + ' נרשמו';
+    'בבקשה לאשר נוכחות · ' + subject + ' · ' + dm(x.date) + ' — ' + n + ' נרשמו';
   const list = pending.map(r =>
     '<tr><td style="padding:6px 0 6px 12px;border-bottom:1px solid #E3EBEF">' + remindEsc_(r.teacherName) +
     ' <span style="color:#5C7182;font-size:13px">· ' + remindEsc_(r.schoolName) + '</span></td>' +
@@ -4750,16 +4789,17 @@ function meetSendGuideApprove_(data, x, isReminder, isTest) {
   const html =
     '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C">' +
     '<p style="margin:0 0 10px">שלום ' + remindEsc_(g.name || '') + ',</p>' +
-    '<p style="margin:0 0 14px">' + (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'הרישום למפגש נסגר. ') +
-    '<b>' + n + '</b> מורים נרשמו להדרכה של ' + remindEsc_(dm(x.date)) + (x.topic ? ' (' + remindEsc_(x.topic) + ')' : '') + '.</p>' +
+    '<p style="margin:0 0 14px">' + (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'ההדרכה מסתיימת בעוד כרבע שעה. <b>בבקשה לאשר נוכחות — זה חשוב.</b><br>') +
+    '<b>' + n + '</b> מורים נרשמו עד עכשיו להדרכה של ' + remindEsc_(dm(x.date)) + (x.topic ? ' (' + remindEsc_(x.topic) + ')' : '') + '.</p>' +
     // כפתור בטבלה עם bgcolor — Gmail מוחק background שמוגדר רק ב-CSS
     '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr><td bgcolor="#1f7a5c" style="background:#1f7a5c;border-radius:10px">' +
     '<a href="' + link + '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:16px;display:inline-block">אישור כולם (' + n + ')</a></td></tr></table>' +
     '<table style="border-collapse:collapse;width:100%;max-width:520px">' + list + '</table>' +
-    '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">מישהו נרשם ולא היה במפגש? לוחצים "לא נכח/ה" ליד השם, ובדף שנפתח מאשרים את השאר.<br>' +
+    '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">מישהו נרשם ולא היה במפגש? לוחצים "לא נכח/ה" ליד השם, ובדף שנפתח מאשרים את השאר. ' +
+    'מי שנרשם/ה אחרי המייל הזה נכלל/ת גם כן באישור.<br>' +
     'בלי אישור עד ' + remindEsc_(autoDay) + ' — הנוכחות תאושר אוטומטית.</p>' +
     '<p style="margin:16px 0 0;font-size:12px;color:#8A97A6">מנור · המרחב הפדגוגי</p></div>';
-  const text = (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'הרישום למפגש נסגר. ') + n + ' מורים נרשמו להדרכה של ' + dm(x.date) + '.\n\n' +
+  const text = (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'ההדרכה מסתיימת בעוד כרבע שעה. בבקשה לאשר נוכחות — זה חשוב.\n') + n + ' מורים נרשמו עד עכשיו להדרכה של ' + dm(x.date) + '.\n\n' +
     pending.map(r => '· ' + r.teacherName + ' · ' + r.schoolName).join('\n') +
     '\n\nאישור כולם: ' + link + '\n\nבלי אישור עד ' + autoDay + ' — הנוכחות תאושר אוטומטית.';
   merhavMail_({ to: to, subject: title, body: text, htmlBody: html, name: 'מנור', replyTo: MAIL_REPLY_TO });
