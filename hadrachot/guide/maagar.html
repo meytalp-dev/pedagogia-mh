@@ -35,7 +35,10 @@
   .lib-linkform { display:grid; grid-template-columns: 2fr 1.4fr auto; gap:8px; margin-top:8px; }
   @media (max-width: 640px) { .lib-linkform { grid-template-columns: 1fr; } }
   .lib-drive { display:flex; align-items:center; gap:10px; background:#EEF6F3; border:1px solid #CFE5DC; border-radius:12px; padding:10px 14px; margin-bottom:12px; font-size:13.5px; }
-  .lib-drive a { font-weight:700; }
+  .lib-drive { flex-wrap:wrap; }
+  .lib-drive > svg { width:20px; height:20px; flex:none; color:var(--primary,#1A5365); }
+  .lib-drive-title { font-weight:700; }
+  .lib-drive .lib-drive-open { padding:8px 16px; font-size:14px; text-decoration:none; }
   .lib-drive-edit { margin-inline-start:auto; background:none; border:none; color:var(--text-muted); font-family:inherit; font-size:12.5px; text-decoration:underline; cursor:pointer; }
   .lib-drive-ask { flex-direction:column; align-items:stretch; gap:8px; }
   .lib-drive-q { display:flex; gap:10px; align-items:flex-start; line-height:1.55; }
@@ -142,6 +145,6 @@
 <script src="../assets/guides.js?v=20261007a"></script>
 <script src="../assets/plans.js?v=20261015b"></script>
 <script src="../assets/plan-changes.js"></script>
-<script src="library.js?v=20260928d"></script>
+<script src="library.js?v=20261015a"></script>
 </body>
 </html>

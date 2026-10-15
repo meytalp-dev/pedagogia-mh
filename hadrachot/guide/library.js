@@ -141,8 +141,8 @@
     driveSig = sig;
     if (loadFailed && !fixed) { box.innerHTML = ''; return; }
     if (url) {
-      box.innerHTML = `<div class="lib-drive">${ICON_FILE}<span>תיקיית החומרים שלך בדרייב</span>
-        <a href="${esc(url)}" target="_blank" rel="noopener">פתיחה</a>
+      box.innerHTML = `<div class="lib-drive">${ICON_FILE}<span class="lib-drive-title">תיקיית החומרים שלך בדרייב</span>
+        <a class="btn btn-primary lib-drive-open" href="${esc(url)}" target="_blank" rel="noopener">פתיחת התיקייה בדרייב</a>
         ${!fixed ? '<button type="button" class="lib-drive-edit" id="lib-drive-edit">החלפת הקישור</button>' : ''}</div>`;
       const ed = document.getElementById('lib-drive-edit');
       if (ed) ed.addEventListener('click', () => { driveSig = 'edit'; box.innerHTML = driveFormHtml(url); bindDriveForm(); });
