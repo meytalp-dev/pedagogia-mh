@@ -26,7 +26,7 @@
   var BACKEND_URL = String(
     window.OGEN_WIDGET_BACKEND ||
     window.OGEN_BACKEND_URL ||
-    "https://script.google.com/macros/s/AKfycbzggpSrv4lHq6RF4784hJKEp1cTktjUmZDZ8TliicXYjfM_cJ4xoRYsIVa-8y7EgvYl/exec"
+    "https://script.google.com/macros/s/AKfycbwyhXVWRnYyOPIaCmAco4_eT7hGGOhQWONiWE4xvtFjaT1ZsWePtREtZTGatY4ujIiRoQ/exec"
   ).trim();
 
   /* מזהה מבקר אקראי שנשמר בדפדפן בלבד — משמש את ה-backend להגבלת קצב,

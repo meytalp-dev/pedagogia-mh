@@ -86,7 +86,7 @@
   /* ---------- טעינת תוכן ---------- */
   /* שיעור שנבנה במחולל (11.10.26) — מזהה של 32 תווים, נשמר בשרת "מחולל - מוח".
      השרת מחזיר גרסת תלמיד בלבד: בלי מערך השיעור ובלי המחוון. */
-  LK.GEN = "https://script.google.com/macros/s/AKfycby743c3fzNYup3WE13jGYdXzfEq6A5jJvGGcXKf6jm5rqUaaZW46fSk2putJwXmAkGdAg/exec";
+  LK.GEN = "https://script.google.com/macros/s/AKfycbwAAve_lLJpWGxxh1gUHmJ_1aZ4J8bt7ush3WQYcgOfdCtWcz1TxOn1_YhUn0K-dnlr3w/exec";
   LK.load = function (id) {
     if (/^[a-f0-9]{32}$/.test(String(id))) {
       return fetch(LK.GEN + "?lesson=" + id).then(function (r) { return r.json(); })
