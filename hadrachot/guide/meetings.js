@@ -64,6 +64,7 @@
   let sel = null;           // המועד שהסימון הידני שלו פתוח — { date, topic, source, subject, label, slots }
   let openMonths = null;    // חודשים פתוחים ('YYYY-MM'); null = ברירת המחדל (החודש הנוכחי)
   let monthsSig = '';
+  const monthSearches = {};
   let edits = {};           // entryKey → 'present' | 'absent' | 'clear'
   let filter = 'all';
   let search = '';
@@ -515,7 +516,7 @@
       if (r.status === 'present' && ids.has(String(r.meetingId))) present.add(String(r.teacherId));
     });
     const indAll = window.MEET_indMonths ? window.MEET_indMonths() : null;   // null = השעות עוד לא נטענו
-    const byName = (a, b) => String(a.school).localeCompare(String(b.school), 'he') || String(a.name).localeCompare(String(b.name), 'he');
+    const byName = (a, b) => String(a.name).localeCompare(String(b.name), 'he') || String(a.school).localeCompare(String(b.school), 'he');
     const att = [], not = [], ind = [];
     groups.forEach(g => {
       const was = g.ids.some(id => present.has(id));
@@ -608,7 +609,7 @@
     return `
       <div class="mh-list ${cls}">
         <h4><span>${title}</span><span class="c">${arr.length}</span></h4>
-        ${arr.length ? `<ul class="mh-people">${arr.map(g => `<li><b>${esc(g.name)}</b><span>${esc(g.school)}</span></li>`).join('')}</ul>`
+        ${arr.length ? `<ul class="mh-people">${arr.map(g => `<li data-person-search="${esc(norm(g.name + ' ' + g.school))}"><b>${esc(g.name)}</b><span>${esc(g.school)}</span></li>`).join('')}</ul>`
           : `<div class="mh-empty">${empty}</div>`}
         ${copy && arr.length ? `<button type="button" class="mh-copy" data-copy="${esc(arr.map(g => g.name + (g.school ? ' — ' + g.school : '')).join('\n'))}">העתקת הרשימה</button>` : ''}
       </div>`;
@@ -627,6 +628,11 @@
         </summary>
         <div class="mm-rows">
           ${ms ? `
+          <div class="mh-search" style="margin:0 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <label for="month-search-${k}">חיפוש שם או בית ספר</label>
+            <input type="search" class="input" id="month-search-${k}" value="${esc(monthSearches[k] || '')}" data-month-search placeholder="הקלידו שם או בית ספר" style="flex:1 1 220px;min-width:0;max-width:100%;">
+            <span data-match-count role="status" aria-live="polite"></span>
+          </div>
           <div class="mh-lists">
             ${peopleHtml(ms.att, 'ok', 'השתתפו החודש', 'עוד אין נוכחות מאושרת החודש', false)}
             ${peopleHtml(ms.not, 'bad', ms.current ? 'עוד לא השתתפו' : 'לא השתתפו', 'כל הקבוצה השתתפה החודש', true)}
@@ -718,6 +724,25 @@
       box.querySelectorAll('details.mm').forEach(d => d.addEventListener('toggle', () => {
         if (d.open) openMonths.add(d.dataset.month); else openMonths.delete(d.dataset.month);
       }));
+      box.querySelectorAll('[data-month-search]').forEach(input => {
+        const applySearch = () => {
+          const month = input.closest('details.mm');
+          monthSearches[month.dataset.month] = input.value;
+          const query = norm(input.value).toLocaleLowerCase('he');
+          const rows = Array.from(month.querySelectorAll('[data-person-search]'));
+          let matches = 0;
+          rows.forEach(row => {
+            const shown = !query || row.dataset.personSearch.toLocaleLowerCase('he').includes(query);
+            row.hidden = !shown;
+            row.style.display = shown ? '' : 'none';
+            if (shown) matches++;
+          });
+          month.querySelector('[data-match-count]').textContent = query
+            ? matches + ' תוצאות תואמות ברשימות (הספירות הכוללות לא השתנו)' : '';
+        };
+        input.addEventListener('input', applySearch);
+        applySearch();
+      });
       box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => openRegistration(sessionByDate(b.dataset.open), b)));
       box.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeRegistration(b.dataset.close, b)));
       box.querySelectorAll('[data-panel], [data-hpanel]').forEach(b => b.addEventListener('click', () => {
