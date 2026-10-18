@@ -5,7 +5,7 @@
    מדבר עם app.js דרך window.TZOHAR. */
 (function () {
   'use strict';
-  var KEREN_EXEC = 'https://script.google.com/macros/s/AKfycbzvvBo-TR3sTUWpZSP7ChFJDJxUZ3ZNskiLaXXce4SydV9tW3w_0sZ79JBIH3VVvntZ/exec';   /* ריק = קרן מוסתרת (מתג חירום) */
+  var KEREN_EXEC = 'https://script.google.com/macros/s/AKfycbzsFxadR0rZsn_9kNI7k-pvZ1TXvZXTM6KxbhHMV-ox2ZyTdMcGKeCTqNuvMJAP1OCc/exec';   /* ריק = קרן מוסתרת (מתג חירום) */
   var T = window.TZOHAR;
   if (!T) return;
   var $ = function (id) { return document.getElementById(id); };
