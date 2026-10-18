@@ -64,9 +64,10 @@ window.TS_GUIDES = {
     zoom: ''
   },
   moria: {
+    /* המגזר החרדי ירד ממנה 18.10.26 — מורי העברית החרדים עברו ליצחק שמש */
     name: 'מוריה פלינט',
     subject: 'עברית',
-    sectors: ['kelali', 'haredi'],
+    sectors: ['kelali'],
     inspector: 'liat',
     drive: 'https://drive.google.com/drive/folders/1uQKR8AmWZCv8-s6mD29SI0ngefxRjx-E?usp=sharing',
     /* 1.9.26 הוסר מסיבות אבטחה; 14.10.26 מיטל ביקשה להחזיר את הקישור הקבוע לתזכורות, בידיעה שהוא גלוי בקובץ */
@@ -144,6 +145,16 @@ window.TS_GUIDES = {
        שהיא מפקחת הספרות הארצית, ולכן שרה מופיעה במבט של יששכר. */
     name: 'שרה ברדה',
     subject: 'ספרות',
+    sectors: ['haredi'],
+    inspector: 'yisachar',
+    drive: '',
+    zoom: ''
+  },
+  yitzhak: {
+    /* נוסף 18.10.26 — מדריך העברית במגזר החרדי. מורי העברית החרדים עוברים
+       אליו ממוריה פלינט (שנשארת בכללי בלבד). המפקח: יששכר חפץ (קביעת מיטל). */
+    name: 'יצחק שמש',
+    subject: 'עברית',
     sectors: ['haredi'],
     inspector: 'yisachar',
     drive: '',
@@ -340,7 +351,10 @@ window.TS_INSPECTORS = {
       { subject: 'תנ"ך',      sectors: ['kelali', 'haredi', 'arab'] },
       { subject: 'היסטוריה', sectors: ['haredi'] },
       { subject: 'אזרחות',   sectors: ['haredi'] },
-      { subject: 'ספרות',    sectors: ['haredi'] }
+      { subject: 'ספרות',    sectors: ['haredi'] },
+      /* 18.10.26 (מיטל): יששכר הוא המפקח של יצחק שמש — עברית חרדית חזרה למבט שלו
+         (ליאת ממשיכה לראות אותה גם כן) */
+      { subject: 'עברית',    sectors: ['haredi'] }
     ]
   },
   revital: {
