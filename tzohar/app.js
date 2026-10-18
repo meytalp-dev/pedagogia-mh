@@ -291,9 +291,9 @@
     else if (n.missing.length) {
       var nm = n.missing.map(function (m) { return m.split(' — ')[0]; });
       out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'gap',
-        d: 'הנספח הוגש ב-' + n.ts + '. חסרים: ' + nm.join(', ') + '.', acts: a(LINK.nispach, 'לעדכון הנספח', 1), link: 'nispach',
+        d: 'הנספח הוגש ב-' + n.ts + '. חסרים: ' + nm.join(', ') + '.', acts: '<button type="button" class="btn primary sm" data-nsadd="1">הוספת בעל/ת תפקיד</button>', link: 'nispach',
         html: esc('הנספח הוגש ב-' + n.ts + '.') + whoBox('nispach', (nm.length === 1 ? 'חסר תפקיד אחד' : 'חסרים ' + nm.length + ' תפקידים') + ' — אילו?',
-          nm.map(function (m) { return [esc(m), m]; }), 'תפקידים שחסרים בנספח בעלי התפקידים — ' + D.school.name + ':', 'לעדכון הנספח: ' + LINK.nispach) });
+          nm.map(function (m) { return [esc(m), m]; }), 'תפקידים שחסרים בנספח בעלי התפקידים — ' + D.school.name + ':', '') });
     }
     else out.push({ k: 'nispach', t: 'נספח בעלי התפקידים', st: 'done', d: 'הוגש ב-' + n.ts + '. כל התפקידים מאוישים.' });
     /* השתלמות מוסדית */
@@ -413,6 +413,8 @@
     /* כלים (tools.js): נתון שנטען ברקע לא מצייר מחדש — לא עוצר הקלטה ולא מוחק טקסט שמקלידים */
     if (window.TZTOOLS && TZTOOLS.owns(PAGE) && !force && $('tzTool') && $('tzTool').getAttribute('data-p') === PAGE) return;
     /* הצ'ק ליסט: נתון שנטען ברקע לא סוגר חלונית יומן/מייל פתוחה או שדה שמקלידים בו */
+    /* הוספת בעל/ת תפקיד (nsadd.js): נתון שנטען ברקע לא מוחק טופס פתוח */
+    if (PAGE === 's' && !force && window.NSADD && NSADD.busy()) return;
     if ((PAGE === 'o' || PAGE === 'c') && !force && document.querySelector('#main .ck-p:not([hidden]), #main .ck-add input:focus, #ckText:not(:placeholder-shown)')) return;
     var h = '';
     if (IS_ADMIN) h += '<div class="asbar">תצוגת אדמין: <b>' + esc(D.school.name) + '</b> · כמו ש' + (isRakaz() ? 'הרכז/ת' : 'המנהל/ת') + ' רואה' +
@@ -597,7 +599,7 @@
     else if (!n.submitted) { rS = tag('', 'הנספח לא הוגש'); rB = '<div class="empty">הנספח עוד לא הוגש.</div><div class="acts"><a class="btn primary sm" href="' + LINK.nispach + '" target="_blank" rel="noopener">להגשת הנספח' + I.ext + '</a></div>'; }
     else {
       rS = n.people.length + ' · ' + (n.missing.length ? tag('', n.missing.length === 1 ? 'חסר תפקיד אחד' : n.missing.length + ' תפקידים חסרים') : tag('ok', 'מאויש'));
-      rB = '<div class="small" style="margin-bottom:10px">הנספח הוגש ' + esc(n.ts) + ' · <a href="' + LINK.nispach + '" target="_blank" rel="noopener">לעדכון הנספח</a></div>';
+      rB = '<div class="small" style="margin-bottom:10px">הנספח הוגש ' + esc(n.ts) + '</div>' + (window.NSADD ? NSADD.box(n) : '');
       if (n.missing.length) rB += '<div class="miss">' + n.missing.map(function (x) { return tag('', 'חסר: ' + x.split(' — ')[0]); }).join('') + '</div>';
       rB += n.people.map(function (q) { return person(String(q.role).split(' — ')[0] + (q.detail ? ' · ' + q.detail : ''), q.name, q.phone, q.email); }).join('');
     }

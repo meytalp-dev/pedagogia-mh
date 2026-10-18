@@ -32,10 +32,12 @@
   function late(s) { return s && s < iso(new Date()); }
 
   /* ===== קישורים — מפתח → כתובת או עמוד בנטע (ניצה מחזירה רק מפתח) ===== */
+  /* נספח שכבר הוגש — לא שולחים לטופס המלא (נפתח ריק ומוחק הכול), אלא להוספה בצוהר (nsadd.js, 18.10.26) */
+  function nsDone() { var d = T.data && T.data(); return !!(d && d.nispach && d.nispach.submitted && window.NSADD); }
   function linkOf(k) {
     var L = T.links();
     return {
-      nispach:     { url: L.nispach, label: 'לנספח בעלי התפקידים' },
+      nispach:     nsDone() ? { ns: 1, label: 'הוספת בעל/ת תפקיד' } : { url: L.nispach, label: 'לנספח בעלי התפקידים' },
       bs:          { url: L.bs, label: 'להגשת הבקשה' },
       rg:          { url: L.rg, label: 'לטופס הרישום' },
       menor:       { url: L.menor, label: 'מי עוד לא נרשם במנור' },
@@ -46,6 +48,7 @@
   }
   function linkBtn(k, cls) {
     var l = linkOf(k); if (!l) return '';
+    if (l.ns) return '<button type="button" class="btn ' + (cls || 'primary') + ' sm" data-nsadd="1">' + esc(l.label) + '</button>';
     return l.url ? '<a class="btn ' + (cls || 'primary') + ' sm" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + IC.ext + '</a>'
                  : '<button type="button" class="btn ' + (cls || 'primary') + ' sm" data-go="' + l.go + '">' + esc(l.label) + '</button>';
   }
