@@ -61,7 +61,7 @@ window.TS_GUIDES = {
     sectors: ['kelali', 'haredi'],
     inspector: 'liat',
     drive: 'https://drive.google.com/drive/folders/1XhUtPHFz2Pv2HrNj6X6TtB-nqp3kzmMJ?usp=sharing',
-    zoom: ''
+    zoom: 'https://edu-il.zoom.us/j/3763121771'
   },
   moria: {
     /* המגזר החרדי ירד ממנה 18.10.26 — מורי העברית החרדים עברו ליצחק שמש */
