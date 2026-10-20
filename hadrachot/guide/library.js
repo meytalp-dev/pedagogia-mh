@@ -335,6 +335,33 @@
     search.addEventListener('input', () => { libSearch = search.value; renderFiles(); });
     document.getElementById('lib-link-add').addEventListener('click', addLink);
     renderDriveCard();
+    initTrack();
+  }
+
+  /* נתיב לאתר המרחב הפדגוגי (20.10.26): בגרות/גמר/שניהם נשמר עם כל קובץ וקישור.
+     רק למדריכי תחומי הדעת שיש להם עמוד באתר; מדריכ/ה של נתיב אחד — בלי שאלה. */
+  const SITE_SUBJECTS = ['מתמטיקה', 'אנגלית', 'עברית', 'ספרות', 'היסטוריה', 'אזרחות', 'תנ"ך'];
+  const TRACK_LS = 'ts.lib.track.' + SLUG;
+  function initTrack() {
+    const box = document.getElementById('lib-track');
+    if (!box) return;
+    const subs = GUIDE_CFG.subjects && GUIDE_CFG.subjects.length ? GUIDE_CFG.subjects : [GUIDE_CFG.subject];
+    const single = GUIDE_CFG.tracks && GUIDE_CFG.tracks.length === 1;
+    if (single || !subs.some(s => SITE_SUBJECTS.indexOf(s) >= 0)) return;
+    let saved = '';
+    try { saved = localStorage.getItem(TRACK_LS) || ''; } catch (e) { /* בלי זיכרון */ }
+    box.querySelectorAll('input[name="lib-track"]').forEach(r => {
+      if (saved && r.value === saved) r.checked = true;
+      r.addEventListener('change', () => { try { localStorage.setItem(TRACK_LS, r.value); } catch (e) { /* בלי זיכרון */ } });
+    });
+    box.hidden = false;
+  }
+  function pickedTrack() {
+    if (GUIDE_CFG.tracks && GUIDE_CFG.tracks.length === 1) return GUIDE_CFG.tracks[0] === 'gmar' ? 'gmar' : 'bagrut';
+    const box = document.getElementById('lib-track');
+    if (!box || box.hidden) return '';
+    const r = box.querySelector('input[name="lib-track"]:checked');
+    return r ? r.value : 'both';
   }
 
   async function addLink() {
@@ -355,7 +382,7 @@
     status.textContent = 'מוסיפה…';
     const res = await TS.apiPost('guide.file.link', Object.assign({}, auth, {
       guideName: GUIDE_CFG.name || '', fileName: name || url, fileUrl: url, folder: folder,
-      mimeType: 'text/uri-list', byName: GUIDE_CFG.name || ''
+      mimeType: 'text/uri-list', byName: GUIDE_CFG.name || '', track: pickedTrack()
     }));
     await loadSpace();
     if ((res && res.ok) || data.files.some(f => f.fileUrl === url)) {
@@ -396,7 +423,8 @@
         data: b64,
         folder: folder,
         byName: GUIDE_CFG.name || '',
-        byRole: 'guide'
+        byRole: 'guide',
+        track: pickedTrack()
       });
       if (res && res.ok) done++;
       else if (res && res.error && !res.transient && !/timeout|http_|bad_response|Failed to fetch/i.test(res.error)) {

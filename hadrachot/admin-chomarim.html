@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>חומרי המדריכים לאתר — מנור</title>
+<link rel="stylesheet" href="assets/fonts-local.css?v=20260924">
+<link rel="stylesheet" href="assets/styles.css?v=20260924g">
+<link rel="icon" type="image/svg+xml" href="assets/menor-mark.svg">
+<!--
+  חומרי המדריכים לאתר (20.10.26, מיטל): הקבצים שמדריכי תחומי הדעת העלו למאגר שלהם במנור
+  נכנסים לעמודי המקצוע באתר המרחב הפדגוגי (<תחום>-bagrut / -gmar.html, chomarim-madrichim.js)
+  רק אחרי אישור כאן. לכל קובץ: נתיב (בגרות/גמר/שניהם) ו"לאתר" / "לא לאתר".
+  שרת: site.materials.admin / site.materials.set (טוקן אדמין ארצי).
+-->
+<style>
+  [hidden] { display: none !important; }
+  .ch-note { color: var(--text-2); font-size: 14px; line-height: 1.6; margin: 0 0 14px; }
+  .ch-sum { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .ch-f { font: inherit; font-size: 14px; font-weight: 700; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; }
+  .ch-f[aria-pressed="true"] { background: var(--primary, #1A5365); border-color: var(--primary, #1A5365); color: #fff; }
+  .ch-f b { font-variant-numeric: tabular-nums; margin-inline-start: 4px; }
+  .ch-subj { margin: 26px 0 8px; font-size: 18px; font-weight: 800; }
+  .ch-guide { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin: 0 0 12px; }
+  .ch-guide-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .ch-guide-h b { font-size: 15px; }
+  .ch-guide-h small { color: var(--text-2); font-size: 13px; }
+  .ch-folder { margin: 10px 0 4px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text-2); }
+  .ch-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 9px 0; border-top: 1px solid var(--border); }
+  .ch-row:first-of-type { border-top: 0; }
+  .ch-name { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; font-size: 14px; }
+  .ch-name a { color: inherit; }
+  .ch-name small { display: block; color: var(--text-2); font-size: 12px; }
+  .ch-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .ch-ctl select { font: inherit; font-size: 13.5px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .ch-btn { font: inherit; font-size: 13.5px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; white-space: nowrap; }
+  .ch-btn.yes[aria-pressed="true"] { background: #E6F4EF; border-color: #1f7a5c; color: #1f7a5c; }
+  .ch-btn.no[aria-pressed="true"] { background: var(--err-soft, #FDECEC); border-color: var(--err, #B3261E); color: var(--err, #B3261E); }
+  .ch-btn.all { font-size: 12.5px; padding: 4px 10px; }
+  .ch-btn:disabled { opacity: .5; cursor: wait; }
+  .ch-chip { font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #FFF4DE; color: #8A5A00; white-space: nowrap; }
+  .ch-empty { color: var(--text-2); font-size: 14px; padding: 12px 2px; }
+  .ch-status { position: sticky; bottom: 12px; margin-top: 16px; text-align: center; }
+  .ch-status span { display: inline-block; background: var(--text, #143E4C); color: #fff; border-radius: 10px; padding: 8px 14px; font-size: 14px; }
+  @media (max-width: 560px) {
+    .ch-guide { padding: 10px 12px; }
+    .ch-ctl { width: 100%; }
+    .ch-ctl select { flex: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <a href="hayom.html" style="display:flex;align-items:center;color:var(--text-3);text-decoration:none;" title="להיום שלי">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="brand-stack">
+        <span class="ministry">משרד העבודה — אדמין</span>
+        <span class="system-name">חומרי המדריכים לאתר</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 style="margin: 24px 0 6px;">חומרי המדריכים לאתר</h1>
+    <p class="ch-note">כל קובץ שמדריך/ה של תחום דעת העלה למאגר במנור. מה שמסומן <b>"לאתר"</b> מופיע במקטע "חומרי למידה מהמדריכים"
+      בעמוד המקצוע באתר המרחב הפדגוגי, בנתיב שנבחר. לפני אישור: לפתוח קבצים שעלולים להכיל שמות, ציונים או חומר של בית ספר אחד.
+      שינוי מגיע לאתר תוך כמה דקות.</p>
+
+    <div class="ch-sum" id="ch-sum" role="group" aria-label="סינון"></div>
+    <label style="display:inline-flex;gap:8px;align-items:center;font-size:14px;margin-bottom:6px">תחום דעת:
+      <select id="ch-subject" style="font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--border);border-radius:8px"><option value="">הכול</option></select>
+    </label>
+    <div id="ch-list"><div class="ch-empty">טוען…</div></div>
+    <div class="ch-status" aria-live="polite"><span id="ch-status" hidden></span></div>
+  </main>
+
+  <footer style="text-align:center; padding: 32px 16px; color: var(--text-3); font-size: 13px;">
+    מנור · המנהל להכשרה מקצועית · משרד העבודה
+  </footer>
+</div>
+
+<script src="assets/app.js?v=20260929r"></script>
+<script src="assets/auth-guard.js" data-roles="ministry_admin"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const TRACKS = [['bagrut', 'בגרות'], ['gmar', 'גמר'], ['both', 'בגרות וגמר']];
+  const SECT = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
+  const FILTERS = [['pending', 'ממתינים'], ['approved', 'באתר'], ['rejected', 'לא לאתר'], ['all', 'הכול']];
+  let FILES = [];
+  let filter = 'pending';
+  let statusTimer = 0;
+
+  function say(t, keep) {
+    const el = $('ch-status');
+    el.textContent = t; el.hidden = !t;
+    clearTimeout(statusTimer);
+    if (t && !keep) statusTimer = setTimeout(() => { el.hidden = true; }, 3500);
+  }
+
+  // קובץ שכדאי לפתוח לפני אישור — גיליונות ורשימות (שמות, ציונים)
+  function risky(f) {
+    return /\.(xlsx?|csv)$/i.test(f.name) || /sheet/.test(f.mime) || /רשימ|ציונ|נתונ|מבחן פנימי|ת"ז/.test(f.name + ' ' + f.folder);
+  }
+
+  async function load() {
+    const r = await TS.api('site.materials.admin', {}, { cache: 'no' });
+    if (!r || !r.ok || !r.data) {
+      const err = (r && r.error) || '';
+      $('ch-list').innerHTML = '<div class="ch-empty">' + (/unauthenticated|forbidden/.test(err)
+        ? 'צריך להתחבר כאדמין. <a href="./?next=admin-chomarim.html">כניסה</a>'
+        : 'השרת לא ענה. לרענן בעוד רגע.') + '</div>';
+      return;
+    }
+    FILES = r.data.files || [];
+    const subs = Array.from(new Set(FILES.map(f => f.subject))).sort((a, b) => a.localeCompare(b, 'he'));
+    const sel = $('ch-subject'), cur = sel.value;
+    sel.innerHTML = '<option value="">הכול</option>' + subs.map(s => '<option' + (s === cur ? ' selected' : '') + '>' + esc(s) + '</option>').join('');
+    if (!FILES.some(f => f.status === 'pending') && filter === 'pending') filter = 'all';
+    render();
+  }
+
+  function render() {
+    const count = k => FILES.filter(f => k === 'all' || f.status === k).length;
+    $('ch-sum').innerHTML = FILTERS.map(([k, t]) =>
+      '<button type="button" class="ch-f" data-f="' + k + '" aria-pressed="' + (filter === k) + '">' + t + '<b>' + count(k) + '</b></button>').join('');
+    const subj = $('ch-subject').value;
+    const list = FILES.filter(f => (filter === 'all' || f.status === filter) && (!subj || f.subject === subj));
+    if (!list.length) {
+      $('ch-list').innerHTML = '<div class="ch-empty">' + (filter === 'pending' ? 'אין קבצים שממתינים לאישור.' : 'אין כאן קבצים.') + '</div>';
+      return;
+    }
+    const tree = {};
+    list.forEach(f => {
+      const g = ((tree[f.subject] = tree[f.subject] || {})[f.guideSlug] = tree[f.subject][f.guideSlug] || { name: f.guide, sectors: f.sectors, folders: {} });
+      (g.folders[f.folder || 'כללי'] = g.folders[f.folder || 'כללי'] || []).push(f);
+    });
+    $('ch-list').innerHTML = Object.keys(tree).sort((a, b) => a.localeCompare(b, 'he')).map(s =>
+      '<h2 class="ch-subj">' + esc(s) + '</h2>' + Object.keys(tree[s]).map(slug => {
+        const g = tree[s][slug];
+        const all = Object.values(g.folders).flat();
+        return '<section class="ch-guide"><div class="ch-guide-h"><div><b>' + esc(g.name) + '</b> <small>· ' +
+          esc((g.sectors || []).map(x => SECT[x] || x).join(' / ')) + ' · ' + all.length + ' קבצים</small></div>' +
+          bulkBtns(all.map(f => f.id)) + '</div>' +
+          Object.keys(g.folders).sort((a, b) => a === 'כללי' ? 1 : b === 'כללי' ? -1 : a.localeCompare(b, 'he', { numeric: true })).map(fo => {
+            const files = g.folders[fo].sort((a, b) => a.name.localeCompare(b.name, 'he', { numeric: true }));
+            return '<div class="ch-folder"><span>תיקייה: ' + esc(fo) + ' (' + files.length + ')</span>' +
+              (Object.keys(g.folders).length > 1 ? bulkBtns(files.map(f => f.id)) : '') + '</div>' + files.map(rowHtml).join('');
+          }).join('') + '</section>';
+      }).join('')).join('');
+  }
+
+  function bulkBtns(ids) {
+    return '<span class="ch-ctl"><button type="button" class="ch-btn all" data-bulk="approved" data-ids="' + esc(ids.join(',')) + '">הכול לאתר</button>' +
+      '<button type="button" class="ch-btn all" data-bulk="rejected" data-ids="' + esc(ids.join(',')) + '">הכול לא לאתר</button></span>';
+  }
+
+  function rowHtml(f) {
+    const tr = f.track || f.suggested;
+    const subjSel = f.subjects && f.subjects.length > 1
+      ? '<select data-subj="' + esc(f.id) + '" aria-label="תחום דעת">' + f.subjects.map(s => '<option' + (s === f.subject ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select>' : '';
+    return '<div class="ch-row" data-row="' + esc(f.id) + '">' +
+      '<div class="ch-name">' + (f.url ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.name) + '</a>' : esc(f.name)) +
+      (risky(f) ? ' <span class="ch-chip">לפתוח לפני אישור</span>' : '') +
+      '<small>' + esc(f.date) + (f.track ? '' : ' · נתיב מוצע לפי השם') + '</small></div>' +
+      '<div class="ch-ctl">' + subjSel +
+      '<select data-track="' + esc(f.id) + '" aria-label="נתיב">' + TRACKS.map(([k, t]) => '<option value="' + k + '"' + (k === tr ? ' selected' : '') + '>' + t + '</option>').join('') + '</select>' +
+      '<button type="button" class="ch-btn yes" data-set="approved" data-id="' + esc(f.id) + '" aria-pressed="' + (f.status === 'approved') + '">לאתר</button>' +
+      '<button type="button" class="ch-btn no" data-set="rejected" data-id="' + esc(f.id) + '" aria-pressed="' + (f.status === 'rejected') + '">לא לאתר</button>' +
+      '</div></div>';
+  }
+
+  // כל שמירה שולחת גם את הנתיב שמוצג — כך הצעה שאושרה נשמרת כנתיב קבוע
+  function itemFor(id, status) {
+    const f = FILES.find(x => x.id === id);
+    const tSel = document.querySelector('select[data-track="' + CSS.escape(id) + '"]');
+    const sSel = document.querySelector('select[data-subj="' + CSS.escape(id) + '"]');
+    const it = { id: id, track: tSel ? tSel.value : (f.track || f.suggested) };
+    if (status) it.status = status;
+    if (sSel) it.subject = sSel.value;
+    return it;
+  }
+
+  async function save(items, btns) {
+    btns.forEach(b => { b.disabled = true; });
+    say('שומרת…', true);
+    const r = await TS.apiPost('site.materials.set', { items: items });
+    btns.forEach(b => { b.disabled = false; });
+    if (r && r.ok) {
+      items.forEach(it => {
+        const f = FILES.find(x => x.id === it.id);
+        if (!f) return;
+        if (it.status) f.status = it.status;
+        f.track = it.track;
+        if (it.subject) f.subject = it.subject;
+      });
+      say(items.length === 1 ? 'נשמר' : 'נשמרו ' + items.length + ' קבצים');
+      render();
+      return;
+    }
+    // תשובה שאבדה — בודקים מה נשמר בפועל
+    say(r && r.error === 'changed_meanwhile' ? 'מדריך/ה שינה/תה קבצים באותו רגע. טוענת מחדש — לנסות שוב.' : 'לא בטוח שנשמר. טוענת מחדש…', true);
+    await load();
+    say('');
+  }
+
+  document.addEventListener('click', e => {
+    const f = e.target.closest('[data-f]');
+    if (f) { filter = f.dataset.f; render(); return; }
+    const one = e.target.closest('[data-set]');
+    if (one) { save([itemFor(one.dataset.id, one.dataset.set)], [one]); return; }
+    const bulk = e.target.closest('[data-bulk]');
+    if (bulk) {
+      const ids = bulk.dataset.ids.split(',').filter(Boolean);
+      if (bulk.dataset.bulk === 'approved' && ids.length > 1 && !confirm('לפרסם באתר ' + ids.length + ' קבצים? (קבצים שמסומנים "לפתוח לפני אישור" כדאי לבדוק קודם)')) return;
+      save(ids.map(id => itemFor(id, bulk.dataset.bulk)), [bulk]);
+    }
+  });
+  // שינוי נתיב/תחום לקובץ שכבר הוחלט עליו — נשמר מיד; לממתין — נשמר עם ההחלטה
+  document.addEventListener('change', e => {
+    if (e.target.id === 'ch-subject') { render(); return; }
+    const id = e.target.dataset.track || e.target.dataset.subj;
+    if (!id) return;
+    const f = FILES.find(x => x.id === id);
+    if (f && f.status !== 'pending') save([itemFor(id, '')], [e.target]);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

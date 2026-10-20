@@ -30,6 +30,11 @@
   .lib-upload { background:var(--surface-soft); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px; }
   .lib-to { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; margin-bottom:8px; }
   .lib-to .select { flex:1; max-width:420px; }
+  .lib-track { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; margin-bottom:10px; font-size:14px; }
+  .lib-track[hidden] { display:none; }
+  .lib-track-q { font-weight:700; }
+  .lib-track label { display:inline-flex; align-items:center; gap:5px; cursor:pointer; }
+  .lib-track-note { flex-basis:100%; font-size:12.5px; color:var(--text-muted); line-height:1.5; }
   .lib-addlink { margin-top:8px; font-size:13px; }
   .lib-addlink summary { cursor:pointer; color:var(--primary,#1A5365); font-weight:600; }
   .lib-linkform { display:grid; grid-template-columns: 2fr 1.4fr auto; gap:8px; margin-top:8px; }
@@ -112,6 +117,14 @@
       <div class="gsec-head"><h2><svg class="gsec-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></h2><span class="n zero" id="lib-count">0</span></div>
       <div id="lib-drive"></div>
       <div class="lib-upload">
+        <!-- נתיב לאתר המרחב הפדגוגי (20.10.26) — library.js ממלא ומציג רק למדריכי תחומי הדעת -->
+        <div class="lib-track" id="lib-track" hidden>
+          <span class="lib-track-q">החומר מתאים ל:</span>
+          <label><input type="radio" name="lib-track" value="bagrut"> בגרות</label>
+          <label><input type="radio" name="lib-track" value="gmar"> גמר</label>
+          <label><input type="radio" name="lib-track" value="both" checked> שניהם</label>
+          <div class="lib-track-note">חומרים שתעלו עשויים להופיע גם באתר המרחב הפדגוגי, בעמוד המקצוע ובנתיב שבחרתם — רק אחרי אישור.</div>
+        </div>
         <div class="drop-zone" id="gdrop-zone">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
           <div class="dz-main">העלאת חומר חדש — גררי לכאן או לחצי לבחירה</div>
@@ -145,6 +158,6 @@
 <script src="../assets/guides.js?v=20261007a"></script>
 <script src="../assets/plans.js?v=20261020a"></script>
 <script src="../assets/plan-changes.js"></script>
-<script src="library.js?v=20261015a"></script>
+<script src="library.js?v=20261020a"></script>
 </body>
 </html>

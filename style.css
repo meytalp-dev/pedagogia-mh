@@ -1122,3 +1122,31 @@ body.pm-open{overflow:hidden}
 .pm-bar-gov .pm-hb{height:32px;padding:0 12px;font-size:var(--fs-xs)}
 .pm-bar-gov .pm-ogen img{width:22px;height:22px}
 @media(max-width:720px){.pmh-widgets .nav .brand{flex:1 1 0;min-width:0}.pmh-widgets .nav .brand b{max-width:none}}
+
+/* ===== חומרי למידה מהמדריכים — עמודי המקצוע (chomarim-madrichim.js, 20.10.26) =====
+   הקבצים שמדריכי המקצוע העלו במנור ומיטל אישרה לאתר. הטאבים בעיצוב .sbjtab
+   אבל בלי .sbjtabs/.sbjpanel — sbjtabs.js מפעיל את כל ה-.sbjpanel בעמוד. */
+.mdr-lead{font-size:var(--fs-sm);color:var(--text2);margin:0 0 14px;max-width:760px}
+.mdr-empty{font-size:var(--fs-sm);color:var(--text2);background:var(--soft-bg);border-radius:10px;padding:12px 14px;margin:0}
+.mdr-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.mdr-panel[hidden]{display:none}
+.mdr-sector{font-size:.8rem;font-weight:800;color:var(--text2);margin:0 0 6px}
+.mdr-guide{margin:0 0 14px}
+.mdr-by{font-size:var(--fs-xs);font-weight:700;color:var(--accent);margin:0 0 6px}
+.mdr-folder{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:0 0 8px;overflow:hidden}
+.mdr-folder summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;
+  padding:11px 14px;font-weight:700;color:var(--navy);list-style:none}
+.mdr-folder summary::-webkit-details-marker{display:none}
+.mdr-folder summary::before{content:'';flex:none;width:8px;height:8px;border-inline-start:2px solid currentColor;
+  border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .2s;margin-inline-end:2px}
+.mdr-folder[open] summary::before{transform:rotate(-45deg)}
+.mdr-folder summary span{flex:1;min-width:0;overflow-wrap:anywhere}
+.mdr-folder summary b{flex:none;min-width:22px;padding:1px 7px;border-radius:999px;background:var(--blue-100);
+  color:var(--navy);font-size:.74rem;text-align:center;font-variant-numeric:tabular-nums}
+.mdr-folder summary:focus-visible,.mdr-file:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.mdr-files{display:grid;gap:6px;padding:0 10px 10px}
+.mdr-file{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--soft-bg);
+  border-radius:10px;padding:9px 12px;color:inherit;text-decoration:none;font-size:var(--fs-sm)}
+.mdr-file:hover{background:var(--blue-bg);color:var(--navy)}
+.mdr-name{min-width:0;overflow-wrap:anywhere}
+.mdr-type{flex:none;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--teal-100);color:#087565}

@@ -67,7 +67,9 @@ const SCHEMA = {
   // guideSlug הוא המפתח מתוך assets/guides.js ולא מזהה פנימי חדש.
   // folder/kind/source — מאגר החומרים (28.9.26): תיקייה (רמות מופרדות ב-" / "),
   // 'file' = הועלה לדרייב של המערכת · 'link' = קישור לקובץ דרייב קיים בלי העתקה
-  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source'],
+  // track/site* — חומרי למידה מהמדריכים באתר (20.10.26): track = bagrut|gmar|both (נבחר בהעלאה),
+  // siteStatus = ''(ממתין)|approved|rejected — רק approved מופיע בעמודי תחומי הדעת באתר
+  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source','track','siteStatus','siteSubject','siteAt'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
   // נוכחות בהשתלמויות שלא במנור (שגרירי חדשנות, 15.10.26) — monthlyExtraTrainings_
@@ -106,7 +108,11 @@ const SCHEMA = {
   // status: active · cancelled (חזר למקור) · notifyState: pending · sent · skip — מייל למורי הקבוצה.
   // lastToldDate/Start — המועד שהמורים יודעים עליו (מהמייל האחרון), כדי שהמייל הבא יאמר "מ-… ל-…"
   plan_changes:       ['id','guideSlug','mdate','fromDate','fromStart','toDate','toStart','reason','status',
-                       'createdAt','updatedAt','notifyState','notifiedAt','notifiedCount','lastToldDate','lastToldStart']
+                       'createdAt','updatedAt','notifyState','notifiedAt','notifiedCount','lastToldDate','lastToldStart'],
+  // שיבוץ לשעות פרטניות (20.10.26) — שורה לכל מועד שהמדריכ/ה פרסמ/ה. status: open · booked
+  // until = היום האחרון לשיבוץ · track = bagrut|gemer · bookedBy = teacher|guide
+  guide_slots:        ['id','guideSlug','date','start','until','status','teacherId','teacherName','schoolName',
+                       'phone','track','note','bookedAt','bookedBy','createdAt','updatedAt']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -312,7 +318,11 @@ const PUBLIC_ACTIONS = new Set([
   // "כבר עניתי בערוץ אחר" (12.10.26) — מפתח מדריכ/ה (meetAuthGuide_) + שאלה של מורה מהקבוצה, בפנים
   'questions.close', 'questions.reopen',
   // שינוי מועד (13.10.26) — changes: מועדים בלבד, בלי סיבה ובלי שמות · move: מפתח מדריכ/ה (meetAuthGuide_) בפנים
-  'plan.changes', 'plan.move'
+  'plan.changes', 'plan.move',
+  // שיבוץ לשעות פרטניות (20.10.26) — guide/add/remove: מפתח מדריכ/ה (meetAuthGuide_) · teacher/book/cancel: מפתח המורה (k)
+  'slots.guide', 'slots.add', 'slots.remove', 'slots.teacher', 'slots.book', 'slots.cancel',
+  // חומרי למידה מהמדריכים באתר (20.10.26) — רק קבצים שמיטל אישרה: שם, קישור צפייה, תיקייה, מדריכ/ה
+  'site.materials'
 ]);
 
 const ADMIN_ONLY_ACTIONS = new Set([
@@ -346,7 +356,9 @@ const STRICT_AUTH_ACTIONS = new Set([
   // שינוי שם בית ספר בכל הלשוניות (23.9.26) — כתיבה המונית, אדמין ארצי בלבד
   'schools.rename',
   // רשימת התפוצה של עדכוני מנור (28.9.26) — שליחה בשם בעלת הסקריפט + קישורים עם מפתחות
-  'updates.send'
+  'updates.send',
+  // אישור חומרי המדריכים לאתר (20.10.26) — כל הקבצים, גם שלא אושרו
+  'site.materials.admin', 'site.materials.set'
 ]);
 
 function getActiveUserEmail_() {
@@ -948,7 +960,7 @@ function auditLog_(userEmail, action, targetType, targetId, status, notes) {
 // ליומן — בדיוק שני הדברים שגרמו לעומס של 14.9.26. הוא נוגע רק ב-link_views.
 // 24.9.26: teacher.self, notes.list ו-staff.(self|directory|teacherKey|guideKeys) נוספו — הן נקראות בכל פתיחת
 // מבט, ובלי זה כל פתיחה איפסה את המטמון (meet.scope קר ~35 שנ׳ לבא אחריה) וכתבה שורה ליומן.
-const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope|approveView)|checkin\.(roster|status)|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|remind\.status|emails\.roster|training\.files|registration\.(status|count|errors)|plan\.changes)$/;
+const READ_ONLY_RE_ = /^(networks\.list|schools\.list|school\.get|teachers\.list|teacher\.get|trainings\.list|attendance\.(monthly|teacher|training)|pd\.list|questions\.list|knowledge\.list|reports\.\w+|qr\.training|feedback\.list|alerts\.list|calendar\.ics|auth\.(status|verify|registerInfo)|contacts\.list|guide\.(dashboard|workspace|group)|meet\.(state|code|report|scope|approveView)|checkin\.(roster|status)|link\.(seen|views)|(school|ministry|network)\.dashboard|teacher\.(self|subjectKey)|notes\.list|guide\.contacts|staff\.(self|directory|teacherKey|guideKeys)|diag\.timing|remind\.status|emails\.roster|training\.files|registration\.(status|count|errors)|plan\.changes|slots\.(guide|teacher))$/;
 const TEACHERS_CACHE_TTL_ = 120;
 
 function teachersGen_() {
@@ -1113,8 +1125,18 @@ function handleRequest(params) {
       case 'guide.file.delete':   result = guideFileDelete(params); break;
       case 'guide.file.link':     result = guideFileLink(params); break;
       case 'guide.file.move':     result = guideFileMove(params); break;
+      case 'site.materials':      result = siteMaterials(params); break;
+      case 'site.materials.admin':result = siteMaterialsAdmin(params); break;
+      case 'site.materials.set':  result = siteMaterialsSet(params); break;
       case 'guide.mail.send':     result = guideMailSend(params); break;
       case 'guide.contacts':      result = guideContacts(params); break;
+      // שיבוץ לשעות פרטניות (20.10.26)
+      case 'slots.guide':         result = slotsGuide(params); break;
+      case 'slots.add':           result = slotsAdd(params); break;
+      case 'slots.remove':        result = slotsRemove(params); break;
+      case 'slots.teacher':       result = slotsTeacher(params); break;
+      case 'slots.book':          result = slotsBook(params); break;
+      case 'slots.cancel':        result = slotsCancel(params); break;
       case 'guide.message.add':   result = guideMessageAdd(params); break;
       case 'guide.message.delete':result = guideMessageDelete(params); break;
       case 'guide.hours.add':     result = guideHoursAdd(params); break;
@@ -3410,7 +3432,9 @@ function guideFileAdd(p) {
     uploaderRole: p.byRole === 'inspector' ? 'inspector' : 'guide',
     folder: guideFolderCell_(p.folder),
     kind: 'file',
-    source: p.source === 'drive-import' ? 'drive-import' : 'upload'
+    source: p.source === 'drive-import' ? 'drive-import' : 'upload',
+    // נתיב לאתר (20.10.26) — בגרות/גמר/שניהם, נבחר במאגר החומרים בהעלאה
+    track: siteTrack_(p.track)
   };
   appendRow('guide_files', obj);
   return { ok: true, data: obj };
@@ -4738,8 +4762,13 @@ function meetGuideApproveTick_(data, slots, now) {
     const endAt = end0 > s.at ? end0 : s.at + MEET_DEFAULT_LEN_MIN;
     const first = endAt - MEET_APPROVE_BEFORE_END_MIN;
     const x = { slug: s.slug, mdate: s.mdate, date: s.date, topic: s.topic, subject: s.subject, last: s.start, startAt: s.at };
-    [[0, 'gapr'], [MEET_APPROVE_REMIND_MIN, 'gaprem']].forEach(pair => {
-      const at = first + pair[0];
+    // 17.10.26: מועד בחלון השבת → שישי 08:00 אם זה אחרי המפגש/המייל הראשון, אחרת מוצאי שבת.
+    // אם שניהם נדחו למוצאי שבת — התזכורת יוצאת 24 שעות אחרי המייל הראשון.
+    const firstAt = meetShabbatShift_(first, s.at);
+    let remAt = meetShabbatShift_(first + MEET_APPROVE_REMIND_MIN, firstAt);
+    if (remAt <= firstAt) remAt = firstAt + MEET_APPROVE_REMIND_MIN;
+    [[0, 'gapr', firstAt], [MEET_APPROVE_REMIND_MIN, 'gaprem', remAt]].forEach(pair => {
+      const at = pair[2];
       if (!(at <= now && now - at < REMIND_WINDOW_MIN)) return;
       // אותה תבנית מפתח כמו שאר התזכורות (…_תאריך_HHMM) — remindCleanup_ מוחק אחרי 3 ימים
       const key = 'remind_' + pair[1] + '_' + x.slug + '_' + x.date + '_' + (pair[0] > 0 ? '0000' : x.last.replace(':', ''));
@@ -4954,11 +4983,16 @@ function monthlyTick_(data) {
   const today = parts[0], hour = Number(parts[1]);
   monthlyMidOnce_(today, hour);
   if (hour < MONTHLY_SEND_HOUR) return;
-  const month = monthlyAddMonths_(today.slice(0, 7), -1);
+  if (meetShabbatNow_()) return;
+  // 17.10.26: דוח שהיה יוצא בשבת (1.5.27) יוצא כבר בשישי בבוקר
+  const dd = today.split('-').map(Number);
+  const isFri = new Date(Date.UTC(dd[0], dd[1] - 1, dd[2])).getUTCDay() === 5;
+  const asOf = isFri ? remindAddDays_(today, 1) : today;
+  const month = monthlyAddMonths_(asOf.slice(0, 7), -1);
   // המועד האחרון של מפגשי החודש (מפגש בכמה ימים יכול לגלוש לחודש הבא)
   let last = monthlyLastDay_(month);
   (data.slots || []).forEach(s => { if (s.mdate.slice(0, 7) === month && s.date > last) last = s.date; });
-  if (today <= last) return;
+  if (asOf <= last) return;
   const props = PropertiesService.getScriptProperties();
   const key = 'monthly_sent_' + month;
   if (props.getProperty(key)) return;
@@ -7580,6 +7614,25 @@ function diagTiming() {
 // ============================================================
 
 const TEACHER_REMIND_HOUR = 17;
+const TEACHER_REMIND_FRI_HOUR = 8;   // שישי בבוקר — למפגשי שבת וראשון
+
+/* 17.10.26 (מיטל): בשבת לא יוצא שום מייל אוטומטי. חלון השבת = שישי מ-14:00 עד שבת 20:00,
+   שעון ישראל (דקות לפי remindMinutes_). מה שנופל בחלון מוקדם לשישי 08:00, ואם כבר מאוחר
+   מדי — יוצא במוצאי שבת. */
+const SHABBAT_FRI_FROM_HOUR = 14, SHABBAT_SAT_TO_HOUR = 20;
+function meetInShabbat_(min) {
+  const d = new Date(min * 60000), w = d.getUTCDay(), h = d.getUTCHours();
+  return (w === 5 && h >= SHABBAT_FRI_FROM_HOUR) || (w === 6 && h < SHABBAT_SAT_TO_HOUR);
+}
+function meetShabbatNow_() { return meetInShabbat_(remindNowMinutes_()); }
+// מועד בחלון השבת → שישי 08:00 של אותו סוף שבוע אם הוא אחרי notBefore, אחרת מוצאי שבת 20:00
+function meetShabbatShift_(min, notBefore) {
+  if (!meetInShabbat_(min)) return min;
+  const day0 = Math.floor(min / 1440) * 1440;
+  const fri = day0 - (new Date(min * 60000).getUTCDay() === 6 ? 1440 : 0);
+  const friMorning = fri + TEACHER_REMIND_FRI_HOUR * 60;
+  return friMorning > (notBefore || 0) ? friMorning : fri + 1440 + SHABBAT_SAT_TO_HOUR * 60;
+}
 const GUIDE_MAIL_DAILY_SENDS = 3;       // שליחות לקבוצה ליום לכל מדריכ/ה
 const GUIDE_MAIL_QUOTA_FLOOR = 40;      // שומרים מכסה לקודי כניסה ולדוחות
 const GUIDE_MAIL_MAX = 400;
@@ -7631,7 +7684,8 @@ function guideFileLink(p) {
     note: String(p.note || '').slice(0, 300), uploadedBy: String(p.byName || '').slice(0, 80),
     createdAt: new Date().toISOString(), uploaderRole: 'guide',
     folder: guideFolderCell_(p.folder), kind: 'link',
-    source: (p.source === 'drive-import' || p.source === 'drive-folder') ? p.source : 'link'
+    source: (p.source === 'drive-import' || p.source === 'drive-folder') ? p.source : 'link',
+    track: siteTrack_(p.track)
   };
   appendRow('guide_files', obj);
   return { ok: true, data: { id: obj.id } };
@@ -7645,6 +7699,156 @@ function guideFileMove(p) {
   ensureTab_('guide_files');
   updateRowById('guide_files', row.id, { folder: guideFolderCell_(p.folder) });
   return { ok: true, data: { id: row.id, folder: guideFolderName_(p.folder) } };
+}
+
+// ============================================================
+// חומרי למידה מהמדריכים באתר המרחב הפדגוגי (20.10.26, מיטל)
+// ------------------------------------------------------------
+// קבצים שמדריכי תחומי הדעת העלו למאגר שלהם במנור מופיעים במקטע
+// "חומרי למידה מהמדריכים" בעמוד המקצוע באתר (<תחום>-bagrut / -gmar.html).
+// - רק אחרי אישור של מיטל (siteStatus = approved) — admin-chomarim.html.
+// - רק תחומי דעת שיש להם עמוד באתר (SITE_SUBJECTS_) — לא מת"ל ולא רכזים חברתיים.
+// - רק מה שהמדריכ/ה העלה לקבוצה: לא קבצי המפקח.ת ולא קישור תיקיית הדרייב.
+// - track ריק (קבצים מלפני 20.10.26) → הצעה לפי שם הקובץ והתיקייה, ומיטל מתקנת באישור.
+// ============================================================
+const SITE_SUBJECTS_ = {
+  'מתמטיקה': 'math', 'אנגלית': 'english', 'עברית': 'hebrew', 'ספרות': 'literature',
+  'היסטוריה': 'history', 'אזרחות': 'civics', 'תנ"ך': 'tanakh'
+};
+const SITE_MATERIALS_TTL_ = 600;
+
+function siteTrack_(v) {
+  v = String(v || '').trim();
+  return v === 'bagrut' || v === 'gmar' || v === 'both' ? v : '';
+}
+
+function siteGuideSubjects_(g) {
+  const list = (g.subjects && g.subjects.length ? g.subjects : [g.subject]).filter(s => SITE_SUBJECTS_[s]);
+  return Array.from(new Set(list));
+}
+
+// הצעת נתיב לקובץ בלי track: "גמר" בשם/בתיקייה → גמר; שאלון/יח"ל/בגרות/מתכונת → בגרות; אחרת שניהם
+function siteSuggestTrack_(f, g) {
+  if (g.tracks && g.tracks.length === 1) return g.tracks[0] === 'gmar' ? 'gmar' : 'bagrut';
+  const t = String(f.fileName || '') + ' ' + guideFolderName_(f.folder);
+  if (/גמר/.test(t)) return 'gmar';
+  if (/בגרו|מתכונ|יח["״']?ל|שאלון|\b(?:35)?[345]7[12]\b|\b17[23]\b/.test(t)) return 'bagrut';
+  return 'both';
+}
+
+// כל הקבצים שיכולים לעלות לאתר, עם המדריכ/ה והמקצוע
+function siteMaterialRows_() {
+  const guides = remindWin_(true).TS_GUIDES || {};
+  const out = [];
+  readAll('guide_files').forEach(f => {
+    if (String(f.uploaderRole || '') === 'inspector' || String(f.source || '') === 'drive-folder') return;
+    const slug = String(f.guideSlug || '');
+    const g = guides[slug];
+    if (!g) return;
+    const subjects = siteGuideSubjects_(g);
+    if (!subjects.length) return;
+    const subject = subjects.indexOf(String(f.siteSubject || '')) >= 0 ? String(f.siteSubject) : subjects[0];
+    out.push({ f: f, g: g, slug: slug, subjects: subjects, subject: subject,
+      track: siteTrack_(f.track), suggested: siteSuggestTrack_(f, g),
+      status: String(f.siteStatus || '') === 'approved' ? 'approved' : String(f.siteStatus || '') === 'rejected' ? 'rejected' : 'pending' });
+  });
+  return out;
+}
+
+function siteMaterialsGen_() {
+  const c = CacheService.getScriptCache();
+  let gen = c.get('siteMatGen');
+  if (!gen) { gen = String(Date.now()); c.put('siteMatGen', gen, 21600); }
+  return gen;
+}
+
+// ציבורי — לעמודי האתר. ?subject=math מצמצם לתחום אחד.
+function siteMaterials(p) {
+  const want = String(p.subject || '').trim();
+  let all = null;
+  const cache = CacheService.getScriptCache();
+  const key = 'siteMat|' + siteMaterialsGen_();
+  try { const hit = readCacheChunked_(cache, key); if (hit) all = hit; } catch (e) { /* קוראים מהגיליון */ }
+  if (!all) {
+    const seen = {};
+    all = siteMaterialRows_()
+      .filter(r => r.status === 'approved' && /^https:\/\//.test(String(r.f.fileUrl || '')))
+      .sort((a, b) => String(toIso_(b.f.createdAt) || '').localeCompare(String(toIso_(a.f.createdAt) || '')))
+      .filter(r => {
+        // אותו קובץ שהועלה כמה פעמים — פעם אחת בעמוד
+        const k = r.slug + '|' + SITE_SUBJECTS_[r.subject] + '|' + String(r.f.fileName || '').trim().toLowerCase();
+        if (seen[k]) return false;
+        seen[k] = 1; return true;
+      })
+      .map(r => ({
+        id: String(r.f.id), subject: SITE_SUBJECTS_[r.subject], track: r.track || r.suggested,
+        sectors: r.g.sectors || [], guide: r.g.name || '',
+        name: String(r.f.fileName || ''), url: String(r.f.fileUrl || ''),
+        mime: String(r.f.mimeType || ''), kind: String(r.f.kind || 'file'),
+        folder: guideFolderName_(r.f.folder), date: String(toIso_(r.f.createdAt) || '').slice(0, 10)
+      }));
+    try { writeCacheChunked_(cache, key, all, SITE_MATERIALS_TTL_); } catch (e) { /* לא חוסם */ }
+  }
+  return { ok: true, data: want ? all.filter(x => x.subject === want) : all };
+}
+
+// אדמין — כל הקבצים לאישור, כולל הצעת הנתיב
+function siteMaterialsAdmin() {
+  const rows = siteMaterialRows_().map(r => ({
+    id: String(r.f.id), guideSlug: r.slug, guide: r.g.name || '', sectors: r.g.sectors || [],
+    subject: r.subject, subjects: r.subjects,
+    name: String(r.f.fileName || ''), url: /^https:\/\//.test(String(r.f.fileUrl || '')) ? String(r.f.fileUrl) : '',
+    mime: String(r.f.mimeType || ''), kind: String(r.f.kind || 'file'),
+    folder: guideFolderName_(r.f.folder), date: String(toIso_(r.f.createdAt) || '').slice(0, 10),
+    track: r.track, suggested: r.suggested, status: r.status
+  }));
+  rows.sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.guide.localeCompare(b.guide, 'he') ||
+    a.folder.localeCompare(b.folder, 'he') || a.name.localeCompare(b.name, 'he', { numeric: true }));
+  return { ok: true, data: { files: rows, subjects: SITE_SUBJECTS_ } };
+}
+
+// אדמין — items: [{ id, status: approved|rejected|pending, track, subject }]. כתיבה אחת לכל עמודה.
+function siteMaterialsSet(p) {
+  let items = p.items;
+  if (typeof items === 'string') { try { items = JSON.parse(items); } catch (e) { items = null; } }
+  if (!Array.isArray(items) || !items.length || items.length > 500) return { ok: false, error: 'bad_items' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const s = ensureTab_('guide_files');
+    const range = s.getDataRange().getValues();
+    const h = range[0].map(String);
+    const col = n => h.indexOf(n);
+    const cId = col('id'), cSt = col('siteStatus'), cTr = col('track'), cSu = col('siteSubject'), cAt = col('siteAt');
+    if ([cId, cSt, cTr, cSu, cAt].some(c => c < 0)) return { ok: false, error: 'missing_columns' };
+    const byId = {};
+    for (let i = 1; i < range.length; i++) byId[String(range[i][cId])] = i;
+    const now = new Date().toISOString();
+    let changed = 0;
+    const missing = [];
+    items.forEach(it => {
+      const i = byId[String(it && it.id)];
+      if (i == null) { missing.push(String(it && it.id)); return; }
+      const st = it.status === 'approved' || it.status === 'rejected' ? it.status : it.status === 'pending' ? '' : null;
+      if (st !== null) { range[i][cSt] = st; range[i][cAt] = now; }
+      if (it.track !== undefined) range[i][cTr] = siteTrack_(it.track);
+      if (it.subject !== undefined) range[i][cSu] = SITE_SUBJECTS_[it.subject] ? it.subject : '';
+      changed++;
+    });
+    if (changed) {
+      // שורה שנמחקה בינתיים (מדריכ/ה מחק/ה קובץ) מזיזה את השורות — אז לא כותבים עמודה שלמה
+      const ids = s.getRange(2, cId + 1, Math.max(s.getLastRow() - 1, 1), 1).getValues().map(r => String(r[0]));
+      if (range.slice(1).some((r, k) => String(r[cId]) !== ids[k])) return { ok: false, error: 'changed_meanwhile' };
+      // רק ארבע העמודות של האתר נכתבות — שאר השורה לא נוגעת
+      [cSt, cTr, cSu, cAt].forEach(c => {
+        s.getRange(2, c + 1, range.length - 1, 1).setValues(range.slice(1).map(r => [r[c]]));
+      });
+      CacheService.getScriptCache().put('siteMatGen', String(Date.now()), 21600);
+    }
+    return { ok: true, data: { changed: changed, missing: missing } };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // מורי הקבוצה לפי אותו כלל של הדשבורדים (TS_guideHasTeacher מ-meet-stats.js)
@@ -7793,18 +7997,26 @@ function teacherRemindDays_(data, date) {
   return out;
 }
 
+/* 17.10.26: לא שולחים בשבת. ביום שישי מ-08:00 יוצאות התזכורות למפגשי שבת וראשון (במקום
+   שבת 17:00, שיצא בתוך השבת — תלונת שרה ברדה). במוצאי שבת (20:00) — השלמה למפגש של ראשון
+   שלא קיבל תזכורת בשישי; המפתח remind_t_ מונע כפילות (17.10.26 — הפעם הראשונה). */
 function teacherRemindTick_(data) {
+  if (meetShabbatNow_()) return;
   const nowS = Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd HH').split(' ');
-  if (Number(nowS[1]) < TEACHER_REMIND_HOUR) return;
-  const tomorrow = remindAddDays_(nowS[0], 1);
-  const days = teacherRemindDays_(data, tomorrow);
+  const dd = nowS[0].split('-').map(Number);
+  const dow = new Date(Date.UTC(dd[0], dd[1] - 1, dd[2])).getUTCDay();
+  const isFri = dow === 5;
+  if (dow !== 6 && Number(nowS[1]) < (isFri ? TEACHER_REMIND_FRI_HOUR : TEACHER_REMIND_HOUR)) return;
+  const targets = isFri ? [remindAddDays_(nowS[0], 1), remindAddDays_(nowS[0], 2)] : [remindAddDays_(nowS[0], 1)];
+  const days = {};
+  targets.forEach(d => Object.assign(days, teacherRemindDays_(data, d)));
   const keys = Object.keys(days);
   if (!keys.length) return;
   const props = PropertiesService.getScriptProperties();
   let win = null;
   keys.forEach(k => {
     const slots = days[k];
-    const key = 'remind_t_' + slots[0].slug + '_' + tomorrow + '_1700';
+    const key = 'remind_t_' + slots[0].slug + '_' + slots[0].date + '_1700';
     if (props.getProperty(key)) return;
     props.setProperty(key, String(Date.now()));   // קודם מסמנים — כשל לא יציף
     try {
@@ -7842,9 +8054,11 @@ function teacherRemindSend_(win, data, slots, live) {
   const rec = guideRecipients_(roster.filter(t => !doneKeys[norm(t.name) + '|' + norm(t.schoolName)]));
   const skippedPresent = Object.keys(doneKeys).length;
 
-  const title = 'תזכורת: מחר ' + guideWhat_(g, subject) + (s0.topic ? ' — ' + s0.topic : '');
+  // מייל של שישי בבוקר למפגש ביום ראשון — "ביום ראשון", לא "מחר"
+  const isTomorrow = date === remindAddDays_(meetToday_(), 1);
+  const title = 'תזכורת: ' + (isTomorrow ? 'מחר ' : 'ביום ' + dayName + ' ') + guideWhat_(g, subject) + (s0.topic ? ' — ' + s0.topic : '');
   const facts = [
-    ['מתי', 'מחר, יום ' + dayName + ' ' + dm(date) + (times ? ' · ' + times : '')],
+    ['מתי', (isTomorrow ? 'מחר, ' : '') + 'יום ' + dayName + ' ' + dm(date) + (times ? ' · ' + times : '')],
     ['נושא', s0.topic],
     ['מדריך/ה', g.name || ''],
     ['מועד נוסף לבחירה', laterOthers.length ? laterOthers.map(dm).join(', ') + ' — משתתפים באחד המועדים' : '']
@@ -8367,6 +8581,7 @@ function planChangeMailAdmin_(win, slug, pm, orig, prev, next, back, reason) {
 
 // מייל למורי הקבוצה — מתוך meetRemindTick, כמה דקות אחרי השינוי האחרון
 function planChangeNotifyTick_() {
+  if (meetShabbatNow_()) return;   // 17.10.26: שינוי שנעשה בשבת נשאר pending ויוצא במוצאי שבת
   const rows = planChangeRows_().filter(r => String(r.notifyState) === 'pending');
   if (!rows.length) return;
   const cutoff = Date.now() - PLAN_CHANGE_NOTIFY_DELAY_MIN * 60000;
