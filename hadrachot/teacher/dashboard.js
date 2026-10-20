@@ -724,6 +724,8 @@ async function load() {
   render();
   // כפתורי הניווט מיד — לא מחכים להדרכות (השרת עונה לאט; מתעדכנים שוב בסוף)
   buildNav();
+  // שיבוץ לשעה פרטנית (20.10.26) — במקביל, לא מעכב את שאר הדף
+  if (window.TS_teacherSlots && teacher && teacherKey && !ADMIN_KEY_ && !DEMO_) TS_teacherSlots.init(teacherKey, teacher);
   // זיהוי ישן בלי בית ספר, או שבית הספר השתנה — מבקשים לפי הרשומה העדכנית
   if (teacher && teacher.school && (!scopePromise || scopeSchool !== teacher.school)) {
     scopeSchool = teacher.school;
@@ -753,6 +755,7 @@ const NAV_ITEMS = [
   ['journey-sec', 'המסע שלי', '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'],
   ['mat-sec', 'חומרים', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'],
   ['msg-sec', 'הודעות', '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'],
+  ['slot-sec', 'שיבוץ לשעה פרטנית', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
   ['ind-sec', 'הדרכה פרטנית', '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 14.5-4 16 0"/>'],
   ['kb-sec', 'מאגר הידע', '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'],
   ['q-sec', 'שאלה למדריכ/ה', '<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>']

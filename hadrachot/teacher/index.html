@@ -125,6 +125,24 @@
   .home-sec h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: 17px; }
   .home-sec h2 svg { width: 20px; height: 20px; color: var(--primary, #1A5365); flex: none; }
   .home-sec .hint { margin: -4px 0 12px; font-size: 13px; color: var(--text-2); line-height: 1.55; }
+  /* שיבוץ לשעה פרטנית (slots.js, 20.10.26) */
+  #slot-sec .hint { margin: 4px 0 10px; }
+  .slot-mine { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+               padding: 12px 14px; border-radius: 12px; background: #EEF5EE; border-right: 4px solid #4E6B4D; margin-bottom: 12px; }
+  .slot-mine-k { font-size: 12.5px; color: var(--text-2); }
+  .slot-day { margin-bottom: 10px; }
+  .slot-day-h { font-weight: 700; font-size: 14.5px; margin-bottom: 6px; }
+  .slot-times { display: flex; flex-wrap: wrap; gap: 8px; }
+  .slot-t { font: inherit; font-weight: 700; font-size: 15px; min-width: 72px; min-height: 44px; padding: 8px 14px; border-radius: 10px;
+            border: 1.5px solid var(--border); background: var(--surface, #fff); color: var(--primary, #1A5365); cursor: pointer; }
+  .slot-t:hover:not(:disabled) { border-color: var(--primary, #1A5365); }
+  .slot-t.on { background: var(--primary, #1A5365); border-color: var(--primary, #1A5365); color: #fff; }
+  .slot-t:disabled { opacity: .45; cursor: default; }
+  .slot-form { margin-top: 12px; padding: 16px; }
+  .slot-form-h { font-weight: 700; margin-bottom: 10px; }
+  .slot-radio { display: flex; align-items: center; gap: 8px; min-height: 36px; cursor: pointer; }
+  .slot-radio input { width: 18px; height: 18px; accent-color: var(--primary, #1A5365); }
+  .slot-past { margin-top: 10px; font-size: 13px; color: var(--text-2); }
   /* ההדרכה הבאה */
   .next-card { display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
                border-right: 4px solid var(--primary, #1A5365); }
@@ -706,6 +724,12 @@
       <div class="h-list" id="msg-list"></div>
     </section>
 
+    <!-- ▸ שיבוץ לשעה פרטנית (slots.js, 20.10.26) — רק כשהמדריכ/ה מפרסמ/ת מועדים במנור -->
+    <section class="home-sec" id="slot-sec" hidden>
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>שיבוץ לשעה פרטנית עם <span id="slot-guide">המדריכ/ה</span></h2>
+      <div id="slot-root"></div>
+    </section>
+
     <!-- ▸ ההדרכה הפרטנית שלי (guide_hours — נושא לכל שעה) -->
     <section class="home-sec" id="ind-sec" hidden>
       <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 14.5-4 16 0"/></svg>ההדרכה הפרטנית שלי</h2>
@@ -788,9 +812,10 @@
 <script src="../assets/plan-changes.js"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/name-match.js?v=20260929"></script>
-<script src="dashboard.js?v=20261015a"></script>
+<script src="dashboard.js?v=20261020s"></script>
 <script src="plan-cal.js?v=20261012av"></script>
 <script src="notes.js?v=20260924"></script>
+<script src="slots.js?v=20261020a"></script>
 <script src="quicklinks.js?v=20260924"></script>
 <script src="tour.js?v=20260924e"></script>
 </body>

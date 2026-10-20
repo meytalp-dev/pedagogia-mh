@@ -8656,3 +8656,265 @@ function planChangeMailTeachers_(win, slug, mdate, told, cur, back) {
   auditLog_('', 'plan.notify', 'guide', slug, 'ok', cur.date + ' ' + cur.start + ' sent=' + sent + ' missing=' + rec.missing.length);
   return sent;
 }
+
+// ============================================================
+// שיבוץ לשעות פרטניות (20.10.26, בקשת מיטל — אזרחות, סיגל נחום)
+// ============================================================
+/* מחליף את לוח הגוגל דוקס השבועי של סיגל ("לו׳ז שעות פרטניות"): המדריכ/ה מפרסמ/ת
+   מועדים, ומורה מהקבוצה שלו/ה משתבצ/ת מהבית שלו/ה במנור בלחיצה. מועד תפוס ננעל —
+   אין מחיקה בטעות של שיבוץ של מורה אחר, והטלפונים לא גלויים לכל הקבוצה.
+   מייל: אישור למורה + עדכון למדריכ/ה על כל שיבוץ וביטול (דרך ממסר merhav).
+   כרגע רק לסיגל; מדריכ/ה נוסף/ת = slug ב-SLOT_GUIDES וגם ב-guide/slots.js וב-teacher/slots.js. */
+const SLOT_GUIDES = ['sigal'];
+const SLOT_TRACKS = { bagrut: 'בחינת בגרות חיצונית', gemer: 'גמר' };
+const SLOT_SIGN = 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה';
+
+function slotsOn_(slug) { return SLOT_GUIDES.indexOf(slug) >= 0; }
+
+function slotRow_(r) {
+  return {
+    id: String(r.id), guideSlug: String(r.guideSlug), date: meetDate_(r.date), start: planTime_(r.start),
+    until: meetDate_(r.until), status: String(r.status || 'open'), teacherId: String(r.teacherId || ''),
+    teacherName: String(r.teacherName || ''), schoolName: String(r.schoolName || ''),
+    phone: String(r.phone || ''), track: String(r.track || ''), note: String(r.note || ''),
+    bookedAt: toIso_(r.bookedAt), bookedBy: String(r.bookedBy || '')
+  };
+}
+
+function slotRows_(slug) {
+  ensureTab_('guide_slots');
+  return readAll('guide_slots').filter(r => String(r.guideSlug) === slug).map(slotRow_)
+    .filter(s => s.date && s.start)
+    .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+}
+
+function slotPast_(s) { return remindMinutes_(s.date, s.start) <= remindNowMinutes_(); }
+// פתוח לשיבוץ: פנוי, לא עבר, והיום האחרון לשיבוץ (until, כולל) עוד לא עבר
+function slotBookable_(s) { return s.status !== 'booked' && !slotPast_(s) && (!s.until || meetToday_() <= s.until); }
+// מועדים שעברו לפני יותר משבועיים לא נשלחים לדף
+function slotRecent_(s) {
+  return s.date >= Utilities.formatDate(new Date(Date.now() - 14 * 86400000), MEET_TZ, 'yyyy-MM-dd');
+}
+
+function slotGuideOf_(win, slug) {
+  return Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug] || {});
+}
+
+function slotBookFields_(t, track, phone, note, by) {
+  const tr = SLOT_TRACKS[String(track || '')] ? String(track) : (SLOT_TRACKS[String(t.type || '')] ? String(t.type) : '');
+  const ph = (meetStr_(phone, 30) || String(t.phone || '').trim()).replace(/^'+/, '');
+  const now = new Date().toISOString();
+  return {
+    status: 'booked', teacherId: String(t.id), teacherName: String(t.name || ''), schoolName: String(t.schoolName || ''),
+    phone: ph ? "'" + ph : '', track: tr, note: meetStr_(note, 300), bookedAt: now, bookedBy: by, updatedAt: now
+  };
+}
+
+const SLOT_FREE_ = { status: 'open', teacherId: '', teacherName: '', schoolName: '', phone: '', track: '', note: '', bookedAt: '', bookedBy: '' };
+
+/* slots.guide — { guide, k|ge } → המועדים מהשבועיים האחרונים והלאה, עם פרטי המשובצים */
+function slotsGuide(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  if (!slotsOn_(slug)) return { ok: true, data: { enabled: false, slots: [] } };
+  return { ok: true, data: { enabled: true, today: meetToday_(), slots: slotRows_(slug).filter(slotRecent_) } };
+}
+
+/* slots.add — { guide, k|ge, items: [{ date, start }], until, teacherId?, track?, phone?, note?, notify? }
+   teacherId = שיבוץ ידני של מורה מהקבוצה (טלפון, ייבוא מהלוח הישן) — מועד אחד בלבד.
+   notify=0 — בלי מייל למורה. מועד שכבר קיים או שעבר — מדולג. */
+function slotsAdd(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  if (!slotsOn_(slug)) return { ok: false, error: 'not_enabled' };
+  const items = meetRecords_(p.items).map(x => ({ date: meetDate_(x && x.date), start: planTime_(x && x.start) }))
+    .filter(x => x.date && x.start);
+  if (!items.length || items.length > 40) return { ok: false, error: 'bad_items' };
+  const until = meetDate_(p.until);
+  let t = null, gname = '';
+  if (p.teacherId) {
+    if (items.length !== 1) return { ok: false, error: 'bad_items' };
+    t = readAll('teachers').find(r => String(r.id) === String(p.teacherId)) || null;
+    const win = remindWin_();
+    const g = slotGuideOf_(win, slug);
+    if (!t || !g.name || !win.TS_guideHasTeacher(g, t)) return { ok: false, error: 'not_mine' };
+    gname = g.name;
+  }
+  const res = meetWithLock_(() => {
+    const have = {};
+    slotRows_(slug).forEach(s => { have[s.date + ' ' + s.start] = 1; });
+    const now = new Date().toISOString();
+    const added = [], skipped = [];
+    items.forEach(x => {
+      const key = x.date + ' ' + x.start;
+      if (have[key] || x.date > PLAN_CHANGE_LAST_DATE || remindMinutes_(x.date, x.start) <= remindNowMinutes_()) { skipped.push(x); return; }
+      have[key] = 1;
+      const row = {
+        id: 'gs_' + slug + '_' + x.date.replace(/-/g, '') + '_' + x.start.replace(':', ''),
+        guideSlug: slug, date: "'" + x.date, start: "'" + x.start, until: until ? "'" + until : '',
+        status: 'open', createdAt: now, updatedAt: now
+      };
+      if (t) Object.assign(row, slotBookFields_(t, p.track, p.phone, p.note, 'guide'));
+      appendRow('guide_slots', row);
+      added.push(row.id);
+    });
+    return { ok: true, data: { added: added, skipped: skipped } };
+  });
+  if (res.ok && t && res.data.added.length && String(p.notify) !== '0') {
+    const s = slotRows_(slug).find(r => r.id === res.data.added[0]);
+    if (s) { try { slotMailTeacher_(slug, gname, t, s, 'assigned'); } catch (e) { console.error('slotsAdd mail: ' + e); } }
+  }
+  if (res.ok) auditLog_('', 'slots.add', 'guide', slug, 'ok', 'added=' + res.data.added.length + (t ? ' teacher=' + t.id : ''));
+  return res;
+}
+
+/* slots.remove — { guide, k|ge, id, notify? } — מוחק מועד. מועד תפוס שעוד לא עבר: מייל למורה שהמועד בוטל.
+   מועד תפוס שכבר עבר נשאר — הוא התיעוד שהשעה ניתנה. */
+function slotsRemove(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const res = meetWithLock_(() => {
+    const s = slotRows_(slug).find(r => r.id === String(p.id || ''));
+    if (!s) return { ok: false, error: 'not_found' };
+    if (s.status === 'booked' && slotPast_(s)) return { ok: false, error: 'past' };
+    deleteRowById_('guide_slots', s.id);
+    return { ok: true, data: { slot: s } };
+  });
+  if (!res.ok) return res;
+  const s = res.data.slot;
+  if (s.status === 'booked' && s.teacherId && String(p.notify) !== '0') {
+    const t = readAll('teachers').find(r => String(r.id) === s.teacherId);
+    if (t) { try { slotMailTeacher_(slug, slotGuideOf_(remindWin_(), slug).name, t, s, 'removed'); } catch (e) { console.error('slotsRemove mail: ' + e); } }
+  }
+  auditLog_('', 'slots.remove', 'guide', slug, 'ok', s.date + ' ' + s.start + (s.teacherId ? ' teacher=' + s.teacherId : ''));
+  return { ok: true, data: { removed: s.id } };
+}
+
+/* slots.teacher — { k } → מה שהמורה רואה: המועדים הפנויים של המדריכ/ה שלו/ה (בלי שמות של אחרים)
+   והשיבוצים שלו/ה. מורה שאין לו/ה מדריכ/ה עם שיבוץ — enabled:false והמקטע לא מוצג. */
+function slotsTeacher(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const win = remindWin_();
+  const slug = SLOT_GUIDES.find(sl => { const g = slotGuideOf_(win, sl); return g.name && win.TS_guideHasTeacher(g, t); });
+  if (!slug) return { ok: true, data: { enabled: false } };
+  const g = slotGuideOf_(win, slug);
+  const rows = slotRows_(slug);
+  const mine = rows.filter(s => s.status === 'booked' && s.teacherId === String(t.id) && slotRecent_(s))
+    .map(s => ({ id: s.id, date: s.date, start: s.start, track: s.track, note: s.note, past: slotPast_(s) }));
+  const open = rows.filter(slotBookable_).map(s => ({ id: s.id, date: s.date, start: s.start, until: s.until }));
+  return { ok: true, data: {
+    enabled: true, guide: slug, guideName: g.name || '', today: meetToday_(),
+    phone: String(t.phone || '').replace(/^'+/, ''), track: SLOT_TRACKS[String(t.type || '')] ? String(t.type) : '',
+    mine: mine, open: open
+  } };
+}
+
+/* slots.book — { k, id, track, phone, note } — שיבוץ עצמי. במנעול: מועד שנתפס בינתיים → taken.
+   שיבוץ אחד קדימה לכל מורה — כדי שמועדים יישארו גם לאחרים; אחרי שהשעה עברה אפשר שוב. */
+function slotsBook(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const raw = readAll('guide_slots').find(r => String(r.id) === String(p.id || ''));
+  if (!raw) return { ok: false, error: 'not_found' };
+  const slug = String(raw.guideSlug);
+  if (!slotsOn_(slug)) return { ok: false, error: 'not_enabled' };
+  const win = remindWin_();
+  const g = slotGuideOf_(win, slug);
+  if (!g.name || !win.TS_guideHasTeacher(g, t)) return { ok: false, error: 'not_mine' };
+  const res = meetWithLock_(() => {
+    const rows = slotRows_(slug);
+    const s = rows.find(r => r.id === String(p.id));
+    if (!s) return { ok: false, error: 'not_found' };
+    if (s.status === 'booked') return s.teacherId === String(t.id) ? { ok: true, data: { slot: s, already: true } } : { ok: false, error: 'taken' };
+    if (slotPast_(s)) return { ok: false, error: 'past' };
+    if (s.until && meetToday_() > s.until) return { ok: false, error: 'closed' };
+    const other = rows.find(r => r.status === 'booked' && r.teacherId === String(t.id) && !slotPast_(r));
+    if (other) return { ok: false, error: 'has_booking', data: { date: other.date, start: other.start } };
+    const fields = slotBookFields_(t, p.track, p.phone, p.note, 'teacher');
+    updateRowById('guide_slots', s.id, fields);
+    return { ok: true, data: { slot: slotRow_(Object.assign({}, s, fields, { date: s.date, start: s.start, until: s.until })) } };
+  });
+  if (!res.ok || res.data.already) return res;
+  const s = res.data.slot;
+  try { slotMailTeacher_(slug, g.name, t, s, 'booked'); } catch (e) { console.error('slotsBook teacher mail: ' + e); }
+  try { slotMailGuide_(slug, g.name, t, s, 'booked'); } catch (e) { console.error('slotsBook guide mail: ' + e); }
+  auditLog_('', 'slots.book', 'guide', slug, 'ok', s.date + ' ' + s.start + ' teacher=' + t.id);
+  return { ok: true, data: { id: s.id, date: s.date, start: s.start, track: s.track } };
+}
+
+/* slots.cancel — { k, id } — המורה משחרר/ת את השיבוץ שלו/ה, עד תחילת השעה. המועד חוזר להיות פנוי. */
+function slotsCancel(p) {
+  const t = teacherByKey_(p.k);
+  if (!t) return { ok: false, error: 'bad_key' };
+  const res = meetWithLock_(() => {
+    ensureTab_('guide_slots');
+    const raw = readAll('guide_slots').find(r => String(r.id) === String(p.id || ''));
+    const s = raw ? slotRow_(raw) : null;
+    if (!s || s.status !== 'booked' || s.teacherId !== String(t.id)) return { ok: false, error: 'not_found' };
+    if (slotPast_(s)) return { ok: false, error: 'past' };
+    updateRowById('guide_slots', s.id, Object.assign({ updatedAt: new Date().toISOString() }, SLOT_FREE_));
+    return { ok: true, data: { slot: s } };
+  });
+  if (!res.ok) return res;
+  const s = res.data.slot;
+  const gname = slotGuideOf_(remindWin_(), s.guideSlug).name;
+  try { slotMailTeacher_(s.guideSlug, gname, t, s, 'cancelled'); } catch (e) { console.error('slotsCancel teacher mail: ' + e); }
+  try { slotMailGuide_(s.guideSlug, gname, t, s, 'cancelled'); } catch (e) { console.error('slotsCancel guide mail: ' + e); }
+  auditLog_('', 'slots.cancel', 'guide', s.guideSlug, 'ok', s.date + ' ' + s.start + ' teacher=' + t.id);
+  return { ok: true, data: { id: s.id } };
+}
+
+function slotFactsHtml_(facts) {
+  return '<table style="border-collapse:collapse;margin:4px 0 8px">' + facts.map(f =>
+    '<tr><td style="padding:3px 0 3px 16px;color:#5C7182;white-space:nowrap;vertical-align:top">' + remindEsc_(f[0]) +
+    '</td><td style="padding:3px 0"' + (f[2] ? ' dir="ltr"' : '') + '>' + remindEsc_(f[1]) + '</td></tr>').join('') + '</table>';
+}
+
+// למורה: booked (שיבצת את עצמך) · assigned (המדריכ/ה שיבצ/ה) · cancelled (ביטלת) · removed (המדריכ/ה ביטל/ה)
+function slotMailTeacher_(slug, guideName, t, s, kind) {
+  if (!guideMailOk_(t.email)) return;
+  const gname = guideName || 'המדריך/ה';
+  const when = planWhen_(s.date, s.start);
+  const lead = {
+    booked: 'נרשמת לשעה פרטנית עם ' + gname + '.',
+    assigned: gname + ' שיבצ/ה אותך לשעה פרטנית.',
+    cancelled: 'ביטלת את השיבוץ לשעה הפרטנית עם ' + gname + '. המועד חזר להיות פנוי.',
+    removed: gname + ' ביטל/ה את המועד של השעה הפרטנית שנקבעה לך. אפשר להשתבץ למועד אחר במנור.'
+  }[kind];
+  const title = {
+    booked: 'נרשמת לשעה פרטנית · ' + when,
+    assigned: 'שובצת לשעה פרטנית · ' + when,
+    cancelled: 'השיבוץ בוטל · שעה פרטנית ' + when,
+    removed: 'המועד בוטל · שעה פרטנית ' + when
+  }[kind];
+  const facts = [['מועד', when], ['מדריך/ה', gname], ['מסלול', SLOT_TRACKS[s.track] || '']].filter(f => f[1]);
+  const replyTo = guideReplyTo_(slug);
+  const link = guideTeacherLink_(t.id) + '#slot-sec';
+  const hello = 'שלום ' + String(t.name || '') + ',';
+  const foot = (replyTo ? 'אפשר להשיב למייל הזה — התשובה תגיע ל' + remindEsc_(gname) + '.<br>' : '') + 'הודעה אוטומטית ממנור · ' + SLOT_SIGN;
+  merhavMail_({ to: String(t.email).trim(), subject: title, name: gname + ' · מנור', replyTo: replyTo || MAIL_REPLY_TO,
+    htmlBody: guideMailHtml_(hello, '<p style="margin:0 0 8px"><b>' + remindEsc_(lead) + '</b></p>' + slotFactsHtml_(facts),
+      link, kind === 'removed' ? 'למועדים הפנויים במנור' : 'הבית שלי במנור', foot),
+    body: hello + '\n\n' + lead + '\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nהבית שלי במנור: ' + link + '\n\n' + SLOT_SIGN });
+}
+
+// למדריכ/ה: booked · cancelled — מי, מאיזה בית ספר, טלפון ומסלול
+function slotMailGuide_(slug, guideName, t, s, kind) {
+  const email = guideReplyTo_(slug);
+  if (!email) return;
+  const when = planWhen_(s.date, s.start);
+  const who = String(t.name || 'מורה') + (t.schoolName ? ' מ' + t.schoolName : '');
+  const lead = kind === 'booked' ? who + ' השתבצ/ה לשעה פרטנית.' : who + ' ביטל/ה את השיבוץ. המועד חזר להיות פנוי.';
+  const facts = [['מועד', when], ['מורה', String(t.name || '')], ['בית ספר', String(t.schoolName || '')],
+    ['טלפון', String(s.phone || '').replace(/^'+/, ''), true], ['מסלול', SLOT_TRACKS[s.track] || ''], ['הערה', s.note || '']].filter(f => f[1]);
+  const link = REMIND_SITE + 'guide/?g=' + slug + '&guide=' + encodeURIComponent(email) + '&k=' + meetGuideKey_(slug) + '#sec-slots';
+  const hello = 'שלום ' + (guideName || '') + ',';
+  const teacherMail = guideMailOk_(t.email) ? String(t.email).trim() : '';
+  merhavMail_({ to: email, name: 'מנור', replyTo: teacherMail || MAIL_REPLY_TO,
+    subject: (kind === 'booked' ? 'שיבוץ חדש לשעה פרטנית: ' : 'שיבוץ בוטל: ') + who + ' · ' + when,
+    htmlBody: guideMailHtml_(hello, '<p style="margin:0 0 8px"><b>' + remindEsc_(lead) + '</b></p>' + slotFactsHtml_(facts),
+      link, 'לוח השעות הפרטניות במנור',
+      (teacherMail ? 'אפשר להשיב למייל הזה — התשובה תגיע ישר למורה.<br>' : '') + 'הודעה אוטומטית ממנור · ' + SLOT_SIGN),
+    body: hello + '\n\n' + lead + '\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nלוח השעות הפרטניות: ' + link + '\n\n' + SLOT_SIGN });
+}
