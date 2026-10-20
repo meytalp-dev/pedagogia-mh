@@ -1029,7 +1029,7 @@ document.querySelectorAll('.ogen-btn,.open-ogen').forEach(el=>el.addEventListene
    הרשימה נגזרת מהעמודים שטוענים auth.js. אם נוסף עמוד נעול —
    להוסיף את שמו כאן. */
 (function () {
-  var LOCKED = ['bikur-mefakeach','doch-pedagogi','drive-menahalim','kvutzot-hadracha','madrich-pedagogi','matzevet-list','menahalim','pikuah-shnati','prisat-pikuah','sikum-matzevet','supervision','tafkid-mefakeach','tizkorot','vaada-mefakeach','vaada-melava','work-plans-app'];
+  var LOCKED = ['bikur-mefakeach','doch-pedagogi','drive-menahalim','kvutzot-hadracha','madrich-pedagogi','matzevet-list','menahalim','pikuah-shnati','prisat-pikuah','sikum-matzevet','supervision','tafkid-mefakeach','tizkorot','vaada-mefakeach','work-plans-app'];
 
   function build() {
     /* בתוך עמוד נעול המשתמש כבר מזוהה — אין מה לסמן */
