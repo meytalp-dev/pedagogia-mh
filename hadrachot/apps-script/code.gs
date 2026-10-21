@@ -1508,9 +1508,9 @@ function getTeacher(id, user) {
 // 21.9 בערב המפתח כאן היה HMAC של מזהה בית הספר בלבד — אותו מפתח לכל מורי בית
 // הספר — ו"הגנת הכפילויות" החזירה מורה קיים אחר במקום ליצור מורה חדש.
 function teacherIdentityKey_(schoolId, name, subject, type) {
-  return String(schoolId || '').trim() + ' ' +
-         String(name || '').trim() + ' ' +
-         String(subject || '').trim() + ' ' +
+  return String(schoolId || '').trim() + '�' +
+         String(name || '').trim() + '�' +
+         String(subject || '').trim() + '�' +
          (String(type || '').trim() === 'gemer' ? 'gemer' : 'bagrut');
 }
 
@@ -8046,6 +8046,11 @@ function teacherRemindSend_(win, data, slots, live) {
   readAll('meetings').forEach(m => {
     if (String(m.guideSlug) === slug && String(meetDate_(m.date)).slice(0, 7) === date.slice(0, 7)) monthIds[String(m.id)] = 1;
   });
+  // נוכחות פוטרת רק אם היא במועד אחר של אותו מפגש (אותו mdate), לא במפגש אחר של אותה מדריכה באותו חודש
+  const sameMeetingDates = {};
+  data.slots.forEach(x => { if (x.slug === slug && x.mdate === s0.mdate) sameMeetingDates[x.date] = 1; });
+  readAll('meetings').forEach(m => { if (!sameMeetingDates[String(meetDate_(m.date))]) delete monthIds[String(m.id)]; });
+
   const presentIds = {};
   readAll('meeting_attendance').forEach(r => { if (monthIds[String(r.meetingId)] && r.status === 'present') presentIds[String(r.teacherId)] = 1; });
   const roster = guideRoster_(win, slug, s0.subject || '');
