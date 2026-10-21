@@ -1508,9 +1508,9 @@ function getTeacher(id, user) {
 // 21.9 בערב המפתח כאן היה HMAC של מזהה בית הספר בלבד — אותו מפתח לכל מורי בית
 // הספר — ו"הגנת הכפילויות" החזירה מורה קיים אחר במקום ליצור מורה חדש.
 function teacherIdentityKey_(schoolId, name, subject, type) {
-  return String(schoolId || '').trim() + '�' +
-         String(name || '').trim() + '�' +
-         String(subject || '').trim() + '�' +
+  return String(schoolId || '').trim() + '\0' +
+         String(name || '').trim() + '\0' +
+         String(subject || '').trim() + '\0' +
          (String(type || '').trim() === 'gemer' ? 'gemer' : 'bagrut');
 }
 
