@@ -8046,16 +8046,19 @@ function teacherRemindSend_(win, data, slots, live) {
   readAll('meetings').forEach(m => {
     if (String(m.guideSlug) === slug && String(meetDate_(m.date)).slice(0, 7) === date.slice(0, 7)) monthIds[String(m.id)] = 1;
   });
-  // נוכחות פוטרת רק אם היא במועד אחר של אותו מפגש (אותו mdate), לא במפגש אחר של אותה מדריכה באותו חודש
+
+  // רכזים חברתיים (SOCIAL_SUBJECT) מודלגים רק אם נכחו במועד אחר של אותו מפגש (אותו mdate) — 21.10.26, מיטל. כל השאר: דילוג על נוכחות בכל מפגש של המדריכה באותו חודש
   const sameMeetingDates = {};
   data.slots.forEach(x => { if (x.slug === slug && x.mdate === s0.mdate) sameMeetingDates[x.date] = 1; });
-  readAll('meetings').forEach(m => { if (!sameMeetingDates[String(meetDate_(m.date))]) delete monthIds[String(m.id)]; });
-
+  const socialIds = {};
+  readAll('meetings').forEach(m => { if (sameMeetingDates[String(meetDate_(m.date))]) socialIds[String(m.id)] = 1; });
   const presentIds = {};
   readAll('meeting_attendance').forEach(r => { if (monthIds[String(r.meetingId)] && r.status === 'present') presentIds[String(r.teacherId)] = 1; });
+  const socialPresent = {};
+  readAll('meeting_attendance').forEach(r => { if (socialIds[String(r.meetingId)] && r.status === 'present') socialPresent[String(r.teacherId)] = 1; });
   const roster = guideRoster_(win, slug, s0.subject || '');
   const doneKeys = {};
-  roster.forEach(t => { if (presentIds[String(t.id)]) doneKeys[norm(t.name) + '|' + norm(t.schoolName)] = 1; });
+  roster.forEach(t => { const wasPresent = String(t.subject || '').trim() === SOCIAL_SUBJECT ? socialPresent[String(t.id)] : presentIds[String(t.id)]; if (wasPresent) doneKeys[norm(t.name) + '|' + norm(t.schoolName)] = 1; });
   const rec = guideRecipients_(roster.filter(t => !doneKeys[norm(t.name) + '|' + norm(t.schoolName)]));
   const skippedPresent = Object.keys(doneKeys).length;
 
