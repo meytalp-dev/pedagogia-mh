@@ -8285,7 +8285,10 @@ const MENOR_UPDATE = {
           '• כפתור אחד מעתיק את מועדי השבוע לשבוע הבא.\n\n' +
           'אצל סיגל נחום (אזרחות) זה כבר פועל, ומורות השתבצו לבד כבר ביומיים הראשונים.\n' +
           'רוצים את זה גם אצלכם? השיבו למייל הזה ונפתח לכם.',
-    link: { url: REMIND_SITE + 'video/shaot-pratiyot.html', label: 'איך זה נראה? הסבר קצר וסרטון של דקה' } },
+    link: { url: REMIND_SITE + 'video/shaot-pratiyot.html', label: 'איך זה נראה? הסבר קצר וסרטון של דקה' },
+    // לסיגל עצמה — במקום "אצל סיגל זה כבר פועל... רוצים גם?" (מיטל 22.10.26)
+    tail: 'אצל סיגל נחום (אזרחות) זה כבר פועל',
+    tailFor: { 'guide:sigal': 'סיגל, תודה שהיית הראשונה לנסות — ובזכותך זה נפתח עכשיו לכל המדריכים.' } },
   intro: 'ועוד כמה חידושים מאז העדכון האחרון:',
   items: [
     { title: 'שינוי מועד מפגש — בעצמכם',
@@ -8294,7 +8297,7 @@ const MENOR_UPDATE = {
       text: 'רבע שעה לפני סוף כל מפגש מגיע אליכם מייל עם מי שנרשם וכפתור "אישור כולם".' },
     { title: '"נכחתי ולא הצלחתי להירשם"',
       text: 'מורה שהשתתף/ה ולא הצליח/ה להירשם יכול/ה לסמן זאת בבית שלו/ה במנור, עד שבוע אחרי המפגש. ' +
-            'הבקשה מגיעה אליכם לאישור, ומאושרת אוטומטית אחרי 3 ימים.' },
+            'הבקשה מגיעה אליכם לאישור, והנוכחות נספרת רק אחרי שתאשרו.' },
     { title: 'החומרים שלכם — באתר המרחב הפדגוגי',
       text: 'כשמעלים חומר למאגר במנור בוחרים אם הוא לבגרות או לגמר. אחרי אישור של מיטל, החומר מופיע גם בעמוד המקצוע באתר המרחב הפדגוגי.',
       link: { url: 'https://pedagogiamh.co.il/', label: 'לאתר המרחב הפדגוגי' } },
@@ -8403,7 +8406,7 @@ function updBuild_(r) {
   let body = r.kind === 'inspector' ? '<p style="margin:0 0 14px;color:#5C7182">לידיעתך — זה העדכון שנשלח היום למדריכים.</p>' : '';
   body += U.lead ? '<div style="background:#FFF6E0;border:2px solid #E8B84A;border-radius:12px;padding:14px 16px;margin:0 0 18px">' +
     '<p style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#143E4C">' + remindEsc_(U.lead.title) + '</p>' +
-    '<p style="margin:0">' + guideTextHtml_(U.lead.text) + more(U.lead.link) + '</p></div>' : '';
+    '<p style="margin:0">' + guideTextHtml_(updLeadText_(U.lead, r)) + more(U.lead.link) + '</p></div>' : '';
   body += '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
   items.forEach((it, i) => {
     const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r))
@@ -8427,6 +8430,13 @@ function updBuild_(r) {
     .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
     .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
   return { subject: U.subject, html: html, text: text };
+}
+
+// tailFor — נוסח אחר לסוף התיבה הראשית לנמען מסוים: מחליף מ-tail ועד הסוף
+function updLeadText_(L, r) {
+  const alt = L.tailFor && L.tailFor[r.kind + ':' + r.slug];
+  const i = alt && L.tail ? L.text.indexOf(L.tail) : -1;
+  return i >= 0 ? L.text.slice(0, i) + alt : L.text;
 }
 
 function updSentKey_(r) { return 'upd_' + MENOR_UPDATE.id + '_' + r.kind + ':' + r.slug; }
