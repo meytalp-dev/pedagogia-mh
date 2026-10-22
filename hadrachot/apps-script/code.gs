@@ -4416,6 +4416,8 @@ function meetRemindTick() {
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
   try { weeklyRegTick_(); }
   catch (e) { console.error('meetRemindTick: weekly registration failed ' + e); }
+  try { updScheduledTick_(); }
+  catch (e) { console.error('meetRemindTick: scheduled update failed ' + e); }
   try { monthlyTick_(data); }
   catch (e) { console.error('meetRemindTick: monthly failed ' + e); }
   try { teacherRemindTick_(data); }
@@ -8467,6 +8469,37 @@ function updatesSend(p) {
   });
   auditLog_('', 'updates.send', 'update', MENOR_UPDATE.id, 'ok', mode + ' sent=' + sent + ' failed=' + failed.length);
   return { ok: true, data: { sent: sent, failed: failed, missing: pick.filter(r => !r.email).map(r => r.name) } };
+}
+
+/* שליחה מתוזמנת של העדכון (22.10.26, מיטל: "לתזמן שליחה ל-8 בבוקר"). רץ מתוך meetRemindTick (כל 5 דק׳).
+   preview — פעם אחת, בטיק הראשון: שתי דוגמאות (מדריכה + מפקחת) לתיבת המרחב.
+   sendAt — פעם אחת, מהשעה הזו ועד שעתיים אחריה; טיק שהתעכב יותר — לא שולח, רק מודיע.
+   ביטול: לשנות id או למחוק את UPD_SCHEDULE ולפרוס. */
+const UPD_SCHEDULE = { id: '2026-10-22', preview: 'guide:sigal,inspector:liat', sendAt: '2026-10-22 08:00' };
+function updScheduledTick_() {
+  const S = typeof UPD_SCHEDULE === 'object' ? UPD_SCHEDULE : null;
+  if (!S || S.id !== MENOR_UPDATE.id) return;
+  const props = PropertiesService.getScriptProperties();
+  const pk = 'upd_sched_preview_' + S.id, sk = 'upd_sched_send_' + S.id;
+  if (S.preview && !props.getProperty(pk)) {
+    props.setProperty(pk, new Date().toISOString());
+    const r = updatesSend({ mode: 'preview', only: S.preview });
+    auditLog_('', 'updates.scheduled', 'update', S.id, 'ok', 'preview ' + JSON.stringify(r.data || r.error));
+  }
+  if (!S.sendAt || props.getProperty(sk)) return;
+  const now = Utilities.formatDate(new Date(), MEET_TZ, 'yyyy-MM-dd HH:mm');
+  if (now < S.sendAt) return;
+  props.setProperty(sk, new Date().toISOString());   // קודם מסמנים — כשל לא ישלח פעמיים
+  const p = S.sendAt.split(' ');
+  const late = remindNowMinutes_() - remindMinutes_(p[0], p[1]) > 120;
+  const r = late ? { ok: false, error: 'late' } : updatesSend({ mode: 'send' });
+  const d = r.data || {};
+  merhavMail_({ to: UPD_MERHAV, name: 'מנור', subject: (r.ok ? 'נשלח: ' : 'לא נשלח: ') + MENOR_UPDATE.subject,
+    body: r.ok ? 'העדכון "' + MENOR_UPDATE.subject + '" נשלח ב-' + now + ' ל-' + d.sent + ' נמענים (מדריכים ומפקחים).' +
+      (d.failed && d.failed.length ? '\nנכשל: ' + d.failed.join(', ') : '') +
+      (d.missing && d.missing.length ? '\nאין מייל במערכת: ' + d.missing.join(', ') : '')
+      : 'השליחה המתוזמנת לא בוצעה (' + r.error + '). אפשר לשלוח ידנית מ-' + REMIND_SITE + 'admin-idkunim.html' });
+  auditLog_('', 'updates.scheduled', 'update', S.id, r.ok ? 'ok' : 'error', 'send ' + JSON.stringify(d || r.error));
 }
 
 // מהעורך: כל המיילים של העדכון הנוכחי נשלחים אלייך בלבד
