@@ -8253,44 +8253,41 @@ function emailsSubmit(p) {
 // הקודם (28.9.26: מאגר חומרים בתיקיות, מייל לקבוצה, אלפון, רישום אחד, מתמטיקה לפי רמות) — בהיסטוריית git.
 // kinds — מי מקבל/ת. {OPEN_Q} בטקסט של פריט = פסקה אישית עם מספר השאלות הפתוחות (מדריכים בלבד).
 const MENOR_UPDATE = {
-  id: '2026-10-12',
-  kinds: ['guide'],
-  subject: 'מה חדש במנור: הרישום למפגשים השתנה — בלי קוד',
-  // lead — העדכון הראשי, בתיבה מודגשת בראש המייל (מיטל 12.10.26: "הכי חשוב ובולט")
-  lead: { title: 'הרישום למפגשים השתנה — פשוט יותר, בלי קוד',
-    text: 'בעקבות ההשתתפות של מיטל בהדרכות בשבועות האחרונים, ראינו כמה הרישום היה מסורבל: מורים נתקעו באמצע, ואתם נדרשתם להקרין קוד. ' +
-          'אנחנו רוצים שהרישום יהיה הכי פשוט וקל — ולכן שינינו אותו:\n\n' +
-          '• אין יותר קוד ואין הקרנה. הרישום נפתח לבד 15 דקות לפני כל מפגש שבתוכנית השנתית, ונסגר שעתיים אחרי תחילתו.\n' +
-          '• המורים נכנסים לקישור האישי שלהם במנור — אותו קישור שקיבלו במייל, ושמגיע אליהם שוב בתזכורת יום לפני המפגש — ולוחצים "אני כאן במפגש". ' +
-          'אין צורך להדביק קישור בצ\'אט (אפשר, כגיבוי בלבד). ' +
-          'מי שעוד לא נרשם/ה למנור נרשם/ת פעם אחת עם מייל וקוד, וחוזר/ת ישר למפגש. שאלת ההשתלמות נשאלת רק בכניסה הבאה, לא באמצע ההדרכה.\n' +
-          '• אצלכם במנור רואים רק את מי שנרשם עכשיו, וכפתור "אישור כולם". רשימת הקבוצה המלאה מקופלת, להוספה ידנית.\n' +
-          '• כשהרישום נסגר מגיע אליכם מייל עם "אישור כולם". מה שלא אושר — מאושר אוטומטית אחרי 3 ימים.' },
+  id: '2026-10-22',
+  // מדריכים + עותק לידיעה למפקחים המקצועיים (מיטל 22.10.26). למפקח/ת נוספת שורת "לידיעתך" בראש המייל.
+  kinds: ['guide', 'inspector'],
+  subject: 'מה חדש במנור: שיבוץ לשעות פרטניות — ועוד חידושים',
+  lead: { title: 'חדש: שיבוץ לשעות פרטניות דרך מנור',
+    text: 'במקום לוח משותף בגוגל דוקס, שבו שיבוצים נמחקים בטעות והטלפונים גלויים לכולם:\n\n' +
+          '• אתם מפרסמים במנור מועדים פנויים, ומגדירים עד מתי השיבוץ פתוח.\n' +
+          '• המורים בקבוצה שלכם רואים את המועדים בבית שלהם במנור ומשתבצים בלחיצה. הם בוחרים מסלול (בגרות חיצונית או גמר) ויכולים לכתוב על מה ירצו לדבר.\n' +
+          '• מועד שנתפס ננעל. כל מורה מחזיק/ה שיבוץ אחד בכל פעם.\n' +
+          '• על כל שיבוץ וביטול מגיע אליכם מייל עם השם, בית הספר, הטלפון וההערה. המורה מקבל/ת אישור.\n' +
+          '• כפתור אחד מעתיק את מועדי השבוע לשבוע הבא.\n\n' +
+          'אצל סיגל נחום (אזרחות) זה כבר פועל, ומורות השתבצו לבד כבר ביומיים הראשונים.\n' +
+          'רוצים את זה גם אצלכם? השיבו למייל הזה ונפתח לכם.',
+    link: { url: REMIND_SITE + 'video/shaot-pratiyot.html', label: 'איך זה נראה? הסבר קצר וסרטון של דקה' } },
   intro: 'ועוד כמה חידושים מאז העדכון האחרון:',
   items: [
-    { title: 'השאלות שלך מהמורים',
-      text: '{OPEN_Q}' },
-    { title: 'שאלה חדשה מגיעה אליך במייל',
-      text: 'כשמורה שואל/ת ב"שאלה למדריכ/ה" במנור, מגיע אליך מייל עם השאלה וכפתור "לענות במנור".\n' +
-            'התשובה שתכתבו במנור נשלחת למורה במייל ונשמרת בבית שלו/ה במנור.' },
-    { title: 'כבר עניתם בוואטסאפ, בטלפון או במפגש?',
-      text: 'ליד כל שאלה פתוחה יש עכשיו כפתור "כבר עניתי בערוץ אחר". השאלה נסגרת ויוצאת מהמונה, ' +
-            'המורה רואה "נענתה בערוץ אחר", ולא נשלח מייל. אם סגרתם בטעות — אפשר לבטל.' },
-    { title: 'שאלות כפולות נוקו',
-      text: 'חלק מהשאלות הופיעו אצלכם כמה פעמים, כי מורים לחצו שוב כשהמערכת הייתה איטית. ' +
-            'העותקים הכפולים הוסרו, ומעכשיו אותה שאלה לא נשמרת פעמיים.' },
-    { title: 'תזכורת למורים יום לפני המפגש',
-      text: 'יום לפני כל מפגש, ב-17:00, כל מורה בקבוצה שלך מקבל/ת מייל עם המועד, הנושא והקישור לזום (אם יש זום קבוע). ' +
-            'מורה שכבר השתתף/ה החודש במועד קודם של אותו מפגש לא מקבל/ת תזכורת. כשמורה עונה לתזכורת — התשובה מגיעה אליך.' },
-    { title: 'מורה בחופשה',
-      text: 'מורה בחופשת לידה או בחופשה ארוכה מסומן/ת "בחופשה": לא נספר/ת במונים ולא מקבל/ת תזכורות ומיילים לקבוצה. ' +
-            'מורה שצריך לסמן — אפשר פשוט להשיב למייל הזה.' },
-    { title: 'מורה שמלמד/ת שני מקצועות',
-      text: 'מורה יכול/ה להוסיף בעצמו/ה מקצוע נוסף מהדף שלו/ה במנור, ומופיע/ה אצל המדריך/ה של כל מקצוע.' }
+    { title: 'שינוי מועד מפגש — בעצמכם',
+      text: 'ליד כל מועד עתידי בתוכנית השנתית יש כפתור "שינוי מועד". המועד החדש מתעדכן בכל המקומות, והמורים בקבוצה מקבלים מייל.' },
+    { title: '"בבקשה לאשר נוכחות"',
+      text: 'רבע שעה לפני סוף כל מפגש מגיע אליכם מייל עם מי שנרשם וכפתור "אישור כולם".' },
+    { title: '"נכחתי ולא הצלחתי להירשם"',
+      text: 'מורה שהשתתף/ה ולא הצליח/ה להירשם יכול/ה לסמן זאת בבית שלו/ה במנור, עד שבוע אחרי המפגש. ' +
+            'הבקשה מגיעה אליכם לאישור, ומאושרת אוטומטית אחרי 3 ימים.' },
+    { title: 'החומרים שלכם — באתר המרחב הפדגוגי',
+      text: 'כשמעלים חומר למאגר במנור בוחרים אם הוא לבגרות או לגמר. אחרי אישור של מיטל, החומר מופיע גם בעמוד המקצוע באתר המרחב הפדגוגי.',
+      link: { url: 'https://pedagogiamh.co.il/', label: 'לאתר המרחב הפדגוגי' } },
+    { title: 'חיפוש ומיון ברשימות הנוכחות',
+      text: 'ברשימות הנוכחות החודשיות אפשר עכשיו לחפש מורה ולמיין לפי שם. תודה למוריה פלינט על המשוב!' },
+    { title: 'מורה שמלמד/ת גם גמר',
+      text: 'מורה יכול/ה להוסיף לעצמו/ה את מסלול הגמר, ומופיע/ה אצלכם בשני המסלולים.' }
   ]
 };
 
 const UPD_FORM = REMIND_SITE + 'teacher/';
+const UPD_MERHAV = 'merhav@pedagogiamh.co.il';
 
 function updWin_() {
   const win = remindWin_();
@@ -8381,15 +8378,19 @@ function updBuild_(r) {
   const L = updLinks_(r);
   const btn = (u, t, bg) => '<a href="' + u + '" style="background:' + (bg || '#1A5365') + ';color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:bold;display:inline-block">' + remindEsc_(t) + '</a>';
   const items = U.items.filter(it => !it.only || it.only.indexOf(r.kind + ':' + r.slug) >= 0);
-  let body = U.lead ? '<div style="background:#FFF6E0;border:2px solid #E8B84A;border-radius:12px;padding:14px 16px;margin:0 0 18px">' +
+  // link — קישור משני בסוף פריט (22.10.26): "הסבר קצר וסרטון", "לאתר" — בלי להעמיס את גוף המייל
+  const more = l => l ? '<br><a href="' + l.url + '" style="color:#1A5365;font-weight:bold">' + remindEsc_(l.label) + ' ←</a>' : '';
+  // עותק לידיעה למפקחים (22.10.26)
+  let body = r.kind === 'inspector' ? '<p style="margin:0 0 14px;color:#5C7182">לידיעתך — זה העדכון שנשלח היום למדריכים.</p>' : '';
+  body += U.lead ? '<div style="background:#FFF6E0;border:2px solid #E8B84A;border-radius:12px;padding:14px 16px;margin:0 0 18px">' +
     '<p style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#143E4C">' + remindEsc_(U.lead.title) + '</p>' +
-    '<p style="margin:0">' + guideTextHtml_(U.lead.text) + '</p></div>' : '';
+    '<p style="margin:0">' + guideTextHtml_(U.lead.text) + more(U.lead.link) + '</p></div>' : '';
   body += '<p style="margin:0 0 14px">' + remindEsc_(U.intro) + '</p>';
   items.forEach((it, i) => {
     const html = guideTextHtml_(it.text).replace('{MAIL_LINKS}', updMailLinksHtml_(r))
       .replace('{OPEN_Q}', updOpenQHtml_(r, L, btn));
     body += '<p style="margin:0 0 4px;font-weight:bold">' + (i + 1) + '. ' + remindEsc_(it.title) + '</p>' +
-      '<p style="margin:0 0 14px">' + html + '</p>';
+      '<p style="margin:0 0 14px">' + html + more(it.link) + '</p>';
   });
   body += '<p style="margin:18px 0 8px">' + btn(L.view, 'המבט שלי במנור') + '</p>' +
     '<p style="margin:0 0 14px;font-size:12px;color:#5C7182">זה הקישור האישי שלך — הוא מראה רק את מה שבאחריותך. כדאי לשמור אותו.</p>';
@@ -8400,7 +8401,8 @@ function updBuild_(r) {
       btn(L.drive, 'צירוף קישור לתיקיית הדרייב', '#1f7a5c') + '</div>';
   }
   body += '<p style="margin:0">שאלה, תקלה או רעיון לשיפור? אפשר פשוט להשיב למייל הזה.</p>';
-  const html = guideMailHtml_('שלום ' + r.name + ',', body, '', '', MONTHLY_SIGN);
+  // מ-22.10.26 בחתימת המרחב ונשלח מ-merhav (קודם: MONTHLY_SIGN, MailApp מאורט)
+  const html = guideMailHtml_('שלום ' + r.name + ',', body, '', '', SLOT_SIGN);
   const text = html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|div)>/g, '\n')
     .replace(/<a [^>]*href="([^"]+)"[^>]*>([^<]*)<\/a>/g, '$2: $1')
     .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
@@ -8436,11 +8438,12 @@ function updatesSend(p) {
   const failed = [];
   list.forEach(r => {
     const m = updBuild_(r);
-    const opt = { to: live ? r.email : REMIND_TO, subject: (live ? '' : '[תצוגה מקדימה] ') + m.subject,
+    // 22.10.26: דרך ממסר merhav, תצוגה מקדימה לתיבת המרחב, תשובות למרחב
+    const opt = { to: live ? r.email : UPD_MERHAV, subject: (live ? '' : '[תצוגה מקדימה] ') + m.subject,
       htmlBody: (live ? '' : monthlyPreviewBanner_(r.name + ' <' + r.email + '>')) + m.html,
-      body: m.text, name: 'מנור · משרד העבודה', replyTo: MAIL_REPLY_TO };
+      body: m.text, name: 'מנור · משרד העבודה', replyTo: UPD_MERHAV };
     try {
-      MailApp.sendEmail(opt);
+      merhavMail_(opt);
       sent++;
       if (live) props.setProperty(updSentKey_(r), new Date().toISOString());
     } catch (e) { failed.push(r.name); }
@@ -8679,12 +8682,20 @@ const SLOT_SIGN = 'המרחב הפדגוגי · המנהל להכשרה מקצו
 
 function slotsOn_(slug) { return SLOT_GUIDES.indexOf(slug) >= 0; }
 
+/* טלפון בלי ה-0 שבהתחלה (22.10.26): בגיליון המורים חלק מהמספרים נשמרו כמספר, וה-0 נפל
+   ("548090072"). נייד בן 9 ספרות שמתחיל ב-5, או קווי בן 8 ספרות — מחזירים את ה-0. */
+function slotPhone_(v) {
+  const s = String(v == null ? '' : v).replace(/^'+/, '').trim();
+  if (/^5\d{8}$/.test(s) || /^[2-489]\d{7}$/.test(s)) return '0' + s;
+  return s;
+}
+
 function slotRow_(r) {
   return {
     id: String(r.id), guideSlug: String(r.guideSlug), date: meetDate_(r.date), start: planTime_(r.start),
     until: meetDate_(r.until), status: String(r.status || 'open'), teacherId: String(r.teacherId || ''),
     teacherName: String(r.teacherName || ''), schoolName: String(r.schoolName || ''),
-    phone: String(r.phone || ''), track: String(r.track || ''), note: String(r.note || ''),
+    phone: slotPhone_(r.phone), track: String(r.track || ''), note: String(r.note || ''),
     bookedAt: toIso_(r.bookedAt), bookedBy: String(r.bookedBy || '')
   };
 }
@@ -8710,7 +8721,7 @@ function slotGuideOf_(win, slug) {
 
 function slotBookFields_(t, track, phone, note, by) {
   const tr = SLOT_TRACKS[String(track || '')] ? String(track) : (SLOT_TRACKS[String(t.type || '')] ? String(t.type) : '');
-  const ph = (meetStr_(phone, 30) || String(t.phone || '').trim()).replace(/^'+/, '');
+  const ph = slotPhone_(meetStr_(phone, 30) || String(t.phone || '').trim());
   const now = new Date().toISOString();
   return {
     status: 'booked', teacherId: String(t.id), teacherName: String(t.name || ''), schoolName: String(t.schoolName || ''),
@@ -8813,7 +8824,7 @@ function slotsTeacher(p) {
   const open = rows.filter(slotBookable_).map(s => ({ id: s.id, date: s.date, start: s.start, until: s.until }));
   return { ok: true, data: {
     enabled: true, guide: slug, guideName: g.name || '', today: meetToday_(),
-    phone: String(t.phone || '').replace(/^'+/, ''), track: SLOT_TRACKS[String(t.type || '')] ? String(t.type) : '',
+    phone: slotPhone_(t.phone), track: SLOT_TRACKS[String(t.type || '')] ? String(t.type) : '',
     mine: mine, open: open
   } };
 }
