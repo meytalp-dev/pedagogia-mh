@@ -2,11 +2,11 @@
    הקבצים שמדריכי תחום הדעת העלו למאגר שלהם במנור, אחרי שמיטל אישרה אותם לאתר
    (hadrachot/admin-chomarim.html). נטען מהשרת של מנור: site.materials — רק מאושרים.
    שימוש: הכותרת בעמוד (לפס הניווט), ומתחתיה <div class="mdr-box" data-subject="math" data-track="bagrut"></div>
-   track: bagrut מציג בגרות+שניהם · gmar מציג גמר+שניהם. מגזרים — לפי המדריכ/ה. */
+   track: bagrut מציג בגרות+שניהם · gmar מציג גמר+שניהם. מגזרים — לפי המדריכ/ה.
+   הסדר (22.10.26): לשונית מגזר ← נושא ← תיקיית המדריכ/ה. */
 (function () {
   var EXEC = 'https://script.google.com/macros/s/AKfycbwDOLGv0Hr7KNjFJBIslJkDt9cDa2g4-Gfho3dTfI0AP3uwjlM3NGCwSnQkXZd4DUlyHg/exec';
   var SECTORS = [['kelali', 'כללי'], ['haredi', 'חרדי'], ['arab', 'ערבי']];
-  var GENERAL = 'כללי';
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -33,24 +33,34 @@
       '<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>';
   }
 
-  // תיקיות לפי המדריכ/ה — כמו במאגר במנור; תיקייה בודדת נפתחת לבד
+  // נושאים (22.10.26, מיטל: "קודם לפי מגזרים, וגם על פי נושאים") — הנושא נקבע בשרת
+  // (הצעה לפי שם הקובץ, ומיטל יכולה לשנות במסך האישור). בתוך נושא: לפי תיקיית המדריכ/ה.
+  var TOPICS = [['tochnit', 'תוכניות לימודים, מיקודים וחוזרים'], ['bchinot', 'בחינות, מתכונות ותרגול'],
+    ['horaa', 'חומרי הוראה לכיתה'], ['hadracha', 'מצגות ממפגשי ההדרכה'], ['merchok', 'למידה מרחוק וחוסן']];
+  function byName(a, b) { return a.name.localeCompare(b.name, 'he', { numeric: true }); }
   function panelHtml(files) {
-    var byGuide = {};
-    files.forEach(function (f) { (byGuide[f.guide] = byGuide[f.guide] || []).push(f); });
-    return Object.keys(byGuide).sort(function (a, b) { return a.localeCompare(b, 'he'); }).map(function (g) {
+    var guides = {};
+    files.forEach(function (f) { guides[f.guide] = 1; });
+    var manyGuides = Object.keys(guides).length > 1;
+    var known = TOPICS.map(function (t) { return t[0]; });
+    return (manyGuides ? '' : '<div class="mdr-by">מאת ' + esc(Object.keys(guides)[0]) + '</div>') + TOPICS.map(function (t) {
+      var list = files.filter(function (f) { return f.topic === t[0] || (t[0] === 'horaa' && known.indexOf(f.topic) < 0); });
+      if (!list.length) return '';
       var byFolder = {};
-      byGuide[g].forEach(function (f) { var k = f.folder || GENERAL; (byFolder[k] = byFolder[k] || []).push(f); });
+      list.forEach(function (f) {
+        var k = (manyGuides ? f.guide + (f.folder ? ' · ' + f.folder : '') : f.folder) || '';
+        (byFolder[k] = byFolder[k] || []).push(f);
+      });
       var names = Object.keys(byFolder).sort(function (a, b) {
-        if (a === GENERAL) return 1; if (b === GENERAL) return -1;
+        if (!a) return 1; if (!b) return -1;
         return a.localeCompare(b, 'he', { numeric: true });
       });
-      var one = names.length === 1;
-      return '<div class="mdr-guide"><div class="mdr-by">מאת ' + esc(g) + ' · ' + byGuide[g].length + ' פריטים</div>' +
-        names.map(function (n) {
-          var list = byFolder[n].sort(function (a, b) { return a.name.localeCompare(b.name, 'he', { numeric: true }); });
-          return '<details class="mdr-folder"' + (one ? ' open' : '') + '><summary><span>' + esc(n) + '</span><b>' + list.length + '</b></summary>' +
-            '<div class="mdr-files">' + list.map(fileRow).join('') + '</div></details>';
-        }).join('') + '</div>';
+      var sub = names.length > 1 || (manyGuides && names[0]);
+      return '<details class="mdr-folder"><summary><span>' + esc(t[1]) + '</span><b>' + list.length + '</b></summary>' +
+        '<div class="mdr-files">' + names.map(function (n) {
+          return (sub ? '<div class="mdr-sub">' + esc(n || (manyGuides ? '' : 'עוד חומרים')) + '</div>' : '') +
+            byFolder[n].sort(byName).map(fileRow).join('');
+        }).join('') + '</div></details>';
     }).join('');
   }
 
@@ -61,30 +71,19 @@
       box.innerHTML = '<p class="mdr-empty">החומרים של המדריכים יעלו לכאן בקרוב.</p>';
       return;
     }
+    // קודם מגזר: לשונית לכל מגזר שיש בו חומרים. מדריכ/ה של כללי וחרדי — החומרים בשתיהן.
     var bySector = {};
     SECTORS.forEach(function (s) {
       bySector[s[0]] = files.filter(function (f) { return (f.sectors || []).indexOf(s[0]) >= 0; });
     });
-    // מגזרים עם אותם קבצים בדיוק (מדריכ/ה שמלווה כללי וחרדי) — לשונית אחת "כללי · חרדי"
-    var tabs = [];
-    SECTORS.forEach(function (s) {
-      var list = bySector[s[0]];
-      if (!list.length) return;
-      var sig = list.map(function (f) { return f.id; }).sort().join(',');
-      var same = tabs.filter(function (t) { return t.sig === sig; })[0];
-      if (same) { same[1] += ' · ' + s[1]; return; }
-      var t = [s[0], s[1]]; t.sig = sig; tabs.push(t);
-    });
+    var tabs = SECTORS.filter(function (s) { return bySector[s[0]].length; });
     var uid = 'mdr-' + (box.getAttribute('data-subject') || '') + '-' + track;
-    var bar = tabs.length > 1
-      ? '<div class="mdr-tabs" role="tablist" aria-label="חומרי המדריכים לפי מגזר">' + tabs.map(function (s, i) {
+    var bar = '<div class="mdr-tabs" role="tablist" aria-label="חומרי המדריכים לפי מגזר">' + tabs.map(function (s, i) {
           return '<button type="button" class="sbjtab" role="tab" id="' + uid + '-t-' + s[0] + '" aria-controls="' + uid + '-p-' + s[0] + '" aria-selected="' + (i ? 'false' : 'true') + '" tabindex="' + (i ? '-1' : '0') + '" data-mdr="' + s[0] + '"><span>' + s[1] + '</span><b class="sbjn">' + bySector[s[0]].length + '</b></button>';
-        }).join('') + '</div>'
-      : '';
+        }).join('') + '</div>';
     var panels = tabs.map(function (s, i) {
-      return '<div class="mdr-panel" role="' + (bar ? 'tabpanel' : 'region') + '" id="' + uid + '-p-' + s[0] + '"' +
-        (bar ? ' aria-labelledby="' + uid + '-t-' + s[0] + '"' : '') + (i ? ' hidden' : '') + '>' +
-        (bar ? '' : '<div class="mdr-sector">' + s[1] + '</div>') + panelHtml(bySector[s[0]]) + '</div>';
+      return '<div class="mdr-panel" role="tabpanel" id="' + uid + '-p-' + s[0] + '" aria-labelledby="' + uid + '-t-' + s[0] + '"' +
+        (i ? ' hidden' : '') + '>' + panelHtml(bySector[s[0]]) + '</div>';
     }).join('');
     box.innerHTML = bar + panels;
     if (!bar) return;

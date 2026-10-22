@@ -71,6 +71,7 @@
       שינוי מגיע לאתר תוך כמה דקות.</p>
 
     <div class="ch-sum" id="ch-sum" role="group" aria-label="סינון"></div>
+    <p style="margin:0 0 14px"><button type="button" class="ch-btn yes" id="ch-all" hidden>לאשר לאתר את כל הממתינים</button></p>
     <label style="display:inline-flex;gap:8px;align-items:center;font-size:14px;margin-bottom:6px">תחום דעת:
       <select id="ch-subject" style="font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--border);border-radius:8px"><option value="">הכול</option></select>
     </label>
@@ -91,6 +92,9 @@
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const TRACKS = [['bagrut', 'בגרות'], ['gmar', 'גמר'], ['both', 'בגרות וגמר']];
+  // הנושא בעמוד המקצוע (22.10.26) — אותם מפתחות כמו SITE_TOPICS_ בשרת ו-chomarim-madrichim.js
+  const TOPICS = [['tochnit', 'תוכניות, מיקודים וחוזרים'], ['bchinot', 'בחינות, מתכונות ותרגול'],
+    ['horaa', 'חומרי הוראה לכיתה'], ['hadracha', 'מצגות ממפגשי ההדרכה'], ['merchok', 'למידה מרחוק וחוסן']];
   const SECT = { kelali: 'כללי', haredi: 'חרדי', arab: 'ערבי' };
   const FILTERS = [['pending', 'ממתינים'], ['approved', 'באתר'], ['rejected', 'לא לאתר'], ['all', 'הכול']];
   let FILES = [];
@@ -128,6 +132,9 @@
 
   function render() {
     const count = k => FILES.filter(f => k === 'all' || f.status === k).length;
+    const pend = count('pending');
+    $('ch-all').hidden = !pend;
+    $('ch-all').textContent = 'לאשר לאתר את כל הממתינים (' + pend + ')';
     $('ch-sum').innerHTML = FILTERS.map(([k, t]) =>
       '<button type="button" class="ch-f" data-f="' + k + '" aria-pressed="' + (filter === k) + '">' + t + '<b>' + count(k) + '</b></button>').join('');
     const subj = $('ch-subject').value;
@@ -171,6 +178,7 @@
       '<small>' + esc(f.date) + (f.track ? '' : ' · נתיב מוצע לפי השם') + '</small></div>' +
       '<div class="ch-ctl">' + subjSel +
       '<select data-track="' + esc(f.id) + '" aria-label="נתיב">' + TRACKS.map(([k, t]) => '<option value="' + k + '"' + (k === tr ? ' selected' : '') + '>' + t + '</option>').join('') + '</select>' +
+      '<select data-topic="' + esc(f.id) + '" aria-label="נושא">' + TOPICS.map(([k, t]) => '<option value="' + k + '"' + (k === (f.topic || f.topicSuggested) ? ' selected' : '') + '>' + t + '</option>').join('') + '</select>' +
       '<button type="button" class="ch-btn yes" data-set="approved" data-id="' + esc(f.id) + '" aria-pressed="' + (f.status === 'approved') + '">לאתר</button>' +
       '<button type="button" class="ch-btn no" data-set="rejected" data-id="' + esc(f.id) + '" aria-pressed="' + (f.status === 'rejected') + '">לא לאתר</button>' +
       '</div></div>';
@@ -181,7 +189,8 @@
     const f = FILES.find(x => x.id === id);
     const tSel = document.querySelector('select[data-track="' + CSS.escape(id) + '"]');
     const sSel = document.querySelector('select[data-subj="' + CSS.escape(id) + '"]');
-    const it = { id: id, track: tSel ? tSel.value : (f.track || f.suggested) };
+    const oSel = document.querySelector('select[data-topic="' + CSS.escape(id) + '"]');
+    const it = { id: id, track: tSel ? tSel.value : (f.track || f.suggested), topic: oSel ? oSel.value : (f.topic || f.topicSuggested) };
     if (status) it.status = status;
     if (sSel) it.subject = sSel.value;
     return it;
@@ -198,6 +207,7 @@
         if (!f) return;
         if (it.status) f.status = it.status;
         f.track = it.track;
+        f.topic = it.topic;
         if (it.subject) f.subject = it.subject;
       });
       say(items.length === 1 ? 'נשמר' : 'נשמרו ' + items.length + ' קבצים');
@@ -211,6 +221,14 @@
   }
 
   document.addEventListener('click', e => {
+    if (e.target.id === 'ch-all') {
+      const ids = FILES.filter(x => x.status === 'pending').map(x => x.id);
+      if (ids.length && confirm('לפרסם באתר את כל ' + ids.length + ' הקבצים שממתינים? כל אחד בנתיב ובנושא שמוצגים לו.')) {
+        // קבצים שלא מוצגים עכשיו (סינון) — עם הנתיב והנושא המוצעים
+        save(ids.map(id => itemFor(id, 'approved')), [e.target]);
+      }
+      return;
+    }
     const f = e.target.closest('[data-f]');
     if (f) { filter = f.dataset.f; render(); return; }
     const one = e.target.closest('[data-set]');
@@ -225,7 +243,7 @@
   // שינוי נתיב/תחום לקובץ שכבר הוחלט עליו — נשמר מיד; לממתין — נשמר עם ההחלטה
   document.addEventListener('change', e => {
     if (e.target.id === 'ch-subject') { render(); return; }
-    const id = e.target.dataset.track || e.target.dataset.subj;
+    const id = e.target.dataset.track || e.target.dataset.subj || e.target.dataset.topic;
     if (!id) return;
     const f = FILES.find(x => x.id === id);
     if (f && f.status !== 'pending') save([itemFor(id, '')], [e.target]);

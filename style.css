@@ -1150,3 +1150,6 @@ body.pm-open{overflow:hidden}
 .mdr-file:hover{background:var(--blue-bg);color:var(--navy)}
 .mdr-name{min-width:0;overflow-wrap:anywhere}
 .mdr-type{flex:none;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--teal-100);color:#087565}
+/* תת־כותרת בתוך נושא — תיקיית המדריכ/ה (22.10.26) */
+.mdr-sub{font-size:.78rem;font-weight:800;color:var(--text2);margin:8px 2px 0}
+.mdr-sub:first-child{margin-top:0}
