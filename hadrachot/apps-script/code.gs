@@ -69,7 +69,7 @@ const SCHEMA = {
   // 'file' = הועלה לדרייב של המערכת · 'link' = קישור לקובץ דרייב קיים בלי העתקה
   // track/site* — חומרי למידה מהמדריכים באתר (20.10.26): track = bagrut|gmar|both (נבחר בהעלאה),
   // siteStatus = ''(ממתין)|approved|rejected — רק approved מופיע בעמודי תחומי הדעת באתר
-  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source','track','siteStatus','siteSubject','siteAt'],
+  guide_files:    ['id','guideSlug','guideName','fileName','fileUrl','fileId','mimeType','size','note','uploadedBy','createdAt','uploaderRole','folder','kind','source','track','siteStatus','siteSubject','siteAt','siteTopic'],
   guide_messages: ['id','guideSlug','guideName','authorName','authorRole','text','createdAt'],
   guide_hours:    ['id','guideSlug','guideName','firstName','lastName','subject','schoolName','topic','date','hours','notes','createdBy','createdAt'],
   // נוכחות בהשתלמויות שלא במנור (שגרירי חדשנות, 15.10.26) — monthlyExtraTrainings_
@@ -7736,6 +7736,20 @@ function siteSuggestTrack_(f, g) {
   return 'both';
 }
 
+// נושא בעמוד המקצוע (22.10.26, מיטל: "קודם לפי מגזרים, וגם על פי נושאים").
+// siteTopic ריק → הצעה לפי שם הקובץ; שם התיקייה קובע רק כשהוא חד־משמעי.
+const SITE_TOPICS_ = ['tochnit', 'bchinot', 'horaa', 'hadracha', 'merchok'];
+function siteSuggestTopic_(f) {
+  const n = String(f.fileName || ''), fo = guideFolderName_(f.folder);
+  if (/למידה מרחוק|חוסן|מקוונ/.test(n + ' ' + fo)) return 'merchok';
+  if (/מפגש|השתלמות|הדרכה/.test(n) || /מצגות הדרכ/.test(fo)) return 'hadracha';
+  if (/מתכונ|חוברת|בחינ|מבחן|פתרונ|מחוון|רשימת תיוג|רשת ביטחון|שאלת בגרות|^שאלון|exam|test|boost|assessment|answer|itest|rubric/i.test(n)) return 'bchinot';
+  if (/תוכני|תכנית|סילבוס|מיקוד|חוזר|חוקי מענה|הקלות|מתווה|עקרונות והנחיות|approved-texts|guidelines/i.test(n) || /^תוכניות לימוד/.test(fo)) return 'tochnit';
+  if (/^מפגש/.test(fo)) return 'hadracha';
+  return 'horaa';
+}
+function siteTopic_(v) { v = String(v || '').trim(); return SITE_TOPICS_.indexOf(v) >= 0 ? v : ''; }
+
 // כל הקבצים שיכולים לעלות לאתר, עם המדריכ/ה והמקצוע
 function siteMaterialRows_() {
   const guides = remindWin_(true).TS_GUIDES || {};
@@ -7750,6 +7764,7 @@ function siteMaterialRows_() {
     const subject = subjects.indexOf(String(f.siteSubject || '')) >= 0 ? String(f.siteSubject) : subjects[0];
     out.push({ f: f, g: g, slug: slug, subjects: subjects, subject: subject,
       track: siteTrack_(f.track), suggested: siteSuggestTrack_(f, g),
+      topic: siteTopic_(f.siteTopic), topicSuggested: siteSuggestTopic_(f),
       status: String(f.siteStatus || '') === 'approved' ? 'approved' : String(f.siteStatus || '') === 'rejected' ? 'rejected' : 'pending' });
   });
   return out;
@@ -7782,6 +7797,7 @@ function siteMaterials(p) {
       })
       .map(r => ({
         id: String(r.f.id), subject: SITE_SUBJECTS_[r.subject], track: r.track || r.suggested,
+        topic: r.topic || r.topicSuggested,
         sectors: r.g.sectors || [], guide: r.g.name || '',
         name: String(r.f.fileName || ''), url: String(r.f.fileUrl || ''),
         mime: String(r.f.mimeType || ''), kind: String(r.f.kind || 'file'),
@@ -7800,7 +7816,7 @@ function siteMaterialsAdmin() {
     name: String(r.f.fileName || ''), url: /^https:\/\//.test(String(r.f.fileUrl || '')) ? String(r.f.fileUrl) : '',
     mime: String(r.f.mimeType || ''), kind: String(r.f.kind || 'file'),
     folder: guideFolderName_(r.f.folder), date: String(toIso_(r.f.createdAt) || '').slice(0, 10),
-    track: r.track, suggested: r.suggested, status: r.status
+    track: r.track, suggested: r.suggested, topic: r.topic, topicSuggested: r.topicSuggested, status: r.status
   }));
   rows.sort((a, b) => a.subject.localeCompare(b.subject, 'he') || a.guide.localeCompare(b.guide, 'he') ||
     a.folder.localeCompare(b.folder, 'he') || a.name.localeCompare(b.name, 'he', { numeric: true }));
@@ -7819,8 +7835,8 @@ function siteMaterialsSet(p) {
     const range = s.getDataRange().getValues();
     const h = range[0].map(String);
     const col = n => h.indexOf(n);
-    const cId = col('id'), cSt = col('siteStatus'), cTr = col('track'), cSu = col('siteSubject'), cAt = col('siteAt');
-    if ([cId, cSt, cTr, cSu, cAt].some(c => c < 0)) return { ok: false, error: 'missing_columns' };
+    const cId = col('id'), cSt = col('siteStatus'), cTr = col('track'), cSu = col('siteSubject'), cAt = col('siteAt'), cTo = col('siteTopic');
+    if ([cId, cSt, cTr, cSu, cAt, cTo].some(c => c < 0)) return { ok: false, error: 'missing_columns' };
     const byId = {};
     for (let i = 1; i < range.length; i++) byId[String(range[i][cId])] = i;
     const now = new Date().toISOString();
@@ -7833,14 +7849,15 @@ function siteMaterialsSet(p) {
       if (st !== null) { range[i][cSt] = st; range[i][cAt] = now; }
       if (it.track !== undefined) range[i][cTr] = siteTrack_(it.track);
       if (it.subject !== undefined) range[i][cSu] = SITE_SUBJECTS_[it.subject] ? it.subject : '';
+      if (it.topic !== undefined) range[i][cTo] = siteTopic_(it.topic);
       changed++;
     });
     if (changed) {
       // שורה שנמחקה בינתיים (מדריכ/ה מחק/ה קובץ) מזיזה את השורות — אז לא כותבים עמודה שלמה
       const ids = s.getRange(2, cId + 1, Math.max(s.getLastRow() - 1, 1), 1).getValues().map(r => String(r[0]));
       if (range.slice(1).some((r, k) => String(r[cId]) !== ids[k])) return { ok: false, error: 'changed_meanwhile' };
-      // רק ארבע העמודות של האתר נכתבות — שאר השורה לא נוגעת
-      [cSt, cTr, cSu, cAt].forEach(c => {
+      // רק עמודות האתר נכתבות — שאר השורה לא נוגעת
+      [cSt, cTr, cSu, cAt, cTo].forEach(c => {
         s.getRange(2, c + 1, range.length - 1, 1).setValues(range.slice(1).map(r => [r[c]]));
       });
       CacheService.getScriptCache().put('siteMatGen', String(Date.now()), 21600);
