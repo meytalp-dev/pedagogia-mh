@@ -7,7 +7,7 @@
    מדריכ/ה נוסף/ת = slug ב-SLOT_GUIDES כאן, ב-teacher/slots.js וב-code.gs.
    ============================================================ */
 (function () {
-  const SLOT_GUIDES = ['sigal'];
+  const SLOT_GUIDES = ['sigal', 'yitzhak'];   // יצחק שמש — 22.10.26
   const SLUG = (typeof GUIDE_CFG !== 'undefined' && GUIDE_CFG.slug) || '';
   const sec = document.getElementById('sec-slots');
   if (!sec) return;

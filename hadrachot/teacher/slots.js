@@ -6,7 +6,7 @@
    מוצג רק למורי אזרחות (בדיקה מהירה כאן); השרת מחליט סופית לפי הקבוצה של המדריכ/ה.
    ============================================================ */
 (function () {
-  const SUBJECTS = ['אזרחות'];   // המקצועות של SLOT_GUIDES בשרת (כרגע: סיגל)
+  const SUBJECTS = ['אזרחות', 'עברית'];   // המקצועות של SLOT_GUIDES בשרת (סיגל · יצחק — עברית חרדי, 22.10.26)
   const TRACKS = { bagrut: 'בחינת בגרות חיצונית', gemer: 'גמר' };
   const DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
   const ERR = {
@@ -87,7 +87,7 @@
         </div>`;
       }
     } else if (!mineNext.length) {
-      html += `<div class="empty" style="padding:18px;">אין כרגע מועדים פנויים. ${esc(first)} מפרסמת מועדים חדשים מדי שבוע — וכשיהיו, הם יופיעו כאן.</div>`;
+      html += `<div class="empty" style="padding:18px;">אין כרגע מועדים פנויים. כשיתפרסמו מועדים חדשים — הם יופיעו כאן.</div>`;
     }
     if (minePast.length) {
       html += `<div class="slot-past">שעות פרטניות שנקבעו: ${minePast.map(m => esc(dayLbl(m.date)) + ' <span dir="ltr">' + esc(m.start) + '</span>').join(' · ')}</div>`;

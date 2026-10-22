@@ -8736,7 +8736,7 @@ function planChangeMailTeachers_(win, slug, mdate, told, cur, back) {
    אין מחיקה בטעות של שיבוץ של מורה אחר, והטלפונים לא גלויים לכל הקבוצה.
    מייל: אישור למורה + עדכון למדריכ/ה על כל שיבוץ וביטול (דרך ממסר merhav).
    כרגע רק לסיגל; מדריכ/ה נוסף/ת = slug ב-SLOT_GUIDES וגם ב-guide/slots.js וב-teacher/slots.js. */
-const SLOT_GUIDES = ['sigal'];
+const SLOT_GUIDES = ['sigal', 'yitzhak'];   // יצחק שמש (עברית, חרדי) — 22.10.26
 const SLOT_TRACKS = { bagrut: 'בחינת בגרות חיצונית', gemer: 'גמר' };
 const SLOT_SIGN = 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה';
 
