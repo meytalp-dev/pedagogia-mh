@@ -6580,14 +6580,33 @@ function trainingApprove(p) {
    פתחה את הרישום (meetOpenFor_), בדיוק כמו בצ'ק-אין הרגיל.
    הסטטוס הוא 'pending' וממתין לאישור המדריכה, ככלל הקיים: רישום עצמי
    אינו נספר כנוכחות עד שאושר. */
+/* מורה עם כמה כרטיסים — שני מקצועות, או מקצוע + רכז.ת חברתי.ת (24.10.26, מיטל).
+   המכשיר זוכר את הכרטיס האחרון שהיה פעיל, ולא בהכרח את זה של הקבוצה שנכנסים אליה
+   עכשיו (ראניה חגו, 22.10: הרישום להדרכת העברית של סוהא נקלט תחת כרטיס הרכזת).
+   הרישום נשמר על הכרטיס של אותו אדם (teacherSubjects_) שמתאים לקבוצה.
+   אין כרטיס מתאים, או שהכרטיס שבמכשיר כבר מתאים — נשאר הכרטיס שבמכשיר, כמו קודם. */
+function teacherCardForGuide_(t, slug) {
+  const rows = readAll('teachers');
+  const cards = teacherSubjects_(t, rows);
+  if (cards.length < 2) return t;   // רוב המורים — כרטיס אחד, בלי לטעון את guides.js
+  let win;
+  try { win = remindWin_(); } catch (e) { console.error('teacherCardForGuide_: ' + e); return t; }
+  const g = Object.assign({ slug: slug }, (win.TS_GUIDES || {})[slug] || {});
+  if (!g.name || win.TS_guideHasTeacher(g, t)) return t;
+  const hit = cards.map(x => rows.find(r => String(r.id) === x.id))
+    .filter(r => r && win.TS_guideHasTeacher(g, r))[0];
+  return hit || t;
+}
+
 function teacherHere(p) {
-  const t = teacherByKey_(p.k);
-  if (!t) return { ok: false, error: 'bad_key' };
+  const t0 = teacherByKey_(p.k);
+  if (!t0) return { ok: false, error: 'bad_key' };
   const slug = meetSlug_(p.g);
   if (!slug) return { ok: false, error: 'missing_guide' };
   const now = Date.now();
   const m = meetOpenFor_(slug, now);
   if (!m) return { ok: false, error: 'closed' };
+  const t = teacherCardForGuide_(t0, slug);
 
   // 12.10.26 — זה הרישום הראשי עכשיו (mifgash/ בלי קוד): עשרות לחיצות באותה דקה,
   // ולכן במנעול, כמו checkin.submit — אחרת לחיצה כפולה יוצרת שתי שורות
@@ -6625,10 +6644,11 @@ function teacherHere(p) {
    רק מועד מהתוכנית השנתית שהיה בשבעת הימים האחרונים (לא היום ולא עתידי). */
 const CLAIM_MAX_DAYS = 7;
 function teacherClaim(p) {
-  const t = teacherByKey_(p.k);
-  if (!t) return { ok: false, error: 'bad_key' };
+  const t0 = teacherByKey_(p.k);
+  if (!t0) return { ok: false, error: 'bad_key' };
   const slug = meetSlug_(p.g);
   if (!slug) return { ok: false, error: 'missing_guide' };
+  const t = teacherCardForGuide_(t0, slug);   // כמו teacher.here — הכרטיס של הקבוצה
   const d = String(p.d || ''), day = String(p.day || p.d || '');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return { ok: false, error: 'bad_date' };
   const today = meetToday_();
