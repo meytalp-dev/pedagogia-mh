@@ -158,7 +158,7 @@ window.TS_GUIDES = {
     sectors: ['haredi'],
     inspector: 'yisachar',
     drive: '',
-    zoom: ''
+    zoom: 'https://edu-il.zoom.us/j/2350155712'   /* הזום הקבוע של יצחק שמש (מיטל, 24.10.26) */
   },
 
   /* ---------- החברה הערבית ---------- */
