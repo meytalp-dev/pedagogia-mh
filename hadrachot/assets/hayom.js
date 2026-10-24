@@ -197,55 +197,39 @@
       : '<span>השרת של מנור לא ענה. הקישורים למדריכות נבנו בלי מפתח — לרענן בעוד רגע.</span>';
   }
 
-  /* ---------- מייל חד-פעמי "מבט בית הספר ומי עוד לא נרשם" (22.10.26 — במקום העדכון השבועי שבוטל).
-     weekly.admin בטוקן אדמין: on=once-preview → הכל לתיבת המרחב; on=once-send → שליחה אמיתית, פעם אחת. ---------- */
-  function onceShow(d, note) {
-    const sentAt = d && d.onceSentAt;
-    $('hy-weekly-state').textContent = sentAt
-      ? 'נשלח ב-' + new Date(sentAt).toLocaleString('he-IL', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' })
-      : 'טרם נשלח';
-    $('hy-weekly-note').textContent = note || (d && d.quota != null ? 'מכסת מייל שנותרה היום: ' + d.quota : '');
-    const t = $('hy-weekly-toggle');
-    t.hidden = !!sentAt;
-    t.textContent = 'לשלוח עכשיו לכולם';
+  /* ---------- הדוח החודשי — תצוגה מקדימה (24.10.26: המייל החד-פעמי והעדכון השבועי בוטלו, והתוכן —
+     מבט בית הספר, שאלות ותשובות, חדש באתר — נכנס לדוח החודשי). weekly.admin בטוקן אדמין, on=monthly-preview ---------- */
+  function monthShow(d, note) {
+    $('hy-weekly-state').textContent = d && d.monthlyLive ? 'הדוח החודשי פעיל — יוצא לבד ב-1 בחודש' : 'הדוח החודשי במצב תצוגה מקדימה';
+    $('hy-weekly-note').textContent = note || '';
   }
-  async function weeklyCall(on) {
-    const r = await TS.api('weekly.admin', on ? { on: on } : {}, { cache: 'no' });
+  async function weeklyCall(params) {
+    const r = await TS.api('weekly.admin', params || {}, { cache: 'no' });
     if (r && r.ok && r.data) return r.data;
     const err = (r && r.error) || '';
-    $('hy-weekly-state').textContent = /unauthenticated|forbidden/.test(err) ? 'צריך להתחבר כאדמין'
-      : err === 'already_sent' ? 'כבר נשלח — לא נשלח שוב.' : 'השרת לא ענה. לרענן בעוד רגע.';
+    $('hy-weekly-state').textContent = /unauthenticated|forbidden/.test(err) ? 'צריך להתחבר כאדמין' : 'השרת לא ענה. לרענן בעוד רגע.';
     return null;
   }
   async function initWeekly() {
     const qs = new URLSearchParams(location.search);
     if (qs.get('weekly')) history.replaceState(null, '', location.pathname);   // קישורים ישנים מהמייל השבועי — לא עושים כלום
-    const d = await weeklyCall('');
-    if (d) onceShow(d);
-    $('hy-weekly-preview').onclick = async e => {
-      const b = e.currentTarget; b.disabled = true; b.textContent = 'שולח…';
-      const r = await weeklyCall('once-preview');
-      b.disabled = false; b.textContent = 'תצוגה מקדימה';
-      if (r) onceShow(r, 'נשלחה תצוגה מקדימה ל-merhav (' + ((r.preview && r.preview.sent) || 0) + ' מיילים בתוכה).');
+    const d = await weeklyCall();
+    if (d) monthShow(d);
+    const prev = (() => { const t = new Date(); t.setDate(1); t.setMonth(t.getMonth() - 1);
+      return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0'); })();
+    const now = new Date().toISOString().slice(0, 7);
+    const bind = (id, month, label) => {
+      $(id).onclick = async e => {
+        const b = e.currentTarget; b.disabled = true; b.textContent = 'שולח…';
+        const r = await weeklyCall({ on: 'monthly-preview', month: month });
+        b.disabled = false; b.textContent = label;
+        if (r) monthShow(r, 'נשלחה תצוגה מקדימה ל-merhav (' + month + '): מייל מרוכז של המנהלים + מייל לכל מפקח/ת.');
+      };
     };
-    $('hy-weekly-toggle').onclick = async e => {
-      const b = e.currentTarget;
-      if (!confirm('לשלוח עכשיו? מייל לכל מנהל/ת (רכזים פדגוגיים בעותק) ולכל מפקח/ת — כ-70 מיילים מתיבת המרחב. פעם אחת בלבד.')) return;
-      b.disabled = true; b.textContent = 'שולח… (עד כמה דקות, לא לסגור את הדף)';
-      // השרת עוצר אחרי 4 דקות ומחזיר more — קוראים שוב, והוא ממשיך ממי שעוד לא קיבל
-      let n = 0, failed = [], skipped = [], r = null;
-      for (let i = 0; i < 6; i++) {
-        r = await weeklyCall('once-send');
-        if (!r || !r.sent) break;
-        n += r.sent.sent || 0; failed = r.sent.failed || []; skipped = r.sent.skipped || [];
-        if (!r.sent.more) break;
-        $('hy-weekly-note').textContent = 'נשלחו ' + n + ' עד עכשיו, ממשיך…';
-      }
-      b.disabled = false; b.textContent = 'לשלוח עכשיו לכולם';
-      if (r) onceShow(r, 'נשלח ✓ ' + n + ' מיילים' +
-        (failed.length ? ' · נכשלו: ' + failed.join(', ') : '') +
-        (skipped.length ? ' · דולגו: ' + skipped.join(', ') : ''));
-    };
+    bind('hy-weekly-preview', now, 'החודש עד היום');
+    $('hy-weekly-toggle').hidden = false;
+    $('hy-weekly-toggle').textContent = 'החודש הקודם';
+    bind('hy-weekly-toggle', prev, 'החודש הקודם');
   }
 
   function renderAll() { renderKeyWarn(); renderWeek(); renderGaps(); renderLinks(); renderMine(); renderGuides(); }

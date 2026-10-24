@@ -4420,7 +4420,7 @@ function meetRemindTick() {
   try { data = remindLoad_(); }
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
   // העדכון השבועי "מי עוד לא נרשם" בוטל (22.10.26, מיטל: "אני לא רוצה עדכון שבועי") —
-  // במקומו מייל חד-פעמי (regOnceSend_) שמפנה למבט בית הספר.
+  // מ-24.10.26 התוכן (מבט בית הספר, שאלות ותשובות, חדש באתר) נמצא בדוח החודשי.
   try { updScheduledTick_(); }
   catch (e) { console.error('meetRemindTick: scheduled update failed ' + e); }
   try { monthlyTick_(data); }
@@ -4955,6 +4955,8 @@ const MONTHLY_SIGN = 'יחידת הפיקוח על הדרכות מורים · מ
 // מיילי סיכום הנוכחות למנהלים/מפקחים/מדריכים (15.10.26, מיטל)
 const MONTHLY_SUMMARY_SIGN = 'המנהל להכשרה מקצועית · משרד העבודה';
 const MONTHLY_REPLY_TO = 'merhav@pedagogiamh.co.il';
+// התצוגה המקדימה של הדוח החודשי — לתיבת המרחב (24.10.26; עד אז לחשבון אורט, שנסגר)
+const MONTHLY_PREVIEW_TO = MONTHLY_REPLY_TO;
 
 function monthlyIsLive_() {
   return PropertiesService.getScriptProperties().getProperty('MONTHLY_LIVE') === '1';
@@ -5038,213 +5040,17 @@ function weeklyRegLive(p) {
   if (!meetSafeEqual_(String(p.t || ''), weeklyRegToken_())) return { ok: false, error: 'bad_link' };
   const props = PropertiesService.getScriptProperties();
   const on = String(p.on || '');
-  // 22.10.26: העדכון השבועי בוטל — הפעלה לא אפשרית; במקומו מייל חד-פעמי (once-preview / once-send)
+  // 22.10.26: העדכון השבועי בוטל, ו-24.10.26 גם המייל החד-פעמי — התוכן נכנס לדוח החודשי (מיטל: "כדי שלא יהיו כמה מיילים").
+  // on=monthly-preview — תצוגה מקדימה של הדוח החודשי הקרוב (החודש הקודם/הנוכחי עד היום) לתיבת המרחב.
   props.deleteProperty('WEEKLY_REG_LIVE');
-  const st = () => ({ live: false, onceSentAt: props.getProperty(REG_ONCE_KEY) || '', quota: MailApp.getRemainingDailyQuota() });
-  if (on === 'once-preview') { const r = regOnceSend_(false); return { ok: true, data: Object.assign(st(), { preview: r }) }; }
-  if (on === 'once-send') {
-    if (props.getProperty(REG_ONCE_KEY)) return { ok: false, error: 'already_sent' };
-    // כל נמען מסומן לחוד (reg_once_20261022:<id>) — קריאה שנקטעה ממשיכה מאיפה שעצרה; הדף קורא שוב כל עוד more
-    const lock = LockService.getScriptLock();
-    if (!lock.tryLock(5000)) return { ok: false, error: 'busy' };
-    try {
-      const r = regOnceSend_(true);
-      if (!r.more) props.setProperty(REG_ONCE_KEY, new Date().toISOString());
-      auditLog_('', 'regonce.send', 'mail', REG_ONCE_KEY, 'ok', JSON.stringify({ sent: r.sent, more: r.more, skipped: r.skipped.length, failed: r.failed.length }));
-      return { ok: true, data: Object.assign(st(), { sent: r }) };
-    } finally { lock.releaseLock(); }
+  if (on === 'monthly-preview') {
+    const today = meetToday_();
+    const month = String(p.month || '').match(/^\d{4}-\d{2}$/) ? String(p.month) : today.slice(0, 7);
+    monthlySend_(month, false, today);
+    return { ok: true, data: { live: false, monthlyLive: monthlyIsLive_(), preview: month } };
   }
-  return { ok: true, data: st() };
+  return { ok: true, data: { live: false, monthlyLive: monthlyIsLive_() } };
 }
-
-/* מייל חד-פעמי (22.10.26, מיטל: "נעשה חד פעמי עכשיו... ולרשום שמעכשיו הם יוכלו להסתכל על זה לבד
-   במבט בית הספר עם הקישור. אותו דבר למפקחים"). לכל מנהל/ת (רכזים פדגוגיים בעותק) — מצב הרישום,
-   השמות שחסרים, הקישור למבט בית הספר ולשאלות ותשובות; לכל מפקח/ת — הטבלה והשמות לפי בית ספר.
-   נשלח מ-merhav דרך הממסר. תצוגה מקדימה — הכל לתיבת המרחב. */
-const REG_ONCE_KEY = 'reg_once_20261022';
-const REG_ONCE_FAQ = 'https://pedagogiamh.co.il/menor.html';
-const REG_ONCE_SIGN = 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה';
-
-function regOnceBtn_(href, label) {
-  return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 14px"><tr>' +
-    '<td bgcolor="#16325C" style="background:#16325C;border-radius:10px"><a href="' + href +
-    '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:15px;display:inline-block">' + label + '</a></td></tr></table>';
-}
-
-function regOnceNames_(s) {
-  const li = list => list.map(r => '<li>' + remindEsc_(r.name) + ' <span style="color:#5C7182">· ' + remindEsc_(r.subject) + '</span></li>').join('');
-  return (s.none.length ? '<p style="margin:0 0 4px"><b>טרם נרשמו (' + s.none.length + '):</b></p><ul style="margin:0 0 12px;padding-right:20px">' + li(s.none) + '</ul>' : '') +
-    (s.started.length ? '<p style="margin:0 0 4px"><b>התחילו ולא סיימו (' + s.started.length + '):</b> קיבלו קוד למייל ולא הזינו אותו.</p><ul style="margin:0 0 12px;padding-right:20px">' + li(s.started) + '</ul>' : '');
-}
-
-// כותרת מקטע במייל — קו צבעוני מימין, כדי שהמייל הארוך ייקרא בחלקים
-function regOnceH_(t) {
-  return '<p style="margin:20px 0 6px;padding:0 10px 0 0;border-right:4px solid #256A8A;font-size:17px;font-weight:bold;color:#16325C">' + t + '</p>';
-}
-
-// שאלות ותשובות למנהלים — במייל רק השאלה, כקישור שפותח את התשובה בדף (22.10.26, מיטל:
-// "שיהיה מקופלים החלקים שלא יהיה מייל ארוך מאוד" — Gmail לא מציג קיפול, לכן קישור לכל שאלה)
-const REG_ONCE_QA = [
-  ['המורה השתתף/ה בהדרכה ולא מופיע/ה במנור — מה עושים?', 'm1'],
-  ['המורה עשה/תה הכול לפי ההנחיות, ועדיין לא נרשמה נוכחות', 'm10'],
-  ['מה זה הדוח החודשי שמגיע בסוף כל חודש, ולמי הוא מגיע?', 'm4'],
-  ['מורה חדש/ה לא מופיע/ה ברשימה', 'm7'],
-  ['מורה בחופשת לידה או שעזב/ה', 'm6'],
-  ['המנהל/ת או הרכז/ת הפדגוגי/ת התחלפו', 'm9']
-];
-
-// עדכונים באתר המרחב הפדגוגי — רק עמודים ציבוריים וארציים שכבר באוויר (22.10.26)
-const REG_ONCE_SITE = [
-  ['ועדה מלווה בית ספרית — כל ההנחיות בעמוד אחד', 'https://pedagogiamh.co.il/vaada-melava.html'],
-  ['חומרי למידה מהמדריכים בעמודי המקצוע', 'https://pedagogiamh.co.il/bagrut.html'],
-  ['הרשמה להשתלמויות במצפן של משרד החינוך', 'https://pedagogiamh.co.il/mitzpen-rishum.html'],
-  ['תיק הטיולים המעודכן — 18 נספחים למילוי', 'https://pedagogiamh.co.il/tik-tiyulim.html']
-];
-
-// שמות בשורה אחת: "משה (מתמטיקה) · שרה (אנגלית)" — קצר יותר מרשימה
-function regOnceNamesInline_(list) {
-  return list.map(r => remindEsc_(r.name) + ' <span style="color:#5C7182">(' + remindEsc_(r.subject) + ')</span>').join(' · ');
-}
-
-function regOncePrincipalMail_(s, greet) {
-  const miss = s.none.length + s.started.length;
-  const lk = 'color:#1f7a5c;font-weight:bold;text-decoration:none';
-  const li = 'margin:0 0 6px';
-  const html =
-    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C;text-align:right">' +
-    '<p style="margin:0 0 10px">שלום ' + remindEsc_(greet) + ',</p>' +
-    '<p style="margin:0">עדכון קצר על מנור ועל אתר המרחב הפדגוגי.</p>' +
-
-    regOnceH_('מי עוד לא נרשם למנור') +
-    '<p style="margin:0 0 8px">' + remindEsc_(s.name) + ': <b>' + s.yes + ' מתוך ' + s.n + '</b> המורים נרשמו.' +
-    (miss ? ' רק מורה שנרשם/ה נספר/ת בנוכחות בהדרכות.' : ' <b>כל המורים נרשמו — תודה רבה!</b>') + '</p>' +
-    (s.none.length ? '<p style="' + li + '"><b>טרם נרשמו:</b> ' + regOnceNamesInline_(s.none) + '</p>' : '') +
-    (s.started.length ? '<p style="' + li + '"><b>קיבלו קוד ולא סיימו:</b> ' + regOnceNamesInline_(s.started) + '</p>' : '') +
-    (miss ? '<p style="margin:0">הקישור לרישום למורים: <a href="' + REMIND_SITE + 'teacher/" style="' + lk + '">כניסה למנור למורים</a></p>' : '') +
-
-    regOnceH_('מבט בית הספר — מעכשיו בעצמכם') +
-    '<p style="margin:0 0 4px">מי נרשם, נוכחות בהדרכות והשתלמות מקצועית — בכל רגע. הקוד לכניסה מגיע למייל הזה.</p>' +
-    regOnceBtn_(REMIND_SITE, 'כניסה למבט בית הספר') +
-
-    regOnceH_('שאלות ותשובות') +
-    REG_ONCE_QA.map(q => '<p style="' + li + '">◂ <a href="' + REG_ONCE_FAQ + '#' + q[1] + '" style="' + lk + '">' + remindEsc_(q[0]) + '</a></p>').join('') +
-    '<p style="margin:0;font-size:14px"><a href="' + REG_ONCE_FAQ + '#menahalim" style="color:#1f7a5c">כל השאלות והתשובות ←</a></p>' +
-
-    regOnceH_('חדש באתר המרחב הפדגוגי') +
-    REG_ONCE_SITE.map(x => '<p style="' + li + '">◂ <a href="' + x[1] + '" style="' + lk + '">' + remindEsc_(x[0]) + '</a></p>').join('') +
-
-    '<p style="margin:20px 0 0;font-size:14px">שאלה, תיקון או עדכון? משיבים למייל הזה.</p>' +
-    '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">' + REG_ONCE_SIGN + '</p></div>';
-  return { subject: 'מנור והמרחב הפדגוגי · מי עוד לא נרשם, מבט בית הספר ומה חדש · ' + s.name, html: html, miss: miss };
-}
-
-function regOnceInspectorMail_(name, schools) {
-  const all = schools.filter(s => s.inspector === name && s.n)
-    .sort((a, b) => (b.none.length + b.started.length) - (a.none.length + a.started.length));
-  if (!all.length) return null;
-  const n = all.reduce((a, s) => a + s.n, 0), yes = all.reduce((a, s) => a + s.yes, 0);
-  const td = 'padding:6px 8px;border-bottom:1px solid #E3EBEF;text-align:right';
-  const withMiss = all.filter(s => s.none.length + s.started.length);
-  const html =
-    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C;text-align:right">' +
-    '<p style="margin:0 0 10px">שלום ' + remindEsc_(name) + ',</p>' +
-    '<p style="margin:0 0 12px">בהדרכות המקצועיות המורים נרשמים לנוכחות דרך <b>מנור</b>, ורק מורה שנרשם/ה נספר/ת. ' +
-    'מצב הרישום בבתי הספר שלך: <b>' + yes + ' מתוך ' + n + '</b> המורים נרשמו.</p>' +
-    '<table style="border-collapse:collapse;width:100%;max-width:560px;font-size:14px">' +
-    '<tr><th style="' + td + '">בית ספר</th><th style="' + td + '">נרשמו</th><th style="' + td + '">חסרים</th></tr>' +
-    all.map(s => { const m = s.none.length + s.started.length;
-      return '<tr><td style="' + td + '">' + remindEsc_(s.name) + '</td><td style="' + td + '">' + s.yes + ' מתוך ' + s.n +
-        '</td><td style="' + td + (m ? ';font-weight:bold;color:#a4442f' : ';color:#1f7a5c') + '">' + (m || '✓') + '</td></tr>'; }).join('') +
-    '</table>' +
-    (withMiss.length ? '<p style="margin:16px 0 6px"><b>השמות לפי בית ספר:</b></p>' +
-      withMiss.map(s => '<p style="margin:10px 0 4px;color:#256A8A"><b>' + remindEsc_(s.name) + '</b></p>' + regOnceNames_(s)).join('') : '') +
-    '<p style="margin:16px 0 4px"><b>מעכשיו אפשר לראות את זה בעצמך, בכל רגע — במבט המפקח.ת במנור,</b> ' +
-    'במקטע "טרם נרשמו למנור": כל בתי הספר שלך, השמות, וכפתור העתקה לשליחה. בוחרים תפקיד ושם, והקוד מגיע למייל הזה.</p>' +
-    regOnceBtn_(REMIND_SITE, 'כניסה למבט המפקח.ת') +
-    '<p style="margin:0 0 12px">המנהלים והרכזים הפדגוגיים קיבלו היום מייל עם השמות של בית הספר שלהם, ' +
-    'ומעכשיו גם הם רואים את זה בעצמם במבט בית הספר.</p>' +
-    '<p style="margin:0 0 12px">שאלות שחוזרות על עצמן, למנהלים ולמורים: ' +
-    '<a href="' + REG_ONCE_FAQ + '" style="color:#1f7a5c;font-weight:bold">שאלות ותשובות על מנור</a>.</p>' +
-    '<p style="margin:16px 0 0;font-size:13px;color:#5C7182">' + REG_ONCE_SIGN + '</p></div>';
-  return { subject: 'מנור · רישום המורים בבתי הספר שלך', html: html };
-}
-
-function regOnceText_(html) {
-  return html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div|li)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
-    .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-    .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
-}
-
-// live=false → שני מיילים מרוכזים (מנהלים, מפקחים) לתיבת המרחב
-function regOnceSend_(live) {
-  const D = weeklyRegData_();
-  const principals = D.R.principals || {}, inspectors = D.R.inspectors || {};
-  const PC = (typeof PEDAGOGIC_COORDINATORS !== 'undefined') ? PEDAGOGIC_COORDINATORS : {};
-  const sent = [], skipped = [], failed = [], pParts = [], iParts = [];
-  const props = PropertiesService.getScriptProperties();
-  const t0 = Date.now();
-  let more = false;
-  // במצב חי: מדלגים על מי שכבר קיבל; עוצרים אחרי 4 דקות (מגבלת 6 הדקות של Apps Script) ומחזירים more
-  const due = key => {
-    if (!live) return true;
-    if (props.getProperty(REG_ONCE_KEY + ':' + key)) return false;
-    if (Date.now() - t0 > 4 * 60000) { more = true; return false; }
-    return true;
-  };
-  const mark = key => { if (live) props.setProperty(REG_ONCE_KEY + ':' + key, new Date().toISOString()); };
-  const send = (to, cc, m) => {
-    const o = { to: to, subject: m.subject, htmlBody: m.html, body: regOnceText_(m.html), name: 'מנור · משרד העבודה', replyTo: MONTHLY_REPLY_TO };
-    if (cc) o.cc = cc;
-    merhavMail_(o);
-  };
-  const head = (to, cc, subject) => '<div style="margin:0 0 22px;padding:0 0 16px;border-bottom:3px solid #256A8A">' +
-    '<p dir="rtl" style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#256A8A"><b>אל:</b> ' + remindEsc_(to) +
-    (cc ? '<br><b>עותק:</b> ' + remindEsc_(cc) : '') + '<br><b>נושא:</b> ' + remindEsc_(subject) + '</p>';
-  D.schools.forEach(s => {
-    if (!s.n) return;
-    const p = principals[s.id];
-    const alias = Object.keys(D.aliases).filter(k => D.aliases[k] === s.id);
-    const coords = [s.id].concat(alias).reduce((a, id) => a.concat(PC[id] || []), [])
-      .filter(c => c.email && (!p || String(c.email).toLowerCase() !== String(p.email || '').toLowerCase()));
-    const names = (p && p.name ? [p.name] : []).concat(coords.map(c => c.name));
-    const greet = names.length > 1 ? names.slice(0, -1).join(', ') + ' ו' + names[names.length - 1] : (names[0] || '');
-    if (!p || !p.email) { skipped.push(s.name + ' — אין מייל מנהל/ת'); return; }
-    const mail = regOncePrincipalMail_(s, greet);
-    const cc = coords.map(c => c.email).join(',');
-    if (!live) {
-      pParts.push(head(p.name + ' <' + p.email + '>', coords.map(c => c.name + ' <' + c.email + '>').join(', '), mail.subject) + mail.html + '</div>');
-      sent.push(s.name); return;
-    }
-    if (!due('s:' + s.id)) return;
-    try { send(p.email, cc, mail); mark('s:' + s.id); sent.push(s.name); } catch (e) { failed.push(s.name + ': ' + e.message); }
-  });
-  D.inspectors.forEach(ins => {
-    const mail = regOnceInspectorMail_(ins.name, D.schools);
-    if (!mail) return;
-    const email = inspectors[ins.name];
-    if (!email) { skipped.push('מפקח/ת ' + ins.name + ' — אין מייל'); return; }
-    if (!live) { iParts.push(head(ins.name + ' <' + email + '>', '', mail.subject) + mail.html + '</div>'); sent.push('מפקח/ת ' + ins.name); return; }
-    if (!due('i:' + ins.name)) return;
-    try { send(email, '', mail); mark('i:' + ins.name); sent.push('מפקח/ת ' + ins.name); } catch (e) { failed.push(ins.name + ': ' + e.message); }
-  });
-  if (!live) {
-    const banner = '<div dir="rtl" style="margin:0 0 18px;padding:12px 14px;background:#FFF6DB;border-radius:10px;font-family:Arial,sans-serif;font-size:14px;line-height:1.6">' +
-      '<b>תצוגה מקדימה — לא נשלח לאף אחד חוץ ממך.</b> מייל חד-פעמי: ' + pParts.length + ' בתי ספר, ' + iParts.length + ' מפקחים' +
-      (skipped.length ? '. דולגו: ' + remindEsc_(skipped.join(' · ')) : '') + '. השליחה עצמה — מדף "היום שלי".</div>';
-    try {
-      if (pParts.length) merhavMail_({ to: MONTHLY_REPLY_TO, subject: '[תצוגה מקדימה] מנור · מבט בית הספר — מנהלים (' + pParts.length + ')',
-        htmlBody: banner + pParts.join(''), body: 'תצוגה מקדימה', name: 'מנור' });
-      if (iParts.length) merhavMail_({ to: MONTHLY_REPLY_TO, subject: '[תצוגה מקדימה] מנור · רישום המורים — מפקחים (' + iParts.length + ')',
-        htmlBody: banner + iParts.join(''), body: 'תצוגה מקדימה', name: 'מנור' });
-    } catch (e) { failed.push('תצוגה מקדימה: ' + e.message); }
-  }
-  console.log('regOnceSend_ live=' + live + ' · נשלחו ' + sent.length + ' · דולגו ' + skipped.length + ' · נכשלו ' + failed.length +
-    (skipped.length ? '\n' + skipped.join('\n') : '') + (failed.length ? '\n' + failed.join('\n') : ''));
-  return { sent: sent.length, skipped: skipped, failed: failed, more: more };
-}
-
-// מהעורך: תצוגה מקדימה לתיבת המרחב
-function regOncePreview() { console.log(JSON.stringify(regOnceSend_(false))); }
 
 function weeklyRegData_() {
   const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
@@ -5616,6 +5422,50 @@ function monthlyTrainingInspector_(tr, schools) {
 }
 
 // plural — המייל ממוען גם לרכז/ת הפדגוגי/ת ("נודה לכם אם תדאגו")
+/* תוספות לדוח החודשי (24.10.26) — במקום המייל החד-פעמי. כל שאלה = קישור לתשובה בדף
+   pedagogiamh.co.il/menor.html (#m1…), כי Gmail לא מציג קיפול. */
+const MONTHLY_FAQ = 'https://pedagogiamh.co.il/menor.html';
+const MONTHLY_QA_PRINCIPAL = [
+  ['המורה השתתף/ה בהדרכה ולא מופיע/ה במנור — מה עושים?', 'm1'],
+  ['המורה עשה/תה הכול לפי ההנחיות, ועדיין לא נרשמה נוכחות', 'm10'],
+  ['מה זה הדוח החודשי, ולמי הוא מגיע?', 'm4'],
+  ['מורה חדש/ה לא מופיע/ה ברשימה', 'm7'],
+  ['מורה בחופשת לידה או שעזב/ה', 'm6'],
+  ['המנהל/ת או הרכז/ת הפדגוגי/ת התחלפו', 'm9']
+];
+/* "חדש באתר המרחב הפדגוגי" — לפי חודש הדוח (המפתח = החודש שהדוח מסכם; הדוח של אוקטובר יוצא ב-1.11).
+   חודש בלי רשומה — בלי המקטע. רק עמודים ציבוריים וארציים שכבר באוויר. */
+const MONTHLY_NEWS = {
+  '2026-10': [
+    ['ועדה מלווה בית ספרית — כל ההנחיות בעמוד אחד', 'https://pedagogiamh.co.il/vaada-melava.html'],
+    ['חומרי למידה מהמדריכים בעמודי המקצוע', 'https://pedagogiamh.co.il/bagrut.html'],
+    ['הרשמה להשתלמויות במצפן של משרד החינוך', 'https://pedagogiamh.co.il/mitzpen-rishum.html'],
+    ['תיק הטיולים המעודכן — 18 נספחים למילוי', 'https://pedagogiamh.co.il/tik-tiyulim.html'],
+    ['שאלות ותשובות על מנור — למורים ולמנהלים', 'https://pedagogiamh.co.il/menor.html']
+  ]
+};
+function monthlyH_(t) {
+  return '<p style="margin:22px 0 6px;padding:0 10px 0 0;border-right:4px solid #256A8A;font-size:16px;font-weight:bold;color:#16325C">' + t + '</p>';
+}
+function monthlyBtn_(href, label) {
+  return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 4px"><tr>' +
+    '<td bgcolor="#16325C" style="background:#16325C;border-radius:10px"><a href="' + href +
+    '" style="color:#ffffff;text-decoration:none;padding:11px 20px;font-weight:bold;font-size:15px;display:inline-block">' + label + '</a></td></tr></table>';
+}
+function monthlyQaHtml_(list, allHash) {
+  const lk = 'color:#1f7a5c;font-weight:bold;text-decoration:none';
+  return monthlyH_('שאלות ותשובות') +
+    list.map(q => '<p style="margin:0 0 5px">◂ <a href="' + MONTHLY_FAQ + '#' + q[1] + '" style="' + lk + '">' + remindEsc_(q[0]) + '</a></p>').join('') +
+    '<p style="margin:0;font-size:14px"><a href="' + MONTHLY_FAQ + allHash + '" style="color:#1f7a5c">כל השאלות והתשובות ←</a></p>';
+}
+function monthlyNewsHtml_(month) {
+  const list = (typeof MONTHLY_NEWS === 'object' && MONTHLY_NEWS[month]) || [];
+  if (!list.length) return '';
+  const lk = 'color:#1f7a5c;font-weight:bold;text-decoration:none';
+  return monthlyH_('חדש באתר המרחב הפדגוגי') +
+    list.map(x => '<p style="margin:0 0 5px">◂ <a href="' + x[1] + '" style="' + lk + '">' + remindEsc_(x[0]) + '</a></p>').join('');
+}
+
 function monthlyPrincipalMail_(C, school, principalName, plural) {
   const ids = [school.id].concat(school.alias || []);
   const entries = C.entries.filter(e => ids.indexOf(e.school) >= 0);
@@ -5651,7 +5501,8 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
     ? '<p style="margin:18px 0 0">במנור עדיין לא רשומים מבית ספרך <b>' + unreg.length + ' מורים</b>:<br>' +
         '<span style="font-size:13px;color:#5b6b7b">' + monthlyNameList_(unreg.map(n => ({ name: n }))) + '</span></p>' +
       '<p style="margin:10px 0 0">' + (plural ? 'נודה לכם אם תדאגו' : 'נודה לך אם תדאג/י') +
-        ' לטפל בכך ולוודא שהם נרשמים להדרכות דרך מנור.</p>'
+        ' לטפל בכך ולוודא שהם נרשמים להדרכות דרך מנור. הקישור לרישום למורים: ' +
+        '<a href="' + REMIND_SITE + 'teacher/" style="color:#1f7a5c;font-weight:bold">כניסה למנור למורים</a></p>'
     : '';
 
   const html = monthlyWrapHtml_(
@@ -5671,8 +5522,15 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
           '. למורי בית הספר לא התקיים עדיין מפגש הדרכה החודש.</p>') +
     trainingsHtml +
     unregHtml +
-    '<p style="margin:14px 0 0">תודה על שיתוף הפעולה.</p>' +
-    '<p style="margin:16px 0 0"><a href="' + link + '" style="color:#256A8A;font-weight:bold">למסך בית הספר — כל החודשים, לפי מקצוע ומדריכ/ה</a></p>' +
+    // 24.10.26 (מיטל: "נקשר את זה למייל שמנור מוציאה דוח חודשי לכל מנהל, כדי שלא יהיו כמה מיילים") —
+    // מבט בית הספר, שאלות ותשובות ו"חדש באתר" נכנסים לדוח החודשי במקום מייל נפרד
+    monthlyH_('מבט בית הספר — בכל רגע, בלי לחכות לדוח') +
+    '<p style="margin:0 0 4px">מי נרשם ומי עוד לא (עם כפתור העתקה לשליחה למורים), נוכחות בכל החודשים לפי מקצוע ומדריכ/ה, והשתלמות מקצועית. ' +
+      'הקוד לכניסה מגיע למייל הזה.</p>' +
+    monthlyBtn_(link, 'כניסה למבט בית הספר') +
+    monthlyQaHtml_(MONTHLY_QA_PRINCIPAL, '#menahalim') +
+    monthlyNewsHtml_(C.month) +
+    '<p style="margin:16px 0 0">תודה על שיתוף הפעולה. שאלה, תיקון או עדכון? משיבים למייל הזה.</p>' +
     '<p style="margin:10px 0 0;font-size:12.5px;color:#5b6b7b">בכל חודש מתקיימת הדרכה אחת בשני מועדים, בוקר וערב — השתתפות באחד מהם נספרת כנוכחות. גם הדרכה פרטנית נספרת.' +
       (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>'
   );
@@ -5756,6 +5614,12 @@ function monthlyInspectorMail_(C, inspName, schools) {
       monthlySchoolTable_(rows, false, true)
       : '<p style="margin:0 0 10px">למורי בתי הספר שבפיקוחך לא התקיים עדיין מפגש הדרכה החודש.</p>') +
     socialHtml +
+    monthlyH_('מי עוד לא נרשם למנור — במבט המפקח.ת') +
+    '<p style="margin:0 0 4px">במבט המפקח.ת במנור, במקטע "טרם נרשמו למנור": כל בתי הספר שבפיקוחך, השמות, וכפתור העתקה לשליחה. ' +
+      'המנהלים והרכזים הפדגוגיים רואים את אותה רשימה במבט בית הספר.</p>' +
+    monthlyBtn_(REMIND_SITE, 'כניסה למבט המפקח.ת') +
+    monthlyQaHtml_(MONTHLY_QA_PRINCIPAL, '') +
+    monthlyNewsHtml_(C.month) +
     '<p style="margin:14px 0 0;font-size:13px;color:#5b6b7b">כל מנהל/ת קיבל/ה מייל עם הפירוט של בית הספר שלו/ה.' +
       (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>'
   );
@@ -5867,7 +5731,8 @@ function monthlyMail_(to, subject, html, cc) {
   // תשובות למיילי הסיכום — לתיבת המרחב, לא למייל הפרטי (15.10.26, מיטל)
   const opts = { to: to, subject: subject, htmlBody: html, body: text, name: 'מנור · משרד העבודה', replyTo: MONTHLY_REPLY_TO };
   if (cc) opts.cc = cc;
-  MailApp.sendEmail(opts);
+  // 24.10.26 (מיטל): מ-merhav דרך ממסר המרחב (כולל עותק), לא מחשבון אורט שנסגר. ממסר נכשל → MailApp כמו קודם.
+  merhavMail_(opts);
 }
 
 function monthlyPreviewBanner_(to) {
@@ -5915,7 +5780,7 @@ function monthlySend_(month, live, today, withGuides) {
   });
   if (previewParts.length) {
     try {
-      monthlyMail_(REMIND_TO, tag + 'מיילי המנהלים (' + previewParts.length + ') · ' + label,
+      monthlyMail_(MONTHLY_PREVIEW_TO, tag + 'מיילי המנהלים (' + previewParts.length + ') · ' + label,
         monthlyPreviewBanner_('כל מנהל/ת בנפרד — ' + previewParts.length + ' מיילים') + previewParts.join(''));
     } catch (e) { failed.push('תצוגת המנהלים: ' + e.message); }
   }
@@ -5928,7 +5793,7 @@ function monthlySend_(month, live, today, withGuides) {
     if (!email) { skipped.push('מפקח/ת ' + ins.name + ' — אין מייל'); return; }
     try {
       if (live) monthlyMail_(email, mail.subject, mail.html);
-      else monthlyMail_(REMIND_TO, tag + 'מפקח/ת ' + ins.name + ' · ' + label,
+      else monthlyMail_(MONTHLY_PREVIEW_TO, tag + 'מפקח/ת ' + ins.name + ' · ' + label,
         monthlyPreviewBanner_(ins.name + ' <' + email + '>') + mail.html);
       sent.push('מפקח/ת ' + ins.name + ' (' + mail.yes + ' מתוך ' + mail.n + ')');
     } catch (e) { failed.push(ins.name + ': ' + e.message); }
@@ -5957,7 +5822,7 @@ function monthlySend_(month, live, today, withGuides) {
     });
     if (guideParts.length) {
       try {
-        monthlyMail_(REMIND_TO, tag + 'מיילי המדריכים (' + guideParts.length + ') · ' + label,
+        monthlyMail_(MONTHLY_PREVIEW_TO, tag + 'מיילי המדריכים (' + guideParts.length + ') · ' + label,
           monthlyPreviewBanner_('כל מדריך/ה בנפרד — ' + guideParts.length + ' מיילים') + guideParts.join(''));
       } catch (e) { failed.push('תצוגת המדריכים: ' + e.message); }
     }
@@ -5974,7 +5839,7 @@ function monthlySend_(month, live, today, withGuides) {
     (skipped.length ? '<br><b>לא נשלח (' + skipped.length + '):</b> ' + remindEsc_(skipped.join(' · ')) : '') +
     (failed.length ? '<br><b style="color:#a4442f">נכשל (' + failed.length + '):</b> ' + remindEsc_(failed.join(' · ')) : '');
   const ov = monthlyOverviewMail_(C, schools, log);
-  monthlyMail_(REMIND_TO, tag + (live ? 'יומן שליחה — ' : '') + ov.subject,
+  monthlyMail_(MONTHLY_PREVIEW_TO, tag + (live ? 'יומן שליחה — ' : '') + ov.subject,
     (live ? '' : monthlyPreviewBanner_(ovTo.join(', ') || '(לא הוגדר נמען למבט הכולל)')) + ov.html);
   console.log('monthlySend_ ' + month + ' live=' + live + ' sent=' + sent.length +
     ' skipped=' + skipped.length + ' failed=' + failed.length);
