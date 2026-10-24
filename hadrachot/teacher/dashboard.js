@@ -1106,6 +1106,14 @@ function renderHere(scope, guideSlug) {
 /* "נכחתי ולא הצלחתי להירשם" (15.10.26, מיטל) — מועדים מהתוכנית בשבעת הימים האחרונים (לא היום),
    שאין לי בהם שורת נוכחות. teacher.claim יוצר שורה ממתינה ושולח למדריכ/ה. */
 const CLAIM_DAYS = 7;
+const CLAIM_REASONS = [
+  'לא הצלחתי להיכנס למנור / לא קיבלתי קוד',
+  'לא ידעתי שצריך להירשם במנור',
+  'לא מצאתי את הכפתור "אני כאן"',
+  'הרישום היה סגור כשניסיתי',
+  'הדף לא נטען או הופיעה תקלה',
+  'אחר'
+];
 function renderClaim(scope, slug) {
   const card = document.getElementById('claim-card');
   const list = document.getElementById('claim-list');
@@ -1131,28 +1139,49 @@ function renderClaim(scope, slug) {
     <div class="claim-row">
       <div class="claim-when">ההדרכה של ${esc(dm(x.day))}${x.m.topic ? `<small>${esc(x.m.topic)}</small>` : ''}</div>
       <button type="button" class="btn btn-secondary claim-btn" data-d="${esc(x.m.date)}" data-day="${esc(x.day)}">נכחתי ולא הצלחתי להירשם</button>
+      <div class="claim-why" hidden>
+        <label>מה קרה? (חובה)</label>
+        <select class="claim-reason">
+          <option value="">בחירה…</option>
+          ${CLAIM_REASONS.map(t => `<option>${esc(t)}</option>`).join('')}
+        </select>
+        <textarea class="claim-text" maxlength="500" placeholder="כמה מילים על מה שקרה (חובה כשבוחרים &quot;אחר&quot;)"></textarea>
+        <button type="button" class="btn btn-primary claim-send">שליחה למדריכ/ה</button>
+      </div>
     </div>`).join('');
   card.hidden = false;
-  list.querySelectorAll('.claim-btn').forEach(btn => {
+  list.querySelectorAll('.claim-row').forEach(row => {
+    const btn = row.querySelector('.claim-btn'), why = row.querySelector('.claim-why');
+    const send = row.querySelector('.claim-send'), sel = row.querySelector('.claim-reason'), txt = row.querySelector('.claim-text');
     btn.disabled = !(teacherKey || DEMO_) || !!ADMIN_KEY_;
-    btn.onclick = async () => {
-      btn.disabled = true; btn.textContent = 'שולח…';
-      const body = { k: teacherKey, g: slug, d: btn.dataset.d, day: btn.dataset.day };
+    const sayErr = text => {
+      let msg = row.querySelector('.claim-err');
+      if (!msg) { msg = document.createElement('span'); msg.className = 'claim-err'; why.after(msg); }
+      msg.textContent = text;
+    };
+    // שלב 1: פותחים את "מה קרה?" — 22.10.26, מיטל: "שנדע למה היא לא הצליחה להירשם ונטפל בזה"
+    btn.onclick = () => { btn.style.display = 'none'; why.hidden = false; sel.focus(); };   // .btn גובר על [hidden]
+    send.onclick = async () => {
+      const reason = sel.value, note = txt.value.trim();
+      if (!reason) { sayErr('בחרו מה קרה.'); sel.focus(); return; }
+      if (reason === 'אחר' && !note) { sayErr('כתבו בכמה מילים מה קרה.'); txt.focus(); return; }
+      const old = row.querySelector('.claim-err'); if (old) old.remove();
+      send.disabled = true; send.textContent = 'שולח…';
+      const body = { k: teacherKey, g: slug, d: btn.dataset.d, day: btn.dataset.day,
+        why: (reason + (note ? ' — ' + note : '')).slice(0, 600) };
       let r = await TS.apiPost('teacher.claim', body);
       if (r && !r.ok && (r.transient || ['timeout', 'bad_response', 'busy'].indexOf(r.error) >= 0)) r = await TS.apiPost('teacher.claim', body);
       if (r && r.ok) {
-        btn.outerHTML = '<span class="claim-ok">' + (r.data && r.data.already ? 'כבר רשום/ה בהדרכה הזו ✓' : 'נשלח למדריכ/ה לאישור ✓') + '</span>';
+        why.outerHTML = '<span class="claim-ok">' + (r.data && r.data.already ? 'כבר רשום/ה בהדרכה הזו ✓' : 'נשלח למדריכ/ה לאישור ✓') + '</span>';
         return;
       }
-      btn.disabled = false; btn.textContent = 'נכחתי ולא הצלחתי להירשם';
+      send.disabled = false; send.textContent = 'שליחה למדריכ/ה';
       const err = r && r.error;
-      const msg = document.createElement('span');
-      msg.className = 'claim-err';
-      msg.textContent = err === 'out_of_range' ? 'עבר יותר משבוע — אפשר לפנות למדריכ/ה.' : 'לא הצלחנו לשלוח כרגע. אפשר לנסות שוב.';
-      btn.after(msg);
+      sayErr(err === 'out_of_range' ? 'עבר יותר משבוע — אפשר לפנות למדריכ/ה.' : 'לא הצלחנו לשלוח כרגע. אפשר לנסות שוב.');
     };
   });
 }
+
 
 function hereDone(text) {
   const form = document.getElementById('th-form');

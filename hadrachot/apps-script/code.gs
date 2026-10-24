@@ -95,7 +95,9 @@ const SCHEMA = {
   meeting_attendance: ['id','meetingId','guideSlug','date','teacherId','teacherName','schoolName',
                        'status','guideStatus','selfCheckinAt','markedAt','source','updatedAt',
                        // markedVia: 'manual' | 'zoom' — סימון שנעשה מתוך דוח המשתתפים של הזום
-                       'markedVia','zoomMinutes'],
+                       'markedVia','zoomMinutes',
+                       // claimWhy: "נכחתי ולא הצלחתי להירשם" — מה קרה, בלשון המורה (22.10.26)
+                       'claimWhy'],
   // מי פתח את הקישור האישי שלו (16.9.26) — התשובה ל"שלחנו לכולם?".
   // סימון "נשלח" ב-admin-guides נשמר בדפדפן ומעיד רק על לחיצה; זה מעיד על
   // פתיחה בפועל. אין כאן IP ואין user-agent — רק מי, מתי, וכמה פעמים.
@@ -299,6 +301,8 @@ const PUBLIC_ACTIONS = new Set([
   'registration.status', 'registration.count', 'registration.errors',
   // "טרם נרשמו למנור" במבט בית הספר (8.10.26) — מפתח staff של מנהל/ת או רכז/ת אותו בית ספר, בפנים
   'registration.school',
+  // "טרם נרשמו למנור" במבט המפקח.ת (22.10.26) — מפתח staff של מפקח/ת; רק בתי הספר בפריסת הפיקוח שלו/ה, בפנים
+  'registration.inspector',
   // "מי עוד לא נרשם" בצוהר (13.10.26) — רק לשער ההרשאות, עם מפתח משותף (gk), בפנים
   'registration.gate',
   // אבחון מהירות (24.9.26) — מספרים בלבד: זמני קריאה וגודל כל לשונית, בלי שום תוכן
@@ -1181,6 +1185,7 @@ function handleRequest(params) {
       case 'registration.status': result = registrationStatus(params); break;
       case 'registration.count':  result = registrationCount(params); break;
       case 'registration.school': result = registrationSchool(params); break;
+      case 'registration.inspector': result = registrationInspector(params); break;
       case 'registration.gate':   result = registrationGate(params); break;
       case 'registration.errors': result = registrationErrors(params); break;
       case 'diag.timing':         result = diagTiming(); break;
@@ -4414,8 +4419,8 @@ function meetRemindTick() {
   let data;
   try { data = remindLoad_(); }
   catch (e) { console.error('meetRemindTick: load failed ' + e); return; }
-  try { weeklyRegTick_(); }
-  catch (e) { console.error('meetRemindTick: weekly registration failed ' + e); }
+  // העדכון השבועי "מי עוד לא נרשם" בוטל (22.10.26, מיטל: "אני לא רוצה עדכון שבועי") —
+  // במקומו מייל חד-פעמי (regOnceSend_) שמפנה למבט בית הספר.
   try { updScheduledTick_(); }
   catch (e) { console.error('meetRemindTick: scheduled update failed ' + e); }
   try { monthlyTick_(data); }
@@ -4424,8 +4429,8 @@ function meetRemindTick() {
   catch (e) { console.error('meetRemindTick: teacher reminders failed ' + e); }
   try { meetStandingTick_(); }
   catch (e) { console.error('meetRemindTick: standing marks failed ' + e); }
-  try { meetAutoApproveTick_(); }
-  catch (e) { console.error('meetRemindTick: auto approve failed ' + e); }
+  // אישור אוטומטי אחרי 3 ימים בוטל (22.10.26, מיטל: "לבטל אישור אוטומטי ולהעביר למדריכה
+  // לאישור. רק אחרי שמאשר אפשר לרשום נוכחות"). meetAutoApproveTick_ נשאר בקוד ולא נקרא.
   try { planChangeNotifyTick_(); }
   catch (e) { console.error('meetRemindTick: plan change mail failed ' + e); }
   const now = remindNowMinutes_();
@@ -4841,11 +4846,11 @@ function meetSendGuideApprove_(data, x, isReminder, isTest) {
     '<table style="border-collapse:collapse;width:100%;max-width:520px">' + list + '</table>' +
     '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">מישהו נרשם ולא היה במפגש? לוחצים "לא נכח/ה" ליד השם, ובדף שנפתח מאשרים את השאר. ' +
     'מי שנרשם/ה אחרי המייל הזה נכלל/ת גם כן באישור.<br>' +
-    'בלי אישור עד ' + remindEsc_(autoDay) + ' — הנוכחות תאושר אוטומטית.</p>' +
+    '<b>הנוכחות נספרת רק אחרי האישור שלך.</b></p>' +
     '<p style="margin:16px 0 0;font-size:12px;color:#8A97A6">מנור · המרחב הפדגוגי</p></div>';
   const text = (isReminder ? 'עדיין מחכים לאישור שלך. ' : 'ההדרכה מסתיימת בעוד כרבע שעה. בבקשה לאשר נוכחות — זה חשוב.\n') + n + ' מורים נרשמו עד עכשיו להדרכה של ' + dm(x.date) + '.\n\n' +
     pending.map(r => '· ' + r.teacherName + ' · ' + r.schoolName).join('\n') +
-    '\n\nאישור כולם: ' + link + '\n\nבלי אישור עד ' + autoDay + ' — הנוכחות תאושר אוטומטית.';
+    '\n\nאישור כולם: ' + link + '\n\nהנוכחות נספרת רק אחרי האישור שלך.';
   merhavMail_({ to: to, subject: title, body: text, htmlBody: html, name: 'מנור', replyTo: MAIL_REPLY_TO });
   return 'sent';
 }
@@ -5033,11 +5038,213 @@ function weeklyRegLive(p) {
   if (!meetSafeEqual_(String(p.t || ''), weeklyRegToken_())) return { ok: false, error: 'bad_link' };
   const props = PropertiesService.getScriptProperties();
   const on = String(p.on || '');
-  if (on === 'preview') { const r = weeklyRegSend_(false); return { ok: true, data: { live: weeklyRegIsLive_(), preview: r } }; }
-  if (on === '1') props.setProperty('WEEKLY_REG_LIVE', '1');
-  if (on === '0') props.deleteProperty('WEEKLY_REG_LIVE');
-  return { ok: true, data: { live: weeklyRegIsLive_() } };
+  // 22.10.26: העדכון השבועי בוטל — הפעלה לא אפשרית; במקומו מייל חד-פעמי (once-preview / once-send)
+  props.deleteProperty('WEEKLY_REG_LIVE');
+  const st = () => ({ live: false, onceSentAt: props.getProperty(REG_ONCE_KEY) || '', quota: MailApp.getRemainingDailyQuota() });
+  if (on === 'once-preview') { const r = regOnceSend_(false); return { ok: true, data: Object.assign(st(), { preview: r }) }; }
+  if (on === 'once-send') {
+    if (props.getProperty(REG_ONCE_KEY)) return { ok: false, error: 'already_sent' };
+    // כל נמען מסומן לחוד (reg_once_20261022:<id>) — קריאה שנקטעה ממשיכה מאיפה שעצרה; הדף קורא שוב כל עוד more
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(5000)) return { ok: false, error: 'busy' };
+    try {
+      const r = regOnceSend_(true);
+      if (!r.more) props.setProperty(REG_ONCE_KEY, new Date().toISOString());
+      auditLog_('', 'regonce.send', 'mail', REG_ONCE_KEY, 'ok', JSON.stringify({ sent: r.sent, more: r.more, skipped: r.skipped.length, failed: r.failed.length }));
+      return { ok: true, data: Object.assign(st(), { sent: r }) };
+    } finally { lock.releaseLock(); }
+  }
+  return { ok: true, data: st() };
 }
+
+/* מייל חד-פעמי (22.10.26, מיטל: "נעשה חד פעמי עכשיו... ולרשום שמעכשיו הם יוכלו להסתכל על זה לבד
+   במבט בית הספר עם הקישור. אותו דבר למפקחים"). לכל מנהל/ת (רכזים פדגוגיים בעותק) — מצב הרישום,
+   השמות שחסרים, הקישור למבט בית הספר ולשאלות ותשובות; לכל מפקח/ת — הטבלה והשמות לפי בית ספר.
+   נשלח מ-merhav דרך הממסר. תצוגה מקדימה — הכל לתיבת המרחב. */
+const REG_ONCE_KEY = 'reg_once_20261022';
+const REG_ONCE_FAQ = 'https://pedagogiamh.co.il/menor.html';
+const REG_ONCE_SIGN = 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה';
+
+function regOnceBtn_(href, label) {
+  return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:6px 0 14px"><tr>' +
+    '<td bgcolor="#16325C" style="background:#16325C;border-radius:10px"><a href="' + href +
+    '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:15px;display:inline-block">' + label + '</a></td></tr></table>';
+}
+
+function regOnceNames_(s) {
+  const li = list => list.map(r => '<li>' + remindEsc_(r.name) + ' <span style="color:#5C7182">· ' + remindEsc_(r.subject) + '</span></li>').join('');
+  return (s.none.length ? '<p style="margin:0 0 4px"><b>טרם נרשמו (' + s.none.length + '):</b></p><ul style="margin:0 0 12px;padding-right:20px">' + li(s.none) + '</ul>' : '') +
+    (s.started.length ? '<p style="margin:0 0 4px"><b>התחילו ולא סיימו (' + s.started.length + '):</b> קיבלו קוד למייל ולא הזינו אותו.</p><ul style="margin:0 0 12px;padding-right:20px">' + li(s.started) + '</ul>' : '');
+}
+
+// כותרת מקטע במייל — קו צבעוני מימין, כדי שהמייל הארוך ייקרא בחלקים
+function regOnceH_(t) {
+  return '<p style="margin:20px 0 6px;padding:0 10px 0 0;border-right:4px solid #256A8A;font-size:17px;font-weight:bold;color:#16325C">' + t + '</p>';
+}
+
+// שאלות ותשובות למנהלים — במייל רק השאלה, כקישור שפותח את התשובה בדף (22.10.26, מיטל:
+// "שיהיה מקופלים החלקים שלא יהיה מייל ארוך מאוד" — Gmail לא מציג קיפול, לכן קישור לכל שאלה)
+const REG_ONCE_QA = [
+  ['המורה השתתף/ה בהדרכה ולא מופיע/ה במנור — מה עושים?', 'm1'],
+  ['המורה עשה/תה הכול לפי ההנחיות, ועדיין לא נרשמה נוכחות', 'm10'],
+  ['מה זה הדוח החודשי שמגיע בסוף כל חודש, ולמי הוא מגיע?', 'm4'],
+  ['מורה חדש/ה לא מופיע/ה ברשימה', 'm7'],
+  ['מורה בחופשת לידה או שעזב/ה', 'm6'],
+  ['המנהל/ת או הרכז/ת הפדגוגי/ת התחלפו', 'm9']
+];
+
+// עדכונים באתר המרחב הפדגוגי — רק עמודים ציבוריים וארציים שכבר באוויר (22.10.26)
+const REG_ONCE_SITE = [
+  ['ועדה מלווה בית ספרית — כל ההנחיות בעמוד אחד', 'https://pedagogiamh.co.il/vaada-melava.html'],
+  ['חומרי למידה מהמדריכים בעמודי המקצוע', 'https://pedagogiamh.co.il/bagrut.html'],
+  ['הרשמה להשתלמויות במצפן של משרד החינוך', 'https://pedagogiamh.co.il/mitzpen-rishum.html'],
+  ['תיק הטיולים המעודכן — 18 נספחים למילוי', 'https://pedagogiamh.co.il/tik-tiyulim.html']
+];
+
+// שמות בשורה אחת: "משה (מתמטיקה) · שרה (אנגלית)" — קצר יותר מרשימה
+function regOnceNamesInline_(list) {
+  return list.map(r => remindEsc_(r.name) + ' <span style="color:#5C7182">(' + remindEsc_(r.subject) + ')</span>').join(' · ');
+}
+
+function regOncePrincipalMail_(s, greet) {
+  const miss = s.none.length + s.started.length;
+  const lk = 'color:#1f7a5c;font-weight:bold;text-decoration:none';
+  const li = 'margin:0 0 6px';
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C;text-align:right">' +
+    '<p style="margin:0 0 10px">שלום ' + remindEsc_(greet) + ',</p>' +
+    '<p style="margin:0">עדכון קצר על מנור ועל אתר המרחב הפדגוגי.</p>' +
+
+    regOnceH_('מי עוד לא נרשם למנור') +
+    '<p style="margin:0 0 8px">' + remindEsc_(s.name) + ': <b>' + s.yes + ' מתוך ' + s.n + '</b> המורים נרשמו.' +
+    (miss ? ' רק מורה שנרשם/ה נספר/ת בנוכחות בהדרכות.' : ' <b>כל המורים נרשמו — תודה רבה!</b>') + '</p>' +
+    (s.none.length ? '<p style="' + li + '"><b>טרם נרשמו:</b> ' + regOnceNamesInline_(s.none) + '</p>' : '') +
+    (s.started.length ? '<p style="' + li + '"><b>קיבלו קוד ולא סיימו:</b> ' + regOnceNamesInline_(s.started) + '</p>' : '') +
+    (miss ? '<p style="margin:0">הקישור לרישום למורים: <a href="' + REMIND_SITE + 'teacher/" style="' + lk + '">כניסה למנור למורים</a></p>' : '') +
+
+    regOnceH_('מבט בית הספר — מעכשיו בעצמכם') +
+    '<p style="margin:0 0 4px">מי נרשם, נוכחות בהדרכות והשתלמות מקצועית — בכל רגע. הקוד לכניסה מגיע למייל הזה.</p>' +
+    regOnceBtn_(REMIND_SITE, 'כניסה למבט בית הספר') +
+
+    regOnceH_('שאלות ותשובות') +
+    REG_ONCE_QA.map(q => '<p style="' + li + '">◂ <a href="' + REG_ONCE_FAQ + '#' + q[1] + '" style="' + lk + '">' + remindEsc_(q[0]) + '</a></p>').join('') +
+    '<p style="margin:0;font-size:14px"><a href="' + REG_ONCE_FAQ + '#menahalim" style="color:#1f7a5c">כל השאלות והתשובות ←</a></p>' +
+
+    regOnceH_('חדש באתר המרחב הפדגוגי') +
+    REG_ONCE_SITE.map(x => '<p style="' + li + '">◂ <a href="' + x[1] + '" style="' + lk + '">' + remindEsc_(x[0]) + '</a></p>').join('') +
+
+    '<p style="margin:20px 0 0;font-size:14px">שאלה, תיקון או עדכון? משיבים למייל הזה.</p>' +
+    '<p style="margin:14px 0 0;font-size:13px;color:#5C7182">' + REG_ONCE_SIGN + '</p></div>';
+  return { subject: 'מנור והמרחב הפדגוגי · מי עוד לא נרשם, מבט בית הספר ומה חדש · ' + s.name, html: html, miss: miss };
+}
+
+function regOnceInspectorMail_(name, schools) {
+  const all = schools.filter(s => s.inspector === name && s.n)
+    .sort((a, b) => (b.none.length + b.started.length) - (a.none.length + a.started.length));
+  if (!all.length) return null;
+  const n = all.reduce((a, s) => a + s.n, 0), yes = all.reduce((a, s) => a + s.yes, 0);
+  const td = 'padding:6px 8px;border-bottom:1px solid #E3EBEF;text-align:right';
+  const withMiss = all.filter(s => s.none.length + s.started.length);
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C;text-align:right">' +
+    '<p style="margin:0 0 10px">שלום ' + remindEsc_(name) + ',</p>' +
+    '<p style="margin:0 0 12px">בהדרכות המקצועיות המורים נרשמים לנוכחות דרך <b>מנור</b>, ורק מורה שנרשם/ה נספר/ת. ' +
+    'מצב הרישום בבתי הספר שלך: <b>' + yes + ' מתוך ' + n + '</b> המורים נרשמו.</p>' +
+    '<table style="border-collapse:collapse;width:100%;max-width:560px;font-size:14px">' +
+    '<tr><th style="' + td + '">בית ספר</th><th style="' + td + '">נרשמו</th><th style="' + td + '">חסרים</th></tr>' +
+    all.map(s => { const m = s.none.length + s.started.length;
+      return '<tr><td style="' + td + '">' + remindEsc_(s.name) + '</td><td style="' + td + '">' + s.yes + ' מתוך ' + s.n +
+        '</td><td style="' + td + (m ? ';font-weight:bold;color:#a4442f' : ';color:#1f7a5c') + '">' + (m || '✓') + '</td></tr>'; }).join('') +
+    '</table>' +
+    (withMiss.length ? '<p style="margin:16px 0 6px"><b>השמות לפי בית ספר:</b></p>' +
+      withMiss.map(s => '<p style="margin:10px 0 4px;color:#256A8A"><b>' + remindEsc_(s.name) + '</b></p>' + regOnceNames_(s)).join('') : '') +
+    '<p style="margin:16px 0 4px"><b>מעכשיו אפשר לראות את זה בעצמך, בכל רגע — במבט המפקח.ת במנור,</b> ' +
+    'במקטע "טרם נרשמו למנור": כל בתי הספר שלך, השמות, וכפתור העתקה לשליחה. בוחרים תפקיד ושם, והקוד מגיע למייל הזה.</p>' +
+    regOnceBtn_(REMIND_SITE, 'כניסה למבט המפקח.ת') +
+    '<p style="margin:0 0 12px">המנהלים והרכזים הפדגוגיים קיבלו היום מייל עם השמות של בית הספר שלהם, ' +
+    'ומעכשיו גם הם רואים את זה בעצמם במבט בית הספר.</p>' +
+    '<p style="margin:0 0 12px">שאלות שחוזרות על עצמן, למנהלים ולמורים: ' +
+    '<a href="' + REG_ONCE_FAQ + '" style="color:#1f7a5c;font-weight:bold">שאלות ותשובות על מנור</a>.</p>' +
+    '<p style="margin:16px 0 0;font-size:13px;color:#5C7182">' + REG_ONCE_SIGN + '</p></div>';
+  return { subject: 'מנור · רישום המורים בבתי הספר שלך', html: html };
+}
+
+function regOnceText_(html) {
+  return html.replace(/<br\s*\/?>/g, '\n').replace(/<\/(p|tr|div|li)>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
+    .replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+    .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n');
+}
+
+// live=false → שני מיילים מרוכזים (מנהלים, מפקחים) לתיבת המרחב
+function regOnceSend_(live) {
+  const D = weeklyRegData_();
+  const principals = D.R.principals || {}, inspectors = D.R.inspectors || {};
+  const PC = (typeof PEDAGOGIC_COORDINATORS !== 'undefined') ? PEDAGOGIC_COORDINATORS : {};
+  const sent = [], skipped = [], failed = [], pParts = [], iParts = [];
+  const props = PropertiesService.getScriptProperties();
+  const t0 = Date.now();
+  let more = false;
+  // במצב חי: מדלגים על מי שכבר קיבל; עוצרים אחרי 4 דקות (מגבלת 6 הדקות של Apps Script) ומחזירים more
+  const due = key => {
+    if (!live) return true;
+    if (props.getProperty(REG_ONCE_KEY + ':' + key)) return false;
+    if (Date.now() - t0 > 4 * 60000) { more = true; return false; }
+    return true;
+  };
+  const mark = key => { if (live) props.setProperty(REG_ONCE_KEY + ':' + key, new Date().toISOString()); };
+  const send = (to, cc, m) => {
+    const o = { to: to, subject: m.subject, htmlBody: m.html, body: regOnceText_(m.html), name: 'מנור · משרד העבודה', replyTo: MONTHLY_REPLY_TO };
+    if (cc) o.cc = cc;
+    merhavMail_(o);
+  };
+  const head = (to, cc, subject) => '<div style="margin:0 0 22px;padding:0 0 16px;border-bottom:3px solid #256A8A">' +
+    '<p dir="rtl" style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;color:#256A8A"><b>אל:</b> ' + remindEsc_(to) +
+    (cc ? '<br><b>עותק:</b> ' + remindEsc_(cc) : '') + '<br><b>נושא:</b> ' + remindEsc_(subject) + '</p>';
+  D.schools.forEach(s => {
+    if (!s.n) return;
+    const p = principals[s.id];
+    const alias = Object.keys(D.aliases).filter(k => D.aliases[k] === s.id);
+    const coords = [s.id].concat(alias).reduce((a, id) => a.concat(PC[id] || []), [])
+      .filter(c => c.email && (!p || String(c.email).toLowerCase() !== String(p.email || '').toLowerCase()));
+    const names = (p && p.name ? [p.name] : []).concat(coords.map(c => c.name));
+    const greet = names.length > 1 ? names.slice(0, -1).join(', ') + ' ו' + names[names.length - 1] : (names[0] || '');
+    if (!p || !p.email) { skipped.push(s.name + ' — אין מייל מנהל/ת'); return; }
+    const mail = regOncePrincipalMail_(s, greet);
+    const cc = coords.map(c => c.email).join(',');
+    if (!live) {
+      pParts.push(head(p.name + ' <' + p.email + '>', coords.map(c => c.name + ' <' + c.email + '>').join(', '), mail.subject) + mail.html + '</div>');
+      sent.push(s.name); return;
+    }
+    if (!due('s:' + s.id)) return;
+    try { send(p.email, cc, mail); mark('s:' + s.id); sent.push(s.name); } catch (e) { failed.push(s.name + ': ' + e.message); }
+  });
+  D.inspectors.forEach(ins => {
+    const mail = regOnceInspectorMail_(ins.name, D.schools);
+    if (!mail) return;
+    const email = inspectors[ins.name];
+    if (!email) { skipped.push('מפקח/ת ' + ins.name + ' — אין מייל'); return; }
+    if (!live) { iParts.push(head(ins.name + ' <' + email + '>', '', mail.subject) + mail.html + '</div>'); sent.push('מפקח/ת ' + ins.name); return; }
+    if (!due('i:' + ins.name)) return;
+    try { send(email, '', mail); mark('i:' + ins.name); sent.push('מפקח/ת ' + ins.name); } catch (e) { failed.push(ins.name + ': ' + e.message); }
+  });
+  if (!live) {
+    const banner = '<div dir="rtl" style="margin:0 0 18px;padding:12px 14px;background:#FFF6DB;border-radius:10px;font-family:Arial,sans-serif;font-size:14px;line-height:1.6">' +
+      '<b>תצוגה מקדימה — לא נשלח לאף אחד חוץ ממך.</b> מייל חד-פעמי: ' + pParts.length + ' בתי ספר, ' + iParts.length + ' מפקחים' +
+      (skipped.length ? '. דולגו: ' + remindEsc_(skipped.join(' · ')) : '') + '. השליחה עצמה — מדף "היום שלי".</div>';
+    try {
+      if (pParts.length) merhavMail_({ to: MONTHLY_REPLY_TO, subject: '[תצוגה מקדימה] מנור · מבט בית הספר — מנהלים (' + pParts.length + ')',
+        htmlBody: banner + pParts.join(''), body: 'תצוגה מקדימה', name: 'מנור' });
+      if (iParts.length) merhavMail_({ to: MONTHLY_REPLY_TO, subject: '[תצוגה מקדימה] מנור · רישום המורים — מפקחים (' + iParts.length + ')',
+        htmlBody: banner + iParts.join(''), body: 'תצוגה מקדימה', name: 'מנור' });
+    } catch (e) { failed.push('תצוגה מקדימה: ' + e.message); }
+  }
+  console.log('regOnceSend_ live=' + live + ' · נשלחו ' + sent.length + ' · דולגו ' + skipped.length + ' · נכשלו ' + failed.length +
+    (skipped.length ? '\n' + skipped.join('\n') : '') + (failed.length ? '\n' + failed.join('\n') : ''));
+  return { sent: sent.length, skipped: skipped, failed: failed, more: more };
+}
+
+// מהעורך: תצוגה מקדימה לתיבת המרחב
+function regOncePreview() { console.log(JSON.stringify(regOnceSend_(false))); }
 
 function weeklyRegData_() {
   const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
@@ -6034,7 +6241,7 @@ function relaySend_(opts, url) {
   const cache = CacheService.getScriptCache();
   cache.put('relay_' + id, JSON.stringify({
     to: String(opts.to).trim(), subject: opts.subject, body: opts.body, html: opts.htmlBody, name: opts.name,
-    replyTo: opts.replyTo || ''
+    replyTo: opts.replyTo || '', cc: opts.cc || ''
   }), 120);
   /* "הדף לא נמצא" רגעי של Apps Script (נמדד 5.10.26: עד 4 מתוך 5 ברצף) — עד שלושה ניסיונות.
      רק כשאין תשובה קריאה; תשובה מפורשת (nomail/domain/quota) לא חוזרת. המחיר: אם אבדה
@@ -6639,8 +6846,9 @@ function teacherHere(p) {
 /* teacher.claim — "נכחתי ולא הצלחתי להירשם" (15.10.26, מיטל: "מה קורה עם כאלו שהיו בנוכחות
    ולא הצליחו להירשם?"). אחרי שהרישום נסגר המורה לא יכול/ה לעזור לעצמו/ה, והבקשה מגיעה למיטל
    בוואטסאפ. עכשיו: שורה ממתינה (markedVia='claim') + מייל למדריכ/ה עם "לא נכח/ה";
-   בלי תגובה — אישור אוטומטי אחרי 3 ימים כמו כל רישום עצמי (החלטת מיטל).
-   p: k (מפתח המורה), g (slug), d (date של המפגש), day (היום שבו השתתף/ה).
+   22.10.26 (מיטל): בלי אישור אוטומטי — נספר רק אחרי אישור המדריכ/ה. המורה כותב/ת מה קרה (why),
+   והסיבה מגיעה גם לתיבת המרחב, "שנדע למה היא לא הצליחה להירשם ונטפל בזה".
+   p: k (מפתח המורה), g (slug), d (date של המפגש), day (היום שבו השתתף/ה), why (חובה, עד 600 תווים).
    רק מועד מהתוכנית השנתית שהיה בשבעת הימים האחרונים (לא היום ולא עתידי). */
 const CLAIM_MAX_DAYS = 7;
 function teacherClaim(p) {
@@ -6654,6 +6862,8 @@ function teacherClaim(p) {
   const today = meetToday_();
   const minDay = Utilities.formatDate(new Date(Date.now() - CLAIM_MAX_DAYS * 864e5), MEET_TZ, 'yyyy-MM-dd');
   if (day >= today || day < minDay) return { ok: false, error: 'out_of_range' };
+  // דף ישן במטמון של הדפדפן לא שולח סיבה — נקלט בכל זאת, כדי שהבקשה לא תיפול
+  const why = String(p.why || '').replace(/\s+/g, ' ').trim().slice(0, 600) || 'לא צוין (דף ישן)';
   const data = remindLoad_();
   const slot = (data.slots || []).filter(s => s.slug === slug && s.mdate === d && s.date === day)[0];
   if (!slot) return { ok: false, error: 'not_planned' };
@@ -6671,16 +6881,34 @@ function teacherClaim(p) {
       id: rowId, meetingId: String(m.id), guideSlug: slug, date: "'" + meetDate_(m.date),
       teacherId: id, teacherName: String(t.name || '').trim(), schoolName: String(t.schoolName || '').trim(),
       status: 'pending', guideStatus: '', selfCheckinAt: iso, markedAt: '',
-      source: 'teacher-claim', updatedAt: iso, markedVia: 'claim'
+      source: 'teacher-claim', updatedAt: iso, markedVia: 'claim', claimWhy: why
     });
-    return { ok: true, data: { status: 'pending', already: false }, _mail: { meetingId: String(m.id), rowId: rowId } };
+    return { ok: true, data: { status: 'pending', already: false }, _mail: { meetingId: String(m.id), rowId: rowId, why: why } };
   });
   if (res && res.ok && res._mail) {
     bumpTeachersGen_();
     try { claimMail_(slug, g, slot, t, res._mail); } catch (e) { console.error('claimMail_: ' + e); }
+    try { claimMerhavMail_(g, slot, t, res._mail.why); } catch (e) { console.error('claimMerhavMail_: ' + e); }
     delete res._mail;
   }
   return res;
+}
+
+// עותק לתיבת המרחב: מי, איזו הדרכה, ולמה לא הצליח/ה להירשם — כדי לטפל בסיבה
+function claimMerhavMail_(g, slot, t, why) {
+  const dm = s => +s.slice(8, 10) + '.' + +s.slice(5, 7);
+  const who = String(t.name || '').trim() + ' · ' + String(t.schoolName || '').trim() + ' · ' + String(t.subject || '').trim();
+  const mail = String(t.email || '').trim();
+  const html =
+    '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C;text-align:right">' +
+    '<p style="margin:0 0 8px"><b>' + remindEsc_(who) + '</b> ביקש/ה נוכחות בהדרכה של ' + remindEsc_(g.name || '') +
+    ' (' + remindEsc_(dm(slot.date)) + ') ולא הצליח/ה להירשם.</p>' +
+    '<p style="margin:0 0 8px;padding:10px 12px;background:#FFF6DB;border-radius:8px"><b>מה קרה:</b> ' + remindEsc_(why) + '</p>' +
+    (mail ? '<p style="margin:0 0 8px">המייל של המורה: <span dir="ltr">' + remindEsc_(mail) + '</span> (אפשר להשיב למייל הזה ישירות)</p>' : '') +
+    '<p style="margin:0;font-size:13px;color:#5C7182">הבקשה נשלחה למדריכ/ה לאישור. אין אישור אוטומטי.</p></div>';
+  merhavMail_({ to: MONTHLY_REPLY_TO, subject: 'נכחתי ולא הצלחתי להירשם · ' + String(t.name || '').trim() + ' · ' + dm(slot.date),
+    body: who + '\nמה קרה: ' + why + (mail ? '\nמייל: ' + mail : ''), htmlBody: html, name: 'מנור',
+    replyTo: mail || MONTHLY_REPLY_TO });
 }
 
 function claimMail_(slug, g, slot, t, x) {
@@ -6688,14 +6916,14 @@ function claimMail_(slug, g, slot, t, x) {
   if (!to) return 'no_email';
   const dm = s => +s.slice(8, 10) + '.' + +s.slice(5, 7);
   const link = meetApproveLink_(x.meetingId);
-  const autoDay = Utilities.formatDate(new Date(Date.now() + MEET_AUTO_APPROVE_H * 3600000), MEET_TZ, 'd.M');
   const who = String(t.name || '').trim() + ' · ' + String(t.schoolName || '').trim();
   const html =
     '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#143E4C">' +
     '<p style="margin:0 0 10px">שלום ' + remindEsc_(g.name || '') + ',</p>' +
     '<p style="margin:0 0 10px"><b>' + remindEsc_(who) + '</b> כתב/ה שהשתתף/ה בהדרכה של ' + remindEsc_(dm(slot.date)) +
     (slot.topic ? ' (' + remindEsc_(slot.topic) + ')' : '') + ' ולא הצליח/ה להירשם.</p>' +
-    '<p style="margin:0 0 14px">אם זה נכון — אין צורך לעשות כלום, הנוכחות תאושר אוטומטית ב-' + remindEsc_(autoDay) + '.</p>' +
+    (x.why ? '<p style="margin:0 0 10px"><b>מה קרה, לדבריו/ה:</b> ' + remindEsc_(x.why) + '</p>' : '') +
+    '<p style="margin:0 0 14px">בבקשה לבדוק מול הנוכחות בזום ולאשר. <b>הנוכחות נספרת רק אחרי האישור שלך.</b></p>' +
     '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr>' +
     '<td bgcolor="#1f7a5c" style="background:#1f7a5c;border-radius:10px"><a href="' + link + '" style="color:#ffffff;text-decoration:none;padding:12px 22px;font-weight:bold;font-size:16px;display:inline-block">אישור עכשיו</a></td>' +
     '<td style="width:12px"></td>' +
@@ -6703,7 +6931,8 @@ function claimMail_(slug, g, slot, t, x) {
     '</tr></table>' +
     '<p style="margin:16px 0 0;font-size:12px;color:#8A97A6">מנור · המרחב הפדגוגי</p></div>';
   const text = who + ' כתב/ה שהשתתף/ה בהדרכה של ' + dm(slot.date) + ' ולא הצליח/ה להירשם.\n' +
-    'אם זה נכון — אין צורך לעשות כלום, הנוכחות תאושר אוטומטית ב-' + autoDay + '.\n\n' +
+    (x.why ? 'מה קרה, לדבריו/ה: ' + x.why + '\n' : '') +
+    'בבקשה לבדוק מול הנוכחות בזום ולאשר. הנוכחות נספרת רק אחרי האישור שלך.\n\n' +
     'אישור עכשיו: ' + link + '\nלא נכח/ה: ' + link + '&x=' + encodeURIComponent(x.rowId);
   merhavMail_({ to: to, subject: 'בקשת נוכחות · ' + String(t.name || '').trim() + ' · ' + dm(slot.date),
     body: text, htmlBody: html, name: 'מנור', replyTo: MAIL_REPLY_TO });
@@ -7396,6 +7625,30 @@ function registrationSchool(p) {
     .filter(r => r.school === sid && !r.newTeacher && !REG_SCHOOL_EXCLUDE_[r.schoolName + '|' + r.subject])
     .map(r => ({ name: r.name, subject: r.subject, state: r.state, missing: r.missing || [] }));
   return { ok: true, data: rows };
+}
+
+/* registration.inspector (22.10.26, מיטל: "כן תפתח") — "טרם נרשמו למנור" במבט המפקח.ת: כל בתי הספר
+   שבפריסת הפיקוח (_data/inspector-map-2027.json) של המפקח/ת המחובר/ת. שמות, מקצועות ומצב בלבד.
+   מטה רשאי/ת לבקש לפי שם (p.name) — לצפייה במבט של מפקח/ת מדף האדמין. */
+function registrationInspector(p) {
+  const email = staffEmailByKey_(p.sk);
+  if (!email) return { ok: false, error: 'forbidden' };
+  const roles = staffRolesFor_(email).roles;
+  const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+  let names = roles.filter(r => r.role === 'inspector').map(r => norm(r.name || r.person)).filter(Boolean);
+  if (roles.some(r => r.role === 'ministry') && norm(p.name)) names = [norm(p.name)];
+  if (!names.length) return { ok: false, error: 'forbidden' };
+  const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
+  const aliases = R.aliases || {};
+  const map = JSON.parse(monthlyFetch_('_data/inspector-map-2027.json'));
+  const schools = (map.schools || []).filter(s => !aliases[s.id] && names.indexOf(norm(s.inspector)) >= 0)
+    .map(s => ({ id: s.id, name: s.name }));
+  const mine = {};
+  schools.forEach(s => { mine[s.id] = 1; });
+  const rows = registrationData_()
+    .filter(r => mine[aliases[r.school] || r.school] && !r.newTeacher && !REG_SCHOOL_EXCLUDE_[r.schoolName + '|' + r.subject])
+    .map(r => ({ school: aliases[r.school] || r.school, name: r.name, subject: r.subject, state: r.state }));
+  return { ok: true, data: { schools: schools, rows: rows } };
 }
 
 /* registration.errors (29.9.26) — תקלות הכניסה של מורים מ-3 הימים האחרונים, מתוך

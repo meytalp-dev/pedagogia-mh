@@ -88,6 +88,13 @@
   .claim-when small { display: block; font-weight: 400; color: var(--text-2); font-size: 12.5px; }
   .claim-btn { font-size: 13px; padding: 7px 14px; }
   .claim-ok { font-size: 13px; font-weight: 700; color: #1f6b52; }
+  .claim-why[hidden] { display: none; }
+  .claim-why { flex-basis: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .claim-why label { font-size: 13px; font-weight: 700; }
+  .claim-why select, .claim-why textarea { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 8px; background: #fff; width: 100%; box-sizing: border-box; }
+  .claim-why textarea { min-height: 64px; resize: vertical; }
+  .claim-why .claim-send { align-self: flex-start; font-size: 13px; padding: 8px 16px; }
   .claim-err { font-size: 13px; font-weight: 600; color: #8f2f1c; }
   .tg-code { width: 100%; box-sizing: border-box; text-align: center; font-size: 26px;
              letter-spacing: 9px; font-weight: 700; padding: 10px; }
@@ -600,10 +607,10 @@
       </section>
 
       <!-- "נכחתי ולא הצלחתי להירשם" (15.10.26) — הדרכה מהשבוע האחרון בלי רישום שלי.
-           הבקשה נשלחת למדריכ/ה, ובלי תגובה מאושרת אוטומטית אחרי 3 ימים. -->
+           הבקשה נשלחת למדריכ/ה עם הסיבה; נספרת רק אחרי אישור (בלי אישור אוטומטי מ-22.10.26). -->
       <section class="card claim-card" id="claim-card" hidden>
         <div class="claim-title">השתתפת בהדרכה ולא הצלחת להירשם?</div>
-        <p class="claim-note">אפשר לבקש עד שבוע אחרי ההדרכה. הבקשה עוברת למדריכ/ה לאישור.</p>
+        <p class="claim-note">אפשר לבקש עד שבוע אחרי ההדרכה. ספרו לנו מה קרה, כדי שנוכל לתקן. הבקשה עוברת למדריכ/ה, והנוכחות נספרת אחרי האישור.</p>
         <div class="claim-list" id="claim-list"></div>
       </section>
 
