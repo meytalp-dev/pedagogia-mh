@@ -51,26 +51,29 @@
     if (head) head.textContent = name;
     const mineNext = (D.mine || []).filter(m => !m.past);
     const minePast = (D.mine || []).filter(m => m.past);
+    // שעה משותפת שהמדריכ/ה קבע/ה (25.10.26) לא חוסמת שיבוץ אישי
+    const ownNext = mineNext.filter(m => !m.group);
     const open = D.open || [];
     let html = '';
     if (mineNext.length) {
       html += mineNext.map(m => `
         <div class="slot-mine">
-          <div><div class="slot-mine-k">נרשמת לשעה פרטנית</div>
-            <b>${esc(dayLbl(m.date))} בשעה <span dir="ltr">${esc(m.start)}</span></b>${m.track ? ' · ' + esc(TRACKS[m.track] || '') : ''}</div>
-          <button type="button" class="btn btn-secondary" data-slot-cancel="${esc(m.id)}">ביטול השיבוץ</button>
+          <div><div class="slot-mine-k">${m.group ? 'שובצת לשעה פרטנית משותפת עם ' + esc(first) + (m.size > 1 ? ' · ' + m.size + ' מורים' : '') : 'נרשמת לשעה פרטנית'}</div>
+            <b>${esc(dayLbl(m.date))} בשעה <span dir="ltr">${esc(m.start)}</span></b>${m.track ? ' · ' + esc(TRACKS[m.track] || '') : ''}
+            ${m.group && m.note ? `<div class="slot-mine-k">נושא: ${esc(m.note)}</div>` : ''}</div>
+          <button type="button" class="btn btn-secondary" data-slot-cancel="${esc(m.id)}" data-group="${m.group ? 1 : 0}">${m.group ? 'לא אוכל להגיע' : 'ביטול השיבוץ'}</button>
         </div>`).join('');
     }
     if (open.length) {
       const byDate = {};
       open.forEach(s => { (byDate[s.date] = byDate[s.date] || []).push(s); });
-      html += `<p class="hint">${mineNext.length ? 'מועדים פנויים נוספים. אפשר להשתבץ לשעה אחת בכל פעם — כדי להחליף, קודם מבטלים.' : 'בוחרים מועד פנוי, ממלאים פרטים ולוחצים "שיבוץ". אישור יגיע במייל.'}</p>` +
+      html += `<p class="hint">${ownNext.length ? 'מועדים פנויים נוספים. אפשר להשתבץ לשעה אחת בכל פעם — כדי להחליף, קודם מבטלים.' : 'בוחרים מועד פנוי, ממלאים פרטים ולוחצים "שיבוץ". אישור יגיע במייל.'}</p>` +
         Object.keys(byDate).sort().map(d => `
         <div class="slot-day"><div class="slot-day-h">${esc(dayLbl(d))}</div>
-          <div class="slot-times">${byDate[d].map(s => `<button type="button" class="slot-t${pick === s.id ? ' on' : ''}" data-slot="${esc(s.id)}" dir="ltr"${mineNext.length ? ' disabled' : ''}>${esc(s.start)}</button>`).join('')}</div>
+          <div class="slot-times">${byDate[d].map(s => `<button type="button" class="slot-t${pick === s.id ? ' on' : ''}" data-slot="${esc(s.id)}" dir="ltr"${ownNext.length ? ' disabled' : ''}>${esc(s.start)}</button>`).join('')}</div>
         </div>`).join('');
       const p = open.find(s => s.id === pick);
-      if (p && !mineNext.length) {
+      if (p && !ownNext.length) {
         html += `
         <div class="card slot-form">
           <div class="slot-form-h">שיבוץ ל${esc(dayLbl(p.date))} בשעה <span dir="ltr">${esc(p.start)}</span> עם ${esc(first)}</div>
@@ -128,11 +131,13 @@
   }
 
   async function cancel(btn) {
-    if (!confirm('לבטל את השיבוץ? המועד יחזור להיות פנוי למורים אחרים.')) return;
+    const grp = btn.dataset.group === '1';
+    if (!confirm(grp ? 'לבטל את ההשתתפות שלך בשעה המשותפת? המדריכ/ה יקבל/תקבל עדכון במייל.'
+      : 'לבטל את השיבוץ? המועד יחזור להיות פנוי למורים אחרים.')) return;
     btn.disabled = true;
     const res = await TS.apiPost('slots.cancel', { k: KEY, id: btn.dataset.slotCancel });
     if (!res || !res.ok) { btn.disabled = false; TS.toast(errText(res)); return; }
-    TS.toast('השיבוץ בוטל');
+    TS.toast(grp ? 'ההשתתפות בוטלה' : 'השיבוץ בוטל');
     await load();
   }
 

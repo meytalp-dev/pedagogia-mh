@@ -170,21 +170,89 @@
 
   /* 28.9.26 (מיטל): במקום וואטסאפ — ההודעה נשמרת בעמוד הקבוצה ונשלחת במייל
      אישי לכל מורה (guide.mail.send). השרת בונה את רשימת הנמענים בעצמו. */
+  const MAIL_ERR = {
+    daily_limit: 'היום כבר נשלחו 3 מיילים לקבוצה — אפשר שוב מחר.',
+    quota: 'מכסת המיילים היומית של המערכת כמעט נגמרה — לנסות מחר.',
+    no_recipients: 'לאף מורה מהנמענים אין עדיין מייל.',
+    bad_key: 'אין הרשאת שליחה מהקישור הזה.'
+  };
+  // null = לכל הקבוצה; אחרת רשימת בתי הספר שסומנו (אולי ריקה)
+  function toSchools() {
+    const r = document.querySelector('input[name="gmsg-to"]:checked');
+    if (!r || r.value !== 'schools') return null;
+    return [...document.querySelectorAll('#gmsg-schools input[data-school]:checked')].map(b => b.dataset.school);
+  }
+  // רשימת בתי הספר של הקבוצה — נבנית מחדש עם רשימת התפוצה, הסימונים נשמרים
+  function renderSchools() {
+    const wrap = document.getElementById('gmsg-schools');
+    if (!wrap) return;
+    const mode = toSchools();
+    const picked = mode || [];
+    const mailRow = document.getElementById('gmsg-mail-row');
+    if (mailRow) mailRow.hidden = !!mode;
+    wrap.hidden = !mode;
+    const btn = document.getElementById('gmsg-send');
+    if (btn) btn.textContent = mode ? 'שליחה במייל' : 'פרסום ושליחה';
+    if (!mode) return;
+    const info = mailInfo();
+    const by = {};
+    info.all.forEach(p => {
+      const s = String(p.school || '').replace(/\s+/g, ' ').trim();
+      if (!s) return;
+      const b = by[s] = by[s] || { all: 0, mail: 0 };
+      b.all++;
+      if (p.email) b.mail++;
+    });
+    const names = Object.keys(by).sort((a, b) => a.localeCompare(b, 'he'));
+    if (!names.length) { wrap.innerHTML = '<div class="gm-schools-note">' + (CONTACTS ? 'אין בתי ספר ברשימת הקבוצה.' : 'טוען את רשימת בתי הספר…') + '</div>'; return; }
+    const n = mailInfo(picked).withEmail.length;
+    wrap.innerHTML = names.map(s => `<label class="gm-check"><input type="checkbox" data-school="${esc(s)}"${picked.indexOf(s) >= 0 ? ' checked' : ''}>
+        <span>${esc(s)} <span class="gm-n">· ${by[s].mail} עם מייל${by[s].mail < by[s].all ? ' מתוך ' + by[s].all : ''}</span></span></label>`).join('') +
+      `<div class="gm-schools-note">${picked.length ? 'יישלח במייל ל-' + n + ' מורים.' : 'מסמנים בית ספר אחד או כמה.'} ההודעה לא מתפרסמת בעמוד הקבוצה.</div>`;
+    wrap.querySelectorAll('input[data-school]').forEach(b => b.addEventListener('change', renderSchools));
+  }
+  document.querySelectorAll('input[name="gmsg-to"]').forEach(r => r.addEventListener('change', renderSchools));
+
   async function sendMessage() {
     const box = document.getElementById('gmsg-text');
     const subjBox = document.getElementById('gmsg-subject');
     const text = box.value.trim();
     if (!text) { box.focus(); return; }
-    const withMail = document.getElementById('gmsg-mail').checked;
+    const schools = toSchools();
+    const withMail = schools ? true : document.getElementById('gmsg-mail').checked;
     const subject = subjBox.value.trim() || ('הודעה מ' + (GUIDE_CFG.name || 'המדריך/ה') + (subjectsLabel() ? ' · הדרכה ב' + subjectsLabel() : ''));
     const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    const btn = document.getElementById('gmsg-send');
+    const status = document.getElementById('gmsg-status');
+    if (schools) {
+      /* 25.10.26 (מיטל): הודעה לבתי ספר מסוימים — במייל בלבד, רק למורי הקבוצה מבתי הספר
+         שנבחרו. לא מתפרסמת בעמוד הקבוצה, כי שאר המורים לא אמורים לראות אותה. */
+      if (!(auth.k || auth.ge)) { TS.toast('שליחה במייל דורשת כניסה מהקישור האישי'); return; }
+      if (!schools.length) { TS.toast('בוחרים לפחות בית ספר אחד'); return; }
+      const n = mailInfo(schools).withEmail.length;
+      if (!n) { TS.toast('למורים בבתי הספר שנבחרו אין עדיין מייל'); return; }
+      if (!confirm('לשלוח את ההודעה במייל ל-' + n + ' מורים מ: ' + schools.join(', ') + '?\n\nההודעה לא תפורסם בעמוד הקבוצה.')) return;
+      btn.disabled = true;
+      status.textContent = 'שולחת במייל... (זה לוקח כדקה)';
+      const r = await TS.apiPost('guide.mail.send', Object.assign({}, auth, {
+        subject: subject, text: text + '\n\nכל החומרים וההודעות של הקבוצה: ' + groupUrl(), schools: JSON.stringify(schools)
+      }));
+      btn.disabled = false;
+      if (r && r.ok) {
+        box.value = ''; subjBox.value = '';
+        const d = r.data || {};
+        status.textContent = 'נשלח במייל ל-' + (d.sent || 0) + ' מורים מ' + schools.join(', ') +
+          (d.missing && d.missing.length ? ' · ל-' + d.missing.length + ' אין מייל' : '');
+      } else {
+        status.textContent = 'המייל לא נשלח: ' + (MAIL_ERR[r && r.error] || 'תקלה רגעית — ייתכן שחלק נשלחו. לא לשלוח שוב לפני שבודקים.');
+      }
+      return;
+    }
     if (withMail && !(auth.k || auth.ge)) {
       TS.toast('שליחה במייל דורשת כניסה מהקישור האישי — ההודעה תפורסם רק בעמוד הקבוצה');
     }
     const n = mailInfo().withEmail.length;
     if (withMail && (auth.k || auth.ge) && !confirm('לשלוח את ההודעה במייל ל-' + n + ' מורים?')) return;
-    const btn = document.getElementById('gmsg-send');
-    const status = document.getElementById('gmsg-status');
     btn.disabled = true;
     status.textContent = 'מפרסמת...';
 
@@ -216,12 +284,6 @@
       subject: subject, text: text + '\n\nכל החומרים וההודעות של הקבוצה: ' + groupUrl()
     }));
     btn.disabled = false;
-    const MAIL_ERR = {
-      daily_limit: 'היום כבר נשלחו 3 מיילים לקבוצה — אפשר שוב מחר.',
-      quota: 'מכסת המיילים היומית של המערכת כמעט נגמרה — לנסות מחר.',
-      no_recipients: 'לאף מורה בקבוצה אין עדיין מייל.',
-      bad_key: 'אין הרשאת שליחה מהקישור הזה.'
-    };
     if (res2 && res2.ok) {
       subjBox.value = '';
       const d = res2.data || {};
@@ -251,8 +313,10 @@
     renderMail();
   }
   window.SPACE_onAuth = loadContacts;
-  function mailInfo() {
-    const base = (typeof myTeachers === 'function') ? myTeachers() : myRoster();
+  function mailInfo(schools) {
+    const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+    const base = ((typeof myTeachers === 'function') ? myTeachers() : myRoster())
+      .filter(t => !schools || schools.indexOf(norm(t.schoolName)) >= 0);
     const all = CONTACTS ? base.map(t => Object.assign({}, t, { email: (CONTACTS[String(t.id)] || {}).email || '', phone: (CONTACTS[String(t.id)] || {}).phone || '' })) : base;
     const okMail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim());
     const people = {}, list = [];
@@ -272,6 +336,7 @@
   }
   window.SPACE_onRoster = function () { renderMail(); };
   function renderMail() {
+    renderSchools();
     const root = document.getElementById('mail-root');
     if (!root) return;
     const info = mailInfo();

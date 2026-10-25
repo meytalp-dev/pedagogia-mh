@@ -114,7 +114,7 @@ const SCHEMA = {
   // שיבוץ לשעות פרטניות (20.10.26) — שורה לכל מועד שהמדריכ/ה פרסמ/ה. status: open · booked
   // until = היום האחרון לשיבוץ · track = bagrut|gemer · bookedBy = teacher|guide
   guide_slots:        ['id','guideSlug','date','start','until','status','teacherId','teacherName','schoolName',
-                       'phone','track','note','bookedAt','bookedBy','createdAt','updatedAt']
+                       'phone','track','note','bookedAt','bookedBy','createdAt','updatedAt','teacherIds']
 };
 
 // תפקידים נתמכים — סדר היררכי
@@ -8062,7 +8062,8 @@ function guideReplyTo_(slug) {
   } catch (e) { return ''; }
 }
 
-/* guide.mail.send — { guide, k|ge, subject, text, dryRun } */
+/* guide.mail.send — { guide, k|ge, subject, text, dryRun, schools? }
+   schools (25.10.26, מיטל) — רשימת שמות בתי ספר: המייל רק למורי הקבוצה מבתי הספר האלה. */
 function guideMailSend(p) {
   const slug = meetAuthGuide_(p);
   if (!slug) return { ok: false, error: 'bad_key' };
@@ -8073,7 +8074,10 @@ function guideMailSend(p) {
 
   const win = remindWin_();
   const g = (win.TS_GUIDES || {})[slug] || {};
-  const rec = guideRecipients_(guideRoster_(win, slug, ''));
+  const normSch = x => String(x || '').replace(/\s+/g, ' ').trim();
+  const schools = meetRecords_(p.schools).map(normSch).filter(Boolean);
+  const roster = guideRoster_(win, slug, '').filter(t => !schools.length || schools.indexOf(normSch(t.schoolName)) >= 0);
+  const rec = guideRecipients_(roster);
   const info = { recipients: rec.withEmail.length, missing: rec.missing };
   if (dry) return { ok: true, data: Object.assign({ dryRun: true, quota: MailApp.getRemainingDailyQuota() }, info) };
 
@@ -8101,7 +8105,7 @@ function guideMailSend(p) {
     opt.replyTo = replyTo || MAIL_REPLY_TO;
     try { MailApp.sendEmail(opt); sent++; } catch (e) { failed.push(r.name); }
   });
-  auditLog_('', 'guide.mail.send', 'guide', slug, 'ok', 'sent=' + sent + ' failed=' + failed.length);
+  auditLog_('', 'guide.mail.send', 'guide', slug, 'ok', 'sent=' + sent + ' failed=' + failed.length + (schools.length ? ' schools=' + schools.join('|') : ''));
   return { ok: true, data: Object.assign({ sent: sent, failed: failed }, info) };
 }
 
@@ -8888,15 +8892,22 @@ function slotPhone_(v) {
   return s;
 }
 
+/* שעה משותפת (25.10.26, מיטל): המדריכ/ה משבצ/ת כמה מורים יחד — בית ספר שלם או מורים
+   שנבחרו — למועד אחד. teacherIds = רשימה מופרדת בפסיק, teacherId ריק, group=true.
+   בשיבוץ רגיל teacherIds נגזר מ-teacherId, כך שכל הבדיקות עוברות דרך slotHas_. */
 function slotRow_(r) {
+  const tid = String(r.teacherId || '');
+  const gids = String(r.teacherIds || '').split(',').map(x => x.trim()).filter(Boolean);
   return {
     id: String(r.id), guideSlug: String(r.guideSlug), date: meetDate_(r.date), start: planTime_(r.start),
-    until: meetDate_(r.until), status: String(r.status || 'open'), teacherId: String(r.teacherId || ''),
+    until: meetDate_(r.until), status: String(r.status || 'open'), teacherId: tid,
+    teacherIds: gids.length ? gids : (tid ? [tid] : []), group: gids.length > 0,
     teacherName: String(r.teacherName || ''), schoolName: String(r.schoolName || ''),
     phone: slotPhone_(r.phone), track: String(r.track || ''), note: String(r.note || ''),
     bookedAt: toIso_(r.bookedAt), bookedBy: String(r.bookedBy || '')
   };
 }
+function slotHas_(s, id) { return s.status === 'booked' && s.teacherIds.indexOf(String(id)) >= 0; }
 
 function slotRows_(slug) {
   ensureTab_('guide_slots');
@@ -8927,7 +8938,19 @@ function slotBookFields_(t, track, phone, note, by) {
   };
 }
 
-const SLOT_FREE_ = { status: 'open', teacherId: '', teacherName: '', schoolName: '', phone: '', track: '', note: '', bookedAt: '', bookedBy: '' };
+const SLOT_FREE_ = { status: 'open', teacherId: '', teacherIds: '', teacherName: '', schoolName: '', phone: '', track: '', note: '', bookedAt: '', bookedBy: '' };
+
+// שעה משותפת — השמות ובתי הספר נשמרים בשורה כדי שהלוח של המדריכ/ה ייקרא בלי טעינת המורים
+function slotGroupFields_(ts, note) {
+  const now = new Date().toISOString();
+  const schools = [];
+  ts.forEach(t => { const s = String(t.schoolName || '').trim(); if (s && schools.indexOf(s) < 0) schools.push(s); });
+  return {
+    status: 'booked', teacherId: '', teacherIds: ts.map(t => String(t.id)).join(','),
+    teacherName: ts.map(t => String(t.name || '')).join(' · ').slice(0, 2000), schoolName: schools.join(' · ').slice(0, 500),
+    phone: '', track: '', note: meetStr_(note, 300), bookedAt: now, bookedBy: 'guide', updatedAt: now
+  };
+}
 
 /* slots.guide — { guide, k|ge } → המועדים מהשבועיים האחרונים והלאה, עם פרטי המשובצים */
 function slotsGuide(p) {
@@ -8948,40 +8971,62 @@ function slotsAdd(p) {
     .filter(x => x.date && x.start);
   if (!items.length || items.length > 40) return { ok: false, error: 'bad_items' };
   const until = meetDate_(p.until);
-  let t = null, gname = '';
-  if (p.teacherId) {
-    if (items.length !== 1) return { ok: false, error: 'bad_items' };
-    t = readAll('teachers').find(r => String(r.id) === String(p.teacherId)) || null;
+  let t = null, gname = '', group = null;
+  const gids = meetRecords_(p.teacherIds).map(x => String(x || '').trim()).filter((x, i, a) => x && a.indexOf(x) === i);
+  if (p.teacherId || gids.length) {
+    if (items.length !== 1 || gids.length > 60) return { ok: false, error: 'bad_items' };
     const win = remindWin_();
     const g = slotGuideOf_(win, slug);
-    if (!t || !g.name || !win.TS_guideHasTeacher(g, t)) return { ok: false, error: 'not_mine' };
+    if (!g.name) return { ok: false, error: 'not_mine' };
     gname = g.name;
+    const all = readAll('teachers');
+    if (gids.length) {
+      // שעה משותפת — כל המורים חייבים להיות בקבוצה של המדריכ/ה
+      group = gids.map(id => all.find(r => String(r.id) === id) || null);
+      if (group.some(x => !x || !win.TS_guideHasTeacher(g, x))) return { ok: false, error: 'not_mine' };
+    } else {
+      t = all.find(r => String(r.id) === String(p.teacherId)) || null;
+      if (!t || !win.TS_guideHasTeacher(g, t)) return { ok: false, error: 'not_mine' };
+    }
   }
   const res = meetWithLock_(() => {
     const have = {};
-    slotRows_(slug).forEach(s => { have[s.date + ' ' + s.start] = 1; });
+    slotRows_(slug).forEach(s => { have[s.date + ' ' + s.start] = s; });
     const now = new Date().toISOString();
     const added = [], skipped = [];
     items.forEach(x => {
       const key = x.date + ' ' + x.start;
-      if (have[key] || x.date > PLAN_CHANGE_LAST_DATE || remindMinutes_(x.date, x.start) <= remindNowMinutes_()) { skipped.push(x); return; }
-      have[key] = 1;
+      if (x.date > PLAN_CHANGE_LAST_DATE || remindMinutes_(x.date, x.start) <= remindNowMinutes_()) { skipped.push(x); return; }
+      const ex = have[key];
+      if (ex) {
+        // שיבוץ ידני למועד פנוי שכבר פורסם — ממלאים אותו במקום לדלג
+        if ((t || group) && ex.status !== 'booked') {
+          updateRowById('guide_slots', ex.id, group ? slotGroupFields_(group, p.note) : slotBookFields_(t, p.track, p.phone, p.note, 'guide'));
+          added.push(ex.id);
+        } else skipped.push(Object.assign({ taken: ex.status === 'booked' }, x));
+        return;
+      }
       const row = {
         id: 'gs_' + slug + '_' + x.date.replace(/-/g, '') + '_' + x.start.replace(':', ''),
         guideSlug: slug, date: "'" + x.date, start: "'" + x.start, until: until ? "'" + until : '',
         status: 'open', createdAt: now, updatedAt: now
       };
-      if (t) Object.assign(row, slotBookFields_(t, p.track, p.phone, p.note, 'guide'));
+      if (group) Object.assign(row, slotGroupFields_(group, p.note));
+      else if (t) Object.assign(row, slotBookFields_(t, p.track, p.phone, p.note, 'guide'));
       appendRow('guide_slots', row);
+      have[key] = row;
       added.push(row.id);
     });
     return { ok: true, data: { added: added, skipped: skipped } };
   });
-  if (res.ok && t && res.data.added.length && String(p.notify) !== '0') {
+  if (res.ok && (t || group) && res.data.added.length && String(p.notify) !== '0') {
     const s = slotRows_(slug).find(r => r.id === res.data.added[0]);
-    if (s) { try { slotMailTeacher_(slug, gname, t, s, 'assigned'); } catch (e) { console.error('slotsAdd mail: ' + e); } }
+    if (s) (group || [t]).forEach(x => {
+      try { slotMailTeacher_(slug, gname, x, s, 'assigned'); } catch (e) { console.error('slotsAdd mail: ' + e); }
+    });
   }
-  if (res.ok) auditLog_('', 'slots.add', 'guide', slug, 'ok', 'added=' + res.data.added.length + (t ? ' teacher=' + t.id : ''));
+  if (res.ok) auditLog_('', 'slots.add', 'guide', slug, 'ok', 'added=' + res.data.added.length +
+    (group ? ' group=' + group.length : t ? ' teacher=' + t.id : ''));
   return res;
 }
 
@@ -8999,11 +9044,15 @@ function slotsRemove(p) {
   });
   if (!res.ok) return res;
   const s = res.data.slot;
-  if (s.status === 'booked' && s.teacherId && String(p.notify) !== '0') {
-    const t = readAll('teachers').find(r => String(r.id) === s.teacherId);
-    if (t) { try { slotMailTeacher_(slug, slotGuideOf_(remindWin_(), slug).name, t, s, 'removed'); } catch (e) { console.error('slotsRemove mail: ' + e); } }
+  if (s.status === 'booked' && s.teacherIds.length && String(p.notify) !== '0') {
+    const all = readAll('teachers');
+    const gname = slotGuideOf_(remindWin_(), slug).name;
+    s.teacherIds.forEach(id => {
+      const t = all.find(r => String(r.id) === id);
+      if (t) { try { slotMailTeacher_(slug, gname, t, s, 'removed'); } catch (e) { console.error('slotsRemove mail: ' + e); } }
+    });
   }
-  auditLog_('', 'slots.remove', 'guide', slug, 'ok', s.date + ' ' + s.start + (s.teacherId ? ' teacher=' + s.teacherId : ''));
+  auditLog_('', 'slots.remove', 'guide', slug, 'ok', s.date + ' ' + s.start + (s.teacherIds.length ? ' teachers=' + s.teacherIds.join(',') : ''));
   return { ok: true, data: { removed: s.id } };
 }
 
@@ -9017,8 +9066,10 @@ function slotsTeacher(p) {
   if (!slug) return { ok: true, data: { enabled: false } };
   const g = slotGuideOf_(win, slug);
   const rows = slotRows_(slug);
-  const mine = rows.filter(s => s.status === 'booked' && s.teacherId === String(t.id) && slotRecent_(s))
-    .map(s => ({ id: s.id, date: s.date, start: s.start, track: s.track, note: s.note, past: slotPast_(s) }));
+  // בשעה משותפת המורה רואה עם מי — אלה מורים מאותה קבוצה שנפגשים יחד
+  const mine = rows.filter(s => slotHas_(s, t.id) && slotRecent_(s))
+    .map(s => ({ id: s.id, date: s.date, start: s.start, track: s.track, note: s.note, past: slotPast_(s),
+      group: s.group, size: s.teacherIds.length, schools: s.group ? s.schoolName : '' }));
   const open = rows.filter(slotBookable_).map(s => ({ id: s.id, date: s.date, start: s.start, until: s.until }));
   return { ok: true, data: {
     enabled: true, guide: slug, guideName: g.name || '', today: meetToday_(),
@@ -9043,10 +9094,11 @@ function slotsBook(p) {
     const rows = slotRows_(slug);
     const s = rows.find(r => r.id === String(p.id));
     if (!s) return { ok: false, error: 'not_found' };
-    if (s.status === 'booked') return s.teacherId === String(t.id) ? { ok: true, data: { slot: s, already: true } } : { ok: false, error: 'taken' };
+    if (s.status === 'booked') return (!s.group && s.teacherId === String(t.id)) ? { ok: true, data: { slot: s, already: true } } : { ok: false, error: 'taken' };
     if (slotPast_(s)) return { ok: false, error: 'past' };
     if (s.until && meetToday_() > s.until) return { ok: false, error: 'closed' };
-    const other = rows.find(r => r.status === 'booked' && r.teacherId === String(t.id) && !slotPast_(r));
+    // שעה משותפת שהמדריכ/ה קבע/ה לא חוסמת שיבוץ אישי
+    const other = rows.find(r => !r.group && slotHas_(r, t.id) && !slotPast_(r));
     if (other) return { ok: false, error: 'has_booking', data: { date: other.date, start: other.start } };
     const fields = slotBookFields_(t, p.track, p.phone, p.note, 'teacher');
     updateRowById('guide_slots', s.id, fields);
@@ -9068,16 +9120,25 @@ function slotsCancel(p) {
     ensureTab_('guide_slots');
     const raw = readAll('guide_slots').find(r => String(r.id) === String(p.id || ''));
     const s = raw ? slotRow_(raw) : null;
-    if (!s || s.status !== 'booked' || s.teacherId !== String(t.id)) return { ok: false, error: 'not_found' };
+    if (!s || !slotHas_(s, t.id)) return { ok: false, error: 'not_found' };
     if (slotPast_(s)) return { ok: false, error: 'past' };
-    updateRowById('guide_slots', s.id, Object.assign({ updatedAt: new Date().toISOString() }, SLOT_FREE_));
-    return { ok: true, data: { slot: s } };
+    const left = s.teacherIds.filter(id => id !== String(t.id));
+    if (s.group && left.length) {
+      // שעה משותפת: המורה יוצא/ת, והשאר נשארים משובצים
+      const all = readAll('teachers');
+      const rest = left.map(id => all.find(r => String(r.id) === id)).filter(Boolean);
+      const f = slotGroupFields_(rest, s.note);
+      updateRowById('guide_slots', s.id, { teacherIds: left.join(','), teacherName: f.teacherName, schoolName: f.schoolName,
+        updatedAt: new Date().toISOString() });
+    } else updateRowById('guide_slots', s.id, Object.assign({ updatedAt: new Date().toISOString() }, SLOT_FREE_));
+    return { ok: true, data: { slot: s, stays: s.group && left.length > 0 } };
   });
   if (!res.ok) return res;
   const s = res.data.slot;
+  const kind = s.group ? 'left' : 'cancelled';
   const gname = slotGuideOf_(remindWin_(), s.guideSlug).name;
-  try { slotMailTeacher_(s.guideSlug, gname, t, s, 'cancelled'); } catch (e) { console.error('slotsCancel teacher mail: ' + e); }
-  try { slotMailGuide_(s.guideSlug, gname, t, s, 'cancelled'); } catch (e) { console.error('slotsCancel guide mail: ' + e); }
+  try { slotMailTeacher_(s.guideSlug, gname, t, s, kind); } catch (e) { console.error('slotsCancel teacher mail: ' + e); }
+  try { slotMailGuide_(s.guideSlug, gname, t, s, kind); } catch (e) { console.error('slotsCancel guide mail: ' + e); }
   auditLog_('', 'slots.cancel', 'guide', s.guideSlug, 'ok', s.date + ' ' + s.start + ' teacher=' + t.id);
   return { ok: true, data: { id: s.id } };
 }
@@ -9093,19 +9154,26 @@ function slotMailTeacher_(slug, guideName, t, s, kind) {
   if (!guideMailOk_(t.email)) return;
   const gname = guideName || 'המדריך/ה';
   const when = planWhen_(s.date, s.start);
+  const shared = s.group ? ' משותפת' : '';
   const lead = {
     booked: 'נרשמת לשעה פרטנית עם ' + gname + '.',
-    assigned: gname + ' שיבצ/ה אותך לשעה פרטנית.',
+    assigned: gname + ' שיבצ/ה אותך לשעה פרטנית' + shared + '.',
     cancelled: 'ביטלת את השיבוץ לשעה הפרטנית עם ' + gname + '. המועד חזר להיות פנוי.',
-    removed: gname + ' ביטל/ה את המועד של השעה הפרטנית שנקבעה לך. אפשר להשתבץ למועד אחר במנור.'
+    left: 'ביטלת את ההשתתפות שלך בשעה הפרטנית המשותפת עם ' + gname + '. ' + gname + ' קיבל/ה עדכון.',
+    removed: gname + ' ביטל/ה את המועד של השעה הפרטנית' + shared + ' שנקבעה לך.' + (s.group ? '' : ' אפשר להשתבץ למועד אחר במנור.')
   }[kind];
   const title = {
     booked: 'נרשמת לשעה פרטנית · ' + when,
-    assigned: 'שובצת לשעה פרטנית · ' + when,
+    assigned: 'שובצת לשעה פרטנית' + shared + ' · ' + when,
     cancelled: 'השיבוץ בוטל · שעה פרטנית ' + when,
-    removed: 'המועד בוטל · שעה פרטנית ' + when
+    left: 'ההשתתפות בוטלה · שעה פרטנית משותפת ' + when,
+    removed: 'המועד בוטל · שעה פרטנית' + shared + ' ' + when
   }[kind];
-  const facts = [['מועד', when], ['מדריך/ה', gname], ['מסלול', SLOT_TRACKS[s.track] || '']].filter(f => f[1]);
+  // בשעה משותפת: עם מי (בלי השם של המורה עצמו/ה)
+  const others = s.group ? String(s.teacherName || '').split(' · ').filter(n => n && n !== String(t.name || '')) : [];
+  const facts = [['מועד', when], ['מדריך/ה', gname], ['מסלול', SLOT_TRACKS[s.track] || ''],
+    ['יחד עם', kind === 'assigned' && others.length ? others.join(', ') : ''],
+    ['נושא', kind === 'assigned' && s.group ? s.note : '']].filter(f => f[1]);
   const replyTo = guideReplyTo_(slug);
   const link = guideTeacherLink_(t.id) + '#slot-sec';
   const hello = 'שלום ' + String(t.name || '') + ',';
@@ -9116,20 +9184,23 @@ function slotMailTeacher_(slug, guideName, t, s, kind) {
     body: hello + '\n\n' + lead + '\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') + '\n\nהבית שלי במנור: ' + link + '\n\n' + SLOT_SIGN });
 }
 
-// למדריכ/ה: booked · cancelled — מי, מאיזה בית ספר, טלפון ומסלול
+// למדריכ/ה: booked · cancelled · left (יצא/ה משעה משותפת) — מי, מאיזה בית ספר, טלפון ומסלול
 function slotMailGuide_(slug, guideName, t, s, kind) {
   const email = guideReplyTo_(slug);
   if (!email) return;
   const when = planWhen_(s.date, s.start);
   const who = String(t.name || 'מורה') + (t.schoolName ? ' מ' + t.schoolName : '');
-  const lead = kind === 'booked' ? who + ' השתבצ/ה לשעה פרטנית.' : who + ' ביטל/ה את השיבוץ. המועד חזר להיות פנוי.';
+  const rest = s.teacherIds.length - 1;
+  const lead = kind === 'booked' ? who + ' השתבצ/ה לשעה פרטנית.'
+    : kind === 'left' ? who + ' ביטל/ה את ההשתתפות בשעה הפרטנית המשותפת.' + (rest > 0 ? ' נשארו ' + rest + ' משובצים.' : ' לא נשארו משובצים, והמועד חזר להיות פנוי.')
+    : who + ' ביטל/ה את השיבוץ. המועד חזר להיות פנוי.';
   const facts = [['מועד', when], ['מורה', String(t.name || '')], ['בית ספר', String(t.schoolName || '')],
     ['טלפון', String(s.phone || '').replace(/^'+/, ''), true], ['מסלול', SLOT_TRACKS[s.track] || ''], ['הערה', s.note || '']].filter(f => f[1]);
   const link = REMIND_SITE + 'guide/?g=' + slug + '&guide=' + encodeURIComponent(email) + '&k=' + meetGuideKey_(slug) + '#sec-slots';
   const hello = 'שלום ' + (guideName || '') + ',';
   const teacherMail = guideMailOk_(t.email) ? String(t.email).trim() : '';
   merhavMail_({ to: email, name: 'מנור', replyTo: teacherMail || MAIL_REPLY_TO,
-    subject: (kind === 'booked' ? 'שיבוץ חדש לשעה פרטנית: ' : 'שיבוץ בוטל: ') + who + ' · ' + when,
+    subject: (kind === 'booked' ? 'שיבוץ חדש לשעה פרטנית: ' : kind === 'left' ? 'ביטול השתתפות בשעה משותפת: ' : 'שיבוץ בוטל: ') + who + ' · ' + when,
     htmlBody: guideMailHtml_(hello, '<p style="margin:0 0 8px"><b>' + remindEsc_(lead) + '</b></p>' + slotFactsHtml_(facts),
       link, 'לוח השעות הפרטניות במנור',
       (teacherMail ? 'אפשר להשיב למייל הזה — התשובה תגיע ישר למורה.<br>' : '') + 'הודעה אוטומטית ממנור · ' + SLOT_SIGN),

@@ -35,6 +35,7 @@
     bad_key: 'אין הרשאה — צריך להיכנס מהקישור האישי שלך למנור.',
     bad_items: 'לא הוזנו מועדים תקינים. בוחרים תאריך וכותבים שעות, למשל 10:30, 11:30.',
     past: 'אי אפשר למחוק שעה שכבר התקיימה — היא נשמרת כתיעוד.',
+    not_mine: 'אחד המורים שנבחרו כבר לא בקבוצה שלך — רעננו את הדף.',
     not_found: 'המועד כבר לא קיים — רעננו את הדף.',
     busy: 'השרת עמוס כרגע — נסו שוב בעוד רגע.'
   };
@@ -76,6 +77,17 @@
     const row = s => {
       const isBooked = s.status === 'booked';
       const phone = String(s.phone || '').replace(/^'+/, '');
+      const n = (s.teacherIds || []).length;
+      if (isBooked && s.group) {
+        return `<div class="sl-row booked">
+        <span class="sl-time">${esc(s.start)}</span>
+        <span class="sl-who"><span class="track-chip">שעה משותפת · ${n} מורים</span>
+          <div><b>${esc(s.teacherName)}</b></div>
+          ${s.schoolName ? `<div class="sl-note">${esc(s.schoolName)}</div>` : ''}
+          ${s.note ? `<div class="sl-note">נושא: ${esc(s.note)}</div>` : ''}</span>
+        ${s.date >= t ? `<button type="button" class="mh-edit" data-sl-del="${esc(s.id)}" data-booked="1">ביטול המועד</button>` : ''}
+      </div>`;
+      }
       return `<div class="sl-row${isBooked ? ' booked' : ''}">
         <span class="sl-time">${esc(s.start)}</span>
         <span class="sl-who">${isBooked
@@ -84,6 +96,7 @@
              ${s.track ? ` · <span class="track-chip ${esc(s.track)}">${esc(TRACKS[s.track] || s.track)}</span>` : ''}
              ${s.note ? `<div class="sl-note">${esc(s.note)}</div>` : ''}`
           : '<span class="sl-free">פנוי</span>'}</span>
+        ${!isBooked && s.date >= t ? `<button type="button" class="mh-edit" data-sl-grp="${esc(s.id)}">שיבוץ מורים</button>` : ''}
         ${s.date >= t ? `<button type="button" class="mh-edit" data-sl-del="${esc(s.id)}" data-booked="${isBooked ? 1 : 0}">${isBooked ? 'ביטול השיבוץ' : 'מחיקה'}</button>` : ''}
       </div>`;
     };
@@ -104,8 +117,10 @@
         <div class="btn-row" style="margin:8px 0 0;">
           <button type="button" class="btn btn-primary" id="sl-add">הוספת המועדים</button>
           ${lastWeek ? `<button type="button" class="btn btn-secondary" id="sl-copy">העתקת מועדי השבוע של ${esc(shortLbl(lastWeek))} לשבוע שאחריו</button>` : ''}
+          <button type="button" class="btn btn-secondary" id="sl-grp-open">שיבוץ בית ספר או כמה מורים יחד</button>
         </div>
         <div class="ws-status" id="sl-status"></div>
+        <div id="sl-grp" class="sl-grp" hidden></div>
       </div>
       ${upcoming.length ? byDate(upcoming).map(day).join('')
         : '<div class="empty" style="padding:18px;">עדיין אין מועדים קרובים. מוסיפים תאריך ושעות — והם יופיעו למורים בבית שלהם במנור.</div>'}
@@ -130,6 +145,113 @@
     if (copyBtn) copyBtn.addEventListener('click', () => copyWeek(lastWeek));
     document.getElementById('sl-share-copy').addEventListener('click', shareCopy);
     root.querySelectorAll('[data-sl-del]').forEach(b => b.addEventListener('click', () => remove(b)));
+    document.getElementById('sl-grp-open').addEventListener('click', () => openGroup(null));
+    root.querySelectorAll('[data-sl-grp]').forEach(b => b.addEventListener('click', () =>
+      openGroup((data.slots || []).find(x => x.id === b.dataset.slGrp))));
+  }
+
+  /* ---------- שעה משותפת (25.10.26, מיטל) ----------
+     המדריכ/ה משבצ/ת בית ספר שלם או כמה מורים למועד אחד. כל מורה מקבל/ת מייל,
+     ורואה את השעה בבית שלו/ה במנור. מועד פנוי שכבר פורסם — מתמלא; אחרת נוצר מועד חדש. */
+  function roster() {
+    const list = (typeof myTeachers === 'function') ? myTeachers() : [];
+    const seen = {};
+    return list.filter(x => x && x.id && !seen[x.id] && (seen[x.id] = 1));
+  }
+
+  function openGroup(slot) {
+    const box = document.getElementById('sl-grp');
+    const people = roster();
+    if (!people.length) { status('רשימת המורים עוד נטענת — נסו שוב בעוד רגע.', false); return; }
+    const bySchool = {};
+    people.forEach(p => {
+      const s = String(p.schoolName || '').replace(/\s+/g, ' ').trim() || 'בלי בית ספר';
+      (bySchool[s] = bySchool[s] || []).push(p);
+    });
+    const schools = Object.keys(bySchool).sort((a, b) => a.localeCompare(b, 'he'));
+    schools.forEach(s => bySchool[s].sort((a, b) => String(a.name).localeCompare(String(b.name), 'he')));
+    box.hidden = false;
+    box.innerHTML = `
+      <div class="sl-grp-h">שיבוץ בית ספר או כמה מורים לשעה אחת</div>
+      <div class="sl-add-row">
+        <label>תאריך<input type="date" class="input" id="sg-date" min="${esc(today())}" value="${esc(slot ? slot.date : '')}"></label>
+        <label>שעה<input class="input" id="sg-time" dir="ltr" placeholder="10:30" value="${esc(slot ? slot.start : '')}" style="max-width:110px;"></label>
+        <label class="sl-grow">נושא (לא חובה — מופיע במייל)<input class="input" id="sg-note" maxlength="300"></label>
+      </div>
+      <div class="sl-grp-list">${schools.map((s, i) => `
+        <details class="sl-grp-sch"${schools.length <= 3 ? ' open' : ''}>
+          <summary><b>${esc(s)}</b> <span class="sl-note">· ${bySchool[s].length} מורים</span> <span class="sl-note" data-sg-n="${i}"></span></summary>
+          <label class="gm-check sl-grp-all"><input type="checkbox" data-sg-school="${i}"> <span>כל המורים מבית הספר</span></label>
+          ${bySchool[s].map(p => `<label class="gm-check"><input type="checkbox" data-sg-t="${esc(p.id)}" data-sg-si="${i}">
+            <span>${esc(p.name)}${p.subject ? ' <span class="sl-note">· ' + esc(p.subject) + '</span>' : ''}</span></label>`).join('')}
+        </details>`).join('')}</div>
+      <div class="btn-row" style="margin:8px 0 0;">
+        <button type="button" class="btn btn-primary" id="sg-save">שיבוץ ושליחת מייל למורים</button>
+        <button type="button" class="btn btn-secondary" id="sg-close">סגירה</button>
+      </div>
+      <div class="ws-status" id="sg-status"></div>`;
+    // כמה סומנו בכל בית ספר — גלוי גם כשבית הספר מקופל
+    const count = () => {
+      const n = box.querySelectorAll('input[data-sg-t]:checked').length;
+      document.getElementById('sg-status').textContent = n ? 'נבחרו ' + n + ' מורים' : '';
+      box.querySelectorAll('[data-sg-n]').forEach(el => {
+        const k = box.querySelectorAll('input[data-sg-si="' + el.dataset.sgN + '"]:checked').length;
+        el.textContent = k ? '· סומנו ' + k : '';
+      });
+    };
+    box.querySelectorAll('input[data-sg-school]').forEach(c => c.addEventListener('change', () => {
+      box.querySelectorAll('input[data-sg-si="' + c.dataset.sgSchool + '"]').forEach(x => { x.checked = c.checked; });
+      count();
+    }));
+    box.querySelectorAll('input[data-sg-t]').forEach(c => c.addEventListener('change', () => {
+      const si = c.dataset.sgSi;
+      const all = box.querySelectorAll('input[data-sg-si="' + si + '"]');
+      const on = box.querySelectorAll('input[data-sg-si="' + si + '"]:checked');
+      const head = box.querySelector('input[data-sg-school="' + si + '"]');
+      head.checked = on.length === all.length;
+      head.indeterminate = on.length > 0 && on.length < all.length;
+      count();
+    }));
+    document.getElementById('sg-close').addEventListener('click', () => { box.hidden = true; box.innerHTML = ''; });
+    document.getElementById('sg-save').addEventListener('click', () => saveGroup(people));
+    box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  async function saveGroup(people) {
+    const box = document.getElementById('sl-grp');
+    const st = document.getElementById('sg-status');
+    const say = (txt, ok) => { st.textContent = txt; st.style.color = ok === false ? 'var(--err, #B4483C)' : ''; };
+    const date = document.getElementById('sg-date').value;
+    const time = parseTimes(document.getElementById('sg-time').value);
+    const ids = [...box.querySelectorAll('input[data-sg-t]:checked')].map(c => c.dataset.sgT);
+    if (!date) { say('בוחרים תאריך.', false); return; }
+    if (time.length !== 1 || !time[0]) { say('כותבים שעה אחת, למשל 10:30.', false); return; }
+    if (!ids.length) { say('מסמנים בית ספר או מורים.', false); return; }
+    const ex = (data.slots || []).find(s => s.date === date && s.start === time[0]);
+    if (ex && ex.status === 'booked') { say('במועד הזה כבר יש שיבוץ. בוחרים שעה אחרת או מבטלים את הקיים.', false); return; }
+    const names = ids.map(id => (people.find(p => String(p.id) === id) || {}).name).filter(Boolean);
+    if (!confirm('לשבץ ' + ids.length + ' מורים ל' + dayLbl(date) + ' בשעה ' + time[0] + '?\n\n' +
+      names.slice(0, 12).join(', ') + (names.length > 12 ? ' ועוד ' + (names.length - 12) : '') +
+      '\n\nכל אחד/ת יקבל/תקבל מייל עם המועד.')) return;
+    const btn = document.getElementById('sg-save');
+    btn.disabled = true;
+    say('שומר ושולח מיילים…');
+    const res = await TS.apiPost('slots.add', Object.assign({}, auth(), {
+      items: JSON.stringify([{ date: date, start: time[0] }]), until: date,
+      teacherIds: JSON.stringify(ids), note: document.getElementById('sg-note').value.trim()
+    }));
+    btn.disabled = false;
+    if (!res || !res.ok) {
+      // POST שהתשובה שלו נפלה — בודקים בטעינה אם השיבוץ נחת לפני שמבקשים שוב
+      await load();
+      const landed = (data.slots || []).find(s => s.date === date && s.start === time[0] && s.status === 'booked');
+      if (landed) TS.toast('השיבוץ נשמר');
+      else TS.toast(errText(res));
+      return;
+    }
+    if (!(res.data.added || []).length) { say('לא שובץ — המועד תפוס או שהשעה עברה.', false); return; }
+    TS.toast('שובצו ' + ids.length + ' מורים ונשלחו מיילים');
+    await load();
   }
 
   function status(text, ok) {
@@ -184,14 +306,16 @@
   async function remove(btn) {
     const s = (data.slots || []).find(x => x.id === btn.dataset.slDel);
     if (!s) return;
-    const msg = btn.dataset.booked === '1'
+    const msg = s.group
+      ? 'לבטל את השעה המשותפת ב' + dayLbl(s.date) + ' בשעה ' + s.start + '?\n\nהמועד יימחק, וכל ' + (s.teacherIds || []).length + ' המורים שבו יקבלו מייל שהמועד בוטל.'
+      : btn.dataset.booked === '1'
       ? 'לבטל את השיבוץ של ' + s.teacherName + ' ב' + dayLbl(s.date) + ' בשעה ' + s.start + '?\n\nהמועד יימחק, ו' + s.teacherName + ' יקבל/תקבל מייל שהמועד בוטל.'
       : 'למחוק את המועד ' + dayLbl(s.date) + ' בשעה ' + s.start + '?';
     if (!confirm(msg)) return;
     btn.disabled = true;
     const res = await TS.apiPost('slots.remove', Object.assign({}, auth(), { id: s.id }));
     if (!res || !res.ok) { btn.disabled = false; TS.toast(errText(res)); return; }
-    TS.toast(btn.dataset.booked === '1' ? 'השיבוץ בוטל ונשלח מייל למורה' : 'המועד נמחק');
+    TS.toast(s.group ? 'המועד בוטל ונשלחו מיילים למורים' : btn.dataset.booked === '1' ? 'השיבוץ בוטל ונשלח מייל למורה' : 'המועד נמחק');
     load();
   }
 
