@@ -300,7 +300,8 @@
       var m = /(\d{1,2}) ב([א-ת]+) (20\d\d)/.exec(txt);
       if (!h || !body || !m || !HEB_MONTHS[m[2]]) return;
       var moed = card.getAttribute('data-moed') || '';
-      var ev = { title: 'בחינה: ' + h.textContent.trim() + (moed ? ' · מועד ' + moed : ''),
+      var ev = { title: moed === 'גמר' ? 'בחינת גמר: ' + h.textContent.trim()
+          : 'בחינה: ' + h.textContent.trim() + (moed ? ' · מועד ' + moed : ''),
         date: m[3] + '-' + pad(HEB_MONTHS[m[2]]) + '-' + pad(+m[1]),
         desc: 'לוח מבחנים תשפ״ז · ' + SITE };
       all.push(ev);

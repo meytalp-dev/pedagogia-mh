@@ -269,6 +269,8 @@
   .m-w{background:#E8F2FF;color:#124D7A;border-color:#C6DDF5}
   .m-s{background:#FFF6E3;color:#8A6210;border-color:#F4E0B0}
   .m-b{background:#F0EBFA;color:#5B4A8A;border-color:#DCD2F0}
+  .m-g{background:#E4F4E8;color:#1F6B3A;border-color:#BFE3C9}
+  .exg{font-size:.76rem;color:var(--text2);line-height:1.45;margin-top:6px}
   .stag{font-size:.71rem;font-weight:700;border-radius:999px;padding:1px 8px;
     background:var(--teal-100);color:#0A7268;border:1px solid #B9EDE7}
   .exhide{display:none !important}
@@ -285,19 +287,21 @@
 </style>
 
 <div class="pagehead" style="padding-top:52px">
-  <div class="kicker rv">מועדי היבחנות · אגף בכיר בחינות</div>
+  <div class="kicker rv">מועדי היבחנות · בגרות וגמר</div>
   <h1 class="rv d1" style="font-size:var(--fs-5xl);margin:10px 0 8px">לוח מבחנים · בגרויות וגמר תשפ״ז</h1>
   <p class="rv d2 lead" style="font-size:var(--fs-lg);max-width:700px">
     כל מועדי הבחינות של שנת תשפ״ז במקום אחד, עם סימון של שבעת תחומי הדעת שלנו.
-    הנתונים נלקחו מלוחות המועדים הרשמיים של משרד החינוך.</p>
+    מועדי הבגרות נלקחו מלוחות המועדים הרשמיים של משרד החינוך. מבחני הגמר החיצוניים לנוער (מועד קיץ)
+    מופיעים לפי סמל הבחינה, הכיתה, שפת הבחינה והמגמות שנבחנות בה.</p>
 </div>
 
 <div class="exbar"><div class="expills">
   <button class="expill on" data-f="all">כל המקצועות</button>
   <button class="expill" data-f="core">שבעת תחומי הדעת</button>
-  <button class="expill" data-f="חורף">מועד חורף</button>
-  <button class="expill" data-f="קיץ">מועד קיץ</button>
-  <button class="expill" data-f="מועד ב'">מועד ב׳</button>
+  <button class="expill" data-f="חורף">בגרות · מועד חורף</button>
+  <button class="expill" data-f="קיץ">בגרות · מועד קיץ</button>
+  <button class="expill" data-f="מועד ב'">בגרות · מועד ב׳</button>
+  <button class="expill" data-f="גמר" id="gmar">מבחני גמר · קיץ</button>
 </div></div>
 
 <div class="exgrid" id="exgrid" data-pn-skip>
@@ -322,23 +326,61 @@
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>29</b><span>אפר</span></div><div class="exb"><h2>ערבית לערבים (לשון) כולל הגבר</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 29 באפריל 2027</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>2</b><span>מאי</span></div><div class="exb"><h2>ערבית לדרוזים (לשון)</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום ראשון · 2 במאי 2027</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>5</b><span>מאי</span></div><div class="exb"><h2>מקצועות הגבר · מדעי המחשב · שפות זרות</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 5 במאי 2027</span></div></div></div>
+<div class="ex gm core" data-moed="גמר" data-core="1" data-d="2027-05-06"><div class="exd"><b>6</b><span>מאי</span></div><div class="exb"><h2>מתמטיקה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 6 במאי 2027</span><span class="stag">מתמטיקה</span></div><div class="exg">סמל 22002 · כיתות י"א, י"ב · עברית/ערבית<br>כל המגמות</div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>9</b><span>מאי</span></div><div class="exb"><h2>דינים · יהדות</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום ראשון · 9 במאי 2027</span></div></div></div>
+<div class="ex gm core" data-moed="גמר" data-core="1" data-d="2027-05-09"><div class="exd"><b>9</b><span>מאי</span></div><div class="exb"><h2>לשון עברית לדוברי ערבית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום ראשון · 9 במאי 2027</span><span class="stag">עברית</span></div><div class="exg">סמל 22025 · כיתות י"א, י"ב · עברית<br>כל המגמות</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-13"><div class="exd"><b>13</b><span>מאי</span></div><div class="exb"><h2>ספרות ערבית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 13 במאי 2027</span></div><div class="exg">סמל 22005 · כיתות י"א, י"ב · ערבית<br>כל המגמות</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>17</b><span>מאי</span></div><div class="exb"><h2>עברית ליהודים</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 17 במאי 2027</span><span class="stag">עברית</span></div></div></div>
+<div class="ex gm core" data-moed="גמר" data-core="1" data-d="2027-05-18"><div class="exd"><b>18</b><span>מאי</span></div><div class="exb"><h2>הבעה, הבנה ולשון עברית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 18 במאי 2027</span><span class="stag">עברית</span></div><div class="exg">סמל 22024 · כיתות י"א, י"ב · עברית<br>כל המגמות</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>20</b><span>מאי</span></div><div class="exb"><h2>תנ״ך כולל הגבר</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 20 במאי 2027</span><span class="stag">תנ״ך</span></div></div></div>
+<div class="ex gm core" data-moed="גמר" data-core="1" data-d="2027-05-24"><div class="exd"><b>24</b><span>מאי</span></div><div class="exb"><h2>אזרחות לדוברי עברית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 24 במאי 2027</span><span class="stag">אזרחות</span></div><div class="exg">סמל 22003 · כיתות י"א, י"ב · עברית<br>כל המגמות</div></div></div>
+<div class="ex gm core" data-moed="גמר" data-core="1" data-d="2027-05-24"><div class="exd"><b>24</b><span>מאי</span></div><div class="exb"><h2>אזרחות לדוברי ערבית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 24 במאי 2027</span><span class="stag">אזרחות</span></div><div class="exg">סמל 2010 · כיתות י"א, י"ב · ערבית<br>כל המגמות</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>26</b><span>מאי</span></div><div class="exb"><h2>מתמטיקה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 26 במאי 2027</span><span class="stag">מתמטיקה</span></div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>27</b><span>מאי</span></div><div class="exb"><h2>מתמטיקה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 27 במאי 2027</span><span class="stag">מתמטיקה</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>דיפלומטיה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 31 במאי 2027</span></div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>תורת החשמל</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 38266 · כיתות י"א, י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · חשמל מעשי תלת פאזי (3827) · התקנה ושירות למתקני קירור ומיזוג אוויר דרג- 2 וחשמל מעשי תלת פאזי (3828)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>תורת החשמל מוסמך</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 14777 · כיתות י"א, י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · חשמלאי מוסמך (1401) · חשמלאי מוסמך וחשמלאי מכשור ובקרה תעופתית (4865) · חשמלאי מוסמך וחשמל מערכות כלי טיס (3850)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>טבחות</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 13013 · כיתה י"ב · עברית/ערבית<br>קולינריה · קולינריה (1626)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>קונדיטאות ואפייה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 13823 · כיתה י"ב · עברית/ערבית<br>קולינריה · קונדיטאות ואפייה (1382)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>אוטוטרוניקה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 12061 · כיתה י"ב · עברית/ערבית<br>רכב · אוטוטק/אוטוטרוניקה (2249)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-05-31"><div class="exd"><b>31</b><span>מאי</span></div><div class="exb"><h2>אוטוטרוניקה- התמחות כלי צמ"ה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שני · 31 במאי 2027</span></div><div class="exg">סמל 23551 · כיתה י"ב · עברית/ערבית<br>רכב · אוטוטק/אוטוטרוניקה-התמחות כלי צמ"ה (2355)</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>1</b><span>יונ</span></div><div class="exb"><h2>אנגלית</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שלישי · 1 ביוני 2027</span><span class="stag">אנגלית</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>ביולוגיה מעבדה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 2 ביוני 2027</span></div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-02"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>התקנת מחיצות גבס וטפסנות</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום רביעי · 2 ביוני 2027</span></div><div class="exg">סמל 23690 · כיתה י' · עברית<br>בניין וסביבה · בנייה חדשנית ואקולוגית (286)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-02"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>מחנכת שנות ינקות במעונות יום</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום רביעי · 2 ביוני 2027</span></div><div class="exg">סמל 91333 · כיתה י"ב · עברית/ערבית<br>חינוך וטיפול · מחנכת שנות ינקות- סוג 1 (915)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-02"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>עיצוב שיער</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום רביעי · 2 ביוני 2027</span></div><div class="exg">סמל 6033 · כיתות י"א, י"ב · עברית/ערבית<br>טיפוח החן · עיצוב שיער רמה א' (603) · עיצוב שיער רמה א' ואיפור מקצועי ואמנותי (616) · עיצוב שיער רמה א' איפור מקצועי, אמנותי (639)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-02"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>עיצוב שיער רמה ב'</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום רביעי · 2 ביוני 2027</span></div><div class="exg">סמל 6035 · כיתה י"ב · עברית/ערבית<br>טיפוח החן · עיצוב שיער רמה ב' (611) · עיצוב שיער רמה ב' ואיפור מקצועי ואמנותי (617) · עיצוב שיער רמה ב' איפור מקצועי, אמנותי (647)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-02"><div class="exd"><b>2</b><span>יונ</span></div><div class="exb"><h2>אופטיקה סוג 2</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום רביעי · 2 ביוני 2027</span></div><div class="exg">סמל 17121 · כיתה י"ב · עברית<br>פארה רפואי · אופטיקאות (1702)</div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>ביולוגיה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 3 ביוני 2027</span></div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>תפירת מוצרי אופנה וסטיילינג</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 15802 · כיתה י"ב · עברית<br>אופנה וטכסטיל · תפירת מוצרי אופנה וסטיילינג (1580)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>טכנולוגיות עץ ורהיטים</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 16051 · כיתה י"ב · עברית/ערבית<br>אמנות עיבוד העץ · מפעיל ומתכנת CNC בעץ (1679)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>התקנה ושירות למתקני קירור ומ"א- דרג 2</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 38231 · כיתה י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · התקנה ושירות למתקני קירור ומיזוג אויר דרג- 2 וחשמל מעשי תלת פאזי (3828)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>קירור ומיזוג אוויר לחשמל שירות</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 37353 · כיתה י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · התקנה ושירות למתקני קירור ומיזוג אויר וחשמל שירות (3735)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>מערכות תיכון וייצור באמצעות מחשב</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 23457 · כיתה י"ב · עברית/ערבית<br>מערכות ייצור ומיכון · מערכות תיכון וייצור באמצעות מחשב- התמחות תיב"מ (2341)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-03"><div class="exd"><b>3</b><span>יונ</span></div><div class="exb"><h2>עיצוב מדיה וקריאייטיב</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום חמישי · 3 ביוני 2027</span></div><div class="exg">סמל 5733 · כיתה י"ב · עברית/ערבית<br>עיצוב ומדיה · עיצוב מדיה וקריאייטיב (573)</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>7</b><span>יונ</span></div><div class="exb"><h2>היסטוריה לכלל המגזרים כולל הגבר</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 7 ביוני 2027</span><span class="stag">היסטוריה</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>8</b><span>יונ</span></div><div class="exb"><h2>תאוריה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שלישי · 8 ביוני 2027</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>9</b><span>יונ</span></div><div class="exb"><h2>מורשות לכלל המגזרים · מחשבת ישראל</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 9 ביוני 2027</span></div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>14</b><span>יונ</span></div><div class="exb"><h2>עברית לערבים ולדרוזים · מחשבה ומוסר · תלמוד ותושבע״פ</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 14 ביוני 2027</span><span class="stag">עברית</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>תאוריה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שלישי · 15 ביוני 2027</span></div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>תורה וחומרי הבנייה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 45665 · כיתה י"א · עברית<br>בניין וסביבה · בנייה חדשנית ואקולוגית</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>אקו ים- שימשו אקולוגי במשאבי ים</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 99522 · כיתה י"ב · עברית<br>חקלאות ונוי · אקו ים (9952)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>קוסמטיקה</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 61502 · כיתה י"ב · עברית<br>טיפוח החן · קוסמטיקה (615)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>מכניקה הנדסית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 55859 · כיתה י"ב · עברית<br>מערכות ייצור ומיכון · אנרגיה ומערכות הנדסיות (במערכות ייצור חשמל) (2378) · מערכות הנדסיות (2379)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>מערכות הנדסיות התמחות כלי טיס</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 55677 · כיתה י"ב · עברית<br>מערכות ייצור ומיכון · מערכות הנדסיות התמחות כלי טיס (2385)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>מערכות הנדסיות ימיות</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 45885 · כיתה י"ב · עברית<br>מערכות ייצור ומיכון · מערכות הנדסיות ימיות (2380)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>ניהול מלאי ורכש</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 8115 · כיתה י"ב · עברית<br>ניהול שיווק ופיננסים · ניהול מלאי ורכש (8165)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>עיצוב צליל (סאונד)</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 5744 · כיתה י"ב · עברית<br>עיצוב ומדיה · עיצוב צליל (סאונד) (574)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>צילום סטילס ווידאו</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 56403 · כיתה י"ב · עברית<br>עיצוב ומדיה · צילום סטילס ווידאו (564)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>תורת החומרים</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 15045 · כיתה י"א · עברית<br>פארה רפואי · טכנאות שיניים (1703)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-15"><div class="exd"><b>15</b><span>יונ</span></div><div class="exb"><h2>עתודה ניהולית בתיירות</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 15 ביוני 2027</span></div><div class="exg">סמל 1663 · כיתה י"ב · עברית<br>קולינריה · עתודה ניהולית בתיירות (1627)</div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>17</b><span>יונ</span></div><div class="exb"><h2>ספרות לכלל המגזרים כולל הגבר · ערבית (ספרות)</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 17 ביוני 2027</span><span class="stag">ספרות</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>21</b><span>יונ</span></div><div class="exb"><h2>כימיה · מקצועות הגבר</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 21 ביוני 2027</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>22</b><span>יונ</span></div><div class="exb"><h2>תאוריה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שלישי · 22 ביוני 2027</span></div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-22"><div class="exd"><b>22</b><span>יונ</span></div><div class="exb"><h2>בנייה חדשנית ואקולוגית</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 22 ביוני 2027</span></div><div class="exg">סמל 45334 · כיתה י"ב · עברית<br>בניין וסביבה · בנייה חדשנית ואקולוגית</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-22"><div class="exd"><b>22</b><span>יונ</span></div><div class="exb"><h2>מכונות חשמל ומתקני חשמל</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 22 ביוני 2027</span></div><div class="exg">סמל 38267 · כיתה י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · חשמל מעשי תלת פאזי (3827) · התקנה ושירות למתקני קירור ומיזוג אוויר דרג- 2 וחשמל מעשי תלת פאזי (3828)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-22"><div class="exd"><b>22</b><span>יונ</span></div><div class="exb"><h2>מכונות חשמל ומתקני חשמל מוסמך</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 22 ביוני 2027</span></div><div class="exg">סמל 14409 · כיתה י"ב · עברית/ערבית<br>חשמל ובקרת אקלים · חשמלאי מוסמך (1401) · חשמלאי מוסמך וחשמל מערכות כלי טיס (3850) · חשמלאי מוסמך וחשמלאי מכשור ובקרה תעופתית (4865)</div></div></div>
+<div class="ex gm" data-moed="גמר" data-core="0" data-d="2027-06-22"><div class="exd"><b>22</b><span>יונ</span></div><div class="exb"><h2>טכנאות שיניים</h2><div class="exm"><span class="mtag m-g">גמר</span><span>יום שלישי · 22 ביוני 2027</span></div><div class="exg">סמל 17031 · כיתה י"ב · עברית<br>פארה רפואי · טכנאות שיניים (1703)</div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>23</b><span>יונ</span></div><div class="exb"><h2>פיזיקה מעבדה</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום רביעי · 23 ביוני 2027</span></div></div></div>
 <div class="ex core" data-moed="קיץ" data-core="1"><div class="exd"><b>24</b><span>יונ</span></div><div class="exb"><h2>אזרחות כולל הגבר</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום חמישי · 24 ביוני 2027</span><span class="stag">אזרחות</span></div></div></div>
 <div class="ex" data-moed="קיץ" data-core="0"><div class="exd"><b>28</b><span>יונ</span></div><div class="exb"><h2>פיזיקה · מוט״ל</h2><div class="exm"><span class="mtag m-s">קיץ</span><span>יום שני · 28 ביוני 2027</span></div></div></div>
@@ -366,6 +408,11 @@
     בלשון משרד החינוך: "מועדי הבחינות המפורטים בלוח זה כפופים לשינויים. משרד החינוך רשאי
     לעדכן את מועדי הבחינות, סדרן או מתכונתן במהלך שנת הלימודים, בהתאם לצורך."
   </div>
+  <div class="draft">
+    <b>גם לוח מבחני הגמר הוא טיוטה.</b>
+    "טיוטת לוח מועדי בחינות גמר חיצוניות לנוער · מועד קיץ תשפ״ז". מועד, סמל או מגמה עשויים להשתנות
+    עד פרסום הלוח הסופי — לפני רישום תלמידים לבחינה כדאי לוודא מול הלוח העדכני.
+  </div>
 </div>
 
 <script>
@@ -385,13 +432,15 @@
       });
     });
   });
+  /* luach-mivchanim.html#gmar — נפתח מסונן למבחני הגמר (קישור מהגאנט ומנתיב הגמר) */
+  if (location.hash === '#gmar') document.getElementById('gmar').click();
 })();
 </script>
 
 </main>
 
 <!-- foot:start tagline="עודכן 27.8.2026" -->
-<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 27.8.2026</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impactos.co.il</a></div></div>
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 25.10.2026</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impactos.co.il</a></div></div>
 <!-- foot:end -->
 
 <script src="site.js" defer></script>

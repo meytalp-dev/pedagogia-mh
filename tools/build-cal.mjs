@@ -215,7 +215,7 @@ for (const [tk, list] of groups) {
 }
 for (const e of MANUAL) { // ידני בגאנט: חגים, אירועים לאומיים, בחינות, הודעות
   const tk = e.t, h = hoursFrom(e.s);
-  const pre = tk === 'exam' ? 'בחינת בגרות: ' : '';
+  const pre = tk === 'exam' ? 'בחינת בגרות: ' : tk === 'gmar' && !e.n.startsWith('מבחני מגמה') ? 'בחינת גמר: ' : '';
   const post = groups.has(tk) ? ' · ' + TRACKS[tk].name : '';
   feed(tk, TRACKS[tk].name + ' · תשפ״ז').push({ title: pre + e.n + post, date: e.d, endDate: e.d2 || null,
     start: h.start, end: h.end, desc: [aud(tk, e.a), e.s].filter(Boolean).join(' · '),
