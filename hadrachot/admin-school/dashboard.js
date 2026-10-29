@@ -124,23 +124,15 @@ function renderAll() {
   const subjectsCount = Object.keys(state.subjects).length;
   document.getElementById('stat-teachers').textContent = state.teachers.length;
   document.getElementById('stat-subjects').textContent = subjectsCount;
+  // אחוז הנוכחות ו"מורים בסיכון" מגיעים מנתוני המפגשים (meet.js) — הטאב הישן
+  // (trainings/attendance) לא מתעדכן, והציג 0% לכולם (29.10.26)
   const rateEl = document.getElementById('stat-rate');
   const riskEl = document.getElementById('stat-risk');
-  if (noAttendanceYet()) {
-    rateEl.textContent = '—';
-    rateEl.className = 'stat-value';
-    document.getElementById('stat-rate-sub').textContent = 'טרם החלה מדידה';
-    riskEl.textContent = '—';
-    riskEl.className = 'stat-value';
-  } else {
-    rateEl.textContent = state.stats.avgRate + '%';
-    rateEl.className = 'stat-value ' +
-      (state.stats.avgRate >= 80 ? 'ok' : state.stats.avgRate >= 50 ? 'warn' : 'err');
-    document.getElementById('stat-rate-sub').textContent = 'יעד: ' + (s.attendanceTarget || 80) + '%';
-    const atRisk = state.teachers.filter(t => t.stats.rate < 50).length;
-    riskEl.textContent = atRisk;
-    riskEl.className = 'stat-value ' + (atRisk === 0 ? 'ok' : atRisk <= 2 ? 'warn' : 'err');
-  }
+  rateEl.textContent = '—';
+  rateEl.className = 'stat-value';
+  document.getElementById('stat-rate-sub').textContent = 'טוען…';
+  riskEl.textContent = '—';
+  riskEl.className = 'stat-value';
 
   populateSubjectFilter();
   renderAlerts();
@@ -164,14 +156,12 @@ function populateSubjectFilter() {
   }
 }
 
-// עוד לא התקיימה אף הדרכה → 0% אצל כולם הוא "אין נתונים", לא "בסיכון"
-function noAttendanceYet() {
-  return !(state.teachers || []).some(t => t.stats && t.stats.total > 0);
-}
 
+// מורים בסיכון — מנתוני המפגשים (meet.js), שם אחד לכל אדם עם המקצועות שחסרים לו.
+// עד שהנתונים נטענים — ריק (לא מציגים את הטאב הישן, שבו כולם 0%).
 function renderAlerts() {
   const container = document.getElementById('alerts-section');
-  const atRisk = noAttendanceYet() ? [] : state.teachers.filter(t => t.stats.rate < 50);
+  const atRisk = (window.SCHOOL_meetRisk && window.SCHOOL_meetRisk()) || [];
   if (!atRisk.length) {
     container.innerHTML = '';
     return;
@@ -180,8 +170,8 @@ function renderAlerts() {
     <div class="low-rate-card">
       <h4>${atRisk.length} מורים בסיכון — נוכחות מתחת ל-50%</h4>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        ${atRisk.slice(0, 8).map(t => `
-          <a class="reminder-btn" href="${TS.whatsappLink(t.phone, `שלום ${t.name}, ראיתי שהיו לך פחות מחצי מההדרכות החודש. אשמח לדבר.`)}" target="_blank">
+        ${atRisk.map(t => `
+          <a class="reminder-btn" title="${escapeHtml(t.subjects.join(', ') + ' · ' + t.months.join(', '))}" href="${TS.whatsappLink(t.phone, `שלום ${t.name}, במנור לא רשומה לך נוכחות בהדרכת ${t.subjects.join(', ')} (${t.months.join(', ')}). אם השתתפת — אפשר לבקש תיקון בכפתור "נכחתי ולא הצלחתי להירשם" במבט האישי במנור. אשמח לדבר.`)}" target="_blank">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
             ${TS.escape ? TS.escape(t.name) : t.name}
           </a>
@@ -322,6 +312,7 @@ function renderTrainings() {
 // שעמודת "מפגשים" לא תישאר ריקה.
 window.SCHOOL_onMeet = function () {
   if (state && state.teachers && state.teachers.length) renderTeachers();
+  if (state && state.school) renderAlerts();
 };
 
 // סיכום הנוכחות במפגשי ההדרכה לכותרת קבוצת המקצוע (meet.js מחשב)

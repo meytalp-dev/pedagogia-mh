@@ -37,6 +37,8 @@
     ]);
     loaded = true;
     if (!rep || !rep.ok || !tl || !tl.ok) { failed = true; render(); return; }
+    phoneById = {};
+    (tl.data || []).forEach(t => { if (t.phone) phoneById[String(t.id)] = t.phone; });
     const guides = Object.keys(window.TS_GUIDES || {})
       .map(k => Object.assign({ slug: k }, window.TS_GUIDES[k]));
     stats = window.TS_meetStats({
@@ -77,10 +79,39 @@
     const rateEl = document.getElementById('stat-rate');
     const subEl = document.getElementById('stat-rate-sub');
     const riskEl = document.getElementById('stat-risk');
-    if (rateEl) rateEl.textContent = rate === null ? '—' : rate + '%';
+    if (rateEl) {
+      rateEl.textContent = rate === null ? '—' : rate + '%';
+      rateEl.className = 'stat-value' + (rate === null ? '' : rate >= 80 ? ' ok' : rate >= 50 ? ' warn' : ' err');
+    }
     if (subEl) subEl.textContent = rated.length ? 'יעד: 80% · בהדרכות החודשיות' : 'טרם התקיימה הדרכה עם רישום נוכחות';
-    if (riskEl) riskEl.textContent = rated.length ? rated.filter(p => p.rate < 50).length : '—';
+    // אדם אחד = מורה אחד, גם אם הוא בכמה קבוצות (קובי ויצמן בארבעה מקצועות נספר פעם אחת)
+    if (riskEl) {
+      const n = rated.length ? atRisk().length : null;
+      riskEl.textContent = n === null ? '—' : n;
+      riskEl.className = 'stat-value' + (n === null ? '' : n === 0 ? ' ok' : n <= 2 ? ' warn' : ' err');
+    }
   }
+
+  /* "מורים בסיכון" — מנתוני המפגשים, לא מהטאב הישן (29.10.26, מיטל: בתיבה הופיעו כל
+     13 הכרטיסים של קמ"ג דימונה ב-0%, כולל מי שנכח). קבוצה שבה האחוז מתחת ל-50%
+     נכנסת; אותו אדם בכמה קבוצות מאוחד לשורה אחת עם כל המקצועות שחסרים לו. */
+  let phoneById = {};
+  function atRisk() {
+    if (!stats) return [];
+    const byName = {};
+    const out = [];
+    stats.guides.forEach(g => g.persons.forEach(p => {
+      if (!(p.held > 0) || p.rate >= 50) return;
+      const k = String(p.name || '').replace(/\s+/g, ' ').trim();
+      let r = byName[k];
+      if (!r) { r = byName[k] = { name: p.name, phone: '', subjects: [], months: [] }; out.push(r); }
+      (p.subjects.length ? p.subjects : [p.subject]).forEach(s => { if (s && r.subjects.indexOf(s) < 0) r.subjects.push(s); });
+      (p.missed || []).forEach(m => { if (r.months.indexOf(m) < 0) r.months.push(m); });
+      if (!r.phone) r.phone = p.ids.map(id => phoneById[id]).filter(Boolean)[0] || '';
+    }));
+    return out.sort((a, b) => String(a.name).localeCompare(String(b.name), 'he'));
+  }
+  window.SCHOOL_meetRisk = function () { return stats ? atRisk() : null; };
   /* ה-KPI שייכים לדשבורד הישן, והוא מצייר אותם כשהתשובה שלו מגיעה — לפעמים
      אחרינו, ואז הוא דרס את נתוני המפגשים ב-"—" (קודקס, 20.9.26). dashboard.js
      קורא לנו בסוף ה-render שלו; הפונקציה בטוחה לקריאה חוזרת ויוצאת בלי נתונים.
