@@ -120,7 +120,7 @@ function render() {
   const pdEl = document.getElementById('stat-pd');
   if (pdEl) pdEl.textContent = s.onTarget || 0;
   const missedEl = document.getElementById('stat-missed');
-  if (missedEl) missedEl.textContent = noData ? '—' : s.atRisk || 0;
+  if (missedEl) missedEl.textContent = '—';   // meet.js ממלא מנתוני המפגשים
 
   // גרף המגמה נבנה ב-meet.js מההדרכות החודשיות; כאן רק מצב ביניים.
   const trendEl = document.getElementById('trend-chart');
@@ -129,27 +129,37 @@ function render() {
       ? 'ההדרכות טרם התחילו — הגרף ייבנה מההדרכה החודשית הראשונה.'
       : 'נתוני המגמה מצטברים מחודש לחודש.') + '</div>';
   }
+  renderSchools();
   if (typeof window.NW_meetApply === 'function') window.NW_meetApply();
+}
 
-  // Schools table
+/* טבלת בתי הספר — הנוכחות מנתוני המפגשים (meet.js), לא מהטאב הישן שבו כולם 0%
+   (29.10.26). meet.js קורא שוב כשהנתונים שלו מגיעים. */
+function renderSchools() {
   const tbody = document.getElementById('schools-body');
-  const schools = data.schoolBreakdown || [];
+  if (!tbody || !data) return;
+  const schools = (data.schoolBreakdown || []).map(s => {
+    const m = window.NW_meetSchool ? window.NW_meetSchool(s.id) : null;
+    return { s: s, m: m, rate: m && m.rate !== null ? m.rate : null };
+  }).sort((a, b) => (a.rate === null ? 101 : a.rate) - (b.rate === null ? 101 : b.rate) ||
+    String(a.s.name).localeCompare(String(b.s.name), 'he'));
   if (!schools.length) {
     tbody.innerHTML = `<tr><td colspan="5" class="empty">אין בתי ספר עם נתונים ברשת</td></tr>`;
     return;
   }
-  tbody.innerHTML = schools.map(s => `
+  tbody.innerHTML = schools.map(({ s, m, rate }) => `
     <tr>
       <td><strong>${escapeHtml(s.name)}</strong></td>
       <td>${s.teachers}</td>
-      <td>${noData ? '—' : s.present}</td>
-      <td>${noData ? '<span class="badge neutral">—</span>' : `<span class="badge ${s.rate >= 80 ? 'ok' : s.rate >= 50 ? 'warn' : 'err'}">${s.rate}%</span>`}</td>
+      <td>${m && m.measured ? m.participated + '/' + m.measured : '—'}</td>
+      <td>${rate === null ? '<span class="badge neutral">—</span>' : `<span class="badge ${rate >= 80 ? 'ok' : rate >= 50 ? 'warn' : 'err'}">${rate}%</span>`}</td>
       <td>
         <a class="btn btn-secondary" href="../admin-school/?school=${encodeURIComponent(s.id)}&network=${encodeURIComponent(networkId)}">פתח</a>
       </td>
     </tr>
   `).join('');
 }
+window.NW_renderSchools = renderSchools;
 
 function escapeHtml(s) {
   return (s || '').toString()
@@ -161,6 +171,14 @@ function sendReportToNetwork() {
   if (!data || !data.network) return;
   const net = data.network;
   const s = data.summary || {};
+  // הנוכחות מנתוני המפגשים (meet.js), לא מהטאב הישן שבו כולם 0% (29.10.26)
+  const m = window.NW_meetSummary ? window.NW_meetSummary() : null;
+  if (!m) { alert('נתוני הנוכחות עדיין נטענים — נסו שוב בעוד רגע.'); return; }
+  const noMeet = !m.measured;
+  const bySchool = (data.schoolBreakdown || []).map(sc => {
+    const x = window.NW_meetSchool(sc.id);
+    return { name: sc.name, teachers: sc.teachers, rate: x && x.rate !== null ? x.rate : null };
+  }).sort((a, b) => (a.rate === null ? 101 : a.rate) - (b.rate === null ? 101 : b.rate));
   const subject = `דוח חודשי — רשת ${net.name} — ${TS.monthLabel()}`;
   const lines = [
     `שלום,`,
@@ -170,18 +188,19 @@ function sendReportToNetwork() {
     `סיכום:`,
     `• בתי ספר עם מורים בהדרכה: ${s.schools}`,
     `• סה"כ מורים: ${s.teachers}`,
-    ...(noAttendanceYet()
+    ...(noMeet
       ? [`• מדידת הנוכחות טרם החלה — נתוני נוכחות יופיעו בדוחות הבאים`]
       : [
-          `• אחוז נוכחות ממוצע: ${s.avgRate}%`,
-          `• עומדים ביעד (80%+): ${s.onTarget}`,
-          `• מורים בסיכון (מתחת ל-50%): ${s.atRisk}`
+          `• אחוז נוכחות ממוצע בהדרכות: ${m.rate}%`,
+          `• השתתפו לפחות בהדרכה אחת: ${m.participated} מתוך ${m.measured} מורים שנמדדו`,
+          `• עומדים ביעד (80%+): ${m.onTarget}`,
+          `• מורים בסיכון (מתחת ל-50%): ${m.atRisk}`
         ]),
     ``,
-    `פירוט לפי בית ספר${noAttendanceYet() ? '' : ' (מהחלש לחזק)'}:`,
-    ...(data.schoolBreakdown || []).slice(0, 15).map(sc =>
-      noAttendanceYet()
-        ? `• ${sc.name}: ${sc.teachers} מורים`
+    `פירוט לפי בית ספר${noMeet ? '' : ' (מהחלש לחזק)'}:`,
+    ...bySchool.slice(0, 15).map(sc =>
+      sc.rate === null
+        ? `• ${sc.name}: ${sc.teachers} מורים · טרם נמדד`
         : `• ${sc.name}: ${sc.rate}% (${sc.teachers} מורים)`
     ),
     ``,

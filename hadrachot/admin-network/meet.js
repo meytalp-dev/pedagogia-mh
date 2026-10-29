@@ -192,8 +192,38 @@
     if (missedEl && i.held) missedEl.textContent = i.never;
     const missedSub = document.getElementById('stat-missed-sub');
     if (missedSub) missedSub.textContent = i.unmeasured ? i.unmeasured + ' מורים טרם נמדדו' : '';
+    if (typeof window.NW_renderSchools === 'function') window.NW_renderSchools();
   }
   window.NW_meetApply = function () { applyToPage(); };
+
+  /* טבלת בתי הספר והמייל "דוח חודשי לרשת" — מנתוני המפגשים, לא מהטאב הישן
+     trainings/attendance שבו כולם 0% (29.10.26). אחוז = ממוצע הקבוצות שנמדדו,
+     כמו ה-KPI; ספירת אנשים — אדם אחד גם אם הוא בכמה קבוצות. "בסיכון" = קבוצה
+     אחת לפחות מתחת ל-50%, כמו במבט בית הספר. */
+  function summarize(list) {
+    const rated = list.filter(p => p.held > 0);
+    const people = {};
+    rated.forEach(p => {
+      const k = String(p.name || '').replace(/\s+/g, ' ').trim() + '|' + (p.school || p.schoolName);
+      const r = people[k] || (people[k] = { came: false, low: false, all80: true });
+      if (p.participated) r.came = true;
+      if (p.rate < 50) r.low = true;
+      if (p.rate < 80) r.all80 = false;
+    });
+    const ps = Object.keys(people).map(k => people[k]);
+    return {
+      rate: rated.length ? Math.round(rated.reduce((s, p) => s + p.rate, 0) / rated.length) : null,
+      measured: ps.length,
+      participated: ps.filter(r => r.came).length,
+      atRisk: ps.filter(r => r.low).length,
+      onTarget: ps.filter(r => r.all80).length
+    };
+  }
+  // null עד שהנתונים נטענו
+  window.NW_meetSummary = function () { return last ? summarize(last.persons) : null; };
+  window.NW_meetSchool = function (schoolId) {
+    return last ? summarize(last.persons.filter(p => p.school === schoolId)) : null;
+  };
 
   /* "מגמת נוכחות 6 חודשים" היה ריק תמיד — הגרף נבנה מהמערכת הישנה.
      עכשיו: עמודה לכל חודש הדרכה שהתקיים. */
