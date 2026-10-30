@@ -3411,7 +3411,7 @@ function guideFileAdd(p) {
   let bytes;
   try { bytes = Utilities.base64Decode(b64); }
   catch (e) { return { ok: false, error: 'bad_encoding' }; }
-  if (bytes.length > MAX_GUIDE_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+  if (bytes.length > 15 * 1024 * 1024) return { ok: false, error: 'file_too_large' };
 
   const fileName = safeFileName_(p.fileName);
   const blob = Utilities.newBlob(bytes, p.mimeType || 'application/octet-stream', fileName);
