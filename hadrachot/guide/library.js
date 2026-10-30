@@ -11,7 +11,7 @@
   const GUIDE_CFG = (window.TS_resolveGuide ? (window.TS_resolveGuide(SLUG, guideEmail) || {}) : {}) || {};
   if (!GUIDE_CFG.slug) GUIDE_CFG.slug = SLUG;
   if (!guideEmail && GUIDE_CFG.email) guideEmail = GUIDE_CFG.email;
-  const MAX_FILE_BYTES = 8 * 1024 * 1024;
+  const MAX_FILE_BYTES = 15 * 1024 * 1024;
   const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
   let data = { files: [] };
   let driveFile = null;      // תיקיית הדרייב שהמדריכ/ה צירף/ה בעצמו/ה (28.9.26)
@@ -407,7 +407,7 @@
 
     for (const file of files) {
       if (file.size > MAX_FILE_BYTES) {
-        problems.push(`"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 8MB לקובץ. קובץ גדול: להעלות לדרייב ולהוסיף כקישור`);
+        problems.push(`"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 15MB לקובץ. קובץ גדול: להעלות לדרייב ולהוסיף כקישור`);
         continue;
       }
       status.textContent = `מעלה את "${file.name}" ל${folder || GENERAL} (${done + unsure.length + 1} מתוך ${files.length})...`;
