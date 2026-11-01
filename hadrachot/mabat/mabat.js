@@ -378,7 +378,7 @@ function renderTeachers() {
    מכאן נשמר עם byRole 'inspector' — מגיע למדריכה בלבד, לא לעמוד הקבוצה.
    ============================================================ */
 
-const MAX_FILE_BYTES = 8 * 1024 * 1024;   // זהה לתקרה בצד השרת
+const MAX_FILE_BYTES = 15 * 1024 * 1024;   // זהה לתקרה בצד השרת
 let wsGuide = null;                        // המדריכה שהחלון פתוח עליה
 
 function initGuideWorkspaceUI() {
@@ -526,7 +526,7 @@ async function uploadFiles(fileList) {
 
   for (const file of files) {
     if (file.size > MAX_FILE_BYTES) {
-      status.textContent = `"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 8MB לקובץ.`;
+      status.textContent = `"${file.name}" גדול מדי (${fmtSize(file.size)}) — עד 15MB לקובץ.`;
       continue;
     }
     status.textContent = `מעלה את "${file.name}" (${done + 1} מתוך ${files.length})...`;
