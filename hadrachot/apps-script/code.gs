@@ -3411,7 +3411,7 @@ function guideFileAdd(p) {
   let bytes;
   try { bytes = Utilities.base64Decode(b64); }
   catch (e) { return { ok: false, error: 'bad_encoding' }; }
-  if (bytes.length > MAX_GUIDE_FILE_BYTES) return { ok: false, error: 'file_too_large' };
+  if (bytes.length > 15 * 1024 * 1024) return { ok: false, error: 'file_too_large' };
 
   const fileName = safeFileName_(p.fileName);
   const blob = Utilities.newBlob(bytes, p.mimeType || 'application/octet-stream', fileName);
@@ -5340,14 +5340,51 @@ function monthlyNameList_(arr, limit) {
   const sorted = arr.slice().sort((a, b) => a.name.localeCompare(b.name, 'he'));
   const extra = sorted.length > max ? sorted.length - max : 0;
   return monthlyNames_(extra ? sorted.slice(0, max) : sorted) +
-    (extra ? '<br><span style="color:#8a97a6">ועוד ' + extra + ' מורים — ברשימה המלאה במסך</span>' : '');
+    (extra ? ' <span style="color:#8a97a6">ועוד ' + extra + ' מורים — ברשימה המלאה במסך</span>' : '');
 }
 
+// שמות ברצף עם · ולא שורה לכל שם — הרשימה ממלאת את רוחב הבלוק (1.11.26)
 function monthlyNames_(arr) {
   return arr.map(e =>
     remindEsc_(e.name) + (e.status === 'individual' ? ' <span style="color:#8a97a6">(הדרכה פרטנית)</span>'
       : e.status === 'pending' ? ' <span style="color:#8a97a6">(נרשם/ה, טרם אושר/ה ע״י המדריך/ה)</span>' : '')
-  ).join('<br>');
+  ).join(' · ');
+}
+
+/* בלוק ברוחב מלא לכל בית ספר / מקצוע, במקום טבלה של 4 עמודות (1.11.26, מיטל: "התצוגה במייל
+   מאוד לא נוחה ולא מאפשרת לראות את הנתונים"). בנייד העמודות נמחצו לרצועות צרות של מילה-שתיים.
+   עכשיו: כותרת + מספר בשורה אחת, ומתחת מי השתתף/ה ומי לא, כל אחד בשורה משלו. */
+function monthlyBlock_(title, ratioHtml, yesHtml, noHtml) {
+  return '<div style="padding:10px 2px 11px;border-top:1px solid #e3e8ee">' +
+    '<p style="margin:0 0 4px;font-size:15px"><b>' + title + '</b>' + (ratioHtml ? ' &nbsp;' + ratioHtml : '') + '</p>' +
+    (yesHtml === null ? '' : '<p style="margin:0 0 3px;font-size:14px"><b style="color:#1f7a5c">השתתפו:</b> ' + (yesHtml || '—') + '</p>') +
+    (noHtml === null ? '' : noHtml
+      ? '<p style="margin:0;font-size:14px"><b style="color:#a4442f">לא השתתפו:</b> ' + noHtml + '</p>'
+      : '<p style="margin:0;font-size:14px;color:#1f7a5c"><b>כולם השתתפו</b></p>') +
+    '</div>';
+}
+
+function monthlyBlocks_(blocks) {
+  return '<div style="border-bottom:1px solid #e3e8ee">' + blocks.join('') + '</div>';
+}
+
+// מורה במכמה מקצועות = שם אחד עם המקצועות בסוגריים ("כהן שושן (אזרחות, היסטוריה)"), לא ארבע פעמים
+function monthlyPeople_(arr) {
+  const by = {}, order = [];
+  arr.forEach(e => {
+    if (!by[e.name]) { by[e.name] = []; order.push(e.name); }
+    if (e.subject && by[e.name].indexOf(e.subject) < 0) by[e.name].push(e.subject);
+  });
+  return order.map(n => remindEsc_(n) + (by[n].length
+    ? ' <span style="color:#8a97a6">(' + by[n].map(remindEsc_).join(', ') + ')</span>' : ''));
+}
+
+/* הערה בכל דוח שיוצא ממנור למנהלים, לרכזים ולמפקחים (1.11.26, ניסוח מיטל) */
+function monthlyRegNote_() {
+  return '<div style="margin:0 0 16px;padding:10px 14px;background:#EEF5F8;border-right:4px solid #256A8A;border-radius:6px;font-size:14px;line-height:1.65">' +
+    '<b>חשוב לדעת:</b> האחריות על הרישום להדרכות במנור היא של המורים. כל הדרכה שמורה נרשם/ה אליה מאושרת על ידי המדריך/ה, ומוצגת כאן. ' +
+    'הנתונים ממנור מסתמכים על הרישומים האלה: מורה שלא נרשם/ה למנור ולא נרשם/ה להדרכה — לא נוכל לדעת שהשתתף/ה בה.<br>' +
+    '<b>נודה לעזרתכם ברישום המורים למנור, ובהסבר על החשיבות של ההרשמה להדרכה דרכה.</b></div>';
 }
 
 const MONTHLY_SITE = 'https://pedagogiamh.co.il/hadrachot';
@@ -5407,18 +5444,14 @@ function monthlyTrainingInspector_(tr, schools) {
   const yes = rows.reduce((t, r) => t + r.list.filter(monthlyIsIn_).length, 0);
   return '<p style="margin:22px 0 4px;font-weight:bold">' + remindEsc_(tr.title) + '</p>' +
     '<p style="margin:0 0 8px;font-size:14px">השתתפו ' + yes + ' מתוך ' + n + ' רשומים</p>' +
-    '<table style="border-collapse:collapse;width:100%;font-size:14px">' + monthlyTh_(['בית ספר', 'השתתפו', 'מי השתתף/ה', 'לא השתתפו']) +
-    rows.map(r => {
+    monthlyBlocks_(rows.map(r => {
       const no = r.list.filter(e => !monthlyIsIn_(e)).sort((a, b) => a.name.localeCompare(b.name, 'he'));
       const yesL = r.list.filter(monthlyIsIn_).sort((a, b) => a.name.localeCompare(b.name, 'he'));
-      return '<tr><td style="' + MONTHLY_CELL + '">' + remindEsc_(r.name) + '</td>' +
-        '<td style="' + MONTHLY_CELL + ';white-space:nowrap">' + (r.list.length - no.length) + ' מתוך ' + r.list.length + '</td>' +
-        '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#1f7a5c">' +
-          (yesL.length ? yesL.map(e => remindEsc_(e.name) + monthlyTrack_(e)).join('<br>') : '—') + '</td>' +
-        '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' + (no.length
-          ? no.map(e => remindEsc_(e.name) + monthlyTrack_(e) + (e.status === 'pending' ? ' <span style="color:#8a97a6">(טרם אושר/ה)</span>' : '')).join('<br>')
-          : '<span style="color:#1f7a5c">כולם השתתפו</span>') + '</td></tr>';
-    }).join('') + '</table>';
+      return monthlyBlock_(remindEsc_(r.name),
+        '<span style="white-space:nowrap;color:#5b6b7b">' + yesL.length + ' מתוך ' + r.list.length + '</span>',
+        yesL.map(e => remindEsc_(e.name) + monthlyTrack_(e)).join(' · '),
+        no.map(e => remindEsc_(e.name) + monthlyTrack_(e) + (e.status === 'pending' ? ' <span style="color:#8a97a6">(טרם אושר/ה)</span>' : '')).join(' · '));
+    }));
 }
 
 // plural — המייל ממוען גם לרכז/ת הפדגוגי/ת ("נודה לכם אם תדאגו")
@@ -5478,19 +5511,17 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
   const inN = entries.filter(monthlyIsIn_).length;
   const pct = monthlyPct_(inN, entries.length);
 
-  const rows = subjects.map(s => {
+  const rows = monthlyBlocks_(subjects.map(s => {
     const list = bySubj[s];
     const yes = list.filter(monthlyIsIn_), no = list.filter(e => !monthlyIsIn_(e));
     const p = monthlyPct_(yes.length, list.length);
-    return '<tr><td style="' + MONTHLY_CELL + ';font-weight:bold;white-space:nowrap">' + remindEsc_(s) + '</td>' +
-      '<td style="' + MONTHLY_CELL + ';white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(p) + '">' +
-        p + '%<span style="font-weight:normal;color:#5b6b7b"> · ' + yes.length + ' מתוך ' + list.length + '</span></td>' +
-      // מי השתתף/ה — חזר לבקשת רויטל (14.10.26; הוסר ב-18.9.26)
-      '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#1f7a5c">' +
-        (yes.length ? monthlyNameList_(yes) : '—') + '</td>' +
-      '<td style="' + MONTHLY_CELL + ';font-size:13px;color:#a4442f">' +
-        (no.length ? monthlyNameList_(no) : '<span style="color:#1f7a5c">כולם השתתפו</span>') + '</td></tr>';
-  }).join('');
+    // מי השתתף/ה — חזר לבקשת רויטל (14.10.26; הוסר ב-18.9.26)
+    return monthlyBlock_(remindEsc_(s),
+      '<span style="white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(p) + '">' + p + '%</span>' +
+        '<span style="white-space:nowrap;color:#5b6b7b"> · ' + yes.length + ' מתוך ' + list.length + '</span>',
+      yes.length ? monthlyNameList_(yes) : '',
+      no.length ? monthlyNameList_(no) : '');
+  }));
 
   const label = monthlyPeriod_(C);
   const link = MONTHLY_SITE + '/admin-school/?school=' + encodeURIComponent(school.id);
@@ -5508,6 +5539,7 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
   const html = monthlyWrapHtml_(
     '<p style="margin:0 0 10px">שלום' + (principalName ? ' ' + remindEsc_(principalName) : '') + ',</p>' +
     '<p style="margin:0 0 14px">ההדרכות המקצועיות והפיתוח המקצועי עוזרים לנו לשפר את הפדגוגיה וליצור שפה אחידה, וחשיבותם גדולה.</p>' +
+    monthlyRegNote_() +
     (entries.length
       ? '<p style="margin:0 0 6px">אחוז הנוכחות בהדרכות ובפיתוח המקצועי ב<b>' + remindEsc_(school.name) + '</b> בחודש ' +
           remindEsc_(label) + ':</p>' +
@@ -5516,8 +5548,7 @@ function monthlyPrincipalMail_(C, school, principalName, plural) {
         // "כל הכבוד" לאחוז גבוה (15.10.26, מיטל) — הסף של הירוק (80%)
         (pct >= 80 ? '<p style="margin:-6px 0 14px;font-size:16px;font-weight:bold;color:#1f7a5c">' +
           (pct === 100 ? 'כל הכבוד! כל המורים השתתפו בהדרכות.' : 'כל הכבוד על אחוז השתתפות גבוה!') + '</p>' : '') +
-        '<table style="border-collapse:collapse;width:100%;font-size:14px">' +
-          monthlyTh_(['מקצוע', 'נוכחות', 'מי השתתף/ה', 'מי לא השתתף/ה']) + rows + '</table>'
+        rows
       : '<p style="margin:0 0 14px">סיכום ההשתתפות של <b>' + remindEsc_(school.name) + '</b> בחודש ' + remindEsc_(label) +
           '. למורי בית הספר לא התקיים עדיין מפגש הדרכה החודש.</p>') +
     trainingsHtml +
@@ -5568,7 +5599,23 @@ function monthlyRatio_(yes, n) {
   return n ? yes + ' מתוך ' + n + ' · ' + monthlyPct_(yes, n) + '%' : '—';
 }
 
+// מייל המפקח/ת — בלוק לכל בית ספר (1.11.26). מורה במכמה מקצועות מופיע/ה פעם אחת בכל רשימה.
+function monthlySchoolBlocks_(rows) {
+  const byName = (a, b) => a.name.localeCompare(b.name, 'he') || a.subject.localeCompare(b.subject, 'he');
+  return monthlyBlocks_(rows.map(r => {
+    const ratio = '<span style="white-space:nowrap;font-weight:bold;color:' + monthlyPctColor_(r.pct) + '">' +
+      (r.n ? monthlyRatio_(r.yes, r.n) : '<span style="font-weight:normal">אין מפגשים החודש</span>') + '</span>';
+    if (!r.n) return monthlyBlock_(remindEsc_(r.name), ratio, null, null);
+    // מי השתתף/ה — גם אצל המפקחים (15.10.26, מיטל: "בדרך כלל אחד או שניים")
+    const yes = monthlyPeople_((r.yesList || []).slice().sort(byName));
+    const no = monthlyPeople_(r.no.slice().sort(byName));
+    return monthlyBlock_(remindEsc_(r.name), ratio, yes.join(' · '),
+      no.slice(0, 8).join(' · ') + (no.length > 8 ? ' <span style="color:#8a97a6">ועוד ' + (no.length - 8) + ' — במבט המפקח.ת</span>' : ''));
+  }));
+}
+
 function monthlySchoolTable_(rows, withInspector, withNames) {
+  if (withNames && !withInspector) return monthlySchoolBlocks_(rows);
   const head = ['בית ספר'].concat(withInspector ? ['מפקח/ת'] : [], ['השתתפו'], withNames ? ['מי השתתף/ה', 'לא השתתפו'] : []);
   const subjSort = (a, b) => a.subject.localeCompare(b.subject, 'he') || a.name.localeCompare(b.name, 'he');
   return '<table style="border-collapse:collapse;width:100%;font-size:14px">' + monthlyTh_(head) +
@@ -5609,6 +5656,7 @@ function monthlyInspectorMail_(C, inspName, schools) {
     '<p style="margin:0 0 10px">שלום ' + remindEsc_(inspName) + ',</p>' +
     '<p style="margin:0 0 12px">סיכום השתתפות המורים במפגשי ההדרכה המקצועית בחודש ' + remindEsc_(label) +
       ' בבתי הספר שבפיקוחך. מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית.</p>' +
+    monthlyRegNote_() +
     (n ? '<p style="margin:0 0 10px;font-size:18px;font-weight:bold">השתתפו: ' + yes + ' מתוך ' + n +
       ' מורים (' + monthlyPct_(yes, n) + '%)</p>' +
       monthlySchoolTable_(rows, false, true)
@@ -5665,6 +5713,7 @@ function monthlyOverviewMail_(C, schools, log) {
       'השתתפו: ' + yes + ' מתוך ' + n + ' מורים' + (n ? ' (' + monthlyPct_(yes, n) + '%)' : '') + '</p>' +
     '<p style="margin:0 0 12px;font-size:13px;color:#5b6b7b">מורה נחשב/ת כמי שהשתתף/ה אם נכח/ה באחד ממפגשי ההדרכה במקצוע שלו/ה החודש, או קיבל/ה הדרכה פרטנית. ' +
       'נספרים רק מפגשים שהמדריך/ה הזין/ה בהם נוכחות.' + (C.partial ? ' ' + MONTHLY_PARTIAL_NOTE : '') + '</p>' +
+    monthlyRegNote_() +
     monthlyGuideWarnings_(C) +
     // הדרכות מקצועיות קודם ובשלמותן, ההשתלמויות אחריהן (16.10.26, מיטל: תפן נראה 1/1 בהשתלמות ו-0% בהדרכות)
     '<p style="margin:18px 0 6px;font-weight:bold">הדרכות מקצועיות — לפי מקצוע ומדריך/ה</p>' + guideTable +
