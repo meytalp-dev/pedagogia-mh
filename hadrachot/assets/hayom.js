@@ -230,6 +230,36 @@
     $('hy-weekly-toggle').hidden = false;
     $('hy-weekly-toggle').textContent = 'החודש הקודם';
     bind('hy-weekly-toggle', prev, 'החודש הקודם');
+    if (d && d.prevMonth) initSend(d);
+  }
+
+  /* שליחה אמיתית של החודש שהסתיים (1.11.26) — פעם אחת, אחרי אישור. on=monthly-send */
+  const HE_MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  function initSend(d) {
+    const name = HE_MONTHS[Number(d.prevMonth.slice(5, 7)) - 1];
+    const btn = $('hy-send-btn'), sent = t => {
+      $('hy-send-state').textContent = 'הדוח של ' + name + ' נשלח לנמענים';
+      $('hy-send-note').textContent = t || 'יומן השליחה בתיבת merhav.';
+      btn.hidden = true; $('hy-send-guides').parentNode.hidden = true;
+    };
+    $('hy-monthly-send').hidden = false;
+    if (d.prevSent) { sent(new Date(Number(d.prevSent)).toLocaleString('he-IL')); return; }
+    $('hy-send-state').textContent = 'שליחה אמיתית — ' + name;
+    $('hy-send-note').textContent = 'מחשב מחדש מהנתונים החיים ושולח לכ-' + d.recipients + ' מנהלים ומפקחים. פעם אחת בלבד.';
+    btn.textContent = 'שלח את ' + name + ' לנמענים';
+    btn.onclick = async () => {
+      const g = $('hy-send-guides').checked;
+      if (!confirm('לשלוח עכשיו את הדוח של ' + name + ' לכ-' + d.recipients + ' מנהלים ומפקחים' + (g ? ' וגם למדריכים' : '') +
+        '?\nאי אפשר לבטל אחרי השליחה.')) return;
+      btn.disabled = true; btn.textContent = 'שולח… (כמה דקות)';
+      const r = await TS.api('weekly.admin', { on: 'monthly-send', month: d.prevMonth, guides: g ? '1' : '' }, { cache: 'no' });
+      if (r && r.ok && r.data) return sent('נשלחו ' + r.data.sent + ', לא נשלחו ' + r.data.skipped + ', נכשלו ' + r.data.failed + '. יומן השליחה בתיבת merhav.');
+      const err = (r && r.error) || '';
+      if (err === 'already_sent') return sent();
+      btn.disabled = false; btn.textContent = 'שלח את ' + name + ' לנמענים';
+      $('hy-send-note').textContent = err === 'shabbat' ? 'לא שולחים בשבת.'
+        : 'לא התקבלה תשובה מהשרת. ייתכן שהשליחה עוד רצה — לבדוק את יומן השליחה ב-merhav לפני שלוחצים שוב.';
+    };
   }
 
   function renderAll() { renderKeyWarn(); renderWeek(); renderGaps(); renderLinks(); renderMine(); renderGuides(); }

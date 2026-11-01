@@ -5049,7 +5049,25 @@ function weeklyRegLive(p) {
     monthlySend_(month, false, today);
     return { ok: true, data: { live: false, monthlyLive: monthlyIsLive_(), preview: month } };
   }
-  return { ok: true, data: { live: false, monthlyLive: monthlyIsLive_() } };
+  // on=monthly-send — שליחה אמיתית חד-פעמית של חודש שהסתיים (1.11.26, מיטל: "אני רוצה לשלוח").
+  // לא מדליק את MONTHLY_LIVE: החודש הבא שוב יוצא קודם כתצוגה מקדימה. פעם אחת לכל חודש.
+  if (on === 'monthly-send') {
+    const today = meetToday_();
+    const month = String(p.month || '');
+    if (!/^\d{4}-\d{2}$/.test(month) || month >= today.slice(0, 7)) return { ok: false, error: 'bad_month' };
+    if (meetShabbatNow_()) return { ok: false, error: 'shabbat' };
+    const key = 'monthly_live_sent_' + month;
+    if (props.getProperty(key)) return { ok: false, error: 'already_sent' };
+    props.setProperty(key, String(Date.now()));   // קודם מסמנים — לחיצה כפולה לא תשלח פעמיים
+    const res = monthlySend_(month, true, today, String(p.guides || '') === '1');
+    return { ok: true, data: { monthlyLive: monthlyIsLive_(), month: month,
+      sent: res.sent.length, skipped: res.skipped.length, failed: res.failed.length } };
+  }
+  const R = (typeof MONTHLY_RECIPIENTS !== 'undefined') ? MONTHLY_RECIPIENTS : {};
+  const prev = monthlyAddMonths_(meetToday_().slice(0, 7), -1);
+  return { ok: true, data: { live: false, monthlyLive: monthlyIsLive_(), prevMonth: prev,
+    prevSent: props.getProperty('monthly_live_sent_' + prev) || '',
+    recipients: Object.keys(R.principals || {}).length + Object.keys(R.inspectors || {}).length } };
 }
 
 function weeklyRegData_() {
