@@ -5208,6 +5208,12 @@ function monthlyFetch_(path) {
 
 const MONTHLY_RANK = { present: 3, individual: 2, pending: 1, absent: 0 };
 
+// אותו מורה בשני בתי ספר (1.11.26, מיטל: "להחשיב כהדרכה") — כרטיס → הכרטיס שבו נרשמה הנוכחות, באותו מקצוע
+const MONTHLY_SAME_TEACHER = {
+  'tch_1786370853824_92': 'tch_1787847824933_772',    // אורן ירקוני, אנגלית: אור העתיד ← עתיד כפר חב"ד
+  'tch_1787665077229_175': 'tch_1791742664765_711'    // קדוש שמעון, ספרות: ישיבת עתיד אור מנחם ← אור העתיד
+};
+
 function monthlyNorm_(s) {
   return String(s || '').replace(/\s+/g, ' ').trim();
 }
@@ -5237,6 +5243,20 @@ function monthlyCompute_(month, today) {
   const pendingKey = {};
   rep.rows.forEach(r => { if (r.status === 'pending') pendingKey[r.meetingId + '|' + r.teacherId] = 1; });
   const inMonth = d => String(d || '').slice(0, 7) === month;
+  // נוכחות אצל מדריך/ה אחר/ת שמלמד/ת את אותו מקצוע נחשבת (1.11.26, מיטל) — מורי עברית חרדים אצל מוריה,
+  // מורי אזרחות במפגש היסטוריה של רבקה. לפי מקצוע הכרטיס שנרשם, לא לפי מקצוע המפגש.
+  const cardSubj = {};
+  teachers.forEach(t => { cardSubj[String(t.id)] = String(t.subject || '').trim(); });
+  const credit = {};
+  rep.rows.forEach(r => {
+    if (r.status !== 'present' || !inMonth(r.date) || r.date > end) return;
+    const s = cardSubj[r.teacherId];
+    if (s && win.TS_guideTeaches(win.TS_GUIDES[r.guideSlug], s)) credit[r.teacherId + '|' + s] = 1;
+  });
+  Object.keys(MONTHLY_SAME_TEACHER).forEach(id => {
+    const to = MONTHLY_SAME_TEACHER[id], s = cardSubj[id];
+    if (s && credit[to + '|' + s]) credit[id + '|' + s] = 1;
+  });
 
   const merged = {}, guideRows = [];
   stats.guides.forEach(g => {
@@ -5262,7 +5282,7 @@ function monthlyCompute_(month, today) {
         const mine = held.filter(m => { const ms = subjOf(m); return !ms || ms === s; });
         if (!mine.length && !indiv) return;
         let status = 'absent';
-        if (mine.some(m => p.attended.indexOf(m.id) >= 0)) status = 'present';
+        if (mine.some(m => p.attended.indexOf(m.id) >= 0) || p.ids.some(id => credit[id + '|' + s])) status = 'present';
         else if (indiv) status = 'individual';
         else if (mine.some(m => p.ids.some(id => pendingKey[m.id + '|' + id]))) status = 'pending';
         gr.n++;
@@ -5301,20 +5321,78 @@ function monthlyExtraTrainings_(month, end) {
   ensureTab_('training_extra');
   const fmt = d => Number(d.slice(8, 10)) + '.' + Number(d.slice(5, 7));
   const groups = {}, order = [];
-  readAll('training_extra').forEach(r => {
-    const date = meetDate_(r.date);
-    if (!r.training || date.slice(0, 7) !== month || date > end) return;
-    const t = String(r.training).trim();
+  const extra = readAll('training_extra');
+  const add = (t, track, date, school, name, status) => {
     if (!groups[t]) { groups[t] = { slots: {}, list: [] }; order.push(t); }
-    const track = String(r.track || '').trim();
-    groups[t].slots[(track ? track + ' ' : '') + fmt(date)] = date;
-    groups[t].list.push({ school: String(r.school || ''), name: monthlyNorm_(r.name),
-      subject: track, status: String(r.status || '').trim() === 'present' ? 'present' : 'absent' });
+    const slot = (track ? track + ' ' : '') + fmt(date);
+    groups[t].slots[slot] = date;
+    // שורה לכל מפגש — המסלול והתאריך ליד השם
+    groups[t].list.push({ school: school, name: monthlyNorm_(name), subject: slot, status: status });
+  };
+  // הגיליון של שני לא נפתח — חוזרים ל-training_extra, כדי שהדוח כולו לא ייפול
+  let shani = null;
+  try { shani = monthlyShaniRows_(month, end, extra); } catch (e) { Logger.log('הגיליון של שני: ' + e); }
+  extra.forEach(r => {
+    const date = meetDate_(r.date);
+    if (!r.training || (shani && String(r.training).trim() === SHANI_TRAINING) || date.slice(0, 7) !== month || date > end) return;
+    add(String(r.training).trim(), String(r.track || '').trim(), date, String(r.school || ''),
+      r.name, String(r.status || '').trim() === 'present' ? 'present' : 'absent');
   });
+  (shani || []).forEach(x => add(SHANI_TRAINING, x.track, x.date, x.school, x.name, x.status));
   return order.map(t => {
     const slots = Object.keys(groups[t].slots).sort((a, b) => groups[t].slots[a].localeCompare(groups[t].slots[b]));
     return { title: 'השתלמות ' + t + ' — ' + slots.join(' · '), list: groups[t].list };
   });
+}
+
+/* שגרירי חדשנות — מהגיליון של שני (1.11.26, מיטל: "תחבר את השגרירים לשני"). הממסר של merhav כותב לשם
+   ✓/✗ אחרי כל זום, ו-training_extra נשאר רק כמפתח שם→בית ספר. כותרת: "נוכחות מפגש N\nתאריך: DD/MM\nסוג מפגש: …".
+   רק מפגשים סינכרוניים; תא ריק או טקסט אחר = לא נכנס לדוח. */
+const SHANI_SS = '1t6MoDHcyCm_cnt02QN7odv1C3PE-COXMAIf3Bf-RuTQ';
+const SHANI_TABS = { 'כלים': 'ימי שני', 'הובלה': 'ימי רביעי' };
+const SHANI_TRAINING = 'שגרירי חדשנות — רכזי תקשוב';
+
+function monthlyShaniRows_(month, end, extra) {
+  const norm = s => String(s || '').replace(/[‎‏׳״'"`\-–()]/g, ' ').replace(/\s+/g, ' ').trim();
+  const byName = {};
+  extra.forEach(r => { if (String(r.training).trim() === SHANI_TRAINING && r.school) byName[norm(r.name)] = String(r.school); });
+  const schools = readAll('schools').map(s => ({ id: String(s.id), n: norm(s.name) })).filter(s => s.n.length >= 3);
+  const ss = SpreadsheetApp.openById(SHANI_SS);
+  const out = [], bySemel = {}, unmapped = [];
+  Object.keys(SHANI_TABS).forEach(track => {
+    const sh = ss.getSheetByName(SHANI_TABS[track]);
+    if (!sh) throw new Error('אין לשונית "' + SHANI_TABS[track] + '" בגיליון של שני');
+    const v = sh.getDataRange().getDisplayValues();
+    const hr = v.findIndex(r => r.indexOf('שם פרטי') >= 0);
+    if (hr < 0) throw new Error('אין שורת כותרות בלשונית "' + SHANI_TABS[track] + '"');
+    const h = v[hr], ci = n => h.findIndex(x => String(x).trim() === n);
+    const cF = ci('שם פרטי'), cL = ci('שם משפחה'), cS = ci('שם המוסד החינוכי'), cSem = ci('סמל מוסד');
+    const cols = [];
+    h.forEach((x, c) => {
+      const m = String(x).match(/נוכחות מפגש\s*\d+[\s\S]*?תאריך:\s*(\d{1,2})\/(\d{1,2})/);
+      if (!m || /א-?סנכרוני|א-?סינכרוני/.test(x)) return;
+      const date = month.slice(0, 4) + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+      if (date.slice(0, 7) === month && date <= end) cols.push({ c: c, date: date });
+    });
+    const people = v.slice(hr + 1).map(r => ({ name: monthlyNorm_(r[cF] + ' ' + r[cL]), school: String(r[cS] || ''),
+      semel: String(r[cSem] || '').trim(), r: r })).filter(p => p.name);
+    people.forEach(p => { const id = byName[norm(p.name)]; if (id && p.semel) bySemel[p.semel] = id; });
+    people.forEach(p => {
+      let id = byName[norm(p.name)] || bySemel[p.semel];
+      if (!id) {
+        const ns = norm(p.school), hit = schools.filter(s => ns.indexOf(s.n) >= 0 || s.n.indexOf(ns) >= 0);
+        if (hit.length === 1) id = hit[0].id;
+      }
+      cols.forEach(col => {
+        const cell = String(p.r[col.c] || '').trim();
+        if (cell !== '✓' && cell !== '✗') return;
+        if (!id) { unmapped.push(p.name + ' (' + p.school + ')'); return; }
+        out.push({ track: track, date: col.date, school: id, name: p.name, status: cell === '✓' ? 'present' : 'absent' });
+      });
+    });
+  });
+  if (unmapped.length) Logger.log('שגרירים בלי בית ספר במנור: ' + unmapped.join(', '));
+  return out;
 }
 
 // "אוקטובר 2026", ובחודש שעוד לא נגמר "אוקטובר 2026 (עד 14.10)" — סיכום באמצע החודש (14.10.26)
@@ -5443,7 +5521,7 @@ function monthlyTrainingInspector_(tr, schools) {
   const n = rows.reduce((t, r) => t + r.list.length, 0);
   const yes = rows.reduce((t, r) => t + r.list.filter(monthlyIsIn_).length, 0);
   return '<p style="margin:22px 0 4px;font-weight:bold">' + remindEsc_(tr.title) + '</p>' +
-    '<p style="margin:0 0 8px;font-size:14px">השתתפו ' + yes + ' מתוך ' + n + ' רשומים</p>' +
+    '<p style="margin:0 0 8px;font-size:14px">השתתפו ' + yes + ' מתוך ' + n + '</p>' +
     monthlyBlocks_(rows.map(r => {
       const no = r.list.filter(e => !monthlyIsIn_(e)).sort((a, b) => a.name.localeCompare(b.name, 'he'));
       const yesL = r.list.filter(monthlyIsIn_).sort((a, b) => a.name.localeCompare(b.name, 'he'));
