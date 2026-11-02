@@ -115,7 +115,7 @@ async function loadData() {
       INSP.subjects = Array.from(new Set(teachers.map(t => t.subject))).sort((a, b) => a.localeCompare(b, 'he'));
       const all = window.TS_GUIDES || {};
       state.guides = Object.keys(all).map(k => Object.assign({ slug: k }, all[k])).filter(g =>
-        teachers.some(t => window.TS_guideTeaches(g, t.subject) && (!(g.sectors || []).length || g.sectors.indexOf(t.sector) >= 0)));
+        teachers.some(t => window.TS_guideTeaches(g, t.subject) && (!(g.sectors || []).length || g.sectors.indexOf(t.sector) >= 0) && window.TS_guideHasSchool(g, t)));
     }
     renderAll();
     // שאלת ההשתלמות המקצועית (28.9.26) — מקטע מקופל מתחת למדריכות
@@ -254,7 +254,7 @@ function renderGuides() {
   const grid = document.getElementById('guides-grid');
   grid.classList.remove('gx');
   grid.innerHTML = state.guides.map(g => {
-    const n = state.teachers.filter(t => window.TS_guideTeaches(g, t.subject)).length;
+    const n = state.teachers.filter(t => window.TS_guideTeaches(g, t.subject) && window.TS_guideHasSchool(g, t)).length;
     const plan = window.TS_planFor ? window.TS_planFor(g.slug) : null;
     const nextMeet = plan && window.TS_nextMeeting ? window.TS_nextMeeting(plan) : null;
     return `
@@ -419,7 +419,7 @@ function openGuideWorkspace(slug, tab) {
   document.getElementById('gw-title').textContent = wsGuide.name;
   document.getElementById('gw-sub').textContent =
     window.TS_guideSubjects(wsGuide).join(' · ') + ' · ' +
-    state.teachers.filter(t => window.TS_guideTeaches(wsGuide, t.subject)).length + ' מורים';
+    state.teachers.filter(t => window.TS_guideTeaches(wsGuide, t.subject) && window.TS_guideHasSchool(wsGuide, t)).length + ' מורים';
   switchWsTab(tab || 'files');
   renderWsPanes();
   document.getElementById('guide-modal').classList.add('open');

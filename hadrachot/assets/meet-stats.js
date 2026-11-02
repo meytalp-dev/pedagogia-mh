@@ -55,6 +55,7 @@
     if (!window.TS_guideTeaches(g, t.subject)) return false;
     const sector = t.sector || 'kelali';
     if (g.sectors && g.sectors.length && g.sectors.indexOf(sector) < 0) return false;
+    if (window.TS_guideHasSchool && !window.TS_guideHasSchool(g, t)) return false;
     const track = t.type === 'gemer' ? 'gemer' : 'bagrut';
     if (Array.isArray(g.tracks) && g.tracks.length && g.tracks.indexOf(track) < 0) return false;
     if (Array.isArray(g.units) && g.units.length && track !== 'gemer') {

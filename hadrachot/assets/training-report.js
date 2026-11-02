@@ -22,6 +22,7 @@
     var subs = window.TS_guideSubjects ? TS_guideSubjects(g) : [g.subject];
     if (subs.indexOf(t.subject) < 0) return false;
     if (g.sectors && g.sectors.indexOf(t.sector || 'kelali') < 0) return false;
+    if (window.TS_guideHasSchool && !TS_guideHasSchool(g, t)) return false;
     var type = t.type === 'gemer' ? 'gemer' : 'bagrut';
     if (Array.isArray(g.tracks) && g.tracks.length && g.tracks.indexOf(type) < 0) return false;
     if (Array.isArray(g.units) && g.units.length && type !== 'gemer') {

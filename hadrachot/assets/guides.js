@@ -19,11 +19,34 @@
      ↓ החלוקה במתמטיקה בחברה היהודית (קביעת מיטל 9.9.26):
        שירה = 3 יח"ל + כל הגמר · גל = 4-5 יח"ל · "3 + 4-5" מופיע אצל שתיהן.
 
+   schools / notSchools — פיצול קבוצה לפי בית ספר (נוסף 2.11.26, מזהי sch_ מטאב schools).
+     schools    — רק מורי בתי הספר האלה. notSchools — כל מורי המקצוע חוץ מהם.
+     נבדק ב-TS_guideHasSchool, ולכן כל מסך וכל תזכורת סופרים את אותה קבוצה.
+
    המקור: "רשימת מדריכים" תשפ"ז (מיטל פלג, 8.9.26) —
    מעודכן על גבי "קבוצות הדרכה ופרטי המדריכים" תשפ"ז.
 
    דשבורד מדריכה נטען לפי ?g=<slug>; מבט מפקח.ת לפי mabat/?i=<slug>.
    ============================================================ */
+
+/* מתמטיקה בחברה הערבית — בתי הספר של סמיר סואעד (קובץ "קהילת מורי המתמטיקה
+   בחברה הערבית", מיטל 2.11.26). כל השאר אצל משה עשור. */
+const MATH_ARAB_SAMIR_SCHOOLS = [
+  'sch_049',                /* עתיד מסעדה */
+  'sch_1787661672618_954',  /* אל אמאני סכנין */
+  'sch_1786303306868_747',  /* עתיד טק ביר אל מכסור */
+  'sch_001',                /* אום אל פחם בנות */
+  'sch_041',                /* ערערה */
+  'sch_035',                /* עמל טייבה ב' */
+  'sch_012',                /* בית חנינה בנים */
+  'sch_011',                /* בית חנינה בנות */
+  'sch_039',                /* עמל רהט */
+  'sch_030',                /* לקייה — בקובץ "חורה" */
+  'sch_060',                /* סכנין תל שבע */
+  'sch_056',                /* שגב שלום */
+  'sch_016'                 /* דרור נווה מדבר */
+];
+
 window.TS_GUIDES = {
 
   /* ---------- החברה היהודית ---------- */
@@ -217,6 +240,17 @@ window.TS_GUIDES = {
     subject: 'מתמטיקה',
     sectors: ['arab'],
     inspector: 'yasmin',
+    notSchools: MATH_ARAB_SAMIR_SCHOOLS,
+    drive: '',
+    zoom: ''
+  },
+  samir: {
+    /* נוסף 2.11.26 (מיטל): החלוקה מול משה לפי בית ספר — בגרות וגמר, כל היחידות. */
+    name: 'סמיר סואעד',
+    subject: 'מתמטיקה',
+    sectors: ['arab'],
+    inspector: 'yasmin',
+    schools: MATH_ARAB_SAMIR_SCHOOLS,
     drive: '',
     zoom: ''
   },
@@ -308,6 +342,14 @@ window.TS_guideSubjects = function (g) {
 /* האם המקצוע הזה באחריות המדריכ/ה */
 window.TS_guideTeaches = function (g, subject) {
   return window.TS_guideSubjects(g).indexOf(subject) >= 0;
+};
+
+/* האם בית הספר של המורה בקבוצה של המדריכ/ה (schools / notSchools) */
+window.TS_guideHasSchool = function (g, t) {
+  const school = String((t && t.school) || '');
+  if (Array.isArray(g.schools)) return g.schools.indexOf(school) >= 0;
+  if (Array.isArray(g.notSchools)) return g.notSchools.indexOf(school) < 0;
+  return true;
 };
 
 /* ============================================================

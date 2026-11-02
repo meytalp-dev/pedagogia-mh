@@ -240,6 +240,7 @@ async function loadData(opts) {
     // סינון המקצוע נדרש רק כשמשכנו את כל המורים (מדריכה רב-מקצועית)
     (mySubjects.length < 2 || mySubjects.indexOf(t.subject) >= 0) &&
     (!sectors || sectors.indexOf(t.sector || 'kelali') >= 0) &&
+    (!window.TS_guideHasSchool || TS_guideHasSchool(GUIDE_CFG, t)) &&
     (!tracks || tracks.indexOf(t.type === 'gemer' ? 'gemer' : 'bagrut') >= 0)
   );
 
