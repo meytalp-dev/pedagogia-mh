@@ -13,7 +13,7 @@
   if (!guideEmail && GUIDE_CFG.email) guideEmail = GUIDE_CFG.email;
   const MAX_FILE_BYTES = 15 * 1024 * 1024;
   const ICON_FILE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
-  let data = { files: [] };
+  let data = { files: [], folders: [] };   // folders — תיקיות שנפתחו ריקות (2.11.26)
   let driveFile = null;      // תיקיית הדרייב שהמדריכ/ה צירף/ה בעצמו/ה (28.9.26)
   let driveSig = null;       // הכרטיס נצייר מחדש רק כשהמצב משתנה — שלא יימחק מה שמוקלד
   let loadFailed = false;
@@ -50,7 +50,7 @@
       const all = (res.data.files && res.data.files[SLUG]) || [];
       // קישור תיקיית הדרייב (source='drive-folder') מוצג בכרטיס שבראש המאגר, לא כקובץ בתיקייה
       driveFile = all.find(f => f.source === 'drive-folder') || null;
-      data = { files: all.filter(f => f.source !== 'drive-folder') };
+      data = { files: all.filter(f => f.source !== 'drive-folder'), folders: (res.data.folders && res.data.folders[SLUG]) || [] };
     } else loadFailed = true;
     const first = !loaded;
     loaded = true;
@@ -88,7 +88,13 @@
     return idx >= 0 ? pf[idx] : (pf[pf.length - 1] || GENERAL);
   }
   function fileFolders() {
-    return Array.from(new Set(data.files.map(f => f.folder || GENERAL)));
+    // כולל תיקיות ריקות ותיקיות אב שיש בהן רק תת-תיקיות — כולן יעד להעלאה ולהעברה
+    const out = new Set();
+    data.files.map(f => f.folder || GENERAL).concat(data.folders).forEach(path => {
+      const parts = path.split(' / ');
+      parts.forEach((p, i) => out.add(parts.slice(0, i + 1).join(' / ')));
+    });
+    return Array.from(out);
   }
   // כל התיקיות לבורר: קיימות (נושא) → מפגשים → כללי
   function allFolders() {
@@ -199,14 +205,15 @@
   }
 
   // עץ: { name, files: [], kids: {name: node} }
-  function buildTree(files) {
+  function buildTree(files, emptyFolders) {
     const root = { name: '', files: [], kids: {} };
-    files.forEach(f => {
-      const parts = (f.folder || GENERAL).split(' / ');
+    const walk = path => {
       let node = root;
-      parts.forEach(p => { node = node.kids[p] = node.kids[p] || { name: p, files: [], kids: {} }; });
-      node.files.push(f);
-    });
+      path.split(' / ').forEach(p => { node = node.kids[p] = node.kids[p] || { name: p, files: [], kids: {} }; });
+      return node;
+    };
+    files.forEach(f => walk(f.folder || GENERAL).files.push(f));
+    (emptyFolders || []).forEach(walk);
     return root;
   }
   function countTree(n) { return n.files.length + Object.keys(n.kids).reduce((s, k) => s + countTree(n.kids[k]), 0); }
@@ -240,11 +247,21 @@
     const kids = Object.keys(node.kids).sort((a, b) => a.localeCompare(b, 'he', { numeric: true }));
     const isMeeting = /^מפגש \d/.test(node.name);
     const open = libSearch || (libOpen && libOpen.has(full));
+    // "כללי" ותיקיות המפגשים נגזרות אוטומטית — שם קבוע; עד 3 רמות, כמו בשרת
+    const fixedName = depth === 0 && (node.name === GENERAL || isMeeting);
+    const empty = !countTree(node);
     return `
       <details class="lib-folder" data-folder="${esc(full)}"${open ? ' open' : ''}>
         <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          <span>${esc(node.name)}</span>${isMeeting && depth === 0 ? '<span class="auto">מפגש</span>' : ''}<span class="c">${countTree(node)}</span><button type="button" class="up" data-up="${esc(full === GENERAL ? '' : full)}">+ העלאה לכאן</button></summary>
+          <span class="lib-fname">${esc(node.name)}</span>${isMeeting && depth === 0 ? '<span class="auto">מפגש</span>' : ''}<span class="c">${countTree(node)}</span>
+          <span class="lib-facts">
+            <button type="button" class="up" data-up="${esc(full === GENERAL ? '' : full)}">+ העלאה לכאן</button>
+            ${depth < 2 ? `<button type="button" class="up" data-sub="${esc(full)}">+ תת-תיקייה</button>` : ''}
+            ${fixedName ? '' : `<button type="button" class="up" data-ren="${esc(full)}" data-name="${esc(node.name)}">שינוי שם</button>`}
+            ${empty && !fixedName ? `<button type="button" class="up" data-rmf="${esc(full)}">מחיקה</button>` : ''}
+          </span></summary>
         <div class="lib-body">
+          ${empty && !kids.length ? '<div class="lib-fempty">התיקייה ריקה.</div>' : ''}
           ${kids.map(k => folderHtml(node.kids[k], full, folders, depth + 1)).join('')}
           ${node.files.sort((a, b) => String(a.fileName).localeCompare(String(b.fileName), 'he', { numeric: true })).map(f => fileRowHtml(f, folders)).join('')}
         </div>
@@ -260,11 +277,11 @@
     if (!libOpen) libOpen = new Set();
     const q = libSearch.trim().toLowerCase();
     const files = q ? data.files.filter(f => (String(f.fileName) + ' ' + (f.folder || '')).toLowerCase().indexOf(q) >= 0) : data.files;
-    if (!files.length) {
+    if (!files.length && (q || !data.folders.length)) {
       el.innerHTML = `<div class="empty" style="padding:18px;">${q ? 'לא נמצא במאגר' : 'המאגר עדיין ריק. מעלים קובץ למעלה — הוא נכנס לתיקייה שבחרת.'}</div>`;
       return;
     }
-    const tree = buildTree(files);
+    const tree = buildTree(files, q ? [] : data.folders);
     const F = allFolders();
     const folders = [...F.topics, ...fileFolders().filter(f => F.topics.indexOf(f) < 0 && f !== GENERAL), GENERAL]
       .filter((v, i, a) => a.indexOf(v) === i);
@@ -285,6 +302,18 @@
       upTarget = b.dataset.up;
       document.getElementById('gfile-input').click();
     }));
+    el.querySelectorAll('[data-sub]').forEach(b => b.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      addSubfolder(b.dataset.sub);
+    }));
+    el.querySelectorAll('[data-ren]').forEach(b => b.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      renameFolder(b.dataset.ren, b.dataset.name);
+    }));
+    el.querySelectorAll('[data-rmf]').forEach(b => b.addEventListener('click', e => {
+      e.preventDefault(); e.stopPropagation();
+      removeEmptyFolder(b.dataset.rmf);
+    }));
     el.querySelectorAll('[data-del-file]').forEach(b => b.addEventListener('click', async () => {
       if (!confirm('למחוק את הקובץ מהמאגר? הוא ייעלם גם מהמורים.')) return;
       b.disabled = true;
@@ -301,6 +330,62 @@
       else TS.toast(res && res.error === 'bad_key' ? 'אין הרשאה מהקישור הזה' : 'ההעברה לא הצליחה — לנסות שוב');
       await loadSpace();
     }));
+  }
+
+  /* תת-תיקיות ושינוי שם (2.11.26, מיטל). תוצאה נבדקת בטעינה מחדש: גוגל מאבדת לפעמים
+     את התשובה ל-POST שכבר בוצע, ולכן לא מסתמכים עליה ולא שולחים שוב. */
+  const FOLDER_ERRORS = {
+    exists: 'כבר יש כאן תיקייה בשם הזה.',
+    reserved: 'השם הזה שמור לתיקיות האוטומטיות. בחרו שם אחר.',
+    too_deep: 'אפשר עד 3 רמות של תיקיות.',
+    bad_name: 'צריך לכתוב שם.',
+    bad_key: 'אין הרשאה מהקישור הזה. פתחו את המאגר מהקישור האישי.',
+    not_empty: 'יש בתיקייה קבצים, ולכן אי אפשר למחוק אותה.',
+    not_found: 'התיקייה לא נמצאה. רעננו את הדף.',
+    busy: 'השרת עסוק. נסו שוב בעוד רגע.'
+  };
+  function folderAuth() {
+    const auth = window.GUIDE_AUTH ? window.GUIDE_AUTH() : {};
+    if (auth.k || auth.ge) return auth;
+    TS.toast(FOLDER_ERRORS.bad_key);
+    return null;
+  }
+  const folderExists = path => fileFolders().indexOf(path) >= 0;
+  function folderDone(res, verified, okMsg) {
+    if (verified) { TS.toast(okMsg); return; }
+    TS.toast((res && FOLDER_ERRORS[res.error]) || 'הפעולה לא הצליחה. נסו שוב בעוד רגע.');
+  }
+  async function addSubfolder(parent) {
+    const auth = folderAuth();
+    if (!auth) return;
+    const name = (window.prompt('שם התת-תיקייה בתוך "' + parent + '":', '') || '').replace(/\//g, '-').replace(/\s+/g, ' ').trim();
+    if (!name) return;
+    const path = parent + ' / ' + name;
+    const res = await TS.apiPost('guide.folder.add', Object.assign({}, auth, { parent: parent, name: name, guideName: GUIDE_CFG.name || '' }));
+    if (res && !res.ok && res.error === 'exists') { TS.toast(FOLDER_ERRORS.exists); return; }
+    libOpen.add(parent); libOpen.add(path);
+    await loadSpace();
+    folderDone(res, folderExists(path), 'התת-תיקייה נפתחה');
+  }
+  async function renameFolder(full, oldName) {
+    const auth = folderAuth();
+    if (!auth) return;
+    const name = (window.prompt('השם החדש של התיקייה:', oldName) || '').replace(/\//g, '-').replace(/\s+/g, ' ').trim();
+    if (!name || name === oldName) return;
+    const parts = full.split(' / ');
+    const to = parts.slice(0, -1).concat([name]).join(' / ');
+    if (folderExists(to)) { TS.toast(FOLDER_ERRORS.exists); return; }
+    const res = await TS.apiPost('guide.folder.rename', Object.assign({}, auth, { from: full, name: name }));
+    if (libOpen.has(full)) libOpen.add(to);
+    await loadSpace();
+    folderDone(res, folderExists(to) && !folderExists(full), 'השם עודכן');
+  }
+  async function removeEmptyFolder(full) {
+    const auth = folderAuth();
+    if (!auth || !confirm('למחוק את התיקייה הריקה "' + full + '"?')) return;
+    const res = await TS.apiPost('guide.folder.delete', Object.assign({}, auth, { folder: full }));
+    await loadSpace();
+    folderDone(res, !folderExists(full), 'התיקייה נמחקה');
   }
 
   let upTarget = null;       // תיקייה שנבחרה מכפתור "העלאה לכאן" (null = לשאול)

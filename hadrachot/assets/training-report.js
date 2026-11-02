@@ -79,6 +79,14 @@
     for (var i = 0; i < t.ids.length; i++) if (files[t.ids[i]] && files[t.ids[i]].url) return files[t.ids[i]];
     return null;
   }
+  // לאן נרשם/ה ושם ההשתלמות (2.11.26) — מ-training.files, לא מהרשימה הפתוחה
+  function infoOf(t, files) {
+    for (var i = 0; i < t.ids.length; i++) {
+      var x = files[t.ids[i]];
+      if (x && (x.place || x.course)) return { place: x.place || '', course: x.course || '' };
+    }
+    return { place: '', course: '' };
+  }
 
   var CSS =
     '.tr-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}' +
@@ -103,9 +111,81 @@
     'table.tr-t th{background:var(--surface-soft);font-size:11.5px;font-weight:700;color:var(--text-muted);text-align:right;padding:8px 10px;white-space:nowrap}' +
     'table.tr-t td{padding:7px 10px;border-top:1px solid var(--border-soft,#E8EEF0)}' +
     'table.tr-t a{font-weight:700;color:var(--primary,#1A5365)}' +
-    '.tr-empty{padding:12px 14px;font-size:13px;color:var(--text-muted)}';
+    '.tr-empty{padding:12px 14px;font-size:13px;color:var(--text-muted)}' +
+    '.tr-name{min-width:96px}.tr-rec-btn{display:block;margin-top:4px;font-family:inherit;font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--primary,#1A5365);cursor:pointer;white-space:nowrap}' +
+    '.tr-rec{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(20,40,50,.45)}' +
+    '.tr-rec form{background:var(--surface,#fff);border-radius:14px;padding:18px;width:100%;max-width:440px;max-height:90vh;overflow:auto;box-sizing:border-box}' +
+    '.tr-rec h3{margin:0 0 2px;font-size:17px}.tr-rec .who{font-size:13px;color:var(--text-muted);margin-bottom:12px}' +
+    '.tr-rec label{display:block;font-size:13px;font-weight:700;margin-bottom:10px}' +
+    '.tr-rec input{display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font:inherit;font-weight:400;font-size:16px}' +
+    '.tr-rec .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}' +
+    '.tr-rec .clear{margin-inline-start:auto;background:none;border:none;font-family:inherit;font-size:13px;color:#a4442f;text-decoration:underline;cursor:pointer}' +
+    '.tr-rec .tr-rec-msg{font-size:13px;color:#a4442f;margin-top:8px;min-height:1em}';
 
-  /* opts: { rows, files, guides: [{slug,name,...}] (אופציונלי — עמודת מדריכ/ה ומסנן) } */
+  /* תיעוד הרשמה (2.11.26, מיטל) — רק במדריכה שמקבלת opts.record (אילנה).
+     guide.training.record: שני שדות ריקים מבטלים את התיעוד. */
+  function openRecord(el, opts, t, files) {
+    var cur = infoOf(t, files);
+    var uniq = function (key) {
+      var seen = {};
+      Object.keys(files).forEach(function (id) { var v = files[id][key]; if (v) seen[v] = 1; });
+      return Object.keys(seen).sort(function (a, b) { return a.localeCompare(b, 'he'); })
+        .map(function (v) { return '<option value="' + esc(v) + '"></option>'; }).join('');
+    };
+    var box = document.createElement('div');
+    box.className = 'tr-rec';
+    box.innerHTML = '<form role="dialog" aria-modal="true" aria-labelledby="tr-rec-h"><h3 id="tr-rec-h">תיעוד הרשמה להשתלמות</h3>' +
+      '<div class="who">' + esc(t.name) + ' · ' + esc(t.schoolName) + ' · ' + esc(t.subject) + '</div>' +
+      '<label>לאן נרשם/ה<input id="tr-rec-place" list="tr-rec-places" maxlength="160" value="' + esc(cur.place) + '"></label><datalist id="tr-rec-places">' + uniq('place') + '</datalist>' +
+      '<label>שם ההשתלמות<input id="tr-rec-course" list="tr-rec-courses" maxlength="160" value="' + esc(cur.course) + '"></label><datalist id="tr-rec-courses">' + uniq('course') + '</datalist>' +
+      '<div class="acts"><button type="submit" class="btn btn-primary">שמירה</button><button type="button" class="btn btn-secondary" data-close>ביטול</button>' +
+      (cur.place || cur.course ? '<button type="button" class="clear" data-clear>מחיקת התיעוד</button>' : '') + '</div>' +
+      '<div class="tr-rec-msg" aria-live="polite"></div></form>';
+    document.body.appendChild(box);
+    var q = function (s) { return box.querySelector(s); };
+    var close = function () { box.remove(); };
+    q('[data-close]').onclick = close;
+    box.addEventListener('click', function (e) { if (e.target === box) close(); });
+    q('#tr-rec-place').focus();
+    var save = function (place, course) {
+      var btn = q('button[type=submit]');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      q('.tr-rec-msg').textContent = 'שומרת…';
+      opts.record(t.ids[0], place, course).then(function (res) {
+        if (!res || !res.ok) {
+          btn.disabled = false;
+          q('.tr-rec-msg').textContent = res && res.error === 'bad_key' ? 'אין הרשאה. פתחו את הדף מהקישור האישי.'
+            : res && res.error === 'forbidden' ? 'המורה לא באחריותך.' : 'לא נשמר. בדקו ברשימה ונסו שוב בעוד רגע.';
+          return;
+        }
+        var d = res.data || {};
+        (opts.rows || []).forEach(function (r) {
+          if (t.ids.indexOf(String(r.id)) < 0) return;
+          r.trainingStatus = d.trainingStatus;
+          r.trainingApprovedBy = d.trainingApprovedBy;
+          var fr = files[String(r.id)] || (files[String(r.id)] = { url: '', name: '', note: '' });
+          fr.place = d.place || ''; fr.course = d.course || '';
+        });
+        close();
+        // המורה עובר/ת לקבוצה אחרת, לפעמים סגורה — פותחים אותה וגוללים לשורה
+        el._trFocus = t.ids[0];
+        render(el, opts);
+        TS.toast(place || course ? 'התיעוד נשמר' : 'התיעוד נמחק');
+      });
+    };
+    q('form').onsubmit = function (e) {
+      e.preventDefault();
+      var place = q('#tr-rec-place').value.trim(), course = q('#tr-rec-course').value.trim();
+      if (!place && !course) { q('.tr-rec-msg').textContent = 'צריך למלא לפחות שדה אחד.'; return; }
+      save(place, course);
+    };
+    var clr = q('[data-clear]');
+    if (clr) clr.onclick = function () { if (confirm('למחוק את התיעוד? המורה יחזור/תחזור למצב שלפני התיעוד.')) save('', ''); };
+  }
+
+  /* opts: { rows, files, guides: [{slug,name,...}] (אופציונלי — עמודת מדריכ/ה ומסנן),
+           record: (id, place, course) → Promise (אופציונלי — כפתור תיעוד הרשמה) } */
   function render(el, opts) {
     if (!document.getElementById('tr-css')) {
       var st = document.createElement('style'); st.id = 'tr-css'; st.textContent = CSS; document.head.appendChild(st);
@@ -138,6 +218,8 @@
         list.map(function (x) { return '<option' + (x === val ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join('') + '</select>' : '';
     };
     var cols = '<th>שם</th><th>בית ספר</th><th>מקצוע</th><th>מסלול</th>' + (guides ? '<th>מדריכ/ה</th>' : '');
+    // "טרם ענו" ו"לא עברו ולא נרשמו" — אין עדיין מה להציג בשתי העמודות
+    var hasInfo = function (g) { return g.key !== 'missing' && g.key !== 'none'; };
     el.innerHTML =
       '<div class="tr-kpis">' +
         '<div class="tr-kpi"><div class="l">ענו</div><div class="v">' + answered + '</div><div class="s">מתוך ' + rows.length + ' מורים</div></div>' +
@@ -151,18 +233,24 @@
         '<input type="search" id="tr-q" placeholder="חיפוש מורה / בית ספר" value="' + esc(f.q) + '"></div>' +
       GROUPS.map(function (g) {
         var list = by[g.key];
-        return '<details class="tr-grp"' + (list.length && g.key !== 'passed-file' && g.key !== 'registered-file' ? ' open' : '') + ' data-g="' + g.key + '">' +
+        var focused = list.some(function (x) { return x.ids.indexOf(el._trFocus) >= 0; });
+        return '<details class="tr-grp"' + ((list.length && g.key !== 'passed-file' && g.key !== 'registered-file') || focused ? ' open' : '') + ' data-g="' + g.key + '">' +
           '<summary><span class="badge ' + g.cls + ' tr-n">' + list.length + '</span><h2>' + g.title + (g.sub ? '<small>' + g.sub + '</small>' : '') + '</h2>' +
           (list.length ? '<button type="button" class="tr-copy" data-copy="' + g.key + '">העתקת הרשימה</button>' : '') + '</summary>' +
           (list.length ? '<div class="tr-wrap"><table class="tr-t"><thead><tr>' + cols +
-            (g.key.indexOf('-file') > 0 ? '<th>אישור</th>' : '') + (g.key.indexOf('nofile') > 0 ? '<th>הערת המורה</th>' : '') + '</tr></thead><tbody>' +
+            (g.key.indexOf('-file') > 0 ? '<th>אישור</th>' : '') + (g.key.indexOf('nofile') > 0 ? '<th>הערת המורה</th>' : '') +
+            (hasInfo(g) ? '<th>לאן נרשם/ה</th><th>שם ההשתלמות</th>' : '') + '</tr></thead><tbody>' +
             list.map(function (t) {
               var fl = fileOf(t, files);
-              return '<tr><td>' + esc(t.name) + '</td><td>' + esc(t.schoolName) + '</td><td>' + esc(t.subject) + '</td><td>' + esc(t.tracks.join(' + ')) + '</td>' +
+              var info = infoOf(t, files);
+              // הכפתור ליד השם: בנייד הטבלה נגללת לרוחב, והעמודה האחרונה מחוץ למסך
+              return '<tr><td class="tr-name">' + esc(t.name) + (opts.record ? '<button type="button" class="tr-rec-btn" data-rec="' + esc(t.ids[0]) + '">' +
+                (info.place || info.course ? 'עריכת התיעוד' : 'תיעוד הרשמה') + '</button>' : '') + '</td><td>' + esc(t.schoolName) + '</td><td>' + esc(t.subject) + '</td><td>' + esc(t.tracks.join(' + ')) + '</td>' +
                 (guides ? '<td>' + esc(t._guides.join(', ') || '—') + '</td>' : '') +
                 (g.key.indexOf('-file') > 0 ? '<td>' + (fl ? '<a href="' + esc(fl.url) + '" target="_blank" rel="noopener">פתיחה</a>'
                   : esc(t.trainingApprovedBy || '')) + '</td>' : '') +
-                (g.key.indexOf('nofile') > 0 ? '<td>' + esc(noteOf(t, files)) + '</td>' : '') + '</tr>';
+                (g.key.indexOf('nofile') > 0 ? '<td>' + esc(noteOf(t, files)) + '</td>' : '') +
+                (hasInfo(g) ? '<td>' + esc(info.place) + '</td><td>' + esc(info.course) + '</td>' : '') + '</tr>';
             }).join('') + '</tbody></table></div>'
             : '<div class="tr-empty">אין מורים בקבוצה הזו.</div>') +
         '</details>';
@@ -175,6 +263,14 @@
     var q = el.querySelector('#tr-q');
     var tmr = null;
     q.oninput = function () { clearTimeout(tmr); tmr = setTimeout(function () { f.q = q.value; render(el, opts); el.querySelector('#tr-q').focus(); }, 250); };
+    el.querySelectorAll('[data-rec]').forEach(function (b) {
+      b.onclick = function () {
+        var t = all.filter(function (x) { return x.ids.indexOf(b.dataset.rec) >= 0; })[0];
+        if (t) openRecord(el, opts, t, files);
+      };
+      if (b.dataset.rec === el._trFocus) b.scrollIntoView({ block: 'center' });
+    });
+    el._trFocus = '';
     el.querySelectorAll('[data-copy]').forEach(function (b) {
       b.onclick = function (e) {
         e.preventDefault(); e.stopPropagation();

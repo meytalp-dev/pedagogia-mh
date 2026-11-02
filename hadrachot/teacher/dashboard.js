@@ -1022,11 +1022,19 @@ function renderGroup(g) {
           : esc(f.fileName)}${f.note ? `<div>${esc(f.note)}</div>` : ''}</div>
         <div class="d">${esc(when(f.createdAt))}</div>
       </div>`;
-    const groups = {};
-    files.forEach(f => { (groups[f.folder || 'כללי'] = groups[f.folder || 'כללי'] || []).push(f); });
-    const names = Object.keys(groups).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
-    document.getElementById('mat-list').innerHTML = names.length === 1 ? groups[names[0]].map(item).join('')
-      : names.map(n => `<details class="mat-folder"><summary><b>${esc(n)}</b> <span class="d">(${groups[n].length})</span></summary>${groups[n].map(item).join('')}</details>`).join('');
+    // תיקיות בתוך תיקיות (2.11.26): folder = "רמה / רמה / רמה"
+    const root = { files: [], kids: {} };
+    files.forEach(f => {
+      let n = root;
+      (f.folder || 'כללי').split(' / ').forEach(p => { n = n.kids[p] = n.kids[p] || { files: [], kids: {} }; });
+      n.files.push(f);
+    });
+    const count = n => n.files.length + Object.keys(n.kids).reduce((s, k) => s + count(n.kids[k]), 0);
+    const names = n => Object.keys(n.kids).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
+    const tree = (n, depth) => names(n).map(k => `<details class="mat-folder"${depth ? ' style="margin-inline-start:14px;"' : ''}><summary><b>${esc(k)}</b> <span class="d">(${count(n.kids[k])})</span></summary>${tree(n.kids[k], depth + 1)}${n.kids[k].files.map(item).join('')}</details>`).join('');
+    const tops = names(root);
+    document.getElementById('mat-list').innerHTML = tops.length === 1 && !names(root.kids[tops[0]]).length
+      ? root.kids[tops[0]].files.map(item).join('') : tree(root, 0);
     document.getElementById('mat-sec').hidden = false;
   }
   if (msgs.length) {
@@ -1651,7 +1659,11 @@ function renderTraining() {
     badge.innerHTML = !st ? '<span class="badge neutral">השתלמות: טרם נענה</span>'
       : '<span class="badge ' + (st === 'none' ? 'warn' : 'ok') + '">' + esc(TRAINING_LABEL[st]) + '</span>' +
         (file ? ' <a class="badge info" href="' + esc(file) + '" target="_blank" rel="noopener">האישור שצירפתי</a>'
-          : approvedBy ? ' <span class="badge info">' + esc(approvedBy) + '</span>' : '');
+          : approvedBy ? ' <span class="badge info">' + esc(approvedBy) + '</span>' : '') +
+        // מה שהמדריכה תיעדה (2.11.26, מיטל): שם ההשתלמות ולאן נרשמת — לקריאה בלבד
+        (st !== 'none' && (teacher.trainingCourse || teacher.trainingPlace)
+          ? ' <span class="badge neutral">' + (st === 'passed' ? 'ההשתלמות: ' : 'נרשמת ל: ') +
+            esc([teacher.trainingCourse, teacher.trainingPlace].filter(Boolean).join(' · ')) + '</span>' : '');
   }
   const sec = document.getElementById('pd-sec');
   if (!sec || ADMIN_KEY_) return;

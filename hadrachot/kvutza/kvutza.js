@@ -112,12 +112,20 @@
           <span class="fr-open">פתיחה</span>
         </a>`;
     // מאגר החומרים לפי תיקיות (28.9.26)
-    const groups = {};
-    rows.forEach(f => { (groups[f.folder || 'כללי'] = groups[f.folder || 'כללי'] || []).push(f); });
-    const names = Object.keys(groups).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
+    // תיקיות בתוך תיקיות (2.11.26): folder = "רמה / רמה / רמה"
+    const root = { files: [], kids: {} };
+    rows.forEach(f => {
+      let n = root;
+      (f.folder || 'כללי').split(' / ').forEach(p => { n = n.kids[p] = n.kids[p] || { files: [], kids: {} }; });
+      n.files.push(f);
+    });
+    const count = n => n.files.length + Object.keys(n.kids).reduce((s, k) => s + count(n.kids[k]), 0);
+    const names = n => Object.keys(n.kids).sort((a, b) => (a === 'כללי') - (b === 'כללי') || a.localeCompare(b, 'he', { numeric: true }));
+    const tree = (n, depth) => names(n).map(k => `<details class="mat-folder" style="margin-bottom:8px;${depth ? 'margin-inline-start:14px;' : ''}"><summary style="cursor:pointer;padding:8px 0;font-weight:700;">${esc(k)} <span style="color:var(--text-muted);font-weight:500;">(${count(n.kids[k])})</span></summary>${tree(n.kids[k], depth + 1)}${n.kids[k].files.map(row).join('')}</details>`).join('');
+    const tops = names(root);
     $('g-files').innerHTML = !rows.length ? '<div class="empty" style="padding:20px;">עדיין אין חומרים בקבוצה.</div>'
-      : names.length === 1 ? groups[names[0]].map(row).join('')
-      : names.map(n => `<details class="mat-folder" style="margin-bottom:8px;"><summary style="cursor:pointer;padding:8px 0;font-weight:700;">${esc(n)} <span style="color:var(--text-muted);font-weight:500;">(${groups[n].length})</span></summary>${groups[n].map(row).join('')}</details>`).join('');
+      : tops.length === 1 && !names(root.kids[tops[0]]).length ? root.kids[tops[0]].files.map(row).join('')
+      : tree(root, 0);
   }
 
   function setBoth(html) {

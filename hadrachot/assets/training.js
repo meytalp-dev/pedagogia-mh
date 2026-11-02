@@ -30,7 +30,9 @@
     } catch (e) { /* אחסון חסום — ננסה מפתח מדריכ/ה */ }
     if (!body.sk) {
       var qs = new URLSearchParams(location.search);
-      if (qs.get('g') && qs.get('k')) { body.g = qs.get('g'); body.gk = qs.get('k'); }
+      var gk = qs.get('k');
+      if (!gk && qs.get('g')) { try { gk = localStorage.getItem('ts.meet.k.' + qs.get('g')); } catch (e) { gk = ''; } }
+      if (qs.get('g') && gk) { body.g = qs.get('g'); body.gk = gk; }
     }
     if (!body.sk && !body.gk) return Promise.resolve({});
     pending = TS.api('training.files', body, { cache: 'no' })

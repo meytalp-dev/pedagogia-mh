@@ -325,7 +325,7 @@
   .hours-form label { display:block; font-size:11.5px; font-weight:600; color:var(--text-muted); margin-bottom:4px; }
   .hours-form .input, .hours-form .select, .hours-form .textarea { padding:8px 10px; font-size:13.5px; width:100%; box-sizing:border-box; }
   /* styles.css?v=20260923 בלי כלל [hidden], ו-.btn מגדיר display — בלי זה הכפתור תמיד גלוי */
-  #h-cancel[hidden], #pa-cancel[hidden] { display:none; }
+  #h-cancel[hidden], #pa-cancel[hidden], #go-hishtalmut[hidden] { display:none; }
   .hours-total { display:inline-block; background:#E6F0F4; color:var(--primary,#1A5365); padding:4px 11px; border-radius:999px; font-size:12.5px; font-weight:700; margin-bottom:10px; }
   .h-row { border:1px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:9px; background:var(--surface-soft); }
   .h-row.editing { border-color:var(--primary,#1A5365); box-shadow:0 0 0 2px rgba(37,106,138,.15); }
@@ -768,6 +768,7 @@
              כל כפתור פותח את הכלי שלו (שנשאר גם ב"כלים נוספים") וגולל אליו -->
         <div class="gq-acts" role="group" aria-label="פעולות מהירות">
           <a class="btn btn-primary gq" href="maagar.html" id="go-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-2-3H5a2 2 0 0 0-2 2z"/></svg><span>מאגר החומרים</span></a>
+          <a class="btn btn-primary gq" href="hishtalmut.html" id="go-hishtalmut" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span>השתלמות מקצועית</span></a>
           <a class="btn btn-secondary gq" href="#mail-card" id="go-alphon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>אלפון המורים</span></a>
           <button type="button" class="btn btn-secondary gq" data-tool="tool-adhoc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הדרכה חדשה</span></button>
           <button type="button" class="btn btn-secondary gq" data-add-teacher><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>הוספת מורה</span></button>
@@ -1241,10 +1242,10 @@
 <script src="../assets/plans.js?v=20261102s"></script>
 <script src="../assets/plan-changes.js"></script>
 <script src="../assets/meet-stats.js?v=20261102s"></script>
-<script src="../assets/training.js?v=20261012a"></script>
+<script src="../assets/training.js?v=20261102a"></script>
 <script src="dashboard.js?v=20261102s"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20261025a"></script>
+<script src="space.js?v=20261102a"></script>
 <script src="meetings.js?v=20261102a"></script>
 <script src="slots.js?v=20261025a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->

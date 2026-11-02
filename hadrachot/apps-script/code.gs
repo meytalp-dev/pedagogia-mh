@@ -34,6 +34,8 @@ const SCHEMA = {
                'pdActive','pdFile','pdYear','createdAt','schoolName','notes',
                // שאלת ההשתלמות בהרשמה למבט המורה (28.9.26): passed · registered · none
                'trainingStatus','trainingFile','trainingFileName','trainingAt',
+               // תיעוד הרשמה על ידי המדריכה (2.11.26): לאן · שם ההשתלמות · מי תיעד/ה · הסטטוס שלפני התיעוד
+               'trainingPlace','trainingCourse','trainingBy','trainingPrev',
                // יח"ל שהמורה סימן/ה בהרשמה (28.9.26) — מתמטיקה: 3,4,5,gemer · אנגלית: 3,4,5
                'unitsSelf',
                // רישום עצמי (29.9.26): מורה שלא היה/ה ברשימה · מייל שעודכן בהרשמה
@@ -315,6 +317,8 @@ const PUBLIC_ACTIONS = new Set([
   'notes.list', 'notes.save', 'notes.delete', 'notes.file', 'notes.fileDelete',
   // מאגר החומרים ומייל לקבוצה (28.9.26) — דורשים מפתח מדריכ/ה (meetAuthGuide_) בפנים
   'guide.file.link', 'guide.file.move', 'guide.mail.send', 'guide.contacts',
+  // תת-תיקיות ושינוי שם במאגר, תיעוד הרשמה להשתלמות (2.11.26) — מפתח מדריכ/ה בפנים
+  'guide.folder.add', 'guide.folder.rename', 'guide.folder.delete', 'guide.training.record',
   // השלמת מייל עצמית של מורים (28.9.26) — הרשימה בלי כתובות, והכתיבה רק למי שאין לו מייל
   'emails.roster', 'emails.submit',
   // כפילויות ותיקוני שם (29.9.26) — ההרשאה בפנים: מפתח staff עם תפקיד ministry
@@ -1131,6 +1135,10 @@ function handleRequest(params) {
       case 'guide.file.delete':   result = guideFileDelete(params); break;
       case 'guide.file.link':     result = guideFileLink(params); break;
       case 'guide.file.move':     result = guideFileMove(params); break;
+      case 'guide.folder.add':    result = guideFolderAdd(params); break;
+      case 'guide.folder.rename': result = guideFolderRename(params); break;
+      case 'guide.folder.delete': result = guideFolderDelete(params); break;
+      case 'guide.training.record': result = guideTrainingRecord(params); break;
       case 'site.materials':      result = siteMaterials(params); break;
       case 'site.materials.admin':result = siteMaterialsAdmin(params); break;
       case 'site.materials.set':  result = siteMaterialsSet(params); break;
@@ -1449,7 +1457,8 @@ function maskContact_(t) {
     phone: digits ? '•••' + digits.slice(-3) : '',
     email: '',
     // אישור ההשתלמות הוא מסמך אישי — הסטטוס נשאר, הקישור רק דרך training.files
-    trainingFile: '', trainingFileName: '', trainingNote: ''
+    trainingFile: '', trainingFileName: '', trainingNote: '',
+    trainingPlace: '', trainingCourse: '', trainingBy: '', trainingPrev: ''
   });
 }
 
@@ -3336,13 +3345,16 @@ function guideWorkspace(p) {
   if (!slugs.length) return { ok: false, error: 'missing_guides' };
   const inSlugs = r => slugs.indexOf(String(r.guideSlug || '')) >= 0;
 
-  const files = readAll('guide_files').filter(inSlugs);
+  const allFiles = readAll('guide_files').filter(inSlugs);
+  // תיקייה ריקה (2.11.26) נשמרת כשורה kind='folder' — לא קובץ, ולכן יוצאת בנפרד
+  const files = allFiles.filter(f => String(f.kind) !== 'folder');
   const messages = readAll('guide_messages').filter(inSlugs);
   const hours = readAll('guide_hours').filter(inSlugs);
   const activities = sheet('guide_activities') ? readAll('guide_activities').filter(inSlugs) : [];
 
   const bucket = () => slugs.reduce((acc, s) => { acc[s] = []; return acc; }, {});
-  const out = { files: bucket(), messages: bucket(), hours: bucket(), activities: bucket() };
+  const out = { files: bucket(), messages: bucket(), hours: bucket(), activities: bucket(), folders: bucket() };
+  allFiles.forEach(f => { if (String(f.kind) === 'folder') out.folders[f.guideSlug].push(guideFolderName_(f.folder)); });
   activities.forEach(a => out.activities[a.guideSlug].push({
     id: a.id, name: a.name || '', date: toIso_(a.date), start: actTime_(a.start), end: actTime_(a.end),
     location: a.location || '', hours: Number(a.hours) || 0, notes: a.notes || '',
@@ -3387,7 +3399,7 @@ function guideGroup(p) {
   const mine = r => String(r.guideSlug || '') === slug;
 
   const files = readAll('guide_files')
-    .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector' && String(f.source || '') !== 'drive-folder')
+    .filter(f => mine(f) && String(f.uploaderRole || '') !== 'inspector' && String(f.source || '') !== 'drive-folder' && String(f.kind) !== 'folder')
     .map(f => ({
       fileName: f.fileName || '', fileUrl: f.fileUrl || '', mimeType: f.mimeType || '',
       size: Number(f.size) || 0, createdAt: toIso_(f.createdAt),
@@ -6461,7 +6473,7 @@ function teachersMerge(p) {
   const moved = {};
   try {
     const fill = {};
-    ['email', 'phone', 'trainingStatus', 'trainingFile', 'trainingFileName', 'trainingAt', 'unitsSelf', 'units', 'seniority', 'students']
+    ['email', 'phone', 'trainingStatus', 'trainingFile', 'trainingFileName', 'trainingAt', 'trainingPlace', 'trainingCourse', 'trainingBy', 'trainingPrev', 'unitsSelf', 'units', 'seniority', 'students']
       .forEach(k => { if (!String(keep[k] || '').trim() && String(drop[k] || '').trim()) fill[k] = drop[k]; });
     if (Object.keys(fill).length) { ensureTab_('teachers'); updateRowById('teachers', keepId, fill); }
     // מפגשים שבהם keep כבר רשום — השורה של drop נמחקת במקום לעבור
@@ -6552,6 +6564,7 @@ function teacherSelf(p) {
     trainingFileName: String(t.trainingFileName || ''), trainingAt: toIso_(t.trainingAt),
     trainingNote: String(t.trainingNote || ''),
     trainingApprovedBy: String(t.trainingApprovedBy || ''),
+    trainingPlace: String(t.trainingPlace || ''), trainingCourse: String(t.trainingCourse || ''),
     unitsSelf: String(t.unitsSelf || '').replace(/^'/, ''),
     subjects: teacherSubjects_(t),
     matalGroup: matalGroup_(t)
@@ -6704,6 +6717,7 @@ function teacherTraining(p) {
   }
   // המורה ענה/תה בעצמו/ה "לא עברתי" — אישור המדריכה הקודם כבר לא תקף
   if (status === 'none' && t.trainingApprovedBy) fields.trainingApprovedBy = '';
+  if (status === 'none' && t.trainingBy) Object.assign(fields, { trainingPlace: '', trainingCourse: '', trainingBy: '', trainingPrev: '' });
   const derived = unitsList ? unitsFromSelf_(unitsList) : '';
   trainingSiblings_(t).forEach(x => {
     const f = Object.assign({}, fields);
@@ -6742,11 +6756,12 @@ function trainingFiles(p) {
   }
   const out = {};
   readAll('teachers').forEach(t => {
-    if (!t.trainingFile && !t.trainingNote) return;
+    if (!t.trainingFile && !t.trainingNote && !t.trainingPlace && !t.trainingCourse) return;
     if (schools && schools.indexOf(String(t.school)) < 0) return;
     // note (29.9.26): הערת המורה על האישור — גם כשאין קובץ. url ריק = אין קובץ.
     out[String(t.id)] = { url: String(t.trainingFile || ''), name: String(t.trainingFileName || ''),
-      note: String(t.trainingNote || '') };
+      note: String(t.trainingNote || ''),
+      place: String(t.trainingPlace || ''), course: String(t.trainingCourse || '') };
   });
   return { ok: true, data: out };
 }
@@ -6792,6 +6807,46 @@ function trainingApprove(p) {
   const n = s => rows.filter(r => r.status === s).length;
   return { ok: true, data: { dryRun: dryRun, by: by, approve: n('approve'), already: n('already'),
     notFound: n('not_found'), duplicate: n('duplicate'), rows: rows } };
+}
+
+/* guide.training.record — { guide, k|ge, id, place, course } (2.11.26, מיטל)
+   המדריכה האחראית על ההשתלמויות (trainingScope:'subject', היום רק אילנה) מתעדת לאן המורה
+   נרשם/ה ואת שם ההשתלמות. מי שעוד לא עבר/ה עובר/ת ל"נרשם/ה" ונספר/ת "עם אישור" (trainingApprovedBy),
+   ולכן לא מתבקש/ת עוד לצרף אישור. שני השדות ריקים = ביטול, והסטטוס חוזר למה שהיה לפני התיעוד.
+   נכתב לכל שורות אותו אדם באותו מקצוע ובית ספר. */
+function guideTrainingRecord(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const g = (remindWin_(true).TS_GUIDES || {})[slug];
+  if (!g || g.trainingScope !== 'subject') return { ok: false, error: 'forbidden' };
+  const t = readAll('teachers').find(x => String(x.id) === String(p.id));
+  if (!t) return { ok: false, error: 'not_found' };
+  const subs = g.subjects && g.subjects.length ? g.subjects : [g.subject];
+  if (subs.indexOf(String(t.subject || '').trim()) < 0 || (g.sectors && g.sectors.indexOf(t.sector || 'kelali') < 0)) return { ok: false, error: 'forbidden' };
+  // גרש מוביל — טקסט שמתחיל ב-= לא ייכתב לגיליון כנוסחה
+  const clean = v => { const c = String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, 160); return /^[=+\-@]/.test(c) ? "'" + c : c; };
+  const place = clean(p.place), course = clean(p.course);
+  const by = 'תועד על ידי ' + g.name;
+  const had = !!String(t.trainingBy || '');
+  const st = String(t.trainingStatus || '');
+  const fields = {};
+  if (!place && !course) {
+    if (!had) return { ok: true, data: { trainingStatus: st, trainingApprovedBy: String(t.trainingApprovedBy || ''), place: '', course: '' } };
+    Object.assign(fields, { trainingPlace: '', trainingCourse: '', trainingBy: '', trainingPrev: '', trainingStatus: String(t.trainingPrev || '') });
+    if (String(t.trainingApprovedBy || '') === by) fields.trainingApprovedBy = '';
+  } else {
+    Object.assign(fields, { trainingPlace: place, trainingCourse: course, trainingBy: g.name });
+    if (!had) fields.trainingPrev = st;
+    if (st !== 'passed') fields.trainingStatus = 'registered';
+    if (!t.trainingFile && !t.trainingApprovedBy) fields.trainingApprovedBy = by;
+    if (st !== 'passed' && st !== 'registered') fields.trainingAt = new Date().toISOString();
+  }
+  ensureTab_('teachers');   // העמודות החדשות — updateRowById מדלג בשקט על עמודה שאין
+  trainingSiblings_(t).forEach(x => updateRowById('teachers', x.id, fields));
+  return { ok: true, data: {
+    trainingStatus: fields.trainingStatus !== undefined ? fields.trainingStatus : st,
+    trainingApprovedBy: fields.trainingApprovedBy !== undefined ? fields.trainingApprovedBy : String(t.trainingApprovedBy || ''),
+    place: place.replace(/^'/, ''), course: course.replace(/^'/, '') } };
 }
 
 /* teacher.here — "אני כאן" מתוך מבט המורה (21.9.26).
@@ -7979,6 +8034,80 @@ function guideFileLink(p) {
   return { ok: true, data: { id: obj.id } };
 }
 
+/* תת-תיקיות ושינוי שם במאגר (2.11.26, מיטל). תיקייה קיימת כי קובץ נושא אותה, ולכן
+   תיקייה ריקה נשמרת כשורה kind='folder' בלי קובץ. guide.workspace מחזיר אותן ב-folders. */
+function guideFolderPaths_(slug) {
+  return readAll('guide_files').filter(f => String(f.guideSlug) === slug && String(f.source) !== 'drive-folder')
+    .map(f => ({ id: String(f.id), kind: String(f.kind || ''), path: guideFolderName_(f.folder) }));
+}
+function guideFolderInTree_(path, root) { return path === root || path.indexOf(root + ' / ') === 0; }
+function guideFolderPart_(v) { return String(v == null ? '' : v).replace(/\//g, '-').replace(/\s+/g, ' ').trim().slice(0, 60); }
+// "כללי" ותיקיות המפגשים נגזרות אוטומטית — אי אפשר לקרוא להן אחרת או ליצור כאלה ברמה העליונה
+function guideFolderReserved_(path) { return path === 'כללי' || /^מפגש \d/.test(path); }
+
+function guideFolderAdd(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const name = guideFolderPart_(p.name);
+  if (!name) return { ok: false, error: 'bad_name' };
+  const parent = guideFolderName_(p.parent);
+  if (parent && parent.split(' / ').length >= 3) return { ok: false, error: 'too_deep' };
+  if (!parent && guideFolderReserved_(name)) return { ok: false, error: 'reserved' };
+  const path = parent ? parent + ' / ' + name : name;
+  ensureTab_('guide_files');
+  if (guideFolderPaths_(slug).some(f => guideFolderInTree_(f.path, path))) return { ok: false, error: 'exists' };
+  appendRow('guide_files', {
+    id: newId('gf'), guideSlug: slug, guideName: String(p.guideName || '').slice(0, 80), fileName: name,
+    createdAt: new Date().toISOString(), uploaderRole: 'guide', folder: guideFolderCell_(path), kind: 'folder', source: 'folder'
+  });
+  return { ok: true, data: { folder: path } };
+}
+
+function guideFolderRename(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const from = guideFolderName_(p.from);
+  const name = guideFolderPart_(p.name);
+  if (!from || !name) return { ok: false, error: 'bad_name' };
+  const parts = from.split(' / ');
+  if (parts.length === 1 && guideFolderReserved_(from)) return { ok: false, error: 'reserved' };
+  if (parts.length === 1 && guideFolderReserved_(name)) return { ok: false, error: 'reserved' };
+  const to = parts.slice(0, -1).concat([name]).join(' / ');
+  if (to === from) return { ok: true, data: { folder: to, moved: 0 } };
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(20000)) return { ok: false, error: 'busy' };
+  try {
+    const paths = guideFolderPaths_(slug);
+    if (paths.some(f => guideFolderInTree_(f.path, to))) return { ok: false, error: 'exists' };
+    const hit = {};
+    paths.forEach(f => { if (guideFolderInTree_(f.path, from)) hit[f.id] = to + f.path.slice(from.length); });
+    const moved = Object.keys(hit).length;
+    if (!moved) return { ok: false, error: 'not_found' };
+    ensureTab_('guide_files');
+    const sh = sheet('guide_files');
+    const range = sh.getDataRange().getValues();
+    const idCol = range[0].indexOf('id'), folderCol = range[0].indexOf('folder');
+    for (let i = 1; i < range.length; i++) {
+      const next = hit[String(range[i][idCol])];
+      if (next) sh.getRange(i + 1, folderCol + 1).setValue(guideFolderCell_(next));
+    }
+    return { ok: true, data: { folder: to, moved: moved } };
+  } finally { lock.releaseLock(); }
+}
+
+// רק תיקייה בלי קבצים: קובץ לא נמחק מכאן אף פעם
+function guideFolderDelete(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const folder = guideFolderName_(p.folder);
+  if (!folder) return { ok: false, error: 'bad_name' };
+  const tree = guideFolderPaths_(slug).filter(f => guideFolderInTree_(f.path, folder));
+  if (!tree.length) return { ok: false, error: 'not_found' };
+  if (tree.some(f => f.kind !== 'folder')) return { ok: false, error: 'not_empty' };
+  tree.forEach(f => deleteRowById_('guide_files', f.id));
+  return { ok: true, data: { folder: folder } };
+}
+
 function guideFileMove(p) {
   const slug = meetAuthGuide_(p);
   if (!slug) return { ok: false, error: 'bad_key' };
@@ -8043,7 +8172,7 @@ function siteMaterialRows_() {
   const guides = remindWin_(true).TS_GUIDES || {};
   const out = [];
   readAll('guide_files').forEach(f => {
-    if (String(f.uploaderRole || '') === 'inspector' || String(f.source || '') === 'drive-folder') return;
+    if (String(f.uploaderRole || '') === 'inspector' || String(f.source || '') === 'drive-folder' || String(f.kind) === 'folder') return;
     const slug = String(f.guideSlug || '');
     const g = guides[slug];
     if (!g) return;
@@ -8452,7 +8581,8 @@ function guideContacts(p) {
   return { ok: true, data: guideRoster_(win, slug, '').map(t => ({
     id: String(t.id), name: String(t.name || ''), schoolName: String(t.schoolName || ''),
     subject: String(t.subject || ''), type: String(t.type || ''),
-    email: String(t.email || '').trim(), phone: String(t.phone || '').trim()
+    email: String(t.email || '').trim(), phone: String(t.phone || '').trim(),
+    trainingStatus: String(t.trainingStatus || ''), trainingPlace: String(t.trainingPlace || ''), trainingCourse: String(t.trainingCourse || '')
   })) };
 }
 

@@ -58,8 +58,8 @@
 
 <script src="../assets/app.js?v=20260929r"></script>
 <script src="../assets/guides.js?v=20261008a"></script>
-<script src="../assets/training.js?v=20261012a"></script>
-<script src="../assets/training-report.js?v=20261012a"></script>
+<script src="../assets/training.js?v=20261102a"></script>
+<script src="../assets/training-report.js?v=20261102a"></script>
 <script>
 (async function () {
   /* דף ההשתלמות של המדריכ/ה (28.9.26) — אותם מורים כמו ב"המורים שלי" בדשבורד */
@@ -97,7 +97,25 @@
     return o && TS_guideSubjects(o).some(function (s) { return subs.indexOf(s) >= 0; }) &&
       (o.sectors || []).some(function (s) { return (g.sectors || []).indexOf(s) >= 0; });
   }) : null;
-  TS_trainingReport.render(root, { rows: rows, files: files, guides: peers });
+  /* תיעוד הרשמה (2.11.26, מיטל) — רק אצל המדריכה האחראית על ההשתלמויות; השרת מוודא גם הוא.
+     אותה הרשאה כמו במאגר החומרים: מפתח מהקישור/מהמכשיר, מייל המדריכ/ה, או מפתח שמטה מקבל/ת. */
+  var record = null;
+  if (wide) {
+    var authKey = qs.get('k') || '';
+    try { authKey = authKey || localStorage.getItem('ts.meet.k.' + g.slug) || ''; } catch (e) { /* בלי זיכרון */ }
+    var authMail = g.email || qs.get('guide') || '';
+    if (!authKey && !authMail && window.TS_staff && TS_staff.get) {
+      var st = TS_staff.get();
+      if (st && st.k && (st.roles || []).some(function (r) { return r.role === 'ministry'; })) {
+        var km = await TS.api('staff.guideKeys', { k: st.k, slugs: g.slug }, { cache: 'no' });
+        authKey = (km && km.ok && km.data && km.data[g.slug]) || '';
+      }
+    }
+    record = function (id, place, course) {
+      return TS.apiPost('guide.training.record', { guide: g.slug, k: authKey, ge: authMail, id: id, place: place, course: course });
+    };
+  }
+  TS_trainingReport.render(root, { rows: rows, files: files, guides: peers, record: record });
 })();
 </script>
 </body>

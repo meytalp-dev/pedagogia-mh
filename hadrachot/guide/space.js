@@ -32,6 +32,9 @@
     // מאגר החומרים — עמוד נפרד (28.9.26); הכפתור בראש הדף שומר את הקישור האישי
     const lib = document.getElementById('go-library');
     if (lib) lib.href = 'maagar.html' + location.search;
+    // דף ההשתלמות בראש המבט של המדריכה האחראית על ההשתלמויות (אילנה, 2.11.26)
+    const hish = document.getElementById('go-hishtalmut');
+    if (hish && GUIDE_CFG.trainingScope === 'subject') { hish.href = 'hishtalmut.html' + location.search; hish.hidden = false; }
     // "אלפון המורים" בראש הדף — גולל לכרטיס ופותח את האלפון
     const alph = document.getElementById('go-alphon');
     if (alph) alph.addEventListener('click', e => {
@@ -313,17 +316,30 @@
     renderMail();
   }
   window.SPACE_onAuth = loadContacts;
+  /* עמודת "השתלמות" באלפון (2.11.26, מיטל) — סטטוס + שם ההשתלמות ולאן נרשם/ה.
+     מת"ליות ורכזים חברתיים לא נשאלים על השתלמות, ואצלם אין עמודה. */
+  const NO_TRAINING_SUBJECTS = ['מת"ל', 'רכז.ת חברתי.ת'];
+  const alphonHasTraining = () => !(window.TS_guideSubjects ? window.TS_guideSubjects(GUIDE_CFG) : [GUIDE_CFG.subject])
+    .every(s => NO_TRAINING_SUBJECTS.indexOf(s) >= 0);
+  function trainingLabel(t) {
+    const LABEL = { passed: 'עבר/ה', registered: 'נרשם/ה', none: 'לא עבר/ה ולא נרשם/ה' };
+    const st = String(t.trainingStatus || '');
+    const where = st === 'none' ? '' : [t.trainingCourse, t.trainingPlace].filter(Boolean).join(' · ');
+    return (LABEL[st] || 'טרם ענה/תה') + (where ? ': ' + where : '');
+  }
   function mailInfo(schools) {
     const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
     const base = ((typeof myTeachers === 'function') ? myTeachers() : myRoster())
       .filter(t => !schools || schools.indexOf(norm(t.schoolName)) >= 0);
-    const all = CONTACTS ? base.map(t => Object.assign({}, t, { email: (CONTACTS[String(t.id)] || {}).email || '', phone: (CONTACTS[String(t.id)] || {}).phone || '' })) : base;
+    const all = CONTACTS ? base.map(t => Object.assign({}, t, CONTACTS[String(t.id)] || { email: '', phone: '' })) : base;
     const okMail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || '').trim());
     const people = {}, list = [];
     all.forEach(t => {
       const k = String(t.name || '').replace(/\s+/g, ' ').trim().toLowerCase() + '|' + String(t.schoolName || '').trim().toLowerCase();
       let p = people[k];
-      if (!p) { p = people[k] = { name: t.name || '', school: t.schoolName || '', email: '', phone: '', tracks: [] }; list.push(p); }
+      if (!p) { p = people[k] = { name: t.name || '', school: t.schoolName || '', email: '', phone: '', tracks: [], training: [] }; list.push(p); }
+      const tl = trainingLabel(t);
+      if (p.training.indexOf(tl) < 0) p.training.push(tl);
       if (!p.email && okMail(t.email)) p.email = String(t.email).trim().toLowerCase();
       if (!p.phone && t.phone) p.phone = String(t.phone).trim();
       const tr = t.type === 'gemer' ? 'גמר' : 'בגרות';
@@ -372,8 +388,8 @@
         <summary style="color:var(--text);">אלפון המורים (${info.all.length})</summary>
         <div class="rep-wrap" style="max-height:340px;overflow:auto;margin-bottom:10px;">
           <table class="rep-table"><tbody>
-            <tr><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th></tr>
-            ${info.all.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.school)}</td><td dir="ltr">${p.phone ? `<a href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">${esc(p.phone)}</a>` : '—'}</td><td dir="ltr">${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : '—'}</td></tr>`).join('')}
+            <tr><th>שם</th><th>בית ספר</th><th>טלפון</th><th>מייל</th>${alphonHasTraining() ? '<th>השתלמות</th>' : ''}</tr>
+            ${info.all.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.school)}</td><td dir="ltr">${p.phone ? `<a href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">${esc(p.phone)}</a>` : '—'}</td><td dir="ltr">${p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : '—'}</td>${alphonHasTraining() ? `<td>${esc(p.training.join(' | '))}</td>` : ''}</tr>`).join('')}
           </tbody></table>
         </div>
       </details>`;
@@ -383,8 +399,9 @@
     if (miss) miss.addEventListener('click', e => copy(missMsg, e.currentTarget));
     document.getElementById('ml-csv').addEventListener('click', () => {
       const q = v => '"' + String(v || '').replace(/"/g, '""') + '"';
-      const csv = '﻿' + ['שם,בית ספר,מסלול,טלפון,מייל'].concat(info.all.map(p =>
-        [p.name, p.school, p.tracks.join(' + '), p.phone, p.email].map(q).join(','))).join('\r\n');
+      const withTr = alphonHasTraining();
+      const csv = '﻿' + ['שם,בית ספר,מסלול,טלפון,מייל' + (withTr ? ',השתלמות' : '')].concat(info.all.map(p =>
+        [p.name, p.school, p.tracks.join(' + '), p.phone, p.email].concat(withTr ? [p.training.join(' | ')] : []).map(q).join(','))).join('\r\n');
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
       a.download = 'אלפון-מורים-' + (GUIDE_CFG.name || SLUG) + '.csv';
