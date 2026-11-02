@@ -1076,64 +1076,14 @@
           </div>
         </details>
         <details class="tool" id="tool-trainings">
-          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>ההדרכות שלי (כל המועדים) · הדרכה ידנית</span></summary>
+          <summary><svg class="mm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg><span>ההדרכות שלי (כל המועדים)</span></summary>
           <div class="tool-body">
-            <div class="te-toolbar">
-          <button class="btn btn-primary" id="btn-new-training">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            הדרכה חדשה
-          </button>
-            </div>
             <div class="card" style="padding:0;"><div id="trainings-list"><div class="empty" style="padding:24px;">טוען...</div></div></div>
           </div>
         </details>
       </div>
     </details>
   </main>
-
-<!-- New training modal -->
-<div class="modal-overlay" id="modal-training">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>הדרכה חדשה</h3>
-      <button class="modal-close" onclick="closeNewTraining()">×</button>
-    </div>
-    <form id="form-training">
-      <div class="form-grid">
-        <div class="form-row">
-          <label class="form-label">מקצוע *</label>
-          <select class="select" name="subject" id="t-subject" required>
-            <option value="">בחרי מקצוע</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label class="form-label">תאריך *</label>
-          <input type="date" class="input" name="date" id="t-date" required>
-        </div>
-        <div class="form-row">
-          <label class="form-label">מיקום</label>
-          <input class="input" name="location" placeholder='זום / בית הספר X'>
-        </div>
-        <div class="form-row">
-          <label class="form-label">שם מדריך/ה</label>
-          <input class="input" name="guideName">
-        </div>
-        <div class="form-row" style="grid-column:1/-1;">
-          <label class="form-label">מייל מדריך/ה</label>
-          <input type="email" class="input" name="guideEmail">
-        </div>
-        <div class="form-row" style="grid-column:1/-1;">
-          <label class="form-label">הערות</label>
-          <textarea class="textarea" name="notes" placeholder="נושאים, חומרים..."></textarea>
-        </div>
-      </div>
-      <div class="btn-row" style="margin-top:16px;">
-        <button type="submit" class="btn btn-primary">צרי הדרכה</button>
-        <button type="button" class="btn btn-secondary" onclick="closeNewTraining()">ביטול</button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <!-- שינוי מועד מפגש (13.10.26) — dashboard.js → openPlanMove -->
 <div class="modal-overlay" id="modal-plan-move">
@@ -1292,7 +1242,7 @@
 <script src="../assets/plan-changes.js"></script>
 <script src="../assets/meet-stats.js?v=20260928a"></script>
 <script src="../assets/training.js?v=20261012a"></script>
-<script src="dashboard.js?v=20261102a"></script>
+<script src="dashboard.js?v=20261102b"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
 <script src="space.js?v=20261025a"></script>
 <script src="meetings.js?v=20261102a"></script>

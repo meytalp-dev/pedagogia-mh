@@ -82,7 +82,6 @@ function renderViewSwitch() {
 document.addEventListener('DOMContentLoaded', async () => {
   renderViewSwitch();
   bindTabs();
-  document.getElementById('btn-new-training').addEventListener('click', openNewTraining);
   // פעולות מהירות בראש הדף — פותחות את הכלי המקופל שלו וגוללות אליו
   document.querySelectorAll('.gq[data-tool]').forEach(b => b.addEventListener('click', () => {
     const tool = document.getElementById(b.dataset.tool);
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   const qAdd = document.querySelector('.gq[data-add-teacher]');
   if (qAdd) qAdd.addEventListener('click', () => { const b = document.getElementById('btn-add-teacher'); if (b) b.click(); });
-  document.getElementById('form-training').addEventListener('submit', submitTraining);
   document.getElementById('teacher-search').addEventListener('input', renderTeachers);
   document.getElementById('teacher-school').addEventListener('change', renderTeachers);
   const addBtn = document.getElementById('btn-add-teacher');
@@ -1656,35 +1654,3 @@ async function teacherLanded(data) {
     (t.type === 'gemer' ? 'gemer' : 'bagrut') === type);
 }
 
-function openNewTraining() {
-  document.getElementById('form-training').reset();
-  document.getElementById('t-date').value = new Date().toISOString().slice(0,10);
-  populateSubjects('t-subject');
-  document.getElementById('modal-training').classList.add('open');
-}
-function closeNewTraining() {
-  document.getElementById('modal-training').classList.remove('open');
-}
-function populateSubjects(id) {
-  const sel = document.getElementById(id);
-  if (sel.options.length > 1) return;
-  TS.SUBJECTS.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s; opt.textContent = s;   // דרך ה-DOM — הגרשיים של תנ"ך לא שוברות attribute
-    sel.appendChild(opt);
-  });
-}
-
-async function submitTraining(e) {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const data = Object.fromEntries(fd);
-  const res = await TS.apiPost('training.create', data);
-  if (res.ok) {
-    TS.toast('ההדרכה נוצרה');
-    closeNewTraining();
-    await loadData();
-  } else {
-    TS.toast('שגיאה');
-  }
-}
