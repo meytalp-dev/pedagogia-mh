@@ -1005,6 +1005,8 @@ window.TS_meetingSlots = function (m) {
    שינוי: { g: slug, m: date המקורי של המפגש, f/fs: המועד המקורי (תאריך, שעה),
             t/ts: המועד החדש }. מועד מזוהה תמיד לפי המקור, גם אחרי כמה הזזות.
    שינוי שהמועד המקורי שלו כבר לא קיים בקובץ (מיטל ערכה ידנית) — לא חל.
+   מפגש נוסף (2.11.26): { add: 1, i: מזהה, tp: נושא, sb: מקצוע, t/ts: המועד } — מתווסף לתוכנית
+   של המדריכ/ה כמפגש רגיל עם added: true.
    ============================================================ */
 window.TS_applyPlanChanges = function (list) {
   const plans = window.TS_PLANS || {};
@@ -1014,8 +1016,12 @@ window.TS_applyPlanChanges = function (list) {
   const mins = t => { const p = String(t).split(':').map(Number); return p[0] * 60 + p[1]; };
   const hhmm = n => String(Math.floor(n / 60) % 24).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
   const pad = t => (String(t).length === 4 ? '0' : '') + t;
-  const byMeeting = {};
+  const byMeeting = {}, adds = [];
   (Array.isArray(list) ? list : []).forEach(c => {
+    if (c && c.add) {
+      if (plans[c.g] && /^\d{4}-\d{2}-\d{2}$/.test(c.t) && /^\d{1,2}:\d{2}$/.test(c.ts)) adds.push(c);
+      return;
+    }
     if (!c || !plans[c.g] || !/^\d{4}-\d{2}-\d{2}$/.test(c.f) || !/^\d{4}-\d{2}-\d{2}$/.test(c.t) ||
         !/^\d{1,2}:\d{2}$/.test(c.fs) || !/^\d{1,2}:\d{2}$/.test(c.ts)) return;
     (byMeeting[c.g + '|' + c.m] = byMeeting[c.g + '|' + c.m] || []).push(c);
@@ -1023,6 +1029,7 @@ window.TS_applyPlanChanges = function (list) {
   Object.keys(plans).forEach(slug => {
     const plan = plans[slug];
     if (!plan || !Array.isArray(plan.meetings)) return;
+    plan.meetings = plan.meetings.filter(m => !m.added);   // החלה חוזרת — המפגשים הנוספים נבנים מחדש למטה
     let touched = false;
     plan.meetings.forEach((cur, i) => {
       const orig = cur.__orig || cur;           // החלה חוזרת (דף המדריכה אחרי שמירה) — תמיד מהמקור
@@ -1069,6 +1076,18 @@ window.TS_applyPlanChanges = function (list) {
       touched = true;
     });
     if (touched) plan.meetings.sort((a, b) => a.date.localeCompare(b.date));
+  });
+  const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  adds.forEach(c => {
+    const plan = plans[c.g];
+    if (!Array.isArray(plan.meetings)) return;
+    const start = pad(c.ts);
+    plan.meetings.push({
+      date: c.t, label: dm(c.t) + '.' + c.t.slice(2, 4), day: wd(c.t), month: MONTHS[+c.t.slice(5, 7) - 1], time: start,
+      subject: c.sb || '', topic: String(c.tp || '').replace(/[<>]/g, '') || 'מפגש הדרכה', note: 'מפגש נוסף',
+      added: true, addId: c.i || '', slots: [{ date: c.t, start: start, part: '', of: c.t, ofs: start, added: true }]
+    });
+    plan.meetings.sort((a, b) => a.date.localeCompare(b.date));
   });
   window.TS_PLAN_CHANGES_APPLIED = list || [];
 };

@@ -1141,6 +1141,14 @@ function planSlotsHtml(m) {
   const chips = slots.map(s => {
     const future = (s.date + ' ' + s.start) > now;
     const txt = (s.part ? s.part + ' · ' : '') + 'יום ' + planWd(s.date) + ' ' + planDm(s.date) + ' · ' + s.start;
+    // מפגש נוסף — לא בתוכנית, ולכן משנים או מבטלים אותו בחלונית שלו
+    if (s.added) {
+      const edit = future
+        ? `<button type="button" class="plan-move-btn plan-add-edit" data-id="${escapeHtml(m.addId || '')}" data-date="${escapeHtml(s.date)}" data-start="${escapeHtml(s.start)}"
+             data-topic="${escapeHtml(m.topic || '')}" data-subject="${escapeHtml(m.subject || '')}">${ICON_MOVE}שינוי או ביטול</button>`
+        : '';
+      return `<span class="plan-slot moved${future ? '' : ' done'}"><bdi>${escapeHtml(txt)}</bdi><em>נוסף</em>${edit}</span>`;
+    }
     const btn = future
       ? `<button type="button" class="plan-move-btn" data-md="${escapeHtml(md)}" data-of="${escapeHtml(s.of || s.date)}" data-ofs="${escapeHtml(s.ofs || s.start)}"
            data-cd="${escapeHtml(s.date)}" data-cs="${escapeHtml(s.start)}" data-part="${escapeHtml(s.part || '')}" data-topic="${escapeHtml(m.topic || '')}"
@@ -1171,6 +1179,8 @@ function setPlanChanges(mine) {
 
 let planMoveCur = null;
 document.addEventListener('click', e => {
+  const edit = e.target.closest('.plan-add-edit');
+  if (edit) { openPlanAdd(edit.dataset); return; }
   const b = e.target.closest('.plan-move-btn');
   if (b) openPlanMove(b.dataset);
 });
@@ -1247,6 +1257,95 @@ async function submitPlanMove(back) {
     t.textContent = res.data && res.data.unchanged ? 'לא היה מה לשנות — המועד נשאר כמו שהוא.'
       : back ? 'המועד חזר למקור. מיטל קיבלה הודעה, ומורי הקבוצה יקבלו מייל בעוד כמה דקות.'
       : 'המועד עודכן. מיטל קיבלה הודעה, ומורי הקבוצה יקבלו מייל על השינוי בעוד כמה דקות.';
+    t.hidden = false;
+    clearTimeout(t._h);
+    t._h = setTimeout(() => { t.hidden = true; }, 9000);
+  }
+}
+
+/* ============================================================
+   מפגש נוסף עתידי בידי המדריכ/ה (2.11.26, מיטל)
+   חלונית: תאריך, שעה, נושא (ומקצוע, למי שמדריך/ה בכמה מקצועות). code.gs → planAdd.
+   עם d = תיקון או ביטול של מפגש נוסף קיים.
+   ============================================================ */
+let planAddId = '';
+function openPlanAdd(d) {
+  d = d || {};
+  planAddId = d.id || '';
+  const box = document.getElementById('modal-plan-add');
+  if (!box) return;
+  document.getElementById('pa-title').textContent = planAddId ? 'שינוי מפגש נוסף' : 'קביעת מפגש עתידי';
+  document.getElementById('pa-cancel').hidden = !planAddId;
+  document.getElementById('pa-date').min = planNowKey().slice(0, 10);
+  document.getElementById('pa-date').value = d.date || '';
+  document.getElementById('pa-time').value = d.start || '';
+  document.getElementById('pa-topic').value = d.topic || '';
+  const subs = ((window.TS_GUIDES || {})[guideSlug] || {}).subjects || [];
+  const row = document.getElementById('pa-subject-row');
+  const sel = document.getElementById('pa-subject');
+  row.hidden = subs.length < 2;
+  sel.innerHTML = '<option value="">כל המקצועות</option>';
+  subs.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+  sel.value = d.subject || '';
+  planAddMsg('', '');
+  box.classList.add('open');
+  setTimeout(() => document.getElementById('pa-date').focus(), 30);
+}
+function closePlanAdd() {
+  const box = document.getElementById('modal-plan-add');
+  if (box) box.classList.remove('open');
+  planAddId = '';
+}
+function planAddMsg(text, kind) {
+  const el = document.getElementById('pa-msg');
+  el.textContent = text;
+  el.className = 'pm-msg' + (kind ? ' ' + kind : '');
+  el.hidden = !text;
+}
+const PLAN_ADD_ERR = Object.assign({}, PLAN_MOVE_ERR, {
+  past: 'המפגש כבר התחיל או עבר, ולכן אי אפשר לשנות או לבטל אותו.',
+  to_past: 'המועד כבר עבר. צריך לבחור תאריך ושעה עתידיים.',
+  to_far: 'אפשר לקבוע מפגש עד סוף שנת הלימודים (31.8.27).',
+  same_day: 'כבר יש מפגש בתאריך הזה. אם זה אותו מפגש, אפשר לשנות אותו ב"תוכנית שנתית". אחרת צריך לבחור תאריך אחר.',
+  no_meeting: 'המפגש לא נמצא. כדאי לרענן את הדף ולנסות שוב.',
+  no_plan: 'אין עדיין תוכנית שנתית לקבוצה הזו, ולכן אי אפשר לקבוע בה מפגש. אפשר לפנות למיטל.'
+});
+async function submitPlanAdd(cancel) {
+  const date = document.getElementById('pa-date').value;
+  const time = document.getElementById('pa-time').value;
+  if (!cancel) {
+    if (!date || !time) { planAddMsg(PLAN_ADD_ERR.bad_date, 'err'); return; }
+    if ((date + ' ' + time) <= planNowKey()) { planAddMsg(PLAN_ADD_ERR.to_past, 'err'); return; }
+  }
+  const auth = typeof window.GUIDE_AUTH === 'function' ? window.GUIDE_AUTH() : { guide: guideSlug };
+  const btns = document.querySelectorAll('#modal-plan-add button');
+  btns.forEach(x => { x.disabled = true; });
+  planAddMsg('שמירה…', '');
+  let res = null;
+  try {
+    res = await TS.apiPost('plan.add', Object.assign({}, auth, {
+      id: planAddId, date: cancel ? '' : date, start: cancel ? '' : time, cancel: cancel ? 1 : '',
+      topic: document.getElementById('pa-topic').value.trim(),
+      subject: document.getElementById('pa-subject').value
+    }));
+  } catch (e) { res = null; }
+  btns.forEach(x => { x.disabled = false; });
+  if (!res || !res.ok) {
+    planAddMsg(PLAN_ADD_ERR[res && res.error] || 'השמירה לא הצליחה. כדאי לרענן את הדף ולבדוק ב"תוכנית שנתית" אם המפגש נשמר, לפני שמנסים שוב.', 'err');
+    return;
+  }
+  if (res.data && Array.isArray(res.data.changes)) setPlanChanges(res.data.changes);
+  closePlanAdd();
+  const msg = cancel ? 'המפגש בוטל. מיטל קיבלה הודעה, ואם המורים כבר שמעו עליו הם יקבלו מייל בעוד כמה דקות.'
+    : 'המפגש נשמר בתוכנית. מיטל קיבלה הודעה, ומורי הקבוצה יקבלו מייל בעוד כמה דקות.';
+  TS.toast(msg);
+  const t = document.getElementById('plan-saved');
+  if (t) {
+    t.textContent = msg;
     t.hidden = false;
     clearTimeout(t._h);
     t._h = setTimeout(() => { t.hidden = true; }, 9000);

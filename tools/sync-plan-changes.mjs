@@ -33,7 +33,12 @@ if (!body) { console.warn('sync-plan-changes: השרת לא ענה — הקוב�
 const D = /^\d{4}-\d{2}-\d{2}$/, T = /^\d{2}:\d{2}$/, S = /^[a-z0-9_-]{1,40}$/i;
 const list = body.data.changes
   .filter(c => c && S.test(c.g) && D.test(c.m) && D.test(c.f) && T.test(c.fs) && D.test(c.t) && T.test(c.ts))
-  .map(c => ({ g: c.g, m: c.m, f: c.f, fs: c.fs, t: c.t, ts: c.ts }))
+  .map(c => {
+    const o = { g: c.g, m: c.m, f: c.f, fs: c.fs, t: c.t, ts: c.ts };
+    // מפגש נוסף (2.11.26) — הנושא נכתב בידי המדריכ/ה ומגיע לדפים ציבוריים: בלי תגיות
+    if (c.add) Object.assign(o, { add: 1, i: String(c.i || ''), tp: String(c.tp || '').replace(/[<>`]/g, '').slice(0, 200), sb: String(c.sb || '').replace(/[<>`]/g, '') });
+    return o;
+  })
   .sort((a, b) => (a.g + a.m + a.f + a.fs).localeCompare(b.g + b.m + b.f + b.fs));
 
 const old = readFileSync(OUT, 'utf8');

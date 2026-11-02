@@ -123,6 +123,16 @@ if (!tables.length) fail('לא נמצאה אף טבלה מסומנת ב-' + PAGE
   const hhmm = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
   const starts = s => (s.match(/(^|[^–\-\d:])\d{1,2}:\d{2}/g) || []).map(x => x.replace(/^[^\d]/, ''));
   for (const c of changes) {
+    // מפגש נוסף (2.11.26) — שורה חדשה בטבלה של המדריכ/ה, לפי השורה הראשונה שלה
+    if (c.add) {
+      const t = tables.find(x => x.ta['data-guide'] === c.g);
+      if (t && t.rows.length) {
+        const r0 = t.rows[0], title = c.tp || 'מפגש נוסף';
+        t.rows.push(Object.assign({}, r0, { p: { date: c.t }, h: { start: c.ts, end: '' }, title, txt: c.ts,
+          ra: Object.assign({}, r0.ra, { 'data-g': title, 'data-gs': '' }) }));
+      }
+      continue;
+    }
     for (const t of tables) {
       if (t.ta['data-guide'] !== c.g) continue;
       const add = [];

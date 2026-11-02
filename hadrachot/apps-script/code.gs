@@ -110,7 +110,9 @@ const SCHEMA = {
   // status: active · cancelled (חזר למקור) · notifyState: pending · sent · skip — מייל למורי הקבוצה.
   // lastToldDate/Start — המועד שהמורים יודעים עליו (מהמייל האחרון), כדי שהמייל הבא יאמר "מ-… ל-…"
   plan_changes:       ['id','guideSlug','mdate','fromDate','fromStart','toDate','toStart','reason','status',
-                       'createdAt','updatedAt','notifyState','notifiedAt','notifiedCount','lastToldDate','lastToldStart'],
+                       'createdAt','updatedAt','notifyState','notifiedAt','notifiedCount','lastToldDate','lastToldStart',
+                       // מפגש נוסף בידי המדריכ/ה (2.11.26) — kind=add: שורה למפגש שלא בתוכנית, המועד ב-toDate/toStart
+                       'kind','topic','subject'],
   // שיבוץ לשעות פרטניות (20.10.26) — שורה לכל מועד שהמדריכ/ה פרסמ/ה. status: open · booked
   // until = היום האחרון לשיבוץ · track = bagrut|gemer · bookedBy = teacher|guide
   guide_slots:        ['id','guideSlug','date','start','until','status','teacherId','teacherName','schoolName',
@@ -321,8 +323,8 @@ const PUBLIC_ACTIONS = new Set([
   'teachers.matalSetup', 'teachers.matalLinks',
   // "כבר עניתי בערוץ אחר" (12.10.26) — מפתח מדריכ/ה (meetAuthGuide_) + שאלה של מורה מהקבוצה, בפנים
   'questions.close', 'questions.reopen',
-  // שינוי מועד (13.10.26) — changes: מועדים בלבד, בלי סיבה ובלי שמות · move: מפתח מדריכ/ה (meetAuthGuide_) בפנים
-  'plan.changes', 'plan.move',
+  // שינוי מועד (13.10.26) — changes: מועדים בלבד, בלי סיבה ובלי שמות · move/add: מפתח מדריכ/ה (meetAuthGuide_) בפנים
+  'plan.changes', 'plan.move', 'plan.add',
   // שיבוץ לשעות פרטניות (20.10.26) — guide/add/remove: מפתח מדריכ/ה (meetAuthGuide_) · teacher/book/cancel: מפתח המורה (k)
   'slots.guide', 'slots.add', 'slots.remove', 'slots.teacher', 'slots.book', 'slots.cancel',
   // חומרי למידה מהמדריכים באתר (20.10.26) — רק קבצים שמיטל אישרה: שם, קישור צפייה, תיקייה, מדריכ/ה
@@ -1209,6 +1211,7 @@ function handleRequest(params) {
       case 'meet.approve':        result = meetApprove(params); break;
       case 'plan.changes':        result = planChanges(params); break;
       case 'plan.move':           result = planMove(params); break;
+      case 'plan.add':            result = planAdd(params); break;
 
       // פתיחת הקישור האישי (16.9.26)
       case 'link.seen':           result = linkSeen(params); break;
@@ -8835,11 +8838,16 @@ function planChangeRows_() {
 }
 
 // [{ g, m, f, fs, t, ts }] — מה ש-TS_applyPlanChanges מקבל. בלי סיבה ובלי שמות.
+// מפגש נוסף: גם add=1, i (מזהה השורה), tp (נושא), sb (מקצוע)
 function planChangesActive_() {
-  return planChangeRows_().filter(r => String(r.status) === 'active').map(r => ({
-    g: String(r.guideSlug), m: meetDate_(r.mdate), f: meetDate_(r.fromDate), fs: planTime_(r.fromStart),
-    t: meetDate_(r.toDate), ts: planTime_(r.toStart)
-  })).filter(c => c.g && c.m && c.f && c.fs && c.t && c.ts)
+  return planChangeRows_().filter(r => String(r.status) === 'active').map(r => {
+    const c = {
+      g: String(r.guideSlug), m: meetDate_(r.mdate), f: meetDate_(r.fromDate), fs: planTime_(r.fromStart),
+      t: meetDate_(r.toDate), ts: planTime_(r.toStart)
+    };
+    if (String(r.kind) !== 'add') return c;
+    return Object.assign(c, { m: c.t, f: c.t, fs: c.ts, add: 1, i: String(r.id), tp: String(r.topic || ''), sb: String(r.subject || '') });
+  }).filter(c => c.g && c.m && c.f && c.fs && c.t && c.ts)
     .sort((a, b) => (a.g + a.m + a.f + a.fs).localeCompare(b.g + b.m + b.f + b.fs));
 }
 
@@ -8910,6 +8918,97 @@ function planMove(p) {
   return { ok: true, data: { changes: planChangesActive_().filter(c => c.g === slug), back: res.data.back } };
 }
 
+/* plan.add — מפגש נוסף עתידי שלא בתוכנית (2.11.26, מיטל).
+   { guide, k|ge, date, start, topic, subject } = מפגש חדש · עם id = תיקון מפגש קיים · id + cancel=1 = ביטול.
+   המפגש נכנס ל-plan_changes (kind=add), ו-TS_applyPlanChanges מוסיף אותו לתוכנית — ומשם תזכורות,
+   פתיחת רישום, דוחות, טבלאות, גאנט ויומן כמו כל מועד. מועד שכבר התחיל לא משתנה ולא מתבטל. */
+function planAdd(p) {
+  const slug = meetAuthGuide_(p);
+  if (!slug) return { ok: false, error: 'bad_key' };
+  const id = String(p.id || '').trim();
+  const cancel = String(p.cancel || '') === '1';
+  const date = meetDate_(p.date), start = planTime_(p.start);
+  if (cancel && !id) return { ok: false, error: 'no_meeting' };
+  if (!cancel && (!date || !start)) return { ok: false, error: 'bad_date' };
+  // הנושא מגיע לדפים ציבוריים ולגיליון — בלי תגיות ובלי תחילית של נוסחה
+  const topic = meetStr_(p.topic, 200).replace(/[<>`]/g, '').replace(/^[=+\-@]+/, '').trim();
+
+  const win = remindWin_();
+  const plan = (win.TS_PLANS || {})[slug];
+  if (!plan) return { ok: false, error: 'no_plan' };
+  const g = (win.TS_GUIDES || {})[slug] || {};
+  const subject = (g.subjects || []).indexOf(String(p.subject || '')) >= 0 ? String(p.subject) : '';
+  // מפגש מזוהה לפי מדריכ/ה + תאריך (meetId_) — אי אפשר שני מפגשים באותו יום
+  const taken = !cancel && (plan.meetings || []).some(m => !(m.added && m.addId === id) &&
+    (win.TS_meetingSlots(m).some(s => s.date === date) || [m.date, m.date2].concat(m.dates || []).indexOf(date) >= 0));
+  if (taken) return { ok: false, error: 'same_day' };
+
+  const res = meetWithLock_(() => {
+    const rows = planChangeRows_();
+    const row = id ? rows.find(r => String(r.id) === id && String(r.kind) === 'add' && String(r.guideSlug) === slug) : null;
+    if (id && (!row || String(row.status) !== 'active')) return { ok: false, error: 'no_meeting' };
+    const now = remindNowMinutes_();
+    const prev = row ? { date: meetDate_(row.toDate), start: planTime_(row.toStart) } : null;
+    if (prev && remindMinutes_(prev.date, prev.start) <= now) return { ok: false, error: 'past' };
+    const nowIso = new Date().toISOString();
+    const told = row && meetDate_(row.lastToldDate) ? { date: meetDate_(row.lastToldDate), start: planTime_(row.lastToldStart) } : null;
+    if (cancel) {
+      // המורים עוד לא שמעו על המפגש — אין מה לבטל אצלם
+      updateRowById('plan_changes', id, { status: 'cancelled', updatedAt: nowIso, notifyState: told ? 'pending' : 'skip' });
+      return { ok: true, data: { row: Object.assign({}, row), prev: prev } };
+    }
+    if (remindMinutes_(date, start) <= now) return { ok: false, error: 'to_past' };
+    if (date > PLAN_CHANGE_LAST_DATE) return { ok: false, error: 'to_far' };
+    if (rows.some(r => String(r.kind) === 'add' && String(r.status) === 'active' && String(r.guideSlug) === slug &&
+        String(r.id) !== id && meetDate_(r.toDate) === date)) return { ok: false, error: 'same_day' };
+    const upd = {
+      toDate: "'" + date, toStart: "'" + start, topic: topic, subject: subject, updatedAt: nowIso,
+      notifyState: told && told.date === date && told.start === start ? 'skip' : 'pending'
+    };
+    if (row) { updateRowById('plan_changes', id, upd); return { ok: true, data: { prev: prev } }; }
+    appendRow('plan_changes', Object.assign({
+      id: 'pa_' + slug + '_' + Date.now(), guideSlug: slug, kind: 'add', mdate: "'" + date, fromDate: "'" + date, fromStart: "'" + start,
+      reason: '', status: 'active', createdAt: nowIso, notifiedAt: '', notifiedCount: '', lastToldDate: '', lastToldStart: ''
+    }, upd));
+    return { ok: true, data: { prev: null } };
+  });
+  if (!res.ok) return res;
+
+  try { CacheService.getScriptCache().remove('remind_data_v4'); } catch (e) {}
+  const info = cancel
+    ? { topic: String(res.data.row.topic || ''), subject: String(res.data.row.subject || '') }
+    : { topic: topic, subject: subject };
+  const when = cancel ? res.data.prev : { date: date, start: start };
+  try { planAddMailAdmin_(g, slug, info, when, res.data.prev, cancel); }
+  catch (e) { console.error('planAdd: admin mail ' + e); }
+  auditLog_('', 'plan.add', 'guide', slug, 'ok', (cancel ? 'cancel ' : '') + when.date + ' ' + when.start);
+  return { ok: true, data: { changes: planChangesActive_().filter(c => c.g === slug), cancelled: cancel } };
+}
+
+// מייל למיטל על מפגש נוסף — מיד
+function planAddMailAdmin_(g, slug, info, when, prev, cancel) {
+  const name = g.name || slug;
+  const subject = info.subject || g.subject || (g.subjects || []).join(' + ');
+  const moved = !cancel && prev && (prev.date !== when.date || prev.start !== when.start);
+  const what = cancel ? 'ביטל/ה מפגש נוסף.' : moved ? 'שינה/תה מועד של מפגש נוסף.' : prev ? 'עדכן/ה מפגש נוסף.' : 'קבע/ה מפגש נוסף שלא בתוכנית.';
+  const title = (cancel ? 'מפגש נוסף בוטל: ' : 'מפגש נוסף: ') + subject + ' · ' + name + ' · ' + planWhen_(when.date, when.start);
+  const facts = [
+    ['מדריך/ה', name],
+    ['מקצוע', subject],
+    ['נושא המפגש', info.topic],
+    ['המועד הקודם', moved ? planWhen_(prev.date, prev.start) : ''],
+    [cancel ? 'המועד שבוטל' : 'המועד', planWhen_(when.date, when.start)]
+  ].filter(x => x[1]);
+  const html = '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a3a">' +
+    '<p style="margin:0 0 12px">מיטל, ' + remindEsc_(name) + ' ' + what + '</p>' +
+    '<table style="border-collapse:collapse;margin-bottom:14px">' + facts.map(x =>
+      '<tr><td style="padding:4px 0 4px 16px;color:#5b6b7b;white-space:nowrap;vertical-align:top">' + remindEsc_(x[0]) +
+      '</td><td style="padding:4px 0">' + remindEsc_(x[1]) + '</td></tr>').join('') + '</table>' +
+    '<p style="margin:0;font-size:12px;color:#8a97a6">דף ההדרכות המקצועיות, הגאנט ויומן המנוי מתעדכנים תוך חצי שעה. הודעה אוטומטית ממנור.</p></div>';
+  merhavMail_({ to: REMIND_TO, subject: title, htmlBody: html, name: 'מנור',
+    body: facts.map(x => x[0] + ': ' + x[1]).join('\n') });
+}
+
 // מייל למיטל על כל שינוי — מיד
 function planChangeMailAdmin_(win, slug, pm, orig, prev, next, back, reason) {
   const g = (win.TS_GUIDES || {})[slug] || {};
@@ -8947,6 +9046,7 @@ function planChangeNotifyTick_() {
   if (!due.length) return;
   const win = remindWin_();
   due.slice(0, 3).forEach(r => {
+    if (String(r.kind) === 'add') { planAddNotify_(win, r); return; }
     const id = String(r.id);
     const slug = String(r.guideSlug);
     const cur = String(r.status) === 'active'
@@ -8964,6 +9064,70 @@ function planChangeNotifyTick_() {
       updateRowById('plan_changes', id, { notifiedCount: n });
     } catch (e) { console.error('planChangeNotifyTick_: ' + id + ' ' + e); }
   });
+}
+
+// מפגש נוסף: מייל ראשון = "נקבע מפגש", אחר כך שינוי מועד או ביטול. לא שמעו ובוטל = אין מייל.
+function planAddNotify_(win, r) {
+  const id = String(r.id);
+  const active = String(r.status) === 'active';
+  const cur = { date: meetDate_(r.toDate), start: planTime_(r.toStart) };
+  const told = meetDate_(r.lastToldDate) ? { date: meetDate_(r.lastToldDate), start: planTime_(r.lastToldStart) } : null;
+  const skip = active ? !!told && told.date === cur.date && told.start === cur.start : !told;
+  // קודם מסמנים — כשל לא יציף את המורים
+  updateRowById('plan_changes', id, { notifyState: skip ? 'skip' : 'sent', notifiedAt: new Date().toISOString(),
+    lastToldDate: active ? "'" + cur.date : '', lastToldStart: active ? "'" + cur.start : '' });
+  if (skip) return;
+  const when = active ? cur : told;
+  if (remindMinutes_(when.date, when.start) <= remindNowMinutes_()) return;
+  try {
+    const n = planAddMailTeachers_(win, String(r.guideSlug), r, active ? told : null, when, !active);
+    updateRowById('plan_changes', id, { notifiedCount: n });
+  } catch (e) { console.error('planAddNotify_: ' + id + ' ' + e); }
+}
+
+function planAddMailTeachers_(win, slug, r, told, when, cancelled) {
+  const g = (win.TS_GUIDES || {})[slug] || {};
+  const rowSubject = String(r.subject || '');
+  const subject = rowSubject || g.subject || (g.subjects || []).join(' + ');
+  const rec = guideRecipients_(guideRoster_(win, slug, rowSubject));
+  if (!rec.withEmail.length) return 0;
+  const whenTxt = planWhen_(when.date, when.start);
+  if (MailApp.getRemainingDailyQuota() - rec.withEmail.length < GUIDE_MAIL_QUOTA_FLOOR) {
+    MailApp.sendEmail({ to: REMIND_TO, subject: 'מייל על מפגש נוסף לא נשלח למורים — אין מספיק מכסת מייל', name: 'מנור',
+      body: (g.name || slug) + ': ' + whenTxt + '\n' + rec.withEmail.length + ' נמענים, מכסה ' + MailApp.getRemainingDailyQuota() });
+    return 0;
+  }
+  const lead = cancelled ? 'מפגש ההדרכה הנוסף בוטל.' : told ? 'מועד מפגש ההדרכה הנוסף השתנה.' : 'נקבע מפגש הדרכה נוסף.';
+  const title = (cancelled ? 'בוטל מפגש הדרכה: ' : told ? 'שינוי מועד: ' : 'מפגש הדרכה נוסף: ') + guideWhat_(g, subject) + ' — ' + whenTxt.replace(/^יום /, '');
+  const facts = [
+    ['המועד הקודם', told ? planWhen_(told.date, told.start) : ''],
+    [cancelled ? 'המועד שבוטל' : 'המועד', whenTxt],
+    ['נושא', String(r.topic || '')],
+    ['מדריך/ה', g.name || '']
+  ].filter(f => f[1]);
+  const factsHtml = '<p style="margin:0 0 8px"><b>' + lead + '</b></p>' +
+    '<table style="border-collapse:collapse;margin:4px 0 8px">' + facts.map(f =>
+      '<tr><td style="padding:3px 0 3px 16px;color:#5C7182;white-space:nowrap;vertical-align:top">' + remindEsc_(f[0]) +
+      '</td><td style="padding:3px 0">' + (f[0] === 'המועד הקודם' ? '<s>' + remindEsc_(f[1]) + '</s>' : f[0] === 'המועד' ? '<b>' + remindEsc_(f[1]) + '</b>' : remindEsc_(f[1])) +
+      '</td></tr>').join('') + '</table>' +
+    (g.zoom && !cancelled ? '<p style="margin:8px 0 0">הכניסה למפגש בזום: <a href="' + remindEsc_(g.zoom) + '" dir="ltr">' + remindEsc_(g.zoom) + '</a></p>' : '') +
+    (cancelled ? '' : '<p style="margin:8px 0 0">הרישום לנוכחות ייפתח ביום המפגש, כרגיל — מהכפתור למטה.</p>');
+  const foot = 'הודעה אוטומטית ממנור · ' + MONTHLY_SIGN;
+  const replyTo = guideReplyTo_(slug);
+  let sent = 0;
+  rec.withEmail.forEach(t => {
+    const link = guideTeacherLink_(t.id);
+    const hello = 'שלום ' + t.name + ',';
+    const opt = { to: t.email, subject: title, name: (g.name || 'מנור') + ' · מנור',
+      htmlBody: guideMailHtml_(hello, factsHtml, link, 'הבית שלי במנור', foot),
+      body: hello + '\n\n' + lead + '\n' + facts.map(f => f[0] + ': ' + f[1]).join('\n') +
+        (g.zoom && !cancelled ? '\n\nהכניסה למפגש בזום: ' + g.zoom : '') +
+        '\n\nהבית שלי במנור: ' + link + '\n\n' + MONTHLY_SIGN };
+    opt.replyTo = replyTo || MAIL_REPLY_TO;
+    try { MailApp.sendEmail(opt); sent++; } catch (e) { console.error('planAddMail: ' + t.email + ' ' + e); }
+  });
+  auditLog_('', 'plan.notify', 'guide', slug, 'ok', 'add ' + when.date + ' ' + when.start + ' sent=' + sent + ' missing=' + rec.missing.length);
+  return sent;
 }
 
 function planChangeMailTeachers_(win, slug, mdate, told, cur, back) {

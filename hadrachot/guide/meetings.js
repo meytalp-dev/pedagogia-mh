@@ -450,12 +450,16 @@
     const host = document.getElementById('meet-adhoc-host');
     if (!host) return;
     host.innerHTML = `
-      <div class="space-hint" style="margin-top:0;">מפגש נוסף או מפגש שהוזז לתאריך שלא בתוכנית. בוחרים תאריך (היום או מפגש שכבר התקיים), ואחר כך מסמנים נוכחות כרגיל.</div>
+      ${planNow() ? `<div class="space-hint" style="margin-top:0;">מפגש עתידי: נכנס לתוכנית, והמורים מקבלים עליו מייל ותזכורת.</div>
+      <button type="button" class="btn btn-primary" id="meet-plan-add" style="margin:6px 0 16px;">קביעת מפגש עתידי</button>` : ''}
+      <div class="space-hint" style="margin-top:0;">מפגש שהתקיים היום או בעבר ולא מופיע בתוכנית: בוחרים תאריך, ואחר כך מסמנים נוכחות כרגיל.</div>
       <div id="meet-adhoc" class="meet-adhoc" style="margin-top:6px; padding-top:0; border-top:none;">
         <label><span>תאריך המפגש</span><input type="date" class="input" id="meet-adhoc-date"></label>
         <label class="grow"><span>נושא (לא חובה)</span><input type="text" class="input" id="meet-adhoc-topic" maxlength="200"></label>
         <button type="button" class="btn btn-primary" id="meet-adhoc-go">הוספת המפגש וסימון נוכחות</button>
       </div>`;
+    const addBtn = document.getElementById('meet-plan-add');
+    if (addBtn) addBtn.addEventListener('click', () => { window.openPlanAdd(); });
     const dateIn = document.getElementById('meet-adhoc-date');
     dateIn.max = S.today;
     dateIn.value = S.today;

@@ -685,6 +685,16 @@
   const hhmm = n => Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0');
   const starts = txt => (txt.match(/(^|[^–\-\d:])\d{1,2}:\d{2}/g) || []).map(x => x.replace(/^[^\d]/, ''));
   list.forEach(c => {
+    // מפגש נוסף (2.11.26) — שורת הערה מתחת לטבלה של המדריכ/ה
+    if (c.add) {
+      const table = document.querySelector('table.sched[data-guide="' + c.g + '"]');
+      if (!table) return;
+      const extra = document.createElement('div');
+      extra.className = 'sm';
+      extra.textContent = 'מפגש נוסף: יום ' + wd(c.t) + ' ' + dm(c.t) + ' בשעה ' + c.ts + (c.tp ? ' · ' + c.tp : '');
+      table.after(extra);
+      return;
+    }
     document.querySelectorAll('table.sched[data-guide="' + c.g + '"] tr').forEach(tr => {
       const dt = tr.querySelector('td.dt');
       if (!dt || dt.textContent.trim() !== dmy(c.f)) return;
