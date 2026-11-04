@@ -86,6 +86,58 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
 .sec-row .rm a:hover{text-decoration:underline}
 .assign{width:100%;display:grid;grid-template-columns:1fr 1.3fr auto;gap:8px;padding-top:10px;border-top:1px dashed var(--line)}
 
+/* תפריט הוועדה */
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;align-items:start}
+.vmenu{position:sticky;top:72px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:2px}
+.vmenu>b{color:var(--navy);font-family:Rubik,sans-serif;padding:2px 8px 0}
+.vmenu>.rs{padding:0 8px 8px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.vmenu a{display:flex;align-items:center;min-height:44px;padding:6px 10px;border-radius:9px;text-decoration:none;color:var(--ink);font-weight:600}
+.vmenu a:hover{background:var(--paper)}
+.vmenu a[aria-current=page]{background:var(--navy);color:#fff}
+.vmenu a.back{font-size:.86rem;font-weight:500;color:var(--muted);margin-top:6px;border-top:1px solid var(--line);border-radius:0}
+.vmain{min-width:0}
+/* בהצגה הדיגיטלית השקף מקבל את הרוחב, והתפריט נסגר */
+.shell.wide{grid-template-columns:minmax(0,1fr)}
+.shell.wide .vmenu{display:none}
+.shell.wide .live{grid-template-columns:minmax(0,1fr) 340px}
+.shell.wide .live.solo{grid-template-columns:minmax(0,1fr)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:14px}
+.tiles.two{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.tile{display:flex;flex-direction:column;gap:5px;background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:17px;text-decoration:none;color:var(--ink);text-align:right;cursor:pointer;min-height:100px}
+.tile:hover{border-color:var(--navy)}
+.tile b{font:700 1.08rem Rubik,sans-serif;color:var(--navy)}
+.tile span{color:var(--muted);font-size:.93rem}
+.tile.big{min-height:150px}
+.tile:disabled{opacity:.6}
+.years{display:flex;gap:6px;margin-bottom:14px}
+.years button{min-height:44px;padding:6px 20px;border:1.5px solid #c9d4d5;background:#fff;border-radius:30px;font-weight:700;cursor:pointer}
+.years button[aria-selected=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+ul.plain{margin:4px 0 0;padding-inline-start:20px}
+ul.plain li{margin:3px 0}
+
+/* שקף בהצגה הדיגיטלית: אותו עיצוב כמו ה-PowerPoint */
+.slidewrap{container-type:inline-size;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.slidewrap:fullscreen{border:0;border-radius:0;display:flex;align-items:center;justify-content:center;background:#000}
+.slide{aspect-ratio:16/9;width:100%;background:#fff url(deck/bg-content.png) center/100% 100% no-repeat;padding:2.2cqw 3.6cqw 8cqw;overflow-y:auto;font-family:David,'Frank Ruhl Libre',Assistant,serif;font-size:1.85cqw;line-height:1.3;color:#1a1a1a}
+.slide.is-cover{background-image:url(deck/bg-cover.png);padding:0}
+.dk-title{font:700 3.2cqw/1.2 David,Assistant,serif;margin:0 0 1.2cqw}
+.dk-body>*{margin-bottom:1.5cqw}
+.dk-tb{border-collapse:collapse;width:100%;table-layout:fixed}
+.dk-tb th,.dk-tb td{border:1px solid #8c8c8c;padding:.35cqw .6cqw;text-align:right;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+.dk-tb th{font-weight:700;color:#1a1a1a}
+.dk-tb td.lab{font-weight:700;background:#f2f2f2}
+.dk-chart{margin:0;max-width:78%}
+.dk-chart figcaption{text-align:center;font-weight:700}
+.dk-chart svg{width:100%;height:auto;display:block;font-family:David,Assistant,serif}
+.dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw}
+.dk-legend i{display:inline-block;width:1cqw;height:1cqw;margin-inline-end:.4cqw}
+.dk-img{display:block;max-width:100%;max-height:34cqw;margin:0 auto}
+.dk-cover{position:relative;height:100%}
+.dk-frame{position:absolute;top:21.5%;right:12.8%;left:13%;height:58%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:2.1cqw}
+.dk-frame h2{font:700 3.6cqw David,serif;color:#a2752c;margin:0}
+.dk-frame p{margin:.3cqw 0}.dk-frame .g{font-size:2.7cqw;font-weight:700;color:#a2752c}.dk-frame .s{font-size:1.6cqw;margin-top:1.5cqw}
+.live.solo{grid-template-columns:minmax(0,1fr)}
+
 /* טבלאות למילוי */
 .tblw{overflow-x:auto}
 table.grid{border-collapse:collapse;width:100%;background:#fff}
@@ -141,7 +193,9 @@ summary{cursor:pointer;min-height:30px}
 .toast{position:fixed;inset-block-end:18px;inset-inline:16px;max-width:520px;margin:0 auto;background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;z-index:60;text-align:center}
 
 @media (max-width:980px){
-  .live{grid-template-columns:minmax(0,1fr)}
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .vmenu{display:none}
+  .live,.shell.wide .live{grid-template-columns:minmax(0,1fr)}
   .lside{position:static;max-height:none;overflow:visible}
   .lmain{order:2}
 }
@@ -155,6 +209,27 @@ summary{cursor:pointer;min-height:30px}
   .assign{grid-template-columns:1fr}
   .doc{padding:15px}.doc dl{grid-template-columns:1fr}.doc dt{margin-top:6px}
   .savebar .btn{flex:1}
+  /* שקף בטלפון: בלי יחס 16:9. טקסט בגודל קריא, והטבלאות ברוחב מלא */
+  .slide{aspect-ratio:auto;background:#fff;padding:14px;font-size:15.5px;font-family:Assistant,sans-serif;overflow:visible}
+  .slide.is-cover{background:#fff;padding:0}
+  .dk-title{font-size:21px;margin-bottom:10px;font-family:Rubik,sans-serif}
+  .dk-body>*{margin-bottom:12px}
+  .dk-tb,.dk-tb tbody,.dk-tb tr,.dk-tb td{display:block;width:100%}
+  .dk-tb colgroup{display:none}
+  .dk-tb thead,.dk-tb thead tr{display:block}
+  .dk-tb thead tr:not(:first-child),.dk-tb thead th:not([colspan]){display:none}
+  .dk-tb thead th[colspan]{display:block;border-radius:9px 9px 0 0;padding:7px 10px}
+  .dk-tb tr{border:1px solid #d5dedf;border-radius:9px;margin-bottom:8px;overflow:hidden}
+  .dk-tb td{border:0;border-top:1px solid #edf1f1;padding:6px 10px}
+  .dk-tb td:first-child{border-top:0}
+  .dk-tb td[data-l]:not(.lab):not([data-l=""])::before{content:attr(data-l);display:block;font-size:.82rem;font-weight:700;color:var(--muted)}
+  .dk-chart{max-width:100%}
+  .dk-legend{gap:4px 12px;font-size:.85rem}.dk-legend i{width:10px;height:10px;margin-inline-end:4px}
+  .dk-img{max-height:none}
+  .dk-cover{height:auto}
+  .dk-frame{position:static;font-size:17px;padding:30px 12px;border:6px solid #f0ab34;margin:10px}
+  .dk-frame h2{font-size:26px}.dk-frame .g{font-size:19px}.dk-frame .s{font-size:14px;margin-top:10px}
+  #fsBtn{display:none}
   /* טבלה הופכת לשורות: כל תא עם הכותרת שלו */
   .tblw{overflow:visible}
   table.grid,table.grid tbody,table.grid tr,table.grid td{display:block;width:100%}
@@ -167,7 +242,8 @@ summary{cursor:pointer;min-height:30px}
   td.rowlbl{color:var(--navy);background:var(--paper)}
 }
 @media print{
-  .top,.foot,.steps,.acts,.crumb,.deadline,.toast{display:none!important}
+  .top,.foot,.vmenu,.acts,.crumb,.deadline,.toast{display:none!important}
+  .shell{display:block}
   body{background:#fff;font-size:12pt}.wrap{padding:0;max-width:none}.doc{border:0;padding:0}
   table.grid th,table.grid td{font-size:10.5pt}
   h2{break-after:avoid}.task{break-inside:avoid}
