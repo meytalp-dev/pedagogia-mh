@@ -1,0 +1,174 @@
+/* ועדה מלווה — אותה משפחה כמו צוהר: טורקיז כהה, שמש, נייר חם. */
+:root{
+  --navy:#26505e; --blue:#2c6474; --blue-soft:#e6f1f3; --amber:#f3c867; --amber-soft:#fef3d9;
+  --ink:#1c2a2d; --muted:#5f6f72; --line:#dfe7e7; --paper:#f5f8f7; --bg:#fbfaf6;
+  --ok:#0f8a5f; --ok-soft:#e1f5ec; --bad:#c43c47; --bad-soft:#fdecee; --warn:#94560a; --warn-soft:#fff3e2; --r:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:17px;line-height:1.55;color:var(--ink);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+[hidden]{display:none!important}
+[dir=ltr]{unicode-bidi:isolate}
+a{color:var(--blue)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:Rubik,Assistant,sans-serif;color:var(--navy);line-height:1.25;margin:0;font-weight:700}
+h1{font-size:1.65rem}h2{font-size:1.2rem}h3{font-size:1.03rem}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+.top{position:sticky;top:0;z-index:30;background:var(--navy);color:#fff}
+.top-in{max-width:1180px;margin:0 auto;padding:9px 16px;display:flex;align-items:center;gap:14px;min-height:58px}
+.brand{color:#fff;text-decoration:none;display:flex;flex-direction:column}
+.brand b{font:700 1.15rem/1.2 Rubik,sans-serif}.brand small{font-size:.8rem;opacity:.85}
+.who{margin-inline-start:auto;font-size:.88rem;opacity:.92;text-align:left;max-width:45vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .out{color:#fff;min-height:44px}
+
+.wrap{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:22px 16px 40px}
+.loading,.empty{color:var(--muted);padding:26px 4px}
+.foot{border-top:1px solid var(--line);padding:18px 16px 22px;text-align:center;color:var(--muted);font-size:.85rem;display:grid;gap:5px;justify-items:center}
+.credit{font-size:.76rem}
+.helpbtn{display:inline-flex;align-items:center;min-height:44px;font-weight:700}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.head{margin-bottom:16px}.head p{margin:6px 0 0;color:var(--muted)}
+.crumb{display:inline-flex;align-items:center;min-height:40px;font-size:.92rem;color:var(--blue);text-decoration:none;font-weight:600}
+.crumb:hover{text-decoration:underline}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:9px 18px;border-radius:11px;border:1.5px solid var(--navy);background:#fff;color:var(--navy);font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.btn.primary{background:var(--navy);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.small{min-height:40px;padding:6px 12px;font-size:.92rem}
+.link{border:0;background:none;color:var(--blue);text-decoration:underline;cursor:pointer;padding:4px 2px;min-height:40px}
+.link.danger{color:var(--bad)}
+.acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;align-items:center}
+
+/* כניסה */
+.login{max-width:430px;margin:5vh auto 0}
+.login h1{margin-bottom:6px}.login p{color:var(--muted);margin:0 0 16px}
+
+/* שדות */
+label.f,.f{display:block;margin:0 0 16px}
+.f>b,.lbl{display:block;font-weight:700;margin-bottom:5px}
+.hint{display:block;color:var(--muted);font-size:.88rem;font-weight:400;margin:-2px 0 6px}
+input[type=text],input[type=email],input[type=date],input[type=search],input[inputmode],select,textarea{width:100%;border:1.5px solid #c9d4d5;border-radius:10px;padding:10px 12px;background:#fff;min-height:46px;font-size:16px}
+textarea{min-height:88px;resize:vertical;display:block;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(38,80,94,.15)}
+.err{color:var(--bad);font-weight:600;margin-top:8px}
+
+/* רשימת בתי ספר */
+.filter{margin-bottom:12px}
+.summary{display:grid;gap:7px;margin-bottom:14px}
+.bar{height:9px;background:#e6ecec;border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--navy);border-radius:9px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 2px;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.row:first-child{border-top:0}
+.row:hover .rt{text-decoration:underline}
+.rt{font-weight:700;color:var(--navy)}
+.rs{color:var(--muted);font-size:.88rem}
+.rm{flex:1;min-width:190px}
+.tag{display:inline-block;padding:3px 10px;border-radius:30px;font-size:.84rem;font-weight:700;white-space:nowrap;background:var(--paper);color:var(--muted)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.info{background:var(--blue-soft);color:var(--navy)}
+
+/* ציר ועדות */
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.tl{border:1.5px solid var(--line);border-radius:var(--r);padding:15px;background:#fff;display:flex;flex-direction:column;gap:7px}
+.tl.future{background:var(--paper);border-style:dashed}
+.tl .btn{margin-top:auto}
+
+/* ועדה */
+.steps{display:flex;gap:6px;margin:0 0 16px;background:#eef3f2;padding:5px;border-radius:13px}
+.steps a{flex:1;text-align:center;padding:10px 6px;border-radius:9px;text-decoration:none;color:var(--muted);font-weight:700;min-height:44px;display:flex;align-items:center;justify-content:center}
+.steps a[aria-current=page]{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(38,80,94,.16)}
+.grp{margin:20px 0 6px;font:700 .92rem Rubik,sans-serif;color:var(--muted)}
+.sec-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.sec-row .rm a{font-weight:700;color:var(--navy);text-decoration:none;display:inline-block;min-height:30px}
+.sec-row .rm a:hover{text-decoration:underline}
+.assign{width:100%;display:grid;grid-template-columns:1fr 1.3fr auto;gap:8px;padding-top:10px;border-top:1px dashed var(--line)}
+
+/* טבלאות למילוי */
+.tblw{overflow-x:auto}
+table.grid{border-collapse:collapse;width:100%;background:#fff}
+table.grid th,table.grid td{border:1px solid var(--line);padding:6px 7px;vertical-align:top;text-align:right;font-size:.95rem}
+table.grid th{background:var(--paper);font-weight:700;color:var(--navy)}
+table.grid td input,table.grid td select,table.grid td textarea{border-color:transparent;background:transparent;min-height:40px;padding:7px 8px}
+table.grid td textarea{min-height:64px}
+table.grid td input:focus,table.grid td select:focus,table.grid td textarea:focus{background:#fff;border-color:var(--navy)}
+td.rowlbl{font-weight:600;background:#fafcfb;min-width:120px}
+.rowdel{border:0;background:none;color:var(--bad);cursor:pointer;min-width:38px;min-height:38px;font-size:1.1rem;line-height:1}
+
+.block{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fcfdfc}
+.block>h3{margin-bottom:10px}
+summary{cursor:pointer;min-height:30px}
+.bhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.savebar{position:sticky;bottom:0;z-index:15;background:rgba(251,250,246,.96);border-top:1px solid var(--line);padding:10px 2px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.saved{color:var(--muted);font-size:.9rem;margin-inline-end:auto}
+.saved.bad{color:var(--bad);font-weight:700}
+
+/* מהוועדה הקודמת */
+.prevbox{background:var(--amber-soft);border:1.5px solid #f0d995;border-radius:var(--r);padding:16px;margin-bottom:16px}
+.prevbox>h2{font-size:1.08rem;margin-bottom:3px}
+.prevbox>p{margin:0 0 10px;font-size:.92rem;color:#6a5a2a}
+.ptask{background:#fff;border-radius:11px;padding:12px;margin-top:9px}
+.ptask .ttxt{font-weight:600}
+.ptask .town{color:var(--muted);font-size:.9rem}
+.statuses{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
+.statuses button{min-height:40px;min-width:52px;border:1.5px solid #c9d4d5;background:#fff;border-radius:30px;padding:5px 13px;cursor:pointer;font-weight:600;font-size:.92rem}
+.statuses button[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.draftnote{display:inline-block;background:var(--warn-soft);color:var(--warn);font-size:.8rem;font-weight:700;padding:1px 8px;border-radius:20px;margin-inline-start:6px}
+
+/* מצב ועדה */
+.live{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
+.lside{position:sticky;top:70px;display:grid;gap:12px;max-height:calc(100vh - 84px);overflow:auto}
+.lnav{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lnav select{flex:1;min-width:190px;font-weight:700}
+.note{border-top:1px solid var(--line);padding:9px 0}
+.note:first-of-type{border-top:0}
+.note small{color:var(--muted);display:flex;justify-content:space-between;gap:6px;align-items:center}
+.val{white-space:pre-wrap;overflow-wrap:anywhere}
+.ro .f{margin-bottom:12px}
+.none{color:#94a1a3}
+.task{border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px;background:#fff;overflow-wrap:anywhere}
+.task b{display:block}
+.task small{color:var(--muted);display:block}
+
+/* פרוטוקול */
+.doc{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:26px;overflow-wrap:anywhere}
+.doc h1{margin-bottom:3px}.doc h2{margin:22px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--amber)}
+.doc dl{display:grid;grid-template-columns:150px 1fr;gap:4px 10px;margin:12px 0}.doc dt{font-weight:700}.doc dd{margin:0}
+.deadline{background:var(--warn-soft);color:var(--warn);padding:9px 13px;border-radius:10px;font-weight:600;margin-bottom:12px}
+
+.toast{position:fixed;inset-block-end:18px;inset-inline:16px;max-width:520px;margin:0 auto;background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;z-index:60;text-align:center}
+
+@media (max-width:980px){
+  .live{grid-template-columns:minmax(0,1fr)}
+  .lside{position:static;max-height:none;overflow:visible}
+  .lmain{order:2}
+}
+@media (max-width:640px){
+  body{font-size:16.5px}
+  .wrap{padding:14px 12px 30px}
+  .card{padding:14px}
+  h1{font-size:1.4rem}
+  .who{display:none}
+  .top .out{margin-inline-start:auto}
+  .assign{grid-template-columns:1fr}
+  .doc{padding:15px}.doc dl{grid-template-columns:1fr}.doc dt{margin-top:6px}
+  .savebar .btn{flex:1}
+  /* טבלה הופכת לשורות: כל תא עם הכותרת שלו */
+  .tblw{overflow:visible}
+  table.grid,table.grid tbody,table.grid tr,table.grid td{display:block;width:100%}
+  table.grid thead{display:none}
+  table.grid tr{border:1px solid var(--line);border-radius:11px;margin-bottom:9px;overflow:hidden;background:#fff}
+  table.grid td{border:0;border-top:1px solid #edf1f1;padding:7px 10px}
+  table.grid td:first-child{border-top:0}
+  table.grid td[data-l]:not(.rowlbl)::before{content:attr(data-l);display:block;font-size:.84rem;font-weight:700;color:var(--muted);margin-bottom:2px}
+  table.grid td input,table.grid td select,table.grid td textarea{border-color:#d5dedf;background:#fff}
+  td.rowlbl{color:var(--navy);background:var(--paper)}
+}
+@media print{
+  .top,.foot,.steps,.acts,.crumb,.deadline,.toast{display:none!important}
+  body{background:#fff;font-size:12pt}.wrap{padding:0;max-width:none}.doc{border:0;padding:0}
+  table.grid th,table.grid td{font-size:10.5pt}
+  h2{break-after:avoid}.task{break-inside:avoid}
+}
