@@ -70,11 +70,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
 .tag.warn{background:var(--warn-soft);color:var(--warn)}
 .tag.info{background:var(--blue-soft);color:var(--navy)}
 
-/* ציר ועדות */
-.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+/* דף בית הספר */
+.vstat{display:flex;gap:16px;align-items:center;flex-wrap:wrap;border-color:#c9dfe4;background:var(--blue-soft)}
+.vstat-t{flex:1 1 260px;display:grid;gap:6px}
+.vstat-t>b{font:700 1.1rem Rubik,sans-serif;color:var(--navy);margin-inline-end:8px}
+.vstat-t .tag{justify-self:start}
+.vstat .btn{flex:0 0 auto}
+.sh{margin:20px 0 10px;font-size:1.15rem;color:var(--navy)}
+/* תפריט צד מקובץ: קבוצה לבית הספר, לוועדה ולפיקוח. רק הנוכחית פתוחה */
+.vmenu details.mg{border-top:1px solid var(--line);padding-top:3px;margin-top:3px}
+.vmenu details.mg summary{list-style:none;display:flex;align-items:center;gap:7px;min-height:42px;padding:4px 8px;font:700 .95rem Rubik,sans-serif;color:var(--navy);cursor:pointer;border-radius:9px}
+.vmenu details.mg summary::-webkit-details-marker{display:none}
+.vmenu details.mg summary:hover{background:var(--paper)}
+.vmenu details.mg summary::before{content:'◂';color:var(--muted);width:14px;text-align:center;font-size:1rem}
+.vmenu details.mg[open] summary::before{content:'▾'}
+.vmenu details.mg a{padding-inline-start:28px;font-weight:500;min-height:40px}
+table.grid td.n{text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.grid td.n.up{color:var(--ok);font-weight:700}
+table.grid td.n.down{color:var(--warn);font-weight:700}
+.plink{color:var(--ink);text-decoration:none;font-weight:600}
+.plink:hover{color:var(--navy);text-decoration:underline}
+.svaadot h2{margin:22px 0 8px}
+.svaadot h3{margin:8px 0}
 .tl{border:1.5px solid var(--line);border-radius:var(--r);padding:15px;background:#fff;display:flex;flex-direction:column;gap:7px}
 .tl.future{background:var(--paper);border-style:dashed}
-.tl .btn{margin-top:auto}
 
 /* ועדה */
 .steps{display:flex;gap:6px;margin:0 0 16px;background:#eef3f2;padding:5px;border-radius:13px}
@@ -217,6 +236,7 @@ summary{cursor:pointer;min-height:30px}
   .assign{grid-template-columns:1fr}
   .doc{padding:15px}.doc dl{grid-template-columns:1fr}.doc dt{margin-top:6px}
   .savebar .btn{flex:1}
+  .vstat .btn{flex:1 1 100%}
   /* שקף בטלפון: בלי יחס 16:9. טקסט בגודל קריא, והטבלאות ברוחב מלא */
   .slide{aspect-ratio:auto;background:#fff;padding:14px;font-size:15.5px;font-family:Assistant,sans-serif;overflow:visible}
   .slide.is-cover{background:#fff;padding:0}

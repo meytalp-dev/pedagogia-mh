@@ -1,7 +1,7 @@
 /* ועדה מלווה — הדף (4.11.26). השרת: רויטל\vaada-gas\Code.js. כל הנתונים נשלפים אחרי כניסה; אין כאן שום נתון אישי.
    ניתוב לפי hash:
    #                 מסך הבית (מנהל.ת: בית הספר · מפקח.ת ומטה: רשימה · בעל.ת תפקיד: התחומים שלי)
-   #s/<סמל>          ציר הוועדות של בית ספר
+   #s/<סמל>          דף בית הספר: אנשים, תמונת מצב, הוועדה הקודמת, משימות פתוחות, הוועדות (הוועדה של השנה נפתחת לבד)
    #v/<id>           ראשי של הוועדה: סיכום וכרטיס לכל פריט בתפריט
    #v/<id>/prep      הכנה: תחנות וסוגיית ליבה
    #v/<id>/fill      מילוי מצגת האב  ·  #v/<id>/e/<תחום>  מילוי תחום
@@ -57,7 +57,7 @@
   function session() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.exp > Date.now() ? s : null; } catch (e) { return null; } }
   function logout(silent) {
     try { localStorage.removeItem(KEY); } catch (e) {}
-    S.token = ''; S.me = null; S.V = null; S.board = null;
+    S.token = ''; S.me = null; S.V = null; S.board = null; S.SCH = null;
     if (!silent) location.hash = '';
     route();
   }
@@ -117,7 +117,7 @@
     var h = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
     window.scrollTo(0, 0);
     if (!h[0]) return viewHome();
-    if (h[0] === 's') return viewSchool(h[1]);
+    if (h[0] === 's') return viewSchool(h[1], h[2]);
     if (h[0] === 'v') return withVaada(h[1], function () {
       /* נציג.ת רשת: רק הפרוטוקול והחתימה */
       if (S.V.caps.rep) return viewSign();
@@ -175,9 +175,10 @@
     APP.innerHTML = h + '</div>';
   }
 
+  /* מצב בית הספר. הוועדה נפתחת לבד בכניסה, ולכן "התחילו" = תחום אחד לפחות נשמר או נקבע תאריך */
   function schoolState(s) {
     var v = s.vaadot.filter(function (x) { return x.stage === 'a'; })[0];
-    if (!v) return { key: 'none', tag: '<span class="tag warn">טרם נפתחה</span>', done: 0 };
+    if (!v || (v.status !== 'closed' && !v.started && !v.date)) return { key: 'none', tag: '<span class="tag warn">טרם התחילו להכין</span>', v: v };
     if (v.status === 'closed') return { key: 'closed', tag: '<span class="tag ok">התקיימה ונסגרה</span>', v: v };
     return { key: 'prep', tag: '<span class="tag info">בהכנה · ' + v.done + ' מתוך ' + v.total + '</span>', v: v };
   }
@@ -189,13 +190,13 @@
     var opened = list.length - missing.length;
     var pct = list.length ? Math.round(opened / list.length * 100) : 0;
     var h = '<div class="head"><h1>' + (r.me.role === 'sup' ? 'בתי הספר שלי' : 'כל בתי הספר') + '</h1></div>' +
-      '<div class="card summary"><b>נפתחו ' + opened + ' ועדות מתוך ' + list.length + ' · נסגרו ' + closed + '</b><div class="bar"><i style="width:' + pct + '%"></i></div></div>';
+      '<div class="card summary"><b>התחילו להכין ' + opened + ' מתוך ' + list.length + ' · נסגרו ' + closed + '</b><div class="bar"><i style="width:' + pct + '%"></i></div></div>';
     if (missing.length) {
       var names = missing.map(function (s) { return s.name + (s.principals[0] ? ' · ' + s.principals[0].name : ''); }).join('\n');
       var mails = missing.map(function (s) { return (s.principals[0] || {}).email; }).filter(Boolean).join(',');
-      h += '<details class="card"><summary><b>מי טרם פתח ועדה (' + missing.length + ')</b></summary><div class="val" style="margin-top:9px">' + esc(names) + '</div>' +
+      h += '<details class="card"><summary><b>מי טרם התחיל להכין (' + missing.length + ')</b></summary><div class="val" style="margin-top:9px">' + esc(names) + '</div>' +
         '<div class="acts"><button type="button" class="btn small" id="copyMissing">העתקת הרשימה</button>' +
-        mailBtn({ id: 'mailMissing', cls: 'btn small', label: 'מייל תזכורת', bcc: mails, subject: 'תזכורת: פתיחת הוועדה המלווה במערכת הדיגיטלית', lines: ['שלום,', 'טרם נפתחה במערכת הוועדה המלווה של תחילת השנה. הפתיחה וההכנה נעשות בכתובת:', SITE, 'בכניסה מקלידים את המייל שלך ומקבלים קוד.', 'זימונים לוועדת פתיחת השנה נשלחים עד 15.11, ומצגת האב נשלחת למפקחים כשבועיים לפני הוועדה.', '', 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה'] }) +
+        mailBtn({ id: 'mailMissing', cls: 'btn small', label: 'מייל תזכורת', bcc: mails, subject: 'תזכורת: הכנת הוועדה המלווה במערכת הדיגיטלית', lines: ['שלום,', 'טרם התחילה במערכת ההכנה לוועדה המלווה של תחילת השנה. ההכנה נעשית בכתובת:', SITE, 'בכניסה מקלידים את המייל שלך ומקבלים קוד, ונכנסים ישר לדף של בית הספר.', 'זימונים לוועדת פתיחת השנה נשלחים עד 15.11, ומצגת האב נשלחת למפקחים כשבועיים לפני הוועדה.', '', 'המרחב הפדגוגי · המנהל להכשרה מקצועית · משרד העבודה'] }) +
         '</div></details>';
       S.copyMissing = names;
     }
@@ -218,48 +219,156 @@
     wireMail();
   }
 
-  /* ===== בית ספר: ציר ועדות ===== */
-  function viewSchool(semel) {
+  /* ===== המערכת של בית הספר: בית + דף לכל פריט (מיטל, 4.11.26: לא עמוד אחד עמוס) =====
+     #s/<סמל>        בית: סיכום הוועדה + כרטיס לכל פריט
+     #s/<סמל>/pic    תמונת מצב: מיפוי, עובדות מהוועדה הקודמת, אקלים, סל
+     #s/<סמל>/roles  בעלי התפקידים מהנספח
+     #s/<סמל>/prev   הוועדה הקודמת: החלטות ופערים
+     #s/<סמל>/open   משימות פתוחות לאורך השנה
+     #s/<סמל>/past   ועדות קודמות
+     הנתונים נטענים פעם אחת (פעולה school, שגם פותחת את הוועדה של השנה) ונשמרים ב-S.SCH */
+  var SCHOOL_PAGES = [['', 'ראשי'], ['pic', 'תמונת מצב'], ['roles', 'בעלי תפקידים'], ['prev', 'הוועדה הקודמת'], ['open', 'משימות פתוחות'], ['past', 'ועדות קודמות']];
+  var VAADA_PAGES = [['', 'ראשי הוועדה'], ['prep', 'הכנה'], ['fill', 'מילוי מצגת האב'], ['deck', 'מצגת הוועדה'], ['recs', 'המלצות המפקח.ת'], ['tasks', 'החלטות ומשימות'], ['sign', 'פרוטוקול וחתימות']];
+  var SUP_PAGES = [['brief', 'שיחה מצומצמת'], ['hivui', 'חיווי להנהלת המינהל'], ['sup', 'הכנת מפקח.ת']];
+
+  /* תפריט צד מקובץ: קבוצה לבית הספר, קבוצה לוועדה (ולפיקוח). רק הקבוצה הנוכחית פתוחה */
+  function sideMenu(groups, title, sub) {
+    return '<nav class="vmenu" aria-label="תפריט"><b>' + esc(title) + '</b><span class="rs">' + esc(sub) + '</span>' +
+      groups.map(function (g) {
+        var cur = g.items.some(function (it) { return it[2]; });
+        return '<details class="mg"' + (cur ? ' open' : '') + '><summary>' + esc(g.title) + '</summary>' +
+          g.items.map(function (it) { return '<a href="' + it[0] + '"' + (it[2] ? ' aria-current="page"' : '') + '>' + esc(it[1]) + '</a>'; }).join('') + '</details>';
+      }).join('') + '</nav>';
+  }
+  function menuGroup(title, pages, base, cur) {
+    return { title: title, items: pages.map(function (p) { return [base + (p[0] ? '/' + p[0] : ''), p[1], cur === p[0]]; }) };
+  }
+  function schoolGroup(semel, cur) { return menuGroup('בית הספר', SCHOOL_PAGES, '#s/' + semel, cur); }
+  function vaadaGroup(id, cur) { return menuGroup('ועדת תחילת שנה ' + VAADA.YEAR, VAADA_PAGES, '#v/' + id, cur); }
+
+  function withSchool(semel, then) {
+    if (S.SCH && S.SCH.school.semel === semel) return then(S.SCH);
     loading();
-    (S.board ? Promise.resolve(S.board) : loadBoard()).then(function (r) {
-      header();
-      var s = (r.schools || []).filter(function (x) { return x.semel === semel; })[0];
-      if (!s) return failed('forbidden');
-      var manage = r.me.admin || r.me.principalOf.indexOf(semel) > -1;
-      var back = r.schools.length > 1 ? '<a class="crumb" href="#">→ כל בתי הספר</a>' : '';
-      var a = s.vaadot.filter(function (v) { return v.stage === 'a'; })[0];
-      var h = back + '<div class="head"><h1>' + esc(s.name) + '</h1><p>' + esc(s.network) + ' · ' + esc(s.sups.join(' · ')) + '</p></div>' +
-        '<div class="years" role="tablist" aria-label="שנה"><button type="button" role="tab" data-y="5787" aria-selected="true">' + VAADA.YEAR + '</button><button type="button" role="tab" data-y="5786" aria-selected="false">תשפ"ו</button></div><div id="yearBody">';
-      h += '<div class="timeline"><div class="tl"><h3>ועדת תחילת שנה</h3>';
-      if (a) {
-        h += '<div>' + schoolState({ vaadot: [a] }).tag + '</div>' + (a.date ? '<div class="rs">' + fmtDate(a.date) + '</div>' : '') +
-          '<a class="btn primary" href="#v/' + a.id + '">כניסה לוועדה</a>';
-      } else if (manage) {
-        h += '<div class="rs">זימונים עד 15.11 · הוועדה עד אמצע ינואר</div><button type="button" class="btn primary" id="openA">פתיחת הוועדה</button>';
-      } else h += '<div><span class="tag warn">טרם נפתחה</span></div><div class="rs">המנהל.ת פותח.ת את הוועדה.</div>';
-      h += '</div><div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">אפריל–יוני · זימונים עד 15.5. תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div></div></div>';
-      APP.innerHTML = h;
-      var y0 = $('#yearBody').innerHTML;
-      $$('.years button').forEach(function (b) {
-        b.onclick = function () {
-          $$('.years button').forEach(function (c) { c.setAttribute('aria-selected', String(c === b)); });
-          if (b.getAttribute('data-y') === '5787') { $('#yearBody').innerHTML = y0; wireOpen(); return; }
-          $('#yearBody').innerHTML = '<div class="loading">טוען…</div>';
-          pastList(semel).then(function (html) { $('#yearBody').innerHTML = html; wirePast(); });
-        };
-      });
-      wireOpen();
-      function wireOpen() {
-            var o = $('#openA');
-      if (o) o.onclick = function () {
-        o.disabled = true; o.textContent = 'פותח…';
-        api('open', { semel: semel, stage: 'a' }).then(function (x) {
-          S.board = null;
-          if (x.ok) location.hash = '#v/' + x.id; else { toast(errText(x.error)); o.disabled = false; o.textContent = 'פתיחת הוועדה'; }
-        });
-      };
-      }
+    api('school', { semel: semel }).then(function (r) {
+      if (!r.ok) return failed(r.error);
+      S.SCH = r; S.me = r.me; S.board = null; header();
+      then(r);
     }).catch(function () {});
+  }
+  function viewSchool(semel, page) {
+    page = page || '';
+    if (!SCHOOL_PAGES.some(function (p) { return p[0] === page; })) page = '';
+    withSchool(semel, function (r) {
+      var s = r.school, many = r.me.all || (r.me.semels || []).length > 1;
+      var crumb = page ? '<a class="crumb" href="#s/' + semel + '">→ ' + esc(s.name) + '</a>' :
+        many ? '<a class="crumb" href="#">→ ' + (r.me.role === 'sup' && !r.me.all ? 'בתי הספר שלי' : 'כל בתי הספר') + '</a>' : '';
+      var title = page ? SCHOOL_PAGES.filter(function (p) { return p[0] === page; })[0][1] : s.name;
+      var head = crumb + '<div class="head"><h1>' + esc(title) + '</h1><p>' + (page ? esc(s.name) + ' · ' : '') + esc(s.network) + ' · מפקח.ת: ' + esc(s.sups.join(' · ')) +
+        (r.principals.length ? ' · מנהל.ת: ' + esc(r.principals.map(function (p) { return p.name; }).join(', ')) : ' · <span class="tag warn">אין מנהל.ת ברשימה</span>') + '</p></div>';
+      var body = page === 'pic' ? schoolPic(r) : page === 'roles' ? schoolRoles(r) : page === 'prev' ? schoolPrev(r) : page === 'open' ? schoolOpen(r) : page === 'past' ? schoolPast(r) : schoolHome(r);
+      APP.innerHTML = '<div class="shell">' + sideMenu([schoolGroup(semel, page), vaadaGroup(r.current)], s.name, s.network) + '<div class="vmain">' + head + body + '</div></div>';
+      wirePast();
+    });
+  }
+  function plainList(items) { return '<ul class="plain">' + items.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
+  function tilesOf(items) {
+    return '<div class="tiles">' + items.map(function (x) { return '<a class="tile" href="' + x[0] + '"><b>' + esc(x[1]) + '</b>' + (x[2] ? '<span>' + esc(x[2]) + '</span>' : '') + '</a>'; }).join('') + '</div>';
+  }
+  function goLink(href, label) { return '<div class="acts"><a class="btn small" href="' + href + '">' + esc(label) + '</a></div>'; }
+
+  /* בית: מצב הוועדה + כרטיס לכל דף של בית הספר + כרטיס לכל פריט בוועדה */
+  function schoolHome(r) {
+    var a = r.vaadot.filter(function (v) { return v.stage === 'a'; })[0], st = schoolState({ vaadot: r.vaadot }), t = r.tuva || {};
+    var base = '#v/' + r.current, sb = '#s/' + r.school.semel;
+    var sub = a && a.status === 'closed' ? 'הוועדה התקיימה ונסגרה' + (a.date ? ' · ' + fmtDate(a.date) : '') :
+      a && a.date ? 'הוועדה ב-' + fmtDate(a.date) + ' · הושלמו ' + a.done + ' מתוך ' + a.total + ' תחומים' :
+      'זימונים עד 15.11 · הוועדה עד אמצע ינואר · הושלמו ' + (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים';
+    var pct = a && a.total ? Math.round(a.done / a.total * 100) : 0;
+    var h = '<div class="card vstat"><div class="vstat-t"><b>ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</b> ' + st.tag + '<div class="rs">' + esc(sub) + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
+      '<a class="btn primary" id="enterV" href="' + base + '">כניסה לוועדה</a></div>';
+    var have = [t.mipuiFacts ? 'מיפוי' : '', t.aklim ? 'אקלים' : '', t.sal ? 'סל תוכניות' : '', t.facts ? 'עובדות מהוועדה הקודמת' : ''].filter(Boolean);
+    var roles = (t.roles || []).filter(function (x) { return x.role; }), vac = roles.filter(function (x) { return x.vacant; }).length;
+    var pv = r.prev || { tasks: [], recs: [] }, op = r.open || [], past = r.past || [];
+    var prevSub = [pv.tasks.length ? count(pv.tasks.length, 'החלטה אחת', 'החלטות') : '', pv.recs.length ? count(pv.recs.length, 'פער אחד', 'פערים') : ''].filter(Boolean).join(' · ');
+    h += '<h2 class="sh">בית הספר</h2>' + tilesOf([
+      [sb + '/pic', 'תמונת מצב', have.length ? have.join(' · ') : 'עוד אין נתונים'],
+      [sb + '/roles', 'בעלי תפקידים', roles.length ? count(roles.length, 'בעל.ת תפקיד אחד.ת', 'בעלי תפקידים') + (vac ? ' · ' + count(vac, 'תפקיד אחד טרם אויש', 'טרם אוישו') : '') : 'אין נספח במערכת'],
+      [sb + '/prev', 'הוועדה הקודמת', prevSub ? prevSub + ' מ' + (pv.label || 'הוועדה הקודמת') : 'אין החלטות במערכת'],
+      [sb + '/open', 'משימות פתוחות', op.length ? count(op.length, 'משימה פתוחה אחת', 'משימות פתוחות') : 'עדיין אין משימות'],
+      [sb + '/past', 'ועדות קודמות', past.length ? count(past.length, 'מסמך אחד', 'מסמכים') + ' מתשפ"ו' : 'אין מסמכים במערכת']
+    ]);
+    h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
+      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים'], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
+      [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
+    ]);
+    h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">אפריל–יוני · זימונים עד 15.5. תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
+    return h;
+  }
+
+  /* תמונת מצב: רק עובדות שמותר לבית הספר לראות (לפי נייר יעקבזון). הדירוגים נשארים אצל המפקח.ת */
+  function schoolPic(r) {
+    var t = r.tuva || {}, base = '#v/' + r.current, h = '';
+    var m = t.mipuiFacts || {}, facts = [['תלמידים בכיתות ט–יב', m['מספר תלמידים מט-יב']], ['תלמידים בינואר השנה', m['מספר תלמידים בינואר השנה בכיתות ט-יב']], ['תלמידים בינואר שנה שעברה', m['מספר תלמידים בינואר שנה שעברה']], ['תלמידי קורסים', m['מספר תלמידי קורסים']], ['מגמות לימוד', m['מגמות לימוד']]].filter(function (x) { return x[1]; });
+    if (facts.length) h += '<div class="card"><h2>מהמיפוי' + (m['תאריך קליטת טופס'] ? ' · ' + fmtDate(m['תאריך קליטת טופס']) : '') + '</h2>' + plainList(facts.map(function (x) { return esc(x[0]) + ': <b>' + esc(x[1]) + '</b>'; })) + goLink(base + '/e/netunim', 'לעדכון בנתוני בית הספר') + '</div>';
+    if (t.facts && (t.facts.facts || []).length) h += '<div class="card"><h2>עובדות מהוועדה הקודמת' + (t.facts.stage ? ' (' + esc(t.facts.stage) + ')' : '') + '</h2>' + plainList(t.facts.facts.map(esc)) + '</div>';
+    if (t.aklim && t.aklim.length) {
+      var byAud = {};
+      t.aklim.forEach(function (x) { (byAud[x['קהל'] || ''] = byAud[x['קהל'] || ''] || []).push(x); });
+      h += '<div class="card"><h2>שאלון האקלים</h2><div class="rs" style="margin-bottom:6px">ציונים מ-0 עד 100. ההשוואה היא לבתי ספר דומים. ירוק: מעל ההשוואה, כתום: מתחת.</div>';
+      Object.keys(byAud).forEach(function (aud) {
+        h += '<div class="tblw"><table class="grid aklim"><thead><tr><th>' + esc(aud || 'ממד') + '</th><th>תשפ"ו</th><th>תשפ"ה</th><th>השוואה</th></tr></thead><tbody>' +
+          byAud[aud].map(function (x) {
+            var now = Number(x['תשפ"ו']), cmp = Number(x['השוואה']), cls = now && cmp ? (now >= cmp ? ' up' : ' down') : '';
+            return '<tr><td class="rowlbl">' + esc(x['ממד']) + '</td><td data-l="תשפ&quot;ו" class="n' + cls + '">' + esc(x['תשפ"ו']) + '</td><td data-l="תשפ&quot;ה" class="n">' + esc(x['תשפ"ה']) + '</td><td data-l="השוואה" class="n">' + esc(x['השוואה']) + '</td></tr>';
+          }).join('') + '</tbody></table></div>';
+      });
+      if (t.aklimWeak && t.aklimWeak.length) h += '<details><summary><b>ההיגדים הנמוכים ביותר</b></summary>' + plainList(t.aklimWeak.slice(0, 12).map(function (x) { return esc(x['קהל'] || '') + ': ' + esc(x['היגד'] || '') + (x['ממוצע'] ? ' (' + esc(x['ממוצע']) + ')' : ''); })) + '</details>';
+      h += goLink(base + '/e/aklim', 'לתחום האקלים בוועדה') + '</div>';
+    }
+    if (t.sal && (t.sal.programs || []).length) {
+      var byDom = {};
+      t.sal.programs.forEach(function (p) { (byDom[p.domain || 'אחר'] = byDom[p.domain || 'אחר'] || []).push(p); });
+      h += '<div class="card"><h2>סל התוכניות שהוגש</h2>' + Object.keys(byDom).map(function (d) {
+        return '<h3>' + esc(d) + '</h3>' + plainList(byDom[d].map(function (p) { return esc(p.name) + (p.target ? ' <span class="rs">(' + esc(p.target) + ')</span>' : ''); }));
+      }).join('') + '</div>';
+    }
+    return h || '<div class="card empty">עוד אין נתונים על בית הספר במערכת. הם ייכנסו עם מילוי מצגת האב.' + goLink(base + '/fill', 'למילוי מצגת האב') + '</div>';
+  }
+
+  function schoolRoles(r) {
+    var roles = ((r.tuva || {}).roles || []).filter(function (x) { return x.role; }), base = '#v/' + r.current;
+    if (!roles.length) return '<div class="card empty">אין במערכת נספח בעלי תפקידים לבית הספר.' + goLink(base + '/e/koach', 'למילוי כוח האדם בוועדה') + '</div>';
+    return '<div class="card"><div class="rs" style="margin-bottom:8px">מנספח בעלי התפקידים שהוגש. תיקונים נעשים בתחום כוח האדם בוועדה.</div><div class="tblw"><table class="grid"><thead><tr><th>תפקיד</th><th>שם</th><th>שעות</th><th>ותק</th></tr></thead><tbody>' +
+      roles.map(function (x) { return '<tr><td class="rowlbl">' + esc(x.role) + (x.detail ? ' <span class="rs">' + esc(x.detail) + '</span>' : '') + '</td><td data-l="שם">' + (x.vacant ? '<span class="tag warn">טרם אויש</span>' : esc(x.name)) + '</td><td data-l="שעות">' + esc(x.hours) + '</td><td data-l="ותק">' + esc(x.years) + '</td></tr>'; }).join('') +
+      '</tbody></table></div>' + goLink(base + '/e/koach', 'לעדכון בכוח האדם') + '</div>';
+  }
+
+  function schoolPrev(r) {
+    var pv = r.prev || { tasks: [], recs: [] }, base = '#v/' + r.current, h = '';
+    var secTitle = function (id) { var d = VAADA.section('a', id); return d ? d.title : id; };
+    if (pv.tasks.length) {
+      var isDraft = pv.tasks.some(function (x) { return x.draft === 'כן'; });
+      h += '<div class="card"><h2>החלטות ' + esc(pv.label || '') + '</h2>' + (isDraft ? '<div class="rs" style="margin-bottom:6px">נלקחו מהתקציר של המסמך, ולכן טיוטה. בוועדה מאשרים, מתקנים או מוחקים, ועונים מה קרה איתן. לחיצה על החלטה פותחת את התחום שלה.</div>' : '') +
+        plainList(pv.tasks.map(function (x) { return '<a class="plink" href="' + base + '/e/' + esc(x.sec || 'dualit') + '">' + esc(x.text) + '</a>' + (x.owner ? ' <span class="rs">· ' + esc(x.owner) + '</span>' : '') + (x.st ? ' <span class="tag info">' + esc(x.st) + '</span>' : '') + ' <span class="rs">' + esc(secTitle(x.sec)) + '</span>'; })) + '</div>';
+    }
+    if (pv.recs.length) h += '<div class="card"><h2>פערים שזוהו</h2>' + plainList(pv.recs.map(function (x) { return esc(x.text); })) + goLink(base + '/recs', 'להמלצות המפקח.ת') + '</div>';
+    return h || '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
+  }
+
+  function schoolOpen(r) {
+    var op = r.open || [];
+    if (!op.length) return '<div class="card empty">עדיין אין משימות. ההחלטות שייכתבו בוועדת תחילת השנה יופיעו כאן, עם הסטטוס שלהן לאורך השנה.' + goLink('#v/' + r.current + '/tasks', 'להחלטות ומשימות בוועדה') + '</div>';
+    return '<div class="card"><div class="rs" style="margin-bottom:8px">משימות שעוד לא סומנו "עמידה בתכנון" או "בוטל". לחיצה פותחת את המשימות בוועדה שלהן.</div>' +
+      plainList(op.map(function (x) { return '<a class="plink" href="#v/' + esc(x.vid) + '/tasks">' + esc(x.text) + '</a>' + (x.owner ? ' <span class="rs">· ' + esc(x.owner) + '</span>' : '') + (x.party === 'פיקוח' ? ' <span class="tag">באחריות הפיקוח</span>' : '') + (x.follow ? ' <span class="rs">· מעקב עד ' + fmtDate(x.follow) + '</span>' : '') + (x.st ? ' <span class="tag info">' + esc(x.st) + '</span>' : ''); })) + '</div>';
+  }
+
+  function schoolPast(r) {
+    var past = (r.past || []).slice().sort(function (x, y) { return x.date < y.date ? 1 : -1; });
+    if (!past.length) return '<div class="card empty">אין במערכת מסמך של ועדה מלווה משנים קודמות.</div>';
+    return past.map(function (x, i) {
+      return '<details class="card"' + (i ? '' : ' open') + '><summary><b>ועדה מלווה ' + esc(x.year) + ' · ' + esc(x.stage) + '</b>' + (x.date ? ' <span class="rs">' + fmtDate(x.date) + '</span>' : '') + '</summary>' + summaryHtml(x.summary) +
+        (x.hasFile ? '<div class="acts"><button type="button" class="btn small" data-past="' + esc(x.key) + '">פתיחת המסמך</button></div>' : '') + '</details>';
+    }).join('');
   }
 
   /* ===== טעינת ועדה ===== */
@@ -268,7 +377,7 @@
     loading();
     api('vaada', { id: id }).then(function (r) {
       if (!r.ok) return failed(r.error);
-      S.V = r; S.me = r.me; header();
+      S.V = r; S.me = r.me; S.SCH = null; header();
       then();
     }).catch(function () {});
   }
@@ -280,12 +389,10 @@
     var st = secStatus(id);
     return st === 'done' ? '<span class="tag ok">הושלם</span>' : st === 'started' ? '<span class="tag info">בעבודה</span>' : '<span class="tag">טרם התחיל</span>';
   }
-  function menu() {
-    var c = S.V.caps, m = [['', 'ראשי'], ['prep', 'הכנה'], ['fill', 'מילוי מצגת האב'], ['deck', 'מצגת הוועדה'], ['recs', 'המלצות המפקח.ת'], ['tasks', 'משימות מהוועדה'], ['sign', 'פרוטוקול וחתימות'], ['past', 'ועדות קודמות']];
-    if (c.brief) m.push(['brief', 'שיחה מצומצמת']);
-    if (c.hivui) m.push(['hivui', 'חיווי להנהלת המינהל']);
-    if (c.supPaper) m.push(['sup', 'הכנת מפקח.ת']);
-    return m;
+  /* קבוצת "לפיקוח" בתפריט: רק מה שמותר למחובר.ת */
+  function supGroup(id, cur) {
+    var c = S.V.caps, pages = SUP_PAGES.filter(function (p) { return p[0] === 'brief' ? c.brief : p[0] === 'hivui' ? c.hivui : c.supPaper; });
+    return pages.length ? menuGroup('לפיקוח', pages, '#v/' + id, cur) : null;
   }
   function viewName() {
     var p = location.hash.split('/')[2] || '';
@@ -293,18 +400,16 @@
   }
   function vHead() {
     var V = S.V, v = V.v, h = '';
-    if (V.caps.full) h += '<a class="crumb" href="#' + (viewName() ? 'v/' + v.id : 's/' + v.semel) + '">→ ' + (viewName() ? 'תפריט הוועדה' : esc(v.school)) + '</a>';
+    if (V.caps.full) h += '<a class="crumb" href="#' + (viewName() ? 'v/' + v.id : 's/' + v.semel) + '">→ ' + (viewName() ? 'ראשי הוועדה' : esc(v.school)) + '</a>';
     else h += '<a class="crumb" href="#">→ הוועדה המלווה</a>';
     return h + '<div class="head"><h1>ועדה מלווה · ' + esc(VAADA.STAGES[v.stage]) + ' ' + esc(v.year) + '</h1><p>' + esc(v.school) + (v.date ? ' · ' + fmtDate(v.date) : '') + (v.status === 'closed' ? ' · <b>הוועדה נסגרה</b>' : '') + '</p></div>';
   }
-  /* תפריט קבוע בצד במחשב. בטלפון: הכרטיסים במסך הראשי של הוועדה והקישור "תפריט הוועדה" */
+  /* תפריט מקובץ בצד במחשב: בית הספר (מקופל), הוועדה (פתוח), לפיקוח. בטלפון: הכרטיסים במסך הראשי של הוועדה */
   function shell(inner) {
     var V = S.V;
     if (!V.caps.full) { APP.innerHTML = inner; return; }
-    var cur = viewName(), base = '#v/' + V.v.id;
-    APP.innerHTML = '<div class="shell' + (location.hash.split('/')[2] === 'live' ? ' wide' : '') + '"><nav class="vmenu" aria-label="תפריט הוועדה"><b>' + esc(V.v.school) + '</b><span class="rs">' + esc(VAADA.STAGES[V.v.stage]) + ' ' + esc(V.v.year) + '</span>' +
-      menu().map(function (m) { return '<a href="' + base + (m[0] ? '/' + m[0] : '') + '"' + (cur === m[0] ? ' aria-current="page"' : '') + '>' + esc(m[1]) + '</a>'; }).join('') +
-      '<a class="back" href="#s/' + V.v.semel + '">כל הוועדות של בית הספר</a></nav><div class="vmain">' + inner + '</div></div>';
+    var cur = viewName(), groups = [schoolGroup(V.v.semel), vaadaGroup(V.v.id, cur), supGroup(V.v.id, cur)].filter(Boolean);
+    APP.innerHTML = '<div class="shell' + (location.hash.split('/')[2] === 'live' ? ' wide' : '') + '">' + sideMenu(groups, V.v.school, VAADA.STAGES[V.v.stage] + ' ' + V.v.year) + '<div class="vmain">' + inner + '</div></div>';
   }
 
   /* ===== ראשי של הוועדה: סיכום + כרטיס לכל פריט בתפריט ===== */
@@ -331,9 +436,8 @@
       ['fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים'],
       ['deck', 'מצגת הוועדה', 'מצגת אב, שקפים נבחרים או הצגה דיגיטלית'],
       ['recs', 'המלצות המפקח.ת', V.prev.recs.length ? 'יש ' + count(V.prev.recs.length, 'המלצה אחת', 'המלצות') + ' מהוועדה הקודמת' : V.recs.length ? count(V.recs.length, 'המלצה אחת', 'המלצות') : 'עדיין אין המלצות'],
-      ['tasks', 'משימות מהוועדה', V.tasks.length ? 'בוצעו ' + doneT + ' מתוך ' + V.tasks.length : 'עדיין אין משימות'],
-      ['sign', 'פרוטוקול וחתימות', V.v.status === 'closed' ? 'נחתם על ידי ' + signed + ' מתוך ' + need.length : 'חותמים אחרי סגירת הוועדה'],
-      ['past', 'ועדות קודמות', 'הוועדות שהיו, כולל תשפ"ו']
+      ['tasks', 'החלטות ומשימות', V.tasks.length ? 'בוצעו ' + doneT + ' מתוך ' + V.tasks.length : 'עדיין אין החלטות'],
+      ['sign', 'פרוטוקול וחתימות', V.v.status === 'closed' ? 'נחתם על ידי ' + signed + ' מתוך ' + need.length : 'חותמים אחרי סגירת הוועדה']
     ];
     if (V.caps.brief) tiles.push(['brief', 'שיחה מצומצמת', 'מפקח.ת ומנהל.ת בלבד']);
     if (V.caps.hivui) tiles.push(['hivui', 'חיווי להנהלת המינהל', 'תמונת מצב והחלטות מרכזיות']);
