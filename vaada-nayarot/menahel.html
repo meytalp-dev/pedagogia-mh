@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ועדה מלווה – נייר למנהל/ת</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4A2F52">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#4A2F52;--plum-soft:#F0E9F1;--gold:#8A5A10;--gold-mid:#B8791C;--gold-soft:#F6EAD3;--ink:#2A2730;--muted:#5C5A62;--line:#DCD3C2;--bg:#F6F2E9;--card:#FFFDF8;--ok:#3F5A33;--ok-soft:#E6ECDF;--bad:#8E2219;--bad-soft:#F8E3E0;--r:14px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.125rem/1.7 Assistant,'Segoe UI',Arial,sans-serif}
+h1,h2,h3,h4{font-family:Rubik,Assistant,sans-serif;font-weight:700;line-height:1.3;margin:0;color:var(--plum)}
+p{margin:0 0 1em}
+ol,ul{margin:0;padding:0;list-style:none}
+strong{font-weight:700;color:var(--plum)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold-mid);outline-offset:2px;border-radius:4px}
+h2:focus{outline:none}
+.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;inset-inline-start:12px;top:-60px;background:#fff;color:var(--plum);padding:10px 16px;border-radius:8px;font-weight:700;z-index:30}
+.skip:focus{top:10px}
+
+.hero{background:var(--plum);color:#fff;padding:26px 20px 22px;border-bottom:4px solid var(--gold-mid)}
+.hero-in{max-width:1120px;margin:auto}
+.hero h1{color:#fff;font-size:clamp(1.5rem,4.5vw,2.25rem)}
+.hero p{margin:6px 0 0;color:#EDE4EF;font-size:1rem}
+
+.wrap{max-width:1120px;margin:auto;padding:28px 20px 40px;display:grid;grid-template-columns:270px minmax(0,1fr);gap:40px;align-items:start}
+.side{position:sticky;top:20px}
+.side summary{display:none}
+.toc a{display:flex;gap:10px;align-items:baseline;padding:11px 10px;border-bottom:1px solid var(--line);text-decoration:none;line-height:1.35;font-weight:600}
+.toc a:hover{background:var(--plum-soft)}
+.toc .n{font-family:Rubik,sans-serif;font-size:.9rem;color:var(--gold);min-width:1.1em}
+.toc a[aria-current=true]{background:var(--plum);color:#fff;border-radius:8px;border-color:transparent}
+.toc a[aria-current=true] .n{color:#F3D9A4}
+.all{display:none;margin:12px 10px 0;font-size:1rem;color:var(--plum);font-weight:600}
+.js .all{display:inline-block}
+.prog{display:none;height:5px;background:var(--line);border-radius:5px;overflow:hidden;margin:0 0 18px}
+.prog i{display:block;height:100%;background:var(--gold-mid);width:0}
+.count{display:none;color:var(--muted);font-size:1rem;margin:0 0 4px}
+.js .prog,.js .count{display:block}
+.js.showall .prog,.js.showall .count,.js.showall .pager{display:none}
+
+main{min-width:0}
+.ch{margin-bottom:44px}
+.js .ch.off{display:none}
+.js:not(.showall) .ch{margin-bottom:0}
+.ch h2{font-size:clamp(1.5rem,3.6vw,1.95rem);margin-bottom:18px}
+.ch>p,.box p,.ans{max-width:68ch}
+.sub{font-size:1.2rem;margin:26px 0 12px}
+.kicker{font-size:1rem;font-weight:700;color:var(--muted);margin:18px 0 8px}
+
+.box{background:var(--gold-soft);border-radius:var(--r);padding:18px 20px;margin:22px 0}
+.box p:last-child{margin-bottom:0}
+.box strong{color:#6A4409}
+.box.test{background:var(--plum-soft)}
+.box.test strong{color:var(--plum)}
+.box .ticks{margin:0 0 14px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:0 0 8px}
+.cards li{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.cards h4{font-size:1.1rem;margin-bottom:6px}
+.cards p{margin:0;line-height:1.6}
+
+.ticks li{display:flex;gap:10px;padding:7px 0}
+.ticks .ic{color:var(--ok);margin-top:.32em}
+.dots{margin:0 0 8px}
+.dots li{position:relative;padding:6px 18px 6px 0}
+.dots li::before{content:"";position:absolute;inset-inline-start:2px;top:1.05em;width:7px;height:7px;border-radius:50%;background:var(--gold-mid)}
+.nb{display:inline-block;white-space:nowrap;unicode-bidi:isolate}
+
+.chain{margin:18px 0}
+.link{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.link h3{display:flex;align-items:center;gap:10px;font-size:1.25rem;margin-bottom:12px}
+.num{display:inline-grid;place-items:center;width:1.85em;height:1.85em;flex:none;border-radius:50%;background:var(--plum);color:#fff;font:700 .95rem Rubik,sans-serif}
+.link dl{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px}
+dt{font-weight:700;font-size:1rem;color:var(--muted)}
+dd{margin:0;line-height:1.55}
+dd p{margin:0 0 .5em}
+dd p:last-child{margin:0}
+.link dl>.good,.link dl>.warn{grid-column:1/-1;border-radius:10px;padding:10px 14px}
+.good{background:var(--ok-soft)} .good dt{color:var(--ok)}
+.warn{background:var(--bad-soft)} .warn dt{color:var(--bad)}
+.link dd ul li{padding:3px 0}
+.arrow{display:flex;justify-content:center;color:var(--gold-mid);padding:5px 0;font-size:1.2rem}
+
+.bar{margin:18px 0 6px}
+.bar-row{display:flex;gap:3px}
+.seg{flex-basis:0;min-width:32px;text-align:center;font:700 .85rem/2.5 Rubik,sans-serif;border-radius:6px;white-space:nowrap}
+.seg.rng{min-width:50px;font-size:.8rem}
+.seg.plum{background:var(--plum);color:#fff}
+.seg.gold{background:var(--gold-mid);color:#1E1408}
+.seg.pause{background:var(--line);color:var(--ink)}
+.bar-ends{display:flex;justify-content:space-between;font-size:.92rem;color:var(--muted);margin-top:4px}
+
+.agenda{border-top:1px solid var(--line)}
+.ag{display:grid;grid-template-columns:128px minmax(0,1fr);gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+.ag-time{display:flex;flex-direction:column;gap:4px}
+.tm{font:700 1rem Rubik,sans-serif;color:var(--plum)}
+.dur{display:inline-block;width:max-content;font-size:.95rem;font-weight:700;padding:1px 10px;border-radius:30px;background:var(--plum-soft);color:var(--plum)}
+.ag.gold .dur{background:var(--gold-soft);color:#6A4409}
+.ag.pause .dur{background:var(--line);color:var(--ink)}
+.ag h3{font-size:1.2rem;margin-bottom:6px}
+.ag.gold{background:linear-gradient(0deg,var(--gold-soft),var(--gold-soft));margin-inline:-14px;padding-inline:14px;border-radius:var(--r)}
+.ag.pause{padding-block:10px;align-items:center}
+.ag.pause h3{margin:0;color:var(--muted);font-weight:500}
+.ag dl{margin:0;display:grid;gap:10px}
+.note{background:var(--card);border-radius:10px;padding:10px 14px;margin-top:8px!important}
+
+.steps{display:grid;gap:12px;margin:14px 0 8px}
+.step{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+.step.gold .num{background:var(--gold-mid);color:#1E1408}
+.step h3{font-size:1.12rem}
+.step p{margin:0}
+.who{font-weight:600;color:var(--muted);font-size:1rem}
+.step .who{margin-bottom:4px}
+.lbl{font-weight:700}
+
+.line{margin:10px 0 18px;border-inline-start:3px solid var(--line);padding-inline-start:20px}
+.line li{position:relative;padding:0 0 18px}
+.line li:last-child{padding-bottom:0}
+.line li::before{content:"";position:absolute;inset-inline-start:-29px;top:.45em;width:15px;height:15px;border-radius:50%;background:var(--plum);border:3px solid var(--bg)}
+.line p{margin:0 0 3px}
+.when{font-family:Rubik,sans-serif;font-weight:700;color:var(--plum)}
+
+.dodont{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:4px}
+.dodont th{font:700 1.1rem Rubik,sans-serif;text-align:start;padding:6px 16px}
+.dodont th .ic,.tag .ic{margin-inline-end:6px;vertical-align:-.2em}
+.dodont th.do{color:var(--ok)} .dodont th.dont{color:var(--bad)}
+.dodont td{width:50%;padding:12px 16px;vertical-align:top;line-height:1.5}
+td.do{background:var(--ok-soft);border-radius:0 10px 10px 0}
+td.dont{background:var(--bad-soft);border-radius:10px 0 0 10px}
+.tag{display:none;font:700 .92rem Rubik,sans-serif;margin-bottom:2px}
+
+.cases-head{margin-top:0}
+.case{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.case summary{display:flex;justify-content:space-between;gap:14px;align-items:center;min-height:52px;padding:12px 18px;cursor:pointer;font-weight:700;color:var(--plum);line-height:1.4;list-style:none}
+.case summary::-webkit-details-marker{display:none}
+.chev{transition:transform .15s}
+.case[open] .chev{transform:rotate(180deg)}
+.ans{padding:0 18px 16px}
+
+.pager{display:none;justify-content:space-between;gap:12px;margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
+.js .pager{display:flex}
+.pager a{display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700;line-height:1.3}
+.pg-prev{color:var(--plum);border:1.5px solid var(--plum)}
+.pg-next{background:var(--plum);color:#fff;margin-inline-start:auto}
+.pager a:hover{filter:brightness(1.15)}
+.pager a[hidden]{display:none}
+
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:18px 20px 30px;line-height:1.7}
+footer a{color:var(--plum)}
+
+@media (max-width:860px){
+  body{font-size:1.0625rem}
+  .wrap{display:block;padding:0 16px 30px}
+  .side{position:sticky;top:0;z-index:20;margin:0 -16px 20px;background:var(--bg);border-bottom:1px solid var(--line)}
+  .side summary{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:52px;padding:8px 16px;font-weight:700;color:var(--plum);line-height:1.3;cursor:pointer;list-style:none}
+  .side summary::-webkit-details-marker{display:none}
+  .side[open] .chev{transform:rotate(180deg)}
+  .side-in{max-height:70vh;overflow:auto;padding:0 8px 12px}
+  .js .count{display:none}
+  .seg{min-width:30px}
+  .hero{padding:20px 16px 16px}
+  .link dl{grid-template-columns:minmax(0,1fr)}
+  .ag{grid-template-columns:minmax(0,1fr);gap:8px}
+  .ag-time{flex-direction:row;align-items:center;gap:10px}
+  .ag.pause{gap:2px}
+  .dodont thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .dodont,.dodont tbody,.dodont tr,.dodont td{display:block;width:100%}
+  .dodont tr{margin-bottom:12px}
+  td.do{border-radius:10px 10px 0 0}
+  td.dont{border-radius:0 0 10px 10px}
+  .tag{display:block}
+  .tag .ic{margin-inline-end:4px}
+  .pager a{flex:1;justify-content:center;text-align:center}
+  .pg-prev{flex:0 0 auto}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{
+  body{background:#fff;font-size:11.5pt}
+  .side,.pager,.prog,.count,.skip,.bar{display:none!important}
+  .hero{background:none;color:#000;padding:0 0 10px;border-bottom:2px solid #000}
+  .hero h1,.hero p{color:#000}
+  .wrap{display:block;padding:12px 0}
+  .ch{display:block!important;margin-bottom:24px!important}
+  .ch h2{break-after:avoid}
+  .link,.step,.case,.ag,.dodont tr,.cards li{break-inside:avoid}
+  .case summary .chev{display:none}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+<a class="skip" href="#main">דילוג לתוכן</a>
+<header class="hero"><div class="hero-in">
+  <h1>ועדה מלווה – נייר למנהל/ת</h1>
+  <p>3 בנובמבר 2026 · יגאל יעקבזון</p>
+</div></header>
+<div class="wrap">
+  <details class="side" open>
+    <summary><span id="cur">רציונל ומהות</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary>
+    <nav class="side-in" aria-label="פרקי הנייר">
+      <ol class="toc"><li><a href="#ch1" data-i="0"><span class="n" aria-hidden="true">1</span><span>רציונל ומהות</span></a></li><li><a href="#ch2" data-i="1"><span class="n" aria-hidden="true">2</span><span>מטרות הוועדה המלווה</span></a></li><li><a href="#ch3" data-i="2"><span class="n" aria-hidden="true">3</span><span>מתווה הוועדה</span></a></li><li><a href="#ch4" data-i="3"><span class="n" aria-hidden="true">4</span><span>מתווה להצגת סוגיה להיוועצות</span></a></li><li><a href="#ch5" data-i="4"><span class="n" aria-hidden="true">5</span><span>הכנה מקדימה</span></a></li><li><a href="#ch6" data-i="5"><span class="n" aria-hidden="true">6</span><span>עשה ואל תעשה למנהל</span></a></li><li><a href="#ch7" data-i="6"><span class="n" aria-hidden="true">7</span><span>מה אפשר לצפות מבעלי התפקידים</span></a></li><li><a href="#ch8" data-i="7"><span class="n" aria-hidden="true">8</span><span>מקרים ותגובות</span></a></li></ol>
+      <a class="all" id="all" href="#all">הצגת כל הנייר ברצף</a>
+    </nav>
+  </details>
+  <main id="main">
+    <p class="count" id="count">1 מתוך 8</p>
+    <div class="prog" aria-hidden="true"><i id="bar"></i></div>
+    <section class="ch" id="ch1" aria-labelledby="h1"><h2 id="h1" tabindex="-1">רציונל ומהות</h2><p>הוועדה המלווה היא צומת משמעותי בתרבות של חשיבה תכנונית ותוכנית עבודה בית-ספרית. תוכנית העבודה קושרת בין צרכים – מטרות (ומדדי הצלחה) – פעולות – משאבים. נוכחות כלל השותפים מאפשרת לבית הספר מרחב אוטונומיה לצד האחריותיות הנדרשת והמצופה.</p><p><strong>מנהל בית הספר מוביל את הוועדה.</strong> תפקיד הפיקוח לאפשר מרחב שיח מכבד ומוגן, ולוודא שבית הספר והצוות מתקדמים למימוש יעדים בהלימה למדיניות וליעדי המינהל.</p><h3 class="sub">לוועדה שלושה תפקידים:</h3><ul class="cards"><li><h4>בקרה ואחריותיות</h4><p>האם המטרות עונות על הצרכים שזוהו? האם הפעולות יקדמו את השגת המטרות? האם המשאבים מספיקים ומנוצלים באופן מושכל?</p></li><li><h4>קבלת החלטות</h4><p>בקרה בעידן של אוטונומיה מתמקדת בשיקול הדעת של המנהל וצוותו: באילו נקודות מבט והשלכות נשקלו. הוועדה מסתיימת בהחלטות ובשיעורי בית, כולל אחריות של כלל השותפים.</p></li><li><h4>היוועצות</h4><p>חברי הוועדה הם משאב ידע וחשיבה שעומד לרשות בית הספר, כדי להתמודד טוב יותר עם סוגיית ליבה שהמנהל בחר.</p></li></ul><h3 class="sub">עקרונות מנחים:</h3><ul class="cards"><li><h4>פחות זה יותר</h4><p>עד <span dir="ltr" class="nb">3–4</span> תחנות תוכן, לעומק. לא סקירה של כל התחומים.</p></li><li><h4>רצף רב-שנתי</h4><p>כל ועדה נשענת על החלטות הקודמת.</p></li><li><h4>חוויה מצמיחה ולא מפרקת</h4><p>שיח מכבד מול הצוות. סוגיות רגישות מתבררות מראש או בשיחה המצומצמת.</p></li><li><h4>הוועדה אינה מנגנון יחיד</h4><p>לא כל נושא צריך להיות מלובן בוועדה, ולא כל נושא צריך להידון עם כלל השותפים.</p></li></ul></section><section class="ch" id="ch2" aria-labelledby="h2"><h2 id="h2" tabindex="-1">מטרות הוועדה המלווה</h2><p>המטרה המרכזית היא לבחון את איכות התכנון הבית-ספרי כשרשרת אחת סגורה: <strong>צורך ← מטרות ומדדי הצלחה ← פעולות ← משאבים</strong>. תוכנית טובה היא תוכנית שבה כל חוליה נגזרת מקודמתה ומובילה לבאה אחריה.</p><ol class="chain"><li class="link"><h3><span class="num" aria-hidden="true">1</span>צורך</h3><dl><div class=""><dt>שאלה מנחה</dt><dd>מה הנתונים אומרים עלינו, ומה הכי דוחק?</dd></div><div class=""><dt>מה מציגים</dt><dd><span dir="ltr" class="nb">2–3</span> נתונים בולטים בהשוואה לשנים קודמות</dd></div><div class="good"><dt>סימן לתכנון איכותי</dt><dd>הצורך נשען על נתון ולא על תחושה בלבד</dd></div></dl></li><li class="arrow" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13.5l6 6 6-6"/></svg></li><li class="link"><h3><span class="num" aria-hidden="true">2</span>מטרות ומדדי הצלחה</h3><dl><div class=""><dt>שאלה מנחה</dt><dd>מה נרצה שישתנה, ואיך נדע שהצלחנו?</dd></div><div class=""><dt>מה מציגים</dt><dd>מטרות בהלימה ליעדי המינהל, עם מדד ויעד מספרי או איכותי</dd></div><div class="good"><dt>סימן לתכנון איכותי</dt><dd>כל מטרה ניתנת למדידה ומקושרת לצורך שהוצג</dd></div></dl></li><li class="arrow" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13.5l6 6 6-6"/></svg></li><li class="link"><h3><span class="num" aria-hidden="true">3</span>פעולות</h3><dl><div class=""><dt>שאלה מנחה</dt><dd>מה נעשה בפועל, מי אחראי ומתי?</dd></div><div class=""><dt>מה מציגים</dt><dd>תוכנית אופרטיבית: פעולה, אחראי, לוח זמנים</dd></div><div class="good"><dt>סימן לתכנון איכותי</dt><dd>הפעולות נגזרות מהמטרה, ולא רשימת הפעילויות הקיימות</dd></div></dl></li><li class="arrow" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13.5l6 6 6-6"/></svg></li><li class="link"><h3><span class="num" aria-hidden="true">4</span>משאבים</h3><dl><div class=""><dt>שאלה מנחה</dt><dd>איך המשאבים משרתים את המטרה?</dd></div><div class=""><dt>מה מציגים</dt><dd>סל התוכניות, שעות, תקציב וכוח אדם – בתוך כל יעד</dd></div><div class="good"><dt>סימן לתכנון איכותי</dt><dd>התיעדוף התקציבי משקף שיקול דעת ניהולי</dd></div></dl></li></ol><p>סל התוכניות והמשאבים מוצג <strong>בתוך</strong> יעדי תוכנית העבודה, ולא כנושא טכני או חשבונאי נפרד.</p><h3 class="sub">מטרות נוספות:</h3><ul class="dots"><li>לוודא הלימה בין יעדי בית הספר ליעדי המינהל: נוכחות, תעסוקה, הישגים פדגוגיים וחינוך יוצר.</li><li>לסיים בהחלטות ובשיעורי בית מוגדרים, שישמשו בסיס לוועדה הבאה.</li><li>לאפשר למנהל לקבל חשיבה משותפת על סוגיית ליבה אחת, שהוא עצמו בחר.</li></ul><div class="box"><p><strong>&quot;אזהרת מסע&quot;</strong> – אין צורך להספיק לעבור על כל המצגת. בניית המצגת מסייעת לבית הספר בהליך התכנוני: לעבור בתחנות הנדרשות, לאסוף נתונים בראייה רב-שנתית ולגבש מטרות ודרכי פעולה. המטרה בוועדה היא שיח משמעותי, ובחינה משותפת של אפקטיביות דפוסי החשיבה, התכנון והפעולה הבית-ספריים.</p></div></section><section class="ch" id="ch3" aria-labelledby="h3"><h2 id="h3" tabindex="-1">מתווה הוועדה</h2><p>הוועדה נמשכת 4 שעות כולל הפסקה. המנהל מוביל את הוועדה ומנהל את הזמן והשיח; המפקח מכווין לפי הצורך. השעות בטבלה הן דוגמה.</p><div class="bar" aria-hidden="true"><div class="bar-row"><span class="seg plum" style="flex-grow:30.0">30</span><span class="seg plum" style="flex-grow:30.0">30</span><span class="seg gold" style="flex-grow:90.0">90</span><span class="seg pause" style="flex-grow:20.0">20</span><span class="seg plum" style="flex-grow:40.0">40</span><span class="seg plum" style="flex-grow:15.0">15</span><span class="seg plum rng" style="flex-grow:17.5"><span dir="ltr" class="nb">15–20</span></span></div><div class="bar-ends"><span>09:00</span><span>13:00</span></div></div><p class="kicker">שעות (דוגמה)</p><ol class="agenda"><li class="ag plum"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">09:00–09:30</span></span><span class="dur">30 דק&#x27;</span></div><div class="ag-body"><h3>פתיחה ובמת הצלחות</h3><dl><div><dt>מה קורה</dt><dd><p>מטרת הוועדה, סדר היום וכללי השיח; הצלחות נבחרות ומה אפשר אותן</p></dd></div><div><dt>מוביל</dt><dd><p>המנהל וחברי הצוות</p></dd></div></dl></div></li><li class="ag plum"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">09:30–10:00</span></span><span class="dur">30 דק&#x27;</span></div><div class="ag-body"><h3>נתונים בולטים ורצף רב-שנתי</h3><dl><div><dt>מה קורה</dt><dd><p>נתונים מרכזיים, צרכים ומטרות; חיבור להחלטות הוועדה הקודמת</p></dd></div><div><dt>מוביל</dt><dd><p>המנהל</p></dd></div></dl></div></li><li class="ag gold"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">10:00–11:30</span></span><span class="dur">90 דק&#x27;</span></div><div class="ag-body"><h3>עד <span dir="ltr" class="nb">3–4</span> תחנות תוכן</h3><dl><div><dt>מה קורה</dt><dd><p>תחנות בהלימה ליעדי המינהל: חינוך יוצר; חניכות ותעסוקה; נוכחות ונשירה. בכל תחנה: צורך, מטרה ומדדים, פעולות, משאבים</p></dd></div><div><dt>מוביל</dt><dd><p>חברי הצוות בתחום אחריותם; המנהל שומר על הזמן והמבנה</p></dd></div></dl></div></li><li class="ag pause"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">11:30–11:50</span></span><span class="dur">20 דק&#x27;</span></div><div class="ag-body"><h3>הפסקה</h3></div></li><li class="ag plum"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">11:50–12:30</span></span><span class="dur">40 דק&#x27;</span></div><div class="ag-body"><h3>במת היוועצות</h3><dl><div><dt>מה קורה</dt><dd><p>הצגת סוגיית ליבה לפי המתווה (להלן)</p></dd></div><div><dt>מוביל</dt><dd><p>המנהל מציג; המפקח הכולל/הפדגוגי מנחה</p></dd></div></dl></div></li><li class="ag plum"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">12:30–12:45</span></span><span class="dur">15 דק&#x27;</span></div><div class="ag-body"><h3>סיכום במליאה</h3><dl><div><dt>מה קורה</dt><dd><p>החלטות ושיעורי בית: מה, מי, עד מתי</p></dd></div><div><dt>מוביל</dt><dd><p>המנהל</p></dd></div></dl></div></li><li class="ag plum"><div class="ag-time"><span class="tm"><span dir="ltr" class="nb">12:45–13:00</span></span><span class="dur"><span dir="ltr" class="nb">15–20</span> דק&#x27;</span></div><div class="ag-body"><h3>שיחה מצומצמת</h3><dl><div><dt>מה קורה</dt><dd><p>המפקח והמנהל בלבד: חיווי אישי וסוגיות רגישות</p></dd></div><div><dt>מוביל</dt><dd><p>המפקח</p></dd></div></dl></div></li></ol><p>רישום ההחלטות במהלך הוועדה – בעל תפקיד שהמנהל מגדיר מראש. ככל שרמת התפקוד הבית-ספרי גבוהה יותר, כך גם האוטונומיה בבחירת היעדים גבוהה יותר.</p></section><section class="ch" id="ch4" aria-labelledby="h4"><h2 id="h4" tabindex="-1">מתווה להצגת סוגיה להיוועצות</h2><p>במת ההיוועצות נמשכת 40 דקות. המנהל מציג סוגיה אחת, וחברי הוועדה חושבים איתו. המפקח הכולל/הפדגוגי מנחה את השיח ושומר על מרחב מוגן.</p><div class="bar" aria-hidden="true"><div class="bar-row"><span class="seg plum" style="flex-grow:7.0">7</span><span class="seg plum" style="flex-grow:3.0">3</span><span class="seg plum" style="flex-grow:2.0">2</span><span class="seg gold" style="flex-grow:8.0">8</span><span class="seg gold" style="flex-grow:15.0">15</span><span class="seg plum" style="flex-grow:5.0">5</span></div></div><ol class="steps"><li class="step plum"><span class="num">1</span><div><h3>הנתונים והבעיה</h3><p class="who">המנהל, 7 דק&#x27;</p><p>מה קורה היום, על סמך אילו נתונים, ומה כבר ניסינו.</p></div></li><li class="step plum"><span class="num">2</span><div><h3>המחירים</h3><p class="who">המנהל, 3 דק&#x27;</p><p>מה בית הספר משלם בגלל הבעיה: תלמידים, צוות, תוצאות, משאבים.</p></div></li><li class="step plum"><span class="num">3</span><div><h3>שאלת ההיוועצות</h3><p class="who">המנהל, 2 דק&#x27;</p><p>שאלה פתוחה אחת שהמנהל באמת מתלבט בה, בנוסח &quot;איך...&quot;.</p></div></li><li class="step gold"><span class="num">4</span><div><h3>שאלות בהרה</h3><p class="who">חברי הוועדה, 8 דק&#x27;</p><p>שאלות להבנה בלבד, בלי הצעות ובלי שיפוט.</p></div></li><li class="step gold"><span class="num">5</span><div><h3>רעיונות וכיוונים</h3><p class="who">חברי הוועדה, 15 דק&#x27;</p><p>הצעות, ניסיון ומשאבים. המנהל מקשיב ורושם, בלי להגיב ובלי להצדיק.</p></div></li><li class="step plum"><span class="num">6</span><div><h3>שיקוף</h3><p class="who">המנהל, 5 דק&#x27;</p><p>מה אני לוקח מכאן, ומה הצעד הראשון.</p></div></li></ol><div class="box test"><p><strong>מבחן המהותיות:</strong> שלבי הנתונים והמחירים הם וסת שמוודא שהסוגיה מהותית ולא שולית. כבר בשיחה המקדימה בודקים יחד:</p><ul class="ticks"><li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>יש נתון שמראה את הבעיה?</span></li><li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>יש מחיר ממשי שבית הספר משלם היום?</span></li><li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>הפתרון אינו ידוע מראש, והמנהל באמת מתלבט?</span></li><li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>הסוגיה בהשפעת בית הספר, ולא רק בהשפעת גורם חיצוני?</span></li></ul><p>סוגיה שלא עומדת במבחן הזה מתאימה יותר לשיחה שוטפת עם המפקח.</p></div></section><section class="ch" id="ch5" aria-labelledby="h5"><h2 id="h5" tabindex="-1">הכנה מקדימה</h2><p>איכות הוועדה נקבעת ברובה לפניה. המועדים שלהלן הם הצעה.</p><ol class="line"><li><p class="when">שיחה מקדימה עם המפקח הכולל/הפדגוגי (כשלושה שבועות לפני)</p><p>בחירת תחנות התוכן וניסוח סוגיית הליבה, כולל הנתונים והמחירים (מבחן המהותיות). זה גם המקום לשתף פערים ורגישויות שחשוב שהמפקח יכיר.</p></li><li><p class="when">מצגת אב (כשבועיים לפני)</p><p>מסמך מקיף של כלל הנתונים, התוכניות ובעלי התפקידים. נשלחת למפקחים מראש ומשמשת רקע, לא מוצגת בוועדה.</p></li><li><p class="when">שקפים נבחרים</p><p>המצגת שמוצגת בפועל. מספר מצומצם של שקפים לכל מקטע, במבנה קבוע לכל תחנה: צורך, מטרה ומדדים, פעולות, משאבים.</p></li><li><p class="when">חלוקת הובלה בצוות</p><p>קביעה מי מחברי הצוות מוביל כל תחנה, מי רושם את ההחלטות, ומי עוזר לשמור על הזמנים.</p></li><li><p class="when">החלטות הוועדה הקודמת</p><p>עדכון קצר: מה בוצע, מה שונה ומה נדחה.</p></li></ol><div class="box"><p><strong>הוועדה כבמה לצוות.</strong> מצופה שחברי הצוות יובילו את המקטעים שבתחום אחריותם. שווה לראות בכך הזדמנות ולא רק חלוקת עבודה: לתת להם במה מול הפיקוח, להכיר בעשייה שלהם ולחזק את מעמדם ואת תחושת המסוגלות שלהם. מנהל שמאפשר לצוות להוביל מראה בכך גם את כוחה של הנהלת בית הספר. תפקיד המנהל להכין אותם, לחבר בין התחנות ולעמוד לצידם.</p></div></section><section class="ch" id="ch6" aria-labelledby="h6"><h2 id="h6" tabindex="-1">עשה ואל תעשה למנהל</h2><table class="dodont" role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col" class="do"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</th><th role="columnheader" scope="col" class="dont"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>הובל את הוועדה: פתיחה, ניהול הזמן וסיכום ההחלטות</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תעביר את ההובלה לפיקוח</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>תן לחברי הצוות להוביל את התחנות שבתחומם, והכן אותם מראש</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תציג לבד את כל התחנות במקום הצוות</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>בחר עד <span dir="ltr" class="nb">3–4</span> תחנות והעמק בהן</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תנסה להציג את כל מה שבית הספר עושה</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>הצג כל יעד במבנה צורך – מטרה ומדדים – פעולות – משאבים</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תציג רשימת פעילויות שאינה מקושרת למטרה</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>בנה מצגת אב מלאה והצג רק שקפים נבחרים</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תביא מטווח שקפים של כל בעלי התפקידים</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>שלב את סל התוכניות והמשאבים בתוך היעדים והסבר את התיעדוף</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תציג את התקציב כטבלה חשבונאית נפרדת</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>קשר כל נתון למשמעות שלו: מה הוא אומר ומה נגזר ממנו</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תציג נתונים בלי פרשנות</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>הצג גם מה שלא הצליח, ומה למדתם מזה</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תייפה את התמונה ואל תסתיר פערים</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>הבא סוגיית ליבה עם נתונים ומחיר ממשי, שאתה באמת מתלבט בה</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תבחר סוגיה &quot;בטוחה&quot; או שולית</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>שמור על לוח הזמנים של כל מקטע</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תאריך במת הצלחות על חשבון הדיון</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>הקשב לשאלות ולהערות כמשאב לשיפור</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תתגונן או תשיב לכל שאלה בהצדקה</td></tr><tr role="row"><td role="cell" class="do"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>עשה</span>סיים עם שיעורי בית ברורים: מה, מי ועד מתי</td><td role="cell" class="dont"><span class="tag"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>אל תעשה</span>אל תסיים בלי סיכום החלטות</td></tr></tbody></table></section><section class="ch" id="ch7" aria-labelledby="h7"><h2 id="h7" tabindex="-1">מה אפשר לצפות מבעלי התפקידים</h2><p>המפקחים (פדגוגי, מקצועי, טיפולי) ונציגי הרשת החינוכית מתחייבים ל:</p><ul class="dots"><li>לאפשר מרחב שיח מכבד ומוגן למנהל ולחברי הצוות שמציגים.</li><li>להגיע מוכנים, אחרי שקראו את מצגת האב ושוחחו עם בעלי התפקידים בבית הספר.</li><li>להעלות פערים וסוגיות רגישות בהכנה המוקדמת או בשיחה המצומצמת, לא מול הצוות.</li><li>לשאול שאלות שמקדמות חשיבה, במסגרת תחום אחריותם.</li><li>להימנע מביקורת על תפקוד הניהול האישי של המנהל בפני הצוות.</li><li>לכבד את לוח הזמנים ואת המיקוד בתחנות שנבחרו.</li><li>להשתתף במלוא בבמת ההיוועצות ולתת רעיונות ומשאבים, לא רק הערות.</li><li>לעמוד מאחורי ההחלטות שנוסחו וללוות את יישומן עד הוועדה הבאה.</li></ul></section><section class="ch" id="ch8" aria-labelledby="h8"><h2 id="h8" tabindex="-1">מקרים ותגובות</h2><p class="kicker cases-head">מקרה · תגובה מומלצת</p><details class="case"><summary><span>נשאלת על נתון שאין לך כרגע</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">&quot;אבדוק ואעביר עד …&quot; – ורושמים כשיעורי בית. אין צורך לאלתר.</div></details><details class="case"><summary><span>יעד מהשנה שעברה לא הושג</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">הצג אותו כלמידה: מה תכננו, מה קרה, מה למדנו ומה משנים.</div></details><details class="case"><summary><span>בעל תפקיד מעלה ביקורת חריפה מול הצוות</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">אפשר לומר: &quot;חשוב לי להעמיק בזה, נדבר בשיחה המצומצמת&quot;. המפקח הכולל אחראי לשמור על מרחב מוגן.</div></details><details class="case"><summary><span>חבר צוות מתקשה בהצגת התחנה שלו</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">השלם וחזק אותו, בלי לקחת ממנו את התחנה. בפעם הבאה: חזרה משותפת לפני הוועדה.</div></details><details class="case"><summary><span>כל בעלי התפקידים בבית הספר רוצים להציג</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">כולם מופיעים במצגת האב. בוועדה מציגים מובילי התחנות שנבחרו.</div></details><details class="case"><summary><span>תחנה חורגת מהזמן</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">מסכמים בשתי שורות ומעבירים את השאר למעקב כתוב. אפשר להיעזר בשומר זמן מהצוות.</div></details><details class="case"><summary><span>עולה בקשה למשאבים נוספים</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">קשר את הבקשה לצורך ולמטרה שהוצגו. ההחלטה תתקבל בסיכום או במעקב.</div></details><details class="case"><summary><span>מפקחים שונים מצביעים על כיוונים סותרים</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">שקף את המתח ובקש מהמפקח הכולל לסכם את הכיוון המוסכם.</div></details><details class="case"><summary><span>סוגיית הליבה נוגעת באנשי צוות ספציפיים</span><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></summary><div class="ans">נסח אותה כשאלה מערכתית, בלי שמות. את הפרטים שמור לשיחה המצומצמת.</div></details></section>
+    <nav class="pager" aria-label="מעבר בין פרקים">
+      <a class="pg-prev" id="prev" href="#"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>הקודם</span></a>
+      <a class="pg-next" id="next" href="#"><span id="nextT">הבא</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    </nav>
+  </main>
+</div>
+<footer>
+  המנהל להכשרה מקצועית · משרד העבודה<br>
+  נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener">impactos · impactos.co.il</a>
+</footer>
+<script>
+(function(){
+  var root=document.documentElement,chs=[].slice.call(document.querySelectorAll('.ch')),links=[].slice.call(document.querySelectorAll('.toc a')),
+      side=document.querySelector('.side'),main=document.getElementById('main'),all=document.getElementById('all'),
+      prev=document.getElementById('prev'),next=document.getElementById('next'),nextT=document.getElementById('nextT'),
+      cur=document.getElementById('cur'),count=document.getElementById('count'),bar=document.getElementById('bar'),n=chs.length;
+  var mq=window.matchMedia('(max-width:860px)');
+  function syncSide(){side.open=!mq.matches}
+  (mq.addEventListener?mq.addEventListener('change',syncSide):mq.addListener(syncSide));syncSide();
+  function title(i){return chs[i].querySelector('h2').textContent}
+  function jump(el){
+    var off=mq.matches?side.offsetHeight+8:16;
+    window.scrollTo(0,Math.max(0,el.getBoundingClientRect().top+window.scrollY-off));
+  }
+  function route(moved){
+    var h=location.hash.slice(1),showAll=h==='all',i=chs.findIndex(function(c){return c.id===h});
+    if(i<0)i=0;
+    root.classList.toggle('showall',showAll);
+    chs.forEach(function(c,k){c.classList.toggle('off',!showAll&&k!==i)});
+    links.forEach(function(a,k){if(!showAll&&k===i)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
+    all.textContent=showAll?'חזרה לפרק אחד בכל פעם':'הצגת כל הנייר ברצף';
+    all.href=showAll?'#ch1':'#all';
+    cur.textContent=showAll?'כל הנייר':(i+1)+' מתוך '+n+' · '+title(i);
+    count.textContent=(i+1)+' מתוך '+n;
+    bar.style.width=((i+1)/n*100)+'%';
+    prev.hidden=i===0;next.hidden=i===n-1;
+    if(i>0)prev.href='#ch'+i;
+    if(i<n-1){next.href='#ch'+(i+2);nextT.textContent='הבא: '+title(i+1)}
+    if(moved){
+      if(mq.matches)side.open=false;
+      jump(main);
+      var t=showAll?main.querySelector('h2'):chs[i].querySelector('h2');
+      t.focus({preventScroll:true});
+    }
+  }
+  window.addEventListener('hashchange',function(){route(true)});
+  route(false);
+  var opened=[];
+  window.addEventListener('beforeprint',function(){opened=[].slice.call(document.querySelectorAll('details.case:not([open])'));opened.forEach(function(d){d.open=true})});
+  window.addEventListener('afterprint',function(){opened.forEach(function(d){d.open=false})});
+})();
+</script>
+</body>
+</html>
