@@ -237,7 +237,9 @@
   function setFocus(on) { try { if (on) sessionStorage.setItem(FOCUS_KEY, '1'); else sessionStorage.removeItem(FOCUS_KEY); } catch (e) {} }
   function focusBar(cur) {
     var base = '#v/' + S.V.v.id;
-    return '<nav class="fbar" aria-label="השלבים"><a href="' + base + '/prev"' + (cur === 'prev' ? ' aria-current="page"' : '') + '>1. ועדת תשפ"ו</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. הכנה</a><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>3. מילוי מצגת האב</a></nav>';
+    /* בתוך הצעדים בטלפון הסרגל מוסתר: המסך נשאר למה שממלאים עכשיו */
+    var inStep = /\/(e|prep)(\/|$)/.test(location.hash);
+    return '<nav class="fbar' + (inStep ? ' instep' : '') + '" aria-label="השלבים"><a href="' + base + '/prev"' + (cur === 'prev' ? ' aria-current="page"' : '') + '>1. ועדת תשפ"ו</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. הכנה</a><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>3. מילוי מצגת האב</a></nav>';
   }
   function viewFocus(semel) {
     loading();
@@ -499,15 +501,23 @@
       var handled = V.prev.tasks.filter(function (t) { return t.refStatus; }).length;
       h += '<div class="prevbox" style="padding:12px 16px"><b>מ' + esc(V.prev.label) + ': ' + handled + ' מתוך ' + prevN + ' משימות עודכנו.</b> בכל תחום מופיעות בראש העמוד המשימות שלו.</div>';
     }
-    var g = '';
-    visibleSecs().forEach(function (s) {
-      if (s.g !== g) { g = s.g; h += '<div class="grp">' + esc(g) + '</div>'; }
+    /* במקום רשימה של 18 תחומים: "להמשיך" אחד, והקבוצות מקופלות. מי שרק קורא רואה הכול פתוח */
+    var nx = nextSec(null), vis = visibleSecs(), g = '';
+    if (nx && v.status !== 'closed' && V.caps.edit.indexOf(nx.id) > -1) h += '<a class="btn primary fnext" href="#v/' + v.id + '/e/' + nx.id + '">להמשיך: ' + esc(nx.title) + ' ←</a>';
+    vis.forEach(function (s, i) {
+      if (s.g !== g) {
+        if (g) h += '</details>';
+        g = s.g;
+        var inG = vis.filter(function (x) { return x.g === g; }), doneG = inG.filter(function (x) { return secStatus(x.id) === 'done'; }).length;
+        h += '<details class="secgrp"' + (!V.caps.manage || (nx && nx.g === g) ? ' open' : '') + '><summary><b>' + esc(g) + '</b><span class="rs">' + doneG + ' מתוך ' + inG.length + '</span></summary>';
+      }
       var a = V.assign[s.id];
       var pt = V.prev.tasks.filter(function (t) { return t.sec === s.id; });
       var open = pt.filter(function (t) { return !t.refStatus; }).length;
       h += '<div class="sec-row" data-sec="' + s.id + '"><div class="rm"><a href="#v/' + v.id + '/e/' + s.id + '">' + esc(s.title) + (s.opt ? ' (רשות)' : '') + '</a><br><span class="rs">' +
         (a ? esc(a.name || a.email) : 'ממלא.ת: ' + esc(s.who)) + (open ? ' · ' + count(open, 'משימה אחת', 'משימות') + ' מהוועדה הקודמת' : '') + '</span></div>' + statusTag(s.id) +
         (manage ? '<button type="button" class="link" data-as="' + s.id + '">' + (a ? 'שינוי שיוך' : 'שיוך') + '</button>' : '') + '</div>';
+      if (i === vis.length - 1) h += '</details>';
     });
     shell(h);
     var cl = $('#copyLeft');
@@ -522,7 +532,7 @@
   function metaCard(edit) {
     var v = S.V.v;
     if (!edit) return '<div class="card"><b>מועד:</b> ' + (fmtDate(v.date) || 'טרם נקבע') + ' · <b>רשם.ת:</b> ' + esc(v.recName || v.recEmail || 'טרם מונה') + '</div>';
-    return '<details class="card"' + (v.date ? '' : ' open') + '><summary><b>פרטי הוועדה: מועד, רשם.ת, רשת ומשתתפים</b></summary><div style="margin-top:12px">' +
+    return '<details class="card metac"><summary><b>פרטי הוועדה: מועד, רשם.ת, רשת ומשתתפים</b></summary><div style="margin-top:12px">' +
       '<label class="f"><b>תאריך הוועדה</b><input type="date" data-m="date" value="' + esc(v.date) + '"></label>' +
       '<label class="f"><b>רשם.ת הפרוטוקול: שם</b><input type="text" data-m="recName" value="' + esc(v.recName) + '"></label>' +
       '<label class="f"><b>רשם.ת הפרוטוקול: מייל</b><span class="hint">הרשם.ת נכנס.ת עם המייל הזה ורושם.ת את ההחלטות. בלי רשם.ת — המנהל.ת רושם.ת.</span><input type="email" dir="ltr" data-m="recEmail" value="' + esc(v.recEmail) + '"></label>' +
@@ -602,7 +612,9 @@
   }
   function tableHtml(f, val, tag) {
     var rows = f.rows || null, n = rows ? rows.length : Math.max((val || []).length, f.minRows || (f.add ? 1 : 0));
-    var h = '<div class="f"><span class="lbl">' + esc(f.l) + (tag || '') + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
+    /* טור מספרים אחד: בטלפון התווית והמספר באותה שורה */
+    var tight = rows && f.cols.length === 1 && f.cols[0].t === 'num';
+    var h = '<div class="f"><span class="lbl">' + esc(f.l) + (tag || '') + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid' + (tight ? ' tight' : '') + '" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
     f.cols.forEach(function (c) { h += '<th scope="col">' + esc(c.l) + '</th>'; });
     h += (f.add ? '<th aria-label="מחיקה"></th>' : '') + '</tr></thead><tbody>';
     for (var r = 0; r < n; r++) h += tableRow(f, val, r);
@@ -732,7 +744,100 @@
     if (Q.id && (Object.keys(Q.patch).length || Q.busy)) { flushNow(); e.preventDefault(); e.returnValue = ''; }
   });
 
+  /* ===== צעד אחד בכל פעם: בלי גלילה ארוכה (מיטל, 5.11.26) =====
+     כל השדות נשארים בטופס ורק מוסתרים, כך שהקריאה והשמירה לא משתנות. הצעדים נקבעים לפי הגובה בפועל:
+     שדות נכנסים יחד לצעד כל עוד הם נכנסים למסך, וטבלה שלא נכנסת מתפרקת לשורות. */
+  var STEP_AT = {};
+  function stepBar(endHtml, savedHtml) {
+    return '<div class="savebar snav"><button type="button" class="btn small" id="sPrev">→ הקודם</button><span class="smid"><span class="rs" id="sPos"></span>' + savedHtml + '</span><button type="button" class="btn small primary" id="sNext">הבא ←</button>' + endHtml + '</div>' +
+      '<details class="card pall" id="sAll"><summary><b>כל השלבים</b></summary><div id="sRows"></div></details>';
+  }
+  function stepper(root, key, end) {
+    var atoms = [], boxes = [], steps = [], cur = 0;
+    var budget = Math.max(320, innerHeight * 0.6);
+    function hOf(el) { return el.getBoundingClientRect().height + 16; }
+    function collect() {
+      atoms = []; boxes = [];
+      var pend = [];
+      function add(a) { a.also = pend; pend = []; atoms.push(a); }
+      function kids(el, box) { Array.prototype.slice.call(el.children).forEach(function (x) { walk(x, box); }); }
+      function walk(el, box) {
+        if (el.tagName === 'SUMMARY' || /^H\d$/.test(el.tagName) || (el.hidden && el.tagName === 'BUTTON')) return;
+        if (el.classList.contains('pretop')) { pend.push(el); return; }
+        if (el.hasAttribute('data-item') || el.hasAttribute('data-st') || el.classList.contains('card')) { boxes.push(el); el.hidden = false; if (el.tagName === 'DETAILS') el.open = true; kids(el, el); return; }
+        if (el.tagName === 'DETAILS') { el.open = true; el.hidden = false; add({ el: el, box: box }); return; }
+        if (el.tagName === 'DIV' && !el.classList.contains('f')) return kids(el, box);
+        el.hidden = false;
+        var tb = el.classList.contains('f') && $('table[data-table]', el);
+        if (!tb) { add({ el: el, box: box, join: el.tagName === 'BUTTON' }); return; }
+        $$('tbody tr', tb).forEach(function (tr) { tr.hidden = false; });
+        if (hOf(el) <= budget) { add({ el: el, box: box }); return; }
+        $$('tbody tr', tb).forEach(function (tr, i) { add({ el: el, box: box, tr: tr, first: i === 0 }); });
+      }
+      kids(root, null);
+      /* גובה רק אחרי שהכול גלוי */
+      atoms.forEach(function (a) { a.h = a.tr ? hOf(a.tr) + (a.first ? hOf(a.el) - $$('tbody tr', a.el).reduce(function (s, t) { return s + t.getBoundingClientRect().height; }, 0) : 0) : hOf(a.el); });
+      steps = []; var sum = 0, st = null;
+      atoms.forEach(function (a) {
+        if (st && (a.join || (st[0].box === a.box && sum + a.h <= budget))) { st.push(a); sum += a.h; }
+        else { st = [a]; steps.push(st); sum = a.h; }
+      });
+    }
+    function caption(s) {
+      var a = s[0], box = a.box && a.box.querySelector('summary b'), l = a.tr ? $('.rowlbl', a.tr) : null;
+      var own = l || (a.tr || a.el).querySelector('summary b, b, .lbl, h2');
+      if (a.tr && !l) own = null;
+      var t = [box ? box.textContent : '', a.tr ? ($('.lbl', a.el) || {}).firstChild ? $('.lbl', a.el).firstChild.textContent : '' : '', own ? (own.firstChild || own).textContent : ''].filter(Boolean);
+      return t.join(' · ') || 'שורה';
+    }
+    function filled(s) {
+      return s.some(function (a) { return $$('input:not([type=file]):not([type=checkbox]):not([data-s=title]),textarea', a.tr || a.el).some(function (x) { return String(x.value).trim(); }); });
+    }
+    function rows() {
+      $('#sRows').innerHTML = steps.map(function (s, i) { return '<button type="button" class="prow" data-sj="' + i + '"' + (i === cur ? ' aria-current="true"' : '') + '><span class="pmark' + (filled(s) ? ' on' : '') + '">' + (filled(s) ? '✓' : '') + '</span><span>' + esc(caption(s)) + '</span></button>'; }).join('');
+      $$('[data-sj]').forEach(function (b) { b.onclick = function () { $('#sAll').open = false; show(Number(b.getAttribute('data-sj'))); }; });
+    }
+    function show(i, stay) {
+      cur = Math.max(0, Math.min(i, steps.length - 1)); STEP_AT[key] = cur;
+      atoms.forEach(function (a) { a.el.hidden = true; if (a.tr) a.tr.hidden = true; a.also.forEach(function (x) { x.hidden = true; }); });
+      steps[cur].forEach(function (a) { a.el.hidden = false; if (a.tr) a.tr.hidden = false; a.also.forEach(function (x) { x.hidden = false; }); });
+      boxes.forEach(function (b) { b.hidden = !steps[cur].some(function (a) { return b.contains(a.el); }); });
+      $$('[data-addrow]', root).forEach(function (b) { var tb = $('[data-table="' + b.getAttribute('data-addrow') + '"]', root), trs = $$('tbody tr', tb); b.hidden = !!(trs.length && trs[trs.length - 1].hidden); });
+      var last = cur === steps.length - 1;
+      $('#sPos').textContent = (cur + 1) + ' מתוך ' + steps.length;
+      $('#sPrev').disabled = cur === 0;
+      $('#sNext').hidden = last;
+      if (end) end.hidden = !last;
+      rows();
+      if (!stay) window.scrollTo(0, 0);
+    }
+    function move(d) { var a = document.activeElement; if (a && a.blur && /TEXTAREA|INPUT/.test(a.tagName)) a.blur(); show(cur + d); }
+    $('#sPrev').onclick = function () { move(-1); };
+    $('#sNext').onclick = function () { move(1); };
+    root.classList.add('stepped');
+    collect();
+    show(STEP_AT[key] || 0, true);
+    /* אחרי הוספה או מחיקה של שורה: הצעדים נקבעים מחדש, ונשארים ליד מה ששונה */
+    return {
+      rebuild: function (target) {
+        var keep = cur;
+        collect();
+        if (target) steps.forEach(function (s, i) { if (s.some(function (a) { return a.tr === target || a.el.contains(target) || target.contains(a.el); })) keep = i; });
+        show(keep, true);
+      }
+    };
+  }
+
   /* ===== מילוי תחום ===== */
+  /* התחום הבא שלא הסתיים. תחום רשות לא נספר */
+  function nextSec(secId) {
+    var vis = visibleSecs(), i = vis.map(function (s) { return s.id; }).indexOf(secId);
+    return vis.slice(i + 1).concat(vis.slice(0, Math.max(i, 0))).filter(function (s) { return !s.opt && secStatus(s.id) !== 'done'; })[0] || null;
+  }
+  function nextSecHash(secId) {
+    var n = nextSec(secId);
+    return n ? '#v/' + S.V.v.id + '/e/' + n.id : (S.V.caps.full ? '#v/' + S.V.v.id + '/fill' : '#');
+  }
   function viewEdit(secId) {
     var V = S.V, v = V.v, sec = VAADA.section(v.stage, secId);
     if (!sec) return failed('notfound');
@@ -748,18 +853,17 @@
       Object.keys(pending).forEach(function (k) { d[k] = pending[k]; });
       Q.patch = pending;
     }
-    var vis = visibleSecs(), idx = vis.map(function (s) { return s.id; }).indexOf(secId);
     var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + v.id + '/fill' : '#') + '">→ ' + (V.caps.full ? 'כל התחומים' : 'התחומים שלי') + '</a>' +
-      '<div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · ועדת ' + esc(VAADA.STAGES[v.stage]) + ' ' + esc(v.year) + '. בלי שמות תלמידים, בבקשה.</p></div>';
+      '<div class="head stephead"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · בלי שמות תלמידים</p></div>';
     h += prevLine(secId) + tuvaBox(secId);
     h += '<form class="card" id="sf" onsubmit="return false">' + sec.fields.map(function (f) { return fieldHtml(sec, f); }).join('') + '</form>';
     var isDone = secStatus(secId) === 'done';
-    h += '<div class="savebar"><span class="saved" id="saved">הכול נשמר אוטומטית</span>' +
-      (idx < vis.length - 1 ? '<a class="btn small" href="#v/' + v.id + '/e/' + vis[idx + 1].id + '">לתחום הבא ←</a>' : '') +
-      '<button type="button" class="btn small primary" id="doneBtn">' + (isDone ? 'לפתוח שוב לעריכה' : 'סיימתי את התחום') + '</button></div>';
+    h += stepBar(isDone ? '<a class="btn small primary" id="sEnd" href="' + nextSecHash(secId) + '">' + (nextSec(secId) ? 'לתחום הבא ←' : 'לכל התחומים ←') + '</a>' : '<button type="button" class="btn small primary" id="doneBtn">סיימתי את התחום</button>', '<span class="saved" id="saved">הכול נשמר אוטומטית</span>');
+    if (isDone) h += '<button type="button" class="link" id="doneBtn">לפתוח שוב לעריכה</button>';
     shell(h);
     var form = $('#sf');
     wirePrev(secId);
+    var steps = stepper(form, v.id + '|' + secId, $(isDone ? '#sEnd' : '#doneBtn'));
     function fieldOf(el) {
       if (el.hasAttribute('data-f')) return el.getAttribute('data-f');
       var w = el.closest('[data-plan]'); if (w) return w.getAttribute('data-plan');
@@ -788,16 +892,19 @@
       if ((k = t.getAttribute('data-addrow'))) {
         var f = fieldDef(sec, k), tbl = $('[data-table="' + k + '"] tbody', form);
         tbl.insertAdjacentHTML('beforeend', tableRow(f, null, tbl.children.length));
+        steps.rebuild(tbl.lastElementChild);
       } else if (t.hasAttribute('data-delrow')) {
         var tb = t.closest('[data-table]');
         t.closest('tr').parentNode.removeChild(t.closest('tr'));
         changed(tb);
+        steps.rebuild();
       } else if ((k = t.getAttribute('data-addrep'))) {
         var rf = fieldDef(sec, k), wrap = $('[data-repeat="' + k + '"]', form);
         wrap.insertAdjacentHTML('beforeend', repeatItem(rf, {}, wrap.children.length).replace('<details class="block" ', '<details class="block" open '));
+        steps.rebuild(wrap.lastElementChild);
       } else if (t.hasAttribute('data-delrep')) {
         var w = t.closest('[data-repeat]');
-        if (confirm('למחוק את כל מה שנכתב ב' + 'פריט הזה?')) { t.closest('[data-item]').parentNode.removeChild(t.closest('[data-item]')); changed(w); }
+        if (confirm('למחוק את כל מה שנכתב ב' + 'פריט הזה?')) { t.closest('[data-item]').parentNode.removeChild(t.closest('[data-item]')); changed(w); steps.rebuild(); }
       } else if (t.getAttribute('data-file')) fileOpen(t.getAttribute('data-file'));
       else if (t.getAttribute('data-filedel')) fileDel(t.getAttribute('data-filedel'), secId);
     });
@@ -824,7 +931,8 @@
         if (r.data) V.secs[secId].data = r.data;
         S.board = null;
         toast(wasDone ? 'התחום נפתח לעריכה' : 'התחום סומן כהושלם. תודה!');
-        go(V.caps.full ? '#v/' + v.id + '/fill' : '#');
+        if (!wasDone) delete STEP_AT[v.id + '|' + secId];
+        go(wasDone ? '#v/' + v.id + '/e/' + secId : nextSecHash(secId));
       }).catch(function () {});
     };
     if (pending) { setSaved('שומר טיוטה שלא נשמרה…'); flush(); }
@@ -1235,12 +1343,14 @@
 
   /* ===== שמירה אוטומטית למסמכי ועדה ===== */
   function docAuto(kind, root, read) {
-    var t = null, busy = false, again = false, el = $('[data-docsaved]', root);
+    var t = null, busy = false, again = false, last = null, el = $('[data-docsaved]', root);
     function say(s) { if (el) el.textContent = s; }
     function send() {
       if (busy) { again = true; return; }
       busy = true; say('שומר…');
-      var patch = read();
+      /* הערכים נקראים בזמן ההקלדה: אם עברו בינתיים לדף אחר, נשמר מה שהוקלד ולא דף אחר */
+      var patch = last || read();
+      last = null;
       S.V.docs[kind] = Object.assign(S.V.docs[kind] || {}, patch);
       api('docSave', { id: S.V.v.id, kind: kind, patch: patch }).then(function (r) {
         busy = false;
@@ -1248,8 +1358,8 @@
         if (again) { again = false; send(); }
       }).catch(function () { busy = false; });
     }
-    root.addEventListener('input', function () { say('שומר…'); clearTimeout(t); t = setTimeout(send, 900); });
-    root.addEventListener('change', function () { clearTimeout(t); t = setTimeout(send, 300); });
+    root.addEventListener('input', function () { last = read(); say('שומר…'); clearTimeout(t); t = setTimeout(send, 900); });
+    root.addEventListener('change', function () { last = read(); clearTimeout(t); t = setTimeout(send, 300); });
     return send;
   }
   function fld(label, key, val, hint, area, dis) {
@@ -1300,7 +1410,8 @@
         '<label class="f"><b>משאבים מסל התוכניות</b><span class="hint">סל התוכניות, שעות, תקציב וכוח אדם, בתוך היעד. לא כטבלה חשבונאית.</span><textarea data-s="res"' + (dis ? ' disabled' : '') + '>' + esc(st.res) + '</textarea></label>' +
         '</div></details>';
     }
-    var h = vHead() + '<div class="head"><h2>התחנות שנבחרו</h2><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>' +
+    var back = focusOn() ? '#m/' + V.v.semel : '#v/' + V.v.id;
+    var h = (can ? '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'השלבים שלי' : 'ראשי הוועדה') + '</a><div class="head stephead"><h1>הכנה</h1><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>' : vHead() + '<div class="head"><h2>התחנות שנבחרו</h2><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>') +
       '<form id="prepForm" onsubmit="return false"><div id="stList">' + stations.map(stHtml).join('') + '</div>' +
       (can ? '<button type="button" class="link" id="addSt"' + (stations.length >= 4 ? ' hidden' : '') + '>+ הוספת תחנה</button>' : '') +
       '<div class="card" style="margin-top:14px"><h2 style="margin-bottom:8px">סוגיית הליבה לבמת ההיוועצות</h2>' +
@@ -1309,8 +1420,9 @@
       '<label class="f"><b>3. שאלת ההיוועצות</b><span class="hint">שאלה פתוחה אחת שהמנהל באמת מתלבט בה, בנוסח "איך...".</span><textarea data-i="question"' + (dis ? ' disabled' : '') + '>' + esc(iss.question) + '</textarea></label>' +
       '<div class="f"><span class="lbl">מבחן המהותיות</span>' + TESTS.map(function (t, i) { return '<label class="chk"><input type="checkbox" data-t="' + i + '"' + (tests[i] ? ' checked' : '') + (dis ? ' disabled' : '') + '> ' + esc(t) + '</label>'; }).join('') +
       '<span class="hint" id="testNote" style="margin-top:6px"></span></div></div></form>' +
-      '<div class="savebar"><span class="saved" data-docsaved>' + (can ? 'הכול נשמר אוטומטית' : 'לקריאה') + '</span></div>' + helpBlock('man', 'נייר למנהל/ת: המתווה, עשה ואל תעשה');
-    shell(h);
+      (can ? stepBar('<button type="button" class="btn small primary" id="prepEnd">סיום ←</button>', '<span class="saved" data-docsaved>הכול נשמר אוטומטית</span>') : '<div class="savebar"><span class="saved" data-docsaved>לקריאה</span></div>') + helpBlock('man', 'נייר למנהל/ת: המתווה, עשה ואל תעשה');
+    /* עטיפה משלה: במסלול המנהל.ת האב הוא #app, והמאזין היה נשאר פעיל בדפים אחרים */
+    shell('<div id="prepRoot">' + h + '</div>');
     wireHelp();
     function note() {
       var boxes = $$('[data-t]'), all = boxes.every(function (b) { return b.checked; });
@@ -1326,11 +1438,23 @@
         issue: (function () { var o = { tests: $$('[data-t]').map(function (b) { return b.checked; }) }; $$('[data-i]').forEach(function (e) { o[e.getAttribute('data-i')] = e.value; }); return o; })()
       };
     });
+    var steps = stepper($('#prepForm'), V.v.id + '|prep', $('#prepEnd'));
+    /* סיום: בלי סטטוס. במסלול המנהל.ת ממשיכים לשלב הבא */
+    $('#prepEnd').onclick = function () {
+      delete STEP_AT[V.v.id + '|prep'];
+      go(focusOn() ? '#v/' + V.v.id + '/fill' : '#v/' + V.v.id);
+    };
+    $('#prepForm').addEventListener('input', function (e) {
+      if (!e.target.hasAttribute('data-s') || e.target.getAttribute('data-s') !== 'title') return;
+      var box = e.target.closest('[data-st]'), n = $$('[data-st]').indexOf(box) + 1;
+      $('summary b', box).textContent = 'תחנה ' + n + (e.target.value ? ': ' + e.target.value : '');
+    });
     var add = $('#addSt');
     if (add) add.onclick = function () {
       var list = $('#stList');
       list.insertAdjacentHTML('beforeend', stHtml({ sec: '' }, list.children.length).replace('data-st ', 'data-st open '));
-      if (list.children.length >= 4) add.hidden = true;
+      if (list.children.length >= 4) add.parentNode.removeChild(add);
+      steps.rebuild(list.lastElementChild);
     };
   }
 

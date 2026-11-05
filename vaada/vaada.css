@@ -357,6 +357,33 @@ input[type=text],input[type=email],input[type=date],input[type=search],input[inp
   .tiles:not(.two){grid-template-columns:minmax(0,1fr)}
   .vmenu{border:0}
 }
+/* צעד אחד בכל פעם: הכנה ותחומים */
+.stepped details>summary{pointer-events:none;list-style:none}
+.stepped details>summary::-webkit-details-marker{display:none}
+.stepped .block{margin-bottom:0}
+#sf.stepped .block{border:0;padding:0;background:none}
+#sf.stepped .block>summary{font-family:Rubik,sans-serif;color:var(--navy);margin-bottom:6px}
+.savebar.snav{flex-wrap:nowrap;gap:8px}
+.savebar.snav .btn{flex:0 0 auto;min-width:92px}
+.smid{flex:1;min-width:0;display:grid;justify-items:center;text-align:center;line-height:1.25}
+.smid .saved{margin:0;font-size:.76rem}
+.fnext{display:flex;width:100%;margin-bottom:14px}
+.secgrp{border-top:1px solid var(--line);padding:4px 0}
+.secgrp>summary{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px;font-family:Rubik,sans-serif;color:var(--navy)}
+.secgrp[open]>summary{margin-bottom:6px}
+@media (max-width:640px){
+  table.grid.tight tr{display:grid;grid-template-columns:minmax(0,1fr) 92px;align-items:stretch;margin-bottom:6px}
+  table.grid.tight td{width:auto;border-top:0}
+  table.grid.tight td.rowlbl{display:flex;align-items:center;background:transparent;color:var(--ink);min-width:0}
+  table.grid.tight td[data-l]::before{display:none}
+  .fbar{flex-wrap:nowrap;gap:4px;margin-bottom:6px}
+  .fbar a{flex:1 1 0;min-width:0;justify-content:center;text-align:center;padding:4px 6px;font-size:.8rem;line-height:1.15}
+  .fbar.instep{display:none}
+  .head.stephead{margin-bottom:8px}
+  .stephead h1{font-size:1.3rem}
+  .stephead p{margin-top:2px;font-size:.86rem;line-height:1.3}
+  .stepped .f:last-child{margin-bottom:4px}
+}
 /* ועדת תשפ"ו: פריט אחד בכל פעם */
 .prevp .ptsec{margin:0 0 6px}
 .pitem .card{margin-bottom:0}
