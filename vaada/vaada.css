@@ -193,6 +193,10 @@ summary{cursor:pointer;min-height:30px}
 .prevbox>p{margin:0 0 10px;font-size:.92rem;color:#6a5a2a}
 .ptask{background:#fff;border-radius:11px;padding:12px;margin-top:9px}
 .ptask .ttxt{font-weight:600}
+.prevp .ptask{border:1px solid var(--line);margin-top:4px}
+.prevp .ptsec{margin-top:14px}
+.prevline{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--amber-soft);border-color:#f0d995;text-decoration:none;color:var(--ink)}
+.prevline span{color:var(--blue);font-weight:600}
 .ptask .town{color:var(--muted);font-size:.9rem}
 .statuses{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
 .statuses button{min-height:40px;min-width:52px;border:1.5px solid #c9d4d5;background:#fff;border-radius:30px;padding:5px 13px;cursor:pointer;font-weight:600;font-size:.92rem}

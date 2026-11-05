@@ -129,7 +129,8 @@
       if (h[2] === 'recs') return viewRecs();
       if (h[2] === 'tasks') return viewTasks();
       if (h[2] === 'sign' || h[2] === 'sum') return viewSign();
-      if (h[2] === 'past') return viewPast();
+      if (h[2] === 'prev') return viewPrevPage();
+      if (h[2] === 'past') return location.replace('#v/' + S.V.v.id + '/prev');
       if (h[2] === 'prep') return viewPrepare();
       if (h[2] === 'brief' && S.V.caps.brief) return viewBrief();
       if (h[2] === 'hivui' && S.V.caps.hivui) return viewHivui();
@@ -223,11 +224,10 @@
      #s/<סמל>        בית: סיכום הוועדה + כרטיס לכל פריט
      #s/<סמל>/pic    תמונת מצב: מיפוי, עובדות מהוועדה הקודמת, אקלים, סל
      #s/<סמל>/roles  בעלי התפקידים מהנספח
-     #s/<סמל>/prev   הוועדה הקודמת: החלטות ופערים
+     #s/<סמל>/prev   עובר ל-#v/<id>/prev: ועדת תשפ"ו (החלטות, פערים, מה קרה איתם, המסמך)
      #s/<סמל>/open   משימות פתוחות לאורך השנה
-     #s/<סמל>/past   ועדות קודמות
      הנתונים נטענים פעם אחת (פעולה school, שגם פותחת את הוועדה של השנה) ונשמרים ב-S.SCH */
-  var SCHOOL_PAGES = [['', 'ראשי'], ['pic', 'תמונת מצב'], ['roles', 'בעלי תפקידים'], ['prev', 'הוועדה הקודמת'], ['open', 'משימות פתוחות'], ['past', 'ועדות קודמות']];
+  var SCHOOL_PAGES = [['', 'ראשי'], ['pic', 'תמונת מצב'], ['roles', 'בעלי תפקידים'], ['prev', 'ועדת תשפ"ו'], ['open', 'משימות פתוחות']];
   var VAADA_PAGES = [['', 'ראשי הוועדה'], ['prep', 'הכנה'], ['fill', 'מילוי מצגת האב'], ['deck', 'מצגת הוועדה'], ['recs', 'המלצות המפקח.ת'], ['tasks', 'החלטות ומשימות'], ['sign', 'פרוטוקול וחתימות']];
   var SUP_PAGES = [['brief', 'שיחה מצומצמת'], ['hivui', 'חיווי להנהלת המינהל'], ['sup', 'הכנת מפקח.ת']];
 
@@ -257,15 +257,17 @@
   }
   function viewSchool(semel, page) {
     page = page || '';
+    var toPrev = page === 'prev' || page === 'past';
     if (!SCHOOL_PAGES.some(function (p) { return p[0] === page; })) page = '';
     withSchool(semel, function (r) {
+      if (toPrev) return location.replace('#v/' + r.current + '/prev');
       var s = r.school, many = r.me.all || (r.me.semels || []).length > 1;
       var crumb = page ? '<a class="crumb" href="#s/' + semel + '">→ ' + esc(s.name) + '</a>' :
         many ? '<a class="crumb" href="#">→ ' + (r.me.role === 'sup' && !r.me.all ? 'בתי הספר שלי' : 'כל בתי הספר') + '</a>' : '';
       var title = page ? SCHOOL_PAGES.filter(function (p) { return p[0] === page; })[0][1] : s.name;
       var head = crumb + '<div class="head"><h1>' + esc(title) + '</h1><p>' + (page ? esc(s.name) + ' · ' : '') + esc(s.network) + ' · מפקח.ת: ' + esc(s.sups.join(' · ')) +
         (r.principals.length ? ' · מנהל.ת: ' + esc(r.principals.map(function (p) { return p.name; }).join(', ')) : ' · <span class="tag warn">אין מנהל.ת ברשימה</span>') + '</p></div>';
-      var body = page === 'pic' ? schoolPic(r) : page === 'roles' ? schoolRoles(r) : page === 'prev' ? schoolPrev(r) : page === 'open' ? schoolOpen(r) : page === 'past' ? schoolPast(r) : schoolHome(r);
+      var body = page === 'pic' ? schoolPic(r) : page === 'roles' ? schoolRoles(r) : page === 'open' ? schoolOpen(r) : schoolHome(r);
       APP.innerHTML = '<div class="shell">' + sideMenu([schoolGroup(semel, page), vaadaGroup(r.current)], s.name, s.network) + '<div class="vmain">' + head + body + '</div></div>';
       wirePast();
     });
@@ -288,14 +290,14 @@
       '<a class="btn primary" id="enterV" href="' + base + '">כניסה לוועדה</a></div>';
     var have = [t.mipuiFacts ? 'מיפוי' : '', t.aklim ? 'אקלים' : '', t.sal ? 'סל תוכניות' : '', t.facts ? 'עובדות מהוועדה הקודמת' : ''].filter(Boolean);
     var roles = (t.roles || []).filter(function (x) { return x.role; }), vac = roles.filter(function (x) { return x.vacant; }).length;
-    var pv = r.prev || { tasks: [], recs: [] }, op = r.open || [], past = r.past || [];
+    var pv = r.prev || { tasks: [], recs: [] }, op = r.open || [];
     var prevSub = [pv.tasks.length ? count(pv.tasks.length, 'החלטה אחת', 'החלטות') : '', pv.recs.length ? count(pv.recs.length, 'פער אחד', 'פערים') : ''].filter(Boolean).join(' · ');
+    var prevDone = pv.tasks.filter(function (x) { return x.refStatus; }).length + pv.recs.filter(function (x) { return x.ref; }).length;
     h += '<h2 class="sh">בית הספר</h2>' + tilesOf([
       [sb + '/pic', 'תמונת מצב', have.length ? have.join(' · ') : 'עוד אין נתונים'],
       [sb + '/roles', 'בעלי תפקידים', roles.length ? count(roles.length, 'בעל.ת תפקיד אחד.ת', 'בעלי תפקידים') + (vac ? ' · ' + count(vac, 'תפקיד אחד טרם אויש', 'טרם אוישו') : '') : 'אין נספח במערכת'],
-      [sb + '/prev', 'הוועדה הקודמת', prevSub ? prevSub + ' מ' + (pv.label || 'הוועדה הקודמת') : 'אין החלטות במערכת'],
-      [sb + '/open', 'משימות פתוחות', op.length ? count(op.length, 'משימה פתוחה אחת', 'משימות פתוחות') : 'עדיין אין משימות'],
-      [sb + '/past', 'ועדות קודמות', past.length ? count(past.length, 'מסמך אחד', 'מסמכים') + ' מתשפ"ו' : 'אין מסמכים במערכת']
+      [sb + '/prev', 'ועדת תשפ"ו', prevSub ? prevSub + ' · נענו ' + prevDone + ' מתוך ' + (pv.tasks.length + pv.recs.length) : 'אין החלטות במערכת'],
+      [sb + '/open', 'משימות פתוחות', op.length ? count(op.length, 'משימה פתוחה אחת', 'משימות פתוחות') : 'עדיין אין משימות']
     ]);
     var nSeed = a && a.status === 'closed' ? 0 : (r.seedSecs || []).length;
     h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
@@ -344,18 +346,6 @@
       '</tbody></table></div>' + goLink(base + '/e/koach', 'לעדכון בכוח האדם') + '</div>';
   }
 
-  function schoolPrev(r) {
-    var pv = r.prev || { tasks: [], recs: [] }, base = '#v/' + r.current, h = '';
-    var secTitle = function (id) { var d = VAADA.section('a', id); return d ? d.title : id; };
-    if (pv.tasks.length) {
-      var isDraft = pv.tasks.some(function (x) { return x.draft === 'כן'; });
-      h += '<div class="card"><h2>החלטות ' + esc(pv.label || '') + '</h2>' + (isDraft ? '<div class="rs" style="margin-bottom:6px">נלקחו מהתקציר של המסמך, ולכן טיוטה. בוועדה מאשרים, מתקנים או מוחקים, ועונים מה קרה איתן. לחיצה על החלטה פותחת את התחום שלה.</div>' : '') +
-        plainList(pv.tasks.map(function (x) { return '<a class="plink" href="' + base + '/e/' + esc(x.sec || 'dualit') + '">' + esc(x.text) + '</a>' + (x.owner ? ' <span class="rs">· ' + esc(x.owner) + '</span>' : '') + (x.st ? ' <span class="tag info">' + esc(x.st) + '</span>' : '') + ' <span class="rs">' + esc(secTitle(x.sec)) + '</span>'; })) + '</div>';
-    }
-    if (pv.recs.length) h += '<div class="card"><h2>פערים שזוהו</h2>' + plainList(pv.recs.map(function (x) { return esc(x.text); })) + goLink(base + '/recs', 'להמלצות המפקח.ת') + '</div>';
-    return h || '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
-  }
-
   function schoolOpen(r) {
     var op = r.open || [];
     if (!op.length) return '<div class="card empty">עדיין אין משימות. ההחלטות שייכתבו בוועדת תחילת השנה יופיעו כאן, עם הסטטוס שלהן לאורך השנה.' + goLink('#v/' + r.current + '/tasks', 'להחלטות ומשימות בוועדה') + '</div>';
@@ -363,14 +353,6 @@
       plainList(op.map(function (x) { return '<a class="plink" href="#v/' + esc(x.vid) + '/tasks">' + esc(x.text) + '</a>' + (x.owner ? ' <span class="rs">· ' + esc(x.owner) + '</span>' : '') + (x.party === 'פיקוח' ? ' <span class="tag">באחריות הפיקוח</span>' : '') + (x.follow ? ' <span class="rs">· מעקב עד ' + fmtDate(x.follow) + '</span>' : '') + (x.st ? ' <span class="tag info">' + esc(x.st) + '</span>' : ''); })) + '</div>';
   }
 
-  function schoolPast(r) {
-    var past = (r.past || []).slice().sort(function (x, y) { return x.date < y.date ? 1 : -1; });
-    if (!past.length) return '<div class="card empty">אין במערכת מסמך של ועדה מלווה משנים קודמות.</div>';
-    return past.map(function (x, i) {
-      return '<details class="card"' + (i ? '' : ' open') + '><summary><b>ועדה מלווה ' + esc(x.year) + ' · ' + esc(x.stage) + '</b>' + (x.date ? ' <span class="rs">' + fmtDate(x.date) + '</span>' : '') + '</summary>' + summaryHtml(x.summary) +
-        (x.hasFile ? '<div class="acts"><button type="button" class="btn small" data-past="' + esc(x.key) + '">פתיחת המסמך</button></div>' : '') + '</details>';
-    }).join('');
-  }
 
   /* ===== טעינת ועדה ===== */
   function withVaada(id, then) {
@@ -411,7 +393,7 @@
   function shell(inner) {
     var V = S.V;
     if (!V.caps.full) { APP.innerHTML = inner; return; }
-    var cur = viewName(), groups = [schoolGroup(V.v.semel), vaadaGroup(V.v.id, cur), supGroup(V.v.id, cur)].filter(Boolean);
+    var cur = viewName(), groups = [schoolGroup(V.v.semel, cur === 'prev' ? 'prev' : null), vaadaGroup(V.v.id, cur), supGroup(V.v.id, cur)].filter(Boolean);
     APP.innerHTML = '<div class="shell' + (location.hash.split('/')[2] === 'live' ? ' wide' : '') + '">' + sideMenu(groups, V.v.school, VAADA.STAGES[V.v.stage] + ' ' + V.v.year) + '<div class="vmain">' + inner + '</div></div>';
   }
 
@@ -438,7 +420,7 @@
       ['prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'בחירת 3–4 תחנות וסוגיית ליבה'],
       ['fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים'],
       ['deck', 'מצגת הוועדה', 'מצגת אב, שקפים נבחרים או הצגה דיגיטלית'],
-      ['recs', 'המלצות המפקח.ת', V.prev.recs.length ? 'יש ' + count(V.prev.recs.length, 'המלצה אחת', 'המלצות') + ' מהוועדה הקודמת' : V.recs.length ? count(V.recs.length, 'המלצה אחת', 'המלצות') : 'עדיין אין המלצות'],
+      ['recs', 'המלצות המפקח.ת', V.recs.length ? count(V.recs.length, 'המלצה אחת', 'המלצות') : 'עדיין אין המלצות'],
       ['tasks', 'החלטות ומשימות', V.tasks.length ? 'בוצעו ' + doneT + ' מתוך ' + V.tasks.length : 'עדיין אין החלטות'],
       ['sign', 'פרוטוקול וחתימות', V.v.status === 'closed' ? 'נחתם על ידי ' + signed + ' מתוך ' + need.length : 'חותמים אחרי סגירת הוועדה']
     ];
@@ -718,7 +700,7 @@
     var vis = visibleSecs(), idx = vis.map(function (s) { return s.id; }).indexOf(secId);
     var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + v.id + '/fill' : '#') + '">→ ' + (V.caps.full ? 'כל התחומים' : 'התחומים שלי') + '</a>' +
       '<div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · ועדת ' + esc(VAADA.STAGES[v.stage]) + ' ' + esc(v.year) + '. בלי שמות תלמידים, בבקשה.</p></div>';
-    h += prevBox(secId) + tuvaBox(secId);
+    h += prevLine(secId) + tuvaBox(secId);
     h += '<form class="card" id="sf" onsubmit="return false">' + sec.fields.map(function (f) { return fieldHtml(sec, f); }).join('') + '</form>';
     var isDone = secStatus(secId) === 'done';
     h += '<div class="savebar"><span class="saved" id="saved">הכול נשמר אוטומטית</span>' +
@@ -813,9 +795,61 @@
       (isDraft ? 'המשימות נלקחו מהתקציר של המסמך, ולכן הן טיוטה: מאשרים, מתקנים או מוחקים. ' : '') + 'לכל משימה: מה קרה איתה, מה למדנו, והאם ממשיכים.</p>' +
       list.map(prevTask).join('') + '</section>';
   }
-  function canReflect() {
-    var c = S.V.caps;
-    return S.V.v.status !== 'closed' && (c.manage || c.decide || c.mine.length > 0);
+  function prevLine(secId) {
+    var n = prevList(secId).length;
+    if (!n || !S.V.caps.full) return '';
+    return '<a class="card prevline" href="#v/' + S.V.v.id + '/prev"><b>' + count(n, 'החלטה אחת', 'החלטות') + ' מהוועדה הקודמת בתחום הזה</b><span>מה קרה איתן</span></a>';
+  }
+  /* על מה שקרה בוועדה הקודמת עונה המנהל.ת */
+  function canReflect() { return S.V.v.status !== 'closed' && S.V.caps.manage; }
+
+  /* ===== ועדת תשפ"ו: החלטות, פערים, מה קרה איתם, והמסמך ===== */
+  function prevCountHtml() {
+    var P = S.V.prev, total = P.tasks.length + P.recs.length, done = P.tasks.filter(function (t) { return t.refStatus; }).length + P.recs.filter(function (r) { return r.ref; }).length;
+    return '<b>נענו ' + done + ' מתוך ' + total + '</b><div class="bar"><i style="width:' + (total ? Math.round(done / total * 100) : 0) + '%"></i></div>';
+  }
+  function drawPrevCount() { var el = $('#prevCount'); if (el) el.innerHTML = prevCountHtml(); }
+  function viewPrevPage() {
+    var V = S.V, P = V.prev, can = canReflect();
+    var secTitle = function (id) { var d = VAADA.section('a', id); return d ? d.title : ''; };
+    var h = '<a class="crumb" href="#s/' + V.v.semel + '">→ ' + esc(V.v.school) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.' : 'עונה המנהל.ת. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.') + '</p></div>';
+    if (P.tasks.length || P.recs.length) h += '<div class="card summary" id="prevCount">' + prevCountHtml() + '</div>';
+    h += '<section id="prevbox" class="prevp"><h2>החלטות</h2>' + (P.tasks.some(function (t) { return t.draft === 'כן'; }) ? '<p class="rs">נלקח מתקציר המסמך, ולכן טיוטה.</p>' : '');
+    h += P.tasks.length ? P.tasks.map(function (t) { return (t.sec ? '<div class="rs ptsec">' + esc(secTitle(t.sec)) + '</div>' : '') + prevTask(t); }).join('') : '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
+    h += '</section>';
+    if (P.recs.length) h += '<h2 style="margin:20px 0 8px">פערים שזוהו</h2>' + P.recs.map(function (r) {
+      return '<div class="card" data-rec="' + esc(r.id) + '"><div class="ttxt"><b>' + esc(r.text) + '</b>' + (r.draft === 'כן' ? '<span class="draftnote">טיוטה</span>' : '') + '</div>' +
+        (can ? '<label class="f" style="margin:8px 0 4px"><span class="lbl">מה קרה?</span><textarea data-ref>' + esc(r.ref) + '</textarea></label><span class="rs" data-refsaved></span>' +
+          (r.draft === 'כן' ? '<div class="acts" style="margin-top:4px"><button type="button" class="link danger" data-rdel>מחיקה</button></div>' : '')
+          : (r.ref ? '<div class="val" style="margin-top:6px"><b>מה קרה:</b> ' + esc(r.ref) + '</div>' : '<div class="rs" style="margin-top:6px">טרם נענה.</div>')) + '</div>';
+    }).join('');
+    h += '<h2 style="margin:20px 0 8px">המסמכים</h2><div id="pastBody"><div class="loading">טוען…</div></div>';
+    shell(h);
+    wirePrev();
+    if (can) $$('[data-rec]').forEach(function (card) {
+      var id = card.getAttribute('data-rec'), ta = $('[data-ref]', card), del = $('[data-rdel]', card);
+      ta.onchange = function () {
+        var sv = $('[data-refsaved]', card); sv.textContent = 'שומר…';
+        api('recRef', { id: V.v.id, recId: id, ref: ta.value }).then(function (r) {
+          if (!r.ok) { sv.textContent = errText(r.error); return; }
+          P.recs = P.recs.map(function (x) { return x.id === id ? r.rec : x; });
+          sv.textContent = 'נשמר'; drawPrevCount();
+          var dn = $('.draftnote', card); if (dn) dn.remove();
+          if (del) { del.parentNode.removeChild(del); del = null; }
+        }).catch(function () {});
+      };
+      if (del) del.onclick = function () {
+        if (!confirm('למחוק את הפריט הזה?')) return;
+        api('recDel', { id: V.v.id, recId: id }).then(function (r) {
+          if (!r.ok) return toast(errText(r.error));
+          P.recs = P.recs.filter(function (x) { return x.id !== id; }); card.remove(); drawPrevCount();
+        }).catch(function () {});
+      };
+    });
+    pastList(V.v.semel).then(function (html) {
+      var b = $('#pastBody');
+      if (b) { b.innerHTML = html; wirePast(); }
+    });
   }
   function prevTask(t) {
     var can = canReflect(), id = esc(t.id), h = '<div class="ptask" data-pt="' + id + '">';
@@ -838,6 +872,7 @@
         S.V.prev.tasks = S.V.prev.tasks.map(function (t) { return t.id === id ? r.task : t; });
         S.V.tasks = S.V.tasks.filter(function (t) { return t.from !== id; });
         if (r.carried) S.V.tasks.push(r.carried);
+        drawPrevCount();
         return r;
       }).catch(function () { return null; });
     }
@@ -947,7 +982,7 @@
   }
   function viewRead(secId) {
     var V = S.V, sec = VAADA.section(V.v.stage, secId);
-    var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + V.v.id + '/fill' : '#') + '">→ כל התחומים</a><div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(V.v.school) + '</p></div>' + prevBox(secId) +
+    var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + V.v.id + '/fill' : '#') + '">→ כל התחומים</a><div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(V.v.school) + '</p></div>' + prevLine(secId) +
       '<div class="card ro">' + sec.fields.map(function (f) { return roField(sec, f); }).join('') + '</div>';
     shell(h);
     wirePrev(secId);
@@ -1022,40 +1057,13 @@
   /* ===== המלצות המפקח.ת ===== */
   function viewRecs() {
     var V = S.V, can = V.caps.rec;
-    var h = vHead() + '<h2 style="margin-bottom:8px">מ' + esc(V.prev.label) + '</h2>';
-    if (V.prev.recs.some(function (r) { return r.draft === 'כן'; })) h += '<p class="rs">נלקח מהתקציר של המסמך, ולכן זו טיוטה. ' + (can ? 'כותבים התייחסות, מתקנים או מוחקים.' : 'המפקח.ת מתייחס.ת לכל פריט.') + '</p>';
-    h += V.prev.recs.length ? V.prev.recs.map(function (r) {
-      return '<div class="card" data-rec="' + esc(r.id) + '"><div class="ttxt"><b>' + esc(r.text) + '</b>' + (r.draft === 'כן' ? '<span class="draftnote">טיוטה</span>' : '') + '</div>' +
-        (can ? '<label class="f" style="margin:8px 0 4px"><span class="lbl">התייחסות המפקח.ת</span><textarea data-ref>' + esc(r.ref) + '</textarea></label><span class="rs" data-refsaved></span>' +
-          (r.draft === 'כן' ? '<div class="acts" style="margin-top:4px"><button type="button" class="link danger" data-rdel>מחיקה</button></div>' : '')
-          : (r.ref ? '<div class="val" style="margin-top:6px"><b>התייחסות המפקח.ת' + (r.refBy ? ' (' + esc(r.refBy) + ')' : '') + ':</b> ' + esc(r.ref) + '</div>' : '<div class="rs" style="margin-top:6px">טרם נכתבה התייחסות.</div>')) + '</div>';
-    }).join('') : '<div class="card empty">אין המלצות מהוועדה הקודמת.</div>';
-    h += '<h2 style="margin:20px 0 8px">המלצות לוועדה הזו</h2><div id="recList">' + V.recs.map(recLine).join('') + '</div>';
+    var h = vHead();
+    h += '<div id="recList">' + V.recs.map(recLine).join('') + '</div>';
     if (!V.recs.length && !can) h += '<div class="card empty">עדיין אין המלצות.</div>';
     if (can) h += '<form class="card" id="recForm"><label class="f" style="margin-bottom:8px"><b>המלצה חדשה</b><textarea id="recText"></textarea></label><button class="btn small primary">הוספה</button></form>';
     else if (V.v.status !== 'closed') h += '<p class="rs">ההמלצות נכתבות על ידי המפקח.ת הפדגוגי.ת.</p>';
     shell(h);
     if (!can) return;
-    $$('[data-rec]').forEach(function (card) {
-      var id = card.getAttribute('data-rec'), ta = $('[data-ref]', card);
-      if (ta) ta.onchange = function () {
-        var sv = $('[data-refsaved]', card); sv.textContent = 'שומר…';
-        api('recRef', { id: V.v.id, recId: id, ref: ta.value }).then(function (r) {
-          if (!r.ok) { sv.textContent = errText(r.error); return; }
-          V.prev.recs = V.prev.recs.map(function (x) { return x.id === id ? r.rec : x; });
-          sv.textContent = 'נשמר';
-          var dn = $('.draftnote', card); if (dn) dn.remove();
-        }).catch(function () {});
-      };
-      var del = $('[data-rdel]', card);
-      if (del) del.onclick = function () {
-        if (!confirm('למחוק את הפריט הזה?')) return;
-        api('recDel', { id: V.v.id, recId: id }).then(function (r) {
-          if (!r.ok) return toast(errText(r.error));
-          V.prev.recs = V.prev.recs.filter(function (x) { return x.id !== id; }); card.remove();
-        }).catch(function () {});
-      };
-    });
     $('#recForm').onsubmit = function (e) {
       e.preventDefault();
       var t = $('#recText').value.trim();
@@ -1308,15 +1316,6 @@
       };
     });
   }
-  function viewPast() {
-    var V = S.V;
-    shell(vHead() + '<div id="pastBody"><div class="loading">טוען…</div></div>');
-    pastList(V.v.semel).then(function (html) {
-      var b = $('#pastBody');
-      if (b) { b.innerHTML = html; wirePast(); }
-    });
-  }
-
   function notesCard() {
     var can = S.V.caps.note && S.V.v.status !== 'closed';
     return '<div class="card" style="margin:0"><h3>הערות בדיון</h3><div id="nlist"></div>' + (can ? '<form id="nform" style="margin-top:9px"><textarea rows="2" id="ntext" style="min-height:64px" placeholder="הערה לתחום הזה" aria-label="הערה"></textarea><button class="btn small primary" style="margin-top:7px;width:100%">הוספת הערה</button></form>' : '') + '</div>';

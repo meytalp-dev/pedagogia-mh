@@ -112,6 +112,8 @@ var VAADA_DECK = (function () {
       S('מה סיכמנו ב' + V.prev.label).table([5, 1.5, 4.2, 1.1], ['משימה', 'סטטוס', 'מה למדנו', 'ממשיכים'],
         prevDone.map(function (t) { return [t.text + (t.owner ? ' (' + t.owner + ')' : ''), t.refStatus, t.refNote, t.refCont]; }));
     }
+    var prevGaps = ((V.prev && V.prev.recs) || []).filter(function (r) { return r.ref; });
+    if (prevGaps.length) S('הפערים שזוהו ב' + V.prev.label).table([6, 6], ['פער', 'מה קרה'], prevGaps.map(function (r) { return [r.text, r.ref]; }));
 
     /* התחומים לפי סדר המצגת */
     o.sections.forEach(function (sec) {
@@ -210,13 +212,8 @@ var VAADA_DECK = (function () {
     });
 
     /* המלצות המפקח.ת */
-    var prevRecs = ((V.prev && V.prev.recs) || []).filter(function (r) { return r.ref; });
     var recs = V.recs || [];
-    if (prevRecs.length || recs.length) {
-      var sr = S('המלצות המפקח.ת');
-      if (prevRecs.length) sr.table([6, 6], ['מ' + V.prev.label, 'התייחסות'], prevRecs.map(function (r) { return [r.text, r.ref]; }));
-      if (recs.length) sr.table([12], ['המלצות לוועדה הזו'], recs.map(function (r) { return [r.text]; }));
-    }
+    if (recs.length) S('המלצות המפקח.ת').table([12], ['המלצות לוועדה הזו'], recs.map(function (r) { return [r.text]; }));
 
     /* פרוטוקול: מופיע רק אם כבר התקבלו החלטות */
     if ((V.tasks || []).length) {
@@ -273,6 +270,8 @@ var VAADA_DECK = (function () {
     if (net) net.blocks.filter(function (b) { return b.type === 'chart'; }).forEach(function (b) { data.blocks.push(b); });
     var prevT = ((V.prev && V.prev.tasks) || []).filter(function (t) { return t.draft !== 'כן' || t.refStatus; });
     if (prevT.length) data.table([5, 1.5, 4.2, 1.1], ['החלטות הוועדה הקודמת', 'סטטוס', 'מה למדנו', 'ממשיכים'], prevT.map(function (t) { return [t.text, t.refStatus, t.refNote, t.refCont]; }));
+    var prevG = ((V.prev && V.prev.recs) || []).filter(function (r) { return r.ref; });
+    if (prevG.length) data.table([6, 6], ['הפערים שזוהו בוועדה הקודמת', 'מה קרה'], prevG.map(function (r) { return [r.text, r.ref]; }));
     if (!data.blocks.length) data.table([12], null, [['טרם מולא']]);
 
     /* תחנה: צורך ← מטרה ומדדים ← פעולות ← משאבים */
