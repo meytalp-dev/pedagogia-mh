@@ -65,6 +65,7 @@
 
   /* ===== כניסה ===== */
   function viewLogin() {
+    document.body.classList.add('at-login');
     $('#who').hidden = true; $('#out').hidden = true;
     APP.innerHTML = '<div class="gate-head"><img src="logo-minhal.png" alt="משרד העבודה · מינהל הכשרה מקצועית"><svg class="gate-mark" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke-width="17" stroke-linecap="round" transform="rotate(-62 50 50)"><circle cx="50" cy="50" r="38" stroke="#1D4F5E" stroke-dasharray="132 239"/><circle cx="50" cy="50" r="38" stroke="#C4862A" stroke-dasharray="26 239" stroke-dashoffset="-164"/><circle cx="50" cy="50" r="38" stroke="#7F9A8E" stroke-dasharray="20 239" stroke-dashoffset="-204"/></g></svg><div class="gate-name"><b>מעגל</b><small>הוועדה המלווה</small></div></div><form class="card login" id="lf"><h1 class="vh">כניסה למעגל</h1><p>מקלידים את המייל שלך, ונשלח אליו קוד בן 6 ספרות. המכשיר יזכור אותך ל-30 יום.</p>' +
       '<label class="f"><b>המייל שלך</b><input type="email" id="le" dir="ltr" autocomplete="email" required></label>' +
@@ -100,6 +101,7 @@
 
   function header() {
     if (!S.me) return;
+    document.body.classList.remove('at-login');
     var w = $('#who');
     w.textContent = S.me.name || S.me.email; w.hidden = false;
     $('#out').hidden = false;
@@ -225,6 +227,10 @@
   }
 
   /* ===== מסלול המנהל.ת: הקישור שנשלח למנהלים. אותם עמודים ואותם נתונים, בלי התפריט המלא (מיטל, 5.11.26) ===== */
+  /* תחנה נספרת רק כשמילאו בה משהו מעבר לכותרת: הכותרות המוצעות הן רק הצעה */
+  function realStations(V) {
+    return ((V.docs.prep || {}).stations || []).filter(function (st) { return st.title && Object.keys(st).some(function (k) { return k !== 'title' && k !== 'sec' && String(st[k] || '').trim(); }); }).length;
+  }
   var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e'];
   var FOCUS_KEY = 'vaada_focus';
   function focusOn() { try { return sessionStorage.getItem(FOCUS_KEY) === '1'; } catch (e) { return false; } }
@@ -240,7 +246,7 @@
         withVaada(r.current, function () {
           var V = S.V, P = V.prev, d = reqDone(), base = '#v/' + V.v.id;
           var total = P.tasks.length + P.recs.length, ans = P.tasks.filter(function (t) { return t.refStatus; }).length + P.recs.filter(function (x) { return x.ref; }).length;
-          var nSt = ((V.docs.prep || {}).stations || []).filter(function (s) { return s.title; }).length;
+          var nSt = realStations(V);
           var step = function (n, href, title, sub, val, max) {
             return '<a class="fstep" href="' + href + '"><span class="fnum">' + n + '</span><span class="ftxt"><b>' + esc(title) + '</b><span>' + esc(sub) + '</span>' + (max ? '<span class="bar"><i style="width:' + Math.round(val / max * 100) + '%"></i></span>' : '') + '</span></a>';
           };
@@ -460,7 +466,7 @@
     var doneT = V.tasks.filter(function (t) { return t.st === 'עמידה בתכנון' || t.st === 'בוטל'; }).length;
     var need = signSlots();
     var signed = need.filter(function (n) { return n.done; }).length;
-    var nSt = ((V.docs.prep || {}).stations || []).filter(function (s) { return s.title; }).length;
+    var nSt = realStations(V);
     var tiles = [
       ['prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'בחירת 3–4 תחנות וסוגיית ליבה'],
       ['fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים'],
@@ -1044,7 +1050,7 @@
   }
   function viewDeck() {
     var V = S.V, out = collectSlides(true);
-    var nSt = ((V.docs.prep || {}).stations || []).filter(function (s) { return s.title; }).length;
+    var nSt = realStations(V);
     var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן השקפים הנבחרים יכללו רק פתיחה, נתונים וסיכום. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
     var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא ולא ייכנס' : out.missing.length + ' תחומים עוד לא מולאו ולא ייכנסו') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
@@ -1277,7 +1283,6 @@
       list.insertAdjacentHTML('beforeend', stHtml({ sec: '' }, list.children.length).replace('data-st ', 'data-st open '));
       if (list.children.length >= 4) add.hidden = true;
     };
-    if (!P.stations) send();
   }
 
   /* ===== שיחה מצומצמת: מפקח.ת ומנהל.ת בלבד. לא נכנסת לפרוטוקול, למצגת או למייל ===== */
