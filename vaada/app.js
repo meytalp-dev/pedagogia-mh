@@ -860,23 +860,69 @@
     return '<b>נענו ' + done + ' מתוך ' + total + '</b><div class="bar"><i style="width:' + (total ? Math.round(done / total * 100) : 0) + '%"></i></div>';
   }
   function drawPrevCount() { var el = $('#prevCount'); if (el) el.innerHTML = prevCountHtml(); }
+  /* המנהל.ת עונה על פריט אחד בכל פעם: סיים, מגיע הבא. בלי גלילה ארוכה (מיטל, 5.11.26). מי שרק קורא רואה רשימה */
   function viewPrevPage() {
     var V = S.V, P = V.prev, can = canReflect();
     var secTitle = function (id) { var d = VAADA.section('a', id); return d ? d.title : ''; };
-    var h = '<a class="crumb" href="' + (focusOn() ? '#m/' + V.v.semel + '">→ השלבים שלי' : '#s/' + V.v.semel + '">→ ' + esc(V.v.school)) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.' : 'עונה המנהל.ת. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.') + '</p></div>';
-    if (P.tasks.length || P.recs.length) h += '<div class="card summary" id="prevCount">' + prevCountHtml() + '</div>';
-    h += '<section id="prevbox" class="prevp"><h2>החלטות</h2>' + (P.tasks.some(function (t) { return t.draft === 'כן'; }) ? '<p class="rs">נלקח מתקציר המסמך, ולכן טיוטה.</p>' : '');
-    h += P.tasks.length ? P.tasks.map(function (t) { return (t.sec ? '<div class="rs ptsec">' + esc(secTitle(t.sec)) + '</div>' : '') + prevTask(t); }).join('') : '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
-    h += '</section>';
-    if (P.recs.length) h += '<h2 style="margin:20px 0 8px">פערים שזוהו</h2>' + P.recs.map(function (r) {
-      return '<div class="card" data-rec="' + esc(r.id) + '"><div class="ttxt"><b>' + esc(r.text) + '</b>' + (r.draft === 'כן' ? '<span class="draftnote">טיוטה</span>' : '') + '</div>' +
+    var items = P.tasks.map(function (t) { return { id: t.id, kind: 't', t: t }; }).concat(P.recs.map(function (r) { return { id: r.id, kind: 'r', r: r }; }));
+    var answered = function (it) {
+      if (it.kind === 't') { var x = P.tasks.filter(function (q) { return q.id === it.id; })[0]; return !!(x && x.refStatus); }
+      var y = P.recs.filter(function (q) { return q.id === it.id; })[0]; return !!(y && y.ref);
+    };
+    var textOf = function (it) { return it.kind === 't' ? it.t.text : it.r.text; };
+    var cardOf = function (it) {
+      if (it.kind === 't') return '<div class="rs ptsec">החלטה' + (it.t.sec ? ' · ' + esc(secTitle(it.t.sec)) : '') + '</div>' + prevTask(it.t);
+      var r = it.r;
+      return '<div class="rs ptsec">פער שזוהה</div><div class="card" data-rec="' + esc(r.id) + '"><div class="ttxt"><b>' + esc(r.text) + '</b>' + (r.draft === 'כן' ? '<span class="draftnote">טיוטה</span>' : '') + '</div>' +
         (can ? '<label class="f" style="margin:8px 0 4px"><span class="lbl">מה קרה?</span><textarea data-ref>' + esc(r.ref) + '</textarea></label><span class="rs" data-refsaved></span>' +
           (r.draft === 'כן' ? '<div class="acts" style="margin-top:4px"><button type="button" class="link danger" data-rdel>מחיקה</button></div>' : '')
           : (r.ref ? '<div class="val" style="margin-top:6px"><b>מה קרה:</b> ' + esc(r.ref) + '</div>' : '<div class="rs" style="margin-top:6px">טרם נענה.</div>')) + '</div>';
-    }).join('');
-    h += '<h2 style="margin:20px 0 8px">המסמכים</h2><div id="pastBody"><div class="loading">טוען…</div></div>';
+    };
+    var back = focusOn() ? '#m/' + V.v.semel : '#s/' + V.v.semel;
+    var h = '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'השלבים שלי' : esc(V.v.school)) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם.' : 'עונה המנהל.ת.') + ' התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.</p></div>';
+    if (!items.length) h += '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
+    else h += '<div class="card summary" id="prevCount">' + prevCountHtml() + '</div>';
+    h += '<section id="prevbox" class="prevp">' + items.map(function (it, i) { return '<div class="pitem" data-pi="' + i + '"' + (can ? ' hidden' : '') + '>' + cardOf(it) + '</div>'; }).join('') + '</section>';
+    if (can && items.length) {
+      h += '<div class="pnav" id="pnav"><button type="button" class="btn" id="pPrev">→ הקודם</button><span id="pPos" class="rs"></span><button type="button" class="btn primary" id="pNext">הבא ←</button></div>' +
+        '<div class="card pdone" id="pDone" hidden><h2 id="pDoneT"></h2><div class="acts"><a class="btn primary" href="' + (focusOn() ? '#v/' + V.v.id + '/prep">לשלב הבא: הכנה ←' : back + '">חזרה לבית הספר') + '</a><button type="button" class="btn" id="pAgain">חזרה לפריטים</button></div></div>' +
+        '<details class="card pall" id="pAll"><summary><b>כל הפריטים</b></summary><div id="pRows"></div></details>';
+    }
+    h += '<details class="card"><summary><b>המסמכים</b></summary><div id="pastBody" style="margin-top:8px"><div class="loading">טוען…</div></div></details>';
     shell(h);
     wirePrev();
+    if (can && items.length) {
+      var cur = 0;
+      var first = 0;
+      while (first < items.length && answered(items[first])) first++;
+      cur = first < items.length ? first : 0;
+      if (viewPrevPage.at !== undefined && viewPrevPage.at < items.length) cur = viewPrevPage.at;
+      viewPrevPage.at = undefined;
+      var rows = function () {
+        $('#pRows').innerHTML = items.map(function (it, i) { return '<button type="button" class="prow" data-jump="' + i + '" data-jump-id="' + esc(it.id) + '"' + (i === cur ? ' aria-current="true"' : '') + '><span class="pmark' + (answered(it) ? ' on' : '') + '">' + (answered(it) ? '✓' : '') + '</span><span>' + esc(textOf(it)) + '</span></button>'; }).join('');
+        $$('[data-jump]').forEach(function (b) { b.onclick = function () { show(Number(b.getAttribute('data-jump'))); $('#pAll').open = false; }; });
+      };
+      var show = function (i) {
+        cur = i;
+        $('#pDone').hidden = true; $('#pnav').hidden = false; $('#prevbox').hidden = false;
+        $$('.pitem').forEach(function (x) { x.hidden = Number(x.getAttribute('data-pi')) !== i; });
+        $('#pPos').textContent = (i + 1) + ' מתוך ' + items.length;
+        $('#pPrev').disabled = i === 0;
+        $('#pNext').textContent = i === items.length - 1 ? 'סיום' : 'הבא ←';
+        rows(); window.scrollTo(0, 0);
+      };
+      $('#pPrev').onclick = function () { flushRef(); if (cur > 0) show(cur - 1); };
+      $('#pNext').onclick = function () {
+        flushRef();
+        if (cur < items.length - 1) return show(cur + 1);
+        var open = items.filter(function (it) { return !answered(it); }).length;
+        $('#pDoneT').textContent = open ? 'נשארו ' + count(open, 'פריט אחד', 'פריטים') + ' בלי תשובה' : 'כל הפריטים נענו. תודה!';
+        $('#pDone').hidden = false; $('#pnav').hidden = true; $('#prevbox').hidden = true; window.scrollTo(0, 0);
+      };
+      $('#pAgain').onclick = function () { show(0); };
+      var flushRef = function () { var a = document.activeElement; if (a && a.blur && a.tagName === 'TEXTAREA') a.blur(); };
+      show(cur);
+    }
     if (can) $$('[data-rec]').forEach(function (card) {
       var id = card.getAttribute('data-rec'), ta = $('[data-ref]', card), del = $('[data-rdel]', card);
       ta.onchange = function () {
@@ -893,7 +939,9 @@
         if (!confirm('למחוק את הפריט הזה?')) return;
         api('recDel', { id: V.v.id, recId: id }).then(function (r) {
           if (!r.ok) return toast(errText(r.error));
-          P.recs = P.recs.filter(function (x) { return x.id !== id; }); card.remove(); drawPrevCount();
+          P.recs = P.recs.filter(function (x) { return x.id !== id; });
+          viewPrevPage.at = Number(card.closest('[data-pi]').getAttribute('data-pi'));
+          viewPrevPage();
         }).catch(function () {});
       };
     });
@@ -947,6 +995,7 @@
         api('taskDel', { id: S.V.v.id, taskId: wrap.getAttribute('data-pt') }).then(function (r) {
           if (!r.ok) return toast(errText(r.error));
           S.V.prev.tasks = S.V.prev.tasks.filter(function (x) { return x.id !== wrap.getAttribute('data-pt'); });
+          if ($('#pnav')) { viewPrevPage.at = Number(wrap.closest('[data-pi]').getAttribute('data-pi')); viewPrevPage(); return; }
           wrap.parentNode.removeChild(wrap);
         }).catch(function () {});
       }
