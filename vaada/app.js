@@ -1,6 +1,7 @@
 /* ועדה מלווה — הדף (4.11.26). השרת: רויטל\vaada-gas\Code.js. כל הנתונים נשלפים אחרי כניסה; אין כאן שום נתון אישי.
    ניתוב לפי hash:
    #                 מסך הבית (מנהל.ת: בית הספר · מפקח.ת ומטה: רשימה · בעל.ת תפקיד: התחומים שלי)
+   #m  ·  #m/<סמל>   מסלול המנהל.ת: ועדת תשפ"ו, הכנה, מילוי. בלי התפריט המלא. הנתונים הם אותם נתונים
    #s/<סמל>          דף בית הספר: אנשים, תמונת מצב, הוועדה הקודמת, משימות פתוחות, הוועדות (הוועדה של השנה נפתחת לבד)
    #v/<id>           ראשי של הוועדה: סיכום וכרטיס לכל פריט בתפריט
    #v/<id>/prep      הכנה: תחנות וסוגיית ליבה
@@ -57,7 +58,7 @@
   function session() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.exp > Date.now() ? s : null; } catch (e) { return null; } }
   function logout(silent) {
     try { localStorage.removeItem(KEY); } catch (e) {}
-    S.token = ''; S.me = null; S.V = null; S.board = null; S.SCH = null;
+    S.token = ''; S.me = null; S.V = null; S.board = null; S.SCH = null; setFocus(false);
     if (!silent) location.hash = '';
     route();
   }
@@ -65,7 +66,7 @@
   /* ===== כניסה ===== */
   function viewLogin() {
     $('#who').hidden = true; $('#out').hidden = true;
-    APP.innerHTML = '<form class="card login" id="lf"><h1>כניסה לוועדה המלווה</h1><p>מקלידים את המייל שלך, ונשלח אליו קוד בן 6 ספרות. המכשיר יזכור אותך ל-30 יום.</p>' +
+    APP.innerHTML = '<div class="gate-head"><img src="logo-minhal.png" alt="משרד העבודה · מינהל הכשרה מקצועית"><svg class="gate-mark" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke-width="17" stroke-linecap="round" transform="rotate(-62 50 50)"><circle cx="50" cy="50" r="38" stroke="#1D4F5E" stroke-dasharray="132 239"/><circle cx="50" cy="50" r="38" stroke="#C4862A" stroke-dasharray="26 239" stroke-dashoffset="-164"/><circle cx="50" cy="50" r="38" stroke="#7F9A8E" stroke-dasharray="20 239" stroke-dashoffset="-204"/></g></svg><div class="gate-name"><b>מעגל</b><small>הוועדה המלווה</small></div></div><form class="card login" id="lf"><h1 class="vh">כניסה למעגל</h1><p>מקלידים את המייל שלך, ונשלח אליו קוד בן 6 ספרות. המכשיר יזכור אותך ל-30 יום.</p>' +
       '<label class="f"><b>המייל שלך</b><input type="email" id="le" dir="ltr" autocomplete="email" required></label>' +
       '<label class="f" id="lcw" hidden><b>הקוד שקיבלת במייל</b><input type="text" inputmode="numeric" id="lc" dir="ltr" autocomplete="one-time-code" maxlength="6"></label>' +
       '<button class="btn primary" id="lb" style="width:100%">שליחת קוד</button><div class="err" id="lerr" role="alert"></div>' +
@@ -116,11 +117,14 @@
     }
     var h = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
     window.scrollTo(0, 0);
+    if (h[0] === 'm') { setFocus(true); return viewFocus(h[1]); }
+    if (focusOn() && h[0] !== 'v') return location.replace('#m' + (h[0] === 's' && h[1] ? '/' + h[1] : ''));
     if (!h[0]) return viewHome();
     if (h[0] === 's') return viewSchool(h[1], h[2]);
     if (h[0] === 'v') return withVaada(h[1], function () {
       /* נציג.ת רשת: רק הפרוטוקול והחתימה */
       if (S.V.caps.rep) return viewSign();
+      if (focusOn() && FOCUS_PAGES.indexOf(h[2] || '') < 0) return location.replace('#m/' + S.V.v.semel);
       if (h[2] === 'e') return viewEdit(h[3]);
       if (h[2] === 'fill') return viewPrep();
       if (!S.V.caps.full) return location.replace('#');
@@ -220,6 +224,45 @@
     wireMail();
   }
 
+  /* ===== מסלול המנהל.ת: הקישור שנשלח למנהלים. אותם עמודים ואותם נתונים, בלי התפריט המלא (מיטל, 5.11.26) ===== */
+  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e'];
+  var FOCUS_KEY = 'vaada_focus';
+  function focusOn() { try { return sessionStorage.getItem(FOCUS_KEY) === '1'; } catch (e) { return false; } }
+  function setFocus(on) { try { if (on) sessionStorage.setItem(FOCUS_KEY, '1'); else sessionStorage.removeItem(FOCUS_KEY); } catch (e) {} }
+  function focusBar(cur) {
+    var base = '#v/' + S.V.v.id;
+    return '<nav class="fbar" aria-label="השלבים"><a href="' + base + '/prev"' + (cur === 'prev' ? ' aria-current="page"' : '') + '>1. ועדת תשפ"ו</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. הכנה</a><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>3. מילוי מצגת האב</a></nav>';
+  }
+  function viewFocus(semel) {
+    loading();
+    var go1 = function (sm) {
+      withSchool(sm, function (r) {
+        withVaada(r.current, function () {
+          var V = S.V, P = V.prev, d = reqDone(), base = '#v/' + V.v.id;
+          var total = P.tasks.length + P.recs.length, ans = P.tasks.filter(function (t) { return t.refStatus; }).length + P.recs.filter(function (x) { return x.ref; }).length;
+          var nSt = ((V.docs.prep || {}).stations || []).filter(function (s) { return s.title; }).length;
+          var step = function (n, href, title, sub, val, max) {
+            return '<a class="fstep" href="' + href + '"><span class="fnum">' + n + '</span><span class="ftxt"><b>' + esc(title) + '</b><span>' + esc(sub) + '</span>' + (max ? '<span class="bar"><i style="width:' + Math.round(val / max * 100) + '%"></i></span>' : '') + '</span></a>';
+          };
+          APP.innerHTML = '<div class="head"><h1>' + esc(V.v.school) + '</h1><p>ועדת תחילת שנה ' + esc(V.v.year) + (V.v.date ? ' · ' + fmtDate(V.v.date) : '') + '</p></div><div class="fsteps">' +
+            step(1, base + '/prev', 'ועדת תשפ"ו: מה קרה', total ? 'נענו ' + ans + ' מתוך ' + total : 'אין החלטות במערכת', ans, total) +
+            step(2, base + '/prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'תחנות וסוגיית ליבה', Math.min(nSt, 3), 3) +
+            step(3, base + '/fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים', d.done, d.total) +
+            '</div><button type="button" class="link" id="fexit">לכל המערכת</button>';
+          $('#fexit').onclick = function () { setFocus(false); location.hash = '#s/' + V.v.semel; };
+        });
+      });
+    };
+    if (semel) return go1(semel);
+    loadBoard().then(function (r) {
+      if (!r.ok) return failed(r.error);
+      var mine = r.me.principalOf || [];
+      if (mine.length === 1) return location.replace('#m/' + mine[0]);
+      /* בלי בית ספר אחד ברור (מטה, מפקח.ת, בעל.ת תפקיד): למסך הרגיל */
+      setFocus(false); location.replace('#');
+    }).catch(function () {});
+  }
+
   /* ===== המערכת של בית הספר: בית + דף לכל פריט (מיטל, 4.11.26: לא עמוד אחד עמוס) =====
      #s/<סמל>        בית: סיכום הוועדה + כרטיס לכל פריט
      #s/<סמל>/pic    תמונת מצב: מיפוי, עובדות מהוועדה הקודמת, אקלים, סל
@@ -283,10 +326,10 @@
     var a = r.vaadot.filter(function (v) { return v.stage === 'a'; })[0], st = schoolState({ vaadot: r.vaadot }), t = r.tuva || {};
     var base = '#v/' + r.current, sb = '#s/' + r.school.semel;
     var sub = a && a.status === 'closed' ? 'הוועדה התקיימה ונסגרה' + (a.date ? ' · ' + fmtDate(a.date) : '') :
-      a && a.date ? 'הוועדה ב-' + fmtDate(a.date) + ' · הושלמו ' + a.done + ' מתוך ' + a.total + ' תחומים' :
+      a && a.date ? 'הושלמו ' + a.done + ' מתוך ' + a.total + ' תחומים' :
       'זימונים עד 15.11 · הוועדה עד אמצע ינואר · הושלמו ' + (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים';
     var pct = a && a.total ? Math.round(a.done / a.total * 100) : 0;
-    var h = '<div class="card vstat"><div class="vstat-t"><b>ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</b> ' + st.tag + '<div class="rs">' + esc(sub) + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
+    var h = '<div class="card vstat"><div class="vstat-t"><div class="vsk">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</div>' + (a && a.date ? '<div class="vdate">' + fmtDate(a.date) + '</div>' : '') + st.tag + '<div class="rs">' + esc(sub) + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
       '<a class="btn primary" id="enterV" href="' + base + '">כניסה לוועדה</a></div>';
     var have = [t.mipuiFacts ? 'מיפוי' : '', t.aklim ? 'אקלים' : '', t.sal ? 'סל תוכניות' : '', t.facts ? 'עובדות מהוועדה הקודמת' : ''].filter(Boolean);
     var roles = (t.roles || []).filter(function (x) { return x.role; }), vac = roles.filter(function (x) { return x.vacant; }).length;
@@ -385,7 +428,8 @@
   }
   function vHead() {
     var V = S.V, v = V.v, h = '';
-    if (V.caps.full) h += '<a class="crumb" href="#' + (viewName() ? 'v/' + v.id : 's/' + v.semel) + '">→ ' + (viewName() ? 'ראשי הוועדה' : esc(v.school)) + '</a>';
+    if (focusOn()) h += '<a class="crumb" href="#m/' + v.semel + '">→ השלבים שלי</a>';
+    else if (V.caps.full) h += '<a class="crumb" href="#' + (viewName() ? 'v/' + v.id : 's/' + v.semel) + '">→ ' + (viewName() ? 'ראשי הוועדה' : esc(v.school)) + '</a>';
     else h += '<a class="crumb" href="#">→ הוועדה המלווה</a>';
     return h + '<div class="head"><h1>ועדה מלווה · ' + esc(VAADA.STAGES[v.stage]) + ' ' + esc(v.year) + '</h1><p>' + esc(v.school) + (v.date ? ' · ' + fmtDate(v.date) : '') + (v.status === 'closed' ? ' · <b>הוועדה נסגרה</b>' : '') + '</p></div>';
   }
@@ -393,6 +437,7 @@
   function shell(inner) {
     var V = S.V;
     if (!V.caps.full) { APP.innerHTML = inner; return; }
+    if (focusOn()) { APP.innerHTML = focusBar(viewName()) + inner; return; }
     var cur = viewName(), groups = [schoolGroup(V.v.semel, cur === 'prev' ? 'prev' : null), vaadaGroup(V.v.id, cur), supGroup(V.v.id, cur)].filter(Boolean);
     APP.innerHTML = '<div class="shell' + (location.hash.split('/')[2] === 'live' ? ' wide' : '') + '">' + sideMenu(groups, V.v.school, VAADA.STAGES[V.v.stage] + ' ' + V.v.year) + '<div class="vmain">' + inner + '</div></div>';
   }
@@ -812,7 +857,7 @@
   function viewPrevPage() {
     var V = S.V, P = V.prev, can = canReflect();
     var secTitle = function (id) { var d = VAADA.section('a', id); return d ? d.title : ''; };
-    var h = '<a class="crumb" href="#s/' + V.v.semel + '">→ ' + esc(V.v.school) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.' : 'עונה המנהל.ת. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.') + '</p></div>';
+    var h = '<a class="crumb" href="' + (focusOn() ? '#m/' + V.v.semel + '">→ השלבים שלי' : '#s/' + V.v.semel + '">→ ' + esc(V.v.school)) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.' : 'עונה המנהל.ת. התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.') + '</p></div>';
     if (P.tasks.length || P.recs.length) h += '<div class="card summary" id="prevCount">' + prevCountHtml() + '</div>';
     h += '<section id="prevbox" class="prevp"><h2>החלטות</h2>' + (P.tasks.some(function (t) { return t.draft === 'כן'; }) ? '<p class="rs">נלקח מתקציר המסמך, ולכן טיוטה.</p>' : '');
     h += P.tasks.length ? P.tasks.map(function (t) { return (t.sec ? '<div class="rs ptsec">' + esc(secTitle(t.sec)) + '</div>' : '') + prevTask(t); }).join('') : '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
