@@ -57,7 +57,7 @@
 
   function session() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.exp > Date.now() ? s : null; } catch (e) { return null; } }
   function logout(silent) {
-    try { localStorage.removeItem(KEY); } catch (e) {}
+    try { localStorage.removeItem(KEY); sessionStorage.removeItem(GUEST_KEY); } catch (e) {}
     S.token = ''; S.me = null; S.V = null; S.board = null; S.SCH = null; setFocus(false);
     if (!silent) location.hash = '';
     route();
@@ -104,7 +104,21 @@
     document.body.classList.remove('at-login');
     var w = $('#who');
     w.textContent = S.me.name || S.me.email; w.hidden = false;
-    $('#out').hidden = false;
+    $('#out').hidden = S.me.role === 'guest';
+  }
+
+  /* קישור צפייה זמני: #g/<קוד>. הקוד נשמר רק בלשונית הזו, ולא דורס כניסה רגילה במכשיר */
+  var GUEST_KEY = 'vaada_guest';
+  function guestToken() { try { return sessionStorage.getItem(GUEST_KEY) || ''; } catch (e) { return ''; } }
+  function enterGuest(tok) {
+    loading();
+    S.token = tok; S.V = null; S.board = null; S.SCH = null; setFocus(false);
+    try { sessionStorage.setItem(GUEST_KEY, tok); } catch (e) {}
+    api('board').then(function (r) {
+      if (!r.ok || !r.schools.length) return failed(r.error);
+      S.me = r.me; header();
+      location.replace('#s/' + r.schools[0].semel);
+    }).catch(function () {});
   }
 
   /* ===== ניתוב ===== */
@@ -112,6 +126,9 @@
   function route() {
     clearTimeout(pollT); pollT = null; liveId++; document.onkeydown = null;
     flushNow();
+    var gm = /^#g\/([\w-]+)/.exec(location.hash);
+    if (gm) return enterGuest(gm[1]);
+    if (!S.token) S.token = guestToken();
     if (!S.token) {
       var s = session();
       if (!s) return viewLogin();
@@ -198,7 +215,7 @@
     var pct = list.length ? Math.round(opened / list.length * 100) : 0;
     var h = '<div class="head"><h1>' + (r.me.role === 'sup' ? 'בתי הספר שלי' : 'כל בתי הספר') + '</h1></div>' +
       '<div class="card summary"><b>התחילו להכין ' + opened + ' מתוך ' + list.length + ' · נסגרו ' + closed + '</b><div class="bar"><i style="width:' + pct + '%"></i></div></div>';
-    if (missing.length) {
+    if (missing.length && r.me.role !== 'guest') {
       var names = missing.map(function (s) { return s.name + (s.principals[0] ? ' · ' + s.principals[0].name : ''); }).join('\n');
       var mails = missing.map(function (s) { return (s.principals[0] || {}).email; }).filter(Boolean).join(',');
       h += '<details class="card"><summary><b>מי טרם התחיל להכין (' + missing.length + ')</b></summary><div class="val" style="margin-top:9px">' + esc(names) + '</div>' +
