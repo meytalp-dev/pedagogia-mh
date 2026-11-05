@@ -297,8 +297,9 @@
       [sb + '/open', 'משימות פתוחות', op.length ? count(op.length, 'משימה פתוחה אחת', 'משימות פתוחות') : 'עדיין אין משימות'],
       [sb + '/past', 'ועדות קודמות', past.length ? count(past.length, 'מסמך אחד', 'מסמכים') + ' מתשפ"ו' : 'אין מסמכים במערכת']
     ]);
+    var nSeed = a && a.status === 'closed' ? 0 : (r.seedSecs || []).length;
     h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
-      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים'], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
+      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
       [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
     ]);
     h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">אפריל–יוני · זימונים עד 15.5. תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
@@ -387,7 +388,9 @@
   function secStatus(id) { var x = S.V.secs[id]; return x ? x.status : ''; }
   function statusTag(id) {
     var st = secStatus(id);
-    return st === 'done' ? '<span class="tag ok">הושלם</span>' : st === 'started' ? '<span class="tag info">בעבודה</span>' : '<span class="tag">טרם התחיל</span>';
+    if (st === 'done') return '<span class="tag ok">הושלם</span>';
+    if (st === 'started') return '<span class="tag info">בעבודה</span>';
+    return VAADA_PREFILL.hasAny(S.V, id) ? '<span class="tag ready">מוכן לבדיקה</span>' : '<span class="tag">טרם התחיל</span>';
   }
   /* קבוצת "לפיקוח" בתפריט: רק מה שמותר למחובר.ת */
   function supGroup(id, cur) {
@@ -531,57 +534,31 @@
   }
 
   /* ===== שדות טופס ===== */
-  function prefillRows(f) {
-    var m = (S.V.school.megamot || []);
-    if (f.prefill === 'megamot') return m.map(function (x) { return [x[0], x[1]]; });
-    if (f.prefill === 'megamotName') return m.map(function (x) { return [x[0]]; });
-    return [];
+  /* הלוגיקה של הערך ההתחלתי נמצאת ב-prefill.js */
+  function initial(secId, f) { return VAADA_PREFILL.value(S.V, secId, f); }
+  /* תווית ליד כותרת שדה שהערך שלו מוכן מראש ועוד לא נשמר */
+  function srcTag(secId, f) {
+    var s = VAADA_PREFILL.source(S.V, secId, f);
+    return s ? '<span class="presrc" data-src="' + f.k + '">מוכן מראש · ' + esc(s) + '</span>' : '';
   }
-  /* ערך התחלתי של שדה: מה שנשמר, ואם אין — מה שידוע כבר על בית הספר */
-  function initial(secId, f) {
-    var d = (S.V.secs[secId] || {}).data || {};
-    if (d[f.k] !== undefined) return d[f.k];
-    var sch = S.V.school;
-    if (secId === 'sipur' && f.k === 'sup') return sch.sups.join(' · ');
-    if (secId === 'koach' && f.k === 'roles' && (S.V.tuva || {}).roles) return rolesFromTuva(f);
-    if (f.t === 'table' && f.add) {
-      var rows = prefillRows(f);
-      return rows.length ? rows : [];
-    }
-    if (f.t === 'repeat' && f.prefill) return prefillRows(f).map(function (r) { return { name: r[0] }; });
-    return undefined;
-  }
-
-  /* בעלי התפקידים מהנספח: השמות נכנסים כטיוטה. חברות בהנהלה והכשרה ממלאים ידנית */
-  function rolesFromTuva(f) {
-    var match = { 'מנהל.ת': /^מנהל/, 'סגן.ית מנהל.ת': /סגן/, 'רכז פדגוגי': /פדגוג/, 'רכז חניכות': /חניכות/, 'רכז חברתי': /חברתי/, 'יועץ/יועצים': /יוע[ץצ]|ייעוץ/, 'מת"לית': /מת.?ל/, 'רכז הכלה ושילוב': /הכלה|שילוב/ };
-    return f.rows.map(function (l) {
-      var names = S.V.tuva.roles.filter(function (r) { return !r.vacant && r.name && match[l] && match[l].test(r.role || ''); }).map(function (r) { return r.name; });
-      return [names.join(', '), '', ''];
-    });
-  }
-  /* מה ידוע כבר מתובה על התחום. מוצג לעיון, כדי לא לכתוב פעמיים */
+  /* רמזים שלא נכנסים לטופס. כל השאר כבר בתוך השדות */
   function tuvaBox(secId) {
     var t = S.V.tuva || {}, h = '';
     var src = function (txt) { return '<div class="rs" style="margin-bottom:6px">' + esc(txt) + '</div>'; };
-    if (secId === 'netunim' && (t.mipuiFacts || t.facts)) {
-      if (t.mipuiFacts) {
-        var m = t.mipuiFacts, lines = [['מספר תלמידים מט-יב', m['מספר תלמידים מט-יב']], ['תלמידים בינואר השנה', m['מספר תלמידים בינואר השנה בכיתות ט-יב']], ['תלמידים בינואר שנה שעברה', m['מספר תלמידים בינואר שנה שעברה']], ['תלמידי קורסים', m['מספר תלמידי קורסים']], ['מגמות לימוד', m['מגמות לימוד']]].filter(function (x) { return x[1]; });
-        h += src('מהמיפוי' + (m['תאריך קליטת טופס'] ? ' מ-' + fmtDate(m['תאריך קליטת טופס']) : '') + '. בטבלה מבקשים את נתוני נובמבר, ולכן לא מילאנו אותם אוטומטית.') + '<ul class="plain">' + lines.map(function (x) { return '<li>' + esc(x[0]) + ': ' + esc(x[1]) + '</li>'; }).join('') + '</ul>';
-      }
-      if (t.facts) h += src('מהוועדה הקודמת (' + (t.facts.stage || '') + '):') + '<ul class="plain">' + t.facts.facts.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    var list = function (items) { return '<ul class="plain">' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; };
+    if (secId === 'netunim' && t.mipuiFacts) {
+      var m = t.mipuiFacts, lines = [['השנה', m['מספר תלמידים בינואר השנה בכיתות ט-יב']], ['שנה שעברה', m['מספר תלמידים בינואר שנה שעברה']]].filter(function (x) { return x[1]; });
+      if (lines.length) h += src('תלמידים בינואר, מהמיפוי:') + list(lines.map(function (x) { return x[0] + ': ' + x[1]; }));
     }
-    if (secId === 'koach' && t.roles) h += src('השמות בטבלה הגיעו מנספח בעלי התפקידים. בודקים ומתקנים. חברות בהנהלה והכשרה ממלאים כאן.');
-    if (secId === 'aklim' && (t.aklim || t.aklimWeak)) {
-      if (t.aklim) h += src('נתוני שאלון האקלים כבר במערכת, והם ייכנסו למצגת עם גרף. אפשר להעלות גם גרפים משלכם.');
-      if (t.aklimWeak) h += src('ההיגדים הנמוכים ביותר, לעזרה בניסוח המסקנות:') + '<ul class="plain">' + t.aklimWeak.slice(0, 12).map(function (x) { return '<li>' + esc(x['קהל'] || '') + ': ' + esc(x['היגד'] || '') + (x['ממוצע'] ? ' (' + esc(x['ממוצע']) + ')' : '') + '</li>'; }).join('') + '</ul>';
+    if (secId === 'aklim' && (t.aklimWeak || []).length) {
+      h += src('ההיגדים הנמוכים:') + list(t.aklimWeak.slice(0, 12).map(function (x) { return (x['קהל'] || '') + ': ' + (x['היגד'] || '') + (x['ממוצע'] ? ' (' + x['ממוצע'] + ')' : ''); }));
     }
     var sal = t.sal, domOf = { dualit: /פדגוג/, chanichut: /מקצוע|חניכות/, yeutz: /ייעוצ|יעוצ|טיפול/, chevrati: /חברתי/, hatmada: /ייעוצ|יעוצ|טיפול/, pituach: /פדגוג/ };
     if (sal && domOf[secId]) {
       var pr = (sal.programs || []).filter(function (p) { return domOf[secId].test(p.domain || ''); });
-      if (pr.length) h += src('מסל התוכניות שהוגש. כדאי לשלב אותן כמשאבים בתוך היעדים:') + '<ul class="plain">' + pr.map(function (p) { return '<li>' + esc(p.name) + (p.target ? ' (' + esc(p.target) + ')' : '') + '</li>'; }).join('') + '</ul>';
+      if (pr.length) h += src('מסל התוכניות:') + list(pr.map(function (p) { return p.name + (p.target ? ' (' + p.target + ')' : ''); }));
     }
-    return h ? '<details class="card tuvabox"><summary><b>מה כבר ידוע מתובה</b></summary><div style="margin-top:8px">' + h + '</div></details>' : '';
+    return h ? '<details class="card tuvabox"><summary><b>לעיון, לא נכנס לטופס</b></summary><div style="margin-top:8px">' + h + '</div></details>' : '';
   }
 
   function cellInput(col, val, fk, r, c) {
@@ -590,9 +567,9 @@
     if (col.t === 'num') return '<input type="text" inputmode="numeric" data-num' + a + ' aria-label="' + esc(col.l) + '" value="' + esc(val) + '">';
     return '<textarea rows="1" style="min-height:42px"' + a + ' aria-label="' + esc(col.l) + '">' + esc(val) + '</textarea>';
   }
-  function tableHtml(f, val) {
+  function tableHtml(f, val, tag) {
     var rows = f.rows || null, n = rows ? rows.length : Math.max((val || []).length, f.minRows || (f.add ? 1 : 0));
-    var h = '<div class="f"><span class="lbl">' + esc(f.l) + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
+    var h = '<div class="f"><span class="lbl">' + esc(f.l) + (tag || '') + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
     f.cols.forEach(function (c) { h += '<th scope="col">' + esc(c.l) + '</th>'; });
     h += (f.add ? '<th aria-label="מחיקה"></th>' : '') + '</tr></thead><tbody>';
     for (var r = 0; r < n; r++) h += tableRow(f, val, r);
@@ -646,14 +623,14 @@
     }).join('');
   }
   function fieldHtml(sec, f) {
-    var val = initial(sec.id, f);
-    if (f.t === 'table') return tableHtml(f, val);
-    if (f.t === 'plan') return planHtml(f, val);
-    if (f.t === 'repeat') return repeatHtml(f, val);
+    var val = initial(sec.id, f), tag = srcTag(sec.id, f), top = tag ? '<div class="pretop">' + tag + '</div>' : '';
+    if (f.t === 'table') return tableHtml(f, val, tag);
+    if (f.t === 'plan') return top + planHtml(f, val);
+    if (f.t === 'repeat') return top + repeatHtml(f, val);
     if (f.t === 'file') return fileHtml(f, sec.id);
     var hint = f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '';
-    if (f.t === 'area') return '<label class="f"><b>' + esc(f.l) + '</b>' + hint + '<textarea data-f="' + f.k + '">' + esc(val) + '</textarea></label>';
-    return '<label class="f"><b>' + esc(f.l) + '</b>' + hint + '<input type="text"' + (f.t === 'num' ? ' inputmode="numeric"' : '') + ' data-f="' + f.k + '" value="' + esc(val) + '"></label>';
+    if (f.t === 'area') return '<label class="f"><b>' + esc(f.l) + tag + '</b>' + hint + '<textarea data-f="' + f.k + '">' + esc(val) + '</textarea></label>';
+    return '<label class="f"><b>' + esc(f.l) + tag + '</b>' + hint + '<input type="text"' + (f.t === 'num' ? ' inputmode="numeric"' : '') + ' data-f="' + f.k + '" value="' + esc(val) + '"></label>';
   }
 
   /* קריאת הערך מהטופס */
@@ -760,10 +737,13 @@
       var k = fieldOf(el);
       if (!k) return;
       var f = sec.fields.filter(function (x) { return x.k === k; })[0];
-      if (f) queue(k, readField(form, f));
+      if (!f) return;
+      var tag = $('[data-src="' + k + '"]', form);
+      if (tag) tag.parentNode.removeChild(tag);
+      queue(k, readField(form, f));
     }
     form.addEventListener('input', function (e) {
-      if (e.target.hasAttribute('data-num')) e.target.value = e.target.value.replace(/[^d.]/g, '');
+      if (e.target.hasAttribute('data-num')) e.target.value = e.target.value.replace(/[^\d.]/g, '');
       changed(e.target);
     });
     form.addEventListener('change', function (e) {
@@ -794,13 +774,21 @@
     $('#doneBtn').onclick = function () {
       var b = this, wasDone = secStatus(secId) === 'done';
       b.disabled = true;
+      /* מי שסיים/ה אישר/ה גם את מה שהיה מוכן מראש: נשמר כמו שמוצג */
+      var fill = {};
+      if (!wasDone) $$('[data-src]', form).forEach(function (t) {
+        var k = t.getAttribute('data-src');
+        fill[k] = readField(form, fieldDef(sec, k));
+      });
       flush().then(function () {
-        return api('save', { id: v.id, sec: secId, patch: {}, done: !wasDone });
+        /* fill: השרת שומר רק שדה שעדיין ריק אצלו, כדי לא לדרוס עריכה ממכשיר אחר */
+        return api('save', { id: v.id, sec: secId, patch: {}, fill: fill, done: !wasDone });
       }).then(function (r) {
         b.disabled = false;
         if (!r.ok) return toast(errText(r.error));
         V.secs[secId] = V.secs[secId] || { data: {} };
         V.secs[secId].status = r.status;
+        if (r.data) V.secs[secId].data = r.data;
         S.board = null;
         toast(wasDone ? 'התחום נפתח לעריכה' : 'התחום סומן כהושלם. תודה!');
         go(V.caps.full ? '#v/' + v.id + '/fill' : '#');
@@ -937,7 +925,7 @@
     return h + '</tbody></table></div>';
   }
   function roField(sec, f) {
-    var val = initial(sec.id, f), h = '<div class="f"><span class="lbl">' + esc(f.l) + '</span>';
+    var val = initial(sec.id, f), h = '<div class="f"><span class="lbl">' + esc(f.l) + srcTag(sec.id, f) + '</span>';
     if (f.t === 'table') h += roTable(f, val);
     else if (f.t === 'file') {
       var list = S.V.files.filter(function (x) { return x.sec === sec.id && x.field === f.k; });

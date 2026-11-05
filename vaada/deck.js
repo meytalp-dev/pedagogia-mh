@@ -5,7 +5,9 @@
    VAADA_DECK.toHtml(slide) → שקף להצגה דיגיטלית.
    העיצוב כמו docs/vaada-melava-matzeget-tchilat-shana.pptx: רקע, פס צבעוני ולוגואים (deck/*.png),
    גופן David, צבע כותרת לפי תחום, טבלאות מימין לשמאל.
-   תחום שלא מולא לא מקבל שקף. אין כאן שמות תלמידים, כי הם לא נשמרים במערכת. */
+   תחום שלא מולא לא מקבל שקף. אין כאן שמות תלמידים, כי הם לא נשמרים במערכת.
+   כל ערך נקרא דרך VAADA_PREFILL.deckValue: מה שנשמר גובר. נתון מוכן בלי שורת שנה נכנס רק אחרי אישור בית הספר.
+   בגרף ערך חסר הוא null ולא 0: אפס אמיתי מקבל תווית, ערך חסר לא מצויר. */
 var VAADA_DECK = (function () {
   'use strict';
 
@@ -24,7 +26,21 @@ var VAADA_DECK = (function () {
   }
   function numOf(v) { var n = parseFloat(txt(v)); return isNaN(n) ? null : n; }
   function dmy(d) { return d ? String(d).slice(0, 10).split('-').reverse().join('.') : ''; }
-  function pct(a, b) { return b > 0 ? Math.round(a / b * 100) : 0; }
+  function pct(a, b) { return a != null && b > 0 ? Math.round(a / b * 100) : null; }
+  function series(labels, rows, idx, name) {
+    return { name: name, labels: labels, values: rows.map(function (r) { return numOf(r[idx]); }) };
+  }
+  function fieldOf(sec, k) { return sec.fields.filter(function (x) { return x.k === k; })[0]; }
+  /* יש בשדה נתון בפועל. שם מגמה לבד הוא רק מילוי מראש של השורה */
+  function hasValue(f, value) {
+    if (f.t === 'file') return false;
+    if (f.prefill !== 'megamotName') return filled(value);
+    return (value || []).some(function (r) {
+      return f.t === 'repeat'
+        ? f.fields.some(function (x) { return x.k !== 'name' && filled(r[x.k]); })
+        : filled((r || []).slice(1));
+    });
+  }
 
   /* ===== איסוף: שקף = כותרת, צבע, תחום ורשימת בלוקים (טבלה / גרף / תמונה) ===== */
   function Slide(title, color, sec) { this.title = title; this.color = color || C.blue; this.sec = sec || ''; this.blocks = []; }
@@ -32,13 +48,27 @@ var VAADA_DECK = (function () {
     this.blocks.push({ type: 'table', colW: colW, head: head, rows: rows.map(function (r) { return r.map(txt); }), opts: opts || {} });
     return this;
   };
-  Slide.prototype.chart = function (series, opts, h) { this.blocks.push({ type: 'chart', series: series, opts: opts || {}, h: h || 2.6 }); return this; };
+  /* סדרה או קטגוריה בלי אף ערך לא נכנסות. הצבע והמקרא נשארים של הסדרה המקורית */
+  Slide.prototype.chart = function (ser, opts, h) {
+    var palette = (opts && opts.colors) || (ser.length === 1 ? [C.blue] : [C.blue, C.green, C.purple, C.red, 'EEAC34']);
+    var keep = ser.map(function (d, i) { return i; }).filter(function (i) { return ser[i].values.some(function (x) { return x != null; }); });
+    if (!keep.length) return this;
+    var cats = ser[0].labels.map(function (l, c) { return c; }).filter(function (c) { return keep.some(function (i) { return ser[i].values[c] != null; }); });
+    this.blocks.push({
+      type: 'chart', h: h || 2.6,
+      series: keep.map(function (i) {
+        return { name: ser[i].name, labels: cats.map(function (c) { return ser[i].labels[c]; }), values: cats.map(function (c) { return ser[i].values[c]; }) };
+      }),
+      opts: Object.assign({}, opts, { colors: keep.map(function (i) { return palette[i % palette.length]; }), legend: ser.length > 1 })
+    });
+    return this;
+  };
   Slide.prototype.image = function (im) { this.blocks.push({ type: 'image', im: im }); return this; };
 
   function collect(o) {
     var V = o.V, v = V.v, images = o.images || [], slides = [], missing = [];
     function S(title, color, sec) { var s = new Slide(title, color, sec); slides.push(s); return s; }
-    function val(sec, f) { return o.initial(sec.id, f); }
+    function val(sec, f) { return VAADA_PREFILL.deckValue(V, sec.id, f); }
 
     function tableRows(f, value) {
       var out = [];
@@ -70,9 +100,6 @@ var VAADA_DECK = (function () {
           rows.length ? rows : [['', '', '']], { heading: 'יעד מרכזי ' + (i + 1) + ': ' + txt(g.g) });
       });
     }
-    function series(labels, rows, idx, name) {
-      return { name: name, labels: labels, values: rows.map(function (r) { var n = numOf(r[idx]); return n == null ? 0 : n; }) };
-    }
 
     /* פתיחה */
     var cover = S('', C.gold, '');
@@ -88,13 +115,15 @@ var VAADA_DECK = (function () {
 
     /* התחומים לפי סדר המצגת */
     o.sections.forEach(function (sec) {
-      var saved = (V.secs[sec.id] || {}).data;
       var hasFile = (V.files || []).some(function (x) { return x.sec === sec.id; });
-      var aklimT = sec.id === 'aklim' ? aklimSlides(V.tuva, sec.id) : [];
+      /* ציוני האקלים נכנסים רק כשקפים משלהם, לא כטבלה נוספת בשקף התחום */
+      var scoresF = sec.id === 'aklim' ? fieldOf(sec, 'scores') : null;
+      var aklimT = scoresF ? aklimSlides(val(sec, scoresF), scoresF, sec.id) : [];
       aklimT.forEach(function (s) { slides.push(s); });
-      if (!filled(saved) && !hasFile) { if (!sec.opt && !aklimT.length) missing.push(sec.title); return; }
+      var has = sec.fields.some(function (f) { return f !== scoresF && hasValue(f, val(sec, f)); });
+      if (!has && !hasFile) { if (!sec.opt && !aklimT.length) missing.push(sec.title); return; }
       var color = SEC_COLOR[sec.id] || C.blue, sl = S(sec.title, color, sec.id);
-      function get(k) { var f = sec.fields.filter(function (x) { return x.k === k; })[0]; return { f: f, v: f ? val(sec, f) : null }; }
+      function get(k) { var f = fieldOf(sec, k); return { f: f, v: f ? val(sec, f) : null }; }
 
       if (sec.id === 'netunim') {
         var st = get('students'), rows = tableRows(st.f, st.v);
@@ -121,14 +150,14 @@ var VAADA_DECK = (function () {
       if (sec.id === 'taasuka') {
         ['yod_a', 'yod_b'].forEach(function (k) {
           var x = get(k), rows = tableRows(x.f, x.v);
-          if (!rows.length) return;
+          if (!hasValue(x.f, x.v)) return;
           addFormTable(sl, x.f, x.v, { fs: 14, colW: [2.6, 1, 1, 1, 1] });
           var good = rows.filter(function (r) { return numOf(r[1]) > 0 || numOf(r[3]) > 0; });
           if (good.length) {
             var L = good.map(function (r) { return r[0]; });
             sl.chart([
-              { name: 'תשפ"ו', labels: L, values: good.map(function (r) { return pct(numOf(r[2]) || 0, numOf(r[1]) || 0); }) },
-              { name: 'תשפ"ז', labels: L, values: good.map(function (r) { return pct(numOf(r[4]) || 0, numOf(r[3]) || 0); }) }
+              { name: 'תשפ"ו', labels: L, values: good.map(function (r) { return pct(numOf(r[2]), numOf(r[1])); }) },
+              { name: 'תשפ"ז', labels: L, values: good.map(function (r) { return pct(numOf(r[4]), numOf(r[3])); }) }
             ], { title: 'אחוז המועסקים לפי מגמה · ' + x.f.l, percent: true, colors: [C.purple, C.green] }, 2.5);
           }
         });
@@ -163,6 +192,7 @@ var VAADA_DECK = (function () {
       var pending = [];
       function flushKv() { if (pending.length) { sl.table([3, 9], null, pending, { labelFirst: true, labelFill: sec.id === 'sipur' ? 'C5E8F7' : null }); pending = []; } }
       sec.fields.forEach(function (f) {
+        if (f === scoresF) return;
         var value = val(sec, f);
         if (f.t === 'text' || f.t === 'num' || f.t === 'area') { if (txt(value)) pending.push([f.l, txt(value)]); return; }
         flushKv();
@@ -204,23 +234,22 @@ var VAADA_DECK = (function () {
     return { slides: slides, missing: missing };
   }
 
-  /* אקלים מתובה: שקף לכל קהל, עם טבלה רב-שנתית וגרף */
-  function aklimSlides(tuva, secId) {
-    var rows = (tuva && tuva.aklim) || [], groups = {}, order = [], out = [];
-    rows.forEach(function (r) {
-      var g = txt(r['קהל']) + (txt(r['יחידה']) ? ' · ' + txt(r['יחידה']) : '');
+  /* שדה ציוני האקלים: שקף לכל קהל, עם טבלה רב-שנתית וגרף.
+     סדר העמודות בשורה: קהל, ממד, תשפ"ה, תשפ"ו, בתי ספר דומים */
+  function aklimSlides(value, f, secId) {
+    var groups = {}, order = [], out = [];
+    (value || []).filter(function (r) { return filled((r || []).slice(1)); }).forEach(function (r) {
+      var g = txt(r[0]);
       if (!groups[g]) { groups[g] = []; order.push(g); }
       groups[g].push(r);
     });
     order.forEach(function (g) {
-      var list = groups[g], s = new Slide('אקלים · ' + g, C.purple, secId);
-      var has = function (k) { return list.some(function (r) { return txt(r[k]); }); };
-      var cols = ['תשפ"ד', 'תשפ"ה', 'תשפ"ו', 'השוואה'].filter(has);
-      s.table([4].concat(cols.map(function () { return 1; })), ['ממד'].concat(cols.map(function (c) { return c === 'השוואה' ? 'בתי ספר דומים' : c; })),
-        list.map(function (r) { return [txt(r['ממד'])].concat(cols.map(function (c) { return txt(r[c]); })); }), { labelFirst: true, fs: list.length > 9 ? 12 : 14 });
-      var chartRows = list.slice(0, 7), labels = chartRows.map(function (r) { return txt(r['ממד']); });
-      var ser = ['תשפ"ה', 'תשפ"ו'].filter(has).map(function (c) { return { name: c, labels: labels, values: chartRows.map(function (r) { return numOf(r[c]) || 0; }) }; });
-      if (ser.length && list.length <= 7) s.chart(ser, { title: 'אקלים ' + g + ' לאורך השנים', colors: [C.purple, C.green], max100: true, dec: true }, 2.5);
+      var list = groups[g], s = new Slide('אקלים' + (g ? ' · ' + g : ''), C.purple, secId);
+      var has = function (i) { return list.some(function (r) { return txt(r[i]); }); };
+      var cols = [2, 3, 4, 5].filter(has), labels = list.map(function (r) { return txt(r[1]); });
+      s.table([4].concat(cols.map(function () { return 1; })), [f.cols[1].l].concat(cols.map(function (i) { return f.cols[i].l; })),
+        list.map(function (r) { return [txt(r[1])].concat(cols.map(function (i) { return txt(r[i]); })); }), { labelFirst: true, fs: list.length > 9 ? 12 : 14 });
+      if (list.length <= 7) s.chart([3, 4].map(function (i) { return series(labels, list, i, f.cols[i].l); }), { title: 'אקלים' + (g ? ' ' + g : '') + ' לאורך השנים', colors: [C.purple, C.green], max100: true, dec: true }, 2.5);
       out.push(s);
     });
     return out;
@@ -234,7 +263,8 @@ var VAADA_DECK = (function () {
     slides.push(master.slides[0]);   /* פתיחה */
 
     var open = S('פתיחה ובמת הצלחות', C.blue, 'gaava');
-    var proud = ((V.secs.gaava || {}).data || {}).proud;
+    var gaava = o.sectionOf('gaava'), proudF = gaava ? fieldOf(gaava, 'proud') : null;
+    var proud = proudF ? VAADA_PREFILL.deckValue(V, 'gaava', proudF) : null;
     var proudRows = (proud || []).map(function (r) { return txt(r[0]); }).filter(Boolean);
     open.table([12], ['3 דברים שאנחנו גאים בהם במיוחד'], proudRows.length ? proudRows.map(function (t) { return [t]; }) : [['טרם מולא']]);
 
@@ -254,7 +284,7 @@ var VAADA_DECK = (function () {
       if (txt(st.data)) kv.push(['הנתון שעליו הצורך נשען', txt(st.data)]);
       s.table([3, 9], null, kv, { labelFirst: true });
       var sec = st.sec ? o.sectionOf(st.sec) : null, planF = sec ? sec.fields.filter(function (f) { return f.t === 'plan'; })[0] : null;
-      var plan = planF ? o.initial(sec.id, planF) : null;
+      var plan = planF ? VAADA_PREFILL.deckValue(V, sec.id, planF) : null;
       ((plan && plan.goals) || []).forEach(function (g, i) {
         if (!filled(g)) return;
         var rows = (g.rows || []).filter(filled);
@@ -336,11 +366,11 @@ var VAADA_DECK = (function () {
       var data = b.series, O = b.opts;
       S.addChart('bar', data.map(function (d) { return { name: d.name, labels: d.labels, values: d.values }; }), {
         x: x, y: y, w: w, h: h, barDir: 'col', barGrouping: 'clustered', barGapWidthPct: 60,
-        chartColors: O.colors || (data.length === 1 ? [C.blue] : [C.blue, C.green, C.purple, C.red, 'EEAC34']),
+        chartColors: O.colors, displayBlanksAs: 'gap',
         showTitle: !!O.title, title: O.title, titleFontFace: FONT, titleFontSize: 15, titleColor: C.ink,
-        showLegend: data.length > 1, legendPos: 'b', legendFontFace: FONT, legendFontSize: 12, legendColor: C.ink,
+        showLegend: !!O.legend, legendPos: 'b', legendFontFace: FONT, legendFontSize: 12, legendColor: C.ink,
         showValue: true, dataLabelPosition: 'outEnd', dataLabelFontFace: FONT, dataLabelFontSize: 12, dataLabelColor: C.ink,
-        dataLabelFormatCode: O.percent ? '0"%";-0"%";;' : O.dec ? '0.0;-0.0;;' : '#,##0;-#,##0;;',
+        dataLabelFormatCode: O.percent ? '0"%"' : O.dec ? '0.0' : '#,##0',
         catAxisLabelFontFace: FONT, catAxisLabelFontSize: 12, catAxisLabelColor: C.ink, catAxisOrientation: 'maxMin',
         valAxisHidden: true, valGridLine: { style: 'none' }, catGridLine: { style: 'none' }, valAxisMinVal: 0, valAxisMaxVal: O.percent || O.max100 ? 100 : undefined
       });
@@ -426,7 +456,7 @@ var VAADA_DECK = (function () {
   /* ===== הצגה דיגיטלית ===== */
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function chartHtml(b) {
-    var data = b.series, O = b.opts, labels = data[0].labels, colors = O.colors || (data.length === 1 ? [C.blue] : [C.blue, C.green, C.purple, C.red]);
+    var data = b.series, O = b.opts, labels = data[0].labels, colors = O.colors;
     var maxV = O.percent || O.max100 ? 100 : Math.max.apply(null, data.map(function (d) { return Math.max.apply(null, d.values.concat([1])); }));
     var W0 = 720, H0 = 230, base = 195, top = 22, group = W0 / labels.length, bar = Math.min(62, (group * 0.72) / data.length);
     var h = '<figure class="dk-chart">' + (O.title ? '<figcaption>' + esc(O.title) + '</figcaption>' : '') + '<svg viewBox="0 0 ' + W0 + ' ' + H0 + '" role="img" aria-label="' + esc(O.title || 'גרף') + '">';
@@ -435,7 +465,7 @@ var VAADA_DECK = (function () {
       var gx = W0 - group * (i + 1), start = gx + (group - bar * data.length) / 2;
       data.forEach(function (d, j) {
         var val = d.values[i], bh = (val / maxV) * (base - top), x = start + bar * (data.length - 1 - j);
-        if (val) {
+        if (val != null) {
           h += '<rect x="' + x.toFixed(1) + '" y="' + (base - bh).toFixed(1) + '" width="' + (bar - 3).toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="#' + colors[j % colors.length] + '"></rect>';
           h += '<text x="' + (x + (bar - 3) / 2).toFixed(1) + '" y="' + (base - bh - 5).toFixed(1) + '" text-anchor="middle" font-size="13">' + val + (O.percent ? '%' : '') + '</text>';
         }
@@ -443,7 +473,7 @@ var VAADA_DECK = (function () {
       h += '<text x="' + (gx + group / 2).toFixed(1) + '" y="' + (base + 20) + '" text-anchor="middle" font-size="14">' + esc(l) + '</text>';
     });
     h += '<line x1="0" x2="' + W0 + '" y1="' + base + '" y2="' + base + '" stroke="#8c8c8c"></line></svg>';
-    if (data.length > 1) h += '<div class="dk-legend">' + data.map(function (d, j) { return '<span><i style="background:#' + colors[j % colors.length] + '"></i>' + esc(d.name) + '</span>'; }).join('') + '</div>';
+    if (O.legend) h += '<div class="dk-legend">' + data.map(function (d, j) { return '<span><i style="background:#' + colors[j % colors.length] + '"></i>' + esc(d.name) + '</span>'; }).join('') + '</div>';
     return h + '</figure>';
   }
   function tableHtml(b, color) {
