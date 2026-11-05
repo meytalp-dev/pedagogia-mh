@@ -85,7 +85,9 @@
   window.TS_meetStats = function (opts) {
     const today = opts.today || new Date().toISOString().slice(0, 10);
     const guides = opts.guides || [];
-    const teachers = opts.teachers || [];
+    // Approved 5.11.2026: leave/sabbatical teachers are outside attendance denominators.
+    // Historical meeting and attendance rows remain unchanged.
+    const teachers = (opts.teachers || []).filter(t => !String(t.onLeave || "").trim());
     const meetings = opts.meetings || [];
     const rows = opts.rows || [];
     const yearStart = window.TS_schoolYearStart(today);
