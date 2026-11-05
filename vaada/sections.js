@@ -21,7 +21,6 @@ var VAADA = (function () {
       { k: 'grad', t: 'area', l: 'דמות הבוגר הרצוי' },
       { k: 'principal', t: 'text', l: 'שם המנהל/ת' },
       { k: 'sup', t: 'text', l: 'שם המפקח/ת' },
-      { k: 'district', t: 'text', l: 'ממונה המחוז' },
       { k: 'network', t: 'text', l: 'נציג הרשת' },
       { k: 'mifras', t: 'text', l: 'שנת ליווי במפרש ושם המדריכ/ה' },
       { k: 'therapy', t: 'text', l: 'מפקחת מערך טיפולי' },
