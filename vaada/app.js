@@ -1,7 +1,7 @@
 /* ועדה מלווה — הדף (4.11.26). השרת: רויטל\vaada-gas\Code.js. כל הנתונים נשלפים אחרי כניסה; אין כאן שום נתון אישי.
    ניתוב לפי hash:
    #                 מסך הבית (מנהל.ת: בית הספר · מפקח.ת ומטה: רשימה · בעל.ת תפקיד: התחומים שלי)
-   #m  ·  #m/<סמל>   מסלול המנהל.ת: ועדת תשפ"ו, הכנה, מילוי. בלי התפריט המלא. הנתונים הם אותם נתונים
+   #m  ·  #m/<סמל>   מסלול המנהל.ת: מילוי מצגת האב, ואז בחירת תחנות. בלי התפריט המלא. הנתונים הם אותם נתונים
    #s/<סמל>          דף בית הספר: אנשים, תמונת מצב, הוועדה הקודמת, משימות פתוחות, הוועדות (הוועדה של השנה נפתחת לבד)
    #v/<id>           ראשי של הוועדה: סיכום וכרטיס לכל פריט בתפריט
    #v/<id>/prep      הכנה: תחנות וסוגיית ליבה
@@ -256,27 +256,13 @@
     var base = '#v/' + S.V.v.id;
     /* בתוך הצעדים בטלפון הסרגל מוסתר: המסך נשאר למה שממלאים עכשיו */
     var inStep = /\/(e|prep)(\/|$)/.test(location.hash);
-    return '<nav class="fbar' + (inStep ? ' instep' : '') + '" aria-label="השלבים"><a href="' + base + '/prev"' + (cur === 'prev' ? ' aria-current="page"' : '') + '>1. ועדת תשפ"ו</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. הכנה</a><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>3. מילוי מצגת האב</a></nav>';
+    return '<nav class="fbar' + (inStep ? ' instep' : '') + '" aria-label="השלבים"><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>1. מילוי מצגת האב</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. בחירת תחנות</a></nav>';
   }
+  /* הקישור למנהלים פותח ישר את מילוי מצגת האב. אחריה בוחרים תחנות (מיטל, 5.11.26) */
   function viewFocus(semel) {
     loading();
     var go1 = function (sm) {
-      withSchool(sm, function (r) {
-        withVaada(r.current, function () {
-          var V = S.V, P = V.prev, d = reqDone(), base = '#v/' + V.v.id;
-          var total = P.tasks.length + P.recs.length, ans = P.tasks.filter(function (t) { return t.refStatus; }).length + P.recs.filter(function (x) { return x.ref; }).length;
-          var nSt = realStations(V);
-          var step = function (n, href, title, sub, val, max) {
-            return '<a class="fstep" href="' + href + '"><span class="fnum">' + n + '</span><span class="ftxt"><b>' + esc(title) + '</b><span>' + esc(sub) + '</span>' + (max ? '<span class="bar"><i style="width:' + Math.round(val / max * 100) + '%"></i></span>' : '') + '</span></a>';
-          };
-          APP.innerHTML = '<div class="head"><h1>' + esc(V.v.school) + '</h1><p>ועדת תחילת שנה ' + esc(V.v.year) + (V.v.date ? ' · ' + fmtDate(V.v.date) : '') + '</p></div><div class="fsteps">' +
-            step(1, base + '/prev', 'ועדת תשפ"ו: מה קרה', total ? 'נענו ' + ans + ' מתוך ' + total : 'אין החלטות במערכת', ans, total) +
-            step(2, base + '/prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'תחנות וסוגיית ליבה', Math.min(nSt, 3), 3) +
-            step(3, base + '/fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים', d.done, d.total) +
-            '</div><button type="button" class="link" id="fexit">לכל המערכת</button>';
-          $('#fexit').onclick = function () { setFocus(false); location.hash = '#s/' + V.v.semel; };
-        });
-      });
+      withSchool(sm, function (r) { location.replace('#v/' + r.current + '/fill'); });
     };
     if (semel) return go1(semel);
     loadBoard().then(function (r) {
@@ -453,7 +439,7 @@
   }
   function vHead() {
     var V = S.V, v = V.v, h = '';
-    if (focusOn()) h += '<a class="crumb" href="#m/' + v.semel + '">→ השלבים שלי</a>';
+    if (focusOn()) h = '';
     else if (V.caps.full) h += '<a class="crumb" href="#' + (viewName() ? 'v/' + v.id : 's/' + v.semel) + '">→ ' + (viewName() ? 'ראשי הוועדה' : esc(v.school)) + '</a>';
     else h += '<a class="crumb" href="#">→ הוועדה המלווה</a>';
     return h + '<div class="head"><h1>ועדה מלווה · ' + esc(VAADA.STAGES[v.stage]) + ' ' + esc(v.year) + '</h1><p>' + esc(v.school) + (v.date ? ' · ' + fmtDate(v.date) : '') + (v.status === 'closed' ? ' · <b>הוועדה נסגרה</b>' : '') + '</p></div>';
@@ -521,6 +507,7 @@
     /* במקום רשימה של 18 תחומים: "להמשיך" אחד, והקבוצות מקופלות. מי שרק קורא רואה הכול פתוח */
     var nx = nextSec(null), vis = visibleSecs(), g = '';
     if (nx && v.status !== 'closed' && V.caps.edit.indexOf(nx.id) > -1) h += '<a class="btn primary fnext" href="#v/' + v.id + '/e/' + nx.id + '">להמשיך: ' + esc(nx.title) + ' ←</a>';
+    else if (!nx && focusOn()) h += '<a class="btn primary fnext" href="#v/' + v.id + '/prep">כל התחומים הושלמו. לבחירת התחנות ←</a>';
     vis.forEach(function (s, i) {
       if (s.g !== g) {
         if (g) h += '</details>';
@@ -536,7 +523,10 @@
         (manage ? '<button type="button" class="link" data-as="' + s.id + '">' + (a ? 'שינוי שיוך' : 'שיוך') + '</button>' : '') + '</div>';
       if (i === vis.length - 1) h += '</details>';
     });
+    if (focusOn()) h += '<button type="button" class="link" id="fexit">לכל המערכת</button>';
     shell(h);
+    var fx = $('#fexit');
+    if (fx) fx.onclick = function () { setFocus(false); location.hash = '#s/' + v.semel; };
     var cl = $('#copyLeft');
     if (cl) cl.onclick = function () { copyText(leftText(left)); toast('הרשימה הועתקה'); };
     wireMeta();
@@ -1003,14 +993,14 @@
           (r.draft === 'כן' ? '<div class="acts" style="margin-top:4px"><button type="button" class="link danger" data-rdel>מחיקה</button></div>' : '')
           : (r.ref ? '<div class="val" style="margin-top:6px"><b>מה קרה:</b> ' + esc(r.ref) + '</div>' : '<div class="rs" style="margin-top:6px">טרם נענה.</div>')) + '</div>';
     };
-    var back = focusOn() ? '#m/' + V.v.semel : '#s/' + V.v.semel;
-    var h = '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'השלבים שלי' : esc(V.v.school)) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם.' : 'עונה המנהל.ת.') + ' התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.</p></div>';
+    var back = focusOn() ? '#v/' + V.v.id + '/fill' : '#s/' + V.v.semel;
+    var h = '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'מילוי מצגת האב' : esc(V.v.school)) + '</a><div class="head"><h1>ועדת תשפ"ו</h1><p>' + (can ? 'מה קרה עם מה שסוכם.' : 'עונה המנהל.ת.') + ' התשובות נכנסות למצגת של ועדת ' + esc(VAADA.YEAR) + '.</p></div>';
     if (!items.length) h += '<div class="card empty">אין במערכת החלטות מהוועדה הקודמת.</div>';
     else h += '<div class="card summary" id="prevCount">' + prevCountHtml() + '</div>';
     h += '<section id="prevbox" class="prevp">' + items.map(function (it, i) { return '<div class="pitem" data-pi="' + i + '"' + (can ? ' hidden' : '') + '>' + cardOf(it) + '</div>'; }).join('') + '</section>';
     if (can && items.length) {
       h += '<div class="pnav" id="pnav"><button type="button" class="btn" id="pPrev">→ הקודם</button><span id="pPos" class="rs"></span><button type="button" class="btn primary" id="pNext">הבא ←</button></div>' +
-        '<div class="card pdone" id="pDone" hidden><h2 id="pDoneT"></h2><div class="acts"><a class="btn primary" href="' + (focusOn() ? '#v/' + V.v.id + '/prep">לשלב הבא: הכנה ←' : back + '">חזרה לבית הספר') + '</a><button type="button" class="btn" id="pAgain">חזרה לפריטים</button></div></div>' +
+        '<div class="card pdone" id="pDone" hidden><h2 id="pDoneT"></h2><div class="acts"><a class="btn primary" href="' + (focusOn() ? back + '">חזרה למילוי מצגת האב' : back + '">חזרה לבית הספר') + '</a><button type="button" class="btn" id="pAgain">חזרה לפריטים</button></div></div>' +
         '<details class="card pall" id="pAll"><summary><b>כל הפריטים</b></summary><div id="pRows"></div></details>';
     }
     h += '<details class="card"><summary><b>המסמכים</b></summary><div id="pastBody" style="margin-top:8px"><div class="loading">טוען…</div></div></details>';
@@ -1427,8 +1417,8 @@
         '<label class="f"><b>משאבים מסל התוכניות</b><span class="hint">סל התוכניות, שעות, תקציב וכוח אדם, בתוך היעד. לא כטבלה חשבונאית.</span><textarea data-s="res"' + (dis ? ' disabled' : '') + '>' + esc(st.res) + '</textarea></label>' +
         '</div></details>';
     }
-    var back = focusOn() ? '#m/' + V.v.semel : '#v/' + V.v.id;
-    var h = (can ? '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'השלבים שלי' : 'ראשי הוועדה') + '</a><div class="head stephead"><h1>הכנה</h1><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>' : vHead() + '<div class="head"><h2>התחנות שנבחרו</h2><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>') +
+    var back = focusOn() ? '#v/' + V.v.id + '/fill' : '#v/' + V.v.id;
+    var h = (can ? '<a class="crumb" href="' + back + '">→ ' + (focusOn() ? 'מילוי מצגת האב' : 'ראשי הוועדה') + '</a><div class="head stephead"><h1>' + (focusOn() ? 'בחירת תחנות' : 'הכנה') + '</h1><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>' : vHead() + '<div class="head"><h2>התחנות שנבחרו</h2><p>עד 3–4 תחנות, לעומק. כל מה שלא נבחר נשאר במצגת האב.</p></div>') +
       '<form id="prepForm" onsubmit="return false"><div id="stList">' + stations.map(stHtml).join('') + '</div>' +
       (can ? '<button type="button" class="link" id="addSt"' + (stations.length >= 4 ? ' hidden' : '') + '>+ הוספת תחנה</button>' : '') +
       '<div class="card" style="margin-top:14px"><h2 style="margin-bottom:8px">סוגיית הליבה לבמת ההיוועצות</h2>' +
@@ -1456,7 +1446,7 @@
       };
     });
     var steps = stepper($('#prepForm'), V.v.id + '|prep', $('#prepEnd'));
-    /* סיום: בלי סטטוס. במסלול המנהל.ת ממשיכים לשלב הבא */
+    /* סיום: בלי סטטוס. במסלול המנהל.ת חוזרים למילוי, שהוא המסך הראשי שלהם */
     $('#prepEnd').onclick = function () {
       delete STEP_AT[V.v.id + '|prep'];
       go(focusOn() ? '#v/' + V.v.id + '/fill' : '#v/' + V.v.id);

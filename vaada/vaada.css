@@ -74,13 +74,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
 .pretop{margin-bottom:8px}.pretop .presrc{margin-inline-start:0}.pretop:empty{display:none}
 
 /* מסלול המנהל.ת */
-.fsteps{display:grid;gap:12px;margin-bottom:14px}
-.fstep{display:flex;gap:14px;align-items:center;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:17px;text-decoration:none;color:var(--ink)}
-.fstep:hover{border-color:var(--navy)}
-.fnum{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font:700 1.15rem Rubik,sans-serif}
-.ftxt{flex:1;min-width:0;display:grid;gap:5px}
-.ftxt b{font:700 1.1rem Rubik,sans-serif;color:var(--navy)}
-.ftxt>span:not(.bar){color:var(--muted);font-size:.95rem}
 .fbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .fbar a{min-height:44px;display:inline-flex;align-items:center;padding:6px 14px;border:1.5px solid #c9d4d5;background:var(--card);border-radius:30px;font-weight:700;text-decoration:none;color:var(--ink)}
 .fbar a[aria-current=page]{background:var(--navy);border-color:var(--navy);color:#fff}
@@ -345,8 +338,6 @@ input[type=text],input[type=email],input[type=date],input[type=search],input[inp
 .tiles:not(.two) .tile::after{content:'←';grid-column:2;grid-row:1 / span 2;color:var(--amber);font-size:1.2rem}
 .tiles:not(.two) .tile:hover b{text-decoration:underline;text-underline-offset:3px}
 /* המסלול למנהלים */
-.fnum{background:transparent;border:2px solid var(--navy);color:var(--navy);font-weight:800}
-.fstep{background:var(--card);border-width:1px;box-shadow:0 10px 30px -24px rgba(74,47,82,.45)}
 .fbar a{border-color:var(--navy);color:var(--navy);background:transparent}
 .fbar a[aria-current=page]{color:#fff;background:var(--navy)}
 .tl.future{background:transparent;border-color:var(--line)}
