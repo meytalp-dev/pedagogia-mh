@@ -178,7 +178,7 @@
   /* מצב בית הספר. הוועדה נפתחת לבד בכניסה, ולכן "התחילו" = תחום אחד לפחות נשמר או נקבע תאריך */
   function schoolState(s) {
     var v = s.vaadot.filter(function (x) { return x.stage === 'a'; })[0];
-    if (!v || (v.status !== 'closed' && !v.started && !v.date)) return { key: 'none', tag: '<span class="tag warn">טרם התחילו להכין</span>', v: v };
+    if (!v || (v.status !== 'closed' && !v.started)) return { key: 'none', tag: '<span class="tag warn">טרם התחילו להכין</span>', v: v };
     if (v.status === 'closed') return { key: 'closed', tag: '<span class="tag ok">התקיימה ונסגרה</span>', v: v };
     return { key: 'prep', tag: '<span class="tag info">בהכנה · ' + v.done + ' מתוך ' + v.total + '</span>', v: v };
   }
@@ -208,7 +208,7 @@
       $('#blist').innerHTML = hit.map(function (s) {
         var st = schoolState(s);
         return '<a class="row" href="#s/' + s.semel + '"><span class="rm"><span class="rt">' + esc(s.name) + '</span><br><span class="rs">' + esc(s.sups.join(' · ')) + ' · ' + esc(s.network) + (s.principals[0] ? ' · ' + esc(s.principals[0].name) : '') + '</span></span>' +
-          (st.v && st.v.date ? '<span class="rs">' + fmtDate(st.v.date) + '</span>' : '') +
+          ((st.v && st.v.date) || s.dateA ? '<span class="rs">' + fmtDate((st.v && st.v.date) || s.dateA) + '</span>' : '') +
           (s.open ? '<span class="tag">' + count(s.open, 'משימה פתוחה אחת', 'משימות פתוחות') + '</span>' : '') + st.tag + '</a>';
       }).join('') || '<div class="empty">לא נמצא בית ספר.</div>';
     }
@@ -302,7 +302,7 @@
       [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
       [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
     ]);
-    h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">אפריל–יוני · זימונים עד 15.5. תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
+    h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">' + (r.dateB ? 'מועד: ' + fmtDate(r.dateB) + ' · ' : 'אפריל–יוני · זימונים עד 15.5. ') + 'תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
     return h;
   }
 
