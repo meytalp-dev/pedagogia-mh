@@ -59,6 +59,7 @@
   function logout(silent) {
     try { localStorage.removeItem(KEY); sessionStorage.removeItem(GUEST_KEY); } catch (e) {}
     S.token = ''; S.me = null; S.V = null; S.board = null; S.SCH = null; setFocus(false);
+    QUEUES = {}; Q = newQueue(null, null);
     if (!silent) location.hash = '';
     route();
   }
@@ -141,7 +142,7 @@
     if (!h[0]) return viewHome();
     if (h[0] === 's') return viewSchool(h[1], h[2]);
     if (h[0] === 'v') return withVaada(h[1], function () {
-      /* נציג.ת רשת: רק הפרוטוקול והחתימה */
+      /* מנהל.ת אזור: רק הפרוטוקול והחתימה */
       if (S.V.caps.rep) return viewSign();
       if (focusOn() && FOCUS_PAGES.indexOf(h[2] || '') < 0) return location.replace('#m/' + S.V.v.semel);
       if (h[2] === 'e') return viewEdit(h[3]);
@@ -187,7 +188,7 @@
     me.assigned.forEach(function (a) { (byV[a.vid] = byV[a.vid] || []).push(a.sec); });
     h += '<div class="card">';
     me.recorderOf.forEach(function (id) { h += '<a class="row" href="#v/' + esc(id) + '"><span class="rm"><span class="rt">רישום הפרוטוקול של הוועדה</span></span><span class="tag info">רשם.ת</span></a>'; });
-    (me.netOf || []).forEach(function (id) { h += '<a class="row" href="#v/' + esc(id) + '/sign"><span class="rm"><span class="rt">פרוטוקול הוועדה וחתימה</span></span><span class="tag info">נציג.ת הרשת</span></a>'; });
+    (me.netOf || []).forEach(function (id) { h += '<a class="row" href="#v/' + esc(id) + '/sign"><span class="rm"><span class="rt">פרוטוקול הוועדה וחתימה</span></span><span class="tag info">מנהל.ת אזור</span></a>'; });
     Object.keys(byV).forEach(function (vid) {
       var st = vid.split('-').pop();
       byV[vid].forEach(function (sec) {
@@ -248,7 +249,7 @@
   function realStations(V) {
     return ((V.docs.prep || {}).stations || []).filter(function (st) { return st.title && Object.keys(st).some(function (k) { return k !== 'title' && k !== 'sec' && String(st[k] || '').trim(); }); }).length;
   }
-  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e'];
+  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e', 'deck', 'live'];
   var FOCUS_KEY = 'vaada_focus';
   function focusOn() { try { return sessionStorage.getItem(FOCUS_KEY) === '1'; } catch (e) { return false; } }
   function setFocus(on) { try { if (on) sessionStorage.setItem(FOCUS_KEY, '1'); else sessionStorage.removeItem(FOCUS_KEY); } catch (e) {} }
@@ -256,7 +257,7 @@
     var base = '#v/' + S.V.v.id;
     /* בתוך הצעדים בטלפון הסרגל מוסתר: המסך נשאר למה שממלאים עכשיו */
     var inStep = /\/(e|prep)(\/|$)/.test(location.hash);
-    return '<nav class="fbar' + (inStep ? ' instep' : '') + '" aria-label="השלבים"><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>1. מילוי מצגת האב</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. בחירת תחנות</a></nav>';
+    return '<nav class="fbar' + (inStep ? ' instep' : '') + '" aria-label="השלבים"><a href="' + base + '/fill"' + (cur === 'fill' ? ' aria-current="page"' : '') + '>1. מילוי מצגת האב</a><a href="' + base + '/prep"' + (cur === 'prep' ? ' aria-current="page"' : '') + '>2. בחירת תחנות</a><a href="' + base + '/deck"' + (cur === 'deck' ? ' aria-current="page"' : '') + '>3. המצגת</a></nav>';
   }
   /* הקישור למנהלים פותח ישר את מילוי מצגת האב. אחריה בוחרים תחנות (מיטל, 5.11.26) */
   function viewFocus(semel) {
@@ -338,7 +339,7 @@
     var base = '#v/' + r.current, sb = '#s/' + r.school.semel;
     var sub = a && a.status === 'closed' ? 'הוועדה התקיימה ונסגרה' + (a.date ? ' · ' + fmtDate(a.date) : '') :
       a && a.date ? 'הושלמו ' + a.done + ' מתוך ' + a.total + ' תחומים' :
-      'זימונים עד 15.11 · הוועדה עד אמצע ינואר · הושלמו ' + (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים';
+      'זימונים עד 15.11 · הוועדה עד אמצע ינואר · הושלמו ' + (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים';
     var pct = a && a.total ? Math.round(a.done / a.total * 100) : 0;
     var h = '<div class="card vstat"><div class="vstat-t"><div class="vsk">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</div>' + (a && a.date ? '<div class="vdate">' + fmtDate(a.date) + '</div>' : '') + st.tag + '<div class="rs">' + esc(sub) + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
       '<a class="btn primary" id="enterV" href="' + base + '">כניסה לוועדה</a></div>';
@@ -355,7 +356,7 @@
     ]);
     var nSeed = a && a.status === 'closed' ? 0 : (r.seedSecs || []).length;
     h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
-      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 17) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
+      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
       [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
     ]);
     h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">' + (r.dateB ? 'מועד: ' + fmtDate(r.dateB) + ' · ' : 'אפריל–יוני · זימונים עד 15.5. ') + 'תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
@@ -543,10 +544,10 @@
       '<label class="f"><b>תאריך הוועדה</b><input type="date" data-m="date" value="' + esc(v.date) + '"></label>' +
       '<label class="f"><b>רשם.ת הפרוטוקול: שם</b><input type="text" data-m="recName" value="' + esc(v.recName) + '"></label>' +
       '<label class="f"><b>רשם.ת הפרוטוקול: מייל</b><span class="hint">הרשם.ת נכנס.ת עם המייל הזה ורושם.ת את ההחלטות. בלי רשם.ת — המנהל.ת רושם.ת.</span><input type="email" dir="ltr" data-m="recEmail" value="' + esc(v.recEmail) + '"></label>' +
-      '<label class="f"><b>נציג.ת הרשת: שם</b><input type="text" data-m="netName" value="' + esc(v.netName) + '"></label>' +
-      '<label class="f"><b>נציג.ת הרשת: מייל</b><span class="hint">נכנס.ת עם המייל הזה ורואה רק את הפרוטוקול והחתימה.</span><input type="email" dir="ltr" data-m="netEmail" value="' + esc(v.netEmail) + '"></label>' +
-      '<label class="f"><b>משתתפים</b><span class="hint">שם ותפקיד, שורה לכל אחד.ת. חובה: מנהל.ת והנהלה, נציג.ת הרשת, מפקח.ת כולל.ת, מפקחת מערך טיפולי, מפקחים מקצועיים.</span><textarea data-m="parts">' + esc(v.parts) + '</textarea></label>' +
-      '<label class="f"><b>מיילים למשלוח הסיכום</b><span class="hint">מופרדים בפסיק</span><input type="text" dir="ltr" data-m="emails" value="' + esc(v.emails) + '"></label>' +
+      '<label class="f"><b>מנהל.ת אזור: שם</b><input type="text" data-m="netName" value="' + esc(v.netName) + '"></label>' +
+      '<label class="f"><b>מנהל.ת אזור: מייל</b><span class="hint">נכנס.ת עם המייל הזה ורואה רק את הפרוטוקול והחתימה.</span><input type="email" dir="ltr" data-m="netEmail" value="' + esc(v.netEmail) + '"></label>' +
+      '<label class="f"><b>משתתפים</b><span class="hint">שם ותפקיד, שורה לכל אחד.ת. חובה: מנהל.ת והנהלה, מנהל.ת אזור, מפקח.ת כולל.ת, מפקחת מערך טיפולי, מפקחים מקצועיים.</span><textarea data-m="parts">' + esc(v.parts) + '</textarea></label>' +
+      '<label class="f"><b>מיילים למשלוח הסיכום (רשות)</b><span class="hint">מופרדים בפסיק</span><input type="text" dir="ltr" data-m="emails" value="' + esc(v.emails) + '"></label>' +
       '<div class="saved" id="metaSaved"></div></div></details>';
   }
   function wireMeta() {
@@ -586,10 +587,10 @@
   /* ===== שדות טופס ===== */
   /* הלוגיקה של הערך ההתחלתי נמצאת ב-prefill.js */
   function initial(secId, f) { return VAADA_PREFILL.value(S.V, secId, f); }
-  /* תווית ליד כותרת שדה שהערך שלו מוכן מראש ועוד לא נשמר */
+  /* תווית ליד כותרת שדה שהערך שלו מוכן מראש ועוד לא נשמר: רק מאיפה זה, בלי מספר עמוד (מיטל, 5.11.26) */
   function srcTag(secId, f) {
     var s = VAADA_PREFILL.source(S.V, secId, f);
-    return s ? '<span class="presrc" data-src="' + f.k + '">מוכן מראש · ' + esc(s) + '</span>' : '';
+    return s ? '<span class="presrc" data-src="' + f.k + '">' + esc(s.replace(/,?\s*עמ['׳]?\s*\d[\d\s,–-]*/g, ' ').replace(/\s+/g, ' ').trim()) + '</span>' : '';
   }
   /* רמזים שלא נכנסים לטופס. כל השאר כבר בתוך השדות */
   function tuvaBox(secId) {
@@ -603,7 +604,9 @@
     if (secId === 'aklim' && (t.aklimWeak || []).length) {
       h += src('ההיגדים הנמוכים:') + list(t.aklimWeak.slice(0, 12).map(function (x) { return (x['קהל'] || '') + ': ' + (x['היגד'] || '') + (x['ממוצע'] ? ' (' + x['ממוצע'] + ')' : ''); }));
     }
-    var sal = t.sal, domOf = { dualit: /פדגוג/, chanichut: /מקצוע|חניכות/, yeutz: /ייעוצ|יעוצ|טיפול/, chevrati: /חברתי/, hatmada: /ייעוצ|יעוצ|טיפול/, pituach: /פדגוג/ };
+    /* סל התוכניות בכל תחום שיש לו תחום מקביל בסל (מיטל, 5.11.26) */
+    var PED = /פדגוג/, MIK = /מקצוע|חניכות/, YEU = /ייעוצ|יעוצ|טיפול/, CHE = /חברתי/;
+    var sal = t.sal, domOf = { dualit: PED, pituach: PED, gmar: PED, pedagogit: PED, chanichut: MIK, taasuka: MIK, mgamot: MIK, yeutz: YEU, hatmada: YEU, shiluv: YEU, aklim: YEU, rigshi: YEU, chevrati: CHE, bogrim: CHE };
     if (sal && domOf[secId]) {
       var pr = (sal.programs || []).filter(function (p) { return domOf[secId].test(p.domain || ''); });
       if (pr.length) h += src('מסל התוכניות:') + list(pr.map(function (p) { return p.name + (p.target ? ' (' + p.target + ')' : ''); }));
@@ -615,13 +618,16 @@
     var a = ' data-cell="' + fk + '" data-r="' + r + '" data-c="' + c + '"';
     if (col.t === 'yn') return '<select' + a + ' aria-label="' + esc(col.l) + '"><option value=""></option><option' + (val === 'כן' ? ' selected' : '') + '>כן</option><option' + (val === 'לא' ? ' selected' : '') + '>לא</option></select>';
     if (col.t === 'num') return '<input type="text" inputmode="numeric" data-num' + a + ' aria-label="' + esc(col.l) + '" value="' + esc(val) + '">';
+    if (col.t === 'area') return '<textarea rows="3"' + a + ' aria-label="' + esc(col.l) + '">' + esc(val) + '</textarea>';
     return '<textarea rows="1" style="min-height:42px"' + a + ' aria-label="' + esc(col.l) + '">' + esc(val) + '</textarea>';
   }
   function tableHtml(f, val, tag) {
     var rows = f.rows || null, n = rows ? rows.length : Math.max((val || []).length, f.minRows || (f.add ? 1 : 0));
     /* טור מספרים אחד: בטלפון התווית והמספר באותה שורה */
     var tight = rows && f.cols.length === 1 && f.cols[0].t === 'num';
-    var h = '<div class="f"><span class="lbl">' + esc(f.l) + (tag || '') + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid' + (tight ? ' tight' : '') + '" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
+    /* שורות ממוספרות (1, 2, 3): עמודת התווית צרה, כדי שלא תיראה כמו שדה (מיטל, 5.11.26) */
+    var short = rows && rows.every(function (l) { return l.length <= 2; });
+    var h = '<div class="f"><span class="lbl">' + esc(f.l) + (tag || '') + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + '<div class="tblw"><table class="grid' + (tight ? ' tight' : '') + (short ? ' short' : '') + '" data-table="' + f.k + '"><thead><tr>' + (rows ? '<th></th>' : '');
     f.cols.forEach(function (c) { h += '<th scope="col">' + esc(c.l) + '</th>'; });
     h += (f.add ? '<th aria-label="מחיקה"></th>' : '') + '</tr></thead><tbody>';
     for (var r = 0; r < n; r++) h += tableRow(f, val, r);
@@ -632,7 +638,7 @@
     var h = '<tr>' + (f.rows ? '<td class="rowlbl">' + esc(f.rows[r]) + '</td>' : '');
     f.cols.forEach(function (c, i) {
       var v = val && val[r] ? val[r][i] : '';
-      h += '<td data-l="' + esc(c.l) + '">' + cellInput(c, v == null ? '' : v, f.k, r, i) + '</td>';
+      h += '<td data-l="' + esc(c.l) + '"' + (c.t === 'area' ? ' class="wide"' : '') + '>' + cellInput(c, v == null ? '' : v, f.k, r, i) + '</td>';
     });
     if (f.add) h += '<td><button type="button" class="rowdel" data-delrow="' + f.k + '" aria-label="מחיקת שורה">×</button></td>';
     return h + '</tr>';
@@ -682,6 +688,7 @@
     if (f.t === 'file') return fileHtml(f, sec.id);
     var hint = f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '';
     if (f.t === 'area') return '<label class="f"><b>' + esc(f.l) + tag + '</b>' + hint + '<textarea data-f="' + f.k + '">' + esc(val) + '</textarea></label>';
+    if (f.t === 'yn') return '<label class="f"><b>' + esc(f.l) + tag + '</b>' + hint + '<select data-f="' + f.k + '"><option value=""></option><option' + (val === 'כן' ? ' selected' : '') + '>כן</option><option' + (val === 'לא' ? ' selected' : '') + '>לא</option></select></label>';
     return '<label class="f"><b>' + esc(f.l) + tag + '</b>' + hint + '<input type="text"' + (f.t === 'num' ? ' inputmode="numeric"' : '') + ' data-f="' + f.k + '" value="' + esc(val) + '"></label>';
   }
 
@@ -713,42 +720,60 @@
 
   /* ===== שמירה אוטומטית =====
      שדה שהשתנה נכנס לתור ונשלח אחרי שהמשתמש.ת עצר.ה. אם השליחה נכשלה — נשאר בתור, נשמר במכשיר ומנסים שוב. */
-  var Q = { id: null, sec: null, patch: {}, timer: null, busy: false, fails: 0 };
-  function draftKey() { return 'vaada_draft_' + Q.id + '_' + Q.sec; }
+  /* תור נפרד לכל תחום: מעבר לתחום אחר לא מאפס שמירה שעוד לא הסתיימה, והיא נשלחת רק לתחום שלה */
+  function newQueue(id, sec) { return { id: id, sec: sec, patch: {}, sending: null, run: null, timer: null, busy: false, fails: 0 }; }
+  var QUEUES = {};
+  var Q = newQueue(null, null);
+  function queueOf(id, sec) { var k = id + '|' + sec; return QUEUES[k] || (QUEUES[k] = newQueue(id, sec)); }
+  function draftKey(q) { return 'vaada_draft_' + q.id + '_' + q.sec; }
+  /* הטיוטה במכשיר כוללת גם מה שנשלח ועוד לא אושר */
+  function writeDraft(q) {
+    try { localStorage.setItem(draftKey(q), JSON.stringify(Object.assign({}, q.sending, q.patch))); } catch (e) {}
+  }
   function setSaved(t, bad) { var el = $('#saved'); if (el) { el.textContent = t; el.className = 'saved' + (bad ? ' bad' : ''); } }
   function queue(k, val) {
-    Q.patch[k] = val;
-    try { localStorage.setItem(draftKey(), JSON.stringify(Q.patch)); } catch (e) {}
+    var q = Q;
+    q.patch[k] = val;
+    writeDraft(q);
     setSaved('שומר…');
-    clearTimeout(Q.timer);
-    Q.timer = setTimeout(flush, 900);
+    clearTimeout(q.timer);
+    q.timer = setTimeout(function () { flush(q); }, 900);
   }
-  function flush() {
-    clearTimeout(Q.timer);
-    if (Q.busy || !Q.id || !Object.keys(Q.patch).length) return Promise.resolve(true);
-    var patch = Q.patch, id = Q.id, sec = Q.sec, dk = draftKey();
-    Q.patch = {}; Q.busy = true;
-    return api('save', { id: id, sec: sec, patch: patch }).then(function (r) {
-      Q.busy = false;
+  /* תור שכבר שולח מחזיר את השליחה הנוכחית, וההמשך שלה שולח גם את מה שנוסף בינתיים */
+  function flush(q) {
+    q = q || Q;
+    clearTimeout(q.timer);
+    if (q.busy) return q.run;
+    if (!q.id || !Object.keys(q.patch).length) return Promise.resolve(true);
+    var patch = q.patch, id = q.id, sec = q.sec;
+    q.patch = {}; q.sending = patch; q.busy = true;
+    q.run = api('save', { id: id, sec: sec, patch: patch }).then(function (r) {
+      q.busy = false; q.sending = null;
       if (r.ok) {
-        Q.fails = 0;
-        try { if (Q.sec !== sec || !Object.keys(Q.patch).length) localStorage.removeItem(dk); } catch (e) {}
+        q.fails = 0;
+        try { if (Object.keys(q.patch).length) writeDraft(q); else localStorage.removeItem(draftKey(q)); } catch (e) {}
         var x = S.V && S.V.v.id === id ? (S.V.secs[sec] = S.V.secs[sec] || { data: {}, status: 'started' }) : null;
         if (x) { Object.keys(patch).forEach(function (k) { x.data[k] = patch[k]; }); x.status = r.status; }
-        setSaved('נשמר ' + fmtAt(r.at).split(' ').pop());
-        if (Object.keys(Q.patch).length) return flush();
+        if (q === Q) setSaved('נשמר ' + fmtAt(r.at).split(' ').pop());
+        if (Object.keys(q.patch).length) return flush(q);
         return true;
       }
-      Q.patch = Object.assign(patch, Q.patch);
-      Q.fails++;
-      setSaved('לא נשמר: ' + errText(r.error), true);
-      if (r.error === 'network' || r.error === 'server') Q.timer = setTimeout(flush, Math.min(30000, 4000 * Q.fails));
+      q.patch = Object.assign(patch, q.patch);
+      writeDraft(q);
+      q.fails++;
+      if (q === Q) setSaved('לא נשמר: ' + errText(r.error), true);
+      else if (q.fails === 1) toast('לא נשמר בתחום הקודם: ' + errText(r.error));
+      if (r.error === 'network' || r.error === 'server') q.timer = setTimeout(function () { flush(q); }, Math.min(30000, 4000 * q.fails));
       return false;
-    }).catch(function () { Q.busy = false; return false; });
+    }).catch(function () { q.busy = false; return false; });
+    return q.run;
   }
   function flushNow() { if (Q.id && Object.keys(Q.patch).length) flush(); }
   window.addEventListener('beforeunload', function (e) {
-    if (Q.id && (Object.keys(Q.patch).length || Q.busy)) { flushNow(); e.preventDefault(); e.returnValue = ''; }
+    var open = Object.keys(QUEUES).map(function (k) { return QUEUES[k]; }).filter(function (q) { return Object.keys(q.patch).length || q.busy; });
+    if (!open.length) return;
+    open.forEach(function (q) { flush(q); });
+    e.preventDefault(); e.returnValue = '';
   });
 
   /* ===== צעד אחד בכל פעם: בלי גלילה ארוכה (מיטל, 5.11.26) =====
@@ -778,7 +803,8 @@
         var tb = el.classList.contains('f') && $('table[data-table]', el);
         if (!tb) { add({ el: el, box: box, join: el.tagName === 'BUTTON' }); return; }
         $$('tbody tr', tb).forEach(function (tr) { tr.hidden = false; });
-        if (hOf(el) <= budget) { add({ el: el, box: box }); return; }
+        /* טבלה שנכנסת למסך נשארת שלמה, בצעד משלה. מתפרקת לשורות רק כשהיא גבוהה מהמסך (מיטל, 5.11.26) */
+        if (hOf(el) <= Math.max(budget, innerHeight - 220)) { add({ el: el, box: box }); return; }
         $$('tbody tr', tb).forEach(function (tr, i) { add({ el: el, box: box, tr: tr, first: i === 0 }); });
       }
       kids(root, null);
@@ -851,14 +877,14 @@
     if (!V.caps.full && V.caps.mine.indexOf(secId) < 0) return failed('forbidden');
     var edit = V.caps.edit.indexOf(secId) > -1;
     if (!edit) return viewRead(secId);
-    Q.id = v.id; Q.sec = secId; Q.patch = {}; Q.fails = 0;
+    Q = queueOf(v.id, secId);
     /* טיוטה שלא הגיעה לשרת (נפל החיבור) */
     var pending = null;
-    try { pending = JSON.parse(localStorage.getItem(draftKey()) || 'null'); } catch (e) {}
+    try { pending = JSON.parse(localStorage.getItem(draftKey(Q)) || 'null'); } catch (e) {}
     if (pending) {
       var d = (V.secs[secId] = V.secs[secId] || { data: {}, status: 'started' }).data;
       Object.keys(pending).forEach(function (k) { d[k] = pending[k]; });
-      Q.patch = pending;
+      Q.patch = Object.assign(pending, Q.patch);
     }
     var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + v.id + '/fill' : '#') + '">→ ' + (V.caps.full ? 'כל התחומים' : 'התחומים שלי') + '</a>' +
       '<div class="head stephead"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · בלי שמות תלמידים</p></div>';
@@ -961,10 +987,13 @@
       (isDraft ? 'המשימות נלקחו מהתקציר של המסמך, ולכן הן טיוטה: מאשרים, מתקנים או מוחקים. ' : '') + 'לכל משימה: מה קרה איתה, מה למדנו, והאם ממשיכים.</p>' +
       list.map(prevTask).join('') + '</section>';
   }
+  /* החלטה שכבר נענתה לא מבקשת תשובה שוב: רק תזכורת שקטה שאפשר לפתוח (מיטל, 5.11.26) */
   function prevLine(secId) {
-    var n = prevList(secId).length;
+    var list = prevList(secId), n = list.length;
     if (!n || !S.V.caps.full) return '';
-    return '<a class="card prevline" href="#v/' + S.V.v.id + '/prev"><b>' + count(n, 'החלטה אחת', 'החלטות') + ' מהוועדה הקודמת בתחום הזה</b><span>מה קרה איתן</span></a>';
+    var open = list.filter(function (t) { return !t.refStatus; }).length;
+    if (!open) return '<a class="card prevline done" href="#v/' + S.V.v.id + '/prev"><b>' + (n === 1 ? 'ההחלטה מהוועדה הקודמת בתחום הזה נענתה' : 'ההחלטות מהוועדה הקודמת בתחום הזה נענו') + '</b><span>לצפייה</span></a>';
+    return '<a class="card prevline" href="#v/' + S.V.v.id + '/prev"><b>' + count(open, 'החלטה אחת', 'החלטות') + ' מהוועדה הקודמת בתחום הזה עוד בלי תשובה</b><span>מה קרה איתן</span></a>';
   }
   /* על מה שקרה בוועדה הקודמת עונה המנהל.ת */
   function canReflect() { return S.V.v.status !== 'closed' && S.V.caps.manage; }
@@ -1230,7 +1259,7 @@
     n = Math.max(0, Math.min(n, slides.length - 1));
     var sl = slides[n], secId = sl.sec;
     var prevN = n > 0 ? '<a class="btn small" href="' + base + (n - 1) + '" id="sPrev">→ הקודם</a>' : '';
-    var nextN = n < slides.length - 1 ? '<a class="btn small" href="' + base + (n + 1) + '" id="sNext">הבא ←</a>' : '<a class="btn small primary" href="#v/' + v.id + '/sign">לפרוטוקול ←</a>';
+    var nextN = n < slides.length - 1 ? '<a class="btn small" href="' + base + (n + 1) + '" id="sNext">הבא ←</a>' : (focusOn() ? '<a class="btn small primary" href="#v/' + v.id + '/deck">חזרה למצגת</a>' : '<a class="btn small primary" href="#v/' + v.id + '/sign">לפרוטוקול ←</a>');
     var side = secId ? '<aside class="lside" id="lside">' + notesCard() + decideCard() + (prevList(secId).length ? '<details class="card" style="margin:0"><summary><b>מה סיכמנו בפעם הקודמת</b></summary>' + prevBox(secId) + '</details>' : '') + '</aside>' : '';
     shell(vHead() + '<div class="lnav">' + prevN + '<select id="lsel" aria-label="מעבר לשקף">' + slides.map(function (s, i) { return '<option value="' + i + '"' + (i === n ? ' selected' : '') + '>' + (i + 1) + '. ' + esc(s.cover ? 'פתיחה' : s.title) + '</option>'; }).join('') + '</select>' + nextN +
       '<button type="button" class="btn small" id="fsBtn">מסך מלא</button></div>' +
@@ -1683,7 +1712,7 @@
   /* ===== סיכום ופרוטוקול ===== */
   function domName(d) { for (var i = 0; i < VAADA.DOMS.length; i++) if (VAADA.DOMS[i][0] === d) return VAADA.DOMS[i][1]; return d; }
   function domOfSec(sec) { var s = VAADA.section(S.V.v.stage, sec); return s ? s.dom : 'general'; }
-  /* מי צריך לחתום: המפקח.ת הפדגוגי.ת ונציג.ת הרשת */
+  /* מי צריך לחתום: המפקח.ת הפדגוגי.ת ומנהל.ת האזור */
   function signSlots() {
     var V = S.V, signs = V.signs || [], out = [];
     (V.school.sups || []).forEach(function (name) {
@@ -1692,7 +1721,7 @@
     });
     /* חתימה של מפקח.ת ששמו.ה לא בפריסה עדיין נספרת */
     signs.filter(function (x) { return x.role === 'ped' && (V.school.sups || []).indexOf(x.name) < 0; }).forEach(function (s) { out.push({ label: 'מפקח.ת פדגוגי.ת', name: s.name, done: s }); });
-    out.push({ label: 'נציג.ת הרשת', name: V.v.netName || '', done: signs.filter(function (x) { return x.role === 'net'; })[0] || null });
+    out.push({ label: 'מנהל.ת אזור', name: V.v.netName || '', done: signs.filter(function (x) { return x.role === 'net'; })[0] || null });
     return out;
   }
   function signCard() {
@@ -1718,7 +1747,7 @@
     var canClose = V.caps.manage || V.caps.decide;
     h += '<div class="acts" style="margin:0 0 14px"><button type="button" class="btn small" id="printBtn">הדפסה / PDF</button>';
     if (!V.caps.rep) h += mailBtn({ id: 'mailSum', cls: 'btn small', label: 'מייל לכלל המשתתפים', to: v.emails, subject: 'סיכום הוועדה המלווה: ' + v.school, lines: sumLines(), html: true });
-    if (!V.caps.rep && v.status === 'closed' && v.netEmail) h += mailBtn({ id: 'mailSign', cls: 'btn small', label: 'בקשת חתימה מנציג.ת הרשת', to: v.netEmail, subject: 'חתימה על פרוטוקול הוועדה המלווה: ' + v.school, lines: ['שלום ' + (v.netName || '') + ',', 'פרוטוקול הוועדה המלווה של ' + v.school + ' מוכן לחתימה:', SITE + '#v/' + v.id + '/sign', 'בכניסה מקלידים את המייל הזה ומקבלים קוד.', 'תודה!'] });
+    if (!V.caps.rep && v.status === 'closed' && v.netEmail) h += mailBtn({ id: 'mailSign', cls: 'btn small', label: 'בקשת חתימה ממנהל.ת האזור', to: v.netEmail, subject: 'חתימה על פרוטוקול הוועדה המלווה: ' + v.school, lines: ['שלום ' + (v.netName || '') + ',', 'פרוטוקול הוועדה המלווה של ' + v.school + ' מוכן לחתימה:', SITE + '#v/' + v.id + '/sign', 'בכניסה מקלידים את המייל הזה ומקבלים קוד.', 'תודה!'] });
     if (v.status !== 'closed' && canClose) h += '<button type="button" class="btn small primary" id="closeBtn">סגירת הוועדה</button>';
     if (v.status === 'closed' && V.caps.manage) h += '<button type="button" class="btn small" id="reopenBtn">פתיחה מחדש</button>';
     h += '</div>' + signCard() + protocolHtml();

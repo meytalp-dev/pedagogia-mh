@@ -70,7 +70,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
 .tag.warn{background:var(--warn-soft);color:var(--warn)}
 .tag.info{background:var(--blue-soft);color:var(--navy)}
 .tag.ready{background:var(--amber-soft);color:var(--warn)}
-.presrc{display:inline-block;max-width:100%;margin-inline-start:8px;padding:1px 9px;border-radius:30px;background:var(--amber-soft);color:var(--warn);font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:.8rem;font-weight:600;line-height:1.5;vertical-align:baseline;overflow-wrap:anywhere}
+.presrc{display:inline-block;max-width:100%;margin-inline-start:8px;color:var(--muted);font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:.8rem;font-weight:400;line-height:1.5;vertical-align:baseline;overflow-wrap:anywhere}
 .pretop{margin-bottom:8px}.pretop .presrc{margin-inline-start:0}.pretop:empty{display:none}
 
 /* מסלול המנהל.ת */
@@ -202,6 +202,9 @@ summary{cursor:pointer;min-height:30px}
 .prevp .ptsec{margin-top:14px}
 .prevline{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--amber-soft);border-color:#f0d995;text-decoration:none;color:var(--ink)}
 .prevline span{color:var(--blue);font-weight:600}
+.prevline.done{background:var(--card);border-color:var(--line)}.prevline.done b{font-weight:500;color:var(--muted)}
+table.grid td.wide{min-width:260px}table.grid td.wide textarea{min-height:110px}
+table.grid.short td.rowlbl,table.grid.short thead th:first-child{width:2.6em;min-width:0;text-align:center}
 .ptask .town{color:var(--muted);font-size:.9rem}
 .statuses{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0}
 .statuses button{min-height:40px;min-width:52px;border:1.5px solid #c9d4d5;background:var(--card);border-radius:30px;padding:5px 13px;cursor:pointer;font-weight:600;font-size:.92rem}

@@ -140,13 +140,15 @@ var VAADA_DECK = (function () {
         var el = get('elig'), er = tableRows(el.f, el.v);
         if (er.length) {
           addFormTable(sl, el.f, el.v, { fs: 14 });
-          var ok = er.filter(function (r) { return r.slice(1, 5).some(function (x) { return numOf(x) != null; }); });
+          var ok = er.filter(function (r) { return r.slice(1, 3).some(function (x) { return numOf(x) != null; }); });
           if (ok.length >= 2) {
             var labs = ok.map(function (r) { return r[0]; });
-            sl.chart([series(labs, ok, 1, 'מספר בוגרים'), series(labs, ok, 2, 'זכאים לתעודת מקצוע'), series(labs, ok, 3, 'בגרות טכנולוגית 14 יח\''), series(labs, ok, 4, 'בגרות מלאה')], { title: 'בוגרים וזכאות לאורך השנים' }, 2.9);
+            sl.chart([series(labs, ok, 1, 'מספר בוגרים'), series(labs, ok, 2, 'זכאים לתעודת מקצוע')], { title: 'בוגרים וזכאות לתעודת מקצוע לאורך השנים' }, 2.9);
           }
         }
-        ['subj', 'tracks'].forEach(function (k) { var x = get(k); addFormTable(sl, x.f, x.v, { fs: 14 }); });
+        var bg = get('bagrut');
+        if (txt(bg.v)) sl.table([3, 9], null, [['זכאות לבגרות', txt(bg.v)]], { labelFirst: true });
+        ['bsubj', 'tracks'].forEach(function (k) { var x = get(k); addFormTable(sl, x.f, x.v, { fs: 14 }); });
         return;
       }
       if (sec.id === 'taasuka') {
