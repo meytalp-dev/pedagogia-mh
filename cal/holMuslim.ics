@@ -1,0 +1,160 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:חגים וחופשות · מוסלמים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:35ee2425@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261224
+DTEND;VALUE=DATE:20270109
+SUMMARY:חופשת החורף
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:2250caaa@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270105
+DTEND;VALUE=DATE:20270107
+SUMMARY:לילת אל־איסרא ואל־מיעראג׳
+DESCRIPTION:מוסלמים · עליית הנביא השמיימה · י
+ ומיים · התאריך המדויק בהודעת האגף לחינו
+ ך בחברה הערבית והבדואית\nhttps://pedagogiamh.co.il/g
+ antt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4464892c@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270124
+DTEND;VALUE=DATE:20270125
+SUMMARY:ליל אל־בראאה
+DESCRIPTION:מוסלמים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:76f3b86@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270209
+SUMMARY:תחילת רמדאן
+DESCRIPTION:מוסלמים · מתכונת שיעורים מקוצרת 
+ · התאריך המדויק בהודעת האגף לחינוך בחבר
+ ה הערבית והבדואית\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:9867ebb8@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270220
+DTEND;VALUE=DATE:20270221
+SUMMARY:יום הרפורמה המובטח
+DESCRIPTION:העדה האחמדית\nhttps://pedagogiamh.co.il/gantt.htm
+ l
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:8ec8f96f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270306
+DTEND;VALUE=DATE:20270307
+SUMMARY:ליל אל־קדר
+DESCRIPTION:מוסלמים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4eaca808@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270309
+DTEND;VALUE=DATE:20270312
+SUMMARY:עיד אל־פיטר
+DESCRIPTION:מוסלמים · שלושה ימים · התאריך המד
+ ויק בהודעת האגף לחינוך בחברה הערבית והב
+ דואית\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:5cf8e412@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270323
+DTEND;VALUE=DATE:20270324
+SUMMARY:יום המשיח המובטח
+DESCRIPTION:העדה האחמדית\nhttps://pedagogiamh.co.il/gantt.htm
+ l
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:70a5f0a2@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270416
+SUMMARY:חופשת האביב
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:c552300f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270515
+DTEND;VALUE=DATE:20270516
+SUMMARY:יום עראפה
+DESCRIPTION:מוסלמים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:aa507437@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270519
+SUMMARY:עיד אל־אדחא
+DESCRIPTION:מוסלמים · שלושה ימים · התאריך המד
+ ויק בהודעת האגף לחינוך בחברה הערבית והב
+ דואית\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:e65a61d1@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270527
+DTEND;VALUE=DATE:20270528
+SUMMARY:יום החליפות
+DESCRIPTION:העדה האחמדית\nhttps://pedagogiamh.co.il/gantt.htm
+ l
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:1ef69091@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270606
+DTEND;VALUE=DATE:20270607
+SUMMARY:ראשית השנה ההג׳רית
+DESCRIPTION:מוסלמים · יום אחד · התאריך המדויק
+  בהודעת האגף לחינוך בחברה הערבית והבדוא
+ ית\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+END:VCALENDAR

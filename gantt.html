@@ -32,6 +32,9 @@
   --g-yeutzi-bg:#FBE2EC; --g-yeutzi-bd:#F0B7CD; --g-yeutzi-tx:#97365C;
   --g-national-bg:#FCEFD2; --g-national-bd:#EDD49A; --g-national-tx:#7A5A10;
   --g-holiday-bg:#EAF0F5; --g-holiday-bd:#CBD9E4; --g-holiday-tx:#46606F;
+  --g-holMuslim-bg:#E6F2DC; --g-holMuslim-bd:#BFDBA8; --g-holMuslim-tx:#3D6722;
+  --g-holChristian-bg:#F8E6DD; --g-holChristian-bd:#EAC4B1; --g-holChristian-tx:#8A4326;
+  --g-holDruze-bg:#EEE8E0; --g-holDruze-bd:#D5C9B8; --g-holDruze-tx:#5E4E3A;
   --g-exam-bg:#D8F0EC; --g-exam-bd:#A2DBD2; --g-exam-tx:#0A6A60;
   --g-gmar-bg:#E4F4E8; --g-gmar-bd:#BFE3C9; --g-gmar-tx:#1F6B3A;
   --g-rakazPed-bg:#FFE3CC; --g-rakazPed-bd:#F5BE93; --g-rakazPed-tx:#8A4A16;
@@ -65,6 +68,9 @@
 .t-yeutzi{background:var(--g-yeutzi-bg);border-color:var(--g-yeutzi-bd);color:var(--g-yeutzi-tx)}
 .t-national{background:var(--g-national-bg);border-color:var(--g-national-bd);color:var(--g-national-tx)}
 .t-holiday{background:var(--g-holiday-bg);border-color:var(--g-holiday-bd);color:var(--g-holiday-tx)}
+.t-holMuslim{background:var(--g-holMuslim-bg);border-color:var(--g-holMuslim-bd);color:var(--g-holMuslim-tx)}
+.t-holChristian{background:var(--g-holChristian-bg);border-color:var(--g-holChristian-bd);color:var(--g-holChristian-tx)}
+.t-holDruze{background:var(--g-holDruze-bg);border-color:var(--g-holDruze-bd);color:var(--g-holDruze-tx)}
 .t-exam{background:var(--g-exam-bg);border-color:var(--g-exam-bd);color:var(--g-exam-tx)}
 .t-gmar{background:var(--g-gmar-bg);border-color:var(--g-gmar-bd);color:var(--g-gmar-tx)}
 .t-rakazPed{background:var(--g-rakazPed-bg);border-color:var(--g-rakazPed-bd);color:var(--g-rakazPed-tx)}
@@ -397,7 +403,7 @@
    של השתלמות רק בטבלה שם. כאן ידנית רק מה שאין לו שורה בטבלאות.
    להוספת אירוע ידני: מוסיפים שורה למערך EVENTS, מחוץ לסימונים —
    {t:'מסלול', d:'YYYY-MM-DD', d2:'YYYY-MM-DD' (לא חובה, לטווח), n:'שם', s:'פרטים (שעה/מקום)'}
-   מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / career / yeutzi / menahal / sherut / exam / gmar / national / holiday
+   מסלולים: rakaz / rakazPed / matalA / matalB / tikshuvA / tikshuvB / career / yeutzi / menahal / sherut / exam / gmar / national / holiday / holMuslim / holChristian / holDruze
    (daat — הדרכות מקצועיות — נבנה כולו אוטומטית מ-hadrachot-miktzoiot.html, לא מוסיפים לו ידנית)
    שדה aud במסלול = למי המפגשים מיועדים (מוצג בכל צ׳יפ ובכל שורה ב״מהלך השנה״).
    שדה a באירוע דורס את aud של המסלול — למפגש שמיועד לקהל אחר.
@@ -419,7 +425,10 @@ const TRACKS = {
   exam:    {name:'מועדי בחינות · בגרות', sub:'משרד החינוך · טיוטה 12.7.26', aud:''},
   gmar:    {name:'מועדי בחינות · גמר', sub:'גמר חיצוניות לנוער · קיץ · טיוטה', aud:''},
   national:{name:'אירועים לאומיים', sub:'ימי זיכרון וציון', aud:''},
-  holiday: {name:'חגים וחופשות', sub:'', aud:''}
+  holiday: {name:'חגים וחופשות · יהודים', sub:'', aud:''},
+  holMuslim:{name:'חגים וחופשות · מוסלמים', sub:'לפי לוח השנה לחברה הערבית', aud:'מוסלמים'},
+  holChristian:{name:'חגים וחופשות · נוצרים', sub:'לפי לוח השנה לחברה הערבית', aud:'נוצרים'},
+  holDruze:{name:'חגים וחופשות · דרוזים', sub:'לפי לוח השנה לחברה הערבית', aud:'דרוזים'}
 };
 const EVENTS = [
  /* cal:gen:start — נבנה אוטומטית מטבלאות המועדים ב-hishtalmuyot.html וב-hadrachot-miktzoiot.html (tools/build-cal.mjs).
@@ -709,15 +718,58 @@ const EVENTS = [
  {t:'holiday', d:'2026-09-20', d2:'2026-09-21', n:'יום הכיפורים', s:''},
  {t:'holiday', d:'2026-09-25', d2:'2026-10-03', n:'סוכות ושמחת תורה', s:'חופשת החג'},
  {t:'holiday', d:'2026-12-04', d2:'2026-12-12', n:'חנוכה', s:'הדלקה ראשונה בערב 4.12'},
- {t:'holiday', d:'2026-12-25', n:'חג המולד', s:''},
  {t:'holiday', d:'2027-01-23', n:'ט״ו בשבט', s:''},
- {t:'holiday', d:'2027-02-08', n:'תחילת רמדאן', s:'מועד משוער'},
- {t:'holiday', d:'2027-03-10', d2:'2027-03-12', n:'עיד אל-פיטר', s:'מועד משוער'},
  {t:'holiday', d:'2027-03-23', d2:'2027-03-24', n:'פורים ושושן פורים', s:''},
  {t:'holiday', d:'2027-04-21', d2:'2027-04-28', n:'פסח', s:'ליל הסדר 21.4 · שביעי של פסח 28.4'},
- {t:'holiday', d:'2027-05-16', d2:'2027-05-18', n:'עיד אל-אדחא', s:'מועד משוער'},
  {t:'holiday', d:'2027-05-25', n:'ל״ג בעומר', s:''},
  {t:'holiday', d:'2027-06-10', d2:'2027-06-11', n:'שבועות', s:'ערב חג 10.6'},
+ /* --- חגים מוסלמיים (חוזר מנכ״ל, סעיף 4.3 א-ב). הולדת הנביא 25–26.8.26 לא כאן: לפני פתיחת השנה --- */
+ {t:'holMuslim', d:'2027-01-05', d2:'2027-01-06', n:'לילת אל־איסרא ואל־מיעראג׳', s:'עליית הנביא השמיימה · יומיים · התאריך המדויק בהודעת האגף לחינוך בחברה הערבית והבדואית'},
+ {t:'holMuslim', d:'2027-02-08', n:'תחילת רמדאן', s:'מתכונת שיעורים מקוצרת · התאריך המדויק בהודעת האגף לחינוך בחברה הערבית והבדואית'},
+ {t:'holMuslim', d:'2027-03-09', d2:'2027-03-11', n:'עיד אל־פיטר', s:'שלושה ימים · התאריך המדויק בהודעת האגף לחינוך בחברה הערבית והבדואית'},
+ {t:'holMuslim', d:'2027-05-16', d2:'2027-05-18', n:'עיד אל־אדחא', s:'שלושה ימים · התאריך המדויק בהודעת האגף לחינוך בחברה הערבית והבדואית'},
+ {t:'holMuslim', d:'2027-06-06', n:'ראשית השנה ההג׳רית', s:'יום אחד · התאריך המדויק בהודעת האגף לחינוך בחברה הערבית והבדואית'},
+ {t:'holMuslim', d:'2027-01-24', n:'ליל אל־בראאה', s:''},
+ {t:'holMuslim', d:'2027-03-06', n:'ליל אל־קדר', s:''},
+ {t:'holMuslim', d:'2027-05-15', n:'יום עראפה', s:''},
+ {t:'holMuslim', d:'2026-12-24', d2:'2027-01-08', n:'חופשת החורף', a:'בתי הספר בחברה הערבית', s:''},
+ {t:'holMuslim', d:'2027-03-28', d2:'2027-04-15', n:'חופשת האביב', a:'בתי הספר בחברה הערבית', s:''},
+ {t:'holMuslim', d:'2027-02-20', n:'יום הרפורמה המובטח', a:'העדה האחמדית', s:''},
+ {t:'holMuslim', d:'2027-03-23', n:'יום המשיח המובטח', a:'העדה האחמדית', s:''},
+ {t:'holMuslim', d:'2027-05-27', n:'יום החליפות', a:'העדה האחמדית', s:''},
+ /* --- חגים נוצריים (חוזר מנכ״ל, סעיף 4.3 ג-ה) --- */
+ {t:'holChristian', d:'2026-09-21', n:'חג הצלב', s:''},
+ {t:'holChristian', d:'2026-12-24', d2:'2027-01-08', n:'חופשת החורף', a:'בתי הספר בחברה הערבית', s:''},
+ {t:'holChristian', d:'2027-03-28', d2:'2027-04-15', n:'חופשת האביב', a:'בתי הספר בחברה הערבית', s:''},
+ {t:'holChristian', d:'2026-11-16', n:'מאר ג׳רייס', a:'יפו, רמלה ולוד בלבד', s:''},
+ {t:'holChristian', d:'2026-12-24', d2:'2026-12-26', n:'חג המולד', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-01-01', n:'ראשית השנה', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-01-06', n:'ההתגלות', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-01-06', d2:'2027-01-08', n:'חג המולד', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-01-14', n:'ראשית השנה', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-01-19', n:'ההתגלות', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-02-02', n:'כניסת המשיח אל ההיכל', a:'קתולים ולטינים', s:''},
+ {t:'holChristian', d:'2027-02-09', n:'מאר מרון', a:'מרונים', s:''},
+ {t:'holChristian', d:'2027-02-10', n:'יום רביעי של האפר', a:'אנג׳לים', s:''},
+ {t:'holChristian', d:'2027-02-15', n:'כניסת המשיח אל ההיכל', a:'אורתודוקסים', s:''},
+ {t:'holChristian', d:'2027-03-21', n:'יום ראשון של הדקלים', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-03-25', d2:'2027-03-30', n:'השבוע הקדוש ופסחא', a:'קתולים, לטינים, אנג׳לים ומרונים', s:'ח׳מיס אל־אסראר 25.3 · יום שישי הגדול 26.3 · שבת האור 27.3 · פסחא 28–30.3'},
+ {t:'holChristian', d:'2027-03-25', n:'הבשורה', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-04-20', n:'הבשורה', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-04-25', n:'יום ראשון של הדקלים', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-04-29', d2:'2027-05-04', n:'השבוע הקדוש ופסחא', a:'יוונים, אורתודוקסים וארמנים', s:'ח׳מיס אל־אסראר 29.4 · יום שישי הגדול 30.4 · שבת האור 1.5 · פסחא 2–4.5'},
+ {t:'holChristian', d:'2027-05-06', n:'העלייה השמיימה', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-05-16', d2:'2027-05-17', n:'שבועות', a:'קתולים, לטינים, אנג׳לים ומרונים', s:''},
+ {t:'holChristian', d:'2027-05-27', n:'יום חמישי של הגוף', a:'בפסוטה בלבד', s:''},
+ {t:'holChristian', d:'2027-06-10', n:'העלייה השמיימה', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ {t:'holChristian', d:'2027-06-20', d2:'2027-06-21', n:'שבועות', a:'יוונים, אורתודוקסים וארמנים', s:''},
+ /* --- חגים דרוזיים (חוזר מנכ״ל, סעיף 4.3 ו) --- */
+ {t:'holDruze', d:'2026-09-10', n:'יום הנביא סבלאן', s:'יום אחד'},
+ {t:'holDruze', d:'2026-12-25', n:'חג הנביא אליהו, עיד אל־חד׳ר', s:'יום אחד'},
+ {t:'holDruze', d:'2027-04-24', d2:'2027-04-30', n:'חג הנביא שועייב', s:'שבעה ימים'},
+ {t:'holDruze', d:'2027-05-16', d2:'2027-05-18', n:'חג הקורבן', s:'שלושה ימים'},
+ {t:'holDruze', d:'2026-12-24', d2:'2027-01-08', n:'חופשת החורף', a:'בתי הספר בחברה הערבית', s:''},
+ {t:'holDruze', d:'2027-03-28', d2:'2027-04-15', n:'חופשת האביב', a:'בתי הספר בחברה הערבית', s:''},
  /* --- מועדי בחינות · בגרות (אגף בכיר בחינות, טיוטה 12.7.2026) ---
     בחינה לכל יום היבחנות. הלוח המלא לפי מקצוע: luach-mivchanim.html         */
  {t:'exam', d:'2026-12-28', n:'מחשבת ישראל דתי', s:'מועד חורף · יום שני', u:'luach-mivchanim.html'},

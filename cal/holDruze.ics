@@ -1,0 +1,87 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:חגים וחופשות · דרוזים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:37c84812@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260910
+DTEND;VALUE=DATE:20260911
+SUMMARY:יום הנביא סבלאן
+DESCRIPTION:דרוזים · יום אחד\nhttps://pedagogiamh.co.il/gan
+ tt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:35ee2425@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261224
+DTEND;VALUE=DATE:20270109
+SUMMARY:חופשת החורף
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4bdef64c@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261225
+DTEND;VALUE=DATE:20261226
+SUMMARY:חג הנביא אליהו\, עיד אל־חד׳ר
+DESCRIPTION:דרוזים · יום אחד\nhttps://pedagogiamh.co.il/gan
+ tt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:70a5f0a2@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270416
+SUMMARY:חופשת האביב
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:9edac889@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270424
+DTEND;VALUE=DATE:20270501
+SUMMARY:חג הנביא שועייב
+DESCRIPTION:דרוזים · שבעה ימים\nhttps://pedagogiamh.co.il
+ /gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f556d70b@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270519
+SUMMARY:חג הקורבן
+DESCRIPTION:דרוזים · שלושה ימים\nhttps://pedagogiamh.co.
+ il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,276 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pedagogiamh.co.il//calendar//HE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:חגים וחופשות · נוצרים · תשפ״ז
+X-WR-TIMEZONE:Asia/Jerusalem
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VTIMEZONE
+TZID:Asia/Jerusalem
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:IDT
+DTSTART:19700327T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=FR;BYMONTHDAY=23,24,25,26,27,28,29
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:IST
+DTSTART:19701025T020000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:2661b403@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20260921
+DTEND;VALUE=DATE:20260922
+SUMMARY:חג הצלב
+DESCRIPTION:נוצרים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:fa5f53db@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261116
+DTEND;VALUE=DATE:20261117
+SUMMARY:מאר ג׳רייס
+DESCRIPTION:יפו\, רמלה ולוד בלבד\nhttps://pedagogiamh.co.
+ il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:35ee2425@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261224
+DTEND;VALUE=DATE:20270109
+SUMMARY:חופשת החורף
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:fca97a8a@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20261224
+DTEND;VALUE=DATE:20261227
+SUMMARY:חג המולד
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f8501b30@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270101
+DTEND;VALUE=DATE:20270102
+SUMMARY:ראשית השנה
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:df185c2b@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270106
+DTEND;VALUE=DATE:20270107
+SUMMARY:ההתגלות
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:7ee02171@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270106
+DTEND;VALUE=DATE:20270109
+SUMMARY:חג המולד
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:c4128fd4@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270114
+DTEND;VALUE=DATE:20270115
+SUMMARY:ראשית השנה
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:17b39d4b@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270119
+DTEND;VALUE=DATE:20270120
+SUMMARY:ההתגלות
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:3e12534f@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270202
+DTEND;VALUE=DATE:20270203
+SUMMARY:כניסת המשיח אל ההיכל
+DESCRIPTION:קתולים ולטינים\nhttps://pedagogiamh.co.il/gantt
+ .html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f2678209@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270209
+DTEND;VALUE=DATE:20270210
+SUMMARY:מאר מרון
+DESCRIPTION:מרונים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:6f058e96@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270210
+DTEND;VALUE=DATE:20270211
+SUMMARY:יום רביעי של האפר
+DESCRIPTION:אנג׳לים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:a059652b@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270215
+DTEND;VALUE=DATE:20270216
+SUMMARY:כניסת המשיח אל ההיכל
+DESCRIPTION:אורתודוקסים\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:fc61576c@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270321
+DTEND;VALUE=DATE:20270322
+SUMMARY:יום ראשון של הדקלים
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:4d42be98@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270325
+DTEND;VALUE=DATE:20270331
+SUMMARY:השבוע הקדוש ופסחא
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים 
+ · ח׳מיס אל־אסראר 25.3 · יום שישי הגדול 26.3 
+ · שבת האור 27.3 · פסחא 28–30.3\nhttps://pedagogiamh.co.il
+ /gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:f35f5c32@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270325
+DTEND;VALUE=DATE:20270326
+SUMMARY:הבשורה
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:70a5f0a2@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270328
+DTEND;VALUE=DATE:20270416
+SUMMARY:חופשת האביב
+DESCRIPTION:בתי הספר בחברה הערבית\nhttps://pedagogiamh
+ .co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:8eefbb0e@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270420
+DTEND;VALUE=DATE:20270421
+SUMMARY:הבשורה
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:865eddeb@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270425
+DTEND;VALUE=DATE:20270426
+SUMMARY:יום ראשון של הדקלים
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:d474f0ab@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270429
+DTEND;VALUE=DATE:20270505
+SUMMARY:השבוע הקדוש ופסחא
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים · ח׳
+ מיס אל־אסראר 29.4 · יום שישי הגדול 30.4 · שב
+ ת האור 1.5 · פסחא 2–4.5\nhttps://pedagogiamh.co.il/gantt.htm
+ l
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:c843afa3@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270506
+DTEND;VALUE=DATE:20270507
+SUMMARY:העלייה השמיימה
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:7845633d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270516
+DTEND;VALUE=DATE:20270518
+SUMMARY:שבועות
+DESCRIPTION:קתולים\, לטינים\, אנג׳לים ומרונים\
+ nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:1d3f78e7@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270527
+DTEND;VALUE=DATE:20270528
+SUMMARY:יום חמישי של הגוף
+DESCRIPTION:בפסוטה בלבד\nhttps://pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:1b48401d@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270610
+DTEND;VALUE=DATE:20270611
+SUMMARY:העלייה השמיימה
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+BEGIN:VEVENT
+UID:441bc8b7@pedagogiamh.co.il
+DTSTAMP:20260901T000000Z
+DTSTART;VALUE=DATE:20270620
+DTEND;VALUE=DATE:20270622
+SUMMARY:שבועות
+DESCRIPTION:יוונים\, אורתודוקסים וארמנים\nhttps:
+ //pedagogiamh.co.il/gantt.html
+URL:https://pedagogiamh.co.il/gantt.html
+END:VEVENT
+END:VCALENDAR
