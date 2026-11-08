@@ -37,7 +37,7 @@
   var ERR = {
     network: 'אין חיבור לשרת. בודקים את האינטרנט ומנסים שוב.', server: 'משהו השתבש בשרת. מנסים שוב בעוד רגע.',
     forbidden: 'אין לחשבון הזה הרשאה לפעולה.', notfound: 'הוועדה לא נמצאה.', closed: 'הוועדה סגורה. המנהל.ת יכול.ה לפתוח אותה מחדש.', notclosed: 'חותמים אחרי שסוגרים את הוועדה.', nofile: 'המסמך עדיין לא זמין במערכת החדשה.',
-    toolong: 'התחום ארוך מדי לשמירה. כדאי לקצר או להעביר חלק לקובץ.', toolarge: 'הקובץ גדול מ-8MB.', badmail: 'כתובת המייל לא תקינה.', empty: 'לא נכתב טקסט.',
+    toolong: 'התחום ארוך מדי לשמירה. כדאי לקצר או להעביר חלק לקובץ.', toolarge: 'הקובץ גדול מ-8MB.', toomany: 'כבר יש 10 תמונות בוועדה הזו. כדי להוסיף, מוחקים תמונה אחרת.', badmail: 'כתובת המייל לא תקינה.', empty: 'לא נכתב טקסט.',
     notlisted: 'המייל הזה לא ברשימה. אפשר לנסות מייל אחר שלך, או ללחוץ "נתקלתם בבעיה?" למטה.',
     cooldown: 'קוד נשלח לפני פחות מדקה. בודקים במייל (גם בספאם).', quota: 'הגענו למכסת המיילים של היום. מנסים שוב מחר.',
     expired: 'הקוד פג. שולחים קוד חדש.', badcode: 'הקוד לא נכון. מנסים שוב.', toomany: 'יותר מדי ניסיונות. שולחים קוד חדש.'
@@ -149,7 +149,8 @@
       if (h[2] === 'fill') return viewPrep();
       if (!S.V.caps.full) return location.replace('#');
       if (h[2] === 'deck') return viewDeck();
-      if (h[2] === 'live') return viewLive(Number(h[3]) || 0);
+      if (h[2] === 'live') return viewLive(Number(h[3]) || 0, false);
+      if (h[2] === 'all') return viewLive(Number(h[3]) || 0, true);
       if (h[2] === 'recs') return viewRecs();
       if (h[2] === 'tasks') return viewTasks();
       if (h[2] === 'sign' || h[2] === 'sum') return viewSign();
@@ -249,7 +250,7 @@
   function realStations(V) {
     return ((V.docs.prep || {}).stations || []).filter(function (st) { return st.title && Object.keys(st).some(function (k) { return k !== 'title' && k !== 'sec' && String(st[k] || '').trim(); }); }).length;
   }
-  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e', 'deck', 'live'];
+  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e', 'deck', 'live', 'all'];
   var FOCUS_KEY = 'vaada_focus';
   function focusOn() { try { return sessionStorage.getItem(FOCUS_KEY) === '1'; } catch (e) { return false; } }
   function setFocus(on) { try { if (on) sessionStorage.setItem(FOCUS_KEY, '1'); else sessionStorage.removeItem(FOCUS_KEY); } catch (e) {} }
@@ -356,7 +357,7 @@
     ]);
     var nSeed = a && a.status === 'closed' ? 0 : (r.seedSecs || []).length;
     h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
-      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'דיגיטלית או PowerPoint'],
+      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'שקפים נבחרים או מצגת אב'],
       [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
     ]);
     h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">' + (r.dateB ? 'מועד: ' + fmtDate(r.dateB) + ' · ' : 'אפריל–יוני · זימונים עד 15.5. ') + 'תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
@@ -436,7 +437,7 @@
   }
   function viewName() {
     var p = location.hash.split('/')[2] || '';
-    return p === 'e' ? 'fill' : p === 'live' ? 'deck' : p === 'sum' ? 'sign' : p;
+    return p === 'e' ? 'fill' : p === 'live' || p === 'all' ? 'deck' : p === 'sum' ? 'sign' : p;
   }
   function vHead() {
     var V = S.V, v = V.v, h = '';
@@ -448,10 +449,28 @@
   /* תפריט מקובץ בצד במחשב: בית הספר (מקופל), הוועדה (פתוח), לפיקוח. בטלפון: הכרטיסים במסך הראשי של הוועדה */
   function shell(inner) {
     var V = S.V;
-    if (!V.caps.full) { APP.innerHTML = inner; return; }
-    if (focusOn()) { APP.innerHTML = focusBar(viewName()) + inner; return; }
+    inner = backToSlide() + inner;
+    document.body.classList.toggle('on-live', /^(live|all)$/.test(location.hash.split('/')[2] || ''));
+    if (!V.caps.full) { APP.innerHTML = inner; wireBack(); return; }
+    if (focusOn()) { APP.innerHTML = focusBar(viewName()) + inner; wireBack(); return; }
     var cur = viewName(), groups = [schoolGroup(V.v.semel, cur === 'prev' ? 'prev' : null), vaadaGroup(V.v.id, cur), supGroup(V.v.id, cur)].filter(Boolean);
-    APP.innerHTML = '<div class="shell' + (location.hash.split('/')[2] === 'live' ? ' wide' : '') + '">' + sideMenu(groups, V.v.school, VAADA.STAGES[V.v.stage] + ' ' + V.v.year) + '<div class="vmain">' + inner + '</div></div>';
+    APP.innerHTML = '<div class="shell' + (/^(live|all)$/.test(location.hash.split('/')[2] || '') ? ' wide' : '') + '">' + sideMenu(groups, V.v.school, VAADA.STAGES[V.v.stage] + ' ' + V.v.year) + '<div class="vmain">' + inner + '</div></div>';
+    wireBack();
+  }
+  /* עריכה מתוך ההצגה: "חזרה לשקף" בראש הטופס, עד שחוזרים למצגת (מיטל, 7.11.26) */
+  var BACK = null;
+  function backToSlide() {
+    if (!BACK) return '';
+    if (location.hash !== BACK.to) { if (/^#v\/[^/]+\/(live|all)\//.test(location.hash)) BACK = null; return ''; }
+    return '<a class="btn small primary backslide" id="backSlide" href="' + BACK.from + '">→ חזרה לשקף</a>';
+  }
+  function wireBack() {
+    var b = $('#backSlide');
+    if (b) b.onclick = function (e) {
+      e.preventDefault();
+      var to = BACK.from;
+      Promise.all(Object.keys(QUEUES).map(function (k) { return flush(QUEUES[k]); })).then(function () { go(to); }, function () { go(to); });
+    };
   }
 
   /* ===== ראשי של הוועדה: סיכום + כרטיס לכל פריט בתפריט ===== */
@@ -476,7 +495,7 @@
     var tiles = [
       ['prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'בחירת 3–4 תחנות וסוגיית ליבה'],
       ['fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים'],
-      ['deck', 'מצגת הוועדה', 'מצגת אב, שקפים נבחרים או הצגה דיגיטלית'],
+      ['deck', 'מצגת הוועדה', 'שקפים נבחרים או מצגת אב, על המסך'],
       ['recs', 'המלצות המפקח.ת', V.recs.length ? count(V.recs.length, 'המלצה אחת', 'המלצות') : 'עדיין אין המלצות'],
       ['tasks', 'החלטות ומשימות', V.tasks.length ? 'בוצעו ' + doneT + ' מתוך ' + V.tasks.length : 'עדיין אין החלטות'],
       ['sign', 'פרוטוקול וחתימות', V.v.status === 'closed' ? 'נחתם על ידי ' + signed + ' מתוך ' + need.length : 'חותמים אחרי סגירת הוועדה']
@@ -659,21 +678,28 @@
   }
   function repeatHtml(f, val) {
     val = val && val.length ? val : [{}];
-    var h = '<div data-repeat="' + f.k + '">';
+    var h = (f.h ? '<p class="hint">' + esc(f.h) + '</p>' : '') + '<div data-repeat="' + f.k + '">';
     val.forEach(function (it, i) { h += repeatItem(f, it, i); });
     return h + '</div><button type="button" class="btn small" data-addrep="' + f.k + '">+ הוספת ' + esc(f.item) + '</button>';
   }
   function repeatItem(f, it, i) {
     var h = '<details class="block" ' + (i === 0 ? 'open' : '') + ' data-item><summary><b>' + esc(it.name || (f.item + ' ' + (i + 1))) + '</b></summary><div style="margin-top:10px">';
     f.fields.forEach(function (x) {
-      h += '<label class="f"><b>' + esc(x.l) + '</b>' + (x.t === 'text' ? '<input type="text" data-rf="' + x.k + '" value="' + esc(it[x.k]) + '">' : '<textarea data-rf="' + x.k + '">' + esc(it[x.k]) + '</textarea>') + '</label>';
+      h += '<label class="f"><b>' + esc(x.l) + '</b>' + (x.t === 'text' ? '<input type="text" data-rf="' + x.k + '" value="' + esc(it[x.k]) + '">'
+        : x.t === 'yn' ? '<select data-rf="' + x.k + '">' + ['', 'כן', 'לא'].map(function (o) { return '<option' + (o === (it[x.k] || '') ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>'
+        : '<textarea data-rf="' + x.k + '">' + esc(it[x.k]) + '</textarea>') + '</label>';
     });
     return h + '<button type="button" class="link danger" data-delrep>מחיקת ה' + esc(f.item) + '</button></div></details>';
   }
+  /* תמונות לשקפים: בכל תחום, אחרי השדות. כל תמונה = שקף במצגת האב, אחרי התחום (מיטל, 8.11.26) */
+  var IMG_MAX = 10, IMG_MB = 5;
+  var IMG_FIELD = { k: 'img', img: true, l: 'תמונות לשקפים (רשות)', h: 'כל תמונה נכנסת כשקף נפרד במצגת האב, אחרי התחום. PNG או JPG, עד ' + IMG_MB + 'MB לתמונה ועד ' + IMG_MAX + ' תמונות לוועדה.' };
+  /* x: קובץ מהשרת (mime) או קובץ שנבחר בדפדפן (type) */
+  function isImg(x) { return /^image\/(png|jpe?g|gif)$/.test(x.mime || x.type || ''); }
   function fileHtml(f, secId) {
     var list = S.V.files.filter(function (x) { return x.sec === secId && x.field === f.k; });
     return '<div class="f" data-fileblock="' + f.k + '"><span class="lbl">' + esc(f.l) + '</span>' + (f.h ? '<span class="hint">' + esc(f.h) + '</span>' : '') + filesList(list, true) +
-      '<label class="btn small" style="margin-top:6px">העלאת קובץ<input type="file" hidden data-up="' + f.k + '" accept="image/*,.pdf,.ppt,.pptx,.doc,.docx"></label></div>';
+      '<label class="btn small" style="margin-top:6px">' + (f.img ? 'הוספת תמונה' : 'העלאת קובץ') + '<input type="file" hidden data-up="' + f.k + '" accept="' + (f.img ? 'image/png,image/jpeg,image/gif' : 'image/*,.pdf,.ppt,.pptx,.doc,.docx') + '"></label></div>';
   }
   function filesList(list, del) {
     return list.map(function (x) {
@@ -889,7 +915,7 @@
     var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + v.id + '/fill' : '#') + '">→ ' + (V.caps.full ? 'כל התחומים' : 'התחומים שלי') + '</a>' +
       '<div class="head stephead"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · בלי שמות תלמידים</p></div>';
     h += prevLine(secId) + tuvaBox(secId);
-    h += '<form class="card" id="sf" onsubmit="return false">' + sec.fields.map(function (f) { return fieldHtml(sec, f); }).join('') + '</form>';
+    h += '<form class="card" id="sf" onsubmit="return false">' + sec.fields.map(function (f) { return fieldHtml(sec, f); }).join('') + fileHtml(IMG_FIELD, secId) + '</form>';
     var isDone = secStatus(secId) === 'done';
     h += stepBar(isDone ? '<a class="btn small primary" id="sEnd" href="' + nextSecHash(secId) + '">' + (nextSec(secId) ? 'לתחום הבא ←' : 'לכל התחומים ←') + '</a>' : '<button type="button" class="btn small primary" id="doneBtn">סיימתי את התחום</button>', '<span class="saved" id="saved">הכול נשמר אוטומטית</span>');
     if (isDone) h += '<button type="button" class="link" id="doneBtn">לפתוח שוב לעריכה</button>';
@@ -965,7 +991,7 @@
         S.board = null;
         toast(wasDone ? 'התחום נפתח לעריכה' : 'התחום סומן כהושלם. תודה!');
         if (!wasDone) delete STEP_AT[v.id + '|' + secId];
-        go(wasDone ? '#v/' + v.id + '/e/' + secId : nextSecHash(secId));
+        go(wasDone ? '#v/' + v.id + '/e/' + secId : BACK && BACK.to === location.hash ? BACK.from : nextSecHash(secId));
       }).catch(function () {});
     };
     if (pending) { setSaved('שומר טיוטה שלא נשמרה…'); flush(); }
@@ -1153,8 +1179,13 @@
   function upload(inp, secId) {
     var file = inp.files[0];
     if (!file) return;
-    if (file.size > 8 * 1024 * 1024) return toast(ERR.toolarge);
     var field = inp.getAttribute('data-up'), r = new FileReader();
+    if (field === IMG_FIELD.k) {
+      inp.value = '';
+      if (!isImg(file)) return toast('אפשר להוסיף תמונה מסוג PNG או JPG בלבד.');
+      if (file.size > IMG_MB * 1024 * 1024) return toast('התמונה גדולה מ-' + IMG_MB + 'MB. אפשר להקטין אותה ולנסות שוב.');
+      if (S.V.files.filter(isImg).length >= IMG_MAX) return toast(ERR.toomany);
+    } else if (file.size > 8 * 1024 * 1024) return toast(ERR.toolarge);
     setSaved('מעלה קובץ…');
     r.onload = function () {
       api('upload', { id: S.V.v.id, sec: secId, field: field, name: file.name, mime: file.type, b64: String(r.result).split(',')[1] }).then(function (x) {
@@ -1247,27 +1278,56 @@
     var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן השקפים הנבחרים יכללו רק פתיחה, נתונים וסיכום. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
     var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא ולא ייכנס' : out.missing.length + ' תחומים עוד לא מולאו ולא ייכנסו') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
-      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>הצגה דיגיטלית</b><span>השקפים הנבחרים לפי סדר היום, על המסך. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
-      '<button type="button" class="tile big" data-deck="sel"><b>PowerPoint: שקפים נבחרים</b><span>המצגת שמציגים בפועל: הצלחות, נתונים, התחנות, היוועצות וסיכום.</span></button>' +
-      '<button type="button" class="tile big" data-deck="all"><b>PowerPoint: מצגת אב</b><span>כל מה שמולא. נשלחת למפקחים כשבועיים לפני הוועדה, לרקע ולא להצגה.</span></button></div>');
-    wireDeck();
+      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, נתונים, התחנות, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
+      '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה.</span></a></div>' +
+      '<p class="rs">בכל שקף אפשר ללחוץ "עריכה", לתקן בטופס של התחום ולחזור לשקף המעודכן.</p>');
   }
 
   /* ===== הצגה דיגיטלית: שקף, ולצידו הערות והחלטות של התחום ===== */
-  function viewLive(n) {
-    var V = S.V, v = V.v, out = collectSlides(false), slides = out.slides, base = '#v/' + v.id + '/live/';
+  /* לאן "עריכה" בשקף: הטופס של התחום, ההכנה (תחנות והיוועצות) או ההמלצות. רק למי שמותר לערוך שם */
+  function editHref(sl) {
+    var V = S.V, id = V.v.id, e = sl.edit;
+    if (!e) return '';
+    if (e === 'prep') return V.caps.prepEdit ? '#v/' + id + '/prep' : '';
+    if (e === 'recs') return V.caps.rec ? '#v/' + id + '/recs' : '';
+    return VAADA.section(V.v.stage, e) && V.caps.edit.indexOf(e) > -1 ? '#v/' + id + '/e/' + e : '';
+  }
+  var SIDE_HIDE = false;
+  function fsOn() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  /* במסך מלא הדף נראה כמו מצגת: בלי הכותרת, התפריט והשלבים. הכפתור מתעדכן גם כשיוצאים ב-Esc */
+  function fsSync() {
+    document.body.classList.toggle('present', fsOn());
+    var b = $('#fsBtn');
+    if (b) b.textContent = fsOn() ? 'יציאה ממסך מלא' : 'מסך מלא';
+  }
+  document.addEventListener('fullscreenchange', fsSync);
+  document.addEventListener('webkitfullscreenchange', fsSync);
+  function viewLive(n, all) {
+    var V = S.V, v = V.v, out = collectSlides(all), slides = out.slides, base = '#v/' + v.id + (all ? '/all/' : '/live/');
     n = Math.max(0, Math.min(n, slides.length - 1));
-    var sl = slides[n], secId = sl.sec;
+    var sl = slides[n], secId = sl.sec, edit = editHref(sl);
+    BACK = null;
     var prevN = n > 0 ? '<a class="btn small" href="' + base + (n - 1) + '" id="sPrev">→ הקודם</a>' : '';
     var nextN = n < slides.length - 1 ? '<a class="btn small" href="' + base + (n + 1) + '" id="sNext">הבא ←</a>' : (focusOn() ? '<a class="btn small primary" href="#v/' + v.id + '/deck">חזרה למצגת</a>' : '<a class="btn small primary" href="#v/' + v.id + '/sign">לפרוטוקול ←</a>');
     var side = secId ? '<aside class="lside" id="lside">' + notesCard() + decideCard() + (prevList(secId).length ? '<details class="card" style="margin:0"><summary><b>מה סיכמנו בפעם הקודמת</b></summary>' + prevBox(secId) + '</details>' : '') + '</aside>' : '';
     shell(vHead() + '<div class="lnav">' + prevN + '<select id="lsel" aria-label="מעבר לשקף">' + slides.map(function (s, i) { return '<option value="' + i + '"' + (i === n ? ' selected' : '') + '>' + (i + 1) + '. ' + esc(s.cover ? 'פתיחה' : s.title) + '</option>'; }).join('') + '</select>' + nextN +
-      '<button type="button" class="btn small" id="fsBtn">מסך מלא</button></div>' +
-      '<div class="live' + (secId ? '' : ' solo') + '"><div class="lmain"><div class="slidewrap" id="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl) + '</div></div></div>' + side + '</div>');
+      (edit ? '<a class="btn small" href="' + edit + '" id="editBtn">עריכה</a>' : '') +
+      (side ? '<button type="button" class="btn small" id="sideBtn" aria-pressed="' + !SIDE_HIDE + '">' + (SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום') + '</button>' : '') +
+      '<button type="button" class="btn small" id="fsBtn">' + (fsOn() ? 'יציאה ממסך מלא' : 'מסך מלא') + '</button></div>' +
+      '<div class="live' + (secId && !SIDE_HIDE ? '' : ' solo') + '"><div class="lmain"><div class="slidewrap" id="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl, { n: n + 1, of: slides.length, kind: all ? 'מצגת אב' : 'שקפים נבחרים' }) + '</div></div></div>' + side + '</div>');
     $('#lsel').onchange = function () { go(base + this.value); };
+    if (edit) $('#editBtn').onclick = function () { BACK = { to: edit, from: base + n }; };
+    /* מסך מלא על כל הדף ולא על השקף בלבד: המעבר בין שקפים לא מוציא ממנו, והניווט והרישום נשארים (מיטל, 7.11.26) */
     $('#fsBtn').onclick = function () {
-      var el = $('#slidewrap');
-      if (el.requestFullscreen) el.requestFullscreen(); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      var d = document, el = d.documentElement;
+      if (fsOn()) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+      else (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    };
+    if (side) $('#sideBtn').onclick = function () {
+      SIDE_HIDE = !SIDE_HIDE;
+      $('.live').classList.toggle('solo', SIDE_HIDE);
+      this.textContent = SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום';
+      this.setAttribute('aria-pressed', String(!SIDE_HIDE));
     };
     document.onkeydown = function (e) {
       if (/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) return;
@@ -1656,57 +1716,6 @@
         }).catch(function () {});
       }
     });
-  }
-
-  /* ===== מצגת PowerPoint: נבנית בדפדפן. הספרייה נטענת רק כשלוחצים ===== */
-  function loadScript(src) {
-    return new Promise(function (ok, no) {
-      if ($('script[src="' + src + '"]')) return ok();
-      var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = no;
-      document.head.appendChild(s);
-    });
-  }
-  function imageFor(f) {
-    return api('file', { fileId: f.id }).then(function (r) {
-      if (!r.ok) return null;
-      var data = 'data:' + (r.mime || f.mime) + ';base64,' + r.b64;
-      return new Promise(function (done) {
-        var im = new Image();
-        im.onload = function () { done({ id: f.id, sec: f.sec, field: f.field, name: f.name, data: data, w: im.naturalWidth, h: im.naturalHeight }); };
-        im.onerror = function () { done(null); };
-        im.src = data;
-      });
-    });
-  }
-  function wireDeck() {
-    $$('[data-deck]').forEach(function (b) { b.onclick = function () { makeDeck(b); }; });
-  }
-  function makeDeck(b) {
-    {
-      var V = S.V, lbl = $('b', b), label = lbl.textContent, selected = b.getAttribute('data-deck') === 'sel';
-      b.disabled = true; lbl.textContent = 'בונה מצגת…';
-      flush();
-      var imgs = V.files.filter(function (f) { return /^image\/(png|jpe?g|gif)/.test(f.mime || ''); });
-      loadScript('vendor/pptxgen-3.12.0.bundle.js')
-        .then(function () { return Promise.all(imgs.map(imageFor)); })
-        .then(function (images) {
-          var out = VAADA_DECK.toPptx({
-            PptxGenJS: window.PptxGenJS, V: V, initial: initial, images: images.filter(Boolean), selected: selected,
-            sections: secs(), doms: VAADA.DOMS, sectionOf: function (id) { return VAADA.section(V.v.stage, id); }
-          });
-          var name = (selected ? 'ועדה מלווה שקפים נבחרים ' : 'ועדה מלווה מצגת אב ') + V.v.school.replace(/[\\/:*?"<>|]/g, '') + ' ' + V.v.year.replace(/"/g, '') + '.pptx';
-          return out.pres.writeFile({ fileName: name }).then(function () { return out.missing; });
-        })
-        .then(function (missing) {
-          b.disabled = false; lbl.textContent = label;
-          toast(!missing.length ? 'המצגת ירדה' : missing.length === 1 ? 'המצגת ירדה. התחום "' + missing[0] + '" לא מולא ולא נכנס.' : 'המצגת ירדה. ' + missing.length + ' תחומים לא מולאו ולא נכנסו.');
-        })
-        .catch(function (e) {
-          console.error(e);
-          b.disabled = false; lbl.textContent = label;
-          toast('לא הצלחנו לבנות את המצגת. מנסים שוב, ואם זה חוזר לוחצים "נתקלתם בבעיה?".');
-        });
-    }
   }
 
   /* ===== סיכום ופרוטוקול ===== */

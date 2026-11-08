@@ -150,27 +150,60 @@ input:disabled,textarea:disabled,select:disabled{background:var(--paper);color:v
 ul.plain{margin:4px 0 0;padding-inline-start:20px}
 ul.plain li{margin:3px 0}
 
-/* שקף בהצגה הדיגיטלית: אותו עיצוב כמו ה-PowerPoint */
-.slidewrap{container-type:inline-size;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.slidewrap:fullscreen{border:0;border-radius:0;display:flex;align-items:center;justify-content:center;background:#000}
-.slide{aspect-ratio:16/9;width:100%;background:#fff url(deck/bg-content.png) center/100% 100% no-repeat;padding:2.2cqw 3.6cqw 8cqw;overflow-y:auto;font-family:David,'Frank Ruhl Libre',Assistant,serif;font-size:1.85cqw;line-height:1.3;color:#1a1a1a}
-.slide.is-cover{background-image:url(deck/bg-cover.png);padding:0}
-.dk-title{font:700 3.2cqw/1.2 David,Assistant,serif;margin:0 0 1.2cqw}
-.dk-body>*{margin-bottom:1.5cqw}
-.dk-tb{border-collapse:collapse;width:100%;table-layout:fixed}
-.dk-tb th,.dk-tb td{border:1px solid #8c8c8c;padding:.35cqw .6cqw;text-align:right;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
-.dk-tb th{font-weight:700;color:#1a1a1a}
-.dk-tb td.lab{font-weight:700;background:#f2f2f2}
-.dk-chart{margin:0;max-width:78%}
-.dk-chart figcaption{text-align:center;font-weight:700}
-.dk-chart svg{width:100%;height:auto;display:block;font-family:David,Assistant,serif}
-.dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw}
-.dk-legend i{display:inline-block;width:1cqw;height:1cqw;margin-inline-end:.4cqw}
-.dk-img{display:block;max-width:100%;max-height:34cqw;margin:0 auto}
-.dk-cover{position:relative;height:100%}
-.dk-frame{position:absolute;top:21.5%;right:12.8%;left:13%;height:58%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:2.1cqw}
-.dk-frame h2{font:700 3.6cqw David,serif;color:#a2752c;margin:0}
-.dk-frame p{margin:.3cqw 0}.dk-frame .g{font-size:2.7cqw;font-weight:700;color:#a2752c}.dk-frame .s{font-size:1.6cqw;margin-top:1.5cqw}
+/* שקף בהצגה הדיגיטלית: בעיצוב של מעגל, סגול וזהב (מיטל, 7.11.26). המידות ב-cqw, כך שהשקף כולו מתכווץ עם הרוחב */
+.slidewrap{--plum:#4A2F52;--plum-deep:#35203C;--gold:#B8791C;--gold2:#D9A441;--sl-bg:#F6F2E9;--sl-card:#FFFDF8;--sl-line:#DCD3C2;--sl-ink:#243B42;--sl-muted:#616868;container-type:inline-size;background:var(--sl-bg);border:1px solid var(--sl-line);border-radius:10px;overflow:hidden;box-shadow:0 18px 40px -28px rgba(53,32,60,.55)}
+.slide{aspect-ratio:16/9;width:100%;background:var(--sl-bg);display:flex;flex-direction:column;overflow:hidden;font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:1.75cqw;line-height:1.35;color:var(--sl-ink)}
+.dk-bar{display:flex;align-items:center;gap:1.1cqw;height:5.2cqw;padding:0 3.2cqw;background:#fff;border-bottom:.14cqw solid var(--plum);flex:none}
+.dk-bar img{height:3cqw;display:block}
+.dk-bar .sep{width:1px;height:2.6cqw;background:var(--sl-line)}
+.dk-lock{display:flex;align-items:center;gap:.6cqw;color:var(--plum)}
+.dk-lock .dk-ring{width:2.6cqw;height:2.6cqw}
+.dk-lock b{font:800 1.6cqw/1 Rubik,sans-serif}
+.dk-lock small{font-size:1.1cqw;color:var(--sl-muted)}
+.dk-cnt{margin-inline-start:auto;font-weight:600;font-size:1.2cqw;color:var(--sl-muted);background:#F0E9F1;border-radius:3cqw;padding:.3cqw 1.1cqw}
+.dk-main{flex:1;min-height:0;overflow-y:auto;padding:1.8cqw 3.2cqw 2.4cqw}
+.dk-kick{font:700 1.45cqw Rubik,sans-serif;color:var(--gold);margin-bottom:.2cqw}
+.dk-title{font:800 3.1cqw/1.15 Rubik,Assistant,sans-serif;color:var(--plum);margin:0 0 1.2cqw;padding-inline-start:1cqw;border-inline-start:.45cqw solid var(--ac,var(--plum))}
+.dk-body>*{margin-bottom:1.3cqw}
+.dk-tb{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;background:var(--sl-card);border:1px solid var(--sl-line);border-radius:.8cqw;overflow:hidden;box-shadow:0 .5cqw 1.6cqw -1.1cqw rgba(74,47,82,.45)}
+.dk-tb th,.dk-tb td{border-bottom:1px solid #EEE7D8;border-inline-start:1px solid #EEE7D8;padding:.5cqw .8cqw;text-align:right;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+.dk-tb th:first-child,.dk-tb td:first-child{border-inline-start:0}
+.dk-tb tbody tr:last-child td{border-bottom:0}
+.dk-tb th{font:700 1.5cqw/1.3 Rubik,Assistant,sans-serif;color:var(--plum)}
+.dk-tb th.hd{color:#fff;font-size:1.6cqw}
+.dk-tb td.lab{font-weight:700;background:#F9F7F2;color:var(--plum)}
+.dk-chart{margin:0;max-width:72%;background:var(--sl-card);border:1px solid var(--sl-line);border-radius:.8cqw;padding:1cqw 1.4cqw}
+.dk-chart figcaption{font:700 1.5cqw Rubik,sans-serif;color:var(--plum);margin-bottom:.4cqw}
+.dk-chart svg{width:100%;height:auto;display:block;font-family:Assistant,sans-serif;fill:var(--sl-ink)}
+.dk-chart svg .lab{fill:var(--sl-muted);font-weight:600}
+.dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw;font-size:1.4cqw}
+.dk-legend i{display:inline-block;width:1.2cqw;height:1.2cqw;border-radius:.25cqw;margin-inline-end:.4cqw;vertical-align:-.1cqw}
+.dk-img{display:block;max-width:100%;max-height:37cqw;margin:0 auto;border-radius:.6cqw;box-shadow:0 .6cqw 1.8cqw -1.2cqw rgba(53,32,60,.6)}
+/* שער: סגול עמוק, הלוגו על לוח לבן, והטבעת של מעגל */
+.dk-cover{position:relative;flex:1;color:#fff;background:radial-gradient(70cqw 48cqw at 18% 58%,#5C3D66 0%,var(--plum) 45%,var(--plum-deep) 100%);overflow:hidden}
+.dk-cover .dk-ring{position:absolute;left:-5.5cqw;top:50%;width:50cqw;height:50cqw;margin-top:-25cqw;color:#fff;opacity:.95}
+.dk-plate{position:absolute;top:2.2cqw;right:3.2cqw;background:#fff;border-radius:.8cqw;padding:.7cqw 1.1cqw}
+.dk-plate img{height:3.2cqw;display:block}
+.dk-hero{position:absolute;right:5.8cqw;top:12.5cqw;width:48cqw}
+.dk-hero .k{font:700 1.3cqw Rubik,sans-serif;color:var(--gold2);margin:0 0 .6cqw}
+.dk-hero h2{font:800 5.4cqw/1.02 Rubik,sans-serif;color:#fff;margin:0}
+.dk-hero .g{font:700 1.9cqw Rubik,sans-serif;color:#F3D9A4;margin:.8cqw 0 0}
+.dk-hero .sc{font:700 2.2cqw Assistant,sans-serif;margin:2.4cqw 0 0;display:inline-block;padding:.4cqw 1.4cqw;border:.1cqw solid var(--gold2);border-radius:3cqw}
+.dk-hero .dt{font-size:1.6cqw;margin:1cqw 0 0;color:#EFE7F1}
+.dk-hero .s{font-size:1.2cqw;margin:1.4cqw 0 0;color:#EFE7F1}
+.backslide{margin-bottom:12px}
+/* מסך מלא: הדף כולו הופך למצגת. השקף גדול ככל שנכנס, הניווט למעלה, והרישום בצד עד שמסתירים אותו */
+.present.on-live{background:#35203C}
+.present.on-live .top,.present.on-live .foot,.present.on-live .vmenu,.present.on-live .fbar,.present.on-live .head,.present.on-live .crumb{display:none}
+.present.on-live .wrap{max-width:none;padding:10px 16px}
+.present.on-live .shell{display:block}
+.present.on-live .lnav{margin-bottom:10px}
+.present.on-live .lnav .btn,.present.on-live .lnav select{background:#4A2F52;color:#fff;border-color:#6F4F78}
+.present.on-live .live{grid-template-columns:minmax(0,1fr) 360px;gap:14px;align-items:start}
+.present.on-live .live.solo{grid-template-columns:minmax(0,1fr)}
+.present.on-live .lmain{display:flex;justify-content:center}
+.present.on-live .slidewrap{width:min(100%,calc((100vh - 76px) * 16 / 9));border:0}
+.present.on-live .lside{top:10px;max-height:calc(100vh - 76px)}
 .live.solo{grid-template-columns:minmax(0,1fr)}
 
 /* טבלאות למילוי */
@@ -253,25 +286,37 @@ table.grid.short td.rowlbl,table.grid.short thead th:first-child{width:2.6em;min
   .savebar .btn{flex:1}
   .vstat .btn{flex:1 1 100%}
   /* שקף בטלפון: בלי יחס 16:9. טקסט בגודל קריא, והטבלאות ברוחב מלא */
-  .slide{aspect-ratio:auto;background:#fff;padding:14px;font-size:15.5px;font-family:Assistant,sans-serif;overflow:visible}
-  .slide.is-cover{background:#fff;padding:0}
-  .dk-title{font-size:21px;margin-bottom:10px;font-family:Rubik,sans-serif}
+  .slide{aspect-ratio:auto;font-size:15.5px;overflow:visible}
+  .dk-bar{height:46px;padding:0 12px;gap:10px;border-bottom-width:2px}
+  .dk-bar img{height:26px}.dk-bar .sep{height:24px}
+  .dk-lock .dk-ring{width:22px;height:22px}.dk-lock b{font-size:15px}.dk-lock small{display:none}
+  .dk-cnt{font-size:12px;padding:3px 9px;border-radius:20px}
+  .dk-main{padding:14px 12px 16px;overflow:visible}
+  .dk-kick{font-size:14px}
+  .dk-title{font-size:21px;margin-bottom:10px;padding-inline-start:10px;border-inline-start-width:4px}
   .dk-body>*{margin-bottom:12px}
+  .dk-tb{border:0;background:none;box-shadow:none;border-radius:0}
+  .dk-tb th{font-size:14px}.dk-tb th.hd{font-size:15px}
   .dk-tb,.dk-tb tbody,.dk-tb tr,.dk-tb td{display:block;width:100%}
   .dk-tb colgroup{display:none}
   .dk-tb thead,.dk-tb thead tr{display:block}
   .dk-tb thead tr:not(:first-child),.dk-tb thead th:not([colspan]){display:none}
   .dk-tb thead th[colspan]{display:block;border-radius:9px 9px 0 0;padding:7px 10px}
-  .dk-tb tr{border:1px solid #d5dedf;border-radius:9px;margin-bottom:8px;overflow:hidden}
-  .dk-tb td{border:0;border-top:1px solid #edf1f1;padding:6px 10px}
+  .dk-tb tr{border:1px solid #DCD3C2;border-radius:9px;margin-bottom:8px;overflow:hidden;background:#FFFDF8}
+  .dk-tb td{border:0;border-top:1px solid #EEE7D8;padding:6px 10px}
   .dk-tb td:first-child{border-top:0}
   .dk-tb td[data-l]:not(.lab):not([data-l=""])::before{content:attr(data-l);display:block;font-size:.82rem;font-weight:700;color:var(--muted)}
-  .dk-chart{max-width:100%}
+  .dk-chart{max-width:100%;padding:10px;border-radius:9px}
+  .dk-chart figcaption{font-size:15px}
   .dk-legend{gap:4px 12px;font-size:.85rem}.dk-legend i{width:10px;height:10px;margin-inline-end:4px}
   .dk-img{max-height:none}
-  .dk-cover{height:auto}
-  .dk-frame{position:static;font-size:17px;padding:30px 12px;border:6px solid #f0ab34;margin:10px}
-  .dk-frame h2{font-size:26px}.dk-frame .g{font-size:19px}.dk-frame .s{font-size:14px;margin-top:10px}
+  .dk-cover{min-height:420px;background:radial-gradient(520px 420px at 15% 70%,#5C3D66 0%,#4A2F52 45%,#35203C 100%)}
+  .dk-cover .dk-ring{width:300px;height:300px;left:-110px;top:auto;bottom:-90px;margin:0;opacity:.35}
+  .dk-plate{top:14px;right:14px;padding:6px 10px;border-radius:8px}.dk-plate img{height:30px}
+  .dk-hero{position:relative;right:auto;top:auto;width:auto;padding:84px 20px 30px}
+  .dk-hero .k{font-size:14px}.dk-hero h2{font-size:34px}.dk-hero .g{font-size:17px}
+  .dk-hero .sc{font-size:18px;margin-top:18px;padding:4px 14px;border-width:1.5px;border-radius:30px}
+  .dk-hero .dt{font-size:16px}.dk-hero .s{font-size:14px}
   #fsBtn{display:none}
   /* טבלה הופכת לשורות: כל תא עם הכותרת שלו */
   .tblw{overflow:visible}
