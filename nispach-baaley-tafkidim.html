@@ -956,12 +956,15 @@ function payload(d){
   return out;
 }
 
+// TEMP until nispach @14 deployed: השרת החי מכיר רק "מרחביה/מעיינות" (אחרת נוצרת שורה כפולה).
+// מתרגמים רק במה שנשלח לשרת, התצוגה נשארת "מעיינות"
+function toServer(d){ var o = Object.assign({}, d); if (o.school === "מעיינות") o.school = "מרחביה/מעיינות"; return o; }
 function send(d){
   if (!API_URL) return Promise.resolve({ok:false, error:"no_api"});
   return fetch(API_URL, {
     method: "POST",
     headers: {"Content-Type":"text/plain;charset=utf-8"},
-    body: JSON.stringify(d)
+    body: JSON.stringify(toServer(d))
   }).then(function(r){ return r.json(); })
     .catch(function(){ return {ok:false, error:"network"}; });
 }

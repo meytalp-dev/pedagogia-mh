@@ -1037,7 +1037,9 @@ $("rg-form").addEventListener("submit", function(ev){
   var btn = $("rg-send"), st = $("rg-status");
   btn.disabled = true; btn.textContent = "שולח…";
   st.className = "rg-status"; st.textContent = "";
-  fetchJson(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(d)}, 3)
+  // TEMP until rishum-hishtalmuyot @18 deployed: השרת החי מכיר רק "מרחביה/מעיינות". מתרגמים רק במה שנשלח לשרת, התצוגה נשארת "מעיינות"
+  var dSend = Object.assign({}, d); if (dSend.school === "מעיינות") dSend.school = "מרחביה/מעיינות";
+  fetchJson(API, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(dSend)}, 3)
     .then(function(r){
       btn.disabled = false; btn.textContent = "שליחת הרישום";
       if (!r || !r.ok){
