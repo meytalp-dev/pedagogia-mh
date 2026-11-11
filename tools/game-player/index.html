@@ -6,7 +6,8 @@
 <title>משחק לימודי – הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית</title>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
+/* 11.11.26: --wrong / --wrong-l — תשובה שגויה בכתום-אדום, לא בטורקיז של המותג */
+:root{--bg:#F8FBFF;--card:#fff;--primary:#124D7A;--primary-l:#E8F2FF;--primary-d:#0D3B66;--secondary:#087B9C;--sec-l:#E4FAF7;--green:#52B788;--green-l:#D8F3DC;--accent:#E9A319;--accent-l:#FEF3C7;--wrong:#C2410C;--wrong-l:#FDECEC;--dark:#102A43;--gray:#52687A;--gray-l:#94A3B8;--border:rgba(0,0,0,.06);--shadow:0 2px 20px -4px rgba(0,0,0,.06);--shadow-md:0 8px 28px rgba(0,0,0,.07);--r:20px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 .plain-btn{background:transparent;border:0;padding:0;margin:0;font:inherit;color:inherit;text-align:inherit;cursor:pointer}
 .sr-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -17,6 +18,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .progress-fill{height:100%;background:linear-gradient(to left,var(--primary-l),var(--primary),var(--primary-d));border-radius:20px;transition:width .5s;width:0%}
 .g-card{background:var(--card);border-radius:var(--r);padding:36px;box-shadow:var(--shadow-md);animation:fadeUp .45s ease}
 .screen{display:none}.screen.active{display:block}
+.ic{display:inline-block;vertical-align:-.18em;flex-shrink:0}
 
 /* Loading */
 .loading-screen{text-align:center;padding:80px 20px}
@@ -24,12 +26,12 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--gray);font-size:16px}
 .error-box{text-align:center;padding:60px 20px}
-.error-icon{font-size:48px;margin-bottom:16px}
+.error-icon{color:var(--gray);margin-bottom:16px;display:flex;justify-content:center}
 .error-title{font-size:22px;font-weight:700;margin-bottom:8px;color:var(--secondary)}
 .error-sub{color:var(--gray);font-size:15px;line-height:1.6}
 
 /* Intro */
-.intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 20px}
+.intro-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-l);color:var(--primary-d);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
 .intro-title{font-family:'Assistant',sans-serif;font-size:28px;font-weight:900;text-align:center;margin-bottom:6px}
 .intro-sub{color:var(--gray);font-size:16px;text-align:center;margin-bottom:28px}
 .input-group{margin-bottom:16px}
@@ -40,6 +42,21 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .btn-primary{background:var(--primary);color:white}.btn-primary:hover{background:var(--primary-d);transform:translateY(-2px)}.btn-primary:disabled{opacity:.4;pointer-events:none}
 .btn-next{background:var(--primary);color:white;margin-top:16px;display:none}.btn-next:hover{background:var(--primary-d);transform:translateY(-2px)}
 .game-type-badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary-l);color:var(--primary-d);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin:0 auto 16px;justify-content:center}
+/* איך משחקים — בפתיחה, מעל "התחילו!" */
+.howto{background:var(--primary-l);border-radius:14px;padding:14px 18px;margin:4px 0 18px;text-align:right}
+.howto-title{font-size:14px;font-weight:800;color:var(--primary-d);margin-bottom:8px}
+.howto ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.howto li{font-size:15px;line-height:1.5;color:var(--dark);padding-right:16px;position:relative}
+.howto li::before{content:'';position:absolute;right:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+/* שורת הוראה קבועה בראש מסך המשחק */
+.game-howto{font-size:14px;font-weight:700;color:var(--primary-d);background:var(--primary-l);border-radius:12px;padding:10px 14px;margin-bottom:12px;text-align:center;line-height:1.45}
+.game-howto:empty{display:none}
+/* הודעה קצרה בתוך המשחק (נכון / לא נכון / מידע) */
+.g-msg{min-height:24px;text-align:center;font-size:14px;font-weight:700;margin:8px 0;border-radius:10px;padding:2px 8px;line-height:1.5}
+.g-msg.wrong{color:var(--wrong);background:var(--wrong-l)}
+.g-msg.correct{color:#2D7A54;background:var(--green-l)}
+.g-msg.info{color:var(--gray)}
+.fb-head{display:inline-flex;align-items:center;gap:6px}
 
 /* Trivia */
 .q-counter{font-size:13px;color:var(--primary);font-weight:700;letter-spacing:1px;margin-bottom:6px}
@@ -48,62 +65,78 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .q-opt{background:var(--bg);border:2px solid rgba(0,0,0,.05);border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer;transition:all .3s;text-align:right;display:flex;align-items:center;gap:12px}
 .q-opt:hover{background:var(--primary-l);border-color:var(--primary)}
 .q-opt .opt-letter{width:32px;height:32px;border-radius:10px;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.q-opt .opt-mark{margin-right:auto;display:none}
+.q-opt.correct .opt-mark,.q-opt.wrong .opt-mark{display:inline-block}
 .q-opt.correct{background:var(--green-l);border-color:var(--green);color:#2D7A54}.q-opt.correct .opt-letter{background:var(--green);color:white}
-.q-opt.wrong{background:var(--sec-l);border-color:var(--secondary);color:#B44050}.q-opt.wrong .opt-letter{background:var(--secondary);color:white}
+.q-opt.wrong{background:var(--wrong-l);border-color:var(--wrong);color:var(--wrong)}.q-opt.wrong .opt-letter{background:var(--wrong);color:white}
 .q-opt.disabled{pointer-events:none;opacity:.7}.q-opt.disabled.dim{opacity:.45}
+.q-opt.correct.disabled,.q-opt.wrong.disabled{opacity:1}
 .q-feedback{margin-top:16px;padding:16px 20px;border-radius:14px;font-size:15px;line-height:1.6;display:none}
-.q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);color:#2D7A54}.q-feedback.wrong{background:var(--sec-l);color:#B44050}
+.q-feedback.show{display:block}.q-feedback.correct{background:var(--green-l);color:#2D7A54}.q-feedback.wrong{background:var(--wrong-l);color:var(--wrong)}
 
 /* Matching */
 .match-progress{text-align:center;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:16px}
-.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .match-col-title{font-size:13px;font-weight:700;color:var(--gray);text-align:center;margin-bottom:8px}
-.match-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;margin-bottom:8px}
+.match-item{display:block;width:100%;min-height:44px;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:12px 14px;text-align:center;font-size:15px;font-weight:600;line-height:1.4;cursor:pointer;transition:all .3s;margin-bottom:8px;overflow-wrap:anywhere}
 .match-item:hover{border-color:var(--primary)}
-.match-item.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:scale(1.03)}
+.match-item.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);box-shadow:0 0 0 3px rgba(18,77,122,.15)}
 .match-item.matched{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none;opacity:.7}
-.match-item.wrong-flash{background:var(--sec-l);border-color:var(--secondary);animation:shake .4s ease}
+.match-item.wrong-flash{background:var(--wrong-l);border-color:var(--wrong);color:var(--wrong);animation:shake .4s ease}
 
 /* Ordering */
-.order-instruction{background:var(--primary-l);padding:14px 20px;border-radius:14px;text-align:center;font-size:15px;font-weight:600;color:var(--primary-d);margin-bottom:20px}
+.order-instruction{background:var(--primary-l);padding:14px 20px;border-radius:14px;text-align:center;font-size:15px;font-weight:600;color:var(--primary-d);margin-bottom:12px}
+.order-ends{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--gray);margin:0 4px 6px}
 .order-list{display:flex;flex-direction:column;gap:8px}
-.order-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .3s}
+.order-item{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all .3s}
 .order-item .oi-num{width:30px;height:30px;border-radius:10px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.order-item .oi-text{flex:1;font-size:15px;font-weight:600}
-.order-item .oi-arrows{display:flex;flex-direction:column;gap:2px}
-.order-item .oi-arrows button{width:28px;height:22px;border:none;border-radius:6px;background:white;cursor:pointer;font-size:12px;transition:background .2s;border:1px solid var(--border)}
+.order-item .oi-text{flex:1;font-size:15px;font-weight:600;line-height:1.45;min-width:0;overflow-wrap:anywhere}
+.order-item .oi-pos{display:block;font-size:13px;font-weight:700;margin-top:2px}
+.order-item .oi-arrows{display:flex;gap:6px;flex-shrink:0}
+.order-item .oi-arrows button{width:44px;height:44px;border-radius:10px;background:white;cursor:pointer;transition:background .2s;border:1px solid #CBD5E1;color:var(--primary-d);display:flex;align-items:center;justify-content:center}
 .order-item .oi-arrows button:hover{background:var(--primary-l)}
+.order-item .oi-arrows button:disabled{opacity:.3;cursor:default}
 .order-item.correct-pos{border-color:var(--green);background:var(--green-l)}
-.order-item.wrong-pos{border-color:var(--secondary);background:var(--sec-l)}
+.order-item.correct-pos .oi-pos{color:#2D7A54}
+.order-item.wrong-pos{border-color:var(--wrong);background:var(--wrong-l)}
+.order-item.wrong-pos .oi-pos{color:var(--wrong)}
 .check-btn{margin-top:16px}
 
 /* Escape Room */
 .escape-room-card{text-align:center}
-.escape-room-num{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--primary);color:white;font-size:20px;font-weight:800;font-family:'Assistant',sans-serif;margin-bottom:12px}
-.escape-room-title{font-family:'Assistant',sans-serif;font-size:22px;font-weight:800;margin-bottom:16px;color:var(--primary-d)}
+.escape-room-title{font-family:'Assistant',sans-serif;font-size:22px;font-weight:800;margin-bottom:16px;color:var(--primary-d);display:flex;align-items:center;justify-content:center;gap:8px}
 .escape-story{background:var(--bg);border-radius:14px;padding:18px 20px;font-size:15px;line-height:1.8;margin-bottom:16px;text-align:right}
 .escape-riddle{background:var(--accent-l);border-radius:14px;padding:18px 20px;font-size:16px;font-weight:700;line-height:1.6;margin-bottom:20px;text-align:center;border:2px solid var(--accent)}
 .escape-input-row{display:flex;gap:10px;margin-bottom:12px}
-.escape-input-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;text-align:center}
+.escape-input-row input{flex:1;min-width:0;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;text-align:center}
 .escape-input-row input:focus{outline:none;border-color:var(--primary)}
-.escape-input-row input.shake-input{animation:shake .4s ease;border-color:var(--secondary)}
-.escape-hint-btn{background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);width:auto;padding:10px 20px;font-size:14px;margin-bottom:12px}
+.escape-input-row input.shake-input{animation:shake .4s ease;border-color:var(--wrong)}
+.escape-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.escape-hint-btn{background:var(--accent-l);color:#7A4E07;border:2px solid var(--accent);width:auto;min-height:44px;padding:10px 20px;font-size:14px;margin-bottom:12px}
 .escape-hint-btn:hover{background:var(--accent);color:white}
+.escape-hint-btn:disabled{opacity:.45;pointer-events:none}
+.escape-reveal-btn{background:white;color:var(--primary-d);border:2px solid var(--primary);width:auto;min-height:44px;padding:10px 20px;font-size:14px;margin-bottom:12px}
+.escape-reveal-btn:hover{background:var(--primary-l)}
 .escape-hint-text{background:var(--accent-l);border-radius:12px;padding:14px 18px;font-size:14px;color:#92600e;margin-bottom:12px;display:none}
 .escape-feedback{padding:16px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
 .escape-feedback.correct{display:block;background:var(--green-l);color:#2D7A54}
+.escape-feedback.shown{display:block;background:var(--bg);color:var(--dark);border:2px solid #CBD5E1}
 .escape-celebration{text-align:center;padding:30px 20px}
-.escape-celebration .big-icon{font-size:72px;margin-bottom:16px}
+.escape-celebration .big-icon{color:var(--green);margin-bottom:16px;display:flex;justify-content:center}
 .escape-celebration .big-text{font-family:'Assistant',sans-serif;font-size:26px;font-weight:900;color:var(--primary-d);margin-bottom:8px}
 
 /* Memory */
-.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-.memory-card{aspect-ratio:1;border-radius:14px;cursor:pointer;position:relative;perspective:600px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+.memory-card{display:block;width:100%;aspect-ratio:3/4;border-radius:14px;cursor:pointer;position:relative;perspective:600px}
 .memory-card-inner{display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;position:relative}
 .memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
-.memory-card-face{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;font-size:14px;font-weight:700;padding:8px;text-align:center;word-break:break-word;line-height:1.3}
+.memory-card-face{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;backface-visibility:hidden;font-size:14px;font-weight:700;padding:8px 6px;text-align:center;overflow-wrap:anywhere;line-height:1.3;overflow:hidden}
 .memory-card-back{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:white;font-size:28px}
 .memory-card-front{background:var(--bg);border:2px solid var(--border);color:var(--dark);transform:rotateY(180deg)}
+.memory-card-front .mc-lbl{font-size:10px;font-weight:700;color:var(--gray);letter-spacing:.5px}
+.memory-card-front .mc-txt{display:block}
+.memory-card-front.long{font-size:12px}
+.memory-card.miss .memory-card-front{border-color:var(--wrong);background:var(--wrong-l)}
 .memory-card.matched .memory-card-front{background:var(--green-l);border-color:var(--green);color:#2D7A54}
 .memory-card.matched{pointer-events:none}
 .memory-counter{text-align:center;font-size:14px;font-weight:700;color:var(--primary);margin-bottom:8px}
@@ -112,11 +145,11 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .wheel-container{text-align:center;position:relative;margin-bottom:20px}
 .wheel-canvas-wrap{position:relative;display:inline-block;margin:0 auto}
 .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:24px solid var(--dark);z-index:5;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))}
-.wheel-canvas{border-radius:50%;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.wheel-canvas{border-radius:50%;box-shadow:0 4px 24px rgba(0,0,0,.15);max-width:100%;height:auto}
 .wheel-spin-btn{background:var(--primary);color:white;width:auto;padding:14px 40px;font-size:18px;margin-top:16px;border-radius:50px}
 .wheel-spin-btn:hover{background:var(--primary-d);transform:translateY(-2px)}
 .wheel-spin-btn:disabled{opacity:.4;pointer-events:none}
-.wheel-popup{margin-top:20px;display:none}
+.wheel-popup{margin-top:20px;display:none;scroll-margin-top:12px}
 .wheel-popup.show{display:block}
 .wheel-q-text{font-size:18px;font-weight:700;font-family:'Assistant',sans-serif;margin-bottom:16px;line-height:1.5}
 .wheel-counter{font-size:13px;color:var(--gray);font-weight:600;margin-bottom:10px}
@@ -124,99 +157,115 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 /* True/False */
 .tf-statement{font-size:20px;font-weight:700;font-family:'Assistant',sans-serif;text-align:center;line-height:1.6;padding:30px 20px;margin-bottom:24px;background:var(--bg);border-radius:14px}
 .tf-buttons{display:flex;gap:12px;margin-bottom:16px}
-.tf-btn{flex:1;padding:20px;border:3px solid transparent;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;transition:all .3s;font-family:'Assistant',sans-serif}
+.tf-btn{flex:1;padding:20px;border:3px solid transparent;border-radius:16px;font-size:20px;font-weight:800;cursor:pointer;transition:all .3s;font-family:'Assistant',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px}
 .tf-btn-true{background:var(--green-l);color:#2D7A54;border-color:var(--green)}.tf-btn-true:hover{background:var(--green);color:white;transform:translateY(-3px)}
-.tf-btn-false{background:var(--sec-l);color:#B44050;border-color:var(--secondary)}.tf-btn-false:hover{background:var(--secondary);color:white;transform:translateY(-3px)}
-.tf-btn.selected-correct{background:var(--green);color:white;transform:scale(1.05)}
-.tf-btn.selected-wrong{background:var(--secondary);color:white;transform:scale(1.05)}
+.tf-btn-false{background:var(--sec-l);color:#0B5E75;border-color:var(--secondary)}.tf-btn-false:hover{background:var(--secondary);color:white;transform:translateY(-3px)}
+.tf-btn.selected-correct{background:var(--green);color:white;border-color:var(--green);transform:scale(1.05)}
+.tf-btn.selected-wrong{background:var(--wrong);color:white;border-color:var(--wrong);transform:scale(1.05)}
 .tf-btn.disabled{pointer-events:none;opacity:.5}
+.tf-btn.disabled.selected-correct,.tf-btn.disabled.selected-wrong{opacity:1}
 
 /* Fill Blank */
 .fb-sentence{font-size:19px;font-weight:600;line-height:1.8;text-align:center;margin-bottom:20px;padding:20px;background:var(--bg);border-radius:14px}
-.fb-blank{display:inline-block;min-width:80px;border-bottom:3px solid var(--primary);padding:2px 8px;color:var(--primary);font-weight:800}
+.fb-blank{display:inline-block;border-bottom:3px solid var(--primary);padding:0 4px;color:var(--primary);font-weight:800;white-space:nowrap}
+.fb-blank .fb-pre{color:var(--dark)}
+.fb-slot{display:inline-block;min-width:60px;text-align:center}
+.fb-pre+.fb-slot{text-align:right}
 .fb-input-row{display:flex;gap:10px;margin-bottom:12px}
-.fb-input-row input{flex:1;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;text-align:center}
+.fb-input-row input{flex:1;min-width:0;padding:14px 18px;border:2px solid var(--border);border-radius:14px;font-family:'Assistant',sans-serif;font-size:16px;text-align:center}
 .fb-input-row input:focus{outline:none;border-color:var(--primary)}
-.fb-hint-btn{background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);width:auto;padding:10px 20px;font-size:14px;margin-bottom:12px}
+.fb-input-row input.shake-input{animation:shake .4s ease;border-color:var(--wrong)}
+.fb-hint-btn{background:var(--accent-l);color:#7A4E07;border:2px solid var(--accent);width:auto;min-height:44px;padding:10px 20px;font-size:14px;margin-bottom:12px}
 .fb-hint-btn:hover{background:var(--accent);color:white}
+.fb-hint-btn:disabled{opacity:.45;pointer-events:none}
 .fb-hint-text{background:var(--accent-l);border-radius:12px;padding:12px 16px;font-size:14px;color:#92600e;margin-bottom:12px;display:none}
 .fb-feedback{padding:14px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
 .fb-feedback.show{display:block}
 .fb-feedback.correct{background:var(--green-l);color:#2D7A54}
-.fb-feedback.wrong{background:var(--sec-l);color:#B44050}
+.fb-feedback.wrong{background:var(--wrong-l);color:var(--wrong)}
 
 /* Sentence */
-.sentence-target{min-height:60px;background:var(--bg);border:2px dashed var(--border);border-radius:14px;padding:14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center;justify-content:center}
-.sentence-target.empty::after{content:'לחצו על מילים כדי לבנות את המשפט';color:var(--gray-l);font-size:14px}
+.sentence-target{min-height:60px;background:var(--bg);border:2px dashed #CBD5E1;border-radius:14px;padding:14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center;justify-content:center}
+.sentence-target.empty::after{content:'המשפט ייבנה כאן';color:var(--gray-l);font-size:14px}
 .sentence-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
-.word-chip{padding:10px 18px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s;user-select:none}
+.word-chip{min-height:44px;min-width:44px;padding:10px 16px;border-radius:12px;font-size:15px;font-weight:600;line-height:1.3;cursor:pointer;transition:all .3s;user-select:none;text-align:center}
 .word-chip-pool{background:var(--primary-l);color:var(--primary-d);border:2px solid var(--primary)}
 .word-chip-pool:hover{background:var(--primary);color:white;transform:translateY(-2px)}
 .word-chip-pool.used{opacity:.3;pointer-events:none}
-.word-chip-target{background:white;color:var(--dark);border:2px solid var(--border)}
-.word-chip-target:hover{border-color:var(--secondary);color:var(--secondary)}
+.word-chip-target{background:white;color:var(--dark);border:2px solid #CBD5E1}
+.word-chip-target:hover{border-color:var(--primary);color:var(--primary)}
 .sentence-feedback{padding:14px;border-radius:14px;text-align:center;font-size:15px;font-weight:700;margin-top:12px;display:none}
 .sentence-feedback.show{display:block}
 .sentence-feedback.correct{background:var(--green-l);color:#2D7A54}
-.sentence-feedback.wrong{background:var(--sec-l);color:#B44050}
+.sentence-feedback.wrong{background:var(--wrong-l);color:var(--wrong)}
 
-/* Groups (Connections) */
-.groups-lives{text-align:center;font-size:14px;font-weight:700;color:var(--gray);margin-bottom:12px}
-.groups-lives .heart{color:var(--secondary);font-size:18px;margin:0 2px}
-.groups-solved{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.groups-solved-group{border-radius:14px;padding:14px 18px;text-align:center;font-weight:700;font-size:15px;animation:fadeUp .4s ease}
-.groups-solved-group .group-name{font-size:13px;font-weight:800;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
-.groups-solved-group .group-items{font-size:15px;font-weight:600}
-.groups-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.groups-cell{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s;word-break:break-word;min-height:56px;display:flex;align-items:center;justify-content:center}
-.groups-cell:hover{border-color:var(--primary)}
-.groups-cell.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:scale(1.03)}
-.groups-cell.wrong-flash{animation:shake .4s ease;background:var(--sec-l);border-color:var(--secondary)}
-.groups-check-btn{margin-top:0}
+/* Groups — מיון לקבוצות גלויות (11.11.26): לוחצים על כרטיס ואז על הקבוצה */
+.groups-help{text-align:center;font-size:15px;font-weight:700;color:var(--dark);margin-bottom:14px;line-height:1.5}
+.groups-boxes{display:grid;grid-template-columns:repeat(var(--gcols,4),minmax(0,1fr));gap:10px;margin-bottom:12px}
+.groups-box{display:flex;flex-direction:column;align-items:stretch;gap:6px;min-height:96px;padding:10px;border:2px dashed #B6C4D2;border-radius:14px;text-align:center;transition:border-color .2s,box-shadow .2s}
+.groups-boxes.armed .groups-box:not(.full){border-style:solid;border-color:var(--primary);box-shadow:0 0 0 3px rgba(18,77,122,.12)}
+.groups-box.drag-over{box-shadow:0 0 0 4px rgba(18,77,122,.3)}
+.groups-box.full{border-style:solid;border-color:transparent}
+.groups-box-name{font-size:15px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
+.groups-box-count{font-size:12px;font-weight:700;opacity:.75}
+.groups-box-items{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.groups-chip{background:rgba(255,255,255,.85);border-radius:8px;padding:3px 8px;font-size:13px;font-weight:600;line-height:1.35;overflow-wrap:anywhere;animation:popIn .3s ease}
+.groups-msg{min-height:24px;text-align:center;font-size:14px;font-weight:700;margin-bottom:10px;border-radius:10px;padding:2px 8px}
+.groups-msg.wrong{color:var(--wrong);background:var(--wrong-l)}
+.groups-msg.correct{color:#2D7A54;background:var(--green-l)}
+.groups-msg.info{color:var(--gray)}
+.groups-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.groups-card{min-height:48px;padding:10px 12px;background:#fff;border:2px solid #CBD5E1;border-radius:12px;text-align:center;font-size:15px;font-weight:600;line-height:1.4;color:var(--dark);white-space:normal;overflow-wrap:anywhere;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.groups-card:hover{border-color:var(--primary)}
+.groups-card.selected{background:var(--primary-l);border-color:var(--primary);color:var(--primary-d);transform:translateY(-2px);box-shadow:var(--shadow)}
+.groups-card.wrong-flash{animation:shake .4s ease;border-color:var(--wrong)}
 .groups-colors-0{background:#E8F2FF;color:#0D3B66}
-.groups-colors-1{background:#E4FAF7;color:#B44050}
-.groups-colors-2{background:#FEF3C7;color:#92600e}
-.groups-colors-3{background:#dbeafe;color:#1e40af}
+.groups-colors-1{background:#E4FAF7;color:#0B5E55}
+.groups-colors-2{background:#FEF3C7;color:#7A4E07}
+.groups-colors-3{background:#EDE9FE;color:#4C2E8F}
 
 /* Hangman */
-.hangman-word{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;padding:20px}
+.hangman-word{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;padding:16px 8px}
 .hangman-letter-slot{width:36px;height:44px;border-bottom:3px solid var(--dark);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:'Assistant',sans-serif}
 .hangman-letter-slot.revealed{color:var(--green);border-color:var(--green)}
-.hangman-hint{background:var(--accent-l);border-radius:14px;padding:14px 18px;text-align:center;font-size:15px;font-weight:600;color:#92600e;margin-bottom:20px}
-.hangman-status{text-align:center;margin-bottom:16px;font-size:16px;font-weight:700;color:var(--gray)}
-.hangman-emoji{font-size:48px;text-align:center;margin-bottom:12px}
+.hangman-letter-slot.missed{color:var(--wrong);border-color:var(--wrong)}
+.hangman-letter-slot.fixed{border-color:transparent;color:var(--dark)}
+.hangman-hint{background:var(--accent-l);border-radius:14px;padding:14px 18px;text-align:center;font-size:15px;font-weight:600;color:#92600e;margin-bottom:16px}
+.hangman-status{text-align:center;margin-bottom:8px;font-size:16px;font-weight:700;color:var(--dark)}
+.hangman-status.low{color:var(--wrong)}
 .hangman-lives{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
-.hangman-lives .life-dot{width:16px;height:16px;border-radius:50%;background:var(--green);transition:all .3s}
-.hangman-lives .life-dot.lost{background:var(--secondary)}
+.hangman-lives .life-dot{width:14px;height:14px;border-radius:50%;background:var(--green);transition:all .3s}
+.hangman-lives .life-dot.lost{background:var(--wrong);opacity:.35}
 .hangman-keyboard{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
-.hangman-key{width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:var(--bg);font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:'Assistant',sans-serif}
+.hangman-key{width:44px;height:44px;border:2px solid #CBD5E1;border-radius:10px;background:var(--bg);font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:'Assistant',sans-serif}
 .hangman-key:hover{background:var(--primary-l);border-color:var(--primary)}
 .hangman-key.correct-key{background:var(--green-l);border-color:var(--green);color:#2D7A54;pointer-events:none}
-.hangman-key.wrong-key{background:var(--sec-l);border-color:var(--secondary);color:#B44050;pointer-events:none;opacity:.5}
+.hangman-key.wrong-key{background:var(--wrong-l);border-color:var(--wrong);color:var(--wrong);pointer-events:none;opacity:.55}
 .hangman-result{padding:16px;border-radius:14px;text-align:center;font-size:16px;font-weight:700;margin-top:12px;display:none}
 .hangman-result.show{display:block}
 .hangman-result.win{background:var(--green-l);color:#2D7A54}
-.hangman-result.lose{background:var(--sec-l);color:#B44050}
+.hangman-result.lose{background:var(--wrong-l);color:var(--wrong)}
 
 /* Millionaire */
 .mill-layout{display:flex;gap:20px;align-items:flex-start}
 .mill-main{flex:1;min-width:0}
-.mill-ladder{width:140px;flex-shrink:0;display:flex;flex-direction:column-reverse;gap:4px}
-.mill-ladder-item{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700;text-align:center;background:var(--bg);color:var(--gray);transition:all .3s;font-family:'Assistant',sans-serif}
+.mill-side{width:140px;flex-shrink:0}
+.mill-ladder{display:flex;flex-direction:column-reverse;gap:4px}
+.mill-ladder-item{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:700;text-align:center;background:var(--bg);color:var(--gray);transition:all .3s;font-family:'Assistant',sans-serif;border:2px solid transparent}
 .mill-ladder-item.current{background:var(--accent);color:white;transform:scale(1.08);box-shadow:0 2px 10px rgba(233,163,25,.3)}
 .mill-ladder-item.passed{background:var(--green-l);color:#2D7A54}
-.mill-ladder-item.checkpoint{border:2px solid var(--accent);font-weight:800}
-.mill-ladder-item.checkpoint.passed{border-color:var(--green)}
+.mill-ladder-item.checkpoint{border-color:var(--accent);font-weight:800}
+.mill-ladder-item.checkpoint.passed{border-color:var(--accent)}
+.mill-legend{font-size:12px;color:var(--gray);text-align:center;margin-top:8px;line-height:1.4}
+.mill-legend .sw{display:inline-block;width:14px;height:10px;border:2px solid var(--accent);border-radius:3px;vertical-align:-1px;margin-left:4px}
 .mill-lifeline{display:flex;gap:10px;margin-bottom:16px;justify-content:center}
-.mill-lifeline-btn{padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;background:var(--accent-l);color:var(--accent);border:2px solid var(--accent);font-family:'Assistant',sans-serif}
+.mill-lifeline-btn{min-height:44px;min-width:88px;padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;background:var(--accent-l);color:#7A4E07;border:2px solid var(--accent);font-family:'Assistant',sans-serif}
 .mill-lifeline-btn:hover{background:var(--accent);color:white}
 .mill-lifeline-btn.used{opacity:.3;pointer-events:none;text-decoration:line-through}
 .mill-q-text{font-size:18px;font-weight:700;font-family:'Assistant',sans-serif;line-height:1.5;margin-bottom:18px}
-.mill-result{text-align:center;padding:20px}
-.mill-result .money{font-size:3rem;font-weight:900;font-family:'Assistant',sans-serif;color:var(--accent);margin-bottom:8px}
 
 /* Score */
-.score-icon{font-size:60px;text-align:center;margin-bottom:12px}
+.score-icon{text-align:center;margin-bottom:12px;display:flex;justify-content:center}
 .score-num{font-size:5rem;font-weight:900;font-family:'Assistant',sans-serif;text-align:center;line-height:1}
 .score-label{font-size:16px;color:var(--gray);text-align:center;margin-top:4px}
 .score-msg{font-size:20px;font-weight:700;text-align:center;margin-top:20px;padding:16px;border-radius:14px}
@@ -226,6 +275,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 .score-detail .lbl{font-size:12px;color:var(--gray);margin-top:4px}
 .send-status{margin-top:16px;padding:14px;border-radius:12px;text-align:center;font-size:15px;display:none}
 .send-status.success{display:block;background:var(--green-l);color:#2D7A54}
+.send-status.error{display:block;background:var(--wrong-l);color:var(--wrong)}
 .retry-btn{margin-top:16px;background:var(--bg);color:var(--primary-d);border:2px solid var(--primary);font-weight:600}
 .retry-btn:hover{background:var(--primary-l)}
 
@@ -235,21 +285,33 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
 @keyframes celebrate{0%{transform:scale(1)}25%{transform:scale(1.1) rotate(-3deg)}50%{transform:scale(1.15) rotate(3deg)}75%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
 
 @media(max-width:500px){
-  .g-card{padding:24px}
+  body{padding:16px 12px}
+  .g-card{padding:22px 20px}
   .q-text{font-size:18px}
   .score-num{font-size:3.5rem}
   .score-details{flex-direction:column}
-  .match-grid{grid-template-columns:1fr;gap:24px}
   .intro-title{font-size:22px}
-  .memory-grid{grid-template-columns:repeat(3,1fr)}
-  .groups-grid{grid-template-columns:repeat(4,1fr)}
-  .groups-cell{font-size:12px;padding:10px 4px;min-height:48px}
-  .hangman-key{width:34px;height:34px;font-size:16px}
+  /* התאמה בטלפון: עמודת המושגים נשארת דבוקה למעלה בזמן הגלילה להגדרות */
+  .match-grid{grid-template-columns:1fr;gap:12px}
+  .match-col-r{position:sticky;top:0;z-index:3;background:var(--card);padding:8px 0 4px;max-height:45vh;overflow-y:auto;box-shadow:0 8px 10px -10px rgba(0,0,0,.35)}
+  .match-col-r .match-list{display:flex;flex-wrap:wrap;gap:6px}
+  .match-col-r .match-item{width:auto;flex:1 1 auto;margin:0;padding:10px 12px;font-size:14px}
+  .match-col-r .match-item.matched{display:none}
+  .memory-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .memory-card-face{font-size:13px;padding:6px 4px;gap:2px}
+  .memory-card-front.long{font-size:11px;line-height:1.25}
+  .memory-card-front .mc-lbl{font-size:9px}
+  .memory-card-back{font-size:22px}
+  .groups-boxes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .groups-box{min-height:84px;padding:8px}
+  .groups-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mill-layout{flex-direction:column}
-  .mill-ladder{width:100%;flex-direction:row;flex-wrap:wrap;justify-content:center}
+  .mill-side{width:100%}
+  .mill-ladder{flex-direction:row;flex-wrap:wrap;justify-content:center}
   .mill-ladder-item{padding:6px 8px;font-size:11px}
   .tf-btn{font-size:16px;padding:16px}
   .wheel-canvas{max-width:280px;max-height:280px}
+  .order-item{padding:8px 10px;gap:8px}
 }
 </style>
 <link rel="canonical" href="https://pedagogiamh.co.il/tools/game-player/">
@@ -269,7 +331,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   <!-- Error Screen -->
   <div class="screen" id="errorScreen">
     <div class="g-card error-box">
-      <div class="error-icon">😕</div>
+      <div class="error-icon" id="errorIcon"></div>
       <div class="error-title">המשחק לא נמצא</div>
       <div class="error-sub" id="errorMsg">ייתכן שהקישור שגוי או שהמשחק הוסר.</div>
     </div>
@@ -278,7 +340,7 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
   <!-- Intro Screen -->
   <div class="screen" id="introScreen">
     <div class="g-card">
-      <div class="intro-icon" id="gameIcon">🎮</div>
+      <div class="intro-icon" id="gameIcon"></div>
       <h1 class="intro-title" id="gameTitle">משחק לימודי</h1>
       <div class="intro-sub" id="gameSub"></div>
       <div style="display:flex;justify-content:center;margin-bottom:20px">
@@ -286,12 +348,13 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       </div>
       <div class="input-group"><label for="studentName">שם מלא</label><input type="text" id="studentName" placeholder="למשל: נועה כהן"></div>
       <div class="input-group"><label for="studentClass">כיתה</label><select id="studentClass"><option value="">בחרו כיתה</option></select></div>
+      <div class="howto" id="howto"></div>
       <button class="btn btn-primary" id="startBtn" disabled onclick="startGame()">התחילו!</button>
     </div>
   </div>
 
   <!-- Game Screen -->
-  <div class="screen" id="gameScreen"><div class="g-card" id="gameArea"></div></div>
+  <div class="screen" id="gameScreen"><div class="game-howto" id="gameHowto"></div><div class="g-card" id="gameArea"></div></div>
 
   <!-- Score Screen -->
   <div class="screen" id="scoreScreen">
@@ -300,13 +363,9 @@ body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--dark);m
       <div class="score-num" id="scoreNum"></div>
       <div class="score-label" id="scoreLabel">מתוך 100</div>
       <div class="score-msg" id="scoreMsg"></div>
-      <div class="score-details">
-        <div class="score-detail"><div class="num" id="correctCount" style="color:var(--green)"></div><div class="lbl">נכונים</div></div>
-        <div class="score-detail"><div class="num" id="wrongCount" style="color:var(--secondary)"></div><div class="lbl">שגויים</div></div>
-        <div class="score-detail"><div class="num" id="totalCount" style="color:var(--primary)"></div><div class="lbl">סה״כ</div></div>
-      </div>
+      <div class="score-details" id="scoreDetails"></div>
       <button class="btn btn-primary" style="margin-top:24px" onclick="sendResults()">שלחו תוצאות למורה</button>
-      <div class="send-status" id="sendStatus"></div>
+      <div class="send-status" id="sendStatus" role="status"></div>
       <button class="btn retry-btn" onclick="retryGame()">שחקו שוב</button>
     </div>
   </div>
@@ -318,7 +377,7 @@ const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyLwo3jrseEDJ4GLnVNC
 let gameConfig = null;
 let gameMeta = null;
 let studentName = '', studentClass = '';
-let score = 0, totalItems = 0, correctItems = 0;
+let score = 0, totalItems = 0, correctItems = 0, wrongItems = 0;
 let isMillionaire = false;
 let millionaireMoneyReached = 0;
 
@@ -326,16 +385,93 @@ const gameTypeNames = {
   trivia: 'טריוויה', matching: 'התאמה', ordering: 'סדר נכון',
   escape: 'חדר בריחה', memory: 'זיכרון', wheel: 'גלגל השאלות',
   truefalse: 'נכון / לא נכון', fillblank: 'השלמת חסר',
-  sentence: 'סדר את המשפט', groups: 'קבוצות',
+  sentence: 'סדר את המשפט', groups: 'מיון לקבוצות',
   hangman: 'נחשו את המילה', millionaire: 'סולם הפרסים'
 };
-const gameTypeIcons = {
-  trivia: '🎯', matching: '🔗', ordering: '📋',
-  escape: '🔐', memory: '🧠', wheel: '🎡',
-  truefalse: '✅', fillblank: '✏️',
-  sentence: '🔤', groups: '🎨',
-  hangman: '🔮', millionaire: '💰'
+
+/* ===== אייקונים — קו SVG בלבד, בלי אימוג'ים (11.11.26) ===== */
+const ICONS = {
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  up: '<path d="m18 15-6-6-6 6"/>',
+  down: '<path d="m6 9 6 6 6-6"/>',
+  star: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/>',
+  trend: '<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
+  book: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+  lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  unlock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+  trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0z"/>',
+  help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  list: '<path d="M10 6h11M10 12h11M10 18h11M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',
+  cards: '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="9" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/>',
+  wheel: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><path d="M12 2v8M12 14v8M2 12h8M14 12h8"/>',
+  truefalse: '<path d="m3 8 3 3 5-6"/><path d="m14 14 6 6M20 14l-6 6"/>',
+  pencil: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+  text: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  letters: '<path d="M3 21h4M10 21h4M17 21h4"/><path d="m8 4 4 11 4-11"/>',
+  game: '<rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/>'
 };
+function svgIcon(name, size) {
+  const s = size || 20;
+  return '<svg class="ic" viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+}
+const gameTypeIcons = {
+  trivia: 'help', matching: 'link', ordering: 'list', escape: 'lock', memory: 'cards', wheel: 'wheel',
+  truefalse: 'truefalse', fillblank: 'pencil', sentence: 'text', groups: 'grid', hangman: 'letters', millionaire: 'trophy'
+};
+
+/* ===== איך משחקים (11.11.26): 2–3 שורות במסך הפתיחה + שורה אחת קבועה בראש מסך המשחק ===== */
+const HOWTO = {
+  trivia: ['קראו את השאלה ובחרו תשובה אחת מתוך ארבע.', 'אחרי כל תשובה תראו מה נכון והסבר קצר.', 'המשחק נגמר אחרי השאלה האחרונה.'],
+  matching: ['לחצו על מושג ואז על ההגדרה שלו.', 'לא הזוג? המושג נשאר בחור ומנסים הגדרה אחרת. כל טעות מורידה מהציון.', 'המשחק נגמר כשכל הזוגות מותאמים.'],
+  ordering: ['סדרו את הפריטים: הראשון למעלה, האחרון למטה.', 'החצים מזיזים פריט מקום אחד למעלה או למטה.', 'לחצו "בדקו" ותראו את המקום הנכון של כל פריט.'],
+  escape: ['בכל חדר יש חידה. כתבו את התשובה ולחצו "בדקו".', 'טעיתם? נסו שוב או פתחו רמז (חצי נקודה). אחרי 3 ניסיונות אפשר לראות את התשובה.', 'המשחק נגמר כשיוצאים מהחדר האחרון.'],
+  memory: ['הפכו שני קלפים. מושג וההגדרה שלו נשארים פתוחים.', 'לא זוג? הקלפים נסגרים. זכרו איפה היו.', 'פחות ניסיונות = ציון גבוה יותר. המשחק נגמר כשכל הזוגות נמצאו.'],
+  wheel: ['סובבו את הגלגל וענו על השאלה שיוצאת.', 'אחרי כל תשובה תראו מה נכון והסבר קצר.', 'המשחק נגמר כשעניתם על כל השאלות.'],
+  truefalse: ['קראו את המשפט והחליטו: נכון או לא נכון.', 'אחרי כל תשובה תראו הסבר קצר.', 'המשחק נגמר אחרי המשפט האחרון.'],
+  fillblank: ['כתבו מילה אחת — המילה שחסרה במשפט — ולחצו "בדקו".', 'טעיתם? יש עוד ניסיון אחד (חצי נקודה), ואז תראו את התשובה.', 'המשחק נגמר אחרי המשפט האחרון.'],
+  sentence: ['לחצו על המילים לפי הסדר כדי לבנות משפט.', 'לחיצה על מילה שכבר במשפט מחזירה אותה. כשכל המילים במקום מופיע "בדקו".', 'המשחק נגמר אחרי המשפט האחרון.'],
+  groups: ['לחצו על כרטיס ואז על הקבוצה שהוא שייך אליה. במחשב אפשר גם לגרור.', 'טעיתם? הכרטיס נשאר וממשיכים לנסות. הציון נספר לפי הניסיון הראשון.', 'המשחק נגמר כשכל הכרטיסים ממוינים.'],
+  hangman: ['בחרו אותיות כדי לגלות את המילה. יש לכם 6 טעויות.', 'אות שלא במילה מורידה טעות אחת. הרמז עוזר.', 'המשחק נגמר אחרי המילה האחרונה.'],
+  millionaire: ['ענו על שאלות בקושי עולה ועלו בסולם הפרסים.', 'טעות אחת מסיימת את המשחק. סכום במסגרת כתומה נשמר גם אם טועים אחריו.', 'אפשר להשתמש פעם אחת ב-50:50 כדי להוריד שתי תשובות שגויות.']
+};
+/* מיון לקבוצות — ההוראה כבר כתובה בתוך המשחק עצמו, לכן אין שורה כפולה למעלה */
+const HOWTO_LINE = {
+  trivia: 'בחרו את התשובה הנכונה',
+  matching: 'לחצו על מושג ואז על ההגדרה שלו',
+  ordering: 'הראשון למעלה, האחרון למטה. הזיזו עם החצים ולחצו "בדקו"',
+  escape: 'כתבו את התשובה (מילה אחת או מספר) ולחצו "בדקו"',
+  memory: 'הפכו שני קלפים ומצאו מושג וההגדרה שלו',
+  wheel: 'סובבו את הגלגל וענו על השאלה',
+  truefalse: 'החליטו: נכון או לא נכון',
+  fillblank: 'כתבו את המילה החסרה — מילה אחת',
+  sentence: 'לחצו על המילים לפי הסדר. לחיצה על מילה במשפט מחזירה אותה',
+  groups: '',
+  hangman: 'בחרו אותיות. מותר לטעות 6 פעמים בכל מילה',
+  millionaire: 'טעות אחת מסיימת את המשחק. 50:50 — פעם אחת'
+};
+function curType() { return gameConfig && HOWTO[gameConfig.gameType] ? gameConfig.gameType : 'trivia'; }
+
+/* ===== השוואת תשובה חופשית (חדר בריחה, השלמת חסר) =====
+   בלי ניקוד, גרשיים ומירכאות, מקפים ומקף עברי, רווחים מיותרים, אותיות סופיות, אותיות גדולות/קטנות,
+   ובלי ה' הידיעה בתחילת מילה — "הכנסת" = "כנסת", "חוקי היסוד" = "חוקי יסוד". */
+const FINAL_LETTERS = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
+function normAnswer(s) {
+  let t = String(s == null ? '' : s).toLowerCase();
+  t = t.replace(/[־\-‐‑‒–—_\/]/g, ' ');            /* מקף עברי ומקפים — רווח */
+  t = t.replace(/[֑-ׇ]/g, '');                 /* ניקוד וטעמים */
+  t = t.replace(/['"`׳״’‘“”„.,!?;:()\[\]{}…]/g, '');     /* גרשיים, מירכאות וסימני פיסוק */
+  t = t.replace(/[ךםןףץ]/g, ch => FINAL_LETTERS[ch]);
+  return t.split(/\s+/).filter(Boolean).map(w => (w.length > 2 && w[0] === 'ה') ? w.slice(1) : w).join(' ');
+}
+function answerMatches(typed, answer) {
+  const a = normAnswer(typed);
+  return !!a && a === normAnswer(answer);
+}
 
 const nameInput = document.getElementById('studentName');
 const classInput = document.getElementById('studentClass');
@@ -360,9 +496,9 @@ function shuffle(arr) {
 }
 
 function escapeHtml(str) {
-  if (!str) return '';
+  if (str == null || str === '') return '';
   const div = document.createElement('div');
-  div.textContent = str;
+  div.textContent = String(str);
   return div.innerHTML;
 }
 
@@ -373,6 +509,22 @@ function setProgress(fraction) {
 function animateCard() {
   const c = document.getElementById('gameArea');
   c.style.animation = 'none'; c.offsetHeight; c.style.animation = 'fadeUp .45s ease';
+}
+
+/* כותרת משוב: אייקון ✓ / ✗ בקו + טקסט */
+function fbHead(ok, okText, badText) {
+  return '<strong class="fb-head">' + svgIcon(ok ? 'check' : 'x', 18) + (ok ? okText : badText) + '</strong>';
+}
+function optMark() { return '<span class="opt-mark"></span>'; }
+function markOptions(els, correctIdx, chosenIdx) {
+  els.forEach((o, i) => {
+    o.classList.add('disabled');
+    o.disabled = true;
+    const mk = o.querySelector('.opt-mark');
+    if (i === correctIdx) { o.classList.add('correct'); if (mk) mk.innerHTML = svgIcon('check', 18); }
+    else if (i === chosenIdx) { o.classList.add('wrong'); if (mk) mk.innerHTML = svgIcon('x', 18); }
+    else o.classList.add('dim');
+  });
 }
 
 // ===== LOAD GAME FROM GOOGLE SHEETS =====
@@ -401,7 +553,7 @@ function gpSend(done) {
   const st = document.getElementById('sendStatus');
   fetch(MECHOLEL_API, { method: 'POST', body: JSON.stringify({ action: 'submit', lid: GP.lid, kind: 'game', sid: gpSid(),
     name: studentName, cls: studentClass, score: s, max: m, done: done }) })
-    .then(r => r.json()).then(d => { if (done && st) { st.className = 'send-status ' + (d && d.ok ? 'success' : 'error'); st.textContent = d && d.ok ? 'התוצאה נשלחה למורה ✓' : 'התוצאה לא נשלחה. נסו לשחק שוב כשיש חיבור.'; } })
+    .then(r => r.json()).then(d => { if (done && st) { st.className = 'send-status ' + (d && d.ok ? 'success' : 'error'); st.innerHTML = d && d.ok ? svgIcon('check', 18) + ' התוצאה נשלחה למורה' : 'התוצאה לא נשלחה. נסו לשחק שוב כשיש חיבור.'; } })
     .catch(() => { GP.last = ''; if (done && st) { st.className = 'send-status error'; st.textContent = 'התוצאה לא נשלחה. נסו לשחק שוב כשיש חיבור.'; } });
 }
 /* בזמן המשחק — עדכון כל 3 שניות, רק כשהציון השתנה */
@@ -479,20 +631,23 @@ function loadGame() {
 }
 
 function showError(title, msg) {
+  document.getElementById('errorIcon').innerHTML = svgIcon('alert', 48);
   document.querySelector('.error-title').textContent = title;
   document.getElementById('errorMsg').textContent = msg;
   showScreen('errorScreen');
 }
 
 function setupIntro() {
-  const subjectIcons = { 'עברית':'א', 'מתמטיקה':'➗', 'היסטוריה':'📜', 'אנגלית':'A', 'מדעים':'🔬', 'חשבונאות':'📊' };
-  const icon = subjectIcons[gameMeta.subject] || '🎮';
   const gt = gameConfig.gameType;
+  const ht = curType();
 
-  document.getElementById('gameIcon').textContent = icon;
-  document.getElementById('gameTitle').textContent = 'משחק – ' + escapeHtml(gameMeta.name);
-  document.getElementById('gameSub').textContent = escapeHtml(gameMeta.subject) + ' | ' + escapeHtml(gameMeta.grade) + ' | הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית';
-  document.getElementById('gameTypeBadge').textContent = (gameTypeIcons[gt] || '🎮') + ' ' + (gameTypeNames[gt] || gt);
+  document.getElementById('gameIcon').innerHTML = svgIcon(gameTypeIcons[gt] || 'game', 40);
+  document.getElementById('gameTitle').textContent = 'משחק – ' + (gameMeta.name || '');
+  document.getElementById('gameSub').textContent = (gameMeta.subject || '') + ' | ' + (gameMeta.grade || '') + ' | הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית';
+  document.getElementById('gameTypeBadge').textContent = gameTypeNames[gt] || gt;
+  document.getElementById('howto').innerHTML = '<div class="howto-title">איך משחקים?</div><ul>' +
+    HOWTO[ht].map(l => '<li>' + escapeHtml(l) + '</li>').join('') + '</ul>';
+  document.getElementById('gameHowto').textContent = HOWTO_LINE[ht] || '';
 
   document.title = 'משחק – ' + gameMeta.name + ' | הבית של המנהיגות הפדגוגית היוצרת · מינהל הכשרה מקצועית';
 
@@ -512,13 +667,10 @@ function setupIntro() {
 }
 
 // ===== START GAME =====
-function startGame() {
-  studentName = nameInput.value.trim();
-  studentClass = document.getElementById('studentClass').value.trim();
-  score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
+function runGame() {
+  score = 0; correctItems = 0; wrongItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
   showScreen('gameScreen');
   gpStart();
-
   const initFn = {
     trivia: initTrivia, matching: initMatching, ordering: initOrdering,
     escape: initEscape, memory: initMemory, wheel: initWheel,
@@ -528,22 +680,15 @@ function startGame() {
   };
   (initFn[gameConfig.gameType] || initTrivia)();
 }
-
+function startGame() {
+  studentName = nameInput.value.trim();
+  studentClass = document.getElementById('studentClass').value.trim();
+  runGame();
+}
 function retryGame() {
   document.getElementById('sendStatus').className = 'send-status';
   document.getElementById('sendStatus').textContent = '';
-  score = 0; correctItems = 0; isMillionaire = false; millionaireMoneyReached = 0;
-  showScreen('gameScreen');
-  gpStart();
-
-  const initFn = {
-    trivia: initTrivia, matching: initMatching, ordering: initOrdering,
-    escape: initEscape, memory: initMemory, wheel: initWheel,
-    truefalse: initTrueFalse, fillblank: initFillBlank,
-    sentence: initSentence, groups: initGroups,
-    hangman: initHangman, millionaire: initMillionaire
-  };
-  (initFn[gameConfig.gameType] || initTrivia)();
+  runGame();
 }
 
 // ==========================================
@@ -552,7 +697,7 @@ function retryGame() {
 let triviaQ = 0, triviaItems = [];
 function initTrivia() {
   triviaItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = triviaItems.length; triviaQ = 0; score = 0; correctItems = 0;
+  totalItems = triviaItems.length; triviaQ = 0; score = 0; correctItems = 0; wrongItems = 0;
   renderTriviaQ();
 }
 function renderTriviaQ() {
@@ -563,24 +708,18 @@ function renderTriviaQ() {
     '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
     '<div class="q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options">' + q.options.map((o, i) =>
-      '<button type="button" class="q-opt plain-btn" onclick="triviaAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
+      '<button type="button" class="q-opt plain-btn" onclick="triviaAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span>' + optMark() + '</button>'
     ).join('') + '</div>' +
-    '<div class="q-feedback" id="qFeedback"></div>' +
+    '<div class="q-feedback" id="qFeedback" role="status"></div>' +
     '<button class="btn btn-next" id="nextBtn" onclick="nextTrivia()">הבא</button>';
 }
 function triviaAnswer(idx) {
   const q = triviaItems[triviaQ], ok = idx === q.correct;
-  document.querySelectorAll('.q-opt').forEach((o, i) => {
-    o.classList.add('disabled');
-    o.disabled = true;
-    if (i === q.correct) o.classList.add('correct');
-    else if (i === idx && !ok) o.classList.add('wrong');
-    else o.classList.add('dim');
-  });
+  markOptions(document.querySelectorAll('.q-opt'), q.correct, idx);
   const fb = document.getElementById('qFeedback');
   fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
-  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(q.explanation || '') : '<strong>לא נכון.</strong> ' + escapeHtml(q.explanation || '');
-  if (ok) { score++; correctItems++; }
+  fb.innerHTML = fbHead(ok, 'נכון!', 'לא נכון.') + ' ' + escapeHtml(q.explanation || '');
+  if (ok) { score++; correctItems++; } else wrongItems++;
   document.getElementById('nextBtn').style.display = 'block';
   document.getElementById('nextBtn').textContent = triviaQ < totalItems - 1 ? 'הבא' : 'סיום';
 }
@@ -594,126 +733,180 @@ function nextTrivia() {
 // ==========================================
 // ===== MATCHING =====
 // ==========================================
-let matchPairs = [], matchedCount = 0, selectedRight = null;
+/* 11.11.26: כל טעות נספרת. זוג נחשב "נכון" רק אם המושג הותאם בלי טעות. המושג נשאר בחור אחרי טעות.
+   בטלפון עמודת המושגים דבוקה למעלה (CSS) — אין גלילה הלוך-חזור. */
+let matchPairs = [], matchedCount = 0, selectedRight = null, matchMistakes = 0, matchMissed = {};
 function initMatching() {
   matchPairs = [...gameConfig.items]; totalItems = matchPairs.length;
-  matchedCount = 0; selectedRight = null; score = 0; correctItems = 0;
+  matchedCount = 0; selectedRight = null; score = 0; correctItems = 0; wrongItems = 0;
+  matchMistakes = 0; matchMissed = {};
   const rightItems = shuffle(matchPairs.map((p, i) => ({ text: p.right, idx: i })));
   const leftItems = shuffle(matchPairs.map((p, i) => ({ text: p.left, idx: i })));
   const rTitle = gameConfig.columnRightTitle || 'מושג';
   const lTitle = gameConfig.columnLeftTitle || 'הגדרה';
   setProgress(0);
   document.getElementById('gameArea').innerHTML =
-    '<div class="match-progress" id="matchProg">0 מתוך ' + totalItems + ' זוגות</div>' +
+    '<div class="match-progress" id="matchProg"></div>' +
     '<div class="match-grid">' +
-    '<div><div class="match-col-title">' + escapeHtml(rTitle) + '</div>' + rightItems.map(r =>
+    '<div class="match-col match-col-r"><div class="match-col-title">' + escapeHtml(rTitle) + '</div><div class="match-list">' + rightItems.map(r =>
       '<button type="button" class="match-item match-right plain-btn" data-idx="' + r.idx + '" aria-pressed="false" onclick="selectRight(this)">' + escapeHtml(r.text) + '</button>'
-    ).join('') + '</div>' +
-    '<div><div class="match-col-title">' + escapeHtml(lTitle) + '</div>' + leftItems.map(l =>
+    ).join('') + '</div><div class="g-msg" id="matchMsg" role="status" aria-live="polite"></div></div>' +
+    '<div class="match-col match-col-l"><div class="match-col-title">' + escapeHtml(lTitle) + '</div><div class="match-list">' + leftItems.map(l =>
       '<button type="button" class="match-item match-left plain-btn" data-idx="' + l.idx + '" onclick="selectLeft(this)">' + escapeHtml(l.text) + '</button>'
-    ).join('') + '</div>' +
+    ).join('') + '</div></div>' +
     '</div>';
+  matchUpdateProg();
+}
+function matchUpdateProg() {
+  document.getElementById('matchProg').textContent = matchedCount + ' מתוך ' + totalItems + ' זוגות · טעויות: ' + matchMistakes;
+}
+function matchMsg(t, cls) {
+  const m = document.getElementById('matchMsg');
+  if (m) { m.className = 'g-msg' + (cls ? ' ' + cls : ''); m.textContent = t || ''; }
 }
 function selectRight(el) {
   if (el.classList.contains('matched')) return;
   document.querySelectorAll('.match-right').forEach(r => { r.classList.remove('selected'); r.setAttribute('aria-pressed', 'false'); });
   el.classList.add('selected'); el.setAttribute('aria-pressed', 'true'); selectedRight = el;
+  matchMsg('עכשיו לחצו על ההגדרה המתאימה', 'info');
 }
 function selectLeft(el) {
-  if (!selectedRight || el.classList.contains('matched')) return;
+  if (el.classList.contains('matched')) return;
+  if (!selectedRight) { matchMsg('קודם בחרו מושג', 'info'); return; }
   const rIdx = parseInt(selectedRight.dataset.idx), lIdx = parseInt(el.dataset.idx);
   if (rIdx === lIdx) {
     selectedRight.classList.remove('selected'); selectedRight.classList.add('matched');
     selectedRight.setAttribute('aria-pressed', 'false');
     selectedRight.disabled = true; el.disabled = true;
-    el.classList.add('matched'); matchedCount++; correctItems++; score++;
-    document.getElementById('matchProg').textContent = matchedCount + ' מתוך ' + totalItems + ' זוגות';
+    el.classList.add('matched'); matchedCount++;
+    if (!matchMissed[rIdx]) { correctItems++; score++; }
+    matchUpdateProg();
     setProgress(matchedCount / totalItems);
     selectedRight = null;
-    if (matchedCount === totalItems) setTimeout(showScore, 600);
+    matchMsg('נכון!', 'correct');
+    if (matchedCount === totalItems) setTimeout(matchEnd, 700);
   } else {
-    selectedRight.classList.add('wrong-flash'); el.classList.add('wrong-flash');
+    matchMistakes++; wrongItems = matchMistakes; matchMissed[rIdx] = true;
+    matchUpdateProg();
     const r = selectedRight;
-    setTimeout(() => { r.classList.remove('selected', 'wrong-flash'); r.setAttribute('aria-pressed', 'false'); el.classList.remove('wrong-flash'); }, 500);
-    selectedRight = null;
+    r.classList.add('wrong-flash'); el.classList.add('wrong-flash');
+    setTimeout(() => { r.classList.remove('wrong-flash'); el.classList.remove('wrong-flash'); }, 600);
+    matchMsg('זה לא הזוג, נסו שוב', 'wrong');
   }
+}
+function matchEnd() {
+  showScore({ details: [[correctItems, 'זוגות בלי טעות', 'var(--green)'], [matchMistakes, 'טעויות', 'var(--wrong)'], [totalItems, 'זוגות', 'var(--primary)']] });
 }
 
 // ==========================================
 // ===== ORDERING =====
 // ==========================================
-let orderItems = [];
+/* 11.11.26: הציון לפי צמדים סמוכים בסדר הנכון (פריט אחד שזז לא מוחק את כל השאר).
+   אחרי "בדקו" — המקום הנכון של כל פריט, וכפתור "לסיכום" (בלי מעבר אוטומטי). */
+let orderItems = [], orderChecked = false;
 function initOrdering() {
-  orderItems = shuffle(gameConfig.items.map((item, i) => ({ ...item, correctPos: item.position || i + 1 })));
-  totalItems = orderItems.length; score = 0; correctItems = 0;
+  const base = gameConfig.items.map((item, i) => ({ ...item, correctPos: item.position || i + 1 }));
+  orderItems = shuffle(base);
+  for (let k = 0; k < 10 && base.length > 1 && orderItems.every((it, i) => i === 0 || orderItems[i - 1].correctPos < it.correctPos); k++) orderItems = shuffle(base);
+  totalItems = Math.max(1, orderItems.length - 1); score = 0; correctItems = 0; wrongItems = 0; orderChecked = false;
+  setProgress(0);
   renderOrder();
 }
-function renderOrder() {
-  setProgress(0);
+function renderOrder(focusIdx, focusDir) {
   const inst = gameConfig.instruction || 'סדרו את הפריטים בסדר הנכון';
-  document.getElementById('gameArea').innerHTML =
-    '<div class="order-instruction">' + escapeHtml(inst) + '</div>' +
-    '<div class="order-list" id="orderList">' + orderItems.map((item, i) =>
-      '<div class="order-item" data-idx="' + i + '">' +
-      '<div class="oi-num">' + (i + 1) + '</div>' +
-      '<div class="oi-text">' + escapeHtml(item.text) + '</div>' +
-      '<div class="oi-arrows">' +
-      '<button type="button" aria-label="הזזה למעלה" onclick="moveItem(' + i + ',-1)">▲</button>' +
-      '<button type="button" aria-label="הזזה למטה" onclick="moveItem(' + i + ',1)">▼</button>' +
-      '</div></div>'
-    ).join('') + '</div>' +
-    '<button class="btn btn-primary check-btn" onclick="checkOrder()">בדקו סדר</button>';
+  const n = orderItems.length;
+  let html = '<div class="order-instruction">' + escapeHtml(inst) + '</div>' +
+    '<div class="order-ends"><span>הראשון</span></div>' +
+    '<div class="order-list" id="orderList">' + orderItems.map((item, i) => {
+      let cls = 'order-item', pos = '';
+      if (orderChecked) {
+        const right = item.correctPos === i + 1;
+        cls += right ? ' correct-pos' : ' wrong-pos';
+        pos = '<span class="oi-pos">' + (right ? svgIcon('check', 14) + ' במקום הנכון' : 'מקום נכון: ' + item.correctPos) + '</span>';
+      }
+      return '<div class="' + cls + '" data-idx="' + i + '">' +
+        '<div class="oi-num">' + (i + 1) + '</div>' +
+        '<div class="oi-text">' + escapeHtml(item.text) + pos + '</div>' +
+        (orderChecked ? '' : '<div class="oi-arrows">' +
+          '<button type="button" data-dir="-1" aria-label="הזזה למעלה"' + (i === 0 ? ' disabled' : '') + ' onclick="moveItem(' + i + ',-1)">' + svgIcon('up', 22) + '</button>' +
+          '<button type="button" data-dir="1" aria-label="הזזה למטה"' + (i === n - 1 ? ' disabled' : '') + ' onclick="moveItem(' + i + ',1)">' + svgIcon('down', 22) + '</button>' +
+          '</div>') +
+        '</div>';
+    }).join('') + '</div>' +
+    '<div class="order-ends"><span></span><span>האחרון</span></div>';
+  if (orderChecked) {
+    html += '<div class="g-msg ' + (correctItems === totalItems ? 'correct' : 'info') + '" role="status">' +
+      correctItems + ' מתוך ' + totalItems + ' צמדים סמוכים בסדר הנכון</div>' +
+      '<button class="btn btn-next" style="display:block" onclick="orderEnd()">לסיכום</button>';
+  } else {
+    html += '<button class="btn btn-primary check-btn" onclick="checkOrder()">בדקו</button>';
+  }
+  document.getElementById('gameArea').innerHTML = html;
+  if (focusIdx != null) {
+    const b = document.querySelector('.order-item[data-idx="' + focusIdx + '"] button[data-dir="' + focusDir + '"]');
+    const alt = document.querySelector('.order-item[data-idx="' + focusIdx + '"] button:not([disabled])');
+    if (b && !b.disabled) b.focus(); else if (alt) alt.focus();
+  }
 }
 function moveItem(idx, dir) {
+  if (orderChecked) return;
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= orderItems.length) return;
   [orderItems[idx], orderItems[newIdx]] = [orderItems[newIdx], orderItems[idx]];
-  renderOrder();
+  renderOrder(newIdx, dir);
 }
 function checkOrder() {
   correctItems = 0;
-  orderItems.forEach((item, i) => { if (item.correctPos === i + 1) correctItems++; });
-  score = correctItems;
-  const items = document.querySelectorAll('.order-item');
-  items.forEach((el, i) => {
-    el.classList.add(orderItems[i].correctPos === i + 1 ? 'correct-pos' : 'wrong-pos');
-    el.querySelector('.oi-arrows').style.display = 'none';
-  });
-  document.querySelector('.check-btn').style.display = 'none';
+  for (let i = 0; i + 1 < orderItems.length; i++) if (orderItems[i + 1].correctPos === orderItems[i].correctPos + 1) correctItems++;
+  if (orderItems.length < 2) correctItems = 1;
+  score = correctItems; wrongItems = totalItems - correctItems;
+  orderChecked = true;
   setProgress(1);
-  setTimeout(showScore, 1500);
+  renderOrder();
+}
+function orderEnd() {
+  showScore({ details: [[correctItems, 'צמדים בסדר נכון', 'var(--green)'], [wrongItems, 'צמדים לא בסדר', 'var(--wrong)'], [totalItems, 'צמדים סמוכים', 'var(--primary)']] });
 }
 
 // ==========================================
 // ===== ESCAPE ROOM =====
 // ==========================================
-let escapeRooms = [], escapeIdx = 0, escapeHintsUsed = {};
+/* 11.11.26: השוואה סלחנית (normAnswer); טעות = "עוד לא"; אחרי 3 ניסיונות — "הראו את התשובה" (0 נקודות לחדר);
+   רמז = חצי נקודה; מספר החדר מוצג פעם אחת (מהכותרת יורד "חדר 1 ·"). */
+let escapeRooms = [], escapeIdx = 0, escapeHintsUsed = {}, escapeTries = 0, escapeDone = false, escapeSolved = 0, escapeRevealed = 0;
 function initEscape() {
   escapeRooms = [...gameConfig.items];
   totalItems = escapeRooms.length;
-  escapeIdx = 0; score = 0; correctItems = 0;
-  escapeHintsUsed = {};
+  escapeIdx = 0; score = 0; correctItems = 0; wrongItems = 0;
+  escapeHintsUsed = {}; escapeSolved = 0; escapeRevealed = 0;
   renderEscapeRoom();
+}
+function escapeTitle(t) {
+  return String(t || '').replace(/^\s*חדר\s*(מספר\s*)?\d+\s*[·:\-–—.|,]*\s*/, '').trim();
 }
 function renderEscapeRoom() {
   const room = escapeRooms[escapeIdx];
   const n = escapeIdx + 1;
+  const title = escapeTitle(room.title);
+  escapeTries = 0; escapeDone = false;
   setProgress(n / (totalItems + 1));
   document.getElementById('gameArea').innerHTML =
-    '<div class="escape-room-card">' +
-    '<div class="escape-room-num">' + n + '</div>' +
-    '<div class="escape-room-title">' + escapeHtml(room.title) + '</div>' +
-    '</div>' +
+    '<div class="q-counter">חדר ' + n + ' מתוך ' + totalItems + '</div>' +
+    (title ? '<div class="escape-room-card"><div class="escape-room-title">' + svgIcon('lock', 22) + '<span>' + escapeHtml(title) + '</span></div></div>' : '') +
     '<div class="escape-story">' + escapeHtml(room.story) + '</div>' +
     '<div class="escape-riddle">' + escapeHtml(room.riddle) + '</div>' +
     '<div class="escape-input-row">' +
     '<label class="sr-label" for="escapeInput">התשובה שלכם</label>' +
-    '<input type="text" id="escapeInput" placeholder="הקלידו את התשובה...">' +
-    '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkEscapeAnswer()">בדקו</button>' +
+    '<input type="text" id="escapeInput" placeholder="הקלידו את התשובה..." autocomplete="off">' +
+    '<button class="btn btn-primary" id="escapeCheckBtn" style="width:auto;padding:14px 24px" onclick="checkEscapeAnswer()">בדקו</button>' +
     '</div>' +
-    (room.hint ? '<button class="btn escape-hint-btn" onclick="showEscapeHint()">רמז</button>' : '') +
+    '<div class="g-msg" id="escapeMsg" role="status" aria-live="polite"></div>' +
+    '<div class="escape-actions">' +
+    (room.hint ? '<button class="btn escape-hint-btn" onclick="showEscapeHint()">רמז (חצי נקודה)</button>' : '') +
+    '<button class="btn escape-reveal-btn" id="escapeRevealBtn" style="display:none" onclick="revealEscape()">הראו את התשובה</button>' +
+    '</div>' +
     '<div class="escape-hint-text" id="escapeHint">' + escapeHtml(room.hint || '') + '</div>' +
-    '<div class="escape-feedback" id="escapeFeedback"></div>' +
+    '<div class="escape-feedback" id="escapeFeedback" role="status"></div>' +
     '<button class="btn btn-next" id="escapeNextBtn" onclick="nextEscapeRoom()" style="display:none">החדר הבא</button>';
 
   document.getElementById('escapeInput').addEventListener('keydown', function(e) {
@@ -721,49 +914,71 @@ function renderEscapeRoom() {
   });
 }
 function showEscapeHint() {
+  if (escapeDone) return;
   escapeHintsUsed[escapeIdx] = true;
   document.getElementById('escapeHint').style.display = 'block';
   const btn = document.querySelector('.escape-hint-btn');
-  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; }
+  if (btn) btn.disabled = true;
+}
+function escapeFinish(nextLabel) {
+  escapeDone = true;
+  document.getElementById('escapeInput').disabled = true;
+  document.getElementById('escapeCheckBtn').disabled = true;
+  const hb = document.querySelector('.escape-hint-btn'); if (hb) hb.style.display = 'none';
+  document.getElementById('escapeRevealBtn').style.display = 'none';
+  document.getElementById('escapeMsg').textContent = '';
+  document.getElementById('escapeMsg').className = 'g-msg';
+  const nextBtn = document.getElementById('escapeNextBtn');
+  nextBtn.style.display = 'block';
+  nextBtn.textContent = escapeIdx < totalItems - 1 ? 'החדר הבא' : 'סיום';
 }
 function checkEscapeAnswer() {
+  if (escapeDone) return;
   const input = document.getElementById('escapeInput');
   const answer = input.value.trim();
   if (!answer) return;
   const room = escapeRooms[escapeIdx];
-  const correct = answer.toLowerCase() === room.answer.trim().toLowerCase();
-  if (correct) {
-    const pts = escapeHintsUsed[escapeIdx] ? 0.5 : 1;
-    score += pts; correctItems++;
+  if (answerMatches(answer, room.answer)) {
+    const hint = !!escapeHintsUsed[escapeIdx];
+    score += hint ? 0.5 : 1; correctItems = score; escapeSolved++;
     const fb = document.getElementById('escapeFeedback');
     fb.className = 'escape-feedback correct';
-    fb.textContent = 'נכון! פתחתם את החדר!';
-    input.disabled = true;
-    const nextBtn = document.getElementById('escapeNextBtn');
-    nextBtn.style.display = 'block';
-    nextBtn.textContent = escapeIdx < totalItems - 1 ? 'החדר הבא' : 'סיום';
+    fb.innerHTML = fbHead(true, 'נכון! פתחתם את החדר.', '') + (hint ? ' (חצי נקודה, כי נעזרתם ברמז)' : '');
+    escapeFinish();
   } else {
+    escapeTries++;
     input.classList.add('shake-input');
     setTimeout(() => input.classList.remove('shake-input'), 400);
+    const m = document.getElementById('escapeMsg');
+    m.className = 'g-msg wrong';
+    m.textContent = (room.hint && !escapeHintsUsed[escapeIdx]) ? 'עוד לא. נסו שוב או פתחו רמז' : 'עוד לא. נסו שוב';
+    if (escapeTries >= 3) document.getElementById('escapeRevealBtn').style.display = '';
+    input.select();
   }
+}
+function revealEscape() {
+  if (escapeDone) return;
+  const room = escapeRooms[escapeIdx];
+  escapeRevealed++; wrongItems = escapeRevealed;
+  const fb = document.getElementById('escapeFeedback');
+  fb.className = 'escape-feedback shown';
+  fb.innerHTML = 'התשובה: <strong>' + escapeHtml(room.answer) + '</strong>. הדלת נפתחה, בלי נקודה על החדר הזה.';
+  escapeFinish();
 }
 function nextEscapeRoom() {
   escapeIdx++;
   if (escapeIdx >= totalItems) {
-    // Show escape celebration then score
     setProgress(1);
     document.getElementById('gameArea').innerHTML =
       '<div class="escape-celebration">' +
-      '<div class="big-icon" style="animation:celebrate 1s ease">🎉</div>' +
+      '<div class="big-icon" style="animation:celebrate 1s ease">' + svgIcon('unlock', 64) + '</div>' +
       '<div class="big-text">ברחתם בהצלחה!</div>' +
-      '<p style="color:var(--gray);margin-top:8px">פתחתם את כל ' + totalItems + ' החדרים</p>' +
+      '<p style="color:var(--gray);margin-top:8px">יצאתם מכל ' + totalItems + ' החדרים</p>' +
       '</div>';
-    // Adjust score for showScore: correctItems stays as-is, totalItems stays
-    // score is already accumulated with 0.5 or 1 per room
-    // We'll show based on score/totalItems
-    correctItems = Math.round(score); // approximate
+    correctItems = score;   /* חצי נקודה על חדר עם רמז; השרת מעגל */
     totalItems = escapeRooms.length;
-    setTimeout(showScore, 2000);
+    setTimeout(() => showScore({ pct: Math.round(score / Math.max(1, totalItems) * 100),
+      details: [[escapeSolved, 'חדרים שפתרתם', 'var(--green)'], [escapeRevealed, 'חדרים שבהם ראיתם את התשובה', 'var(--wrong)'], [totalItems, 'חדרים', 'var(--primary)']] }), 2000);
     return;
   }
   animateCard();
@@ -773,12 +988,13 @@ function nextEscapeRoom() {
 // ==========================================
 // ===== MEMORY =====
 // ==========================================
-let memoryCards = [], memoryFlipped = [], memoryMatched = 0, memoryTotal = 0, memoryLocked = false;
+/* 11.11.26: מונה ניסיונות. ציון = עד 2 ניסיונות לכל זוג = 100; יותר ניסיונות — הציון יורד בהדרגה. */
+let memoryCards = [], memoryFlipped = [], memoryMatched = 0, memoryTotal = 0, memoryLocked = false, memoryAttempts = 0, memoryMisses = 0;
 function initMemory() {
   const items = gameConfig.items;
   memoryTotal = items.length;
   totalItems = memoryTotal;
-  memoryMatched = 0; score = 0; correctItems = 0; memoryLocked = false;
+  memoryMatched = 0; score = 0; correctItems = 0; wrongItems = 0; memoryLocked = false; memoryAttempts = 0; memoryMisses = 0;
 
   // Create card pairs: for each item {front, back}, create two cards with the same pairId
   let cards = [];
@@ -792,15 +1008,20 @@ function initMemory() {
   setProgress(0);
   renderMemory();
 }
+function memoryRatio() { return memoryAttempts ? Math.min(1, (2 * memoryTotal) / memoryAttempts) : 1; }
+function memoryCounterText() { return 'זוגות: ' + memoryMatched + ' מתוך ' + memoryTotal + ' · ניסיונות: ' + memoryAttempts; }
 function renderMemory() {
+  const fl = gameConfig.columnRightTitle || 'מושג', bl = gameConfig.columnLeftTitle || 'הגדרה';
   document.getElementById('gameArea').innerHTML =
-    '<div class="memory-counter" id="memoryCounter">0 מתוך ' + memoryTotal + ' זוגות</div>' +
+    '<div class="memory-counter" id="memoryCounter" role="status">' + memoryCounterText() + '</div>' +
     '<div class="memory-grid">' +
     memoryCards.map((card, i) =>
-      '<button type="button" class="memory-card plain-btn' + (card.matched ? ' flipped matched' : '') + '" data-idx="' + i + '"' + (card.matched ? ' disabled' : '') + ' onclick="flipMemoryCard(' + i + ')">' +
+      '<button type="button" class="memory-card plain-btn' + (card.matched ? ' flipped matched' : '') + '" data-idx="' + i + '"' + (card.matched ? ' disabled' : '') + ' aria-label="קלף ' + (i + 1) + '" onclick="flipMemoryCard(' + i + ')">' +
       '<span class="memory-card-inner">' +
       '<span class="memory-card-face memory-card-back">?</span>' +
-      '<span class="memory-card-face memory-card-front">' + escapeHtml(card.text) + '</span>' +
+      '<span class="memory-card-face memory-card-front' + (String(card.text || '').length > 26 ? ' long' : '') + '">' +
+      '<span class="mc-lbl">' + escapeHtml(card.type === 'front' ? fl : bl) + '</span>' +
+      '<span class="mc-txt">' + escapeHtml(card.text) + '</span></span>' +
       '</span></button>'
     ).join('') +
     '</div>';
@@ -815,10 +1036,12 @@ function flipMemoryCard(idx) {
   if (memoryFlipped.length >= 2) return;
 
   el.classList.add('flipped');
+  el.setAttribute('aria-label', card.text);
   memoryFlipped.push(idx);
 
   if (memoryFlipped.length === 2) {
     memoryLocked = true;
+    memoryAttempts++;
     const first = memoryCards[memoryFlipped[0]];
     const second = memoryCards[memoryFlipped[1]];
 
@@ -832,33 +1055,44 @@ function flipMemoryCard(idx) {
         cardA.classList.add('matched'); cardB.classList.add('matched');
         cardA.disabled = true; cardB.disabled = true;
         memoryMatched++;
-        correctItems = memoryMatched;
-        score = memoryMatched;
-        document.getElementById('memoryCounter').textContent = memoryMatched + ' מתוך ' + memoryTotal + ' זוגות';
+        correctItems = Math.round(memoryMatched * memoryRatio());
+        score = correctItems;
+        document.getElementById('memoryCounter').textContent = memoryCounterText();
         setProgress(memoryMatched / memoryTotal);
         memoryFlipped = [];
         memoryLocked = false;
-        if (memoryMatched === memoryTotal) setTimeout(showScore, 600);
+        if (memoryMatched === memoryTotal) setTimeout(memoryEnd, 600);
       }, 500);
     } else {
       // No match - flip back
+      memoryMisses++; wrongItems = memoryMisses;
+      correctItems = Math.round(memoryMatched * memoryRatio());
+      document.getElementById('memoryCounter').textContent = memoryCounterText();
+      const a = document.querySelectorAll('.memory-card')[memoryFlipped[0]], b = document.querySelectorAll('.memory-card')[memoryFlipped[1]];
+      a.classList.add('miss'); b.classList.add('miss');
       setTimeout(() => {
-        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.remove('flipped');
-        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.remove('flipped');
+        [a, b].forEach(c => { c.classList.remove('flipped', 'miss'); c.setAttribute('aria-label', 'קלף ' + (+c.dataset.idx + 1)); });
         memoryFlipped = [];
         memoryLocked = false;
       }, 1000);
     }
   }
 }
+function memoryEnd() {
+  const ratio = memoryRatio();
+  correctItems = Math.round(memoryTotal * ratio); score = correctItems;
+  showScore({ pct: Math.round(ratio * 100),
+    details: [[memoryTotal, 'זוגות שמצאתם', 'var(--green)'], [memoryMisses, 'ניסיונות לא מוצלחים', 'var(--wrong)'], [memoryAttempts, 'ניסיונות', 'var(--primary)']] });
+}
 
 // ==========================================
 // ===== WHEEL OF FORTUNE =====
 // ==========================================
+/* 11.11.26: בלי מספרים על הפלחים; אחרי תשובה — הסבר וכפתור "סובבו שוב" (בלי טיימר); השאלה נגללת לתצוגה */
 let wheelItems = [], wheelAnswered = [], wheelCurrentQ = -1, wheelSpinning = false, wheelCanvas = null, wheelCtx = null, wheelRotation = 0;
 function initWheel() {
   wheelItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = wheelItems.length; score = 0; correctItems = 0;
+  totalItems = wheelItems.length; score = 0; correctItems = 0; wrongItems = 0;
   wheelAnswered = new Array(totalItems).fill(false);
   wheelCurrentQ = -1; wheelSpinning = false; wheelRotation = 0;
   renderWheel();
@@ -866,15 +1100,15 @@ function initWheel() {
 function renderWheel() {
   const size = 300;
   document.getElementById('gameArea').innerHTML =
-    '<div class="wheel-container">' +
+    '<div class="wheel-container" id="wheelTop">' +
     '<div class="wheel-canvas-wrap">' +
     '<div class="wheel-pointer"></div>' +
-    '<canvas id="wheelCanvas" width="' + size + '" height="' + size + '" class="wheel-canvas"></canvas>' +
+    '<canvas id="wheelCanvas" width="' + size + '" height="' + size + '" class="wheel-canvas" aria-hidden="true"></canvas>' +
     '</div>' +
     '</div>' +
     '<div style="text-align:center">' +
-    '<div class="wheel-counter" id="wheelCounter">' + correctItems + ' מתוך ' + totalItems + ' שאלות</div>' +
-    '<button class="btn wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">!סובבו</button>' +
+    '<div class="wheel-counter" id="wheelCounter">נענו 0 מתוך ' + totalItems + ' שאלות</div>' +
+    '<button class="btn wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">סובבו!</button>' +
     '</div>' +
     '<div class="wheel-popup" id="wheelPopup"></div>';
 
@@ -897,7 +1131,6 @@ function drawWheel(rotation) {
   for (let i = 0; i < n; i++) {
     const startAngle = (2 * Math.PI / n) * i;
     const endAngle = (2 * Math.PI / n) * (i + 1);
-    const midAngle = (startAngle + endAngle) / 2;
 
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -908,16 +1141,6 @@ function drawWheel(rotation) {
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
     ctx.stroke();
-
-    // Text
-    ctx.save();
-    ctx.rotate(midAngle);
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold ' + Math.max(10, Math.min(14, Math.floor(120 / n))) + 'px Heebo';
-    const label = (i + 1).toString();
-    ctx.fillText(label, r * 0.65, 4);
-    ctx.restore();
   }
 
   ctx.restore();
@@ -947,10 +1170,7 @@ function spinWheel() {
   const n = totalItems;
   const sliceAngle = 2 * Math.PI / n;
   // The pointer is at the top (angle = -PI/2 = 3PI/2)
-  // We want the target slice to end up at the top
-  // Target slice center angle = sliceAngle * targetIdx + sliceAngle/2
-  // After rotation R, the slice at angle A ends up at angle A + R
-  // We want A + R = -PI/2 (mod 2PI) => R = -PI/2 - A + full_rotations
+  // Target slice center angle = sliceAngle * targetIdx + sliceAngle/2 ; we want A + R = -PI/2 (mod 2PI)
   const targetAngle = sliceAngle * targetIdx + sliceAngle / 2;
   const fullSpins = 4 + Math.floor(Math.random() * 3); // 4-6 full spins
   const finalRotation = fullSpins * 2 * Math.PI + (3 * Math.PI / 2 - targetAngle);
@@ -965,8 +1185,7 @@ function spinWheel() {
   function animateSpin() {
     const elapsed = Date.now() - startTime;
     const t = Math.min(elapsed / duration, 1);
-    // Ease out cubic
-    const eased = 1 - Math.pow(1 - t, 3);
+    const eased = 1 - Math.pow(1 - t, 3);   // Ease out cubic
     wheelRotation = startRotation + (endRotation - startRotation) * eased;
     drawWheel(wheelRotation);
 
@@ -988,40 +1207,40 @@ function showWheelQuestion(idx) {
   popup.innerHTML =
     '<div class="wheel-q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options">' + q.options.map((o, i) =>
-      '<button type="button" class="q-opt plain-btn" onclick="wheelAnswer(' + idx + ',' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
+      '<button type="button" class="q-opt plain-btn" onclick="wheelAnswer(' + idx + ',' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span>' + optMark() + '</button>'
     ).join('') + '</div>' +
-    '<div class="q-feedback" id="wheelFeedback"></div>';
+    '<div class="q-feedback" id="wheelFeedback" role="status"></div>' +
+    '<button class="btn btn-next" id="wheelNextBtn"></button>';
+  try { popup.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { popup.scrollIntoView(); }
 }
 function wheelAnswer(qIdx, ansIdx) {
   const q = wheelItems[qIdx];
   const ok = ansIdx === q.correct;
   const popup = document.getElementById('wheelPopup');
-  popup.querySelectorAll('.q-opt').forEach((o, i) => {
-    o.classList.add('disabled');
-    o.disabled = true;
-    if (i === q.correct) o.classList.add('correct');
-    else if (i === ansIdx && !ok) o.classList.add('wrong');
-    else o.classList.add('dim');
-  });
-  if (ok) { score++; correctItems++; }
+  markOptions(popup.querySelectorAll('.q-opt'), q.correct, ansIdx);
+  if (ok) { score++; correctItems++; } else wrongItems++;
   wheelAnswered[qIdx] = true;
 
+  const fb = document.getElementById('wheelFeedback');
+  fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
+  fb.innerHTML = fbHead(ok, 'נכון!', 'לא נכון.') + ' ' + escapeHtml(q.explanation || '');
+
   const answeredCount = wheelAnswered.filter(Boolean).length;
-  document.getElementById('wheelCounter').textContent = answeredCount + ' מתוך ' + totalItems + ' שאלות';
+  document.getElementById('wheelCounter').textContent = 'נענו ' + answeredCount + ' מתוך ' + totalItems + ' שאלות';
   setProgress(answeredCount / totalItems);
+  drawWheel(wheelRotation);   // הפלח שנענה — באפור
 
-  // Redraw wheel with answered section grayed
-  drawWheel(wheelRotation);
-
-  if (answeredCount >= totalItems) {
-    setTimeout(showScore, 1500);
-  } else {
-    // Show spin button again after delay
-    setTimeout(() => {
-      popup.className = 'wheel-popup';
-      document.getElementById('wheelSpinBtn').disabled = false;
-    }, 1500);
-  }
+  const nb = document.getElementById('wheelNextBtn');
+  nb.style.display = 'block';
+  if (answeredCount >= totalItems) { nb.textContent = 'לסיכום'; nb.onclick = () => showScore(); }
+  else { nb.textContent = 'סובבו שוב'; nb.onclick = wheelAgain; }
+}
+function wheelAgain() {
+  document.getElementById('wheelPopup').className = 'wheel-popup';
+  const top = document.getElementById('wheelTop');
+  try { top.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { top.scrollIntoView(); }
+  document.getElementById('wheelSpinBtn').disabled = false;
+  spinWheel();
 }
 
 // ==========================================
@@ -1030,22 +1249,24 @@ function wheelAnswer(qIdx, ansIdx) {
 let tfItems = [], tfIdx = 0;
 function initTrueFalse() {
   tfItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = tfItems.length; tfIdx = 0; score = 0; correctItems = 0;
+  totalItems = tfItems.length; tfIdx = 0; score = 0; correctItems = 0; wrongItems = 0;
   renderTrueFalse();
 }
 function renderTrueFalse() {
   const item = tfItems[tfIdx], n = tfIdx + 1;
   setProgress(n / totalItems);
   document.getElementById('gameArea').innerHTML =
-    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div class="q-counter">משפט ' + n + ' מתוך ' + totalItems + '</div>' +
     '<div class="tf-statement">' + escapeHtml(item.text) + '</div>' +
     '<div class="tf-buttons">' +
-    '<button class="tf-btn tf-btn-true" onclick="tfAnswer(true)">✓ נכון</button>' +
-    '<button class="tf-btn tf-btn-false" onclick="tfAnswer(false)">✗ לא נכון</button>' +
+    '<button class="tf-btn tf-btn-true" onclick="tfAnswer(true)">' + svgIcon('check', 22) + 'נכון</button>' +
+    '<button class="tf-btn tf-btn-false" onclick="tfAnswer(false)">' + svgIcon('x', 22) + 'לא נכון</button>' +
     '</div>' +
-    '<div class="q-feedback" id="tfFeedback"></div>' +
+    '<div class="q-feedback" id="tfFeedback" role="status"></div>' +
     '<button class="btn btn-next" id="tfNextBtn" onclick="nextTrueFalse()" style="display:none">הבא</button>';
 }
+/* הסבר ישן שמתחיל ב"נכון." / "לא נכון." — הכותרת כבר אומרת את זה */
+function tfExplain(s) { return String(s || '').replace(/^\s*(לא\s+)?נכון\s*[.!:,–—-]\s*/, ''); }
 function tfAnswer(answer) {
   const item = tfItems[tfIdx];
   const ok = answer === item.correct;
@@ -1062,11 +1283,11 @@ function tfAnswer(answer) {
     if (!ok) trueBtn.classList.add('selected-wrong');
   }
 
-  if (ok) { score++; correctItems++; }
+  if (ok) { score++; correctItems++; } else wrongItems++;
 
   const fb = document.getElementById('tfFeedback');
   fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
-  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(item.explanation || '') : '<strong>לא נכון.</strong> ' + escapeHtml(item.explanation || '');
+  fb.innerHTML = fbHead(ok, 'צדקתם!', 'טעיתם.') + ' ' + (item.correct ? 'המשפט נכון. ' : 'המשפט לא נכון. ') + escapeHtml(tfExplain(item.explanation));
 
   const nextBtn = document.getElementById('tfNextBtn');
   nextBtn.style.display = 'block';
@@ -1082,30 +1303,40 @@ function nextTrueFalse() {
 // ==========================================
 // ===== FILL IN THE BLANK =====
 // ==========================================
-let fbItems = [], fbIdx = 0;
+/* 11.11.26: השוואה סלחנית, ניסיון שני (חצי נקודה), וחסר באמצע מילה ("מבקר ה___") — האותיות הצמודות נכנסות לקו */
+let fbItems = [], fbIdx = 0, fbTries = 0, fbDone = false, fbRight = 0, fbWrong = 0;
 function initFillBlank() {
   fbItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = fbItems.length; fbIdx = 0; score = 0; correctItems = 0;
+  totalItems = fbItems.length; fbIdx = 0; score = 0; correctItems = 0; wrongItems = 0; fbRight = 0; fbWrong = 0;
   renderFillBlank();
+}
+function fbSentenceHtml(sentence) {
+  const s = String(sentence || '');
+  const m = /([א-ת]*)_{2,}([א-ת]*)/.exec(s);
+  if (!m) return escapeHtml(s) + ' <span class="fb-blank"><span class="fb-slot" id="fbSlot">?</span></span>';
+  const before = s.slice(0, m.index), after = s.slice(m.index + m[0].length);
+  return escapeHtml(before) +
+    '<span class="fb-blank">' + (m[1] ? '<span class="fb-pre">' + escapeHtml(m[1]) + '</span>' : '') +
+    '<span class="fb-slot" id="fbSlot" data-pre="' + escapeHtml(m[1]) + '">?</span>' +
+    (m[2] ? '<span class="fb-pre">' + escapeHtml(m[2]) + '</span>' : '') + '</span>' +
+    escapeHtml(after).replace(/_{2,}/g, '<span class="fb-blank"><span class="fb-slot">?</span></span>');
 }
 function renderFillBlank() {
   const item = fbItems[fbIdx], n = fbIdx + 1;
+  fbTries = 0; fbDone = false;
   setProgress(n / totalItems);
 
-  // Replace ___ or blanks with highlighted marker
-  const sentenceHtml = escapeHtml(item.sentence).replace(/_{2,}/g, '<span class="fb-blank">?</span>');
-
   document.getElementById('gameArea').innerHTML =
-    '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
-    '<div class="fb-sentence">' + sentenceHtml + '</div>' +
+    '<div class="q-counter">משפט ' + n + ' מתוך ' + totalItems + '</div>' +
+    '<div class="fb-sentence">' + fbSentenceHtml(item.sentence) + '</div>' +
     '<div class="fb-input-row">' +
-    '<label class="sr-label" for="fbInput">התשובה שלכם</label>' +
-    '<input type="text" id="fbInput" placeholder="הקלידו את התשובה...">' +
-    '<button class="btn btn-primary" style="width:auto;padding:14px 24px" onclick="checkFillBlank()">בדקו</button>' +
+    '<label class="sr-label" for="fbInput">המילה החסרה</label>' +
+    '<input type="text" id="fbInput" placeholder="מילה אחת..." autocomplete="off">' +
+    '<button class="btn btn-primary" id="fbCheckBtn" style="width:auto;padding:14px 24px" onclick="checkFillBlank()">בדקו</button>' +
     '</div>' +
     (item.hint ? '<button class="btn fb-hint-btn" onclick="showFbHint()">רמז</button>' : '') +
     '<div class="fb-hint-text" id="fbHintText">' + escapeHtml(item.hint || '') + '</div>' +
-    '<div class="fb-feedback" id="fbFeedback"></div>' +
+    '<div class="fb-feedback" id="fbFeedback" role="status"></div>' +
     '<button class="btn btn-next" id="fbNextBtn" onclick="nextFillBlank()" style="display:none">הבא</button>';
 
   document.getElementById('fbInput').addEventListener('keydown', function(e) {
@@ -1115,33 +1346,50 @@ function renderFillBlank() {
 function showFbHint() {
   document.getElementById('fbHintText').style.display = 'block';
   const btn = document.querySelector('.fb-hint-btn');
-  if (btn) { btn.disabled = true; btn.style.opacity = '.4'; }
+  if (btn) btn.disabled = true;
 }
 function checkFillBlank() {
   const input = document.getElementById('fbInput');
-  if (input.disabled) return;
+  if (fbDone || input.disabled) return;
   const answer = input.value.trim();
   if (!answer) return;
   const item = fbItems[fbIdx];
-  const ok = answer.toLowerCase() === item.answer.trim().toLowerCase();
-
-  input.disabled = true;
+  const slot = document.getElementById('fbSlot');
+  const pre = slot ? slot.getAttribute('data-pre') || '' : '';
+  /* "מבקר ה___" — גם "מדינה" וגם "המדינה" נכונות */
+  const ok = answerMatches(answer, item.answer) || (pre && answerMatches(pre + answer, pre + item.answer));
   const fb = document.getElementById('fbFeedback');
-  fb.className = 'fb-feedback show ' + (ok ? 'correct' : 'wrong');
 
+  if (!ok && fbTries === 0) {
+    fbTries = 1;
+    fb.className = 'fb-feedback show wrong';
+    fb.innerHTML = fbHead(false, '', 'עוד לא.') + ' יש לכם עוד ניסיון אחד.';
+    input.classList.add('shake-input');
+    setTimeout(() => input.classList.remove('shake-input'), 400);
+    input.select();
+    return;
+  }
+
+  fbDone = true;
+  input.disabled = true;
+  document.getElementById('fbCheckBtn').disabled = true;
+  fb.className = 'fb-feedback show ' + (ok ? 'correct' : 'wrong');
   if (ok) {
-    fb.textContent = 'נכון!';
-    score++; correctItems++;
+    score += fbTries ? 0.5 : 1; correctItems = score; fbRight++;
+    fb.innerHTML = fbHead(true, 'נכון!', '') + (fbTries ? ' (בניסיון השני, חצי נקודה)' : '');
   } else {
-    fb.innerHTML = '<strong>לא נכון.</strong> התשובה הנכונה: ' + escapeHtml(item.answer);
+    fbWrong++; wrongItems = fbWrong;
+    fb.innerHTML = fbHead(false, '', 'לא נכון.') + ' התשובה הנכונה: ' + escapeHtml(item.answer);
   }
 
   // Fill the blank with the answer
-  const blank = document.querySelector('.fb-blank');
-  if (blank) {
-    blank.textContent = item.answer;
-    blank.style.color = ok ? 'var(--green)' : 'var(--secondary)';
-    blank.style.borderColor = ok ? 'var(--green)' : 'var(--secondary)';
+  if (slot) {
+    let shown = String(item.answer || '');
+    if (pre && shown.indexOf(pre) === 0) shown = shown.slice(pre.length);
+    slot.textContent = shown;
+    const bl = slot.parentNode;
+    bl.style.color = ok ? '#2D7A54' : 'var(--wrong)';
+    bl.style.borderColor = ok ? 'var(--green)' : 'var(--wrong)';
   }
 
   const nextBtn = document.getElementById('fbNextBtn');
@@ -1150,7 +1398,11 @@ function checkFillBlank() {
 }
 function nextFillBlank() {
   fbIdx++;
-  if (fbIdx >= totalItems) { showScore(); return; }
+  if (fbIdx >= totalItems) {
+    showScore({ pct: Math.round(score / Math.max(1, totalItems) * 100),
+      details: [[fbRight, 'נכונים', 'var(--green)'], [fbWrong, 'שגויים', 'var(--wrong)'], [totalItems, 'סה״כ', 'var(--primary)']] });
+    return;
+  }
   animateCard();
   renderFillBlank();
 }
@@ -1158,35 +1410,37 @@ function nextFillBlank() {
 // ==========================================
 // ===== SENTENCE ORDERING =====
 // ==========================================
+/* 11.11.26: סימני פיסוק יורדים מהמילים (אין "ישראל." כמילה שמסגירה את הסוף) */
 let sentItems = [], sentIdx = 0, sentBuilt = [], sentWords = [];
+function sentTokens(s) {
+  return String(s || '').trim().split(/\s+/).map(w => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')).filter(Boolean);
+}
 function initSentence() {
   sentItems = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = sentItems.length; sentIdx = 0; score = 0; correctItems = 0;
+  totalItems = sentItems.length; sentIdx = 0; score = 0; correctItems = 0; wrongItems = 0;
   renderSentence();
 }
 function renderSentence() {
   const item = sentItems[sentIdx], n = sentIdx + 1;
   setProgress(n / totalItems);
 
-  // Split sentence into words and shuffle
-  sentWords = item.sentence.trim().split(/\s+/);
-  const shuffled = shuffle(sentWords.map((w, i) => ({ text: w, origIdx: i })));
+  sentWords = sentTokens(item.sentence);
+  let shuffled = shuffle(sentWords.map((w, i) => ({ text: w, origIdx: i })));
+  for (let k = 0; k < 10 && sentWords.length > 1 && shuffled.map(w => w.text).join(' ') === sentWords.join(' '); k++) shuffled = shuffle(shuffled);
   sentBuilt = [];
 
   document.getElementById('gameArea').innerHTML =
     '<div class="q-counter">משפט ' + n + ' מתוך ' + totalItems + '</div>' +
-    '<div style="font-size:15px;font-weight:600;color:var(--gray);margin-bottom:12px;text-align:center">סדרו את המילים למשפט נכון:</div>' +
-    '<div class="sentence-target empty" id="sentTarget"></div>' +
+    '<div class="sentence-target empty" id="sentTarget" aria-label="המשפט שלכם"></div>' +
     '<div class="sentence-pool" id="sentPool">' +
     shuffled.map((w, i) =>
       '<button type="button" class="word-chip word-chip-pool plain-btn" data-pool-idx="' + i + '" data-word="' + escapeHtml(w.text) + '" onclick="addWordToSentence(this)">' + escapeHtml(w.text) + '</button>'
     ).join('') +
     '</div>' +
     '<button class="btn btn-primary check-btn" id="sentCheckBtn" onclick="checkSentence()" style="display:none">בדקו</button>' +
-    '<div class="sentence-feedback" id="sentFeedback"></div>' +
+    '<div class="sentence-feedback" id="sentFeedback" role="status"></div>' +
     '<button class="btn btn-next" id="sentNextBtn" onclick="nextSentence()" style="display:none">הבא</button>';
 
-  // Store shuffled data for reference
   window._sentShuffled = shuffled;
 }
 function addWordToSentence(el) {
@@ -1200,9 +1454,7 @@ function addWordToSentence(el) {
 }
 function removeWordFromSentence(idx) {
   const removed = sentBuilt.splice(idx, 1)[0];
-  // Restore pool chip
-  const poolChips = document.querySelectorAll('.word-chip-pool');
-  poolChips.forEach(c => {
+  document.querySelectorAll('.word-chip-pool').forEach(c => {
     if (c.getAttribute('data-pool-idx') === removed.poolIdx) {
       c.classList.remove('used');
       c.disabled = false;
@@ -1218,34 +1470,27 @@ function updateSentenceTarget() {
   } else {
     target.className = 'sentence-target';
     target.innerHTML = sentBuilt.map((w, i) =>
-      '<button type="button" class="word-chip word-chip-target plain-btn" onclick="removeWordFromSentence(' + i + ')">' + escapeHtml(w.word) + '</button>'
+      '<button type="button" class="word-chip word-chip-target plain-btn" aria-label="' + escapeHtml(w.word) + ' — החזרה" onclick="removeWordFromSentence(' + i + ')">' + escapeHtml(w.word) + '</button>'
     ).join('');
   }
-  // Show check button when all words placed
-  const checkBtn = document.getElementById('sentCheckBtn');
-  if (sentBuilt.length === sentWords.length) {
-    checkBtn.style.display = 'block';
-  } else {
-    checkBtn.style.display = 'none';
-  }
+  document.getElementById('sentCheckBtn').style.display = sentBuilt.length === sentWords.length ? 'block' : 'none';
 }
 function checkSentence() {
-  const built = sentBuilt.map(w => w.word).join(' ');
-  const original = sentItems[sentIdx].sentence.trim();
-  const ok = built === original;
+  const ok = sentBuilt.map(w => w.word).join(' ') === sentWords.join(' ');
+  const original = String(sentItems[sentIdx].sentence || '').trim();
 
   const fb = document.getElementById('sentFeedback');
   fb.className = 'sentence-feedback show ' + (ok ? 'correct' : 'wrong');
 
   if (ok) {
-    fb.textContent = 'מצוין! המשפט נכון!';
+    fb.innerHTML = fbHead(true, 'מצוין! המשפט נכון.', '');
     score++; correctItems++;
   } else {
-    fb.innerHTML = '<strong>לא מדויק.</strong> המשפט הנכון: ' + escapeHtml(original);
+    wrongItems++;
+    fb.innerHTML = fbHead(false, '', 'לא מדויק.') + ' המשפט הנכון: ' + escapeHtml(original);
   }
 
   document.getElementById('sentCheckBtn').style.display = 'none';
-  // Disable all interactions
   document.querySelectorAll('.word-chip-pool').forEach(c => c.style.pointerEvents = 'none');
   document.querySelectorAll('.word-chip-target').forEach(c => c.style.pointerEvents = 'none');
 
@@ -1263,232 +1508,192 @@ function nextSentence() {
 // ==========================================
 // ===== GROUPS (Connections) =====
 // ==========================================
-let groupsData = [], groupsAllItems = [], groupsSelected = [], groupsSolved = [], groupsLives = 4;
+/* מיון לקבוצות (11.11.26): שמות הקבוצות גלויים למעלה; לוחצים על כרטיס ואז על הקבוצה (או גוררים במחשב).
+   נכון — הכרטיס עובר לתוך הקבוצה. לא נכון — רעידה קלה, הכרטיס נשאר וממשיכים לנסות. אין "חיים".
+   הציון = כמה פריטים מוינו נכון בניסיון הראשון, מתוך כל הפריטים. מבנה הנתונים לא השתנה: [{name, items:[...]}],
+   גם לקבוצות עם יותר/פחות מ-4 פריטים ולמספר קבוצות שונה מ-4. */
+let groupsData = [], groupsAllItems = [], groupsSelected = -1, groupsDone = false;
+function groupsNorm(s) { return String(s == null ? '' : s).trim().replace(/\s+/g, ' '); }
 function initGroups() {
-  groupsData = [...gameConfig.items]; // each: {name, items:[4 strings]}
-  totalItems = groupsData.length; // number of groups (should be 4)
+  groupsData = (Array.isArray(gameConfig.items) ? gameConfig.items : [])
+    .filter(g => g && Array.isArray(g.items))
+    .map((g, gi) => ({ name: groupsNorm(g.name) || ('קבוצה ' + (gi + 1)), items: g.items.map(groupsNorm).filter(Boolean) }))
+    .filter(g => g.items.length);
+  groupsSelected = -1; groupsDone = false;
   score = 0; correctItems = 0;
-  groupsSolved = [];
-  groupsSelected = [];
-  groupsLives = 4;
-
-  // Flatten all items with group index
   let allItems = [];
-  groupsData.forEach((group, gi) => {
-    group.items.forEach(item => {
-      allItems.push({ text: item, groupIdx: gi });
-    });
-  });
+  groupsData.forEach((group, gi) => group.items.forEach(text => allItems.push({ text, groupIdx: gi, placed: -1, missed: false })));
   groupsAllItems = shuffle(allItems);
-
-  renderGroups();
-}
-function renderGroups() {
-  setProgress(groupsSolved.length / totalItems);
-
-  // Lives display
-  let livesHtml = '<div class="groups-lives">';
-  for (let i = 0; i < 4; i++) {
-    livesHtml += '<span class="heart">' + (i < groupsLives ? '❤️' : '🖤') + '</span>';
+  totalItems = groupsAllItems.length;
+  if (!totalItems) {
+    document.getElementById('gameArea').innerHTML = '<div class="groups-help">אין פריטים במשחק הזה.</div>';
+    return;
   }
-  livesHtml += ' <span style="margin-right:8px">' + groupsLives + ' ניסיונות נותרו</span></div>';
-
-  // Solved groups
-  const groupColors = ['groups-colors-0','groups-colors-1','groups-colors-2','groups-colors-3'];
-  let solvedHtml = '<div class="groups-solved">';
-  groupsSolved.forEach((gi, si) => {
-    const group = groupsData[gi];
-    solvedHtml += '<div class="groups-solved-group ' + groupColors[si % 4] + '">' +
-      '<div class="group-name">' + escapeHtml(group.name) + '</div>' +
-      '<div class="group-items">' + group.items.map(it => escapeHtml(it)).join(' • ') + '</div>' +
-      '</div>';
-  });
-  solvedHtml += '</div>';
-
-  // Remaining items grid
-  const remaining = groupsAllItems.filter(item => !groupsSolved.includes(item.groupIdx));
-  let gridHtml = '<div class="groups-grid">';
-  remaining.forEach((item, i) => {
-    const isSelected = groupsSelected.includes(i);
-    gridHtml += '<button type="button" class="groups-cell plain-btn' + (isSelected ? ' selected' : '') + '" data-ridx="' + i + '" aria-pressed="' + (isSelected ? 'true' : 'false') + '" onclick="toggleGroupItem(' + i + ')">' + escapeHtml(item.text) + '</button>';
-  });
-  gridHtml += '</div>';
-
-  const selectedCount = groupsSelected.length;
-  document.getElementById('gameArea').innerHTML =
-    livesHtml + solvedHtml + gridHtml +
-    '<button class="btn btn-primary groups-check-btn" onclick="checkGroups()"' + (selectedCount !== 4 ? ' disabled' : '') + '>בדקו (' + selectedCount + '/4)</button>';
+  renderGroups('', '');
 }
-function toggleGroupItem(idx) {
-  const pos = groupsSelected.indexOf(idx);
-  if (pos >= 0) {
-    groupsSelected.splice(pos, 1);
-  } else {
-    if (groupsSelected.length >= 4) return;
-    groupsSelected.push(idx);
-  }
-  renderGroups();
+function renderGroups(msg, msgType) {
+  const placed = groupsAllItems.filter(it => it.placed >= 0).length;
+  setProgress(placed / totalItems);
+  const cols = Math.min(4, Math.max(1, groupsData.length));
+  let html = '<div class="groups-help">לחצו על כרטיס, ואז על הקבוצה שהוא שייך אליה</div>';
+  html += '<div class="groups-boxes' + (groupsSelected >= 0 ? ' armed' : '') + '" style="--gcols:' + cols + '">';
+  groupsData.forEach((g, gi) => {
+    const inBox = groupsAllItems.filter(it => it.placed === gi);
+    const full = inBox.length >= g.items.length;
+    html += '<button type="button" class="groups-box plain-btn groups-colors-' + (gi % 4) + (full ? ' full' : '') + '" data-gi="' + gi + '"' +
+      ' onclick="placeGroupItem(' + gi + ')" ondragover="groupsDragOver(event)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="groupsDrop(event,' + gi + ')"' +
+      ' aria-label="' + escapeHtml(g.name) + ' — ' + inBox.length + ' מתוך ' + g.items.length + '">' +
+      '<span class="groups-box-name">' + escapeHtml(g.name) + '</span>' +
+      '<span class="groups-box-count">' + inBox.length + ' מתוך ' + g.items.length + '</span>' +
+      '<span class="groups-box-items">' + inBox.map(it => '<span class="groups-chip">' + escapeHtml(it.text) + '</span>').join('') + '</span>' +
+      '</button>';
+  });
+  html += '</div>';
+  html += '<div class="groups-msg' + (msgType ? ' ' + msgType : '') + '" id="groupsMsg" role="status" aria-live="polite">' + escapeHtml(msg || '') + '</div>';
+  html += '<div class="groups-cards">';
+  groupsAllItems.forEach((it, i) => {
+    if (it.placed >= 0) return;
+    const sel = i === groupsSelected;
+    html += '<button type="button" class="groups-card plain-btn' + (sel ? ' selected' : '') + '" data-idx="' + i + '" draggable="true"' +
+      ' aria-pressed="' + (sel ? 'true' : 'false') + '" onclick="selectGroupItem(' + i + ')" ondragstart="groupsDragStart(event,' + i + ')">' +
+      escapeHtml(it.text) + '</button>';
+  });
+  html += '</div>';
+  document.getElementById('gameArea').innerHTML = html;
 }
-function checkGroups() {
-  if (groupsSelected.length !== 4) return;
-
-  const remaining = groupsAllItems.filter(item => !groupsSolved.includes(item.groupIdx));
-  const selectedItems = groupsSelected.map(i => remaining[i]);
-
-  // Check if all selected items are from the same group
-  const groupIdx = selectedItems[0].groupIdx;
-  const allSame = selectedItems.every(item => item.groupIdx === groupIdx);
-
-  if (allSame) {
-    groupsSolved.push(groupIdx);
-    correctItems++;
-    score++;
-    groupsSelected = [];
-    if (groupsSolved.length >= totalItems) {
-      renderGroups();
-      setTimeout(showScore, 1000);
+function selectGroupItem(idx) {
+  if (groupsDone) return;
+  groupsSelected = groupsSelected === idx ? -1 : idx;
+  renderGroups('', '');
+}
+function placeGroupItem(gi) {
+  if (groupsDone) return;
+  if (groupsSelected < 0) { renderGroups('קודם בחרו כרטיס', 'info'); return; }
+  const it = groupsAllItems[groupsSelected], g = groupsData[gi];
+  if (!it || !g) return;
+  /* נכון אם הפריט שייך לקבוצה (גם אם אותו פריט מופיע בטעות בשתי קבוצות) — ויש בה עוד מקום */
+  const inBox = groupsAllItems.filter(x => x.placed === gi).length;
+  const ok = (it.groupIdx === gi || g.items.indexOf(it.text) > -1) && inBox < g.items.length;
+  if (ok) {
+    it.placed = gi;
+    if (!it.missed) { correctItems++; score++; }
+    groupsSelected = -1;
+    const left = groupsAllItems.filter(x => x.placed < 0).length;
+    if (!left) {
+      groupsDone = true;
+      renderGroups('כל הכרטיסים מוינו!', 'correct');
+      setTimeout(showScore, 1200);
     } else {
-      renderGroups();
+      renderGroups('נכון!', 'correct');
     }
   } else {
-    // Wrong - shake and decrement lives
-    groupsLives--;
-    // Flash wrong
-    const cells = document.querySelectorAll('.groups-cell');
-    groupsSelected.forEach(idx => {
-      if (cells[idx]) cells[idx].classList.add('wrong-flash');
-    });
-    setTimeout(() => {
-      groupsSelected = [];
-      if (groupsLives <= 0) {
-        // Game over - reveal all groups
-        groupsSolved = groupsData.map((_, i) => i);
-        renderGroups();
-        setTimeout(showScore, 1500);
-      } else {
-        renderGroups();
-      }
-    }, 600);
+    it.missed = true;
+    const sel = groupsSelected;
+    renderGroups('לא בדיוק — נסו קבוצה אחרת', 'wrong');
+    const card = document.querySelector('.groups-card[data-idx="' + sel + '"]');
+    if (card) { card.classList.add('wrong-flash'); setTimeout(() => card.classList.remove('wrong-flash'), 450); }
   }
+}
+/* גרירה במחשב — אותה פעולה כמו לחיצה על כרטיס ואז על קבוצה */
+function groupsDragStart(e, idx) {
+  groupsSelected = idx;
+  try { e.dataTransfer.setData('text/plain', String(idx)); e.dataTransfer.effectAllowed = 'move'; } catch (err) {}
+}
+function groupsDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function groupsDrop(e, gi) {
+  e.preventDefault();
+  let idx = parseInt((e.dataTransfer && e.dataTransfer.getData('text/plain')) || '', 10);
+  if (!isNaN(idx) && groupsAllItems[idx] && groupsAllItems[idx].placed < 0) groupsSelected = idx;
+  placeGroupItem(gi);
 }
 
 // ==========================================
 // ===== HANGMAN =====
 // ==========================================
-let hangmanWords = [], hangmanIdx = 0, hangmanRevealed = [], hangmanWrong = 0, hangmanGuessedLetters = [], hangmanMaxWrong = 6;
-const hangmanEmojis = ['🙂','😐','😟','😰','😱','💀'];
+/* 11.11.26: אותיות סופיות — ניחוש נ חושף גם ן (וכן כ/ך, מ/ם, פ/ף, צ/ץ). תו שאינו אות (מקף, גרש, רווח) גלוי מההתחלה.
+   "נשארו X טעויות" במקום פרצופים. */
+let hangmanWords = [], hangmanIdx = 0, hangmanRevealed = [], hangmanWrong = 0, hangmanGuessedLetters = [], hangmanMaxWrong = 6, hangmanOver = false;
 const hebrewLetters = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+function hmBase(ch) { return FINAL_LETTERS[ch] || ch; }
 function initHangman() {
   hangmanWords = gameConfig.settings && gameConfig.settings.shuffleItems ? shuffle(gameConfig.items) : [...gameConfig.items];
-  totalItems = hangmanWords.length; hangmanIdx = 0; score = 0; correctItems = 0;
+  totalItems = hangmanWords.length; hangmanIdx = 0; score = 0; correctItems = 0; wrongItems = 0;
   startHangmanWord();
 }
+function hmWord() { return String(hangmanWords[hangmanIdx].word || '').trim().replace(/[֑-ׇ]/g, ''); }
 function startHangmanWord() {
-  const item = hangmanWords[hangmanIdx];
-  const word = item.word.trim();
-  hangmanRevealed = new Array(word.length).fill(false);
-  // Reveal spaces automatically
-  for (let i = 0; i < word.length; i++) {
-    if (word[i] === ' ') hangmanRevealed[i] = true;
-  }
+  const word = hmWord();
+  hangmanRevealed = [...word].map(ch => hebrewLetters.indexOf(hmBase(ch)) < 0);
   hangmanWrong = 0;
   hangmanGuessedLetters = [];
+  hangmanOver = false;
   renderHangman();
 }
-function renderHangman() {
+function hmLeftText() {
+  const left = hangmanMaxWrong - hangmanWrong;
+  return left <= 0 ? 'לא נשארו טעויות' : left === 1 ? 'נשארה טעות אחת' : 'נשארו ' + left + ' טעויות';
+}
+function renderHangman(result) {
   const item = hangmanWords[hangmanIdx];
-  const word = item.word.trim();
+  const word = [...hmWord()];
   const n = hangmanIdx + 1;
   setProgress(n / (totalItems + 1));
 
-  // Word display
-  let wordHtml = '<div class="hangman-word">';
-  for (let i = 0; i < word.length; i++) {
-    if (word[i] === ' ') {
-      wordHtml += '<div style="width:20px"></div>';
-    } else {
-      wordHtml += '<div class="hangman-letter-slot' + (hangmanRevealed[i] ? ' revealed' : '') + '">' + (hangmanRevealed[i] ? escapeHtml(word[i]) : '') + '</div>';
-    }
-  }
+  let wordHtml = '<div class="hangman-word" aria-label="המילה">';
+  word.forEach((ch, i) => {
+    if (ch === ' ') { wordHtml += '<div style="width:20px"></div>'; return; }
+    const isLetter = hebrewLetters.indexOf(hmBase(ch)) > -1;
+    let cls = 'hangman-letter-slot';
+    if (!isLetter) cls += ' fixed';
+    else if (hangmanRevealed[i]) cls += ' revealed';
+    else if (hangmanOver) cls += ' missed';
+    const show = hangmanRevealed[i] || hangmanOver;
+    wordHtml += '<div class="' + cls + '">' + (show ? escapeHtml(ch) : '') + '</div>';
+  });
   wordHtml += '</div>';
 
-  // Emoji and lives
-  const emojiIdx = Math.min(hangmanWrong, hangmanEmojis.length - 1);
-  let livesHtml = '<div class="hangman-emoji">' + hangmanEmojis[emojiIdx] + '</div>';
-  livesHtml += '<div class="hangman-lives">';
-  for (let i = 0; i < hangmanMaxWrong; i++) {
-    livesHtml += '<div class="life-dot' + (i < hangmanWrong ? ' lost' : '') + '"></div>';
-  }
+  let livesHtml = '<div class="hangman-status' + (hangmanMaxWrong - hangmanWrong <= 2 ? ' low' : '') + '" role="status">' + hmLeftText() + '</div>';
+  livesHtml += '<div class="hangman-lives" aria-hidden="true">';
+  for (let i = 0; i < hangmanMaxWrong; i++) livesHtml += '<div class="life-dot' + (i < hangmanWrong ? ' lost' : '') + '"></div>';
   livesHtml += '</div>';
 
-  // Hint
-  let hintHtml = item.hint ? '<div class="hangman-hint">רמז: ' + escapeHtml(item.hint) + '</div>' : '';
+  const hintHtml = item.hint ? '<div class="hangman-hint">רמז: ' + escapeHtml(item.hint) + '</div>' : '';
 
-  // Keyboard
   let kbHtml = '<div class="hangman-keyboard">';
   hebrewLetters.forEach(letter => {
     let cls = 'hangman-key';
-    if (hangmanGuessedLetters.includes(letter)) {
-      const inWord = word.includes(letter);
-      cls += inWord ? ' correct-key' : ' wrong-key';
-    }
-    kbHtml += '<button type="button" class="' + cls + ' plain-btn"' + (hangmanGuessedLetters.includes(letter) ? ' disabled' : '') + ' onclick="hangmanGuess(\'' + letter + '\')">' + letter + '</button>';
+    const used = hangmanGuessedLetters.includes(letter);
+    if (used) cls += word.some(ch => hmBase(ch) === letter) ? ' correct-key' : ' wrong-key';
+    kbHtml += '<button type="button" class="' + cls + ' plain-btn"' + (used || hangmanOver ? ' disabled' : '') + ' onclick="hangmanGuess(\'' + letter + '\')">' + letter + '</button>';
   });
   kbHtml += '</div>';
 
+  const last = hangmanIdx >= totalItems - 1;
   document.getElementById('gameArea').innerHTML =
     '<div class="q-counter">מילה ' + n + ' מתוך ' + totalItems + '</div>' +
     wordHtml + livesHtml + hintHtml + kbHtml +
-    '<div class="hangman-result" id="hangmanResult"></div>' +
-    '<button class="btn btn-next" id="hangmanNextBtn" onclick="nextHangman()" style="display:none">הבא</button>';
+    '<div class="hangman-result' + (result ? ' show ' + result.cls : '') + '" id="hangmanResult" role="status">' + (result ? result.html : '') + '</div>' +
+    '<button class="btn btn-next" id="hangmanNextBtn" onclick="nextHangman()" style="display:' + (hangmanOver ? 'block' : 'none') + '">' + (last ? 'סיום' : 'המילה הבאה') + '</button>';
 }
 function hangmanGuess(letter) {
-  if (hangmanGuessedLetters.includes(letter)) return;
+  if (hangmanOver || hangmanGuessedLetters.includes(letter)) return;
   hangmanGuessedLetters.push(letter);
 
-  const word = hangmanWords[hangmanIdx].word.trim();
+  const word = [...hmWord()];
   let found = false;
-  for (let i = 0; i < word.length; i++) {
-    if (word[i] === letter) {
-      hangmanRevealed[i] = true;
-      found = true;
-    }
-  }
+  word.forEach((ch, i) => { if (hmBase(ch) === letter) { hangmanRevealed[i] = true; found = true; } });
+  if (!found) hangmanWrong++;
 
-  if (!found) {
-    hangmanWrong++;
-  }
-
-  renderHangman();
-
-  // Check win/lose
-  const allRevealed = hangmanRevealed.every(Boolean);
-  if (allRevealed) {
-    // Win
+  if (hangmanRevealed.every(Boolean)) {
     score++; correctItems++;
-    const res = document.getElementById('hangmanResult');
-    res.className = 'hangman-result show win';
-    res.textContent = 'כל הכבוד! ניחשתם את המילה!';
-    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
-    const nextBtn = document.getElementById('hangmanNextBtn');
-    nextBtn.style.display = 'block';
-    nextBtn.textContent = hangmanIdx < totalItems - 1 ? 'המילה הבאה' : 'סיום';
+    hangmanOver = true;
+    renderHangman({ cls: 'win', html: fbHead(true, 'כל הכבוד! ניחשתם את המילה.', '') });
   } else if (hangmanWrong >= hangmanMaxWrong) {
-    // Lose
-    const res = document.getElementById('hangmanResult');
-    res.className = 'hangman-result show lose';
-    res.textContent = 'המילה היתה: ' + word;
-    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
-    // Reveal all letters
-    for (let i = 0; i < word.length; i++) hangmanRevealed[i] = true;
+    wrongItems++;
+    hangmanOver = true;
+    renderHangman({ cls: 'lose', html: fbHead(false, '', 'המילה הייתה:') + ' ' + escapeHtml(word.join('')) });
+  } else {
     renderHangman();
-    const res2 = document.getElementById('hangmanResult');
-    res2.className = 'hangman-result show lose';
-    res2.textContent = 'המילה היתה: ' + word;
-    document.querySelectorAll('.hangman-key').forEach(k => k.style.pointerEvents = 'none');
-    const nextBtn = document.getElementById('hangmanNextBtn');
-    nextBtn.style.display = 'block';
-    nextBtn.textContent = hangmanIdx < totalItems - 1 ? 'המילה הבאה' : 'סיום';
   }
 }
 function nextHangman() {
@@ -1501,20 +1706,17 @@ function nextHangman() {
 // ==========================================
 // ===== MILLIONAIRE =====
 // ==========================================
-let millItems = [], millIdx = 0, millLadder = [], millUsed5050 = false, millCheckpoints = [];
+/* 11.11.26: ההסבר נשאר על המסך עם כפתור (בלי מעבר אוטומטי); הודעת "הגעתם לפסגה" — כשעונים נכון על השאלה האחרונה;
+   בסיכום: שגויים = 1 (או 0), ובנפרד כמה שאלות לא הגעתם אליהן. */
+let millItems = [], millIdx = 0, millLadder = [], millUsed5050 = false, millCheckpoints = [], millLost = false;
 function initMillionaire() {
   millItems = [...gameConfig.items];
-  totalItems = millItems.length; millIdx = 0; score = 0; correctItems = 0;
-  millUsed5050 = false;
+  totalItems = millItems.length; millIdx = 0; score = 0; correctItems = 0; wrongItems = 0;
+  millUsed5050 = false; millLost = false;
   isMillionaire = true;
 
-  // Build ladder based on number of questions
   const fullLadder = [100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
-  if (totalItems <= fullLadder.length) {
-    millLadder = fullLadder.slice(0, totalItems);
-  } else {
-    millLadder = fullLadder;
-  }
+  millLadder = totalItems <= fullLadder.length ? fullLadder.slice(0, totalItems) : fullLadder;
 
   // Checkpoints at level 5 and 10 (0-indexed: 4 and 9)
   millCheckpoints = [];
@@ -1530,8 +1732,7 @@ function renderMillionaire() {
   setProgress(n / totalItems);
   const L = ['א','ב','ג','ד'];
 
-  // Ladder
-  let ladderHtml = '<div class="mill-ladder">';
+  let ladderHtml = '<div class="mill-side"><div class="mill-ladder">';
   for (let i = 0; i < millLadder.length; i++) {
     let cls = 'mill-ladder-item';
     if (i === millIdx) cls += ' current';
@@ -1539,27 +1740,25 @@ function renderMillionaire() {
     if (millCheckpoints.includes(i)) cls += ' checkpoint';
     ladderHtml += '<div class="' + cls + '">' + millLadder[i].toLocaleString() + ' ₪</div>';
   }
-  ladderHtml += '</div>';
+  ladderHtml += '</div>' + (millCheckpoints.length ? '<div class="mill-legend"><span class="sw"></span>מסגרת כתומה = סכום שנשמר</div>' : '') + '</div>';
 
-  // Lifeline
-  let lifelineHtml = '<div class="mill-lifeline">' +
-    '<button type="button" class="mill-lifeline-btn' + (millUsed5050 ? ' used' : '') + '"' + (millUsed5050 ? ' disabled' : '') + ' onclick="mill5050()" id="mill5050Btn">50:50</button>' +
+  const lifelineHtml = '<div class="mill-lifeline">' +
+    '<button type="button" class="mill-lifeline-btn' + (millUsed5050 ? ' used' : '') + '"' + (millUsed5050 ? ' disabled' : '') + ' onclick="mill5050()" id="mill5050Btn" aria-label="50:50 — הורדת שתי תשובות שגויות, פעם אחת במשחק">50:50</button>' +
     '</div>';
 
-  // Question
-  let qHtml =
+  const qHtml =
     '<div class="mill-main">' +
     '<div class="q-counter">שאלה ' + n + ' מתוך ' + totalItems + '</div>' +
     lifelineHtml +
     '<div class="mill-q-text">' + escapeHtml(q.text) + '</div>' +
     '<div class="q-options" id="millOptions">' + q.options.map((o, i) =>
-      '<button type="button" class="q-opt plain-btn" id="millOpt' + i + '" onclick="millAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span></button>'
+      '<button type="button" class="q-opt plain-btn" id="millOpt' + i + '" onclick="millAnswer(' + i + ')"><span class="opt-letter">' + L[i] + '</span><span>' + escapeHtml(o) + '</span>' + optMark() + '</button>'
     ).join('') + '</div>' +
-    '<div class="q-feedback" id="millFeedback"></div>' +
+    '<div class="q-feedback" id="millFeedback" role="status"></div>' +
+    '<button class="btn btn-next" id="millNextBtn"></button>' +
     '</div>';
 
-  document.getElementById('gameArea').innerHTML =
-    '<div class="mill-layout">' + qHtml + ladderHtml + '</div>';
+  document.getElementById('gameArea').innerHTML = '<div class="mill-layout">' + qHtml + ladderHtml + '</div>';
 }
 function mill5050() {
   if (millUsed5050) return;
@@ -1569,15 +1768,9 @@ function mill5050() {
   lifelineBtn.disabled = true;
 
   const q = millItems[millIdx];
-  const correct = q.correct;
-  // Pick 2 wrong options to remove
-  let wrongIndices = [];
-  for (let i = 0; i < q.options.length; i++) {
-    if (i !== correct) wrongIndices.push(i);
-  }
-  // Remove 2 random wrong options
-  const toRemove = shuffle(wrongIndices).slice(0, 2);
-  toRemove.forEach(i => {
+  const wrongIndices = [];
+  for (let i = 0; i < q.options.length; i++) if (i !== q.correct) wrongIndices.push(i);
+  shuffle(wrongIndices).slice(0, 2).forEach(i => {
     const opt = document.getElementById('millOpt' + i);
     if (opt) {
       opt.classList.add('disabled', 'dim');
@@ -1589,88 +1782,82 @@ function mill5050() {
 function millAnswer(idx) {
   const q = millItems[millIdx];
   const ok = idx === q.correct;
-
-  document.querySelectorAll('#millOptions .q-opt').forEach((o, i) => {
-    o.classList.add('disabled');
-    o.disabled = true;
-    if (i === q.correct) o.classList.add('correct');
-    else if (i === idx && !ok) o.classList.add('wrong');
-  });
+  markOptions(document.querySelectorAll('#millOptions .q-opt'), q.correct, idx);
+  const b = document.getElementById('mill5050Btn'); if (b) b.disabled = true;
 
   const fb = document.getElementById('millFeedback');
   fb.className = 'q-feedback show ' + (ok ? 'correct' : 'wrong');
-  fb.innerHTML = ok ? '<strong>נכון!</strong> ' + escapeHtml(q.explanation || '') : '<strong>לא נכון!</strong> ' + escapeHtml(q.explanation || '');
+  fb.innerHTML = fbHead(ok, 'נכון!', 'לא נכון.') + ' ' + escapeHtml(q.explanation || '');
 
+  const nb = document.getElementById('millNextBtn');
+  nb.style.display = 'block';
   if (ok) {
-    correctItems++;
-    millionaireMoneyReached = millLadder[millIdx];
-    millIdx++;
-    if (millIdx >= totalItems) {
-      // Won all!
-      setTimeout(() => {
-        score = correctItems;
-        showMillionaireScore();
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        animateCard();
-        renderMillionaire();
-      }, 1500);
-    }
+    correctItems++; score = correctItems;
+    millionaireMoneyReached = millLadder[Math.min(millIdx, millLadder.length - 1)];
+    nb.textContent = millIdx >= totalItems - 1 ? 'לסיכום' : 'לשאלה הבאה';
   } else {
-    // Wrong - fall to last checkpoint
+    millLost = true; wrongItems = 1;
     let fallTo = 0;
-    for (const cp of millCheckpoints) {
-      if (cp < millIdx) fallTo = millLadder[cp];
-    }
+    for (const cp of millCheckpoints) if (cp < millIdx) fallTo = millLadder[cp];
     millionaireMoneyReached = fallTo;
     score = correctItems;
-    setTimeout(() => {
-      showMillionaireScore();
-    }, 2000);
+    nb.textContent = 'לסיכום';
   }
+  nb.onclick = millNext;
+}
+function millNext() {
+  if (millLost || millIdx >= totalItems - 1) { showMillionaireScore(); return; }
+  millIdx++;
+  animateCard();
+  renderMillionaire();
 }
 function showMillionaireScore() {
   setProgress(1);
-  const p = Math.round(correctItems / totalItems * 100);
-  let ic, msg, bg;
-  if (millionaireMoneyReached >= 1000000) { ic = '👑'; msg = 'הגעתם לפסגה! ענקי!'; bg = 'var(--accent-l)'; }
-  else if (p >= 70) { ic = '💰'; msg = 'כל הכבוד! הרווחתם יפה!'; bg = 'var(--green-l)'; }
-  else if (p >= 50) { ic = '💵'; msg = 'לא רע! אפשר לשפר!'; bg = 'var(--primary-l)'; }
-  else { ic = '📖'; msg = 'כדאי לחזור על החומר'; bg = 'var(--sec-l)'; }
+  const p = Math.round(correctItems / Math.max(1, totalItems) * 100);
+  const top = !millLost && correctItems >= totalItems;
+  let ic, msg, bg, col;
+  if (top) { ic = 'trophy'; msg = 'הגעתם לפסגה! ענקי!'; bg = 'var(--accent-l)'; col = 'var(--accent)'; }
+  else if (p >= 70) { ic = 'award'; msg = 'כל הכבוד! הרווחתם יפה!'; bg = 'var(--green-l)'; col = 'var(--green)'; }
+  else if (p >= 50) { ic = 'trend'; msg = 'לא רע! אפשר לשפר!'; bg = 'var(--primary-l)'; col = 'var(--primary)'; }
+  else { ic = 'book'; msg = 'כדאי לחזור על החומר'; bg = 'var(--bg)'; col = 'var(--gray)'; }
 
-  document.getElementById('scoreIcon').textContent = ic;
+  const si = document.getElementById('scoreIcon'); si.innerHTML = svgIcon(ic, 56); si.style.color = col;
   document.getElementById('scoreNum').textContent = millionaireMoneyReached.toLocaleString();
-  document.getElementById('scoreNum').style.color = millionaireMoneyReached >= 64000 ? 'var(--accent)' : millionaireMoneyReached >= 1000 ? 'var(--green)' : 'var(--secondary)';
-  document.getElementById('scoreLabel').textContent = 'הגעתם ל-' + millionaireMoneyReached.toLocaleString() + ' ₪';
+  document.getElementById('scoreNum').style.color = top ? 'var(--accent)' : millionaireMoneyReached > 0 ? 'var(--green)' : 'var(--gray)';
+  document.getElementById('scoreLabel').textContent = millionaireMoneyReached > 0 ? 'הגעתם ל-' + millionaireMoneyReached.toLocaleString() + ' ₪' : 'הפעם לא נשמר סכום';
   document.getElementById('scoreMsg').textContent = msg;
   document.getElementById('scoreMsg').style.background = bg;
-  document.getElementById('correctCount').textContent = correctItems;
-  document.getElementById('wrongCount').textContent = totalItems - correctItems;
-  document.getElementById('totalCount').textContent = totalItems;
+  const notReached = Math.max(0, totalItems - correctItems - (millLost ? 1 : 0));
+  setScoreDetails([[correctItems, 'נכונים', 'var(--green)'], [millLost ? 1 : 0, 'שגויים', 'var(--wrong)'], [notReached, 'שאלות שלא הגעתם אליהן', 'var(--primary)']]);
   showScreen('scoreScreen');
 }
 
 // ==========================================
 // ===== SCORE =====
 // ==========================================
-function showScore() {
-  const p = Math.round(correctItems / totalItems * 100);
+function setScoreDetails(rows) {
+  document.getElementById('scoreDetails').innerHTML = rows.map(r =>
+    '<div class="score-detail"><div class="num" style="color:' + r[2] + '">' + r[0] + '</div><div class="lbl">' + escapeHtml(r[1]) + '</div></div>').join('');
+}
+/* o.pct — ציון מוכן (כשיש חצאי נקודות או ציון לפי ניסיונות); o.details — [[מספר, תווית, צבע], ...] */
+function showScore(o) {
+  o = o || {};
+  const p = o.pct != null ? o.pct : Math.round(correctItems / Math.max(1, totalItems) * 100);
   setProgress(1);
-  let ic, msg, bg;
-  if (p >= 90) { ic = '🌟'; msg = 'מצוין! שליטה מעולה!'; bg = 'var(--green-l)'; }
-  else if (p >= 70) { ic = '👏'; msg = 'כל הכבוד! ביצוע טוב מאוד!'; bg = 'var(--primary-l)'; }
-  else if (p >= 50) { ic = '💪'; msg = 'אפשר לשפר – נסו שוב!'; bg = 'var(--accent-l)'; }
-  else { ic = '📖'; msg = 'כדאי לחזור על החומר'; bg = 'var(--sec-l)'; }
-  document.getElementById('scoreIcon').textContent = ic;
+  let ic, msg, bg, col;
+  if (p >= 90) { ic = 'star'; msg = 'מצוין! שליטה מעולה!'; bg = 'var(--green-l)'; col = 'var(--accent)'; }
+  else if (p >= 70) { ic = 'award'; msg = 'כל הכבוד! ביצוע טוב מאוד!'; bg = 'var(--primary-l)'; col = 'var(--green)'; }
+  else if (p >= 50) { ic = 'trend'; msg = 'אפשר לשפר – נסו שוב!'; bg = 'var(--accent-l)'; col = 'var(--primary)'; }
+  else { ic = 'book'; msg = 'כדאי לחזור על החומר'; bg = 'var(--bg)'; col = 'var(--gray)'; }
+  const si = document.getElementById('scoreIcon'); si.innerHTML = svgIcon(ic, 56); si.style.color = col;
   document.getElementById('scoreNum').textContent = p;
-  document.getElementById('scoreNum').style.color = p >= 70 ? 'var(--green)' : p >= 50 ? 'var(--accent)' : 'var(--secondary)';
+  document.getElementById('scoreNum').style.color = p >= 70 ? 'var(--green)' : p >= 50 ? 'var(--accent)' : 'var(--gray)';
   document.getElementById('scoreLabel').textContent = 'מתוך 100';
   document.getElementById('scoreMsg').textContent = msg;
   document.getElementById('scoreMsg').style.background = bg;
-  document.getElementById('correctCount').textContent = correctItems;
-  document.getElementById('wrongCount').textContent = totalItems - correctItems;
-  document.getElementById('totalCount').textContent = totalItems;
+  /* שגויים = טעויות אמיתיות. במיון לקבוצות כל הפריטים ממוינים בסוף, ולכן = פריטים שלא מוינו בניסיון הראשון */
+  const w = (gameConfig && gameConfig.gameType === 'groups') ? Math.max(0, totalItems - correctItems) : wrongItems;
+  setScoreDetails(o.details || [[correctItems, 'נכונים', 'var(--green)'], [w, 'שגויים', 'var(--wrong)'], [totalItems, 'סה״כ', 'var(--primary)']]);
   showScreen('scoreScreen');
 }
 
@@ -1686,7 +1873,7 @@ function sendResults() {
     classroom: studentClass,
     score: p,
     totalQuestions: totalItems,
-    correctAnswers: correctItems,
+    correctAnswers: Math.round(correctItems),
     level: '',
     teacherEmail: gameMeta.email || ''
   });
@@ -1695,7 +1882,7 @@ function sendResults() {
   s.onload = s.onerror = function() {
     const st = document.getElementById('sendStatus');
     st.className = 'send-status success';
-    st.textContent = 'התוצאות נשלחו בהצלחה למורה! ✓';
+    st.innerHTML = svgIcon('check', 18) + ' התוצאות נשלחו בהצלחה למורה!';
     btn.textContent = 'נשלח!';
     s.remove();
   };

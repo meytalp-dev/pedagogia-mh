@@ -923,7 +923,9 @@
   function renderGame2(d) {
     var G = d.game, wrap = el("div", "lk-body lk-game2");
     var name = GAME_HE[G.gameType] || "משחק";
-    wrap.appendChild(el("div", "lk-g2head", "<b>" + esc(name) + "</b><span>" + (G.items || []).length + " פריטים · משחקים על המסך או בטלפון</span>"));
+    /* במיון לקבוצות סופרים את הפריטים שבתוך הקבוצות, לא את הקבוצות */
+    var cnt = G.gameType === "groups" ? (G.items || []).reduce(function (s, g) { return s + ((g && Array.isArray(g.items)) ? g.items.length : 0); }, 0) : (G.items || []).length;
+    wrap.appendChild(el("div", "lk-g2head", "<b>" + esc(name) + "</b><span>" + cnt + " פריטים · משחקים על המסך או בטלפון</span>"));
     if (d.id) {
       var fr = el("iframe", "lk-gframe");
       /* אצל המורה (t=1) הנגן לא שולח תוצאות — רק תלמידים נספרים */
@@ -947,7 +949,17 @@
     }).join("");
     else if (t === "matching") h += "<table><tbody>" + it.map(function (p) { return "<tr><td>" + esc(p.right) + "</td><td>" + (teacher ? esc(p.left) : "") + "</td></tr>"; }).join("") + "</tbody></table>";
     else if (t === "memory") h += "<table><tbody>" + it.map(function (p) { return "<tr><td>" + esc(p.front) + "</td><td>" + (teacher ? esc(p.back) : "") + "</td></tr>"; }).join("") + "</tbody></table>";
-    else if (t === "groups") h += it.map(function (g) { return "<p><b>" + esc(g.name) + ":</b> " + (teacher ? esc((g.items || []).join(" · ")) : "") + "</p>"; }).join("");
+    else if (t === "groups") {
+      /* מיון לקבוצות: אצל המורה — כל קבוצה עם הפריטים שלה; בדף התלמיד — מחסן פריטים מעורבב + טבלה ריקה למיון */
+      var gs = it.filter(function (g) { return g && Array.isArray(g.items); });
+      if (teacher) h += "<table><tbody>" + gs.map(function (g) { return "<tr><td><b>" + esc(g.name || "") + "</b></td><td>" + esc(g.items.join(" · ")) + "</td></tr>"; }).join("") + "</tbody></table>";
+      else {
+        var bank = [];
+        gs.forEach(function (g) { bank = bank.concat(g.items); });
+        h += "<p><b>מיינו את הפריטים לקבוצות:</b> " + esc(shuffle(bank).join(" · ")) + "</p>" +
+          "<table><tbody>" + gs.map(function (g) { return "<tr><td><b>" + esc(g.name || "") + "</b></td><td></td></tr>"; }).join("") + "</tbody></table>";
+      }
+    }
     else if (t === "ordering") h += "<ol>" + it.slice().sort(function (a, b) { return a.position - b.position; }).map(function (x) { return "<li>" + esc(x.text) + "</li>"; }).join("") + "</ol>";
     else if (t === "escape") h += it.map(function (r, n) { return "<p><b>" + (n + 1) + ". " + esc(r.title) + "</b><br>" + esc(r.story) + "<br>" + esc(r.riddle) + (teacher ? "<br>תשובה: " + esc(r.answer) : "") + "</p>"; }).join("");
     else if (t === "truefalse") h += it.map(function (x, n) { return "<p>" + (n + 1) + ". " + esc(x.text) + (teacher ? " — <b>" + (x.correct ? "נכון" : "לא נכון") + "</b>. " + esc(x.explanation || "") : "") + "</p>"; }).join("");
