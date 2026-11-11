@@ -405,6 +405,37 @@
 .mr-cl .les{font-size:var(--fs-xs);color:var(--muted);margin-top:6px;font-weight:700}
 .mr-cl .mr-tasks li{font-size:var(--fs-xs);padding:6px 10px}
 
+/* מבט ארצי — לצוות המשרד (11.11.26) */
+.mr-nsum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 14px;padding:12px 16px;border-radius:16px;background:linear-gradient(135deg,var(--blue-bg),var(--cyan-100));border:1px solid var(--border);font-size:var(--fs-md);color:var(--text2)}
+.mr-nsum b{color:var(--navy);font-variant-numeric:tabular-nums}
+.mr-nsum .sep{color:var(--muted)}
+.mr-ntab{border:1.5px solid var(--border);border-radius:18px;overflow:hidden;background:#fff;margin-bottom:16px}
+.mr-nh,.mr-ns{display:grid;grid-template-columns:minmax(0,1fr) 90px 130px 170px 24px;align-items:center;gap:12px;padding:11px 16px}
+.mr-nh{background:var(--soft-bg);font-size:var(--fs-xs);font-weight:800;color:var(--text2);border-bottom:1px solid var(--border)}
+.mr-ns{width:100%;border:0;border-top:1px solid var(--border);background:#fff;font:inherit;font-size:var(--fs-md);color:var(--text);text-align:start;cursor:pointer;min-height:52px}
+.mr-ntab .mr-ns:first-of-type{border-top:0}
+.mr-nh + .mr-ns{border-top:0}
+.mr-ns:hover{background:var(--cyan-100)}
+.mr-ns:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.mr-ns .nm{font-weight:800;color:var(--navy);overflow-wrap:anywhere;line-height:1.35}
+.mr-ns .c,.mr-ns .t{font-variant-numeric:tabular-nums}
+.mr-ns .c small,.mr-ns .t small{display:none}
+.mr-ns .pc{display:flex;align-items:center;gap:8px}
+.mr-ns .pc b{min-width:44px;font-variant-numeric:tabular-nums;color:var(--m-green-ink)}
+.mr-ns .pc .mr-bar{flex:1;margin:0;height:8px}
+.mr-ns .go{width:20px;height:20px;color:var(--muted)}
+.mr-pback{margin-bottom:12px}
+@media(max-width:760px){
+  .mr-nh{display:none}
+  .mr-ns{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nm go" "nums nums" "pc pc";gap:6px 10px;padding:12px 14px}
+  .mr-ns .nm{grid-area:nm}
+  .mr-ns .go{grid-area:go}
+  .mr-ns .nums{grid-area:nums;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:var(--fs-sm);color:var(--text2)}
+  .mr-ns .c small,.mr-ns .t small{display:inline}
+  .mr-ns .pc{grid-area:pc}
+}
+@media(min-width:761px){ .mr-ns .nums{display:contents} }
+
 .mr-privacy{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 18px;border-radius:16px;background:#fff;border:1px solid var(--border);font-size:var(--fs-sm);line-height:1.6;color:var(--text2)}
 .mr-privacy svg{flex:none;width:34px;height:34px;padding:7px;border-radius:50%;background:#ECF8F0;color:var(--m-green-ink)}
 .mr-privacy b{color:var(--navy)}
@@ -425,7 +456,7 @@
   .mr-nav .mr-btn.pri{flex:1}
   .mr-miss h3 .mr-btn{margin-inline-start:0}
 }
-@media print{.nav,.govbar,.drawer,.scrim,.foot,.mr-hero,.mr-mode,.mr-steps,.mr-nav,.mr-privacy{display:none!important}}
+@media print{.nav,.govbar,.drawer,.scrim,.foot,.mr-hero,.mr-mode,.mr-steps,.mr-nav,.mr-privacy,.mr-pback{display:none!important}}
 </style>
 
 <div class="mr-hero">
@@ -441,7 +472,7 @@
   </div>
 
   <div class="mr-demo" id="mr-demo" hidden><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-    <span><b>מצב הדגמה.</b> הכלי עובד במלואו במכשיר הזה. "שליחת סיכום למנהל.ת" נשמרת כאן בלבד, ומבט המנהל.ת מציג בית ספר לדוגמה עם נתונים בדויים.</span></div>
+    <span><b>מצב הדגמה.</b> הכלי עובד במלואו במכשיר הזה. "שליחת סיכום למנהל.ת" נשמרת כאן בלבד, ומבט המנהל.ת מציג את המבט הארצי של צוות המשרד ובתי ספר לדוגמה — הכול נתונים בדויים.</span></div>
 
   <!-- ===== מבט מורה ===== -->
   <div class="mr-card" id="mr-teacher">
@@ -538,7 +569,17 @@
   <div class="mr-card" id="mr-principal" hidden>
     <section class="mr-panel on" aria-label="מבט מנהל.ת">
       <div id="mr-plogin"></div>
+      <!-- מבט ארצי — רק לצוות המשרד (role: ministry במנור). לחיצה על בית ספר פותחת את מבט בית הספר -->
+      <div id="mr-nat" hidden>
+        <div class="mr-ph">
+          <h2>מבט ארצי<small id="mr-nsub">כל בתי הספר שדיווחו</small></h2>
+          <label>תאריך<input type="date" id="mr-ndate"></label>
+        </div>
+        <div class="mr-nsum" id="mr-nsum" aria-live="polite"></div>
+        <div id="mr-nview" aria-live="polite"></div>
+      </div>
       <div id="mr-pbody" hidden>
+        <button type="button" class="mr-btn sm mr-pback" id="mr-pback" hidden><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>חזרה למבט הארצי</button>
         <div class="mr-ph">
           <h2 id="mr-pschool">בית הספר<small></small></h2>
           <label id="mr-pschool-l" hidden>בית ספר<select id="mr-pschools"></select></label>
@@ -1187,7 +1228,7 @@ window.addEventListener("storage", function(e){
   if (e.key === "ts.teacher.v1" || e.key === "ts.staff.v1") {
     WHO = { teacher: null, staff: null };
     if (STEP === 5) paintTeacherLogin();
-    if (MODE === "p") openPrincipal();
+    if (MODE === "p") { DRILL = null; openPrincipal(); }
   }
 });
 
@@ -1227,6 +1268,7 @@ var ERR = {
   nocls: "חסר שם כיתה.",
   limit: "נשלחו היום יותר מדי סיכומים מהחשבון הזה. אפשר להמשיך מחר.",
   notprincipal: "המבט הזה מיועד למנהלים ולרכזים פדגוגיים של בית הספר. בעלי תפקידים אחרים לא רואים כאן נתונים.",
+  notministry: "המבט הארצי מיועד לצוות המשרד בלבד.",
   network: "התשובה מהשרת לא הגיעה. בדקו את החיבור ונסו שוב."
 };
 function errText(d){ return ERR[d && d.error] || "משהו השתבש. נסו שוב בעוד רגע — ואם זה חוזר, כתבו לנו בכפתור ״נתקלתם בבעיה?״."; }
@@ -1245,7 +1287,7 @@ el("mr-send").addEventListener("click", function(){
     lsSet(DEMO_KEY, demo.slice(-40));
     L.sent = Date.now(); L.sentSig = JSON.stringify(R); save();
     paintSummary(L.id);
-    msg("mr-smsg", "מצב הדגמה: הסיכום נשמר במכשיר הזה בלבד. עברו ל״מבט מנהל.ת״ כדי לראות איך הוא נראה למנהל.ת.", true);
+    msg("mr-smsg", "מצב הדגמה: הסיכום נשמר במכשיר הזה בלבד. עברו ל״מבט מנהל.ת״ ובחרו ״בית ספר לדוגמה״ כדי לראות איך הוא נראה למנהל.ת.", true);
     track("סיכום", "הדגמה");
     return;
   }
@@ -1278,7 +1320,8 @@ el("mr-pseg").addEventListener("click", function(e){
 });
 function openPrincipal(){
   msg("mr-pmsg", "");
-  if (DEMO) { el("mr-plogin").innerHTML = ""; el("mr-pbody").hidden = false; loadPrincipal(); return; }
+  if (DEMO) { el("mr-plogin").innerHTML = ""; NATIONAL = true; showNational(!DRILL); return; }
+  NATIONAL = false; el("mr-nat").hidden = true; el("mr-pback").hidden = true;
   if (!auth("staff")) { el("mr-plogin").innerHTML = loginBox("staff", "מבט המנהל.ת — כניסה דרך מנור"); el("mr-pbody").hidden = true; return; }
   el("mr-plogin").innerHTML = '<div class="mr-empty">מאמתים את הכניסה…</div>';
   whoami("staff").then(function(d){
@@ -1287,21 +1330,22 @@ function openPrincipal(){
       else el("mr-plogin").innerHTML = "";
       msg("mr-pmsg", errText(d)); return;
     }
-    if (!d.principal) { el("mr-plogin").innerHTML = ""; msg("mr-pmsg", ERR.notprincipal); return; }
+    if (!d.principal && !d.ministry) { el("mr-plogin").innerHTML = ""; msg("mr-pmsg", ERR.notprincipal); return; }
     WHO.staff = d;
     el("mr-plogin").innerHTML = "";
     var sl = el("mr-pschools");
-    sl.innerHTML = d.schools.map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
-    el("mr-pschool-l").hidden = d.schools.length < 2;
+    sl.innerHTML = (d.schools || []).map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
+    el("mr-pschool-l").hidden = (d.schools || []).length < 2;
+    if (d.ministry) { NATIONAL = true; showNational(!DRILL); return; }   /* צוות המשרד — קודם המבט הארצי */
     el("mr-pbody").hidden = false;
     loadPrincipal();
   });
 }
 function loadPrincipal(){
   var date = el("mr-pdate").value || today();
-  if (DEMO) { PDATA = demoSchool(date); paintPrincipal(); return; }
+  if (DEMO) { PDATA = DRILL && DRILL.school !== DEMO_SAMPLE ? demoGen(DRILL, date) : demoSchool(date); paintPrincipal(); return; }
   el("mr-pview").innerHTML = '<div class="mr-empty">טוענים…</div>';
-  post({ action: "school", date: date, school: el("mr-pschools").value || "" }, "staff").then(function(d){
+  post({ action: "school", date: date, school: DRILL ? DRILL.school : (el("mr-pschools").value || "") }, "staff").then(function(d){
     if (!d || !d.ok) { PDATA = null; el("mr-pview").innerHTML = ""; msg("mr-pmsg", errText(d)); return; }
     msg("mr-pmsg", ""); PDATA = d;
     var o = el("mr-pschools").querySelector('option[value="' + cssEsc(d.school) + '"]');
@@ -1332,7 +1376,7 @@ function pct(x){ return x.total ? Math.round(100 * (x.present + x.late) / x.tota
 function paintPrincipal(){
   var D = PDATA; if (!D) return;
   var h2 = el("mr-pschool");
-  h2.innerHTML = esc(D.schoolName || "בית הספר") + "<small>" + (D.demo ? "נתונים בדויים להדגמה · " : "") + "דיווחו " + uniq(D.rows).length + " כיתות · טרם דיווחו " + D.missing.length + "</small>";
+  h2.innerHTML = esc(D.schoolName || (DRILL && DRILL.schoolName) || "בית הספר") + "<small>" + (D.demo ? "נתונים בדויים להדגמה · " : "") + "דיווחו " + uniq(D.rows).length + " כיתות · טרם דיווחו " + D.missing.length + "</small>";
   var segBtns = el("mr-pseg").children;
   segBtns[0].textContent = "דיווחו (" + uniq(D.rows).length + ")";
   segBtns[1].textContent = "טרם דיווחו (" + D.missing.length + ")";
@@ -1359,6 +1403,118 @@ function paintPrincipal(){
 }
 function uniq(rows){ var o = {}; rows.forEach(function(x){ o[x.cls] = 1; }); return Object.keys(o); }
 
+/* ===== מבט ארצי — לצוות המשרד (whoami.ministry). מספרים בלבד, לכל בית ספר =====
+   לחיצה על בית ספר פותחת את מבט בית הספר (אותו מבט כמו המנהל.ת), ו"חזרה למבט הארצי" מחזירה. */
+var NATIONAL = false, DRILL = null, NDATA = null;
+el("mr-ndate").value = today();
+el("mr-ndate").addEventListener("change", loadNational);
+el("mr-pback").addEventListener("click", function(){ showNational(true); track("מבט ארצי", "חזרה"); });
+function showNational(reload){
+  DRILL = null;
+  el("mr-pbody").hidden = true; el("mr-pback").hidden = true;
+  el("mr-nat").hidden = false;
+  if (reload || !NDATA) loadNational(); else paintNational();
+}
+function drill(sid){
+  var s = NDATA && NDATA.schools.filter(function(x){ return x.school === sid; })[0];
+  if (!s) return;
+  DRILL = s;
+  el("mr-nat").hidden = true;
+  el("mr-pback").hidden = false;
+  el("mr-pschool-l").hidden = true;
+  el("mr-pdate").value = NDATA.date || el("mr-ndate").value || today();
+  PSEG = "r";
+  Array.prototype.forEach.call(el("mr-pseg").children, function(x, i){ x.classList.toggle("on", i === 0); });
+  el("mr-pbody").hidden = false;
+  loadPrincipal();
+  try { el("mr-pback").focus({ preventScroll: true }); } catch(e){}
+  track("מבט ארצי", "בית ספר");
+}
+function loadNational(){
+  var date = el("mr-ndate").value || today();
+  if (DEMO) { NDATA = demoNational(date); paintNational(); return; }
+  el("mr-nsum").innerHTML = ""; el("mr-nview").innerHTML = '<div class="mr-empty">טוענים…</div>';
+  post({ action: "national", date: date }, "staff").then(function(d){
+    if (!d || !d.ok) { NDATA = null; el("mr-nview").innerHTML = ""; msg("mr-pmsg", errText(d)); return; }
+    msg("mr-pmsg", ""); NDATA = d; paintNational();
+  });
+}
+function paintNational(){
+  var D = NDATA; if (!D) return;
+  var isToday = D.date === today(), S = D.sum || { schools: 0, classes: 0, total: 0, present: 0, late: 0 };
+  el("mr-nsub").textContent = (D.demo ? "נתונים בדויים להדגמה · " : "") + "לצוות המשרד · " + (isToday ? "היום" : shortDate(D.date));
+  el("mr-nsum").innerHTML = "<span><b>" + S.schools + "</b> בתי ספר דיווחו</span><span class=\"sep\" aria-hidden=\"true\">·</span>" +
+    "<span><b>" + S.classes + "</b> כיתות</span><span class=\"sep\" aria-hidden=\"true\">·</span>" +
+    "<span>נוכחות <b>" + pct(S) + "%</b></span>";
+  var v = el("mr-nview"), h = "";
+  if (!D.schools.length) h += '<div class="mr-empty">עוד לא הגיעו דיווחים בתאריך הזה.</div>';
+  else {
+    h += '<div class="mr-ntab"><div class="mr-nh" aria-hidden="true"><span>בית הספר</span><span>כיתות</span><span>נכחו / סה״כ</span><span>נוכחות</span><span></span></div>' +
+      D.schools.map(function(s){
+        var p = pct(s);
+        return '<button type="button" class="mr-ns" data-s="' + esc(s.school) + '" aria-label="' + esc(s.schoolName || s.school) + ": " + s.classes + " כיתות, נכחו " + (s.present + s.late) + " מתוך " + s.total + ", " + p + '% — פתיחת בית הספר">' +
+          '<span class="nm">' + esc(s.schoolName || s.school) + "</span>" +
+          '<span class="nums"><span class="c"><small>כיתות </small>' + s.classes + '</span><span class="t"><small>נכחו </small><bdi dir="ltr">' + (s.present + s.late) + " / " + s.total + "</bdi></span></span>" +
+          '<span class="pc"><b>' + p + '%</b><span class="mr-bar" aria-hidden="true"><i class="p" style="width:' + p + '%"></i></span></span>' +
+          svg('<path d="m15 6-6 6 6 6"/>', "go") + "</button>";
+      }).join("") + "</div>";
+  }
+  var miss = D.missing || [], when = isToday ? "היום" : "ב-" + shortDate(D.date);
+  if (!miss.length) h += '<div class="mr-miss"><div class="mr-allok">' + svg(IC.ok) + "כל בתי הספר שדיווחו בשבועיים האחרונים דיווחו גם " + esc(when) + "</div></div>";
+  else {
+    h += '<div class="mr-miss a"><h3>טרם דיווחו ' + esc(when) + ' <span class="num">' + miss.length + "</span>" +
+      '<button type="button" class="mr-btn sm" id="mr-ncopy">' + svg(IC.copy) + "העתקת השמות</button></h3>" +
+      '<ul class="mr-names">' + miss.map(function(m){ return "<li>" + esc(m.schoolName || m.school) + (m.last ? ' <small style="color:var(--muted);font-weight:600">דיווח אחרון ' + esc(shortDate(m.last)) + "</small>" : "") + "</li>"; }).join("") + "</ul></div>" +
+      '<p class="mr-hint">בתי ספר שדיווחו בשבועיים האחרונים ולא דיווחו בתאריך הזה.</p>';
+  }
+  v.innerHTML = h;
+  Array.prototype.forEach.call(v.querySelectorAll(".mr-ns"), function(b){ b.onclick = function(){ drill(b.dataset.s); }; });
+  var cp = el("mr-ncopy");
+  if (cp) cp.onclick = function(){ var n = miss.map(function(m){ return m.schoolName || m.school; }); copyText(n.join("\n"), n.length); track("העתקה", "טרם דיווחו · ארצי"); };
+}
+
+/* מבט ארצי לדוגמה — בתי ספר, כיתות ומורים בדויים. "בית ספר לדוגמה" הוא אותו בית ספר של מבט המנהל.ת בהדגמה,
+   כולל הסיכומים ש"נשלחו" ממבט המורה. כל השאר נבנים מאותו מחולל, כך שהמספרים בכניסה לבית ספר תואמים לרשימה. */
+var DEMO_SAMPLE = "demo";
+var DEMO_SCHOOLS = [["d01", "תיכון הגפן", 9], ["d02", "מקיף נווה תמר", 12], ["d03", "תיכון שער הדרום", 7], ["d04", "מכללת אופק הטכנולוגית", 10],
+  ["d05", "תיכון אל-זיתון", 8], ["d06", "מקיף רמות הגליל", 11], ["d07", "תיכון גבעת הרקפות", 6], ["d08", "תיכון אל-נור", 9],
+  ["d09", "מקיף חוף הכרמל", 10], ["d10", "תיכון עמק השקד", 5], ["d11", "מכללת נחשון למקצועות", 8], ["d12", "תיכון מעלה הצוקים", 7]];
+var DEMO_OFF = { d03: 1, d08: 1, d11: 1 };   /* בתי ספר שדיווחו לאחרונה ולא בתאריך הנבחר */
+var DEMO_T = ["רונית אלמוג", "סאמי חורי", "אורית בן דוד", "מוחמד עבאס", "יעל שחר", "דוד מזרחי", "נסרין עודה", "אבי כרמי", "מיכל ארד", "ראמי חלבי", "שירן גל", "עומר נחום"];
+var DEMO_S = ["מתמטיקה", "אנגלית", "עברית", "חשמל", "אזרחות", "מכונות", "היסטוריה", "ספרות", "מחשבים", "פיזיקה"];
+function demoGen(sc, date){
+  var seed = 7; (sc.school + date).split("").forEach(function(ch){ seed = (seed * 31 + ch.charCodeAt(0)) % 9973; });
+  function rnd(){ seed = (seed * 7919 + 17) % 9973; return seed / 9973; }
+  var G = ["ט׳", "י׳", "י״א", "י״ב"], rows = [], missing = [];
+  var def = DEMO_SCHOOLS.filter(function(s){ return s[0] === sc.school; })[0];
+  var n = def ? def[2] : 6, off = DEMO_OFF[sc.school] && date === today();
+  for (var i = 0; i < n; i++) {
+    var cls = G[i % 4] + (Math.floor(i / 4) + 1), teacher = DEMO_T[(i + sc.school.length * 3 + n) % DEMO_T.length];
+    if (off || rnd() < 0.18) { missing.push({ cls: cls, teacher: teacher, date: shiftDays(-1 - (i % 3)) }); continue; }
+    var tot = 18 + Math.floor(rnd() * 12), abs = Math.floor(rnd() * 6), late = Math.floor(rnd() * 3);
+    rows.push({ cls: cls, lesson: DEMO_S[(i + n) % DEMO_S.length], teacher: teacher, sent: p2(8 + (i % 6)) + ":" + p2(Math.floor(rnd() * 60)),
+      total: tot, present: tot - abs - late, absent: abs, late: late, unmarked: 0, tasks: [] });
+  }
+  rows.sort(function(a, b){ return a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : 0; });
+  return { ok: true, demo: true, school: sc.school, schoolName: sc.schoolName, date: date, rows: rows, missing: missing };
+}
+function demoNational(date){
+  var list = DEMO_SCHOOLS.map(function(s){ return demoGen({ school: s[0], schoolName: s[1], n: s[2] }, date); });
+  var sample = demoSchool(date); sample.school = DEMO_SAMPLE; list.push(sample);
+  var schools = [], missing = [], sum = { schools: 0, classes: 0, total: 0, present: 0, absent: 0, late: 0, unmarked: 0 };
+  list.forEach(function(d){
+    if (!d.rows.length) { if (d.missing.length) missing.push({ school: d.school, schoolName: d.schoolName, last: d.missing[0].date }); return; }
+    var s = { school: d.school, schoolName: d.schoolName, classes: uniq(d.rows).length, total: 0, present: 0, absent: 0, late: 0, unmarked: 0 };
+    d.rows.forEach(function(r){ ["total", "present", "absent", "late", "unmarked"].forEach(function(k){ s[k] += +r[k] || 0; }); });
+    schools.push(s);
+    ["classes", "total", "present", "absent", "late", "unmarked"].forEach(function(k){ sum[k] += s[k]; });
+  });
+  sum.schools = schools.length;
+  var byName = function(a, b){ return a.schoolName.localeCompare(b.schoolName, "he"); };
+  schools.sort(byName); missing.sort(byName);
+  return { ok: true, demo: true, date: date, schools: schools, missing: missing, sum: sum };
+}
+
 /* ---------- מחיקה מהמכשיר ---------- */
 el("mr-wipe").addEventListener("click", function(){
   if (!confirm("למחוק מהמכשיר הזה את כל הכיתות, השמות, הנוכחות והמשימות? אי אפשר לשחזר.")) return;
@@ -1366,7 +1522,7 @@ el("mr-wipe").addEventListener("click", function(){
   DB = { v: 1, classes: {}, order: [], cur: "" }; UI = {};
   el("mr-subj").value = ""; el("mr-date").value = "";
   paintClassSel(); showOut(""); go(1);
-  if (MODE === "p") loadPrincipal();
+  if (MODE === "p") { if (NATIONAL && !DRILL) loadNational(); else loadPrincipal(); }
   toast("כל הנתונים נמחקו מהמכשיר");
 });
 
