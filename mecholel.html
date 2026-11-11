@@ -5,7 +5,7 @@
 <script src="/gate.js"></script>
 <script src="/analytics.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>מחולל שיעורים · הבית של המנהיגות הפדגוגית היוצרת</title>
+<title>מחולל השיעורים · הבית של המנהיגות הפדגוגית היוצרת</title>
 <meta name="description" content="מחולל שיעורים למורה — מערך שיעור, מצגת, דף עבודה, פעילות פתיחה, משחק ובוחן, בשבעת תחומי הדעת.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
@@ -62,7 +62,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
     <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
     <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות · לפי מגזר ומקצוע</a>
     <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
-    <a href="mecholel.html">מחולל שיעורים</a>
+    <a href="mecholel.html">מחולל השיעורים</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
     <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
@@ -144,7 +144,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
     <div class="sect">שירותים</div>
     <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
     <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
-    <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="ai.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
     <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -202,7 +202,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
       <a href="bagrut.html">נתיב הבגרות</a>
       <a href="gmar.html">נתיב הגמר</a>
       <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a>
-      <a href="mecholel.html">מחולל שיעורים</a>
+      <a href="mecholel.html">מחולל השיעורים</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="alternatives.html">הערכה</a>
@@ -321,6 +321,25 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 .mg-big:hover{transform:translateY(-2px);box-shadow:var(--sh-sm)}
 .mg-big.on{border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,119,153,.12)}
 .mg-big.on svg{background:var(--grad);color:#fff}
+/* בכיתה / מרחוק (11.11.26) */
+.mg-q-s{font-size:var(--fs-xl)}
+.mg-mode{margin-bottom:12px}
+.mg-mode .mg-big{padding:14px 16px;align-items:center}
+.mg-mode .mg-big svg{width:40px;height:40px;padding:9px}
+.mg-mode .mg-big b{font-size:var(--fs-md);margin-bottom:2px}
+.mg-model{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 22px}
+.mg-model[hidden]{display:none}
+.mg-model div{border:1.5px solid var(--border);border-top:4px solid var(--sg);border-radius:14px;padding:10px 12px;background:#fff}
+.mg-model i{font-style:normal;font-weight:800;font-size:var(--fs-xl);color:var(--sg);line-height:1;margin-inline-end:6px;font-variant-numeric:tabular-nums}
+.mg-model b{font-size:var(--fs-sm);color:var(--navy)}
+.mg-model span{display:block;margin-top:4px;font-size:var(--fs-xs);color:var(--text2);line-height:1.5}
+.mg-remote{border:1.5px solid var(--border);border-inline-start:4px solid var(--accent);border-radius:16px;background:#fff;padding:14px 18px;margin-bottom:14px}
+.mg-remote h3{display:flex;align-items:center;gap:8px;font-size:var(--fs-md);color:var(--navy);margin:0 0 8px}
+.mg-remote h3 svg{width:22px;height:22px;flex:none;color:var(--accent)}
+.mg-remote ul{margin:0;padding-inline-start:18px;display:grid;gap:6px}
+.mg-remote li{font-size:var(--fs-sm);color:var(--text2);line-height:1.55}
+.mg-remote li b{color:var(--navy)}
+.mg-remote p{margin:10px 0 0;font-size:var(--fs-xs);color:var(--muted)}
 .mg-mat{display:none;margin-top:16px;padding:18px;border-radius:18px;background:var(--soft-bg);border:1px dashed var(--border-strong)}
 .mg-mat.on{display:grid;grid-template-columns:1fr 1fr;gap:14px;animation:mgIn .3s var(--ease)}
 .mg-mat label{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);font-weight:700;color:var(--navy)}
@@ -421,7 +440,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
   .mg-panel,.mg-build{padding:20px 16px}
   .mg-steps{padding:10px 12px}
   .mg-steps button{flex-direction:column;gap:4px;font-size:var(--fs-2xs);text-align:center;padding:6px 2px}
-  .mg-opts,.mg-two,.mg-mat.on{grid-template-columns:1fr}
+  .mg-opts,.mg-two,.mg-mat.on,.mg-model{grid-template-columns:1fr}
   .mg-picks{grid-template-columns:1fr 1fr}
   .mg-kit{flex-direction:column;align-items:flex-start;gap:12px}
   .mg-nav{flex-wrap:wrap}
@@ -522,7 +541,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 <div class="mg">
 <div class="mg-hero">
   <div class="crumb rv"><a href="space.html">המרחב הפדגוגי</a> ‹ מחולל שיעורים</div>
-  <h1 class="rv d1">מחולל <em>שיעורים</em></h1>
+  <h1 class="rv d1">מחולל <em>השיעורים</em></h1>
   <p class="rv d2">שלושה צעדים קצרים, ושיעור שלם מוכן לכיתה: מערך, פתיחה, מצגת, משחק, דף עבודה ובוחן. הכול נבנה כאן בעמוד, עם הצגה לכיתה, הדפסה והורדה.</p>
 </div>
 
@@ -537,6 +556,23 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
 
   <!-- צעד 1 -->
   <section class="mg-panel on" data-panel="1" aria-labelledby="mg-q1">
+    <h2 class="mg-q mg-q-s" id="mg-q0">איפה מתקיים השיעור?</h2>
+    <div class="mg-two mg-mode" id="mg-mode" role="group" aria-labelledby="mg-q0">
+      <button type="button" class="mg-big on" data-remote="0" aria-pressed="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M8 20h8M12 15v5"/><path d="M7 8.5h6M7 11.5h4"/></svg>
+        <div><b>שיעור בכיתה</b><span>מצגת למקרן, דף עבודה להדפסה ופעילות פנים מול פנים.</span></div>
+      </button>
+      <button type="button" class="mg-big" data-remote="1" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10.5 6-3.5v10l-6-3.5"/></svg>
+        <div><b>שיעור מרחוק (זום / Meet)</b><span>לפי מודל 15 / 25 / 10: מפגש חי קצר, עבודה עצמאית, סגירה וכרטיס יציאה.</span></div>
+      </button>
+    </div>
+    <div class="mg-model" id="mg-model" hidden>
+      <div style="--sg:var(--m-turq)"><i>15</i><b>מפגש חי — נוכחות</b><span>שגרת פתיחה קצרה, מי נמצא ומי חסר, ואז הסבר אחד ממוקד.</span></div>
+      <div style="--sg:var(--m-green)"><i>25</i><b>עבודה עצמאית</b><span>משימה אחת ברורה עם דוגמה פתורה, בסיס והעמקה. המורה זמין/ה בצ׳אט.</span></div>
+      <div style="--sg:var(--m-blue)"><i>10</i><b>סגירה וכרטיס יציאה</b><span>חוזרים יחד, שאלה אחת, וכל תלמיד/ה ממלא/ת כרטיס יציאה קצר.</span></div>
+    </div>
+
     <h2 class="mg-q" id="mg-q1">באיזה תחום דעת?</h2>
     <p class="mg-hint">בוחרים תחום, וכותבים את נושא השיעור במילים שלכם.</p>
     <div class="mg-subj" id="mg-subj"></div>
@@ -591,7 +627,7 @@ h2.sub-sec .sub-sec-note{font-size:.82rem;font-weight:600;color:var(--text2)}
     <h2 class="mg-q" id="mg-q3">מה לבנות?</h2>
     <p class="mg-hint">ערכה מלאה בלחיצה אחת — או רק מה שאתם צריכים.</p>
     <button type="button" class="mg-kit on" id="mg-kit"><span class="tag">מומלץ</span><span class="ic6" id="mg-ic6"></span>
-      <div><b>ערכה מלאה</b><span>מערך שיעור · פעילות פתיחה · מצגת · משחק · דף עבודה · בוחן — כולם על אותו שלד, מדברים זה עם זה.</span></div></button>
+      <div><b>ערכה מלאה</b><span id="mg-kit-d">מערך שיעור · פעילות פתיחה · מצגת · משחק · דף עבודה · בוחן — כולם על אותו שלד, מדברים זה עם זה.</span></div></button>
     <div class="mg-or">או לבחור בעצמי</div>
     <div class="mg-picks" id="mg-picks"></div>
     <div class="mg-sub" id="mg-gtype" hidden><b>איזה משחק?</b><div class="mg-chips" data-chips="gameType"></div></div>
@@ -708,7 +744,16 @@ var CHIPS = {
     ["truefalse", "נכון / לא נכון"], ["story", "סיפור מפתיע"], ["guessnumber", "נחשו את המספר"], ["vote", "הצבעה מהטלפונים"], ["wordcloud", "ענן מילים"]]
 };
 
-var S = { gameType:"", openerType:"", subj:"", grade:"כיתה י׳", len:45, track:"נתיב הגמר · תעודת גמר", level:"רגיל", mat:false, kit:true, picks:{ lesson:true } };
+var S = { gameType:"", openerType:"", subj:"", grade:"כיתה י׳", len:45, track:"נתיב הגמר · תעודת גמר", level:"רגיל", mat:false, kit:true, picks:{ lesson:true }, remote:false };
+/* 11.11.26: שיעור מרחוק (זום / Meet) לפי מודל 15/25/10 של emergency.html. ?mode=remote בוחר אותו מראש.
+   התוצרים זהים במבנה — רק התיאורים כאן והבנייה בשרת (ctx.remote) משתנים. */
+var KIND_D = { lesson: KIND.lesson.d, deck: KIND.deck.d, sheet: KIND.sheet.d, kit: "" };
+var KIND_D_REMOTE = {
+  lesson: "לפי 15/25/10: מפגש חי, עבודה עצמאית, סגירה וכרטיס יציאה מקוון.",
+  deck: "8–12 שקפים לשיתוף מסך בזום, עם הערות מרצה.",
+  sheet: "משימה עצמאית מקוונת ל-25 הדקות, עם מחוון למורה.",
+  kit: "מערך 15/25/10 · פעילות פתיחה · מצגת לשיתוף מסך · משחק · משימה עצמאית מקוונת · בוחן — כולם על אותו שלד."
+};
 var MATERIAL = { name:"", type:"", text:"", b64:"" };
 
 /* ---------- צעד 1 ---------- */
@@ -745,10 +790,10 @@ document.querySelectorAll(".mg-seg").forEach(function(g){
 });
 
 /* ---------- צעד 2: חומר ---------- */
-document.querySelectorAll(".mg-big").forEach(function(b){
+document.querySelectorAll(".mg-big[data-mat]").forEach(function(b){
   b.addEventListener("click", function(){
     S.mat = b.dataset.mat === "1";
-    document.querySelectorAll(".mg-big").forEach(function(x){ x.classList.toggle("on", x === b); });
+    document.querySelectorAll(".mg-big[data-mat]").forEach(function(x){ x.classList.toggle("on", x === b); });
     el("mg-mat").classList.toggle("on", S.mat);
   });
 });
@@ -778,10 +823,16 @@ el("mg-fclear").addEventListener("click", function(){
 
 /* ---------- צעד 3: מה לבנות ---------- */
 el("mg-ic6").innerHTML = ORDER.map(function(k){ return svg(KIND[k].i); }).join("");
-el("mg-picks").innerHTML = ORDER.map(function(k){
-  return '<button type="button" class="mg-pick" data-k="' + k + '"><span class="h">' + svg(KIND[k].i) + esc(KIND[k].t) +
-    '<span class="ck">' + svg('<path d="M20 6 9 17l-5-5"/>') + "</span></span><small>" + esc(KIND[k].d) + "</small></button>";
-}).join("");
+KIND_D.kit = el("mg-kit-d").textContent;
+function paintPickList(){
+  el("mg-picks").innerHTML = ORDER.map(function(k){
+    var d = (S.remote && KIND_D_REMOTE[k]) || KIND_D[k] || KIND[k].d;
+    return '<button type="button" class="mg-pick" data-k="' + k + '"><span class="h">' + svg(KIND[k].i) + esc(KIND[k].t) +
+      '<span class="ck">' + svg('<path d="M20 6 9 17l-5-5"/>') + "</span></span><small>" + esc(d) + "</small></button>";
+  }).join("");
+  el("mg-kit-d").textContent = S.remote ? KIND_D_REMOTE.kit : KIND_D.kit;
+}
+paintPickList();
 function chosen(){ return S.kit ? ORDER.slice() : ORDER.filter(function(k){ return S.picks[k]; }); }
 document.querySelectorAll("[data-chips]").forEach(function(box){
   var key = box.dataset.chips;
@@ -809,6 +860,23 @@ el("mg-picks").addEventListener("click", function(e){
   paintPicks(); msg("mg-msg3", "");
 });
 paintPicks();
+
+/* ---------- בכיתה / מרחוק ---------- */
+function setRemote(on){
+  S.remote = !!on;
+  Array.prototype.forEach.call(el("mg-mode").children, function(x){
+    var me2 = (x.dataset.remote === "1") === S.remote;
+    x.classList.toggle("on", me2); x.setAttribute("aria-pressed", me2 ? "true" : "false");
+  });
+  el("mg-model").hidden = !S.remote;
+  paintPickList(); paintPicks();
+}
+el("mg-mode").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-remote]"); if (!b) return;
+  setRemote(b.dataset.remote === "1");
+  track("אשף", S.remote ? "מרחוק" : "בכיתה");
+});
+if (/^(remote|zoom|merachok)$/i.test(new URLSearchParams(location.search).get("mode") || "")) setRemote(true);
 
 /* ---------- ניווט בין הצעדים ---------- */
 var STEP = 1;
@@ -850,6 +918,7 @@ var BANK = [
 function bankMatch(){
   var t = el("mg-topic").value.trim();
   if (S.mat) return null;   /* מי שצירף חומר — רוצה שיעור על החומר שלו */
+  if (S.remote) return null;   /* שיעורי הבנק בנויים לכיתה — שיעור מרחוק נבנה לפי 15/25/10 */
   return BANK.filter(function(b){ return b.subject === S.subj && b.match.some(function(w){ return t.indexOf(w) > -1; }); })[0] || null;
 }
 
@@ -975,10 +1044,31 @@ function paintTL(){
       (s === "fail" && r.k !== "spine" ? '<button type="button" class="rt" data-retry="' + r.k + '">שוב</button>' : "") + "</div>";
   }).join("");
 }
+/* טיפים להעברה מרחוק — מתוך עמוד הלמידה בחירום (emergency.html): המודל, שגרות הפתיחה, כרטיסי היציאה וערוץ "חברה" */
+var REMOTE_TIPS = [
+  ["15 דקות חי, לא יותר", "שגרת פתיחה קצרה, מי נמצא ומי חסר, ואז הסבר אחד ממוקד. לא מרצים 45 דקות מול מסך שחור."],
+  ["מצלמה", "לא דורשים מצלמה פתוחה כל השיעור. ״כמה אתם כאן היום?״ — מרימים 1–3 אצבעות למצלמה, בלי הסבר ובלי שיפוט."],
+  ["צ׳אט", "פתיחה בסבב של מילה אחת בצ׳אט — המורה קורא/ת, לא מנתח/ת. בזמן העבודה העצמאית אתם זמינים בצ׳אט."],
+  ["חדרים לזוגות", "חלק מ-25 הדקות אפשר לעבוד בזוגות בחדרי עבודה (Breakout Rooms). הקשר עצמו הוא ההתערבות."],
+  ["המשימה העצמאית", "משימה אחת ברורה עם דוגמה פתורה, בסיס והעמקה. שלחו בצ׳אט את הקישור לתלמידים לפני שיוצאים לעבודה."],
+  ["הכיסא הריק", "מי חסר היום? מי מתנדב/ת לשלוח לו/לה הודעה אחרי השיעור. זו הפעולה שמחזירה תלמידים."],
+  ["כרטיס יציאה", "כל שיעור מסתיים בכרטיס יציאה מקוון — בטופס או בצ׳אט. בלי כרטיס יציאה אין לכם מושג מי למד."]
+];
+function remoteTips(data){
+  var old = el("mg-remote"); if (old) old.remove();
+  if (!data || !data.remote) return;
+  var box = document.createElement("div");
+  box.className = "mg-remote"; box.id = "mg-remote";
+  box.innerHTML = "<h3>" + svg('<rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10.5 6-3.5v10l-6-3.5"/>') + "טיפים להעברה מרחוק</h3><ul>" +
+    REMOTE_TIPS.map(function(t){ return "<li><b>" + esc(t[0]) + ":</b> " + esc(t[1]) + "</li>"; }).join("") + "</ul>" +
+    '<p>עוד שגרות פתיחה, כרטיסי יציאה ומסלול לתלמידים בלי מסך — ב<a class="lk" href="emergency.html#ptichot">עמוד הלמידה בחירום</a>.</p>';
+  el("mg-res").insertBefore(box, el("mg-kitview"));
+}
 function mountKit(data, kinds, keepTab){
   var host = el("mg-kitview"), on = keepTab && host.querySelector(".lk-tab.on"), onText = on ? on.textContent : "";
   QUIET = true;   /* לחיצות של הקוד עצמו לא נספרות בניטור */
   try {
+    remoteTips(data);
     LessonKit.mount(host, data, kinds);
     addResultsTab(data);
     if (onText) Array.prototype.forEach.call(host.querySelectorAll(".lk-tab"), function(t){ if (t.textContent === onText) t.click(); });
@@ -1035,13 +1125,13 @@ function generate(){
     return;
   }
   var kinds = chosen(), topic = el("mg-topic").value.trim(), run = el("mg-run");
-  var ctx = { subject:S.subj, grade:S.grade, topic:topic, duration:S.len, track:S.track, level:S.level,
+  var ctx = { subject:S.subj, grade:S.grade, topic:topic, duration:S.len, track:S.track, level:S.level, remote:S.remote,
     text: S.mat ? ((MATERIAL.text || "") || el("mg-paste").value).slice(0, MAXCHARS) : "",
     link: S.mat ? el("mg-link").value.trim() : "",
     fileName: S.mat ? MATERIAL.name : "", fileType: S.mat ? MATERIAL.type : "", fileData: S.mat ? (MATERIAL.b64 || "") : "" };
   run.disabled = true;
   RUN = { kinds: kinds, state: { spine:"wait" }, data: null };
-  showBuild("בונים את השיעור על ״" + topic + "״", S.subj + " · " + S.grade + " · " + S.len + " דקות");
+  showBuild("בונים את השיעור על ״" + topic + "״", S.subj + " · " + S.grade + " · " + S.len + " דקות" + (S.remote ? " · שיעור מרחוק (15/25/10)" : ""));
   paintTL(); startClock();
   post({ action:"spine", ctx: ctx, kinds: kinds, opts: { gameType: S.gameType, openerType: S.openerType } }).then(function(d){
     if (!d || !d.ok || d.limited) {
@@ -1055,7 +1145,7 @@ function generate(){
     if (d.left != null) { LEFT = d.left; paintLogin(); }
     var s = d.spine || {};
     RUN.lid = d.lid; RUN.state.spine = "ok";
-    RUN.data = { id: d.lid, subject:S.subj, grade:S.grade, track:S.track, duration:S.len,
+    RUN.data = { id: d.lid, subject:S.subj, grade:S.grade, track:S.track, duration:S.len, remote: S.remote || undefined,
       topic: s.topic || topic, module: s.module || "", goal: s.goal || "", skill: s.skill || "", prep: s.prep || "" };
     el("mg-btitle").textContent = "בונים את " + (kinds.length > 1 ? "התוצרים" : "התוצר") + " על ״" + RUN.data.topic + "״";
     el("mg-note").innerHTML = "<b>" + esc(RUN.data.topic) + "</b> · " + esc(RUN.data.goal) +

@@ -6,11 +6,11 @@
 <script src="/analytics.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>למידה בחירום · הבית של המנהיגות הפדגוגית היוצרת</title>
-<meta name="description" content="למידה בחירום — עמוד המורה: מדף העשרה מסונן של שיעורים חיים, קורסים וסיורים וירטואליים בחינם, לצד מודל השיעור 15/25/10, מחולל מערכים ומסלול ללא מסך.">
+<meta name="description" content="למידה בחירום — עמוד המורה: מדף העשרה מסונן של שיעורים חיים, קורסים וסיורים וירטואליים בחינם, לצד מודל השיעור 15/25/10, מחולל השיעורים ומסלול ללא מסך.">
 <meta name="pmh-year" content="תשפ״ז">
 <meta property="og:type" content="website">
 <meta property="og:title" content="למידה בחירום">
-<meta property="og:description" content="למידה בחירום — עמוד המורה: מדף העשרה מסונן של שיעורים חיים, קורסים וסיורים וירטואליים בחינם, לצד מודל השיעור 15/25/10, מחולל מערכים ומסלול ללא מסך.">
+<meta property="og:description" content="למידה בחירום — עמוד המורה: מדף העשרה מסונן של שיעורים חיים, קורסים וסיורים וירטואליים בחינם, לצד מודל השיעור 15/25/10, מחולל השיעורים ומסלול ללא מסך.">
 <meta property="og:url" content="https://pedagogiamh.co.il/emergency.html">
 <meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
 <meta property="og:locale" content="he_IL">
@@ -24,8 +24,6 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="/pagenav.css">
 <link rel="stylesheet" href="/toolbelt.css">
-<link rel="stylesheet" href="lesson-kit.css">
-<script src="lesson-kit.js"></script>
 <style>
 .sechead{padding:34px var(--px) 0}
 .sechead h2{font-size:1.5rem;margin-top:6px}
@@ -41,24 +39,13 @@
 .model p{font-size:.86rem;color:var(--text2);line-height:1.6}
 @media(max-width:860px){.model{grid-template-columns:1fr}}
 
-/* ===== מחולל מערכי שיעור ===== */
-.gen{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:24px 26px;box-shadow:var(--sh-sm)}
-.gen .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
-.gen label{display:flex;flex-direction:column;gap:5px;font-size:.83rem;font-weight:700;color:var(--navy)}
-.gen input,.gen select,.gen textarea{font-family:'Assistant',sans-serif;font-size:.92rem;padding:10px 13px;border:1.5px solid var(--border);border-radius:11px;background:#fff;color:var(--text);width:100%}
-.gen input:focus,.gen select:focus,.gen textarea:focus{outline:none;border-color:var(--cyan)}
-.gen .wide{grid-column:1/-1}
-.gen .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
-.gen .hint{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.6}
-.out{margin-top:18px;border:1.5px dashed var(--border-strong);border-radius:16px;padding:18px 20px;background:#fff;display:none}
-.out.on{display:block}
-.out h4{font-size:.95rem;color:var(--navy);margin-bottom:8px}
-.out pre{white-space:pre-wrap;font-family:'Assistant',sans-serif;font-size:.87rem;line-height:1.7;color:var(--text);max-height:360px;overflow:auto;background:var(--soft-bg);border-radius:11px;padding:14px 16px}
-.out .row2{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+/* ===== הכרטיס למחולל השיעורים (המחולל שהיה כאן עבר ל-mecholel.html, 11.11.26) ===== */
+.mech-card{display:flex;gap:16px;align-items:flex-start;padding:20px 22px;border-inline-start:4px solid var(--cyan)}
+.mech-card .ic{flex:none}
+.mech-card h3{font-size:var(--fs-lg);margin:2px 0 4px;color:var(--navy)}
+.mech-card p{font-size:var(--fs-sm);color:var(--text2);line-height:1.6;margin:0}
+.mech-card .go{display:inline-block;margin-top:10px;color:var(--accent);font-weight:800;font-size:var(--fs-sm)}
 .btn.sm{padding:9px 20px;font-size:.86rem}
-.spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-@media(max-width:760px){.gen .fields{grid-template-columns:1fr}}
 
 /* ===== בנקים: שגרות פתיחה וכרטיסי יציאה ===== */
 .bank{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
@@ -163,7 +150,7 @@
     <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
     <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות · לפי מגזר ומקצוע</a>
     <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
-    <a href="mecholel.html">מחולל שיעורים</a>
+    <a href="mecholel.html">מחולל השיעורים</a>
     <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
     <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
     <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
@@ -245,7 +232,7 @@
     <div class="sect">שירותים</div>
     <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
     <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
-    <a href="tools/"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="ai.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
     <a href="drive-menahalim.html">דרייב מנהלים</a>
     <a href="tashpaz.html">היערכות תשפ״ז</a>
     <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
@@ -303,7 +290,7 @@
       <a href="bagrut.html">נתיב הבגרות</a>
       <a href="gmar.html">נתיב הגמר</a>
       <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a>
-      <a href="mecholel.html">מחולל שיעורים</a>
+      <a href="mecholel.html">מחולל השיעורים</a>
       <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
       <a href="emergency.html">למידה בחירום</a>
       <a href="alternatives.html">הערכה</a>
@@ -378,7 +365,7 @@
   <a class="card rv" href="#model" style="padding:20px 22px">
     <div class="ic" style="background:var(--blue-100);color:var(--navy-800)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
     <h2 style="font-size:var(--fs-lg);margin:11px 0 2px">יש לי שיעור חי היום</h2>
-    <p style="font-size:var(--fs-sm);color:var(--text2)">מודל 15/25/10, בנק שגרות פתיחה ומחולל מערכים ‹</p>
+    <p style="font-size:var(--fs-sm);color:var(--text2)">מודל 15/25/10, בנק שגרות פתיחה ומחולל השיעורים ‹</p>
   </a>
   <a class="card rv d1" href="#lomasach" style="padding:20px 22px">
     <div class="ic" style="background:var(--teal-100);color:#087565"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M2 20h20"/><path d="m3 3 18 18"/></svg></div>
@@ -430,80 +417,15 @@
   </div>
 </div>
 
-<div class="sechead rv" id="mecholel">
-  <div class="kicker">כלי AI · חדש</div>
-  <h2>מחולל מערכי שיעור ללמידה מרחוק</h2>
-  <p>ממלאים שישה שדות — ומקבלים מערך שיעור מלא לפי מודל 15/25/10, כולל גרסה ללא מסך, כרטיס יציאה והודעת וואטסאפ מוכנה לשליחה לקבוצה.</p>
-</div>
 <div style="padding:18px var(--px) 0">
-<div class="gen rv">
-  <div class="fields">
-    <label>מקצוע או תחום דעת
-      <input id="g-subj" type="text" placeholder="למשל: חשמל · אנגלית · מתמטיקה 3 יח״ל">
-    </label>
-    <label>שכבה / כיתה
-      <select id="g-grade">
-        <option>כיתה י׳</option><option>כיתה י״א</option><option>כיתה י״ב</option>
-        <option>כיתת גמר</option><option>כיתה משולבת</option><option>לומדים מבוגרים</option>
-      </select>
-    </label>
-    <label class="wide">נושא השיעור
-      <input id="g-topic" type="text" placeholder="למשל: חוק אוהם · זמן עבר פשוט · קריאת שרטוט">
-    </label>
-    <label>אורך השיעור
-      <select id="g-len"><option>45 דקות</option><option selected>50 דקות</option><option>60 דקות</option><option>90 דקות</option></select>
-    </label>
-    <label>מתכונת
-      <select id="g-mode">
-        <option>מפגש חי (סינכרוני)</option>
-        <option>עבודה עצמאית (א־סינכרוני)</option>
-        <option>ללא מסך — וואטסאפ וטלפון</option>
-        <option>משולב</option>
-      </select>
-    </label>
-    <label class="wide">מאפייני הקבוצה — לא חובה
-      <textarea id="g-notes" rows="2" placeholder="למשל: קבוצה עם פערים גדולים · שליש מהתלמידים לומדים מהטלפון · שלושה תלמידים מפונים"></textarea>
-    </label>
-  </div>
-  <div class="acts">
-    <button class="btn primary ogen-btn" id="g-run">צור מערך שיעור</button>
-    <button class="btn line sm" id="g-copy">העתק את הפרומפט</button>
-    <span class="hint" style="margin:0">אפשר גם להפעיל בכלי ה-AI שלכם ›</span>
-  </div>
-  <div class="acts" style="margin-top:8px">
-    <button class="btn line sm" data-ai="https://chatgpt.com/">העתק ופתח ב-ChatGPT</button>
-    <button class="btn line sm" data-ai="https://claude.ai/new">העתק ופתח ב-Claude</button>
-    <button class="btn line sm" data-ai="https://gemini.google.com/app">העתק ופתח ב-Gemini</button>
-  </div>
-  <p class="hint">המחולל בנוי על ההנחיות הפדגוגיות של המינהל: הוא תמיד מייצר גם גרסה ללא מסך, תמיד מסיים בכרטיס יציאה, ויודע שהוא כותב למגמות ולנתיבי גמר — לא לכיתה עיונית רגילה. את הפלט תמיד עוברים ומתאימים; הוא טיוטה, לא תחליף לשיקול דעת.</p>
-
-  <div class="out" id="g-out">
-    <h3 id="g-out-title">המערך שלך</h3>
-    <pre id="g-out-body"></pre>
-    <div class="row2">
-      <button class="btn line sm" id="g-copyout">העתק את התוצאה</button>
-      <button class="btn line sm" id="g-print">הדפס / שמור כ-PDF</button>
+  <a class="card rv mech-card" id="mecholel" href="mecholel.html?mode=remote">
+    <div class="ic" style="background:var(--cyan-100);color:var(--accent)"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10.5 6-3.5v10l-6-3.5"/></svg></div>
+    <div>
+      <h3>מחולל השיעורים — שיעור מרחוק לפי 15 / 25 / 10</h3>
+      <p>בוחרים תחום ונושא, ומקבלים ערכה שבנויה על המודל: מערך שיעור, מצגת לשיתוף מסך, משימה עצמאית מקוונת, כרטיס יציאה מקוון, משחק ובוחן — עם טיפים להעברה בזום או ב-Meet. הכול נבנה כאן באתר, עם כניסה אחת דרך הרישום במנור.</p>
+      <span class="go">לבניית שיעור מרחוק ‹</span>
     </div>
-  </div>
-
-  <!-- החזרה מהכלי החיצוני. עד כה הפרומפט הועתק ולא היה שום מקום להחזיר אליו את התשובה. -->
-  <div style="margin-top:22px;border-top:1.5px solid var(--border);padding-top:18px">
-    <h3 style="font-size:var(--fs-base);color:var(--navy);margin-bottom:4px">קיבלתם מערך? הדביקו אותו כאן</h3>
-    <p class="hint" style="margin:0 0 10px">הדביקו את מה ש-ChatGPT, Claude או Gemini החזירו — והמערך יוצג כאן מסודר, מוכן להדפסה ולהורדה. הטקסט נשאר בדפדפן שלכם ואינו נשלח לשום מקום.</p>
-    <textarea id="g-back" rows="5" placeholder="הדביקו כאן את מערך השיעור שקיבלתם…"></textarea>
-    <div class="acts" style="margin-top:10px">
-      <button class="btn primary sm" id="g-back-show" type="button">הצג את המערך</button>
-      <button class="btn line sm" id="g-back-print" type="button">הדפסה</button>
-      <button class="btn line sm" id="g-back-down" type="button">הורדה כקובץ</button>
-    </div>
-    <div id="g-back-out" class="lk" style="margin-top:16px"></div>
-  </div>
-</div>
-
-<!-- שיעורים מוכנים: לא כל מורה רוצה לעבור דרך כלי AI בשעת חירום. -->
-<div class="notice rv" style="margin-top:16px">
-  <b>מעדיפים שיעור מוכן, בלי AI?</b> ב<a href="space.html">מחולל שבתחומי הדעת</a> יש בנק שיעורים בנויים מראש — מערך, מצגת, דף עבודה, פעילות פתיחה, משחק ובוחן — שנפתחים מיד בעמוד, בלי המתנה ובלי מעבר לכלי חיצוני.
-</div>
+  </a>
 </div>
 
 <div class="sechead rv" id="ptichot">
@@ -732,184 +654,6 @@
 <script src="search.js" defer></script>
 <script src="/pagenav.js" defer></script>
 <script src="/toolbelt.js" defer></script>
-<script>
-/* ===== מחולל מערכי שיעור =====
-   כשעוגן תיפרס עם מצב lesson — להדביק כאן את כתובת ה-exec,
-   והמחולל יעבור אוטומטית לייצור חי בתוך העמוד.
-   עד אז הוא עובד כמחולל פרומפט: מרכיב את ההנחיה ומעתיק אותה. */
-var LESSON_BACKEND = "";
-
-function val(id) { return (document.getElementById(id).value || "").trim(); }
-
-function buildPrompt() {
-  var subj = val('g-subj') || "—", topic = val('g-topic') || "—", notes = val('g-notes');
-  return [
-    "אתה מומחה לפדגוגיה של הכשרה מקצועית. בנה מערך שיעור ללמידה מרחוק.",
-    "",
-    "הקשר:",
-    "· בית ספר מקצועי בפיקוח משרד העבודה — מינהל הכשרה מקצועית. תלמידים בנתיבי גמר ובגרות ובמגמות טכניות.",
-    "· מקצוע או תחום: " + subj,
-    "· שכבה: " + val('g-grade'),
-    "· נושא השיעור: " + topic,
-    "· אורך: " + val('g-len'),
-    "· מתכונת: " + val('g-mode'),
-    notes ? "· מאפייני הקבוצה: " + notes : "",
-    "",
-    "בנה לפי מודל 15/25/10, בהתאמה יחסית לאורך שנבחר:",
-    "1. פתיחה — שגרה קצרה שמייצרת נוכחות, ואז הסבר אחד ממוקד בלבד.",
-    "2. עבודה עצמאית — משימה אחת ברורה עם דוגמה פתורה, בשתי רמות: בסיס והעמקה.",
-    "3. סגירה — חזרה משותפת קצרה וכרטיס יציאה.",
-    "",
-    "חובה לכלול תמיד, גם אם לא ביקשתי:",
-    "א. גרסה ללא מסך — איך אותו שיעור מתקיים דרך הודעה קולית בוואטסאפ, שיחת טלפון או דף מודפס.",
-    "ב. כרטיס יציאה — שלוש שאלות קצרות.",
-    "ג. הודעת וואטסאפ מוכנה לשליחה לקבוצה, עד 40 מילים.",
-    "ד. מה עושים עם תלמיד שלא התחבר לשיעור.",
-    "",
-    "כללים:",
-    "· עברית פשוטה, פנייה למורה בגוף שני. בלי הקדמות ובלי ז׳רגון אקדמי.",
-    "· לכל פעילות לציין זמן מדויק בדקות.",
-    "· בראש המערך טבלה קצרה: מטרת השיעור · המיומנות · מה צריך להכין מראש.",
-    "· אם הנושא כולל התנסות מעשית שלא ניתנת לביצוע מהבית — לומר זאת במפורש, להציע מה כן אפשר ללמד עכשיו (תיאוריה, בטיחות, שרטוט, חישוב, צפייה בסימולציה) ומה נדחה לחזרה לסדנה.",
-    "· לסיים בשלוש שורות: מה לבדוק לפני השיעור הבא."
-  ].filter(Boolean).join("\n");
-}
-
-function copyText(t) {
-  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
-  var a = document.createElement('textarea');
-  a.value = t; document.body.appendChild(a); a.select();
-  try { document.execCommand('copy'); } catch (e) {}
-  a.remove(); return Promise.resolve();
-}
-function flash(btn, txt) { var o = btn.textContent; btn.textContent = txt; setTimeout(function () { btn.textContent = o; }, 1800); }
-function showOut(title, body) {
-  document.getElementById('g-out-title').textContent = title;
-  document.getElementById('g-out-body').textContent = body;
-  var box = document.getElementById('g-out');
-  box.classList.add('on');
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-function checkFields() {
-  if (!val('g-subj') || !val('g-topic')) { alert('נא למלא מקצוע ונושא שיעור'); return false; }
-  return true;
-}
-
-document.getElementById('g-copy').addEventListener('click', function () {
-  if (!checkFields()) return;
-  var p = buildPrompt();
-  copyText(p); flash(this, 'הועתק ✓');
-  showOut('הפרומפט שלך — מוכן להדבקה בכל כלי AI', p);
-});
-
-document.querySelectorAll('[data-ai]').forEach(function (b) {
-  b.addEventListener('click', function () {
-    if (!checkFields()) return;
-    var p = buildPrompt();
-    copyText(p).then(function () {
-      showOut('הפרומפט הועתק — הדביקו אותו בחלון שנפתח', p);
-      window.open(b.dataset.ai, '_blank', 'noopener');
-    });
-  });
-});
-
-document.getElementById('g-run').addEventListener('click', function () {
-  if (!checkFields()) return;
-  var p = buildPrompt(), btn = this;
-  if (!LESSON_BACKEND) {
-    copyText(p);
-    showOut('הפרומפט שלך — הועתק ומוכן',
-      'הייצור החי בתוך העמוד עדיין לא מופעל.\nההנחיה המלאה הועתקה ללוח — הדביקו אותה ב-ChatGPT, ב-Claude או ב-Gemini ותקבלו את המערך.\n\n— — —\n\n' + p);
-    return;
-  }
-  var orig = btn.innerHTML;
-  btn.innerHTML = '<span class="spin"></span> בונה מערך…'; btn.disabled = true;
-  fetch(LESSON_BACKEND, { method: 'POST', body: JSON.stringify({ mode: 'lesson', question: p }) })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (d && d.ok !== false && (d.lesson || d.summary)) showOut('המערך שלך', d.lesson || d.summary);
-      else { copyText(p); showOut('לא הצלחנו לייצר כרגע — ההנחיה הועתקה', p); }
-    })
-    .catch(function () { copyText(p); showOut('לא הצלחנו לייצר כרגע — ההנחיה הועתקה', p); })
-    .finally(function () { btn.innerHTML = orig; btn.disabled = false; });
-});
-
-document.getElementById('g-copyout').addEventListener('click', function () {
-  copyText(document.getElementById('g-out-body').textContent); flash(this, 'הועתק ✓');
-});
-/* ההדפסה עוברת דרך ערכת השיעור — iframe מוסתר במקום window.open.
-   חוסם החלונות הקופצים של הדפדפן בלע את החלון הקודם בשקט, וזו הסיבה
-   שהמערך "לא נפתח" אצל המורות. */
-document.getElementById('g-print').addEventListener('click', function () {
-  var box = document.createElement('div');
-  box.innerHTML = '<div class="lk-card" style="white-space:pre-wrap">' +
-    LessonKit.esc(document.getElementById('g-out-body').textContent) + '</div>';
-  LessonKit.print(box, 'מערך שיעור');
-});
-
-/* ---------- החזרה מהכלי החיצוני ---------- */
-function mdToHtml(src) {
-  var out = [], inList = false, inTable = false;
-  function closeList(){ if (inList) { out.push('</ul>'); inList = false; } }
-  function closeTable(){ if (inTable) { out.push('</tbody></table>'); inTable = false; } }
-  function inline(t){
-    return LessonKit.esc(t)
-      .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
-      .replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<i>$2</i>');
-  }
-  String(src || '').split(/\r?\n/).forEach(function (raw) {
-    var l = raw.trim();
-    if (!l) { closeList(); closeTable(); return; }
-    var head = l.match(/^(#{1,6})\s+(.*)$/);
-    if (head) {
-      closeList(); closeTable();
-      var lvl = Math.min(head[1].length + 2, 6);
-      out.push('<h' + lvl + '>' + inline(head[2]) + '</h' + lvl + '>');
-      return;
-    }
-    if (/^\|(.+)\|$/.test(l)) {
-      if (/^[\s|:-]+$/.test(l)) return;
-      closeList();
-      if (!inTable) { out.push('<table><tbody>'); inTable = true; }
-      out.push('<tr>' + l.slice(1, -1).split('|').map(function (c) {
-        return '<td>' + inline(c.trim()) + '</td>';
-      }).join('') + '</tr>');
-      return;
-    }
-    closeTable();
-    if (/^[-*·•]\s+/.test(l) || /^\d+[.)]\s+/.test(l)) {
-      if (!inList) { out.push('<ul>'); inList = true; }
-      out.push('<li>' + inline(l.replace(/^([-*·•]|\d+[.)])\s+/, '')) + '</li>');
-      return;
-    }
-    closeList();
-    out.push('<p>' + inline(l) + '</p>');
-  });
-  closeList(); closeTable();
-  return out.join('\n');
-}
-
-(function backFlow() {
-  var ta = document.getElementById('g-back'), out = document.getElementById('g-back-out');
-  if (!ta || !out) return;
-  function name() { var t = val('g-topic'); return t ? 'מערך שיעור · ' + t : 'מערך שיעור'; }
-  function build() {
-    var txt = (ta.value || '').trim();
-    if (!txt) { alert('הדביקו קודם את המערך שקיבלתם'); ta.focus(); return null; }
-    out.innerHTML = '<div class="lk-card">' + mdToHtml(txt) + '</div>';
-    return out;
-  }
-  document.getElementById('g-back-show').addEventListener('click', function () {
-    if (build()) out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
-  document.getElementById('g-back-print').addEventListener('click', function () {
-    if (build()) LessonKit.print(out, name());
-  });
-  document.getElementById('g-back-down').addEventListener('click', function () {
-    if (build()) LessonKit.download(out, name(), name());
-  });
-})();
-</script>
 <script>
 /* ===== כרטיסיות הניווט של העמוד ===== */
 (function pageTabs(){
