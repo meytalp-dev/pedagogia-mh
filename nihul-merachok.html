@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/gate.js"></script>
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול למידה מרחוק · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="ניהול למידה מרחוק בחירום — נוכחות בשיעור מרחוק, מעקב הגשת משימות, מי לא נכח ומי לא הגיש, וסיכום במספרים למנהל.ת. שמות התלמידים נשארים במכשיר של המורה.">
+<meta name="pmh-year" content="תשפ״ז">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ניהול למידה מרחוק">
+<meta property="og:description" content="נוכחות, הגשת משימות ומי חסר — לכל כיתה, מהטלפון או מהמחשב. שמות התלמידים נשארים במכשיר של המורה.">
+<meta property="og:url" content="https://pedagogiamh.co.il/nihul-merachok.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="canonical" href="https://pedagogiamh.co.il/nihul-merachok.html">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="/track.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
+
+<!-- nav:start section="space" -->
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <a href="gantt.html"><span class="n">◂</span> לוח גאנט צוותים</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="bagrut.html"><span class="n">03</span> נתיב הבגרות · תחומי הדעת</a>
+    <a href="gmar.html">נתיב הגמר · תחומי הדעת</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
+    <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות · לפי מגזר ומקצוע</a>
+    <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
+    <a href="mecholel.html">מחולל השיעורים</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a href="alternatives.html"><span class="n">08</span> הערכה</a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="chaka-ya.html">כיתה י״א</a>
+    <a class="nested" href="chaka-yb.html">כיתה י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="https://tfasim.pedagogiamh.co.il/revital/">תובה · הבית של המפקחים</a>
+    <a class="nested" href="https://tfasim.pedagogiamh.co.il/revital/#K">ערכת המפקח.ת</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="/tzohar/">צוהר · בית הספר שלי</a>
+    <a href="/neta/">נטע · מרחב הרכזים הפדגוגיים</a>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a href="pikuah-miktzoi.html">פיקוח מקצועי · מגמות ומפקחים</a>
+    <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a class="nested" href="kehilot.html">קהילות מקצועיות · קישורי הצטרפות</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="matal.html">מחברת המת״ל · תפקודי למידה</a>
+    <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה · תשפ״ז</a>
+    <a href="menahalim-hadashim.html">מנהלים חדשים · ערכת הכניסה</a>
+    <a class="nested" href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a class="nested" href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+    <a class="nested" href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a class="nested" href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">רכז פדגוגי</div>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+    <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+    <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+    <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+    <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+    <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+    <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+    <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+    <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    <div class="sect">חינוך חברתי יוצר</div>
+    <a href="chevrati.html">שער המרחב החברתי</a>
+    <a href="chevrati-tfisa.html"><span class="n">01</span> התפיסה וארבעת העקרונות</a>
+    <a href="chevrati-tafkid.html"><span class="n">02</span> תפקיד הרכז.ת</a>
+    <a href="chevrati-tochnit.html"><span class="n">03</span> בניית תוכנית העבודה</a>
+    <a href="chevrati-hachshara.html"><span class="n">04</span> ההכשרה השנתית</a>
+    <a href="chevrati-meoravut.html"><span class="n">05</span> מעורבות ומנהיגות תלמידים</a>
+    <a href="chevrati-kehila.html"><span class="n">06</span> קהילה של משמעות</a>
+    <a href="chevrati-eretz.html"><span class="n">07</span> ״ארץ״ — הסביבה הפיזית</a>
+    <a href="chevrati-arachim.html"><span class="n">08</span> ערכים וטקסים</a>
+    <a href="chevrati-chosen.html"><span class="n">09</span> חוסן בתקופת משבר</a>
+    <a href="chevrati-tzevet.html"><span class="n">10</span> עבודה עם הצוות</a>
+    <a href="chevrati-merchavim.html"><span class="n">11</span> מרחבים בניהול עצמי</a>
+    <a href="chevrati-klim.html"><span class="n">12</span> ארגז הכלים · מעגל השנה</a>
+    <a href="chevrati-prida.html"><span class="n">13</span> פרידה וסיום</a>
+    <a href="chevrati-shitufim.html"><span class="n">14</span> שיתופים מהשטח</a>
+    <a href="chevrati-arabic.html"><span class="n">15</span> التربية الاجتماعية · بالعربية</a>
+    <a href="chevrati-matala.html"><span class="n">16</span> מטלת הסיכום</a>
+    <div class="sect">נהלים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a class="nested" href="nehalim-minhal.html">נהלי מינהל</a>
+    <a class="nested" href="takzivim.html">תקציבים</a>
+    <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
+    <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    <a class="nested" href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
+    <div class="sect">שירותים</div>
+    <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
+    <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
+    <a href="ai.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="/hadrachot/" target="_blank" rel="noopener">מנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <div class="sect">אודות</div>
+    <a href="archive.html">ארכיון · שנים קודמות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה" width="1200" height="420">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="gov-mid">
+    <!-- תובה, צוהר ונטע — קבועים ובולטים בראש כל עמוד, במחשב ובנייד, ולא בין הקטגוריות (מיטל, 11.10.26) -->
+    <div class="sys sys-d" role="navigation" aria-label="המערכות האישיות">
+      <a class="sys-btn tuva" href="https://tfasim.pedagogiamh.co.il/revital/"><img src="/img/sys-tuva.png" alt="" width="64" height="64"><span><b>תובה</b><small>למפקחים</small></span></a>
+      <a class="sys-btn tzohar" href="/tzohar/"><img src="/img/sys-tzohar.png" alt="" width="64" height="64"><span><b>צוהר</b><small>למנהלים</small></span></a>
+      <a class="sys-btn neta" href="/neta/"><img src="/img/sys-neta.png" alt="" width="64" height="64"><span><b>נטע</b><small>לרכזים פדגוגיים</small></span></a>
+    </div>
+    <span class="navitem"><a class="lnk" href="menahalim.html" aria-haspopup="true">מרחב מנהלים<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+        <a href="/hadrachot/" target="_blank" rel="noopener">מנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="drive-menahalim.html">דרייב מנהלים</a>
+        <a href="tashpaz.html">היערכות תשפ״ז</a>
+        <a href="pikuah-miktzoi.html">פיקוח מקצועי · מגמות ומפקחים</a>
+        <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה</a>
+        <a class="gatelink" href="menahalim-hadashim.html">מנהלים חדשים · ערכת הכניסה</a>
+      </div>
+    </span>
+  </div>
+  <div class="left"><a href="negishut.html">נגישות</a><span class="dis">English</span><span class="dis">العربية</span></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <!-- תובה, צוהר ונטע בנייד — מעל צ'יפי הקטגוריות. במחשב: העותק שבפס העליון -->
+  <div class="sys sys-m" role="navigation" aria-label="המערכות האישיות">
+    <a class="sys-btn tuva" href="https://tfasim.pedagogiamh.co.il/revital/"><img src="/img/sys-tuva.png" alt="" width="64" height="64"><span><b>תובה</b><small>למפקחים</small></span></a>
+    <a class="sys-btn tzohar" href="/tzohar/"><img src="/img/sys-tzohar.png" alt="" width="64" height="64"><span><b>צוהר</b><small>למנהלים</small></span></a>
+    <a class="sys-btn neta" href="/neta/"><img src="/img/sys-neta.png" alt="" width="64" height="64"><span><b>נטע</b><small>לרכזים פדגוגיים</small></span></a>
+  </div>
+  <span class="navitem"><a class="lnk active" href="space.html" aria-haspopup="true">מרחב פדגוגי<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="bagrut.html">נתיב הבגרות</a>
+      <a href="gmar.html">נתיב הגמר</a>
+      <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a>
+      <a href="mecholel.html">מחולל השיעורים</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="alternatives.html">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chanichut.html" aria-haspopup="true">חניכות וקריירה<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית בכיתה</a>
+      <a href="career.html#lessons">מערכי שיעור · ט׳–י״ב</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="procedures.html">שער הנהלים · ארבע הקטגוריות</a>
+      <a href="nehalim-minhal.html">נהלי מינהל</a>
+      <a href="takzivim.html">תקציבים</a>
+      <a href="cherum-nehalim.html">אירוע חריג</a>
+      <a href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html" aria-haspopup="true">בעלי תפקידים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="tafkidim.html">שער בעלי התפקידים · כל ההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ״ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז.ת הפדגוגי.ת</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+      <a href="matal.html">מחברת המת״ל</a>
+      <a href="kehilot.html">קהילות מקצועיות · קישורי הצטרפות</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chevrati.html" aria-haspopup="true">חינוך חברתי יוצר<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chevrati.html">שער המרחב החברתי · כל החומרים</a>
+      <a href="chevrati-tfisa.html">התפיסה וארבעת העקרונות</a>
+      <a href="chevrati-tochnit.html">בניית תוכנית העבודה</a>
+      <a href="chevrati-hachshara.html">ההכשרה השנתית ומפגשיה</a>
+      <a href="chevrati-klim.html">ארגז הכלים · מעגל השנה</a>
+      <a href="chevrati-arabic.html">التربية الاجتماعية · بالعربية</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות לבעלי תפקידים</a></span>
+  <span class="navitem"><a class="lnk" href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a></span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+<!-- nav:end -->
+
+<main id="main">
+
+<style>
+/* ===== ניהול למידה מרחוק (11.11.26) ===== */
+.mr-hero{padding:30px var(--px) 4px}
+.mr-hero .crumb{margin-bottom:10px}
+.mr-hero h1{font-size:clamp(1.8rem,4.2vw,2.5rem);line-height:1.15;margin:0 0 8px;color:var(--navy)}
+.mr-hero h1 em{font-style:normal;background:var(--m-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mr-hero p{font-size:var(--fs-lg);color:var(--text2);max-width:660px;margin:0;line-height:1.6}
+.mr-wrap{padding:16px var(--px) 40px;max-width:1080px}
+.mr-wrap *{box-sizing:border-box}
+.mr-wrap [hidden]{display:none!important}
+.mr-ic{width:20px;height:20px;flex:none}
+
+/* מורה / מנהל.ת */
+.mr-mode{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--soft-bg);border:1px solid var(--border);margin-bottom:14px;max-width:100%}
+.mr-mode button{display:inline-flex;align-items:center;gap:8px;font:inherit;font-weight:800;font-size:var(--fs-md);padding:10px 18px;border:0;border-radius:999px;background:none;color:var(--text2);cursor:pointer}
+.mr-mode button.on{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(13,59,102,.2)}
+.mr-demo{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;padding:12px 16px;border-radius:14px;background:#FFF7E6;border:1px solid #F5D9A0;color:#6B4A00;font-size:var(--fs-sm);line-height:1.6}
+.mr-demo .mr-ic{color:var(--m-yellow-ink);margin-top:2px}
+
+.mr-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;box-shadow:var(--sh-md);overflow:hidden}
+.mr-steps{display:flex;gap:4px;padding:12px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff,var(--soft-bg))}
+.mr-steps button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:0;padding:9px 6px;border-radius:12px;font:inherit;font-size:var(--fs-sm);font-weight:800;color:var(--muted);cursor:pointer}
+.mr-steps button i{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--blue-bg);color:var(--navy);transition:all .25s var(--ease)}
+.mr-steps button i svg{width:18px;height:18px}
+.mr-steps button.on{color:var(--navy);background:#fff;box-shadow:var(--sh-sm)}
+.mr-steps button.on i{background:var(--grad);color:#fff}
+.mr-steps button[disabled]{opacity:.45;cursor:default}
+
+.mr-clsbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:12px 24px;border-bottom:1px solid var(--border);background:#fff;font-size:var(--fs-sm);color:var(--text2)}
+.mr-clsbar b{color:var(--navy)}
+.mr-clsbar select{font:inherit;font-weight:800;font-size:var(--fs-md);color:var(--navy);padding:8px 12px;border:1.5px solid var(--border-strong);border-radius:12px;background:#fff;max-width:100%}
+
+.mr-panel{display:none;padding:24px 26px 26px;animation:mrIn .3s var(--ease)}
+.mr-panel.on{display:block}
+@keyframes mrIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.mr-q{font-size:var(--fs-2xl);font-weight:800;color:var(--navy);margin:0 0 4px}
+.mr-hint{font-size:var(--fs-sm);color:var(--text2);margin:0 0 16px;line-height:1.6}
+
+/* קובץ */
+.mr-drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px 18px;border:2px dashed var(--border-strong);border-radius:20px;background:var(--soft-bg);text-align:center;cursor:pointer;transition:all .2s}
+.mr-drop:hover,.mr-drop.over{border-color:var(--accent);background:var(--cyan-100)}
+.mr-drop svg{width:46px;height:46px;padding:10px;border-radius:14px;background:#fff;color:var(--navy)}
+.mr-drop b{font-size:var(--fs-lg);color:var(--navy)}
+.mr-drop span{font-size:var(--fs-sm);color:var(--text2)}
+.mr-drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.mr-or{margin:12px 0 0;font-size:var(--fs-sm);color:var(--text2)}
+.mr-out{margin-top:18px}
+.mr-found{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:#ECF8F0;border:1px solid #BFE5CB;color:#1B5E35;font-size:var(--fs-sm);line-height:1.6}
+.mr-found.bad{background:#FFF4E5;border-color:#F5D9A0;color:#6B4A00}
+.mr-found b{color:inherit}
+.mr-found .mr-ic{margin-top:2px}
+.mr-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px;padding:16px;border-radius:16px;background:var(--soft-bg);border:1px solid var(--border)}
+.mr-map label{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);font-weight:800;color:var(--navy)}
+.mr-map select,.mr-map input{font:inherit;font-weight:600;font-size:var(--fs-md);padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text);width:100%}
+.mr-map .full{grid-column:1/-1;font-weight:600;color:var(--text2)}
+.mr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.mr-chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:var(--fs-sm);font-weight:800;padding:9px 15px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--navy);cursor:pointer}
+.mr-chip small{font-weight:600;color:var(--muted)}
+.mr-chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mr-chip.on small{color:#CFE0F0}
+.mr-saved{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:var(--fs-sm);color:var(--text2)}
+
+/* כפתורים */
+.mr-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:800;font-size:var(--fs-md);padding:12px 20px;border-radius:999px;border:1.5px solid var(--border-strong);background:#fff;color:var(--navy);cursor:pointer;text-decoration:none;min-height:46px}
+.mr-btn:hover{border-color:var(--accent);background:var(--cyan-100)}
+.mr-btn.pri{border:0;background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(13,59,102,.2)}
+.mr-btn.pri:hover{background:var(--grad);transform:translateY(-1px)}
+.mr-btn.ok{border-color:var(--m-green);color:var(--m-green-ink)}
+.mr-btn[disabled]{opacity:.55;cursor:wait;transform:none}
+.mr-btn.sm{padding:8px 14px;min-height:38px;font-size:var(--fs-sm)}
+.mr-link{background:none;border:0;padding:0;font:inherit;font-weight:800;color:var(--navy);text-decoration:underline;cursor:pointer}
+.mr-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:1px solid var(--border)}
+.mr-nav .sp{flex:1}
+
+/* שיעור */
+.mr-lesson{display:grid;grid-template-columns:170px 1fr;gap:12px;margin-bottom:12px}
+.mr-lesson label{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);font-weight:800;color:var(--navy)}
+.mr-lesson input{font:inherit;font-weight:600;font-size:var(--fs-md);padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text);width:100%;min-height:46px}
+.mr-lesson input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(10,119,153,.12)}
+.mr-recent{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.mr-recent:empty{display:none}
+.mr-recent .mr-chip{padding:6px 12px;font-size:var(--fs-xs)}
+
+.mr-count{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 12px}
+.mr-count div{padding:10px 8px;border-radius:14px;text-align:center;background:var(--soft-bg);border:1px solid var(--border)}
+.mr-count b{display:block;font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.mr-count span{font-size:var(--fs-xs);font-weight:800;color:var(--text2)}
+.mr-count .p{background:#ECF8F0;border-color:#BFE5CB}.mr-count .p b{color:var(--m-green-ink)}
+.mr-count .a{background:#FDEEEE;border-color:#F4C4C4}.mr-count .a b{color:var(--m-red-ink)}
+.mr-count .l{background:#FFF6E0;border-color:#F3DCA0}.mr-count .l b{color:var(--m-yellow-ink)}
+.mr-count .u b{color:var(--muted)}
+.mr-count.two{grid-template-columns:repeat(2,1fr)}
+.mr-acts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+
+/* רשימת התלמידים */
+.mr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px}
+.mr-st{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:9px 12px 9px 9px;border:1.5px solid var(--border);border-radius:16px;background:#fff;font:inherit;font-size:var(--fs-base);font-weight:700;color:var(--text);text-align:start;cursor:pointer;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mr-st .n{flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.35}
+.mr-st .pill{flex:none;display:inline-flex;align-items:center;gap:5px;min-width:96px;justify-content:center;padding:8px 10px;border-radius:999px;font-size:var(--fs-sm);font-weight:800;background:var(--soft-bg);color:var(--muted);border:1.5px solid var(--border)}
+.mr-st .pill svg{width:16px;height:16px}
+.mr-st.s-p{border-color:#9FD6B2;background:#F5FBF7}.mr-st.s-p .pill{background:var(--m-green);border-color:var(--m-green);color:#fff}
+.mr-st.s-a{border-color:#F0B0B0;background:#FEF6F6}.mr-st.s-a .pill{background:var(--m-red-ink);border-color:var(--m-red-ink);color:#fff}
+.mr-st.s-l{border-color:#EFD08A;background:#FFFBF0}.mr-st.s-l .pill{background:#FFE6A6;border-color:#E9BC4C;color:#6B4A00}
+.mr-st.s-y{border-color:#9FD6B2;background:#F5FBF7}.mr-st.s-y .pill{background:var(--m-green);border-color:var(--m-green);color:#fff}
+.mr-st.s-n .pill{background:#fff;color:var(--m-red-ink);border-color:#F0B0B0}
+.mr-st:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mr-empty{padding:18px;border-radius:16px;background:var(--soft-bg);color:var(--text2);font-size:var(--fs-sm);line-height:1.6;text-align:center}
+
+/* מי חסר */
+.mr-seg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--soft-bg);border:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap}
+.mr-seg button{font:inherit;font-weight:800;font-size:var(--fs-sm);padding:9px 16px;border:0;border-radius:10px;background:none;color:var(--text2);cursor:pointer}
+.mr-seg button.on{background:#fff;color:var(--navy);box-shadow:var(--sh-sm)}
+.mr-pick{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-sm);font-weight:800;color:var(--navy);margin-bottom:14px;max-width:420px}
+.mr-pick select{font:inherit;font-weight:700;font-size:var(--fs-md);padding:10px 12px;border:1.5px solid var(--border-strong);border-radius:12px;background:#fff;color:var(--text);width:100%}
+.mr-miss{border:1.5px solid var(--border);border-radius:18px;padding:14px 16px;margin-bottom:12px;background:#fff}
+.mr-miss h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font-size:var(--fs-lg);color:var(--navy)}
+.mr-miss h3 .num{font-size:var(--fs-sm);font-weight:800;padding:3px 11px;border-radius:999px;background:var(--soft-bg);color:var(--text2)}
+.mr-miss h3 .mr-btn{margin-inline-start:auto}
+.mr-miss.a{border-color:#F0B0B0}.mr-miss.a h3 .num{background:#FDEEEE;color:var(--m-red-ink)}
+.mr-miss.l{border-color:#EFD08A}.mr-miss.l h3 .num{background:#FFF6E0;color:var(--m-yellow-ink)}
+.mr-names{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.mr-names li{padding:6px 12px;border-radius:10px;background:var(--soft-bg);font-weight:700;font-size:var(--fs-sm)}
+.mr-allok{display:flex;align-items:center;gap:10px;color:var(--m-green-ink);font-weight:800;font-size:var(--fs-md)}
+
+/* סיכום */
+.mr-sum{border:1.5px solid var(--border);border-radius:18px;padding:16px;background:#fff;margin-bottom:14px}
+.mr-sum h3{margin:0 0 4px;font-size:var(--fs-lg);color:var(--navy)}
+.mr-sum .meta{font-size:var(--fs-sm);color:var(--text2);margin-bottom:10px}
+.mr-tasks{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.mr-tasks li{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);padding:8px 12px;border-radius:12px;background:var(--soft-bg)}
+.mr-tasks li b{margin-inline-start:auto;font-variant-numeric:tabular-nums;color:var(--navy)}
+.mr-send{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,var(--blue-bg),var(--cyan-100));border:1px solid var(--border);margin-bottom:14px;font-size:var(--fs-sm);line-height:1.6;color:var(--text2)}
+.mr-send b{color:var(--navy)}
+.mr-send .mr-ic{color:var(--navy);margin-top:2px}
+.mr-msg{display:none;margin-top:12px;padding:12px 16px;border-radius:12px;background:#FFF4E5;color:#7A4B00;font-size:var(--fs-sm);line-height:1.6}
+.mr-msg.on{display:block}
+.mr-msg.good{background:#ECF8F0;color:#1B5E35}
+.mr-login{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--soft-bg);border:1px solid var(--border);margin-bottom:14px;font-size:var(--fs-sm);line-height:1.6;color:var(--text2)}
+.mr-login b{display:block;color:var(--navy);font-size:var(--fs-md)}
+.mr-login .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+
+/* מבט מנהל.ת */
+.mr-ph{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.mr-ph h2{margin:0;font-size:var(--fs-2xl);color:var(--navy);flex:1;min-width:200px}
+.mr-ph h2 small{display:block;font-size:var(--fs-sm);font-weight:700;color:var(--text2);margin-top:2px}
+.mr-ph label{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-xs);font-weight:800;color:var(--navy)}
+.mr-ph input,.mr-ph select{font:inherit;font-weight:700;font-size:var(--fs-md);padding:9px 12px;border:1.5px solid var(--border-strong);border-radius:12px;background:#fff;color:var(--text);min-height:44px}
+.mr-classes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:16px}
+.mr-cl{border:1.5px solid var(--border);border-radius:18px;padding:14px 16px;background:#fff}
+.mr-cl .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mr-cl .top b{font-size:var(--fs-xl);color:var(--navy)}
+.mr-cl .top span{font-size:var(--fs-xs);color:var(--text2);font-weight:700}
+.mr-cl .top .pct{margin-inline-start:auto;font-size:var(--fs-lg);font-weight:800;color:var(--m-green-ink)}
+.mr-bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--soft-bg);margin:10px 0 8px}
+.mr-bar i{display:block;height:100%}
+.mr-bar .p{background:var(--m-green)}.mr-bar .l{background:var(--m-yellow)}.mr-bar .a{background:var(--m-red)}
+.mr-nums{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:var(--fs-sm);color:var(--text2)}
+.mr-nums b{font-variant-numeric:tabular-nums;color:var(--text)}
+.mr-cl .les{font-size:var(--fs-xs);color:var(--muted);margin-top:6px;font-weight:700}
+.mr-cl .mr-tasks li{font-size:var(--fs-xs);padding:6px 10px}
+
+.mr-privacy{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 18px;border-radius:16px;background:#fff;border:1px solid var(--border);font-size:var(--fs-sm);line-height:1.6;color:var(--text2)}
+.mr-privacy svg{flex:none;width:34px;height:34px;padding:7px;border-radius:50%;background:#ECF8F0;color:var(--m-green-ink)}
+.mr-privacy b{color:var(--navy)}
+.mr-toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--navy);color:#fff;font-weight:800;font-size:var(--fs-sm);padding:12px 20px;border-radius:999px;box-shadow:var(--sh-float);transition:all .25s var(--ease);z-index:300;max-width:calc(100vw - 32px);text-align:center}
+.mr-toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:760px){
+  .mr-panel{padding:18px 16px 20px}
+  .mr-clsbar{padding:10px 16px}
+  .mr-steps{padding:8px 6px;gap:2px}
+  .mr-steps button{flex-direction:column;gap:4px;font-size:.72rem;padding:6px 1px}
+  .mr-lesson{grid-template-columns:1fr}
+  .mr-count b{font-size:1.25rem}
+  .mr-count span{font-size:.7rem}
+  .mr-list{grid-template-columns:1fr}
+  .mr-mode{display:flex}
+  .mr-mode button{flex:1;justify-content:center;padding:10px 8px}
+  .mr-nav .mr-btn.pri{flex:1}
+  .mr-miss h3 .mr-btn{margin-inline-start:0}
+}
+@media print{.nav,.govbar,.drawer,.scrim,.foot,.mr-hero,.mr-mode,.mr-steps,.mr-nav,.mr-privacy{display:none!important}}
+</style>
+
+<div class="mr-hero">
+  <div class="crumb"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="emergency.html">למידה בחירום</a> ‹ ניהול למידה מרחוק</div>
+  <h1>ניהול <em>למידה מרחוק</em></h1>
+  <p>נוכחות בשיעור, הגשת משימות ומי חסר — לכל כיתה, מהטלפון או מהמחשב. והמנהל.ת מקבל.ת תמונת מצב במספרים.</p>
+</div>
+
+<div class="mr-wrap">
+  <div class="mr-mode" role="tablist" aria-label="מבט">
+    <button type="button" role="tab" class="on" data-mode="t" aria-selected="true"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9.2V14c0 1.7 2.2 3 5 3s5-1.3 5-3V9.2"/></svg>מבט מורה</button>
+    <button type="button" role="tab" data-mode="p" aria-selected="false"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>מבט מנהל.ת</button>
+  </div>
+
+  <div class="mr-demo" id="mr-demo" hidden><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span><b>מצב הדגמה.</b> הכלי עובד במלואו במכשיר הזה. "שליחת סיכום למנהל.ת" נשמרת כאן בלבד, ומבט המנהל.ת מציג בית ספר לדוגמה עם נתונים בדויים.</span></div>
+
+  <!-- ===== מבט מורה ===== -->
+  <div class="mr-card" id="mr-teacher">
+    <nav class="mr-steps" id="mr-steps" aria-label="שלבים">
+      <button type="button" data-step="1" class="on"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M12 17v-6M9.5 13.5 12 11l2.5 2.5"/></svg></i>קובץ</button>
+      <button type="button" data-step="2" disabled><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.6L16 9.6"/></svg></i>נוכחות</button>
+      <button type="button" data-step="3" disabled><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></svg></i>משימות</button>
+      <button type="button" data-step="4" disabled><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c0-3.6 2.9-6 6.5-6 1.3 0 2.5.3 3.5.9"/><path d="m16 15 5 5M21 15l-5 5"/></svg></i>מי חסר</button>
+      <button type="button" data-step="5" disabled><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></i>סיכום</button>
+    </nav>
+
+    <div class="mr-clsbar" id="mr-clsbar" hidden>
+      <label for="mr-cls"><b>כיתה:</b></label>
+      <select id="mr-cls"></select>
+      <span id="mr-clsn"></span>
+    </div>
+
+    <!-- 1. קובץ -->
+    <section class="mr-panel on" data-p="1" aria-labelledby="mr-q1">
+      <h2 class="mr-q" id="mr-q1">טוענים את רשימת התלמידים</h2>
+      <p class="mr-hint">קובץ ייצוא ממשו״ב או מסמארט סקול — Excel או CSV. אפשר קובץ עם כמה כיתות. מספיקים שם וכיתה; ת״ז וטלפון, אם יש בקובץ, לא נקראים ולא נשמרים.</p>
+      <label class="mr-drop" id="mr-drop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v5h5"/><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2z"/><path d="M12 17v-6M9.5 13.5 12 11l2.5 2.5"/></svg>
+        <b>בחירת קובץ התלמידים</b>
+        <span dir="rtl">או גוררים אותו לכאן · <span dir="ltr">.xlsx · .xls · .csv</span></span>
+        <input type="file" id="mr-file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv">
+      </label>
+      <p class="mr-or">אין קובץ בהישג יד? <button type="button" class="mr-link" id="mr-sample">טעינת כיתה לדוגמה</button> (שמות בדויים)</p>
+      <div class="mr-out" id="mr-out" aria-live="polite"></div>
+      <div class="mr-saved" id="mr-saved" hidden></div>
+    </section>
+
+    <!-- 2. נוכחות -->
+    <section class="mr-panel" data-p="2" aria-labelledby="mr-q2">
+      <h2 class="mr-q" id="mr-q2">נוכחות בשיעור</h2>
+      <p class="mr-hint">נגיעה בשם מחליפה: נכח/ה ← לא נכח/ה ← איחר/ה. הכול נשמר מיד במכשיר.</p>
+      <div class="mr-lesson">
+        <label>תאריך<input type="date" id="mr-date"></label>
+        <label>שיעור / מקצוע<input type="text" id="mr-subj" maxlength="60" placeholder="למשל: מתמטיקה · שיעור 2" list="mr-subjs" autocomplete="off"></label>
+        <datalist id="mr-subjs"></datalist>
+      </div>
+      <div class="mr-recent" id="mr-recent"></div>
+      <div class="mr-count" id="mr-acount"></div>
+      <div class="mr-acts">
+        <button type="button" class="mr-btn ok sm" id="mr-allp"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>סמן את כולם נכחו</button>
+        <button type="button" class="mr-btn sm" id="mr-clear">ניקוי הסימון</button>
+      </div>
+      <div class="mr-list" id="mr-alist"></div>
+      <div class="mr-nav"><span class="sp"></span><button type="button" class="mr-btn pri" data-go="3">המשך למשימות ←</button></div>
+    </section>
+
+    <!-- 3. משימות -->
+    <section class="mr-panel" data-p="3" aria-labelledby="mr-q3">
+      <h2 class="mr-q" id="mr-q3">הגשת משימות</h2>
+      <p class="mr-hint">מוסיפים משימה, ונוגעים בשם של מי שהגיש/ה. נגיעה נוספת מבטלת.</p>
+      <div class="mr-lesson">
+        <label>משימה חדשה<input type="text" id="mr-tname" maxlength="60" placeholder="למשל: דף עבודה 3" autocomplete="off"></label>
+        <div style="display:flex;align-items:flex-end"><button type="button" class="mr-btn pri" id="mr-tadd" style="width:100%"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>הוספת משימה</button></div>
+      </div>
+      <div class="mr-recent" id="mr-tlist"></div>
+      <div id="mr-tbody"></div>
+      <div class="mr-nav"><button type="button" class="mr-btn" data-go="2">→ לנוכחות</button><span class="sp"></span><button type="button" class="mr-btn pri" data-go="4">מי חסר ←</button></div>
+    </section>
+
+    <!-- 4. מי חסר -->
+    <section class="mr-panel" data-p="4" aria-labelledby="mr-q4">
+      <h2 class="mr-q" id="mr-q4">מי לא נכח · מי לא הגיש</h2>
+      <p class="mr-hint">הרשימה להעתקה — להודעה לתלמידים, להורים או למחנך.ת.</p>
+      <div class="mr-seg" id="mr-mseg"><button type="button" class="on" data-m="a">לא נכחו</button><button type="button" data-m="t">לא הגישו</button></div>
+      <label class="mr-pick"><span id="mr-mlbl">שיעור</span><select id="mr-msel"></select></label>
+      <div id="mr-mbody" aria-live="polite"></div>
+      <div class="mr-nav"><button type="button" class="mr-btn" data-go="3">→ למשימות</button><span class="sp"></span><button type="button" class="mr-btn pri" data-go="5">לסיכום ←</button></div>
+    </section>
+
+    <!-- 5. סיכום -->
+    <section class="mr-panel" data-p="5" aria-labelledby="mr-q5">
+      <h2 class="mr-q" id="mr-q5">סיכום ושליחה למנהל.ת</h2>
+      <p class="mr-hint">הורדה לאקסל של כל הנוכחות והמשימות של הכיתה, ושליחת סיכום השיעור למנהל.ת — במספרים בלבד.</p>
+      <label class="mr-pick">שיעור<select id="mr-ssel"></select></label>
+      <div id="mr-sbody"></div>
+      <div class="mr-send"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <span><b>מה יישלח למנהל.ת:</b> בית הספר, הכיתה, התאריך, שם השיעור, כמה נכחו / לא נכחו / איחרו, וכמה הגישו כל משימה. <b>שום שם של תלמיד/ה לא יוצא מהמכשיר.</b> בשם השיעור והמשימה כותבים מקצוע או נושא — לא שמות.</span></div>
+      <div id="mr-tlogin"></div>
+      <div class="mr-acts">
+        <button type="button" class="mr-btn pri" id="mr-send"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg>שליחת סיכום למנהל.ת</button>
+        <button type="button" class="mr-btn" id="mr-xls"><svg class="mr-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg>הורדה לאקסל</button>
+      </div>
+      <div class="mr-msg" id="mr-smsg"></div>
+      <div class="mr-nav"><button type="button" class="mr-btn" data-go="4">→ מי חסר</button><span class="sp"></span><button type="button" class="mr-btn" data-go="2">שיעור חדש</button></div>
+    </section>
+  </div>
+
+  <!-- ===== מבט מנהל.ת ===== -->
+  <div class="mr-card" id="mr-principal" hidden>
+    <section class="mr-panel on" aria-label="מבט מנהל.ת">
+      <div id="mr-plogin"></div>
+      <div id="mr-pbody" hidden>
+        <div class="mr-ph">
+          <h2 id="mr-pschool">בית הספר<small></small></h2>
+          <label id="mr-pschool-l" hidden>בית ספר<select id="mr-pschools"></select></label>
+          <label>תאריך<input type="date" id="mr-pdate"></label>
+        </div>
+        <div class="mr-seg" id="mr-pseg"><button type="button" class="on" data-v="r">דיווחו</button><button type="button" data-v="m">טרם דיווחו</button></div>
+        <div id="mr-pview" aria-live="polite"></div>
+      </div>
+      <div class="mr-msg" id="mr-pmsg"></div>
+    </section>
+  </div>
+
+  <p class="mr-privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 9.5 4-1.2 7-5 7-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg>
+    <span><b>שמות התלמידים נשארים אצלכם.</b> הקובץ נקרא בתוך הדפדפן, והשמות נשמרים רק במכשיר הזה — לא נשלחים לשום שרת ולא נשמרים באתר. למנהל.ת יוצאים מספרים בלבד. <button type="button" class="mr-link" id="mr-wipe">מחיקת כל הנתונים מהמכשיר</button></span></p>
+</div>
+
+<div class="mr-toast" id="mr-toast" role="status" aria-live="polite"></div>
+
+</main>
+
+<!-- foot:start tagline="עודכן 11.11.2026" -->
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 11.11.2026</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impactos.co.il</a></div></div>
+<!-- foot:end -->
+
+<script id="mr-parser">
+/* ===== קריאת קובץ התלמידים (בדפדפן בלבד) =====
+   מקבל שורות (מערך של מערכים) מגיליון — ייצוא משו״ב / סמארט סקול — ומחזיר כיתות ושמות.
+   הכותרות לא חייבות להיות בשורה 1: סורקים עד 25 שורות ראשונות.
+   נקראים רק שם וכיתה. עמודות ת״ז וטלפון מזוהות רק כדי לומר למורה שהן לא נשמרות.
+   בלי DOM — נבדק ב-Node (רויטל/merachok-gas/tests/test-parser.js). */
+var MRParse = (function(){
+  var SCAN = 25;
+  function norm(s){
+    return String(s == null ? "" : s).toLowerCase()
+      .replace(/[‎‏‪-‮﻿]/g, "")
+      .replace(/[^\p{L}\p{N} ]+/gu, " ").replace(/\s+/g, " ").trim();
+  }
+  function set(a){ var o = {}; a.forEach(function(x){ o[norm(x)] = 1; }); return o; }
+  var H = {
+    full: set(["שם", "שם מלא", "שם התלמיד", "שם התלמידה", "שם התלמיד/ה", "שם תלמיד", "שם תלמיד/ה", "תלמיד", "תלמיד/ה", "התלמיד",
+      "שם ומשפחה", "שם ושם משפחה", "שם משפחה ושם פרטי", "שם משפחה ופרטי", "שם פרטי ומשפחה", "שם פרטי ושם משפחה",
+      "name", "full name", "student", "student name", "الاسم", "اسم الطالب", "الطالب"]),
+    first: set(["שם פרטי", "פרטי", "first name", "first", "given name", "الاسم الشخصي", "الاسم الأول"]),
+    last: set(["שם משפחה", "משפחה", "last name", "surname", "family name", "last", "اسم العائلة", "العائلة"]),
+    cls: set(["כיתה", "כתה", "כיתה ומקבילה", "כיתה/מקבילה", "כיתת אם", "כיתה אם", "קבוצה", "קבוצת לימוד", "class", "class name", "homeroom", "الصف", "الشعبة"]),
+    grade: set(["שכבה", "שכבת גיל", "שכבה/כיתה", "grade", "level", "الطبقة"]),
+    par: set(["מקבילה", "מס' כיתה", "מס כיתה", "מספר כיתה", "מספר מקבילה", "parallel"])
+  };
+  function kindOf(h){
+    var n = norm(h);
+    if (!n) return "";
+    for (var k in H) if (H[k][n]) return k;
+    if (/^(ת ?ז|תעודת זהות|מס(פר)? זהות|זהות|מספר ת ?ז|id|id number|רקורד|מ ?ז)$/.test(n)) return "id";
+    if (/(טלפון|נייד|פלאפון|סלולרי|phone|mobile|tel|هاتف|جوال)/.test(n)) return "phone";
+    if (/^שם התלמיד/.test(n)) return "full";
+    return "";
+  }
+  /* "י'1" · "י׳ 1" · "יא-2" · "י״א 2" → "י׳1" / "י״א2"; "10" + "1" → "10-1" */
+  function normClass(s){
+    var t = String(s == null ? "" : s).replace(/[‎‏﻿]/g, "").replace(/\s+/g, " ").trim();
+    if (!t) return "";
+    var u = t.replace(/[״"]|''/g, '"').replace(/[׳'`´’]/g, "'");
+    var m = /^(?:כית[הת]\s*)?([א-ת])\s*(["']?)\s*([א-ת])?\s*["']?\s*[-–/]?\s*(\d{1,2})?$/.exec(u);
+    if (m && (m[1] + (m[3] || "")).length <= 2) {
+      var L = m[1] + (m[3] || ""), D = m[4] || "";
+      return (L.length === 1 ? L + "׳" : L[0] + "״" + L[1]) + D;
+    }
+    return t.replace(/\s*-\s*/g, "-").slice(0, 30);
+  }
+  function joinGrade(g, p){
+    g = String(g == null ? "" : g).trim(); p = String(p == null ? "" : p).trim();
+    if (!g) return normClass(p);
+    if (!p) return normClass(g);
+    if (/^\d+$/.test(g)) return normClass(g + "-" + p);
+    return normClass(g + p);
+  }
+  function cell(r, i){ return i == null || i < 0 ? "" : String(r[i] == null ? "" : r[i]).replace(/\s+/g, " ").trim(); }
+
+  /* מאתרים את שורת הכותרות: השורה עם הכי הרבה כותרות מוכרות, שיש בה עמודת שם */
+  function detect(rows){
+    rows = rows || [];
+    var best = null;
+    for (var r = 0; r < Math.min(SCAN, rows.length); r++) {
+      var row = rows[r] || [], map = {}, ignored = [], score = 0;
+      for (var c = 0; c < row.length; c++) {
+        var k = kindOf(row[c]);
+        if (!k) continue;
+        score++;
+        if (k === "id" || k === "phone") { ignored.push(String(row[c]).trim()); continue; }
+        if (map[k] == null) map[k] = c;
+      }
+      /* "שם" + "שם משפחה" בנפרד = שם פרטי + שם משפחה */
+      if (map.full != null && map.last != null && map.first == null && norm(row[map.full]) === "שם") { map.first = map.full; delete map.full; }
+      var hasName = map.full != null || map.first != null || map.last != null;
+      if (hasName && (!best || score > best.score)) best = { score: score, headerRow: r, map: map, ignored: ignored, headers: row.map(function(x){ return String(x == null ? "" : x).trim(); }) };
+    }
+    if (!best) {
+      var widest = 0;
+      for (var i = 0; i < Math.min(SCAN, rows.length); i++) if ((rows[i] || []).filter(function(x){ return String(x).trim(); }).length > ((rows[widest] || []).filter(function(x){ return String(x).trim(); }).length)) widest = i;
+      return { ok: false, headerRow: widest, map: {}, ignored: [], headers: (rows[widest] || []).map(function(x){ return String(x == null ? "" : x).trim(); }) };
+    }
+    best.ok = true;
+    return best;
+  }
+
+  var SECTION = /^(?:כית[הת]|קבוצה|الصف)\s*[:\-–]?\s*(.+)$/;
+  var TOTAL = /^(סה ?כ|סך הכל|סך הכול|total|מספר תלמידים|כמות)/;
+  /* map: { full | first+last, cls | grade+par } — מספרי עמודות */
+  function extract(rows, headerRow, map, opts){
+    opts = opts || {};
+    var classes = {}, order = [], seen = {}, cur = "", skipped = 0, count = 0;
+    var headerNames = {};
+    (rows[headerRow] || []).forEach(function(h){ headerNames[norm(h)] = 1; });
+    var hasCls = map.cls != null || map.grade != null || map.par != null;
+    for (var r = headerRow + 1; r < rows.length; r++) {
+      var row = rows[r] || [];
+      var filled = row.filter(function(x){ return String(x == null ? "" : x).trim(); });
+      if (!filled.length) continue;
+      if (filled.length === 1) {
+        var sm = SECTION.exec(String(filled[0]).trim());
+        if (sm) { cur = normClass(sm[1]); continue; }
+      }
+      var name;
+      if (map.full != null) name = cell(row, map.full);
+      else name = [cell(row, map.first), cell(row, map.last)].filter(Boolean).join(" ");
+      name = name.replace(/\s+/g, " ").trim().slice(0, 80);
+      if (!name || /^[\d\s.\-/]+$/.test(name) || headerNames[norm(name)] || TOTAL.test(norm(name))) { skipped++; continue; }
+      var cls = "";
+      if (map.cls != null) cls = normClass(cell(row, map.cls));
+      else if (map.grade != null || map.par != null) cls = joinGrade(cell(row, map.grade), cell(row, map.par));
+      if (!cls) cls = cur || opts.defaultClass || "הכיתה שלי";
+      if (!classes[cls]) { classes[cls] = []; order.push(cls); seen[cls] = {}; }
+      var nm = name, n = 2;
+      while (seen[cls][nm]) nm = name + " (" + (n++) + ")";
+      seen[cls][nm] = 1;
+      classes[cls].push(nm);
+      count++;
+    }
+    return { classes: classes, order: order, count: count, skipped: skipped };
+  }
+  function parse(rows, opts){
+    var d = detect(rows);
+    if (!d.ok) return { ok: false, detect: d };
+    var x = extract(rows, d.headerRow, d.map, opts);
+    return { ok: x.count > 0, detect: d, classes: x.classes, order: x.order, count: x.count, skipped: x.skipped };
+  }
+  return { norm: norm, kindOf: kindOf, normClass: normClass, joinGrade: joinGrade, detect: detect, extract: extract, parse: parse };
+})();
+if (typeof module !== "undefined") module.exports = MRParse;
+</script>
+
+<script>
+/* ===== ניהול למידה מרחוק (11.11.26) =====
+   עמוד אחד, צעד אחד בכל פעם: קובץ → נוכחות → משימות → מי חסר → סיכום. ומבט מנהל.ת.
+   פרטיות: שמות התלמידים נשארים ב-localStorage של המכשיר בלבד (pmh.merachok.v1).
+   לשרת יוצאים רק מספרים (report_ ב-רויטל/merachok-gas/קוד.js), ובית הספר נקבע שם לפי הזהות במנור.
+   כניסה: כמו מחולל השיעורים — המפתח שמנור שמר בדפדפן (ts.teacher.v1 / ts.staff.v1); הכניסה עצמה
+   במנור בלשונית חדשה, והעמוד מזהה אותה דרך אירוע storage.
+   MERACHOK_BACKEND ריק = מצב הדגמה: הכול עובד במכשיר, והסיכום "נשלח" למבט מנהל.ת לדוגמה. */
+var MERACHOK_BACKEND = "https://script.google.com/macros/s/AKfycbx1rc-lfpe2fNg_KuJU0Czrk1HFwfrCBrO468Cgwp5MQn22pzau6Q0AwehWiQkrfYxS/exec";
+
+(function merachok(){
+var KEY = "pmh.merachok.v1", UI_KEY = "pmh.merachok.ui", DEMO_KEY = "pmh.merachok.demo";
+var DEMO = !MERACHOK_BACKEND;
+var CALL_MS = 45000;
+
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+function svg(p, cls){ return '<svg class="' + (cls || "mr-ic") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + "</svg>"; }
+var IC = {
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  dot: '<circle cx="12" cy="12" r="3"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  ok: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.6 2.6L16 9.6"/>',
+  warn: '<path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17h.01"/>',
+  user: '<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-3.9 3.4-6.4 7.5-6.4s7.5 2.5 7.5 6.4"/>'
+};
+function msg(id, t, good){ var m = el(id); m.textContent = t || ""; m.classList.toggle("on", !!t); m.classList.toggle("good", !!good); }
+var toastT = 0;
+function toast(t){ var b = el("mr-toast"); b.textContent = t; b.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(function(){ b.classList.remove("on"); }, 2600); }
+function track(a, b){ try { if (window.pmhTrack) window.pmhTrack(a, b); } catch(e){} }
+
+/* ---------- אחסון במכשיר — כל גישה עטופה ---------- */
+var STORE_OK = true;
+function lsGet(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e){ return null; } }
+function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ STORE_OK = false; return false; } }
+function lsDel(k){ try { localStorage.removeItem(k); } catch(e){} }
+
+var DB = lsGet(KEY);
+if (!DB || DB.v !== 1 || typeof DB.classes !== "object") DB = { v: 1, classes: {}, order: [], cur: "" };
+function save(){
+  if (!lsSet(KEY, DB) && !save.warned) { save.warned = true; toast("הדפדפן לא מאפשר שמירה — הנתונים יימחקו כשתסגרו את הדף"); }
+}
+var UI = lsGet(UI_KEY) || {};
+function saveUI(){ lsSet(UI_KEY, UI); }
+function C(){ return DB.classes[DB.cur] || null; }
+
+/* ---------- תאריכים ---------- */
+function p2(n){ return (n < 10 ? "0" : "") + n; }
+function today(){ var d = new Date(); return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
+function shortDate(s){ var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? (+m[3]) + "." + (+m[2]) : s; }
+function lessonLabel(L){ return shortDate(L.date) + (L.subj ? " · " + L.subj : ""); }
+
+/* ===== מורה / מנהל.ת ===== */
+var MODE = UI.mode === "p" ? "p" : "t";
+function setMode(m){
+  MODE = m; UI.mode = m; saveUI();
+  document.querySelectorAll(".mr-mode button").forEach(function(b){ var on = b.dataset.mode === m; b.classList.toggle("on", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  el("mr-teacher").hidden = m !== "t";
+  el("mr-principal").hidden = m !== "p";
+  if (m === "p") openPrincipal();
+  track("מבט", m === "p" ? "מנהל.ת" : "מורה");
+}
+document.querySelectorAll(".mr-mode button").forEach(function(b){ b.addEventListener("click", function(){ setMode(b.dataset.mode); }); });
+el("mr-demo").hidden = !DEMO;
+
+/* ===== הצעדים ===== */
+var STEP = 1;
+function go(n){
+  if (n > 1 && !C()) n = 1;
+  STEP = n;
+  document.querySelectorAll("#mr-teacher .mr-panel").forEach(function(p){ p.classList.toggle("on", +p.dataset.p === n); });
+  document.querySelectorAll("#mr-steps button").forEach(function(b){
+    var k = +b.dataset.step;
+    b.classList.toggle("on", k === n);
+    b.disabled = k > 1 && !C();
+    if (k === n) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+  });
+  el("mr-clsbar").hidden = !C() || n === 1;
+  if (n === 2) paintAttend();
+  if (n === 3) paintTasks();
+  if (n === 4) paintMissing();
+  if (n === 5) paintSummary();
+  if (n === 1) paintSaved();
+  UI.step = n; saveUI();
+  var top = el("mr-teacher").getBoundingClientRect().top;
+  if (top < 0) el("mr-teacher").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+el("mr-steps").addEventListener("click", function(e){ var b = e.target.closest("button"); if (b && !b.disabled) go(+b.dataset.step); });
+document.querySelectorAll("[data-go]").forEach(function(b){ b.addEventListener("click", function(){ go(+b.dataset.go); }); });
+
+/* ---------- בורר הכיתה ---------- */
+function paintClassSel(){
+  var s = el("mr-cls");
+  s.innerHTML = DB.order.map(function(c){ return '<option value="' + esc(c) + '"' + (c === DB.cur ? " selected" : "") + ">" + esc(c) + "</option>"; }).join("");
+  var c = C();
+  el("mr-clsn").textContent = c ? c.names.length + " תלמידים" : "";
+}
+el("mr-cls").addEventListener("change", function(){ DB.cur = this.value; save(); paintClassSel(); go(STEP); });
+
+/* ===== 1. קובץ ===== */
+var PENDING = null;   /* מה שנקרא מהקובץ ועוד לא נשמר: { rows, d, res, file } */
+function readFile(f){
+  if (!f) return;
+  if (f.size > 8 * 1048576) { showOut('<div class="mr-found bad">' + svg(IC.warn) + "<span>הקובץ גדול מדי (מעל 8MB). מייצאים רק את רשימת התלמידים.</span></div>"); return; }
+  if (!window.XLSX) { showOut('<div class="mr-found bad">' + svg(IC.warn) + "<span>רכיב קריאת האקסל עוד לא נטען. בדקו את החיבור ונסו שוב בעוד רגע.</span></div>"); return; }
+  var isCsv = /\.(csv|txt|tsv)$/i.test(f.name) || /csv|text\/plain/.test(f.type);
+  var r = new FileReader();
+  r.onload = function(){
+    var wb;
+    try {
+      if (isCsv) {
+        var buf = new Uint8Array(r.result), text;
+        try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); }
+        catch(e){ try { text = new TextDecoder("windows-1255").decode(buf); } catch(e2){ text = new TextDecoder("utf-8").decode(buf); } }
+        wb = XLSX.read(text.replace(/^\ufeff/, ""), { type: "string", raw: false });
+      } else wb = XLSX.read(r.result, { type: "array" });
+    } catch(e){ showOut('<div class="mr-found bad">' + svg(IC.warn) + "<span>לא הצלחנו לקרוא את הקובץ. שמרו אותו מחדש כ-Excel ‏(<span dir=\"ltr\">.xlsx</span>) או CSV ונסו שוב.</span></div>"); return; }
+    /* הגיליון הראשון שיש בו רשימה מזוהה; אחרת — הראשון */
+    var pick = null;
+    wb.SheetNames.forEach(function(n){
+      if (pick && pick.res.ok) return;
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[n], { header: 1, raw: false, defval: "", blankrows: false });
+      var res = MRParse.parse(rows);
+      if (!pick || res.ok) pick = { rows: rows, res: res, sheet: n };
+    });
+    if (!pick) { showOut('<div class="mr-found bad">' + svg(IC.warn) + "<span>הקובץ ריק.</span></div>"); return; }
+    PENDING = { rows: pick.rows, res: pick.res, d: pick.res.detect, file: f.name, map: Object.assign({}, pick.res.detect.map), hr: pick.res.detect.headerRow };
+    track("קובץ", pick.res.ok ? "זוהה" : "ידני");
+    paintPending(!pick.res.ok);
+  };
+  r.onerror = function(){ showOut('<div class="mr-found bad">' + svg(IC.warn) + "<span>לא הצלחנו לפתוח את הקובץ.</span></div>"); };
+  r.readAsArrayBuffer(f);
+}
+function showOut(h){ el("mr-out").innerHTML = h; }
+function colOpts(sel, none){
+  var hs = (PENDING.rows[PENDING.hr] || []).map(function(h, i){ return { i: i, t: String(h == null ? "" : h).trim() || ("עמודה " + (i + 1)) }; });
+  return '<option value="">' + esc(none) + "</option>" + hs.map(function(h){ return '<option value="' + h.i + '"' + (sel === h.i ? " selected" : "") + ">" + esc(h.t) + "</option>"; }).join("");
+}
+function rowOpts(){
+  var out = "";
+  for (var i = 0; i < Math.min(25, PENDING.rows.length); i++) {
+    var t = (PENDING.rows[i] || []).filter(function(x){ return String(x).trim(); }).slice(0, 3).join(" · ");
+    out += '<option value="' + i + '"' + (i === PENDING.hr ? " selected" : "") + ">שורה " + (i + 1) + (t ? ": " + esc(t.slice(0, 40)) : "") + "</option>";
+  }
+  return out;
+}
+function paintPending(manual){
+  var P = PENDING, m = P.map;
+  var x = MRParse.extract(P.rows, P.hr, m);
+  P.x = x;
+  var hasName = m.full != null || m.first != null || m.last != null;
+  var ok = hasName && x.count > 0;
+  var head = P.rows[P.hr] || [];
+  var nameCol = m.full != null ? head[m.full] : [m.first != null ? head[m.first] : "", m.last != null ? head[m.last] : ""].filter(Boolean).join(" + ");
+  var clsCol = m.cls != null ? head[m.cls] : [m.grade != null ? head[m.grade] : "", m.par != null ? head[m.par] : ""].filter(Boolean).join(" + ");
+  var h = "";
+  if (ok) {
+    h += '<div class="mr-found">' + svg(IC.ok) + "<span><b>נמצאו " + x.count + " תלמידים ב-" + x.order.length + (x.order.length === 1 ? " כיתה" : " כיתות") + ".</b> " +
+      "שם: <b>" + esc(nameCol) + "</b>" + (clsCol ? " · כיתה: <b>" + esc(clsCol) + "</b>" : " · אין עמודת כיתה") +
+      " · הכותרות בשורה " + (P.hr + 1) +
+      (P.d.ignored && P.d.ignored.length ? "<br>לא נקרא ולא נשמר: " + esc(P.d.ignored.join(", ")) : "") +
+      ' <button type="button" class="mr-link" id="mr-remap">' + (manual ? "הסתרת בחירת העמודות" : "לא נכון? בחירת עמודות") + "</button></span></div>";
+  } else {
+    h += '<div class="mr-found bad">' + svg(IC.warn) + "<span><b>לא זיהינו לבד את עמודת השם.</b> בחרו למטה איפה השם ואיפה הכיתה בקובץ.</span></div>";
+    manual = true;
+  }
+  if (manual) {
+    h += '<div class="mr-map">' +
+      '<label>שורת הכותרות<select data-k="hr">' + rowOpts() + "</select></label>" +
+      '<label>שם מלא<select data-k="full">' + colOpts(m.full, "— אין / בנפרד —") + "</select></label>" +
+      '<label>שם פרטי<select data-k="first">' + colOpts(m.first, "—") + "</select></label>" +
+      '<label>שם משפחה<select data-k="last">' + colOpts(m.last, "—") + "</select></label>" +
+      '<label>כיתה<select data-k="cls">' + colOpts(m.cls, "— אין עמודה —") + "</select></label>" +
+      '<label>שכבה<select data-k="grade">' + colOpts(m.grade, "—") + "</select></label>" +
+      '<label>מקבילה<select data-k="par">' + colOpts(m.par, "—") + "</select></label>" +
+      (m.cls == null && m.grade == null && m.par == null ? '<label>שם הכיתה (כשאין עמודה)<input type="text" id="mr-defcls" maxlength="30" placeholder="למשל: י׳2" value="' + esc(P.defCls || "") + '"></label>' : "") +
+      '<span class="full">ת״ז וטלפון לא צריך לבחור — הם לא נקראים.</span></div>';
+  }
+  if (ok) {
+    h += '<div class="mr-chips" aria-label="הכיתות שבקובץ">' + x.order.map(function(c){ return '<span class="mr-chip">' + esc(c) + " <small>" + x.classes[c].length + "</small></span>"; }).join("") + "</div>" +
+      '<div class="mr-nav"><span class="sp"></span><button type="button" class="mr-btn pri" id="mr-keep">שמירה ומעבר לנוכחות ←</button></div>';
+  }
+  showOut(h);
+  P.manual = manual;
+  var rm = el("mr-remap"); if (rm) rm.onclick = function(){ paintPending(!P.manual); };
+  el("mr-out").querySelectorAll(".mr-map select").forEach(function(s){
+    s.onchange = function(){
+      var k = s.dataset.k, v = s.value === "" ? null : +s.value;
+      if (k === "hr") { P.hr = v || 0; var d = MRParse.detect(P.rows.slice(P.hr)); P.map = {}; if (d.ok && d.headerRow === 0) P.map = d.map; }
+      else { if (v == null) delete P.map[k]; else P.map[k] = v; if (k === "full" && v != null) { delete P.map.first; delete P.map.last; } if ((k === "first" || k === "last") && v != null) delete P.map.full; }
+      paintPending(true);
+    };
+  });
+  var dc = el("mr-defcls");
+  if (dc) dc.oninput = function(){ P.defCls = dc.value; var keep = el("mr-keep"); if (keep) keep.dataset.def = dc.value; };
+  var keep = el("mr-keep");
+  if (keep) keep.onclick = function(){ commit(); };
+}
+function commit(){
+  var P = PENDING; if (!P) return;
+  var def = MRParse.normClass(P.defCls || "") || "";
+  var x = MRParse.extract(P.rows, P.hr, P.map, { defaultClass: def || "הכיתה שלי" });
+  x.order.forEach(function(c){
+    var old = DB.classes[c];
+    DB.classes[c] = { names: x.classes[c], lessons: old ? old.lessons : [], tasks: old ? old.tasks : [], from: P.file, at: Date.now() };
+    if (DB.order.indexOf(c) < 0) DB.order.push(c);
+  });
+  if (!DB.classes[DB.cur]) DB.cur = x.order[0];
+  if (x.order.indexOf(DB.cur) < 0) DB.cur = x.order[0];
+  save(); PENDING = null; showOut("");
+  /* הקובץ עצמו לא נשמר — רק השמות והכיתות */
+  try { el("mr-file").value = ""; } catch(e){}
+  paintClassSel();
+  toast("נשמרו " + x.count + " תלמידים ב-" + x.order.length + (x.order.length === 1 ? " כיתה" : " כיתות"));
+  track("קובץ", "נשמר");
+  go(2);
+}
+el("mr-file").addEventListener("change", function(){ readFile(this.files && this.files[0]); });
+(function(){
+  var d = el("mr-drop");
+  ["dragenter", "dragover"].forEach(function(t){ d.addEventListener(t, function(e){ e.preventDefault(); d.classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function(t){ d.addEventListener(t, function(e){ e.preventDefault(); d.classList.remove("over"); }); });
+  d.addEventListener("drop", function(e){ var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; readFile(f); });
+})();
+/* כיתה לדוגמה — שמות בדויים, נבנים כאן בדפדפן */
+el("mr-sample").addEventListener("click", function(){
+  var F = ["נועה", "איתי", "מאיה", "עומר", "ליאן", "יוסף", "תמר", "אדם", "רנא", "דניאל", "שירה", "מוחמד", "הילה", "אריאל", "סלמא", "רועי", "אלה", "כרים", "יעל", "נדב", "ריהאם", "עידו", "ליה", "אמיר"];
+  var L = ["אלון", "ברק", "גלעד", "דור", "חורי", "זיו", "טל", "יפת", "כרמי", "לביא", "מנסור", "נחום", "סער", "עבאס", "פז", "צור", "קדם", "רז", "שגיא", "תבור", "חדאד", "אורן", "בר", "נסים"];
+  var rows = [["רשימת תלמידים לדוגמה — שמות בדויים"], [], ["מס׳", "שם משפחה", "שם פרטי", "כיתה"]];
+  F.forEach(function(f, i){ rows.push([i + 1, L[i], f, i < 12 ? "י׳1" : "י׳2"]); });
+  var res = MRParse.parse(rows);
+  PENDING = { rows: rows, res: res, d: res.detect, file: "כיתה לדוגמה", map: Object.assign({}, res.detect.map), hr: res.detect.headerRow };
+  paintPending(false);
+});
+function paintSaved(){
+  var box = el("mr-saved");
+  if (!DB.order.length) { box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = "<b>כיתות שמורות במכשיר:</b>" +
+    '<div class="mr-chips">' + DB.order.map(function(c){ return '<button type="button" class="mr-chip' + (c === DB.cur ? " on" : "") + '" data-c="' + esc(c) + '">' + esc(c) + " <small>" + DB.classes[c].names.length + "</small></button>"; }).join("") + "</div>" +
+    '<div class="mr-nav" style="border:0;padding-top:0;margin-top:14px"><span class="sp"></span><button type="button" class="mr-btn pri" data-go2="2">המשך לנוכחות ←</button></div>';
+  box.querySelectorAll("[data-c]").forEach(function(b){ b.onclick = function(){ DB.cur = b.dataset.c; save(); paintClassSel(); go(2); }; });
+  box.querySelector("[data-go2]").onclick = function(){ go(2); };
+}
+
+/* ===== 2. נוכחות ===== */
+var NEXT = { "": "p", p: "a", a: "l", l: "p" };
+var ST = { p: ["נכח/ה", IC.check], a: ["לא נכח/ה", IC.x], l: ["איחר/ה", IC.clock], "": ["לא סומן", IC.dot] };
+function curLessonKey(){ return (el("mr-date").value || today()) + "|" + el("mr-subj").value.replace(/\s+/g, " ").trim(); }
+function findLesson(create){
+  var c = C(); if (!c) return null;
+  var k = curLessonKey();
+  var L = c.lessons.filter(function(x){ return x.id === k; })[0];
+  if (!L && create) {
+    L = { id: k, date: el("mr-date").value || today(), subj: el("mr-subj").value.replace(/\s+/g, " ").trim(), m: {} };
+    c.lessons.push(L);
+    c.lessons.sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  }
+  return L;
+}
+function counts(L, names){
+  var o = { total: names.length, present: 0, absent: 0, late: 0, unmarked: 0 };
+  names.forEach(function(n){ var s = L && L.m[n]; if (s === "p") o.present++; else if (s === "a") o.absent++; else if (s === "l") o.late++; else o.unmarked++; });
+  return o;
+}
+function countBox(o){
+  return '<div class="p"><b>' + o.present + "</b><span>נכחו</span></div>" +
+    '<div class="a"><b>' + o.absent + "</b><span>לא נכחו</span></div>" +
+    '<div class="l"><b>' + o.late + "</b><span>איחרו</span></div>" +
+    '<div class="u"><b>' + o.unmarked + "</b><span>לא סומנו</span></div>";
+}
+function stRow(n, s){
+  var t = ST[s || ""];
+  return '<button type="button" class="mr-st s-' + (s || "u") + '" data-n="' + esc(n) + '" aria-label="' + esc(n) + ": " + t[0] + '"><span class="n">' + esc(n) + '</span><span class="pill">' + svg(t[1]) + t[0] + "</span></button>";
+}
+function paintAttend(){
+  var c = C(); if (!c) return;
+  if (!el("mr-date").value) el("mr-date").value = UI.date && UI.date >= shiftDays(-1) ? UI.date : today();
+  if (!el("mr-subj").value && UI.subj) el("mr-subj").value = UI.subj;
+  var L = findLesson(false);
+  el("mr-acount").innerHTML = countBox(counts(L, c.names));
+  el("mr-alist").innerHTML = c.names.map(function(n){ return stRow(n, L && L.m[n]); }).join("");
+  var subs = {};
+  DB.order.forEach(function(k){ (DB.classes[k].lessons || []).forEach(function(x){ if (x.subj) subs[x.subj] = 1; }); });
+  el("mr-subjs").innerHTML = Object.keys(subs).map(function(s){ return '<option value="' + esc(s) + '">'; }).join("");
+  var rec = c.lessons.slice(-6).reverse();
+  el("mr-recent").innerHTML = rec.length ? rec.map(function(x){ return '<button type="button" class="mr-chip' + (L && x.id === L.id ? " on" : "") + '" data-l="' + esc(x.id) + '">' + esc(lessonLabel(x)) + "</button>"; }).join("") : "";
+}
+function shiftDays(n){ var d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
+function rememberLesson(){ UI.date = el("mr-date").value; UI.subj = el("mr-subj").value; saveUI(); }
+el("mr-date").addEventListener("change", function(){ rememberLesson(); paintAttend(); });
+el("mr-subj").addEventListener("input", function(){ rememberLesson(); paintAttend(); });
+el("mr-recent").addEventListener("click", function(e){
+  var b = e.target.closest("[data-l]"); if (!b) return;
+  var L = C().lessons.filter(function(x){ return x.id === b.dataset.l; })[0]; if (!L) return;
+  el("mr-date").value = L.date; el("mr-subj").value = L.subj; rememberLesson(); paintAttend();
+});
+el("mr-alist").addEventListener("click", function(e){
+  var b = e.target.closest(".mr-st"); if (!b) return;
+  var L = findLesson(true), n = b.dataset.n;
+  L.m[n] = NEXT[L.m[n] || ""];
+  save();
+  b.outerHTML = stRow(n, L.m[n]);
+  el("mr-acount").innerHTML = countBox(counts(L, C().names));
+  var nb = el("mr-alist").querySelector('[data-n="' + cssEsc(n) + '"]'); if (nb) nb.focus();
+  if (!el("mr-recent").querySelector(".on")) paintAttend();
+});
+function cssEsc(s){ return window.CSS && CSS.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, "\\$&"); }
+el("mr-allp").addEventListener("click", function(){
+  var L = findLesson(true);
+  C().names.forEach(function(n){ L.m[n] = "p"; });
+  save(); paintAttend(); toast("כולם סומנו נכחו — נגיעה בשם משנה");
+});
+el("mr-clear").addEventListener("click", function(){
+  var L = findLesson(false); if (!L) return;
+  L.m = {}; save(); paintAttend();
+});
+
+/* ===== 3. משימות ===== */
+var CURTASK = null;
+function paintTasks(){
+  var c = C(); if (!c) return;
+  if (!c.tasks.some(function(t){ return t.id === CURTASK; })) CURTASK = c.tasks.length ? c.tasks[c.tasks.length - 1].id : null;
+  el("mr-tlist").innerHTML = c.tasks.map(function(t){ return '<button type="button" class="mr-chip' + (t.id === CURTASK ? " on" : "") + '" data-t="' + esc(t.id) + '">' + esc(t.title) + "</button>"; }).join("");
+  var T = c.tasks.filter(function(t){ return t.id === CURTASK; })[0];
+  if (!T) { el("mr-tbody").innerHTML = '<div class="mr-empty">עוד אין משימות לכיתה ' + esc(DB.cur) + ". כתבו שם של משימה למעלה ולחצו ״הוספת משימה״.</div>"; return; }
+  var sub = c.names.filter(function(n){ return T.m[n]; }).length;
+  el("mr-tbody").innerHTML = '<div class="mr-count two"><div class="p"><b>' + sub + '</b><span>הגישו</span></div><div class="a"><b>' + (c.names.length - sub) + "</b><span>לא הגישו</span></div></div>" +
+    '<div class="mr-acts"><button type="button" class="mr-btn sm" id="mr-tdel">מחיקת המשימה</button></div>' +
+    '<div class="mr-list" id="mr-tl">' + c.names.map(function(n){ return tRow(n, T.m[n]); }).join("") + "</div>";
+  el("mr-tdel").onclick = function(){
+    if (!confirm("למחוק את המשימה ״" + T.title + "״ ואת הסימונים שלה?")) return;
+    c.tasks = c.tasks.filter(function(t){ return t !== T; }); CURTASK = null; save(); paintTasks();
+  };
+}
+function tRow(n, y){
+  return '<button type="button" class="mr-st ' + (y ? "s-y" : "s-n") + '" data-n="' + esc(n) + '" aria-pressed="' + (y ? "true" : "false") + '"><span class="n">' + esc(n) + '</span><span class="pill">' + svg(y ? IC.check : IC.x) + (y ? "הגיש/ה" : "לא הגיש/ה") + "</span></button>";
+}
+el("mr-tadd").addEventListener("click", addTask);
+el("mr-tname").addEventListener("keydown", function(e){ if (e.key === "Enter") addTask(); });
+function addTask(){
+  var c = C(), t = el("mr-tname").value.replace(/\s+/g, " ").trim();
+  if (!t) { el("mr-tname").focus(); toast("כתבו קודם את שם המשימה"); return; }
+  var T = { id: "t" + Date.now().toString(36), title: t.slice(0, 60), at: today(), m: {} };
+  c.tasks.push(T); CURTASK = T.id; el("mr-tname").value = ""; save(); paintTasks();
+}
+el("mr-tlist").addEventListener("click", function(e){ var b = e.target.closest("[data-t]"); if (!b) return; CURTASK = b.dataset.t; paintTasks(); });
+el("mr-tbody").addEventListener("click", function(e){
+  var b = e.target.closest(".mr-st"); if (!b) return;
+  var T = C().tasks.filter(function(t){ return t.id === CURTASK; })[0]; if (!T) return;
+  var n = b.dataset.n;
+  if (T.m[n]) delete T.m[n]; else T.m[n] = 1;
+  save();
+  b.outerHTML = tRow(n, T.m[n]);
+  var sub = C().names.filter(function(x){ return T.m[x]; }).length;
+  var cb = el("mr-tbody").querySelector(".mr-count");
+  cb.innerHTML = '<div class="p"><b>' + sub + '</b><span>הגישו</span></div><div class="a"><b>' + (C().names.length - sub) + "</b><span>לא הגישו</span></div>";
+});
+
+/* ===== 4. מי חסר ===== */
+var MSEG = "a";
+el("mr-mseg").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  MSEG = b.dataset.m;
+  Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+  paintMissing();
+});
+el("mr-msel").addEventListener("change", function(){ paintMissing(this.value); });
+function copyText(t, n){
+  function done(){ toast(n === 1 ? "הועתק שם אחד" : "הועתקו " + n + " שמות"); }
+  function fallback(){
+    var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch(e){ toast("ההעתקה נחסמה — סמנו את השמות והעתיקו ידנית"); }
+    document.body.removeChild(ta);
+  }
+  try { if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(t).then(done, fallback); return; } } catch(e){}
+  fallback();
+}
+function missBox(cls, title, names, copyLbl){
+  if (!names.length) return "";
+  return '<div class="mr-miss ' + cls + '"><h3>' + esc(title) + ' <span class="num">' + names.length + "</span>" +
+    '<button type="button" class="mr-btn sm" data-copy="' + cls + '">' + svg(IC.copy) + esc(copyLbl) + "</button></h3>" +
+    '<ul class="mr-names">' + names.map(function(n){ return "<li>" + esc(n) + "</li>"; }).join("") + "</ul></div>";
+}
+function paintMissing(sel){
+  var c = C(); if (!c) return;
+  var s = el("mr-msel"), body = el("mr-mbody"), list = MSEG === "a" ? c.lessons.slice().reverse() : c.tasks.slice().reverse();
+  el("mr-mlbl").textContent = MSEG === "a" ? "שיעור" : "משימה";
+  var curId = sel || (MSEG === "a" ? (findLesson(false) || {}).id : CURTASK);
+  if (!list.some(function(x){ return x.id === curId; })) curId = list.length ? list[0].id : "";
+  s.innerHTML = list.map(function(x){ return '<option value="' + esc(x.id) + '"' + (x.id === curId ? " selected" : "") + ">" + esc(MSEG === "a" ? lessonLabel(x) : x.title) + "</option>"; }).join("");
+  s.parentNode.hidden = !list.length;
+  if (!list.length) { body.innerHTML = '<div class="mr-empty">' + (MSEG === "a" ? "עוד לא סומנה נוכחות בכיתה הזאת." : "עוד אין משימות בכיתה הזאת.") + "</div>"; return; }
+  var X = list.filter(function(x){ return x.id === curId; })[0], groups = {};
+  if (MSEG === "a") {
+    groups.a = c.names.filter(function(n){ return X.m[n] === "a"; });
+    groups.l = c.names.filter(function(n){ return X.m[n] === "l"; });
+    groups.u = c.names.filter(function(n){ return !X.m[n]; });
+    body.innerHTML = (groups.a.length || groups.l.length ? "" : '<div class="mr-miss"><div class="mr-allok">' + svg(IC.ok) + "כולם נכחו בשיעור הזה" + (groups.u.length ? " (מתוך מי שסומן)" : "") + "</div></div>") +
+      missBox("a", "לא נכחו", groups.a, "העתקת השמות") + missBox("l", "איחרו", groups.l, "העתקת השמות") +
+      (groups.u.length ? missBox("u", "עוד לא סומנו", groups.u, "העתקה") : "");
+  } else {
+    groups.n = c.names.filter(function(n){ return !X.m[n]; });
+    body.innerHTML = groups.n.length ? missBox("a", "לא הגישו · " + X.title, groups.n, "העתקת השמות") :
+      '<div class="mr-miss"><div class="mr-allok">' + svg(IC.ok) + "כולם הגישו את המשימה</div></div>";
+    groups.a = groups.n;
+  }
+  body.querySelectorAll("[data-copy]").forEach(function(b){
+    b.onclick = function(){ var g = groups[b.dataset.copy] || []; copyText(g.join("\n"), g.length); track("העתקה", MSEG === "a" ? "לא נכחו" : "לא הגישו"); };
+  });
+}
+
+/* ===== 5. סיכום, אקסל ושליחה ===== */
+el("mr-ssel").addEventListener("change", function(){ paintSummary(this.value); });
+var SUMSEL = null;
+function taskCounts(c){
+  return c.tasks.slice(-12).map(function(t){ return { title: t.title, submitted: c.names.filter(function(n){ return t.m[n]; }).length, total: c.names.length }; });
+}
+function reportOf(c, L){
+  var o = counts(L, c.names);
+  return { date: L.date, cls: DB.cur, lesson: L.subj, total: o.total, present: o.present, absent: o.absent, late: o.late, unmarked: o.unmarked, tasks: taskCounts(c) };
+}
+function paintSummary(sel){
+  var c = C(); if (!c) return;
+  var list = c.lessons.slice().reverse();
+  var cur = sel || SUMSEL || (findLesson(false) || {}).id;
+  if (!list.some(function(x){ return x.id === cur; })) cur = list.length ? list[0].id : "";
+  SUMSEL = cur;
+  el("mr-ssel").innerHTML = list.map(function(x){ return '<option value="' + esc(x.id) + '"' + (x.id === cur ? " selected" : "") + ">" + esc(lessonLabel(x)) + "</option>"; }).join("");
+  el("mr-ssel").parentNode.hidden = !list.length;
+  el("mr-send").hidden = !list.length;
+  var L = list.filter(function(x){ return x.id === cur; })[0];
+  if (!L) { el("mr-sbody").innerHTML = '<div class="mr-empty">עוד לא סומנה נוכחות בכיתה ' + esc(DB.cur) + ". אפשר כבר עכשיו להוריד לאקסל את רשימת המשימות.</div>"; paintTeacherLogin(); return; }
+  var R = reportOf(c, L);
+  var sent = L.sent && L.sentSig === JSON.stringify(R);
+  el("mr-sbody").innerHTML = '<div class="mr-sum"><h3>כיתה ' + esc(DB.cur) + " · " + esc(lessonLabel(L)) + "</h3>" +
+    '<div class="meta">' + R.total + " תלמידים" + (L.sent ? " · " + (sent ? "נשלח למנהל.ת" : "השתנה מאז השליחה — אפשר לשלוח שוב") : "") + "</div>" +
+    '<div class="mr-count">' + countBox(R) + "</div>" +
+    (R.tasks.length ? '<b style="font-size:var(--fs-sm);color:var(--navy)">משימות</b><ul class="mr-tasks">' + R.tasks.map(function(t){ return "<li>" + esc(t.title) + "<b>" + t.submitted + " / " + t.total + " הגישו</b></li>"; }).join("") + "</ul>" : "") +
+    "</div>";
+  paintTeacherLogin();
+}
+el("mr-xls").addEventListener("click", function(){
+  var c = C(); if (!c) return;
+  if (!window.XLSX) { msg("mr-smsg", "רכיב האקסל עוד לא נטען. נסו שוב בעוד רגע."); return; }
+  var W = { p: "נכח/ה", a: "לא נכח/ה", l: "איחר/ה" };
+  var head = ["שם"].concat(c.lessons.map(lessonLabel));
+  var att = [head].concat(c.names.map(function(n){ return [n].concat(c.lessons.map(function(L){ return W[L.m[n]] || ""; })); }));
+  att.push([]);
+  [["נכחו", "p"], ["לא נכחו", "a"], ["איחרו", "l"]].forEach(function(r){ att.push([r[0]].concat(c.lessons.map(function(L){ return c.names.filter(function(n){ return L.m[n] === r[1]; }).length; }))); });
+  var tk = [["שם"].concat(c.tasks.map(function(t){ return t.title; }))].concat(c.names.map(function(n){ return [n].concat(c.tasks.map(function(t){ return t.m[n] ? "הגיש/ה" : "לא הגיש/ה"; })); }));
+  tk.push([]);
+  tk.push(["הגישו"].concat(c.tasks.map(function(t){ return c.names.filter(function(n){ return t.m[n]; }).length; })));
+  var wb = XLSX.utils.book_new();
+  var s1 = XLSX.utils.aoa_to_sheet(att), s2 = XLSX.utils.aoa_to_sheet(tk);
+  s1["!cols"] = [{ wch: 24 }].concat(c.lessons.map(function(){ return { wch: 16 }; }));
+  s2["!cols"] = [{ wch: 24 }].concat(c.tasks.map(function(){ return { wch: 16 }; }));
+  XLSX.utils.book_append_sheet(wb, s1, "נוכחות");
+  XLSX.utils.book_append_sheet(wb, s2, "משימות");
+  wb.Workbook = { Views: [{ RTL: true }] };
+  var fname = "נוכחות-ומשימות-" + DB.cur.replace(/[\\\/:*?"<>|׳״']/g, "") + "-" + today() + ".xlsx";
+  XLSX.writeFile(wb, fname);
+  toast("הקובץ ירד: " + fname);
+  track("ייצוא", "אקסל");
+});
+
+/* ---------- כניסה — דרך מנור, בלשונית חדשה ---------- */
+function auth(kind){
+  var t = lsGet("ts.teacher.v1"), s = lsGet("ts.staff.v1");
+  if (kind === "teacher") return t && t.k ? { t: "teacher", k: t.k, name: t.name || "" } : null;
+  if (kind === "staff") return s && s.k ? { t: "staff", k: s.k, name: s.name || "" } : null;
+  return null;
+}
+function loginBox(kind, why){
+  var href = kind === "teacher" ? "hadrachot/teacher/" : "hadrachot/";
+  return '<div class="mr-login">' + svg(IC.user) + "<div><b>" + esc(why) + "</b>" +
+    "<span>נכנסים פעם אחת עם הרישום במנור. הכניסה נפתחת בלשונית חדשה — אחרי שנכנסתם, חזרו לכאן והעמוד יזהה אתכם לבד.</span>" +
+    '<div class="acts"><a class="mr-btn pri sm" href="' + href + '" target="_blank" rel="noopener">' + (kind === "teacher" ? "כניסה למורים" : "כניסה לבעלי תפקידים") + '<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></div></div></div>';
+}
+var WHO = { teacher: null, staff: null };
+function paintTeacherLogin(){
+  var box = el("mr-tlogin");
+  if (DEMO) { box.innerHTML = ""; return; }
+  var a = auth("teacher");
+  if (!a) { box.innerHTML = loginBox("teacher", "כדי לשלוח למנהל.ת — כניסה דרך מנור"); return; }
+  var w = WHO.teacher;
+  box.innerHTML = '<div class="mr-login">' + svg(IC.user) + "<div><b>מחובר/ת דרך מנור: " + esc((w && w.name) || a.name || "מורה") + "</b>" +
+    "<span>" + (w && w.schoolName ? "הסיכום יגיע למנהל.ת של " + esc(w.schoolName) + "." : "בית הספר נקבע לפי הרישום שלך במנור.") + "</span></div></div>";
+  if (!w) whoami("teacher").then(function(d){ if (d && d.ok) { WHO.teacher = d; if (STEP === 5) paintTeacherLogin(); } });
+}
+window.addEventListener("storage", function(e){
+  if (e.key === "ts.teacher.v1" || e.key === "ts.staff.v1") {
+    WHO = { teacher: null, staff: null };
+    if (STEP === 5) paintTeacherLogin();
+    if (MODE === "p") openPrincipal();
+  }
+});
+
+/* ---------- הקריאה לשרת — rid + שחזור ב-GET (הלקח של מנור) ---------- */
+function rid(){
+  try { var a = new Uint8Array(16); crypto.getRandomValues(a);
+    return Array.prototype.map.call(a, function(b){ return ("0" + b.toString(16)).slice(-2); }).join(""); } catch(e){ return ""; }
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function recover(id, n){
+  if (!id || n >= 6) return Promise.resolve(null);
+  return sleep([1500, 3000, 4000, 6000, 8000, 10000][n]).then(function(){
+    return fetch(MERACHOK_BACKEND + "?rid=" + id).then(function(r){ return r.json(); })
+      .then(function(d){ return d && d.error === "rid_pending" ? recover(id, n + 1) : d; })
+      .catch(function(){ return recover(id, n + 1); });
+  });
+}
+function post(body, kind){
+  var a = auth(kind), id = rid(), ctl = window.AbortController ? new AbortController() : null;
+  body.auth = a ? { t: a.t, k: a.k } : null; body.rid = id;
+  var timer = ctl ? setTimeout(function(){ ctl.abort(); }, CALL_MS) : 0;
+  /* text/plain — בלי preflight, כמו בשאר השרתים של האתר */
+  return fetch(MERACHOK_BACKEND, { method: "POST", body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return recover(id, 0); })
+    .then(function(d){ clearTimeout(timer); return d || { ok: false, error: "network" }; },
+          function(){ clearTimeout(timer); return { ok: false, error: "network" }; });
+}
+function whoami(kind){ return post({ action: "whoami" }, kind); }
+var ERR = {
+  nologin: "צריך להיכנס דרך מנור — הכפתור למעלה.",
+  badlogin: "הכניסה במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור ונסו שוב.",
+  menor: "לא הצלחנו לאמת את הכניסה מול מנור. נסו שוב בעוד רגע.",
+  noschool: "לא מצאנו את בית הספר שלך ברישום במנור. שליחה למנהל.ת אפשרית מכניסת מורים.",
+  baddate: "אפשר לשלוח סיכום של שיעור מ-45 הימים האחרונים בלבד.",
+  badcounts: "המספרים לא מסתדרים. רעננו את הדף ונסו שוב.",
+  nocls: "חסר שם כיתה.",
+  limit: "נשלחו היום יותר מדי סיכומים מהחשבון הזה. אפשר להמשיך מחר.",
+  notprincipal: "המבט הזה מיועד למנהלים ולרכזים פדגוגיים של בית הספר. בעלי תפקידים אחרים לא רואים כאן נתונים.",
+  network: "התשובה מהשרת לא הגיעה. בדקו את החיבור ונסו שוב."
+};
+function errText(d){ return ERR[d && d.error] || "משהו השתבש. נסו שוב בעוד רגע — ואם זה חוזר, כתבו לנו בכפתור ״נתקלתם בבעיה?״."; }
+
+el("mr-send").addEventListener("click", function(){
+  var c = C(); if (!c) return;
+  var L = c.lessons.filter(function(x){ return x.id === SUMSEL; })[0];
+  if (!L) return;
+  var R = reportOf(c, L);
+  if (R.unmarked === R.total) { msg("mr-smsg", "עוד לא סומנה נוכחות בשיעור הזה."); return; }
+  var btn = el("mr-send");
+  if (DEMO) {
+    var demo = lsGet(DEMO_KEY) || [];
+    demo = demo.filter(function(x){ return !(x.cls === R.cls && x.date === R.date && x.lesson === R.lesson); });
+    demo.push(Object.assign({ teacher: "אתם (הדגמה)", sent: new Date().toTimeString().slice(0, 5) }, R));
+    lsSet(DEMO_KEY, demo.slice(-40));
+    L.sent = Date.now(); L.sentSig = JSON.stringify(R); save();
+    paintSummary(L.id);
+    msg("mr-smsg", "מצב הדגמה: הסיכום נשמר במכשיר הזה בלבד. עברו ל״מבט מנהל.ת״ כדי לראות איך הוא נראה למנהל.ת.", true);
+    track("סיכום", "הדגמה");
+    return;
+  }
+  if (!auth("teacher")) { msg("mr-smsg", ERR.nologin); paintTeacherLogin(); return; }
+  btn.disabled = true; msg("mr-smsg", "שולחים…", true);
+  post({ action: "report", report: R }, "teacher").then(function(d){
+    btn.disabled = false;
+    if (d && d.ok) {
+      L.sent = Date.now(); L.sentSig = JSON.stringify(R); save();
+      paintSummary(L.id);
+      msg("mr-smsg", (d.updated ? "הסיכום עודכן" : "הסיכום נשלח") + " למנהל.ת" + (d.schoolName ? " של " + d.schoolName : "") + ". נשלחו מספרים בלבד.", true);
+      track("סיכום", "נשלח");
+    } else {
+      if (d && d.error === "badlogin") { lsDel("ts.teacher.v1"); WHO.teacher = null; paintTeacherLogin(); }
+      msg("mr-smsg", errText(d));
+    }
+  });
+});
+
+/* ===== מבט מנהל.ת ===== */
+var PSEG = "r", PDATA = null;
+el("mr-pdate").value = today();
+el("mr-pdate").addEventListener("change", loadPrincipal);
+el("mr-pschools").addEventListener("change", loadPrincipal);
+el("mr-pseg").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  PSEG = b.dataset.v;
+  Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle("on", x === b); });
+  paintPrincipal();
+});
+function openPrincipal(){
+  msg("mr-pmsg", "");
+  if (DEMO) { el("mr-plogin").innerHTML = ""; el("mr-pbody").hidden = false; loadPrincipal(); return; }
+  if (!auth("staff")) { el("mr-plogin").innerHTML = loginBox("staff", "מבט המנהל.ת — כניסה דרך מנור"); el("mr-pbody").hidden = true; return; }
+  el("mr-plogin").innerHTML = '<div class="mr-empty">מאמתים את הכניסה…</div>';
+  whoami("staff").then(function(d){
+    if (!d || !d.ok) {
+      if (d && d.error === "badlogin") { lsDel("ts.staff.v1"); el("mr-plogin").innerHTML = loginBox("staff", "הכניסה לא בתוקף — כניסה מחדש דרך מנור"); }
+      else el("mr-plogin").innerHTML = "";
+      msg("mr-pmsg", errText(d)); return;
+    }
+    if (!d.principal) { el("mr-plogin").innerHTML = ""; msg("mr-pmsg", ERR.notprincipal); return; }
+    WHO.staff = d;
+    el("mr-plogin").innerHTML = "";
+    var sl = el("mr-pschools");
+    sl.innerHTML = d.schools.map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
+    el("mr-pschool-l").hidden = d.schools.length < 2;
+    el("mr-pbody").hidden = false;
+    loadPrincipal();
+  });
+}
+function loadPrincipal(){
+  var date = el("mr-pdate").value || today();
+  if (DEMO) { PDATA = demoSchool(date); paintPrincipal(); return; }
+  el("mr-pview").innerHTML = '<div class="mr-empty">טוענים…</div>';
+  post({ action: "school", date: date, school: el("mr-pschools").value || "" }, "staff").then(function(d){
+    if (!d || !d.ok) { PDATA = null; el("mr-pview").innerHTML = ""; msg("mr-pmsg", errText(d)); return; }
+    msg("mr-pmsg", ""); PDATA = d;
+    var o = el("mr-pschools").querySelector('option[value="' + cssEsc(d.school) + '"]');
+    if (o && d.schoolName) o.textContent = d.schoolName;
+    paintPrincipal();
+  });
+}
+/* בית ספר לדוגמה — כיתות, מורים ומספרים בדויים, ועוד הסיכומים ש"נשלחו" ממבט המורה במצב הדגמה */
+function demoSchool(date){
+  var CL = [["ט׳1", "רונית אלמוג", "מתמטיקה", 28], ["ט׳2", "סאמי חורי", "אנגלית", 27], ["י׳1", "אורית בן דוד", "עברית", 26], ["י׳2", "מוחמד עבאס", "חשמל", 24],
+    ["י״א1", "יעל שחר", "אזרחות", 25], ["י״א2", "דוד מזרחי", "מכונות", 22], ["י״ב1", "נסרין עודה", "היסטוריה", 23], ["י״ב2", "אבי כרמי", "ספרות", 21]];
+  var seed = 0; for (var i = 0; i < date.length; i++) seed = (seed * 31 + date.charCodeAt(i)) % 9973;
+  function rnd(){ seed = (seed * 7919 + 17) % 9973; return seed / 9973; }
+  var rows = [], missing = [];
+  CL.forEach(function(c, i){
+    var reported = i !== 3 && i !== 5 && i !== 7;
+    if (!reported) { missing.push({ cls: c[0], teacher: c[1], date: shiftDays(-1 - (i % 2)) }); return; }
+    var abs = Math.floor(rnd() * 6), late = Math.floor(rnd() * 4), pres = c[3] - abs - late;
+    rows.push({ cls: c[0], lesson: c[2], teacher: c[1], sent: p2(8 + i) + ":" + p2(Math.floor(rnd() * 60)), total: c[3], present: pres, absent: abs, late: late, unmarked: 0,
+      tasks: i % 2 ? [] : [{ title: "משימה שבועית", submitted: Math.max(0, c[3] - Math.floor(rnd() * 9)), total: c[3] }] });
+  });
+  var mine = (lsGet(DEMO_KEY) || []).filter(function(x){ return x.date === date; });
+  mine.forEach(function(x){ rows = rows.filter(function(r){ return r.cls !== x.cls || r.teacher === x.teacher; }); rows.push(x); missing = missing.filter(function(m){ return m.cls !== x.cls; }); });
+  rows.sort(function(a, b){ return a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : 0; });
+  return { ok: true, demo: true, schoolName: "בית ספר לדוגמה", date: date, rows: rows, missing: missing };
+}
+function pct(x){ return x.total ? Math.round(100 * (x.present + x.late) / x.total) : 0; }
+function paintPrincipal(){
+  var D = PDATA; if (!D) return;
+  var h2 = el("mr-pschool");
+  h2.innerHTML = esc(D.schoolName || "בית הספר") + "<small>" + (D.demo ? "נתונים בדויים להדגמה · " : "") + "דיווחו " + uniq(D.rows).length + " כיתות · טרם דיווחו " + D.missing.length + "</small>";
+  var segBtns = el("mr-pseg").children;
+  segBtns[0].textContent = "דיווחו (" + uniq(D.rows).length + ")";
+  segBtns[1].textContent = "טרם דיווחו (" + D.missing.length + ")";
+  var v = el("mr-pview");
+  if (PSEG === "r") {
+    if (!D.rows.length) { v.innerHTML = '<div class="mr-empty">עוד לא הגיעו דיווחים בתאריך הזה.</div>'; return; }
+    v.innerHTML = '<div class="mr-classes">' + D.rows.map(function(x){
+      var w = function(n){ return x.total ? (100 * n / x.total).toFixed(1) : 0; };
+      return '<div class="mr-cl"><div class="top"><b>' + esc(x.cls) + "</b><span>" + esc(x.teacher) + '</span><span class="pct">' + pct(x) + "%</span></div>" +
+        '<div class="mr-bar" role="img" aria-label="' + x.present + " נכחו, " + x.late + " איחרו, " + x.absent + ' לא נכחו"><i class="p" style="width:' + w(x.present) + '%"></i><i class="l" style="width:' + w(x.late) + '%"></i><i class="a" style="width:' + w(x.absent) + '%"></i></div>' +
+        '<div class="mr-nums"><span>נכחו <b>' + x.present + "</b></span><span>איחרו <b>" + x.late + "</b></span><span>לא נכחו <b>" + x.absent + "</b></span>" + (x.unmarked ? "<span>לא סומנו <b>" + x.unmarked + "</b></span>" : "") + "<span>מתוך <b>" + x.total + "</b></span></div>" +
+        ((x.tasks || []).length ? '<ul class="mr-tasks">' + x.tasks.map(function(t){ return "<li>" + esc(t.title) + "<b>" + t.submitted + " / " + t.total + " הגישו</b></li>"; }).join("") + "</ul>" : "") +
+        '<div class="les">' + esc(x.lesson || "שיעור") + (x.sent ? " · נשלח " + esc(String(x.sent).length > 5 ? String(x.sent).slice(11, 16) : x.sent) : "") + "</div></div>";
+    }).join("") + "</div>";
+  } else {
+    if (!D.missing.length) { v.innerHTML = '<div class="mr-miss"><div class="mr-allok">' + svg(IC.ok) + "כל הכיתות שדיווחו בשבועיים האחרונים דיווחו גם היום</div></div>"; return; }
+    var lines = D.missing.map(function(m){ return m.cls + " · " + m.teacher; });
+    v.innerHTML = '<div class="mr-miss a"><h3>כיתות שטרם דיווחו <span class="num">' + D.missing.length + "</span>" +
+      '<button type="button" class="mr-btn sm" id="mr-pcopy">' + svg(IC.copy) + "העתקת הרשימה</button></h3>" +
+      '<ul class="mr-names">' + D.missing.map(function(m){ return "<li>" + esc(m.cls) + " · " + esc(m.teacher) + ' <small style="color:var(--muted);font-weight:600">דיווח אחרון ' + esc(shortDate(m.date)) + "</small></li>"; }).join("") + "</ul></div>" +
+      '<p class="mr-hint">כיתות שדיווחו בשבועיים האחרונים ולא דיווחו בתאריך הזה.</p>';
+    el("mr-pcopy").onclick = function(){ copyText(lines.join("\n"), lines.length); };
+  }
+}
+function uniq(rows){ var o = {}; rows.forEach(function(x){ o[x.cls] = 1; }); return Object.keys(o); }
+
+/* ---------- מחיקה מהמכשיר ---------- */
+el("mr-wipe").addEventListener("click", function(){
+  if (!confirm("למחוק מהמכשיר הזה את כל הכיתות, השמות, הנוכחות והמשימות? אי אפשר לשחזר.")) return;
+  lsDel(KEY); lsDel(DEMO_KEY); lsDel(UI_KEY);
+  DB = { v: 1, classes: {}, order: [], cur: "" }; UI = {};
+  el("mr-subj").value = ""; el("mr-date").value = "";
+  paintClassSel(); showOut(""); go(1);
+  if (MODE === "p") loadPrincipal();
+  toast("כל הנתונים נמחקו מהמכשיר");
+});
+
+/* ---------- התחלה ---------- */
+paintClassSel();
+setMode(MODE);
+go(C() ? (UI.step && UI.step > 1 ? Math.min(+UI.step, 5) : 2) : 1);
+})();
+</script>
+<script src="site.js" defer></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+</body>
+</html>
