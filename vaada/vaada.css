@@ -159,6 +159,8 @@ input:disabled,textarea:disabled,select:disabled{background:var(--paper);color:v
 .years button[aria-selected=true]{background:var(--navy);border-color:var(--navy);color:#fff}
 ul.plain{margin:4px 0 0;padding-inline-start:20px}
 ul.plain li{margin:3px 0}
+.leftl li{margin:0;padding:5px 0}
+.leftl .plink{color:var(--navy);text-decoration:underline;text-underline-offset:3px;display:inline-block;min-height:30px}
 
 /* שקף בהצגה הדיגיטלית: בעיצוב של מעגל, סגול וזהב (מיטל, 7.11.26). המידות ב-cqw, כך שהשקף כולו מתכווץ עם הרוחב */
 .slidewrap{--plum:#4A2F52;--plum-deep:#35203C;--gold:#B8791C;--gold2:#D9A441;--sl-bg:#F6F2E9;--sl-card:#FFFDF8;--sl-line:#DCD3C2;--sl-ink:#243B42;--sl-muted:#616868;container-type:inline-size;background:var(--sl-bg);border:1px solid var(--sl-line);border-radius:10px;overflow:hidden;box-shadow:0 18px 40px -28px rgba(53,32,60,.55)}

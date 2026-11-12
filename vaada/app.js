@@ -517,7 +517,11 @@
     var pct = req.length ? Math.round(done.length / req.length * 100) : 0;
     var h = vHead() + '<div class="card summary"><b>הושלמו ' + done.length + ' מתוך ' + req.length + ' תחומים</b><div class="bar"><i style="width:' + pct + '%"></i></div>';
     var left = req.filter(function (s) { return secStatus(s.id) !== 'done'; });
-    if (left.length && V.caps.full) h += '<details><summary>מי טרם סיים (' + left.length + ')</summary><div class="val" id="leftList" style="margin-top:7px">' + esc(leftText(left)) + '</div><button type="button" class="btn small" id="copyLeft" style="margin-top:8px">העתקת הרשימה</button></details>';
+    /* כל שורה לחיצה: נכנסים ישר להשלים את התחום (מיטל, 12.11.26) */
+    if (left.length && V.caps.full) h += '<details><summary>מי טרם סיים (' + left.length + ')</summary><ul class="plain leftl" id="leftList">' + left.map(function (s) {
+      var w = whoFills(s.id);
+      return '<li><a class="plink" href="#v/' + v.id + '/e/' + s.id + '">' + esc(s.title) + '</a> <span class="rs">· ' + esc(w.length ? w.join(', ') : 'המנהל.ת') + '</span></li>';
+    }).join('') + '</ul><button type="button" class="btn small" id="copyLeft" style="margin-top:8px">העתקת הרשימה</button></details>';
     h += '</div>';
     if (manage || V.caps.full) h += metaCard(manage);
     var prevN = V.prev.tasks.length;
