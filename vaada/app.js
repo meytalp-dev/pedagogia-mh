@@ -148,6 +148,7 @@
       if (h[2] === 'e') return viewEdit(h[3]);
       if (h[2] === 'fill') return viewPrep();
       if (!S.V.caps.full) return location.replace('#');
+      if (h[2] === 'holders') return viewHolders();
       if (h[2] === 'deck') return viewDeck();
       if (h[2] === 'live') return viewLive(Number(h[3]) || 0, false);
       if (h[2] === 'all') return viewLive(Number(h[3]) || 0, true);
@@ -250,7 +251,7 @@
   function realStations(V) {
     return ((V.docs.prep || {}).stations || []).filter(function (st) { return st.title && Object.keys(st).some(function (k) { return k !== 'title' && k !== 'sec' && String(st[k] || '').trim(); }); }).length;
   }
-  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'e', 'deck', 'live', 'all'];
+  var FOCUS_PAGES = ['prev', 'prep', 'fill', 'holders', 'e', 'deck', 'live', 'all'];
   var FOCUS_KEY = 'vaada_focus';
   function focusOn() { try { return sessionStorage.getItem(FOCUS_KEY) === '1'; } catch (e) { return false; } }
   function setFocus(on) { try { if (on) sessionStorage.setItem(FOCUS_KEY, '1'); else sessionStorage.removeItem(FOCUS_KEY); } catch (e) {} }
@@ -437,7 +438,7 @@
   }
   function viewName() {
     var p = location.hash.split('/')[2] || '';
-    return p === 'e' ? 'fill' : p === 'live' || p === 'all' ? 'deck' : p === 'sum' ? 'sign' : p;
+    return p === 'e' || p === 'holders' ? 'fill' : p === 'live' || p === 'all' ? 'deck' : p === 'sum' ? 'sign' : p;
   }
   function vHead() {
     var V = S.V, v = V.v, h = '';
@@ -526,6 +527,14 @@
     }
     /* במקום רשימה של 18 תחומים: "להמשיך" אחד, והקבוצות מקופלות. מי שרק קורא רואה הכול פתוח */
     var nx = nextSec(null), vis = visibleSecs(), g = '';
+    if (V.caps.full) {
+      var hs = activeHolders(), mailN = {};
+      hs.forEach(function (x) { mailN[x.email || x.name] = 1; });
+      var nH = Object.keys(mailN).length;
+      h += '<div class="card holdc"><b>' + (nH ? count(nH, 'בעל.ת תפקיד אחד.ת ממלא.ת', 'בעלי תפקידים ממלאים') + ' את התחומים שלהם' : 'עוד אין בעלי תפקידים שממלאים תחומים') + '</b><div class="rs">' +
+        (nH ? 'שויכו לבד מנספח בעלי התפקידים, לפי התפקיד. כל אחד.ת נכנס.ת עם המייל ורואה רק את התחומים שלו.ה.' : 'אפשר להוסיף בעלי תפקידים ולבחור לכל אחד.ת תחומים.') + '</div>' +
+        '<a class="btn small" href="#v/' + v.id + '/holders">' + (manage ? 'מי ממלא מה · הוספה ועדכון' : 'מי ממלא מה') + ' ←</a></div>';
+    }
     if (nx && v.status !== 'closed' && V.caps.edit.indexOf(nx.id) > -1) h += '<a class="btn primary fnext" href="#v/' + v.id + '/e/' + nx.id + '">להמשיך: ' + esc(nx.title) + ' ←</a>';
     else if (!nx && focusOn()) h += '<a class="btn primary fnext" href="#v/' + v.id + '/prep">כל התחומים הושלמו. לבחירת התחנות ←</a>';
     vis.forEach(function (s, i) {
@@ -535,12 +544,11 @@
         var inG = vis.filter(function (x) { return x.g === g; }), doneG = inG.filter(function (x) { return secStatus(x.id) === 'done'; }).length;
         h += '<details class="secgrp"' + (!V.caps.manage || (nx && nx.g === g) ? ' open' : '') + '><summary><b>' + esc(g) + '</b><span class="rs">' + doneG + ' מתוך ' + inG.length + '</span></summary>';
       }
-      var a = V.assign[s.id];
+      var who = whoFills(s.id);
       var pt = V.prev.tasks.filter(function (t) { return t.sec === s.id; });
       var open = pt.filter(function (t) { return !t.refStatus; }).length;
       h += '<div class="sec-row" data-sec="' + s.id + '"><div class="rm"><a href="#v/' + v.id + '/e/' + s.id + '">' + esc(s.title) + (s.opt ? ' (רשות)' : '') + '</a><br><span class="rs">' +
-        (a ? esc(a.name || a.email) : 'ממלא.ת: ' + esc(s.who)) + (open ? ' · ' + count(open, 'משימה אחת', 'משימות') + ' מהוועדה הקודמת' : '') + '</span></div>' + statusTag(s.id) +
-        (manage ? '<button type="button" class="link" data-as="' + s.id + '">' + (a ? 'שינוי שיוך' : 'שיוך') + '</button>' : '') + '</div>';
+        (who.length ? 'ממלא.ת: ' + esc(who.join(', ')) : 'ממלא.ת: המנהל.ת') + (open ? ' · ' + count(open, 'משימה אחת', 'משימות') + ' מהוועדה הקודמת' : '') + '</span></div>' + statusTag(s.id) + '</div>';
       if (i === vis.length - 1) h += '</details>';
     });
     if (focusOn()) h += '<button type="button" class="link" id="fexit">לכל המערכת</button>';
@@ -550,10 +558,93 @@
     var cl = $('#copyLeft');
     if (cl) cl.onclick = function () { copyText(leftText(left)); toast('הרשימה הועתקה'); };
     wireMeta();
-    $$('[data-as]').forEach(function (b) { b.onclick = function () { assignForm(b.getAttribute('data-as')); }; });
   }
   function leftText(left) {
-    return left.map(function (s) { var a = S.V.assign[s.id]; return s.title + ' · ' + (a ? (a.name || a.email) : s.who); }).join('\n');
+    return left.map(function (s) { var w = whoFills(s.id); return s.title + ' · ' + (w.length ? w.join(', ') : 'המנהל.ת'); }).join('\n');
+  }
+  /* מי ממלא.ת תחום: בעלי התפקידים (מהנספח או שנוספו) + שיוך ידני ישן, אם יש */
+  function activeHolders() { return (S.V.holders || []).filter(function (x) { return !x.off; }); }
+  function whoFills(sec) {
+    var out = [];
+    activeHolders().forEach(function (x) { if (x.secs.indexOf(sec) > -1 && out.indexOf(x.name) < 0) out.push(x.name); });
+    var a = S.V.assign[sec];
+    if (a && out.indexOf(a.name || a.email) < 0) out.push(a.name || a.email);
+    return out;
+  }
+
+  /* ===== מי ממלא מה (#v/<id>/holders): שיוך אוטומטי מהנספח + הוספה ועריכה של המנהל.ת. מיטל, 12.11.26 ===== */
+  function viewHolders() {
+    var V = S.V, v = V.v, manage = V.caps.manage && v.status !== 'closed';
+    var list = V.holders || [], act = list.filter(function (x) { return !x.off; }), offs = list.filter(function (x) { return x.off; });
+    var title = function (id) { var d = VAADA.section(v.stage, id); return d ? d.title : id; };
+    var h = vHead() + '<div class="head"><h2>מי ממלא מה</h2><p>' +
+      (manage ? 'בעלי התפקידים מנספח בעלי התפקידים שויכו לבד לתחומים שלהם, לפי התפקיד. אפשר לשנות תחומים, להסיר ולהוסיף. כל אחד.ת נכנס.ת עם המייל שכאן ורואה רק את התחומים שלו.ה.' : 'בעלי התפקידים שממלאים תחומים בוועדה.') + '</p></div>';
+    if (manage) h += '<div class="acts" style="margin-bottom:12px"><button type="button" class="btn primary small" id="hAdd">+ הוספת בעל.ת תפקיד</button></div><div id="hForm"></div>';
+    h += '<div class="card">' + (act.length ? act.map(function (x) {
+      return '<div class="hrow" data-k="' + esc(x.key) + '"><div class="rm"><b>' + esc(x.name) + '</b> <span class="rs">' + esc(x.role || '') + (x.detail ? ' · ' + esc(x.detail) : '') + (x.src === 'נוסף' ? ' · נוסף.ה ידנית' : '') + '</span>' +
+        (x.email ? '<div class="rs" dir="ltr" style="text-align:right">' + esc(x.email) + '</div>' : '') +
+        '<div class="htags">' + (x.secs.length ? x.secs.map(function (s) { return '<span class="tag">' + esc(title(s)) + '</span>'; }).join('') : '<span class="tag warn">בלי תחום</span>') + '</div></div>' +
+        (manage ? '<div class="hacts">' + (x.email && x.secs.length ? holderMail(x) : '') + '<button type="button" class="link" data-he="' + esc(x.key) + '">עריכה</button><button type="button" class="link" data-hd="' + esc(x.key) + '">הסרה</button></div>' : '') + '</div>';
+    }).join('') : '<div class="empty">אין בעלי תפקידים שממלאים תחומים. התחומים אצל המנהל.ת.</div>') + '</div>';
+    var none = secs().filter(function (s) { return !whoFills(s.id).length; });
+    if (none.length) h += '<details class="card"><summary><b>' + count(none.length, 'תחום אחד', 'תחומים') + ' אצל המנהל.ת</b></summary>' + plainList(none.map(function (s) { return esc(s.title) + (s.opt ? ' (רשות)' : ''); })) + '</details>';
+    if (manage && offs.length) h += '<details class="card"><summary>הוסרו (' + offs.length + ')</summary>' + offs.map(function (x) {
+      return '<div class="hrow"><div class="rm">' + esc(x.name) + ' <span class="rs">' + esc(x.role || '') + '</span></div><button type="button" class="link" data-hr="' + esc(x.key) + '">החזרה</button></div>';
+    }).join('') + '</details>';
+    h += '<div class="acts"><a class="btn small" href="#v/' + v.id + '/fill">→ חזרה למילוי מצגת האב</a></div>';
+    shell(h);
+    wireMail();
+    if (!manage) return;
+    var byKey = {}; list.forEach(function (x) { byKey[x.key] = x; });
+    $('#hAdd').onclick = function () { holderForm(null); };
+    $$('[data-he]').forEach(function (b) { b.onclick = function () { holderForm(byKey[b.getAttribute('data-he')]); }; });
+    $$('[data-hd]').forEach(function (b) {
+      b.onclick = function () {
+        var x = byKey[b.getAttribute('data-hd')];
+        if (!confirm('להסיר את ' + x.name + '? הכניסה שלו.ה לתחומים תיחסם.')) return;
+        holderSend({ key: x.key, del: true }, 'הוסר.ה');
+      };
+    });
+    $$('[data-hr]').forEach(function (b) {
+      b.onclick = function () { var x = byKey[b.getAttribute('data-hr')]; holderSend({ key: x.key, name: x.name, role: x.role, email: x.email, secs: x.secs, off: false }, 'הוחזר.ה'); };
+    });
+  }
+  function holderSend(data, done) {
+    return api('holderSave', Object.assign({ semel: S.V.v.semel }, data)).then(function (r) {
+      if (!r.ok) { toast(errText(r.error)); return false; }
+      S.V.holders = r.holders; toast(done); viewHolders(); return true;
+    }).catch(function () { return false; });
+  }
+  function holderForm(x) {
+    var box = $('#hForm'), v = S.V.v;
+    x = x || { name: '', role: '', email: '', secs: [] };
+    box.innerHTML = '<form class="card hform"><h3>' + (x.key ? 'עריכת ' + esc(x.name) : 'הוספת בעל.ת תפקיד') + '</h3>' +
+      '<label class="f"><b>שם</b><input type="text" name="name" required value="' + esc(x.name) + '"></label>' +
+      '<label class="f"><b>תפקיד</b><input type="text" name="role" placeholder="למשל: רכז.ת מגמה, סגן.ית מנהל.ת" value="' + esc(x.role) + '"></label>' +
+      '<label class="f"><b>מייל</b><span class="hint">איתו נכנסים למעגל ומקבלים קוד</span><input type="email" name="email" dir="ltr" required value="' + esc(x.email) + '"></label>' +
+      '<fieldset class="f hsecs"><legend><b>התחומים שהוא.היא ממלא.ת</b></legend>' + secs().map(function (s) {
+        return '<label class="chk"><input type="checkbox" value="' + s.id + '"' + (x.secs.indexOf(s.id) > -1 ? ' checked' : '') + '> ' + esc(s.title) + (s.opt ? ' (רשות)' : '') + '</label>';
+      }).join('') + '</fieldset>' +
+      '<div class="acts"><button class="btn primary small">שמירה</button><button type="button" class="btn small" id="hCancel">ביטול</button></div></form>';
+    var f = box.querySelector('form');
+    f.scrollIntoView({ block: 'start' });
+    f.elements.name.focus();
+    $('#hCancel').onclick = function () { box.innerHTML = ''; };
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      var picked = Array.prototype.map.call(f.querySelectorAll('.hsecs input:checked'), function (c) { return c.value; });
+      if (!picked.length && !confirm('לא נבחר תחום. לשמור בכל זאת? בלי תחום אין כניסה.')) return;
+      var btn = f.querySelector('.btn.primary'); btn.disabled = true;
+      holderSend({ key: x.key, name: f.elements.name.value.trim(), role: f.elements.role.value.trim(), email: f.elements.email.value.trim(), secs: picked }, x.key ? 'נשמר' : 'נוסף.ה')
+        .then(function (okd) { if (!okd) btn.disabled = false; });
+    };
+  }
+  function holderMail(x) {
+    var v = S.V.v, t = x.secs.map(function (s) { var d = VAADA.section(v.stage, s); return d ? d.title : s; });
+    var links = x.secs.map(function (s, i) { return t[i] + ': ' + SITE + '#v/' + v.id + '/e/' + s; });
+    return mailBtn({ id: 'hm_' + x.key.replace(/[^\w]/g, '_'), cls: 'btn small', label: 'מייל', to: x.email,
+      subject: 'ועדה מלווה ' + v.school + ': ' + (t.length === 1 ? 'התחום "' + t[0] + '"' : 'התחומים שלך'),
+      lines: ['שלום ' + x.name + ',', 'לקראת הוועדה המלווה של ' + v.school + ', אבקש למלא במערכת מעגל את ' + (t.length === 1 ? 'התחום:' : 'התחומים:'), ''].concat(links).concat(['', 'בכניסה מקלידים את המייל הזה (' + x.email + ') ומקבלים קוד. הכול נשמר אוטומטית. בסוף כל תחום לוחצים "סיימתי את התחום".', '', 'תודה!']) });
   }
 
   function metaCard(edit) {

@@ -116,6 +116,16 @@ table.grid td.n.down{color:var(--warn);font-weight:700}
 .tline{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px}
 .tline>div{display:flex;flex-direction:column;gap:2px;font-size:.92rem}
 .tline b{color:var(--navy)}
+/* מי ממלא מה (12.11.26) */
+.holdc{display:grid;gap:6px;justify-items:start}
+.hrow{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}
+.hrow:last-child{border-bottom:0}
+.hrow .rm{flex:1;min-width:200px}
+.htags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.htags .tag{white-space:normal}
+.hacts{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hsecs{border:0;padding:0;margin:0 0 12px}
+.hsecs legend{margin-bottom:6px}
 .chk{display:flex;gap:8px;align-items:flex-start;padding:6px 0;min-height:40px}
 .chk input{width:20px;height:20px;flex:none;margin-top:3px}
 input:disabled,textarea:disabled,select:disabled{background:var(--paper);color:var(--ink)}
