@@ -112,7 +112,7 @@
           '<button class="btn primary" id="lgGo">כניסה</button><p class="muted small">שכחתם את הקוד? פנו למרחב הפדגוגי דרך "נתקלתם בבעיה?" בתחתית הדף. הנתונים שלכם לא יימחקו.</p>';
         $('#lgGo').onclick = function () { doLogin('login', s, $('#lgCode').value); };
       } else {
-        box.innerHTML = '<div class="note"><b>זו הכניסה הראשונה של בית הספר.</b> קבעו קוד (6 תווים לפחות) ושתפו אותו עם הצוות המוביל בלבד. כל מי שיש לו את הקוד יוכל לראות ולערוך.</div>' +
+        box.innerHTML = '<div class="note"><span><b>זו הכניסה הראשונה של בית הספר.</b> קבעו קוד (6 תווים לפחות) ושתפו אותו עם הצוות המוביל בלבד. כל מי שיש לו את הקוד יוכל לראות ולערוך.</span></div>' +
           '<label class="fld"><span>קוד חדש לבית הספר</span><input id="lgCode" type="password" autocomplete="new-password" dir="ltr"></label>' +
           '<label class="fld"><span>שוב, לאימות</span><input id="lgCode2" type="password" autocomplete="new-password" dir="ltr"></label>' +
           '<button class="btn primary" id="lgGo">קביעת קוד וכניסה</button>';
