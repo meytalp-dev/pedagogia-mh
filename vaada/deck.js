@@ -300,7 +300,15 @@ var VAADA_DECK = (function () {
     if (prevG.length) data.table([6, 6], ['הפערים שזוהו בוועדה הקודמת', 'מה קרה'], prevG.map(function (r) { return [r.text, r.ref]; }));
     if (!data.blocks.length) data.table([12], null, [['טרם מולא']]);
 
-    /* תחנה: צורך ← מטרה ומדדים ← פעולות ← משאבים */
+    /* כל שקפי הנתונים של תחום ממצגת האב (טבלאות, גרפים, תמונות). כל תחום נכנס פעם אחת (מיטל, 15.11.26) */
+    var used = {};
+    function secSlides(id) {
+      if (!id || id === 'shkafim' || used[id]) return;
+      used[id] = true;
+      master.slides.filter(function (s) { return s.sec === id; }).forEach(function (s) { slides.push(s); });
+    }
+
+    /* תחנה: צורך ← מטרה ומדדים ← פעולות ← משאבים, ואחריה הנתונים המלאים של התחום */
     (prep.stations || []).filter(function (st) { return txt(st.title); }).forEach(function (st, si) {
       var color = SEC_COLOR[st.sec] || C.blue, s = S(txt(st.title), color, st.sec || 'station').set({ kick: 'תחנה ' + (si + 1), edit: 'prep' });
       var kv = [];
@@ -316,7 +324,11 @@ var VAADA_DECK = (function () {
         s.table([1, 1, 1], ['פעולות', 'משאבים', 'מדדי הצלחה'], rows.length ? rows : [['', '', '']], { heading: 'מטרה ' + (i + 1) + ': ' + txt(g.g) });
       });
       if (txt(st.res)) s.table([3, 9], null, [['משאבים מסל התוכניות', txt(st.res)]], { labelFirst: true });
+      secSlides(st.sec);
     });
+
+    /* שאר התחומים שמולאו, גם אם לא נבחרו כתחנה: הוועדה רואה את כל הנתונים והגרפים */
+    o.sections.forEach(function (sec) { secSlides(sec.id); });
 
     /* שקפים של בית הספר שסומנו לשקפים הנבחרים, ואחריהם התמונות שהועלו אליהם */
     master.slides.filter(function (s) { return s.sec === 'shkafim' && (s.own || s.blocks.some(function (b) { return b.type === 'image'; })); }).forEach(function (s) { slides.push(s); });

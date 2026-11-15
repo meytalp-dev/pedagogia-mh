@@ -1370,10 +1370,10 @@
   function viewDeck() {
     var V = S.V, out = collectSlides(true);
     var nSt = realStations(V);
-    var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן השקפים הנבחרים יכללו רק פתיחה, נתונים וסיכום. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
+    var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן בשקפים הנבחרים לא יהיו שקפי תחנות. כל הנתונים והגרפים שמולאו נכנסים בכל מקרה. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
     var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא ולא ייכנס' : out.missing.length + ' תחומים עוד לא מולאו ולא ייכנסו') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
-      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, נתונים, התחנות, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
+      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, התחנות, כל הנתונים והגרפים שמולאו, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
       '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה.</span></a></div>' +
       '<p class="rs">בכל שקף אפשר ללחוץ "עריכה", לתקן בטופס של התחום ולחזור לשקף המעודכן.</p>');
   }
