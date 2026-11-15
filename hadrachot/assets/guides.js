@@ -76,7 +76,7 @@ window.TS_GUIDES = {
        בגרות וגמר, כל היחידות. שאר המבט נשאר 4–5 יח"ל. */
     trainingScope: 'subject',
     drive: '',
-    zoom: ''
+    zoom: 'https://edu-il.zoom.us/j/82374779489'
   },
   sivan: {
     name: 'סיון נחליאל',
