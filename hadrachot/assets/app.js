@@ -104,10 +104,27 @@ const TS = (() => {
     }));
   }
   function authClear() { localStorage.removeItem('ts.auth'); }
+  /* זיהוי לכל בקשה (15.11.26, אבטחה שלב 2): המפתחות שכבר שמורים בדפדפן —
+     בעל תפקיד (ts.staff.v1), מדריכ/ה (GUIDE_AUTH בדפי המדריכה), מורה (ts.teacher.v1).
+     שמות נפרדים (_sk/_gs/_gk/_ge/_tk) כדי לא להתנגש בפרמטרים הקיימים של כל פעולה.
+     השרת משתמש בהם רק כדי לוודא שהכתיבה מגיעה ממישהו מזוהה. */
+  function idParams_() {
+    const o = {};
+    try { const s = JSON.parse(localStorage.getItem('ts.staff.v1') || 'null'); if (s && s.k) o._sk = s.k; } catch (e) {}
+    try { const t = JSON.parse(localStorage.getItem('ts.teacher.v1') || 'null'); if (t && t.k) o._tk = t.k; } catch (e) {}
+    try {
+      const g = typeof window.GUIDE_AUTH === 'function' ? (window.GUIDE_AUTH() || {}) : {};
+      if (g.guide) o._gs = g.guide;
+      if (g.k) o._gk = g.k;
+      if (g.ge) o._ge = g.ge;
+    } catch (e) {}
+    return o;
+  }
   function withAuth_(params) {
     const a = authGet();
-    if (a && a.token) return Object.assign({ authEmail: a.email, authToken: a.token }, params);
-    return params;
+    const base = idParams_();
+    if (a && a.token) Object.assign(base, { authEmail: a.email, authToken: a.token });
+    return Object.assign(base, params);
   }
 
   // opts.cache: 'fresh' (default) → cache-first, refresh background. 'no' → always fetch. 'only' → cache or null.
