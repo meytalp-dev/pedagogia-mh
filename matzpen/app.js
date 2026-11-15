@@ -90,13 +90,15 @@
   /* ---------- כניסה ---------- */
   function showLogin(msg) {
     document.body.classList.add('is-login');
-    var last = store('mz_school') || '';
+    var DEMO = 'בית ספר בדיקה', demo = /[?&]demo\b/.test(location.search);
+    var last = demo ? DEMO : (store('mz_school') || '');
+    var list = demo ? SCHOOLS.concat([DEMO]) : SCHOOLS;
     $('#app').innerHTML =
       '<section class="login card">' +
       '<div class="login-head">' + IC.compass + '<div><h2>כניסה למצפן של בית הספר</h2><p>כל בית ספר עובד במרחב משלו. רק מי שיש לו את הקוד של בית הספר רואה את מה שנכתב בו.</p></div></div>' +
       (msg ? '<p class="note warn" role="alert">' + esc(msg) + '</p>' : '') +
       '<label class="fld"><span>בית הספר</span><select id="lgSchool"><option value="">בחרו בית ספר…</option>' +
-      SCHOOLS.map(function (s) { return '<option' + (s === last ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</select></label>' +
+      list.map(function (s) { return '<option' + (s === last ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</select></label>' +
       '<div id="lgRest"></div></section>';
     $('#lgSchool').addEventListener('change', loginStep);
     if (last) loginStep();
