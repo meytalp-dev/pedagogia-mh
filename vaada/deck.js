@@ -308,6 +308,11 @@ var VAADA_DECK = (function () {
       master.slides.filter(function (s) { return s.sec === id; }).forEach(function (s) { slides.push(s); });
     }
 
+    /* רקע לפני התחנות: הסיפור הבית ספרי, נתוני בית הספר וכוח אדם. תחום שנבחר כתחנה נשאר ליד התחנה שלו */
+    var stSecs = {};
+    (prep.stations || []).forEach(function (st) { if (txt(st.title) && st.sec) stSecs[st.sec] = true; });
+    ['sipur', 'netunim', 'koach'].forEach(function (id) { if (!stSecs[id]) secSlides(id); });
+
     /* תחנה: צורך ← מטרה ומדדים ← פעולות ← משאבים, ואחריה הנתונים המלאים של התחום */
     (prep.stations || []).filter(function (st) { return txt(st.title); }).forEach(function (st, si) {
       var color = SEC_COLOR[st.sec] || C.blue, s = S(txt(st.title), color, st.sec || 'station').set({ kick: 'תחנה ' + (si + 1), edit: 'prep' });
@@ -329,6 +334,9 @@ var VAADA_DECK = (function () {
 
     /* שאר התחומים שמולאו, גם אם לא נבחרו כתחנה: הוועדה רואה את כל הנתונים והגרפים */
     o.sections.forEach(function (sec) { secSlides(sec.id); });
+
+    /* שקף אחד מרוכז לתחומים שלא מולאו, כדי שהוועדה תדע מה חסר (תחומי רשות לא נספרים) */
+    if (master.missing.length) S('תחומים שטרם מולאו', C.blue, '').set({ kick: 'סדר היום · נתונים' }).table([12], null, master.missing.map(function (t) { return [t]; }));
 
     /* שקפים של בית הספר שסומנו לשקפים הנבחרים, ואחריהם התמונות שהועלו אליהם */
     master.slides.filter(function (s) { return s.sec === 'shkafim' && (s.own || s.blocks.some(function (b) { return b.type === 'image'; })); }).forEach(function (s) { slides.push(s); });
