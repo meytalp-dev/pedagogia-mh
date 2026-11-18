@@ -1009,7 +1009,13 @@
         <div id="meet-list">${listHtml(list)}</div>
       </details>
 
-      ${wrapCardHtml()}`;
+      ${wrapCardHtml()}
+
+      ${dirtyN || saving ? `
+      <div class="meet-float-save" role="region" aria-label="שמירת נוכחות">
+        <span>${saving ? 'שומר…' : dirtyN + ' סימונים לא נשמרו'}</span>
+        <button type="button" class="btn btn-primary" id="meet-save-float"${saving ? ' disabled' : ''}>${saving ? 'שומר…' : 'שמירה'}</button>
+      </div>` : ''}`;
 
     bindBody(list);
     bindWrap();
@@ -1196,6 +1202,9 @@
       bindRows(byKey);
     });
     document.getElementById('meet-save').addEventListener('click', save);
+    // 18.11.26 — פס שמירה צף: הכפתור העליון נעלם כשגוללים לרשימת הקבוצה
+    const fs = document.getElementById('meet-save-float');
+    if (fs) fs.addEventListener('click', save);
     document.getElementById('meet-rest-absent').addEventListener('click', () => {
       list.filter(g => g.state === 'none').forEach(g => { edits[g.key] = 'absent'; });
       renderBody();

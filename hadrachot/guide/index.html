@@ -513,6 +513,12 @@
   .meet-save-bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
   .meet-save-bar .btn[disabled] { opacity:.55; cursor:default; }
   .meet-save-note { font-size:12.5px; color:#9a6400; }
+  .meet-float-save { position:fixed; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%); z-index:60;
+    display:flex; align-items:center; gap:12px; padding:10px 12px 10px 16px; max-width:calc(100vw - 32px); box-sizing:border-box;
+    background:#FFF3DC; border:1px solid #F0D8B8; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.18); font-size:14px; font-weight:600; color:#8a5a00; }
+  .meet-float-save .btn { flex:none; }
+  .meet-float-save span { white-space:nowrap; }
+  #meet-body { padding-bottom:72px; }
 
   .meet-pending { border-color:#F0D8B8; background:#FFFBF4; }
   .meet-list-head { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
@@ -1246,7 +1252,7 @@
 <script src="dashboard.js?v=20261102s"></script>
 <script src="../assets/hours-report.js?v=20260923"></script>
 <script src="space.js?v=20261102a"></script>
-<script src="meetings.js?v=20261102a"></script>
+<script src="meetings.js?v=20261118a"></script>
 <script src="slots.js?v=20261025a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->
 <script src="../assets/tour.js?v=20260924f"></script>
