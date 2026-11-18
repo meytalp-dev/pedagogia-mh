@@ -174,6 +174,8 @@ ul.plain li{margin:3px 0}
 .dk-lock small{font-size:1.1cqw;color:var(--sl-muted)}
 .dk-cnt{margin-inline-start:auto;font-weight:600;font-size:1.2cqw;color:var(--sl-muted);background:#F0E9F1;border-radius:3cqw;padding:.3cqw 1.1cqw}
 .dk-main{flex:1;min-height:0;overflow-y:auto;padding:1.8cqw 3.2cqw 2.4cqw}
+.dk-fit{transform-origin:top right}
+.dk-main.fitted{overflow:hidden}
 .dk-kick{font:700 1.45cqw Rubik,sans-serif;color:var(--gold);margin-bottom:.2cqw}
 .dk-title{font:800 3.1cqw/1.15 Rubik,Assistant,sans-serif;color:var(--plum);margin:0 0 1.2cqw;padding-inline-start:1cqw;border-inline-start:.45cqw solid var(--ac,var(--plum))}
 .dk-body>*{margin-bottom:1.3cqw}
@@ -187,6 +189,7 @@ ul.plain li{margin:3px 0}
 .dk-chart{margin:0;max-width:72%;background:var(--sl-card);border:1px solid var(--sl-line);border-radius:.8cqw;padding:1cqw 1.4cqw}
 .dk-chart figcaption{font:700 1.5cqw Rubik,sans-serif;color:var(--plum);margin-bottom:.4cqw}
 .dk-chart svg{width:100%;height:auto;display:block;font-family:Assistant,sans-serif;fill:var(--sl-ink)}
+.slide .dk-chart svg{max-height:17cqw}   /* גרף לא תופס חצי שקף; השקף כולו נכנס בלי גלילה (17.11.26) */
 .dk-chart svg .lab{fill:var(--sl-muted);font-weight:600}
 .dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw;font-size:1.4cqw}
 .dk-legend i{display:inline-block;width:1.2cqw;height:1.2cqw;border-radius:.25cqw;margin-inline-end:.4cqw;vertical-align:-.1cqw}
@@ -319,6 +322,7 @@ table.grid.short td.rowlbl,table.grid.short thead th:first-child{width:2.6em;min
   .dk-tb td:first-child{border-top:0}
   .dk-tb td[data-l]:not(.lab):not([data-l=""])::before{content:attr(data-l);display:block;font-size:.82rem;font-weight:700;color:var(--muted)}
   .dk-chart{max-width:100%;padding:10px;border-radius:9px}
+  .slide .dk-chart svg{max-height:none}
   .dk-chart figcaption{font-size:15px}
   .dk-legend{gap:4px 12px;font-size:.85rem}.dk-legend i{width:10px;height:10px;margin-inline-end:4px}
   .dk-img{max-height:none}

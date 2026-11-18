@@ -550,9 +550,10 @@
       }
       var who = whoFills(s.id);
       var pt = V.prev.tasks.filter(function (t) { return t.sec === s.id; });
-      var open = pt.filter(function (t) { return !t.refStatus; }).length;
+      var open = pt.filter(function (t) { return !t.refStatus; }).length, pre = preList(s.id).length;
       h += '<div class="sec-row" data-sec="' + s.id + '"><div class="rm"><a href="#v/' + v.id + '/e/' + s.id + '">' + esc(s.title) + (s.opt ? ' (רשות)' : '') + '</a><br><span class="rs">' +
-        (who.length ? 'ממלא.ת: ' + esc(who.join(', ')) : 'ממלא.ת: המנהל.ת') + (open ? ' · ' + count(open, 'משימה אחת', 'משימות') + ' מהוועדה הקודמת' : '') + '</span></div>' + statusTag(s.id) + '</div>';
+        (who.length ? 'ממלא.ת: ' + esc(who.join(', ')) : 'ממלא.ת: המנהל.ת') + (open ? ' · ' + count(open, 'משימה אחת', 'משימות') + ' מהוועדה הקודמת' : '') + '</span>' +
+        (pre ? '<br><span class="tag warn">' + count(pre, 'הערה אחת', 'הערות') + ' של הפיקוח</span>' : '') + '</div>' + statusTag(s.id) + '</div>';
       if (i === vis.length - 1) h += '</details>';
     });
     if (focusOn()) h += '<button type="button" class="link" id="fexit">לכל המערכת</button>';
@@ -1009,7 +1010,7 @@
     }
     var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + v.id + '/fill' : '#') + '">→ ' + (V.caps.full ? 'כל התחומים' : 'התחומים שלי') + '</a>' +
       '<div class="head stephead"><h1>' + esc(sec.title) + '</h1><p>' + esc(v.school) + ' · בלי שמות תלמידים</p></div>';
-    h += prevLine(secId) + tuvaBox(secId);
+    h += preBox(secId) + prevLine(secId) + tuvaBox(secId);
     h += '<form class="card" id="sf" onsubmit="return false">' + sec.fields.map(function (f) { return fieldHtml(sec, f); }).join('') + fileHtml(IMG_FIELD, secId) + '</form>';
     var isDone = secStatus(secId) === 'done';
     h += stepBar(isDone ? '<a class="btn small primary" id="sEnd" href="' + nextSecHash(secId) + '">' + (nextSec(secId) ? 'לתחום הבא ←' : 'לכל התחומים ←') + '</a>' : '<button type="button" class="btn small primary" id="doneBtn">סיימתי את התחום</button>', '<span class="saved" id="saved">הכול נשמר אוטומטית</span>');
@@ -1109,6 +1110,16 @@
       list.map(prevTask).join('') + '</section>';
   }
   /* החלטה שכבר נענתה לא מבקשת תשובה שוב: רק תזכורת שקטה שאפשר לפתוח (מיטל, 5.11.26) */
+  /* הערות המפקחים והמטה לפני הוועדה, בראש הטופס של התחום: כדי שהממלא.ת יראו ויתקנו (מיטל, 18.11.26) */
+  function preList(secId) { return (S.V.preNotes || []).filter(function (n) { return n.sec === secId; }); }
+  function preLine(n, del) {
+    return '<div class="note"><small><span>' + esc(n.name) + ' · ' + fmtAt(n.at) + '</span>' + (del ? '<button type="button" class="link danger" data-pdel="' + esc(n.id) + '">מחיקה</button>' : '') + '</small><div class="val">' + esc(n.text) + '</div></div>';
+  }
+  function preBox(secId) {
+    var list = preList(secId);
+    if (!list.length) return '';
+    return '<div class="card"><h3>הערות הפיקוח לפני הוועדה</h3>' + list.map(function (n) { return preLine(n, false); }).join('') + '</div>';
+  }
   function prevLine(secId) {
     var list = prevList(secId), n = list.length;
     if (!n || !S.V.caps.full) return '';
@@ -1352,7 +1363,7 @@
   }
   function viewRead(secId) {
     var V = S.V, sec = VAADA.section(V.v.stage, secId);
-    var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + V.v.id + '/fill' : '#') + '">→ כל התחומים</a><div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(V.v.school) + '</p></div>' + prevLine(secId) +
+    var h = '<a class="crumb" href="' + (V.caps.full ? '#v/' + V.v.id + '/fill' : '#') + '">→ כל התחומים</a><div class="head"><h1>' + esc(sec.title) + '</h1><p>' + esc(V.v.school) + '</p></div>' + preBox(secId) + prevLine(secId) +
       '<div class="card ro">' + sec.fields.map(function (f) { return roField(sec, f); }).join('') + '</div>';
     shell(h);
     wirePrev(secId);
@@ -1374,7 +1385,7 @@
     var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא ולא ייכנס' : out.missing.length + ' תחומים עוד לא מולאו ולא ייכנסו') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
       '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, התחנות, כל הנתונים והגרפים שמולאו, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
-      '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה.</span></a></div>' +
+      '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה, וכותבים הערות לכל תחום. ההערות מופיעות לממלאים בטופס התחום.</span></a></div>' +
       '<p class="rs">בכל שקף אפשר ללחוץ "עריכה", לתקן בטופס של התחום ולחזור לשקף המעודכן.</p>');
   }
 
@@ -1397,6 +1408,38 @@
   }
   document.addEventListener('fullscreenchange', fsSync);
   document.addEventListener('webkitfullscreenchange', fsSync);
+  /* שקף ארוך מתכווץ עד שהכול נכנס, בלי פס גלילה בתוך השקף (מיטל, 17.11.26).
+     scale ולא zoom: הרוחב בפריסה מוגדל ב-1/z, כך שאחרי ההקטנה התוכן תופס בדיוק את רוחב השקף */
+  function fitSlide() {
+    var main = document.querySelector('#slidewrap .dk-main');
+    if (!main) return;
+    var box = main.querySelector('.dk-fit');
+    if (!box) {
+      box = document.createElement('div'); box.className = 'dk-fit';
+      while (main.firstChild) box.appendChild(main.firstChild);
+      main.appendChild(box);
+    }
+    var slide = main.closest('.slide');
+    box.style.transform = ''; box.style.width = ''; main.classList.remove('fitted');
+    slide.style.aspectRatio = ''; slide.style.height = '';
+    if (getComputedStyle(main).overflowY !== 'auto') return;   /* בטלפון השקף נפתח לגובה, אין מה להקטין */
+    /* קודם השקף נמתח לגובה המסך (לא פחות מ-16:9), ורק אם עדיין לא נכנס, התוכן מוקטן */
+    var top = slide.getBoundingClientRect().top + window.scrollY, room = Math.floor(window.innerHeight - top - 14);
+    if (room > slide.clientHeight) { slide.style.aspectRatio = 'auto'; slide.style.height = room + 'px'; }
+    var cs = getComputedStyle(main), avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    var z = 1;
+    for (var i = 0; i < 6 && box.scrollHeight * z > avail + 1; i++) {
+      z = Math.max(0.45, z * avail / (box.scrollHeight * z));
+      box.style.width = (100 / z) + '%';
+      box.style.transform = 'scale(' + z + ')';
+    }
+    if (z < 1) main.classList.add('fitted');
+  }
+  var fitT;
+  function fitSoon() { clearTimeout(fitT); fitT = setTimeout(fitSlide, 60); }
+  window.addEventListener('resize', fitSoon);
+  document.addEventListener('fullscreenchange', fitSoon);
+  document.addEventListener('webkitfullscreenchange', fitSoon);
   function viewLive(n, all) {
     var V = S.V, v = V.v, out = collectSlides(all), slides = out.slides, base = '#v/' + v.id + (all ? '/all/' : '/live/');
     n = Math.max(0, Math.min(n, slides.length - 1));
@@ -1404,7 +1447,7 @@
     BACK = null;
     var prevN = n > 0 ? '<a class="btn small" href="' + base + (n - 1) + '" id="sPrev">→ הקודם</a>' : '';
     var nextN = n < slides.length - 1 ? '<a class="btn small" href="' + base + (n + 1) + '" id="sNext">הבא ←</a>' : (focusOn() ? '<a class="btn small primary" href="#v/' + v.id + '/deck">חזרה למצגת</a>' : '<a class="btn small primary" href="#v/' + v.id + '/sign">לפרוטוקול ←</a>');
-    var side = secId ? '<aside class="lside" id="lside">' + notesCard() + decideCard() + (prevList(secId).length ? '<details class="card" style="margin:0"><summary><b>מה סיכמנו בפעם הקודמת</b></summary>' + prevBox(secId) + '</details>' : '') + '</aside>' : '';
+    var side = secId ? '<aside class="lside" id="lside">' + (all ? preCard() : '') + notesCard() + decideCard() + (prevList(secId).length ? '<details class="card" style="margin:0"><summary><b>מה סיכמנו בפעם הקודמת</b></summary>' + prevBox(secId) + '</details>' : '') + '</aside>' : '';
     shell(vHead() + '<div class="lnav">' + prevN + '<select id="lsel" aria-label="מעבר לשקף">' + slides.map(function (s, i) { return '<option value="' + i + '"' + (i === n ? ' selected' : '') + '>' + (i + 1) + '. ' + esc(s.cover ? 'פתיחה' : s.title) + '</option>'; }).join('') + '</select>' + nextN +
       (edit ? '<a class="btn small" href="' + edit + '" id="editBtn">עריכה</a>' : '') +
       (side ? '<button type="button" class="btn small" id="sideBtn" aria-pressed="' + !SIDE_HIDE + '">' + (SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום') + '</button>' : '') +
@@ -1423,17 +1466,22 @@
       $('.live').classList.toggle('solo', SIDE_HIDE);
       this.textContent = SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום';
       this.setAttribute('aria-pressed', String(!SIDE_HIDE));
+      fitSoon();
     };
+    fitSlide();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSoon);
     document.onkeydown = function (e) {
       if (/INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || '')) return;
       if (e.key === 'ArrowLeft' && n < slides.length - 1) go(base + (n + 1));
       if (e.key === 'ArrowRight' && n > 0) go(base + (n - 1));
     };
     $$('[data-img]').forEach(function (img) {
+      img.addEventListener('load', fitSoon);
       api('file', { fileId: img.getAttribute('data-img') }).then(function (r) { if (r.ok) img.src = 'data:' + r.mime + ';base64,' + r.b64; }).catch(function () {});
     });
     if (!secId) return;
     wirePrev(secId);
+    if (all) { drawPre(secId); wirePre(secId); }
     drawNotes(secId); drawDecisions(secId);
     wireLive(secId);
     /* הערות והחלטות של האחרים מגיעות תוך חצי דקה */
@@ -1744,6 +1792,40 @@
       '<label class="f" style="margin-bottom:8px"><b>מדדי הצלחה (איך נדע שהשגנו את היעד)</b><input type="text" id="tmeasure"></label>' +
       '<label class="f" style="margin-bottom:8px"><b>מועד מעקב ודיווח למפקח</b><input type="date" id="tfollow"></label>' +
       '<button class="btn small primary" id="tsave" style="width:100%">שמירת ההחלטה</button></form>' : (S.V.v.status === 'closed' ? '' : '<p class="rs" style="margin:8px 0 0">את ההחלטות רושם.ת ' + esc(S.V.v.recName || 'המנהל.ת') + '.</p>')) + '</div>';
+  }
+  /* במצגת האב: הערות הפיקוח לפני הוועדה, לכל תחום. כותבים המפקחים של בית הספר והמטה */
+  function preCard() {
+    var can = S.V.caps.preNote;
+    if (!can && !(S.V.preNotes || []).length) return '';
+    return '<div class="card" style="margin:0"><h3>הערות הפיקוח לפני הוועדה</h3><div id="plist"></div>' + (can ? '<form id="pform" style="margin-top:9px"><textarea rows="2" id="ptext" style="min-height:64px" placeholder="מה כדאי לתקן או להשלים בתחום הזה לפני הוועדה" aria-label="הערה לפני הוועדה"></textarea><button class="btn small primary" style="margin-top:7px;width:100%">הוספת הערה</button></form>' : '') + '</div>';
+  }
+  function drawPre(sec) {
+    var el = $('#plist'); if (!el) return;
+    var list = preList(sec);
+    el.innerHTML = list.length ? list.map(function (n) { return preLine(n, S.V.v.status !== 'closed' && (n.email === S.me.email || S.me.admin)); }).join('') : '<div class="rs" style="padding:6px 0">אין עדיין הערות לתחום הזה.</div>';
+  }
+  function wirePre(sec) {
+    var pf = $('#pform');
+    if (pf) pf.onsubmit = function (e) {
+      e.preventDefault();
+      var t = $('#ptext').value.trim();
+      if (!t) return;
+      var b = pf.querySelector('button'); b.disabled = true;
+      api('preNote', { id: S.V.v.id, sec: sec, text: t }).then(function (r) {
+        b.disabled = false;
+        if (!r.ok) return toast(errText(r.error));
+        (S.V.preNotes = S.V.preNotes || []).push(r.note); $('#ptext').value = ''; drawPre(sec);
+      }).catch(function () { b.disabled = false; });
+    };
+    var pl = $('#plist');
+    if (pl) pl.addEventListener('click', function (e) {
+      var id = e.target.getAttribute('data-pdel');
+      if (!id) return;
+      api('preNoteDel', { noteId: id }).then(function (r) {
+        if (!r.ok) return toast(errText(r.error));
+        S.V.preNotes = S.V.preNotes.filter(function (n) { return n.id !== id; }); drawPre(sec);
+      }).catch(function () {});
+    });
   }
   function drawNotes(sec) {
     var el = $('#nlist'); if (!el) return;

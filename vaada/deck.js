@@ -169,20 +169,28 @@ var VAADA_DECK = (function () {
             sl.chart([series(labs, ok, 1, 'מספר בוגרים'), series(labs, ok, 2, 'זכאים לתעודת מקצוע')], { title: 'בוגרים וזכאות לתעודת מקצוע לאורך השנים' }, 2.9);
           }
         }
+        /* בגרות ותכנון בשקף משלהם: הכול בשקף אחד לא נכנס בלי גלילה (מיטל, 17.11.26) */
+        var sl2 = er.length ? null : sl;
+        function bsl() { return sl2 || (sl2 = S(sec.title + ' · בגרות ותכנון', color, sec.id)); }
         var bg = get('bagrut');
-        if (txt(bg.v)) sl.table([3, 9], null, [['זכאות לבגרות', txt(bg.v)]], { labelFirst: true });
-        ['bsubj', 'tracks'].forEach(function (k) { var x = get(k); addFormTable(sl, x.f, x.v, { fs: 14 }); });
+        if (txt(bg.v)) bsl().table([3, 9], null, [['זכאות לבגרות', txt(bg.v)]], { labelFirst: true });
+        ['bsubj', 'tracks'].forEach(function (k) { var x = get(k); if (hasValue(x.f, x.v)) addFormTable(bsl(), x.f, x.v, { fs: 14 }); });
         return;
       }
       if (sec.id === 'taasuka') {
+        /* שקף לכל שכבה (17.11.26) */
+        var usedT = false;
         ['yod_a', 'yod_b'].forEach(function (k) {
           var x = get(k), rows = tableRows(x.f, x.v);
           if (!hasValue(x.f, x.v)) return;
-          addFormTable(sl, x.f, x.v, { fs: 14, colW: [2.6, 1, 1, 1, 1] });
+          var tsl = usedT ? S(sec.title + ' · ' + x.f.l, color, sec.id) : sl;
+          if (!usedT) sl.title = sec.title + ' · ' + x.f.l;
+          usedT = true;
+          addFormTable(tsl, x.f, x.v, { fs: 14, colW: [2.6, 1, 1, 1, 1] });
           var good = rows.filter(function (r) { return numOf(r[1]) > 0 || numOf(r[3]) > 0; });
           if (good.length) {
             var L = good.map(function (r) { return r[0]; });
-            sl.chart([
+            tsl.chart([
               { name: 'תשפ"ו', labels: L, values: good.map(function (r) { return pct(numOf(r[2]), numOf(r[1])); }) },
               { name: 'תשפ"ז', labels: L, values: good.map(function (r) { return pct(numOf(r[4]), numOf(r[3])); }) }
             ], { title: 'אחוז המועסקים לפי מגמה · ' + x.f.l, percent: true, colors: [C.purple, C.green] }, 2.5);
