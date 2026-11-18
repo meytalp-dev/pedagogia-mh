@@ -265,6 +265,9 @@ table.grid.short td.rowlbl,table.grid.short thead th:first-child{width:2.6em;min
 .lnav{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .lnav select{flex:1;min-width:190px;font-weight:700}
 .note{border-top:1px solid var(--line);padding:9px 0}
+.preans{margin-top:6px;padding:6px 10px;border-right:3px solid var(--line);background:var(--bg,#faf6ee);border-radius:4px;font-size:.95em}
+.preform{margin-top:8px}.preform textarea{width:100%;min-height:58px}
+.premarks{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:6px}.premarks label{display:flex;gap:5px;align-items:center;cursor:pointer}
 .note:first-of-type{border-top:0}
 .note small{color:var(--muted);display:flex;justify-content:space-between;gap:6px;align-items:center}
 .val{white-space:pre-wrap;overflow-wrap:anywhere}
