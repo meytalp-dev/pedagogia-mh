@@ -1,0 +1,24 @@
+# מעגל (18.11.26): תזכורת למפקחים שבועיים לפני הוועדה המלווה.
+# כל בוקר (ראשון–שישי) מפעיל את פקודת remindTick בשרת מעגל. השרת עצמו:
+# לא שולח לפני 08:00 בישראל, לא בשבת, ולא שולח פעמיים על אותה ועדה.
+# שתי ריצות (05:00 ו-06:00 UTC) כדי לכסות 08:00 גם בשעון חורף וגם בשעון קיץ.
+name: vaada-remind
+
+on:
+  schedule:
+    - cron: "0 5,6 * * 0-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: remindTick
+        run: |
+          out=$(curl -sSL --max-time 300 -H 'Content-Type: text/plain' --data '{"action":"remindTick"}' \
+            "https://script.google.com/macros/s/AKfycbw0P5NiD_OVrY_1Gn6mFpnkLncRBRz-nMud8bXUzB8hXfea9mUApCSSn5eWV5gc1kVW/exec")
+          echo "$out"
+          echo "$out" | grep -q '"ok":true'
