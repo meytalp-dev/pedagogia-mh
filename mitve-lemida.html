@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<script src="/gate.js"></script>
+<script src="/analytics.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דיווח מתווה למידה · הבית של המנהיגות הפדגוגית היוצרת</title>
+<meta name="description" content="דיווח יומי של מתווה הלמידה בכל בית ספר — למידה מרחוק, היברידית, פיזית או חופשה — ומבט על כל 64 בתי הספר לצוות המטה.">
+<meta name="robots" content="noindex">
+<meta name="pmh-year" content="תשפ״ז">
+<meta property="og:type" content="website">
+<meta property="og:title" content="דיווח מתווה למידה">
+<meta property="og:description" content="דיווח יומי אחד לכל בית ספר: איך לומדים היום.">
+<meta property="og:url" content="https://pedagogiamh.co.il/mitve-lemida.html">
+<meta property="og:image" content="https://pedagogiamh.co.il/logo.png">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="canonical" href="https://pedagogiamh.co.il/mitve-lemida.html">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0D3B66">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="/track.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">דילוג לתוכן הראשי</a>
+
+<!-- nav:start section="space" -->
+<div class="scrim" onclick="toggleMenu(false)"></div>
+<aside class="drawer" id="site-drawer" aria-label="תפריט ראשי">
+  <div class="head"><b>כל האתר</b><button class="close" onclick="toggleMenu(false)" aria-label="סגירת התפריט"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button></div>
+  <div class="body">
+    <a href="index.html"><span class="n">◂</span> דף הבית</a>
+    <a href="gantt.html"><span class="n">◂</span> לוח גאנט צוותים</a>
+    <div class="sect">מרחב פדגוגי</div>
+    <a href="space.html">שער המרחב הפדגוגי</a>
+    <a href="hodaot.html"><span class="n">01</span> הודעות ועדכונים</a>
+    <a href="luach-mivchanim.html"><span class="n">02</span> לוח מבחנים · בגרויות וגמר</a>
+    <a href="bagrut.html"><span class="n">03</span> נתיב הבגרות · תחומי הדעת</a>
+    <a href="gmar.html">נתיב הגמר · תחומי הדעת</a>
+    <a href="bagrut-bank.html">מאגר שאלוני הבגרות</a>
+    <a href="gmar-bank.html">מאגר מבחני הגמר לדוגמה</a>
+    <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות · לפי מגזר ומקצוע</a>
+    <a href="zakaut.html">תעודות, זכאות ומבנה ההיבחנות</a>
+    <a href="mecholel.html">מחולל השיעורים</a>
+    <a href="klim-digitaliim.html"><span class="n">04</span> כלים דיגיטליים ומשחקים</a>
+    <span class="dis"><span class="n">05</span> תוכניות לימודים <span class="tag soon">בקרוב</span></span>
+    <a href="emergency.html"><span class="n">06</span> למידה בחירום</a>
+    <a href="ai.html"><span class="n">07</span> שילוב AI בחינוך</a>
+    <a href="alternatives.html"><span class="n">08</span> הערכה</a>
+    <a href="documents.html"><span class="n">09</span> כלים ניהוליים פדגוגיים</a>
+
+    <div class="sect">חניכות וקריירה</div>
+    <a href="chanichut.html">חניכות · שער התחום</a>
+    <a class="nested" href="chanichut-masnenet.html">מסננת החניכות</a>
+    <a class="nested" href="chanichut-piramida.html">פירמידת החניכות</a>
+    <a class="nested" href="chanichut.html#models">שמונת מודלי החניכות</a>
+    <a class="nested" href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+    <a class="nested" href="chanichut-rakaz.html">תיק החפיפה</a>
+    <a class="nested" href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+    <a class="nested" href="mishov-maasik.html">טופס משוב מעסיק</a>
+    <a href="career.html">נתיבים לקריירה · שער התוכנית</a>
+    <a class="nested" href="chaka-tet.html">כיתה ט׳</a>
+    <a class="nested" href="chaka-yod.html">כיתה י׳</a>
+    <a class="nested" href="chaka-ya.html">כיתה י״א</a>
+    <a class="nested" href="chaka-yb.html">כיתה י״ב</a>
+    <a class="nested" href="chaka.html">מודל ח.כ.ה</a>
+    <a class="nested" href="zinuk.html">על קו הזינוק</a>
+    <div class="sect">מרחב פיקוח</div>
+    <a href="https://tfasim.pedagogiamh.co.il/revital/">תובה · הבית של המפקחים</a>
+    <a class="nested" href="https://tfasim.pedagogiamh.co.il/revital/#K">ערכת המפקח.ת</a>
+    <div class="sect">מרחב מנהלים</div>
+    <a href="/tzohar/">צוהר · בית הספר שלי</a>
+    <a href="/neta/">נטע · מרחב הרכזים הפדגוגיים</a>
+    <a href="menahalim.html">שער מרחב המנהלים</a>
+    <a href="pikuah-miktzoi.html">פיקוח מקצועי · מגמות ומפקחים</a>
+    <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+    <a href="tafkidim.html">בעלי תפקידים · הגדרות ותקנים</a>
+    <a class="nested" href="kehilot.html">קהילות מקצועיות · קישורי הצטרפות</a>
+    <a href="morim-honchim.html">מורים חונכים · קליטת מתמחים</a>
+    <a href="matal.html">מחברת המת״ל · תפקודי למידה</a>
+    <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה · תשפ״ז</a>
+    <a href="menahalim-hadashim.html">מנהלים חדשים · ערכת הכניסה</a>
+    <a class="nested" href="tamtzit-hinuch-yotzer.html">תמצית החינוך היוצר</a>
+    <a class="nested" href="tafkid-menahel.html">תפקיד המנהל.ת</a>
+    <a class="nested" href="madadim-livuy.html">סטנדרטים, מדדים ומעטפת ליווי</a>
+    <a class="nested" href="shana-rishona.html">השנה הראשונה · צ'ק ליסט</a>
+    <div class="sect">רכז פדגוגי</div>
+    <a href="rakaz-pedagogi-klim.html">ארגז הכלים · כל הכלים</a>
+    <a class="nested" href="rakaz-tochnit-avoda.html">תוכנית עבודה שנתית</a>
+    <a class="nested" href="rakaz-tavnit-tichnun.html">תבנית לתכנון לימודי</a>
+    <a class="nested" href="rakaz-tochnit-pratanit.html">תוכנית פדגוגית פרטנית</a>
+    <a class="nested" href="rakaz-prisat-hivachanut.html">פריסת היבחנות תלת־שנתית</a>
+    <a class="nested" href="rakaz-mipuy-beit-sifri.html">מיפוי בית ספרי</a>
+    <a class="nested" href="rakaz-chovert-sheelonim.html">חוברת השאלונים</a>
+    <a class="nested" href="rakaz-sheelon-morim.html">שאלון פדגוגיה · מורים</a>
+    <a class="nested" href="rakaz-sheelon-talmidim.html">שאלון פדגוגיה · תלמידים</a>
+    <div class="sect">חינוך חברתי יוצר</div>
+    <a href="chevrati.html">שער המרחב החברתי</a>
+    <a href="chevrati-tfisa.html"><span class="n">01</span> התפיסה וארבעת העקרונות</a>
+    <a href="chevrati-tafkid.html"><span class="n">02</span> תפקיד הרכז.ת</a>
+    <a href="chevrati-tochnit.html"><span class="n">03</span> בניית תוכנית העבודה</a>
+    <a href="chevrati-hachshara.html"><span class="n">04</span> ההכשרה השנתית</a>
+    <a href="chevrati-meoravut.html"><span class="n">05</span> מעורבות ומנהיגות תלמידים</a>
+    <a href="chevrati-kehila.html"><span class="n">06</span> קהילה של משמעות</a>
+    <a href="chevrati-eretz.html"><span class="n">07</span> ״ארץ״ — הסביבה הפיזית</a>
+    <a href="chevrati-arachim.html"><span class="n">08</span> ערכים וטקסים</a>
+    <a href="chevrati-chosen.html"><span class="n">09</span> חוסן בתקופת משבר</a>
+    <a href="chevrati-tzevet.html"><span class="n">10</span> עבודה עם הצוות</a>
+    <a href="chevrati-merchavim.html"><span class="n">11</span> מרחבים בניהול עצמי</a>
+    <a href="chevrati-klim.html"><span class="n">12</span> ארגז הכלים · מעגל השנה</a>
+    <a href="chevrati-prida.html"><span class="n">13</span> פרידה וסיום</a>
+    <a href="chevrati-shitufim.html"><span class="n">14</span> שיתופים מהשטח</a>
+    <a href="chevrati-arabic.html"><span class="n">15</span> التربية الاجتماعية · بالعربية</a>
+    <a href="chevrati-matala.html"><span class="n">16</span> מטלת הסיכום</a>
+    <div class="sect">נהלים</div>
+    <a href="procedures.html">שער הנהלים</a>
+    <a class="nested" href="nehalim-minhal.html">נהלי מינהל</a>
+    <a class="nested" href="takzivim.html">תקציבים</a>
+    <a class="nested" href="cherum-nehalim.html">אירוע חריג</a>
+    <a class="nested" href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+    <a class="nested" href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    <a class="nested" href="hishtalmut-tikshuv.html">שגרירי חדשנות · רכזי תקשוב</a>
+    <div class="sect">שירותים</div>
+    <button type="button" class="open-ogen"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v13M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/><path d="M5 13a7 7 0 0 0 14 0"/><path d="M3.5 13h3M17.5 13h3"/></svg></span>שאל את עוגן</button>
+    <a href="install.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 6.5v5m0 0 2-2m-2 2-2-2"/></svg></span>עוגן והאתר בנייד</a>
+    <a href="ai.html"><span class="di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8.5 8V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M3 13h18M10 13v2.5h4V13"/></svg></span>ארגז כלים · מחוללים</a>
+    <a href="drive-menahalim.html">דרייב מנהלים</a>
+    <a href="tashpaz.html">היערכות תשפ״ז</a>
+    <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <a href="/hadrachot/" target="_blank" rel="noopener">מנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+    <div class="sect">אודות</div>
+    <a href="archive.html">ארכיון · שנים קודמות</a>
+    <a href="about.html">מי אנחנו</a>
+    <a href="kesher.html">יצירת קשר</a>
+    <a href="negishut.html">הצהרת נגישות</a>
+    <a href="privacy.html">מדיניות פרטיות</a>
+  </div>
+  <div class="foot-note">מינהל הכשרה מקצועית · משרד העבודה</div>
+</aside>
+
+<div class="govbar">
+  <img src="logo.png" alt="משרד העבודה" width="1200" height="420">
+  <span>מדינת ישראל · משרד העבודה</span><span class="sep">|</span><span>מינהל הכשרה מקצועית</span>
+  <div class="gov-mid">
+    <!-- תובה, צוהר ונטע — קבועים ובולטים בראש כל עמוד, במחשב ובנייד, ולא בין הקטגוריות (מיטל, 11.10.26) -->
+    <div class="sys sys-d" role="navigation" aria-label="המערכות האישיות">
+      <a class="sys-btn tuva" href="https://tfasim.pedagogiamh.co.il/revital/"><img src="/img/sys-tuva.png" alt="" width="64" height="64"><span><b>תובה</b><small>למפקחים</small></span></a>
+      <a class="sys-btn tzohar" href="/tzohar/"><img src="/img/sys-tzohar.png" alt="" width="64" height="64"><span><b>צוהר</b><small>למנהלים</small></span></a>
+      <a class="sys-btn neta" href="/neta/"><img src="/img/sys-neta.png" alt="" width="64" height="64"><span><b>נטע</b><small>לרכזים פדגוגיים</small></span></a>
+    </div>
+    <span class="navitem"><a class="lnk" href="menahalim.html" aria-haspopup="true">מרחב מנהלים<span class="caret" aria-hidden="true">▼</span></a>
+      <div class="sub">
+        <span class="dis" title="המערכת בבנייה — תיפתח בהמשך">תוכניות עבודה · בבנייה</span>
+        <a href="/hadrachot/" target="_blank" rel="noopener">מנור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="https://apps.education.gov.il/mankal/" target="_blank" rel="noopener">חוזרי מנכ״ל<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <a href="drive-menahalim.html">דרייב מנהלים</a>
+        <a href="tashpaz.html">היערכות תשפ״ז</a>
+        <a href="pikuah-miktzoi.html">פיקוח מקצועי · מגמות ומפקחים</a>
+        <a href="sikum-mifgash-menahalim.html">סיכום מפגש פתיחת השנה</a>
+        <a class="gatelink" href="menahalim-hadashim.html">מנהלים חדשים · ערכת הכניסה</a>
+      </div>
+    </span>
+  </div>
+  <div class="left"><a href="negishut.html">נגישות</a><span class="dis">English</span><span class="dis">العربية</span></div>
+</div>
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <span class="mark">פ</span>
+    <span><b>הבית של המנהיגות הפדגוגית היוצרת</b><span>מינהל הכשרה מקצועית</span></span>
+  </a>
+  <!-- תובה, צוהר ונטע בנייד — מעל צ'יפי הקטגוריות. במחשב: העותק שבפס העליון -->
+  <div class="sys sys-m" role="navigation" aria-label="המערכות האישיות">
+    <a class="sys-btn tuva" href="https://tfasim.pedagogiamh.co.il/revital/"><img src="/img/sys-tuva.png" alt="" width="64" height="64"><span><b>תובה</b><small>למפקחים</small></span></a>
+    <a class="sys-btn tzohar" href="/tzohar/"><img src="/img/sys-tzohar.png" alt="" width="64" height="64"><span><b>צוהר</b><small>למנהלים</small></span></a>
+    <a class="sys-btn neta" href="/neta/"><img src="/img/sys-neta.png" alt="" width="64" height="64"><span><b>נטע</b><small>לרכזים פדגוגיים</small></span></a>
+  </div>
+  <span class="navitem"><a class="lnk active" href="space.html" aria-haspopup="true">מרחב פדגוגי<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="space.html">שער המרחב הפדגוגי · כל התחומים</a>
+      <a href="luach-mivchanim.html">לוח מבחנים · בגרויות וגמר</a>
+      <a href="bagrut.html">נתיב הבגרות</a>
+      <a href="gmar.html">נתיב הגמר</a>
+      <a href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a>
+      <a href="mecholel.html">מחולל השיעורים</a>
+      <a href="klim-digitaliim.html">כלים דיגיטליים ומשחקים</a>
+      <a href="emergency.html">למידה בחירום</a>
+      <a href="alternatives.html">הערכה</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chanichut.html" aria-haspopup="true">חניכות וקריירה<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chanichut.html">שער החניכות · כל התחום</a>
+      <a href="career-rakaz.html">ארגז הכלים של רכז.ת החניכות</a>
+      <a href="nohal-rakaz-chanichut.html">נוהל רכז החניכות</a>
+      <a href="chanichut.html#models">שמונת מודלי החניכות</a>
+      <a href="career.html">נתיבים לקריירה · התוכנית בכיתה</a>
+      <a href="career.html#lessons">מערכי שיעור · ט׳–י״ב</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="procedures.html" aria-haspopup="true">נהלים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="procedures.html">שער הנהלים · ארבע הקטגוריות</a>
+      <a href="nehalim-minhal.html">נהלי מינהל</a>
+      <a href="takzivim.html">תקציבים</a>
+      <a href="cherum-nehalim.html">אירוע חריג</a>
+      <a href="hadracha.html">הדרכה ופיתוח מקצועי</a>
+      <a href="hishtalmuyot.html">השתלמויות תשפ״ז</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="tafkidim.html" aria-haspopup="true">בעלי תפקידים<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="tafkidim.html">שער בעלי התפקידים · כל ההגדרות</a>
+      <a href="baaley-tafkidim.html">חלוקת שעות, גמולים ודגשים</a>
+      <a href="ogdan-shaot.html">אוגדן שעות תשפ״ז</a>
+      <a href="rakaz-pedagogi-klim.html">ארגז הכלים של הרכז.ת הפדגוגי.ת</a>
+      <a href="morim-honchim.html">מורים חונכים</a>
+      <a href="matal.html">מחברת המת״ל</a>
+      <a href="kehilot.html">קהילות מקצועיות · קישורי הצטרפות</a>
+      <a href="tashpaz.html#kehilot">השתלמויות וקהילות לומדות</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="chevrati.html" aria-haspopup="true">חינוך חברתי יוצר<span class="caret" aria-hidden="true">▼</span></a>
+    <div class="sub">
+      <a class="gatelink" href="chevrati.html">שער המרחב החברתי · כל החומרים</a>
+      <a href="chevrati-tfisa.html">התפיסה וארבעת העקרונות</a>
+      <a href="chevrati-tochnit.html">בניית תוכנית העבודה</a>
+      <a href="chevrati-hachshara.html">ההכשרה השנתית ומפגשיה</a>
+      <a href="chevrati-klim.html">ארגז הכלים · מעגל השנה</a>
+      <a href="chevrati-arabic.html">التربية الاجتماعية · بالعربية</a>
+    </div>
+  </span>
+  <span class="navitem"><a class="lnk" href="gantt.html">לוח גאנט</a></span>
+  <span class="navitem"><a class="lnk" href="hishtalmuyot.html">השתלמויות לבעלי תפקידים</a></span>
+  <span class="navitem"><a class="lnk" href="hadrachot-miktzoiot.html">הדרכות מקצועיות</a></span>
+  <div class="tools">
+    <button class="burger" onclick="toggleMenu(true)" aria-label="תפריט" aria-controls="site-drawer"><i></i><i></i><i></i></button>
+  </div>
+</nav>
+<!-- nav:end -->
+
+<main id="main">
+
+<style>
+/* ===== דיווח מתווה למידה (18.11.26) ===== */
+.mv-hero{padding:30px var(--px) 4px}
+.mv-hero .crumb{margin-bottom:10px}
+.mv-hero h1{font-size:clamp(1.8rem,4.2vw,2.5rem);line-height:1.15;margin:0 0 8px;color:var(--navy)}
+.mv-hero h1 em{font-style:normal;background:var(--m-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mv-hero p{font-size:var(--fs-lg);color:var(--text2);max-width:680px;margin:0;line-height:1.6}
+.mv-wrap{padding:16px var(--px) 40px;max-width:1180px}
+.mv-wrap *{box-sizing:border-box}
+.mv-wrap [hidden]{display:none!important}
+.mv-ic{width:20px;height:20px;flex:none}
+.mv-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;box-shadow:var(--sh-md);padding:22px;margin-bottom:18px}
+.mv-card h2{margin:0;font-size:var(--fs-2xl);color:var(--navy)}
+.mv-card h2 small{display:block;font-size:var(--fs-sm);font-weight:700;color:var(--text2);margin-top:3px}
+.mv-head{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.mv-head > div:first-child{flex:1;min-width:200px}
+.mv-wrap label.f{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-xs);font-weight:800;color:var(--navy)}
+.mv-wrap select,.mv-wrap input[type=search],.mv-wrap textarea{font:inherit;font-weight:700;font-size:var(--fs-md);padding:9px 12px;border:1.5px solid var(--border-strong);border-radius:12px;background:#fff;color:var(--text);min-height:44px;max-width:100%}
+.mv-wrap textarea{width:100%;min-height:76px;resize:vertical;font-weight:500;line-height:1.55}
+.mv-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:800;font-size:var(--fs-md);padding:12px 20px;border-radius:999px;border:1.5px solid var(--border-strong);background:#fff;color:var(--navy);cursor:pointer;text-decoration:none;min-height:46px}
+.mv-btn:hover{border-color:var(--accent);background:var(--cyan-100)}
+.mv-btn.pri{border:0;background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(13,59,102,.2)}
+.mv-btn.pri:hover{background:var(--grad);transform:translateY(-1px)}
+.mv-btn[disabled]{opacity:.55;cursor:wait;transform:none}
+.mv-btn.sm{padding:8px 14px;min-height:38px;font-size:var(--fs-sm)}
+.mv-msg{display:none;margin-top:12px;padding:12px 16px;border-radius:12px;background:#FFF4E5;color:#7A4B00;font-size:var(--fs-sm);line-height:1.6}
+.mv-msg.on{display:block}
+.mv-msg.good{background:#ECF8F0;color:#1B5E35}
+.mv-empty{padding:18px;border-radius:16px;background:var(--soft-bg);color:var(--text2);font-size:var(--fs-sm);line-height:1.6;text-align:center}
+.mv-login{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--soft-bg);border:1px solid var(--border);margin-bottom:16px;font-size:var(--fs-sm);line-height:1.6;color:var(--text2)}
+.mv-login b{display:block;color:var(--navy);font-size:var(--fs-md)}
+.mv-login .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.mv-login .mv-ic{color:var(--navy);margin-top:2px}
+.mv-demo{display:flex;gap:10px;align-items:flex-start;margin:0 0 14px;padding:12px 16px;border-radius:14px;background:#FFF7E6;border:1px solid #F5D9A0;color:#6B4A00;font-size:var(--fs-sm);line-height:1.6}
+
+/* צבע לכל מתווה */
+.mv-wrap{--c-rem:#2F74C0;--c-rem-bg:#EAF2FC;--c-hyb:#7A62B5;--c-hyb-bg:#F1EDFA;--c-phy:#2F9F55;--c-phy-bg:#E9F7EE;--c-vac:#9A6B00;--c-vac-bg:#FFF5DC;--c-mis:#C42B2B;--c-mis-bg:#FDEEEE}
+.k-rem{--c:var(--c-rem);--cb:var(--c-rem-bg)} .k-hyb{--c:var(--c-hyb);--cb:var(--c-hyb-bg)}
+.k-phy{--c:var(--c-phy);--cb:var(--c-phy-bg)} .k-vac{--c:var(--c-vac);--cb:var(--c-vac-bg)} .k-mis{--c:var(--c-mis);--cb:var(--c-mis-bg)}
+
+/* מבט המדווח.ת */
+.mv-status{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:var(--fs-sm);font-weight:800;background:var(--cb,var(--soft-bg));color:var(--c,var(--text2));border:1px solid currentColor}
+.mv-modes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:4px 0 14px}
+.mv-mode{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:104px;padding:14px 8px;border-radius:18px;border:2px solid var(--border);background:#fff;color:var(--text);font:inherit;font-weight:800;font-size:var(--fs-md);cursor:pointer;transition:all .2s var(--ease)}
+.mv-mode svg{width:34px;height:34px;color:var(--c)}
+.mv-mode:hover{border-color:var(--c)}
+.mv-mode[aria-pressed=true]{border-color:var(--c);background:var(--cb);color:var(--c);box-shadow:0 0 0 3px var(--cb)}
+.mv-grades{margin:0 0 14px;padding:14px;border-radius:16px;background:var(--c-hyb-bg);border:1px solid #DCD3F0}
+.mv-grades b{display:block;color:#4E3B86;font-size:var(--fs-sm);margin-bottom:8px}
+.mv-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mv-chip{font:inherit;font-weight:800;font-size:var(--fs-md);min-width:58px;min-height:44px;padding:8px 14px;border-radius:12px;border:1.5px solid #CFC4EA;background:#fff;color:#4E3B86;cursor:pointer}
+.mv-chip[aria-pressed=true]{background:var(--c-hyb);border-color:var(--c-hyb);color:#fff}
+.mv-note{display:block;margin-bottom:14px}
+.mv-note span{display:block;font-size:var(--fs-sm);font-weight:800;color:var(--navy);margin-bottom:6px}
+.mv-week{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)}
+.mv-week h3{grid-column:1/-1;margin:0 0 2px;font-size:var(--fs-md);color:var(--navy)}
+.mv-day{padding:10px 8px;border-radius:14px;background:var(--cb,var(--soft-bg));border:1px solid var(--border);text-align:center;font-size:var(--fs-xs);color:var(--text2);line-height:1.4;min-width:0}
+.mv-day b{display:block;font-size:var(--fs-sm);color:var(--navy)}
+.mv-day .m{display:block;font-weight:800;color:var(--c,var(--muted));margin-top:3px;overflow-wrap:anywhere}
+.mv-day.today{outline:2px solid var(--navy);outline-offset:1px}
+
+/* מבט ארצי */
+.mv-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px}
+.mv-weeknav{display:inline-flex;align-items:center;gap:6px;padding:4px;border-radius:999px;background:var(--soft-bg);border:1px solid var(--border)}
+.mv-weeknav button{width:38px;height:38px;border-radius:50%;border:0;background:#fff;color:var(--navy);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh-sm)}
+.mv-weeknav span{font-weight:800;color:var(--navy);padding:0 6px;font-size:var(--fs-md);white-space:nowrap}
+.mv-seg{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:var(--soft-bg);border:1px solid var(--border);flex-wrap:wrap}
+.mv-seg button{font:inherit;font-weight:800;font-size:var(--fs-sm);padding:8px 12px;border:0;border-radius:10px;background:none;color:var(--text2);cursor:pointer;line-height:1.25}
+.mv-seg button small{display:block;font-weight:600;font-size:var(--fs-2xs)}
+.mv-seg button.on{background:#fff;color:var(--navy);box-shadow:var(--sh-sm)}
+.mv-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.mv-tile{display:flex;flex-direction:column;gap:2px;padding:14px;border-radius:16px;background:var(--cb);border:1.5px solid transparent;color:var(--c);font:inherit;text-align:start;cursor:pointer}
+.mv-tile b{font-size:var(--fs-4xl);line-height:1;font-variant-numeric:tabular-nums}
+.mv-tile span{font-weight:800;font-size:var(--fs-sm)}
+.mv-tile.on{border-color:currentColor}
+.mv-miss{margin-bottom:16px;padding:14px 16px;border-radius:16px;background:var(--c-mis-bg);border:1px solid #F3C9C9}
+.mv-miss h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px;font-size:var(--fs-md);color:var(--c-mis)}
+.mv-miss h3 .mv-btn{margin-inline-start:auto}
+.mv-miss p{margin:0;font-size:var(--fs-sm);line-height:1.8;color:#5E1F1F}
+.mv-filters{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.mv-filters select,.mv-filters input{width:100%}
+.mv-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.mv-acts .cnt{margin-inline-start:auto;font-size:var(--fs-sm);font-weight:700;color:var(--text2)}
+.mv-tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:16px}
+.mv-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+.mv-tbl th{position:sticky;top:0;background:var(--soft-bg);color:var(--navy);font-weight:800;text-align:start;padding:10px;border-bottom:1.5px solid var(--border-strong);white-space:nowrap}
+.mv-tbl td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+.mv-tbl tr:last-child td{border-bottom:0}
+.mv-tbl td.nm{font-weight:800;color:var(--navy);min-width:170px}
+.mv-tbl td.nm small{display:block;font-weight:600;color:var(--muted);font-size:var(--fs-2xs)}
+.mv-tbl th.sel{background:#E3EEFA}
+.mv-cell{display:inline-block;padding:4px 9px;border-radius:999px;background:var(--cb);color:var(--c);font-weight:800;font-size:var(--fs-xs);white-space:nowrap}
+.mv-cell small{display:block;font-weight:700;white-space:normal}
+.mv-cell.none{background:none;color:var(--muted);font-weight:600}
+.mv-tbl td.note{color:var(--text2);font-size:var(--fs-xs);min-width:160px;line-height:1.5}
+.mv-cards{display:none}
+.mv-sc{border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.mv-sc .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.mv-sc .top b{color:var(--navy);font-size:var(--fs-md)}
+.mv-sc .top small{display:block;color:var(--muted);font-size:var(--fs-xs);font-weight:600}
+.mv-sc .days{display:grid;grid-template-columns:repeat(var(--n,5),1fr);gap:4px;margin-top:10px}
+.mv-sc .days > div{border-radius:10px;padding:6px 2px;text-align:center;background:var(--cb,var(--soft-bg));color:var(--c,var(--muted));font-size:var(--fs-2xs);font-weight:800;line-height:1.3;min-width:0;overflow-wrap:anywhere}
+.mv-sc .days > div i{display:block;font-style:normal;color:var(--text2);font-weight:700}
+.mv-sc .note{margin-top:8px;font-size:var(--fs-xs);color:var(--text2);line-height:1.5}
+.mv-print-head{display:none}
+
+.mv-toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--navy);color:#fff;font-weight:800;font-size:var(--fs-sm);padding:12px 20px;border-radius:999px;box-shadow:var(--sh-float);transition:all .25s var(--ease);z-index:300;max-width:calc(100vw - 32px);text-align:center}
+.mv-toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:900px){
+  .mv-filters{grid-template-columns:1fr 1fr}
+  .mv-filters .q{grid-column:1/-1}
+  .mv-tiles{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:760px){
+  .mv-wrap{padding:12px 16px 32px}
+  .mv-hero{padding:22px 16px 2px}
+  .mv-card{padding:16px;border-radius:20px}
+  .mv-modes{grid-template-columns:1fr 1fr}
+  .mv-week{grid-template-columns:repeat(3,1fr)}
+  .mv-tiles{grid-template-columns:1fr 1fr}
+  .mv-tiles .mv-tile:last-child{grid-column:1/-1}
+  .mv-tile b{font-size:var(--fs-3xl)}
+  .mv-tbl-wrap{display:none}
+  .mv-cards{display:block}
+  .mv-bar{gap:8px}
+  .mv-seg{width:100%}
+  .mv-seg button{flex:1;padding:8px 4px}
+  .mv-acts .mv-btn{flex:1 1 auto;white-space:nowrap;padding-inline:10px;gap:6px}
+  .mv-acts .cnt{width:100%;margin:0}
+}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  .nav,.govbar,.drawer,.scrim,.foot,.mv-hero,.mv-login,.mv-demo,.mv-bar,.mv-tiles,.mv-filters,.mv-acts,.mv-miss,#mv-rep,.mv-toast,.skip{display:none!important}
+  body{background:#fff}
+  .mv-wrap{padding:0;max-width:none}
+  .mv-card{box-shadow:none;border:0;padding:0}
+  .mv-card > .mv-head{display:none}
+  .mv-print-head{display:block;margin-bottom:8px}
+  .mv-print-head b{font-size:15pt;color:#0D3B66}
+  .mv-print-head div{font-size:9pt;color:#333;margin-top:2px}
+  .mv-tbl-wrap{display:block!important;overflow:visible;border:0}
+  .mv-cards{display:none!important}
+  .mv-tbl{font-size:8pt}
+  .mv-tbl th{position:static;padding:4px;background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .mv-tbl td{padding:3px 4px}
+  .mv-tbl tr{break-inside:avoid}
+  .mv-cell{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:1px 5px}
+}
+</style>
+
+<div class="mv-hero">
+  <div class="crumb"><a href="space.html">המרחב הפדגוגי</a> ‹ <a href="emergency.html">למידה בחירום</a> ‹ דיווח מתווה למידה</div>
+  <h1>דיווח <em>מתווה למידה</em></h1>
+  <p>דיווח יומי אחד לכל בית ספר: איך לומדים היום — מרחוק, היברידית, פיזית, או שיש חופשה.</p>
+</div>
+
+<div class="mv-wrap">
+  <div class="mv-demo" id="mv-demo" hidden><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span><b>מצב הדגמה.</b> נתונים בדויים. דיווח נשמר רק במסך הזה.</span></div>
+
+  <div id="mv-login"></div>
+
+  <!-- ===== מבט המדווח.ת: מנהל.ת / רכז.ת פדגוגי.ת ===== -->
+  <section class="mv-card" id="mv-rep" hidden aria-labelledby="mv-rschool">
+    <div class="mv-head">
+      <div><h2 id="mv-rschool">בית הספר<small id="mv-rdate"></small></h2></div>
+      <label class="f" id="mv-rsel-l" hidden>בית ספר<select id="mv-rsel"></select></label>
+      <span class="mv-status" id="mv-rstatus"></span>
+    </div>
+    <div id="mv-rform">
+      <div class="mv-modes" id="mv-modes" role="group" aria-label="מתווה הלמידה היום"></div>
+      <div class="mv-grades" id="mv-grades" hidden>
+        <b>אילו שכבות לומדות היום בבית הספר?</b>
+        <div class="mv-chips" id="mv-gchips" role="group" aria-label="שכבות בבית הספר"></div>
+      </div>
+      <label class="mv-note"><span>הערה (לא חובה)</span>
+        <textarea id="mv-note" maxlength="300" placeholder="למשל: באישור הרשות · תלמידי י״א-י״ב במרחב המוגן"></textarea></label>
+      <button type="button" class="mv-btn pri" id="mv-send"><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3 10 14"/><path d="m21 3-7 18-4-7-7-4z"/></svg><span>שליחת הדיווח להיום</span></button>
+    </div>
+    <div class="mv-empty" id="mv-shabbat" hidden>היום שבת — אין דיווח. הדיווח הבא ביום ראשון.</div>
+    <div class="mv-msg" id="mv-rmsg" role="status"></div>
+    <div class="mv-week" id="mv-rweek"></div>
+  </section>
+
+  <!-- ===== מבט ארצי: מטה ===== -->
+  <section class="mv-card" id="mv-nat" hidden aria-labelledby="mv-ntitle">
+    <div class="mv-head">
+      <div><h2 id="mv-ntitle">כל בתי הספר<small>64 בתי הספר · לפי שבוע</small></h2></div>
+    </div>
+    <div class="mv-bar">
+      <div class="mv-weeknav">
+        <button type="button" id="mv-wprev" aria-label="השבוע הקודם"><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        <span id="mv-wlabel">—</span>
+        <button type="button" id="mv-wnext" aria-label="השבוע הבא"><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+      </div>
+      <button type="button" class="mv-btn sm" id="mv-wnow">השבוע</button>
+      <div class="mv-seg" id="mv-days" role="tablist" aria-label="יום"></div>
+    </div>
+    <div class="mv-tiles" id="mv-tiles"></div>
+    <div class="mv-miss" id="mv-miss" hidden></div>
+    <div class="mv-filters">
+      <label class="f q">חיפוש בית ספר<input type="search" id="mv-q" placeholder="שם או סמל מוסד" autocomplete="off"></label>
+      <label class="f">רשת<select id="mv-fnet"></select></label>
+      <label class="f">מחוז<select id="mv-fdist"></select></label>
+      <label class="f">מגזר<select id="mv-fsec"></select></label>
+      <label class="f">מתווה ביום שנבחר<select id="mv-fmode"></select></label>
+    </div>
+    <div class="mv-acts">
+      <button type="button" class="mv-btn sm" id="mv-print"><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>הדפסה</button>
+      <button type="button" class="mv-btn sm" id="mv-xls"><svg class="mv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg>ייצוא לאקסל</button>
+      <button type="button" class="mv-btn sm" id="mv-clear">ניקוי הסינון</button>
+      <span class="cnt" id="mv-cnt" aria-live="polite"></span>
+    </div>
+    <div class="mv-print-head" id="mv-phead"></div>
+    <div class="mv-tbl-wrap"><table class="mv-tbl" id="mv-tbl"></table></div>
+    <div class="mv-cards" id="mv-cards"></div>
+    <div class="mv-msg" id="mv-nmsg" role="status"></div>
+  </section>
+</div>
+
+<div class="mv-toast" id="mv-toast" role="status" aria-live="polite"></div>
+
+</main>
+
+<!-- foot:start tagline="עודכן 18.11.2026" -->
+<div class="foot"><div class="row"><div style="display:flex;align-items:center;gap:14px"><img src="logo.png" alt="משרד העבודה" width="1200" height="420"><span>© מינהל הכשרה מקצועית</span></div><span>עודכן 18.11.2026</span></div><nav class="foot-links" aria-label="קישורים משפטיים"><a href="negishut.html">הצהרת נגישות</a><a href="kesher.html">יצירת קשר</a><a href="privacy.html">מדיניות פרטיות</a><a href="about.html">מי אנחנו</a></nav><div style="text-align:center;font-size:.72rem;color:#8A97A6;padding:8px 0 2px;opacity:.9">האתר נבנה על ידי <a href="https://impactos.co.il/" target="_blank" rel="noopener" style="color:inherit;font-weight:600">impactos · impactos.co.il</a></div></div>
+<!-- foot:end -->
+
+<script>
+/* ===== דיווח מתווה למידה (18.11.26) =====
+   שרת: רויטל/merachok-gas (מתווה.js), אותו שרת של ניהול הלמידה מרחוק.
+   כניסה: מפתח בעלי התפקידים שמנור שמר בדפדפן (ts.staff.v1).
+   מנהל.ת / רכז.ת פדגוגי.ת → דיווח על היום. מטה (role: ministry) → כל 64 בתי הספר לפי שבוע.
+   ?demo=1 → נתונים בדויים, בלי שרת. */
+(function(){
+var BACKEND = "https://script.google.com/macros/s/AKfycbx1rc-lfpe2fNg_KuJU0Czrk1HFwfrCBrO468Cgwp5MQn22pzau6Q0AwehWiQkrfYxS/exec";
+var CALL_MS = 45000;
+var DEMO = /[?&]demo=1\b/.test(location.search);
+var MODES = ["למידה מרחוק", "למידה היברידית", "למידה פיזית", "חופשה"];
+var KEY = { "למידה מרחוק": "rem", "למידה היברידית": "hyb", "למידה פיזית": "phy", "חופשה": "vac" };
+var SHORT = { "למידה מרחוק": "מרחוק", "למידה היברידית": "היברידית", "למידה פיזית": "פיזית", "חופשה": "חופשה" };
+var GRADES = ["ט׳", "י׳", "י״א", "י״ב", "י״ג", "י״ד"];
+var DAYN = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+var DAYL = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳"];
+var SV = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+var ICON = {
+  "למידה מרחוק": '<svg ' + SV + '><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+  "למידה היברידית": '<svg ' + SV + '><path d="M2.5 11 8 6.5l5.5 4.5"/><path d="M4 10v8h8v-8"/><rect x="14" y="12" width="8" height="6" rx="1.2"/><path d="M13 21h10"/></svg>',
+  "למידה פיזית": '<svg ' + SV + '><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M10 21v-5h4v5M9 11h.01M15 11h.01"/></svg>',
+  "חופשה": '<svg ' + SV + '><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+};
+var USER = '<svg class="mv-ic" ' + SV + '><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+
+function el(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]; }); }
+function lsGet(k){ try { return JSON.parse(localStorage.getItem(k) || "null"); } catch(e){ return null; } }
+function lsDel(k){ try { localStorage.removeItem(k); } catch(e){} }
+var toastT;
+function toast(t){ var b = el("mv-toast"); b.textContent = t; b.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(function(){ b.classList.remove("on"); }, 2600); }
+function track(a, b){ try { if (window.pmhTrack) window.pmhTrack(a, b); } catch(e){} }
+function msg(id, t, good){ var m = el(id); m.textContent = t || ""; m.className = "mv-msg" + (t ? " on" : "") + (good ? " good" : ""); }
+
+/* ---------- תאריכים (yyyy-mm-dd, בצהריים UTC כדי לא ליפול על מעבר שעון) ---------- */
+function D(ymd){ return new Date(ymd + "T12:00:00Z"); }
+function ymd(d){ return d.toISOString().slice(0, 10); }
+function add(s, n){ var d = D(s); d.setUTCDate(d.getUTCDate() + n); return ymd(d); }
+function dow(s){ return D(s).getUTCDay(); }
+function weekStart(s){ return add(s, -dow(s)); }
+function dm(s){ var d = D(s); return d.getUTCDate() + "/" + (d.getUTCMonth() + 1); }
+function dmy(s){ var d = D(s); return d.getUTCDate() + "." + (d.getUTCMonth() + 1) + "." + d.getUTCFullYear(); }
+function localToday(){ var p = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jerusalem", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()); return p.slice(0, 10); }
+
+/* ---------- השרת — rid + שחזור ב-GET (כמו בניהול הלמידה מרחוק) ---------- */
+function auth(){ var s = lsGet("ts.staff.v1"); return s && s.k ? { t: "staff", k: s.k, name: s.name || "" } : null; }
+function rid(){ try { var a = new Uint8Array(16); crypto.getRandomValues(a); return Array.prototype.map.call(a, function(b){ return ("0" + b.toString(16)).slice(-2); }).join(""); } catch(e){ return ""; } }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function recover(id, n){
+  if (!id || n >= 6) return Promise.resolve(null);
+  return sleep([1500, 3000, 4000, 6000, 8000, 10000][n]).then(function(){
+    return fetch(BACKEND + "?rid=" + id).then(function(r){ return r.json(); })
+      .then(function(d){ return d && d.error === "rid_pending" ? recover(id, n + 1) : d; })
+      .catch(function(){ return recover(id, n + 1); });
+  });
+}
+function post(body){
+  if (DEMO) return Promise.resolve(demoCall(body));
+  var a = auth(), id = rid(), ctl = window.AbortController ? new AbortController() : null;
+  body.auth = a ? { t: a.t, k: a.k } : null; body.rid = id;
+  var timer = ctl ? setTimeout(function(){ ctl.abort(); }, CALL_MS) : 0;
+  return fetch(BACKEND, { method: "POST", body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined })
+    .then(function(r){ return r.json(); })
+    .catch(function(){ return recover(id, 0); })
+    .then(function(d){ clearTimeout(timer); return d || { ok: false, error: "network" }; },
+          function(){ clearTimeout(timer); return { ok: false, error: "network" }; });
+}
+var ERR = {
+  nologin: "צריך להיכנס דרך מנור — הכפתור למעלה.",
+  badlogin: "הכניסה במכשיר הזה כבר לא בתוקף. היכנסו שוב דרך מנור.",
+  menor: "לא הצלחנו לאמת את הכניסה מול מנור. נסו שוב בעוד רגע.",
+  notprincipal: "הדיווח פתוח למנהל.ת ולרכז.ת הפדגוגי.ת של בית הספר.",
+  notministry: "המבט הארצי פתוח לצוות המטה בלבד.",
+  shabbat: "היום שבת — אין דיווח.",
+  onlytoday: "אפשר לדווח רק על היום. רעננו את הדף ונסו שוב.",
+  badmode: "בחרו את מתווה הלמידה של היום.",
+  nogrades: "בלמידה היברידית — סמנו אילו שכבות לומדות היום בבית הספר.",
+  limit: "נשלחו היום יותר מדי דיווחים מהחשבון הזה.",
+  network: "אין חיבור לשרת. בדקו את האינטרנט ונסו שוב.",
+  server: "תקלה בשרת. נסו שוב בעוד רגע."
+};
+function errText(d){ return ERR[d && d.error] || ERR.server; }
+
+/* ---------- כניסה ---------- */
+function loginBox(why){
+  return '<div class="mv-login">' + USER + "<div><b>" + esc(why) + "</b>" +
+    "<span>מנהלים, רכזים פדגוגיים וצוות המטה נכנסים עם הכניסה לבעלי תפקידים במנור. הכניסה נפתחת בלשונית חדשה — אחרי שנכנסתם, חזרו לכאן והעמוד יזהה אתכם לבד.</span>" +
+    '<div class="acts"><a class="mv-btn pri sm" href="hadrachot/" target="_blank" rel="noopener">כניסה לבעלי תפקידים<span class="sr-only"> (נפתח בלשונית חדשה)</span></a></div></div></div>';
+}
+function start(){
+  el("mv-rep").hidden = true; el("mv-nat").hidden = true;
+  if (!DEMO && !auth()) { el("mv-login").innerHTML = loginBox("כדי לדווח או לצפות — כניסה דרך מנור"); return; }
+  el("mv-login").innerHTML = '<div class="mv-empty">מאמתים את הכניסה…</div>';
+  loadMine();
+}
+window.addEventListener("storage", function(e){ if (e.key === "ts.staff.v1") start(); });
+
+/* ---------- מבט המדווח.ת ---------- */
+var MINE = null, PICK = { mode: "", grades: [] };
+function loadMine(school){
+  return post({ action: "mitveMine", school: school || "" }).then(function(d){
+    if (!d || !d.ok) {
+      if (d && d.error === "badlogin") { lsDel("ts.staff.v1"); el("mv-login").innerHTML = loginBox("הכניסה לא בתוקף — כניסה מחדש דרך מנור"); return; }
+      el("mv-login").innerHTML = '<div class="mv-msg on">' + esc(errText(d)) + "</div>"; return;
+    }
+    el("mv-login").innerHTML = "";
+    if (!d.canReport && !d.ministry) { el("mv-login").innerHTML = '<div class="mv-msg on">' + esc(ERR.notprincipal) + "</div>"; return; }
+    if (d.canReport) { MINE = d; paintMine(); }
+    if (d.ministry && !NAT.loaded) { NAT.loaded = true; el("mv-nat").hidden = false; loadWeek(d.today); }
+  });
+}
+function paintMine(){
+  var d = MINE, r = d.report;
+  el("mv-rep").hidden = false;
+  el("mv-rschool").innerHTML = esc(d.school.name) + "<small>יום " + DAYN[dow(d.today)] + " · " + dmy(d.today) + "</small>";
+  var sel = el("mv-rsel");
+  el("mv-rsel-l").hidden = d.schools.length < 2;
+  sel.innerHTML = d.schools.map(function(s){ return '<option value="' + esc(s.id) + '"' + (s.id === d.school.id ? " selected" : "") + ">" + esc(s.name) + "</option>"; }).join("");
+  var st = el("mv-rstatus");
+  if (r) { st.className = "mv-status k-" + KEY[r.mode]; st.textContent = "דווח היום: " + SHORT[r.mode] + (r.sent ? " · " + r.sent : "") + (r.by ? " · " + r.by : ""); }
+  else { st.className = "mv-status k-mis"; st.textContent = "טרם דווח היום"; }
+  el("mv-rform").hidden = !!d.shabbat; el("mv-shabbat").hidden = !d.shabbat;
+  PICK = { mode: r ? r.mode : "", grades: r && r.grades ? r.grades.split(/,\s*/) : [] };
+  el("mv-note").value = r ? r.note || "" : "";
+  paintPick();
+  el("mv-send").querySelector("span").textContent = r ? "עדכון הדיווח של היום" : "שליחת הדיווח להיום";
+  /* השבוע */
+  var by = {}; d.week.forEach(function(x){ by[x.date] = x; });
+  var days = [0, 1, 2, 3, 4, 5].map(function(i){ return add(d.weekStart, i); });
+  el("mv-rweek").innerHTML = "<h3>השבוע של בית הספר</h3>" + days.map(function(s){
+    var x = by[s], cls = x ? " k-" + KEY[x.mode] : "";
+    return '<div class="mv-day' + cls + (s === d.today ? " today" : "") + '"><b>' + DAYL[dow(s)] + " " + dm(s) + "</b>" +
+      '<span class="m">' + (x ? esc(SHORT[x.mode]) + (x.grades ? " · " + esc(x.grades) : "") : (s < d.today ? "לא דווח" : s === d.today ? "היום" : "—")) + "</span></div>";
+  }).join("");
+}
+function paintPick(){
+  el("mv-modes").innerHTML = MODES.map(function(m){
+    return '<button type="button" class="mv-mode k-' + KEY[m] + '" data-m="' + esc(m) + '" aria-pressed="' + (PICK.mode === m) + '">' + ICON[m] + "<span>" + esc(m) + "</span></button>";
+  }).join("");
+  el("mv-grades").hidden = PICK.mode !== "למידה היברידית";
+  el("mv-gchips").innerHTML = GRADES.map(function(g){
+    return '<button type="button" class="mv-chip" data-g="' + esc(g) + '" aria-pressed="' + (PICK.grades.indexOf(g) > -1) + '">' + esc(g) + "</button>";
+  }).join("");
+}
+el("mv-modes").addEventListener("click", function(e){
+  var b = e.target.closest("[data-m]"); if (!b) return;
+  PICK.mode = b.getAttribute("data-m"); paintPick(); msg("mv-rmsg", "");
+});
+el("mv-gchips").addEventListener("click", function(e){
+  var b = e.target.closest("[data-g]"); if (!b) return;
+  var g = b.getAttribute("data-g"), i = PICK.grades.indexOf(g);
+  if (i > -1) PICK.grades.splice(i, 1); else PICK.grades.push(g);
+  paintPick();
+});
+el("mv-rsel").addEventListener("change", function(){ msg("mv-rmsg", ""); loadMine(this.value); });
+el("mv-send").addEventListener("click", function(){
+  if (!PICK.mode) { msg("mv-rmsg", ERR.badmode); return; }
+  if (PICK.mode === "למידה היברידית" && !PICK.grades.length) { msg("mv-rmsg", ERR.nogrades); return; }
+  var btn = this; btn.disabled = true; msg("mv-rmsg", "שולחים…", true);
+  post({ action: "mitveReport", school: MINE.school.id, date: MINE.today, mode: PICK.mode,
+    grades: PICK.mode === "למידה היברידית" ? PICK.grades : [], note: el("mv-note").value }).then(function(d){
+    btn.disabled = false;
+    if (!d || !d.ok) { msg("mv-rmsg", errText(d)); if (d && d.error === "badlogin") { lsDel("ts.staff.v1"); start(); } return; }
+    msg("mv-rmsg", d.updated ? "הדיווח של היום עודכן. תודה!" : "הדיווח נשמר. תודה!", true);
+    MINE.report = d.report;
+    MINE.week = MINE.week.filter(function(x){ return x.date !== d.report.date; }).concat([d.report]);
+    paintMine(); toast("הדיווח נשמר");
+    track("מתווה למידה", "דיווח");
+    if (NAT.data && NAT.data.weekStart === MINE.weekStart) loadWeek(NAT.data.weekStart);
+  });
+});
+
+/* ---------- מבט ארצי ---------- */
+var NAT = { loaded: false, data: null, day: "", mode: "", today: "" };
+function loadWeek(anchor){
+  msg("mv-nmsg", "טוענים…", true);
+  return post({ action: "mitveWeek", week: anchor }).then(function(d){
+    if (!d || !d.ok) { msg("mv-nmsg", errText(d)); return; }
+    msg("mv-nmsg", "");
+    NAT.data = d; NAT.today = d.today;
+    var days = weekDays();
+    if (days.indexOf(NAT.day) < 0) NAT.day = days.indexOf(d.today) > -1 ? d.today : days[0];
+    if (!NAT.filled) fillFilters();
+    paintNat();
+  });
+}
+function weekDays(){
+  var w = NAT.data.weekStart, out = [0, 1, 2, 3, 4].map(function(i){ return add(w, i); });
+  var fri = add(w, 5);
+  if (NAT.data.rows.some(function(x){ return x.date === fri; }) || NAT.day === fri || NAT.data.today === fri) out.push(fri);
+  return out;
+}
+function uniq(a){ return a.filter(function(x, i){ return x && a.indexOf(x) === i; }).sort(function(x, y){ return x.localeCompare(y, "he"); }); }
+function opts(id, label, vals){ el(id).innerHTML = '<option value="">' + label + "</option>" + vals.map(function(v){ return '<option value="' + esc(v) + '">' + esc(v) + "</option>"; }).join(""); }
+function fillFilters(){
+  NAT.filled = true;
+  var S = NAT.data.schools;
+  opts("mv-fnet", "כל הרשתות", uniq(S.map(function(s){ return s.net; })));
+  opts("mv-fdist", "כל המחוזות", uniq(S.map(function(s){ return s.dist; })));
+  opts("mv-fsec", "כל המגזרים", uniq(S.map(function(s){ return s.sector; })));
+  el("mv-fmode").innerHTML = '<option value="">הכול</option>' + MODES.map(function(m){ return '<option value="' + esc(m) + '">' + esc(m) + "</option>"; }).join("") + '<option value="none">טרם דיווחו</option>';
+}
+function rowsBy(){ var m = {}; NAT.data.rows.forEach(function(x){ m[x.id + "|" + x.date] = x; }); return m; }
+function filtered(BY){
+  var q = el("mv-q").value.trim(), fn = el("mv-fnet").value, fd = el("mv-fdist").value, fs = el("mv-fsec").value, fm = el("mv-fmode").value;
+  return NAT.data.schools.filter(function(s){
+    if (q && s.name.indexOf(q) < 0 && s.semel.indexOf(q) < 0) return false;
+    if (fn && s.net !== fn) return false;
+    if (fd && s.dist !== fd) return false;
+    if (fs && s.sector !== fs) return false;
+    if (fm) { var x = BY[s.id + "|" + NAT.day]; if (fm === "none" ? !!x : !x || x.mode !== fm) return false; }
+    return true;
+  });
+}
+function cell(x){
+  if (!x) return '<span class="mv-cell none">—</span>';
+  return '<span class="mv-cell k-' + KEY[x.mode] + '">' + esc(SHORT[x.mode]) + (x.grades ? "<small>" + esc(x.grades) + "</small>" : "") + "</span>";
+}
+function notesOf(s, days, BY){
+  return days.map(function(d){ var x = BY[s.id + "|" + d]; return x && x.note ? dm(d) + ": " + x.note : ""; }).filter(Boolean);
+}
+function paintNat(){
+  var d = NAT.data, days = weekDays(), BY = rowsBy();
+  el("mv-wlabel").textContent = dm(days[0]) + "–" + dmy(days[days.length - 1]);
+  el("mv-wnext").disabled = add(d.weekStart, 7) > d.today;
+  el("mv-wnow").hidden = d.weekStart === weekStart(d.today);
+  el("mv-days").innerHTML = days.map(function(s){
+    var n = d.rows.filter(function(x){ return x.date === s; }).length;
+    return '<button type="button" role="tab" aria-selected="' + (s === NAT.day) + '" class="' + (s === NAT.day ? "on" : "") + '" data-d="' + s + '">' +
+      DAYL[dow(s)] + " " + dm(s) + "<small>" + (s > d.today ? "—" : n + "/64") + "</small></button>";
+  }).join("");
+  /* סיכום היום שנבחר — על כל 64 */
+  var cnt = { none: 0 }; MODES.forEach(function(m){ cnt[m] = 0; });
+  d.schools.forEach(function(s){ var x = BY[s.id + "|" + NAT.day]; if (x) cnt[x.mode]++; else cnt.none++; });
+  var fm = el("mv-fmode").value;
+  el("mv-tiles").innerHTML = MODES.map(function(m){
+    return '<button type="button" class="mv-tile k-' + KEY[m] + (fm === m ? " on" : "") + '" data-f="' + esc(m) + '"><b>' + cnt[m] + "</b><span>" + esc(m) + "</span></button>";
+  }).join("") + '<button type="button" class="mv-tile k-mis' + (fm === "none" ? " on" : "") + '" data-f="none"><b>' + cnt.none + "</b><span>טרם דיווחו</span></button>";
+  /* מי טרם דיווח — ביום שנבחר, לפי הסינון של רשת/מחוז/מגזר/חיפוש */
+  var future = NAT.day > d.today;
+  var save = el("mv-fmode").value; el("mv-fmode").value = "";
+  var base = filtered(BY); el("mv-fmode").value = save;
+  var miss = base.filter(function(s){ return !BY[s.id + "|" + NAT.day]; });
+  var mb = el("mv-miss");
+  mb.hidden = future || !miss.length || dow(NAT.day) === 5;
+  if (!mb.hidden) mb.innerHTML = "<h3>טרם דיווחו · יום " + DAYN[dow(NAT.day)] + " " + dm(NAT.day) + " · " + miss.length + ' בתי ספר<button type="button" class="mv-btn sm" id="mv-copy">העתקת הרשימה</button></h3><p>' +
+    miss.map(function(s){ return esc(s.name); }).join(" · ") + "</p>";
+  NAT.miss = miss;
+  /* הטבלה */
+  var list = filtered(BY);
+  el("mv-cnt").textContent = "מוצגים " + list.length + " מתוך 64 בתי ספר";
+  var head = "<thead><tr><th>סמל</th><th>בית הספר</th><th>רשת</th><th>מחוז</th><th>מגזר</th>" +
+    days.map(function(s){ return '<th class="' + (s === NAT.day ? "sel" : "") + '">' + DAYL[dow(s)] + " " + dm(s) + "</th>"; }).join("") + "<th>הערות</th></tr></thead>";
+  el("mv-tbl").innerHTML = head + "<tbody>" + list.map(function(s){
+    return '<tr><td dir="ltr">' + esc(s.semel) + '</td><td class="nm">' + esc(s.name) + (s.city ? "<small>" + esc(s.city) + "</small>" : "") + "</td><td>" + esc(s.net) + "</td><td>" + esc(s.dist) + "</td><td>" + esc(s.sector) + "</td>" +
+      days.map(function(dd){ return "<td>" + cell(BY[s.id + "|" + dd]) + "</td>"; }).join("") +
+      '<td class="note">' + notesOf(s, days, BY).map(esc).join("<br>") + "</td></tr>";
+  }).join("") + "</tbody>";
+  if (!list.length) el("mv-tbl").innerHTML = head + '<tbody><tr><td colspan="' + (6 + days.length) + '"><div class="mv-empty">אין בתי ספר שמתאימים לסינון.</div></td></tr></tbody>';
+  el("mv-cards").innerHTML = list.length ? list.map(function(s){
+    var x = BY[s.id + "|" + NAT.day], nt = notesOf(s, days, BY);
+    return '<div class="mv-sc"><div class="top"><div><b>' + esc(s.name) + "</b><small>" + esc([s.net, s.dist, s.sector].join(" · ")) + "</small></div>" + cell(x) + "</div>" +
+      '<div class="days" style="--n:' + days.length + '">' + days.map(function(dd){
+        var y = BY[s.id + "|" + dd];
+        return '<div class="' + (y ? "k-" + KEY[y.mode] : "") + '"><i>' + DAYL[dow(dd)] + "</i>" + (y ? esc(SHORT[y.mode]) : "—") + "</div>";
+      }).join("") + "</div>" + (nt.length ? '<div class="note">' + nt.map(esc).join("<br>") + "</div>" : "") + "</div>";
+  }).join("") : '<div class="mv-empty">אין בתי ספר שמתאימים לסינון.</div>';
+  /* כותרת להדפסה */
+  el("mv-phead").innerHTML = "<b>דיווח מתווה למידה · " + esc(el("mv-wlabel").textContent) + "</b><div>" + esc(filterText()) + " · " + list.length + " בתי ספר · הודפס " + dmy(localToday()) + "</div>";
+}
+function filterText(){
+  var parts = [];
+  [["mv-fnet", "רשת"], ["mv-fdist", "מחוז"], ["mv-fsec", "מגזר"]].forEach(function(p){ var v = el(p[0]).value; if (v) parts.push(p[1] + ": " + v); });
+  var fm = el("mv-fmode").value;
+  if (fm) parts.push((fm === "none" ? "טרם דיווחו" : fm) + " ביום " + DAYL[dow(NAT.day)] + " " + dm(NAT.day));
+  var q = el("mv-q").value.trim(); if (q) parts.push("חיפוש: " + q);
+  return parts.length ? parts.join(" · ") : "כל בתי הספר";
+}
+el("mv-days").addEventListener("click", function(e){ var b = e.target.closest("[data-d]"); if (!b) return; NAT.day = b.getAttribute("data-d"); paintNat(); });
+el("mv-tiles").addEventListener("click", function(e){
+  var b = e.target.closest("[data-f]"); if (!b) return;
+  var f = b.getAttribute("data-f"), s = el("mv-fmode");
+  s.value = s.value === f ? "" : f; paintNat();
+});
+["mv-fnet", "mv-fdist", "mv-fsec", "mv-fmode"].forEach(function(id){ el(id).addEventListener("change", paintNat); });
+el("mv-q").addEventListener("input", paintNat);
+el("mv-clear").addEventListener("click", function(){ ["mv-q", "mv-fnet", "mv-fdist", "mv-fsec", "mv-fmode"].forEach(function(id){ el(id).value = ""; }); paintNat(); });
+el("mv-wprev").addEventListener("click", function(){ NAT.day = ""; loadWeek(add(NAT.data.weekStart, -7)); });
+el("mv-wnext").addEventListener("click", function(){ NAT.day = ""; loadWeek(add(NAT.data.weekStart, 7)); });
+el("mv-wnow").addEventListener("click", function(){ NAT.day = ""; loadWeek(NAT.today); });
+el("mv-nat").addEventListener("click", function(e){
+  if (!e.target.closest("#mv-copy")) return;
+  var txt = NAT.miss.map(function(s){ return s.name; }).join("\n");
+  var done = function(){ toast("הועתקו " + NAT.miss.length + " בתי ספר"); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function(){ fallbackCopy(txt); done(); });
+  else { fallbackCopy(txt); done(); }
+});
+function fallbackCopy(t){ var a = document.createElement("textarea"); a.value = t; a.style.position = "fixed"; a.style.opacity = "0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch(e){} a.remove(); }
+el("mv-print").addEventListener("click", function(){ track("מתווה למידה", "הדפסה"); window.print(); });
+el("mv-xls").addEventListener("click", function(){
+  if (!window.XLSX) { toast("רכיב האקסל עוד נטען — נסו שוב בעוד רגע"); return; }
+  var days = weekDays(), BY = rowsBy(), list = filtered(BY);
+  var head = ["סמל מוסד", "שם בית הספר", "רשת", "מחוז"].concat(days.map(function(s){ return "מתווה למידה " + dm(s); }), ["רשות מקומית קרובה", "מגזר", "הערות"]);
+  var aoa = [head].concat(list.map(function(s){
+    return [Number(s.semel) || s.semel, s.name, s.net, s.dist].concat(days.map(function(dd){
+      var x = BY[s.id + "|" + dd]; return x ? x.mode + (x.grades ? " (" + x.grades + ")" : "") : "";
+    }), [s.city, s.sector, notesOf(s, days, BY).join(" · ")]);
+  }));
+  var ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"] = head.map(function(h, i){ return { wch: i === 1 ? 30 : i === head.length - 1 ? 40 : i >= 4 && i < 4 + days.length ? 24 : 12 }; });
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, (dm(days[0]) + "-" + dm(days[days.length - 1])).replace(/\//g, "_"));
+  wb.Workbook = { Views: [{ RTL: true }] };
+  var fname = "דיווח מתווה למידה " + dm(days[0]).replace("/", "_") + "-" + dm(days[days.length - 1]).replace("/", "_") + ".xlsx";
+  XLSX.writeFile(wb, fname);
+  toast("הקובץ ירד · " + list.length + " בתי ספר");
+  track("מתווה למידה", "אקסל");
+});
+
+/* ---------- הדגמה ---------- */
+var DEMO_DB = null;
+function demoInit(){
+  var today = localToday(), ws = weekStart(today);
+  var S = [["sch_039","84003","עמל רהט","עמל","מרכז","ערבי","רהט"],["sch_031","54009","מעיינות","עמל","צפון","חרדי","צפת"],["sch_a","65007","אורט בית הערבה","אורט","ירושלים","יהודי","ירושלים"],
+    ["sch_b","52901","עתיד כרמיאל","עתיד","צפון","יהודי","כרמיאל"],["sch_c","54100","אל אמאני סכנין","סכנין","צפון","ערבי","סכנין"],["sch_d","83424","מצפה רמון","דרור בתי חינוך","דרום","יהודי","מצפה רמון"],
+    ["sch_e","83425","דרור נווה מדבר","דרור בתי חינוך","דרום","ערבי","נווה מדבר"],["sch_f","46101","נחלים","נחלים","מרכז","דתי","חבל מודיעין"],["sch_g","44008","תיכון החממה","עמל","מרכז","יהודי","הוד השרון"],
+    ["sch_h","55003","אורט כרמל","אורט","צפון","ערבי","חיפה"],["sch_i","61902","הדר","בית שלומית","ירושלים","חרדי","ירושלים"],["sch_j","42919","עתיד פלמחים","עתיד","מרכז","יהודי","שורק"]];
+  var schools = S.map(function(a){ return { id: a[0], semel: a[1], name: a[2], net: a[3], dist: a[4], sector: a[5], city: a[6] }; });
+  for (var i = schools.length; i < 64; i++) schools.push({ id: "sch_x" + i, semel: String(70000 + i), name: "בית ספר לדוגמה " + (i + 1), net: ["עתיד","עמל","סכנין","אורט"][i % 4], dist: ["צפון","מרכז","דרום","ירושלים"][i % 4], sector: ["יהודי","ערבי","חרדי"][i % 3], city: "" });
+  var rows = [], seed = 7;
+  function rnd(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  [0, 1, 2, 3, 4].forEach(function(k){
+    var dd = add(ws, k); if (dd > today) return;
+    schools.forEach(function(s, i){
+      if (i === 0) return;
+      if (dd === today && rnd() < .3) return;
+      var p = rnd(), m = p < .55 ? MODES[0] : p < .75 ? MODES[1] : p < .9 ? MODES[2] : MODES[3];
+      rows.push({ date: dd, id: s.id, mode: m, grades: m === MODES[1] ? "י״א, י״ב" : "", note: i === 4 && k === 1 ? "באישור הרשות המקומית" : "", by: "מנהל.ת לדוגמה", sent: "08:1" + (i % 10) });
+    });
+  });
+  DEMO_DB = { today: today, ws: ws, schools: schools, rows: rows };
+}
+function demoCall(b){
+  if (!DEMO_DB) demoInit();
+  var db = DEMO_DB, me = db.schools[0];
+  if (b.action === "mitveMine") {
+    var wk = db.rows.filter(function(x){ return x.id === me.id; });
+    return { ok: true, today: db.today, shabbat: dow(db.today) === 6, weekStart: db.ws, ministry: true, canReport: true, school: me,
+      schools: [{ id: me.id, name: me.name }], week: wk, report: wk.filter(function(x){ return x.date === db.today; })[0] || null };
+  }
+  if (b.action === "mitveReport") {
+    var r = { date: db.today, id: me.id, mode: b.mode, grades: (b.grades || []).join(", "), note: b.note || "", by: "מנהל.ת לדוגמה", sent: "09:00" };
+    var had = db.rows.some(function(x){ return x.id === me.id && x.date === db.today; });
+    db.rows = db.rows.filter(function(x){ return !(x.id === me.id && x.date === db.today); }).concat([r]);
+    return { ok: true, updated: had, report: r };
+  }
+  if (b.action === "mitveWeek") {
+    var w = weekStart(b.week || db.today);
+    return { ok: true, today: db.today, weekStart: w, schools: db.schools, rows: db.rows.filter(function(x){ return x.date >= w && x.date <= add(w, 6); }) };
+  }
+  return { ok: false, error: "server" };
+}
+
+if (DEMO) el("mv-demo").hidden = false;
+start();
+})();
+</script>
+<script src="site.js" defer></script>
+<script src="search.js" defer></script>
+<script>window.OGEN_WIDGET_POSITION="left";</script>
+<script src="https://meytalp-dev.github.io/ogen/ogen-widget.js" defer></script>
+<script src="feedback.js" defer></script>
+</body>
+</html>
