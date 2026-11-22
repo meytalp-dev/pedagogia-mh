@@ -91,8 +91,11 @@
   function showLogin(msg) {
     document.body.classList.add('is-login');
     var DEMO = 'בית ספר בדיקה', demo = /[?&]demo\b/.test(location.search);
-    var last = demo ? DEMO : (store('mz_school') || '');
     var list = demo ? SCHOOLS.concat([DEMO]) : SCHOOLS;
+    /* ?s=<שם בית הספר> — מגיעים מקישור (למשל הדף המלווה של הכנס) כשבית הספר כבר בחור */
+    var qs = /[?&]s=([^&]*)/.exec(location.search), fromUrl = '';
+    if (qs) { try { fromUrl = decodeURIComponent(qs[1].replace(/\+/g, ' ')); } catch (e) {} }
+    var last = demo ? DEMO : (fromUrl && list.indexOf(fromUrl) > -1 ? fromUrl : (store('mz_school') || ''));
     $('#app').innerHTML =
       '<section class="login card">' +
       '<div class="login-head">' + IC.compass + '<div><h2>כניסה למצפן של בית הספר</h2><p>כל בית ספר עובד במרחב משלו. רק מי שיש לו את הקוד של בית הספר רואה את מה שנכתב בו.</p></div></div>' +
@@ -234,6 +237,7 @@
     return '<section class="card intro">' +
       '<p class="eyebrow">מדריך לתהליך העבודה הבית ספרי</p><h2>' + esc(I.title) + '</h2>' +
       '<p class="lead">כלי עבודה לפיתוח שפה משותפת, זיהוי חוזקות ושרטוט צעדי ההתפתחות הבאים של בית הספר. <b>' + esc(I.note) + '</b></p>' +
+      '<p><a class="btn ghost sm" href="hasipur-habeit-sifri.pdf" target="_blank" rel="noopener">' + IC.link + 'החוברת המלאה: הסיפור הבית ספרי (PDF)</a></p>' +
       '<div class="goals">' + I.goals.map(function (g) { var m = /^\d\.\s*([^—]+)—\s*(.*)$/.exec(g); return '<div class="goal"><b>' + esc(m ? m[1].trim() : '') + '</b><span>' + esc(m ? m[2] : g) + '</span></div>'; }).join('') + '</div>' +
       '<h3>ארבע הרמות</h3><div class="lvl-legend">' + I.levels.map(function (l, i) { return '<div class="lg l' + (i + 1) + '">' + IC['l' + (i + 1)] + '<b>' + esc(l.name) + '</b><span>' + esc(l.desc) + '</span></div>'; }).join('') + '</div>' +
       '<h3>שלושת שלבי התהליך</h3><ol class="phases">' +
