@@ -37,7 +37,7 @@
   var ERR = {
     network: 'אין חיבור לשרת. בודקים את האינטרנט ומנסים שוב.', server: 'משהו השתבש בשרת. מנסים שוב בעוד רגע.',
     forbidden: 'אין לחשבון הזה הרשאה לפעולה.', notfound: 'הוועדה לא נמצאה.', closed: 'הוועדה סגורה. המנהל.ת יכול.ה לפתוח אותה מחדש.', notclosed: 'חותמים אחרי שסוגרים את הוועדה.', nofile: 'המסמך עדיין לא זמין במערכת החדשה.',
-    toolong: 'התחום ארוך מדי לשמירה. כדאי לקצר או להעביר חלק לקובץ.', toolarge: 'הקובץ גדול מ-8MB.', toomany: 'כבר יש 10 תמונות בוועדה הזו. כדי להוסיף, מוחקים תמונה אחרת.', badmail: 'כתובת המייל לא תקינה.', otherschool: 'המייל הזה רשום בנספח בעלי התפקידים בבית ספר אחר, ולכן אי אפשר לשייך אותו לכאן. אם זו טעות, פנו למרחב הפדגוגי.',empty: 'לא נכתב טקסט.',
+    toolong: 'התחום ארוך מדי לשמירה. כדאי לקצר או להעביר חלק לקובץ.', toolarge: 'הקובץ גדול מ-8MB.', toolargeNet: 'מהרשת הזאת אפשר להעלות תמונה עד 3MB. מקטינים את התמונה או מעלים מרשת אחרת (למשל מהטלפון).',toomany: 'כבר יש 10 תמונות בוועדה הזו. כדי להוסיף, מוחקים תמונה אחרת.', badmail: 'כתובת המייל לא תקינה.', otherschool: 'המייל הזה רשום בנספח בעלי התפקידים בבית ספר אחר, ולכן אי אפשר לשייך אותו לכאן. אם זו טעות, פנו למרחב הפדגוגי.',empty: 'לא נכתב טקסט.',
     notlisted: 'המייל הזה לא ברשימה. אפשר לנסות מייל אחר שלך, או ללחוץ "נתקלתם בבעיה?" למטה.',
     cooldown: 'קוד נשלח לפני פחות מדקה. בודקים במייל (גם בספאם).', quota: 'הגענו למכסת המיילים של היום. מנסים שוב מחר.',
     nothing: 'אין מה לשלוח: הכול כבר נשלח.', noprincipal: 'אין לבית הספר מנהל.ת עם מייל ברשימה. פנו למרחב הפדגוגי.',
@@ -47,10 +47,18 @@
 
   function api(action, data) {
     var body = Object.assign({ action: action, token: S.token }, data || {});
-    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+    /* ApiRoute (../api-route.js): ברשת שחוסמת את גוגל (משרד העבודה) עוברים דרך api.pedagogiamh.co.il */
+    var route = window.ApiRoute ? window.ApiRoute.url(API) : Promise.resolve(API);
+    return route.then(function (u) {
+      var text = JSON.stringify(body);
+      /* התחנה ב-Vercel לא מקבלת יותר מ-4MB; מעל זה הדפדפן היה מקבל "אין חיבור" במקום הסבר */
+      if (u !== API && text.length > 4e6) return { json: function () { return { ok: false, error: 'toolargeNet' }; } };
+      return fetch(u, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: text });
+    })
       .then(function (r) { return r.json(); })
-      .catch(function () { return { ok: false, error: 'network' }; })
+      .catch(function () { if (window.ApiRoute) window.ApiRoute.failed(); return { ok: false, error: 'network' }; })
       .then(function (r) {
+        if (r && r.error === 'toolarge' && window.ApiRoute && window.ApiRoute.mode() === 'proxy') r.error = 'toolargeNet';
         if (r && r.error === 'badsession') { logout(true); throw new Error('session'); }
         return r;
       });

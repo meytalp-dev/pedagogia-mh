@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="/analytics.js" defer></script>
+<script src="/api-route.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>אישור השתלמות בית ספרית · תשפ״ז</title>
@@ -222,11 +223,17 @@ function fetchJson(url, opts, tries){
   tries = tries || 3;
   var attempt = function(n){
     var ctl = window.AbortController ? new AbortController() : null;
-    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 15000);
+    var timer;
     var o = {};
     for (var k in (opts || {})) o[k] = opts[k];
     if (ctl) o.signal = ctl.signal;
-    return fetch(url, o)
+    /* ApiRoute (api-route.js): ברשת שחוסמת את גוגל (משרד העבודה) עוברים דרך api.pedagogiamh.co.il.
+       ניסיון שנכשל מאפס את הבחירה, והניסיון הבא בודק מחדש. */
+    var route = window.ApiRoute ? window.ApiRoute.url(url) : Promise.resolve(url);
+    return route.then(function(u){
+      timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 15000);
+      return fetch(u, o);
+    })
       .then(function(r){
         clearTimeout(timer);
         if (!r.ok) throw new Error("http " + r.status);
@@ -234,6 +241,7 @@ function fetchJson(url, opts, tries){
       })
       .catch(function(e){
         clearTimeout(timer);
+        if (window.ApiRoute) window.ApiRoute.failed();
         if (n >= tries) throw e;
         return new Promise(function(res){ setTimeout(res, 900 * n); }).then(function(){
           return attempt(n + 1);
@@ -418,13 +426,15 @@ function decide(decision){
   (decision === "approve" ? a : r).textContent = "שולח…";
   $("badBox").classList.remove("on");
 
-  fetch(API_URL, {
-    method: "POST",
-    headers: {"Content-Type":"text/plain;charset=utf-8"},
-    body: JSON.stringify({ action:"decide", t:TOKEN, decision:decision, who:$("who").value, note:note })
+  (window.ApiRoute ? window.ApiRoute.url(API_URL) : Promise.resolve(API_URL)).then(function(u){
+    return fetch(u, {
+      method: "POST",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({ action:"decide", t:TOKEN, decision:decision, who:$("who").value, note:note })
+    });
   })
   .then(function(x){ return x.json(); })
-  .catch(function(){ return {ok:false, error:"network"}; })
+  .catch(function(){ if (window.ApiRoute) window.ApiRoute.failed(); return {ok:false, error:"network"}; })
   .then(function(j){
     if (j && j.ok){ done(decision, note); return; }
     a.disabled = false; r.disabled = false;
