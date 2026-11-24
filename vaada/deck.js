@@ -146,7 +146,16 @@ var VAADA_DECK = (function () {
       var aklimT = scoresF ? aklimSlides(val(sec, scoresF), scoresF, sec.id) : [];
       aklimT.forEach(function (s) { s.kick = domName[sec.dom] || ''; slides.push(s); });
       var has = sec.fields.some(function (f) { return f !== scoresF && hasValue(f, val(sec, f)); });
-      if (!has && !hasFile) { if (!sec.opt && !aklimT.length) missing.push(sec.title); return; }
+      if (!has && !hasFile) {
+        /* תחום חובה ריק: שקף עם הודעה במצגת האב, כדי שהוועדה תראה שהוא קיים ולא מולא (מיטל, 22.11.26).
+           empty=true: בשקפים הנבחרים הוא לא נכנס, שם יש שקף מרוכז "תחומים שטרם מולאו" */
+        if (!sec.opt && !aklimT.length) {
+          missing.push(sec.title);
+          S(sec.title, SEC_COLOR[sec.id] || C.blue, sec.id).set({ empty: true })
+            .table([12], null, [['התחום טרם מולא' + (sec.who ? ' · ממלא.ת: ' + sec.who : '')]]);
+        }
+        return;
+      }
       var color = SEC_COLOR[sec.id] || C.blue, sl = S(sec.title, color, sec.id);
       function get(k) { var f = fieldOf(sec, k); return { f: f, v: f ? val(sec, f) : null }; }
 
@@ -313,7 +322,7 @@ var VAADA_DECK = (function () {
     function secSlides(id) {
       if (!id || id === 'shkafim' || used[id]) return;
       used[id] = true;
-      master.slides.filter(function (s) { return s.sec === id; }).forEach(function (s) { slides.push(s); });
+      master.slides.filter(function (s) { return s.sec === id && !s.empty; }).forEach(function (s) { slides.push(s); });
     }
 
     /* רקע לפני התחנות: הסיפור הבית ספרי, נתוני בית הספר וכוח אדם. תחום שנבחר כתחנה נשאר ליד התחנה שלו */

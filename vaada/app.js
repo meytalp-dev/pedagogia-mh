@@ -1478,7 +1478,7 @@
     var V = S.V, out = collectSlides(true);
     var nSt = realStations(V);
     var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן בשקפים הנבחרים לא יהיו שקפי תחנות. כל הנתונים והגרפים שמולאו נכנסים בכל מקרה. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
-    var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא ולא ייכנס' : out.missing.length + ' תחומים עוד לא מולאו ולא ייכנסו') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
+    var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא. במצגת האב הוא מופיע עם ההודעה "טרם מולא"' : out.missing.length + ' תחומים עוד לא מולאו. במצגת האב הם מופיעים עם ההודעה "טרם מולא"') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
       '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, התחנות, כל הנתונים והגרפים שמולאו, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
       '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה, וכותבים הערות לכל תחום. ההערות מופיעות לממלאים בטופס התחום.</span></a></div>' +
@@ -1506,23 +1506,19 @@
   document.addEventListener('webkitfullscreenchange', fsSync);
   /* שקף ארוך מתכווץ עד שהכול נכנס, בלי פס גלילה בתוך השקף (מיטל, 17.11.26).
      scale ולא zoom: הרוחב בפריסה מוגדל ב-1/z, כך שאחרי ההקטנה התוכן תופס בדיוק את רוחב השקף */
-  function fitSlide() {
-    var main = document.querySelector('#slidewrap .dk-main');
-    if (!main) return;
+  function fitBox(main) {
     var box = main.querySelector('.dk-fit');
     if (!box) {
-      box = document.createElement('div'); box.className = 'dk-fit';
+      box = main.ownerDocument.createElement('div'); box.className = 'dk-fit';
       while (main.firstChild) box.appendChild(main.firstChild);
       main.appendChild(box);
     }
-    var slide = main.closest('.slide');
     box.style.transform = ''; box.style.width = ''; main.classList.remove('fitted');
-    slide.style.aspectRatio = ''; slide.style.height = '';
-    if (getComputedStyle(main).overflowY !== 'auto') return;   /* בטלפון השקף נפתח לגובה, אין מה להקטין */
-    /* קודם השקף נמתח לגובה המסך (לא פחות מ-16:9), ורק אם עדיין לא נכנס, התוכן מוקטן */
-    var top = slide.getBoundingClientRect().top + window.scrollY, room = Math.floor(window.innerHeight - top - 14);
-    if (room > slide.clientHeight) { slide.style.aspectRatio = 'auto'; slide.style.height = room + 'px'; }
-    var cs = getComputedStyle(main), avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    return box;
+  }
+  /* מקטין את התוכן עד שנכנס, לא פחות מ-0.45. מחזיר false אם גם בהקטנה המרבית לא נכנס */
+  function shrink(main, box) {
+    var cs = main.ownerDocument.defaultView.getComputedStyle(main), avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
     var z = 1;
     for (var i = 0; i < 6 && box.scrollHeight * z > avail + 1; i++) {
       z = Math.max(0.45, z * avail / (box.scrollHeight * z));
@@ -1530,6 +1526,66 @@
       box.style.transform = 'scale(' + z + ')';
     }
     if (z < 1) main.classList.add('fitted');
+    return box.scrollHeight * z <= avail + 1;
+  }
+  function fitSlide() {
+    var main = document.querySelector('#slidewrap .dk-main');
+    if (!main) return;
+    var box = fitBox(main), slide = main.closest('.slide');
+    slide.style.aspectRatio = ''; slide.style.height = '';
+    if (getComputedStyle(main).overflowY !== 'auto') return;   /* בטלפון השקף נפתח לגובה, אין מה להקטין */
+    /* קודם השקף נמתח לגובה המסך (לא פחות מ-16:9), ורק אם עדיין לא נכנס, התוכן מוקטן */
+    var top = slide.getBoundingClientRect().top + window.scrollY, room = Math.floor(window.innerHeight - top - 14);
+    if (room > slide.clientHeight) { slide.style.aspectRatio = 'auto'; slide.style.height = room + 'px'; }
+    shrink(main, box);
+  }
+
+  /* ===== הורדה ל-PDF (מיטל, 24.11.26) =====
+     השקפים נבנים בדף נפרד (pdf.html) ברוחב קבוע של 1280px, כך שגם בטלפון ה-PDF יוצא בשקפים מלאים של 16:9.
+     שומרים דרך חלון ההדפסה של הדפדפן ("שמירה כ-PDF"): הטקסט נשאר טקסט, והקובץ קטן.
+     בלי הרישום שבצד (הערות, החלטות, הערות הפיקוח): רק השקפים.
+     pdf.html קורא ל-window.opener.VAADA_PDF(window) כשהוא נטען */
+  function deckPdf(all) {
+    var V = S.V, v = V.v, slides = collectSlides(all).slides, kind = all ? 'מצגת אב' : 'שקפים נבחרים';
+    window.VAADA_PDF = function (w) { window.VAADA_PDF = null; pdfFill(w, slides, kind, 'מעגל - ' + v.school + ' - ' + kind); };
+    var w = window.open('pdf.html', '_blank');
+    if (!w) { window.VAADA_PDF = null; toast('הדפדפן חסם את החלון של ה-PDF. צריך לאפשר חלונות קופצים באתר ולנסות שוב'); }
+  }
+  function pdfFill(w, slides, kind, title) {
+    var d = w.document;
+    d.title = title;
+    d.getElementById('pmsg').textContent = 'מכינים ' + slides.length + ' שקפים…';
+    d.getElementById('pdeck').innerHTML = slides.map(function (sl, i) {
+      return '<div class="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl, { n: i + 1, of: slides.length, kind: kind }) + '</div></div>';
+    }).join('');
+    function loaded(el) {
+      return new Promise(function (ok) {
+        if (el.tagName === 'LINK' ? el.sheet : el.complete && el.naturalWidth) return ok();
+        el.addEventListener('load', ok); el.addEventListener('error', ok);
+      });
+    }
+    var styles = Array.prototype.map.call(d.querySelectorAll('link[rel=stylesheet]'), loaded);
+    /* תמונות מהדרייב: נטענות דרך השרת, כמו בהצגה */
+    var imgs = Array.prototype.map.call(d.querySelectorAll('[data-img]'), function (img) {
+      return api('file', { fileId: img.getAttribute('data-img') }).then(function (r) {
+        if (!r.ok) return;
+        img.src = 'data:' + r.mime + ';base64,' + r.b64;
+        return loaded(img);
+      }).catch(function () {});
+    });
+    Promise.all(styles.concat(imgs)).then(function () { return d.fonts && d.fonts.ready; }).then(function () {
+      /* כל שקף נכנס לעמוד אחד. שקף שגם בהקטנה לא נכנס, ממשיך לעמוד הבא ולא נחתך */
+      Array.prototype.forEach.call(d.querySelectorAll('.pdeck .dk-main'), function (main) {
+        var box = fitBox(main);
+        if (!shrink(main, box)) { fitBox(main); main.closest('.slidewrap').classList.add('grow'); }
+      });
+      var go = d.getElementById('pgo');
+      d.getElementById('pmsg').textContent = 'בחלון שנפתח בוחרים "שמירה כ-PDF" (Save as PDF) ושומרים';
+      go.disabled = false;
+      go.onclick = function () { w.print(); };
+      d.body.setAttribute('data-ready', '1');
+      if (!isMobile()) setTimeout(function () { w.print(); }, 150);
+    });
   }
   var fitT;
   function fitSoon() { clearTimeout(fitT); fitT = setTimeout(fitSlide, 60); }
@@ -1547,10 +1603,12 @@
     shell(vHead() + '<div class="lnav">' + prevN + '<select id="lsel" aria-label="מעבר לשקף">' + slides.map(function (s, i) { return '<option value="' + i + '"' + (i === n ? ' selected' : '') + '>' + (i + 1) + '. ' + esc(s.cover ? 'פתיחה' : s.title) + '</option>'; }).join('') + '</select>' + nextN +
       (edit ? '<a class="btn small" href="' + edit + '" id="editBtn">עריכה</a>' : '') +
       (side ? '<button type="button" class="btn small" id="sideBtn" aria-pressed="' + !SIDE_HIDE + '">' + (SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום') + '</button>' : '') +
-      '<button type="button" class="btn small" id="fsBtn">' + (fsOn() ? 'יציאה ממסך מלא' : 'מסך מלא') + '</button></div>' +
+      '<button type="button" class="btn small" id="fsBtn">' + (fsOn() ? 'יציאה ממסך מלא' : 'מסך מלא') + '</button>' +
+      '<button type="button" class="btn small" id="pdfBtn">הורדה ל-PDF</button></div>' +
       '<div class="live' + (secId && !SIDE_HIDE ? '' : ' solo') + '"><div class="lmain"><div class="slidewrap" id="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl, { n: n + 1, of: slides.length, kind: all ? 'מצגת אב' : 'שקפים נבחרים' }) + '</div></div></div>' + side + '</div>');
     $('#lsel').onchange = function () { go(base + this.value); };
     if (edit) $('#editBtn').onclick = function () { BACK = { to: edit, from: base + n }; };
+    $('#pdfBtn').onclick = function () { deckPdf(all); };
     /* מסך מלא על כל הדף ולא על השקף בלבד: המעבר בין שקפים לא מוציא ממנו, והניווט והרישום נשארים (מיטל, 7.11.26) */
     $('#fsBtn').onclick = function () {
       var d = document, el = d.documentElement;

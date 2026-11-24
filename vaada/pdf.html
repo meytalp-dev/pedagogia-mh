@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<!-- רוחב קבוע של 1280: גם בטלפון השקפים נבנים בגודל מלא של 16:9, כמו ב-PDF -->
+<meta name="viewport" content="width=1280">
+<script>
+/* בטלפון: מקטינים את התצוגה כך שהשקף כולו נראה על המסך (הפריסה נשארת 1280) */
+(function () { var s = screen.width; if (s && s < 1280) document.querySelector('meta[name=viewport]').setAttribute('content', 'width=1280, initial-scale=' + (s / 1280).toFixed(3)); })();
+</script>
+<meta name="robots" content="noindex,nofollow">
+<title>מעגל · הורדה ל-PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vaada.css">
+<style>
+/* הורדת המצגת ל-PDF (מיטל, 24.11.26). השקפים מגיעים מהחלון של מעגל (app.js, deckPdf) */
+html,body{margin:0;background:#E9E3D6;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.pbar{position:sticky;top:0;z-index:2;display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;padding:16px 24px;background:#4A2F52;color:#fff;font:600 24px/1.4 Assistant,Arial,sans-serif;text-align:center}
+.pbar button{font:700 24px Assistant,Arial,sans-serif;padding:12px 30px;border-radius:40px;border:0;background:#D9A441;color:#35203C;cursor:pointer}
+.pbar button:disabled{opacity:.55;cursor:wait}
+.pdeck{padding:28px 0;display:flex;flex-direction:column;align-items:center;gap:28px}
+.pdeck .slidewrap{width:1280px;flex:none;border:0;border-radius:0}
+.pdeck .slide{width:1280px;height:720px;aspect-ratio:auto}
+/* שקף שגם בהקטנה לא נכנס: ממשיך לעמוד הבא ולא נחתך */
+.pdeck .slidewrap.grow,.pdeck .slidewrap.grow .slide,.pdeck .slidewrap.grow .dk-main{overflow:visible}
+.pdeck .slidewrap.grow .slide{height:auto;min-height:720px}
+/* בלי ריווח בסוף שקף ארוך: אחרת הריווח לבדו גולש לעמוד ריק */
+.pdeck .slidewrap.grow .dk-main{padding-bottom:0}.pdeck .slidewrap.grow .dk-body>:last-child{margin-bottom:0}
+@page{size:13.333in 7.5in;margin:0}
+@media print{
+  html,body{background:#F6F2E9}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pbar{display:none}
+  .pdeck{display:block;padding:0}
+  .pdeck .slidewrap{box-shadow:none;break-after:page;page-break-after:always}
+  .pdeck .slidewrap:last-child{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="pbar"><span id="pmsg">מכינים את השקפים…</span><button type="button" id="pgo" disabled>שמירה כ-PDF</button></div>
+<div class="pdeck" id="pdeck"></div>
+<script>
+(function () {
+  var o = null;
+  try { o = window.opener && window.opener.VAADA_PDF; } catch (e) {}
+  if (o) o(window);
+  else document.getElementById('pmsg').textContent = 'הדף הזה נפתח מתוך המצגת במעגל, בכפתור "הורדה ל-PDF".';
+})();
+</script>
+</body>
+</html>
