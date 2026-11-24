@@ -372,7 +372,7 @@
     ]);
     var nSeed = a && a.status === 'closed' ? 0 : (r.seedSecs || []).length;
     h += '<h2 class="sh">ועדת תחילת שנה ' + esc(VAADA.YEAR) + '</h2>' + tilesOf([
-      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'שקפים נבחרים או מצגת אב'],
+      [base + '/prep', 'הכנה', 'תחנות וסוגיית ליבה'], [base + '/fill', 'מילוי מצגת האב', (a ? a.done : 0) + ' מתוך ' + (a ? a.total : 18) + ' תחומים' + (nSeed ? ' · ' + count(nSeed, 'תחום אחד מוכן לבדיקה', 'תחומים מוכנים לבדיקה') : '')], [base + '/deck', 'מצגת הוועדה', 'מצגת הוועדה המלווה עם התחנות, או מצגת האב המלאה'],
       [base + '/pre', 'הערות הפיקוח', preSub(r.pre)], [base + '/recs', 'המלצות המפקח.ת', 'של המפקח.ת הפדגוגי.ת'], [base + '/tasks', 'החלטות ומשימות', 'ההחלטות מהוועדה והסטטוס שלהן'], [base + '/sign', 'פרוטוקול וחתימות', 'אחרי סגירת הוועדה']
     ]);
     h += '<div class="tl future"><h3>ועדת סיכום שנה</h3><div class="rs">' + (r.dateB ? 'מועד: ' + fmtDate(r.dateB) + ' · ' : 'אפריל–יוני · זימונים עד 15.5. ') + 'תיפתח כאן בהמשך השנה, עם המשימות של ועדת תחילת השנה.</div></div>';
@@ -510,7 +510,7 @@
     var tiles = [
       ['prep', 'הכנה', nSt ? 'נבחרו ' + count(nSt, 'תחנה אחת', 'תחנות') : 'בחירת 3–4 תחנות וסוגיית ליבה'],
       ['fill', 'מילוי מצגת האב', 'הושלמו ' + d.done + ' מתוך ' + d.total + ' תחומים'],
-      ['deck', 'מצגת הוועדה', 'שקפים נבחרים או מצגת אב, על המסך'],
+      ['deck', 'מצגת הוועדה', 'מצגת הוועדה המלווה עם התחנות, או מצגת האב המלאה'],
       ['pre', 'הערות הפיקוח', (V.preNotes || []).length ? preSub({ n: V.preNotes.length, done: V.preNotes.filter(function (n) { return n.reply || n.mark; }).length }) : 'הערות המפקחים על מצגת האב'],
       ['recs', 'המלצות המפקח.ת', V.recs.length ? count(V.recs.length, 'המלצה אחת', 'המלצות') : 'עדיין אין המלצות'],
       ['tasks', 'החלטות ומשימות', V.tasks.length ? 'בוצעו ' + doneT + ' מתוך ' + V.tasks.length : 'עדיין אין החלטות'],
@@ -1477,11 +1477,11 @@
   function viewDeck() {
     var V = S.V, out = collectSlides(true);
     var nSt = realStations(V);
-    var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן בשקפים הנבחרים לא יהיו שקפי תחנות. כל הנתונים והגרפים שמולאו נכנסים בכל מקרה. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
+    var hint = nSt ? '' : '<div class="card">עוד לא נבחרו תחנות, ולכן במצגת הוועדה המלווה לא יהיו שקפי תחנות. כל הנתונים והגרפים שמולאו נכנסים בכל מקרה. <a href="#v/' + V.v.id + '/prep">בחירת תחנות</a></div>';
     var miss = out.missing.length ? '<details class="card"><summary><b>' + (out.missing.length === 1 ? 'תחום אחד עוד לא מולא. במצגת האב הוא מופיע עם ההודעה "טרם מולא"' : out.missing.length + ' תחומים עוד לא מולאו. במצגת האב הם מופיעים עם ההודעה "טרם מולא"') + '</b></summary><div class="val" style="margin-top:8px">' + esc(out.missing.join('\n')) + '</div></details>' : '';
     shell(vHead() + hint + miss + '<div class="tiles">' +
-      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>שקפים נבחרים</b><span>מה שמציגים בוועדה: הצלחות, התחנות, כל הנתונים והגרפים שמולאו, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
-      '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת אב</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה, וכותבים הערות לכל תחום. ההערות מופיעות לממלאים בטופס התחום.</span></a></div>' +
+      '<a class="tile big" href="#v/' + V.v.id + '/live/0"><b>מצגת הוועדה המלווה עם התחנות</b><span>מה שמציגים בוועדה: הצלחות, התחנות, כל הנתונים והגרפים שמולאו, היוועצות וסיכום. לצד כל שקף רושמים הערות והחלטות.</span></a>' +
+      '<a class="tile big" href="#v/' + V.v.id + '/all/0"><b>מצגת האב · המצגת המלאה</b><span>כל מה שמולא. המפקחים רואים אותה כאן כשבועיים לפני הוועדה, לרקע ולא להצגה, וכותבים הערות לכל תחום. ההערות מופיעות לממלאים בטופס התחום.</span></a></div>' +
       '<p class="rs">בכל שקף אפשר ללחוץ "עריכה", לתקן בטופס של התחום ולחזור לשקף המעודכן.</p>');
   }
 
@@ -1495,6 +1495,8 @@
     return VAADA.section(V.v.stage, e) && V.caps.edit.indexOf(e) > -1 ? '#v/' + id + '/e/' + e : '';
   }
   var SIDE_HIDE = false;
+  /* שמות שתי המצגות, בתפריט ובשקף (מיטל, 24.11.26) */
+  var KIND_ALL = 'מצגת האב · המצגת המלאה', KIND_LIVE = 'מצגת הוועדה המלווה עם התחנות';
   function fsOn() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
   /* במסך מלא הדף נראה כמו מצגת: בלי הכותרת, התפריט והשלבים. הכפתור מתעדכן גם כשיוצאים ב-Esc */
   function fsSync() {
@@ -1546,7 +1548,7 @@
      בלי הרישום שבצד (הערות, החלטות, הערות הפיקוח): רק השקפים.
      pdf.html קורא ל-window.opener.VAADA_PDF(window) כשהוא נטען */
   function deckPdf(all) {
-    var V = S.V, v = V.v, slides = collectSlides(all).slides, kind = all ? 'מצגת אב' : 'שקפים נבחרים';
+    var V = S.V, v = V.v, slides = collectSlides(all).slides, kind = all ? KIND_ALL : KIND_LIVE;
     window.VAADA_PDF = function (w) { window.VAADA_PDF = null; pdfFill(w, slides, kind, 'מעגל - ' + v.school + ' - ' + kind); };
     var w = window.open('pdf.html', '_blank');
     if (!w) { window.VAADA_PDF = null; toast('הדפדפן חסם את החלון של ה-PDF. צריך לאפשר חלונות קופצים באתר ולנסות שוב'); }
@@ -1605,7 +1607,7 @@
       (side ? '<button type="button" class="btn small" id="sideBtn" aria-pressed="' + !SIDE_HIDE + '">' + (SIDE_HIDE ? 'הצגת הרישום' : 'הסתרת הרישום') + '</button>' : '') +
       '<button type="button" class="btn small" id="fsBtn">' + (fsOn() ? 'יציאה ממסך מלא' : 'מסך מלא') + '</button>' +
       '<button type="button" class="btn small" id="pdfBtn">הורדה ל-PDF</button></div>' +
-      '<div class="live' + (secId && !SIDE_HIDE ? '' : ' solo') + '"><div class="lmain"><div class="slidewrap" id="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl, { n: n + 1, of: slides.length, kind: all ? 'מצגת אב' : 'שקפים נבחרים' }) + '</div></div></div>' + side + '</div>');
+      '<div class="live' + (secId && !SIDE_HIDE ? '' : ' solo') + '"><div class="lmain"><div class="slidewrap" id="slidewrap"><div class="slide' + (sl.cover ? ' is-cover' : '') + '">' + VAADA_DECK.toHtml(sl, { n: n + 1, of: slides.length, kind: all ? KIND_ALL : KIND_LIVE }) + '</div></div></div>' + side + '</div>');
     $('#lsel').onchange = function () { go(base + this.value); };
     if (edit) $('#editBtn').onclick = function () { BACK = { to: edit, from: base + n }; };
     $('#pdfBtn').onclick = function () { deckPdf(all); };

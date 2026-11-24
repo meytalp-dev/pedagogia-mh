@@ -141,10 +141,11 @@ input:disabled,textarea:disabled,select:disabled{background:var(--paper);color:v
 .vmenu a[aria-current=page]{background:var(--navy);color:#fff}
 .vmenu a.back{font-size:.86rem;font-weight:500;color:var(--muted);margin-top:6px;border-top:1px solid var(--line);border-radius:0}
 .vmain{min-width:0}
-/* בהצגה הדיגיטלית השקף מקבל את הרוחב, והתפריט נסגר */
-.shell.wide{grid-template-columns:minmax(0,1fr)}
-.shell.wide .vmenu{display:none}
-.shell.wide .live{grid-template-columns:minmax(0,1fr) 340px}
+/* בהצגה הדיגיטלית התפריט נשאר בצד, כדי שאפשר לחזור ולעבור לפריטים אחרים (מיטל, 24.11.26).
+   הדף מתרחב, כך שלשקף נשאר רוחב. במסך מלא התפריט נסגר (.present) */
+body.on-live .wrap{max-width:1640px}
+.shell.wide{grid-template-columns:210px minmax(0,1fr)}
+.shell.wide .live{grid-template-columns:minmax(0,1fr) 320px}
 .shell.wide .live.solo{grid-template-columns:minmax(0,1fr)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:14px}
 .tiles.two{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
@@ -164,7 +165,7 @@ ul.plain li{margin:3px 0}
 
 /* שקף בהצגה הדיגיטלית: בעיצוב של מעגל, סגול וזהב (מיטל, 7.11.26). המידות ב-cqw, כך שהשקף כולו מתכווץ עם הרוחב */
 .slidewrap{--plum:#4A2F52;--plum-deep:#35203C;--gold:#B8791C;--gold2:#D9A441;--sl-bg:#F6F2E9;--sl-card:#FFFDF8;--sl-line:#DCD3C2;--sl-ink:#243B42;--sl-muted:#616868;container-type:inline-size;background:var(--sl-bg);border:1px solid var(--sl-line);border-radius:10px;overflow:hidden;box-shadow:0 18px 40px -28px rgba(53,32,60,.55)}
-.slide{aspect-ratio:16/9;width:100%;background:var(--sl-bg);display:flex;flex-direction:column;overflow:hidden;font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:1.75cqw;line-height:1.35;color:var(--sl-ink)}
+.slide{aspect-ratio:16/9;width:100%;background:var(--sl-bg);display:flex;flex-direction:column;overflow:hidden;font-family:Assistant,'Segoe UI',Arial,sans-serif;font-size:2.25cqw;line-height:1.35;color:var(--sl-ink)}
 .dk-bar{display:flex;align-items:center;gap:1.1cqw;height:5.2cqw;padding:0 3.2cqw;background:#fff;border-bottom:.14cqw solid var(--plum);flex:none}
 .dk-bar img{height:3cqw;display:block}
 .dk-bar .sep{width:1px;height:2.6cqw;background:var(--sl-line)}
@@ -183,15 +184,15 @@ ul.plain li{margin:3px 0}
 .dk-tb th,.dk-tb td{border-bottom:1px solid #EEE7D8;border-inline-start:1px solid #EEE7D8;padding:.5cqw .8cqw;text-align:right;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
 .dk-tb th:first-child,.dk-tb td:first-child{border-inline-start:0}
 .dk-tb tbody tr:last-child td{border-bottom:0}
-.dk-tb th{font:700 1.5cqw/1.3 Rubik,Assistant,sans-serif;color:var(--plum)}
-.dk-tb th.hd{color:#fff;font-size:1.6cqw}
+.dk-tb th{font:700 2cqw/1.3 Rubik,Assistant,sans-serif;color:var(--plum)}
+.dk-tb th.hd{color:#fff;font-size:2.1cqw}
 .dk-tb td.lab{font-weight:700;background:#F9F7F2;color:var(--plum)}
 .dk-chart{margin:0;max-width:72%;background:var(--sl-card);border:1px solid var(--sl-line);border-radius:.8cqw;padding:1cqw 1.4cqw}
-.dk-chart figcaption{font:700 1.5cqw Rubik,sans-serif;color:var(--plum);margin-bottom:.4cqw}
+.dk-chart figcaption{font:700 1.9cqw Rubik,sans-serif;color:var(--plum);margin-bottom:.4cqw}
 .dk-chart svg{width:100%;height:auto;display:block;font-family:Assistant,sans-serif;fill:var(--sl-ink)}
 .slide .dk-chart svg{max-height:17cqw}   /* גרף לא תופס חצי שקף; השקף כולו נכנס בלי גלילה (17.11.26) */
 .dk-chart svg .lab{fill:var(--sl-muted);font-weight:600}
-.dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw;font-size:1.4cqw}
+.dk-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:.4cqw 1.4cqw;font-size:1.8cqw}
 .dk-legend i{display:inline-block;width:1.2cqw;height:1.2cqw;border-radius:.25cqw;margin-inline-end:.4cqw;vertical-align:-.1cqw}
 .dk-img{display:block;max-width:100%;max-height:37cqw;margin:0 auto;border-radius:.6cqw;box-shadow:0 .6cqw 1.8cqw -1.2cqw rgba(53,32,60,.6)}
 /* שער: סגול עמוק, הלוגו על לוח לבן, והטבעת של מעגל */

@@ -325,10 +325,12 @@ var VAADA_DECK = (function () {
       master.slides.filter(function (s) { return s.sec === id && !s.empty; }).forEach(function (s) { slides.push(s); });
     }
 
-    /* רקע לפני התחנות: הסיפור הבית ספרי, נתוני בית הספר וכוח אדם. תחום שנבחר כתחנה נשאר ליד התחנה שלו */
+    /* רקע לפני התחנות: השקפים הראשונים של מצגת האב, בסדר שלה — נתוני בית הספר (סיפור, נתונים, כוח אדם, פיתוח מקצועי)
+       וכיוון השנה (גאווה וקפיצות מדרגה). קודם גאווה נדחקה אחרי כל התחנות (מיטל, 24.11.26). תחום שנבחר כתחנה נשאר ליד התחנה שלו */
     var stSecs = {};
     (prep.stations || []).forEach(function (st) { if (txt(st.title) && st.sec) stSecs[st.sec] = true; });
-    ['sipur', 'netunim', 'koach'].forEach(function (id) { if (!stSecs[id]) secSlides(id); });
+    o.sections.filter(function (sec) { return sec.g === 'נתוני בית הספר' || sec.g === 'כיוון השנה'; })
+      .forEach(function (sec) { if (!stSecs[sec.id]) secSlides(sec.id); });
 
     /* תחנה: צורך ← מטרה ומדדים ← פעולות ← משאבים, ואחריה הנתונים המלאים של התחום */
     (prep.stations || []).filter(function (st) { return txt(st.title); }).forEach(function (st, si) {
