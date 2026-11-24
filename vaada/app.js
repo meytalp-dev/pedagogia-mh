@@ -1518,17 +1518,23 @@
     box.style.transform = ''; box.style.width = ''; main.classList.remove('fitted');
     return box;
   }
-  /* מקטין את התוכן עד שנכנס, לא פחות מ-0.45. מחזיר false אם גם בהקטנה המרבית לא נכנס */
+  /* מקטין את התוכן עד שנכנס, לא פחות מ-0.45. מחזיר false אם גם בהקטנה המרבית לא נכנס.
+     חיפוש בינארי: ההקטנה הגדולה ביותר שעדיין נכנסת. כשהתוכן מתרחב הוא נשבר לפחות שורות,
+     ולכן חישוב ישיר הקטין יותר מדי והשאיר שטח ריק מתחת (24.11.26) */
   function shrink(main, box) {
     var cs = main.ownerDocument.defaultView.getComputedStyle(main), avail = main.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    var z = 1;
-    for (var i = 0; i < 6 && box.scrollHeight * z > avail + 1; i++) {
-      z = Math.max(0.45, z * avail / (box.scrollHeight * z));
-      box.style.width = (100 / z) + '%';
-      box.style.transform = 'scale(' + z + ')';
+    function fits(z) {
+      box.style.width = z < 1 ? (100 / z) + '%' : '';
+      box.style.transform = z < 1 ? 'scale(' + z + ')' : '';
+      return box.scrollHeight * z <= avail + 1;
     }
-    if (z < 1) main.classList.add('fitted');
-    return box.scrollHeight * z <= avail + 1;
+    if (fits(1)) return true;
+    if (!fits(0.45)) { main.classList.add('fitted'); return false; }
+    var lo = 0.45, hi = 1;
+    for (var i = 0; i < 7; i++) { var mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+    fits(lo);
+    main.classList.add('fitted');
+    return true;
   }
   function fitSlide() {
     var main = document.querySelector('#slidewrap .dk-main');
