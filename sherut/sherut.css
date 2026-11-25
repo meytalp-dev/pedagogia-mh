@@ -1,0 +1,152 @@
+/* מדור בני ובנות השירות — נטען אחרי style.css ו-article.css ומשתמש במשתני הצבע שלהם */
+
+.sh-sec{padding:6px 0 40px}
+.sh-intro{font-size:var(--fs-lg);color:var(--text2);margin:6px 0 0;max-width:62ch}
+.sh-ic{width:22px;height:22px;flex:0 0 auto}
+svg.sh-ic{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- ניווט המדור (צ'יפים) — באותו מראה של .secnav באתר ---------- */
+.sh-nav{margin:20px 0 4px}
+.sh-nav .sn-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.sh-nav a,.sh-nav span.on{display:inline-flex;align-items:center;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);
+  background:#fff;color:var(--text2);text-decoration:none;font-size:var(--fs-sm);font-weight:700;line-height:1.35;
+  transition:color .2s,border-color .2s,background .2s}
+.sh-nav a:hover{border-color:var(--cyan);background:var(--cyan-100);color:var(--navy)}
+.sh-nav a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.sh-nav span.on{background:var(--grad);border-color:transparent;color:#fff;box-shadow:var(--sh-sm);cursor:default}
+@media print{.sh-nav{display:none !important}}
+
+/* ---------- בית: כרטיסים ומונה ---------- */
+.sh-count{display:inline-flex;align-items:center;gap:8px;margin:18px 0 4px;padding:8px 14px;border-radius:999px;
+  background:var(--blue-bg);color:var(--navy);font-weight:700;font-size:var(--fs-md)}
+.sh-count[hidden]{display:none}
+.sh-count b{font-variant-numeric:tabular-nums}
+.sh-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.sh-tile{display:flex;flex-direction:column;gap:8px;padding:18px;border:1px solid var(--border);border-radius:16px;
+  background:var(--surface);box-shadow:var(--sh-sm);color:inherit;text-decoration:none;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.sh-tile:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:var(--border-strong)}
+.sh-tile:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.sh-tile .sh-ti{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--blue-bg);color:var(--navy-800)}
+.sh-tile .sh-ti svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sh-tile h2{font-size:var(--fs-xl);margin:2px 0 0;color:var(--navy)}
+.sh-tile p{font-size:var(--fs-md);color:var(--text2);margin:0}
+@media(max-width:760px){.sh-tiles{grid-template-columns:1fr}}
+
+/* ---------- הודעות ---------- */
+.sh-note{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border-radius:14px;margin:18px 0;
+  background:var(--soft-bg);border:1px solid var(--border);color:var(--text)}
+.sh-note b{display:block;margin-bottom:2px}
+.sh-note.ok{background:var(--teal-100);border-color:#9FE3D9}
+.sh-note.err{background:#FFF1F0;border-color:#F3C2BD}
+.sh-note[hidden]{display:none}
+
+/* ---------- מאגר: חיפוש וסינון ---------- */
+.sh-tools{margin:18px 0 6px;display:flex;flex-direction:column;gap:12px}
+.sh-search{position:relative}
+.sh-search input{width:100%;font:inherit;font-size:var(--fs-base);padding:11px 42px 11px 14px;border:1.5px solid var(--border);
+  border-radius:12px;background:#fff;color:var(--text)}
+.sh-search input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-100)}
+.sh-search .sh-ic{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:20px;height:20px}
+.sh-flbl{font-size:var(--fs-xs);font-weight:800;color:var(--muted);margin-bottom:6px}
+.sh-chips{display:flex;flex-wrap:wrap;gap:7px}
+.sh-chip{font:inherit;font-size:var(--fs-sm);font-weight:700;padding:6px 13px;border-radius:999px;border:1.5px solid var(--border);
+  background:#fff;color:var(--text2);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.sh-chip:hover{border-color:var(--cyan);background:var(--cyan-100);color:var(--navy)}
+.sh-chip[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.sh-chip:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.sh-res{font-size:var(--fs-sm);color:var(--muted);margin:8px 0 0}
+
+/* ---------- כרטיס פעילות ---------- */
+.sh-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px;align-items:start}
+@media(max-width:760px){.sh-list{grid-template-columns:1fr}}
+.sh-card{border:1px solid var(--border);border-radius:16px;background:var(--surface);box-shadow:var(--sh-sm);overflow:hidden;min-width:0}
+.sh-card.open{grid-column:1/-1;box-shadow:var(--sh-md);border-color:var(--border-strong)}
+.sh-chead{padding:16px 18px 14px}
+.sh-tag{display:inline-block;font-size:var(--fs-2xs);font-weight:800;padding:3px 10px;border-radius:999px;background:var(--cyan-100);color:var(--accent)}
+.sh-card h3{font-size:var(--fs-xl);margin:8px 0 6px;color:var(--navy);overflow-wrap:anywhere}
+.sh-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:var(--fs-sm);color:var(--text2)}
+.sh-meta span{display:inline-flex;align-items:center;gap:5px}
+.sh-meta .sh-ic{width:16px;height:16px;color:var(--muted)}
+.sh-cact{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sh-btn{font:inherit;font-size:var(--fs-sm);font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;
+  border:1.5px solid var(--border-strong);background:#fff;color:var(--navy);cursor:pointer;text-decoration:none}
+.sh-btn:hover{border-color:var(--cyan);background:var(--cyan-100)}
+.sh-btn .sh-ic{width:17px;height:17px}
+.sh-btn.pri{background:var(--grad);border-color:transparent;color:#fff}
+.sh-btn.pri:hover{filter:brightness(1.08)}
+.sh-btn[disabled]{opacity:.5;cursor:not-allowed;filter:none}
+.sh-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.sh-cbody{padding:4px 18px 18px;border-top:1px solid var(--border)}
+.sh-cbody[hidden]{display:none}
+.sh-cbody h4{font-size:var(--fs-md);font-weight:800;color:var(--accent);margin:14px 0 6px}
+.sh-cbody p,.sh-cbody li{font-size:var(--fs-base);color:var(--text);overflow-wrap:anywhere;white-space:pre-line}
+.sh-cbody ol{margin:0;padding-inline-start:22px}
+.sh-cbody ol li{margin:4px 0;white-space:normal}
+.sh-tip{background:#FFF8E6;border:1px solid #F4DDA0;border-radius:12px;padding:10px 14px;margin-top:14px}
+.sh-tip h4{margin-top:0;color:#8A6410}
+.sh-by{margin-top:14px;font-size:var(--fs-sm);color:var(--text2)}
+.sh-empty{text-align:center;padding:34px 18px;border:1.5px dashed var(--border-strong);border-radius:16px;margin-top:18px;color:var(--text2)}
+.sh-empty .sh-ic{width:34px;height:34px;margin:0 auto 8px;color:var(--muted);display:block}
+.sh-empty b{display:block;color:var(--navy);font-size:var(--fs-lg);margin-bottom:4px}
+
+/* ---------- טופס ---------- */
+.sh-form{margin-top:18px;display:grid;gap:16px}
+.sh-row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.sh-row2{grid-template-columns:1fr}}
+.sh-fld label{display:block;font-weight:800;font-size:var(--fs-md);color:var(--navy);margin-bottom:5px}
+.sh-fld .sh-hint{font-weight:500;color:var(--muted);font-size:var(--fs-xs)}
+.sh-fld input,.sh-fld select,.sh-fld textarea{width:100%;font:inherit;font-size:var(--fs-base);padding:10px 12px;border:1.5px solid var(--border);
+  border-radius:11px;background:#fff;color:var(--text)}
+.sh-fld textarea{min-height:96px;resize:vertical;line-height:1.6}
+.sh-fld textarea.tall{min-height:150px}
+.sh-fld input:focus,.sh-fld select:focus,.sh-fld textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-100)}
+.sh-fld.bad input,.sh-fld.bad select,.sh-fld.bad textarea{border-color:#C8372D}
+.sh-err{display:none;color:#B42318;font-size:var(--fs-sm);font-weight:700;margin-top:5px}
+.sh-fld.bad .sh-err{display:block}
+.sh-other{margin-top:8px}
+.sh-other[hidden]{display:none}
+.sh-help{display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--accent);text-decoration:none;font-size:var(--fs-md)}
+.sh-help:hover{text-decoration:underline}
+.sh-help .sh-ic{width:20px;height:20px}
+.sh-submit{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+
+/* ---------- חומרים: תבנית הכרטיס להדפסה ---------- */
+.sh-dl{display:grid;gap:12px;margin-top:18px}
+.sh-dlrow{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:16px 18px;border:1px solid var(--border);
+  border-radius:16px;background:var(--surface);box-shadow:var(--sh-sm)}
+.sh-dlrow h2{font-size:var(--fs-lg);margin:0 0 2px;color:var(--navy)}
+.sh-dlrow p{margin:0;color:var(--text2);font-size:var(--fs-sm)}
+.sh-paper{margin-top:18px;background:#fff;border:1px solid var(--border-strong);border-radius:6px;box-shadow:var(--sh-md);
+  padding:22px;max-width:210mm;color:#102A43}
+.sh-paper h2{font-size:1.35rem;margin:0 0 4px;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:6px}
+.sh-pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:12px}
+.sh-pgrid .full{grid-column:1/-1}
+.sh-pf{border:1px solid #9FB3C8;border-radius:6px;padding:6px 10px 8px;min-height:46px}
+.sh-pf .l{font-size:.78rem;font-weight:800;color:#3E5468}
+.sh-pf.h2{min-height:84px}.sh-pf.h3{min-height:120px}
+.sh-topics{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px;font-size:.86rem}
+.sh-topics span::before{content:"";display:inline-block;width:11px;height:11px;border:1.3px solid #3E5468;border-radius:2px;margin-inline-end:5px;vertical-align:-1px}
+.sh-steps{margin:4px 0 0;padding-inline-start:20px}
+.sh-steps li{border-bottom:1px dotted #9FB3C8;height:26px}
+@media(max-width:520px){.sh-pgrid{grid-template-columns:1fr}.sh-paper{padding:14px}}
+
+/* ---------- הדפסה ---------- */
+@media print{
+  /* הדפסת כרטיס אחד מהמאגר / התבנית הריקה — רק הם על הדף */
+  body.sh-print-one > :not(main),
+  body.sh-print-tpl > :not(main){display:none !important}
+  body.sh-print-one main > *:not(.sh-sec),
+  body.sh-print-tpl main > *:not(.sh-sec){display:none !important}
+  body.sh-print-one .sh-sec .article > *:not(.sh-list){display:none !important}
+  body.sh-print-one .sh-card:not(.print-me){display:none !important}
+  body.sh-print-one .sh-list{display:block !important;margin:0}
+  body.sh-print-one .sh-card.print-me{border:none;box-shadow:none}
+  body.sh-print-one .sh-card.print-me .sh-cbody{display:block !important;border-top:1px solid #999}
+  body.sh-print-one .sh-cact{display:none !important}
+  body.sh-print-tpl .sh-sec .article > *:not(.sh-paper){display:none !important}
+  body.sh-print-tpl .sh-paper{border:none;box-shadow:none;margin:0;padding:0;max-width:none}
+  body.sh-print-tpl .sh-pf.h3{min-height:150px}
+  .sh-sec{padding:0}
+  .sh-sec .article{max-width:none;padding:0}
+}
