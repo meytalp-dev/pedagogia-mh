@@ -358,6 +358,15 @@
   .h-notes { font-size:13px; color:var(--text-2); line-height:1.7; white-space:pre-wrap; word-break:break-word; margin-top:3px; }
   .h-notes.none { color:var(--text-3,#8b9aa3); font-style:italic; }
   .h-by { color:#6b4f99; }
+  /* כמה מורים באותה שעה פרטנית (12.11.26) — נספרת פעם אחת בדוח */
+  .h-pick-hint { font-weight:400; color:var(--text-3,#8b9aa3); }
+  .h-chips[hidden] { display:none; }
+  .h-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .h-chip { display:inline-flex; align-items:center; gap:6px; background:#E6F0F4; color:var(--primary,#1A5365); border-radius:999px; padding:4px 6px 4px 12px; font-size:12.5px; font-weight:600; max-width:100%; }
+  .h-chip span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .h-chip button { border:none; background:rgba(26,83,101,.12); color:inherit; width:22px; height:22px; border-radius:50%; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; padding:0; flex:none; }
+  .h-chip button svg { width:12px; height:12px; }
+  .h-group { display:inline-block; font-size:11px; color:#1A5365; background:#E6F0F4; border-radius:999px; padding:0 8px; margin-inline-start:4px; }
   .h-actions { display:flex; gap:4px; justify-content:flex-end; margin-top:6px; }
   .h-actions .edit { font-family:inherit; font-size:12px; color:var(--primary,#1A5365); background:none; border:none; cursor:pointer; padding:3px 7px; border-radius:6px; }
   .h-actions .edit:hover { background:#E6F0F4; }
@@ -921,9 +930,10 @@
           <div class="space-hint">מפגש אישי עם מורה: עם מי, מה עשיתן ומתי. הרישום מופיע גם אצל המפקח.ת במבט המקצועי — לא בעמוד הקבוצה.</div>
           <form id="hours-form" class="hours-form">
             <div class="full">
-              <label for="h-pick">בחירה מהמורים שלי</label>
+              <label for="h-pick">בחירה מהמורים שלי <span class="h-pick-hint">(אפשר לבחור כמה מורים לאותה שעה)</span></label>
               <input class="input" id="h-pick" list="h-teachers-dl" autocomplete="off" placeholder="התחילי להקליד שם — או מלאי ידנית למטה">
               <datalist id="h-teachers-dl"></datalist>
+              <div class="h-chips" id="h-chips" hidden></div>
             </div>
             <div>
               <label for="h-first">שם פרטי *</label>
@@ -1247,11 +1257,11 @@
 <script src="../assets/guides.js?v=20261115a"></script>
 <script src="../assets/plans.js?v=20261111a"></script>
 <script src="../assets/plan-changes.js"></script>
-<script src="../assets/meet-stats.js?v=20261105leave"></script>
+<script src="../assets/meet-stats.js?v=20261125grp"></script>
 <script src="../assets/training.js?v=20261102a"></script>
 <script src="dashboard.js?v=20261102s"></script>
-<script src="../assets/hours-report.js?v=20260923"></script>
-<script src="space.js?v=20261102a"></script>
+<script src="../assets/hours-report.js?v=20261125grp"></script>
+<script src="space.js?v=20261125grp"></script>
 <script src="meetings.js?v=20261118a"></script>
 <script src="slots.js?v=20261025a"></script>
 <!-- ערכת מבט המורה לכל המבטים (24.9.26): ניווט דביק, סיור, "שאלה או קושי" -->

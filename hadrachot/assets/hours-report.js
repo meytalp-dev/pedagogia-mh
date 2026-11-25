@@ -95,10 +95,19 @@
     });
 
     // ---- הדרכה פרטנית ----
+    // שעה משותפת לכמה מורים (groupId, 12.11.26) — שורה אחת בדוח, עם כל השמות
+    const groupNames = {}, groupDone = {};
+    (opts.hours || []).forEach(h => {
+      if (!h.groupId) return;
+      const n = (String(h.firstName || '') + ' ' + String(h.lastName || '')).trim();
+      (groupNames[h.groupId] = groupNames[h.groupId] || []).push(n);
+    });
     (opts.hours || []).forEach(h => {
       const date = String(h.date || '').slice(0, 10);
       if (!inMonth(date)) return;
-      const who = (String(h.firstName || '') + ' ' + String(h.lastName || '')).trim();
+      if (h.groupId) { if (groupDone[h.groupId]) return; groupDone[h.groupId] = true; }
+      const who = h.groupId ? groupNames[h.groupId].filter(Boolean).join(', ')
+        : (String(h.firstName || '') + ' ' + String(h.lastName || '')).trim();
       const hrs = round4(h.hours) || 1;
       const start = String(h.start || '') || DEFAULT_IND_START;
       rows.push({ kind: 'individual', id: h.id,

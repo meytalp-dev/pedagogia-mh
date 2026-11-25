@@ -454,17 +454,52 @@
       schools.map(s => `<option value="${esc(s)}"></option>`).join('');
   }
 
-  // בחירה מהרשימה ממלאת שם ובית ספר. השם נחתך במילה הראשונה — אם במערכת
-  // הוא רשום "משפחה פרטי", המדריכה מתקנת בשדות; שום דבר לא ננעל.
+  /* כמה מורים לאותה שעה (12.11.26, בקשת מיטל): כל בחירה מהרשימה נכנסת
+     כתגית. בשמירה נוצר רישום לכל מורה (כל אחד/ת מקבל/ת קרדיט "השתתף/ה"),
+     וכולם מקבלים אותו groupId — הדוח למונדיי והסיכומים סופרים את השעה פעם אחת.
+     מורה שלא ברשימה — בשדות השם הידניים, והוא/היא מצטרפ/ת לאותה שעה. */
+  let pickedTeachers = [];   // [{ firstName, lastName, schoolName }]
+  let pendingGroupId = '';   // שמירה חלקית של שעה משותפת — הניסיון החוזר מצטרף לאותה שעה
+
+  function splitName(name) {
+    // השם נחתך במילה הראשונה — אם במערכת הוא רשום "משפחה פרטי", אפשר לתקן אחרי השמירה
+    const parts = String(name || '').trim().split(/\s+/);
+    return { firstName: parts.shift() || '', lastName: parts.join(' ') };
+  }
+
+  function renderChips() {
+    const box = document.getElementById('h-chips');
+    box.hidden = !pickedTeachers.length;
+    box.innerHTML = pickedTeachers.map((t, i) => `
+      <span class="h-chip"><span>${esc((t.firstName + ' ' + t.lastName).trim())}${t.schoolName ? ' · ' + esc(t.schoolName) : ''}</span>
+        <button type="button" data-unpick="${i}" aria-label="הסרה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span>`).join('');
+    box.querySelectorAll('[data-unpick]').forEach(b => b.addEventListener('click', () => {
+      pickedTeachers.splice(Number(b.dataset.unpick), 1);
+      renderChips();
+    }));
+  }
+
   function applyPickedTeacher() {
     const v = val('h-pick');
     const t = myRoster().find(x => pickLabel(x) === v);
     if (!t) return;
-    const parts = String(t.name || '').trim().split(/\s+/);
-    document.getElementById('h-first').value = parts.shift() || '';
-    document.getElementById('h-last').value = parts.join(' ');
-    if (t.schoolName && t.schoolName !== NO_SCHOOL) document.getElementById('h-school').value = t.schoolName;
-    document.getElementById('h-topic').focus();
+    const school = t.schoolName && t.schoolName !== NO_SCHOOL ? t.schoolName : '';
+    const n = splitName(t.name);
+    if (editingHoursId) {
+      // בעדכון רישום קיים — מורה אחד/ת, כמו קודם: הבחירה ממלאת את השדות
+      document.getElementById('h-first').value = n.firstName;
+      document.getElementById('h-last').value = n.lastName;
+      if (school) document.getElementById('h-school').value = school;
+      document.getElementById('h-pick').value = '';
+      document.getElementById('h-topic').focus();
+      return;
+    }
+    const key = x => (x.firstName + ' ' + x.lastName).trim() + '|' + x.schoolName;
+    const item = { firstName: n.firstName, lastName: n.lastName, schoolName: school };
+    if (!pickedTeachers.some(x => key(x) === key(item))) pickedTeachers.push(item);
+    if (school && !val('h-school')) document.getElementById('h-school').value = school;
+    document.getElementById('h-pick').value = '';
+    renderChips();
   }
 
   function todayStr() {
@@ -489,32 +524,75 @@
   async function saveHours() {
     const f = readHoursForm();
     const status = document.getElementById('hours-status');
-    if (!f.firstName && !f.lastName) { status.textContent = 'חסר שם המורה.'; document.getElementById('h-first').focus(); return; }
+    const id = editingHoursId;
+    // המורים לשמירה: התגיות + מי שמולא ידנית בשדות השם
+    const people = id ? [] : pickedTeachers.slice();
+    if (f.firstName || f.lastName) people.push({ firstName: f.firstName, lastName: f.lastName, schoolName: f.schoolName });
+    if (id && !f.firstName && !f.lastName) { status.textContent = 'חסר שם המורה.'; document.getElementById('h-first').focus(); return; }
+    if (!id && !people.length) { status.textContent = 'חסר שם המורה — בחרי מהרשימה או מלאי שם.'; document.getElementById('h-pick').focus(); return; }
     if (!(Number(f.hours) > 0)) { status.textContent = 'מספר השעות צריך להיות גדול מ-0.'; return; }
     const btn = document.getElementById('h-submit');
-    const id = editingHoursId;
     btn.disabled = true;
     status.textContent = 'שומרת...';
 
-    const res = id
-      ? await TS.apiPost('guide.hours.update', Object.assign({ id: id }, f))
-      : await TS.apiPost('guide.hours.add', Object.assign({
-          guide: SLUG, guideName: GUIDE_CFG.name || '', byName: GUIDE_CFG.name || ''
-        }, f));
+    const shared = { subject: f.subject, topic: f.topic, notes: f.notes, date: f.date, hours: f.hours };
+    const ok = [];
+    let expect = [];   // [{ id?, firstName, lastName }] — מה אמור להופיע אחרי הטעינה
+    let usedGroup = '';
+    if (id) {
+      // עדכון: הרישום עצמו, ובשעה משותפת — גם נושא/תיאור/תאריך/שעות של השאר,
+      // כדי שהשעה תישאר אחת בדוח
+      const cur = data.hours.find(x => x.id === id);
+      const res = await TS.apiPost('guide.hours.update', Object.assign({ id: id }, f));
+      ok.push(res && res.ok);
+      expect.push({ id: id, firstName: f.firstName, lastName: f.lastName });
+      const sibs = cur && cur.groupId ? data.hours.filter(x => x.groupId === cur.groupId && x.id !== id) : [];
+      for (const s of sibs) {
+        const r = await TS.apiPost('guide.hours.update', Object.assign({ id: s.id }, shared));
+        ok.push(r && r.ok);
+        expect.push({ id: s.id, firstName: s.firstName || '', lastName: s.lastName || '' });
+      }
+    } else {
+      // ניסיון חוזר אחרי שמירה חלקית — אותה שעה, אותו groupId
+      const groupId = pendingGroupId ||
+        (people.length > 1 ? 'hg_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) : '');
+      usedGroup = groupId;
+      for (const p of people) {
+        const r = await TS.apiPost('guide.hours.add', Object.assign({
+          guide: SLUG, guideName: GUIDE_CFG.name || '', byName: GUIDE_CFG.name || '', groupId: groupId
+        }, shared, p));
+        ok.push(r && r.ok);
+        expect.push({ firstName: p.firstName, lastName: p.lastName });
+      }
+    }
 
     // כמו בהודעות: POST לא חוזר, אבל התשובה שלו יכולה ליפול אחרי שנשמר.
-    // טוענים ובודקים אם הרישום נחת לפני שאומרים "לא נשמר".
+    // טוענים ובודקים אם כל רישום נחת לפני שאומרים "לא נשמר".
     await loadSpace();
-    const same = h => (h.firstName || '') === f.firstName && (h.lastName || '') === f.lastName &&
+    const same = (h, e) => (h.firstName || '') === e.firstName && (h.lastName || '') === e.lastName &&
       String(h.topic || '') === f.topic && String(h.notes || '') === f.notes &&
       Number(h.hours) === Number(f.hours) && String(h.date || '').slice(0, 10) === f.date;
-    const landed = (res && res.ok) ||
-      (id ? data.hours.some(h => h.id === id && same(h)) : data.hours.some(same));
+    const missing = expect.filter((e, i) => !ok[i] &&
+      !(e.id ? data.hours.some(h => h.id === e.id && same(h, e)) : data.hours.some(h => same(h, e))));
     btn.disabled = false;
 
-    if (landed) {
+    if (!missing.length) {
       resetHoursForm();
-      status.textContent = id ? 'העדכון נשמר ✓' : 'הרישום נשמר ✓';
+      status.textContent = id ? 'העדכון נשמר ✓'
+        : (expect.length > 1 ? 'נרשמה שעה משותפת ל-' + expect.length + ' מורים ✓' : 'הרישום נשמר ✓');
+      renderHours();
+    } else if (missing.length < expect.length) {
+      // חלק נשמר — משאירים בתגיות רק את מי שלא נשמר/ה
+      const left = missing.map(m => (m.firstName + ' ' + m.lastName).trim());
+      const isLeft = p => left.indexOf((p.firstName + ' ' + p.lastName).trim()) >= 0;
+      pickedTeachers = pickedTeachers.filter(isLeft);
+      if ((f.firstName || f.lastName) && !isLeft(f)) {
+        document.getElementById('h-first').value = '';
+        document.getElementById('h-last').value = '';
+      }
+      pendingGroupId = usedGroup;
+      renderChips();
+      status.textContent = 'לא נשמר עבור: ' + left.join(', ') + '. נסי שוב בעוד רגע.';
       renderHours();
     } else {
       status.textContent = 'לא נשמר. נסי שוב בעוד רגע.';
@@ -526,6 +604,9 @@
   function resetHoursForm() {
     const wasEditing = !!editingHoursId;
     editingHoursId = '';
+    pickedTeachers = [];
+    pendingGroupId = '';
+    renderChips();
     ['h-pick', 'h-first', 'h-last', 'h-topic', 'h-notes'].forEach(i => document.getElementById(i).value = '');
     document.getElementById('h-hours').value = '1';
     if (wasEditing) {
@@ -543,6 +624,8 @@
     const h = data.hours.find(x => x.id === id);
     if (!h) return;
     editingHoursId = id;
+    pickedTeachers = [];
+    renderChips();
     document.getElementById('h-pick').value = '';
     document.getElementById('h-first').value = h.firstName || '';
     document.getElementById('h-last').value = h.lastName || '';
@@ -581,11 +664,16 @@
       el.innerHTML = '<div class="empty" style="padding:18px;">עדיין לא נרשמו שעות פרטניות</div>';
       return;
     }
-    const sum = rows.reduce((s, h) => s + (Number(h.hours) || 0), 0);
+    // שעה משותפת לכמה מורים (groupId) נספרת פעם אחת
+    const seenG = {};
+    const uniq = rows.filter(h => !h.groupId || (seenG[h.groupId] ? false : (seenG[h.groupId] = true)));
+    const sum = uniq.reduce((s, h) => s + (Number(h.hours) || 0), 0);
     total.hidden = false;
-    total.textContent = `סה"כ ${fmtHours(sum)} שעות · ` + (rows.length === 1 ? 'מפגש אחד' : rows.length + ' מפגשים');
+    total.textContent = `סה"כ ${fmtHours(sum)} שעות · ` + (uniq.length === 1 ? 'מפגש אחד' : uniq.length + ' מפגשים');
 
     el.innerHTML = rows.map(h => {
+      const mates = h.groupId ? rows.filter(x => x.groupId === h.groupId && x.id !== h.id)
+        .map(x => (String(x.firstName || '') + ' ' + String(x.lastName || '')).trim()) : [];
       // רישום שהמפקח.ת הוסיפ.ה מהמבט שלה — מסומן, כדי שלא ייראה כמו טעות
       const byOther = h.createdBy && GUIDE_CFG.name && h.createdBy !== GUIDE_CFG.name;
       const n = Number(h.hours) || 0;
@@ -595,7 +683,7 @@
           <span class="h-who">${esc((String(h.firstName || '') + ' ' + String(h.lastName || '')).trim() || '—')}</span>
           <span class="h-when">${fmtDateOnly(h.date)} · <bdi dir="ltr">${fmtHours(n)}</bdi> ${n === 1 ? 'שעה' : 'שעות'}</span>
         </div>
-        <div class="h-meta">${esc([h.subject, h.schoolName].filter(Boolean).join(' · '))}${byOther ? ' · <span class="h-by">נרשם ע"י ' + esc(h.createdBy) + '</span>' : ''}</div>
+        <div class="h-meta">${esc([h.subject, h.schoolName].filter(Boolean).join(' · '))}${byOther ? ' · <span class="h-by">נרשם ע"י ' + esc(h.createdBy) + '</span>' : ''}${mates.length ? '<span class="h-group">שעה משותפת עם ' + esc(mates.join(', ')) + '</span>' : ''}</div>
         ${h.topic ? `<div class="h-topic">${esc(h.topic)}</div>` : ''}
         ${h.notes ? `<div class="h-notes">${linkify(h.notes)}</div>` : '<div class="h-notes none">עוד לא נכתב מה נעשה במפגש</div>'}
         <div class="h-actions">

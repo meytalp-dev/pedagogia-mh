@@ -186,11 +186,15 @@
       persons.forEach(p => { if (p.schoolName) rosterSchools[norm(p.schoolName)] = p.schoolName; });
       const schoolSessions = {};   // norm(school) → מספר מפגשים פרטניים
       let indSessions = 0, indHours = 0, indOutside = 0;
+      const seenGroup = {};   // שעה משותפת לכמה מורים (groupId) — מפגש ושעות פעם אחת; כל מורה מקבל/ת קרדיט
       (allHours[g.slug] || []).forEach(h => {
         const d = String(h.date || '').slice(0, 10);
         if (!d || d < yearStart || d > today) return;
-        indSessions++;
-        indHours += Number(h.hours) || 0;
+        if (!h.groupId || !seenGroup[h.groupId]) {
+          if (h.groupId) seenGroup[h.groupId] = true;
+          indSessions++;
+          indHours += Number(h.hours) || 0;
+        }
         const full = norm((h.firstName || '') + ' ' + (h.lastName || ''));
         // שם + בית ספר; אם בית הספר נכתב אחרת — שם שמופיע פעם אחת בלבד בקבוצה
         let p = byNameSchool[full + '|' + norm(h.schoolName)];
