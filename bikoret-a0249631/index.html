@@ -92,6 +92,14 @@ table.matrix tfoot td{font-weight:700}
 /* תקציר — נקודות קצרות ולחיצות */
 .sumbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .sumbar .edit-note{margin:0}
+.sumbtns{display:flex;gap:8px;flex-wrap:wrap}
+.ac-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff}
+.ac-where{display:block;width:100%;text-align:right;background:none;border:0;padding:0 0 6px;margin:0 0 6px;border-bottom:1px solid var(--line);color:var(--navy);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;min-height:auto}
+.ac-where:hover{text-decoration:underline}
+.ac-item .c{margin:0}
+.acl .ch2{display:flex;gap:8px;font-size:12.5px;color:var(--muted)} .acl .ch2 b{color:var(--ink);font-size:13.5px}
+.acl .ct{margin:4px 0 0;font-size:14.5px;line-height:1.6;white-space:pre-wrap}
+@media (max-width:520px){ .sumbtns{width:100%} .sumbtns button{flex:1} }
 #editToggle[aria-pressed=true]{background:#FFF4D6;border-color:#F2D27A}
 button.kpi{display:block;text-align:right;width:100%;cursor:pointer;font-weight:400;min-height:auto}
 button.kpi:hover{border-color:var(--navy-2);box-shadow:0 2px 8px rgba(31,78,121,.08)}
@@ -229,7 +237,8 @@ footer a{color:#8A97A6}
   <section class="panel" id="p-sum">
     <div class="sumbar">
       <p class="edit-note" id="editNote">לחיצה על מספר או על שורה פותחת את ההמלצות עצמן</p>
-      <button id="editToggle" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>עריכת התקציר</span></button>
+      <span class="sumbtns"><button id="allCmts" data-open="ac"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>כל ההערות</span></button>
+      <button id="editToggle" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>עריכת התקציר</span></button></span>
     </div>
     <div class="kpis" id="kpis"></div>
     <div class="card"><h2>ההמלצות לפי תחום</h2><div class="chgrid" id="chapters"></div></div>
@@ -356,6 +365,7 @@ function redrawCmts(){
     const nb = tmp.firstChild; if (nb.querySelector('.cnew') && typed[box.dataset.ck]) nb.querySelector('.cnew').value = typed[box.dataset.ck];
     box.replaceWith(nb);
   });
+  if (allOpen && !$('#drawer').hidden) openAll(true);
 }
 function loadCmts(){
   if (!ONLINE) return;
@@ -465,6 +475,7 @@ function renderStatic(){
       `<span><span class="t" data-path="groups.${gi}.items.${ii}.title">${esc(it.title)}</span><span class="s" data-path="groups.${gi}.items.${ii}.text">${esc(it.text)}</span></span>`+
       `<span class="go">${hasCmt(gi,ii,it)?`<span class="cbadge" title="יש הערות">${CMT}</span>`:''}<span>${nrec(it.ids.length)}</span>${CHEV}</span></div>`).join('')+`</div></div>`).join('');
   $('#note').textContent = S.note;
+  updAllBtn();
   applyEditing();
 }
 function renderSummary(){ renderLive(); }
@@ -495,7 +506,8 @@ function itemHTML(r, open){
 }
 let lastFocus = null;
 function openDrawer(title, sub, rows, gkey){
-  lastFocus = document.activeElement;
+  if (!allOpen) lastFocus = document.activeElement;
+  allOpen = false;
   $('#dTitle').textContent = title; $('#dSub').textContent = sub ? `${sub} · ${nrec(rows.length)}` : nrec(rows.length);
   let top = '';
   if (gkey){ const [gi,ii]=gkey.split(':'); const it=state.summary.groups[+gi].items[+ii];
@@ -504,11 +516,45 @@ function openDrawer(title, sub, rows, gkey){
   $('#drawer').hidden = false; $('#dBody').scrollTop = 0; document.body.style.overflow='hidden';
   $('#drawer .x').focus();
 }
-function closeDrawer(){ $('#drawer').hidden = true; document.body.style.overflow='';
+function closeDrawer(){ $('#drawer').hidden = true; document.body.style.overflow=''; allOpen = false;
   if (commentsChanged){ commentsChanged=false; renderStatic(); renderList(); lastFocus=null; }
   if(lastFocus && document.contains(lastFocus)) lastFocus.focus(); }
+/* כל ההערות במקום אחד (25.11.26): החדשות למעלה, ולכל אחת קישור להמלצה או לנושא */
+function allCmts(){
+  const out = [];
+  const push = (key, c) => out.push(Object.assign({key}, c));
+  if (SRV) Object.keys(SRV).forEach(k=>SRV[k].forEach(c=>push(k,c)));
+  else { state.rows.forEach(r=>cList(r).forEach(c=>push('r:'+r.id,c)));
+    state.summary.groups.forEach((g,gi)=>g.items.forEach((it,ii)=>cList(it).forEach(c=>push(`g:${gi}:${ii}`,c)))); }
+  return out.filter(c=>(c.text||'').trim()).sort((x,y)=>String(y.at||'').localeCompare(String(x.at||'')));
+}
+function cmtWhere(key){
+  const [k,a,b] = key.split(':');
+  if (k==='r'){ const r = state.rows.find(x=>String(x.id)===a); return r ? [`המלצה ${r.id} · סעיף ${r.chapter} · ${r.rec}`, 'r:'+r.id] : ['המלצה '+a, '']; }
+  const it = state.summary.groups[+a] && state.summary.groups[+a].items[+b];
+  return it ? [`נושא: ${it.title}`, `g:${a}:${b}`] : ['נושא', ''];
+}
+function updAllBtn(){ const b = $('#allCmts span'); if (!b) return; const n = CLOAD==='ok'||CLOAD==='offline' ? allCmts().length : null; b.textContent = n==null ? 'כל ההערות' : `כל ההערות (${n})`; }
+let allOpen = false;
+function openAll(refresh){
+  if (!refresh) lastFocus = document.activeElement;
+  allOpen = true;
+  const list = allCmts();
+  $('#dTitle').textContent = 'כל ההערות';
+  $('#dSub').textContent = CLOAD==='loading' ? 'טוען…' : CLOAD==='error' ? '' : (list.length===1 ? 'הערה אחת' : `${list.length} הערות`);
+  const st = CLOAD==='loading' ? '<p class="dhint">ההערות עוד נטענות. נסו שוב בעוד כמה שניות.</p>'
+    : CLOAD==='error' ? '<p class="dhint">ההערות של כולם לא נטענו. <button class="cretry">לנסות שוב</button></p>'
+    : CLOAD==='offline' ? '<p class="dhint">זה עותק שמור: מוצגות ההערות שנשמרו בתוכו. ההערות העדכניות נמצאות בדף באתר.</p>' : '';
+  const body = list.map(c=>{ const [w,open] = cmtWhere(c.key);
+    return `<div class="ac-item acl">`+(open?`<button class="ac-where" data-open="${open}">${esc(w.length>140?w.slice(0,140)+'…':w)}</button>`:`<p class="ac-where">${esc(w)}</p>`)+
+      `<div class="c"><div class="ch2"><span><b>${esc(c.by||'ללא שם')}</b>${c.role?' · '+esc(c.role):''}${c.at?' · '+fmtDate(c.at):''}</span></div><p class="ct">${esc(c.text)}</p></div></div>`; }).join('');
+  $('#dBody').innerHTML = st + (body || (CLOAD==='ok'||CLOAD==='offline' ? '<p>עדיין לא נכתבו הערות.</p>' : ''));
+  $('#drawer').hidden = false; if (!refresh){ $('#dBody').scrollTop = 0; document.body.style.overflow='hidden'; $('#drawer .x').focus(); }
+}
 function handleOpen(code){
   const [kind,a,b] = code.split(':'); const S = state.summary;
+  if (kind==='ac') return openAll();
+  if (kind==='r'){ const r = state.rows.find(x=>String(x.id)===a); return r ? openDrawer(`המלצה ${r.id}`, null, [r]) : null; }
   if (kind==='f'){ const [t,fn]=FILTERS[a]; return openDrawer(t,null,state.rows.filter(fn)); }
   if (kind==='c'){ const sev=SEVS[+a]; const rs=state.rows.filter(r=>r.sev===sev&&(+b<0||groupOf(r.status)===GROUPS[+b][0]));
     return openDrawer(sev+(+b<0?'':' · '+GROUPS[+b][0]), null, rs); }
